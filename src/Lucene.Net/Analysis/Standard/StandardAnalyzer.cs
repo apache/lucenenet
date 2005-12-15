@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Standard
 		public static readonly System.String[] STOP_WORDS;
 		
 		/// <summary>Builds an analyzer. </summary>
-		public StandardAnalyzer():this(STOP_WORDS)
+		public StandardAnalyzer() : this(STOP_WORDS)
 		{
 		}
 		
