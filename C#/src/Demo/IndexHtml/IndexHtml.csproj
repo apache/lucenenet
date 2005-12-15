@@ -49,7 +49,7 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE"
-                    DocumentationFile = ""
+                    DocumentationFile = "IndexHtml.xml"
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
@@ -81,13 +81,13 @@
                 />
                 <Reference
                     Name = "DemoLib"
-                    AssemblyName = "DemoLib"
-                    HintPath = "..\..\bin\Debug\DemoLib.dll"
+                    Project = "{72AE650A-73E9-4F01-918B-5B166C2129FA}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "..\..\bin\Debug\Lucene.Net.dll"
+                    HintPath = "..\..\bin\Release\Lucene.Net.dll"
                 />
             </References>
         </Build>
