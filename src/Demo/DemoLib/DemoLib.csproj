@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "..\..\bin\Debug\"
+                    OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -49,14 +49,14 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE"
-                    DocumentationFile = ""
+                    DocumentationFile = "DemoLib.xml"
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "true"
-                    OutputPath = "..\..\bin\Release\"
+                    OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -82,7 +82,7 @@
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "..\..\bin\Debug\Lucene.Net.dll"
+                    HintPath = "..\..\bin\Release\Lucene.Net.dll"
                 />
             </References>
         </Build>
