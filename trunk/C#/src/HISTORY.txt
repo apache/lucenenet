@@ -1,11 +1,22 @@
 Lucene.Net History
 ------------------
 
+15Dec05:
+	- Release: Lucene.Net.1.4.3 final build 004 to the Apache incubator site
+	- Clean-up: VS.Net project settings.
+
+
+21Nov05:
+	- Release: Lucene.Net.1.4.3 final build 004
+	- Fix: Fixed System.Object cast in Lucene.Net.Search.RangeQuery and Lucene.Net.Analysis.PorterStemFilter -- Thanks to Jason
+	- Note: Moved project to Apache at: http://svn.apache.org/repos/asf/incubator/lucene.net/
+
+
 23Oct05:
-	- Release Lucene.Net.1.4.3 final build 003
+	- Release: Lucene.Net.1.4.3 final build 003
 	- Fix: Memory leak -- Thanks to Marcus.
 	- Fix: Remoting class and other misused of System.Object cast -- Thanks to Jason
-	
+
 
 22Feb05:
 	- Release: Lucene.Net.1.4.3 final build 002
@@ -98,7 +109,6 @@ Lucene.Net History
 	- Port: IndexReader.cs -- done. thanks to Bill
 	- Port: IndexWriter.cs -- done. thanks to Bill
 
-    
 
 13Oct04 Lucene.Net.1.4-alpha build 002
 	- Port: SpanNearQuery.cs & SpanOrQuery.cs -- thanks to Radu
