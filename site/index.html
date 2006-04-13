@@ -1,0 +1,124 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Lucene.Net</title>
+        <style type="text/css"> body { background: white; margin: 0.5in; font-family: arial,helvetica,sans-serif; }
+	.notice { border-color: black; border: 2px solid; margin: 0.25in; padding: 0.1in; }
+	.logo { float: right; }
+	</style>
+    </head>
+    <body>
+        <div class="logo">
+            <a href="http://incubator.apache.org/"><img border="none" src="images/apache-incubator-logo.png">
+            </a>
+        </div>
+        <h1>Lucene.Net</h1>
+        <br>
+        <p>
+            Lucene.Net is a source code, class-per-class, API-per-API and algorithmatic 
+            port of the Java <a href="http://lucene.apache.org/java/">Lucene</a> search 
+            engine to the C# and .NET platform utilizing <A href="http://msdn.microsoft.com/netframework/">
+                Microsoft .NET Framework.</A>
+        </p>
+        <div class="notice">
+            <p>Lucene.Net is an effort undergoing incubation at the Apache Software Foundation 
+                (ASF). Incubation is required of all newly accepted projects until a further 
+                review indicates that the infrastructure, communications, and decision making 
+                process have stabilized in a manner consistent with other successful ASF 
+                projects. While incubation status is not necessarily a reflection of the 
+                completeness or stability of the code, it does indicate that the project has 
+                yet to be fully endorsed by the ASF.</p>
+            <p></p>
+            <p>
+                The incubation status is recorded at <a href="http://incubator.apache.org/projects/lucene.net.html">
+                    http://incubator.apache.org/projects/lucene.net.html</a>
+            </p>
+        </div>
+        <p>
+            Lucene.Net sticks to the APIs and classes used in the original Java 
+            implementation of Lucene. The API names as well as class names are preserved 
+            with the intention of giving Lucene.Net the look and feel of the C# language 
+            and the .NET Framework. For example, the method <em>Hits.length()</em> in the 
+            Java implementation now reads <em>Hits.Length()</em> in the C# port.
+        </p>
+        <p>
+            In addition to the APIs and classes port to C#, the algorithm of Java Lucene is 
+            ported to C# Lucene. This means an index created with Java Lucene is 
+            back-and-forth compatible with the C# Lucene; both at reading, writing and 
+            updating. In fact a Lucene index can be concurrently searched and updated using 
+            Java Lucene and C# Lucene processes.
+        </p>
+        <h2>News</h2>
+        <ul>
+            <li>
+            13 April 2006 - The project has moved into the Apache incubator and is now open 
+            for the public, a necessary step towards becoming part of the Lucene Project.
+            <li>
+                13 April 2006 - Lucene.Net is also refered to as <em>DotLucene</em>, <em>dotLucene</em>, 
+                and <em>Lucene.NET</em>. The project's offical name is <b><em>Lucene.Net</em></b>.
+            <li>
+                13 April 2006 - Lucene.Net is still avilable at it's old home on <a href="http://sourceforge.net/projects/dotlucene/">
+                    SourceForge.Net</a> but will no longer be maintainged at SourcdeForge.Net.
+            </li>
+        </ul>
+        <h2>Downloads</h2>
+        <p>
+            A source code rlease of the project is now under SVN and can be accessed here: <a href="https://svn.apache.org/repos/asf/incubator/lucene.net/">
+                Lucene.Net source</a>.
+        </p>
+        <h2>Documentation</h2>
+        <p>
+            The project currently has no documentaton released available, but since 
+            Lucene.Net is API and class port based on Java Lucene to C# Lucene, the Java 
+            Lucene <a href="http://lucene.apache.org/java/docs/api/index.html">documentation</a>
+            applies and can be used.
+        </p>
+        <h2>Development</h2>
+        <p>
+            The Lucene.Net project always welcomes new contributors. The project operates 
+            via its version control system, mailing lists, and issue tracker.
+        </p>
+        <h3>Version Control</h3>
+        <p>
+            Grab the current development version of Lucene.Net from its Subversion 
+            repository at <a href="https://svn.apache.org/repos/asf/incubator/lucene.net//trunk">
+                trunk</a>.
+        </p>
+        <h3>Mailing Lists</h3>
+        <p>
+            For development, discussion about the project occurs on its mailing list, <a href="mailto:lucene-net-dev @ incubator.apache.org">
+                lucene-net-dev @ lucene.apache.org</a>, to subscribe, send a message to <a href="mailto:lucene-net-dev-subscribe @ incubator.apache.org">
+                lucene-net-dev-subscribe @ incubator.apache.org</a>.
+        </p>
+        <p>
+            For general usage, discussion about the project occurs on its mailing list, <a href="mailto:lucene-net-user @ incubator.apache.org">
+                lucene-net-user @ lucene.apache.org</a>, to subscribe, send a message to <a href="mailto:lucene-net-user-subscribe at incubator.apache.org">
+                lucene-net-user-subscribe @ incubator.apache.org</a>.
+        </p>
+        <p>
+            Commit notifications are sent to <a href="mailto:lucene-net-commits @ incubator.apache.org">
+                lucene-net-commits @ lucene.apache.org</a>, to subscribe send a message to <a href="mailto:lucene-net-commits-subscribe at incubator.apache.org">
+                lucene-net-commits-subscribe @ lucene.apache.org</a>.
+        </p>
+        <p>
+            Archives of the lists are available at:
+        </p>
+        <ul>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/</a></li>
+        </ul>
+        <h3>Issue Tracking</h3>
+        <p>
+            Lucene.Net uses the ASF Jira installation for issue tracking. You can view open 
+            issues, create new ones, and see what issues we've fixed via the web interface 
+            at <a href="http://issues.apache.org/jira/browse/LUCENENET/">http://issues.apache.org/jira/browse/LUCENENET/</a>.
+        </p>
+        <p>
+            Note that to create a new issue or comment on an existing one you'll have to <a href="http://issues.apache.org/jira/secure/Signup!default.jspa">
+                sign up for an account</a>.
+        </p>
+    </body>
+</html>
