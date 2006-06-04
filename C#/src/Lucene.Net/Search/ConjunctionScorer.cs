@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
-	sealed class ConjunctionScorer:Scorer
+	class ConjunctionScorer : Scorer
 	{
 		private class AnonymousClassComparator : System.Collections.IComparer
 		{
@@ -40,13 +42,9 @@ namespace Lucene.Net.Search
 				
 			}
 			// sort the array
-			public int Compare(System.Object o1, System.Object o2)
+			public virtual int Compare(System.Object o1, System.Object o2)
 			{
 				return ((Scorer) o1).Doc() - ((Scorer) o2).Doc();
-			}
-			public bool equals(System.Object o1, System.Object o2)
-			{
-				return ((Scorer) o1).Doc() == ((Scorer) o2).Doc();
 			}
 		}
 		private System.Collections.ArrayList scorers = new System.Collections.ArrayList();
@@ -81,7 +79,7 @@ namespace Lucene.Net.Search
 		{
 			if (firstTime)
 			{
-				Init();
+				Init(true);
 			}
 			else if (more)
 			{
@@ -106,13 +104,20 @@ namespace Lucene.Net.Search
 		
 		public override bool SkipTo(int target)
 		{
+			if (firstTime)
+			{
+				Init(false);
+			}
+			
 			System.Collections.IEnumerator i = scorers.GetEnumerator();
 			while (more && i.MoveNext())
 			{
 				more = ((Scorer) i.Current).SkipTo(target);
 			}
+			
 			if (more)
 				SortScorers(); // re-sort scorers
+			
 			return DoNext();
 		}
 		
@@ -128,21 +133,24 @@ namespace Lucene.Net.Search
 			return score;
 		}
 		
-		private void  Init()
+		private void  Init(bool initScorers)
 		{
-			more = scorers.Count > 0;
-			
-			// compute coord factor
+			//  compute coord factor
 			coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
 			
-			// move each scorer to its first entry
-			System.Collections.IEnumerator i = scorers.GetEnumerator();
-			while (more && i.MoveNext())
+			more = scorers.Count > 0;
+			
+			if (initScorers)
 			{
-				more = ((Scorer) i.Current).Next();
+				// move each scorer to its first entry
+				System.Collections.IEnumerator i = scorers.GetEnumerator();
+				while (more && i.MoveNext())
+				{
+					more = ((Scorer) i.Current).Next();
+				}
+				if (more)
+					SortScorers(); // initial sort of list
 			}
-			if (more)
-				SortScorers(); // initial sort of list
 			
 			firstTime = false;
 		}
@@ -150,7 +158,7 @@ namespace Lucene.Net.Search
 		private void  SortScorers()
 		{
 			// move scorers to an array
-            Scorer[] array = (Scorer[]) scorers.ToArray(typeof(Scorer));
+			Scorer[] array = (Scorer[]) scorers.ToArray(typeof(Scorer));
 			scorers.Clear(); // empty the list
 			
 			// note that this comparator is not consistent with equals!

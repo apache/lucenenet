@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -22,12 +23,13 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <author>  schnee
 	/// </author>
-	/// <version>  $Id: TestBooleanPrefixQuery.java,v 1.2 2004/03/29 22:48:06 cutting Exp $
+	/// <version>  $Id: TestBooleanPrefixQuery.java 150492 2004-09-06 22:01:49Z dnaber $
 	/// 
 	/// </version>
 	[TestFixture]
@@ -37,11 +39,18 @@ namespace Lucene.Net.Search
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			//TestRunner.run(Suite());
+			// NUnit.Core.TestRunner.Run(Suite());  // {{Aroush}} where is 'TestRunner' in NUnit?
 		}
 		
-        [Test]
-		public virtual void  TestMethod()
+		/*  // {{Aroush}} Do we need this method?
+        public static NUnit.Framework.TestCase Suite()
+		{
+			return new NUnit.Core.TestSuite(typeof(TestBooleanPrefixQuery));
+		}
+        */
+		
+		[Test]
+        public virtual void  TestMethod()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			
@@ -54,8 +63,8 @@ namespace Lucene.Net.Search
 				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 				for (int i = 0; i < categories.Length; i++)
 				{
-					Document doc = new Document();
-					doc.Add(Field.Keyword("category", categories[i]));
+					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+					doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.UN_TOKENIZED));
 					writer.AddDocument(doc);
 				}
 				writer.Close();
@@ -66,7 +75,7 @@ namespace Lucene.Net.Search
 				rw1 = query.Rewrite(reader);
 				
 				BooleanQuery bq = new BooleanQuery();
-				bq.Add(query, true, false);
+				bq.Add(query, BooleanClause.Occur.MUST);
 				
 				rw2 = bq.Rewrite(reader);
 			}

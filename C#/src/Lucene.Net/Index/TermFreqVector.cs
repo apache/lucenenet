@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
 	
 	/// <summary>Provides access to stored term vector of 
-	/// a document Field.
+	/// a document field.
 	/// </summary>
 	public interface TermFreqVector
 	{
 		/// <summary> </summary>
-		/// <returns> The Field this vector is associated with.
+		/// <returns> The field this vector is associated with.
 		/// 
 		/// </returns>
 		System.String GetField();
@@ -40,7 +42,7 @@ namespace Lucene.Net.Index
 		/// <summary>Array of term frequencies. Locations of the array correspond one to one
 		/// to the terms in the array obtained from <code>getTerms</code>
 		/// method. Each location in the array contains the number of times this
-		/// term occurs in the document or the document Field.
+		/// term occurs in the document or the document field.
 		/// </summary>
 		int[] GetTermFrequencies();
 		

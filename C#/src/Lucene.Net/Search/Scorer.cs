@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Expert: Implements scoring for a class of queries. </summary>
+	/// <summary>Expert: Common scoring functionality for different types of queries.
+	/// <br>A <code>Scorer</code> either iterates over documents matching a query,
+	/// or provides an explanation of the score for a query for a given document.
+	/// <br>Document scores are computed using a given <code>Similarity</code> implementation.
+	/// </summary>
 	public abstract class Scorer
 	{
 		private Similarity similarity;
 		
-		/// <summary>Constructs a Scorer. </summary>
+		/// <summary>Constructs a Scorer.</summary>
+		/// <param name="similarity">The <code>Similarity</code> implementation used by this scorer.
+		/// </param>
 		protected internal Scorer(Similarity similarity)
 		{
 			this.similarity = similarity;
@@ -34,7 +42,11 @@ namespace Lucene.Net.Search
 			return this.similarity;
 		}
 		
-		/// <summary>Scores all documents and passes them to a collector. </summary>
+		/// <summary>Scores and collects all matching documents.</summary>
+		/// <param name="hc">The collector to which all matching documents are passed through
+		/// {@link HitCollector#Collect(int, float)}.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </param>
 		public virtual void  Score(HitCollector hc)
 		{
 			while (Next())
@@ -43,37 +55,70 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Advance to the next document matching the query.  Returns true iff there
-		/// is another match. 
+		/// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
+		/// Note that {@link #Next()} must be called once before this method is called
+		/// for the first time.
 		/// </summary>
+		/// <param name="hc">The collector to which all matching documents are passed through
+		/// {@link HitCollector#Collect(int, float)}.
+		/// </param>
+		/// <param name="max">Do not score documents past this.
+		/// </param>
+		/// <returns> true if more matching documents may remain.
+		/// </returns>
+		protected internal virtual bool Score(HitCollector hc, int max)
+		{
+			while (Doc() < max)
+			{
+				hc.Collect(Doc(), Score());
+				if (!Next())
+					return false;
+			}
+			return true;
+		}
+		
+		/// <summary>Advances to the next document matching the query.</summary>
+		/// <returns> true iff there is another document matching the query.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </returns>
 		public abstract bool Next();
 		
-		/// <summary>Returns the current document number.  Initially invalid, until {@link
-		/// #Next()} is called the first time. 
+		/// <summary>Returns the current document number matching the query.
+		/// Initially invalid, until {@link #Next()} is called the first time.
 		/// </summary>
 		public abstract int Doc();
 		
-		/// <summary>Returns the score of the current document.  Initially invalid, until
-		/// {@link #Next()} is called the first time. 
+		/// <summary>Returns the score of the current document matching the query.
+		/// Initially invalid, until {@link #Next()} or {@link #SkipTo(int)}
+		/// is called the first time.
 		/// </summary>
 		public abstract float Score();
 		
 		/// <summary>Skips to the first match beyond the current whose document number is
-		/// greater than or equal to <i>target</i>. <p>Returns true iff there is such
-		/// a match.  <p>Behaves as if written: <pre>
-		/// boolean SkipTo(int target) {
+		/// greater than or equal to a given target.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </summary>
+		/// <param name="target">The target document number.
+		/// </param>
+		/// <returns> true iff there is such a match.
+		/// <p>Behaves as if written: <pre>
+		/// boolean skipTo(int target) {
 		/// do {
 		/// if (!next())
 		/// return false;
 		/// } while (target > doc());
 		/// return true;
 		/// }
-		/// </pre>
-		/// Most implementations are considerably more efficient than that.
-		/// </summary>
+		/// </pre>Most implementations are considerably more efficient than that.
+		/// </returns>
 		public abstract bool SkipTo(int target);
 		
-		/// <summary>Returns an explanation of the score for <code>doc</code>. </summary>
+		/// <summary>Returns an explanation of the score for a document.
+		/// <br>When this method is used, the {@link #Next()}, {@link #SkipTo(int)} and
+		/// {@link #Score(HitCollector)} methods should not be used.
+		/// </summary>
+		/// <param name="doc">The document number for the explanation.
+		/// </param>
 		public abstract Explanation Explain(int doc);
 	}
 }

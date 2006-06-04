@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
+
 namespace Lucene.Net.Analysis
 {
 	[TestFixture]
 	public class TestStopAnalyzer
 	{
-		private StopAnalyzer stop = new StopAnalyzer();
 		
+		private StopAnalyzer stop = new StopAnalyzer();
 		private System.Collections.Hashtable inValidTokens = new System.Collections.Hashtable();
 		
         [TestFixtureSetUp]
-		protected virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			for (int i = 0; i < StopAnalyzer.ENGLISH_STOP_WORDS.Length; i++)
 			{
@@ -41,16 +43,9 @@ namespace Lucene.Net.Analysis
 			TokenStream stream = stop.TokenStream("test", reader);
 			Assert.IsTrue(stream != null);
 			Token token = null;
-			try
+			while ((token = stream.Next()) != null)
 			{
-				while ((token = stream.Next()) != null)
-				{
-					Assert.IsTrue(inValidTokens.Contains(token.TermText()) == false);
-				}
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.IsTrue(false);
+				Assert.IsFalse(inValidTokens.Contains(token.TermText()));
 			}
 		}
 		
@@ -61,30 +56,15 @@ namespace Lucene.Net.Analysis
 			stopWordsSet.Add("good", "good");
 			stopWordsSet.Add("test", "test");
 			stopWordsSet.Add("analyzer", "analyzer");
-
-            // {{Aroush  how can we copy 'stopWordsSet' to 'System.String[]'?
-            System.String[] arrStopWordsSet = new System.String[3];
-            arrStopWordsSet[0] = "good";
-            arrStopWordsSet[1] = "test";
-            arrStopWordsSet[2] = "analyzer";
-            // Aroush}}
-
-			StopAnalyzer newStop = new StopAnalyzer(arrStopWordsSet);
+			StopAnalyzer newStop = new StopAnalyzer(stopWordsSet);
 			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
 			TokenStream stream = newStop.TokenStream("test", reader);
-			Assert.IsTrue(stream != null);
+			Assert.IsNotNull(stream);
 			Token token = null;
-			try
+			while ((token = stream.Next()) != null)
 			{
-				while ((token = stream.Next()) != null)
-				{
-					System.String text = token.TermText();
-					Assert.IsTrue(stopWordsSet.Contains(text) == false);
-				}
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.IsTrue(false);
+				System.String text = token.TermText();
+				Assert.IsFalse(stopWordsSet.Contains(text));
 			}
 		}
 	}

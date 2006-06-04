@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search.Spans
 {
 	
@@ -73,6 +76,12 @@ namespace Lucene.Net.Search.Spans
 			
 			public virtual bool SkipTo(int target)
 			{
+				// are we already at the correct position?
+				if (doc >= target)
+				{
+					return true;
+				}
+				
 				if (!positions.SkipTo(target))
 				{
 					doc = System.Int32.MaxValue;
@@ -129,18 +138,36 @@ namespace Lucene.Net.Search.Spans
 		public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-            terms.Add(term);
+			terms.Add(term);
 			return terms;
 		}
 		
 		public override System.String ToString(System.String field)
 		{
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			if (term.Field().Equals(field))
-				return term.Text();
+				buffer.Append(term.Text());
 			else
 			{
-				return term.ToString();
+				buffer.Append(term.ToString());
 			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			return buffer.ToString();
+		}
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (!(o is SpanTermQuery))
+				return false;
+			SpanTermQuery other = (SpanTermQuery) o;
+			return (this.GetBoost() == other.GetBoost()) && this.term.Equals(other.term);
+		}
+		
+		/// <summary>Returns a hash code value for this object.</summary>
+		public override int GetHashCode()
+		{
+            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode();    // {{Aroush-1.9}} Is this OK?
 		}
 		
 		public override Spans GetSpans(IndexReader reader)

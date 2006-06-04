@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
@@ -25,8 +27,8 @@ namespace Lucene.Net.Search
 	/// adequate sorting.  It maintains an internal cache of values which
 	/// could be quite large.  The cache is an array of Comparable,
 	/// one for each document in the index.  There is a distinct
-	/// Comparable for each unique term in the Field - if
-	/// some documents have the same term in the Field, the cache
+	/// Comparable for each unique term in the field - if
+	/// some documents have the same term in the field, the cache
 	/// array will have entries which reference the same Comparable.
 	/// 
 	/// <p>Created: Apr 21, 2004 5:08:38 PM
@@ -34,7 +36,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>   Tim Jones
 	/// </author>
-	/// <version>  $Id: SortComparator.java,v 1.2.2.1 2004/09/30 19:20:16 dnaber Exp $
+	/// <version>  $Id: SortComparator.java 150541 2004-09-29 15:09:02Z goller $
 	/// </version>
 	/// <since>   1.4
 	/// </since>
@@ -83,7 +85,8 @@ namespace Lucene.Net.Search
 		public virtual ScoreDocComparator NewComparator(IndexReader reader, System.String fieldname)
 		{
 			System.String field = String.Intern(fieldname);
-            System.IComparable[] cachedValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetCustom(reader, field, this);
+			System.IComparable[] cachedValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetCustom(reader, field, this);
+			
 			return new AnonymousClassScoreDocComparator(cachedValues, this);
 		}
 		

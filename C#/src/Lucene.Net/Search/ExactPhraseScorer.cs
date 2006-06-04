@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
 	
-	sealed class ExactPhraseScorer:PhraseScorer
+	sealed class ExactPhraseScorer : PhraseScorer
 	{
 		
-		internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity, byte[] norms) : 
-            base(weight, tps, positions, similarity, norms)
+		internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity, byte[] norms) : base(weight, tps, positions, similarity, norms)
 		{
 		}
 		

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
+
 namespace Lucene.Net.Analysis
 {
-    [TestFixture]
+    [TestFixture]	
 	public class TestPerFieldAnalzyerWrapper
 	{
         [Test]
@@ -27,7 +29,7 @@ namespace Lucene.Net.Analysis
 			PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer());
 			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
 			
-			TokenStream tokenStream = analyzer.TokenStream("Field", new System.IO.StringReader(text));
+			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
 			Token token = tokenStream.Next();
 			Assert.AreEqual("Qwerty", token.TermText(), "WhitespaceAnalyzer does not lowercase");
 			

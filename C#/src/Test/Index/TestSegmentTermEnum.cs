@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -20,6 +21,7 @@ using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
 	
@@ -30,48 +32,34 @@ namespace Lucene.Net.Index
 	{
 		internal Directory dir = new RAMDirectory();
 		
-        [Test]
-		public virtual void  TestTermEnum()
+		[Test]
+        public virtual void  TestTermEnum()
 		{
 			IndexWriter writer = null;
 			
-			try
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			
+			// add 100 documents with term : aaa
+			// add 100 documents with terms: aaa bbb
+			// Therefore, term 'aaa' has document frequency of 200 and term 'bbb' 100
+			for (int i = 0; i < 100; i++)
 			{
-				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-				
-				// add 100 documents with term : aaa
-				// add 100 documents with terms: aaa bbb
-				// Therefore, term 'aaa' has document frequency of 200 and term 'bbb' 100
-				for (int i = 0; i < 100; i++)
-				{
-					AddDoc(writer, "aaa");
-					AddDoc(writer, "aaa bbb");
-				}
-				
-				writer.Close();
-			}
-			catch (System.IO.IOException e)
-			{
-				System.Console.Error.WriteLine(e.StackTrace);
+				AddDoc(writer, "aaa");
+				AddDoc(writer, "aaa bbb");
 			}
 			
-			try
-			{
-				// verify document frequency of terms in an unoptimized index
-				VerifyDocFreq();
-				
-				// merge segments by optimizing the index
-				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
-				writer.Optimize();
-				writer.Close();
-				
-				// verify document frequency of terms in an optimized index
-				VerifyDocFreq();
-			}
-			catch (System.IO.IOException e2)
-			{
-				System.Console.Error.WriteLine(e2.StackTrace);
-			}
+			writer.Close();
+			
+			// verify document frequency of terms in an unoptimized index
+			VerifyDocFreq();
+			
+			// merge segments by optimizing the index
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			writer.Optimize();
+			writer.Close();
+			
+			// verify document frequency of terms in an optimized index
+			VerifyDocFreq();
 		}
 		
 		private void  VerifyDocFreq()
@@ -111,17 +99,9 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
-			Document doc = new Document();
-			doc.Add(Field.UnStored("content", value_Renamed));
-			
-			try
-			{
-				writer.AddDocument(doc);
-			}
-			catch (System.IO.IOException e)
-			{
-				System.Console.Error.WriteLine(e.StackTrace);
-			}
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.TOKENIZED));
+			writer.AddDocument(doc);
 		}
 	}
 }

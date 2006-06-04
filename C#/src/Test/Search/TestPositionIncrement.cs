@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
@@ -24,6 +25,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
@@ -32,7 +34,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Revision: 1.4 $
+	/// <version>  $Revision: 150585 $
 	/// </version>
 	[TestFixture]
     public class TestPositionIncrement
@@ -43,7 +45,8 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 			}
-			private class AnonymousClassTokenStream : TokenStream
+
+            private class AnonymousClassTokenStream : TokenStream
 			{
 				public AnonymousClassTokenStream(AnonymousClassAnalyzer enclosingInstance)
 				{
@@ -62,7 +65,8 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				private System.String[] TOKENS = new System.String[]{"1", "2", "3", "4", "5"};
+
+                private System.String[] TOKENS = new System.String[]{"1", "2", "3", "4", "5"};
 				private int[] INCREMENTS = new int[]{1, 2, 1, 0, 1};
 				private int i = 0;
 				
@@ -95,14 +99,14 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        [Test]
-		public virtual void  TestSetPosition()
+		[Test]
+        public virtual void  TestSetPosition()
 		{
 			Analyzer analyzer = new AnonymousClassAnalyzer(this);
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, analyzer, true);
-			Document d = new Document();
-			d.Add(Field.Text("Field", "bogus"));
+			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+			d.Add(new Field("field", "bogus", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(d);
 			writer.Optimize();
 			writer.Close();
@@ -112,44 +116,44 @@ namespace Lucene.Net.Search
 			Hits hits;
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "1"));
-			q.Add(new Term("Field", "2"));
+			q.Add(new Term("field", "1"));
+			q.Add(new Term("field", "2"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(0, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "2"));
-			q.Add(new Term("Field", "3"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "3"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(1, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "3"));
-			q.Add(new Term("Field", "4"));
+			q.Add(new Term("field", "3"));
+			q.Add(new Term("field", "4"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(0, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "2"));
-			q.Add(new Term("Field", "4"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "4"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(1, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "3"));
-			q.Add(new Term("Field", "5"));
+			q.Add(new Term("field", "3"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(1, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "4"));
-			q.Add(new Term("Field", "5"));
+			q.Add(new Term("field", "4"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(1, hits.Length());
 			
 			q = new PhraseQuery();
-			q.Add(new Term("Field", "2"));
-			q.Add(new Term("Field", "5"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q);
 			Assert.AreEqual(0, hits.Length());
 		}
@@ -161,7 +165,7 @@ namespace Lucene.Net.Search
         public virtual void  TestIncrementingPositions()
 		{
 			Analyzer analyzer = new WhitespaceAnalyzer();
-			TokenStream ts = analyzer.TokenStream("Field", new System.IO.StringReader("one two three four five"));
+			TokenStream ts = analyzer.TokenStream("field", new System.IO.StringReader("one two three four five"));
 			
 			while (true)
 			{

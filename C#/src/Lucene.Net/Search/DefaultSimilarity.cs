@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
+	
 	/// <summary>Expert: Default scoring implementation. </summary>
-	public class DefaultSimilarity:Similarity
+	[Serializable]
+	public class DefaultSimilarity : Similarity
 	{
 		/// <summary>Implemented as <code>1/sqrt(numTerms)</code>. </summary>
 		public override float LengthNorm(System.String fieldName, int numTerms)
@@ -44,7 +48,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. </summary>
-		public override float Idf(int docFreq, int numDocs)
+		public override float Ldf(int docFreq, int numDocs)
 		{
 			return (float) (System.Math.Log(numDocs / (double) (docFreq + 1)) + 1.0);
 		}

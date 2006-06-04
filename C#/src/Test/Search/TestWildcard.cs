@@ -13,36 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+using NUnit.Framework;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> TestWildcard tests the '*' and '?' wildard characters.
+	/// <summary> TestWildcard tests the '*' and '?' wildcard characters.
 	/// 
 	/// </summary>
+	/// <version>  $Id: TestWildcard.java 329860 2005-10-31 17:06:29Z bmesser $
+	/// </version>
 	/// <author>  Otis Gospodnetic
 	/// </author>
 	[TestFixture]
     public class TestWildcard
 	{
-		/// <summary> Creates a new <code>TestWildcard</code> instance.
-		/// 
-		/// </summary>
-		/// <param name="name">the name of the test
-		/// </param>
-		
-		/// <summary> Tests Wildcard queries with an asterisk.
-		/// 
-		/// </summary>
 		[Test]
-		public virtual void  TestAsterisk()
+        public virtual void  TestEquals()
+		{
+			WildcardQuery wq1 = new WildcardQuery(new Term("field", "b*a"));
+			WildcardQuery wq2 = new WildcardQuery(new Term("field", "b*a"));
+			WildcardQuery wq3 = new WildcardQuery(new Term("field", "b*a"));
+			
+			// reflexive?
+			Assert.AreEqual(wq1, wq2);
+			Assert.AreEqual(wq2, wq1);
+			
+			// transitive?
+			Assert.AreEqual(wq2, wq3);
+			Assert.AreEqual(wq1, wq3);
+			
+			Assert.IsFalse(wq1.Equals(null));
+			
+			FuzzyQuery fq = new FuzzyQuery(new Term("field", "b*a"));
+			Assert.IsFalse(wq1.Equals(fq));
+			Assert.IsFalse(fq.Equals(wq1));
+		}
+		
+		/// <summary> Tests Wildcard queries with an asterisk.</summary>
+		[Test]
+        public virtual void  TestAsterisk()
 		{
 			RAMDirectory indexStore = GetIndexStore("body", new System.String[]{"metal", "metals"});
 			IndexSearcher searcher = new IndexSearcher(indexStore);
@@ -53,11 +71,11 @@ namespace Lucene.Net.Search
 			Query query5 = new WildcardQuery(new Term("body", "m*tals"));
 			
 			BooleanQuery query6 = new BooleanQuery();
-			query6.Add(query5, false, false);
+			query6.Add(query5, BooleanClause.Occur.SHOULD);
 			
 			BooleanQuery query7 = new BooleanQuery();
-			query7.Add(query3, false, false);
-			query7.Add(query5, false, false);
+			query7.Add(query3, BooleanClause.Occur.SHOULD);
+			query7.Add(query5, BooleanClause.Occur.SHOULD);
 			
 			// Queries do not automatically lower-case search terms:
 			Query query8 = new WildcardQuery(new Term("body", "M*tal*"));
@@ -70,13 +88,15 @@ namespace Lucene.Net.Search
 			AssertMatches(searcher, query6, 1);
 			AssertMatches(searcher, query7, 2);
 			AssertMatches(searcher, query8, 0);
+			AssertMatches(searcher, new WildcardQuery(new Term("body", "*tall")), 0);
+			AssertMatches(searcher, new WildcardQuery(new Term("body", "*tal")), 1);
+			AssertMatches(searcher, new WildcardQuery(new Term("body", "*tal*")), 2);
 		}
 		
 		/// <summary> Tests Wildcard queries with a question mark.
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
+		/// <throws>  IOException if an error occurs </throws>
 		[Test]
         public virtual void  TestQuestionmark()
 		{
@@ -87,12 +107,14 @@ namespace Lucene.Net.Search
 			Query query3 = new WildcardQuery(new Term("body", "metals?"));
 			Query query4 = new WildcardQuery(new Term("body", "m?t?ls"));
 			Query query5 = new WildcardQuery(new Term("body", "M?t?ls"));
+			Query query6 = new WildcardQuery(new Term("body", "meta??"));
 			
 			AssertMatches(searcher, query1, 1);
-			AssertMatches(searcher, query2, 2);
-			AssertMatches(searcher, query3, 1);
+			AssertMatches(searcher, query2, 1);
+			AssertMatches(searcher, query3, 0);
 			AssertMatches(searcher, query4, 3);
 			AssertMatches(searcher, query5, 0);
+			AssertMatches(searcher, query6, 1); // Query: 'meta??' matches 'metals' not 'metal'
 		}
 		
 		private RAMDirectory GetIndexStore(System.String field, System.String[] contents)
@@ -101,8 +123,8 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 			for (int i = 0; i < contents.Length; ++i)
 			{
-				Document doc = new Document();
-				doc.Add(Field.Text(field, contents[i]));
+				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				doc.Add(new Field(field, contents[i], Field.Store.YES, Field.Index.TOKENIZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();

@@ -13,14 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> This analyzer is used to facilitate scenarios where different
 	/// fields require different analysis techniques.  Use {@link #addAnalyzer}
-	/// to add a non-default analyzer on a Field name basis.
-	/// See TestPerFieldAnalyzerWrapper.java for example usage.
+	/// to add a non-default analyzer on a field name basis.
+	/// 
+	/// <p>Example usage:
+	/// 
+	/// <pre>
+	/// PerFieldAnalyzerWrapper aWrapper =
+	/// new PerFieldAnalyzerWrapper(new StandardAnalyzer());
+	/// aWrapper.addAnalyzer("firstname", new KeywordAnalyzer());
+	/// aWrapper.addAnalyzer("lastname", new KeywordAnalyzer());
+	/// </pre>
+	/// 
+	/// <p>In this example, StandardAnalyzer will be used for all fields except "firstname"
+	/// and "lastname", for which KeywordAnalyzer will be used.
+	/// 
+	/// <p>A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing
+	/// and query parsing.
 	/// </summary>
 	public class PerFieldAnalyzerWrapper:Analyzer
 	{
@@ -39,18 +55,18 @@ namespace Lucene.Net.Analysis
 			this.defaultAnalyzer = defaultAnalyzer;
 		}
 		
-		/// <summary> Defines an analyzer to use for the specified Field.
+		/// <summary> Defines an analyzer to use for the specified field.
 		/// 
 		/// </summary>
-		/// <param name="fieldName">Field name requiring a non-default analyzer.
+		/// <param name="fieldName">field name requiring a non-default analyzer
 		/// </param>
-		/// <param name="analyzer">non-default analyzer to use for Field
+		/// <param name="analyzer">non-default analyzer to use for field
 		/// </param>
 		public virtual void  AddAnalyzer(System.String fieldName, Analyzer analyzer)
 		{
 			analyzerMap[fieldName] = analyzer;
 		}
-
+		
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			Analyzer analyzer = (Analyzer) analyzerMap[fieldName];
@@ -60,6 +76,12 @@ namespace Lucene.Net.Analysis
 			}
 			
 			return analyzer.TokenStream(fieldName, reader);
+		}
+		
+		public override System.String ToString()
+		{
+			// {{Aroush-1.9}} 'analyzerMap.ToString()' may return a different value then Java.
+			return "PerFieldAnalyzerWrapper(" + analyzerMap.ToString() + ", default=" + defaultAnalyzer + ")";
 		}
 	}
 }

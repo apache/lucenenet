@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using _TestHelper = Lucene.Net.Store.TestHelper;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+using _TestHelper = Lucene.Net.Store._TestHelper;
+
 namespace Lucene.Net.Index
 {
 	
 	
 	/// <author>  dmitrys@earthlink.net
 	/// </author>
-	/// <version>  $Id: TestCompoundFile.java,v 1.5 2004/03/29 22:48:06 cutting Exp $
+	/// <version>  $Id: TestCompoundFile.java 208807 2005-07-01 22:13:53Z dnaber $
 	/// </version>
-    [TestFixture]
+	[TestFixture]
     public class TestCompoundFile
 	{
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-            /*
-			TestRunner.run(new NUnit.Framework.TestSuite(typeof(TestCompoundFile)));
+			// NUnit.Util.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestCompoundFile)));   // {{Aroush}} where is 'TestRunner' in NUnit?
 			//        TestRunner.run (new TestCompoundFile("testSingleFile"));
 			//        TestRunner.run (new TestCompoundFile("testTwoFiles"));
 			//        TestRunner.run (new TestCompoundFile("testRandomFiles"));
@@ -49,7 +49,6 @@ namespace Lucene.Net.Index
 			//        TestRunner.run (new TestCompoundFile("testReadPastEOF"));
 			
 			//        TestRunner.run (new TestCompoundFile("testIWCreate"));
-            */
 		}
 		
 		
@@ -59,17 +58,17 @@ namespace Lucene.Net.Index
 		public virtual void  SetUp()
 		{
 			//dir = new RAMDirectory();
-			dir = FSDirectory.GetDirectory(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", "testIndex")), true);
+			dir = FSDirectory.GetDirectory(new System.IO.FileInfo(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir") + "\\" + "testIndex"), true);
 		}
 		
 		
 		/// <summary>Creates a file of the specified size with random data. </summary>
 		private void  CreateRandomFile(Directory dir, System.String name, int size)
 		{
-			OutputStream os = dir.CreateFile(name);
+			IndexOutput os = dir.CreateOutput(name);
 			for (int i = 0; i < size; i++)
 			{
-				byte b = (byte) (((new System.Random()).NextDouble()) * 256);
+				byte b = (byte) ((new System.Random().NextDouble()) * 256);
 				os.WriteByte(b);
 			}
 			os.Close();
@@ -81,7 +80,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void  CreateSequenceFile(Directory dir, System.String name, byte start, int size)
 		{
-			OutputStream os = dir.CreateFile(name);
+			IndexOutput os = dir.CreateOutput(name);
 			for (int i = 0; i < size; i++)
 			{
 				os.WriteByte(start);
@@ -91,12 +90,12 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		private void  AssertSameStreams(System.String msg, InputStream expected, InputStream test)
+		private void  AssertSameStreams(System.String msg, IndexInput expected, IndexInput test)
 		{
 			Assert.IsNotNull(expected, msg + " null expected");
 			Assert.IsNotNull(test, msg + " null test");
-			Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
-			Assert.AreEqual(expected.GetFilePointer(), test.GetFilePointer(), msg + " position");
+			Assert.AreEqual(test.Length(), expected.Length(), msg + " length");
+			Assert.AreEqual(test.GetFilePointer(), expected.GetFilePointer(), msg + " position");
 			
 			byte[] expectedBuffer = new byte[512];
 			byte[] testBuffer = new byte[expectedBuffer.Length];
@@ -113,7 +112,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		private void  AssertSameStreams(System.String msg, InputStream expected, InputStream actual, long seekTo)
+		private void  AssertSameStreams(System.String msg, IndexInput expected, IndexInput actual, long seekTo)
 		{
 			if (seekTo >= 0 && seekTo < expected.Length())
 			{
@@ -125,7 +124,7 @@ namespace Lucene.Net.Index
 		
 		
 		
-		private void  AssertSameSeekBehavior(System.String msg, InputStream expected, InputStream actual)
+		private void  AssertSameSeekBehavior(System.String msg, IndexInput expected, IndexInput actual)
 		{
 			// seek to 0
 			long point = 0;
@@ -174,7 +173,7 @@ namespace Lucene.Net.Index
 		/// Files of different sizes are tested: 0, 1, 10, 100 bytes.
 		/// </summary>
 		[Test]
-		public virtual void  TestSingleFile()
+        public virtual void  TestSingleFile()
 		{
 			int[] data = new int[]{0, 1, 10, 100};
 			for (int i = 0; i < data.Length; i++)
@@ -186,8 +185,8 @@ namespace Lucene.Net.Index
 				csw.Close();
 				
 				CompoundFileReader csr = new CompoundFileReader(dir, name + ".cfs");
-				InputStream expected = dir.OpenFile(name);
-				InputStream actual = csr.OpenFile(name);
+				IndexInput expected = dir.OpenInput(name);
+				IndexInput actual = csr.OpenInput(name);
 				AssertSameStreams(name, expected, actual);
 				AssertSameSeekBehavior(name, expected, actual);
 				expected.Close();
@@ -212,15 +211,15 @@ namespace Lucene.Net.Index
 			csw.Close();
 			
 			CompoundFileReader csr = new CompoundFileReader(dir, "d.csf");
-			InputStream expected = dir.OpenFile("d1");
-			InputStream actual = csr.OpenFile("d1");
+			IndexInput expected = dir.OpenInput("d1");
+			IndexInput actual = csr.OpenInput("d1");
 			AssertSameStreams("d1", expected, actual);
 			AssertSameSeekBehavior("d1", expected, actual);
 			expected.Close();
 			actual.Close();
 			
-			expected = dir.OpenFile("d2");
-			actual = csr.OpenFile("d2");
+			expected = dir.OpenInput("d2");
+			actual = csr.OpenInput("d2");
 			AssertSameStreams("d2", expected, actual);
 			AssertSameSeekBehavior("d2", expected, actual);
 			expected.Close();
@@ -269,8 +268,8 @@ namespace Lucene.Net.Index
 			CompoundFileReader csr = new CompoundFileReader(dir, "test.cfs");
 			for (int i = 0; i < data.Length; i++)
 			{
-				InputStream check = dir.OpenFile(segment + data[i]);
-				InputStream test = csr.OpenFile(segment + data[i]);
+				IndexInput check = dir.OpenInput(segment + data[i]);
+				IndexInput test = csr.OpenInput(segment + data[i]);
 				AssertSameStreams(data[i], check, test);
 				AssertSameSeekBehavior(data[i], check, test);
 				test.Close();
@@ -299,22 +298,22 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestReadAfterClose()
 		{
-			Demo_FSInputStreamBug((FSDirectory) dir, "test");
+			Demo_FSIndexInputBug((FSDirectory) dir, "test");
 		}
 		
-		private void  Demo_FSInputStreamBug(FSDirectory fsdir, System.String file)
+		private void  Demo_FSIndexInputBug(FSDirectory fsdir, System.String file)
 		{
 			// Setup the test file - we need more than 1024 bytes
-			OutputStream os = fsdir.CreateFile(file);
+			IndexOutput os = fsdir.CreateOutput(file);
 			for (int i = 0; i < 2000; i++)
 			{
 				os.WriteByte((byte) i);
 			}
 			os.Close();
 			
-			InputStream in_Renamed = fsdir.OpenFile(file);
+			IndexInput in_Renamed = fsdir.OpenInput(file);
 			
-			// This read primes the buffer in InputStream
+			// This read primes the buffer in IndexInput
 			byte b = in_Renamed.ReadByte();
 			
 			// Close the file
@@ -327,45 +326,37 @@ namespace Lucene.Net.Index
 			// ERROR: this call should fail, but succeeds for some reason as well
 			in_Renamed.Seek(1099);
 			
-            try
-            {
-                // OK: this call correctly fails. We are now past the 1024 internal
-                // buffer, so an actual IO is attempted, which fails
-                b = in_Renamed.ReadByte();
-            }
-            catch (System.IO.IOException e)
-            {
-            }
-            catch (System.Exception)
-            {
-            }
+			try
+			{
+				// OK: this call correctly fails. We are now past the 1024 internal
+				// buffer, so an actual IO is attempted, which fails
+				b = in_Renamed.ReadByte();
+				Assert.Fail("expected readByte() to throw exception");
+			}
+			catch (System.Exception e)
+			{
+				// expected exception
+			}
 		}
 		
 		
-		internal static bool IsCSInputStream(InputStream is_Renamed)
+		internal static bool IsCSIndexInput(IndexInput is_Renamed)
 		{
-			return is_Renamed is CompoundFileReader.CSInputStream;
+			return is_Renamed is CompoundFileReader.CSIndexInput;
 		}
 		
-		internal static bool IsCSInputStreamOpen(InputStream is_Renamed)
+		internal static bool IsCSIndexInputOpen(IndexInput is_Renamed)
 		{
-            try
-            {
-                if (IsCSInputStream(is_Renamed))
-                {
-                    CompoundFileReader.CSInputStream cis = (CompoundFileReader.CSInputStream) is_Renamed;
+			if (IsCSIndexInput(is_Renamed))
+			{
+				CompoundFileReader.CSIndexInput cis = (CompoundFileReader.CSIndexInput) is_Renamed;
 				
-                    return _TestHelper.IsFSInputStreamOpen(cis.base_Renamed);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                return false;
-            }
+				return _TestHelper.IsFSIndexInputOpen(cis.base_Renamed);
+			}
+			else
+			{
+				return false;
+			}
 		}
 		
 		[Test]
@@ -375,47 +366,53 @@ namespace Lucene.Net.Index
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
 			
 			// basic clone
-			InputStream expected = dir.OpenFile("f11");
-			Assert.IsTrue(_TestHelper.IsFSInputStreamOpen(expected));
+			IndexInput expected = dir.OpenInput("f11");
 			
-			InputStream one = cr.OpenFile("f11");
-			Assert.IsTrue(IsCSInputStreamOpen(one));
-			
-			InputStream two = (InputStream) one.Clone();
-			Assert.IsTrue(IsCSInputStreamOpen(two));
-			
-			AssertSameStreams("basic clone one", expected, one);
-			expected.Seek(0);
-			AssertSameStreams("basic clone two", expected, two);
-			
-			// Now close the first stream
-			one.Close();
-			Assert.IsTrue(IsCSInputStreamOpen(one), "Only close when cr is closed");
-			
-			// The following should really fail since we couldn't expect to
-			// access a file once close has been called on it (regardless of
-			// buffering and/or clone magic)
-			expected.Seek(0);
-			two.Seek(0);
-			AssertSameStreams("basic clone two/2", expected, two);
-			
-			
-			// Now close the compound reader
-			cr.Close();
-			Assert.IsFalse(IsCSInputStreamOpen(one), "Now closed one");
-			Assert.IsFalse(IsCSInputStreamOpen(two), "Now closed two");
-			
-			// The following may also fail since the compound stream is closed
-			expected.Seek(0);
-			two.Seek(0);
-			//AssertSameStreams("basic clone two/3", expected, two);
-			
-			
-			// Now close the second clone
-			two.Close();
-			expected.Seek(0);
-			two.Seek(0);
-			//AssertSameStreams("basic clone two/4", expected, two);
+			// this test only works for FSIndexInput
+			if (_TestHelper.IsFSIndexInput(expected))
+			{
+				
+				Assert.IsTrue(_TestHelper.IsFSIndexInputOpen(expected));
+				
+				IndexInput one = cr.OpenInput("f11");
+				Assert.IsTrue(IsCSIndexInputOpen(one));
+				
+				IndexInput two = (IndexInput) one.Clone();
+				Assert.IsTrue(IsCSIndexInputOpen(two));
+				
+				AssertSameStreams("basic clone one", expected, one);
+				expected.Seek(0);
+				AssertSameStreams("basic clone two", expected, two);
+				
+				// Now close the first stream
+				one.Close();
+				Assert.IsTrue(IsCSIndexInputOpen(one), "Only close when cr is closed");
+				
+				// The following should really fail since we couldn't expect to
+				// access a file once close has been called on it (regardless of
+				// buffering and/or clone magic)
+				expected.Seek(0);
+				two.Seek(0);
+				AssertSameStreams("basic clone two/2", expected, two);
+				
+				
+				// Now close the compound reader
+				cr.Close();
+				Assert.IsFalse(IsCSIndexInputOpen(one), "Now closed one");
+				Assert.IsFalse(IsCSIndexInputOpen(two), "Now closed two");
+				
+				// The following may also fail since the compound stream is closed
+				expected.Seek(0);
+				two.Seek(0);
+				//assertSameStreams("basic clone two/3", expected, two);
+				
+				
+				// Now close the second clone
+				two.Close();
+				expected.Seek(0);
+				two.Seek(0);
+				//assertSameStreams("basic clone two/4", expected, two);
+			}
 			
 			expected.Close();
 		}
@@ -431,11 +428,11 @@ namespace Lucene.Net.Index
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
 			
 			// Open two files
-			InputStream e1 = dir.OpenFile("f11");
-			InputStream e2 = dir.OpenFile("f3");
+			IndexInput e1 = dir.OpenInput("f11");
+			IndexInput e2 = dir.OpenInput("f3");
 			
-			InputStream a1 = cr.OpenFile("f11");
-			InputStream a2 = dir.OpenFile("f3");
+			IndexInput a1 = cr.OpenInput("f11");
+			IndexInput a2 = dir.OpenInput("f3");
 			
 			// Seek the first pair
 			e1.Seek(100);
@@ -512,11 +509,11 @@ namespace Lucene.Net.Index
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
 			
 			// Open two files
-			InputStream e1 = cr.OpenFile("f11");
-			InputStream e2 = cr.OpenFile("f3");
+			IndexInput e1 = cr.OpenInput("f11");
+			IndexInput e2 = cr.OpenInput("f3");
 			
-			InputStream a1 = (InputStream) e1.Clone();
-			InputStream a2 = (InputStream) e2.Clone();
+			IndexInput a1 = (IndexInput) e1.Clone();
+			IndexInput a2 = (IndexInput) e2.Clone();
 			
 			// Seek the first pair
 			e1.Seek(100);
@@ -592,7 +589,7 @@ namespace Lucene.Net.Index
 			// Open two files
 			try
 			{
-				InputStream e1 = cr.OpenFile("bogus");
+				IndexInput e1 = cr.OpenInput("bogus");
 				Assert.Fail("File not found");
 			}
 			catch (System.IO.IOException e)
@@ -609,7 +606,7 @@ namespace Lucene.Net.Index
 		{
 			SetUp_2();
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
-			InputStream is_Renamed = cr.OpenFile("f2");
+			IndexInput is_Renamed = cr.OpenInput("f2");
 			is_Renamed.Seek(is_Renamed.Length() - 10);
 			byte[] b = new byte[100];
 			is_Renamed.ReadBytes(b, 0, 10);

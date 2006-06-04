@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 /// <summary>
@@ -272,6 +273,31 @@ public class SupportClass
     }
 
     /// <summary>
+    /// Represents the methods to support some operations over files.
+    /// </summary>
+    public class FileSupport
+    {
+        /// <summary>
+        /// Returns an array of abstract pathnames representing the files and directories of the specified path.
+        /// </summary>
+        /// <param name="path">The abstract pathname to list it childs.</param>
+        /// <returns>An array of abstract pathnames childs of the path specified or null if the path is not a directory</returns>
+        public static System.IO.FileInfo[] GetFiles(System.IO.FileInfo path)
+        {
+            if ((path.Attributes & System.IO.FileAttributes.Directory) > 0)
+            {																 
+                String[] fullpathnames = System.IO.Directory.GetFileSystemEntries(path.FullName);
+                System.IO.FileInfo[] result = new System.IO.FileInfo[fullpathnames.Length];
+                for (int i = 0; i < result.Length ; i++)
+                    result[i] = new System.IO.FileInfo(fullpathnames[i]);
+                return result;
+            }
+            else
+                return null;
+        }
+    }
+
+    /// <summary>
     /// A simple class for number conversions.
     /// </summary>
     public class Number
@@ -374,6 +400,40 @@ public class SupportClass
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Performs an unsigned bitwise right shift with the specified number
+        /// </summary>
+        /// <param name="number">Number to operate on</param>
+        /// <param name="bits">Ammount of bits to shift</param>
+        /// <returns>The resulting number from the shift operation</returns>
+        public static int URShift(int number, int bits)
+        {
+            if (number >= 0)
+                return number >> bits;
+            else
+                return (number >> bits) + (2 << ~bits);
+        }
+
+        /// <summary>
+        /// Returns the index of the first bit that is set to true that occurs 
+        /// on or after the specified starting index. If no such bit exists 
+        /// then -1 is returned.
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        /// <param name="fromIndex">The index to start checking from (inclusive).</param>
+        /// <returns>The index of the next set bit.</returns>
+        public static int NextSetBit(System.Collections.BitArray bits, int fromIndex)
+        {
+            for (int i = fromIndex; i < bits.Length; i++)
+            {
+                if (bits[i] == true)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 
@@ -594,6 +654,69 @@ public class SupportClass
                 return defValue;
             }
             return theValue;
+        }
+    }
+
+    public static System.Collections.SortedList TailMap(System.Collections.SortedList list, System.Object limit)
+    {
+        System.Collections.Comparer comparer = System.Collections.Comparer.Default;
+        System.Collections.SortedList newList = new System.Collections.SortedList();
+
+        if (list != null)
+        {
+            if (list.Count > 0)
+            {
+                int index = 0;
+                while (comparer.Compare(list.GetKey(index), limit) < 0)
+                    index++;
+
+                for (; index < list.Count; index++)
+                    newList.Add(list.GetKey(index), list[list.GetKey(index)]);
+            }
+        }
+
+        return newList;
+    }
+
+    /// <summary>
+    /// Use for .NET 1.1 Framework only.
+    /// </summary>
+    public class CompressionSupport
+    {
+        public interface ICompressionAdapter
+        {
+            byte[] Compress(byte[] input);
+            byte[] Uncompress(byte[] input);
+        }
+
+        private static ICompressionAdapter compressionAdapter;
+
+        public static byte[] Uncompress(byte[] input)
+        {
+            CheckCompressionSupport();
+            return compressionAdapter.Uncompress(input);
+        }
+
+        public static byte[] Compress(byte[] input)
+        {
+            CheckCompressionSupport();
+            return compressionAdapter.Compress(input);
+        }
+
+        private static void CheckCompressionSupport()
+        {
+            if (compressionAdapter == null)
+            {
+                System.String compressionLibClassName = SupportClass.AppSettings.Get("Lucene.Net.CompressionLib.class", null);
+                if (compressionLibClassName == null)
+                    throw new System.SystemException("Compression support not configured"); 
+
+                Type compressionLibClass = Type.GetType(compressionLibClassName, true);
+                System.Object compressionAdapterObj = Activator.CreateInstance(compressionLibClass);
+                compressionAdapter = compressionAdapterObj as ICompressionAdapter;
+                if (compressionAdapter == null)
+                    throw new System.SystemException("Compression adapter does not support the ICompressionAdapter interface");
+            }
         }
     }
 }

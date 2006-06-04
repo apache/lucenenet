@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A Query that matches documents within an exclusive range.
+	/// <summary> A Query that matches documents within an exclusive range. A RangeQuery
+	/// is built by QueryParser for input like <code>[010 TO 120]</code>.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RangeQuery.java,v 1.12 2004/03/29 22:48:03 cutting Exp $
+	/// <version>  $Id: RangeQuery.java 329381 2005-10-29 09:26:21Z ehatcher $
 	/// </version>
 	[Serializable]
 	public class RangeQuery : Query
@@ -36,7 +40,7 @@ namespace Lucene.Net.Search
 		/// <code>lowerTerm</code> but less than <code>upperTerm</code>.
 		/// There must be at least one term and either term may be null,
 		/// in which case there is no bound on that side, but if there are
-		/// two terms, both terms <b>must</b> be for the same Field.
+		/// two terms, both terms <b>must</b> be for the same field.
 		/// </summary>
 		public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive)
 		{
@@ -46,7 +50,7 @@ namespace Lucene.Net.Search
 			}
 			if (lowerTerm != null && upperTerm != null && lowerTerm.Field() != upperTerm.Field())
 			{
-				throw new System.ArgumentException("Both terms must be for the same Field");
+				throw new System.ArgumentException("Both terms must be for the same field");
 			}
 			
 			// if we have a lowerTerm, start there. otherwise, start at beginning
@@ -63,19 +67,10 @@ namespace Lucene.Net.Search
 			this.inclusive = inclusive;
 		}
 		
-		/// <summary> FIXME: Describe <code>rewrite</code> method here.
-		/// 
-		/// </summary>
-		/// <param name="reader">an <code>IndexReader</code> value
-		/// </param>
-		/// <returns> a <code>Query</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
 		public override Query Rewrite(IndexReader reader)
 		{
 			
-			BooleanQuery query = new BooleanQuery();
+			BooleanQuery query = new BooleanQuery(true);
 			TermEnum enumerator = reader.Terms(lowerTerm);
 			
 			try
@@ -106,7 +101,7 @@ namespace Lucene.Net.Search
 							}
 							TermQuery tq = new TermQuery(term); // found a match
 							tq.SetBoost(GetBoost()); // set the boost
-							query.Add(tq, false, false); // add to query
+							query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 						}
 					}
 					else
@@ -123,12 +118,7 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-		public override Query Combine(Query[] queries)
-		{
-			return Query.MergeBooleanQueries(queries);
-		}
-		
-		/// <summary>Returns the Field name for this query </summary>
+		/// <summary>Returns the field name for this query </summary>
 		public virtual System.String GetField()
 		{
 			return (lowerTerm != null?lowerTerm.Field():upperTerm.Field());
@@ -163,20 +153,41 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(inclusive?"[":"{");
-			buffer.Append(lowerTerm != null?lowerTerm.Text():"null");
+			buffer.Append(lowerTerm != null ? lowerTerm.Text() : "null");
 			buffer.Append(" TO ");
-			buffer.Append(upperTerm != null?upperTerm.Text():"null");
-			buffer.Append(inclusive?"]":"}");
-			if (GetBoost() != 1.0f)
-			{
-                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-                nfi.NumberDecimalDigits = 1;
-
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString("N", nfi));
-			}
+			buffer.Append(upperTerm != null ? upperTerm.Text() : "null");
+			buffer.Append(inclusive ? "]" : "}");
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is RangeQuery))
+				return false;
+			
+			RangeQuery other = (RangeQuery) o;
+			if (this.GetBoost() != other.GetBoost())
+				return false;
+			if (this.inclusive != other.inclusive)
+				return false;
+			// one of lowerTerm and upperTerm can be null
+			if (this.lowerTerm != null?!this.lowerTerm.Equals(other.lowerTerm):other.lowerTerm != null)
+				return false;
+			if (this.upperTerm != null?!this.upperTerm.Equals(other.upperTerm):other.upperTerm != null)
+				return false;
+			return true;
+		}
+		
+		/// <summary>Returns a hash code value for this object.</summary>
+		public override int GetHashCode()
+		{
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ (lowerTerm != null ? lowerTerm.GetHashCode():0) ^ (upperTerm != null?upperTerm.GetHashCode() : 0) ^ (this.inclusive ? 1 : 0);
+		}
+		// {{Aroush-1.9}} Do we need this?!
 		override public System.Object Clone()
 		{
 			return null;

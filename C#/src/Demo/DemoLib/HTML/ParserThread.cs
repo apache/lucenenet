@@ -13,53 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Demo.Html
 {
 	
-    class ParserThread:SupportClass.ThreadClass
-    {
-        internal HTMLParser parser;
+	class ParserThread:SupportClass.ThreadClass
+	{
+		internal HTMLParser parser;
 		
-        internal ParserThread(HTMLParser p)
-        {
-            parser = p;
-        }
+		internal ParserThread(HTMLParser p)
+		{
+			parser = p;
+		}
 		
-        override public void  Run()
-        {
-            // convert pipeOut to pipeIn
-            try
-            {
-                try
-                {
-                    // parse document to pipeOut
-                    parser.HTMLDocument();
-                }
-                catch (ParseException e)
-                {
-                    System.Console.Out.WriteLine("Parse Aborted: " + e.Message);
-                }
-                catch (TokenMgrError e)
-                {
-                    System.Console.Out.WriteLine("Parse Aborted: " + e.Message);
-                }
-                finally
-                {
-                    //parser.pipeOut.Close();
-                    lock (parser)
-                    {
-                        parser.summary.Length = Lucene.Net.Demo.Html.HTMLParser.SUMMARY_LENGTH;
-                        parser.summaryComplete = true;
-                        parser.titleComplete = true;
-                        System.Threading.Monitor.PulseAll(parser);
-                    }
-                }
-            }
-            catch (System.IO.IOException e)
-            {
-                System.Console.Error.WriteLine(e.StackTrace);
-            }
-        }
-    }
+		override public void  Run()
+		{
+			// convert pipeOut to pipeIn
+			try
+			{
+				try
+				{
+					// parse document to pipeOut
+					parser.HTMLDocument();
+				}
+				catch (ParseException e)
+				{
+					System.Console.Out.WriteLine("Parse Aborted: " + e.Message);
+				}
+				catch (TokenMgrError e)
+				{
+					System.Console.Out.WriteLine("Parse Aborted: " + e.Message);
+				}
+				finally
+				{
+					parser.pipeOut.Close();
+					lock (parser)
+					{
+						parser.summary.Length = HTMLParser.SUMMARY_LENGTH;
+						parser.titleComplete = true;
+						System.Threading.Monitor.PulseAll(parser);
+					}
+				}
+			}
+			catch (System.IO.IOException e)
+			{
+				System.Console.Error.WriteLine(e.StackTrace);
+			}
+		}
+	}
 }

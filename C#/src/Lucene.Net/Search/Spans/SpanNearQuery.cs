@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Query = Lucene.Net.Search.Query;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search.Spans
 {
 	
@@ -23,7 +27,7 @@ namespace Lucene.Net.Search.Spans
 	/// matches are required to be in-order. 
 	/// </summary>
 	[Serializable]
-	public class SpanNearQuery:SpanQuery
+	public class SpanNearQuery : SpanQuery
 	{
 		private System.Collections.ArrayList clauses;
 		private int slop;
@@ -46,12 +50,12 @@ namespace Lucene.Net.Search.Spans
 				SpanQuery clause = clauses[i];
 				if (i == 0)
 				{
-					// check Field
+					// check field
 					field = clause.GetField();
 				}
 				else if (!clause.GetField().Equals(field))
 				{
-					throw new System.ArgumentException("Clauses must have same Field.");
+					throw new System.ArgumentException("Clauses must have same field.");
 				}
 				this.clauses.Add(clause);
 			}
@@ -63,7 +67,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
-            return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery));
+			return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery));
 		}
 		
 		/// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
@@ -90,8 +94,7 @@ namespace Lucene.Net.Search.Spans
 			while (i.MoveNext())
 			{
 				SpanQuery clause = (SpanQuery) i.Current;
-                //{{}}// _SupportClass.ICollectionSupport.AddAll(terms, clause.GetTerms()); // {{Aroush-1.4.3}}
-                terms.AddRange(clause.GetTerms());
+				terms.AddRange(clause.GetTerms());
 			}
 			return terms;
 		}
@@ -115,6 +118,7 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(inOrder);
 			buffer.Append(")");
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
@@ -129,6 +133,63 @@ namespace Lucene.Net.Search.Spans
 				return ((SpanQuery) clauses[0]).GetSpans(reader);
 			
 			return new NearSpans(this, reader);
+		}
+		
+		public override Query Rewrite(IndexReader reader)
+		{
+			SpanNearQuery clone = null;
+			for (int i = 0; i < clauses.Count; i++)
+			{
+				SpanQuery c = (SpanQuery) clauses[i];
+				SpanQuery query = (SpanQuery) c.Rewrite(reader);
+				if (query != c)
+				{
+					// clause rewrote: must clone
+					if (clone == null)
+						clone = (SpanNearQuery) this.Clone();
+					clone.clauses[i] = query;
+				}
+			}
+			if (clone != null)
+			{
+				return clone; // some clauses rewrote
+			}
+			else
+			{
+				return this; // no clauses rewrote
+			}
+		}
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (o == null || GetType() != o.GetType())
+				return false;
+			
+			SpanNearQuery spanNearQuery = (SpanNearQuery) o;
+			
+			if (inOrder != spanNearQuery.inOrder)
+				return false;
+			if (slop != spanNearQuery.slop)
+				return false;
+			if (!clauses.Equals(spanNearQuery.clauses))
+				return false;
+			if (!field.Equals(spanNearQuery.field))
+				return false;
+			
+			return GetBoost() == spanNearQuery.GetBoost();
+		}
+		
+		public override int GetHashCode()
+		{
+			int result;
+			result = clauses.GetHashCode();
+			result += slop * 29;
+			result += (inOrder?1:0);
+			result ^= field.GetHashCode();
+			return result;
 		}
 	}
 }

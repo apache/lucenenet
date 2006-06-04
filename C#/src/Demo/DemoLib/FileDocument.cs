@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using DateField = Lucene.Net.Documents.DateField;
+using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+
 namespace Lucene.Net.Demo
 {
 	
@@ -24,39 +26,38 @@ namespace Lucene.Net.Demo
 	
 	public class FileDocument
 	{
-		/// <summary>Makes a document for a File.
-		/// <p>
-		/// The document has three fields:
-		/// <ul>
-		/// <li><code>path</code>--containing the pathname of the file, as a stored,
-		/// tokenized Field;
-		/// <li><code>modified</code>--containing the last modified date of the file as
-		/// a keyword Field as encoded by <a
-		/// href="lucene.document.DateField.html">DateField</a>; and
-		/// <li><code>contents</code>--containing the full contents of the file, as a
-		/// Reader Field;
-		/// </summary>
-		public static Document Document(System.IO.FileInfo f)
+        /// <summary>Makes a document for a File.
+        /// <p>
+        /// The document has three fields:
+        /// <ul>
+        /// <li><code>path</code>--containing the pathname of the file, as a stored,
+        /// untokenized field;
+        /// <li><code>modified</code>--containing the last modified date of the file as
+        /// a field as created by <a
+        /// href="lucene.document.DateTools.html">DateTools</a>; and
+        /// <li><code>contents</code>--containing the full contents of the file, as a
+        /// Reader field;
+        /// </summary>
+        public static Document Document(System.IO.FileInfo f)
 		{
 			
 			// make a new, empty document
 			Document doc = new Document();
 			
-			// Add the path of the file as a Field named "path".  Use a Text Field, so
-			// that the index stores the path, and so that the path is searchable
-			doc.Add(Field.Text("path", f.FullName));
+            // Add the path of the file as a field named "path".  Use a field that is 
+            // indexed (i.e. searchable), but don't tokenize the field into words.
+            doc.Add(new Field("path", f.FullName, Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
-			// Add the last modified date of the file a Field named "modified".  Use a
-			// Keyword Field, so that it's searchable, but so that no attempt is made
-			// to tokenize the Field into words.
-			doc.Add(Field.Keyword("modified", DateField.TimeToString(((f.LastWriteTime.Ticks - 621355968000000000) / 10000))));
+            // Add the last modified date of the file a field named "modified".  Use 
+            // a field that is indexed (i.e. searchable), but don't tokenize the field
+            // into words.
+            doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Ticks, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
-			// Add the contents of the file a Field named "contents".  Use a Text
-			// Field, specifying a Reader, so that the text of the file is tokenized.
-			// ?? why doesn't FileReader work here ??
-			System.IO.FileStream is_Renamed = new System.IO.FileStream(f.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-			System.IO.StreamReader reader = new System.IO.StreamReader(new System.IO.StreamReader(is_Renamed, System.Text.Encoding.Default).BaseStream, new System.IO.StreamReader(is_Renamed, System.Text.Encoding.Default).CurrentEncoding);
-			doc.Add(Field.Text("contents", reader));
+            // Add the contents of the file to a field named "contents".  Specify a Reader,
+            // so that the text of the file is tokenized and indexed, but not stored.
+            // Note that FileReader expects the file to be in the system's default encoding.
+            // If that's not the case searching for special characters will fail.
+            doc.Add(new Field("contents", new System.IO.StreamReader(f.FullName, System.Text.Encoding.Default)));
 			
 			// return the document
 			return doc;

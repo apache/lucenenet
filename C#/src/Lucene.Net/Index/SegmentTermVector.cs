@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
 	
 	
-	class SegmentTermVector : TermFreqVector
+	public class SegmentTermVector : TermFreqVector
 	{
 		private System.String field;
 		private System.String[] terms;
@@ -32,7 +34,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> </summary>
-		/// <returns> The number of the Field this vector is associated with
+		/// <returns> The number of the field this vector is associated with
 		/// </returns>
 		public virtual System.String GetField()
 		{
@@ -44,13 +46,17 @@ namespace Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append('{');
 			sb.Append(field).Append(": ");
-			for (int i = 0; i < terms.Length; i++)
+			if (terms != null)
 			{
-				if (i > 0)
-					sb.Append(", ");
-				sb.Append(terms[i]).Append('/').Append(termFreqs[i]);
+				for (int i = 0; i < terms.Length; i++)
+				{
+					if (i > 0)
+						sb.Append(", ");
+					sb.Append(terms[i]).Append('/').Append(termFreqs[i]);
+				}
 			}
 			sb.Append('}');
+			
 			return sb.ToString();
 		}
 		
@@ -71,6 +77,8 @@ namespace Lucene.Net.Index
 		
 		public virtual int IndexOf(System.String termText)
 		{
+			if (terms == null)
+				return - 1;
 			int res = System.Array.BinarySearch(terms, termText);
 			return res >= 0?res:- 1;
 		}
@@ -86,7 +94,7 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < len; i++)
 			{
-				res[i] = IndexOf(termNumbers[i]);
+				res[i] = IndexOf(termNumbers[start + i]);
 			}
 			return res;
 		}

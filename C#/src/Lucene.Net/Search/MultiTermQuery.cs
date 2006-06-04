@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
@@ -32,7 +35,7 @@ namespace Lucene.Net.Search
 	/// {@link FuzzyTermEnum}, respectively.
 	/// </summary>
 	[Serializable]
-	public abstract class MultiTermQuery:Query
+	public abstract class MultiTermQuery : Query
 	{
 		private Term term;
 		
@@ -54,7 +57,7 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			FilteredTermEnum enumerator = GetEnum(reader);
-			BooleanQuery query = new BooleanQuery();
+			BooleanQuery query = new BooleanQuery(true);
 			try
 			{
 				do 
@@ -64,7 +67,7 @@ namespace Lucene.Net.Search
 					{
 						TermQuery tq = new TermQuery(t); // found a match
 						tq.SetBoost(GetBoost() * enumerator.Difference()); // set the boost
-						query.Add(tq, false, false); // add to query
+						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 					}
 				}
 				while (enumerator.Next());
@@ -76,12 +79,6 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-		public override Query Combine(Query[] queries)
-		{
-			return Query.MergeBooleanQueries(queries);
-		}
-		
-		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
@@ -92,15 +89,28 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			if (GetBoost() != 1.0f)
-			{
-                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-                nfi.NumberDecimalDigits = 1;
-
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString("N", nfi));
-			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
+		}
+		
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is MultiTermQuery))
+				return false;
+			
+			MultiTermQuery multiTermQuery = (MultiTermQuery) o;
+			
+			if (!term.Equals(multiTermQuery.term))
+				return false;
+			
+			return GetBoost() == multiTermQuery.GetBoost();
+		}
+		
+		public override int GetHashCode()
+		{
+			return term.GetHashCode();
 		}
 	}
 }

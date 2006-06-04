@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Lucene.Net.Analysis;
@@ -22,13 +23,14 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.Store;
+
 namespace Lucene.Net
 {
 	
 	/// <summary>JUnit adaptation of an older test case SearchTest.</summary>
 	/// <author>  dmitrys@earthlink.net
 	/// </author>
-	/// <version>  $Id: TestSearch.java,v 1.3 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: TestSearch.java 150494 2004-09-06 22:29:22Z dnaber $
 	/// </version>
 	[TestFixture]
     public class TestSearch
@@ -38,6 +40,7 @@ namespace Lucene.Net
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearch))); // {{Aroush}} where is 'TestRunner' in NUnit?
 		}
 		
 		/// <summary>This test performs a number of searches. It also compares output
@@ -50,16 +53,20 @@ namespace Lucene.Net
 		/// single-file formats, even if the results are wrong.
 		/// </summary>
 		[Test]
-		public virtual void  TestSearch_()
+        public virtual void  TestSearch_Renamed_Method()
 		{
 			System.IO.StringWriter sw = new System.IO.StringWriter();
-			DoTestSearch(sw, false);
+			System.IO.StreamWriter pw = null; // new System.IO.StreamWriter(sw);    // {{Aroush}} how do you pass 'sw' to StreamWriter()?
+			DoTestSearch(pw, false);
+			pw.Close();
 			sw.Close();
 			System.String multiFileOutput = sw.GetStringBuilder().ToString();
 			//System.out.println(multiFileOutput);
 			
 			sw = new System.IO.StringWriter();
-			DoTestSearch(sw, true);
+			pw = null; // new System.IO.StreamWriter(sw);   // {{Aroush}} how do you pass 'sw' to StreamWriter()?
+			DoTestSearch(pw, true);
+			pw.Close();
 			sw.Close();
 			System.String singleFileOutput = sw.GetStringBuilder().ToString();
 			
@@ -67,7 +74,7 @@ namespace Lucene.Net
 		}
 		
 		
-		private void  DoTestSearch(System.IO.StringWriter out_Renamed, bool useCompoundFile)
+		private void  DoTestSearch(System.IO.StreamWriter out_Renamed, bool useCompoundFile)
 		{
 			Directory directory = new RAMDirectory();
 			Analyzer analyzer = new SimpleAnalyzer();
@@ -78,8 +85,8 @@ namespace Lucene.Net
 			System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
 			for (int j = 0; j < docs.Length; j++)
 			{
-				Document d = new Document();
-				d.Add(Field.Text("contents", docs[j]));
+				Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+				d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.TOKENIZED));
 				writer.AddDocument(d);
 			}
 			writer.Close();
@@ -89,7 +96,7 @@ namespace Lucene.Net
 			System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
 			Hits hits = null;
 			
-			QueryParsers.QueryParser parser = new QueryParsers.QueryParser("contents", analyzer);
+			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", analyzer);
 			parser.SetPhraseSlop(4);
 			for (int j = 0; j < queries.Length; j++)
 			{
@@ -106,7 +113,7 @@ namespace Lucene.Net
 				out_Renamed.WriteLine(hits.Length() + " total results");
 				for (int i = 0; i < hits.Length() && i < 10; i++)
 				{
-					Document d = hits.Doc(i);
+					Lucene.Net.Documents.Document d = hits.Doc(i);
 					out_Renamed.WriteLine(i + " " + hits.Score(i) + " " + d.Get("contents"));
 				}
 			}
@@ -115,16 +122,8 @@ namespace Lucene.Net
 		
 		internal static long Time(int year, int month, int day)
 		{
-            // {{Aroush
-			//// System.Globalization.GregorianCalendar calendar = new System.Globalization.GregorianCalendar();
-			//// return SupportClass.CalendarManager.manager.GetDateTime(calendar).Ticks;
-            System.DateTime tempDate = System.DateTime.Now;
-            System.Globalization.GregorianCalendar calendar = new System.Globalization.GregorianCalendar();
-            //tempDate.Year = year;
-            //tempDate.Month = month;
-            //tempDate.Day = day;
-            return tempDate.Ticks;
-            // Aroush}}
-        }
+            System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+            return calendar.Ticks;
+		}
 	}
 }

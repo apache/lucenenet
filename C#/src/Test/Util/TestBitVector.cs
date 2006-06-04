@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Util
 {
 	
@@ -25,11 +27,12 @@ namespace Lucene.Net.Util
 	/// </summary>
 	/// <author>  "Peter Mularien" <pmularien@deploy.com>
 	/// </author>
-	/// <version>  $Id: TestBitVector.java,v 1.3 2004/03/29 22:48:07 cutting Exp $
+	/// <version>  $Id: TestBitVector.java 150259 2004-03-29 22:48:07Z cutting $
 	/// </version>
 	[TestFixture]
     public class TestBitVector
 	{
+		
 		/// <summary> Test the default constructor on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
 		[Test]

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -22,29 +23,14 @@ using Scorer = Lucene.Net.Search.Scorer;
 using Searcher = Lucene.Net.Search.Searcher;
 using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+
 namespace Lucene.Net.Search.Spans
 {
 	
 	[Serializable]
 	class SpanWeight : Weight
 	{
-        virtual public Query Query
-        {
-            get
-            {
-                return query;
-            }
-			
-        }
-        virtual public float Value
-        {
-            get
-            {
-                return value_Renamed;
-            }
-			
-        }
-        private Searcher searcher;
+		private Similarity similarity;
 		private float value_Renamed;
 		private float idf;
 		private float queryNorm;
@@ -55,14 +41,24 @@ namespace Lucene.Net.Search.Spans
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
-			this.searcher = searcher;
+			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
 			this.terms = query.GetTerms();
+			
+			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
+		}
+		
+		public virtual Query GetQuery()
+		{
+			return query;
+		}
+		public virtual float GetValue()
+		{
+			return value_Renamed;
 		}
 		
 		public virtual float SumOfSquaredWeights()
 		{
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
 			queryWeight = idf * query.GetBoost(); // compute query weight
 			return queryWeight * queryWeight; // square it
 		}
@@ -76,15 +72,15 @@ namespace Lucene.Net.Search.Spans
 		
 		public virtual Scorer Scorer(IndexReader reader)
 		{
-			return new SpanScorer(query.GetSpans(reader), this, query.GetSimilarity(searcher), reader.Norms(query.GetField()));
+			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
 		}
 		
 		public virtual Explanation Explain(IndexReader reader, int doc)
 		{
 			
 			Explanation result = new Explanation();
-			result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
-			System.String field = ((SpanQuery) Query).GetField();
+			result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+			System.String field = ((SpanQuery) GetQuery()).GetField();
 			
 			System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
 			System.Collections.IEnumerator i = terms.GetEnumerator();
@@ -93,7 +89,7 @@ namespace Lucene.Net.Search.Spans
 				Term term = (Term) i.Current;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
-				docFreqs.Append(searcher.DocFreq(term));
+				docFreqs.Append(reader.DocFreq(term));
 				
 				if (i.MoveNext())
 				{
@@ -105,10 +101,10 @@ namespace Lucene.Net.Search.Spans
 			
 			// explain query weight
 			Explanation queryExpl = new Explanation();
-			queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+			queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 			
-			Explanation boostExpl = new Explanation(Query.GetBoost(), "boost");
-			if (Query.GetBoost() != 1.0f)
+			Explanation boostExpl = new Explanation(GetQuery().GetBoost(), "boost");
+			if (GetQuery().GetBoost() != 1.0f)
 				queryExpl.AddDetail(boostExpl);
 			queryExpl.AddDetail(idfExpl);
 			
@@ -119,7 +115,7 @@ namespace Lucene.Net.Search.Spans
 			
 			result.AddDetail(queryExpl);
 			
-			// explain Field weight
+			// explain field weight
 			Explanation fieldExpl = new Explanation();
 			fieldExpl.SetDescription("fieldWeight(" + field + ":" + query.ToString(field) + " in " + doc + "), product of:");
 			
@@ -131,7 +127,7 @@ namespace Lucene.Net.Search.Spans
 			byte[] fieldNorms = reader.Norms(field);
 			float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
 			fieldNormExpl.SetValue(fieldNorm);
-			fieldNormExpl.SetDescription("fieldNorm(Field=" + field + ", doc=" + doc + ")");
+			fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 			fieldExpl.AddDetail(fieldNormExpl);
 			
 			fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());

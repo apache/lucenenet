@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+
 namespace Lucene.Net.Util
 {
 	
@@ -30,7 +32,7 @@ namespace Lucene.Net.Util
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: BitVector.java,v 1.4 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: BitVector.java 150536 2004-09-28 18:15:52Z cutting $
 	/// </version>
 	public sealed class BitVector
 	{
@@ -56,7 +58,7 @@ namespace Lucene.Net.Util
 		/// <summary>Sets the value of <code>bit</code> to zero. </summary>
 		public void  Clear(int bit)
 		{
-			bits[bit >> 3] &= (byte) ~ (1 << (bit & 7));
+			bits[bit >> 3] &= (byte) (~ (1 << (bit & 7)));
 			count = - 1;
 		}
 		
@@ -103,7 +105,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public void  Write(Directory d, System.String name)
 		{
-			OutputStream output = d.CreateFile(name);
+			IndexOutput output = d.CreateOutput(name);
 			try
 			{
 				output.WriteInt(Size()); // write size
@@ -121,7 +123,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public BitVector(Directory d, System.String name)
 		{
-			InputStream input = d.OpenFile(name);
+			IndexInput input = d.OpenInput(name);
 			try
 			{
 				size = input.ReadInt(); // read size

@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
 	/// <summary> A memory-resident {@link Directory} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java,v 1.15 2004/05/09 12:41:47 ehatcher Exp $
+	/// <version>  $Id: RAMDirectory.java 351779 2005-12-02 17:37:50Z bmesser $
 	/// </version>
 	public sealed class RAMDirectory : Directory
 	{
-		private class AnonymousClassLock:Lock
+		private class AnonymousClassLock : Lock
 		{
 			public AnonymousClassLock(System.String name, RAMDirectory enclosingInstance)
 			{
@@ -51,7 +53,7 @@ namespace Lucene.Net.Store
 				{
 					if (!Enclosing_Instance.FileExists(name))
 					{
-						Enclosing_Instance.CreateFile(name).Close();
+						Enclosing_Instance.CreateOutput(name).Close();
 						return true;
 					}
 					return false;
@@ -82,26 +84,33 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="dir">a <code>Directory</code> value
 		/// </param>
-		/// <exception cref=""> IOException if an error occurs
+		/// <exception cref="IOException">if an error occurs
 		/// </exception>
-		public RAMDirectory(Directory dir) : this(dir, false)
+		public RAMDirectory(Directory dir):this(dir, false)
 		{
 		}
 		
 		private RAMDirectory(Directory dir, bool closeDir)
 		{
 			System.String[] files = dir.List();
+			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)
 			{
 				// make place on ram disk
-				OutputStream os = CreateFile(System.IO.Path.GetFileName(files[i]));
+				IndexOutput os = CreateOutput(System.IO.Path.GetFileName(files[i]));
 				// read current file
-				InputStream is_Renamed = dir.OpenFile(files[i]);
+				IndexInput is_Renamed = dir.OpenInput(files[i]);
 				// and copy to ram disk
 				int len = (int) is_Renamed.Length();
-				byte[] buf = new byte[len];
-				is_Renamed.ReadBytes(buf, 0, len);
-				os.WriteBytes(buf, len);
+				int readCount = 0;
+				while (readCount < len)
+				{
+					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount:BufferedIndexOutput.BUFFER_SIZE;
+					is_Renamed.ReadBytes(buf, 0, toRead);
+					os.WriteBytes(buf, toRead);
+					readCount += toRead;
+				}
+				
 				// graceful cleanup
 				is_Renamed.Close();
 				os.Close();
@@ -161,7 +170,7 @@ namespace Lucene.Net.Store
 			//     final boolean MONITOR = false;
 			
 			RAMFile file = (RAMFile) files[name];
-			long ts2, ts1 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+			long ts2, ts1 = System.DateTime.Now.Ticks;
 			do 
 			{
 				try
@@ -171,7 +180,7 @@ namespace Lucene.Net.Store
 				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
-				ts2 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+				ts2 = System.DateTime.Now.Ticks;
 				//       if (MONITOR) {
 				//         count++;
 				//       }
@@ -208,7 +217,7 @@ namespace Lucene.Net.Store
 		/// <summary>Creates a new, empty file in the directory with the given name.
 		/// Returns a stream writing this file. 
 		/// </summary>
-		public override OutputStream CreateFile(System.String name)
+		public override IndexOutput CreateOutput(System.String name)
 		{
 			RAMFile file = new RAMFile();
 			files[name] = file;
@@ -216,7 +225,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Returns a stream reading an existing file. </summary>
-		public override InputStream OpenFile(System.String name)
+		public override IndexInput OpenInput(System.String name)
 		{
 			RAMFile file = (RAMFile) files[name];
 			return new RAMInputStream(file);

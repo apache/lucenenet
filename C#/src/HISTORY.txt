@@ -1,6 +1,34 @@
 Lucene.Net History
 ------------------
 
+
+03Jun06:
+	- Release Lucene.Net.1.9 RC1 build 003 Alpha
+	- Note: This is the first release of Lucene.Net 1.9 to SVN
+	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
+	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code
+	- Note: NUnit "Test" code has been ported to Lucene.Net.  Out of 307 tests 58 are failing
+	- Note: There are still some remaing port work to be done; look for thext "Aroush" in the code
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes
+	- Issue: The NUnit test code has not been ported yet
+	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
+
+
+07Feb06:
+	- Release: Lucene.Net.1.9 RC1 build 002 Alpha
+	- Note: This release is based on the current Java code release of 1.9 RC1
+	- Note: This release contains all the fixes currently implemented for 1.4.3 build 004
+	- Note: There are still some remaing port work to be done; look for thext "Aroush" in the code
+	- Issue: The NUnit test code has not been ported yet
+	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
+
+
+26May05:
+	- Release: Lucene.Net.1.9 RC1 build 001 Alpha
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes.
+	- Issue: The NUnit test code has not been ported yet (the current code is still based on 1.4.3 final)
+
+
 15Dec05:
 	- Release: Lucene.Net.1.4.3 final build 004 to the Apache incubator site
 	- Clean-up: VS.Net project settings.
@@ -16,6 +44,12 @@ Lucene.Net History
 	- Release: Lucene.Net.1.4.3 final build 003
 	- Fix: Memory leak -- Thanks to Marcus.
 	- Fix: Remoting class and other misused of System.Object cast -- Thanks to Jason
+
+
+26May05:
+	- Release: Lucene.Net.1.9 RC1 build 001 Alpha
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes.
+	- Issue: The NUnit test code has not been ported yet (the current code is still based on 1.4.3 final)
 
 
 22Feb05:

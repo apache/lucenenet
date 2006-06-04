@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
+
 namespace Lucene.Net.Index
 {
 	
-	sealed public class SegmentInfo
+	public sealed class SegmentInfo
 	{
 		public System.String name; // unique name in dir
 		public int docCount; // number of docs in seg

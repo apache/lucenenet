@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
+
 namespace Lucene.Net.Index
 {
 	
 	/// <summary>An IndexReader which reads multiple indexes, appending their content.
 	/// 
 	/// </summary>
-	/// <version>  $Id: MultiReader.java,v 1.7 2004/05/17 12:56:47 goller Exp $
+	/// <version>  $Id: MultiReader.java 355181 2005-12-08 19:53:06Z cutting $
 	/// </version>
 	public class MultiReader : IndexReader
 	{
@@ -30,7 +33,7 @@ namespace Lucene.Net.Index
 		private int[] starts; // 1st docno for each segment
 		private System.Collections.Hashtable normsCache = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		private int maxDoc = 0;
-		private int numDocs = -1;
+		private int numDocs = - 1;
 		private bool hasDeletions = false;
 		
 		/// <summary> <p>Construct a MultiReader aggregating the named set of (sub)readers.
@@ -47,7 +50,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Construct reading the named set of readers. </summary>
-		public /*internal*/ MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders):base(directory, sis, closeDirectory)
+		public /*internal*/ MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders) : base(directory, sis, closeDirectory)
 		{
 			Initialize(subReaders);
 		}
@@ -69,9 +72,9 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Return an array of term frequency vectors for the specified document.
-		/// The array contains a vector for each vectorized Field in the document.
+		/// The array contains a vector for each vectorized field in the document.
 		/// Each vector vector contains term numbers and frequencies for all terms
-		/// in a given vectorized Field.
+		/// in a given vectorized field.
 		/// If no such fields existed, the method returns null.
 		/// </summary>
 		public override TermFreqVector[] GetTermFreqVectors(int n)
@@ -137,6 +140,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < subReaders.Length; i++)
 				subReaders[i].UndeleteAll();
 			hasDeletions = false;
+			numDocs = - 1; // invalidate cache
 		}
 		
 		private int ReaderIndex(int n)
@@ -166,6 +170,24 @@ namespace Lucene.Net.Index
 			return hi;
 		}
 		
+		public override bool HasNorms(System.String field)
+		{
+			for (int i = 0; i < subReaders.Length; i++)
+			{
+				if (subReaders[i].HasNorms(field))
+					return true;
+			}
+			return false;
+		}
+		
+		private byte[] ones;
+		private byte[] FakeNorms()
+		{
+			if (ones == null)
+				ones = SegmentReader.CreateFakeNorms(MaxDoc());
+			return ones;
+		}
+		
 		public override byte[] Norms(System.String field)
 		{
 			lock (this)
@@ -173,6 +195,8 @@ namespace Lucene.Net.Index
 				byte[] bytes = (byte[]) normsCache[field];
 				if (bytes != null)
 					return bytes; // cache hit
+				if (!HasNorms(field))
+					return FakeNorms();
 				
 				bytes = new byte[MaxDoc()];
 				for (int i = 0; i < subReaders.Length; i++)
@@ -187,12 +211,14 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				byte[] bytes = (byte[]) normsCache[field];
+				if (bytes == null && !HasNorms(field))
+					bytes = FakeNorms();
 				if (bytes != null)
-				// cache hit
+				    // cache hit
 					Array.Copy(bytes, 0, result, offset, MaxDoc());
 				
 				for (int i = 0; i < subReaders.Length; i++)
-				// read from segments
+				    // read from segments
 					subReaders[i].Norms(field, result, offset + starts[i]);
 			}
 		}
@@ -247,35 +273,34 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <seealso cref="IndexReader#GetFieldNames()">
+		/// <seealso cref="IndexReader.GetFieldNames()">
 		/// </seealso>
 		public override System.Collections.ICollection GetFieldNames()
 		{
-			// maintain a unique set of Field names
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
 				System.Collections.ICollection names = reader.GetFieldNames();
-				// iterate through the Field names and add them to the set
-				for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-				{
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
+                {
                     System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-					System.String s = fi.Key.ToString();
+                    System.String s = fi.Key.ToString();
                     if (fieldSet.ContainsKey(s) == false)
                     {
                         fieldSet.Add(s, s);
                     }
-				}
-			}
+                }
+            }
 			return fieldSet;
 		}
 		
-		/// <seealso cref="IndexReader#GetFieldNames(boolean)">
+		/// <seealso cref="IndexReader.GetFieldNames(boolean)">
 		/// </seealso>
 		public override System.Collections.ICollection GetFieldNames(bool indexed)
 		{
-			// maintain a unique set of Field names
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
@@ -294,14 +319,35 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-		public override System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
+		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
 		{
-			// maintain a unique set of Field names
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(storedTermVector);
+				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
+                foreach (object item in names)
+                {
+                    if (fieldSet.ContainsKey(item) == false)
+                    {
+                        fieldSet.Add(item, item);
+                    }
+                }
+            }
+			return fieldSet;
+		}
+		
+		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
+		/// </seealso>
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+		{
+			// maintain a unique set of field names
+			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+			for (int i = 0; i < subReaders.Length; i++)
+			{
+				IndexReader reader = subReaders[i];
+				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
                 foreach (object item in names)
                 {
                     if (fieldSet.ContainsKey(item) == false)
@@ -314,7 +360,7 @@ namespace Lucene.Net.Index
 		}
 	}
 	
-	class MultiTermEnum:TermEnum
+	class MultiTermEnum : TermEnum
 	{
 		private SegmentMergeQueue queue;
 		
@@ -523,7 +569,7 @@ namespace Lucene.Net.Index
 		}
 	}
 	
-	class MultiTermPositions:MultiTermDocs, TermPositions
+	class MultiTermPositions : MultiTermDocs, TermPositions
 	{
 		public MultiTermPositions(IndexReader[] r, int[] s):base(r, s)
 		{

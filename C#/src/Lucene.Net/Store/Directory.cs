@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
@@ -57,13 +59,37 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the length of a file in the directory. </summary>
 		public abstract long FileLength(System.String name);
 		
+		/// <deprecated> use {@link #CreateOutput(String)} 
+		/// </deprecated>
+		public virtual OutputStream createFile(System.String name)
+		{
+			return (OutputStream) CreateOutput(name);
+		}
+		
 		/// <summary>Creates a new, empty file in the directory with the given name.
 		/// Returns a stream writing this file. 
 		/// </summary>
-		public abstract OutputStream CreateFile(System.String name);
+		public virtual IndexOutput CreateOutput(System.String name)
+		{
+			// default implementation for back compatibility
+			// this method should be abstract
+			return (IndexOutput) createFile(name);
+		}
+		
+		/// <deprecated> use {@link #OpenInput(String)} 
+		/// </deprecated>
+		public virtual InputStream OpenFile(System.String name)
+		{
+			return (InputStream) OpenInput(name);
+		}
 		
 		/// <summary>Returns a stream reading an existing file. </summary>
-		public abstract InputStream OpenFile(System.String name);
+		public virtual IndexInput OpenInput(System.String name)
+		{
+			// default implementation for back compatibility
+			// this method should be abstract
+			return (IndexInput) OpenFile(name);
+		}
 		
 		/// <summary>Construct a {@link Lock}.</summary>
 		/// <param name="name">the name of the lock file

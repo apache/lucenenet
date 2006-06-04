@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using TermPositions = Lucene.Net.Index.TermPositions;
+
 namespace Lucene.Net.Search
 {
 	
-	sealed class SloppyPhraseScorer:PhraseScorer
+	sealed class SloppyPhraseScorer : PhraseScorer
 	{
 		private int slop;
 		

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using Searcher = Lucene.Net.Search.Searcher;
 using Weight = Lucene.Net.Search.Weight;
+
 namespace Lucene.Net.Search.Spans
 {
 	
@@ -30,7 +32,7 @@ namespace Lucene.Net.Search.Spans
 		/// </summary>
 		public abstract Spans GetSpans(IndexReader reader);
 		
-		/// <summary>Returns the name of the Field matched by this query.</summary>
+		/// <summary>Returns the name of the field matched by this query.</summary>
 		public abstract System.String GetField();
 		
 		/// <summary>Returns a collection of all terms matched by this query.</summary>

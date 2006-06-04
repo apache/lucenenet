@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+
 namespace Lucene.Net.Search
 {
 	[TestFixture]
 	public class TestQueryTermVector
 	{
-        [TestFixtureSetUp]
-		protected virtual void  SetUp()
+		
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 		}
 		
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
+		[TestFixtureTearDown]
+        public virtual void  TearDown()
 		{
 			
 		}

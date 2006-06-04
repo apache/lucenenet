@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -21,10 +23,10 @@ namespace Lucene.Net.Analysis
 	/// Adjacent sequences of non-Whitespace characters form tokens. 
 	/// </summary>
 	
-	public class WhitespaceTokenizer:CharTokenizer
+	public class WhitespaceTokenizer : CharTokenizer
 	{
 		/// <summary>Construct a new WhitespaceTokenizer. </summary>
-		public WhitespaceTokenizer(System.IO.TextReader in_Renamed):base(in_Renamed)
+		public WhitespaceTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
 		{
 		}
 		

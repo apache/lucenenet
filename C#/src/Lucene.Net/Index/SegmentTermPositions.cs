@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+
 namespace Lucene.Net.Index
 {
 	
 	sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
 	{
-		private InputStream proxStream;
+		private IndexInput proxStream;
 		private int proxCount;
 		private int position;
 		
-		internal SegmentTermPositions(SegmentReader p):base(p)
+		internal SegmentTermPositions(SegmentReader p) : base(p)
 		{
-			this.proxStream = (InputStream) parent.proxStream.Clone();
+			this.proxStream = (IndexInput) parent.proxStream.Clone();
 		}
 		
 		internal override void  Seek(TermInfo ti)
@@ -78,7 +80,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>Called by base.SkipTo(). </summary>
+		/// <summary>Called by super.skipTo(). </summary>
 		protected internal override void  SkipProx(long proxPointer)
 		{
 			proxStream.Seek(proxPointer);

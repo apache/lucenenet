@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser;
+using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.Store;
 using NUnit.Framework;
+
 namespace Lucene.Net
 {
 	
@@ -29,7 +31,7 @@ namespace Lucene.Net
 	/// <summary>JUnit adaptation of an older test case DocTest.</summary>
 	/// <author>  dmitrys@earthlink.net
 	/// </author>
-	/// <version>  $Id: TestSearchForDuplicates.java,v 1.3 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: TestSearchForDuplicates.java 150494 2004-09-06 22:29:22Z dnaber $
 	/// </version>
 	[TestFixture]
     public class TestSearchForDuplicates
@@ -39,7 +41,9 @@ namespace Lucene.Net
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearchForDuplicates)));    // {{Aroush}} where is 'TestRunner' in NUnit
 		}
+		
 		
 		
 		internal const System.String PRIORITY_FIELD = "priority";
@@ -58,16 +62,20 @@ namespace Lucene.Net
 		/// validate this output and make any changes to the checkHits method.
 		/// </summary>
 		[Test]
-		public virtual void  TestRun()
+        public virtual void  TestRun()
 		{
 			System.IO.StringWriter sw = new System.IO.StringWriter();
-			DoTest(sw, false);
+			System.IO.StreamWriter pw = null; // new System.IO.StreamWriter(sw);    // {{Aroush}} how do we pass 'sw' to StreamWriter?
+			DoTest(pw, false);
+			pw.Close();
 			sw.Close();
 			System.String multiFileOutput = sw.GetStringBuilder().ToString();
 			//System.out.println(multiFileOutput);
 			
 			sw = new System.IO.StringWriter();
-			DoTest(sw, true);
+			pw = null; // new System.IO.StreamWriter(sw);   // {{Aroush}} how do we pass 'sw' to StreamWriter?
+			DoTest(pw, true);
+			pw.Close();
 			sw.Close();
 			System.String singleFileOutput = sw.GetStringBuilder().ToString();
 			
@@ -75,7 +83,7 @@ namespace Lucene.Net
 		}
 		
 		
-		private void  DoTest(System.IO.StringWriter out_Renamed, bool useCompoundFiles)
+		private void  DoTest(System.IO.StreamWriter out_Renamed, bool useCompoundFiles)
 		{
 			Directory directory = new RAMDirectory();
 			Analyzer analyzer = new SimpleAnalyzer();
@@ -83,13 +91,14 @@ namespace Lucene.Net
 			
 			writer.SetUseCompoundFile(useCompoundFiles);
 			
+			//UPGRADE_NOTE: Final was removed from the declaration of 'MAX_DOCS '. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
 			int MAX_DOCS = 225;
 			
 			for (int j = 0; j < MAX_DOCS; j++)
 			{
-				Document d = new Document();
-				d.Add(Field.Text(PRIORITY_FIELD, HIGH_PRIORITY));
-				d.Add(Field.Text(ID_FIELD, System.Convert.ToString(j)));
+				Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+				d.Add(new Field(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES, Field.Index.TOKENIZED));
+				d.Add(new Field(ID_FIELD, System.Convert.ToString(j), Field.Store.YES, Field.Index.TOKENIZED));
 				writer.AddDocument(d);
 			}
 			writer.Close();
@@ -98,9 +107,10 @@ namespace Lucene.Net
 			Searcher searcher = new IndexSearcher(directory);
 			Hits hits = null;
 			
-			QueryParsers.QueryParser parser = new QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 			
 			Query query = parser.Parse(HIGH_PRIORITY);
+			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
 			hits = searcher.Search(query);
@@ -113,9 +123,10 @@ namespace Lucene.Net
 			searcher = new IndexSearcher(directory);
 			hits = null;
 			
-			parser = new QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+			parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 			
 			query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
+			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
 			hits = searcher.Search(query);
@@ -126,14 +137,16 @@ namespace Lucene.Net
 		}
 		
 		
-		private void  PrintHits(System.IO.StringWriter out_Renamed, Hits hits)
+		private void  PrintHits(System.IO.StreamWriter out_Renamed, Hits hits)
 		{
+			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine(hits.Length() + " total results\n");
 			for (int i = 0; i < hits.Length(); i++)
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = hits.Doc(i);
+					Lucene.Net.Documents.Document d = hits.Doc(i);
+					//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 					out_Renamed.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}
@@ -146,8 +159,8 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = hits.Doc(i);
-					Assert.AreEqual(System.Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
+					Lucene.Net.Documents.Document d = hits.Doc(i);
+					Assert.AreEqual("check " + i, System.Convert.ToString(i), d.Get(ID_FIELD));
 				}
 			}
 		}
