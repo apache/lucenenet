@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Util
 {
+	
 	/// <summary>A PriorityQueue maintains a partial ordering of its elements such that the
 	/// least element can always be found in constant time.  Put()'s and pop()'s
 	/// require log(size) time. 
@@ -54,7 +57,7 @@ namespace Lucene.Net.Util
 		/// <summary> Adds element to the PriorityQueue in log(size) time if either
 		/// the PriorityQueue is not full, or not lessThan(element, top()).
 		/// </summary>
-		/// <param name="">element
+		/// <param name="element">
 		/// </param>
 		/// <returns> true if element is added, false otherwise.
 		/// </returns>
@@ -133,12 +136,12 @@ namespace Lucene.Net.Util
 		{
 			int i = size;
 			System.Object node = heap[i]; // save bottom node
-            int j = (int) (((uint) i) >> 1);
+			int j = SupportClass.Number.URShift(i, 1);
 			while (j > 0 && LessThan(node, heap[j]))
 			{
 				heap[i] = heap[j]; // shift parents down
 				i = j;
-                j = (int) (((uint) j) >> 1);
+				j = SupportClass.Number.URShift(j, 1);
 			}
 			heap[i] = node; // install saved node
 		}

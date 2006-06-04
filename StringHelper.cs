@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Util
 {
+	
+	
 	/// <summary> Methods for manipulating strings.
 	/// 
-	/// $Id: StringHelper.java,v 1.2 2004/03/25 13:39:59 otis Exp $
+	/// $Id: StringHelper.java 150248 2004-03-25 13:39:59Z otis $
 	/// </summary>
 	public abstract class StringHelper
 	{
