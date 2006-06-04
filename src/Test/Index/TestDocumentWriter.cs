@@ -13,76 +13,146 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Similarity = Lucene.Net.Search.Similarity;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
+	
 	[TestFixture]
 	public class TestDocumentWriter
 	{
-		private RAMDirectory dir = new RAMDirectory();
-		private Document testDoc = new Document();
-		
-		[TestFixtureSetUp]
-		protected virtual void  SetUp()
+		private class AnonymousClassAnalyzer : Analyzer
 		{
-			DocHelper.SetupDoc(testDoc);
+			public AnonymousClassAnalyzer(TestDocumentWriter enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(TestDocumentWriter enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestDocumentWriter enclosingInstance;
+			public TestDocumentWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+
+            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+			{
+				return new WhitespaceTokenizer(reader);
+			}
+			
+			public override int GetPositionIncrementGap(System.String fieldName)
+			{
+				return 500;
+			}
+		}
+		private RAMDirectory dir;
+
+
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
+		{
+			dir = new RAMDirectory();
 		}
 		
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
+		[TestFixtureTearDown]
+        public virtual void  TearDown()
 		{
 			
 		}
 		
-        [Test]
-		public virtual void  Test()
+		[Test]
+        public virtual void  Test()
 		{
 			Assert.IsTrue(dir != null);
 		}
 		
-        [Test]
-		public virtual void  TestAddDocument()
+		[Test]
+        public virtual void  TestAddDocument()
 		{
+			Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
+			DocHelper.SetupDoc(testDoc);
 			Analyzer analyzer = new WhitespaceAnalyzer();
-			Similarity similarity = Similarity.GetDefault();
+			Lucene.Net.Search.Similarity similarity = Lucene.Net.Search.Similarity.GetDefault();
 			DocumentWriter writer = new DocumentWriter(dir, analyzer, similarity, 50);
-			Assert.IsTrue(writer != null);
-			try
+			System.String segName = "test";
+			writer.AddDocument(segName, testDoc);
+			//After adding the document, we should be able to read it back in
+			SegmentReader reader = SegmentReader.Get(new SegmentInfo(segName, 1, dir));
+			Assert.IsTrue(reader != null);
+			Lucene.Net.Documents.Document doc = reader.Document(0);
+			Assert.IsTrue(doc != null);
+			
+			//System.out.println("Document: " + doc);
+			Field[] fields = doc.GetFields("textField2");
+			Assert.IsTrue(fields != null && fields.Length == 1);
+			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_2_TEXT));
+			Assert.IsTrue(fields[0].IsTermVectorStored());
+			
+			fields = doc.GetFields("textField1");
+			Assert.IsTrue(fields != null && fields.Length == 1);
+			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_1_TEXT));
+			Assert.IsFalse(fields[0].IsTermVectorStored());
+			
+			fields = doc.GetFields("keyField");
+			Assert.IsTrue(fields != null && fields.Length == 1);
+			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.KEYWORD_TEXT));
+			
+			fields = doc.GetFields(DocHelper.NO_NORMS_KEY);
+			Assert.IsTrue(fields != null && fields.Length == 1);
+			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.NO_NORMS_TEXT));
+			
+			fields = doc.GetFields(DocHelper.TEXT_FIELD_3_KEY);
+			Assert.IsTrue(fields != null && fields.Length == 1);
+			Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_3_TEXT));
+			
+			// test that the norm file is not present if omitNorms is true
+			for (int i = 0; i < reader.FieldInfos.Size(); i++)
 			{
-				writer.AddDocument("test", testDoc);
-				//After adding the document, we should be able to read it back in
-				SegmentReader reader = new SegmentReader(new SegmentInfo("test", 1, dir));
-				Assert.IsTrue(reader != null);
-				Document doc = reader.Document(0);
-				Assert.IsTrue(doc != null);
-				
-				//System.out.println("Document: " + doc);
-				Field[] fields = doc.GetFields("textField2");
-				Assert.IsTrue(fields != null && fields.Length == 1);
-				Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_2_TEXT));
-				Assert.IsTrue(fields[0].IsTermVectorStored() == true);
-				
-				fields = doc.GetFields("textField1");
-				Assert.IsTrue(fields != null && fields.Length == 1);
-				Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.FIELD_1_TEXT));
-				Assert.IsTrue(fields[0].IsTermVectorStored() == false);
-				
-				fields = doc.GetFields("keyField");
-				Assert.IsTrue(fields != null && fields.Length == 1);
-				Assert.IsTrue(fields[0].StringValue().Equals(DocHelper.KEYWORD_TEXT));
+				FieldInfo fi = reader.FieldInfos.FieldInfo(i);
+				if (fi.IsIndexed)
+				{
+					Assert.IsTrue(fi.omitNorms == !dir.FileExists(segName + ".f" + i));
+				}
 			}
-			catch (System.IO.IOException e)
-			{
-                System.Console.Error.WriteLine(e.StackTrace);
-				Assert.IsTrue(false);
-			}
+		}
+		
+		[Test]
+        public virtual void  TestPositionIncrementGap()
+		{
+			Analyzer analyzer = new AnonymousClassAnalyzer(this);
+			
+			Lucene.Net.Search.Similarity similarity = Lucene.Net.Search.Similarity.GetDefault();
+			DocumentWriter writer = new DocumentWriter(dir, analyzer, similarity, 50);
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("repeated", "repeated one", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("repeated", "repeated two", Field.Store.YES, Field.Index.TOKENIZED));
+			
+			System.String segName = "test";
+			writer.AddDocument(segName, doc);
+			SegmentReader reader = SegmentReader.Get(new SegmentInfo(segName, 1, dir));
+			
+			TermPositions termPositions = reader.TermPositions(new Term("repeated", "repeated"));
+			Assert.IsTrue(termPositions.Next());
+			int freq = termPositions.Freq();
+			Assert.AreEqual(2, freq);
+			Assert.AreEqual(0, termPositions.NextPosition());
+			Assert.AreEqual(502, termPositions.NextPosition());
 		}
 	}
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
@@ -20,13 +21,14 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
 	[TestFixture]
 	public class TestCachingWrapperFilter
 	{
-        [Test]
-		public virtual void  TestCachingWorks()
+		[Test]
+        public virtual void  TestCachingWorks()
 		{
 			Directory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);

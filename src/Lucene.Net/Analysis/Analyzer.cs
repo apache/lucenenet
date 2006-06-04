@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -23,19 +25,17 @@ namespace Lucene.Net.Analysis
 	/// Typical implementations first build a Tokenizer, which breaks the stream of
 	/// characters from the Reader into raw Tokens.  One or more TokenFilters may
 	/// then be applied to the output of the Tokenizer.
-	/// </p>
 	/// <p>
 	/// WARNING: You must override one of the methods defined by this class in your
 	/// subclass or the Analyzer will enter an infinite loop.
-	/// </p>
 	/// </summary>
 	public abstract class Analyzer
 	{
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
 		/// Reader.  Default implementation forwards to tokenStream(Reader) for 
 		/// compatibility with older version.  Override to allow Analyzer to choose 
-		/// strategy based on document and/or Field.  Must be able to handle null
-		/// Field name for backward compatibility. 
+		/// strategy based on document and/or field.  Must be able to handle null
+		/// field name for backward compatibility. 
 		/// </summary>
 		public virtual TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
@@ -46,13 +46,32 @@ namespace Lucene.Net.Analysis
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
 		/// Reader.  Provided for backward compatibility only.
 		/// </summary>
-		/// <deprecated> use TokenStream(String, Reader) instead.
+		/// <deprecated> use tokenStream(String, Reader) instead.
 		/// </deprecated>
-		/// <seealso cref="Reader)">
+		/// <seealso cref="TokenStream(String, Reader)">
 		/// </seealso>
 		public virtual TokenStream TokenStream(System.IO.TextReader reader)
 		{
 			return TokenStream(null, reader);
+		}
+		
+		/// <summary> Invoked before indexing a Field instance if
+		/// terms have already been added to that field.  This allows custom
+		/// analyzers to place an automatic position increment gap between
+		/// Field instances using the same field name.  The default value
+		/// position increment gap is 0.  With a 0 position increment gap and
+		/// the typical default token position increment of 1, all terms in a field,
+		/// including across Field instances, are in successive positions, allowing
+		/// exact PhraseQuery matches, for instance, across Field instance boundaries.
+		/// 
+		/// </summary>
+		/// <param name="fieldName">Field name being indexed.
+		/// </param>
+		/// <returns> position increment gap, added to the next token emitted from {@link #TokenStream(String,Reader)}
+		/// </returns>
+		public virtual int GetPositionIncrementGap(System.String fieldName)
+		{
+			return 0;
 		}
 	}
 }

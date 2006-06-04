@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Wraps another filters result and caches it.  The caching
+	/// <summary> Wraps another filter's result and caches it.  The caching
 	/// behavior is like {@link QueryFilter}.  The purpose is to allow
 	/// filters to simply filter, and then wrap with this class to add
 	/// caching, keeping the two concerns decoupled yet composable.
@@ -73,6 +75,18 @@ namespace Lucene.Net.Search
 		public override System.String ToString()
 		{
 			return "CachingWrapperFilter(" + filter + ")";
+		}
+		
+		public  override bool Equals(System.Object o)
+		{
+			if (!(o is CachingWrapperFilter))
+				return false;
+			return this.filter.Equals(((CachingWrapperFilter) o).filter);
+		}
+		
+		public override int GetHashCode()
+		{
+			return filter.GetHashCode() ^ 0x1117BF25;
 		}
 	}
 }

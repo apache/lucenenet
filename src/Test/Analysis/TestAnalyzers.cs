@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
-using Lucene.Net;
-using Lucene.Net.Analysis;
+
 namespace Lucene.Net.Analysis
 {
+	
 	[TestFixture]
-	public class TestAnalyzers
+    public class TestAnalyzers
 	{
+		
 		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
 		{
 			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));

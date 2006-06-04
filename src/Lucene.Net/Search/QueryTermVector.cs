@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
+
 namespace Lucene.Net.Search
 {
 	
@@ -81,7 +83,7 @@ namespace Lucene.Net.Search
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
 					System.String term = queryTerms[i];
-                    System.Object tmpPosition = tmpSet[term];
+					System.Object tmpPosition = tmpSet[term];
 					if (tmpPosition == null)
 					{
 						tmpSet[term] = (System.Int32) j++;
@@ -95,7 +97,7 @@ namespace Lucene.Net.Search
 						tmpFreqs[position] = (System.Int32) (integer + 1);
 					}
 				}
-                terms = (System.String[]) tmpList.ToArray(typeof(System.String));
+				terms = (System.String[]) tmpList.ToArray(typeof(System.String));
 				//termFreqs = (int[])tmpFreqs.toArray(termFreqs);
 				termFreqs = new int[tmpFreqs.Count];
 				int i2 = 0;

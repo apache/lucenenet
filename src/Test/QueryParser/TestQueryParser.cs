@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -24,6 +25,8 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using DateField = Lucene.Net.Documents.DateField;
+using ParseException = Lucene.Net.QueryParsers.ParseException;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using FuzzyQuery = Lucene.Net.Search.FuzzyQuery;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
@@ -32,12 +35,13 @@ using Query = Lucene.Net.Search.Query;
 using RangeQuery = Lucene.Net.Search.RangeQuery;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using WildcardQuery = Lucene.Net.Search.WildcardQuery;
+
 namespace Lucene.Net.QueryParser
 {
 	
 	/// <summary> Tests QueryParser.</summary>
 	[TestFixture]
-	public class TestQueryParser
+    public class TestQueryParser
 	{
 		
 		public static Analyzer qpAnalyzer = new QPTestAnalyzer();
@@ -47,7 +51,7 @@ namespace Lucene.Net.QueryParser
 			/// <summary> Filter which discards the token 'stop' and which expands the
 			/// token 'phrase' into 'phrase1 phrase2'
 			/// </summary>
-			public QPTestFilter(TokenStream in_Renamed) : base(in_Renamed)
+			public QPTestFilter(TokenStream in_Renamed):base(in_Renamed)
 			{
 			}
 			
@@ -82,43 +86,43 @@ namespace Lucene.Net.QueryParser
 		{
 			
 			/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
-			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+			public TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
 				return new QPTestFilter(new LowerCaseTokenizer(reader));
 			}
 		}
 		
-		public class QPTestParser : QueryParsers.QueryParser
+		public class QPTestParser : Lucene.Net.QueryParsers.QueryParser
 		{
-			public QPTestParser(System.String f, Analyzer a) : base(f, a)
+			public QPTestParser(System.String f, Analyzer a):base(f, a)
 			{
 			}
 			
-			protected /*internal*/ override Query GetFuzzyQuery(System.String field, System.String termStr)
+			protected override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 			{
-				throw new Lucene.Net.Analysis.Standard.ParseException("Fuzzy queries not allowed");
+				throw new ParseException("Fuzzy queries not allowed");
 			}
 			
-			protected /*internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
+			protected override Query GetWildcardQuery(System.String field, System.String termStr)
 			{
-				throw new Lucene.Net.Analysis.Standard.ParseException("Wildcard queries not allowed");
+				throw new ParseException("Wildcard queries not allowed");
 			}
 		}
 		
 		private int originalMaxClauses;
 		
-        [TestFixtureSetUp]
-		public virtual void  SetUp()
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 			originalMaxClauses = BooleanQuery.GetMaxClauseCount();
 		}
 		
-		public virtual QueryParsers.QueryParser GetParser(Analyzer a)
+		public virtual Lucene.Net.QueryParsers.QueryParser GetParser(Analyzer a)
 		{
 			if (a == null)
 				a = new SimpleAnalyzer();
-			QueryParsers.QueryParser qp = new QueryParsers.QueryParser("Field", a);
-			qp.SetOperator(QueryParsers.QueryParser.DEFAULT_OPERATOR_OR);
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", a);
+			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR);
 			return qp;
 		}
 		
@@ -130,7 +134,7 @@ namespace Lucene.Net.QueryParser
 		public virtual void  AssertQueryEquals(System.String query, Analyzer a, System.String result)
 		{
 			Query q = GetQuery(query, a);
-			System.String s = q.ToString("Field");
+			System.String s = q.ToString("field");
 			if (!s.Equals(result))
 			{
 				Assert.Fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
@@ -139,10 +143,21 @@ namespace Lucene.Net.QueryParser
 		
 		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result)
 		{
-			QueryParsers.QueryParser qp = GetParser(null);
-			qp.SetLowercaseWildcardTerms(lowercase);
+			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
+			qp.SetLowercaseExpandedTerms(lowercase);
 			Query q = qp.Parse(query);
-			System.String s = q.ToString("Field");
+			System.String s = q.ToString("field");
+			if (!s.Equals(result))
+			{
+				Assert.Fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
+			}
+		}
+		
+		public virtual void  AssertWildcardQueryEquals(System.String query, System.String result)
+		{
+			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
+			Query q = qp.Parse(query);
+			System.String s = q.ToString("field");
 			if (!s.Equals(result))
 			{
 				Assert.Fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
@@ -153,23 +168,23 @@ namespace Lucene.Net.QueryParser
 		{
 			if (a == null)
 				a = new SimpleAnalyzer();
-			QueryParsers.QueryParser qp = new QueryParsers.QueryParser("Field", a);
-			qp.SetOperator(QueryParsers.QueryParser.DEFAULT_OPERATOR_AND);
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", a);
+			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
 			return qp.Parse(query);
 		}
 		
 		public virtual void  AssertQueryEqualsDOA(System.String query, Analyzer a, System.String result)
 		{
 			Query q = GetQueryDOA(query, a);
-			System.String s = q.ToString("Field");
+			System.String s = q.ToString("field");
 			if (!s.Equals(result))
 			{
 				Assert.Fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result + "/");
 			}
 		}
 		
-        [Test]
-		public virtual void  TestSimple()
+		[Test]
+        public virtual void  TestSimple()
 		{
 			AssertQueryEquals("term term term", null, "term term term");
 			AssertQueryEquals("türm term term", null, "türm term term");
@@ -191,7 +206,7 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("a OR -b", null, "a -b");
 			
 			AssertQueryEquals("+term -term term", null, "+term -term term");
-			AssertQueryEquals("foo:term AND Field:anotherTerm", null, "+foo:term +anotherterm");
+			AssertQueryEquals("foo:term AND field:anotherTerm", null, "+foo:term +anotherterm");
 			AssertQueryEquals("term AND \"phrase phrase\"", null, "+term +\"phrase phrase\"");
 			AssertQueryEquals("\"hello there\"", null, "\"hello there\"");
 			Assert.IsTrue(GetQuery("a AND b", null) is BooleanQuery);
@@ -210,10 +225,18 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("((a OR b) AND NOT c) OR d", null, "(+(a b) -c) d");
 			AssertQueryEquals("+(apple \"steve jobs\") -(foo bar baz)", null, "+(apple \"steve jobs\") -(foo bar baz)");
 			AssertQueryEquals("+title:(dog OR cat) -author:\"bob dole\"", null, "+(title:dog title:cat) -author:\"bob dole\"");
+			
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new StandardAnalyzer());
+			// make sure OR is the default:
+			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
+			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
+			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR, qp.GetDefaultOperator());
+			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR);
+			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
 		}
 		
-        [Test]
-		public virtual void  TestPunct()
+		[Test]
+        public virtual void  TestPunct()
 		{
 			Analyzer a = new WhitespaceAnalyzer();
 			AssertQueryEquals("a&b", a, "a&b");
@@ -221,8 +244,8 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals(".NET", a, ".NET");
 		}
 		
-        [Test]
-		public virtual void  TestSlop()
+		[Test]
+        public virtual void  TestSlop()
 		{
 			AssertQueryEquals("\"term germ\"~2", null, "\"term germ\"~2");
 			AssertQueryEquals("\"term germ\"~2 flork", null, "\"term germ\"~2 flork");
@@ -231,8 +254,8 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("\"term germ\"~2^2", null, "\"term germ\"~2^2.0");
 		}
 		
-        [Test]
-		public virtual void  TestNumber()
+		[Test]
+        public virtual void  TestNumber()
 		{
 			// The numbers go away because SimpleAnalzyer ignores them
 			AssertQueryEquals("3", null, "");
@@ -245,62 +268,78 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("term term1 term2", a, "term term1 term2");
 		}
 		
-        [Test]
-		public virtual void  TestWildcard()
+		[Test]
+        public virtual void  TestWildcard()
 		{
 			AssertQueryEquals("term*", null, "term*");
 			AssertQueryEquals("term*^2", null, "term*^2.0");
 			AssertQueryEquals("term~", null, "term~0.5");
-            AssertQueryEquals("term~0.7", null, "term~0.7");
-            AssertQueryEquals("term~^2", null, "term^2.0~0.5");
-            AssertQueryEquals("term^2~", null, "term^2.0~0.5");
-            AssertQueryEquals("term*germ", null, "term*germ");
-            AssertQueryEquals("term*germ^3", null, "term*germ^3.0");
+			AssertQueryEquals("term~0.7", null, "term~0.7");
+			AssertQueryEquals("term~^2", null, "term~0.5^2.0");
+			AssertQueryEquals("term^2~", null, "term~0.5^2.0");
+			AssertQueryEquals("term*germ", null, "term*germ");
+			AssertQueryEquals("term*germ^3", null, "term*germ^3.0");
 			
-            Assert.IsTrue(GetQuery("term*", null) is PrefixQuery);
-            Assert.IsTrue(GetQuery("term*^2", null) is PrefixQuery);
-            Assert.IsTrue(GetQuery("term~", null) is FuzzyQuery);
-            Assert.IsTrue(GetQuery("term~0.7", null) is FuzzyQuery);
-            FuzzyQuery fq = (FuzzyQuery) GetQuery("term~0.7", null);
-            Assert.AreEqual(0.7f, fq.GetMinSimilarity(), 0.1f);
-            Assert.AreEqual(0, fq.GetPrefixLength());
-            fq = (FuzzyQuery) GetQuery("term~", null);
-            Assert.AreEqual(0.5f, fq.GetMinSimilarity(), 0.1f);
-            Assert.AreEqual(0, fq.GetPrefixLength());
-            try
-            {
-                GetQuery("term~1.1", null); // value > 1, throws exception
-                Assert.Fail();
-            }
-            catch (Lucene.Net.QueryParsers.ParseException pe)
-            {
-                // expected exception
-            }
-            Assert.IsTrue(GetQuery("term*germ", null) is WildcardQuery);
+			Assert.IsTrue(GetQuery("term*", null) is PrefixQuery);
+			Assert.IsTrue(GetQuery("term*^2", null) is PrefixQuery);
+			Assert.IsTrue(GetQuery("term~", null) is FuzzyQuery);
+			Assert.IsTrue(GetQuery("term~0.7", null) is FuzzyQuery);
+			FuzzyQuery fq = (FuzzyQuery) GetQuery("term~0.7", null);
+			Assert.AreEqual(0.7f, fq.GetMinSimilarity(), 0.1f);
+			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.GetPrefixLength());
+			fq = (FuzzyQuery) GetQuery("term~", null);
+			Assert.AreEqual(0.5f, fq.GetMinSimilarity(), 0.1f);
+			Assert.AreEqual(FuzzyQuery.defaultPrefixLength, fq.GetPrefixLength());
+			try
+			{
+				GetQuery("term~1.1", null); // value > 1, throws exception
+				Assert.Fail();
+			}
+			catch (ParseException pe)
+			{
+				// expected exception
+			}
+			Assert.IsTrue(GetQuery("term*germ", null) is WildcardQuery);
 			
 			/* Tests to see that wild card terms are (or are not) properly
 			* lower-cased with propery parser configuration
 			*/
 			// First prefix queries:
+			// by default, convert to lowercase:
+			AssertWildcardQueryEquals("Term*", true, "term*");
+			// explicitly set lowercase:
 			AssertWildcardQueryEquals("term*", true, "term*");
 			AssertWildcardQueryEquals("Term*", true, "term*");
 			AssertWildcardQueryEquals("TERM*", true, "term*");
+			// explicitly disable lowercase conversion:
 			AssertWildcardQueryEquals("term*", false, "term*");
 			AssertWildcardQueryEquals("Term*", false, "Term*");
 			AssertWildcardQueryEquals("TERM*", false, "TERM*");
 			// Then 'full' wildcard queries:
+			// by default, convert to lowercase:
+			AssertWildcardQueryEquals("Te?m", "te?m");
+			// explicitly set lowercase:
 			AssertWildcardQueryEquals("te?m", true, "te?m");
 			AssertWildcardQueryEquals("Te?m", true, "te?m");
 			AssertWildcardQueryEquals("TE?M", true, "te?m");
 			AssertWildcardQueryEquals("Te?m*gerM", true, "te?m*germ");
+			// explicitly disable lowercase conversion:
 			AssertWildcardQueryEquals("te?m", false, "te?m");
 			AssertWildcardQueryEquals("Te?m", false, "Te?m");
 			AssertWildcardQueryEquals("TE?M", false, "TE?M");
 			AssertWildcardQueryEquals("Te?m*gerM", false, "Te?m*gerM");
+			//  Fuzzy queries:
+			AssertWildcardQueryEquals("Term~", "term~0.5");
+			AssertWildcardQueryEquals("Term~", true, "term~0.5");
+			AssertWildcardQueryEquals("Term~", false, "Term~0.5");
+			//  Range queries:
+			AssertWildcardQueryEquals("[A TO C]", "[a TO c]");
+			AssertWildcardQueryEquals("[A TO C]", true, "[a TO c]");
+			AssertWildcardQueryEquals("[A TO C]", false, "[A TO C]");
 		}
 		
-        [Test]
-		public virtual void  TestQPA()
+		[Test]
+        public virtual void  TestQPA()
 		{
 			AssertQueryEquals("term term term", qpAnalyzer, "term term term");
 			AssertQueryEquals("term +stop term", qpAnalyzer, "term term");
@@ -313,8 +352,8 @@ namespace Lucene.Net.QueryParser
 			Assert.IsTrue(GetQuery("term +stop", qpAnalyzer) is TermQuery);
 		}
 		
-        [Test]
-		public virtual void  TestRange()
+		[Test]
+        public virtual void  TestRange()
 		{
 			AssertQueryEquals("[ a TO z]", null, "[a TO z]");
 			Assert.IsTrue(GetQuery("[ a TO z]", null) is RangeQuery);
@@ -330,16 +369,16 @@ namespace Lucene.Net.QueryParser
 		
 		public virtual System.String GetDate(System.String s)
 		{
-            return DateField.DateToString(DateTime.Parse(s));
+			return DateField.DateToString(System.DateTime.Parse(s));    // {{Aroush-1.9}} We want a format of "MMM d, yyy" how is it done in .NET?
 		}
 		
 		public virtual System.String GetLocalizedDate(int year, int month, int day)
 		{
-            return new DateTime(year,month,day).ToShortDateString();
+            return new System.DateTime(year, month, day).ToString("MMM d, yyy");       // {{Aroush-1.9}} We want a format of "MMM d, yyy" will this do?
 		}
 		
-        [Test]
-		public virtual void  TestDateRange()
+		[Test]
+        public virtual void  TestDateRange()
 		{
 			System.String startDate = GetLocalizedDate(2002, 1, 1);
 			System.String endDate = GetLocalizedDate(2002, 1, 4);
@@ -347,34 +386,34 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("{  " + startDate + "    " + endDate + "   }", null, "{" + GetDate(startDate) + " TO " + GetDate(endDate) + "}");
 		}
 		
-        [Test]
-		public virtual void  TestEscaped()
+		[Test]
+        public virtual void  TestEscaped()
 		{
 			Analyzer a = new WhitespaceAnalyzer();
-
-            /*AssertQueryEquals("\\[brackets", a, "\\[brackets");
-			AssertQueryEquals("\\[brackets", null, "brackets");
-			AssertQueryEquals("\\\\", a, "\\\\");
-			AssertQueryEquals("\\+blah", a, "\\+blah");
-			AssertQueryEquals("\\(blah", a, "\\(blah");
 			
-			AssertQueryEquals("\\-blah", a, "\\-blah");
-			AssertQueryEquals("\\!blah", a, "\\!blah");
-			AssertQueryEquals("\\{blah", a, "\\{blah");
-			AssertQueryEquals("\\}blah", a, "\\}blah");
-			AssertQueryEquals("\\:blah", a, "\\:blah");
-			AssertQueryEquals("\\^blah", a, "\\^blah");
-			AssertQueryEquals("\\[blah", a, "\\[blah");
-			AssertQueryEquals("\\]blah", a, "\\]blah");
-			AssertQueryEquals("\\\"blah", a, "\\\"blah");
-			AssertQueryEquals("\\(blah", a, "\\(blah");
-			AssertQueryEquals("\\)blah", a, "\\)blah");
-			AssertQueryEquals("\\~blah", a, "\\~blah");
-			AssertQueryEquals("\\*blah", a, "\\*blah");
-			AssertQueryEquals("\\?blah", a, "\\?blah");
-			//AssertQueryEquals("foo \\&\\& bar", a, "foo \\&\\& bar");
-			//AssertQueryEquals("foo \\|| bar", a, "foo \\|| bar");
-			//AssertQueryEquals("foo \\AND bar", a, "foo \\AND bar");*/
+			/*assertQueryEquals("\\[brackets", a, "\\[brackets");
+			assertQueryEquals("\\[brackets", null, "brackets");
+			assertQueryEquals("\\\\", a, "\\\\");
+			assertQueryEquals("\\+blah", a, "\\+blah");
+			assertQueryEquals("\\(blah", a, "\\(blah");
+			
+			assertQueryEquals("\\-blah", a, "\\-blah");
+			assertQueryEquals("\\!blah", a, "\\!blah");
+			assertQueryEquals("\\{blah", a, "\\{blah");
+			assertQueryEquals("\\}blah", a, "\\}blah");
+			assertQueryEquals("\\:blah", a, "\\:blah");
+			assertQueryEquals("\\^blah", a, "\\^blah");
+			assertQueryEquals("\\[blah", a, "\\[blah");
+			assertQueryEquals("\\]blah", a, "\\]blah");
+			assertQueryEquals("\\\"blah", a, "\\\"blah");
+			assertQueryEquals("\\(blah", a, "\\(blah");
+			assertQueryEquals("\\)blah", a, "\\)blah");
+			assertQueryEquals("\\~blah", a, "\\~blah");
+			assertQueryEquals("\\*blah", a, "\\*blah");
+			assertQueryEquals("\\?blah", a, "\\?blah");
+			//assertQueryEquals("foo \\&\\& bar", a, "foo \\&\\& bar");
+			//assertQueryEquals("foo \\|| bar", a, "foo \\|| bar");
+			//assertQueryEquals("foo \\AND bar", a, "foo \\AND bar");*/
 			
 			AssertQueryEquals("a\\-b:c", a, "a-b:c");
 			AssertQueryEquals("a\\+b:c", a, "a+b:c");
@@ -390,13 +429,13 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("a:b\\+c*", a, "a:b+c*");
 			AssertQueryEquals("a:b\\:c*", a, "a:b:c*");
 			
-            AssertQueryEquals("a:b\\\\c*", a, "a:b\\c*");
+			AssertQueryEquals("a:b\\\\c*", a, "a:b\\c*");
 			
 			AssertQueryEquals("a:b\\-?c", a, "a:b-?c");
 			AssertQueryEquals("a:b\\+?c", a, "a:b+?c");
 			AssertQueryEquals("a:b\\:?c", a, "a:b:?c");
 			
-            AssertQueryEquals("a:b\\\\?c", a, "a:b\\?c");
+			AssertQueryEquals("a:b\\\\?c", a, "a:b\\?c");
 			
 			AssertQueryEquals("a:b\\-c~", a, "a:b-c~0.5");
 			AssertQueryEquals("a:b\\+c~", a, "a:b+c~0.5");
@@ -408,8 +447,8 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("[ a\\\\ TO a\\* ]", null, "[a\\ TO a*]");
 		}
 		
-        [Test]
-		public virtual void  TestTabNewlineCarriageReturn()
+		[Test]
+        public virtual void  TestTabNewlineCarriageReturn()
 		{
 			AssertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
 			
@@ -431,8 +470,8 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEqualsDOA("weltbank \t +worlbank", null, "+weltbank +worlbank");
 		}
 		
-        [Test]
-		public virtual void  TestSimpleDAO()
+		[Test]
+        public virtual void  TestSimpleDAO()
 		{
 			AssertQueryEqualsDOA("term term term", null, "+term +term +term");
 			AssertQueryEqualsDOA("term +term term", null, "+term +term +term");
@@ -441,11 +480,11 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEqualsDOA("-term term term", null, "-term +term +term");
 		}
 		
-        [Test]
-		public virtual void  TestBoost()
+		[Test]
+        public virtual void  TestBoost()
 		{
 			StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(new System.String[]{"on"});
-			QueryParsers.QueryParser qp = new QueryParsers.QueryParser("Field", oneStopAnalyzer);
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", oneStopAnalyzer);
 			Query q = qp.Parse("on^1.0");
 			Assert.IsNotNull(q);
 			q = qp.Parse("\"hello\"^2.0");
@@ -457,69 +496,82 @@ namespace Lucene.Net.QueryParser
 			q = qp.Parse("\"on\"^1.0");
 			Assert.IsNotNull(q);
 			
-			q = QueryParsers.QueryParser.Parse("the^3", "Field", new StandardAnalyzer());
+			Lucene.Net.QueryParsers.QueryParser qp2 = new Lucene.Net.QueryParsers.QueryParser("field", new StandardAnalyzer());
+			q = qp2.Parse("the^3");
+			// "the" is a stop word so the result is an empty query:
 			Assert.IsNotNull(q);
+			Assert.AreEqual("", q.ToString());
+			Assert.AreEqual(1.0f, q.GetBoost(), 0.01f);
 		}
 		
-        [Test]
-		public virtual void  TestException()
+		[Test]
+        public virtual void  TestException()
 		{
 			try
 			{
 				AssertQueryEquals("\"some phrase", null, "abc");
 				Assert.Fail("ParseException expected, not thrown");
 			}
-			catch (Lucene.Net.QueryParsers.ParseException expected)
+			catch (ParseException expected)
 			{
 			}
 		}
 		
-        [Test]
-		public virtual void  TestCustomQueryParserWildcard()
+		[Test]
+        public virtual void  TestCustomQueryParserWildcard()
 		{
 			try
 			{
 				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("a?t");
+				Assert.Fail("Wildcard queries should not be allowed");
 			}
-			catch (Lucene.Net.Analysis.Standard.ParseException expected)
+			catch (ParseException expected)
 			{
-				return ;
+				// expected exception
 			}
-			Assert.Fail("Wildcard queries should not be allowed");
 		}
 		
-        [Test]
-		public virtual void  TestCustomQueryParserFuzzy()
+		[Test]
+        public virtual void  TestCustomQueryParserFuzzy()
 		{
 			try
 			{
 				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("xunit~");
+				Assert.Fail("Fuzzy queries should not be allowed");
 			}
-			catch (Lucene.Net.Analysis.Standard.ParseException expected)
+			catch (ParseException expected)
 			{
-				return ;
+				// expected exception
 			}
-			Assert.Fail("Fuzzy queries should not be allowed");
 		}
 		
-        [Test]
-		public virtual void  TestBooleanQuery()
+		[Test]
+        public virtual void  TestBooleanQuery()
 		{
 			BooleanQuery.SetMaxClauseCount(2);
 			try
 			{
-				QueryParsers.QueryParser.Parse("one two three", "Field", new WhitespaceAnalyzer());
+				Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
+				qp.Parse("one two three");
 				Assert.Fail("ParseException expected due to too many boolean clauses");
 			}
-			catch (Lucene.Net.QueryParsers.ParseException expected)
+			catch (ParseException expected)
 			{
 				// too many boolean clauses, so ParseException is expected
 			}
-
-            BooleanQuery.SetMaxClauseCount(originalMaxClauses);
 		}
 		
-        [TestFixtureTearDown]
+		/// <summary> This test differs from TestPrecedenceQueryParser</summary>
+		[Test]
+        public virtual void  TestPrecedence()
+		{
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
+			Query query1 = qp.Parse("A AND B OR C AND D");
+			Query query2 = qp.Parse("+A +B +C +D");
+			Assert.AreEqual(query1, query2);
+		}
+		
+		[TestFixtureTearDown]
 		public virtual void  TearDown()
 		{
 			BooleanQuery.SetMaxClauseCount(originalMaxClauses);

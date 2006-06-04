@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using StringHelper = Lucene.Net.Util.StringHelper;
+
 namespace Lucene.Net.Index
 {
 	
@@ -24,13 +26,13 @@ namespace Lucene.Net.Index
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
-	sealed public class TermInfosWriter
+	public sealed class TermInfosWriter
 	{
 		/// <summary>The file format version, a negative number. </summary>
 		public const int FORMAT = - 2;
 		
 		private FieldInfos fieldInfos;
-		private OutputStream output;
+		private IndexOutput output;
 		private Term lastTerm = new Term("", "");
 		private TermInfo lastTi = new TermInfo();
 		private long size = 0;
@@ -63,23 +65,24 @@ namespace Lucene.Net.Index
 		
 		private TermInfosWriter other = null;
 		
-		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis)
+		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
-			Initialize(directory, segment, fis, false);
-			other = new TermInfosWriter(directory, segment, fis, true);
+			Initialize(directory, segment, fis, interval, false);
+			other = new TermInfosWriter(directory, segment, fis, interval, true);
 			other.other = this;
 		}
 		
-		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, bool isIndex)
+		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval, bool isIndex)
 		{
-			Initialize(directory, segment, fis, isIndex);
+			Initialize(directory, segment, fis, interval, isIndex);
 		}
 		
-		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, bool isi)
+		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
 		{
+			indexInterval = interval;
 			fieldInfos = fis;
 			isIndex = isi;
-			output = directory.CreateFile(segment + (isIndex?".tii":".tis"));
+			output = directory.CreateOutput(segment + (isIndex ? ".tii" : ".tis"));
 			output.WriteInt(FORMAT); // write format
 			output.WriteLong(0); // leave space for size
 			output.WriteInt(indexInterval); // write indexInterval
@@ -131,7 +134,7 @@ namespace Lucene.Net.Index
 			output.WriteVInt(length); // write delta length
 			output.WriteChars(term.text, start, length); // write delta chars
 			
-			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write Field num
+			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write field num
 			
 			lastTerm = term;
 		}

@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
+
 namespace Lucene.Net.Analysis.Standard
 {
 	
 	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
-	/// LowerCaseFilter} and {@link StopFilter}.
+	/// LowerCaseFilter} and {@link StopFilter}, using a list of English stop words.
 	/// 
 	/// </summary>
-	/// <version>  $Id: StandardAnalyzer.java,v 1.8 2004/03/29 22:48:01 cutting Exp $
+	/// <version>  $Id: StandardAnalyzer.java 219090 2005-07-14 20:36:28Z dnaber $
 	/// </version>
 	public class StandardAnalyzer : Analyzer
 	{
@@ -33,15 +35,37 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		public static readonly System.String[] STOP_WORDS;
 		
-		/// <summary>Builds an analyzer. </summary>
+		/// <summary>Builds an analyzer with the default stop words ({@link #STOP_WORDS}). </summary>
 		public StandardAnalyzer() : this(STOP_WORDS)
 		{
+		}
+		
+		/// <summary>Builds an analyzer with the given stop words. </summary>
+		public StandardAnalyzer(System.Collections.Hashtable stopWords)
+		{
+			stopSet = stopWords;
 		}
 		
 		/// <summary>Builds an analyzer with the given stop words. </summary>
 		public StandardAnalyzer(System.String[] stopWords)
 		{
 			stopSet = StopFilter.MakeStopSet(stopWords);
+		}
+		
+		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
+		/// <seealso cref="WordlistLoader.GetWordSet(File)">
+		/// </seealso>
+		public StandardAnalyzer(System.IO.FileInfo stopwords)
+		{
+			stopSet = WordlistLoader.GetWordSet(stopwords);
+		}
+		
+		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
+		/// <seealso cref="WordlistLoader.GetWordSet(Reader)">
+		/// </seealso>
+		public StandardAnalyzer(System.IO.TextReader stopwords)
+		{
+			stopSet = WordlistLoader.GetWordSet(stopwords);
 		}
 		
 		/// <summary>Constructs a {@link StandardTokenizer} filtered by a {@link

@@ -13,32 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+
 namespace Lucene.Net.Demo
 {
+	//import Lucene.Net.index.Term;
 	
 	class DeleteFiles
 	{
+		
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
+			System.String usage = typeof(DeleteFiles) + " <unique_term>";
+			if (args.Length == 0)
+			{
+				System.Console.Error.WriteLine("Usage: " + usage);
+				System.Environment.Exit(1);
+			}
 			try
 			{
-				Directory directory = FSDirectory.GetDirectory("demo index", false);
+				Directory directory = FSDirectory.GetDirectory("index", false);
 				IndexReader reader = IndexReader.Open(directory);
 				
-				//       Term term = new Term("path", "pizza");
-				//       int deleted = reader.delete(term);
+				Term term = new Term("path", args[0]);
+				int deleted = reader.Delete(term);
 				
-				//       System.out.println("deleted " + deleted +
-				// 			 " documents containing " + term);
+				System.Console.Out.WriteLine("deleted " + deleted + " documents containing " + term);
 				
-				for (int i = 0; i < reader.MaxDoc(); i++)
-					reader.Delete(i);
+				// one can also delete documents by their internal id:
+				/*
+				for (int i = 0; i < reader.maxDoc(); i++) {
+				System.out.println("Deleting document with id " + i);
+				reader.delete(i);
+				}*/
 				
 				reader.Close();
 				directory.Close();

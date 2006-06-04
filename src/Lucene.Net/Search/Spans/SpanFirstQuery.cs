@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Query = Lucene.Net.Search.Query;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search.Spans
 {
 	
-	/// <summary>Matches spans near the beginning of a Field. </summary>
+	/// <summary>Matches spans near the beginning of a field. </summary>
 	[Serializable]
-	public class SpanFirstQuery:SpanQuery
+	public class SpanFirstQuery : SpanQuery
 	{
 		private class AnonymousClassSpans : Spans
 		{
@@ -129,12 +133,34 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(end);
 			buffer.Append(")");
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
 			return new AnonymousClassSpans(reader, this);
+		}
+		
+		public override Query Rewrite(IndexReader reader)
+		{
+			SpanFirstQuery clone = null;
+			
+			SpanQuery rewritten = (SpanQuery) match.Rewrite(reader);
+			if (rewritten != match)
+			{
+				clone = (SpanFirstQuery) this.Clone();
+				clone.match = rewritten;
+			}
+			
+			if (clone != null)
+			{
+				return clone; // some clauses rewrote
+			}
+			else
+			{
+				return this; // no clauses rewrote
+			}
 		}
 	}
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
@@ -21,6 +22,7 @@ using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
 	
@@ -29,7 +31,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Revision: 1.4 $
+	/// <version>  $Revision: 150497 $
 	/// </version>
 	[TestFixture]
     public class TestSimilarity
@@ -85,7 +87,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        private class AnonymousClassHitCollector2:HitCollector
+        private class AnonymousClassHitCollector2 : HitCollector
 		{
 			public AnonymousClassHitCollector2(TestSimilarity enclosingInstance)
 			{
@@ -136,7 +138,9 @@ namespace Lucene.Net.Search
 				Assert.IsTrue(score == 2.0f);
 			}
 		}
+
 		
+		[Serializable]
 		public class SimpleSimilarity : Similarity
 		{
 			public override float LengthNorm(System.String field, int numTerms)
@@ -159,7 +163,7 @@ namespace Lucene.Net.Search
 			{
 				return 1.0f;
 			}
-			public override float Idf(int docFreq, int numDocs)
+			public override float Ldf(int docFreq, int numDocs)
 			{
 				return 1.0f;
 			}
@@ -169,49 +173,47 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        [Test]
-		public virtual void  TestSimilarity_()
+		[Test]
+        public virtual void  TestSimilarity_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
 			writer.SetSimilarity(new SimpleSimilarity());
 			
-			Document d1 = new Document();
-			d1.Add(Field.Text("Field", "a c"));
+			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			d1.Add(new Field("field", "a c", Field.Store.YES, Field.Index.TOKENIZED));
 			
-			Document d2 = new Document();
-			d2.Add(Field.Text("Field", "a b c"));
+			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+			d2.Add(new Field("field", "a b c", Field.Store.YES, Field.Index.TOKENIZED));
 			
 			writer.AddDocument(d1);
 			writer.AddDocument(d2);
 			writer.Optimize();
 			writer.Close();
 			
-			float[] scores = new float[4];
-			
 			Searcher searcher = new IndexSearcher(store);
 			searcher.SetSimilarity(new SimpleSimilarity());
 			
-			Term a = new Term("Field", "a");
-			Term b = new Term("Field", "b");
-			Term c = new Term("Field", "c");
+			Term a = new Term("field", "a");
+			Term b = new Term("field", "b");
+			Term c = new Term("field", "c");
 			
 			searcher.Search(new TermQuery(b), new AnonymousClassHitCollector(this));
 			
 			BooleanQuery bq = new BooleanQuery();
-			bq.Add(new TermQuery(a), false, false);
-			bq.Add(new TermQuery(b), false, false);
-			//System.out.println(bq.toString("Field"));
+			bq.Add(new TermQuery(a), BooleanClause.Occur.SHOULD);
+			bq.Add(new TermQuery(b), BooleanClause.Occur.SHOULD);
+			//System.out.println(bq.toString("field"));
 			searcher.Search(bq, new AnonymousClassHitCollector1(this));
 			
 			PhraseQuery pq = new PhraseQuery();
 			pq.Add(a);
 			pq.Add(c);
-			//System.out.println(pq.toString("Field"));
+			//System.out.println(pq.toString("field"));
 			searcher.Search(pq, new AnonymousClassHitCollector2(this));
 			
 			pq.SetSlop(2);
-			//System.out.println(pq.toString("Field"));
+			//System.out.println(pq.toString("field"));
 			searcher.Search(pq, new AnonymousClassHitCollector3(this));
 		}
 	}

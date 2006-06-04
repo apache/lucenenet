@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Query = Lucene.Net.Search.Query;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Removes matches which overlap with another SpanQuery. </summary>
 	[Serializable]
-	public class SpanNotQuery:SpanQuery
+	public class SpanNotQuery : SpanQuery
 	{
 		private class AnonymousClassSpans : Spans
 		{
@@ -130,7 +134,7 @@ namespace Lucene.Net.Search.Spans
 			this.exclude = exclude;
 			
 			if (!include.GetField().Equals(exclude.GetField()))
-				throw new System.ArgumentException("Clauses must have same Field.");
+				throw new System.ArgumentException("Clauses must have same field.");
 		}
 		
 		/// <summary>Return the SpanQuery whose matches are filtered. </summary>
@@ -163,6 +167,7 @@ namespace Lucene.Net.Search.Spans
 			buffer.Append(", ");
 			buffer.Append(exclude.ToString(field));
 			buffer.Append(")");
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
@@ -170,6 +175,34 @@ namespace Lucene.Net.Search.Spans
 		public override Spans GetSpans(IndexReader reader)
 		{
 			return new AnonymousClassSpans(reader, this);
+		}
+		
+		public override Query Rewrite(IndexReader reader)
+		{
+			SpanNotQuery clone = null;
+			
+			SpanQuery rewrittenInclude = (SpanQuery) include.Rewrite(reader);
+			if (rewrittenInclude != include)
+			{
+				clone = (SpanNotQuery) this.Clone();
+				clone.include = rewrittenInclude;
+			}
+			SpanQuery rewrittenExclude = (SpanQuery) exclude.Rewrite(reader);
+			if (rewrittenExclude != exclude)
+			{
+				if (clone == null)
+					clone = (SpanNotQuery) this.Clone();
+				clone.exclude = rewrittenExclude;
+			}
+			
+			if (clone != null)
+			{
+				return clone; // some clauses rewrote
+			}
+			else
+			{
+				return this; // no clauses rewrote
+			}
 		}
 	}
 }

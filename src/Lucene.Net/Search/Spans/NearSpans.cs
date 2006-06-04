@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+
 namespace Lucene.Net.Search.Spans
 {
 	
@@ -105,18 +107,17 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			
 			private Spans spans;
 			public SpansCell next;
 			private int length = - 1;
 			public int index;
 			
-            public SpansCell(NearSpans enclosingInstance, Spans spans, int index)
+			public SpansCell(NearSpans enclosingInstance, Spans spans, int index)
 			{
 				InitBlock(enclosingInstance);
-                this.spans = spans;
-                this.index = index;
-            }
+				this.spans = spans;
+				this.index = index;
+			}
 			
 			public virtual bool Next()
 			{

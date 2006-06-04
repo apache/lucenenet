@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
 	
@@ -30,26 +31,27 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Revision: 1.3 $
+	/// <version>  $Revision: 150497 $
 	/// </version>
 	[TestFixture]
     public class TestNot
 	{
-        [Test]
-		public virtual void  TestNot_()
+		
+		[Test]
+        public virtual void  TestNot_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
 			
-			Document d1 = new Document();
-			d1.Add(Field.Text("Field", "a b"));
+			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.TOKENIZED));
 			
 			writer.AddDocument(d1);
 			writer.Optimize();
 			writer.Close();
 			
 			Searcher searcher = new IndexSearcher(store);
-			Query query = Lucene.Net.QueryParsers.QueryParser.Parse("a NOT b", "Field", new SimpleAnalyzer());
+			Query query = Lucene.Net.QueryParsers.QueryParser.Parse("a NOT b", "field", new SimpleAnalyzer());
 			//System.out.println(query);
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length());

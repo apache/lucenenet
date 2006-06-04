@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
@@ -22,6 +23,7 @@ using Lucene.Net.Index;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
+
 namespace Lucene.Net.Search
 {
 	[TestFixture]
@@ -29,40 +31,59 @@ namespace Lucene.Net.Search
 	{
 		private IndexSearcher searcher;
 		private RAMDirectory directory = new RAMDirectory();
+
 		
-        [TestFixtureSetUp]
-		public virtual void  SetUp()
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
 			//writer.setUseCompoundFile(true);
 			//writer.infoStream = System.out;
-			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			for (int i = 0; i < 1000; i++)
 			{
-				Document doc = new Document();
-				doc.Add(Field.Text("Field", English.IntToEnglish(i), true));
+				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Field.TermVector termVector;
+				int mod3 = i % 3;
+				int mod2 = i % 2;
+				if (mod2 == 0 && mod3 == 0)
+				{
+					termVector = Field.TermVector.WITH_POSITIONS_OFFSETS;
+				}
+				else if (mod2 == 0)
+				{
+					termVector = Field.TermVector.WITH_POSITIONS;
+				}
+				else if (mod3 == 0)
+				{
+					termVector = Field.TermVector.WITH_OFFSETS;
+				}
+				else
+				{
+					termVector = Field.TermVector.YES;
+				}
+				doc.Add(new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.TOKENIZED, termVector));
 				writer.AddDocument(doc);
 			}
 			writer.Close();
 			searcher = new IndexSearcher(directory);
 		}
 		
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
+		[TestFixtureTearDown]
+        public virtual void  TearDown()
 		{
 			
 		}
 		
-        [Test]
-		public virtual void  Test()
+		[Test]
+        public virtual void  Test()
 		{
 			Assert.IsTrue(searcher != null);
 		}
 		
-        [Test]
-		public virtual void  TestTermVectors_()
+		[Test]
+        public virtual void  TestTermVectors_Renamed_Method()
 		{
-			Query query = new TermQuery(new Term("Field", "seventy"));
+			Query query = new TermQuery(new Term("field", "seventy"));
 			try
 			{
 				Hits hits = searcher.Search(query);
@@ -70,36 +91,9 @@ namespace Lucene.Net.Search
 				
 				for (int i = 0; i < hits.Length(); i++)
 				{
-					TermFreqVector[] vector = searcher.reader.GetTermFreqVectors(hits.Id(i));
+					TermFreqVector[] vector = searcher.Reader.GetTermFreqVectors(hits.Id(i));
 					Assert.IsTrue(vector != null);
 					Assert.IsTrue(vector.Length == 1);
-					//Assert.IsTrue();
-				}
-				TermFreqVector[] vector2 = searcher.reader.GetTermFreqVectors(hits.Id(50));
-				//System.out.println("Explain: " + searcher.explain(query, hits.id(50)));
-				//System.out.println("Vector: " + vector[0].toString());
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.IsTrue(false);
-			}
-		}
-		
-        [Test]
-		public virtual void  TestTermPositionVectors()
-		{
-			Query query = new TermQuery(new Term("Field", "fifty"));
-			try
-			{
-				Hits hits = searcher.Search(query);
-				Assert.AreEqual(100, hits.Length());
-				
-				for (int i = 0; i < hits.Length(); i++)
-				{
-					TermFreqVector[] vector = searcher.reader.GetTermFreqVectors(hits.Id(i));
-					Assert.IsTrue(vector != null);
-					Assert.IsTrue(vector.Length == 1);
-					//Assert.IsTrue();
 				}
 			}
 			catch (System.IO.IOException e)
@@ -108,10 +102,104 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        [Test]
-		public virtual void  TestKnownSetOfDocuments()
+		[Test]
+        public virtual void  TestTermPositionVectors()
 		{
-			System.String[] termArray = new System.String[]{"eating", "chocolate", "in", "a", "computer", "lab", "grows", "old", "colored", "with", "an"};
+			Query query = new TermQuery(new Term("field", "zero"));
+			try
+			{
+				Hits hits = searcher.Search(query);
+				Assert.AreEqual(1, hits.Length());
+				
+				for (int i = 0; i < hits.Length(); i++)
+				{
+					TermFreqVector[] vector = searcher.Reader.GetTermFreqVectors(hits.Id(i));
+					Assert.IsTrue(vector != null);
+					Assert.IsTrue(vector.Length == 1);
+					
+					bool shouldBePosVector = (hits.Id(i) % 2 == 0)?true:false;
+					Assert.IsTrue((shouldBePosVector == false) || (shouldBePosVector == true && (vector[0] is TermPositionVector == true)));
+					
+					bool shouldBeOffVector = (hits.Id(i) % 3 == 0)?true:false;
+					Assert.IsTrue((shouldBeOffVector == false) || (shouldBeOffVector == true && (vector[0] is TermPositionVector == true)));
+					
+					if (shouldBePosVector || shouldBeOffVector)
+					{
+						TermPositionVector posVec = (TermPositionVector) vector[0];
+						System.String[] terms = posVec.GetTerms();
+						Assert.IsTrue(terms != null && terms.Length > 0);
+						
+						for (int j = 0; j < terms.Length; j++)
+						{
+							int[] positions = posVec.GetTermPositions(j);
+							TermVectorOffsetInfo[] offsets = posVec.GetOffsets(j);
+							
+							if (shouldBePosVector)
+							{
+								Assert.IsTrue(positions != null);
+								Assert.IsTrue(positions.Length > 0);
+							}
+							else
+								Assert.IsTrue(positions == null);
+							
+							if (shouldBeOffVector)
+							{
+								Assert.IsTrue(offsets != null);
+								Assert.IsTrue(offsets.Length > 0);
+							}
+							else
+								Assert.IsTrue(offsets == null);
+						}
+					}
+					else
+					{
+						try
+						{
+							TermPositionVector posVec = (TermPositionVector) vector[0];
+							Assert.IsTrue(false);
+						}
+						catch (System.InvalidCastException ignore)
+						{
+							TermFreqVector freqVec = vector[0];
+							System.String[] terms = freqVec.GetTerms();
+							Assert.IsTrue(terms != null && terms.Length > 0);
+						}
+					}
+				}
+			}
+			catch (System.IO.IOException e)
+			{
+				Assert.IsTrue(false);
+			}
+		}
+		
+		[Test]
+        public virtual void  TestTermOffsetVectors()
+		{
+			Query query = new TermQuery(new Term("field", "fifty"));
+			try
+			{
+				Hits hits = searcher.Search(query);
+				Assert.AreEqual(100, hits.Length());
+				
+				for (int i = 0; i < hits.Length(); i++)
+				{
+					TermFreqVector[] vector = searcher.Reader.GetTermFreqVectors(hits.Id(i));
+					Assert.IsTrue(vector != null);
+					Assert.IsTrue(vector.Length == 1);
+					
+					//Assert.IsTrue();
+				}
+			}
+			catch (System.IO.IOException e)
+			{
+				Assert.IsTrue(false);
+			}
+		}
+		
+		[Test]
+        public virtual void  TestKnownSetOfDocuments()
+		{
 			System.String test1 = "eating chocolate in a computer lab"; //6 terms
 			System.String test2 = "computer in a computer lab"; //5 terms
 			System.String test3 = "a chocolate lab grows old"; //5 terms
@@ -129,13 +217,13 @@ namespace Lucene.Net.Search
 			test4Map["computer"] = 1;
 			test4Map["old"] = 1;
 			
-			Document testDoc1 = new Document();
+			Lucene.Net.Documents.Document testDoc1 = new Lucene.Net.Documents.Document();
 			SetupDoc(testDoc1, test1);
-			Document testDoc2 = new Document();
+			Lucene.Net.Documents.Document testDoc2 = new Lucene.Net.Documents.Document();
 			SetupDoc(testDoc2, test2);
-			Document testDoc3 = new Document();
+			Lucene.Net.Documents.Document testDoc3 = new Lucene.Net.Documents.Document();
 			SetupDoc(testDoc3, test3);
-			Document testDoc4 = new Document();
+			Lucene.Net.Documents.Document testDoc4 = new Lucene.Net.Documents.Document();
 			SetupDoc(testDoc4, test4);
 			
 			Directory dir = new RAMDirectory();
@@ -150,8 +238,8 @@ namespace Lucene.Net.Search
 				writer.AddDocument(testDoc4);
 				writer.Close();
 				IndexSearcher knownSearcher = new IndexSearcher(dir);
-				TermEnum termEnum = knownSearcher.reader.Terms();
-				TermDocs termDocs = knownSearcher.reader.TermDocs();
+				TermEnum termEnum = knownSearcher.Reader.Terms();
+				TermDocs termDocs = knownSearcher.Reader.TermDocs();
 				//System.out.println("Terms: " + termEnum.size() + " Orig Len: " + termArray.length);
 				
 				Similarity sim = knownSearcher.GetSimilarity();
@@ -165,12 +253,12 @@ namespace Lucene.Net.Search
 						int docId = termDocs.Doc();
 						int freq = termDocs.Freq();
 						//System.out.println("Doc Id: " + docId + " freq " + freq);
-						TermFreqVector vector = knownSearcher.reader.GetTermFreqVector(docId, "Field");
+						TermFreqVector vector = knownSearcher.Reader.GetTermFreqVector(docId, "field");
 						float tf = sim.Tf(freq);
 						float idf = sim.Idf(term, knownSearcher);
 						//float qNorm = sim.queryNorm()
 						//This is fine since we don't have stop words
-						float lNorm = sim.LengthNorm("Field", vector.GetTerms().Length);
+						float lNorm = sim.LengthNorm("field", vector.GetTerms().Length);
 						//float coord = sim.coord()
 						//System.out.println("TF: " + tf + " IDF: " + idf + " LenNorm: " + lNorm);
 						Assert.IsTrue(vector != null);
@@ -178,7 +266,7 @@ namespace Lucene.Net.Search
 						int[] freqs = vector.GetTermFrequencies();
 						for (int i = 0; i < vTerms.Length; i++)
 						{
-							if (term.Text().Equals(vTerms[i]) == true)
+							if (term.Text().Equals(vTerms[i]))
 							{
 								Assert.IsTrue(freqs[i] == freq);
 							}
@@ -186,7 +274,7 @@ namespace Lucene.Net.Search
 					}
 					//System.out.println("--------");
 				}
-				Query query = new TermQuery(new Term("Field", "chocolate"));
+				Query query = new TermQuery(new Term("field", "chocolate"));
 				Hits hits = knownSearcher.Search(query);
 				//doc 3 should be the first hit b/c it is the shortest match
 				Assert.IsTrue(hits.Length() == 3);
@@ -197,10 +285,10 @@ namespace Lucene.Net.Search
 				System.out.println("Explain: " + knownSearcher.explain(query, hits.id(1)));
 				System.out.println("Hit 2: " + hits.id(2) + " Score: " + hits.score(2) + " String: " +  hits.doc(2).toString());
 				System.out.println("Explain: " + knownSearcher.explain(query, hits.id(2)));*/
-				Assert.IsTrue(testDoc3.ToString().Equals(hits.Doc(0).ToString()));
-				Assert.IsTrue(testDoc4.ToString().Equals(hits.Doc(1).ToString()));
-				Assert.IsTrue(testDoc1.ToString().Equals(hits.Doc(2).ToString()));
-				TermFreqVector vector2 = knownSearcher.reader.GetTermFreqVector(hits.Id(1), "Field");
+				Assert.IsTrue(hits.Id(0) == 2);
+				Assert.IsTrue(hits.Id(1) == 3);
+				Assert.IsTrue(hits.Id(2) == 0);
+				TermFreqVector vector2 = knownSearcher.Reader.GetTermFreqVector(hits.Id(1), "field");
 				Assert.IsTrue(vector2 != null);
 				//System.out.println("Vector: " + vector);
 				System.String[] terms = vector2.GetTerms();
@@ -208,27 +296,26 @@ namespace Lucene.Net.Search
 				Assert.IsTrue(terms != null && terms.Length == 10);
 				for (int i = 0; i < terms.Length; i++)
 				{
-                    System.String term = terms[i];
-                    //System.out.println("Term: " + term);
-                    int freq = freqs2[i];
-                    Assert.IsTrue(test4.IndexOf(term) != - 1);
-                    System.Int32 freqInt = (System.Int32) test4Map[term];
-                    System.Object tmpFreqInt = test4Map[term];
-                    Assert.IsTrue(tmpFreqInt != null);
-                    Assert.IsTrue(freqInt == freq);
-                }
+					System.String term = terms[i];
+					//System.out.println("Term: " + term);
+					int freq = freqs2[i];
+					Assert.IsTrue(test4.IndexOf(term) != - 1);
+					System.Int32 freqInt = (System.Int32) test4Map[term];
+					Assert.IsTrue(false); // Assert.IsTrue(freqInt != null);   // {{Aroush}} how do we test for 'null'?
+					Assert.IsTrue(freqInt == freq);
+				}
 				knownSearcher.Close();
 			}
 			catch (System.IO.IOException e)
 			{
-				System.Console.Error.WriteLine(e.StackTrace);
+                System.Console.Error.WriteLine(e.StackTrace);
 				Assert.IsTrue(false);
 			}
 		}
 		
-		private void  SetupDoc(Document doc, System.String text)
+		private void  SetupDoc(Lucene.Net.Documents.Document doc, System.String text)
 		{
-			doc.Add(Field.Text("Field", text, true));
+			doc.Add(new Field("field", text, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.YES));
 			//System.out.println("Document: " + doc);
 		}
 	}

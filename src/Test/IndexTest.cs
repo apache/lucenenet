@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using FileDocument = Lucene.Net.Demo.FileDocument;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+
 namespace Lucene.Net
 {
 	
@@ -28,13 +30,14 @@ namespace Lucene.Net
 			try
 			{
 				System.DateTime start = System.DateTime.Now;
-				// FIXME: OG: what's with this hard-coded dirs??
-				IndexWriter writer = new IndexWriter("F:\\test", new SimpleAnalyzer(), true);
+				System.String tempFileName = System.IO.Path.GetTempFileName();
+				System.String tempDirectory = System.IO.Path.GetDirectoryName(tempFileName);
+				tempFileName = System.IO.Path.GetFileName(tempFileName);
+				IndexWriter writer = new IndexWriter(System.IO.Path.Combine(tempDirectory, "luceneTest") + tempFileName + ".idx", new SimpleAnalyzer(), true);
+
+				writer.SetMergeFactor(20);
 				
-				writer.mergeFactor = 20;
-				
-				// FIXME: OG: what's with this hard-coded dirs??
-				IndexDocs(writer, new System.IO.FileInfo("F:\\recipes"));
+				IndexDocs(writer, new System.IO.FileInfo("/tmp"));
 				
 				writer.Optimize();
 				writer.Close();
@@ -46,17 +49,17 @@ namespace Lucene.Net
 				
 				System.Diagnostics.Process runtime = System.Diagnostics.Process.GetCurrentProcess();
 				
-                // System.Console.Out.Write(runtime.freeMemory());          // {{Aroush}} -- need to report how much free memory we have
+				// System.Console.Out.Write(java.lang.Runtime.freeMemory());    // {{Aroush}} how do we get freeMemory() in .NET?
 				System.Console.Out.WriteLine(" free memory before gc");
-				System.Console.Out.Write(System.GC.GetTotalMemory(true));
+				// System.Console.Out.Write(java.lang.Runtime.totalMemory());   // {{Aroush}} how do we get totalMemory() in .NET?
 				System.Console.Out.WriteLine(" total memory before gc");
 				
 				System.GC.Collect();
 				
-                // System.Console.Out.Write(runtime.freeMemory());          // {{Aroush}} -- need to report how much free memory we have
-                System.Console.Out.WriteLine(" free memory after gc");
-                System.Console.Out.Write(System.GC.GetTotalMemory(true));
-                System.Console.Out.WriteLine(" total memory after gc");
+				// System.Console.Out.Write(java.lang.Runtime.freeMemory());       // {{Aroush}} how do we get freeMemory() in .NET?
+				System.Console.Out.WriteLine(" free memory after gc");
+				// System.Console.Out.Write(java.lang.Runtime.totalMemory());    // {{Aroush}} how do we get totalMemory() in .NET?
+				System.Console.Out.WriteLine(" total memory after gc");
 			}
 			catch (System.Exception e)
 			{

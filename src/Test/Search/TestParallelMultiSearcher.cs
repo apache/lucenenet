@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
+	
 	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
-	public class TestParallelMultiSearcher : TestMultiSearcher
+	public class TestParallelMultiSearcher:TestMultiSearcher
 	{
+		
 		protected internal override MultiSearcher GetMultiSearcherInstance(Searcher[] searchers)
 		{
 			return new ParallelMultiSearcher(searchers);

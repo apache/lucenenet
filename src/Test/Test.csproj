@@ -32,7 +32,7 @@
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
-                    IncrementalBuild = "false"
+                    IncrementalBuild = "true"
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
@@ -123,12 +123,12 @@
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "..\bin\Debug\Lucene.Net.dll"
+                    HintPath = "..\Lucene.Net\bin\Debug\Lucene.Net.dll"
                 />
                 <Reference
                     Name = "DemoLib"
                     AssemblyName = "DemoLib"
-                    HintPath = "..\bin\Debug\DemoLib.dll"
+                    HintPath = "..\Demo\DemoLib\bin\Debug\DemoLib.dll"
                 />
             </References>
         </Build>
@@ -165,6 +165,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TestDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestHitIterator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TestSearch.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -185,7 +195,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Analysis\TestISOLatin1AccentFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Analysis\TestKeywordAnalyzer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Analysis\TestLengthFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Analysis\TestPerFieldAnalzyerWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Analysis\TestStandardAnalyzer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -195,73 +225,27 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Analysis\RU\RES1251.HTM"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\RESKOI8.HTM"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\RESUNICODE.HTM"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\STEMSUNICODE.TXT"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\TEST1251.TXT"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\TESTKOI8.TXT"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\TestRussianAnalyzer.cs"
+                    RelPath = "Analysis\TestStopFilter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Analysis\RU\TestRussianStem.cs"
+                    RelPath = "Document\TestBinaryDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Analysis\RU\TESTUNICODE.TXT"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Analysis\RU\WORDSUNICODE.TXT"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\AnalysisTestWords.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\stemsUnicode.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\test.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\test2.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\Words.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Data\wordsUnicode.txt"
-                    BuildAction = "Content"
+                    RelPath = "Document\TestDateTools.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Document\TestDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Document\TestNumberTools.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -271,17 +255,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index\DocTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Index\MockInputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Index\TermInfosTest.cs"
+                    RelPath = "Index\MockIndexInput.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -316,6 +290,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestIndexInput.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestIndexModifier.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestIndexReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -326,12 +310,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index\TestInputStream.cs"
+                    RelPath = "Index\TestMultiReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index\TestMultiReader.cs"
+                    RelPath = "Index\TestParallelReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -366,12 +350,37 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index\Store\FSDirectoryTestCase.cs"
+                    RelPath = "Index\TestWordlistLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\Store\TestFSDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\Store\TestRAMDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "QueryParser\TestMultiAnalyzer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "QueryParser\TestMultiFieldQueryParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "QueryParser\TestQueryParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\BaseTestRangeFilter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -386,7 +395,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\QueryUtils.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\SampleComparable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestBoolean2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestBooleanMinShouldMatch.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestBooleanOr.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -396,12 +425,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestBooleanQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestBooleanScorer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestCachingWrapperFilter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestConstantScoreRangeQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestCustomSearcherSort.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestDateFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestDisjunctionMaxQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -416,7 +470,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestFuzzyQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestMatchAllDocsQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestMultiPhraseQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestMultiSearcher.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestMultiSearcherRanking.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestMultiThreadTermVectors.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -456,6 +535,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestRangeFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestRangeQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -491,12 +575,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\Regex\TestRegexQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Regex\TestSpanRegexQuery.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\Spans\TestBasics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Search\Spans\TestSpans.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Spans\TestSpansAdvanced.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Spans\TestSpansAdvanced2.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -511,17 +615,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Util\StringHelperTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Util\TestBitVector.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Util\TestPriorityQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\TestSmallFloat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\TestStringHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Implements search over a single IndexReader.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
+	/// recommended to open only one IndexSearcher and use it for all of your searches.
+	/// 
+	/// <p>Note that you can only access Hits from an IndexSearcher as long as it is
+	/// not yet closed, otherwise an IOException will be thrown. 
 	/// </summary>
 	public class IndexSearcher : Searcher
 	{
@@ -39,13 +45,13 @@ namespace Lucene.Net.Search
 				this.bits = bits;
 				this.totalHits = totalHits;
 				this.hq = hq;
-                this.nDocs = nDocs;
-                this.enclosingInstance = enclosingInstance;
+				this.nDocs = nDocs;
+				this.enclosingInstance = enclosingInstance;
 			}
 			private System.Collections.BitArray bits;
 			private int[] totalHits;
 			private Lucene.Net.Search.HitQueue hq;
-            private int nDocs;
+			private int nDocs;
 			private IndexSearcher enclosingInstance;
 			public IndexSearcher Enclosing_Instance
 			{
@@ -55,19 +61,19 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-            private float minScore = 0.0f;
+			private float minScore = 0.0f;
 			public override void  Collect(int doc, float score)
 			{
 				if (score > 0.0f && (bits == null || bits.Get(doc)))
 				{
 					// skip docs not in bits
 					totalHits[0]++;
-                    if (hq.Size() < nDocs || score >= minScore)
-                    {
-                        hq.Insert(new ScoreDoc(doc, score));
-                        minScore = ((ScoreDoc) hq.Top()).score; // maintain minScore
-                    }
-                }
+					if (hq.Size() < nDocs || score >= minScore)
+					{
+						hq.Insert(new ScoreDoc(doc, score));
+						minScore = ((ScoreDoc) hq.Top()).score; // maintain minScore
+					}
+				}
 			}
 		}
 		private class AnonymousClassHitCollector1 : HitCollector
@@ -137,9 +143,14 @@ namespace Lucene.Net.Search
 				}
 			}
 		}
-		public /*internal*/ IndexReader reader;
+		internal IndexReader reader;
 		private bool closeReader;
 		
+        public IndexReader Reader
+        {
+            get {   return reader;  }
+        }
+
 		/// <summary>Creates a searcher searching the index in the named directory. </summary>
 		public IndexSearcher(System.String path) : this(IndexReader.Open(path), true)
 		{
@@ -161,12 +172,18 @@ namespace Lucene.Net.Search
 			this.closeReader = closeReader;
 		}
 		
+		/// <summary>Return the {@link IndexReader} this searches. </summary>
+		public virtual IndexReader GetIndexReader()
+		{
+			return reader;
+		}
+		
 		/// <summary> Note that the underlying IndexReader is not closed, if
 		/// IndexSearcher was constructed with IndexSearcher(IndexReader r).
 		/// If the IndexReader was supplied implicitly by specifying a directory, then
 		/// the IndexReader gets closed.
 		/// </summary>
-		public override void Close()
+		public override void  Close()
 		{
 			if (closeReader)
 				reader.Close();
@@ -191,31 +208,38 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override TopDocs Search(Query query, Filter filter, int nDocs)
+		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
-			Scorer scorer = query.Weight(this).Scorer(reader);
-			if (scorer == null)
-				return new TopDocs(0, new ScoreDoc[0]);
 			
-			System.Collections.BitArray bits = filter != null ? filter.Bits(reader) : null;
+			if (nDocs <= 0)
+			    // null might be returned from hq.top() below.
+				throw new System.ArgumentException("nDocs must be > 0");
+			
+			Scorer scorer = weight.Scorer(reader);
+			if (scorer == null)
+				return new TopDocs(0, new ScoreDoc[0], System.Single.NegativeInfinity);
+			
+			System.Collections.BitArray bits = filter != null?filter.Bits(reader):null;
 			HitQueue hq = new HitQueue(nDocs);
 			int[] totalHits = new int[1];
 			scorer.Score(new AnonymousClassHitCollector(bits, totalHits, hq, nDocs, this));
 			
 			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
+			    // put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			return new TopDocs(totalHits[0], scoreDocs);
+			float maxScore = (totalHits[0] == 0) ? System.Single.NegativeInfinity : scoreDocs[0].score;
+			
+			return new TopDocs(totalHits[0], scoreDocs, maxScore);
 		}
 		
 		// inherit javadoc
-		public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
+		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
 		{
-			Scorer scorer = query.Weight(this).Scorer(reader);
+			Scorer scorer = weight.Scorer(reader);
 			if (scorer == null)
-				return new TopFieldDocs(0, new ScoreDoc[0], sort.fields);
+				return new TopFieldDocs(0, new ScoreDoc[0], sort.fields, System.Single.NegativeInfinity);
 			
 			System.Collections.BitArray bits = filter != null ? filter.Bits(reader) : null;
 			FieldSortedHitQueue hq = new FieldSortedHitQueue(reader, sort.fields, nDocs);
@@ -227,12 +251,11 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = hq.FillFields((FieldDoc) hq.Pop());
 			
-			return new TopFieldDocs(totalHits[0], scoreDocs, hq.GetFields());
+			return new TopFieldDocs(totalHits[0], scoreDocs, hq.GetFields(), hq.GetMaxScore());
 		}
 		
-		
 		// inherit javadoc
-		public override void  Search(Query query, Filter filter, HitCollector results)
+		public override void  Search(Weight weight, Filter filter, HitCollector results)
 		{
 			HitCollector collector = results;
 			if (filter != null)
@@ -241,7 +264,7 @@ namespace Lucene.Net.Search
 				collector = new AnonymousClassHitCollector2(bits, results, this);
 			}
 			
-			Scorer scorer = query.Weight(this).Scorer(reader);
+			Scorer scorer = weight.Scorer(reader);
 			if (scorer == null)
 				return ;
 			scorer.Score(collector);
@@ -257,9 +280,9 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-		public override Explanation Explain(Query query, int doc)
+		public override Explanation Explain(Weight weight, int doc)
 		{
-			return query.Weight(this).Explain(reader, doc);
+			return weight.Explain(reader, doc);
 		}
 	}
 }

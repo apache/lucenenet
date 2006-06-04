@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 	[TestFixture]
 	public class TestPriorityQueue
 	{
+		
 		private class IntegerQueue : PriorityQueue
 		{
-			public IntegerQueue(int count) : base()
+			public IntegerQueue(int count):base()
 			{
 				Initialize(count);
 			}
 			
+			//UPGRADE_NOTE: Access modifiers of method 'LessThan' were changed to 'public'. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1204'"
 			public override bool LessThan(System.Object a, System.Object b)
 			{
 				return ((System.Int32) a) < ((System.Int32) b);
@@ -36,19 +40,18 @@ namespace Lucene.Net.Util
 		[Test]
         public virtual void  TestPQ()
 		{
-			_TestPQ(10000);
+			_TestPQ2(10000);
 		}
 		
-        public static void  _TestPQ(int count)
+        public static void  _TestPQ2(int count)
 		{
 			PriorityQueue pq = new IntegerQueue(count);
 			System.Random gen = new System.Random();
 			int sum = 0, sum2 = 0;
 			
-			System.DateTime start = System.DateTime.Now;
-			
 			for (int i = 0; i < count; i++)
 			{
+				//UPGRADE_TODO: Method 'java.util.Random.nextInt' was converted to 'System.Random.Next' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073'"
 				int next = gen.Next();
 				sum += next;
 				pq.Put((System.Object) next);
@@ -77,8 +80,8 @@ namespace Lucene.Net.Util
 			//      System.out.println(" microseconds/pop");
 		}
 		
-        [Test]
-		public virtual void  TestClear()
+		[Test]
+        public virtual void  TestClear()
 		{
 			PriorityQueue pq = new IntegerQueue(3);
 			pq.Put((System.Object) 2);
@@ -89,8 +92,8 @@ namespace Lucene.Net.Util
 			Assert.AreEqual(0, pq.Size());
 		}
 		
-        [Test]
-		public virtual void  TestFixedSize()
+		[Test]
+        public virtual void  TestFixedSize()
 		{
 			PriorityQueue pq = new IntegerQueue(3);
 			pq.Insert((System.Object) 2);

@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
-	/// <summary> A memory-resident {@link InputStream} implementation.
+	
+	/// <summary> A memory-resident {@link IndexInput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMInputStream.java,v 1.2 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: RAMInputStream.java 150537 2004-09-28 20:45:26Z cutting $
 	/// </version>
 	
-	class RAMInputStream:InputStream, System.ICloneable
+	class RAMInputStream : BufferedIndexInput, System.ICloneable
 	{
 		private RAMFile file;
 		private int pointer = 0;
+		private long length;
 		
 		public RAMInputStream(RAMFile f)
 		{
@@ -60,11 +64,27 @@ namespace Lucene.Net.Store
 		{
 			pointer = (int) pos;
 		}
-        /*
-		override public System.Object Clone()
+		
+		public override long Length()
 		{
-			return null;
+			return length;
 		}
+
+        /*
+        // {{Aroush-1.9}} Do we need this Clone()?!
+		public override System.Object Clone()
+		{
+            SegmentTermEnum clone = null;
+            try
+            {
+                clone = (SegmentTermEnum) base.MemberwiseClone();
+            }
+            catch (System.Exception)
+            {
+            }
+
+            return clone;
+        }
         */
 	}
 }

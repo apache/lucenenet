@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Hits = Lucene.Net.Search.Hits;
 using Searcher = Lucene.Net.Search.Searcher;
+
 namespace Lucene.Net.Documents
 {
 	
 	/// <summary>Documents are the unit of indexing and search.
 	/// 
-	/// A Document is a set of fields.  Each Field has a name and a textual value.
-	/// A Field may be {@link Field#IsStored() stored} with the document, in which
+	/// A Document is a set of fields.  Each field has a name and a textual value.
+	/// A field may be {@link Field#IsStored() stored} with the document, in which
 	/// case it is returned with search hits on the document.  Thus each document
 	/// should typically contain one or more stored fields which uniquely identify
 	/// it.
@@ -37,7 +39,7 @@ namespace Lucene.Net.Documents
 	[Serializable]
 	public sealed class Document
 	{
-		public System.Collections.IList fields = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		internal System.Collections.IList fields = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		private float boost = 1.0f;
 		
 		/// <summary>Constructs a new document with no fields. </summary>
@@ -46,22 +48,22 @@ namespace Lucene.Net.Documents
 		}
 		
 		
-		/// <summary>Sets a boost factor for hits on any Field of this document.  This value
+		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
 		/// 
 		/// <p>Values are multiplied into the value of {@link Field#GetBoost()} of
-		/// each Field in this document.  Thus, this method in effect sets a default
+		/// each field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Field#SetBoost(float)">
+		/// <seealso cref="Field.SetBoost(float)">
 		/// </seealso>
 		public void  SetBoost(float boost)
 		{
 			this.boost = boost;
 		}
 		
-		/// <summary>Returns the boost factor for hits on any Field of this document.
+		/// <summary>Returns the boost factor for hits on any field of this document.
 		/// 
 		/// <p>The default value is 1.0.
 		/// 
@@ -71,14 +73,14 @@ namespace Lucene.Net.Documents
 		/// this document was indexed.
 		/// 
 		/// </summary>
-		/// <seealso cref="#SetBoost(float)">
+		/// <seealso cref="SetBoost(float)">
 		/// </seealso>
 		public float GetBoost()
 		{
 			return boost;
 		}
 		
-		/// <summary> <p>Adds a Field to a document.  Several fields may be added with
+		/// <summary> <p>Adds a field to a document.  Several fields may be added with
 		/// the same name.  In this case, if the fields are indexed, their text is
 		/// treated as though appended for the purposes of search.</p>
 		/// <p> Note that add like the removeField(s) methods only makes sense 
@@ -92,9 +94,9 @@ namespace Lucene.Net.Documents
 			fields.Add(field);
 		}
 		
-		/// <summary> <p>Removes Field with the specified name from the document.
-		/// If multiple fields exist with this name, this method removes the first Field that has been added.
-		/// If there is no Field with the specified name, the document remains unchanged.</p>
+		/// <summary> <p>Removes field with the specified name from the document.
+		/// If multiple fields exist with this name, this method removes the first field that has been added.
+		/// If there is no field with the specified name, the document remains unchanged.</p>
 		/// <p> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
@@ -116,7 +118,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> <p>Removes all fields with the given name from the document.
-		/// If there is no Field with the specified name, the document remains unchanged.</p>
+		/// If there is no field with the specified name, the document remains unchanged.</p>
 		/// <p> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
@@ -135,7 +137,7 @@ namespace Lucene.Net.Documents
             }
 		}
 		
-		/// <summary>Returns a Field with the given name if any exist in this document, or
+		/// <summary>Returns a field with the given name if any exist in this document, or
 		/// null.  If multiple fields exists with this name, this method returns the
 		/// first value added.
 		/// </summary>
@@ -150,36 +152,39 @@ namespace Lucene.Net.Documents
 			return null;
 		}
 		
-		/// <summary>Returns the string value of the Field with the given name if any exist in
+		/// <summary>Returns the string value of the field with the given name if any exist in
 		/// this document, or null.  If multiple fields exist with this name, this
-		/// method returns the first value added.
+		/// method returns the first value added. If only binary fields with this name
+		/// exist, returns null.
 		/// </summary>
 		public System.String Get(System.String name)
 		{
-			Field field = GetField(name);
-			if (field != null)
-				return field.StringValue();
-			else
-				return null;
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name) && (!field.IsBinary()))
+					return field.StringValue();
+			}
+			return null;
 		}
 		
 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
-		public System.Collections.IEnumerable Fields()
+		public System.Collections.IEnumerator Fields()
 		{
-            return (System.Collections.IEnumerable) fields;
+			return ((System.Collections.ArrayList) fields).GetEnumerator();
 		}
 		
 		/// <summary> Returns an array of {@link Field}s with the given name.
 		/// This method can return <code>null</code>.
 		/// 
 		/// </summary>
-		/// <param name="name">the name of the Field
+		/// <param name="name">the name of the field
 		/// </param>
 		/// <returns> a <code>Field[]</code> array
 		/// </returns>
 		public Field[] GetFields(System.String name)
 		{
-            System.Collections.ArrayList result = new System.Collections.ArrayList();
+			System.Collections.ArrayList result = new System.Collections.ArrayList();
 			for (int i = 0; i < fields.Count; i++)
 			{
 				Field field = (Field) fields[i];
@@ -192,28 +197,100 @@ namespace Lucene.Net.Documents
 			if (result.Count == 0)
 				return null;
 			
-            return (Field[]) result.ToArray(typeof(Field));
+			return (Field[]) result.ToArray(typeof(Field));
 		}
 		
-		/// <summary> Returns an array of values of the Field specified as the method parameter.
+		/// <summary> Returns an array of values of the field specified as the method parameter.
 		/// This method can return <code>null</code>.
 		/// 
 		/// </summary>
-		/// <param name="name">the name of the Field
+		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>String[]</code> of Field values
+		/// <returns> a <code>String[]</code> of field values
 		/// </returns>
 		public System.String[] GetValues(System.String name)
 		{
-			Field[] namedFields = GetFields(name);
-			if (namedFields == null)
-				return null;
-			System.String[] values = new System.String[namedFields.Length];
-			for (int i = 0; i < namedFields.Length; i++)
+			System.Collections.ArrayList result = new System.Collections.ArrayList();
+			for (int i = 0; i < fields.Count; i++)
 			{
-				values[i] = namedFields[i].StringValue();
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name) && (!field.IsBinary()))
+					result.Add(field.StringValue());
 			}
-			return values;
+			
+			if (result.Count == 0)
+				return null;
+			
+			return (System.String[]) (result.ToArray(typeof(System.String)));
+		}
+		
+		/// <summary> Returns an array of byte arrays for of the fields that have the name specified
+		/// as the method parameter. This method will return <code>null</code> if no
+		/// binary fields with the specified name are available.
+		/// 
+		/// </summary>
+		/// <param name="name">the name of the field
+		/// </param>
+		/// <returns> a  <code>byte[][]</code> of binary field values.
+		/// </returns>
+		public byte[][] GetBinaryValues(System.String name)
+		{
+			System.Collections.IList result = new System.Collections.ArrayList();
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name) && (field.IsBinary()))
+                {
+                    byte[] byteArray = field.BinaryValue();
+                    byte[] resultByteArray = new byte[byteArray.Length];
+                    for (int index = 0; index < byteArray.Length; index++)
+                        resultByteArray[index] = (byte) byteArray[index];
+
+                    result.Add(resultByteArray);
+                }
+            }
+			
+			if (result.Count == 0)
+				return null;
+			
+            System.Collections.ICollection c = result;
+            System.Object[] objects = new byte[result.Count][];
+
+            System.Type type = objects.GetType().GetElementType();
+            System.Object[] objs = (System.Object[]) Array.CreateInstance(type, c.Count );
+
+            System.Collections.IEnumerator e = c.GetEnumerator();
+            int ii = 0;
+
+            while (e.MoveNext())
+                objs[ii++] = e.Current;
+
+            // If objects is smaller than c then do not return the new array in the parameter
+            if (objects.Length >= c.Count)
+                objs.CopyTo(objects, 0);
+
+            return (byte[][]) objs;
+        }
+		
+		/// <summary> Returns an array of bytes for the first (or only) field that has the name
+		/// specified as the method parameter. This method will return <code>null</code>
+		/// if no binary fields with the specified name are available.
+		/// There may be non-binary fields with the same name.
+		/// 
+		/// </summary>
+		/// <param name="name">the name of the field.
+		/// </param>
+		/// <returns> a <code>byte[]</code> containing the binary field value.
+		/// </returns>
+		public byte[] GetBinaryValue(System.String name)
+		{
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name) && (field.IsBinary()))
+					return field.BinaryValue();
+			}
+			return null;
 		}
 		
 		/// <summary>Prints the fields of a document for human consumption. </summary>

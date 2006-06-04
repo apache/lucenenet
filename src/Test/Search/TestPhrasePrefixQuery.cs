@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -23,6 +24,7 @@ using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
@@ -31,27 +33,28 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Otis Gospodnetic
 	/// </author>
-	/// <version>  $Id: TestPhrasePrefixQuery.java,v 1.3 2004/03/29 22:48:06 cutting Exp $
+	/// <version>  $Id: TestPhrasePrefixQuery.java 150497 2004-09-07 18:26:36Z dnaber $
 	/// </version>
 	[TestFixture]
     public class TestPhrasePrefixQuery
 	{
+		
 		/// <summary> </summary>
 		[Test]
-		public virtual void  TestPhrasePrefix()
+        public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
-			Document doc1 = new Document();
-			Document doc2 = new Document();
-			Document doc3 = new Document();
-			Document doc4 = new Document();
-			Document doc5 = new Document();
-			doc1.Add(Field.Text("body", "blueberry pie"));
-			doc2.Add(Field.Text("body", "blueberry strudel"));
-			doc3.Add(Field.Text("body", "blueberry pizza"));
-			doc4.Add(Field.Text("body", "blueberry chewing gum"));
-			doc5.Add(Field.Text("body", "piccadilly circus"));
+			Lucene.Net.Documents.Document doc1 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document doc2 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document doc3 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document doc4 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document doc5 = new Lucene.Net.Documents.Document();
+			doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.TOKENIZED));
+			doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.TOKENIZED));
+			doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.TOKENIZED));
+			doc4.Add(new Field("body", "blueberry chewing gum", Field.Store.YES, Field.Index.TOKENIZED));
+			doc5.Add(new Field("body", "piccadilly circus", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc1);
 			writer.AddDocument(doc2);
 			writer.AddDocument(doc3);

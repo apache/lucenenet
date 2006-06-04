@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Searcher = Lucene.Net.Search.Searcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
+	
 	[TestFixture]
 	public class TestFilterIndexReader
 	{
+		
 		private class TestReader : FilterIndexReader
 		{
 			
 			/// <summary>Filter that only permits terms containing 'e'.</summary>
 			private class TestTermEnum : FilterTermEnum
 			{
-				public TestTermEnum(TermEnum termEnum) : base(termEnum)
+				public TestTermEnum(TermEnum termEnum):base(termEnum)
 				{
 				}
 				
@@ -46,7 +43,7 @@ namespace Lucene.Net.Index
 				{
 					while (in_Renamed.Next())
 					{
-						if (in_Renamed.Term().Text().IndexOf((System.Char) 'e') != - 1)
+						if (in_Renamed.Term().Text().IndexOf('e') != - 1)
 							return true;
 					}
 					return false;
@@ -56,7 +53,7 @@ namespace Lucene.Net.Index
 			/// <summary>Filter that only returns odd numbered documents. </summary>
 			private class TestTermPositions : FilterTermPositions
 			{
-				public TestTermPositions(TermPositions in_Renamed):base(in_Renamed)
+                public TestTermPositions(TermPositions in_Renamed) : base(in_Renamed)
 				{
 				}
 				
@@ -94,26 +91,27 @@ namespace Lucene.Net.Index
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestIndexReader)));   // {{Aroush}} where is 'Run' in NUnit?
 		}
 		
 		/// <summary> Tests the IndexReader.getFieldNames implementation</summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-		public virtual void  TestFilterIndexReader_()
+        public virtual void  TestFilterIndexReader_Renamed_Method()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			
-			Document d1 = new Document();
-			d1.Add(Field.Text("default", "one two"));
+			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			d1.Add(new Field("default", "one two", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(d1);
 			
-			Document d2 = new Document();
-			d2.Add(Field.Text("default", "one three"));
+			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+			d2.Add(new Field("default", "one three", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(d2);
 			
-			Document d3 = new Document();
-			d3.Add(Field.Text("default", "two four"));
+			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
+			d3.Add(new Field("default", "two four", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(d3);
 			
 			writer.Close();
@@ -123,7 +121,7 @@ namespace Lucene.Net.Index
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
-				Assert.IsTrue(terms.Term().Text().IndexOf((System.Char) 'e') != - 1);
+				Assert.IsTrue(terms.Term().Text().IndexOf('e') != - 1);
 			}
 			terms.Close();
 			

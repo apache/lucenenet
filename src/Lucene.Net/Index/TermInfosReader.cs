@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
+
 namespace Lucene.Net.Index
 {
 	
@@ -23,7 +25,7 @@ namespace Lucene.Net.Index
 	/// set.  
 	/// </summary>
 	
-	sealed public class TermInfosReader
+	public sealed class TermInfosReader
 	{
 		private Directory directory;
 		private System.String segment;
@@ -33,15 +35,34 @@ namespace Lucene.Net.Index
 		private SegmentTermEnum origEnum;
 		private long size;
 		
+		private Term[] indexTerms = null;
+		private TermInfo[] indexInfos;
+		private long[] indexPointers;
+		
+		private SegmentTermEnum indexEnum;
+		
 		public /*internal*/ TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
 		{
 			directory = dir;
 			segment = seg;
 			fieldInfos = fis;
 			
-			origEnum = new SegmentTermEnum(directory.OpenFile(segment + ".tis"), fieldInfos, false);
+			origEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tis"), fieldInfos, false);
 			size = origEnum.size;
-			ReadIndex();
+			
+			indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
+		}
+		
+		~TermInfosReader()
+		{
+            try
+            {
+                // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+                System.Threading.Thread.SetData(enumerators, null);     // {{Aroush-1.9}} is this required for .NET ?!
+            }
+            catch (Exception)
+            {
+            }
 		}
 		
 		public int GetSkipInterval()
@@ -53,6 +74,8 @@ namespace Lucene.Net.Index
 		{
 			if (origEnum != null)
 				origEnum.Close();
+			if (indexEnum != null)
+				indexEnum.Close();
 		}
 		
 		/// <summary>Returns the number of term/value pairs in the set. </summary>
@@ -72,31 +95,33 @@ namespace Lucene.Net.Index
 			return termEnum;
 		}
 		
-		internal Term[] indexTerms = null;
-		internal TermInfo[] indexInfos;
-		internal long[] indexPointers;
-		
-		private void  ReadIndex()
+		private void  EnsureIndexIsRead()
 		{
-			SegmentTermEnum indexEnum = new SegmentTermEnum(directory.OpenFile(segment + ".tii"), fieldInfos, true);
-			try
+			lock (this)
 			{
-				int indexSize = (int) indexEnum.size;
-				
-				indexTerms = new Term[indexSize];
-				indexInfos = new TermInfo[indexSize];
-				indexPointers = new long[indexSize];
-				
-				for (int i = 0; indexEnum.Next(); i++)
+				if (indexTerms != null)
+				// index already read
+					return ; // do nothing
+				try
 				{
-					indexTerms[i] = indexEnum.Term();
-					indexInfos[i] = indexEnum.TermInfo();
-					indexPointers[i] = indexEnum.indexPointer;
+					int indexSize = (int) indexEnum.size; // otherwise read index
+					
+					indexTerms = new Term[indexSize];
+					indexInfos = new TermInfo[indexSize];
+					indexPointers = new long[indexSize];
+					
+					for (int i = 0; indexEnum.Next(); i++)
+					{
+						indexTerms[i] = indexEnum.Term();
+						indexInfos[i] = indexEnum.TermInfo();
+						indexPointers[i] = indexEnum.indexPointer;
+					}
 				}
-			}
-			finally
-			{
-				indexEnum.Close();
+				finally
+				{
+					indexEnum.Close();
+					indexEnum = null;
+				}
 			}
 		}
 		
@@ -131,9 +156,11 @@ namespace Lucene.Net.Index
 			if (size == 0)
 				return null;
 			
+			EnsureIndexIsRead();
+			
 			// optimize sequential access: first try scanning cached enum w/o seeking
 			SegmentTermEnum enumerator = GetEnum();
-			if (enumerator.Term() != null && ((enumerator.prev != null && term.CompareTo(enumerator.prev) > 0) || term.CompareTo(enumerator.Term()) >= 0))
+			if (enumerator.Term() != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
 			{
 				int enumOffset = (int) (enumerator.position / enumerator.indexInterval) + 1;
 				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
@@ -149,9 +176,7 @@ namespace Lucene.Net.Index
 		private TermInfo ScanEnum(Term term)
 		{
 			SegmentTermEnum enumerator = GetEnum();
-			while (term.CompareTo(enumerator.Term()) > 0 && enumerator.Next())
-			{
-			}
+			enumerator.ScanTo(term);
 			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
 				return enumerator.TermInfo();
 			else
@@ -188,6 +213,7 @@ namespace Lucene.Net.Index
 			if (size == 0)
 				return - 1;
 			
+			EnsureIndexIsRead();
 			int indexOffset = GetIndexOffset(term);
 			SeekEnum(indexOffset);
 			

@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Lock = Lucene.Net.Store.Lock;
-using OutputStream = Lucene.Net.Store.OutputStream;
+
 namespace Lucene.Net.Index
 {
 	
@@ -29,8 +32,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
 	/// </author>
-    /// <version>  $Id: CompoundFileReader.java,v 1.7 2004/07/12 14:36:04 otis Exp $
-    /// </version>
+	/// <version>  $Id: CompoundFileReader.java 208905 2005-07-03 10:40:01Z dnaber $
+	/// </version>
 	public class CompoundFileReader : Directory
 	{
 		
@@ -45,10 +48,7 @@ namespace Lucene.Net.Index
 		private Directory directory;
 		private System.String fileName;
 		
-		// Reference count
-		private bool open;
-		
-		private InputStream stream;
+		private IndexInput stream;
 		private System.Collections.Hashtable entries = new System.Collections.Hashtable();
 		
 		
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				stream = dir.OpenFile(name);
+				stream = dir.OpenInput(name);
 				
 				// read the directory and init files
 				int count = stream.ReadVInt();
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 					{
 						stream.Close();
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 					}
 				}
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public override InputStream OpenFile(System.String id)
+		public override IndexInput OpenInput(System.String id)
 		{
 			lock (this)
 			{
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 				if (entry == null)
 					throw new System.IO.IOException("No sub-file with id " + id + " found");
 				
-				return new CSInputStream(stream, entry.offset, entry.length);
+				return new CSIndexInput(stream, entry.offset, entry.length);
 			}
 		}
 		
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
 		{
 			System.String[] res = new System.String[entries.Count];
             entries.Keys.CopyTo(res, 0);
-            return res;
+			return res;
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
@@ -157,34 +157,34 @@ namespace Lucene.Net.Index
 			return entries.ContainsKey(name);
 		}
 		
-		/// <summary>Returns the time the named file was last modified. </summary>
+		/// <summary>Returns the time the compound file was last modified. </summary>
 		public override long FileModified(System.String name)
 		{
 			return directory.FileModified(fileName);
 		}
 		
-		/// <summary>Set the modified time of an existing file to now. </summary>
+		/// <summary>Set the modified time of the compound file to now. </summary>
 		public override void  TouchFile(System.String name)
 		{
 			directory.TouchFile(fileName);
 		}
 		
-		/// <summary>Removes an existing file in the directory. </summary>
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
 		public override void  DeleteFile(System.String name)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Renames an existing file in the directory.
-		/// If a file already exists with the new name, then it is replaced.
-		/// This replacement should be atomic. 
-		/// </summary>
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Returns the length of a file in the directory. </summary>
+		/// <summary>Returns the length of a file in the directory.</summary>
+		/// <throws>  IOException if the file does not exist  </throws>
 		public override long FileLength(System.String name)
 		{
 			FileEntry e = (FileEntry) entries[name];
@@ -193,38 +193,37 @@ namespace Lucene.Net.Index
 			return e.length;
 		}
 		
-		/// <summary>Creates a new, empty file in the directory with the given name.
-		/// Returns a stream writing this file. 
-		/// </summary>
-		public override OutputStream CreateFile(System.String name)
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
+		public override IndexOutput CreateOutput(System.String name)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Construct a {@link Lock}.</summary>
-		/// <param name="name">the name of the lock file
-		/// </param>
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
 		public override Lock MakeLock(System.String name)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Implementation of an InputStream that reads from a portion of the
+		/// <summary>Implementation of an IndexInput that reads from a portion of the
 		/// compound file. The visibility is left as "package" *only* because
 		/// this helps with testing since JUnit test cases in a different class
 		/// can then access package fields of this class.
 		/// </summary>
-		public /*internal*/ sealed class CSInputStream : InputStream
+		public /*internal*/ sealed class CSIndexInput : BufferedIndexInput
 		{
 			
-			public /*internal*/ InputStream base_Renamed;
+			public /*internal*/ IndexInput base_Renamed;
 			internal long fileOffset;
+			internal long length;
 			
-			internal CSInputStream(InputStream base_Renamed, long fileOffset, long length)
+			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length)
 			{
 				this.base_Renamed = base_Renamed;
 				this.fileOffset = fileOffset;
-				this.length = length; // variable in the superclass
+				this.length = length;
 			}
 			
 			/// <summary>Expert: implements buffer refill.  Reads bytes from the current
@@ -234,7 +233,7 @@ namespace Lucene.Net.Index
 			/// </param>
 			/// <param name="offset">the offset in the array to start storing bytes
 			/// </param>
-			/// <param name="length">the number of bytes to read
+			/// <param name="len">the number of bytes to read
 			/// </param>
 			public override void  ReadInternal(byte[] b, int offset, int len)
 			{
@@ -251,15 +250,20 @@ namespace Lucene.Net.Index
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
 			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
 			/// </summary>
-			/// <seealso cref="#ReadInternal(byte[],int,int)">
+			/// <seealso cref="ReadInternal(byte[],int,int)">
 			/// </seealso>
 			public override void  SeekInternal(long pos)
 			{
 			}
 			
-			/// <summary>Closes the stream to futher operations. </summary>
+			/// <summary>Closes the stream to further operations. </summary>
 			public override void  Close()
 			{
+			}
+			
+			public override long Length()
+			{
+				return length;
 			}
 		}
 	}

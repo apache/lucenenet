@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using MultipleTermPositions = Lucene.Net.Index.MultipleTermPositions;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
@@ -29,12 +32,14 @@ namespace Lucene.Net.Search
 	/// terms) to add them to the query.
 	/// 
 	/// </summary>
+	/// <deprecated> use {@link Lucene.Net.search.MultiPhraseQuery} instead
+	/// </deprecated>
 	/// <author>  Anders Nielsen
 	/// </author>
 	/// <version>  1.0
 	/// </version>
 	[Serializable]
-	public class PhrasePrefixQuery:Query
+	public class PhrasePrefixQuery : Query
 	{
 		private System.String field;
 		private System.Collections.ArrayList termArrays = new System.Collections.ArrayList();
@@ -42,36 +47,36 @@ namespace Lucene.Net.Search
 		
 		private int slop = 0;
 		
-        /// <summary>Sets the phrase slop for this query.</summary>
-        /// <seealso cref="PhraseQuery#SetSlop(int)">
-        /// </seealso>
-        public virtual void  SetSlop(int s)
+		/// <summary>Sets the phrase slop for this query.</summary>
+		/// <seealso cref="PhraseQuery.SetSlop(int)">
+		/// </seealso>
+		public virtual void  SetSlop(int s)
 		{
 			slop = s;
 		}
 		
-        /// <summary>Sets the phrase slop for this query.</summary>
-        /// <seealso cref="PhraseQuery#GetSlop()">
-        /// </seealso>
-        public virtual int GetSlop()
+		/// <summary>Sets the phrase slop for this query.</summary>
+		/// <seealso cref="PhraseQuery.GetSlop()">
+		/// </seealso>
+		public virtual int GetSlop()
 		{
 			return slop;
 		}
 		
-        /// <summary>Add a single term at the next position in the phrase.</summary>
-        /// <seealso cref="PhraseQuery#Add(Term)">
-        /// </seealso>
-        public virtual void  Add(Term term)
+		/// <summary>Add a single term at the next position in the phrase.</summary>
+		/// <seealso cref="PhraseQuery.Add(Term)">
+		/// </seealso>
+		public virtual void  Add(Term term)
 		{
 			Add(new Term[]{term});
 		}
 		
-        /// <summary>Add multiple terms at the next position in the phrase.  Any of the terms
-        /// may match.
-        /// 
-        /// </summary>
-        /// <seealso cref="PhraseQuery#Add(Term)">
-        /// </seealso>
+		/// <summary>Add multiple terms at the next position in the phrase.  Any of the terms
+		/// may match.
+		/// 
+		/// </summary>
+		/// <seealso cref="PhraseQuery.Add(Term)">
+		/// </seealso>
 		public virtual void  Add(Term[] terms)
 		{
 			int position = 0;
@@ -81,42 +86,42 @@ namespace Lucene.Net.Search
 			Add(terms, position);
 		}
 		
-        /// <summary> Allows to specify the relative position of terms within the phrase.
-        /// 
-        /// </summary>
-        /// <seealso cref="int)">
-        /// </seealso>
-        /// <param name="">terms
-        /// </param>
-        /// <param name="">position
-        /// </param>
-        public virtual void  Add(Term[] terms, int position)
-        {
-            if (termArrays.Count == 0)
-                field = terms[0].Field();
+		/// <summary> Allows to specify the relative position of terms within the phrase.
+		/// 
+		/// </summary>
+		/// <seealso cref="PhraseQuery.Add(Term, int)">
+		/// </seealso>
+		/// <param name="terms">
+		/// </param>
+		/// <param name="position">
+		/// </param>
+		public virtual void  Add(Term[] terms, int position)
+		{
+			if (termArrays.Count == 0)
+				field = terms[0].Field();
 			
-            for (int i = 0; i < terms.Length; i++)
-            {
-                if (terms[i].Field() != field)
-                {
-                    throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
-                }
-            }
+			for (int i = 0; i < terms.Length; i++)
+			{
+				if (terms[i].Field() != field)
+				{
+					throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
+				}
+			}
 			
-            termArrays.Add(terms);
-            positions.Add((System.Int32) position);
-        }
+			termArrays.Add(terms);
+			positions.Add((System.Int32) position);
+		}
 		
-        /// <summary> Returns the relative positions of terms in this phrase.</summary>
-        public virtual int[] GetPositions()
-        {
-            int[] result = new int[positions.Count];
-            for (int i = 0; i < positions.Count; i++)
-                result[i] = ((System.Int32) positions[i]);
-            return result;
-        }
+		/// <summary> Returns the relative positions of terms in this phrase.</summary>
+		public virtual int[] GetPositions()
+		{
+			int[] result = new int[positions.Count];
+			for (int i = 0; i < positions.Count; i++)
+				result[i] = ((System.Int32) positions[i]);
+			return result;
+		}
 		
-        [Serializable]
+		[Serializable]
 		private class PhrasePrefixWeight : Weight
 		{
 			private void  InitBlock(PhrasePrefixQuery enclosingInstance)
@@ -124,31 +129,15 @@ namespace Lucene.Net.Search
 				this.enclosingInstance = enclosingInstance;
 			}
 			private PhrasePrefixQuery enclosingInstance;
-			virtual public Query Query
+			public PhrasePrefixQuery Enclosing_Instance
 			{
 				get
 				{
-					return Enclosing_Instance;
+					return enclosingInstance;
 				}
 				
 			}
-            virtual public float Value
-            {
-                get
-                {
-                    return value_Renamed;
-                }
-				
-            }
-            public PhrasePrefixQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-				
-            }
-            private Searcher searcher;
+			private Similarity similarity;
 			private float value_Renamed;
 			private float idf;
 			private float queryNorm;
@@ -157,19 +146,31 @@ namespace Lucene.Net.Search
 			public PhrasePrefixWeight(PhrasePrefixQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
-			}
-			
-			public virtual float SumOfSquaredWeights()
-			{
+				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				
+				// compute idf
 				System.Collections.IEnumerator i = Enclosing_Instance.termArrays.GetEnumerator();
 				while (i.MoveNext())
 				{
 					Term[] terms = (Term[]) i.Current;
 					for (int j = 0; j < terms.Length; j++)
+					{
 						idf += Enclosing_Instance.GetSimilarity(searcher).Idf(terms[j], searcher);
+					}
 				}
-				
+			}
+			
+			public virtual Query GetQuery()
+			{
+				return Enclosing_Instance;
+			}
+			public virtual float GetValue()
+			{
+				return value_Renamed;
+			}
+			
+			public virtual float SumOfSquaredWeights()
+			{
 				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
 				return queryWeight * queryWeight; // square it
 			}
@@ -205,21 +206,21 @@ namespace Lucene.Net.Search
 				}
 				
 				if (Enclosing_Instance.slop == 0)
-					return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.field));
+					return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, reader.Norms(Enclosing_Instance.field));
 				else
-					return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
+					return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				Explanation result = new Explanation();
-				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(" + Query + ")");
+				Explanation idfExpl = new Explanation(idf, "idf(" + GetQuery() + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -234,9 +235,9 @@ namespace Lucene.Net.Search
 				
 				result.AddDetail(queryExpl);
 				
-				// explain Field weight
+				// explain field weight
 				Explanation fieldExpl = new Explanation();
-				fieldExpl.SetDescription("fieldWeight(" + Query + " in " + doc + "), product of:");
+				fieldExpl.SetDescription("fieldWeight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				Explanation tfExpl = Scorer(reader).Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
@@ -246,7 +247,7 @@ namespace Lucene.Net.Search
 				byte[] fieldNorms = reader.Norms(Enclosing_Instance.field);
 				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):0.0f;
 				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(Field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
+				fieldNormExpl.SetDescription("fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
 				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
@@ -269,10 +270,10 @@ namespace Lucene.Net.Search
 			{
 				// optimize one-term case
 				Term[] terms = (Term[]) termArrays[0];
-				BooleanQuery boq = new BooleanQuery();
+				BooleanQuery boq = new BooleanQuery(true);
 				for (int i = 0; i < terms.Length; i++)
 				{
-					boq.Add(new TermQuery(terms[i]), false, false);
+					boq.Add(new TermQuery(terms[i]), BooleanClause.Occur.SHOULD);
 				}
 				boq.SetBoost(GetBoost());
 				return boq.CreateWeight(searcher);
@@ -295,10 +296,10 @@ namespace Lucene.Net.Search
 			while (i.MoveNext())
 			{
 				Term[] terms = (Term[]) i.Current;
-				buffer.Append(terms[0].Text() + (terms.Length > 0 ? "*" : ""));
-                if (i.MoveNext())
-                    buffer.Append(" ");
-            }
+				buffer.Append(terms[0].Text() + (terms.Length > 1?"*":""));
+				if (i.MoveNext())
+					buffer.Append(" ");
+			}
 			buffer.Append("\"");
 			
 			if (slop != 0)
@@ -307,14 +308,11 @@ namespace Lucene.Net.Search
 				buffer.Append(slop);
 			}
 			
-			if (GetBoost() != 1.0f)
-			{
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString());
-			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			
 			return buffer.ToString();
 		}
+        // {{Aroush-1.9}} Do we need this?!
 		override public System.Object Clone()
 		{
 			return null;

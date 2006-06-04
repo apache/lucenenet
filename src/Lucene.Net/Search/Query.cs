@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation
+ * Copyright 2002-2004 The Apache Software Foundation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
@@ -27,14 +29,14 @@ namespace Lucene.Net.Search
 	/// <li> {@link WildcardQuery}
 	/// <li> {@link PhraseQuery}
 	/// <li> {@link PrefixQuery}
-	/// <li> {@link PhrasePrefixQuery}
+	/// <li> {@link MultiPhraseQuery}
 	/// <li> {@link FuzzyQuery}
 	/// <li> {@link RangeQuery}
-	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
+	/// <li> {@link Lucene.Net.search.spans.SpanQuery}
 	/// </ul>
 	/// <p>A parser for queries is contained in:
 	/// <ul>
-	/// <li>{@link Lucene.Net.QueryParser.QueryParser QueryParser}
+	/// <li>{@link Lucene.Net.queryParser.QueryParser QueryParser}
 	/// </ul>
 	/// </summary>
 	[Serializable]
@@ -60,11 +62,18 @@ namespace Lucene.Net.Search
 			return boost;
 		}
 		
-		/// <summary>Prints a query to a string, with <code>Field</code> as the default Field
-		/// for terms.  <p>The representation used is one that is readable by
-		/// {@link Lucene.Net.QueryParser.QueryParser QueryParser}
-		/// (although, if the query was created by the parser, the printed
-		/// representation may not be exactly what was parsed).
+		/// <summary>Prints a query to a string, with <code>field</code> as the default field
+		/// for terms.  <p>The representation used is one that is supposed to be readable
+		/// by {@link Lucene.Net.queryParser.QueryParser QueryParser}. However,
+		/// there are the following limitations:
+		/// <ul>
+		/// <li>If the query was created by the parser, the printed
+		/// representation may not be exactly what was parsed. For example,
+		/// characters that need to be escaped will be represented without
+		/// the required backslash.</li>
+		/// <li>Some of the more complicated queries (e.g. span queries)
+		/// don't have a representation that can be parsed by QueryParser.</li>
+		/// </ul>
 		/// </summary>
 		public abstract System.String ToString(System.String field);
 		
@@ -83,7 +92,7 @@ namespace Lucene.Net.Search
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Expert: Constructs an initializes a Weight for a top-level query. </summary>
+		/// <summary>Expert: Constructs and initializes a Weight for a top-level query. </summary>
 		public virtual Weight Weight(Searcher searcher)
 		{
 			Query query = searcher.Rewrite(this);
@@ -94,7 +103,10 @@ namespace Lucene.Net.Search
 			return weight;
 		}
 		
-		/// <summary>Expert: called to re-write queries into primitive queries. </summary>
+		/// <summary>Expert: called to re-write queries into primitive queries. For example,
+		/// a PrefixQuery will be rewritten into a BooleanQuery that consists
+		/// of TermQuerys.
+		/// </summary>
 		public virtual Query Rewrite(IndexReader reader)
 		{
 			return this;
@@ -102,11 +114,74 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Expert: called when re-writing queries under MultiSearcher.
 		/// 
-		/// <p>Only implemented by derived queries, with no
-		/// {@link #CreateWeight(Searcher)} implementatation.
+		/// Create a single query suitable for use by all subsearchers (in 1-1
+		/// correspondence with queries). This is an optimization of the OR of
+		/// all queries. We handle the common optimization cases of equal
+		/// queries and overlapping clauses of boolean OR queries (as generated
+		/// by MultiTermQuery.rewrite() and RangeQuery.rewrite()).
+		/// Be careful overriding this method as queries[0] determines which
+		/// method will be called and is not necessarily of the same type as
+		/// the other queries.
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
+			System.Collections.Hashtable uniques = new System.Collections.Hashtable();
+			for (int i = 0; i < queries.Length; i++)
+			{
+				Query query = queries[i];
+				BooleanClause[] clauses = null;
+				// check if we can split the query into clauses
+				bool splittable = (query is BooleanQuery);
+				if (splittable)
+				{
+					BooleanQuery bq = (BooleanQuery) query;
+					splittable = bq.IsCoordDisabled();
+					clauses = bq.GetClauses();
+					for (int j = 0; splittable && j < clauses.Length; j++)
+					{
+						splittable = (clauses[j].GetOccur() == BooleanClause.Occur.SHOULD);
+					}
+				}
+				if (splittable)
+				{
+					for (int j = 0; j < clauses.Length; j++)
+					{
+                        Query tmp = clauses[j].GetQuery();
+						uniques.Add(tmp, tmp);
+					}
+				}
+				else
+				{
+                    if (uniques.Contains(query) == false)
+                    {
+                        uniques.Add(query, query);
+                    }
+				}
+			}
+			// optimization: if we have just one query, just return it
+			if (uniques.Count == 1)
+			{
+                System.Collections.IDictionaryEnumerator iter = uniques.GetEnumerator();
+                iter.MoveNext();
+                return iter.Value as Query;
+			}
+			System.Collections.IDictionaryEnumerator it = uniques.GetEnumerator();
+			BooleanQuery result = new BooleanQuery(true);
+			while (it.MoveNext())
+			{
+				result.Add((Query) it.Value, BooleanClause.Occur.SHOULD);
+			}
+			return result;
+		}
+		
+		/// <summary> Expert: adds all terms occuring in this query to the terms set. Only
+		/// works if this query is in its {@link #rewrite rewritten} form.
+		/// 
+		/// </summary>
+		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
+		public virtual void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();
 		}
 		
@@ -128,12 +203,13 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-            BooleanQuery result = new BooleanQuery();
+			bool coordDisabled = queries.Length == 0 ? false : ((BooleanQuery) queries[0]).IsCoordDisabled();
+			BooleanQuery result = new BooleanQuery(coordDisabled);
             foreach (BooleanClause booleanClause in allClauses.Keys)
             {
                 result.Add(booleanClause);
             }
-            return result;
+			return result;
 		}
 		
 		/// <summary>Expert: Returns the Similarity implementation to be used for this query.
@@ -151,7 +227,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				return (Query) this.MemberwiseClone();
+				return (Query) base.MemberwiseClone();
 			}
 			catch (System.Exception e)
 			{

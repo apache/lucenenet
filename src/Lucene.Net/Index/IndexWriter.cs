@@ -13,31 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
 using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Lock = Lucene.Net.Store.Lock;
-using OutputStream = Lucene.Net.Store.OutputStream;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
 	
 	
 	/// <summary>An IndexWriter creates and maintains an index.
-	/// The third argument to the <a href="#IndexWriter"><b>constructor</b></a>
+	/// The third argument to the 
+	/// <a href="#IndexWriter(Lucene.Net.store.Directory, Lucene.Net.analysis.Analyzer, boolean)"><b>constructor</b></a>
 	/// determines whether a new index is created, or whether an existing index is
 	/// opened for the addition of new documents.
 	/// In either case, documents are added with the <a
-	/// href="#addDocument"><b>addDocument</b></a> method.  When finished adding
-	/// documents, <a href="#close"><b>close</b></a> should be called.
-	/// If an index will not have more documents added for a while and optimal search
-	/// performance is desired, then the <a href="#optimize"><b>optimize</b></a>
+	/// href="#addDocument(Lucene.Net.document.Document)"><b>addDocument</b></a> method.  
+	/// When finished adding documents, <a href="#close()"><b>close</b></a> should be called.
+	/// <p>If an index will not have more documents added for a while and optimal search
+	/// performance is desired, then the <a href="#optimize()"><b>optimize</b></a>
 	/// method should be called before the index is closed.
 	/// </summary>
+	/// <summary><p>Opening an IndexWriter creates a lock file for the directory in use. Trying to open
+	/// another IndexWriter on the same directory will lead to an IOException. The IOException
+	/// is also thrown if an IndexReader on the same directory is used to delete documents
+	/// from the index.
+	/// </summary>
+	/// <seealso cref="IndexModifier IndexModifier supports the important methods of IndexWriter plus deletion">
+	/// </seealso>
 	
 	public class IndexWriter
 	{
@@ -58,7 +68,7 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith(bool create, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			internal AnonymousClassWith(bool create, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
 			{
 				InitBlock(create, enclosingInstance);
 			}
@@ -72,31 +82,6 @@ namespace Lucene.Net.Index
 			}
 		}
 		private class AnonymousClassWith1 : Lock.With
-		{
-			private void  InitBlock(IndexWriter enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private IndexWriter enclosingInstance;
-			public IndexWriter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassWith1(IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
-			{
-				InitBlock(enclosingInstance);
-			}
-			public override System.Object DoBody()
-			{
-				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit changes
-				return null;
-			}
-		}
-		private class AnonymousClassWith2 : Lock.With
 		{
 			private void  InitBlock(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance)
 			{
@@ -113,7 +98,67 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith2(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			internal AnonymousClassWith1(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(segmentsToDelete, enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit changes
+				Enclosing_Instance.DeleteSegments(segmentsToDelete); // delete now-unused segments
+				return null;
+			}
+		}
+		private class AnonymousClassWith2 : Lock.With
+		{
+			private void  InitBlock(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance)
+			{
+				this.mergedName = mergedName;
+				this.filesToDelete = filesToDelete;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private System.String mergedName;
+			private System.Collections.ArrayList filesToDelete;
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassWith2(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(mergedName, filesToDelete, enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				// make compound file visible for SegmentReaders
+				Enclosing_Instance.directory.RenameFile(mergedName + ".tmp", mergedName + ".cfs");
+				// delete now unused files of segment 
+				Enclosing_Instance.DeleteFiles(filesToDelete);
+				return null;
+			}
+		}
+		private class AnonymousClassWith3 : Lock.With
+		{
+			private void  InitBlock(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance)
+			{
+				this.segmentsToDelete = segmentsToDelete;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private System.Collections.ArrayList segmentsToDelete;
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassWith3(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
 			{
 				InitBlock(segmentsToDelete, enclosingInstance);
 			}
@@ -124,44 +169,70 @@ namespace Lucene.Net.Index
 				return null;
 			}
 		}
+		private class AnonymousClassWith4 : Lock.With
+		{
+			private void  InitBlock(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance)
+			{
+				this.mergedName = mergedName;
+				this.filesToDelete = filesToDelete;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private System.String mergedName;
+			private System.Collections.ArrayList filesToDelete;
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassWith4(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(mergedName, filesToDelete, enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				// make compound file visible for SegmentReaders
+				Enclosing_Instance.directory.RenameFile(mergedName + ".tmp", mergedName + ".cfs");
+				// delete now unused files of segment 
+				Enclosing_Instance.DeleteFiles(filesToDelete);
+				return null;
+			}
+		}
 		private void  InitBlock()
 		{
 			similarity = Similarity.GetDefault();
 		}
 		
-		/// <summary> Default value is 1000.  Use <code>Lucene.Net.writeLockTimeout</code>
-		/// system property to override.
-		/// </summary>
-		public static long WRITE_LOCK_TIMEOUT = SupportClass.AppSettings.Get("Lucene.Net.writeLockTimeout", 1000L);
+		/// <summary> Default value is 1,000.</summary>
+		public const long WRITE_LOCK_TIMEOUT = 1000;
 		
-		/// <summary> Default value is 10000.  Use <code>Lucene.Net.commitLockTimeout</code>
-		/// system property to override.
-		/// </summary>
-		public static long COMMIT_LOCK_TIMEOUT = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.commitLockTimeout", "10000"));
+		/// <summary> Default value is 10,000.</summary>
+		public const long COMMIT_LOCK_TIMEOUT = 10000;
 		
 		public const System.String WRITE_LOCK_NAME = "write.lock";
 		public const System.String COMMIT_LOCK_NAME = "commit.lock";
 		
-		/// <summary> Default value is 10.  Use <code>Lucene.Net.mergeFactor</code>
-		/// system property to override.
-		/// </summary>
-		public static readonly int DEFAULT_MERGE_FACTOR = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.mergeFactor", "10"));
+		/// <summary> Default value is 10. Change using {@link #SetMergeFactor(int)}.</summary>
+		public const int DEFAULT_MERGE_FACTOR = 10;
 		
-		/// <summary> Default value is 10.  Use <code>Lucene.Net.minMergeDocs</code>
-		/// system property to override.
-		/// </summary>
-		public static readonly int DEFAULT_MIN_MERGE_DOCS = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.minMergeDocs", "10"));
+		/// <summary> Default value is 10. Change using {@link #SetMaxBufferedDocs(int)}.</summary>
+		public const int DEFAULT_MAX_BUFFERED_DOCS = 10;
 		
-		/// <summary> Default value is {@link Integer#MAX_VALUE}.
-		/// Use <code>Lucene.Net.maxMergeDocs</code> system property to override.
-		/// </summary>
-		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.maxMergeDocs", System.Convert.ToString(System.Int32.MaxValue)));
+		/// <deprecated> use {@link #DEFAULT_MAX_BUFFERED_DOCS} instead
+		/// </deprecated>
+		public static readonly int DEFAULT_MIN_MERGE_DOCS = DEFAULT_MAX_BUFFERED_DOCS;
 		
-		/// <summary> Default value is 10000.  Use <code>Lucene.Net.maxFieldLength</code>
-		/// system property to override.
-		/// </summary>
-		public static readonly int DEFAULT_MAX_FIELD_LENGTH = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.maxFieldLength", "10000")); //// "5000000")); // "2147483647"));
+		/// <summary> Default value is {@link Integer#MAX_VALUE}. Change using {@link #SetMaxMergeDocs(int)}.</summary>
+		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
 		
+		/// <summary> Default value is 10,000. Change using {@link #SetMaxFieldLength(int)}.</summary>
+		public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
+		
+		/// <summary> Default value is 128. Change using {@link #SetTermIndexInterval(int)}.</summary>
+		public const int DEFAULT_TERM_INDEX_INTERVAL = 128;
 		
 		private Directory directory; // where this index resides
 		private Analyzer analyzer; // how to analyze text
@@ -173,6 +244,8 @@ namespace Lucene.Net.Index
 		
 		private Lock writeLock;
 		
+		private int termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
+		
 		/// <summary>Use compound file setting. Defaults to true, minimizing the number of
 		/// files used.  Setting this to false may improve indexing performance, but
 		/// may also cause file handle problems.
@@ -181,10 +254,12 @@ namespace Lucene.Net.Index
 		
 		private bool closeDir;
 		
-		/// <summary>Setting to turn on usage of a compound file. When on, multiple files
-		/// for each segment are merged into a single file once the segment creation
-		/// is finished. This is done regardless of what directory is in use.
+		/// <summary>Get the current setting of whether to use the compound file format.
+		/// Note that this just returns the value you set with setUseCompoundFile(boolean)
+		/// or the default. You cannot use this to query the status of an existing index.
 		/// </summary>
+		/// <seealso cref="SetUseCompoundFile(boolean)">
+		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
 			return useCompoundFile;
@@ -199,11 +274,10 @@ namespace Lucene.Net.Index
 			useCompoundFile = value_Renamed;
 		}
 		
-		
 		/// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
 		/// 
 		/// </summary>
-		/// <seealso cref="Similarity#SetDefault(Similarity)">
+		/// <seealso cref="Similarity.SetDefault(Similarity)">
 		/// </seealso>
 		public virtual void  SetSimilarity(Similarity similarity)
 		{
@@ -219,6 +293,43 @@ namespace Lucene.Net.Index
 			return this.similarity;
 		}
 		
+		/// <summary>Expert: Set the interval between indexed terms.  Large values cause less
+		/// memory to be used by IndexReader, but slow random-access to terms.  Small
+		/// values cause more memory to be used by an IndexReader, and speed
+		/// random-access to terms.
+		/// 
+		/// This parameter determines the amount of computation required per query
+		/// term, regardless of the number of documents that contain that term.  In
+		/// particular, it is the maximum number of other terms that must be
+		/// scanned before a term is located and its frequency and position information
+		/// may be processed.  In a large index with user-entered query terms, query
+		/// processing time is likely to be dominated not by term lookup but rather
+		/// by the processing of frequency and positional data.  In a small index
+		/// or when many uncommon query terms are generated (e.g., by wildcard
+		/// queries) term lookup may become a dominant cost.
+		/// 
+		/// In particular, <code>numUniqueTerms/interval</code> terms are read into
+		/// memory by an IndexReader, and, on average, <code>interval/2</code> terms
+		/// must be scanned for each random term access.
+		/// 
+		/// </summary>
+		/// <seealso cref="DEFAULT_TERM_INDEX_INTERVAL">
+		/// </seealso>
+		public virtual void  SetTermIndexInterval(int interval)
+		{
+			this.termIndexInterval = interval;
+		}
+		
+		/// <summary>Expert: Return the interval between indexed terms.
+		/// 
+		/// </summary>
+		/// <seealso cref="SetTermIndexInterval(int)">
+		/// </seealso>
+		public virtual int GetTermIndexInterval()
+		{
+			return termIndexInterval;
+		}
+		
 		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
 		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
 		/// is true, then a new, empty index will be created in
@@ -237,7 +348,7 @@ namespace Lucene.Net.Index
 		/// <summary>  if it does not exist, and <code>create</code> is
 		/// <code>false</code>
 		/// </summary>
-		public IndexWriter(System.String path, Analyzer a, bool create) :this(FSDirectory.GetDirectory(path, create), a, create, true)
+		public IndexWriter(System.String path, Analyzer a, bool create) : this(FSDirectory.GetDirectory(path, create), a, create, true)
 		{
 		}
 		
@@ -259,7 +370,7 @@ namespace Lucene.Net.Index
 		/// <summary>  if it does not exist, and <code>create</code> is
 		/// <code>false</code>
 		/// </summary>
-		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create):this(FSDirectory.GetDirectory(path, create), a, create, true)
+		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create) : this(FSDirectory.GetDirectory(path, create), a, create, true)
 		{
 		}
 		
@@ -281,7 +392,7 @@ namespace Lucene.Net.Index
 		/// <summary>  if it does not exist, and <code>create</code> is
 		/// <code>false</code>
 		/// </summary>
-		public IndexWriter(Directory d, Analyzer a, bool create):this(d, a, create, false)
+		public IndexWriter(Directory d, Analyzer a, bool create) : this(d, a, create, false)
 		{
 		}
 		
@@ -293,7 +404,7 @@ namespace Lucene.Net.Index
 			analyzer = a;
 			
 			Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-			if (!writeLock.Obtain(WRITE_LOCK_TIMEOUT))
+			if (!writeLock.obtain(WRITE_LOCK_TIMEOUT))
 			// obtain write lock
 			{
 				throw new System.IO.IOException("Index locked for write: " + writeLock);
@@ -307,6 +418,111 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		/// <summary>Determines the largest number of documents ever merged by addDocument().
+		/// Small values (e.g., less than 10,000) are best for interactive indexing,
+		/// as this limits the length of pauses while indexing to a few seconds.
+		/// Larger values are best for batched indexing and speedier searches.
+		/// 
+		/// <p>The default value is {@link Integer#MAX_VALUE}.
+		/// </summary>
+		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
+		{
+			this.maxMergeDocs = maxMergeDocs;
+		}
+		
+		/// <seealso cref="setMaxMergeDocs">
+		/// </seealso>
+		public virtual int GetMaxMergeDocs()
+		{
+			return maxMergeDocs;
+		}
+		
+		/// <summary> The maximum number of terms that will be indexed for a single field in a
+		/// document.  This limits the amount of memory required for indexing, so that
+		/// collections with very large files will not crash the indexing process by
+		/// running out of memory.<p/>
+		/// Note that this effectively truncates large documents, excluding from the
+		/// index terms that occur further in the document.  If you know your source
+		/// documents are large, be sure to set this value high enough to accomodate
+		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
+		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
+		/// By default, no more than 10,000 terms will be indexed for a field.
+		/// </summary>
+		public virtual void  SetMaxFieldLength(int maxFieldLength)
+		{
+			this.maxFieldLength = maxFieldLength;
+		}
+		
+		/// <seealso cref="setMaxFieldLength">
+		/// </seealso>
+		public virtual int GetMaxFieldLength()
+		{
+			return maxFieldLength;
+		}
+		
+		/// <summary>Determines the minimal number of documents required before the buffered
+		/// in-memory documents are merging and a new Segment is created.
+		/// Since Documents are merged in a {@link Lucene.Net.store.RAMDirectory},
+		/// large value gives faster indexing.  At the same time, mergeFactor limits
+		/// the number of files open in a FSDirectory.
+		/// 
+		/// <p> The default value is 10.
+		/// 
+		/// </summary>
+		/// <throws>  IllegalArgumentException if maxBufferedDocs is smaller than 1  </throws>
+		public virtual void  SetMaxBufferedDocs(int maxBufferedDocs)
+		{
+			if (maxBufferedDocs < 1)
+				throw new System.ArgumentException("maxBufferedDocs must at least be 1");
+			this.minMergeDocs = maxBufferedDocs;
+		}
+		
+		/// <seealso cref="setMaxBufferedDocs">
+		/// </seealso>
+		public virtual int GetMaxBufferedDocs()
+		{
+			return minMergeDocs;
+		}
+		
+		/// <summary>Determines how often segment indices are merged by addDocument().  With
+		/// smaller values, less RAM is used while indexing, and searches on
+		/// unoptimized indices are faster, but indexing speed is slower.  With larger
+		/// values, more RAM is used during indexing, and while searches on unoptimized
+		/// indices are slower, indexing is faster.  Thus larger values (> 10) are best
+		/// for batch index creation, and smaller values (< 10) for indices that are
+		/// interactively maintained.
+		/// 
+		/// <p>This must never be less than 2.  The default value is 10.
+		/// </summary>
+		public virtual void  SetMergeFactor(int mergeFactor)
+		{
+			if (mergeFactor < 2)
+				throw new System.ArgumentException("mergeFactor cannot be less than 2");
+			this.mergeFactor = mergeFactor;
+		}
+		
+		/// <seealso cref="setMergeFactor">
+		/// </seealso>
+		public virtual int GetMergeFactor()
+		{
+			return mergeFactor;
+		}
+		
+		/// <summary>If non-null, information about merges and a message when
+		/// maxFieldLength is reached will be printed to this.
+		/// </summary>
+		public virtual void  SetInfoStream(System.IO.TextWriter infoStream)
+		{
+			this.infoStream = infoStream;
+		}
+		
+		/// <seealso cref="setInfoStream">
+		/// </seealso>
+		public virtual System.IO.TextWriter GetInfoStream()
+		{
+			return infoStream;
+		}
+		
 		/// <summary>Flushes all changes to an index and closes all associated files. </summary>
 		public virtual void  Close()
 		{
@@ -314,12 +530,15 @@ namespace Lucene.Net.Index
 			{
 				FlushRamSegments();
 				ramDirectory.Close();
-				writeLock.Release(); // release write lock
-				writeLock = null;
+				if (writeLock != null)
+				{
+					writeLock.Release(); // release write lock
+					writeLock = null;
+				}
 				if (closeDir)
 					directory.Close();
-				System.GC.SuppressFinalize(this);
-			}
+                System.GC.SuppressFinalize(this);
+            }
 		}
 		
 		/// <summary>Release the write lock, if needed. </summary>
@@ -330,6 +549,12 @@ namespace Lucene.Net.Index
 				writeLock.Release(); // release write lock
 				writeLock = null;
 			}
+		}
+		
+		/// <summary>Returns the Directory used by this index. </summary>
+		public virtual Directory GetDirectory()
+		{
+			return directory;
 		}
 		
 		/// <summary>Returns the analyzer used by this index. </summary>
@@ -354,7 +579,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> The maximum number of terms that will be indexed for a single Field in a
+		/// <summary> The maximum number of terms that will be indexed for a single field in a
 		/// document.  This limits the amount of memory required for indexing, so that
 		/// collections with very large files will not crash the indexing process by
 		/// running out of memory.<p/>
@@ -363,12 +588,15 @@ namespace Lucene.Net.Index
 		/// documents are large, be sure to set this value high enough to accomodate
 		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-		/// By default, no more than 10,000 terms will be indexed for a Field.
+		/// By default, no more than 10,000 terms will be indexed for a field.
+		/// 
 		/// </summary>
+		/// <deprecated> use {@link #setMaxFieldLength} instead
+		/// </deprecated>
 		public int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
 		
 		/// <summary> Adds a document to this index.  If the document contains more than
-		/// {@link #maxFieldLength} terms for a given Field, the remainder are
+		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
 		public virtual void  AddDocument(Document doc)
@@ -378,12 +606,13 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Adds a document to this index, using the provided analyzer instead of the
 		/// value of {@link #GetAnalyzer()}.  If the document contains more than
-		/// {@link #maxFieldLength} terms for a given Field, the remainder are
+		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
 		public virtual void  AddDocument(Document doc, Analyzer analyzer)
 		{
-			DocumentWriter dw = new DocumentWriter(ramDirectory, analyzer, similarity, maxFieldLength);
+			DocumentWriter dw = new DocumentWriter(ramDirectory, analyzer, this);
+			dw.SetInfoStream(infoStream);
 			System.String segmentName = NewSegmentName();
 			dw.AddDocument(segmentName, doc);
 			lock (this)
@@ -402,7 +631,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				return "_" + SupportClass.Number.ToString(segmentInfos.counter++, SupportClass.Number.MAX_RADIX);
+                return "_" + SupportClass.Number.ToString(segmentInfos.counter++, SupportClass.Number.MAX_RADIX);
 			}
 		}
 		
@@ -416,16 +645,20 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p>This must never be less than 2.  The default value is 10.
 		/// </summary>
+		/// <deprecated> use {@link #setMergeFactor} instead
+		/// </deprecated>
 		public int mergeFactor = DEFAULT_MERGE_FACTOR;
 		
 		/// <summary>Determines the minimal number of documents required before the buffered
 		/// in-memory documents are merging and a new Segment is created.
-		/// Since Documents are merged in a {@link Lucene.Net.Store.RAMDirectory},
+		/// Since Documents are merged in a {@link Lucene.Net.store.RAMDirectory},
 		/// large value gives faster indexing.  At the same time, mergeFactor limits
 		/// the number of files open in a FSDirectory.
 		/// 
 		/// <p> The default value is 10.
 		/// </summary>
+		/// <deprecated> use {@link #setMaxBufferedDocs} instead
+		/// </deprecated>
 		public int minMergeDocs = DEFAULT_MIN_MERGE_DOCS;
 		
 		
@@ -434,11 +667,15 @@ namespace Lucene.Net.Index
 		/// as this limits the length of pauses while indexing to a few seconds.
 		/// Larger values are best for batched indexing and speedier searches.
 		/// 
-		/// <p>The default value is {@link Integer#MAX_VALUE}. 
+		/// <p>The default value is {@link Integer#MAX_VALUE}.
 		/// </summary>
+		/// <deprecated> use {@link #setMaxMergeDocs} instead
+		/// </deprecated>
 		public int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
 		
-		/// <summary>If non-null, information about merges will be printed to this. </summary>
+		/// <summary>If non-null, information about merges will be printed to this.</summary>
+		/// <deprecated> use {@link #setInfoStream} instead 
+		/// </deprecated>
 		public System.IO.TextWriter infoStream = null;
 		
 		/// <summary>Merges all segments together into a single segment, optimizing an index
@@ -472,6 +709,9 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				Optimize(); // start with zero or 1 seg
+				
+				int start = segmentInfos.Count;
+				
 				for (int i = 0; i < dirs.Length; i++)
 				{
 					SegmentInfos sis = new SegmentInfos(); // read infos from dir
@@ -481,6 +721,18 @@ namespace Lucene.Net.Index
 						segmentInfos.Add(sis.Info(j)); // add each info
 					}
 				}
+				
+				// merge newly added segments in log(n) passes
+				while (segmentInfos.Count > start + mergeFactor)
+				{
+					for (int base_Renamed = start + 1; base_Renamed < segmentInfos.Count; base_Renamed++)
+					{
+						int end = System.Math.Min(segmentInfos.Count, base_Renamed + mergeFactor);
+						if (end - base_Renamed > 1)
+							MergeSegments(base_Renamed, end);
+					}
+				}
+				
 				Optimize(); // final cleanup
 			}
 		}
@@ -497,25 +749,44 @@ namespace Lucene.Net.Index
 				Optimize(); // start with zero or 1 seg
 				
 				System.String mergedName = NewSegmentName();
-				SegmentMerger merger = new SegmentMerger(directory, mergedName, false);
+				SegmentMerger merger = new SegmentMerger(this, mergedName);
 				
+				System.Collections.ArrayList segmentsToDelete = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				IndexReader sReader = null;
 				if (segmentInfos.Count == 1)
-				// add existing index, if any
-					merger.Add(new SegmentReader(segmentInfos.Info(0)));
+				{
+					// add existing index, if any
+					sReader = SegmentReader.Get(segmentInfos.Info(0));
+					merger.Add(sReader);
+					segmentsToDelete.Add(sReader); // queue segment for deletion
+				}
 				
 				for (int i = 0; i < readers.Length; i++)
-				// add new indexes
+    				// add new indexes
 					merger.Add(readers[i]);
 				
 				int docCount = merger.Merge(); // merge 'em
 				
-				segmentInfos.Clear(); // pop old infos & add new
+				segmentInfos.RemoveRange(0, segmentInfos.Count - 0);  // pop old infos & add new
 				segmentInfos.Add(new SegmentInfo(mergedName, docCount, directory));
+				
+				if (sReader != null)
+					sReader.Close();
 				
 				lock (directory)
 				{
 					// in- & inter-process sync
-					new AnonymousClassWith1(this, directory.MakeLock("commit.lock"), COMMIT_LOCK_TIMEOUT).Run();
+					new AnonymousClassWith1(segmentsToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+				}
+				
+				if (useCompoundFile)
+				{
+					System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(mergedName + ".tmp");
+					lock (directory)
+					{
+						// in- & inter-process sync
+						new AnonymousClassWith2(mergedName, filesToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+					}
 				}
 			}
 		}
@@ -569,18 +840,26 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void  MergeSegments(int minSegment)
 		{
+			MergeSegments(minSegment, segmentInfos.Count);
+		}
+		
+		/// <summary>Merges the named range of segments, replacing them in the stack with a
+		/// single segment. 
+		/// </summary>
+		private void  MergeSegments(int minSegment, int end)
+		{
 			System.String mergedName = NewSegmentName();
 			if (infoStream != null)
 				infoStream.Write("merging segments");
-			SegmentMerger merger = new SegmentMerger(directory, mergedName, useCompoundFile);
+			SegmentMerger merger = new SegmentMerger(this, mergedName);
 			
 			System.Collections.ArrayList segmentsToDelete = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
-			for (int i = minSegment; i < segmentInfos.Count; i++)
+			for (int i = minSegment; i < end; i++)
 			{
 				SegmentInfo si = segmentInfos.Info(i);
 				if (infoStream != null)
 					infoStream.Write(" " + si.name + " (" + si.docCount + " docs)");
-				IndexReader reader = new SegmentReader(si);
+				IndexReader reader = SegmentReader.Get(si);
 				merger.Add(reader);
 				if ((reader.Directory() == this.directory) || (reader.Directory() == this.ramDirectory))
 					segmentsToDelete.Add(reader); // queue segment for deletion
@@ -593,7 +872,9 @@ namespace Lucene.Net.Index
 				infoStream.WriteLine(" into " + mergedName + " (" + mergedDocCount + " docs)");
 			}
 			
-			segmentInfos.RemoveRange(minSegment, segmentInfos.Count - minSegment); // pop old infos & add new
+			for (int i = end - 1; i >= minSegment; i--)
+    			// remove old infos & add new
+				segmentInfos.RemoveAt(i);
 			segmentInfos.Add(new SegmentInfo(mergedName, mergedDocCount, directory));
 			
 			// close readers before we attempt to delete now-obsolete segments
@@ -602,14 +883,26 @@ namespace Lucene.Net.Index
 			lock (directory)
 			{
 				// in- & inter-process sync
-				new AnonymousClassWith2(segmentsToDelete, this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+				new AnonymousClassWith3(segmentsToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+			}
+			
+			if (useCompoundFile)
+			{
+				System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(mergedName + ".tmp");
+				lock (directory)
+				{
+					// in- & inter-process sync
+					new AnonymousClassWith4(mergedName, filesToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+				}
 			}
 		}
 		
-		/* Some operating systems (e.g. Windows) don't permit a file to be deleted
-		while it is opened for read (e.g. by another process or thread).  So we
-		assume that when a delete fails it is because the file is open in another
-		process, and queue the file for subsequent deletion. */
+		/*
+		* Some operating systems (e.g. Windows) don't permit a file to be deleted
+		* while it is opened for read (e.g. by another process or thread). So we
+		* assume that when a delete fails it is because the file is open in another
+		* process, and queue the file for subsequent deletion.
+		*/
 		
 		private void  DeleteSegments(System.Collections.ArrayList segments)
 		{
@@ -627,6 +920,14 @@ namespace Lucene.Net.Index
 					DeleteFiles(reader.Files(), reader.Directory()); // delete other files
 			}
 			
+			WriteDeleteableFiles(deletable); // note files we can't delete
+		}
+		
+		private void  DeleteFiles(System.Collections.ArrayList files)
+		{
+			System.Collections.ArrayList deletable = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+			DeleteFiles(ReadDeleteableFiles(), deletable); // try to delete deleteable
+			DeleteFiles(files, deletable); // try to delete our files
 			WriteDeleteableFiles(deletable); // note files we can't delete
 		}
 		
@@ -652,7 +953,7 @@ namespace Lucene.Net.Index
 					{
 						if (infoStream != null)
 						{
-							infoStream.WriteLine(e.Message + "; Will re-try later.");
+							infoStream.WriteLine(e.ToString() + "; Will re-try later.");
 						}
 						deletable.Add(file); // add to deletable
 					}
@@ -663,10 +964,10 @@ namespace Lucene.Net.Index
 		private System.Collections.ArrayList ReadDeleteableFiles()
 		{
 			System.Collections.ArrayList result = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
-			if (!directory.FileExists("deletable"))
+			if (!directory.FileExists(IndexFileNames.DELETABLE))
 				return result;
 			
-			InputStream input = directory.OpenFile("deletable");
+			IndexInput input = directory.OpenInput(IndexFileNames.DELETABLE);
 			try
 			{
 				for (int i = input.ReadInt(); i > 0; i--)
@@ -682,7 +983,7 @@ namespace Lucene.Net.Index
 		
 		private void  WriteDeleteableFiles(System.Collections.ArrayList files)
 		{
-			OutputStream output = directory.CreateFile("deleteable.new");
+			IndexOutput output = directory.CreateOutput("deleteable.new");
 			try
 			{
 				output.WriteInt(files.Count);
@@ -693,7 +994,7 @@ namespace Lucene.Net.Index
 			{
 				output.Close();
 			}
-			directory.RenameFile("deleteable.new", "deletable");
+			directory.RenameFile("deleteable.new", IndexFileNames.DELETABLE);
 		}
 	}
 }

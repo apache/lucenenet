@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
 	/// <summary>Filters LetterTokenizer with LowerCaseFilter and StopFilter. </summary>
 	
-	public sealed class StopAnalyzer:Analyzer
+	public sealed class StopAnalyzer : Analyzer
 	{
 		private System.Collections.Hashtable stopWords;
 		
@@ -34,10 +36,32 @@ namespace Lucene.Net.Analysis
 			stopWords = StopFilter.MakeStopSet(ENGLISH_STOP_WORDS);
 		}
 		
+		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
+		public StopAnalyzer(System.Collections.Hashtable stopWords)
+		{
+			this.stopWords = stopWords;
+		}
+		
 		/// <summary>Builds an analyzer which removes words in the provided array. </summary>
 		public StopAnalyzer(System.String[] stopWords)
 		{
 			this.stopWords = StopFilter.MakeStopSet(stopWords);
+		}
+		
+		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
+		/// <seealso cref="WordlistLoader.GetWordSet(File)">
+		/// </seealso>
+		public StopAnalyzer(System.IO.FileInfo stopwordsFile)
+		{
+			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
+		}
+		
+		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
+		/// <seealso cref="WordlistLoader.GetWordSet(Reader)">
+		/// </seealso>
+		public StopAnalyzer(System.IO.TextReader stopwords)
+		{
+			stopWords = WordlistLoader.GetWordSet(stopwords);
 		}
 		
 		/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>

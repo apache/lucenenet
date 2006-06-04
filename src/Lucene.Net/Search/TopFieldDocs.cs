@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
+	
+	
 	/// <summary> Expert: Returned by low-level sorted search implementations.
 	/// 
 	/// <p>Created: Feb 12, 2004 8:58:46 AM 
@@ -25,12 +29,12 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: TopFieldDocs.java,v 1.2 2004/02/27 12:29:31 otis Exp $
+	/// <version>  $Id: TopFieldDocs.java 354819 2005-12-07 17:48:37Z yonik $
 	/// </version>
-	/// <seealso cref="Searchable#Search(Query,Filter,int,Sort)">
+	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 	/// </seealso>
 	[Serializable]
-	public class TopFieldDocs:TopDocs
+	public class TopFieldDocs : TopDocs
 	{
 		
 		/// <summary>The fields which were used to sort results by. </summary>
@@ -43,7 +47,9 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="fields">    The sort criteria used to find the top hits.
 		/// </param>
-		internal TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields):base(totalHits, scoreDocs)
+		/// <param name="maxScore">  The maximum score encountered.
+		/// </param>
+		internal TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore) : base(totalHits, scoreDocs, maxScore)
 		{
 			this.fields = fields;
 		}

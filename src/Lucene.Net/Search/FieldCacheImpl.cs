@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using StringIndex = Lucene.Net.Search.StringIndex;
+
 namespace Lucene.Net.Search
 {
 	
@@ -31,10 +34,24 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-    /// <version>  $Id: FieldCacheImpl.java,v 1.3.2.1 2004/09/30 19:10:26 dnaber Exp $
-    /// </version>
+	/// <version>  $Id: FieldCacheImpl.java 331964 2005-11-09 06:44:10Z otis $
+	/// </version>
 	class FieldCacheImpl : FieldCache
 	{
+		public class AnonymousClassIntParser : IntParser
+		{
+			public virtual int ParseInt(System.String value_Renamed)
+			{
+				return System.Int32.Parse(value_Renamed);
+			}
+		}
+		public class AnonymousClassFloatParser : FloatParser
+		{
+			public virtual float ParseFloat(System.String value_Renamed)
+			{
+				return System.Single.Parse(value_Renamed);
+			}
+		}
 		
 		/// <summary>Expert: Every key in the internal cache is of this type. </summary>
 		internal class Entry
@@ -46,18 +63,18 @@ namespace Lucene.Net.Search
 			/// <summary>Creates one of these objects. </summary>
 			internal Entry(System.String field, int type)
 			{
-                this.field = String.Intern(field);
-                this.type = type;
-                this.custom = null;
-            }
+				this.field = String.Intern(field);
+				this.type = type;
+				this.custom = null;
+			}
 			
 			/// <summary>Creates one of these objects for a custom comparator. </summary>
 			internal Entry(System.String field, System.Object custom)
 			{
-                this.field = String.Intern(field);
-                this.type = SortField.CUSTOM;
-                this.custom = custom;
-            }
+				this.field = String.Intern(field);
+				this.type = SortField.CUSTOM;
+				this.custom = custom;
+			}
 			
 			/// <summary>Two of these are equal iff they reference the same field and type. </summary>
 			public  override bool Equals(System.Object o)
@@ -84,10 +101,13 @@ namespace Lucene.Net.Search
 			/// <summary>Composes a hashcode based on the field and type. </summary>
 			public override int GetHashCode()
 			{
-				return field.GetHashCode() ^ type ^ (custom == null ? 0 : custom.GetHashCode());
+				return field.GetHashCode() ^ type ^ (custom == null?0:custom.GetHashCode());
 			}
 		}
 		
+		private static readonly IntParser INT_PARSER;
+		
+		private static readonly FloatParser FLOAT_PARSER;
 		
 		/// <summary>The internal cache. Maps Entry to array of interpreted term values. *</summary>
 		internal System.Collections.IDictionary cache = new System.Collections.Hashtable();
@@ -98,11 +118,11 @@ namespace Lucene.Net.Search
 			Entry entry = new Entry(field, type);
 			lock (this)
 			{
-                System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
-                if (readerCache == null)
-                    return null;
-                return readerCache[entry];
-            }
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
+				if (readerCache == null)
+					return null;
+				return readerCache[entry];
+			}
 		}
 		
 		/// <summary>See if a custom object is in the cache. </summary>
@@ -111,11 +131,11 @@ namespace Lucene.Net.Search
 			Entry entry = new Entry(field, comparer);
 			lock (this)
 			{
-                System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
-                if (readerCache == null)
-                    return null;
-                return readerCache[entry];
-            }
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
+				if (readerCache == null)
+					return null;
+				return readerCache[entry];
+			}
 		}
 		
 		/// <summary>Put an object into the cache. </summary>
@@ -124,17 +144,17 @@ namespace Lucene.Net.Search
 			Entry entry = new Entry(field, type);
 			lock (this)
 			{
-                System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
-                if (readerCache == null)
-                {
-                    readerCache = new System.Collections.Hashtable();
-                    cache[reader] = readerCache;
-                }
-                System.Object tempObject;
-                tempObject = readerCache[entry];
-                readerCache[entry] = value_Renamed;
-                return tempObject;
-            }
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
+				if (readerCache == null)
+				{
+					readerCache = new System.Collections.Hashtable();
+					cache[reader] = readerCache;
+				}
+				System.Object tempObject;
+				tempObject = readerCache[entry];
+				readerCache[entry] = value_Renamed;
+				return tempObject;
+			}
 		}
 		
 		/// <summary>Put a custom object into the cache. </summary>
@@ -143,24 +163,30 @@ namespace Lucene.Net.Search
 			Entry entry = new Entry(field, comparer);
 			lock (this)
 			{
-                System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
-                if (readerCache == null)
-                {
-                    readerCache = new System.Collections.Hashtable();
-                    cache[reader] = readerCache;
-                }
-                System.Object tempObject;
-                tempObject = readerCache[entry];
-                readerCache[entry] = value_Renamed;
-                return tempObject;
-            }
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
+				if (readerCache == null)
+				{
+					readerCache = new System.Collections.Hashtable();
+					cache[reader] = readerCache;
+				}
+				System.Object tempObject;
+				tempObject = readerCache[entry];
+				readerCache[entry] = value_Renamed;
+				return tempObject;
+			}
 		}
 		
 		// inherit javadocs
 		public virtual int[] GetInts(IndexReader reader, System.String field)
 		{
+			return GetInts(reader, field, INT_PARSER);
+		}
+		
+		// inherit javadocs
+		public virtual int[] GetInts(IndexReader reader, System.String field, IntParser parser)
+		{
 			field = String.Intern(field);
-			System.Object ret = Lookup(reader, field, SortField.INT);
+			System.Object ret = Lookup(reader, field, parser);
 			if (ret == null)
 			{
 				int[] retArray = new int[reader.MaxDoc()];
@@ -172,14 +198,14 @@ namespace Lucene.Net.Search
 					{
 						if (termEnum.Term() == null)
 						{
-							throw new System.SystemException("no terms in Field " + field);
+							throw new System.SystemException("no terms in field " + field);
 						}
 						do 
 						{
 							Term term = termEnum.Term();
 							if (term.Field() != field)
 								break;
-							int termval = System.Int32.Parse(term.Text());
+							int termval = parser.ParseInt(term.Text());
 							termDocs.Seek(termEnum);
 							while (termDocs.Next())
 							{
@@ -194,7 +220,7 @@ namespace Lucene.Net.Search
 						termEnum.Close();
 					}
 				}
-				Store(reader, field, SortField.INT, retArray);
+				Store(reader, field, parser, retArray);
 				return retArray;
 			}
 			return (int[]) ret;
@@ -203,8 +229,14 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual float[] GetFloats(IndexReader reader, System.String field)
 		{
+			return GetFloats(reader, field, FLOAT_PARSER);
+		}
+		
+		// inherit javadocs
+		public virtual float[] GetFloats(IndexReader reader, System.String field, FloatParser parser)
+		{
 			field = String.Intern(field);
-			System.Object ret = Lookup(reader, field, SortField.FLOAT);
+			System.Object ret = Lookup(reader, field, parser);
 			if (ret == null)
 			{
 				float[] retArray = new float[reader.MaxDoc()];
@@ -212,41 +244,33 @@ namespace Lucene.Net.Search
 				{
 					TermDocs termDocs = reader.TermDocs();
 					TermEnum termEnum = reader.Terms(new Term(field, ""));
-                    try
-                    {
-                        if (termEnum.Term() == null)
-                        {
-                            throw new System.SystemException("no terms in Field " + field);
-                        }
-                        do 
-                        {
-                            Term term = termEnum.Term();
-                            if (term.Field() != field)
-                                break;
-                            float termval;
-                            try
-                            {
-                                termval = SupportClass.Single.Parse(term.Text());
-                            }
-                            catch (Exception e)
-                            {
-                                termval = 0;
-                            }
-                            termDocs.Seek(termEnum);
-                            while (termDocs.Next())
-                            {
-                                retArray[termDocs.Doc()] = termval;
-                            }
-                        }
-                        while (termEnum.Next());
-                    }
-                    finally
-                    {
-                        termDocs.Close();
-                        termEnum.Close();
-                    }
+					try
+					{
+						if (termEnum.Term() == null)
+						{
+							throw new System.SystemException("no terms in field " + field);
+						}
+						do 
+						{
+							Term term = termEnum.Term();
+							if (term.Field() != field)
+								break;
+							float termval = parser.ParseFloat(term.Text());
+							termDocs.Seek(termEnum);
+							while (termDocs.Next())
+							{
+								retArray[termDocs.Doc()] = termval;
+							}
+						}
+						while (termEnum.Next());
+					}
+					finally
+					{
+						termDocs.Close();
+						termEnum.Close();
+					}
 				}
-				Store(reader, field, SortField.FLOAT, retArray);
+				Store(reader, field, parser, retArray);
 				return retArray;
 			}
 			return (float[]) ret;
@@ -268,7 +292,7 @@ namespace Lucene.Net.Search
 					{
 						if (termEnum.Term() == null)
 						{
-							throw new System.SystemException("no terms in Field " + field);
+							throw new System.SystemException("no terms in field " + field);
 						}
 						do 
 						{
@@ -311,7 +335,7 @@ namespace Lucene.Net.Search
 					TermEnum termEnum = reader.Terms(new Term(field, ""));
 					int t = 0; // current term number
 					
-					// an entry for documents that have no terms in this Field
+					// an entry for documents that have no terms in this field
 					// should a document with no terms be at top or bottom?
 					// this puts them at the top - if it is changed, FieldDocSortedHitQueue
 					// needs to change as well.
@@ -321,7 +345,7 @@ namespace Lucene.Net.Search
 					{
 						if (termEnum.Term() == null)
 						{
-							throw new System.SystemException("no terms in Field " + field);
+							throw new System.SystemException("no terms in field " + field);
 						}
 						do 
 						{
@@ -332,7 +356,7 @@ namespace Lucene.Net.Search
 							// store term text
 							// we expect that there is at most one term per document
 							if (t >= mterms.Length)
-								throw new System.SystemException("there are more terms than documents in Field \"" + field + "\"");
+								throw new System.SystemException("there are more terms than " + "documents in field \"" + field + "\", but it's impossible to sort on " + "tokenized fields");
 							mterms[t] = term.Text();
 							
 							termDocs.Seek(termEnum);
@@ -373,13 +397,13 @@ namespace Lucene.Net.Search
 			return (StringIndex) ret;
 		}
 		
-		/// <summary>The pattern used to detect integer values in a Field </summary>
+		/// <summary>The pattern used to detect integer values in a field </summary>
 		/// <summary>removed for java 1.3 compatibility
 		/// protected static final Pattern pIntegers = Pattern.compile ("[0-9\\-]+");
 		/// 
 		/// </summary>
 		
-		/// <summary>The pattern used to detect float values in a Field </summary>
+		/// <summary>The pattern used to detect float values in a field </summary>
 		/// <summary> removed for java 1.3 compatibility
 		/// protected static final Object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
 		/// </summary>
@@ -397,18 +421,21 @@ namespace Lucene.Net.Search
 					Term term = enumerator.Term();
 					if (term == null)
 					{
-						throw new System.SystemException("no terms in Field " + field + " - cannot determine sort type");
+						throw new System.SystemException("no terms in field " + field + " - cannot determine sort type");
 					}
 					if (term.Field() == field)
 					{
 						System.String termtext = term.Text().Trim();
 						
-						/// <summary> Java 1.4 level code:
-						/// if (pIntegers.matcher(termtext).matches())
-						/// return IntegerSortedHitQueue.comparator (reader, enumerator, Field);
-						/// else if (pFloats.matcher(termtext).matches())
-						/// return FloatSortedHitQueue.comparator (reader, enumerator, Field);
-						/// </summary>
+						/**
+						* Java 1.4 level code:
+						
+						if (pIntegers.matcher(termtext).matches())
+						return IntegerSortedHitQueue.comparator (reader, enumerator, field);
+						
+						else if (pFloats.matcher(termtext).matches())
+						return FloatSortedHitQueue.comparator (reader, enumerator, field);
+						*/
 						
 						// Java 1.3 level code:
 						try
@@ -435,7 +462,7 @@ namespace Lucene.Net.Search
 					}
 					else
 					{
-						throw new System.SystemException("Field \"" + field + "\" does not appear to be indexed");
+						throw new System.SystemException("field \"" + field + "\" does not appear to be indexed");
 					}
 				}
 				finally
@@ -462,7 +489,7 @@ namespace Lucene.Net.Search
 					{
 						if (termEnum.Term() == null)
 						{
-							throw new System.SystemException("no terms in Field " + field);
+							throw new System.SystemException("no terms in field " + field);
 						}
 						do 
 						{
@@ -484,10 +511,15 @@ namespace Lucene.Net.Search
 						termEnum.Close();
 					}
 				}
-				Store(reader, field, SortField.CUSTOM, retArray);
+				Store(reader, field, comparator, retArray);
 				return retArray;
 			}
 			return (System.IComparable[]) ret;
+		}
+		static FieldCacheImpl()
+		{
+			INT_PARSER = new AnonymousClassIntParser();
+			FLOAT_PARSER = new AnonymousClassFloatParser();
 		}
 	}
 }

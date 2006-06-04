@@ -13,27 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
+	
 	/// <summary>Expert: Returned by low-level search implementations.</summary>
-	/// <seealso cref="Searcher#Search(Query,Filter,int)">
+	/// <seealso cref="Searcher.Search(Query,Filter,int)">
 	/// </seealso>
 	[Serializable]
 	public class TopDocs
 	{
 		/// <summary>Expert: The total number of hits for the query.</summary>
-		/// <seealso cref="Hits#Length()">
+		/// <seealso cref="Hits.Length()">
 		/// </seealso>
 		public int totalHits;
 		/// <summary>Expert: The top hits for the query. </summary>
 		public ScoreDoc[] scoreDocs;
+		/// <summary>Expert: Stores the maximum score value encountered, needed for normalizing. </summary>
+		private float maxScore;
+		
+		/// <summary>Expert: Returns the maximum score value encountered. </summary>
+		public virtual float GetMaxScore()
+		{
+			return maxScore;
+		}
+		
+		/// <summary>Expert: Sets the maximum score value encountered. </summary>
+		public virtual void  SetMaxScore(float maxScore)
+		{
+			this.maxScore = maxScore;
+		}
 		
 		/// <summary>Expert: Constructs a TopDocs.</summary>
-		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs)
+		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
 		{
 			this.totalHits = totalHits;
 			this.scoreDocs = scoreDocs;
+			this.maxScore = maxScore;
 		}
 	}
 }

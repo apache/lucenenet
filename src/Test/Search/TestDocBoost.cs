@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation
+ * Copyright 2005 The Apache Software Foundation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
@@ -21,6 +22,7 @@ using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
 	
@@ -29,12 +31,12 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Revision: 1.4 $
+	/// <version>  $Revision: 150492 $
 	/// </version>
 	[TestFixture]
     public class TestDocBoost
 	{
-		private class AnonymousClassHitCollector:HitCollector
+		private class AnonymousClassHitCollector : HitCollector
 		{
 			public AnonymousClassHitCollector(float[] scores, TestDocBoost enclosingInstance)
 			{
@@ -61,20 +63,20 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        [Test]
-		public virtual void  TestDocBoost_()
+		[Test]
+        public virtual void  TestDocBoost_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
 			
-			Field f1 = Field.Text("Field", "word");
-			Field f2 = Field.Text("Field", "word");
+			Field f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Field f2 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
 			f2.SetBoost(2.0f);
 			
-			Document d1 = new Document();
-			Document d2 = new Document();
-			Document d3 = new Document();
-			Document d4 = new Document();
+			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
+			Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
 			d3.SetBoost(3.0f);
 			d4.SetBoost(2.0f);
 			
@@ -92,7 +94,7 @@ namespace Lucene.Net.Search
 			
 			float[] scores = new float[4];
 			
-			new IndexSearcher(store).Search(new TermQuery(new Term("Field", "word")), new AnonymousClassHitCollector(scores, this));
+			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassHitCollector(scores, this));
 			
 			float lastScore = 0.0f;
 			

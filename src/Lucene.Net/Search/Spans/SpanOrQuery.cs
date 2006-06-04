@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Query = Lucene.Net.Search.Query;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search.Spans
 {
 	
@@ -171,12 +175,12 @@ namespace Lucene.Net.Search.Spans
 				SpanQuery clause = clauses[i];
 				if (i == 0)
 				{
-					// check Field
+					// check field
 					field = clause.GetField();
 				}
 				else if (!clause.GetField().Equals(field))
 				{
-					throw new System.ArgumentException("Clauses must have same Field.");
+					throw new System.ArgumentException("Clauses must have same field.");
 				}
 				this.clauses.Add(clause);
 			}
@@ -205,6 +209,31 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
+		public override Query Rewrite(IndexReader reader)
+		{
+			SpanOrQuery clone = null;
+			for (int i = 0; i < clauses.Count; i++)
+			{
+				SpanQuery c = (SpanQuery) clauses[i];
+				SpanQuery query = (SpanQuery) c.Rewrite(reader);
+				if (query != c)
+				{
+					// clause rewrote: must clone
+					if (clone == null)
+						clone = (SpanOrQuery) this.Clone();
+					clone.clauses[i] = query;
+				}
+			}
+			if (clone != null)
+			{
+				return clone; // some clauses rewrote
+			}
+			else
+			{
+				return this; // no clauses rewrote
+			}
+		}
+		
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -220,10 +249,36 @@ namespace Lucene.Net.Search.Spans
 				}
 			}
 			buffer.Append("])");
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
-		private class SpanQueue:PriorityQueue
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (o == null || GetType() != o.GetType())
+				return false;
+			
+			SpanOrQuery that = (SpanOrQuery) o;
+			
+			if (!clauses.Equals(that.clauses))
+				return false;
+			if (!field.Equals(that.field))
+				return false;
+			
+			return GetBoost() == that.GetBoost();
+		}
+		
+		public override int GetHashCode()
+		{
+			int result;
+			result = clauses.GetHashCode();
+			result = 29 * result + field.GetHashCode();
+			return result;
+		}
+		
+		private class SpanQueue : PriorityQueue
 		{
 			private void  InitBlock(SpanOrQuery enclosingInstance)
 			{
@@ -270,7 +325,7 @@ namespace Lucene.Net.Search.Spans
 		public override Spans GetSpans(IndexReader reader)
 		{
 			if (clauses.Count == 1)
-			// optimize 1-clause case
+    			// optimize 1-clause case
 				return ((SpanQuery) clauses[0]).GetSpans(reader);
 			
 			return new AnonymousClassSpans(reader, this);

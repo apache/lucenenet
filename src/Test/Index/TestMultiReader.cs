@@ -13,57 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
+	
 	[TestFixture]
 	public class TestMultiReader
 	{
 		private Directory dir = new RAMDirectory();
-		private Document doc1 = new Document();
-		private Document doc2 = new Document();
+		private Lucene.Net.Documents.Document doc1 = new Lucene.Net.Documents.Document();
+		private Lucene.Net.Documents.Document doc2 = new Lucene.Net.Documents.Document();
 		private SegmentReader reader1;
 		private SegmentReader reader2;
 		private SegmentReader[] readers = new SegmentReader[2];
 		private SegmentInfos sis = new SegmentInfos();
 		
-        [TestFixtureSetUp]
-		protected virtual void  SetUp()
+		
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(doc1);
 			DocHelper.SetupDoc(doc2);
 			DocHelper.WriteDoc(dir, "seg-1", doc1);
 			DocHelper.WriteDoc(dir, "seg-2", doc2);
-			
-			try
-			{
-				sis.Write(dir);
-				reader1 = new SegmentReader(new SegmentInfo("seg-1", 1, dir));
-				reader2 = new SegmentReader(new SegmentInfo("seg-2", 1, dir));
-				readers[0] = reader1;
-				readers[1] = reader2;
-			}
-			catch (System.IO.IOException e)
-			{
-                System.Console.Error.WriteLine(e.StackTrace);
-			}
-		}
-		/*IndexWriter writer  = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-		writer.addDocument(doc1);
-		writer.addDocument(doc2);
-		writer.close();*/
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
-		{
-			
+			sis.Write(dir);
+			reader1 = SegmentReader.Get(new SegmentInfo("seg-1", 1, dir));
+			reader2 = SegmentReader.Get(new SegmentInfo("seg-2", 1, dir));
+			readers[0] = reader1;
+			readers[1] = reader2;
 		}
 		
-        [Test]
-		public virtual void  Test()
+		[Test]
+        public virtual void  Test()
 		{
 			Assert.IsTrue(dir != null);
 			Assert.IsTrue(reader1 != null);
@@ -71,43 +58,41 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(sis != null);
 		}
 		
-        [Test]
-		public virtual void  TestDocument()
+		[Test]
+        public virtual void  TestDocument()
 		{
-			try
-			{
-				sis.Read(dir);
-				MultiReader reader = new MultiReader(dir, sis, false, readers);
-				Assert.IsTrue(reader != null);
-				Document newDoc1 = reader.Document(0);
-				Assert.IsTrue(newDoc1 != null);
-				Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(doc1) - 2);
-				Document newDoc2 = reader.Document(1);
-				Assert.IsTrue(newDoc2 != null);
-				Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - 2);
-				TermFreqVector vector = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
-				Assert.IsTrue(vector != null);
-			}
-			catch (System.IO.IOException e)
-			{
-				System.Console.Error.WriteLine(e.StackTrace);
-				Assert.IsTrue(false);
-			}
+			sis.Read(dir);
+			MultiReader reader = new MultiReader(dir, sis, false, readers);
+			Assert.IsTrue(reader != null);
+			Lucene.Net.Documents.Document newDoc1 = reader.Document(0);
+			Assert.IsTrue(newDoc1 != null);
+			Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(doc1) - DocHelper.unstored.Count);
+			Lucene.Net.Documents.Document newDoc2 = reader.Document(1);
+			Assert.IsTrue(newDoc2 != null);
+			Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.unstored.Count);
+			TermFreqVector vector = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
+			Assert.IsTrue(vector != null);
+			TestSegmentReader.CheckNorms(reader);
 		}
 		
-        [Test]
+		[Test]
+        public virtual void  TestUndeleteAll()
+		{
+			sis.Read(dir);
+			MultiReader reader = new MultiReader(dir, sis, false, readers);
+			Assert.IsTrue(reader != null);
+			Assert.AreEqual(2, reader.NumDocs());
+			reader.Delete(0);
+			Assert.AreEqual(1, reader.NumDocs());
+			reader.UndeleteAll();
+			Assert.AreEqual(2, reader.NumDocs());
+		}
+		
+		[Test]
 		public virtual void  TestTermVectors()
 		{
-			try
-			{
-				MultiReader reader = new MultiReader(dir, sis, false, readers);
-				Assert.IsTrue(reader != null);
-			}
-			catch (System.IO.IOException e)
-			{
-                System.Console.Error.WriteLine(e.StackTrace);
-				Assert.IsTrue(false);
-			}
+			MultiReader reader = new MultiReader(dir, sis, false, readers);
+			Assert.IsTrue(reader != null);
 		}
 	}
 }

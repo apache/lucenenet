@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
 	[Serializable]
-	public class MockFilter:Filter
+	public class MockFilter : Filter
 	{
-		private bool wasCalled_Renamed_Field;
+		private bool wasCalled;
 		
-		public override System.Collections.BitArray Bits(IndexReader reader)
+        public override System.Collections.BitArray Bits(IndexReader reader)
 		{
-			wasCalled_Renamed_Field = true;
+			wasCalled = true;
 			return new System.Collections.BitArray(64);
 		}
 		
 		public virtual void  Clear()
 		{
-			wasCalled_Renamed_Field = false;
+			wasCalled = false;
 		}
 		
 		public virtual bool WasCalled()
 		{
-			return wasCalled_Renamed_Field;
+			return wasCalled;
 		}
 	}
 }

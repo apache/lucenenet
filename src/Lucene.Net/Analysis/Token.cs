@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
-	/// <summary>A Token is an occurence of a term from the text of a Field.  It consists of
-	/// a term's text, the start and end offset of the term in the text of the Field,
+	
+	/// <summary>A Token is an occurence of a term from the text of a field.  It consists of
+	/// a term's text, the start and end offset of the term in the text of the field,
 	/// and a type string.
 	/// The start and end offsets permit applications to re-associate a token with
 	/// its source text, e.g., to display highlighted query terms in a document
@@ -34,7 +37,7 @@ namespace Lucene.Net.Analysis
 		internal System.String termText; // the text of the term
 		internal int startOffset; // start in source text
 		internal int endOffset; // end in source text
-		internal System.String type_Renamed_Field = "word"; // lexical type
+		internal System.String type = "word"; // lexical type
 		
 		private int positionIncrement = 1;
 		
@@ -54,7 +57,7 @@ namespace Lucene.Net.Analysis
 			termText = text;
 			startOffset = start;
 			endOffset = end;
-			type_Renamed_Field = typ;
+			type = typ;
 		}
 		
 		/// <summary>Set the position increment.  This determines the position of this token
@@ -81,7 +84,7 @@ namespace Lucene.Net.Analysis
 		/// 
 		/// </ul>
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Index.TermPositions">
+		/// <seealso cref="Lucene.Net.index.TermPositions">
 		/// </seealso>
 		public void  SetPositionIncrement(int positionIncrement)
 		{
@@ -91,7 +94,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="#setPositionIncrement">
+		/// <seealso cref="setPositionIncrement">
 		/// </seealso>
 		public int GetPositionIncrement()
 		{
@@ -126,7 +129,19 @@ namespace Lucene.Net.Analysis
 		/// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
 		public System.String Type()
 		{
-			return type_Renamed_Field;
+			return type;
+		}
+		
+		public override System.String ToString()
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("(" + termText + "," + startOffset + "," + endOffset);
+			if (!type.Equals("word"))
+				sb.Append(",type=" + type);
+			if (positionIncrement != 1)
+				sb.Append(",posIncr=" + positionIncrement);
+			sb.Append(")");
+			return sb.ToString();
 		}
 	}
 }

@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> A memory-resident {@link OutputStream} implementation.
+	/// <summary> A memory-resident {@link IndexOutput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java,v 1.2 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: RAMOutputStream.java 150537 2004-09-28 20:45:26Z cutting $
 	/// </version>
 	
-	public class RAMOutputStream:OutputStream
+	public class RAMOutputStream : BufferedIndexOutput
 	{
 		private RAMFile file;
 		private int pointer = 0;
 		
 		/// <summary>Construct an empty output buffer. </summary>
-		public RAMOutputStream():this(new RAMFile())
+		public RAMOutputStream() : this(new RAMFile())
 		{
 		}
 		
@@ -39,7 +41,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Copy the current contents of this buffer to the named output. </summary>
-		public virtual void  WriteTo(OutputStream out_Renamed)
+		public virtual void  WriteTo(IndexOutput out_Renamed)
 		{
 			Flush();
 			long end = file.length;
@@ -60,7 +62,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Resets this to an empty buffer. </summary>
-		public virtual void  Leset()
+		public virtual void  Reset()
 		{
 			try
 			{
@@ -103,7 +105,7 @@ namespace Lucene.Net.Store
 			if (pointer > file.length)
 				file.length = pointer;
 			
-			file.lastModified = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+			file.lastModified = System.DateTime.Now.Ticks;
 		}
 		
 		public override void  Close()

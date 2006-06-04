@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 namespace Lucene.Net.Analysis.Standard
 {
@@ -20,7 +21,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// <summary>An efficient implementation of JavaCC's CharStream interface.  <p>Note that
 	/// this does not do line-number counting, but instead keeps track of the
 	/// character position of the token in the input, as required by Lucene's {@link
-	/// Lucene.Net.Analysis.Token} API. 
+	/// Lucene.Net.analysis.Token} API. 
 	/// </summary>
 	public sealed class FastCharStream : CharStream
 	{
@@ -78,7 +79,6 @@ namespace Lucene.Net.Analysis.Standard
 			bufferStart += tokenStart;
 			tokenStart = 0;
 			
-
 			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
 			if (charsRead <= 0)
 				throw new System.IO.IOException("read past eof");
