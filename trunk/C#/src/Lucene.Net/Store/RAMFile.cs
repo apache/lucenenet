@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
@@ -21,6 +23,6 @@ namespace Lucene.Net.Store
 	{
 		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		internal long length;
-		internal long lastModified = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+		internal long lastModified = System.DateTime.Now.Ticks;
 	}
 }

@@ -13,37 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+using PrefixQuery = Lucene.Net.Search.PrefixQuery;
+using RangeQuery = Lucene.Net.Search.RangeQuery;
+
 namespace Lucene.Net.Documents
 {
 	
 	/// <summary> Provides support for converting dates to strings and vice-versa.
 	/// The strings are structured so that lexicographic sorting orders by date,
-	/// which makes them suitable for use as Field values and search terms.
+	/// which makes them suitable for use as field values and search terms.
 	/// 
-	/// <P>
-	/// Note that you do not have to use this class, you can just save your
-	/// dates as strings if lexicographic sorting orders them by date. This is
-	/// the case for example for dates like <code>yyyy-mm-dd hh:mm:ss</code>
-	/// (of course you can leave out the delimiter characters to save some space).
-	/// The advantage with using such a format is that you can easily save dates
-	/// with the required granularity, e.g. leaving out seconds. This saves memory
-	/// when searching with a RangeQuery or PrefixQuery, as Lucene
-	/// expands these queries to a BooleanQuery with potentially very many terms. 
+	/// <P>Note that this class saves dates with millisecond granularity,
+	/// which is bad for {@link RangeQuery} and {@link PrefixQuery}, as those
+	/// queries are expanded to a BooleanQuery with a potentially large number 
+	/// of terms when searching. Thus you might want to use
+	/// {@link DateTools} instead.
 	/// 
 	/// <P>
 	/// Note: dates before 1970 cannot be used, and therefore cannot be
-	/// indexed when using this class.
+	/// indexed when using this class. See {@link DateTools} for an
+	/// alternative without such a limitation.
+	/// 
 	/// </summary>
+	/// <deprecated> If you build a new index, use {@link DateTools} instead. For 
+	/// existing indices you can continue using this class, as it will not be 
+	/// removed in the near future despite being deprecated.
+	/// </deprecated>
 	public class DateField
 	{
+		
 		private DateField()
 		{
 		}
 		
 		// make date strings long enough to last a millenium
-        private static int DATE_LEN = SupportClass.Number.ToString(
-            1000L * 365 * 24 * 60 * 60 * 1000, SupportClass.Number.MAX_RADIX).Length;
+		private static int DATE_LEN = System.Convert.ToString(
+            1000L * 365 * 24 * 60 * 60 * 1000, 16).Length;
 		
 		public static System.String MIN_DATE_STRING()
 		{
@@ -68,7 +75,7 @@ namespace Lucene.Net.Documents
             TimeSpan ts = date.Subtract(new DateTime(1970, 1, 1));
             ts = ts.Subtract(TimeZone.CurrentTimeZone.GetUtcOffset(date));
             return TimeToString(ts.Ticks / TimeSpan.TicksPerMillisecond);
-		}
+        }
 
 		/// <summary> Converts a millisecond time to a string suitable for indexing.</summary>
 		/// <throws>  RuntimeException if the time specified in the </throws>
@@ -79,7 +86,7 @@ namespace Lucene.Net.Documents
 			if (time < 0)
 				throw new System.SystemException("time too early");
 			
-            System.String s = SupportClass.Number.ToString(time, SupportClass.Number.MAX_RADIX);
+			System.String s = SupportClass.Number.ToString(time, SupportClass.Number.MAX_RADIX);
 			
 			if (s.Length > DATE_LEN)
 				throw new System.SystemException("time too late");
@@ -95,25 +102,25 @@ namespace Lucene.Net.Documents
 			
 			return s;
 		}
-
+		
 		/// <summary>Converts a string-encoded date into a millisecond time. </summary>
 		public static long StringToTime(System.String s)
 		{
-            return SupportClass.Number.Parse(s, SupportClass.Number.MAX_RADIX);
+			return SupportClass.Number.Parse(s, SupportClass.Number.MAX_RADIX);
 		}
-
 		/// <summary>Converts a string-encoded date into a Date object. </summary>
 		public static System.DateTime StringToDate(System.String s)
 		{
+            return new System.DateTime(StringToTime(s));
+
+            // {{Aroush-1.9}} Will the line above do it or do we need the lines below?!
+
+            /*
             long ticks = StringToTime(s) * TimeSpan.TicksPerMillisecond;
             System.DateTime date = new System.DateTime(1970, 1, 1);
             date = date.AddTicks(ticks);
             date = date.Add(TimeZone.CurrentTimeZone.GetUtcOffset(date));
             return date;
-
-            /*
-            System.TimeSpan ts = System.TimeSpan.FromMilliseconds(System.DateField.StringToTime(s));
-            return new System.DateTime(1970,1,1).Add(ts).ToLocalTime();
             */
 		}
 	}

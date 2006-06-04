@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser;
+using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.Store;
+
 namespace Lucene.Net
 {
 	
@@ -46,9 +48,9 @@ namespace Lucene.Net
 				
 				for (int j = 0; j < MAX_DOCS; j++)
 				{
-					Document d = new Document();
-					d.Add(Field.Text(PRIORITY_FIELD, HIGH_PRIORITY));
-					d.Add(Field.Text(ID_FIELD, System.Convert.ToString(j)));
+					Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+					d.Add(new Field(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES, Field.Index.TOKENIZED));
+					d.Add(new Field(ID_FIELD, System.Convert.ToString(j), Field.Store.YES, Field.Index.TOKENIZED));
 					writer.AddDocument(d);
 				}
 				writer.Close();
@@ -57,7 +59,7 @@ namespace Lucene.Net
 				Searcher searcher = new IndexSearcher(directory);
 				Hits hits = null;
 				
-				QueryParsers.QueryParser parser = new QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+				Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 				
 				Query query = parser.Parse(HIGH_PRIORITY);
 				System.Console.Out.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -71,7 +73,7 @@ namespace Lucene.Net
 				searcher = new IndexSearcher(directory);
 				hits = null;
 				
-				parser = new QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+				parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 				
 				query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
 				System.Console.Out.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -94,7 +96,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Document d = hits.Doc(i);
+					Lucene.Net.Documents.Document d = hits.Doc(i);
 					System.Console.Out.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}

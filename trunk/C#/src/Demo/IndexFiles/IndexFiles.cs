@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+
 namespace Lucene.Net.Demo
 {
 	
 	class IndexFiles
 	{
+		
+		internal static readonly System.IO.FileInfo INDEX_DIR = new System.IO.FileInfo("index");
+		
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
@@ -31,19 +36,41 @@ namespace Lucene.Net.Demo
 				System.Environment.Exit(1);
 			}
 			
+			bool tmpBool;
+			if (System.IO.File.Exists(INDEX_DIR.FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists(INDEX_DIR.FullName);
+			if (tmpBool)
+			{
+				System.Console.Out.WriteLine("Cannot save index to '" + INDEX_DIR + "' directory, please delete it first");
+				System.Environment.Exit(1);
+			}
+			
+			System.IO.FileInfo docDir = new System.IO.FileInfo(args[0]);
+			bool tmpBool2;
+			if (System.IO.File.Exists(docDir.FullName))
+				tmpBool2 = true;
+			else
+				tmpBool2 = System.IO.Directory.Exists(docDir.FullName);
+			if (!tmpBool2) // || !docDir.canRead()) // {{Aroush}} what is canRead() in C#?
+			{
+				System.Console.Out.WriteLine("Document directory '" + docDir.FullName + "' does not exist or is not readable, please check the path");
+				System.Environment.Exit(1);
+			}
+			
 			System.DateTime start = System.DateTime.Now;
 			try
 			{
-				IndexWriter writer = new IndexWriter("index", new StandardAnalyzer(), true);
-                IndexDocs(writer, new System.IO.FileInfo(args[0]));
-				
+				IndexWriter writer = new IndexWriter(INDEX_DIR, new StandardAnalyzer(), true);
+				System.Console.Out.WriteLine("Indexing to directory '" + INDEX_DIR + "'...");
+				IndexDocs(writer, docDir);
+				System.Console.Out.WriteLine("Optimizing...");
 				writer.Optimize();
 				writer.Close();
 				
 				System.DateTime end = System.DateTime.Now;
-				
-				System.Console.Out.Write(end.Ticks - start.Ticks);
-				System.Console.Out.WriteLine(" total milliseconds");
+				System.Console.Out.WriteLine(end.Ticks - start.Ticks + " total milliseconds");
 			}
 			catch (System.IO.IOException e)
 			{
@@ -53,30 +80,34 @@ namespace Lucene.Net.Demo
 		
 		public static void  IndexDocs(IndexWriter writer, System.IO.FileInfo file)
 		{
-			if (System.IO.Directory.Exists(file.FullName))
+			// do not try to index files that cannot be read
+			// if (file.canRead())  // {{Aroush}} what is canRead() in C#?
 			{
-				System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName);
-				// an IO error could occur
-				if (files != null)
+				if (System.IO.Directory.Exists(file.FullName))
 				{
-					for (int i = 0; i < files.Length; i++)
+					System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName);
+					// an IO error could occur
+					if (files != null)
 					{
-						IndexDocs(writer, new System.IO.FileInfo(files[i]));
+						for (int i = 0; i < files.Length; i++)
+						{
+							IndexDocs(writer, new System.IO.FileInfo(files[i]));
+						}
 					}
 				}
-			}
-			else
-			{
-				System.Console.Out.WriteLine("adding " + file);
-				try
+				else
 				{
-					writer.AddDocument(FileDocument.Document(file));
-				}
-				// at least on windows, some temporary files raise this exception with an "access denied" message
-				// checking if the file can be read doesn't help
-				catch (System.IO.FileNotFoundException fnfe)
-				{
-					;
+					System.Console.Out.WriteLine("adding " + file);
+					try
+					{
+						writer.AddDocument(FileDocument.Document(file));
+					}
+					// at least on windows, some temporary files raise this exception with an "access denied" message
+					// checking if the file can be read doesn't help
+					catch (System.IO.FileNotFoundException fnfe)
+					{
+						;
+					}
 				}
 			}
 		}

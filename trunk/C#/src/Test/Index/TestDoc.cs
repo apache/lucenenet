@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
-////using NUnit.Framework.TestSuite;
-////using NUnit.Framework.TestRunner;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using FileDocument = Lucene.Net.Demo.FileDocument;
@@ -24,6 +23,7 @@ using Document = Lucene.Net.Documents.Document;
 using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+
 namespace Lucene.Net.Index
 {
 	
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	/// <summary>JUnit adaptation of an older test case DocTest.</summary>
 	/// <author>  dmitrys@earthlink.net
 	/// </author>
-	/// <version>  $Id: TestDoc.java,v 1.5 2004/04/20 19:33:35 goller Exp $
+	/// <version>  $Id: TestDoc.java 150536 2004-09-28 18:15:52Z cutting $
 	/// </version>
 	[TestFixture]
     public class TestDoc
@@ -41,6 +41,7 @@ namespace Lucene.Net.Index
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestDoc)));    // {{Aroush}} where is 'TestRunner' in NUnit
 		}
 		
 		
@@ -55,29 +56,29 @@ namespace Lucene.Net.Index
 		[TestFixtureSetUp]
         public virtual void  SetUp()
 		{
-			workDir = new System.IO.FileInfo(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir") + "\\" + "TestDoc");
+			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", "tempDir"), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
 			
-			indexDir = new System.IO.FileInfo(workDir.FullName + "\\" + "testIndex");
+			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, "testIndex"));
 			System.IO.Directory.CreateDirectory(indexDir.FullName);
 			
 			Directory directory = FSDirectory.GetDirectory(indexDir, true);
 			directory.Close();
 			
 			files = new System.Collections.ArrayList();
-			files.Add(CreateFile("test.txt", "This is the first test file"));
+			files.Add(CreateOutput("test.txt", "This is the first test file"));
 			
-			files.Add(CreateFile("test2.txt", "This is the second test file"));
+			files.Add(CreateOutput("test2.txt", "This is the second test file"));
 		}
 		
-		private System.IO.FileInfo CreateFile(System.String name, System.String text)
+		private System.IO.FileInfo CreateOutput(System.String name, System.String text)
 		{
 			System.IO.StreamWriter fw = null;
 			System.IO.StreamWriter pw = null;
 			
 			try
 			{
-				System.IO.FileInfo f = new System.IO.FileInfo(workDir.FullName + "\\" + name);
+				System.IO.FileInfo f = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, name));
 				bool tmpBool;
 				if (System.IO.File.Exists(f.FullName))
 					tmpBool = true;
@@ -112,8 +113,8 @@ namespace Lucene.Net.Index
 				{
 					pw.Close();
 				}
-				if ((fw != null) && (fw.BaseStream.CanWrite))
-					fw.Close();
+				//if (fw != null)
+				//	fw.Close();
 			}
 		}
 		
@@ -127,9 +128,10 @@ namespace Lucene.Net.Index
 		/// assert various things about the segment.
 		/// </summary>
 		[Test]
-		public virtual void  TestIndexAndMerge()
+        public virtual void  TestIndexAndMerge()
 		{
-			System.IO.StringWriter out_Renamed = new System.IO.StringWriter();
+            System.IO.MemoryStream sw = new System.IO.MemoryStream();
+            System.IO.StreamWriter out_Renamed = new System.IO.StreamWriter(sw);
 			
 			Directory directory = FSDirectory.GetDirectory(indexDir, true);
 			directory.Close();
@@ -150,9 +152,12 @@ namespace Lucene.Net.Index
 			PrintSegment(out_Renamed, "merge3");
 			
 			out_Renamed.Close();
-			System.String multiFileOutput = out_Renamed.GetStringBuilder().ToString();
+			sw.Close();
+            System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+            //System.out.println(multiFileOutput);
 			
-			out_Renamed = new System.IO.StringWriter();
+            sw = new System.IO.MemoryStream();
+            out_Renamed = new System.IO.StreamWriter(sw);
 			
 			directory = FSDirectory.GetDirectory(indexDir, true);
 			directory.Close();
@@ -173,7 +178,8 @@ namespace Lucene.Net.Index
 			PrintSegment(out_Renamed, "merge3");
 			
 			out_Renamed.Close();
-			System.String singleFileOutput = out_Renamed.GetStringBuilder().ToString();
+			sw.Close();
+            System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
 			Assert.AreEqual(multiFileOutput, singleFileOutput);
 		}
@@ -186,7 +192,7 @@ namespace Lucene.Net.Index
 			DocumentWriter writer = new DocumentWriter(directory, analyzer, Similarity.GetDefault(), 1000);
 			
 			System.IO.FileInfo file = new System.IO.FileInfo(workDir.FullName + "\\" + fileName);
-			Document doc = FileDocument.Document(file);
+			Lucene.Net.Documents.Document doc = FileDocument.Document(file);
 			
 			writer.AddDocument(segment, doc);
 			
@@ -198,24 +204,33 @@ namespace Lucene.Net.Index
 		{
 			Directory directory = FSDirectory.GetDirectory(indexDir, false);
 			
-			SegmentReader r1 = new SegmentReader(new SegmentInfo(seg1, 1, directory));
-			SegmentReader r2 = new SegmentReader(new SegmentInfo(seg2, 1, directory));
+			SegmentReader r1 = SegmentReader.Get(new SegmentInfo(seg1, 1, directory));
+			SegmentReader r2 = SegmentReader.Get(new SegmentInfo(seg2, 1, directory));
 			
-			SegmentMerger merger = new SegmentMerger(directory, merged, useCompoundFile);
+			SegmentMerger merger = new SegmentMerger(directory, merged);
 			
 			merger.Add(r1);
 			merger.Add(r2);
 			merger.Merge();
 			merger.CloseReaders();
 			
+			if (useCompoundFile)
+			{
+				System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(merged + ".cfs");
+				for (System.Collections.IEnumerator iter = filesToDelete.GetEnumerator(); iter.MoveNext(); )
+				{
+					directory.DeleteFile((System.String) iter.Current);
+				}
+			}
+			
 			directory.Close();
 		}
 		
 		
-		private void  PrintSegment(System.IO.StringWriter out_Renamed, System.String segment)
+		private void  PrintSegment(System.IO.StreamWriter out_Renamed, System.String segment)
 		{
 			Directory directory = FSDirectory.GetDirectory(indexDir, false);
-			SegmentReader reader = new SegmentReader(new SegmentInfo(segment, 1, directory));
+			SegmentReader reader = SegmentReader.Get(new SegmentInfo(segment, 1, directory));
 			
 			for (int i = 0; i < reader.NumDocs(); i++)
 			{
@@ -235,8 +250,8 @@ namespace Lucene.Net.Index
 					{
 						out_Renamed.Write(" doc=" + positions.Doc());
 						out_Renamed.Write(" TF=" + positions.Freq());
-                        out_Renamed.Write(" pos=");
-                        out_Renamed.Write(positions.NextPosition());
+						out_Renamed.Write(" pos=");
+						out_Renamed.Write(positions.NextPosition());
 						for (int j = 1; j < positions.Freq(); j++)
 							out_Renamed.Write("," + positions.NextPosition());
 						out_Renamed.WriteLine("");

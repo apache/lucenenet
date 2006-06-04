@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -27,7 +29,7 @@ namespace Lucene.Net.Search
 		public float score;
 		
 		/// <summary>Expert: A hit document's number.</summary>
-		/// <seealso cref="Searcher#Doc(int)">
+		/// <seealso cref="Searcher.Doc(int)">
 		/// </seealso>
 		public int doc;
 		

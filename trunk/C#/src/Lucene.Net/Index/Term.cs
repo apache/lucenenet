@@ -13,32 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
-    /// <summary>A Term represents a word from text.  This is the unit of search.  It is
-    /// composed of two elements, the text of the word, as a string, and the name of
-    /// the Field that the text occured in, an interned string.
-    /// Note that terms may represent more than words from text fields, but also
-    /// things like dates, email addresses, urls, etc.  
-    /// </summary>
-    [Serializable]
+	
+	/// <summary>A Term represents a word from text.  This is the unit of search.  It is
+	/// composed of two elements, the text of the word, as a string, and the name of
+	/// the field that the text occured in, an interned string.
+	/// Note that terms may represent more than words from text fields, but also
+	/// things like dates, email addresses, urls, etc.  
+	/// </summary>
+	
+	[Serializable]
 	public sealed class Term : System.IComparable
 	{
 		internal System.String field;
 		public /*internal*/ System.String text;
 		
-		/// <summary>Constructs a Term with the given Field and text. </summary>
+		/// <summary>Constructs a Term with the given field and text. </summary>
 		public Term(System.String fld, System.String txt) : this(fld, txt, true)
 		{
 		}
 		internal Term(System.String fld, System.String txt, bool intern)
 		{
-			field = intern ? String.Intern(fld) : fld; // Field names are interned
+			field = intern ? String.Intern(fld) : fld; // field names are interned
 			text = txt; // unless already known to be
 		}
 		
-		/// <summary>Returns the Field of this term, an interned string.   The Field indicates
+		/// <summary>Returns the field of this term, an interned string.   The field indicates
 		/// the part of a document which this term came from. 
 		/// </summary>
 		public System.String Field()
@@ -55,10 +59,22 @@ namespace Lucene.Net.Index
 			return text;
 		}
 		
-		/// <summary>Compares two terms, returning true iff they have the same
-		/// Field and text. 
+		/// <summary> Optimized construction of new Terms by reusing same field as this Term
+		/// - avoids field.intern() overhead 
 		/// </summary>
-		public  override bool Equals(System.Object o)
+		/// <param name="text">The text of the new term (field is implicitly same as this Term instance)
+		/// </param>
+		/// <returns> A new Term
+		/// </returns>
+		public Term CreateTerm(System.String text)
+		{
+			return new Term(field, text, false);
+		}
+		
+		/// <summary>Compares two terms, returning true iff they have the same
+		/// field and text. 
+		/// </summary>
+		public override bool Equals(System.Object o)
 		{
 			if (o == null)
 				return false;
@@ -66,7 +82,7 @@ namespace Lucene.Net.Index
 			return field == other.field && text.Equals(other.text);
 		}
 		
-		/// <summary>Combines the hashCode() of the Field and the text. </summary>
+		/// <summary>Combines the hashCode() of the field and the text. </summary>
 		public override int GetHashCode()
 		{
 			return field.GetHashCode() + text.GetHashCode();
@@ -77,10 +93,10 @@ namespace Lucene.Net.Index
 			return CompareTo((Term) other);
 		}
 		
-		/// <summary>Compares two terms, returning an integer which is less than zero iff this
-		/// term belongs after the argument, equal zero iff this term is equal to the
-		/// argument, and greater than zero iff this term belongs after the argument.
-		/// The ordering of terms is first by Field, then by text.
+		/// <summary>Compares two terms, returning a negative integer if this
+		/// term belongs before the argument, zero if this term is equal to the
+		/// argument, and a positive integer if this term belongs after the argument.
+		/// The ordering of terms is first by field, then by text.
 		/// </summary>
 		public int CompareTo(Term other)
 		{
@@ -91,7 +107,7 @@ namespace Lucene.Net.Index
 				return String.CompareOrdinal(field, other.field);
 		}
 		
-		/// <summary>Resets the Field and text of a Term. </summary>
+		/// <summary>Resets the field and text of a Term. </summary>
 		internal void  Set(System.String fld, System.String txt)
 		{
 			field = fld;
@@ -105,12 +121,13 @@ namespace Lucene.Net.Index
 		
 		private void  ReadObject(System.IO.BinaryReader in_Renamed)
 		{
-			// This function is private and is never been called, so this may not be a port issue.
-			// in_Renamed.defaultReadObject();    >>    'java.io.ObjectInputStream.defaultReadObject()'     // {{Aroush-1.4.3}}
+			// This function is private and is never been called, so this may not be a port issue.          // {{Aroush-1.4.3}}
+            // 'java.io.ObjectInputStream.defaultReadObject' was not converted                              // {{Aroush-1.4.3}}
+			// in_Renamed.defaultReadObject();                                                              // {{Aroush-1.4.3}}
 			field = String.Intern(field);
 		}
 		
-        // {{Aroush-1.4.3: Or is this what we want (vs. the above)?!!
+        // {{Aroush-1.4.3: or is this method is what we want (vs. the above)?!!
         private void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
             info.AddValue("field", field);

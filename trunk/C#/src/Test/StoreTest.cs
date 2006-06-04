@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net
 {
 	
@@ -37,7 +39,7 @@ namespace Lucene.Net
 			}
 		}
 		
-		public static void  Test(int count, bool ram)
+        public static void  Test(int count, bool ram)
 		{
 			System.Random gen = new System.Random((System.Int32) 1251971);
 			int i;
@@ -60,7 +62,7 @@ namespace Lucene.Net
 				byte b = (byte) (gen.Next() & 0x7F);
 				//System.out.println("filling " + name + " with " + length + " of " + b);
 				
-				OutputStream file = store.CreateFile(name);
+				IndexOutput file = store.CreateOutput(name);
 				
 				for (int j = 0; j < length; j++)
 					file.WriteByte(b);
@@ -75,6 +77,7 @@ namespace Lucene.Net
 			System.Console.Out.Write(end.Ticks - start.Ticks);
 			System.Console.Out.WriteLine(" total milliseconds to create");
 			
+			//UPGRADE_TODO: The differences in the expected value  of parameters for constructor 'java.util.Random.Random'  may cause compilation errors.  "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1092'"
 			gen = new System.Random((System.Int32) 1251971);
 			start = System.DateTime.Now;
 			
@@ -85,10 +88,10 @@ namespace Lucene.Net
 			{
 				System.String name = i + ".dat";
 				int length = gen.Next() & LENGTH_MASK;
-				sbyte b = (sbyte) (gen.Next() & 0x7F);
+				byte b = (byte) (gen.Next() & 0x7F);
 				//System.out.println("reading " + name + " with " + length + " of " + b);
 				
-				InputStream file = store.OpenFile(name);
+				IndexInput file = store.OpenInput(name);
 				
 				if (file.Length() != length)
 					throw new System.Exception("length incorrect");

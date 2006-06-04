@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> Normalizes token text to lower case.
 	/// 
 	/// </summary>
-	/// <version>  $Id: LowerCaseFilter.java,v 1.4 2004/03/29 22:48:00 cutting Exp $
+	/// <version>  $Id: LowerCaseFilter.java 150259 2004-03-29 22:48:07Z cutting $
 	/// </version>
 	public sealed class LowerCaseFilter : TokenFilter
 	{

@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Demo.Html
 {
 	
 	
-    public sealed class Tags
-    {
+	public sealed class Tags
+	{
 		
-        /// <summary> contains all tags for which whitespaces have to be inserted for proper tokenization</summary>
+		/// <summary> contains all tags for which whitespaces have to be inserted for proper tokenization</summary>
         public static readonly System.Collections.Hashtable WS_ELEMS = new System.Collections.Hashtable();
-        //public static readonly SupportClass.SetSupport WS_ELEMS = (SupportClass.SetSupport) new SupportClass.HashSetSupport(SupportClass.HashSetSupport.Synchronized(new SupportClass.HashSetSupport(new SupportClass.HashSetSupport())));
         static Tags()
-        {
-            {
+		{
+			{
                 WS_ELEMS.Add("<hr", "<hr");
                 WS_ELEMS.Add("<hr/", "<hr/"); // note that "<hr />" does not need to be listed explicitly
                 WS_ELEMS.Add("<br", "<br");
@@ -58,6 +59,6 @@ namespace Lucene.Net.Demo.Html
                 WS_ELEMS.Add("<h6", "<h6");
                 WS_ELEMS.Add("</h6", "</h6");
             }
-        }
-    }
+		}
+	}
 }

@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Util
 {
+	
 	/// <summary> Some useful constants.
 	/// 
 	/// </summary>
 	/// <author>   Doug Cutting
 	/// </author>
-	/// <version>  $Id: Constants.java,v 1.3 2004/03/29 22:48:05 cutting Exp $
+	/// <version>  $Id: Constants.java 189792 2005-06-09 18:58:30Z bmesser $
 	/// 
 	/// </version>
 	
@@ -32,7 +35,7 @@ namespace Lucene.Net.Util
 		} // can't construct
 		
 		/// <summary>The value of <tt>System.getProperty("java.version")<tt>. *</summary>
-		public static readonly System.String JAVA_VERSION = System.Configuration.ConfigurationSettings.AppSettings.Get("java.version");
+		public static readonly System.String JAVA_VERSION = System.Configuration.ConfigurationSettings.AppSettings.Get("java.version");     // {{Aroush-1.9}}
 		/// <summary>True iff this is Java version 1.1. </summary>
 		public static readonly bool JAVA_1_1 = JAVA_VERSION.StartsWith("1.1.");
 		/// <summary>True iff this is Java version 1.2. </summary>

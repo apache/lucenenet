@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+
 namespace Lucene.Net.Store
 {
 	
@@ -30,9 +32,9 @@ namespace Lucene.Net.Store
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: Lock.java,v 1.12 2004/05/11 17:43:28 cutting Exp $
+	/// <version>  $Id: Lock.java 179414 2005-06-01 20:10:58Z dnaber $
 	/// </version>
-	/// <seealso cref="Directory#MakeLock(String)">
+	/// <seealso cref="Directory.MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
@@ -54,14 +56,14 @@ namespace Lucene.Net.Store
 		/// <returns> true if lock was obtained
 		/// </returns>
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
-		public virtual bool Obtain(long lockWaitTimeout)
+		public virtual bool obtain(long lockWaitTimeout)
 		{
 			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
 			while (!locked)
 			{
-				if (++sleepCount == maxSleepCount)
+				if (sleepCount++ == maxSleepCount)
 				{
 					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
 				}
@@ -98,7 +100,7 @@ namespace Lucene.Net.Store
 			/// </summary>
 			/// <deprecated> Kept only to avoid breaking existing code.
 			/// </deprecated>
-			public With(Lock lock_Renamed):this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
+			public With(Lock lock_Renamed) : this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
 			{
 			}
 			
@@ -122,7 +124,7 @@ namespace Lucene.Net.Store
 				bool locked = false;
 				try
 				{
-					locked = lock_Renamed.Obtain(lockWaitTimeout);
+					locked = lock_Renamed.obtain(lockWaitTimeout);
 					return DoBody();
 				}
 				finally

@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
-    /// <summary>A TermInfo is the record of information stored for a term.</summary>
-    sealed public class TermInfo
+	
+	/// <summary>A TermInfo is the record of information stored for a term.</summary>
+	
+	public sealed class TermInfo
 	{
 		/// <summary>The number of documents which contain the term. </summary>
 		public /*internal*/ int docFreq = 0;

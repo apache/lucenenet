@@ -38,7 +38,9 @@ Release 3.
 [ This version is derived from Release 3, modified by Brian Goetz to
 optimize for fewer object creations.  ]
 */
+
 using System;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -65,7 +67,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> reset() resets the stemmer so it can stem another word.  If you invoke
-		/// the stemmer by calling add(char) and then stem(), you must call reset()
+		/// the stemmer by calling add(char) and then Stem(), you must call reset()
 		/// before starting another word.
 		/// </summary>
 		public virtual void  Reset()
@@ -74,7 +76,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Add a character to the word being stemmed.  When you are finished
-		/// adding characters, you can call stem(void) to process the word.
+		/// adding characters, you can call Stem(void) to process the word.
 		/// </summary>
 		public virtual void  Add(char ch)
 		{
@@ -185,7 +187,7 @@ namespace Lucene.Net.Analysis
 		
 		/* vowelinstem() is true <=> k0,...j contains a vowel */
 		
-		private bool vowelinstem()
+		private bool Vowelinstem()
 		{
 			int i;
 			for (i = k0; i <= j; i++)
@@ -283,7 +285,7 @@ namespace Lucene.Net.Analysis
 		
 		*/
 		
-		private void  step1()
+		private void  Step1()
 		{
 			if (b[k] == 's')
 			{
@@ -299,7 +301,7 @@ namespace Lucene.Net.Analysis
 				if (M() > 0)
 					k--;
 			}
-			else if ((Ends("ed") || Ends("ing")) && vowelinstem())
+			else if ((Ends("ed") || Ends("ing")) && Vowelinstem())
 			{
 				k = j;
 				if (Ends("at"))
@@ -321,9 +323,9 @@ namespace Lucene.Net.Analysis
 		
 		/* step2() turns terminal y to i when there is another vowel in the stem. */
 		
-		private void  step2()
+		private void  Step2()
 		{
-			if (Ends("y") && vowelinstem())
+			if (Ends("y") && Vowelinstem())
 			{
 				b[k] = 'i';
 				dirty = true;
@@ -334,7 +336,7 @@ namespace Lucene.Net.Analysis
 		-ation) maps to -ize etc. note that the string before the suffix must give
 		m() > 0. */
 		
-		private void  step3()
+		private void  Step3()
 		{
 			if (k == k0)
 				return ; /* For Bug 1 */
@@ -453,7 +455,7 @@ namespace Lucene.Net.Analysis
 		
 		/* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 		
-		private void  step4()
+		private void  Step4()
 		{
 			switch (b[k])
 			{
@@ -502,7 +504,7 @@ namespace Lucene.Net.Analysis
 		
 		/* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 		
-		private void  step5()
+		private void  Step5()
 		{
 			if (k == k0)
 				return ; /* for Bug 1 */
@@ -593,7 +595,7 @@ namespace Lucene.Net.Analysis
 		
 		/* step6() removes a final -e if m() > 1. */
 		
-		private void  step6()
+		private void  Step6()
 		{
 			j = k;
 			if (b[k] == 'e')
@@ -672,7 +674,7 @@ namespace Lucene.Net.Analysis
 			k0 = i0;
 			if (k > k0 + 1)
 			{
-				step1(); step2(); step3(); step4(); step5(); step6();
+				Step1(); Step2(); Step3(); Step4(); Step5(); Step6();
 			}
 			// Also, a word is considered dirty if we lopped off letters
 			// Thanks to Ifigenia Vairelles for pointing this out.
@@ -695,7 +697,7 @@ namespace Lucene.Net.Analysis
 			{
 				try
 				{
-					System.IO.BinaryReader in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read));
+                    System.IO.BinaryReader in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read));
 					byte[] buffer = new byte[1024];
 					int bufferLen, offset, ch;
 					
@@ -737,7 +739,7 @@ namespace Lucene.Net.Analysis
 					
 					in_Renamed.Close();
 				}
-				catch (System.IO.IOException )
+				catch (System.IO.IOException)
 				{
 					System.Console.Out.WriteLine("error reading " + args[i]);
 				}

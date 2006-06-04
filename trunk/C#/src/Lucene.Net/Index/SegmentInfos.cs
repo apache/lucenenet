@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+using Constants = Lucene.Net.Util.Constants;
+
 namespace Lucene.Net.Index
 {
+	
 	[Serializable]
-	sealed public class SegmentInfos : System.Collections.ArrayList
+	public sealed class SegmentInfos : System.Collections.ArrayList
 	{
 		
 		/// <summary>The file format version, a negative number. </summary>
@@ -28,7 +32,10 @@ namespace Lucene.Net.Index
 		public const int FORMAT = - 1;
 		
 		public int counter = 0; // used to name new segments
-		private long version = 0; //counts how often the index has been changed by adding or deleting docs
+		/// <summary> counts how often the index has been changed by adding or deleting docs.
+		/// starting with the current time in milliseconds forces to create unique version numbers.
+		/// </summary>
+		private long version = System.DateTime.Now.Ticks;
 		
 		public SegmentInfo Info(int i)
 		{
@@ -38,7 +45,7 @@ namespace Lucene.Net.Index
 		public void  Read(Directory directory)
 		{
 			
-			InputStream input = directory.OpenFile("segments");
+			IndexInput input = directory.OpenInput(IndexFileNames.SEGMENTS);
 			try
 			{
 				int format = input.ReadInt();
@@ -68,7 +75,7 @@ namespace Lucene.Net.Index
 				{
 					// in old format the version number may be at the end of the file
 					if (input.GetFilePointer() >= input.Length())
-						version = 0;
+						version = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
 					// old file format without version number
 					else
 						version = input.ReadLong(); // read version
@@ -82,7 +89,7 @@ namespace Lucene.Net.Index
 		
 		public void  Write(Directory directory)
 		{
-			OutputStream output = directory.CreateFile("segments.new");
+			IndexOutput output = directory.CreateOutput("segments.new");
 			try
 			{
 				output.WriteInt(FORMAT); // write FORMAT
@@ -102,7 +109,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// install new segment info
-			directory.RenameFile("segments.new", "segments");
+			directory.RenameFile("segments.new", IndexFileNames.SEGMENTS);
 		}
 		
 		/// <summary> version number when this SegmentInfos was generated.</summary>
@@ -115,7 +122,7 @@ namespace Lucene.Net.Index
 		public static long ReadCurrentVersion(Directory directory)
 		{
 			
-			InputStream input = directory.OpenFile("segments");
+			IndexInput input = directory.OpenInput(IndexFileNames.SEGMENTS);
 			int format = 0;
 			long version = 0;
 			try

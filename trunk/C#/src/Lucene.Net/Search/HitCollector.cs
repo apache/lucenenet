@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
-	/// <summary>Lower-level search API.</summary>
-	/// <seealso cref="Searcher#Search(Query,HitCollector)">
+	
+	/// <summary>Lower-level search API.
+	/// <br>HitCollectors are primarily meant to be used to implement queries,
+	/// sorting and filtering.
+	/// </summary>
+	/// <seealso cref="Searcher.Search(Query,HitCollector)">
 	/// </seealso>
-	/// <version>  $Id: HitCollector.java,v 1.6 2004/03/29 22:48:03 cutting Exp $
+	/// <version>  $Id: HitCollector.java 155607 2005-02-27 01:29:53Z otis $
 	/// </version>
 	public abstract class HitCollector
 	{
@@ -40,7 +46,7 @@ namespace Lucene.Net.Search
 		/// <p>Note: This is called in an inner search loop.  For good search
 		/// performance, implementations of this method should not call
 		/// {@link Searcher#Doc(int)} or
-		/// {@link Lucene.Net.Index.IndexReader#Document(int)} on every
+		/// {@link Lucene.Net.index.IndexReader#Document(int)} on every
 		/// document number encountered.  Doing so can slow searches by an order
 		/// of magnitude or more.
 		/// <p>Note: The <code>score</code> passed to this method is a raw score.

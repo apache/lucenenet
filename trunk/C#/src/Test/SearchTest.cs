@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser;
+using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.Store;
+
 namespace Lucene.Net
 {
 	
@@ -38,8 +40,8 @@ namespace Lucene.Net
 				System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
 				for (int j = 0; j < docs.Length; j++)
 				{
-					Document d = new Document();
-					d.Add(Field.Text("contents", docs[j]));
+					Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+					d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.TOKENIZED));
 					writer.AddDocument(d);
 				}
 				writer.Close();
@@ -49,7 +51,7 @@ namespace Lucene.Net
 				System.String[] queries = new System.String[]{"\"a c e\""};
 				Hits hits = null;
 				
-				QueryParsers.QueryParser parser = new QueryParsers.QueryParser("contents", analyzer);
+				Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", analyzer);
 				parser.SetPhraseSlop(4);
 				for (int j = 0; j < queries.Length; j++)
 				{
@@ -66,7 +68,7 @@ namespace Lucene.Net
 					System.Console.Out.WriteLine(hits.Length() + " total results");
 					for (int i = 0; i < hits.Length() && i < 10; i++)
 					{
-						Document d = hits.Doc(i);
+						Lucene.Net.Documents.Document d = hits.Doc(i);
 						System.Console.Out.WriteLine(i + " " + hits.Score(i) + " " + d.Get("contents"));
 					}
 				}
@@ -80,14 +82,8 @@ namespace Lucene.Net
 		
 		internal static long Time(int year, int month, int day)
 		{
-            // {{Aroush
-            System.DateTime tempDate = System.DateTime.Now;
-			System.Globalization.GregorianCalendar calendar = new System.Globalization.GregorianCalendar();
-            //tempDate.Year = year;
-            //tempDate.Month = month;
-            //tempDate.Day = day;
-            return tempDate.Ticks;
-            // Aroush}}
-        }
+            System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+            return calendar.Ticks;
+		}
 	}
 }

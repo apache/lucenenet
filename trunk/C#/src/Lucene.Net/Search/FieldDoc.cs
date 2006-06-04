@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
+	
+	
 	/// <summary> Expert: A ScoreDoc which also contains information about
 	/// how to sort the referenced document.  In addition to the
 	/// document number and score, this object contains an array
-	/// of values for the document from the Field(s) used to sort.
+	/// of values for the document from the field(s) used to sort.
 	/// For example, if the sort criteria was to sort by fields
 	/// "a", "b" then "c", the <code>fields</code> object array
 	/// will have three elements, corresponding respectively to
 	/// the term values for the document in fields "a", "b" and "c".
 	/// The class of each element in the array will be either
 	/// Integer, Float or String depending on the type of values
-	/// in the terms of each Field.
+	/// in the terms of each field.
 	/// 
 	/// <p>Created: Feb 11, 2004 1:23:38 PM
 	/// 
@@ -35,7 +39,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldDoc.java,v 1.4 2004/04/22 22:23:14 tjones Exp $
+	/// <version>  $Id: FieldDoc.java 164865 2005-04-26 19:30:20Z cutting $
 	/// </version>
 	/// <seealso cref="ScoreDoc">
 	/// </seealso>
@@ -48,11 +52,11 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: The values which are used to sort the referenced document.
 		/// The order of these will match the original sort criteria given by a
 		/// Sort object.  Each Object will be either an Integer, Float or String,
-		/// depending on the type of values in the terms of the original Field.
+		/// depending on the type of values in the terms of the original field.
 		/// </summary>
 		/// <seealso cref="Sort">
 		/// </seealso>
-		/// <seealso cref="Searchable#Search(Query,Filter,int,Sort)">
+		/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 		/// </seealso>
 		public System.IComparable[] fields;
 		

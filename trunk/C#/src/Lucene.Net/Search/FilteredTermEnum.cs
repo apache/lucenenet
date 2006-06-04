@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+
 namespace Lucene.Net.Search
 {
 	
@@ -54,7 +55,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns the docFreq of the current Term in the enumeration.
-		/// Initially invalid, valid after next() called for the first time. 
+		/// Returns -1 if no Term matches or all terms have been enumerated.
 		/// </summary>
 		public override int DocFreq()
 		{
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the current Term in the enumeration.
-		/// Initially invalid, valid after next() called for the first time. 
+		/// Returns null if no Term matches or all terms have been enumerated. 
 		/// </summary>
 		public override Term Term()
 		{

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -22,6 +23,7 @@ using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Index
 {
 	[TestFixture]
@@ -31,18 +33,37 @@ namespace Lucene.Net.Index
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-            /*
-			TestRunner.run(new TestSuite(typeof(TestIndexReader)));
+			// NUnit.Core.TestRunner(new NUnit.Core.TestSuite(typeof(TestIndexReader)));  // {{Aroush}} where is 'TestRunner'?
 			//        TestRunner.run (new TestIndexReader("testBasicDelete"));
 			//        TestRunner.run (new TestIndexReader("testDeleteReaderWriterConflict"));
 			//        TestRunner.run (new TestIndexReader("testDeleteReaderReaderConflict"));
 			//        TestRunner.run (new TestIndexReader("testFilesOpenClose"));
-            */
+		}
+		
+		public virtual void  TestIsCurrent()
+		{
+			RAMDirectory d = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(d, new StandardAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			// set up reader:
+			IndexReader reader = IndexReader.Open(d);
+			Assert.IsTrue(reader.IsCurrent());
+			// modify index by adding another document:
+			writer = new IndexWriter(d, new StandardAnalyzer(), false);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			Assert.IsFalse(reader.IsCurrent());
+			// re-create index:
+			writer = new IndexWriter(d, new StandardAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			Assert.IsFalse(reader.IsCurrent());
+			reader.Close();
 		}
 		
 		/// <summary> Tests the IndexReader.getFieldNames implementation</summary>
 		/// <throws>  Exception on error </throws>
-		[Test]
 		public virtual void  TestGetFieldNames()
 		{
 			RAMDirectory d = new RAMDirectory();
@@ -52,54 +73,94 @@ namespace Lucene.Net.Index
 			writer.Close();
 			// set up reader
 			IndexReader reader = IndexReader.Open(d);
-            System.Collections.Hashtable fieldNames = (System.Collections.Hashtable) reader.GetFieldNames();
-			Assert.IsTrue(fieldNames.Contains("keyword"));
-			Assert.IsTrue(fieldNames.Contains("text"));
-			Assert.IsTrue(fieldNames.Contains("unindexed"));
-			Assert.IsTrue(fieldNames.Contains("unstored"));
+			System.Collections.ICollection fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			Assert.IsTrue(CollectionContains(fieldNames, "keyword"));
+			Assert.IsTrue(CollectionContains(fieldNames, "text"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unindexed"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unstored"));
 			// add more documents
 			writer = new IndexWriter(d, new StandardAnalyzer(), false);
 			// want to get some more segments here
-			for (int i = 0; i < 5 * writer.mergeFactor; i++)
+			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
 			{
 				AddDocumentWithFields(writer);
 			}
 			// new fields are in some different segments (we hope)
-			for (int i = 0; i < 5 * writer.mergeFactor; i++)
+			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
 			{
 				AddDocumentWithDifferentFields(writer);
 			}
+			// new termvector fields
+			for (int i = 0; i < 5 * writer.GetMergeFactor(); i++)
+			{
+				AddDocumentWithTermVectorFields(writer);
+			}
+			
 			writer.Close();
 			// verify fields again
 			reader = IndexReader.Open(d);
-			fieldNames = (System.Collections.Hashtable) reader.GetFieldNames();
-            Assert.AreEqual(9, fieldNames.Count); // the following fields + an empty one (bug?!)
-			Assert.IsTrue(fieldNames.Contains("keyword"));
-			Assert.IsTrue(fieldNames.Contains("text"));
-			Assert.IsTrue(fieldNames.Contains("unindexed"));
-			Assert.IsTrue(fieldNames.Contains("unstored"));
-			Assert.IsTrue(fieldNames.Contains("keyword2"));
-			Assert.IsTrue(fieldNames.Contains("text2"));
-			Assert.IsTrue(fieldNames.Contains("unindexed2"));
-			Assert.IsTrue(fieldNames.Contains("unstored2"));
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			Assert.AreEqual(13, fieldNames.Count); // the following fields
+			Assert.IsTrue(CollectionContains(fieldNames, "keyword"));
+			Assert.IsTrue(CollectionContains(fieldNames, "text"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unindexed"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unstored"));
+			Assert.IsTrue(CollectionContains(fieldNames, "keyword2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "text2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unindexed2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unstored2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvnot"));
+			Assert.IsTrue(CollectionContains(fieldNames, "termvector"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvposition"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvoffset"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvpositionoffset"));
 			
 			// verify that only indexed fields were returned
-			System.Collections.ICollection indexedFieldNames = reader.GetFieldNames(true);
-            Assert.AreEqual(6, indexedFieldNames.Count);
-			Assert.IsTrue(fieldNames.Contains("keyword"));
-			Assert.IsTrue(fieldNames.Contains("text"));
-			Assert.IsTrue(fieldNames.Contains("unstored"));
-			Assert.IsTrue(fieldNames.Contains("keyword2"));
-			Assert.IsTrue(fieldNames.Contains("text2"));
-			Assert.IsTrue(fieldNames.Contains("unstored2"));
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.INDEXED);
+			Assert.AreEqual(11, fieldNames.Count); // 6 original + the 5 termvector fields 
+			Assert.IsTrue(CollectionContains(fieldNames, "keyword"));
+			Assert.IsTrue(CollectionContains(fieldNames, "text"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unstored"));
+			Assert.IsTrue(CollectionContains(fieldNames, "keyword2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "text2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unstored2"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvnot"));
+			Assert.IsTrue(CollectionContains(fieldNames, "termvector"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvposition"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvoffset"));
+			Assert.IsTrue(CollectionContains(fieldNames, "tvpositionoffset"));
 			
 			// verify that only unindexed fields were returned
-			System.Collections.ICollection unindexedFieldNames = reader.GetFieldNames(false);
-            Assert.AreEqual(3, unindexedFieldNames.Count); // the following fields + an empty one
-			Assert.IsTrue(fieldNames.Contains("unindexed"));
-            Assert.IsTrue(fieldNames.Contains("unindexed2"));
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED);
+			Assert.AreEqual(2, fieldNames.Count); // the following fields
+			Assert.IsTrue(CollectionContains(fieldNames, "unindexed"));
+			Assert.IsTrue(CollectionContains(fieldNames, "unindexed2"));
+			
+			// verify index term vector fields  
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR);
+			Assert.AreEqual(1, fieldNames.Count); // 1 field has term vector only
+			Assert.IsTrue(CollectionContains(fieldNames, "termvector"));
+			
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION);
+			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
+			Assert.IsTrue(CollectionContains(fieldNames, "tvposition"));
+			
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET);
+			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
+			Assert.IsTrue(CollectionContains(fieldNames, "tvoffset"));
+			
+			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET);
+			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
+			Assert.IsTrue(CollectionContains(fieldNames, "tvpositionoffset"));
 		}
-		
+
+        public static bool CollectionContains(System.Collections.ICollection col, System.String val)
+        {
+            foreach (object item in col)
+                if (item.ToString() == val)
+                    return true;
+            return false;
+        }
 		
 		private void  AssertTermDocsCount(System.String msg, IndexReader reader, Term term, int expected)
 		{
@@ -108,7 +169,7 @@ namespace Lucene.Net.Index
 			try
 			{
 				tdocs = reader.TermDocs(term);
-                Assert.IsNotNull(tdocs, msg + ", null TermDocs");
+				Assert.IsNotNull(tdocs, msg + ", null TermDocs");
 				int count = 0;
 				while (tdocs.Next())
 				{
@@ -119,13 +180,7 @@ namespace Lucene.Net.Index
 			finally
 			{
 				if (tdocs != null)
-					try
-					{
-						tdocs.Close();
-					}
-					catch (System.Exception e)
-					{
-					}
+					tdocs.Close();
 			}
 		}
 		
@@ -175,8 +230,8 @@ namespace Lucene.Net.Index
 			DeleteReaderWriterConflict(false);
 		}
 		
-        [Test]
-		public virtual void  TestDeleteReaderWriterConflictOptimized()
+		[Test]
+        public virtual void  TestDeleteReaderWriterConflictOptimized()
 		{
 			DeleteReaderWriterConflict(true);
 		}
@@ -269,11 +324,11 @@ namespace Lucene.Net.Index
 		
 		private Directory GetDirectory(bool create)
 		{
-            return FSDirectory.GetDirectory(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", "") + "\\" + "testIndex"), create);
+			return FSDirectory.GetDirectory(System.IO.Path.Combine(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir"), "testIndex"), create);
 		}
 		
-        [Test]
-		public virtual void  TestFilesOpenClose()
+		[Test]
+        public virtual void  TestFilesOpenClose()
 		{
 			// Create initial data set
 			Directory dir = GetDirectory(true);
@@ -301,14 +356,80 @@ namespace Lucene.Net.Index
 			dir = GetDirectory(true);
 		}
 		
-        [Test]
-		public virtual void  TestDeleteReaderReaderConflictUnoptimized()
+		[Test]
+        public virtual void  TestLastModified()
+		{
+			Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
+			Directory dir = new RAMDirectory();
+			Assert.IsFalse(IndexReader.IndexExists(dir));
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			Assert.IsTrue(IndexReader.IsLocked(dir)); // writer open, so dir is locked
+			writer.Close();
+			Assert.IsTrue(IndexReader.IndexExists(dir));
+			IndexReader reader = IndexReader.Open(dir);
+			Assert.IsFalse(IndexReader.IsLocked(dir)); // reader only, no lock
+			long version = IndexReader.LastModified(dir);
+			reader.Close();
+			// modify index and check version has been incremented:
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			reader = IndexReader.Open(dir);
+			Assert.IsTrue(version < IndexReader.GetCurrentVersion(dir));
+			reader.Close();
+		}
+		
+		[Test]
+        public virtual void  TestLock()
+		{
+			Directory dir = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			IndexReader reader = IndexReader.Open(dir);
+			try
+			{
+				reader.Delete(0);
+				Assert.Fail("expected lock");
+			}
+			catch (System.IO.IOException e)
+			{
+				// expected exception
+			}
+			IndexReader.Unlock(dir); // this should not be done in the real world! 
+			reader.Delete(0);
+			reader.Close();
+			writer.Close();
+		}
+		
+		[Test]
+        public virtual void  TestUndeleteAll()
+		{
+			Directory dir = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			IndexReader reader = IndexReader.Open(dir);
+			reader.Delete(0);
+			reader.Delete(1);
+			reader.UndeleteAll();
+			reader.Close();
+			reader = IndexReader.Open(dir);
+			Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
+			reader.Close();
+		}
+		
+		[Test]
+        public virtual void  TestDeleteReaderReaderConflictUnoptimized()
 		{
 			DeleteReaderReaderConflict(false);
 		}
 		
-        [Test]
-		public virtual void  TestDeleteReaderReaderConflictOptimized()
+		[Test]
+        public virtual void  TestDeleteReaderReaderConflictOptimized()
 		{
 			DeleteReaderReaderConflict(true);
 		}
@@ -422,37 +543,41 @@ namespace Lucene.Net.Index
 		
 		private void  AddDocumentWithFields(IndexWriter writer)
 		{
-			Document doc = new Document();
-			doc.Add(Field.Keyword("keyword", "test1"));
-			doc.Add(Field.Text("text", "test1"));
-			doc.Add(Field.UnIndexed("unindexed", "test1"));
-			doc.Add(Field.UnStored("unstored", "test1"));
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("keyword", "test1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("text", "test1", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("unindexed", "test1", Field.Store.YES, Field.Index.NO));
+			doc.Add(new Field("unstored", "test1", Field.Store.NO, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 		}
 		
 		private void  AddDocumentWithDifferentFields(IndexWriter writer)
 		{
-			Document doc = new Document();
-			doc.Add(Field.Keyword("keyword2", "test1"));
-			doc.Add(Field.Text("text2", "test1"));
-			doc.Add(Field.UnIndexed("unindexed2", "test1"));
-			doc.Add(Field.UnStored("unstored2", "test1"));
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("keyword2", "test1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("text2", "test1", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("unindexed2", "test1", Field.Store.YES, Field.Index.NO));
+			doc.Add(new Field("unstored2", "test1", Field.Store.NO, Field.Index.TOKENIZED));
+			writer.AddDocument(doc);
+		}
+		
+		private void  AddDocumentWithTermVectorFields(IndexWriter writer)
+		{
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("tvnot", "tvnot", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO));
+			doc.Add(new Field("termvector", "termvector", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.YES));
+			doc.Add(new Field("tvoffset", "tvoffset", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+			doc.Add(new Field("tvposition", "tvposition", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS));
+			doc.Add(new Field("tvpositionoffset", "tvpositionoffset", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			
 			writer.AddDocument(doc);
 		}
 		
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
-			Document doc = new Document();
-			doc.Add(Field.UnStored("content", value_Renamed));
-			
-			try
-			{
-				writer.AddDocument(doc);
-			}
-			catch (System.IO.IOException e)
-			{
-                System.Console.Error.WriteLine(e.StackTrace);
-			}
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.TOKENIZED));
+			writer.AddDocument(doc);
 		}
 	}
 }

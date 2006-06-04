@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using DateField = Lucene.Net.Documents.DateField;
@@ -22,6 +23,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
@@ -30,14 +32,15 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Otis Gospodnetic
 	/// </author>
-	/// <version>  $Revision: 1.5 $
+	/// <version>  $Revision: 150487 $
 	/// </version>
 	[TestFixture]
-	public class TestDateFilter
+    public class TestDateFilter
 	{
+		
 		/// <summary> </summary>
 		[Test]
-		public virtual void  TestBefore()
+        public virtual void  TestBefore()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
@@ -45,10 +48,10 @@ namespace Lucene.Net.Search
 			
 			long now = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
 			
-			Document doc = new Document();
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the past
-			doc.Add(Field.Keyword("datefield", DateField.TimeToString(now - 1000)));
-			doc.Add(Field.Text("body", "Today is a very sunny day in New York City"));
+			doc.Add(new Field("datefield", DateField.TimeToString(now - 1000), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
@@ -93,7 +96,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> </summary>
 		[Test]
-		public virtual void  TestAfter()
+        public virtual void  TestAfter()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
@@ -101,10 +104,10 @@ namespace Lucene.Net.Search
 			
 			long now = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
 			
-			Document doc = new Document();
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the future
-			doc.Add(Field.Keyword("datefield", DateField.TimeToString(now + 888888)));
-			doc.Add(Field.Text("body", "Today is a very sunny day in New York City"));
+			doc.Add(new Field("datefield", DateField.TimeToString(now + 888888), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
 	
-	abstract class PhraseScorer:Scorer
+	abstract class PhraseScorer : Scorer
 	{
 		private Weight weight;
 		protected internal byte[] norms;
@@ -36,7 +38,7 @@ namespace Lucene.Net.Search
 		{
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.Value;
+			this.value_Renamed = weight.GetValue();
 			
 			// convert tps to a list
 			for (int i = 0; i < tps.Length; i++)

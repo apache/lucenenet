@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -21,21 +23,21 @@ namespace Lucene.Net.Search
 	/// <summary> Encapsulates sort criteria for returned hits.
 	/// 
 	/// <p>The fields used to determine sort order must be carefully chosen.
-	/// Documents must contain a single term in such a Field,
+	/// Documents must contain a single term in such a field,
 	/// and the value of the term should indicate the document's relative position in
-	/// a given sort order.  The Field must be indexed, but should not be tokenized,
+	/// a given sort order.  The field must be indexed, but should not be tokenized,
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <dl><dd><code>document.add (new Field ("byNumber", Integer.ToString(x), false, true, false));</code>
-	/// </dd></dl>
+	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.UN_TOKENIZED));</code></p>
+	/// 
 	/// 
 	/// <p><h3>Valid Types of Values</h3>
 	/// 
 	/// <p>There are three possible kinds of term values which may be put into
 	/// sorting fields: Integers, Floats, or Strings.  Unless
 	/// {@link SortField SortField} objects are specified, the type of value
-	/// in the Field is determined by parsing the first term in the Field.
+	/// in the field is determined by parsing the first term in the field.
 	/// 
 	/// <p>Integer term values should contain only digits and an optional
 	/// preceeding negative sign.  Values must be base 10 and in the range
@@ -68,15 +70,15 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>Sorting uses of caches of term values maintained by the
 	/// internal HitQueue(s).  The cache is static and contains an integer
-	/// or float array of length <code>IndexReader.maxDoc()</code> for each Field
+	/// or float array of length <code>IndexReader.maxDoc()</code> for each field
 	/// name for which a sort is performed.  In other words, the size of the
 	/// cache in bytes is:
 	/// 
 	/// <p><code>4 * IndexReader.maxDoc() * (# of different fields actually used to sort)</code>
 	/// 
 	/// <p>For String fields, the cache is larger: in addition to the
-	/// above array, the value of every term in the Field is kept in memory.
-	/// If there are many unique terms in the Field, this could
+	/// above array, the value of every term in the field is kept in memory.
+	/// If there are many unique terms in the field, this could
 	/// be quite large.
 	/// 
 	/// <p>Note that the size of the cache is not affected by how many
@@ -96,15 +98,16 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: Sort.java,v 1.7 2004/04/05 17:23:38 ehatcher Exp $
+	/// <version>  $Id: Sort.java 150618 2004-10-18 22:36:54Z dnaber $
 	/// </version>
 	[Serializable]
 	public class Sort
 	{
 		
-		/// <summary>Represents sorting by computed relevance. Using this sort criteria
-		/// returns the same results as calling {@link Searcher#Search(Query) Searcher#search()}
-		/// without a sort criteria, only with slightly more overhead. 
+		/// <summary> Represents sorting by computed relevance. Using this sort criteria returns
+		/// the same results as calling
+		/// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+		/// only with slightly more overhead.
 		/// </summary>
 		public static readonly Sort RELEVANCE = new Sort();
 		
@@ -114,51 +117,48 @@ namespace Lucene.Net.Search
 		// internal representation of the sort criteria
 		internal SortField[] fields;
 		
-		
-		/// <summary>Sorts by computed relevance.  This is the same sort criteria as
-		/// calling {@link Searcher#Search(Query) Searcher#search()} without a sort criteria, only with
-		/// slightly more overhead. 
+		/// <summary> Sorts by computed relevance. This is the same sort criteria as calling
+		/// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+		/// only with slightly more overhead.
 		/// </summary>
 		public Sort() : this(new SortField[] {SortField.FIELD_SCORE, SortField.FIELD_DOC})
 		{
 		}
 		
-		
-		/// <summary>Sorts by the terms in <code>Field</code> then by index order (document
-		/// number). The type of value in <code>Field</code> is determined
+		/// <summary> Sorts by the terms in <code>field</code> then by index order (document
+		/// number). The type of value in <code>field</code> is determined
 		/// automatically.
+		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		public Sort(System.String field)
 		{
 			SetSort(field, false);
 		}
 		
-		
-		/// <summary>Sorts possibly in reverse by the terms in <code>Field</code> then by
-		/// index order (document number). The type of value in <code>Field</code> is determined
-		/// automatically.
+		/// <summary> Sorts possibly in reverse by the terms in <code>field</code> then by
+		/// index order (document number). The type of value in <code>field</code> is
+		/// determined automatically.
+		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		public Sort(System.String field, bool reverse)
 		{
 			SetSort(field, reverse);
 		}
 		
-		
-		/// <summary>Sorts in succession by the terms in each Field.
-		/// The type of value in <code>Field</code> is determined
-		/// automatically.
+		/// <summary> Sorts in succession by the terms in each field. The type of value in
+		/// <code>field</code> is determined automatically.
+		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		public Sort(System.String[] fields)
 		{
 			SetSort(fields);
 		}
-		
 		
 		/// <summary>Sorts by the criteria in the given SortField. </summary>
 		public Sort(SortField field)
@@ -166,25 +166,22 @@ namespace Lucene.Net.Search
 			SetSort(field);
 		}
 		
-		
 		/// <summary>Sorts in succession by the criteria in each SortField. </summary>
 		public Sort(SortField[] fields)
 		{
 			SetSort(fields);
 		}
 		
-		
-		/// <summary>Sets the sort to the terms in <code>Field</code> then by index order
-		/// (document number). 
+		/// <summary> Sets the sort to the terms in <code>field</code> then by index order
+		/// (document number).
 		/// </summary>
 		public void  SetSort(System.String field)
 		{
 			SetSort(field, false);
 		}
 		
-		
-		/// <summary>Sets the sort to the terms in <code>Field</code> possibly in reverse,
-		/// then by index order (document number). 
+		/// <summary> Sets the sort to the terms in <code>field</code> possibly in reverse,
+		/// then by index order (document number).
 		/// </summary>
 		public virtual void  SetSort(System.String field, bool reverse)
 		{
@@ -192,8 +189,7 @@ namespace Lucene.Net.Search
 			fields = nfields;
 		}
 		
-		
-		/// <summary>Sets the sort to the terms in each Field in succession. </summary>
+		/// <summary>Sets the sort to the terms in each field in succession. </summary>
 		public virtual void  SetSort(System.String[] fieldnames)
 		{
 			int n = fieldnames.Length;
@@ -205,18 +201,24 @@ namespace Lucene.Net.Search
 			fields = nfields;
 		}
 		
-		
 		/// <summary>Sets the sort to the given criteria. </summary>
 		public virtual void  SetSort(SortField field)
 		{
 			this.fields = new SortField[]{field};
 		}
 		
-		
 		/// <summary>Sets the sort to the given criteria in succession. </summary>
 		public virtual void  SetSort(SortField[] fields)
 		{
 			this.fields = fields;
+		}
+		
+		/// <summary> Representation of the sort criteria.</summary>
+		/// <returns> Array of SortField objects used in this sort criteria
+		/// </returns>
+		public virtual SortField[] GetSort()
+		{
+			return fields;
 		}
 		
 		public override System.String ToString()

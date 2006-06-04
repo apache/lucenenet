@@ -1,6 +1,395 @@
-﻿Lucene Change Log
+Lucene Change Log
 
-$Id: CHANGES.txt,v 1.96.2.6 2004/11/25 19:13:00 goller Exp $
+$Id: CHANGES.txt 355181 2005-12-08 19:53:06Z cutting $
+
+1.9 RC1
+
+Note that this realease is mostly but not 100% source compatible with the
+latest release of Lucene (1.4.3). In other words, you should make sure
+your application compiles with this version of Lucene before you replace
+the old Lucene JAR with the new one.
+
+Requirements
+
+ 1. To compile and use Lucene you now need Java 1.4 or later.
+
+Changes in runtime behavior
+
+ 1. FuzzyQuery can no longer throw a TooManyClauses exception. If a
+    FuzzyQuery expands to more than BooleanQuery.maxClauseCount
+    terms only the BooleanQuery.maxClauseCount most similar terms
+    go into the rewritten query and thus the exception is avoided.
+    (Christoph)
+
+ 2. Changed system property from "org.apache.lucene.lockdir" to
+    "org.apache.lucene.lockDir", so that its casing follows the existing
+    pattern used in other Lucene system properties. (Bernhard)
+
+ 3. The terms of RangeQueries and FuzzyQueries are now converted to
+    lowercase by default (as it has been the case for PrefixQueries
+    and WildcardQueries before). Use setLowercaseExpandedTerms(false)
+    to disable that behavior but note that this also affects
+    PrefixQueries and WildcardQueries. (Daniel Naber)
+
+ 4. Document frequency that is computed when MultiSearcher is used is now
+    computed correctly and "globally" across subsearchers and indices, while
+    before it used to be computed locally to each index, which caused
+    ranking across multiple indices not to be equivalent.
+    (Chuck Williams, Wolf Siberski via Otis, bug #31841)
+
+ 5. When opening an IndexWriter with create=true, Lucene now only deletes
+    its own files from the index directory (looking at the file name suffixes
+    to decide if a file belongs to Lucene). The old behavior was to delete
+    all files. (Daniel Naber and Bernhard Messer, bug #34695)
+
+ 6. The version of an IndexReader, as returned by getCurrentVersion()
+    and getVersion() doesn't start at 0 anymore for new indexes. Instead, it
+    is now initialized by the system time in milliseconds.
+    (Bernhard Messer via Daniel Naber)
+
+ 7. Several default values cannot be set via system properties anymore, as
+    this has been considered inappropriate for a library like Lucene. For
+    most properties there are set/get methods available in IndexWriter which
+    you should use instead. This affects the following properties:
+    See IndexWriter for getter/setter methods:
+      org.apache.lucene.writeLockTimeout, org.apache.lucene.commitLockTimeout,
+      org.apache.lucene.minMergeDocs, org.apache.lucene.maxMergeDocs,
+      org.apache.lucene.maxFieldLength, org.apache.lucene.termIndexInterval,
+      org.apache.lucene.mergeFactor,
+    See BooleanQuery for getter/setter methods:
+      org.apache.lucene.maxClauseCount
+    See FSDirectory for getter/setter methods:
+      disableLuceneLocks
+    (Daniel Naber)
+
+ 8. Fixed FieldCacheImpl to use user-provided IntParser and FloatParser,
+    instead of using Integer and Float classes for parsing.
+    (Yonik Seeley via Otis Gospodnetic)
+
+ 9. Expert level search routines returning TopDocs and TopFieldDocs
+    no longer normalize scores.  This also fixes bugs related to
+    MultiSearchers and score sorting/normalization.
+    (Luc Vanlerberghe via Yonik Seeley, LUCENE-469)
+
+New features
+
+ 1. Added support for stored compressed fields (patch #31149)
+    (Bernhard Messer via Christoph)
+
+ 2. Added support for binary stored fields (patch #29370)
+    (Drew Farris and Bernhard Messer via Christoph)
+
+ 3. Added support for position and offset information in term vectors
+    (patch #18927). (Grant Ingersoll & Christoph)
+
+ 4. A new class DateTools has been added. It allows you to format dates
+    in a readable format adequate for indexing. Unlike the existing
+    DateField class DateTools can cope with dates before 1970 and it
+    forces you to specify the desired date resolution (e.g. month, day,
+    second, ...) which can make RangeQuerys on those fields more efficient.
+    (Daniel Naber)
+
+ 5. QueryParser now correctly works with Analyzers that can return more
+    than one token per position. For example, a query "+fast +car"
+    would be parsed as "+fast +(car automobile)" if the Analyzer
+    returns "car" and "automobile" at the same position whenever it
+    finds "car" (Patch #23307).
+    (Pierrick Brihaye, Daniel Naber)
+
+ 6. Permit unbuffered Directory implementations (e.g., using mmap).
+    InputStream is replaced by the new classes IndexInput and
+    BufferedIndexInput.  OutputStream is replaced by the new classes
+    IndexOutput and BufferedIndexOutput.  InputStream and OutputStream
+    are now deprecated and FSDirectory is now subclassable. (cutting)
+
+ 7. Add native Directory and TermDocs implementations that work under
+    GCJ.  These require GCC 3.4.0 or later and have only been tested
+    on Linux.  Use 'ant gcj' to build demo applications. (cutting)
+
+ 8. Add MMapDirectory, which uses nio to mmap input files.  This is
+    still somewhat slower than FSDirectory.  However it uses less
+    memory per query term, since a new buffer is not allocated per
+    term, which may help applications which use, e.g., wildcard
+    queries.  It may also someday be faster. (cutting & Paul Elschot)
+
+ 9. Added javadocs-internal to build.xml - bug #30360
+    (Paul Elschot via Otis)
+
+10. Added RangeFilter, a more generically useful filter than DateFilter.
+    (Chris M Hostetter via Erik)
+
+11. Added NumberTools, a utility class indexing numeric fields.
+    (adapted from code contributed by Matt Quail; committed by Erik)
+
+12. Added public static IndexReader.main(String[] args) method.
+    IndexReader can now be used directly at command line level
+    to list and optionally extract the individual files from an existing
+    compound index file.
+    (adapted from code contributed by Garrett Rooney; committed by Bernhard)
+
+13. Add IndexWriter.setTermIndexInterval() method.  See javadocs.
+    (Doug Cutting)
+
+14. Added LucenePackage, whose static get() method returns java.util.Package,
+    which lets the caller get the Lucene version information specified in
+    the Lucene Jar.
+    (Doug Cutting via Otis)
+
+15. Added Hits.iterator() method and corresponding HitIterator and Hit objects.
+    This provides standard java.util.Iterator iteration over Hits.
+    Each call to the iterator's next() method returns a Hit object.
+    (Jeremy Rayner via Erik)
+
+16. Add ParallelReader, an IndexReader that combines separate indexes
+    over different fields into a single virtual index.  (Doug Cutting)
+
+17. Add IntParser and FloatParser interfaces to FieldCache, so that
+    fields in arbitrarily formats can be cached as ints and floats.
+    (Doug Cutting)
+
+18. Added class org.apache.lucene.index.IndexModifier which combines
+    IndexWriter and IndexReader, so you can add and delete documents without
+    worrying about synchronisation/locking issues.
+    (Daniel Naber)
+
+19. Lucene can now be used inside an unsigned applet, as Lucene's access
+    to system properties will not cause a SecurityException anymore.
+    (Jon Schuster via Daniel Naber, bug #34359)
+
+20. Added a new class MatchAllDocsQuery that matches all documents.
+    (John Wang via Daniel Naber, bug #34946)
+
+21. Added ability to omit norms on a per field basis to decrease
+    index size and memory consumption when there are many indexed fields.
+    See Field.setOmitNorms()
+    (Yonik Seeley, LUCENE-448)
+
+22. Added NullFragmenter to contrib/highlighter, which is useful for
+    highlighting entire documents or fields.
+    (Erik Hatcher)
+
+23. Added regular expression queries, RegexQuery and SpanRegexQuery.
+    Note the same term enumeration caveats apply with these queries as
+    apply to WildcardQuery and other term expanding queries.
+    These two new queries are not currently supported via QueryParser.
+    (Erik Hatcher)
+
+24. Added ConstantScoreQuery which wraps a filter and produces a score
+    equal to the query boost for every matching document.
+    (Yonik Seeley, LUCENE-383)
+
+25. Added ConstantScoreRangeQuery which produces a constant score for
+    every document in the range.  One advantage over a normal RangeQuery
+    is that it doesn't expand to a BooleanQuery and thus doesn't have a maximum
+    number of terms the range can cover.  Both endpoints may also be open.
+    (Yonik Seeley, LUCENE-383)
+
+26. Added ability to specify a minimum number of optional clauses that
+    must match in a BooleanQuery.  See BooleanQuery.setMinimumNumberShouldMatch().
+    (Paul Elschot, Chris Hostetter via Yonik Seeley, LUCENE-395)
+
+27. Added DisjunctionMaxQuery which provides the maximum score across it's clauses.
+    It's very useful for searching across multiple fields.
+    (Chuck Williams via Yonik Seeley, LUCENE-323)
+
+28. New class ISOLatin1AccentFilter that replaces accented characters in the ISO
+    Latin 1 character set by their unaccented equivalent.
+    (Sven Duzont via Erik Hatcher)
+
+29. New class KeywordAnalyzer. "Tokenizes" the entire stream as a single token.
+    This is useful for data like zip codes, ids, and some product names.
+    (Erik Hatcher)
+
+30. Copied LengthFilter from contrib area to core. Removes words that are too
+    long and too short from the stream.
+    (David Spencer via Otis and Daniel)
+
+31. Added getPositionIncrementGap(String fieldName) to Analyzer.  This allows
+    custom analyzers to put gaps between Field instances with the same field
+    name, preventing phrase or span queries crossing these boundaries.  The
+    default implementation issues a gap of 0, allowing the default token
+    position increment of 1 to put the next field's first token into a
+    successive position.
+    (Erik Hatcher, with advice from Yonik)
+
+32. StopFilter can now ignore case when checking for stop words.
+    (Grant Ingersoll via Yonik, LUCENE-248)
+
+API Changes
+
+ 1. Several methods and fields have been deprecated. The API documentation
+    contains information about the recommended replacements. It is planned
+    that most of the deprecated methods and fields will be removed in
+    Lucene 2.0. (Daniel Naber)
+
+ 2. The Russian and the German analyzers have been moved to contrib/analyzers.
+    Also, the WordlistLoader class has been moved one level up in the
+    hierarchy and is now org.apache.lucene.analysis.WordlistLoader
+    (Daniel Naber)
+
+ 3. The API contained methods that declared to throw an IOException
+    but that never did this. These declarations have been removed. If
+    your code tries to catch these exceptions you might need to remove
+    those catch clauses to avoid compile errors. (Daniel Naber)
+
+ 4. Add a serializable Parameter Class to standardize parameter enum
+    classes in BooleanClause and Field. (Christoph)
+
+ 5. Added rewrite methods to all SpanQuery subclasses that nest other SpanQuerys.
+    This allows custom SpanQuery subclasses that rewrite (for term expansion, for
+    example) to nest within the built-in SpanQuery classes successfully.
+
+Bug fixes
+
+ 1. The JSP demo page (src/jsp/results.jsp) now properly closes the
+    IndexSearcher it opens. (Daniel Naber)
+
+ 2. Fixed a bug in IndexWriter.addIndexes(IndexReader[] readers) that
+    prevented deletion of obsolete segments. (Christoph Goller)
+
+ 3. Fix in FieldInfos to avoid the return of an extra blank field in
+    IndexReader.getFieldNames() (Patch #19058). (Mark Harwood via Bernhard)
+
+ 4. Some combinations of BooleanQuery and MultiPhraseQuery (formerly
+    PhrasePrefixQuery) could provoke UnsupportedOperationException
+    (bug #33161). (Rhett Sutphin via Daniel Naber)
+
+ 5. Small bug in skipTo of ConjunctionScorer that caused NullPointerException
+    if skipTo() was called without prior call to next() fixed. (Christoph)
+
+ 6. Disable Similiarty.coord() in the scoring of most automatically
+    generated boolean queries.  The coord() score factor is
+    appropriate when clauses are independently specified by a user,
+    but is usually not appropriate when clauses are generated
+    automatically, e.g., by a fuzzy, wildcard or range query.  Matches
+    on such automatically generated queries are no longer penalized
+    for not matching all terms.  (Doug Cutting, Patch #33472)
+
+ 7. Getting a lock file with Lock.obtain(long) was supposed to wait for
+    a given amount of milliseconds, but this didn't work.
+    (John Wang via Daniel Naber, Bug #33799)
+
+ 8. Fix FSDirectory.createOutput() to always create new files.
+    Previously, existing files were overwritten, and an index could be
+    corrupted when the old version of a file was longer than the new.
+    Now any existing file is first removed.  (Doug Cutting)
+
+ 9. Fix BooleanQuery containing nested SpanTermQuery's, which previously
+    could return an incorrect number of hits.
+    (Reece Wilton via Erik Hatcher, Bug #35157)
+
+10. Fix NullPointerException that could occur with a MultiPhraseQuery
+    inside a BooleanQuery.
+    (Hans Hjelm and Scotty Allen via Daniel Naber, Bug #35626)
+
+11. Fixed SnowballFilter to pass through the position increment from
+    the original token.
+    (Yonik Seeley via Erik Hatcher, LUCENE-437)
+
+12. Added Unicode range of Korean characters to StandardTokenizer,
+    grouping contiguous characters into a token rather than one token
+    per character.  This change also changes the token type to "<CJ>"
+    for Chinese and Japanese character tokens (previously it was "<CJK>").
+    (Cheolgoo Kang via Otis and Erik, LUCENE-444 and LUCENE-461)
+
+13. FieldsReader now looks at FieldInfo.storeOffsetWithTermVector and
+    FieldInfo.storePositionWithTermVector and creates the Field with
+    correct TermVector parameter.
+    (Frank Steinmann via Bernhard, LUCENE-455)
+
+14. Fixed WildcardQuery to prevent "cat" matching "ca??".
+    (Xiaozheng Ma via Bernhard, LUCENE-306)
+
+15. Fixed a bug where MultiSearcher and ParallelMultiSearcher could
+    change the sort order when sorting by string for documents without
+    a value for the sort field.
+    (Luc Vanlerberghe via Yonik, LUCENE-453)
+
+16. Fixed a sorting problem with MultiSearchers that can lead to
+    missing or duplicate docs due to equal docs sorting in an arbitrary order.
+    (Yonik Seeley, LUCENE-456)
+
+17. A single hit using the expert level sorted search methods
+    resulted in the score not being normalized.
+    (Yonik Seeley, LUCENE-462)
+
+18. Fixed inefficient memory usage when loading an index into RAMDirectory.
+    (Volodymyr Bychkoviak via Bernhard, LUCENE-475)
+
+19. Corrected term offsets returned by ChineseTokenizer.
+    (Ray Tsang via Erik Hatcher, LUCENE-324)
+
+20. Fixed MultiReader.undeleteAll() to correctly update numDocs.
+    (Robert Kirchgessner via Doug Cutting, LUCENE-479)
+
+Optimizations
+     
+ 1. Disk usage (peak requirements during indexing and optimization)
+    in case of compound file format has been improved. 
+    (Bernhard, Dmitry, and Christoph)
+
+ 2. Optimize the performance of certain uses of BooleanScorer,
+    TermScorer and IndexSearcher.  In particular, a BooleanQuery
+    composed of TermQuery, with not all terms required, that returns a
+    TopDocs (e.g., through a Hits with no Sort specified) runs much
+    faster.  (cutting)
+    
+ 3. Removed synchronization from reading of term vectors with an
+    IndexReader (Patch #30736). (Bernhard Messer via Christoph)
+
+ 4. Optimize term-dictionary lookup to allocate far fewer terms when
+    scanning for the matching term.  This speeds searches involving
+    low-frequency terms, where the cost of dictionary lookup can be
+    significant. (cutting)
+
+ 5. Optimize fuzzy queries so the standard fuzzy queries with a prefix 
+    of 0 now run 20-50% faster (Patch #31882).
+    (Jonathan Hager via Daniel Naber)
+    
+ 6. A Version of BooleanScorer (BooleanScorer2) added that delivers
+    documents in increasing order and implements skipTo. For queries
+    with required or forbidden clauses it may be faster than the old
+    BooleanScorer, for BooleanQueries consisting only of optional
+    clauses it is probably slower. The new BooleanScorer is now the
+    default. (Patch 31785 by Paul Elschot via Christoph)
+
+ 7. Use uncached access to norms when merging to reduce RAM usage.
+    (Bug #32847).  (Doug Cutting)
+
+ 8. Don't read term index when random-access is not required.  This
+    reduces time to open IndexReaders and they use less memory when
+    random access is not required, e.g., when merging segments.  The
+    term index is now read into memory lazily at the first
+    random-access.  (Doug Cutting)
+
+ 9. Optimize IndexWriter.addIndexes(Directory[]) when the number of
+    added indexes is larger than mergeFactor.  Previously this could
+    result in quadratic performance.  Now performance is n log(n).
+    (Doug Cutting)
+
+10. Speed up the creation of TermEnum for indicies with multiple
+    segments and deleted documents, and thus speed up PrefixQuery,
+    RangeQuery, WildcardQuery, FuzzyQuery, RangeFilter, DateFilter,
+    and sorting the first time on a field.
+    (Yonik Seeley, LUCENE-454)
+
+11. Optimized and generalized 32 bit floating point to byte
+    (custom 8 bit floating point) conversions.  Increased the speed of
+    Similarity.encodeNorm() anywhere from 10% to 250%, depending on the JVM.
+    (Yonik Seeley, LUCENE-467)
+
+Infrastructure
+
+ 1. Lucene's source code repository has converted from CVS to
+    Subversion.  The new repository is at
+    http://svn.apache.org/repos/asf/lucene/java/trunk
+
+ 2. Lucene's issue tracker has migrated from Bugzilla to JIRA.
+    Lucene's JIRA is at http://issues.apache.org/jira/browse/LUCENE
+    The old issues are still available at
+    http://issues.apache.org/bugzilla/show_bug.cgi?id=xxxx
+    (use the bug number instead of xxxx)
+
 
 1.4.3
 
@@ -14,6 +403,7 @@ $Id: CHANGES.txt,v 1.96.2.6 2004/11/25 19:13:00 goller Exp $
   2. QueryParser changes in 1.4.2 broke the QueryParser API. Now the old 
      API is supported again. (Christoph)
 
+
 1.4.2
 
  1. Fixed bug #31241: Sorting could lead to incorrect results (documents
@@ -26,7 +416,7 @@ $Id: CHANGES.txt,v 1.96.2.6 2004/11/25 19:13:00 goller Exp $
  3. FuzzyQuery now takes an additional parameter that specifies the
     minimum similarity that is required for a term to match the query.
     The QueryParser syntax for this is term~x, where x is a floating 
-    point number between 0 and 1 (a bigger number means that a higher
+    point number >= 0 and < 1 (a bigger number means that a higher
     similarity is required). Furthermore, a prefix can be specified
     for FuzzyQuerys so that only those terms are considered similar that 
     start with this prefix. This can speed up FuzzyQuery greatly.

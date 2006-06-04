@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using DateField = Lucene.Net.Documents.DateField;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> A Filter that restricts search results to a range of time.
 	/// 
 	/// <p>For this to work, documents must have been indexed with a
-	/// {@link DateField}.
+	/// {@link DateField}.</p>
+	/// 
 	/// </summary>
+	/// <deprecated> Instead, use {@link RangeFilter} combined with 
+	/// {@link Lucene.Net.document.DateTools}.
+	/// </deprecated>
 	[Serializable]
-	public class DateFilter:Filter
+	public class DateFilter : Filter
 	{
 		private void  InitBlock()
 		{
@@ -46,7 +52,7 @@ namespace Lucene.Net.Search
 			field = f;
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching dates
+		/// <summary> Constructs a filter for field <code>f</code> matching dates
 		/// between <code>from</code> and <code>to</code> inclusively.
 		/// </summary>
 		public DateFilter(System.String f, System.DateTime from, System.DateTime to)
@@ -57,7 +63,7 @@ namespace Lucene.Net.Search
 			end = DateField.DateToString(to);
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching times
+		/// <summary> Constructs a filter for field <code>f</code> matching times
 		/// between <code>from</code> and <code>to</code> inclusively.
 		/// </summary>
 		public DateFilter(System.String f, long from, long to)
@@ -68,7 +74,7 @@ namespace Lucene.Net.Search
 			end = DateField.TimeToString(to);
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching
+		/// <summary> Constructs a filter for field <code>f</code> matching
 		/// dates on or before before <code>date</code>.
 		/// </summary>
 		public static DateFilter Before(System.String field, System.DateTime date)
@@ -78,7 +84,7 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching times
+		/// <summary> Constructs a filter for field <code>f</code> matching times
 		/// on or before <code>time</code>.
 		/// </summary>
 		public static DateFilter Before(System.String field, long time)
@@ -88,7 +94,7 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching
+		/// <summary> Constructs a filter for field <code>f</code> matching
 		/// dates on or after <code>date</code>.
 		/// </summary>
 		public static DateFilter After(System.String field, System.DateTime date)
@@ -98,7 +104,7 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		/// <summary> Constructs a filter for Field <code>f</code> matching
+		/// <summary> Constructs a filter for field <code>f</code> matching
 		/// times on or after <code>time</code>.
 		/// </summary>
 		public static DateFilter After(System.String field, long time)

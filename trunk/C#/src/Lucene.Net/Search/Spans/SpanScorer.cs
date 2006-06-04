@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Explanation = Lucene.Net.Search.Explanation;
 using Scorer = Lucene.Net.Search.Scorer;
 using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+
 namespace Lucene.Net.Search.Spans
 {
 	
 	
-	class SpanScorer:Scorer
+	class SpanScorer : Scorer
 	{
 		private Spans spans;
 		private Weight weight;
@@ -40,7 +42,7 @@ namespace Lucene.Net.Search.Spans
 			this.spans = spans;
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.Value;
+			this.value_Renamed = weight.GetValue();
 		}
 		
 		public override bool Next()

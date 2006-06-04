@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
 	
@@ -23,8 +25,8 @@ namespace Lucene.Net.Index
 		internal int base_Renamed;
 		internal TermEnum termEnum;
 		internal IndexReader reader;
-		internal TermPositions postings;
-		internal int[] docMap = null; // maps around deleted docs
+		private TermPositions postings; // use getPositions()
+		private int[] docMap; // use getDocMap()
 		
 		internal SegmentMergeInfo(int b, TermEnum te, IndexReader r)
 		{
@@ -32,22 +34,38 @@ namespace Lucene.Net.Index
 			reader = r;
 			termEnum = te;
 			term = te.Term();
-			postings = reader.TermPositions();
-			
-			// build array which maps document numbers around deletions 
-			if (reader.HasDeletions())
+		}
+		
+		// maps around deleted docs
+		internal int[] GetDocMap()
+		{
+			if (docMap == null)
 			{
-				int maxDoc = reader.MaxDoc();
-				docMap = new int[maxDoc];
-				int j = 0;
-				for (int i = 0; i < maxDoc; i++)
+				// build array which maps document numbers around deletions 
+				if (reader.HasDeletions())
 				{
-					if (reader.IsDeleted(i))
-						docMap[i] = - 1;
-					else
-						docMap[i] = j++;
+					int maxDoc = reader.MaxDoc();
+					docMap = new int[maxDoc];
+					int j = 0;
+					for (int i = 0; i < maxDoc; i++)
+					{
+						if (reader.IsDeleted(i))
+							docMap[i] = - 1;
+						else
+							docMap[i] = j++;
+					}
 				}
 			}
+			return docMap;
+		}
+		
+		internal TermPositions GetPositions()
+		{
+			if (postings == null)
+			{
+				postings = reader.TermPositions();
+			}
+			return postings;
 		}
 		
 		internal bool Next()
@@ -67,7 +85,10 @@ namespace Lucene.Net.Index
 		internal void  Close()
 		{
 			termEnum.Close();
-			postings.Close();
+			if (postings != null)
+			{
+				postings.Close();
+			}
 		}
 	}
 }

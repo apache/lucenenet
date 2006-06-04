@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -22,8 +23,10 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+
 namespace Lucene.Net.Search
 {
+	
 	/// <summary> FilteredQuery JUnit tests.
 	/// 
 	/// <p>Created: Apr 21, 2004 1:21:46 PM
@@ -31,13 +34,14 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>   Tim Jones
 	/// </author>
-	/// <version>  $Id: TestFilteredQuery.java,v 1.5 2004/07/10 06:19:01 otis Exp $
+	/// <version>  $Id: TestFilteredQuery.java 150585 2004-10-10 15:44:45Z dnaber $
 	/// </version>
 	/// <since>   1.4
 	/// </since>
 	[TestFixture]
     public class TestFilteredQuery
 	{
+		//UPGRADE_NOTE: Field 'EnclosingInstance' was added to class 'AnonymousClassFilter' to access its enclosing instance. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1019'"
 		[Serializable]
 		private class AnonymousClassFilter : Filter
 		{
@@ -72,49 +76,49 @@ namespace Lucene.Net.Search
 		private Query query;
 		private Filter filter;
 		
-        [TestFixtureSetUp]
-		public virtual void  SetUp()
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 			directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			
-			Document doc = new Document();
-			doc.Add(Field.Text("Field", "one two three four five"));
-			doc.Add(Field.Text("sorter", "b"));
+			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("field", "one two three four five", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("sorter", "b", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			
-			doc = new Document();
-			doc.Add(Field.Text("Field", "one two three four"));
-			doc.Add(Field.Text("sorter", "d"));
+			doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("field", "one two three four", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("sorter", "d", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			
-			doc = new Document();
-			doc.Add(Field.Text("Field", "one two three y"));
-			doc.Add(Field.Text("sorter", "a"));
+			doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("field", "one two three y", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("sorter", "a", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			
-			doc = new Document();
-			doc.Add(Field.Text("Field", "one two x"));
-			doc.Add(Field.Text("sorter", "c"));
+			doc = new Lucene.Net.Documents.Document();
+			doc.Add(new Field("field", "one two x", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("sorter", "c", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			
 			writer.Optimize();
 			writer.Close();
 			
 			searcher = new IndexSearcher(directory);
-			query = new TermQuery(new Term("Field", "three"));
+			query = new TermQuery(new Term("field", "three"));
 			filter = new AnonymousClassFilter(this);
 		}
 		
-        [TestFixtureTearDown]
-		public virtual void  TearDown()
+		[TestFixtureTearDown]
+        public virtual void  TearDown()
 		{
 			searcher.Close();
 			directory.Close();
 		}
 		
-        [Test]
-		public virtual void  TestFilteredQuery_()
+		[Test]
+        public virtual void  TestFilteredQuery_Renamed_Method()
 		{
 			Query filteredquery = new FilteredQuery(query, filter);
 			Hits hits = searcher.Search(filteredquery);
@@ -125,23 +129,23 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits.Length());
 			Assert.AreEqual(1, hits.Id(0));
 			
-			filteredquery = new FilteredQuery(new TermQuery(new Term("Field", "one")), filter);
+			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(2, hits.Length());
 			
-			filteredquery = new FilteredQuery(new TermQuery(new Term("Field", "x")), filter);
+			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(1, hits.Length());
 			Assert.AreEqual(3, hits.Id(0));
 			
-			filteredquery = new FilteredQuery(new TermQuery(new Term("Field", "y")), filter);
+			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(0, hits.Length());
 		}
 		
 		/// <summary> This tests FilteredQuery's rewrite correctness</summary>
 		[Test]
-		public virtual void  TestRangeQuery()
+        public virtual void  TestRangeQuery()
 		{
 			RangeQuery rq = new RangeQuery(new Term("sorter", "b"), new Term("sorter", "d"), true);
 			

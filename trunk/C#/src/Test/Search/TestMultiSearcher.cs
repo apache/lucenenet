@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+using KeywordAnalyzer = Lucene.Net.Analysis.KeywordAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -24,17 +26,19 @@ using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> Tests {@link MultiSearcher} class.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestMultiSearcher.java,v 1.6 2004/03/02 13:09:57 otis Exp $
+	/// <version>  $Id: TestMultiSearcher.java 354819 2005-12-07 17:48:37Z yonik $
 	/// </version>
 	[TestFixture]
     public class TestMultiSearcher
 	{
+		
 		/// <summary> ReturnS a new instance of the concrete MultiSearcher class
 		/// used in this test.
 		/// </summary>
@@ -43,30 +47,30 @@ namespace Lucene.Net.Search
 			return new MultiSearcher(searchers);
 		}
 		
-        [Test]
-		public virtual void  TestEmptyIndex()
+		[Test]
+        public virtual void  TestEmptyIndex()
 		{
 			// creating two directories for indices
 			Directory indexStoreA = new RAMDirectory();
 			Directory indexStoreB = new RAMDirectory();
 			
 			// creating a document to store
-			Document lDoc = new Document();
-			lDoc.Add(Field.Text("fulltext", "Once upon a time....."));
-			lDoc.Add(Field.Keyword("id", "doc1"));
-			lDoc.Add(Field.Keyword("handle", "1"));
+			Lucene.Net.Documents.Document lDoc = new Lucene.Net.Documents.Document();
+			lDoc.Add(new Field("fulltext", "Once upon a time.....", Field.Store.YES, Field.Index.TOKENIZED));
+			lDoc.Add(new Field("id", "doc1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
 			// creating a document to store
-			Document lDoc2 = new Document();
-			lDoc2.Add(Field.Text("fulltext", "in a galaxy far far away....."));
-			lDoc2.Add(Field.Keyword("id", "doc2"));
-			lDoc2.Add(Field.Keyword("handle", "1"));
+			Lucene.Net.Documents.Document lDoc2 = new Lucene.Net.Documents.Document();
+			lDoc2.Add(new Field("fulltext", "in a galaxy far far away.....", Field.Store.YES, Field.Index.TOKENIZED));
+			lDoc2.Add(new Field("id", "doc2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc2.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
 			// creating a document to store
-			Document lDoc3 = new Document();
-			lDoc3.Add(Field.Text("fulltext", "a bizarre bug manifested itself...."));
-			lDoc3.Add(Field.Keyword("id", "doc3"));
-			lDoc3.Add(Field.Keyword("handle", "1"));
+			Lucene.Net.Documents.Document lDoc3 = new Lucene.Net.Documents.Document();
+			lDoc3.Add(new Field("fulltext", "a bizarre bug manifested itself....", Field.Store.YES, Field.Index.TOKENIZED));
+			lDoc3.Add(new Field("id", "doc3", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc3.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
 			// creating an index writer for the first index
 			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true);
@@ -102,23 +106,12 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length());
 			
-			try
+			// iterating over the hit documents
+			for (int i = 0; i < hits.Length(); i++)
 			{
-				// iterating over the hit documents
-				for (int i = 0; i < hits.Length(); i++)
-				{
-					Document d = hits.Doc(i);
-				}
+				Lucene.Net.Documents.Document d = hits.Doc(i);
 			}
-			catch (System.IndexOutOfRangeException e)
-			{
-				Assert.Fail("ArrayIndexOutOfBoundsException thrown: " + e.Message);
-				System.Console.Error.WriteLine(e.Source);
-			}
-			finally
-			{
-				mSearcher.Close();
-			}
+			mSearcher.Close();
 			
 			
 			//--------------------------------------------------------------------
@@ -143,24 +136,13 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(4, hits2.Length());
 			
-			try
+			// iterating over the hit documents
+			for (int i = 0; i < hits2.Length(); i++)
 			{
-				// iterating over the hit documents
-				for (int i = 0; i < hits2.Length(); i++)
-				{
-					// no exception should happen at this point
-					Document d = hits2.Doc(i);
-				}
+				// no exception should happen at this point
+				Lucene.Net.Documents.Document d = hits2.Doc(i);
 			}
-			catch (System.Exception e)
-			{
-				Assert.Fail("Exception thrown: " + e.Message);
-                System.Console.Error.WriteLine(e.Source);
-            }
-			finally
-			{
-				mSearcher2.Close();
-			}
+			mSearcher2.Close();
 			
 			//--------------------------------------------------------------------
 			// scenario 3
@@ -189,23 +171,132 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits3.Length());
 			
+			// iterating over the hit documents
+			for (int i = 0; i < hits3.Length(); i++)
+			{
+				Lucene.Net.Documents.Document d = hits3.Doc(i);
+			}
+			mSearcher3.Close();
+		}
+		
+		private static Lucene.Net.Documents.Document CreateDocument(System.String contents1, System.String contents2)
+		{
+			Lucene.Net.Documents.Document document = new Lucene.Net.Documents.Document();
+			
+			document.Add(new Field("contents", contents1, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			
+			if (contents2 != null)
+			{
+				document.Add(new Field("contents", contents2, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			}
+			
+			return document;
+		}
+		
+		private static void  InitIndex(Directory directory, int nDocs, bool create, System.String contents2)
+		{
+			IndexWriter indexWriter = null;
+			
 			try
 			{
-				// iterating over the hit documents
-				for (int i = 0; i < hits3.Length(); i++)
+				indexWriter = new IndexWriter(directory, new KeywordAnalyzer(), create);
+				
+				for (int i = 0; i < nDocs; i++)
 				{
-					Document d = hits3.Doc(i);
+					indexWriter.AddDocument(CreateDocument("doc" + i, contents2));
 				}
 			}
-			catch (System.IO.IOException e)
-			{
-				Assert.Fail("IOException thrown: " + e.Message);
-                System.Console.Error.WriteLine(e.Source);
-            }
 			finally
 			{
-				mSearcher3.Close();
+				if (indexWriter != null)
+				{
+					indexWriter.Close();
+				}
 			}
+		}
+		
+		/* uncomment this when the highest score is always normalized to 1.0, even when it was < 1.0
+		public void testNormalization1() throws IOException {
+		testNormalization(1, "Using 1 document per index:");
+		}
+		*/
+		
+		[Test]
+        public virtual void  TestNormalization10()
+		{
+			_TestNormalization(10, "Using 10 documents per index:");
+		}
+		
+        private void  _TestNormalization(int nDocs, System.String message)
+		{
+			Query query = new TermQuery(new Term("contents", "doc0"));
+			
+			RAMDirectory ramDirectory1;
+			IndexSearcher indexSearcher1;
+			Hits hits;
+			
+			ramDirectory1 = new RAMDirectory();
+			
+			// First put the documents in the same index
+			InitIndex(ramDirectory1, nDocs, true, null); // documents with a single token "doc0", "doc1", etc...
+			InitIndex(ramDirectory1, nDocs, false, "x"); // documents with two tokens "doc0" and "x", "doc1" and x, etc...
+			
+			indexSearcher1 = new IndexSearcher(ramDirectory1);
+			
+			hits = indexSearcher1.Search(query);
+			
+			Assert.AreEqual(2, hits.Length(), message);
+			
+			Assert.AreEqual(1, hits.Score(0), 1e-6, message); // hits.score(0) is 0.594535 if only a single document is in first index
+			
+			// Store the scores for use later
+			float[] scores = new float[]{hits.Score(0), hits.Score(1)};
+			
+			Assert.IsTrue(scores[0] > scores[1], message);
+			
+			indexSearcher1.Close();
+			ramDirectory1.Close();
+			hits = null;
+			
+			
+			
+			RAMDirectory ramDirectory2;
+			IndexSearcher indexSearcher2;
+			
+			ramDirectory1 = new RAMDirectory();
+			ramDirectory2 = new RAMDirectory();
+			
+			// Now put the documents in a different index
+			InitIndex(ramDirectory1, nDocs, true, null); // documents with a single token "doc0", "doc1", etc...
+			InitIndex(ramDirectory2, nDocs, true, "x"); // documents with two tokens "doc0" and "x", "doc1" and x, etc...
+			
+			indexSearcher1 = new IndexSearcher(ramDirectory1);
+			indexSearcher2 = new IndexSearcher(ramDirectory2);
+			
+			Searcher searcher = GetMultiSearcherInstance(new Searcher[]{indexSearcher1, indexSearcher2});
+			
+			hits = searcher.Search(query);
+			
+			Assert.AreEqual(2, hits.Length(), message);
+			
+			// The scores should be the same (within reason)
+			Assert.AreEqual(scores[0], hits.Score(0), 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits.Score(1), 1e-6, message); // This will a document from ramDirectory2
+			
+			
+			
+			// Adding a Sort.RELEVANCE object should not change anything
+			hits = searcher.Search(query, Sort.RELEVANCE);
+			
+			Assert.AreEqual(2, hits.Length(), message);
+			
+			Assert.AreEqual(scores[0], hits.Score(0), 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits.Score(1), 1e-6, message); // This will a document from ramDirectory2
+			
+			searcher.Close();
+			
+			ramDirectory1.Close();
+			ramDirectory2.Close();
 		}
 	}
 }

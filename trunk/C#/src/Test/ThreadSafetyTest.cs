@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser;
+using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+
 namespace Lucene.Net
 {
 	
@@ -33,7 +35,7 @@ namespace Lucene.Net
 		
 		private static int ITERATIONS = 1;
 		
-		private static int random(int i)
+		private static int Random(int i)
 		{
 			// for JDK 1.1 compatibility
 			int r = RANDOM.Next();
@@ -42,11 +44,11 @@ namespace Lucene.Net
 			return r % i;
 		}
 		
-		private class IndexerThread : SupportClass.ThreadClass
+		private class IndexerThread:SupportClass.ThreadClass
 		{
 			private void  InitBlock()
 			{
-				reopenInterval = 30 + Lucene.Net.ThreadSafetyTest.random(60);
+				reopenInterval = 30 + Lucene.Net.ThreadSafetyTest.Random(60);
 			}
 			private int reopenInterval;
 			internal IndexWriter writer;
@@ -64,10 +66,10 @@ namespace Lucene.Net
 					
 					for (int i = 0; i < 1024 * Lucene.Net.ThreadSafetyTest.ITERATIONS; i++)
 					{
-						Document d = new Document();
+						Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
 						int n = Lucene.Net.ThreadSafetyTest.RANDOM.Next();
-						d.Add(Field.Keyword("id", System.Convert.ToString(n)));
-						d.Add(Field.UnStored("contents", English.IntToEnglish(n)));
+						d.Add(new Field("id", System.Convert.ToString(n), Field.Store.YES, Field.Index.UN_TOKENIZED));
+						d.Add(new Field("contents", English.IntToEnglish(n), Field.Store.NO, Field.Index.TOKENIZED));
 						System.Console.Out.WriteLine("Adding " + n);
 						
 						// Switch between single and multiple file segments
@@ -94,11 +96,11 @@ namespace Lucene.Net
 			}
 		}
 		
-		private class SearcherThread : SupportClass.ThreadClass
+		private class SearcherThread:SupportClass.ThreadClass
 		{
 			private void  InitBlock()
 			{
-				reopenInterval = 10 + Lucene.Net.ThreadSafetyTest.random(20);
+				reopenInterval = 10 + Lucene.Net.ThreadSafetyTest.Random(20);
 			}
 			private IndexSearcher searcher;
 			private int reopenInterval;
@@ -115,7 +117,7 @@ namespace Lucene.Net
 				{
 					for (int i = 0; i < 512 * Lucene.Net.ThreadSafetyTest.ITERATIONS; i++)
 					{
-						SearchFor(Lucene.Net.ThreadSafetyTest.RANDOM.Next(), (searcher == null)?Lucene.Net.ThreadSafetyTest.SEARCHER:searcher);
+						searchFor(Lucene.Net.ThreadSafetyTest.RANDOM.Next(), (searcher == null)?Lucene.Net.ThreadSafetyTest.SEARCHER:searcher);
 						if (i % reopenInterval == 0)
 						{
 							if (searcher == null)
@@ -138,10 +140,10 @@ namespace Lucene.Net
 				}
 			}
 			
-			private void  SearchFor(int n, Searcher searcher)
+			private void  searchFor(int n, Searcher searcher)
 			{
 				System.Console.Out.WriteLine("Searching for " + n);
-				Hits hits = searcher.Search(QueryParsers.QueryParser.Parse(English.IntToEnglish(n), "contents", Lucene.Net.ThreadSafetyTest.ANALYZER));
+				Hits hits = searcher.Search(Lucene.Net.QueryParsers.QueryParser.Parse(English.IntToEnglish(n), "contents", Lucene.Net.ThreadSafetyTest.ANALYZER));
 				System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
 				for (int j = 0; j < System.Math.Min(3, hits.Length()); j++)
 				{

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+
 namespace Lucene.Net.Search
 {
 	
@@ -28,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldDocSortedHitQueue.java,v 1.5 2004/05/24 22:51:42 tjones Exp $
+	/// <version>  $Id: FieldDocSortedHitQueue.java 332431 2005-11-11 03:13:10Z yonik $
 	/// </version>
 	class FieldDocSortedHitQueue : PriorityQueue
 	{
@@ -47,7 +49,6 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
 		/// </param>
-		/// <throws>  IOException </throws>
 		internal FieldDocSortedHitQueue(SortField[] fields, int size)
 		{
 			this.fields = fields;
@@ -62,7 +63,7 @@ namespace Lucene.Net.Search
 		/// type until the values come back.  The fields can only be set once.
 		/// This method is thread safe.
 		/// </summary>
-		/// <param name="">fields
+		/// <param name="fields">
 		/// </param>
 		internal virtual void  SetFields(SortField[] fields)
 		{
@@ -122,146 +123,86 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < n && c == 0; ++i)
 			{
 				int type = fields[i].GetType();
+				switch (type)
+				{
+					
+					case SortField.SCORE: 
+						float r1 = (float) ((System.Single) docA.fields[i]);
+						float r2 = (float) ((System.Single) docB.fields[i]);
+						if (r1 > r2)
+							c = - 1;
+						if (r1 < r2)
+							c = 1;
+						break;
+					
+					case SortField.DOC: 
+					case SortField.INT: 
+						int i1 = ((System.Int32) docA.fields[i]);
+						int i2 = ((System.Int32) docB.fields[i]);
+						if (i1 < i2)
+							c = - 1;
+						if (i1 > i2)
+							c = 1;
+						break;
+					
+					case SortField.STRING: 
+						System.String s1 = (System.String) docA.fields[i];
+						System.String s2 = (System.String) docB.fields[i];
+						// null values need to be sorted first, because of how FieldCache.getStringIndex()
+						// works - in that routine, any documents without a value in the given field are
+						// put first.  If both are null, the next SortField is used
+						if (s1 == null)
+							c = (s2 == null)?0:- 1;
+						else if (s2 == null)
+							c = 1;
+						// 
+						else if (fields[i].GetLocale() == null)
+						{
+							c = String.CompareOrdinal(s1, s2);
+						}
+						else
+						{
+							//UPGRADE_TODO: The equivalent in .NET for method 'java.text.Collator.compare' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
+							c = collators[i].Compare(s1.ToString(), s2.ToString());
+						}
+						break;
+					
+					case SortField.FLOAT: 
+						//UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Float.floatValue' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
+						float f1 = (float) ((System.Single) docA.fields[i]);
+						//UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Float.floatValue' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
+						float f2 = (float) ((System.Single) docB.fields[i]);
+						if (f1 < f2)
+							c = - 1;
+						if (f1 > f2)
+							c = 1;
+						break;
+					
+					case SortField.CUSTOM: 
+						c = docA.fields[i].CompareTo(docB.fields[i]);
+						break;
+					
+					case SortField.AUTO: 
+						// we cannot handle this - even if we determine the type of object (Float or
+						// Integer), we don't necessarily know how to compare them (both SCORE and
+						// FLOAT contain floats, but are sorted opposite of each other). Before
+						// we get here, each AUTO should have been replaced with its actual value.
+						throw new System.SystemException("FieldDocSortedHitQueue cannot use an AUTO SortField");
+					
+					default: 
+						throw new System.SystemException("invalid SortField type: " + type);
+					
+				}
 				if (fields[i].GetReverse())
 				{
-					switch (type)
-					{
-						
-						case SortField.SCORE: 
-							float r1 = (float) ((System.Single) docA.fields[i]);
-							float r2 = (float) ((System.Single) docB.fields[i]);
-							if (r1 < r2)
-								c = - 1;
-							if (r1 > r2)
-								c = 1;
-							break;
-						
-						case SortField.DOC: 
-						case SortField.INT: 
-							int i1 = ((System.Int32) docA.fields[i]);
-							int i2 = ((System.Int32) docB.fields[i]);
-							if (i1 > i2)
-								c = - 1;
-							if (i1 < i2)
-								c = 1;
-							break;
-						
-						case SortField.STRING: 
-							System.String s1 = (System.String) docA.fields[i];
-							System.String s2 = (System.String) docB.fields[i];
-							if (s2 == null)
-								c = - 1;
-							// could be null if there are
-							else if (s1 == null)
-								c = 1;
-							// no terms in the given Field
-							else if (fields[i].GetLocale() == null)
-							{
-								c = String.CompareOrdinal(s2, s1);
-							}
-							else
-							{
-								c = collators[i].Compare(s2.ToString(), s1.ToString());
-							}
-							break;
-						
-						case SortField.FLOAT: 
-							float f1 = (float) ((System.Single) docA.fields[i]);
-							float f2 = (float) ((System.Single) docB.fields[i]);
-							if (f1 > f2)
-								c = - 1;
-							if (f1 < f2)
-								c = 1;
-							break;
-						
-						case SortField.CUSTOM: 
-							c = docB.fields[i].CompareTo(docA.fields[i]);
-							break;
-						
-						case SortField.AUTO: 
-							// we cannot handle this - even if we determine the type of object (Float or
-							// Integer), we don't necessarily know how to compare them (both SCORE and
-							// FLOAT both contain floats, but are sorted opposite of each other). Before
-							// we get here, each AUTO should have been replaced with its actual value.
-							throw new System.SystemException("FieldDocSortedHitQueue cannot use an AUTO SortField");
-						
-						default: 
-							throw new System.SystemException("invalid SortField type: " + type);
-						
-					}
-				}
-				else
-				{
-					switch (type)
-					{
-						
-						case SortField.SCORE: 
-							float r1 = (float) ((System.Single) docA.fields[i]);
-							float r2 = (float) ((System.Single) docB.fields[i]);
-							if (r1 > r2)
-								c = - 1;
-							if (r1 < r2)
-								c = 1;
-							break;
-						
-						case SortField.DOC: 
-						case SortField.INT: 
-							int i1 = ((System.Int32) docA.fields[i]);
-							int i2 = ((System.Int32) docB.fields[i]);
-							if (i1 < i2)
-								c = - 1;
-							if (i1 > i2)
-								c = 1;
-							break;
-						
-						case SortField.STRING: 
-							System.String s1 = (System.String) docA.fields[i];
-							System.String s2 = (System.String) docB.fields[i];
-							// null values need to be sorted first, because of how FieldCache.getStringIndex()
-							// works - in that routine, any documents without a value in the given Field are
-							// put first.
-							if (s1 == null)
-								c = - 1;
-							// could be null if there are
-							else if (s2 == null)
-								c = 1;
-							// no terms in the given Field
-							else if (fields[i].GetLocale() == null)
-							{
-								c = String.CompareOrdinal(s1, s2);
-							}
-							else
-							{
-								c = collators[i].Compare(s1.ToString(), s2.ToString());
-							}
-							break;
-						
-						case SortField.FLOAT: 
-							float f1 = (float) ((System.Single) docA.fields[i]);
-							float f2 = (float) ((System.Single) docB.fields[i]);
-							if (f1 < f2)
-								c = - 1;
-							if (f1 > f2)
-								c = 1;
-							break;
-						
-						case SortField.CUSTOM: 
-							c = docA.fields[i].CompareTo(docB.fields[i]);
-							break;
-						
-						case SortField.AUTO: 
-							// we cannot handle this - even if we determine the type of object (Float or
-							// Integer), we don't necessarily know how to compare them (both SCORE and
-							// FLOAT both contain floats, but are sorted opposite of each other). Before
-							// we get here, each AUTO should have been replaced with its actual value.
-							throw new System.SystemException("FieldDocSortedHitQueue cannot use an AUTO SortField");
-						
-						default: 
-							throw new System.SystemException("invalid SortField type: " + type);
-						
-					}
+					c = - c;
 				}
 			}
+			
+			// avoid random sort order that could lead to duplicates (bug #31241):
+			if (c == 0)
+				return docA.doc > docB.doc;
+			
 			return c > 0;
 		}
 	}

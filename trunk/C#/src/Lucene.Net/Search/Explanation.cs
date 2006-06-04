@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -62,7 +64,7 @@ namespace Lucene.Net.Search
 		{
 			if (details == null)
 				return null;
-            return (Explanation[]) details.ToArray(typeof(Explanation));
+			return (Explanation[]) details.ToArray(typeof(Explanation));
 		}
 		
 		/// <summary>Adds a sub-node to this explanation node. </summary>

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+
 namespace Lucene.Net.Index
 {
 	
@@ -26,21 +28,21 @@ namespace Lucene.Net.Index
 	/// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
 	/// 
 	/// </summary>
-	/// <version>  $Id: FieldsReader.java,v 1.7 2004/03/29 22:48:02 cutting Exp $
+	/// <version>  $Id: FieldsReader.java 329524 2005-10-30 05:38:46Z yonik $
 	/// </version>
-	sealed public class FieldsReader
+	public sealed class FieldsReader
 	{
 		private FieldInfos fieldInfos;
-		private InputStream fieldsStream;
-		private InputStream indexStream;
+		private IndexInput fieldsStream;
+		private IndexInput indexStream;
 		private int size;
 		
 		public /*internal*/ FieldsReader(Directory d, System.String segment, FieldInfos fn)
 		{
 			fieldInfos = fn;
 			
-			fieldsStream = d.OpenFile(segment + ".fdt");
-			indexStream = d.OpenFile(segment + ".fdx");
+			fieldsStream = d.OpenInput(segment + ".fdt");
+			indexStream = d.OpenInput(segment + ".fdx");
 			
 			size = (int) (indexStream.Length() / 8);
 		}
@@ -71,10 +73,82 @@ namespace Lucene.Net.Index
 				
 				byte bits = fieldsStream.ReadByte();
 				
-				doc.Add(new Field(fi.name, fieldsStream.ReadString(), true, fi.isIndexed, (bits & 1) != 0, fi.storeTermVector)); // vector
+				bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
+				bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
+				
+				if ((bits & FieldsWriter.FIELD_IS_BINARY) != 0)
+				{
+					byte[] b = new byte[fieldsStream.ReadVInt()];
+					fieldsStream.ReadBytes(b, 0, b.Length);
+					if (compressed)
+						doc.Add(new Field(fi.name, Uncompress(b), Field.Store.COMPRESS));
+					else
+						doc.Add(new Field(fi.name, b, Field.Store.YES));
+				}
+				else
+				{
+					Field.Index index;
+					Field.Store store = Field.Store.YES;
+					
+					if (fi.isIndexed && tokenize)
+						index = Field.Index.TOKENIZED;
+					else if (fi.isIndexed && !tokenize)
+						index = Field.Index.UN_TOKENIZED;
+					else
+						index = Field.Index.NO;
+					
+					Field.TermVector termVector = null;
+					if (fi.storeTermVector)
+					{
+						if (fi.storeOffsetWithTermVector)
+						{
+							if (fi.storePositionWithTermVector)
+							{
+								termVector = Field.TermVector.WITH_POSITIONS_OFFSETS;
+							}
+							else
+							{
+								termVector = Field.TermVector.WITH_OFFSETS;
+							}
+						}
+						else if (fi.storePositionWithTermVector)
+						{
+							termVector = Field.TermVector.WITH_POSITIONS;
+						}
+						else
+						{
+							termVector = Field.TermVector.YES;
+						}
+					}
+					else
+					{
+						termVector = Field.TermVector.NO;
+					}
+					
+					if (compressed)
+					{
+						store = Field.Store.COMPRESS;
+						byte[] b = new byte[fieldsStream.ReadVInt()];
+						fieldsStream.ReadBytes(b, 0, b.Length);
+						Field f = new Field(fi.name, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
+						f.SetOmitNorms(fi.omitNorms);
+						doc.Add(f);
+					}
+					else
+					{
+						Field f = new Field(fi.name, fieldsStream.ReadString(), store, index, termVector);
+						f.SetOmitNorms(fi.omitNorms);
+						doc.Add(f);
+					}
+				}
 			}
 			
 			return doc;
+		}
+		
+		private byte[] Uncompress(byte[] input)
+		{
+            return SupportClass.CompressionSupport.Uncompress(input);
 		}
 	}
 }

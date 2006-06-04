@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -20,11 +21,13 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+
 namespace Lucene.Net.Demo
 {
 	
 	class IndexHTML
 	{
+		
 		private static bool deleting = false; // true during deletion pass
 		private static IndexReader reader; // existing index
 		private static IndexWriter writer; // new index being built
@@ -76,10 +79,9 @@ namespace Lucene.Net.Demo
 					deleting = true;
 					IndexDocs(root, index, create);
 				}
-				
-				writer = new IndexWriter(index, new StandardAnalyzer(), create);
-				writer.maxFieldLength = 1000000;
-				
+
+                writer = new IndexWriter(index, new StandardAnalyzer(), create);
+				writer.SetMaxFieldLength(1000000);
 				IndexDocs(root, index, create); // add new docs
 				
 				System.Console.Out.WriteLine("Optimizing index...");
@@ -119,7 +121,7 @@ namespace Lucene.Net.Demo
 					// delete rest of stale docs
 					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid")
 					{
-						System.Console.Out.WriteLine("deleting " + HTMLDocument.UID2URL(uidIter.Term().Text()));
+						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
 						reader.Delete(uidIter.Term());
 						uidIter.Next();
 					}
@@ -143,7 +145,7 @@ namespace Lucene.Net.Demo
 				System.Array.Sort(files); // sort the files
 				for (int i = 0; i < files.Length; i++)
 				// recursively index them
-                    IndexDocs(new System.IO.FileInfo(files[i]));
+					IndexDocs(new System.IO.FileInfo(file.FullName + "\\" + files[i]));
 			}
 			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
 			{
@@ -151,14 +153,14 @@ namespace Lucene.Net.Demo
 				
 				if (uidIter != null)
 				{
-					System.String uid = HTMLDocument.UID(file); // construct uid for doc
+					System.String uid = HTMLDocument.Uid(file); // construct uid for doc
 					
 					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid" && String.CompareOrdinal(uidIter.Term().Text(), uid) < 0)
 					{
 						if (deleting)
 						{
 							// delete stale docs
-							System.Console.Out.WriteLine("deleting " + HTMLDocument.UID2URL(uidIter.Term().Text()));
+							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
 							reader.Delete(uidIter.Term());
 						}
 						uidIter.Next();
@@ -171,7 +173,7 @@ namespace Lucene.Net.Demo
 					{
 						// add new docs
 						Document doc = HTMLDocument.Document(file);
-						System.Console.Out.WriteLine("adding " + doc.Get("url"));
+						System.Console.Out.WriteLine("adding " + doc.Get("path"));
 						writer.AddDocument(doc);
 					}
 				}
@@ -179,7 +181,7 @@ namespace Lucene.Net.Demo
 				{
 					// creating a new index
 					Document doc = HTMLDocument.Document(file);
-					System.Console.Out.WriteLine("adding " + doc.Get("url"));
+					System.Console.Out.WriteLine("adding " + doc.Get("path"));
 					writer.AddDocument(doc); // add docs unconditionally
 				}
 			}

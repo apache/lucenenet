@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
@@ -36,23 +39,7 @@ namespace Lucene.Net.Search
 				this.enclosingInstance = enclosingInstance;
 			}
 			private TermQuery enclosingInstance;
-            virtual public Query Query
-            {
-                get
-                {
-                    return Enclosing_Instance;
-                }
-				
-            }
-            virtual public float Value
-            {
-                get
-                {
-                    return value_Renamed;
-                }
-				
-            }
-            public TermQuery Enclosing_Instance
+			public TermQuery Enclosing_Instance
 			{
 				get
 				{
@@ -60,7 +47,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Searcher searcher;
+			private Similarity similarity;
 			private float value_Renamed;
 			private float idf;
 			private float queryNorm;
@@ -69,7 +56,8 @@ namespace Lucene.Net.Search
 			public TermWeight(TermQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				idf = similarity.Idf(Enclosing_Instance.term, searcher); // compute idf
 			}
 			
 			public override System.String ToString()
@@ -77,9 +65,17 @@ namespace Lucene.Net.Search
 				return "weight(" + Enclosing_Instance + ")";
 			}
 			
+			public virtual Query GetQuery()
+			{
+				return Enclosing_Instance;
+			}
+			public virtual float GetValue()
+			{
+				return value_Renamed;
+			}
+			
 			public virtual float SumOfSquaredWeights()
 			{
-				idf = Enclosing_Instance.GetSimilarity(searcher).Idf(Enclosing_Instance.term, searcher); // compute idf
 				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
 				return queryWeight * queryWeight; // square it
 			}
@@ -88,7 +84,7 @@ namespace Lucene.Net.Search
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
-				value_Renamed = queryWeight * idf; // idf for document 
+				value_Renamed = queryWeight * idf; // idf for document
 			}
 			
 			public virtual Scorer Scorer(IndexReader reader)
@@ -98,20 +94,20 @@ namespace Lucene.Net.Search
 				if (termDocs == null)
 					return null;
 				
-				return new TermScorer(this, termDocs, Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.term.Field()));
+				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field()));
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				
 				Explanation result = new Explanation();
-				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + searcher.DocFreq(Enclosing_Instance.term) + ")");
+				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + reader.DocFreq(Enclosing_Instance.term) + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -125,7 +121,7 @@ namespace Lucene.Net.Search
 				
 				result.AddDetail(queryExpl);
 				
-				// explain Field weight
+				// explain field weight
 				System.String field = Enclosing_Instance.term.Field();
 				Explanation fieldExpl = new Explanation();
 				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
@@ -136,9 +132,9 @@ namespace Lucene.Net.Search
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(field);
-				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):0.0f;
+				float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
 				fieldNormExpl.SetValue(fieldNorm);
-				fieldNormExpl.SetDescription("fieldNorm(Field=" + field + ", doc=" + doc + ")");
+				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
 				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
@@ -172,6 +168,12 @@ namespace Lucene.Net.Search
 			return new TermWeight(this, searcher);
 		}
 		
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+            Term term = GetTerm();
+			terms.Add(term, term);
+		}
+		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
@@ -182,17 +184,7 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			if (GetBoost() != 1.0f)
-			{
-                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-                nfi.NumberDecimalDigits = 1;
-
-                buffer.Append("^");
-                buffer.Append(GetBoost().ToString("N", nfi));
-
-				//buffer.Append("^");
-				//buffer.Append(GetBoost().ToString());
-			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
@@ -208,7 +200,12 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+		}
+		// {{Aroush-1.9}} Do we need this?!
+		public override System.Object Clone()
+		{
+			return null;
 		}
 	}
 }

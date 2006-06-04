@@ -13,46 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
+
 namespace Lucene.Net.Index
 {
+	
 	
 	//import org.cnlp.utils.properties.ResourceBundleHelper;
 	[TestFixture]
 	public class TestFieldInfos
 	{
 		
-		private Document testDoc = new Document();
+		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		
-        [TestFixtureSetUp]
-		protected virtual void  SetUp()
+		[TestFixtureSetUp]
+        public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);
 		}
 		
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
+		[TestFixtureTearDown]
+        public virtual void  TearDown()
 		{
 		}
 		
-        [Test]
-		public virtual void  Test()
+		[Test]
+        public virtual void  Test()
 		{
 			//Positive test of FieldInfos
 			Assert.IsTrue(testDoc != null);
 			FieldInfos fieldInfos = new FieldInfos();
 			fieldInfos.Add(testDoc);
 			//Since the complement is stored as well in the fields map
-			Assert.IsTrue(fieldInfos.Size() == 7); //this is 7 b/c we are using the no-arg constructor
+			Assert.IsTrue(fieldInfos.Size() == ((System.Collections.Hashtable) DocHelper.all).Count); //this is all b/c we are using the no-arg constructor
 			RAMDirectory dir = new RAMDirectory();
 			System.String name = "testFile";
-			OutputStream output = dir.CreateFile(name);
+			IndexOutput output = dir.CreateOutput(name);
 			Assert.IsTrue(output != null);
 			//Use a RAMOutputStream
 			
@@ -66,10 +67,22 @@ namespace Lucene.Net.Index
 				FieldInfo info = readIn.FieldInfo("textField1");
 				Assert.IsTrue(info != null);
 				Assert.IsTrue(info.storeTermVector == false);
+				Assert.IsTrue(info.omitNorms == false);
 				
 				info = readIn.FieldInfo("textField2");
 				Assert.IsTrue(info != null);
 				Assert.IsTrue(info.storeTermVector == true);
+				Assert.IsTrue(info.omitNorms == false);
+				
+				info = readIn.FieldInfo("textField3");
+				Assert.IsTrue(info != null);
+				Assert.IsTrue(info.storeTermVector == false);
+				Assert.IsTrue(info.omitNorms == true);
+				
+				info = readIn.FieldInfo("omitNorms");
+				Assert.IsTrue(info != null);
+				Assert.IsTrue(info.storeTermVector == false);
+				Assert.IsTrue(info.omitNorms == true);
 				
 				dir.Close();
 			}

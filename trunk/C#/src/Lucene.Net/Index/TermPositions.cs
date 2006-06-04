@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Index
 {
 	
@@ -23,10 +25,10 @@ namespace Lucene.Net.Index
 	/// positions of each occurrence of a term in a document.
 	/// 
 	/// </summary>
-	/// <seealso cref="IndexReader#termPositions">
+	/// <seealso cref="IndexReader.TermPositions()">
 	/// </seealso>
 	
-	public interface TermPositions:TermDocs
+	public interface TermPositions : TermDocs
 	{
 		/// <summary>Returns next position in the current document.  It is an error to call
 		/// this more than {@link #Freq()} times
