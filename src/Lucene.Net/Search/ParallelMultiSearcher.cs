@@ -255,7 +255,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				docs = (sort == null)?searchable.Search(weight, filter, nDocs):searchable.Search(weight, filter, nDocs, sort);
+				docs = (sort == null) ? searchable.Search(weight, filter, nDocs) : searchable.Search(weight, filter, nDocs, sort);
 			}
 			// Store the IOException for later use by the caller of this thread
 			catch (System.IO.IOException ioe)
