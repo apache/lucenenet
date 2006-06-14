@@ -300,9 +300,16 @@ namespace Lucene.Net.Search
 					//System.out.println("Term: " + term);
 					int freq = freqs2[i];
 					Assert.IsTrue(test4.IndexOf(term) != - 1);
-					System.Int32 freqInt = (System.Int32) test4Map[term];
-					Assert.IsTrue(false); // Assert.IsTrue(freqInt != null);   // {{Aroush}} how do we test for 'null'?
-					Assert.IsTrue(freqInt == freq);
+                    System.Int32 freqInt = -1;
+                    try
+                    {
+                        freqInt = (System.Int32) test4Map[term];
+                    }
+                    catch (Exception)
+                    {
+                        Assert.IsTrue(false);
+                    }
+                    Assert.IsTrue(freqInt == freq);
 				}
 				knownSearcher.Close();
 			}

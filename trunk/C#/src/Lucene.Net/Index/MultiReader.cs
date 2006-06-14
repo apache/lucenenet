@@ -327,11 +327,13 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = subReaders[i];
 				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                foreach (object item in names)
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
                 {
-                    if (fieldSet.ContainsKey(item) == false)
+                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                    System.String s = fi.Key.ToString();
+                    if (fieldSet.ContainsKey(s) == false)
                     {
-                        fieldSet.Add(item, item);
+                        fieldSet.Add(s, s);
                     }
                 }
             }
@@ -348,11 +350,13 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = subReaders[i];
 				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-                foreach (object item in names)
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
                 {
-                    if (fieldSet.ContainsKey(item) == false)
+                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                    System.String s = fi.Key.ToString();
+                    if (fieldSet.ContainsKey(s) == false)
                     {
-                        fieldSet.Add(item, item);
+                        fieldSet.Add(s, s);
                     }
                 }
             }

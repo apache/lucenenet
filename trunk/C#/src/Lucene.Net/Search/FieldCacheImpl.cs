@@ -255,7 +255,15 @@ namespace Lucene.Net.Search
 							Term term = termEnum.Term();
 							if (term.Field() != field)
 								break;
-							float termval = parser.ParseFloat(term.Text());
+							float termval;
+                            try
+                            {
+                                termval = SupportClass.Single.Parse(term.Text());
+                            }
+                            catch (Exception e)
+                            {
+                                termval = 0;
+                            }
 							termDocs.Seek(termEnum);
 							while (termDocs.Next())
 							{
