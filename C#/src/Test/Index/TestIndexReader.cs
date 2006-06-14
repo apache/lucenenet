@@ -156,9 +156,13 @@ namespace Lucene.Net.Index
 
         public static bool CollectionContains(System.Collections.ICollection col, System.String val)
         {
-            foreach (object item in col)
-                if (item.ToString() == val)
+            for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
+            {
+                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                System.String s = fi.Key.ToString();
+                if (s == val)
                     return true;
+            }
             return false;
         }
 		
@@ -324,7 +328,7 @@ namespace Lucene.Net.Index
 		
 		private Directory GetDirectory(bool create)
 		{
-			return FSDirectory.GetDirectory(System.IO.Path.Combine(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir"), "testIndex"), create);
+			return FSDirectory.GetDirectory(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"), create);
 		}
 		
 		[Test]

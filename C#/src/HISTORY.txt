@@ -1,9 +1,16 @@
 Lucene.Net History
 ------------------
 
+13Jun06:
+	- Release:  Lucene.Net.1.9 RC1 build 004 Beta
+	- Fix: Lucene.Net.Search.FieldCacheImpl.GetFloats() -- must remove 'f" or "F" for System.Single.Parse() to work
+	- Fix: Lucene.Net.Index.GetFieldnames() -- was storing the object instead the value in the object
+	- Fix: Test.Lucene.Net.Index.CollectionContains() -- need to compare strings, not objects
+	- Fix: Test.Lucene.Net.Serch.TestKnownSetOfDocuments() -- don't fail if an item doesn't exist
+
 
 03Jun06:
-	- Release Lucene.Net.1.9 RC1 build 003 Alpha
+	- Release: Lucene.Net.1.9 RC1 build 003 Alpha
 	- Note: This is the first release of Lucene.Net 1.9 to SVN
 	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
 	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code
