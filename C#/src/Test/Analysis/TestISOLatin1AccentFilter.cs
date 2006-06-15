@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2005 The Apache Software Foundation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestU()
 		{
-			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À �? Â Ã Ä Å Æ Ç È É Ê Ë Ì �? Î �? �? Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü �? Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ"));
+			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ð Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ"));
 			ISOLatin1AccentFilter filter = new ISOLatin1AccentFilter(stream);
 			Assert.AreEqual("Des", filter.Next().TermText());
 			Assert.AreEqual("mot", filter.Next().TermText());
