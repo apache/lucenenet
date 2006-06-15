@@ -64,23 +64,23 @@ namespace Lucene.Net
 		[Test]
         public virtual void  TestRun()
 		{
-			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.IO.StreamWriter pw = null; // new System.IO.StreamWriter(sw);    // {{Aroush}} how do we pass 'sw' to StreamWriter?
-			DoTest(pw, false);
-			pw.Close();
-			sw.Close();
-			System.String multiFileOutput = sw.GetStringBuilder().ToString();
-			//System.out.println(multiFileOutput);
+            System.IO.MemoryStream sw = new System.IO.MemoryStream();
+            System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
+            DoTest(pw, false);
+            pw.Close();
+            sw.Close();
+            System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+            //System.out.println(multiFileOutput);
 			
-			sw = new System.IO.StringWriter();
-			pw = null; // new System.IO.StreamWriter(sw);   // {{Aroush}} how do we pass 'sw' to StreamWriter?
-			DoTest(pw, true);
-			pw.Close();
-			sw.Close();
-			System.String singleFileOutput = sw.GetStringBuilder().ToString();
+            sw = new System.IO.MemoryStream();
+            pw = new System.IO.StreamWriter(sw);
+            DoTest(pw, true);
+            pw.Close();
+            sw.Close();
+            System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
-			Assert.AreEqual(multiFileOutput, singleFileOutput);
-		}
+            Assert.AreEqual(multiFileOutput, singleFileOutput);
+        }
 		
 		
 		private void  DoTest(System.IO.StreamWriter out_Renamed, bool useCompoundFiles)
@@ -160,7 +160,7 @@ namespace Lucene.Net
 				if (i < 10 || (i > 94 && i < 105))
 				{
 					Lucene.Net.Documents.Document d = hits.Doc(i);
-					Assert.AreEqual("check " + i, System.Convert.ToString(i), d.Get(ID_FIELD));
+					Assert.AreEqual(System.Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
 				}
 			}
 		}
