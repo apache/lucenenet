@@ -55,20 +55,20 @@ namespace Lucene.Net
 		[Test]
         public virtual void  TestSearch_Renamed_Method()
 		{
-			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.IO.StreamWriter pw = null; // new System.IO.StreamWriter(sw);    // {{Aroush}} how do you pass 'sw' to StreamWriter()?
+            System.IO.MemoryStream sw = new System.IO.MemoryStream();
+            System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
 			DoTestSearch(pw, false);
 			pw.Close();
 			sw.Close();
-			System.String multiFileOutput = sw.GetStringBuilder().ToString();
+			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			//System.out.println(multiFileOutput);
 			
-			sw = new System.IO.StringWriter();
-			pw = null; // new System.IO.StreamWriter(sw);   // {{Aroush}} how do you pass 'sw' to StreamWriter()?
+			sw = new System.IO.MemoryStream();
+			pw = new System.IO.StreamWriter(sw);
 			DoTestSearch(pw, true);
 			pw.Close();
 			sw.Close();
-			System.String singleFileOutput = sw.GetStringBuilder().ToString();
+			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
 			Assert.AreEqual(multiFileOutput, singleFileOutput);
 		}
