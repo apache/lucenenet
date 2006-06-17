@@ -49,7 +49,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		// make date strings long enough to last a millenium
-		private static int DATE_LEN = System.Convert.ToString(
+		private static int DATE_LEN = SupportClass.Number.ToString(
             1000L * 365 * 24 * 60 * 60 * 1000, 16).Length;
 		
 		public static System.String MIN_DATE_STRING()
