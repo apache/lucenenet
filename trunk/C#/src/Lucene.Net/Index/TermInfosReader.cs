@@ -55,14 +55,8 @@ namespace Lucene.Net.Index
 		
 		~TermInfosReader()
 		{
-            try
-            {
-                // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-                System.Threading.Thread.SetData(enumerators, null);     // {{Aroush-1.9}} is this required for .NET ?!
-            }
-            catch (Exception)
-            {
-            }
+            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+            //System.Threading.Thread.SetData(enumerators, null);
 		}
 		
 		public int GetSkipInterval()
