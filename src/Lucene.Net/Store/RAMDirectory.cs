@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
 				int readCount = 0;
 				while (readCount < len)
 				{
-					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount:BufferedIndexOutput.BUFFER_SIZE;
+					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount : BufferedIndexOutput.BUFFER_SIZE;
 					is_Renamed.ReadBytes(buf, 0, toRead);
 					os.WriteBytes(buf, toRead);
 					readCount += toRead;

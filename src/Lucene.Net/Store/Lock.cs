@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		/// <returns> true if lock was obtained
 		/// </returns>
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
-		public virtual bool obtain(long lockWaitTimeout)
+		public virtual bool Obtain(long lockWaitTimeout)
 		{
 			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
 				bool locked = false;
 				try
 				{
-					locked = lock_Renamed.obtain(lockWaitTimeout);
+					locked = lock_Renamed.Obtain(lockWaitTimeout);
 					return DoBody();
 				}
 				finally

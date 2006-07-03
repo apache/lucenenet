@@ -554,7 +554,7 @@ namespace Lucene.Net.Index
 			if (this.writeLock == null)
 			{
 				Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-				if (!writeLock.obtain(IndexWriter.WRITE_LOCK_TIMEOUT))
+				if (!writeLock.Obtain(IndexWriter.WRITE_LOCK_TIMEOUT))
 				// obtain write lock
 				{
 					throw new System.IO.IOException("Index locked for write: " + writeLock);
@@ -598,7 +598,6 @@ namespace Lucene.Net.Index
 		/// reflected in the {@link #docFreq} statistic, though
 		/// this will be corrected eventually as the index is further modified.
 		/// </summary>
-		//UPGRADE_NOTE: Synchronized keyword was removed from method 'DeleteDocument'. Lock expression was added. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1027'"
 		public void  DeleteDocument(int docNum)
 		{
 			lock (this)
