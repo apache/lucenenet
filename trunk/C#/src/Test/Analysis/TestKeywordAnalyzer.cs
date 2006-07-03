@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis
 		private RAMDirectory directory;
 		private IndexSearcher searcher;
 		
-        [TestFixtureSetUp]
+        [SetUp]
 		public virtual void  SetUp()
 		{
 			directory = new RAMDirectory();

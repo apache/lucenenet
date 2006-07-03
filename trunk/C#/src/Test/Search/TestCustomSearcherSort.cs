@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Create index and query for test cases. </summary>
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			index = GetIndex();

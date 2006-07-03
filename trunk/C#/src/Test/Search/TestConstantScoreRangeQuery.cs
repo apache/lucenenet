@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(e, a, m, SCORE_COMP_THRESH);
 		}
 		
-        [TestFixtureSetUp]
+        [SetUp]
         public virtual void  SetUp()
 		{
 			

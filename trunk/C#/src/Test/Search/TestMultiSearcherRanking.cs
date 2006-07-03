@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> initializes multiSearcher and singleSearcher with the same document set</summary>
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			// create MultiSearcher from two seperate searchers

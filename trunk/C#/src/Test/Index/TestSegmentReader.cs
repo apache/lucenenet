@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 		private SegmentReader reader = null;
 		
 		//TODO: Setup the reader w/ multiple documents
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 			reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

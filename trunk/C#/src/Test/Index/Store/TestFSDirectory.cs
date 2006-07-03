@@ -82,7 +82,7 @@ namespace Lucene.Net.Index.Store
 		
 		private System.IO.FileInfo shouldBeADirectory;
 		
-        [TestFixtureTearDown]
+        [TearDown]
 		public virtual void  TearDown()
 		{
 			if (orgApacheLuceneLockDir != null)

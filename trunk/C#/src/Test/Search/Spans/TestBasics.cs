@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		private IndexSearcher searcher;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			RAMDirectory directory = new RAMDirectory();

@@ -64,13 +64,13 @@ namespace Lucene.Net.Index
 		private RAMDirectory dir;
 
 
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			dir = new RAMDirectory();
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

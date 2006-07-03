@@ -49,7 +49,7 @@ namespace Lucene.Net.Index.Store
 		private int docsToAdd = 500;
 		
 		// setup the index
-        [TestFixtureSetUp]
+        [SetUp]
 		public virtual void  SetUp()
 		{
 			System.String tempDir = System.IO.Path.GetTempPath();
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index.Store
 			searcher.Close();
 		}
 		
-        [TestFixtureTearDown]
+        [TearDown]
 		public virtual void  TearDown()
 		{
 			// cleanup 

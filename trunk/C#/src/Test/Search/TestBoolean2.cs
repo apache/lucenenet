@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 		
 		public const System.String field = "field";
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			RAMDirectory directory = new RAMDirectory();

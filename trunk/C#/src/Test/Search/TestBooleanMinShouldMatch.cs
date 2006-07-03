@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		public IndexReader r;
 		public IndexSearcher s;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			
