@@ -515,15 +515,12 @@ namespace Lucene.Net.Index
 		
 		internal static byte[] CreateFakeNorms(int size)
 		{
-			byte[] ones = new byte[size];
-            byte[] byteArray = new byte[ones.Length];
-            for (int index = 0; index < ones.Length; index++)
-                byteArray[index] = (byte) ones[index];
+            byte[] ones = new byte[size];
             byte val = DefaultSimilarity.EncodeNorm(1.0f);
-            for (int index = 0; index < byteArray.Length; index++)
-                byteArray.SetValue(val, index);
+            for (int index = 0; index < size; index++)
+                ones.SetValue(val, index);
 
-			return ones;
+            return ones;
 		}
 		
 		private byte[] ones;
