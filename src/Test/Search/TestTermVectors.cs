@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 		private RAMDirectory directory = new RAMDirectory();
 
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 			searcher = new IndexSearcher(directory);
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

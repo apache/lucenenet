@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 			InitBlock();
 		}
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			for (int i = 0; i < testFields.Length; i++)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

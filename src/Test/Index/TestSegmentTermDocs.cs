@@ -32,14 +32,14 @@ namespace Lucene.Net.Index
 		private Directory dir = new RAMDirectory();
 		
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);
 			DocHelper.WriteDoc(dir, testDoc);
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
 		public virtual void  TearDown()
 		{
 			

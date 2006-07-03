@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 			return GetIndex(false, false);
 		}
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			full = GetFullIndex();

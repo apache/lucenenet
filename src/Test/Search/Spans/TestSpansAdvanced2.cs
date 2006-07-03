@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Spans
 	{
 		
 		/// <summary> Initializes the tests by adding documents to the index.</summary>
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			base.SetUp();

@@ -31,13 +31,13 @@ namespace Lucene.Net.Index
 		
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 		}

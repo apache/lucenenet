@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParser
 		{
 			
 			/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
-			public TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
 				return new QPTestFilter(new LowerCaseTokenizer(reader));
 			}
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParser
 		
 		private int originalMaxClauses;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			originalMaxClauses = BooleanQuery.GetMaxClauseCount();
@@ -369,12 +369,12 @@ namespace Lucene.Net.QueryParser
 		
 		public virtual System.String GetDate(System.String s)
 		{
-			return DateField.DateToString(System.DateTime.Parse(s));    // {{Aroush-1.9}} We want a format of "MMM d, yyy" how is it done in .NET?
+			return DateField.DateToString(System.DateTime.Parse(s));
 		}
 		
 		public virtual System.String GetLocalizedDate(int year, int month, int day)
 		{
-            return new System.DateTime(year, month, day).ToString("MMM d, yyy");       // {{Aroush-1.9}} We want a format of "MMM d, yyy" will this do?
+            return new System.DateTime(year, month, day).ToString("MM/d/yyy");
 		}
 		
 		[Test]
@@ -571,7 +571,7 @@ namespace Lucene.Net.QueryParser
 			Assert.AreEqual(query1, query2);
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
 		public virtual void  TearDown()
 		{
 			BooleanQuery.SetMaxClauseCount(originalMaxClauses);

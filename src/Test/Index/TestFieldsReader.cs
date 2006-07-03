@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 		private FieldInfos fieldInfos = null;
 		
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			fieldInfos = new FieldInfos();

@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		/// <summary>Set the test case. This test case needs
 		/// a few text files created in the current working directory.
 		/// </summary>
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", "tempDir"), "TestDoc"));

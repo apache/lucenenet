@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 		private Searcher parallel;
 		private Searcher single;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			single = Single();
