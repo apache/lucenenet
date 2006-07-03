@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		private Query query;
 		private Filter filter;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			directory = new RAMDirectory();
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 			filter = new AnonymousClassFilter(this);
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			searcher.Close();

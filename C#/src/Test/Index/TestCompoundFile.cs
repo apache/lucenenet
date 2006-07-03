@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 		
 		private Directory dir;
 		
-		[TestFixtureSetUp]
+		[SetUp]
 		public virtual void  SetUp()
 		{
 			//dir = new RAMDirectory();

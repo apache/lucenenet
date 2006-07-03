@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 		private int docCount = 0;
 		private RAMDirectory dir;
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			dir = new RAMDirectory();

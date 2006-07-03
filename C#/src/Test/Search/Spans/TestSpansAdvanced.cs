@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Spans
 		protected internal const System.String FIELD_TEXT = "TEXT";
 		
 		/// <summary> Initializes the tests by adding 4 identical documents to the index.</summary>
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Spans
 			writer.Close();
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

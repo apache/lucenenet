@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 		private SegmentInfos sis = new SegmentInfos();
 		
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(doc1);

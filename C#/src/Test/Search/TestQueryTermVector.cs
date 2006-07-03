@@ -24,12 +24,12 @@ namespace Lucene.Net.Search
 	public class TestQueryTermVector
 	{
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			

@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Regex
             t.TestRegex1();
         }
 
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			RAMDirectory directory = new RAMDirectory();
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Regex
 			}
 		}
 		
-		[TestFixtureTearDown]
+		[TearDown]
         public virtual void  TearDown()
 		{
 			try

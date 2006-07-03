@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 		private StopAnalyzer stop = new StopAnalyzer();
 		private System.Collections.Hashtable inValidTokens = new System.Collections.Hashtable();
 		
-        [TestFixtureSetUp]
+        [SetUp]
 		public virtual void  SetUp()
 		{
 			for (int i = 0; i < StopAnalyzer.ENGLISH_STOP_WORDS.Length; i++)

@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 		private SegmentReader reader2 = null;
 		
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(doc1);

@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, Search(q2));
 		}
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			//

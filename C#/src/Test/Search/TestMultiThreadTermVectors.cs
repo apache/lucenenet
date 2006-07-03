@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		public int numThreads = 3;
 		
 		
-		[TestFixtureSetUp]
+		[SetUp]
         public virtual void  SetUp()
 		{
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
