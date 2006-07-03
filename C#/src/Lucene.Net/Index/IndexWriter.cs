@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
 			analyzer = a;
 			
 			Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-			if (!writeLock.obtain(WRITE_LOCK_TIMEOUT))
+			if (!writeLock.Obtain(WRITE_LOCK_TIMEOUT))
 			// obtain write lock
 			{
 				throw new System.IO.IOException("Index locked for write: " + writeLock);

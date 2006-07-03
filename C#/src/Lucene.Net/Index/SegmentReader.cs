@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
 		~SegmentReader()
 		{
 			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-			System.Threading.Thread.SetData(termVectorsLocal, null);
+			//System.Threading.Thread.SetData(termVectorsLocal, null);
 		}
 		
 		protected internal override void  DoCommit()
