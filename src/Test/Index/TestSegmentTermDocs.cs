@@ -30,7 +30,6 @@ namespace Lucene.Net.Index
 	{
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private Directory dir = new RAMDirectory();
-        static int val = 0;
 		
 		
 		[SetUp]
