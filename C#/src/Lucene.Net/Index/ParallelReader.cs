@@ -271,11 +271,13 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = ((IndexReader) readers[i]);
 				System.Collections.ICollection names = reader.GetFieldNames(indexed);
-                foreach (object item in names)
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
                 {
-                    if (fieldSet.ContainsKey(item) == false)
+                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                    System.String s = fi.Key.ToString();
+                    if (fieldSet.ContainsKey(s) == false)
                     {
-                        fieldSet.Add(item, item);
+                        fieldSet.Add(s, s);
                     }
                 }
 			}
@@ -289,11 +291,13 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = ((IndexReader) readers[i]);
 				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                foreach (object item in names)
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
                 {
-                    if (fieldSet.ContainsKey(item) == false)
+                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                    System.String s = fi.Key.ToString();
+                    if (fieldSet.ContainsKey(s) == false)
                     {
-                        fieldSet.Add(item, item);
+                        fieldSet.Add(s, s);
                     }
                 }
             }
@@ -302,20 +306,22 @@ namespace Lucene.Net.Index
 		
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < readers.Count; i++)
-			{
-				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-                foreach (object item in names)
+            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            for (int i = 0; i < readers.Count; i++)
+            {
+                IndexReader reader = ((IndexReader) readers[i]);
+                System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
+                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
                 {
-                    if (fieldSet.ContainsKey(item) == false)
+                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                    System.String s = fi.Key.ToString();
+                    if (fieldSet.ContainsKey(s) == false)
                     {
-                        fieldSet.Add(item, item);
+                        fieldSet.Add(s, s);
                     }
                 }
             }
-			return fieldSet;
+            return fieldSet;
 		}
 		
 		private class ParallelTermEnum : TermEnum
