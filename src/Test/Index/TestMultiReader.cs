@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestDocument()
+        public virtual void  TestDocument()     // {{Aroush-1.9}} this test will fail if run within the group
 		{
 			sis.Read(dir);
 			MultiReader reader = new MultiReader(dir, sis, false, readers);

@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	{
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private Directory dir = new RAMDirectory();
+        static int val = 0;
 		
 		
 		[SetUp]
@@ -52,8 +53,14 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestTermDocs()
+        public virtual void  TestTermDocs()     // {{Aroush-1.9}} this test is failing when run as a group
 		{
+            // {{Aroush-1.9}} unless if we add the following 4 lines
+		    Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
+		    Directory dir = new RAMDirectory();
+            DocHelper.SetupDoc(testDoc);
+            DocHelper.WriteDoc(dir, testDoc);
+
 			//After adding the document, we should be able to read it back in
 			SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
 			Assert.IsTrue(reader != null);
@@ -65,7 +72,8 @@ namespace Lucene.Net.Index
 				int docId = segTermDocs.Doc();
 				Assert.IsTrue(docId == 0);
 				int freq = segTermDocs.Freq();
-				Assert.IsTrue(freq == 3);
+                System.Console.Out.WriteLine("freq: " + freq);
+				Assert.IsTrue(freq == 3);       // {{Aroush-1.9}} this is the assert that fails; because 'freq' is 12
 			}
 			reader.Close();
 		}

@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestDocument()
+        public virtual void  TestDocument()     // {{Aroush-1.9}} this test failes when run as a group
 		{
 			Assert.IsTrue(reader.NumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc() >= 1);
@@ -106,7 +106,8 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(result.Count == DocHelper.all.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-				System.String s = (System.String) iter.Current;
+                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iter.Current;
+				System.String s = fi.Key.ToString();
 				//System.out.println("Name: " + s);
 				Assert.IsTrue(DocHelper.nameValues.Contains(s) == true || s.Equals(""));
 			}
@@ -115,8 +116,9 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(result.Count == DocHelper.indexed.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-				System.String s = (System.String) iter.Current;
-				Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
+                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iter.Current;
+                System.String s = fi.Key.ToString();
+                Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
 			}
 			
 			result = reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED);

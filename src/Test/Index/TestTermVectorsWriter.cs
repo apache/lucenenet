@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  Test()
+        public virtual void  Test()             // {{Aroush-1.9}} this test is failing
 		{
 			Assert.IsTrue(dir != null);
 			Assert.IsTrue(positions != null);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		}  */
 		
 		[Test]
-        public virtual void  TestWriter()
+        public virtual void  TestWriter()           // {{Aroush-1.9}} this test is failing
 		{
 			TermVectorsWriter writer = new TermVectorsWriter(dir, seg, fieldInfos);
 			writer.OpenDocument();
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 		/// <summary> Test one document, multiple fields</summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestMultipleFields()
+        public virtual void  TestMultipleFields()       // {{Aroush-1.9}} this test is failing
 		{
 			TermVectorsWriter writer = new TermVectorsWriter(dir, seg, fieldInfos);
 			WriteDocument(writer, testFields.Length);
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-		public virtual void  TestMultipleDocuments()
+		public virtual void  TestMultipleDocuments()        // {{Aroush-1.9}} this test is failing
 		{
 			TermVectorsWriter writer = new TermVectorsWriter(dir, seg, fieldInfos);
 			Assert.IsTrue(writer != null);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
 		/// <summary> 
 		/// </summary>
 		[Test]
-        public virtual void  TestBadSegment()
+        public virtual void  TestBadSegment()       // {{Aroush-1.9}} this test is failing
 		{
 			dir = new RAMDirectory();
 			IndexWriter ir = new IndexWriter(dir, new StandardAnalyzer(), true);
