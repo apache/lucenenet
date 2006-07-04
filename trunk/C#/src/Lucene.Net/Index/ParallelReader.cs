@@ -89,8 +89,10 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator i = reader.GetFieldNames(IndexReader.FieldOption.ALL).GetEnumerator();
 			while (i.MoveNext())
 			{
+                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) i.Current;
+
 				// update fieldToReader map
-				System.String field = (System.String) i.Current;
+				System.String field = fi.Key.ToString();
 				if (fieldToReader[field] == null)
 					fieldToReader[field] = reader;
 			}
