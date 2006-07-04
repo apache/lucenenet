@@ -42,6 +42,7 @@ namespace Lucene.Net.Index
 		[SetUp]
         public virtual void  SetUp()
 		{
+            InitBlock();
 			
 			for (int i = 0; i < testFields.Length; i++)
 			{
