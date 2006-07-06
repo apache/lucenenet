@@ -297,10 +297,17 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			
+            bool appendSpace = false;
+
 			buffer.Append("\"");
 			System.Collections.IEnumerator i = termArrays.GetEnumerator();
 			while (i.MoveNext())
 			{
+                if (appendSpace == true)
+                    buffer.Append(" ");
+                else
+                    appendSpace = true;
+
 				Term[] terms = (Term[]) i.Current;
 				if (terms.Length > 1)
 				{
@@ -317,8 +324,6 @@ namespace Lucene.Net.Search
 				{
 					buffer.Append(terms[0].Text());
 				}
-				if (i.MoveNext())
-					buffer.Append(" ");
 			}
 			buffer.Append("\"");
 			
