@@ -37,7 +37,7 @@ namespace Lucene.Net.Documents
 	public class NumberTools
 	{
 		
-		private const int RADIX = 16; // 36;    {{Arousdh-1.9}} Java's is 36, but .NET's is 16; will this be an issue?
+		private const int RADIX = 16;
 		
 		private const char NEGATIVE_PREFIX = '-';
 		
@@ -46,10 +46,10 @@ namespace Lucene.Net.Documents
 		
 		//NB: this must be less than
 		/// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
-		public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
+		public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
 		
 		/// <summary> Equivalent to longToString(Long.MAX_VALUE)</summary>
-		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "1y2p0ij32e8e7";
+		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
 		
 		/// <summary> The length of (all) strings returned by {@link #longToString}</summary>
 		public static readonly int STR_SIZE = MIN_STRING_VALUE.Length;
