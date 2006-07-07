@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParser
 			/// <summary> Filter which discards the token 'stop' and which expands the
 			/// token 'phrase' into 'phrase1 phrase2'
 			/// </summary>
-			public QPTestFilter(TokenStream in_Renamed):base(in_Renamed)
+			public QPTestFilter(TokenStream in_Renamed) : base(in_Renamed)
 			{
 			}
 			
