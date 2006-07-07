@@ -105,13 +105,13 @@ namespace Lucene.Net.Search.Regex
 		[Test]
         public virtual void  TestRegex2()
 		{
-			Assert.AreEqual(0, RegexQueryNrHits(".[aeiou]c.*"));    // {{Aroush-1.9}} this test is failing
+			Assert.AreEqual(0, RegexQueryNrHits("^.[aeiou]c.*"));
 		}
 		
 		[Test]
         public virtual void  TestRegex3()
 		{
-			Assert.AreEqual(0, RegexQueryNrHits("q.[aeiou]c"));     // {{Aroush-1.9}} this test is failing
+			Assert.AreEqual(0, RegexQueryNrHits("^q.[aeiou]c$"));
 		}
 		
 		[Test]
