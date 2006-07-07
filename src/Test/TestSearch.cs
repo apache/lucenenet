@@ -40,7 +40,7 @@ namespace Lucene.Net
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearch))); // {{Aroush}} where is 'TestRunner' in NUnit?
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearch))); // {{Aroush-1.9}} where is 'TestRunner' in NUnit?
 		}
 		
 		/// <summary>This test performs a number of searches. It also compares output

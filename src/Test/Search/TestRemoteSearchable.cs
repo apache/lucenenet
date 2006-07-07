@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			// publish it
-			// LocateRegistry.createRegistry(1099); // {{Aroush}}
+			// LocateRegistry.createRegistry(1099); // {{Aroush-1.9}}
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexStore);
 			RemoteSearchable impl = new RemoteSearchable(local);
 			System.Runtime.Remoting.RemotingServices.Marshal(impl, "http://localhost/Searchable");
