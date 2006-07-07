@@ -56,9 +56,9 @@ namespace Lucene.Net
 				
 				System.GC.Collect();
 				
-				// System.Console.Out.Write(java.lang.Runtime.freeMemory());       // {{Aroush}} how do we get freeMemory() in .NET?
+				// System.Console.Out.Write(java.lang.Runtime.freeMemory());    // {{Aroush}} how do we get freeMemory() in .NET?
 				System.Console.Out.WriteLine(" free memory after gc");
-				// System.Console.Out.Write(java.lang.Runtime.totalMemory());    // {{Aroush}} how do we get totalMemory() in .NET?
+				// System.Console.Out.Write(java.lang.Runtime.totalMemory());   // {{Aroush}} how do we get totalMemory() in .NET?
 				System.Console.Out.WriteLine(" total memory after gc");
 			}
 			catch (System.Exception e)
