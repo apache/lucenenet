@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 	{
 		
 		[Test]
-        public virtual void  TestPhrasePrefix()     // {{Aroush-1.9}} this test is failing
+        public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);

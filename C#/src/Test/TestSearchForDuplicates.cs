@@ -41,7 +41,7 @@ namespace Lucene.Net
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearchForDuplicates)));    // {{Aroush}} where is 'TestRunner' in NUnit
+			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearchForDuplicates)));    // {{Aroush-1.9}} where is 'TestRunner' in NUnit
 		}
 		
 		

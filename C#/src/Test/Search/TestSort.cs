@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(8080));
             if (argv == null || argv.Length < 1)
             {
-                // NUnit.Core.TestRunner.Run(Suite());    // {{Aroush}} where is "Run" in NUnit?
+                // NUnit.Core.TestRunner.Run(Suite());    // {{Aroush-1.9}} where is "Run" in NUnit?
             }
             else if ("server".Equals(argv[0]))
             {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 		
 		public static NUnit.Framework.TestCase Suite()
 		{
-			return null; // return new NUnit.Core.TestSuite(typeof(TestSort)); {{Aroush}} how do you do this in NUnit?
+			return null; // return new NUnit.Core.TestSuite(typeof(TestSort)); {{Aroush-1.9}} how do you do this in NUnit?
 		}
 		
 		
