@@ -31,10 +31,20 @@ namespace Lucene.Net.Index
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private Directory dir = new RAMDirectory();
 		
-		
+        // This is needed if for the test to pass and mimic what happens wiht JUnit
+        // For some reason, JUnit is creating a new member variable for each sub-test
+        // but NUnit is not -- who is wrong/right, I don't know.
+        private void SetUpInternal()        // {{Aroush-1.9}} See note above
+        {
+		    testDoc = new Lucene.Net.Documents.Document();
+		    dir = new RAMDirectory();
+        }
+
 		[SetUp]
         public virtual void  SetUp()
 		{
+            SetUpInternal();    // We need this for NUnit; see note above
+
 			DocHelper.SetupDoc(testDoc);
 			DocHelper.WriteDoc(dir, testDoc);
 		}
@@ -52,14 +62,8 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestTermDocs()     // {{Aroush-1.9}} this test is failing when run as a group
+        public virtual void  TestTermDocs()
 		{
-            // {{Aroush-1.9}} unless if we add the following 4 lines
-		    Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
-		    Directory dir = new RAMDirectory();
-            DocHelper.SetupDoc(testDoc);
-            DocHelper.WriteDoc(dir, testDoc);
-
 			//After adding the document, we should be able to read it back in
 			SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
 			Assert.IsTrue(reader != null);
@@ -72,7 +76,7 @@ namespace Lucene.Net.Index
 				Assert.IsTrue(docId == 0);
 				int freq = segTermDocs.Freq();
                 System.Console.Out.WriteLine("freq: " + freq);
-				Assert.IsTrue(freq == 3);       // {{Aroush-1.9}} this is the assert that fails; because 'freq' is 12
+				Assert.IsTrue(freq == 3);
 			}
 			reader.Close();
 		}
