@@ -57,8 +57,7 @@ namespace Lucene.Net.Documents
 		/// <summary> Converts a long to a String suitable for indexing.</summary>
 		public static System.String LongToString(long l)
 		{
-			
-			if (l == System.Int64.MinValue)
+            if (l == System.Int64.MinValue)
 			{
 				// special case, because long is not symetric around zero
 				return MIN_STRING_VALUE;
