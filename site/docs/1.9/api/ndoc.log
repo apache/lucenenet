@@ -2627,15 +2627,15 @@ HHC4006: Warning: The file "Lucene.Net.Index.Term.Text.html" is already listed i
 HHC4006: Warning: The file "Lucene.Net.Search.DisjunctionSumScorer.NrMatchers.html" is already listed in the [FILES] section of the project file.
 HHC4006: Warning: The file "Lucene.Net.Store.InputStream.Length.html" is already listed in the [FILES] section of the project file.
 
-Compile time: 0 minutes, 18 seconds
+Compile time: 0 minutes, 17 seconds
 5,178	Topics
 17,901	Local links
 0	Internet links
 8	Graphics
 
 
-Created e:\Aroush.proj\temp\doc\ndoc_msdn_temp\Documentation.chm, 845,837 bytes
-Compression decreased file by 6,574,035 bytes.
+Created e:\Aroush.proj\temp\doc\ndoc_msdn_temp\Documentation.chm, 865,697 bytes
+Compression decreased file by 6,906,169 bytes.
 
 Html Help compile complete
 Done.
