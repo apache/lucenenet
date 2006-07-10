@@ -3,7 +3,7 @@ Lucene.Net History
 
 
 09Jul06:
-	- Release:  Lucene.Net.1.9 RC1 build 005 Beta
+	- Release:  Lucene.Net.1.9 RC1 build 005 "final"
 	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
 	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
 	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value
