@@ -31,10 +31,22 @@ namespace Lucene.Net.Index
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private SegmentReader reader = null;
 		
+        // This is needed if for the test to pass and mimic what happens wiht JUnit
+        // For some reason, JUnit is creating a new member variable for each sub-test
+        // but NUnit is not -- who is wrong/right, I don't know.
+        private void SetUpInternal()        // {{Aroush-1.9}} See note above
+        {
+		    dir = new RAMDirectory();
+		    testDoc = new Lucene.Net.Documents.Document();
+		    reader = null;
+        }
+
 		//TODO: Setup the reader w/ multiple documents
 		[SetUp]
         public virtual void  SetUp()
 		{
+            SetUpInternal();    // We need this for NUnit; see note above
+
 			DocHelper.SetupDoc(testDoc);
 			DocHelper.WriteDoc(dir, testDoc);
 			reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
@@ -56,7 +68,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestDocument()     // {{Aroush-1.9}} this test failes when run as a group
+        public virtual void  TestDocument()
 		{
 			Assert.IsTrue(reader.NumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc() >= 1);
