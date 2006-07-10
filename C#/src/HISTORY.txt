@@ -1,6 +1,30 @@
 Lucene.Net History
 ------------------
 
+
+09Jul06:
+	- Release:  Lucene.Net.1.9 RC1 build 005 Beta
+	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
+	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
+	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value
+	- Fix: Lucene.Net.Store.Obtain() -- changed name from obtain() to Obtain() (lower case to upper case)
+	- Fix: Lucene.Net.Index.SegmentReader.~SegmentReader() -- removed: System.Threading.Thread.SetData()
+	- Fix: Lucene.Net.Index.TermInfosReader.~TermInfosReader() -- removed: System.Threading.Thread.SetData()
+	- Fix: Lucene.Net.Documents.DateField.DATE_LEN -- must use SupportClass.Number.ToString() to get the length
+	- Fix: Lucene.Net.Util.ToStringUtils.Boost() -- wasn't adding ".0" when the value doesn't have a remainder
+	- Fix: Lucene.Net.Index.SegmentReader.CreateFakeNorms() -- was returning the wrong data member
+	- Fix: Lucene.Net.Documents.NumberTools -- value of MIN_STRING_VALUE and MAX_STRING_VALUE were wrong
+	- Fix: Test.Lucene.Net.Analysis.TestISOLatin1AccentFilter.TestU() -- file was not saved as unicode; thanks to Ben Tregenna
+	- Fix: Test.Lucene.Net.TestSearchForDuplicates.TestRun() -- wasn't using MemoryStream correctly
+	- Fix: Test.Lucene.Net.TestSearch.TestSearch_Renamed_Method() -- wasn't using MemoryStream correctly
+	- Fix: Test.Lucene.Net.* -- replaced "[TestFixtureSetUp]" to "[SetUp]" and "[FixtureTearDown]" to "[TearDown]"
+	- Fix: Test.Lucene.Net.Index.TestParallelReader -- was comparing objects instead of the dictionary value
+	- Fix: Test.Lucene.Net.Index.TestSegmentReader -- was comparing objects instead of the dictionary value
+	- Fix: Test.Lucene.Net.Index.TestTermVectorWriter -- was not calling InitBloc()
+	- Fix: Test.Lucene.Net.Analysis.Setup() -- was adding to the hash without checking if the key already exist
+	- Fix: Test.Lucene.Net.Index.TestMultiReader/TestSegmentReader/TestSegmentTermDoc.cs -- all those needed their class member variables re-initialized
+
+
 13Jun06:
 	- Release:  Lucene.Net.1.9 RC1 build 004 Beta
 	- Fix: Lucene.Net.Search.FieldCacheImpl.GetFloats() -- must remove 'f" or "F" for System.Single.Parse() to work
@@ -15,7 +39,7 @@ Lucene.Net History
 	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
 	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code
 	- Note: NUnit "Test" code has been ported to Lucene.Net.  Out of 307 tests 58 are failing
-	- Note: There are still some remaing port work to be done; look for thext "Aroush" in the code
+	- Note: There are still some remaining port work to be done; look for the text "Aroush" in the code
 	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes
 	- Issue: The NUnit test code has not been ported yet
 	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
@@ -25,7 +49,7 @@ Lucene.Net History
 	- Release: Lucene.Net.1.9 RC1 build 002 Alpha
 	- Note: This release is based on the current Java code release of 1.9 RC1
 	- Note: This release contains all the fixes currently implemented for 1.4.3 build 004
-	- Note: There are still some remaing port work to be done; look for thext "Aroush" in the code
+	- Note: There are still some remaining port work to be done; look for the text "Aroush" in the code
 	- Issue: The NUnit test code has not been ported yet
 	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
 
@@ -109,8 +133,8 @@ Lucene.Net History
 		- Search.TestSort.TestNormalizedScores/TestRemoteCustomSort/TestRemoteSort
 	- Fix: Removed 'ref' keyword usage from DateTime.
 	- Port: TestQueryParser.cs -- done. thanks to Radu.
-	- Fix: TestQueryParser.cs -- date-range formating issues.
-	- Fix: Lucene.Net.QueryParsers.GetRangeQuery() -- date-range formating issues.
+	- Fix: TestQueryParser.cs -- date-range formatting issues.
+	- Fix: Lucene.Net.QueryParsers.GetRangeQuery() -- date-range formatting issues.
 	- Fix: Use: System.IO.Path.Combine("path-1", "path-2") instead of "path-1" + "\\" + "path-2"
 
 
@@ -125,7 +149,7 @@ Lucene.Net History
 
 25Oct04:
 	- Port: Ported "test" more than 2/3 of the NUnit test now pass
-	- Fix: Fixed query (ToString()) formating issue ("2" -> "2.0") to pass NUnit test
+	- Fix: Fixed query (ToString()) formatting issue ("2" -> "2.0") to pass NUnit test
 	- Fix: Field items iteration
 
 
