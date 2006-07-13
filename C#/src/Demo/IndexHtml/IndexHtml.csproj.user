@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "E:\Aroush.proj\Lucene.Net-1.9.rc1-002.src\Lucene.Net\bin\Debug\;E:\Aroush.proj\Lucene.Net-1.9.rc1-003.src\Lucene.Net\bin\Debug\" >
+            <Settings ReferencePath = "" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"

@@ -25,15 +25,20 @@ using TermEnum = Lucene.Net.Index.TermEnum;
 namespace Lucene.Net.Demo
 {
 	
-	class IndexHTML
+    /// <summary>Indexer for HTML files. </summary>
+    public class IndexHTML
 	{
+        private IndexHTML()
+        {
+        }
 		
-		private static bool deleting = false; // true during deletion pass
+        private static bool deleting = false; // true during deletion pass
 		private static IndexReader reader; // existing index
 		private static IndexWriter writer; // new index being built
 		private static TermEnum uidIter; // document id iterator
 		
-		[STAThread]
+        /// <summary>Indexer for HTML files.</summary>
+        [STAThread]
 		public static void  Main(System.String[] argv)
 		{
 			try
