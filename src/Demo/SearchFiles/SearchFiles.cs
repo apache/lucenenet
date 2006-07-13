@@ -18,18 +18,19 @@ using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
-using FilterIndexReader = Lucene.Net.Index.FilterIndexReader;
 using IndexReader = Lucene.Net.Index.IndexReader;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
-using Hits = Lucene.Net.Search.Hits;
+using FilterIndexReader = Lucene.Net.Index.FilterIndexReader;
+using Searcher = Lucene.Net.Search.Searcher;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
+using Hits = Lucene.Net.Search.Hits;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 
 namespace Lucene.Net.Demo
 {
 	
-	class SearchFiles
+    /// <summary>Simple command-line based search demo. </summary>
+    public class SearchFiles
 	{
 		
 		/// <summary>Use the norms from one field for all fields.  Norms are read into memory,
@@ -53,7 +54,12 @@ namespace Lucene.Net.Demo
 			}
 		}
 		
-		[STAThread]
+        private SearchFiles()
+        {
+        }
+		
+        /// <summary>Simple command-line based search demo. </summary>
+        [STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = "Usage: " + typeof(SearchFiles) + " [-index dir] [-field f] [-repeat n] [-queries file] [-raw] [-norms field]";
