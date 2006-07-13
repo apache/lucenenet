@@ -21,12 +21,18 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 namespace Lucene.Net.Demo
 {
 	
-	class IndexFiles
+    /// <summary>Index all text files under a directory. </summary>
+    class IndexFiles
 	{
+
+        private IndexFiles()
+        {
+        }
 		
 		internal static readonly System.IO.FileInfo INDEX_DIR = new System.IO.FileInfo("index");
 		
-		[STAThread]
+        /// <summary>Index all text files under a directory. </summary>
+        [STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = typeof(IndexFiles) + " <root_directory>";
@@ -78,7 +84,7 @@ namespace Lucene.Net.Demo
 			}
 		}
 		
-		public static void  IndexDocs(IndexWriter writer, System.IO.FileInfo file)
+		internal static void  IndexDocs(IndexWriter writer, System.IO.FileInfo file)
 		{
 			// do not try to index files that cannot be read
 			// if (file.canRead())  // {{Aroush}} what is canRead() in C#?

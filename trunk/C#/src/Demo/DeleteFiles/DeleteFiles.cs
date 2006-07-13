@@ -24,8 +24,13 @@ namespace Lucene.Net.Demo
 {
 	//import Lucene.Net.index.Term;
 	
-	class DeleteFiles
+    /// <summary>Deletes documents from an index that do not contain a term. </summary>
+    class DeleteFiles
 	{
+
+        private DeleteFiles()
+        {
+        } // singleton
 		
 		[STAThread]
 		public static void  Main(System.String[] args)
