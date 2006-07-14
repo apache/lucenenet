@@ -1,6 +1,16 @@
 Lucene.Net History
 ------------------
 
+13Jul06:
+    - Release:  Lucene.Net.1.9.1 build 001
+    - Port: Lucene.Net.Documents.TimeToString() -- re-based with the Java version
+    - Port: Lucene.Net.Index.IndexWriter.SetMaxBufferedDocs() -- re-based with the Java version
+    - Port: Lucene.Net.Store.BufferedIndexOutput.WriteBytes() -- re-based with the Java version
+    - Port: Lucene.Net.Store.RAMOutputStream.FlushBuffer() -- re-based with the Java version
+    - Port: Lucene.Net.Demo.* -- re-based with the Java version
+    - Port: Test.Lucene.Net.Index.TestCompoundFile.TestLargeWrites() -- new test case added
+    - Port: Test.Lucene.Net.StoreTest.Test() -- re-based with the Java version
+
 
 09Jul06:
 	- Release:  Lucene.Net.1.9 RC1 build 005 "final"
