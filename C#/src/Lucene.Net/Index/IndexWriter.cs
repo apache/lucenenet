@@ -472,8 +472,8 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalArgumentException if maxBufferedDocs is smaller than 1  </throws>
 		public virtual void  SetMaxBufferedDocs(int maxBufferedDocs)
 		{
-			if (maxBufferedDocs < 1)
-				throw new System.ArgumentException("maxBufferedDocs must at least be 1");
+			if (maxBufferedDocs < 2)
+				throw new System.ArgumentException("maxBufferedDocs must at least be 2");
 			this.minMergeDocs = maxBufferedDocs;
 		}
 		

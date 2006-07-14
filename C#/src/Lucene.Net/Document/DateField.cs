@@ -15,8 +15,8 @@
  */
 
 using System;
-using PrefixQuery = Lucene.Net.Search.PrefixQuery;
-using RangeQuery = Lucene.Net.Search.RangeQuery;
+using PrefixQuery = Lucene.Net.Search.PrefixQuery;  // for javadoc
+using RangeQuery = Lucene.Net.Search.RangeQuery;    // for javadoc
 
 namespace Lucene.Net.Documents
 {
@@ -84,12 +84,12 @@ namespace Lucene.Net.Documents
 		public static System.String TimeToString(long time)
 		{
 			if (time < 0)
-				throw new System.SystemException("time too early");
+				throw new System.SystemException("time '" + time + "' is too early, must be >= 0");
 			
 			System.String s = SupportClass.Number.ToString(time, SupportClass.Number.MAX_RADIX);
 			
 			if (s.Length > DATE_LEN)
-				throw new System.SystemException("time too late");
+				throw new System.SystemException("time '" + time + "' is too late, length of string " + "representation must be <= " + DATE_LEN);
 			
 			// Pad with leading zeros
 			if (s.Length < DATE_LEN)
@@ -112,16 +112,6 @@ namespace Lucene.Net.Documents
 		public static System.DateTime StringToDate(System.String s)
 		{
             return new System.DateTime(StringToTime(s));
-
-            // {{Aroush-1.9}} Will the line above do it or do we need the lines below?!
-
-            /*
-            long ticks = StringToTime(s) * TimeSpan.TicksPerMillisecond;
-            System.DateTime date = new System.DateTime(1970, 1, 1);
-            date = date.AddTicks(ticks);
-            date = date.Add(TimeZone.CurrentTimeZone.GetUtcOffset(date));
-            return date;
-            */
 		}
 	}
 }
