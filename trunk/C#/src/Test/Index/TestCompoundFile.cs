@@ -637,5 +637,34 @@ namespace Lucene.Net.Index
 			is_Renamed.Close();
 			cr.Close();
 		}
+
+        /// <summary>
+        /// This test that writes larger than the size of the buffer output
+        /// will correctly increment the file pointer.
+        /// </summary>
+        [Test]
+        public virtual void  TestLargeWrites()
+                                               {
+            IndexOutput os = dir.CreateOutput("testBufferStart.txt");
+
+            byte[] largeBuf = new byte[2048];
+            for (int i=0; i<largeBuf.Length; i++)
+            {
+                largeBuf[i] = (byte) ((new System.Random().NextDouble()) * 256);
+            }
+
+            long currentPos = os.GetFilePointer();
+            os.WriteBytes(largeBuf, largeBuf.Length);
+
+            try
+            {
+                Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());
+            }
+            finally
+            {
+                os.Close();
+            }
+        }
+
 	}
 }

@@ -85,42 +85,6 @@
                     HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\system.runtime.remoting.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.framework.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.core"
-                    AssemblyName = "nunit.core"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.core.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.tests"
-                    AssemblyName = "nunit.tests"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.tests.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.extensions"
-                    AssemblyName = "nunit.extensions"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.extensions.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.mocks"
-                    AssemblyName = "nunit.mocks"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.mocks.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
-                    Name = "nunit.util"
-                    AssemblyName = "nunit.util"
-                    HintPath = "D:\DEVS\NUnit\bin\nunit.util.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
                     Name = "DemoLib"
                     AssemblyName = "DemoLib"
                     HintPath = "..\Demo\DemoLib\bin\Debug\DemoLib.dll"
@@ -129,6 +93,18 @@
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
                     HintPath = "..\Lucene.Net\bin\Debug\Lucene.Net.dll"
+                />
+                <Reference
+                    Name = "nunit.core"
+                    AssemblyName = "nunit.core"
+                    HintPath = ".\NUnit\bin\nunit.core.dll"
+                    AssemblyFolderKey = "hklm\dn\nunit.framework"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = ".\NUnit\bin\nunit.framework.dll"
+                    AssemblyFolderKey = "hklm\dn\nunit.framework"
                 />
             </References>
         </Build>
