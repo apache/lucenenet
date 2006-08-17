@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new SimpleAnalyzer();
 			DocumentWriter writer = new DocumentWriter(directory, analyzer, Similarity.GetDefault(), 1000);
 			
-			System.IO.FileInfo file = new System.IO.FileInfo(workDir.FullName + "\\" + fileName);
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, fileName));
 			Lucene.Net.Documents.Document doc = FileDocument.Document(file);
 			
 			writer.AddDocument(segment, doc);

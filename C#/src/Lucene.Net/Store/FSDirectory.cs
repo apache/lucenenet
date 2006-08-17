@@ -42,7 +42,18 @@ namespace Lucene.Net.Store
 			}
 			private System.IO.FileInfo lockFile;
 			private FSDirectory enclosingInstance;
-			public FSDirectory Enclosing_Instance
+            override public bool IsLocked()
+            {
+                if (Lucene.Net.Store.FSDirectory.disableLocks)
+                    return false;
+                bool tmpBool;
+                if (System.IO.File.Exists(lockFile.FullName))
+                    tmpBool = true;
+                else
+                    tmpBool = System.IO.Directory.Exists(lockFile.FullName);
+                return tmpBool;
+            }
+            public FSDirectory Enclosing_Instance
 			{
 				get
 				{
@@ -102,17 +113,6 @@ namespace Lucene.Net.Store
 					tmpBool = false;
 				bool generatedAux = tmpBool;
 			}
-			public override bool IsLocked()
-			{
-				if (Lucene.Net.Store.FSDirectory.disableLocks)
-					return false;
-				bool tmpBool;
-				if (System.IO.File.Exists(lockFile.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(lockFile.FullName);
-				return tmpBool;
-			}
 			
 			public override System.String ToString()
 			{
@@ -131,19 +131,19 @@ namespace Lucene.Net.Store
 		
 		private static bool disableLocks = false;
 		
-		/// <summary> Set whether Lucene's use of lock files is disabled. By default, 
-		/// lock files are enabled. They should only be disabled if the index
-		/// is on a read-only medium like a CD-ROM.
-		/// </summary>
-		public static void  SetDisableLocks(bool doDisableLocks)
+        /// <summary> Set whether Lucene's use of lock files is disabled. By default, 
+        /// lock files are enabled. They should only be disabled if the index
+        /// is on a read-only medium like a CD-ROM.
+        /// </summary>
+        public static void  SetDisableLocks(bool doDisableLocks)
 		{
 			FSDirectory.disableLocks = doDisableLocks;
 		}
 		
-		/// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
-		/// <returns> true if locks are disabled, false if locks are enabled.
-		/// </returns>
-		public static bool GetDisableLocks()
+        /// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
+        /// <returns> true if locks are disabled, false if locks are enabled.
+        /// </returns>
+        public static bool GetDisableLocks()
 		{
 			return FSDirectory.disableLocks;
 		}
@@ -308,7 +308,9 @@ namespace Lucene.Net.Store
 				
                 System.String[] files = System.IO.Directory.GetFileSystemEntries(directory.FullName); // clear old files    // {{Aroush-1.9}} we want the line below, not this one; how do we make the line below work in C#?!
                 //// System.String[] files = System.IO.Directory.GetFileSystemEntries(new IndexFileNameFilter()); // clear old files 
-				for (int i = 0; i < files.Length; i++)
+                //// if (files == null)
+                ////    throw new System.IO.IOException("Cannot read directory " + directory.FullName);
+                for (int i = 0; i < files.Length; i++)
 				{
 					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, files[i]));
 					bool tmpBool2;
@@ -503,8 +505,9 @@ namespace Lucene.Net.Store
 					}
 					catch (System.IO.IOException ioe)
 					{
-						throw new System.IO.IOException("Cannot rename " + old + " to " + nu);
-					}
+                        System.IO.IOException newExc = new System.IO.IOException("Cannot rename " + old + " to " + nu, ioe);
+                        throw newExc;
+                    }
 					finally
 					{
 						if (in_Renamed != null)

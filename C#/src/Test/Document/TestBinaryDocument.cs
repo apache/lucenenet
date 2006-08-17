@@ -31,8 +31,8 @@ namespace Lucene.Net.Document
 	/// </summary>
 	/// <author>  Bernhard Messer
 	/// </author>
-	/// <version>  $Id: TestBinaryDocument.java 150546 2004-09-30 12:40:28Z goller $
-	/// </version>
+    /// <version>  $Id: TestBinaryDocument.java 387550 2006-03-21 15:36:32Z yonik $
+    /// </version>
 	[TestFixture]
     public class TestBinaryDocument
 	{
@@ -67,11 +67,7 @@ namespace Lucene.Net.Document
 			doc.Add(stringFldStored);
 			doc.Add(stringFldCompressed);
 			
-			/** test for field count */
-            System.Collections.IEnumerator iter = doc.Fields();
-            int count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(4, doc.GetFieldsCount());
 			
 			/** add the doc to a ram index */
 			RAMDirectory dir = new RAMDirectory();
@@ -101,7 +97,7 @@ namespace Lucene.Net.Document
 			Assert.IsTrue(stringFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** delete the document from index */
-			reader.Delete(0);
+			reader.DeleteDocument(0);
 			Assert.AreEqual(0, reader.NumDocs());
 			
 			reader.Close();

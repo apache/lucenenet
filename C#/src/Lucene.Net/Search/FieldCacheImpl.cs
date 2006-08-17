@@ -19,7 +19,7 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
-using StringIndex = Lucene.Net.Search.StringIndex;
+using StringIndex = Lucene.Net.Search.StringIndex; // required by GCJ
 
 namespace Lucene.Net.Search
 {
@@ -59,14 +59,16 @@ namespace Lucene.Net.Search
 			internal System.String field; // which Field
 			internal int type; // which SortField type
 			internal System.Object custom; // which custom comparator
+            internal System.Globalization.CultureInfo locale; // the locale we're sorting (if string)
 			
 			/// <summary>Creates one of these objects. </summary>
-			internal Entry(System.String field, int type)
+			internal Entry(System.String field, int type, System.Globalization.CultureInfo locale)
 			{
 				this.field = String.Intern(field);
 				this.type = type;
 				this.custom = null;
-			}
+                this.locale = locale;
+            }
 			
 			/// <summary>Creates one of these objects for a custom comparator. </summary>
 			internal Entry(System.String field, System.Object custom)
@@ -74,7 +76,8 @@ namespace Lucene.Net.Search
 				this.field = String.Intern(field);
 				this.type = SortField.CUSTOM;
 				this.custom = custom;
-			}
+                this.locale = null;
+            }
 			
 			/// <summary>Two of these are equal iff they reference the same field and type. </summary>
 			public  override bool Equals(System.Object o)
@@ -84,15 +87,18 @@ namespace Lucene.Net.Search
 					Entry other = (Entry) o;
 					if (other.field == field && other.type == type)
 					{
-						if (other.custom == null)
-						{
-							if (custom == null)
-								return true;
-						}
-						else if (other.custom.Equals(custom))
-						{
-							return true;
-						}
+                        if (other.locale == null ? locale == null : other.locale.Equals(locale))
+                        {
+                            if (other.custom == null)
+                            {
+                                if (custom == null)
+                                    return true;
+                            }
+                            else if (other.custom.Equals(custom))
+                            {
+                                return true;
+                            }
+                        }
 					}
 				}
 				return false;
@@ -101,7 +107,7 @@ namespace Lucene.Net.Search
 			/// <summary>Composes a hashcode based on the field and type. </summary>
 			public override int GetHashCode()
 			{
-				return field.GetHashCode() ^ type ^ (custom == null?0:custom.GetHashCode());
+				return field.GetHashCode() ^ type ^ (custom == null ? 0 : custom.GetHashCode()) ^ (locale == null ? 0 : locale.GetHashCode());
 			}
 		}
 		
@@ -113,9 +119,9 @@ namespace Lucene.Net.Search
 		internal System.Collections.IDictionary cache = new System.Collections.Hashtable();
 		
 		/// <summary>See if an object is in the cache. </summary>
-		internal virtual System.Object Lookup(IndexReader reader, System.String field, int type)
+		internal virtual System.Object Lookup(IndexReader reader, System.String field, int type, System.Globalization.CultureInfo locale)
 		{
-			Entry entry = new Entry(field, type);
+			Entry entry = new Entry(field, type, locale);
 			lock (this)
 			{
 				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
@@ -139,9 +145,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Put an object into the cache. </summary>
-		internal virtual System.Object Store(IndexReader reader, System.String field, int type, System.Object value_Renamed)
+		internal virtual System.Object Store(IndexReader reader, System.String field, int type, System.Globalization.CultureInfo locale, System.Object value_Renamed)
 		{
-			Entry entry = new Entry(field, type);
+			Entry entry = new Entry(field, type, locale);
 			lock (this)
 			{
 				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader];
@@ -190,35 +196,28 @@ namespace Lucene.Net.Search
 			if (ret == null)
 			{
 				int[] retArray = new int[reader.MaxDoc()];
-				if (retArray.Length > 0)
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				try
 				{
-					TermDocs termDocs = reader.TermDocs();
-					TermEnum termEnum = reader.Terms(new Term(field, ""));
-					try
+					do 
 					{
-						if (termEnum.Term() == null)
+						Term term = termEnum.Term();
+						if (term == null || term.Field() != field)
+							break;
+						int termval = parser.ParseInt(term.Text());
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
 						{
-							throw new System.SystemException("no terms in field " + field);
+							retArray[termDocs.Doc()] = termval;
 						}
-						do 
-						{
-							Term term = termEnum.Term();
-							if (term.Field() != field)
-								break;
-							int termval = parser.ParseInt(term.Text());
-							termDocs.Seek(termEnum);
-							while (termDocs.Next())
-							{
-								retArray[termDocs.Doc()] = termval;
-							}
-						}
-						while (termEnum.Next());
 					}
-					finally
-					{
-						termDocs.Close();
-						termEnum.Close();
-					}
+					while (termEnum.Next());
+				}
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
 				}
 				Store(reader, field, parser, retArray);
 				return retArray;
@@ -240,43 +239,36 @@ namespace Lucene.Net.Search
 			if (ret == null)
 			{
 				float[] retArray = new float[reader.MaxDoc()];
-				if (retArray.Length > 0)
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				try
 				{
-					TermDocs termDocs = reader.TermDocs();
-					TermEnum termEnum = reader.Terms(new Term(field, ""));
-					try
+					do 
 					{
-						if (termEnum.Term() == null)
+						Term term = termEnum.Term();
+						if (term == null || term.Field() != field)
+							break;
+						float termval;
+                        try
+                        {
+                            termval = SupportClass.Single.Parse(term.Text());
+                        }
+                        catch (Exception e)
+                        {
+                            termval = 0;
+                        }
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
 						{
-							throw new System.SystemException("no terms in field " + field);
+							retArray[termDocs.Doc()] = termval;
 						}
-						do 
-						{
-							Term term = termEnum.Term();
-							if (term.Field() != field)
-								break;
-							float termval;
-                            try
-                            {
-                                termval = SupportClass.Single.Parse(term.Text());
-                            }
-                            catch (Exception e)
-                            {
-                                termval = 0;
-                            }
-							termDocs.Seek(termEnum);
-							while (termDocs.Next())
-							{
-								retArray[termDocs.Doc()] = termval;
-							}
-						}
-						while (termEnum.Next());
 					}
-					finally
-					{
-						termDocs.Close();
-						termEnum.Close();
-					}
+					while (termEnum.Next());
+				}
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
 				}
 				Store(reader, field, parser, retArray);
 				return retArray;
@@ -288,41 +280,34 @@ namespace Lucene.Net.Search
 		public virtual System.String[] GetStrings(IndexReader reader, System.String field)
 		{
 			field = String.Intern(field);
-			System.Object ret = Lookup(reader, field, SortField.STRING);
+			System.Object ret = Lookup(reader, field, SortField.STRING, null);
 			if (ret == null)
 			{
 				System.String[] retArray = new System.String[reader.MaxDoc()];
-				if (retArray.Length > 0)
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				try
 				{
-					TermDocs termDocs = reader.TermDocs();
-					TermEnum termEnum = reader.Terms(new Term(field, ""));
-					try
+					do 
 					{
-						if (termEnum.Term() == null)
+						Term term = termEnum.Term();
+						if (term == null || term.Field() != field)
+							break;
+						System.String termval = term.Text();
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
 						{
-							throw new System.SystemException("no terms in field " + field);
+							retArray[termDocs.Doc()] = termval;
 						}
-						do 
-						{
-							Term term = termEnum.Term();
-							if (term.Field() != field)
-								break;
-							System.String termval = term.Text();
-							termDocs.Seek(termEnum);
-							while (termDocs.Next())
-							{
-								retArray[termDocs.Doc()] = termval;
-							}
-						}
-						while (termEnum.Next());
 					}
-					finally
-					{
-						termDocs.Close();
-						termEnum.Close();
-					}
+					while (termEnum.Next());
 				}
-				Store(reader, field, SortField.STRING, retArray);
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
+				}
+				Store(reader, field, SortField.STRING, null, retArray);
 				return retArray;
 			}
 			return (System.String[]) ret;
@@ -332,74 +317,68 @@ namespace Lucene.Net.Search
 		public virtual StringIndex GetStringIndex(IndexReader reader, System.String field)
 		{
 			field = String.Intern(field);
-			System.Object ret = Lookup(reader, field, Lucene.Net.Search.FieldCache_Fields.STRING_INDEX);
+			System.Object ret = Lookup(reader, field, Lucene.Net.Search.FieldCache_Fields.STRING_INDEX, null);
 			if (ret == null)
 			{
 				int[] retArray = new int[reader.MaxDoc()];
 				System.String[] mterms = new System.String[reader.MaxDoc() + 1];
-				if (retArray.Length > 0)
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				int t = 0; // current term number
+				
+				// an entry for documents that have no terms in this field
+				// should a document with no terms be at top or bottom?
+				// this puts them at the top - if it is changed, FieldDocSortedHitQueue
+				// needs to change as well.
+				mterms[t++] = null;
+				
+				try
 				{
-					TermDocs termDocs = reader.TermDocs();
-					TermEnum termEnum = reader.Terms(new Term(field, ""));
-					int t = 0; // current term number
-					
-					// an entry for documents that have no terms in this field
-					// should a document with no terms be at top or bottom?
-					// this puts them at the top - if it is changed, FieldDocSortedHitQueue
-					// needs to change as well.
-					mterms[t++] = null;
-					
-					try
+					do 
 					{
-						if (termEnum.Term() == null)
+						Term term = termEnum.Term();
+						if (term == null || term.Field() != field)
+							break;
+						
+						// store term text
+						// we expect that there is at most one term per document
+						if (t >= mterms.Length)
+							throw new System.SystemException("there are more terms than " + "documents in field \"" + field + "\", but it's impossible to sort on " + "tokenized fields");
+						mterms[t] = term.Text();
+						
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
 						{
-							throw new System.SystemException("no terms in field " + field);
+							retArray[termDocs.Doc()] = t;
 						}
-						do 
-						{
-							Term term = termEnum.Term();
-							if (term.Field() != field)
-								break;
-							
-							// store term text
-							// we expect that there is at most one term per document
-							if (t >= mterms.Length)
-								throw new System.SystemException("there are more terms than " + "documents in field \"" + field + "\", but it's impossible to sort on " + "tokenized fields");
-							mterms[t] = term.Text();
-							
-							termDocs.Seek(termEnum);
-							while (termDocs.Next())
-							{
-								retArray[termDocs.Doc()] = t;
-							}
-							
-							t++;
-						}
-						while (termEnum.Next());
+						
+						t++;
 					}
-					finally
-					{
-						termDocs.Close();
-						termEnum.Close();
-					}
-					
-					if (t == 0)
-					{
-						// if there are no terms, make the term array
-						// have a single null entry
-						mterms = new System.String[1];
-					}
-					else if (t < mterms.Length)
-					{
-						// if there are less terms than documents,
-						// trim off the dead array space
-						System.String[] terms = new System.String[t];
-						Array.Copy(mterms, 0, terms, 0, t);
-						mterms = terms;
-					}
+					while (termEnum.Next());
 				}
-				StringIndex value_Renamed = new StringIndex(retArray, mterms);
-				Store(reader, field, Lucene.Net.Search.FieldCache_Fields.STRING_INDEX, value_Renamed);
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
+				}
+				
+				if (t == 0)
+				{
+					// if there are no terms, make the term array
+					// have a single null entry
+					mterms = new System.String[1];
+				}
+				else if (t < mterms.Length)
+				{
+					// if there are less terms than documents,
+					// trim off the dead array space
+					System.String[] terms = new System.String[t];
+					Array.Copy(mterms, 0, terms, 0, t);
+					mterms = terms;
+				}
+				
+                StringIndex value_Renamed = new StringIndex(retArray, mterms);
+				Store(reader, field, Lucene.Net.Search.FieldCache_Fields.STRING_INDEX, null, value_Renamed);
 				return value_Renamed;
 			}
 			return (StringIndex) ret;
@@ -420,7 +399,7 @@ namespace Lucene.Net.Search
 		public virtual System.Object GetAuto(IndexReader reader, System.String field)
 		{
 			field = String.Intern(field);
-			System.Object ret = Lookup(reader, field, SortField.AUTO);
+			System.Object ret = Lookup(reader, field, SortField.AUTO, null);
 			if (ret == null)
 			{
 				TermEnum enumerator = reader.Terms(new Term(field, ""));
@@ -435,18 +414,15 @@ namespace Lucene.Net.Search
 					{
 						System.String termtext = term.Text().Trim();
 						
-						/**
-						* Java 1.4 level code:
+                        /// <summary> Java 1.4 level code:
+                        /// if (pIntegers.matcher(termtext).matches())
+                        /// return IntegerSortedHitQueue.comparator (reader, enumerator, field);
+                        /// else if (pFloats.matcher(termtext).matches())
+                        /// return FloatSortedHitQueue.comparator (reader, enumerator, field);
+                        /// </summary>
 						
-						if (pIntegers.matcher(termtext).matches())
-						return IntegerSortedHitQueue.comparator (reader, enumerator, field);
-						
-						else if (pFloats.matcher(termtext).matches())
-						return FloatSortedHitQueue.comparator (reader, enumerator, field);
-						*/
-						
-						// Java 1.3 level code:
-						try
+                        // Java 1.3 level code:
+                        try
 						{
 							System.Int32.Parse(termtext);
 							ret = GetInts(reader, field);
@@ -465,7 +441,7 @@ namespace Lucene.Net.Search
 						}
 						if (ret != null)
 						{
-							Store(reader, field, SortField.AUTO, ret);
+							Store(reader, field, SortField.AUTO, null, ret);
 						}
 					}
 					else
@@ -489,35 +465,28 @@ namespace Lucene.Net.Search
 			if (ret == null)
 			{
 				System.IComparable[] retArray = new System.IComparable[reader.MaxDoc()];
-				if (retArray.Length > 0)
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				try
 				{
-					TermDocs termDocs = reader.TermDocs();
-					TermEnum termEnum = reader.Terms(new Term(field, ""));
-					try
+					do 
 					{
-						if (termEnum.Term() == null)
+						Term term = termEnum.Term();
+						if (term == null || term.Field() != field)
+							break;
+						System.IComparable termval = comparator.GetComparable(term.Text());
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
 						{
-							throw new System.SystemException("no terms in field " + field);
+							retArray[termDocs.Doc()] = termval;
 						}
-						do 
-						{
-							Term term = termEnum.Term();
-							if (term.Field() != field)
-								break;
-							System.IComparable termval = comparator.GetComparable(term.Text());
-							termDocs.Seek(termEnum);
-							while (termDocs.Next())
-							{
-								retArray[termDocs.Doc()] = termval;
-							}
-						}
-						while (termEnum.Next());
 					}
-					finally
-					{
-						termDocs.Close();
-						termEnum.Close();
-					}
+					while (termEnum.Next());
+				}
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
 				}
 				Store(reader, field, comparator, retArray);
 				return retArray;

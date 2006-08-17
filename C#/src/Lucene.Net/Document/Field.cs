@@ -50,7 +50,8 @@ namespace Lucene.Net.Documents
 		
 		private float boost = 1.0f;
 		
-		[Serializable]
+        /// <summary>Specifies whether and how a field should be stored. </summary>
+        [Serializable]
 		public sealed class Store : Parameter
 		{
 			
@@ -74,7 +75,8 @@ namespace Lucene.Net.Documents
 			public static readonly Store NO = new Store("NO");
 		}
 		
-		[Serializable]
+        /// <summary>Specifies whether and how a field should be indexed. </summary>
+        [Serializable]
 		public sealed class Index : Parameter
 		{
 			
@@ -109,7 +111,8 @@ namespace Lucene.Net.Documents
 			public static readonly Index NO_NORMS = new Index("NO_NORMS");
 		}
 		
-		[Serializable]
+        /// <summary>Specifies whether and how a field should have term vectors. </summary>
+        [Serializable]
 		public sealed class TermVector : Parameter
 		{
 			
@@ -190,110 +193,6 @@ namespace Lucene.Net.Documents
 		public float GetBoost()
 		{
 			return boost;
-		}
-		
-		/// <summary>Constructs a String-valued Field that is not tokenized, but is indexed
-		/// and stored.  Useful for non-text fields, e.g. date or url.  
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-		/// Field(name, value, Field.Store.YES, Field.Index.UN_TOKENIZED)} instead 
-		/// </deprecated>
-		public static Field Keyword(System.String name, System.String value_Renamed)
-		{
-			return new Field(name, value_Renamed, true, true, false);
-		}
-		
-		/// <summary>Constructs a String-valued Field that is not tokenized nor indexed,
-		/// but is stored in the index, for return with hits.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-		/// Field(name, value, Field.Store.YES, Field.Index.NO)} instead 
-		/// </deprecated>
-		public static Field UnIndexed(System.String name, System.String value_Renamed)
-		{
-			return new Field(name, value_Renamed, true, false, false);
-		}
-		
-		/// <summary>Constructs a String-valued Field that is tokenized and indexed,
-		/// and is stored in the index, for return with hits.  Useful for short text
-		/// fields, like "title" or "subject". Term vector will not be stored for this field.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-		/// Field(name, value, Field.Store.YES, Field.Index.TOKENIZED)} instead 
-		/// </deprecated>
-		public static Field Text(System.String name, System.String value_Renamed)
-		{
-			return Text(name, value_Renamed, false);
-		}
-		
-		/// <summary>Constructs a Date-valued Field that is not tokenized and is indexed,
-		/// and stored in the index, for return with hits.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-		/// Field(name, value, Field.Store.YES, Field.Index.UN_TOKENIZED)} instead 
-		/// </deprecated>
-		public static Field Keyword(System.String name, System.DateTime value_Renamed)
-		{
-			return new Field(name, DateField.DateToString(value_Renamed), true, true, false);
-		}
-		
-		/// <summary>Constructs a String-valued Field that is tokenized and indexed,
-		/// and is stored in the index, for return with hits.  Useful for short text
-		/// fields, like "title" or "subject".
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)
-		/// Field(name, value, Field.Store.YES, Field.Index.TOKENIZED, storeTermVector)} instead 
-		/// </deprecated>
-		public static Field Text(System.String name, System.String value_Renamed, bool storeTermVector)
-		{
-			return new Field(name, value_Renamed, true, true, true, storeTermVector);
-		}
-		
-		/// <summary>Constructs a String-valued Field that is tokenized and indexed,
-		/// but that is not stored in the index.  Term vector will not be stored for this field.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-		/// Field(name, value, Field.Store.NO, Field.Index.TOKENIZED)} instead 
-		/// </deprecated>
-		public static Field UnStored(System.String name, System.String value_Renamed)
-		{
-			return UnStored(name, value_Renamed, false);
-		}
-		
-		/// <summary>Constructs a String-valued Field that is tokenized and indexed,
-		/// but that is not stored in the index.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)
-		/// Field(name, value, Field.Store.NO, Field.Index.TOKENIZED, storeTermVector)} instead 
-		/// </deprecated>
-		public static Field UnStored(System.String name, System.String value_Renamed, bool storeTermVector)
-		{
-			return new Field(name, value_Renamed, false, true, true, storeTermVector);
-		}
-		
-		/// <summary>Constructs a Reader-valued Field that is tokenized and indexed, but is
-		/// not stored in the index verbatim.  Useful for longer text fields, like
-		/// "body". Term vector will not be stored for this field.
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, Reader) Field(name, value)} instead 
-		/// </deprecated>
-		public static Field Text(System.String name, System.IO.TextReader value_Renamed)
-		{
-			return Text(name, value_Renamed, false);
-		}
-		
-		/// <summary>Constructs a Reader-valued Field that is tokenized and indexed, but is
-		/// not stored in the index verbatim.  Useful for longer text fields, like
-		/// "body".
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, Reader, Field.TermVector)
-		/// Field(name, value, storeTermVector)} instead 
-		/// </deprecated>
-		public static Field Text(System.String name, System.IO.TextReader value_Renamed, bool storeTermVector)
-		{
-			Field f = new Field(name, value_Renamed);
-			f.storeTermVector = storeTermVector;
-			return f;
 		}
 		
 		/// <summary>Returns the name of the field as an interned string.
@@ -378,7 +277,9 @@ namespace Lucene.Net.Documents
 				throw new System.NullReferenceException("name cannot be null");
 			if (value_Renamed == null)
 				throw new System.NullReferenceException("value cannot be null");
-			if (index == Index.NO && store == Store.NO)
+            if (name.Length == 0 && value_Renamed.Length == 0)
+                throw new System.ArgumentException("name and value cannot both be empty");
+            if (index == Index.NO && store == Store.NO)
 				throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
 			if (index == Index.NO && termVector != TermVector.NO)
 				throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
@@ -482,18 +383,9 @@ namespace Lucene.Net.Documents
 			SetStoreTermVector(termVector);
 		}
 		
-		/// <summary>Create a field by specifying all parameters except for <code>storeTermVector</code>,
-		/// which is set to <code>false</code>.
-		/// 
-		/// </summary>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)} instead
-		/// </deprecated>
-		public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token) : this(name, string_Renamed, store, index, token, false)
-		{
-		}
 		
 		
-		/// <summary> Create a stored field with binary value. Optionally the value may be compressed.
+        /// <summary> Create a stored field with binary value. Optionally the value may be compressed.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
@@ -502,7 +394,8 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="store">How <code>value</code> should be stored (compressed or not.)
 		/// </param>
-		public Field(System.String name, byte[] value_Renamed, Store store)
+        /// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
+        public Field(System.String name, byte[] value_Renamed, Store store)
 		{
 			if (name == null)
 				throw new System.ArgumentException("name cannot be null");
@@ -535,39 +428,6 @@ namespace Lucene.Net.Documents
 			this.isBinary = true;
 			
 			SetStoreTermVector(TermVector.NO);
-		}
-		
-		/// <summary> </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="string">The string to process
-		/// </param>
-		/// <param name="store">true if the field should store the string
-		/// </param>
-		/// <param name="index">true if the field should be indexed
-		/// </param>
-		/// <param name="token">true if the field should be tokenized
-		/// </param>
-		/// <param name="storeTermVector">true if we should store the Term Vector info
-		/// 
-		/// </param>
-		/// <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)} instead
-		/// </deprecated>
-		public Field(System.String name, System.String string_Renamed, bool store, bool index, bool token, bool storeTermVector)
-		{
-			if (name == null)
-				throw new System.NullReferenceException("name cannot be null");
-			if (string_Renamed == null)
-				throw new System.NullReferenceException("value cannot be null");
-			if (!index && storeTermVector)
-				throw new System.ArgumentException("cannot store a term vector for fields that are not indexed");
-			
-			this.name = String.Intern(name); // field names are interned
-			this.fieldsData = string_Renamed;
-			this.isStored = store;
-			this.isIndexed = index;
-			this.isTokenized = token;
-			this.storeTermVector = storeTermVector;
 		}
 		
 		private void  SetStoreTermVector(TermVector termVector)

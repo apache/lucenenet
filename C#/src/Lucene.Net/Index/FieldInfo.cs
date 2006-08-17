@@ -32,9 +32,9 @@ namespace Lucene.Net.Index
 		
 		public /*internal*/ bool omitNorms; // omit norms associated with indexed fields
 		
-        public bool IsIndexed
+        public bool IsIndexed()     // {{Aroush-2.0}} remove this function
         {
-            get {   return isIndexed;   }
+            return isIndexed;
         }
 
 		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)

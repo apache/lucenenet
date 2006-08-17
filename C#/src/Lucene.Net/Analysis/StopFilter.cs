@@ -41,27 +41,7 @@ namespace Lucene.Net.Analysis
 			this.stopWords = MakeStopSet(stopWords, ignoreCase);
 		}
 		
-		/// <summary> Constructs a filter which removes words from the input
-		/// TokenStream that are named in the Hashtable.
-		/// 
-		/// </summary>
-		/// <deprecated> Use {@link #StopFilter(TokenStream, Set)} instead
-		/// </deprecated>
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopTable) : this(in_Renamed, stopTable, false)
-		{
-		}
-		/// <summary> Constructs a filter which removes words from the input
-		/// TokenStream that are named in the Hashtable.
-		/// If ignoreCase is true, all keys in the stopTable should already
-		/// be lowercased.
-		/// </summary>
-		/// <deprecated> Use {@link #StopFilter(TokenStream, Set)} instead
-		/// </deprecated>
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopTable, bool ignoreCase) 
-            : this(in_Renamed, new System.Collections.Hashtable(stopTable), ignoreCase, 0)
-		{
-		}
-		
+
 		/// <summary> Construct a token stream filtering the given input.</summary>
 		/// <param name="input">
 		/// </param>
@@ -69,7 +49,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <param name="ignoreCase">-Ignore case when stopping.  The stopWords set must be setup to contain only lower case words 
 		/// </param>
-		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase, int as_set_in_java) : base(input)
+		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase) : base(input)
 		{
 			this.ignoreCase = ignoreCase;
 			this.stopWords = stopWords;
@@ -81,40 +61,10 @@ namespace Lucene.Net.Analysis
 		/// for maximum performance.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[])">
+		/// <seealso cref="MakeStopSet(String[])">
 		/// </seealso>
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords, int as_set_in_java) : this(in_Renamed, stopWords, false)
+		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords) : this(in_Renamed, stopWords, false)
 		{
-		}
-		/// <summary> Builds a Hashtable from an array of stop words,
-		/// appropriate for passing into the StopFilter constructor.
-		/// This permits this table construction to be cached once when
-		/// an Analyzer is constructed.
-		/// 
-		/// </summary>
-		/// <deprecated> Use {@link #MakeStopSet(String[])} instead.
-		/// </deprecated>
-		public static System.Collections.Hashtable MakeStopTable(System.String[] stopWords)
-		{
-			return makeStopTable(stopWords, false);
-		}
-		
-		/// <summary> Builds a Hashtable from an array of stop words,
-		/// appropriate for passing into the StopFilter constructor.
-		/// This permits this table construction to be cached once when
-		/// an Analyzer is constructed.
-		/// </summary>
-		/// <deprecated> Use {@link #MakeStopSet(java.lang.String[], boolean)}  instead.
-		/// </deprecated>
-		public static System.Collections.Hashtable makeStopTable(System.String[] stopWords, bool ignoreCase)
-		{
-			System.Collections.Hashtable stopTable = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable(stopWords.Length));
-			for (int i = 0; i < stopWords.Length; i++)
-			{
-				System.String stopWord = ignoreCase ? stopWords[i].ToLower() : stopWords[i];
-				stopTable[stopWord] = stopWord;
-			}
-			return stopTable;
 		}
 		
 		/// <summary> Builds a Set from an array of stop words,
@@ -123,7 +73,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(String[], boolean) passing false to ignoreCase">
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
 		{

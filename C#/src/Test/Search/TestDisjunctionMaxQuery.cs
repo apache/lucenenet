@@ -98,39 +98,39 @@ namespace Lucene.Net.Search
 			// d1 is an "ok" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-				d1.Add(Field.Keyword("id", "d1"));
-				d1.Add(Field.Text("hed", "elephant"));
-				d1.Add(Field.Text("dek", "elephant"));
-				writer.AddDocument(d1);
+                d1.Add(new Field("id", "d1", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d1"));
+                d1.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
+                d1.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "elephant"));
+                writer.AddDocument(d1);
 			}
 			
 			// d2 is a "good" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-				d2.Add(Field.Keyword("id", "d2"));
-				d2.Add(Field.Text("hed", "elephant"));
-				d2.Add(Field.Text("dek", "albino"));
-				d2.Add(Field.Text("dek", "elephant"));
-				writer.AddDocument(d2);
+                d2.Add(new Field("id", "d2", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d2"));
+                d2.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
+                d2.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "albino"));
+                d2.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "elephant"));
+                writer.AddDocument(d2);
 			}
 			
 			// d3 is a "better" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-				d3.Add(Field.Keyword("id", "d3"));
-				d3.Add(Field.Text("hed", "albino"));
-				d3.Add(Field.Text("hed", "elephant"));
-				writer.AddDocument(d3);
+                d3.Add(new Field("id", "d3", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d3"));
+                d3.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "albino"));
+                d3.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
+                writer.AddDocument(d3);
 			}
 			
 			// d4 is the "best" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
-				d4.Add(Field.Keyword("id", "d4"));
-				d4.Add(Field.Text("hed", "albino"));
-				d4.Add(Field.Text("hed", "elephant"));
-				d4.Add(Field.Text("dek", "albino"));
-				writer.AddDocument(d4);
+                d4.Add(new Field("id", "d4", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d4"));
+                d4.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "albino"));
+                d4.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
+                d4.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "albino"));
+                writer.AddDocument(d4);
 			}
 			
 			writer.Close();
@@ -257,14 +257,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, true, false);
-			}
+                q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, true, false);
-			}
+                q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			
 			
 			Hits h = s.Search(q);
@@ -294,14 +294,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, false, false);
-			}
+                q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, false, false);
-			}
+                q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			
 			
 			Hits h = s.Search(q);
@@ -335,14 +335,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, false, false);
-			}
+                q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, false, false);
-			}
+                q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			
 			
 			Hits h = s.Search(q);
@@ -387,14 +387,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 				q1.Add(Tq("hed", "albino", 1.5f));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, false, false);
-			}
+                q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 				q2.Add(Tq("hed", "elephant", 1.5f));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, false, false);
-			}
+                q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+            }
 			
 			
 			Hits h = s.Search(q);
@@ -459,8 +459,8 @@ namespace Lucene.Net.Search
 			{
 				Lucene.Net.Documents.Document d = h.Doc(i);
 				float score = h.Score(i);
-				System.Console.Error.WriteLine("#" + i + ": {0.000000000}" + score + " - " + d.Get("id"));
-			}
+                System.Console.Error.WriteLine("#" + i + ": {0.000000000}" + score + " - " + d.Get("id"));
+            }
 		}
 	}
 }

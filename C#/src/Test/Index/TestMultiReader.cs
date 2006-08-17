@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			MultiReader reader = new MultiReader(dir, sis, false, readers);
 			Assert.IsTrue(reader != null);
 			Assert.AreEqual(2, reader.NumDocs());
-			reader.Delete(0);
+			reader.DeleteDocument(0);
 			Assert.AreEqual(1, reader.NumDocs());
 			reader.UndeleteAll();
 			Assert.AreEqual(2, reader.NumDocs());

@@ -77,10 +77,8 @@ namespace Lucene.Net.Index
 			//There are 2 unstored fields on the document that are not preserved across writing
 			Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(testDoc) - DocHelper.unstored.Count);
 			
-			System.Collections.IEnumerator fields = result.Fields();
-			while (fields.MoveNext())
+            foreach (Field field in result.Fields())
 			{
-				Field field = (Field) fields.Current;
 				Assert.IsTrue(field != null);
 				Assert.IsTrue(DocHelper.nameValues.Contains(field.Name()));
 			}
@@ -95,7 +93,7 @@ namespace Lucene.Net.Index
 			SegmentReader deleteReader = SegmentReader.Get(new SegmentInfo("seg-to-delete", 1, dir));
 			Assert.IsTrue(deleteReader != null);
 			Assert.IsTrue(deleteReader.NumDocs() == 1);
-			deleteReader.Delete(0);
+			deleteReader.DeleteDocument(0);
 			Assert.IsTrue(deleteReader.IsDeleted(0) == true);
 			Assert.IsTrue(deleteReader.HasDeletions() == true);
 			Assert.IsTrue(deleteReader.NumDocs() == 0);

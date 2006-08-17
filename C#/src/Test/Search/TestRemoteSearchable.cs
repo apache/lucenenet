@@ -114,5 +114,15 @@ namespace Lucene.Net.Search
 			Hits nohits = searcher.Search(new TermQuery(new Term("test", "text")), new QueryFilter(new TermQuery(new Term("test", "non-existent-term"))));
 			Assert.AreEqual(0, nohits.Length());
 		}
-	}
+		
+        [Test]
+        public virtual void  TestConstantScoreQuery()
+        {
+            // try to search the published index
+            Lucene.Net.Search.Searchable[] searchables = new Lucene.Net.Search.Searchable[]{GetRemote()};
+            Searcher searcher = new MultiSearcher(searchables);
+            Hits hits = searcher.Search(new ConstantScoreQuery(new QueryFilter(new TermQuery(new Term("test", "test")))));
+            Assert.AreEqual(1, hits.Length());
+        }
+    }
 }

@@ -101,11 +101,11 @@ namespace Lucene.Net.Store
 				// read current file
 				IndexInput is_Renamed = dir.OpenInput(files[i]);
 				// and copy to ram disk
-				int len = (int) is_Renamed.Length();
-				int readCount = 0;
+				long len = (int) is_Renamed.Length();
+				long readCount = 0;
 				while (readCount < len)
 				{
-					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount : BufferedIndexOutput.BUFFER_SIZE;
+					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int) (len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
 					is_Renamed.ReadBytes(buf, 0, toRead);
 					os.WriteBytes(buf, toRead);
 					readCount += toRead;

@@ -23,11 +23,15 @@ namespace Lucene.Net.Util
 	/// least element can always be found in constant time.  Put()'s and pop()'s
 	/// require log(size) time. 
 	/// </summary>
-	public abstract class PriorityQueue
+    [Serializable]
+    public abstract class PriorityQueue
 	{
-		private System.Object[] heap;
-		private int size;
-		private int maxSize;
+        [NonSerialized]
+        private System.Object[] heap;
+        [NonSerialized]
+        private int size;
+        [NonSerialized]
+        private int maxSize;
 		
 		/// <summary>Determines the ordering of objects in this priority queue.  Subclasses
 		/// must define this one method. 

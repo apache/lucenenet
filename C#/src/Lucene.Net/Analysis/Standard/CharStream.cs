@@ -42,20 +42,6 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		char ReadChar();
 		
-		/// <summary> Returns the column position of the character last read.</summary>
-		/// <deprecated> 
-		/// </deprecated>
-		/// <seealso cref="getEndColumn">
-		/// </seealso>
-		int GetColumn();
-		
-		/// <summary> Returns the line number of the character last read.</summary>
-		/// <deprecated> 
-		/// </deprecated>
-		/// <seealso cref="getEndLine">
-		/// </seealso>
-		int GetLine();
-		
 		/// <summary> Returns the column number of the last character for current token (being
 		/// matched after the last call to BeginTOken).
 		/// </summary>

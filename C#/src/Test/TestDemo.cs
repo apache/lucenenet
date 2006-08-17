@@ -63,8 +63,9 @@ namespace Lucene.Net
 			// Now search the index:
 			IndexSearcher isearcher = new IndexSearcher(directory);
 			// Parse a simple query that searches for "text":
-			Query query = Lucene.Net.QueryParsers.QueryParser.Parse("text", "fieldname", analyzer);
-			Hits hits = isearcher.Search(query);
+            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("fieldname", analyzer);
+            Lucene.Net.Search.Query query = parser.Parse("text");
+            Hits hits = isearcher.Search(query);
 			Assert.AreEqual(1, hits.Length());
 			// Iterate through the results:
 			for (int i = 0; i < hits.Length(); i++)

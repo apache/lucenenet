@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < reader.FieldInfos.Size(); i++)
 			{
 				FieldInfo fi = reader.FieldInfos.FieldInfo(i);
-				if (fi.IsIndexed)
+				if (fi.IsIndexed())
 				{
 					Assert.IsTrue(fi.omitNorms == !dir.FileExists(segName + ".f" + i));
 				}

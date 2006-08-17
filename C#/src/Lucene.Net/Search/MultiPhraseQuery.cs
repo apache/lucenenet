@@ -110,7 +110,15 @@ namespace Lucene.Net.Search
 			positions.Add((System.Int32) position);
 		}
 		
-		/// <summary> Returns the relative positions of terms in this phrase.</summary>
+        /// <summary> Returns a List<Term[]> of the terms in the multiphrase.
+        /// Do not modify the List or its contents.
+        /// </summary>
+        public virtual System.Collections.IList GetTermArrays()
+        {
+            return (System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(termArrays));
+        }
+
+        /// <summary> Returns the relative positions of terms in this phrase.</summary>
 		public virtual int[] GetPositions()
 		{
 			int[] result = new int[positions.Count];
@@ -119,7 +127,22 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-		[Serializable]
+        // inherit javadoc
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
+            {
+                Term[] arr = (Term[]) iter.Current;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    Term tmp = arr[i];
+                    terms.Add(tmp, tmp);
+                }
+            }
+        }
+		
+		
+        [Serializable]
 		private class MultiPhraseWeight : Weight
 		{
 			private void  InitBlock(MultiPhraseQuery enclosingInstance)
@@ -337,7 +360,43 @@ namespace Lucene.Net.Search
 			
 			return buffer.ToString();
 		}
-
+		
+		
+        /// <summary>Returns true if <code>o</code> is equal to this. </summary>
+        public  override bool Equals(System.Object o)
+        {
+            if (!(o is MultiPhraseQuery))
+                return false;
+            MultiPhraseQuery other = (MultiPhraseQuery) o;
+            if (this.GetBoost() == other.GetBoost() && this.slop == other.slop)
+            {
+                System.Collections.IEnumerator iter1 = this.termArrays.GetEnumerator();
+                System.Collections.IEnumerator iter2 = other.termArrays.GetEnumerator();
+                while (iter1.MoveNext() && iter2.MoveNext())
+                {
+                    Term item1 = (Term) iter1.Current;
+                    Term item2 = (Term) iter2.Current;
+                    if (!item1.Equals(item2))
+                        return false;
+                }
+                iter1 = this.positions.GetEnumerator();
+                iter2 = other.positions.GetEnumerator();
+                while (iter1.MoveNext() && iter2.MoveNext())
+                {
+                    System.Int32 item1 = (System.Int32) iter1.Current;
+                    System.Int32 item2 = (System.Int32) iter2.Current;
+                    if (!item1.Equals(item2))
+                        return false;
+                }
+            }
+            return true;
+        }
+		
+        /// <summary>Returns a hash code value for this object.</summary>
+        public override int GetHashCode()
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ termArrays.GetHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
+        }
         // {{Aroush-1.9}} Do we need this?!
         override public System.Object Clone()
 		{

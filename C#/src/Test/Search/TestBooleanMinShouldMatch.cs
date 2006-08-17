@@ -89,12 +89,12 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < data.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(Field.Keyword("id", System.Convert.ToString(i)));
-				doc.Add(Field.Keyword("all", "all"));
-				if (null != data[i])
+                doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id",String.valueOf(i)));
+                doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("all","all"));
+                if (null != data[i])
 				{
-					doc.Add(Field.Text("data", data[i]));
-				}
+                    doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("data",data[i]));
+                }
 				writer.AddDocument(doc);
 			}
 			
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
 			if (expected != h.Length())
 			{
 				PrintHits("TestBooleanMinShouldMatch", h);  // PrintHits(NUnit.Framework.TestCase.GetName(), h);    // {{Aroush-1.9}} 'GetName()' gives us the name of the test in JUnit, how is it done in NUnit?
-			}
+            }
 			Assert.AreEqual(expected, h.Length(), "result count");
 		}
 		
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 			BooleanQuery q = new BooleanQuery();
 			for (int i = 1; i <= 4; i++)
 			{
-				q.Add(new TermQuery(new Term("data", "" + i)), false, false);
+				q.Add(new TermQuery(new Term("data", "" + i)), BooleanClause.Occur.SHOULD); //false, false);
 			}
 			q.SetMinimumNumberShouldMatch(2); // match at least two of 4
 			VerifyNrHits(q, 2);
@@ -136,10 +136,10 @@ namespace Lucene.Net.Search
 			
 			/* one required, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
 			
@@ -152,11 +152,11 @@ namespace Lucene.Net.Search
 			
 			/* two required, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
 			
@@ -169,10 +169,10 @@ namespace Lucene.Net.Search
 			
 			/* one prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
 			
@@ -185,11 +185,11 @@ namespace Lucene.Net.Search
 			
 			/* two prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "C")), false, true);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "C")), BooleanClause.Occur.MUST_NOT); //false, true );
 			
 			q.SetMinimumNumberShouldMatch(2); // 2 of 3 optional 
 			
@@ -202,12 +202,12 @@ namespace Lucene.Net.Search
 			
 			/* one required, one prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); // true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
 			
@@ -220,13 +220,13 @@ namespace Lucene.Net.Search
 			
 			/* two required, one prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
 			
@@ -239,13 +239,13 @@ namespace Lucene.Net.Search
 			
 			/* one required, two prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
-			q.Add(new TermQuery(new Term("data", "C")), false, true);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "C")), BooleanClause.Occur.MUST_NOT); //false, true );
 			
 			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
 			
@@ -258,14 +258,14 @@ namespace Lucene.Net.Search
 			
 			/* two required, two prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
-			q.Add(new TermQuery(new Term("data", "C")), false, true);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "C")), BooleanClause.Occur.MUST_NOT); //false, true );
 			
 			q.SetMinimumNumberShouldMatch(3); // 3 of 4 optional 
 			
@@ -278,14 +278,14 @@ namespace Lucene.Net.Search
 			
 			/* two required, two prohibited, some optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "5")), false, false);
-			q.Add(new TermQuery(new Term("data", "4")), false, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, true);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
-			q.Add(new TermQuery(new Term("data", "1")), false, false);
-			q.Add(new TermQuery(new Term("data", "C")), false, true);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "5")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "4")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST_NOT); //false, true );
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "C")), BooleanClause.Occur.MUST_NOT); //false, true );
 			
 			q.SetMinimumNumberShouldMatch(90); // 90 of 4 optional ?!?!?!
 			
@@ -298,10 +298,10 @@ namespace Lucene.Net.Search
 			
 			/* two required, two optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), false, false);
-			q.Add(new TermQuery(new Term("data", "6")), true, false);
-			q.Add(new TermQuery(new Term("data", "3")), true, false);
-			q.Add(new TermQuery(new Term("data", "2")), false, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.SHOULD); //false, false);
 			
 			q.SetMinimumNumberShouldMatch(2); // 2 of 2 optional 
 			
@@ -314,9 +314,9 @@ namespace Lucene.Net.Search
 			
 			/* two required, one optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "3")), false, false);
-			q.Add(new TermQuery(new Term("data", "2")), true, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "3")), BooleanClause.Occur.SHOULD); //false, false);
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.MUST); //true,  false);
 			
 			q.SetMinimumNumberShouldMatch(1); // 1 of 1 optional 
 			
@@ -329,8 +329,8 @@ namespace Lucene.Net.Search
 			
 			/* two required, no optional */
 			BooleanQuery q = new BooleanQuery();
-			q.Add(new TermQuery(new Term("all", "all")), true, false);
-			q.Add(new TermQuery(new Term("data", "2")), true, false);
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+            q.Add(new TermQuery(new Term("data", "2")), BooleanClause.Occur.MUST); //true,  false);
 			
 			q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
 			
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 			TestBoolean2.Callback minNrCB = new AnonymousClassCallback(rnd, this);
 			
 			
-			int tot = 0;
+
 			// increase number of iterations for more complete testing      
 			for (int i = 0; i < 1000; i++)
 			{
@@ -367,7 +367,6 @@ namespace Lucene.Net.Search
 				// will not normalize scores.
 				TopDocs top1 = s.Search(q1, null, 100);
 				TopDocs top2 = s.Search(q2, null, 100);
-				tot += top2.totalHits;
 				
 				// The constrained query
 				// should be a superset to the unconstrained query.

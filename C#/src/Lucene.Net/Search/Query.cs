@@ -62,20 +62,21 @@ namespace Lucene.Net.Search
 			return boost;
 		}
 		
-		/// <summary>Prints a query to a string, with <code>field</code> as the default field
-		/// for terms.  <p>The representation used is one that is supposed to be readable
-		/// by {@link Lucene.Net.queryParser.QueryParser QueryParser}. However,
-		/// there are the following limitations:
-		/// <ul>
-		/// <li>If the query was created by the parser, the printed
-		/// representation may not be exactly what was parsed. For example,
-		/// characters that need to be escaped will be represented without
-		/// the required backslash.</li>
-		/// <li>Some of the more complicated queries (e.g. span queries)
-		/// don't have a representation that can be parsed by QueryParser.</li>
-		/// </ul>
-		/// </summary>
-		public abstract System.String ToString(System.String field);
+        /// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
+        /// default field and omitted.
+        /// <p>The representation used is one that is supposed to be readable
+        /// by {@link org.apache.lucene.queryParser.QueryParser QueryParser}. However,
+        /// there are the following limitations:
+        /// <ul>
+        /// <li>If the query was created by the parser, the printed
+        /// representation may not be exactly what was parsed. For example,
+        /// characters that need to be escaped will be represented without
+        /// the required backslash.</li>
+        /// <li>Some of the more complicated queries (e.g. span queries)
+        /// don't have a representation that can be parsed by QueryParser.</li>
+        /// </ul>
+        /// </summary>
+        public abstract System.String ToString(System.String field);
 		
 		/// <summary>Prints a query to a string. </summary>
 		public override System.String ToString()
@@ -147,7 +148,10 @@ namespace Lucene.Net.Search
 					for (int j = 0; j < clauses.Length; j++)
 					{
                         Query tmp = clauses[j].GetQuery();
-						uniques.Add(tmp, tmp);
+                        if (uniques.Contains(query) == false)
+                        {
+                            uniques.Add(tmp, tmp);
+                        }
 					}
 				}
 				else

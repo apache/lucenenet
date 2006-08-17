@@ -288,8 +288,28 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if segments file cannot be read. </throws>
 		public static long GetCurrentVersion(Directory directory)
 		{
-			return SegmentInfos.ReadCurrentVersion(directory);
-		}
+            lock (directory)
+            {
+                // in- & inter-process sync
+                Lock commitLock = directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME);
+				
+                bool locked = false;
+				
+                try
+                {
+                    locked = commitLock.Obtain(IndexWriter.COMMIT_LOCK_TIMEOUT);
+					
+                    return SegmentInfos.ReadCurrentVersion(directory);
+                }
+                finally
+                {
+                    if (locked)
+                    {
+                        commitLock.Release();
+                    }
+                }
+            }
+        }
 		
 		/// <summary> Version number when this IndexReader was opened.</summary>
 		public virtual long GetVersion()
@@ -305,12 +325,28 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public virtual bool IsCurrent()
 		{
-			if (SegmentInfos.ReadCurrentVersion(directory) != segmentInfos.GetVersion())
-			{
-				return false;
-			}
-			return true;
-		}
+            lock (directory)
+            {
+                // in- & inter-process sync
+                Lock commitLock = directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME);
+				
+                bool locked = false;
+				
+                try
+                {
+                    locked = commitLock.Obtain(IndexWriter.COMMIT_LOCK_TIMEOUT);
+					
+                    return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.GetVersion();
+                }
+                finally
+                {
+                    if (locked)
+                    {
+                        commitLock.Release();
+                    }
+                }
+            }
+        }
 		
 		/// <summary>  Return an array of term frequency vectors for the specified document.
 		/// The array contains a vector for each vectorized field in the document.
@@ -573,25 +609,8 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
-		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
-		/// Attempts to read its field with the {@link #document}
-		/// method will result in an error.  The presence of this document may still be
-		/// reflected in the {@link #docFreq} statistic, though
-		/// this will be corrected eventually as the index is further modified.
-		/// 
-		/// </summary>
-		/// <deprecated> Use {@link #DeleteDocument(int docNum)} instead.
-		/// </deprecated>
-		public void  Delete(int docNum)
-		{
-			lock (this)
-			{
-				DeleteDocument(docNum);
-			}
-		}
 		
-		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
+        /// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
 		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
 		/// Attempts to read its field with the {@link #document}
 		/// method will result in an error.  The presence of this document may still be
@@ -611,29 +630,12 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Implements deletion of the document numbered <code>docNum</code>.
-		/// Applications should call {@link #Delete(int)} or {@link #Delete(Term)}.
+		/// Applications should call {@link #DeleteDocument(int)} or {@link #DeleteDocuments(Term)}.
 		/// </summary>
 		protected internal abstract void  DoDelete(int docNum);
 		
-		/// <summary>Deletes all documents containing <code>term</code>.
-		/// This is useful if one uses a document field to hold a unique ID string for
-		/// the document.  Then to delete such a document, one merely constructs a
-		/// term with the appropriate field and the unique ID string as its text and
-		/// passes it to this method.
-		/// See {@link #Delete(int)} for information about when this deletion will
-		/// become effective.
-		/// </summary>
-		/// <returns> the number of documents deleted
-		/// 
-		/// </returns>
-		/// <deprecated> Use {@link #DeleteDocuments(Term term)} instead.
-		/// </deprecated>
-		public int Delete(Term term)
-		{
-			return DeleteDocuments(term);
-		}
 		
-		/// <summary>Deletes all documents containing <code>term</code>.
+        /// <summary>Deletes all documents containing <code>term</code>.
 		/// This is useful if one uses a document field to hold a unique ID string for
 		/// the document.  Then to delete such a document, one merely constructs a
 		/// term with the appropriate field and the unique ID string as its text and
@@ -741,96 +743,8 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Returns a list of all unique field names that exist in the index pointed
-		/// to by this IndexReader.
-		/// </summary>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// </returns>
-		/// <throws>  IOException if there is a problem with accessing the index </throws>
-		/// <summary> 
-		/// </summary>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetFieldNames();
 		
-		/// <summary> Returns a list of all unique field names that exist in the index pointed
-		/// to by this IndexReader.  The boolean argument specifies whether the fields
-		/// returned are indexed or not.
-		/// </summary>
-		/// <param name="indexed"><code>true</code> if only indexed fields should be returned;
-		/// <code>false</code> if only unindexed fields should be returned.
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// </returns>
-		/// <throws>  IOException if there is a problem with accessing the index </throws>
-		/// <summary> 
-		/// </summary>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetFieldNames(bool indexed);
-		
-		/// <summary> </summary>
-		/// <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
-		/// else only indexed fields without term vector info 
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// 
-		/// </returns>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public virtual System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
-		{
-			if (storedTermVector)
-			{
-				System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.YES))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_POSITIONS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_OFFSETS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_POSITIONS_OFFSETS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                return fieldSet;
-			}
-			else
-				return GetIndexedFieldNames(Field.TermVector.NO);
-		}
-		
-		/// <summary> Get a list of unique field names that exist in this index, are indexed, and have
-		/// the specified term vector information.
-		/// 
-		/// </summary>
-		/// <param name="tvSpec">specifies which term vector information should be available for the fields
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// 
-		/// </returns>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec);
-		
-		/// <summary> Get a list of unique field names that exist in this index and have the specified
+        /// <summary> Get a list of unique field names that exist in this index and have the specified
 		/// field option information.
 		/// </summary>
 		/// <param name="fldOption">specifies which field option should be available for the returned fields

@@ -95,14 +95,6 @@ namespace Lucene.Net.Store
 			private Lock lock_Renamed;
 			private long lockWaitTimeout;
 			
-			/// <summary>Constructs an executor that will grab the named lock.
-			/// Defaults lockWaitTimeout to Lock.COMMIT_LOCK_TIMEOUT.
-			/// </summary>
-			/// <deprecated> Kept only to avoid breaking existing code.
-			/// </deprecated>
-			public With(Lock lock_Renamed) : this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
-			{
-			}
 			
 			/// <summary>Constructs an executor that will grab the named lock. </summary>
 			public With(Lock lock_Renamed, long lockWaitTimeout)

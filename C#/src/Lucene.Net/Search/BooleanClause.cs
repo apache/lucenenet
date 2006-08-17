@@ -25,11 +25,12 @@ namespace Lucene.Net.Search
 	public class BooleanClause
 	{
 		
-		[Serializable]
+        /// <summary>Specifies how terms may occur in matching documents. </summary>
+        [Serializable]
 		public sealed class Occur : Parameter
 		{
 			
-			internal Occur(System.String name):base(name)
+			internal Occur(System.String name) : base(name)
 			{
 			}
 			
@@ -57,87 +58,29 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>The query whose matching documents are combined by the boolean query.</summary>
-		/// <deprecated> use {@link #SetQuery(Query)} instead 
-		/// </deprecated>
-		public Query query; // TODO: decrease visibility for Lucene 2.0
-		
-		/// <summary>If true, documents documents which <i>do not</i>
-		/// match this sub-query will <i>not</i> match the boolean query.
-		/// </summary>
-		/// <deprecated> use {@link #SetOccur(BooleanClause.Occur)} instead 
-		/// </deprecated>
-		public bool required = false; // TODO: decrease visibility for Lucene 2.0
-		
-		/// <summary>If true, documents documents which <i>do</i>
-		/// match this sub-query will <i>not</i> match the boolean query.
-		/// </summary>
-		/// <deprecated> use {@link #SetOccur(BooleanClause.Occur)} instead 
-		/// </deprecated>
-		public bool prohibited = false; // TODO: decrease visibility for Lucene 2.0
+		private Query query; // TODO: decrease visibility for Lucene 2.0
 		
 		private Occur occur = Occur.SHOULD;
 		
-		/// <summary>Constructs a BooleanClause with query <code>q</code>, required
-		/// <code>r</code> and prohibited <code>p</code>.
-		/// </summary>
-		/// <deprecated> use BooleanClause(Query, Occur) instead
-		/// <ul>
-		/// <li>For BooleanClause(query, true, false) use BooleanClause(query, BooleanClause.Occur.MUST)
-		/// <li>For BooleanClause(query, false, false) use BooleanClause(query, BooleanClause.Occur.SHOULD)
-		/// <li>For BooleanClause(query, false, true) use BooleanClause(query, BooleanClause.Occur.MUST_NOT)
-		/// </ul>
-		/// </deprecated>
-		public BooleanClause(Query q, bool r, bool p)
-		{
-			// TODO: remove for Lucene 2.0
-			query = q;
-			required = r;
-			prohibited = p;
-			if (required)
-			{
-				if (prohibited)
-				{
-					// prohibited && required doesn't make sense, but we want the old behaviour:
-					occur = Occur.MUST_NOT;
-				}
-				else
-				{
-					occur = Occur.MUST;
-				}
-			}
-			else
-			{
-				if (prohibited)
-				{
-					occur = Occur.MUST_NOT;
-				}
-				else
-				{
-					occur = Occur.SHOULD;
-				}
-			}
-		}
 		
 		/// <summary>Constructs a BooleanClause.</summary>
 		public BooleanClause(Query query, Occur occur)
 		{
 			this.query = query;
 			this.occur = occur;
-			SetFields(occur);
 		}
 		
-		public virtual Occur GetOccur()
-		{
-			return occur;
-		}
+        public virtual Occur GetOccur()
+        {
+            return occur;
+        }
 		
-		public virtual void  SetOccur(Occur occur)
-		{
-			this.occur = occur;
-			SetFields(occur);
-		}
+        public virtual void  SetOccur(Occur occur)
+        {
+            this.occur = occur;
+        }
 		
-		public virtual Query GetQuery()
+        public virtual Query GetQuery()
 		{
 			return query;
 		}
@@ -147,52 +90,31 @@ namespace Lucene.Net.Search
 			this.query = query;
 		}
 		
-		public virtual bool IsProhibited()
-		{
-			return prohibited;
-		}
+        public virtual bool IsProhibited()
+        {
+            return Occur.MUST_NOT.Equals(occur);
+        }
 		
-		public virtual bool IsRequired()
-		{
-			return required;
-		}
+        public virtual bool IsRequired()
+        {
+            return Occur.MUST.Equals(occur);
+        }
 		
-		private void  SetFields(Occur occur)
-		{
-			if (occur == Occur.MUST)
-			{
-				required = true;
-				prohibited = false;
-			}
-			else if (occur == Occur.SHOULD)
-			{
-				required = false;
-				prohibited = false;
-			}
-			else if (occur == Occur.MUST_NOT)
-			{
-				required = false;
-				prohibited = true;
-			}
-			else
-			{
-				throw new System.ArgumentException("Unknown operator " + occur);
-			}
-		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		
+        /// <summary>Returns true iff <code>o</code> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (!(o is BooleanClause))
 				return false;
 			BooleanClause other = (BooleanClause) o;
-			return this.query.Equals(other.query) && (this.required == other.required) && (this.prohibited == other.prohibited);
+			return this.query.Equals(other.query) && this.occur.Equals(other.occur);
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ (this.required?1:0) ^ (this.prohibited?2:0);
+			return query.GetHashCode() ^ (Occur.MUST.Equals(occur) ? 1 : 0) ^ (Occur.MUST_NOT.Equals(occur) ? 2 : 0);
 		}
 		
 		

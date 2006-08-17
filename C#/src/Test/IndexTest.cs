@@ -73,7 +73,7 @@ namespace Lucene.Net
 			{
 				System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName);
 				for (int i = 0; i < files.Length; i++)
-					IndexDocs(writer, new System.IO.FileInfo(file.FullName + "\\" + files[i]));
+					IndexDocs(writer, new System.IO.FileInfo(System.IO.Path.Combine(file.FullName, files[i])));
 			}
 			else
 			{

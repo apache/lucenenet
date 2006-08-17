@@ -53,9 +53,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <deprecated> use {@link #SetMaxClauseCount(int)} instead
-		/// </deprecated>
-		public static int maxClauseCount = 1024;
+		
+		private static int maxClauseCount = 1024;
 		
 		/// <summary>Thrown when an attempt is made to add more than {@link
 		/// #GetMaxClauseCount()} clauses. This typically happens if
@@ -179,32 +178,6 @@ namespace Lucene.Net.Search
 		public virtual int GetMinimumNumberShouldMatch()
 		{
 			return minNrShouldMatch;
-		}
-		
-		/// <summary>Adds a clause to a boolean query.  Clauses may be:
-		/// <ul>
-		/// <li><code>required</code> which means that documents which <i>do not</i>
-		/// match this sub-query will <i>not</i> match the boolean query;
-		/// <li><code>prohibited</code> which means that documents which <i>do</i>
-		/// match this sub-query will <i>not</i> match the boolean query; or
-		/// <li>neither, in which case matched documents are neither prohibited from
-		/// nor required to match the sub-query. However, a document must match at
-		/// least 1 sub-query to match the boolean query.
-		/// </ul>
-		/// It is an error to specify a clause as both <code>required</code> and
-		/// <code>prohibited</code>.
-		/// 
-		/// </summary>
-		/// <deprecated> use {@link #Add(Query, BooleanClause.Occur)} instead:
-		/// <ul>
-		/// <li>For add(query, true, false) use add(query, BooleanClause.Occur.MUST)
-		/// <li>For add(query, false, false) use add(query, BooleanClause.Occur.SHOULD)
-		/// <li>For add(query, false, true) use add(query, BooleanClause.Occur.MUST_NOT)
-		/// </ul>
-		/// </deprecated>
-		public virtual void  Add(Query query, bool required, bool prohibited)
-		{
-			Add(new BooleanClause(query, required, prohibited));
 		}
 		
 		/// <summary>Adds a clause to a boolean query.

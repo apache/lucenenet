@@ -107,8 +107,6 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		public ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, System.String[] tokenImageVal):base("")
 		{
-            if (eol == null)
-                eol = @"\n";
 			specialConstructor = true;
 			currentToken = currentTokenVal;
 			expectedTokenSequences = expectedTokenSequencesVal;
@@ -126,15 +124,11 @@ namespace Lucene.Net.Analysis.Standard
 		
 		public ParseException() : base()
 		{
-            if (eol == null)
-                eol = @"\n";
             specialConstructor = false;
 		}
 		
 		public ParseException(System.String message) : base(message)
 		{
-            if (eol == null)
-                eol = @"\n";
             specialConstructor = false;
 		}
 		

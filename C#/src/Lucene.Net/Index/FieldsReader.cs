@@ -148,6 +148,7 @@ namespace Lucene.Net.Index
 		
 		private byte[] Uncompress(byte[] input)
 		{
+            // {{Aroush-2.0}} For .NET 2.0, replace this call to use the built-in compression support
             return SupportClass.CompressionSupport.Uncompress(input);
 		}
 	}

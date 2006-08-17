@@ -29,13 +29,6 @@ namespace Lucene.Net.Analysis
 		/// <summary>The source of tokens for this filter. </summary>
 		protected internal TokenStream input;
 		
-		/// <summary>Call TokenFilter(TokenStream) instead.</summary>
-		/// <deprecated> 
-		/// </deprecated>
-		protected internal TokenFilter()
-		{
-		}
-		
 		/// <summary>Construct a token stream filtering the given input. </summary>
 		protected internal TokenFilter(TokenStream input)
 		{

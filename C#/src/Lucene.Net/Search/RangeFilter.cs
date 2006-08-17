@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>
 	/// This code borrows heavily from {@link RangeQuery}, but is implemented as a Filter
-	/// (much like {@link DateFilter}).
-	/// </p>
+    /// 
+    /// </p>
 	/// </summary>
 	[Serializable]
 	public class RangeFilter : Filter

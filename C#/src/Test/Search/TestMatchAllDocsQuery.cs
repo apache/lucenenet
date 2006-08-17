@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits.Length());
 			
 			// delete a document:
-			is_Renamed.GetIndexReader().Delete(0);
+			is_Renamed.GetIndexReader().DeleteDocument(0);
 			hits = is_Renamed.Search(new MatchAllDocsQuery());
 			Assert.AreEqual(2, hits.Length());
 			

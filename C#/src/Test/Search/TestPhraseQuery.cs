@@ -79,8 +79,6 @@ namespace Lucene.Net.Search
 		[SetUp]
         public virtual void  SetUp()
 		{
-            System.Console.Out.WriteLine("Setup()");
-
 			directory = new RAMDirectory();
 			Analyzer analyzer = new AnonymousClassAnalyzer(this);
 			IndexWriter writer = new IndexWriter(directory, analyzer, true);
@@ -102,8 +100,6 @@ namespace Lucene.Net.Search
 		[TearDown]
         public virtual void  TearDown()
 		{
-            System.Console.Out.WriteLine("TearDown()");
-
 			searcher.Close();
 			directory.Close();
 		}
@@ -111,8 +107,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestNotCloseEnough()
 		{
-            System.Console.Out.WriteLine("TestNotCloseEnough()");
-
 			query.SetSlop(2);
 			query.Add(new Term("field", "one"));
 			query.Add(new Term("field", "five"));
@@ -123,8 +117,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestBarelyCloseEnough()
 		{
-            System.Console.Out.WriteLine("TestBarelyCloseEnough()");
-
 			query.SetSlop(3);
 			query.Add(new Term("field", "one"));
 			query.Add(new Term("field", "five"));
@@ -136,8 +128,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestExact()
 		{
-            System.Console.Out.WriteLine("TestExact()");
-
 			// slop is zero by default
 			query.Add(new Term("field", "four"));
 			query.Add(new Term("field", "five"));
@@ -154,8 +144,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestSlop1()
 		{
-            System.Console.Out.WriteLine("TestSlop1()");
-
 			// Ensures slop of 1 works with terms in order.
 			query.SetSlop(1);
 			query.Add(new Term("field", "one"));
@@ -177,8 +165,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestOrderDoesntMatter()
 		{
-            System.Console.Out.WriteLine("TestOrderDoesntMatter()");
-
 			query.SetSlop(2); // must be at least two for reverse order match
 			query.Add(new Term("field", "two"));
 			query.Add(new Term("field", "one"));
@@ -199,8 +185,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestMulipleTerms()
 		{
-            System.Console.Out.WriteLine("TestMulipleTerms()");
-
 			query.SetSlop(2);
 			query.Add(new Term("field", "one"));
 			query.Add(new Term("field", "three"));
@@ -224,8 +208,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestPhraseQueryWithStopAnalyzer()
 		{
-            System.Console.Out.WriteLine("TestPhraseQueryWithStopAnalyzer()");
-
 			RAMDirectory directory = new RAMDirectory();
 			StopAnalyzer stopAnalyzer = new StopAnalyzer();
 			IndexWriter writer = new IndexWriter(directory, stopAnalyzer, true);
@@ -256,8 +238,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestPhraseQueryInConjunctionScorer()
 		{
-            System.Console.Out.WriteLine("TestPhraseQueryInConjunctionScorer()");
-
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			
@@ -337,8 +317,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestSlopScoring()
 		{
-            System.Console.Out.WriteLine("TestSlopScoring()");
-
 			Directory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			
@@ -377,8 +355,6 @@ namespace Lucene.Net.Search
 		[Test]
         public virtual void  TestWrappedPhrase()
 		{
-            System.Console.Out.WriteLine("TestWrappedPhrase()");
-
 			query.Add(new Term("repeated", "first"));
 			query.Add(new Term("repeated", "part"));
 			query.Add(new Term("repeated", "second"));

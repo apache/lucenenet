@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation
+ * Copyright 2006 The Apache Software Foundation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Scorer for OR like queries, counterpart of Lucene's <code>ConjunctionScorer</code>.
 	/// This Scorer implements {@link Scorer#SkipTo(int)} and uses skipTo() on the given Scorers. 
 	/// </summary>
-	public class DisjunctionSumScorer : Scorer
+	class DisjunctionSumScorer : Scorer
 	{
 		/// <summary>The number of subscorers. </summary>
 		private int nrScorers;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
 			}
 			if (target <= currentDoc)
 			{
-				target = currentDoc + 1;
+				return true;
 			}
 			do 
 			{

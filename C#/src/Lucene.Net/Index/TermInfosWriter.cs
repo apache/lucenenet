@@ -95,12 +95,14 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public /*internal*/ void  Add(Term term, TermInfo ti)
 		{
-			if (!isIndex && term.CompareTo(lastTerm) <= 0)
-				throw new System.IO.IOException("term out of order");
+            if (!isIndex && term.CompareTo(lastTerm) <= 0)
+            {
+                throw new System.IO.IOException("term out of order (\"" + term + "\".compareTo(\"" + lastTerm + "\") <= 0)");
+            }
 			if (ti.freqPointer < lastTi.freqPointer)
-				throw new System.IO.IOException("freqPointer out of order");
+				throw new System.IO.IOException("freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
 			if (ti.proxPointer < lastTi.proxPointer)
-				throw new System.IO.IOException("proxPointer out of order");
+				throw new System.IO.IOException("proxPointer out of order (" + ti.proxPointer + " < " + lastTi.proxPointer + ")");
 			
 			if (!isIndex && size % indexInterval == 0)
 				other.Add(lastTerm, lastTi); // add an index term

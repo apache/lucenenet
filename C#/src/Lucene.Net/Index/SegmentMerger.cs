@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
 					doc += base_Renamed; // convert to merged space
 					
 					if (doc < lastDoc)
-						throw new System.SystemException("docs out of order");
+						throw new System.SystemException("docs out of order (" + doc + " < " + lastDoc + " )");
 					
 					df++;
 					

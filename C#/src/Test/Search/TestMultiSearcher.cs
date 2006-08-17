@@ -92,7 +92,8 @@ namespace Lucene.Net.Search
 			writerB.Close();
 			
 			// creating the query
-			Query query = Lucene.Net.QueryParsers.QueryParser.Parse("handle:1", "fulltext", new StandardAnalyzer());
+            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("fulltext", new StandardAnalyzer());
+            Query query = parser.Parse("handle:1");
 			
 			// building the searchables
 			Searcher[] searchers = new Searcher[2];
@@ -151,7 +152,7 @@ namespace Lucene.Net.Search
 			// deleting the document just added, this will cause a different exception to take place
 			Term term = new Term("id", "doc1");
 			IndexReader readerB = IndexReader.Open(indexStoreB);
-			readerB.Delete(term);
+			readerB.DeleteDocuments(term);
 			readerB.Close();
 			
 			// optimizing the index with the writer
