@@ -1253,7 +1253,7 @@ MatchLoop1:
 				catch (System.IO.IOException e1)
 				{
 					EOFSeen = true;
-					error_after = curPos <= 1?"":input_stream.GetImage();
+					error_after = curPos <= 1 ? "" : input_stream.GetImage();
 					if (curChar == '\n' || curChar == '\r')
 					{
 						error_line++;
@@ -1265,7 +1265,7 @@ MatchLoop1:
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);
-					error_after = curPos <= 1?"":input_stream.GetImage();
+					error_after = curPos <= 1 ? "" : input_stream.GetImage();
 				}
 				throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);
 

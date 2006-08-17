@@ -43,7 +43,13 @@ namespace Lucene.Net.Search
 			return this;
 		}
 		
-		[Serializable]
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            // OK to not add any terms when used for MultiSearcher,
+            // but may not be OK for highlighting
+        }
+		
+        [Serializable]
 		protected internal class ConstantWeight : Weight
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
@@ -59,14 +65,14 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Searcher searcher;
+			private Similarity similarity;
 			private float queryNorm;
 			private float queryWeight;
 			
 			public ConstantWeight(ConstantScoreQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 			}
 			
 			public virtual Query GetQuery()
@@ -93,7 +99,7 @@ namespace Lucene.Net.Search
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new ConstantScorer(enclosingInstance, Enclosing_Instance.GetSimilarity(searcher), reader, this);
+				return new ConstantScorer(enclosingInstance, similarity, reader, this);
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)

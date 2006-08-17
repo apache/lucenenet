@@ -192,5 +192,30 @@ namespace Lucene.Net.Document
 		{
             return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
         }
-	}
+	
+	    [Test]
+        public virtual void  TestDateToolsUTC()
+        {
+            // Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
+            //long time = 1130630400;
+            DateTime time1 = new DateTime(2005, 10, 30);
+            DateTime time2 = time1.AddHours(1);
+            try
+            {
+                //TimeZone.setDefault(TimeZone.getTimeZone("Europe/London")); // {{Aroush-2.0}} need porting 'java.util.TimeZone.getTimeZone'
+                System.DateTime tempAux = time1;
+                System.String d1 = DateTools.DateToString(tempAux, DateTools.Resolution.MINUTE);
+                System.DateTime tempAux2 = time2;
+                System.String d2 = DateTools.DateToString(tempAux2, DateTools.Resolution.MINUTE);
+                System.Console.Out.WriteLine("d1: " + d1 + " d2: " + d2);
+                Assert.IsFalse(d1.Equals(d2), "different times");
+                Assert.AreEqual(DateTools.StringToTime(d1), time1.Ticks, "midnight");
+                Assert.AreEqual(DateTools.StringToTime(d2), time2.Ticks, "later");
+            }
+            finally
+            {
+                //TimeZone.SetDefault(null);    // {{Aroush-2.0}} need porting 'java.util.TimeZone.setDefault'
+            }
+        }
+    }
 }

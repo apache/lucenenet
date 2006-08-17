@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
 			// DELETE DOCUMENTS CONTAINING TERM: aaa
 			int deleted = 0;
 			reader = IndexReader.Open(dir);
-			deleted = reader.Delete(searchTerm);
+			deleted = reader.DeleteDocuments(searchTerm);
 			Assert.AreEqual(100, deleted, "deleted count");
 			Assert.AreEqual(100, reader.DocFreq(searchTerm), "deleted docFreq");
 			AssertTermDocsCount("deleted termDocs", reader, searchTerm, 0);
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
 			int deleted = 0;
 			try
 			{
-				deleted = reader.Delete(searchTerm);
+                deleted = reader.DeleteDocuments(searchTerm);
 				Assert.Fail("Delete allowed on an index reader with stale segment information");
 			}
 			catch (System.IO.IOException e)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
 			AssertTermDocsCount("first reader", reader, searchTerm, 100);
 			AssertTermDocsCount("first reader", reader, searchTerm2, 100);
 			
-			deleted = reader.Delete(searchTerm);
+			deleted = reader.DeleteDocuments(searchTerm);
 			Assert.AreEqual(100, deleted, "deleted count");
 			Assert.AreEqual(100, reader.DocFreq(searchTerm), "deleted docFreq");
 			Assert.AreEqual(100, reader.DocFreq(searchTerm2), "deleted docFreq");
@@ -395,7 +395,7 @@ namespace Lucene.Net.Index
 			IndexReader reader = IndexReader.Open(dir);
 			try
 			{
-				reader.Delete(0);
+				reader.DeleteDocument(0);
 				Assert.Fail("expected lock");
 			}
 			catch (System.IO.IOException e)
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
 				// expected exception
 			}
 			IndexReader.Unlock(dir); // this should not be done in the real world! 
-			reader.Delete(0);
+			reader.DeleteDocument(0);
 			reader.Close();
 			writer.Close();
 		}
@@ -417,8 +417,8 @@ namespace Lucene.Net.Index
 			AddDocumentWithFields(writer);
 			writer.Close();
 			IndexReader reader = IndexReader.Open(dir);
-			reader.Delete(0);
-			reader.Delete(1);
+			reader.DeleteDocument(0);
+			reader.DeleteDocument(1);
 			reader.UndeleteAll();
 			reader.Close();
 			reader = IndexReader.Open(dir);
@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
 			// delete documents containing term: aaa
 			// when the reader is closed, the segment info is updated and
 			// the first reader is now stale
-			reader2.Delete(searchTerm1);
+			reader2.DeleteDocuments(searchTerm1);
 			Assert.AreEqual(100, reader2.DocFreq(searchTerm1), "after delete 1");
 			Assert.AreEqual(100, reader2.DocFreq(searchTerm2), "after delete 1");
 			Assert.AreEqual(100, reader2.DocFreq(searchTerm3), "after delete 1");
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
 			// delete documents containing term: bbb
 			try
 			{
-				reader1.Delete(searchTerm2);
+				reader1.DeleteDocuments(searchTerm2);
 				Assert.Fail("Delete allowed from a stale index reader");
 			}
 			catch (System.IO.IOException e)
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
 			AssertTermDocsCount("reopened", reader1, searchTerm2, 100);
 			AssertTermDocsCount("reopened", reader1, searchTerm3, 100);
 			
-			reader1.Delete(searchTerm2);
+			reader1.DeleteDocuments(searchTerm2);
 			Assert.AreEqual(100, reader1.DocFreq(searchTerm1), "deleted 2");
 			Assert.AreEqual(100, reader1.DocFreq(searchTerm2), "deleted 2");
 			Assert.AreEqual(100, reader1.DocFreq(searchTerm3), "deleted 2");

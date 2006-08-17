@@ -55,7 +55,7 @@ namespace Lucene.Net.Index.Store
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			indexDir = new System.IO.FileInfo(tempDir + "\\" + "RAMDirIndex");
+			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "RAMDirIndex"));
 			
 			IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true);
 			// add some documents

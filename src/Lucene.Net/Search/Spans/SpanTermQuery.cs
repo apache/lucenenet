@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spans
 			
 			public override System.String ToString()
 			{
-				return "spans(" + Enclosing_Instance.ToString() + ")@" + (doc == - 1?"START":((doc == System.Int32.MaxValue)?"END":doc + "-" + position));
+				return "spans(" + Enclosing_Instance.ToString() + ")@" + (doc == - 1 ? "START" : ((doc == System.Int32.MaxValue) ? "END" : doc + "-" + position));
 			}
 		}
 		private Term term;
@@ -135,12 +135,22 @@ namespace Lucene.Net.Search.Spans
 			return term.Field();
 		}
 		
-		public override System.Collections.ICollection GetTerms()
+        /// <summary>Returns a collection of all terms matched by this query.</summary>
+        /// <deprecated> use extractTerms instead
+        /// </deprecated>
+        /// <seealso cref="#extractTerms(Set)">
+        /// </seealso>
+        public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			terms.Add(term);
 			return terms;
 		}
+
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            terms.Add(term, term);
+        }
 		
 		public override System.String ToString(System.String field)
 		{
@@ -167,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode();    // {{Aroush-1.9}} Is this OK?
+            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode() ^ unchecked((int) 0xD23FE494);    // {{Aroush-1.9}} Is this OK?
 		}
 		
 		public override Spans GetSpans(IndexReader reader)

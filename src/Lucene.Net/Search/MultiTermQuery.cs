@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 		
 		public override int GetHashCode()
 		{
-			return term.GetHashCode();
+			return term.GetHashCode() + System.Convert.ToInt32(GetBoost());
 		}
 	}
 }

@@ -18,40 +18,38 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	
-	/// <summary> Expert: Returned by low-level sorted search implementations.
-	/// 
-	/// <p>Created: Feb 12, 2004 8:58:46 AM 
-	/// 
-	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: TopFieldDocs.java 354819 2005-12-07 17:48:37Z yonik $
-	/// </version>
-	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
-	/// </seealso>
-	[Serializable]
-	public class TopFieldDocs : TopDocs
-	{
+    /// <summary> Expert: Returned by low-level sorted search implementations.
+    /// 
+    /// <p>Created: Feb 12, 2004 8:58:46 AM 
+    /// 
+    /// </summary>
+    /// <author>   Tim Jones (Nacimiento Software)
+    /// </author>
+    /// <since>   lucene 1.4
+    /// </since>
+    /// <version>  $Id: TopFieldDocs.java 354819 2005-12-07 17:48:37Z yonik $
+    /// </version>
+    /// <seealso cref="Searcher#search(Query,Filter,int,Sort)">
+    /// </seealso>
+    [Serializable]
+    public class TopFieldDocs : TopDocs
+    {
 		
-		/// <summary>The fields which were used to sort results by. </summary>
-		public SortField[] fields;
+        /// <summary>The fields which were used to sort results by. </summary>
+        public SortField[] fields;
 		
-		/// <summary>Creates one of these objects.</summary>
-		/// <param name="totalHits"> Total number of hits for the query.
-		/// </param>
-		/// <param name="scoreDocs"> The top hits for the query.
-		/// </param>
-		/// <param name="fields">    The sort criteria used to find the top hits.
-		/// </param>
-		/// <param name="maxScore">  The maximum score encountered.
-		/// </param>
-		internal TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore) : base(totalHits, scoreDocs, maxScore)
-		{
-			this.fields = fields;
-		}
-	}
+        /// <summary>Creates one of these objects.</summary>
+        /// <param name="totalHits"> Total number of hits for the query.
+        /// </param>
+        /// <param name="scoreDocs"> The top hits for the query.
+        /// </param>
+        /// <param name="fields">    The sort criteria used to find the top hits.
+        /// </param>
+        /// <param name="maxScore">  The maximum score encountered.
+        /// </param>
+        internal TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore) : base(totalHits, scoreDocs, maxScore)
+        {
+            this.fields = fields;
+        }
+    }
 }

@@ -18,13 +18,13 @@ using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using FilterIndexReader = Lucene.Net.Index.FilterIndexReader;
-using Searcher = Lucene.Net.Search.Searcher;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Hits = Lucene.Net.Search.Hits;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Searcher = Lucene.Net.Search.Searcher;
 
 namespace Lucene.Net.Demo
 {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Demo
 		/// memory.  If all of the fields contain only a single token, then the norms
 		/// are all identical, then single norm vector may be shared. 
 		/// </summary>
-		private class OneNormsReader:FilterIndexReader
+		private class OneNormsReader : FilterIndexReader
 		{
 			private System.String field;
 			
@@ -126,7 +126,7 @@ namespace Lucene.Net.Demo
 			{
 				in_Renamed = new System.IO.StreamReader(new System.IO.StreamReader(System.Console.OpenStandardInput(), System.Text.Encoding.GetEncoding("UTF-8")).BaseStream, new System.IO.StreamReader(System.Console.OpenStandardInput(), System.Text.Encoding.GetEncoding("UTF-8")).CurrentEncoding);
 			}
-			
+			QueryParser parser = new QueryParser(field, analyzer);
 			while (true)
 			{
 				if (queries == null)
@@ -135,10 +135,10 @@ namespace Lucene.Net.Demo
 				
 				System.String line = in_Renamed.ReadLine();
 				
-				if (line == null || line.Length == - 1)
+				if (line == null || line.Length == 0)
 					break;
 				
-				Query query = QueryParser.Parse(line, field, analyzer);
+				Query query = parser.Parse(line);
 				System.Console.Out.WriteLine("Searching for: " + query.ToString(field));
 				
 				Hits hits = searcher.Search(query);

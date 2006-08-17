@@ -38,12 +38,6 @@ namespace Lucene.Net.Search
 			this.local = local;
 		}
 		
-		// this implementation should be removed when the deprecated
-		// Searchable#search(Query,Filter,HitCollector) is removed
-		public virtual void  Search(Query query, Filter filter, HitCollector results)
-		{
-			local.Search(query, filter, results);
-		}
 		
 		public virtual void  Search(Weight weight, Filter filter, HitCollector results)
 		{
@@ -71,24 +65,11 @@ namespace Lucene.Net.Search
 			return local.MaxDoc();
 		}
 		
-		// this implementation should be removed when the deprecated
-		// Searchable#search(Query,Filter,int) is removed
-		public virtual TopDocs Search(Query query, Filter filter, int n)
-		{
-			return local.Search(query, filter, n);
-		}
-		
 		public virtual TopDocs Search(Weight weight, Filter filter, int n)
 		{
 			return local.Search(weight, filter, n);
 		}
 		
-		// this implementation should be removed when the deprecated
-		// Searchable#search(Query,Filter,int,Sort) is removed
-		public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
-		{
-			return local.Search(query, filter, n, sort);
-		}
 		
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
 		{
@@ -105,43 +86,10 @@ namespace Lucene.Net.Search
 			return local.Rewrite(original);
 		}
 		
-		// this implementation should be removed when the deprecated
-		// Searchable#explain(Query,int) is removed
-		public virtual Explanation Explain(Query query, int doc)
-		{
-			return local.Explain(query, doc);
-		}
-		
 		public virtual Explanation Explain(Weight weight, int doc)
 		{
 			return local.Explain(weight, doc);
 		}
-		
-        public override System.Object InitializeLifetimeService()
-        {
-            long initialLeaseTime, sponsorshipTimeout, renewOnCallTime;
-
-            initialLeaseTime = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.initialLeaseTime", -1);
-            sponsorshipTimeout = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.sponsorshipTimeout", -1);
-            renewOnCallTime = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.renewOnCallTime", -1);
-
-            if ((initialLeaseTime == -1) || (sponsorshipTimeout == -1) || (renewOnCallTime == -1))
-            {
-                return null;
-            }
-            else
-            {
-                System.Runtime.Remoting.Lifetime.ILease lease = 
-                    (System.Runtime.Remoting.Lifetime.ILease) base.InitializeLifetimeService();
-                if (lease.CurrentState == System.Runtime.Remoting.Lifetime.LeaseState.Initial)
-                {
-                    lease.InitialLeaseTime = System.TimeSpan.FromMinutes(initialLeaseTime);
-                    lease.SponsorshipTimeout = System.TimeSpan.FromMinutes(sponsorshipTimeout);
-                    lease.RenewOnCallTime = System.TimeSpan.FromSeconds(renewOnCallTime);
-                }
-                return lease;
-            }
-        }
 
 		/// <summary>Exports a searcher for the index in args[0] named
 		/// "//localhost/Searchable". 

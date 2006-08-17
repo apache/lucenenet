@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 		{
 			numDocs = - 1; // invalidate cache
 			int i = ReaderIndex(n); // find segment num
-			subReaders[i].Delete(n - starts[i]); // dispatch to segment reader
+			subReaders[i].DeleteDocument(n - starts[i]); // dispatch to segment reader
 			hasDeletions = true;
 		}
 		
@@ -271,73 +271,6 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < subReaders.Length; i++)
 					subReaders[i].Close();
 			}
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames()">
-		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames()
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames();
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(boolean)">
-		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames(indexed);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
 		}
 		
 		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">

@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
 		{
 			//Check to see the files were created properly in setup
 			Assert.IsTrue(writer.IsDocumentOpen() == false);
-			Assert.IsTrue(dir.FileExists(seg + TermVectorsWriter.TvdExtension));
+			Assert.IsTrue(dir.FileExists(seg + TermVectorsWriter.TvxExtension));
 			Assert.IsTrue(dir.FileExists(seg + TermVectorsWriter.TvxExtension));
 		}
 		

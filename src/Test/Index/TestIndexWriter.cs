@@ -28,8 +28,8 @@ namespace Lucene.Net.Index
 	
 	/// <author>  goller
 	/// </author>
-	/// <version>  $Id: TestIndexWriter.java 208807 2005-07-01 22:13:53Z dnaber $
-	/// </version>
+    /// <version>  $Id: TestIndexWriter.java 387550 2006-03-21 15:36:32Z yonik $
+    /// </version>
 	[TestFixture]
     public class TestIndexWriter
 	{
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 			reader = IndexReader.Open(dir);
 			for (i = 0; i < 40; i++)
 			{
-				reader.Delete(i);
+				reader.DeleteDocument(i);
 			}
 			reader.Close();
 			

@@ -75,7 +75,6 @@ namespace Lucene.Net.Index
 				int docId = segTermDocs.Doc();
 				Assert.IsTrue(docId == 0);
 				int freq = segTermDocs.Freq();
-                System.Console.Out.WriteLine("freq: " + freq);
 				Assert.IsTrue(freq == 3);
 			}
 			reader.Close();

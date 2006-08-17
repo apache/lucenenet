@@ -120,13 +120,14 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		// document data:
-		// the tracer field is used to determine which document was hit
-		// the contents field is used to search and sort by relevance
-		// the int field to sort by int
-		// the float field to sort by float
-		// the string field to sort by string
-		private System.String[][] data = new System.String[][]{new System.String[]{"A", "x a", "5", "4f", "c", "A-3"}, new System.String[]{"B", "y a", "5", "3.4028235E38", "i", "B-10"}, new System.String[]{"C", "x a b c", "2147483647", "1.0", "j", "A-2"}, new System.String[]{"D", "y a b c", "-1", "0.0f", "a", "C-0"}, new System.String[]{"E", "x a b c d", "5", "2f", "h", "B-8"}, new System.String[]{"F", "y a b c d", "2", "3.14159f", "g", "B-1"}, new System.String[]{"G", "x a b c d", "3", "-1.0", "f", "C-100"}, new System.String[]{"H", "y a b c d", "0", "1.4E-45", "e", "C-88"}, new System.String[]{"I", "x a b c d e f", "-2147483648", "1.0e+0", "d", "A-10"}, new System.String[]{"J", "y a b c d e f", "4", ".5", "b", "C-7"}, new System.String[]{"W", "g", "1", null, null, null}, new System.String[]{"X", "g", "1", "0.1", null, null}, new System.String[]{"Y", "g", "1", "0.2", null, null}, new System.String[]{"Z", "f g", null, null, null, null}};
+        // document data:
+        // the tracer field is used to determine which document was hit
+        // the contents field is used to search and sort by relevance
+        // the int field to sort by int
+        // the float field to sort by float
+        // the string field to sort by string
+        // the i18n field includes accented characters for testing locale-specific sorting
+        private System.String[][] data = new System.String[][]{new System.String[]{"A", "x a", "5", "4f", "c", "A-3", "p\u00EAche"}, new System.String[]{"B", "y a", "5", "3.4028235E38", "i", "B-10", "HAT"}, new System.String[]{"C", "x a b c", "2147483647", "1.0", "j", "A-2", "p\u00E9ch\u00E9"}, new System.String[]{"D", "y a b c", "-1", "0.0f", "a", "C-0", "HUT"}, new System.String[]{"E", "x a b c d", "5", "2f", "h", "B-8", "peach"}, new System.String[]{"F", "y a b c d", "2", "3.14159f", "g", "B-1", "H\u00C5T"}, new System.String[]{"G", "x a b c d", "3", "-1.0", "f", "C-100", "sin"}, new System.String[]{"H", "y a b c d", "0", "1.4E-45", "e", "C-88", "H\u00D8T"}, new System.String[]{"I", "x a b c d e f", "-2147483648", "1.0e+0", "d", "A-10", "s\u00EDn"}, new System.String[]{"J", "y a b c d e f", "4", ".5", "b", "C-7", "HOT"}, new System.String[]{"W", "g", "1", null, null, null, null}, new System.String[]{"X", "g", "1", "0.1", null, null, null}, new System.String[]{"Y", "g", "1", "0.2", null, null, null}, new System.String[]{"Z", "f g", null, null, null, null, null}};
 		
 		// create an index of all the documents, or just the x, or just the y documents
 		private Searcher GetIndex(bool even, bool odd)
@@ -148,7 +149,9 @@ namespace Lucene.Net.Search
 						doc.Add(new Field("string", data[i][4], Field.Store.NO, Field.Index.UN_TOKENIZED));
 					if (data[i][5] != null)
 						doc.Add(new Field("custom", data[i][5], Field.Store.NO, Field.Index.UN_TOKENIZED));
-					doc.SetBoost(2); // produce some scores above 1.0
+                    if (data[i][6] != null)
+                        doc.Add(new Field("i18n", data[i][6], Field.Store.NO, Field.Index.UN_TOKENIZED));
+                    doc.SetBoost(2); // produce some scores above 1.0
 					writer.AddDocument(doc);
 				}
 			}
@@ -369,7 +372,45 @@ namespace Lucene.Net.Search
 			AssertMatches(full, queryY, sort, "BFHJD");
 		}
 		
-		// test a custom sort function
+        // test using various international locales with accented characters
+        // (which sort differently depending on locale)
+        [Test]
+        public virtual void  TestInternationalSort()
+        {
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+            AssertMatches(full, queryY, sort, "BFJDH");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
+            AssertMatches(full, queryY, sort, "BJDFH");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
+            AssertMatches(full, queryY, sort, "BJDHF");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+            AssertMatches(full, queryX, sort, "ECAGI");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("fr-FR")));
+            AssertMatches(full, queryX, sort, "EACGI");
+        }
+		
+        // Test the MultiSearcher's ability to preserve locale-sensitive ordering
+        // by wrapping it around a single searcher
+        [Test]
+        public virtual void  TestInternationalMultiSearcherSort()
+        {
+            Searcher multiSearcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{full});
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
+            AssertMatches(multiSearcher, queryY, sort, "BJDFH");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+            AssertMatches(multiSearcher, queryY, sort, "BFJDH");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
+            AssertMatches(multiSearcher, queryY, sort, "BJDHF");
+        }
+		
+        // test a custom sort function
 		[Test]
         public virtual void  TestCustomSorts()
 		{

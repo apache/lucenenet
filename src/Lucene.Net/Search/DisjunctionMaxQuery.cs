@@ -243,7 +243,18 @@ namespace Lucene.Net.Search
 			return clone;
 		}
 		
-		/// <summary>Prettyprint us.</summary>
+		
+        // inherit javadoc
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            for (int i = 0; i < disjuncts.Count; i++)
+            {
+                ((Query) disjuncts[i]).ExtractTerms(terms);
+            }
+        }
+		
+		
+        /// <summary>Prettyprint us.</summary>
 		/// <param name="field">the field to which we are applied
 		/// </param>
 		/// <returns> a string that shows what we do, of the form "(disjunct1 | disjunct2 | ... | disjunctn)^boost"

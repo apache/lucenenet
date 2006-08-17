@@ -81,11 +81,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/* Added class MultiMMapIndexInput, Paul Elschot.
-		* Slightly adapted constructor of MMapIndexInput.
-		* Licensed under the Apache License, Version 2.0.
-		*/
-		private class MultiMMapIndexInput:IndexInput, System.ICloneable
+		private class MultiMMapIndexInput : IndexInput, System.ICloneable
 		{
 			
 			private System.IO.FileStream[] buffers; // private ByteBuffer[] buffers;    // {{Aroush-1.9}}
@@ -199,8 +195,9 @@ namespace Lucene.Net.Store
 				}
 				catch (System.IO.IOException ioe)
 				{
-					throw new System.Exception(ioe.ToString()); // {{Aroush-1.9}} should be re-thrown as RuntimeException
-				}
+                    System.Exception newException = new System.Exception("", ioe);  // {{Aroush-2.0}} This should be SystemException
+                    throw newException;
+                }
 				return clone;
 			}
 			

@@ -46,7 +46,9 @@ namespace Lucene.Net.Search.Spans
 		// location to the index
 		protected internal Directory mDirectory; 
 		
-		// field names in the index
+        protected internal IndexSearcher searcher;
+		
+        // field names in the index
 		private const System.String FIELD_ID = "ID";
 		protected internal const System.String FIELD_TEXT = "TEXT";
 		
@@ -63,13 +65,14 @@ namespace Lucene.Net.Search.Spans
 			AddDocument(writer, "3", "I think it should work.");
 			AddDocument(writer, "4", "I think it should work.");
 			writer.Close();
-		}
+            searcher = new IndexSearcher(mDirectory);
+        }
 		
 		[TearDown]
         public virtual void  TearDown()
 		{
-			
-			mDirectory.Close();
+            searcher.Close();
+            mDirectory.Close();
 			mDirectory = null;
 		}
 		
@@ -100,41 +103,25 @@ namespace Lucene.Net.Search.Spans
         public virtual void  TestBooleanQueryWithSpanQueries()
 		{
 			
-			DoTestBooleanQueryWithSpanQueries(0.3884282f);
+			DoTestBooleanQueryWithSpanQueries(searcher, 0.3884282f);
 		}
 		
 		/// <summary> Tests two span queries.
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		protected internal virtual void  DoTestBooleanQueryWithSpanQueries(float expectedScore)
+		protected internal virtual void  DoTestBooleanQueryWithSpanQueries(IndexSearcher s, float expectedScore)
 		{
 			
 			Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "work"));
 			BooleanQuery query = new BooleanQuery();
 			query.Add(spanQuery, BooleanClause.Occur.MUST);
 			query.Add(spanQuery, BooleanClause.Occur.MUST);
-			Hits hits = ExecuteQuery(query);
-			System.String[] expectedIds = new System.String[]{"1", "2", "3", "4"};
+            System.String[] expectedIds = new System.String[]{"1", "2", "3", "4"};
 			float[] expectedScores = new float[]{expectedScore, expectedScore, expectedScore, expectedScore};
-			AssertHits(hits, "two span queries", expectedIds, expectedScores);
+            AssertHits(s, query, "two span queries", expectedIds, expectedScores);
 		}
 		
-		/// <summary> Executes the query and throws an assertion if the results don't match the
-		/// expectedHits.
-		/// 
-		/// </summary>
-		/// <param name="query">the query to execute
-		/// </param>
-		/// <throws>  IOException </throws>
-		protected internal virtual Hits ExecuteQuery(Query query)
-		{
-			
-			IndexSearcher searcher = new IndexSearcher(mDirectory);
-			Hits hits = searcher.Search(query);
-			searcher.Close();
-			return hits;
-		}
 		
 		/// <summary> Checks to see if the hits are what we expected.
 		/// 
@@ -149,22 +136,43 @@ namespace Lucene.Net.Search.Spans
 		/// 
 		/// </param>
 		/// <throws>  IOException </throws>
-		protected internal virtual void  AssertHits(Hits hits, System.String description, System.String[] expectedIds, float[] expectedScores)
+		protected internal virtual void  AssertHits(Searcher s, Query query, System.String description, System.String[] expectedIds, float[] expectedScores)
 		{
+            float tolerance = 1e-5f;
 			
-			// display the hits
-			/*System.out.println(hits.length() + " hits for search: \"" + description + '\"');
-			for (int i = 0; i < hits.length(); i++) {
-			System.out.println("  " + FIELD_ID + ':' + hits.doc(i).get(FIELD_ID) + " (score:" + hits.score(i) + ')');
-			}*/
+            // Hits hits = searcher.search(query);
+            // hits normalizes and throws things off if one score is greater than 1.0
+            TopDocs topdocs = s.Search(query, null, 10000);
 			
-			// did we get the hits we expected
-			Assert.AreEqual(expectedIds.Length, hits.Length());
-			for (int i = 0; i < hits.Length(); i++)
-			{
-				Assert.IsTrue(expectedIds[i].Equals(hits.Doc(i).Get(FIELD_ID)));
-				Assert.AreEqual(expectedScores[i], hits.Score(i), 0);
-			}
-		}
+            /// <summary>**
+            /// // display the hits
+            /// System.out.println(hits.length() + " hits for search: \"" + description + '\"');
+            /// for (int i = 0; i < hits.length(); i++) {
+            /// System.out.println("  " + FIELD_ID + ':' + hits.doc(i).get(FIELD_ID) + " (score:" + hits.score(i) + ')');
+            /// }
+            /// ***
+            /// </summary>
+			
+            // did we get the hits we expected
+            Assert.AreEqual(expectedIds.Length, topdocs.totalHits);
+            for (int i = 0; i < topdocs.totalHits; i++)
+            {
+                //System.out.println(i + " exp: " + expectedIds[i]);
+                //System.out.println(i + " field: " + hits.doc(i).get(FIELD_ID));
+				
+                int id = topdocs.scoreDocs[i].doc;
+                float score = topdocs.scoreDocs[i].score;
+                Lucene.Net.Documents.Document doc = s.Doc(id);
+                Assert.AreEqual(expectedIds[i], doc.Get(FIELD_ID));
+                bool scoreEq = System.Math.Abs(expectedScores[i] - score) < tolerance;
+                if (!scoreEq)
+                {
+                    System.Console.Out.WriteLine(i + " warning, expected score: " + expectedScores[i] + ", actual " + score);
+                    System.Console.Out.WriteLine(s.Explain(query, id));
+                }
+                Assert.AreEqual(expectedScores[i], score, tolerance);
+                Assert.AreEqual(s.Explain(query, id).GetValue(), score, tolerance);
+            }
+        }
 	}
 }

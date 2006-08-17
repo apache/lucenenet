@@ -29,11 +29,13 @@ namespace Lucene.Net.Analysis
         [SetUp]
 		public virtual void  SetUp()
 		{
+            stop = new StopAnalyzer();
+            inValidTokens = new System.Collections.Hashtable();
+
 			for (int i = 0; i < StopAnalyzer.ENGLISH_STOP_WORDS.Length; i++)
 			{
-                if (inValidTokens.ContainsKey(StopAnalyzer.ENGLISH_STOP_WORDS[i]) == false)
-				    inValidTokens.Add(StopAnalyzer.ENGLISH_STOP_WORDS[i], StopAnalyzer.ENGLISH_STOP_WORDS[i]);
-			}
+                inValidTokens.Add(StopAnalyzer.ENGLISH_STOP_WORDS[i], StopAnalyzer.ENGLISH_STOP_WORDS[i]);
+            }
 		}
 		
         [Test]

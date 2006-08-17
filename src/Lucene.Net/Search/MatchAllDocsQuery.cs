@@ -51,36 +51,35 @@ namespace Lucene.Net.Search
 			}
 			
 			internal IndexReader reader;
-			internal int count;
-			internal int maxDoc;
+            internal int id;
+			internal int maxId;
+			internal float score_Renamed_Field;
 			
-			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity) : base(similarity)
+			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity, Weight w) : base(similarity)
 			{
-				InitBlock(enclosingInstance);
-				this.reader = reader;
-				count = - 1;
-				maxDoc = reader.MaxDoc();
+                InitBlock(enclosingInstance);
+                this.reader = reader;
+                id = - 1;
+                maxId = reader.MaxDoc() - 1;
+                score_Renamed_Field = w.GetValue();
+            }
+			
+			public override Explanation Explain(int doc)
+			{
+				return null; // not called... see MatchAllDocsWeight.explain()
 			}
 			
 			public override int Doc()
 			{
-				return count;
-			}
-			
-			public override Explanation Explain(int doc)
-			{
-				Explanation explanation = new Explanation();
-				explanation.SetValue(1.0f);
-				explanation.SetDescription("MatchAllDocsQuery");
-				return explanation;
+				return id;
 			}
 			
 			public override bool Next()
 			{
-				while (count < (maxDoc - 1))
+				while (id < maxId)
 				{
-					count++;
-					if (!reader.IsDeleted(count))
+					id++;
+					if (!reader.IsDeleted(id))
 					{
 						return true;
 					}
@@ -90,13 +89,13 @@ namespace Lucene.Net.Search
 			
 			public override float Score()
 			{
-				return 1.0f;
+				return score_Renamed_Field;
 			}
 			
 			public override bool SkipTo(int target)
 			{
-				count = target - 1;
-				return Next();
+                id = target - 1;
+                return Next();
 			}
 		}
 		
@@ -117,6 +116,8 @@ namespace Lucene.Net.Search
 				
 			}
 			private Searcher searcher;
+            private float queryWeight;
+            private float queryNorm;
 			
 			public MatchAllDocsWeight(MatchAllDocsQuery enclosingInstance, Searcher searcher)
 			{
@@ -136,33 +137,37 @@ namespace Lucene.Net.Search
 			
 			public virtual float GetValue()
 			{
-				return 1.0f;
+				return queryWeight;
 			}
 			
 			public virtual float SumOfSquaredWeights()
 			{
-				return 1.0f;
-			}
+                queryWeight = Enclosing_Instance.GetBoost();
+                return queryWeight * queryWeight;
+            }
 			
 			public virtual void  Normalize(float queryNorm)
 			{
-			}
+                this.queryNorm = queryNorm;
+                queryWeight *= this.queryNorm;
+            }
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new MatchAllScorer(enclosingInstance, reader, Enclosing_Instance.GetSimilarity(searcher));
+				return new MatchAllScorer(enclosingInstance, reader, Enclosing_Instance.GetSimilarity(searcher), this);
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("MatchAllDocsQuery:");
-				
-				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
-				if (Enclosing_Instance.GetBoost() != 1.0f)
-					queryExpl.AddDetail(boostExpl);
-				queryExpl.SetValue(boostExpl.GetValue());
+				queryExpl.SetDescription("MatchAllDocsQuery, product of:");
+                queryExpl.SetValue(GetValue());
+                if (Enclosing_Instance.GetBoost() != 1.0f)
+                {
+                    queryExpl.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+                }
+                queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				
 				return queryExpl;
 			}
@@ -173,7 +178,11 @@ namespace Lucene.Net.Search
 			return new MatchAllDocsWeight(this, searcher);
 		}
 		
-		public override System.String ToString(System.String field)
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+        }
+		
+        public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("MatchAllDocsQuery");

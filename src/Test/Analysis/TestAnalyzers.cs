@@ -24,7 +24,8 @@ namespace Lucene.Net.Analysis
     public class TestAnalyzers
 	{
 		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
+		
+        public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
 		{
 			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
 			for (int i = 0; i < output.Length; i++)

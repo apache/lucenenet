@@ -16,7 +16,6 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Index
 {
@@ -214,7 +213,7 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoDelete(int n)
 		{
-			in_Renamed.Delete(n);
+			in_Renamed.DeleteDocument(n);
 		}
 		protected internal override void  DoCommit()
 		{
@@ -225,24 +224,20 @@ namespace Lucene.Net.Index
 			in_Renamed.Close();
 		}
 		
-		public override System.Collections.ICollection GetFieldNames()
-		{
-			return in_Renamed.GetFieldNames();
-		}
 		
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			return in_Renamed.GetFieldNames(indexed);
-		}
+        public override System.Collections.ICollection  GetFieldNames(IndexReader.FieldOption fieldNames)
+        {
+            return in_Renamed.GetFieldNames(fieldNames);
+        }
 		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			return in_Renamed.GetIndexedFieldNames(tvSpec);
-		}
+        public override long GetVersion()
+        {
+                return in_Renamed.GetVersion();
+        }
 		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
-		{
-			return in_Renamed.GetFieldNames(fieldNames);
-		}
-	}
+        public override bool IsCurrent()
+        {
+                return in_Renamed.IsCurrent();
+        }
+    }
 }

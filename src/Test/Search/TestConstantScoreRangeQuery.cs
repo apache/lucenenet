@@ -85,12 +85,12 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < data.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(Field.Keyword("id", System.Convert.ToString(i)));
-				doc.Add(Field.Keyword("all", "all"));
+                doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id",String.valueOf(i)));
+                doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("all","all"));
 				if (null != data[i])
 				{
-					doc.Add(Field.Text("data", data[i]));
-				}
+                    doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("data",data[i]));
+                }
 				writer.AddDocument(doc);
 			}
 			
@@ -200,8 +200,8 @@ namespace Lucene.Net.Search
 			// ConstantScoreRangeQuery and make sure hte order is the same
 			
 			BooleanQuery q = new BooleanQuery();
-			q.Add(rq, T, F);
-			q.Add(Csrq("data", "1", "6", T, T), T, F);
+            q.Add(rq, BooleanClause.Occur.MUST); //T, F);
+            q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur.MUST); //T, F);
 			
 			Hits actual = search.Search(q);
 			
@@ -212,7 +212,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		[Test]
+		
+		
+		
+        [Test]
         public virtual void  TestRangeQueryId()
 		{
 			// NOTE: uses index build in *super* SetUp

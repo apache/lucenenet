@@ -20,7 +20,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary>Base implementation class for buffered {@link IndexOutput}. </summary>
-	public abstract class BufferedIndexOutput:IndexOutput
+	public abstract class BufferedIndexOutput : IndexOutput
 	{
 		internal const int BUFFER_SIZE = 1024;
 		

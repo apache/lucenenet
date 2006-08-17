@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 		public virtual void  SetUp()
 		{
 			//dir = new RAMDirectory();
-			dir = FSDirectory.GetDirectory(new System.IO.FileInfo(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir") + "\\" + "testIndex"), true);
+            dir = FSDirectory.GetDirectory(new System.IO.FileInfo(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir") + "\\" + "testIndex"), true);
 		}
 		
 		
@@ -638,8 +638,7 @@ namespace Lucene.Net.Index
 			cr.Close();
 		}
 
-        /// <summary>
-        /// This test that writes larger than the size of the buffer output
+        /// <summary>This test that writes larger than the size of the buffer output
         /// will correctly increment the file pointer.
         /// </summary>
         [Test]

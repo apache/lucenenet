@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 			i.Optimize();
 			Assert.AreEqual(2, i.DocCount());
 			i.Flush();
-			i.Delete(0);
+			i.DeleteDocument(0);
 			Assert.AreEqual(1, i.DocCount());
 			i.Flush();
 			Assert.AreEqual(1, i.DocCount());
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 			i.AddDocument(GetDoc());
 			i.Flush();
 			Assert.AreEqual(3, i.DocCount());
-			i.Delete(allDocTerm);
+			i.DeleteDocuments(allDocTerm);
 			Assert.AreEqual(0, i.DocCount());
 			i.Optimize();
 			Assert.AreEqual(0, i.DocCount());
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 			Assert.IsFalse(i.GetUseCompoundFile());
 			
 			// test setting properties when internally the reader is opened:
-			i.Delete(allDocTerm);
+			i.DeleteDocuments(allDocTerm);
 			i.SetMaxBufferedDocs(100);
 			i.SetMergeFactor(25);
 			i.SetMaxFieldLength(250000);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			System.IO.FileInfo indexDir = new System.IO.FileInfo(tempDir + "\\" + "lucenetestindex");
+			System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex"));
 			Directory rd = FSDirectory.GetDirectory(indexDir, create);
 			IndexThread.id = 0;
 			IndexThread.idStack.Clear();
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
 							continue;
 						}
 						Term delTerm = new Term("id", System.Int32.Parse(delId).ToString());
-						int delCount = index.Delete(delTerm);
+						int delCount = index.DeleteDocuments(delTerm);
 						if (delCount != 1)
 						{
 							throw new System.SystemException("Internal error: " + threadNumber + " deleted " + delCount + " documents, term=" + delTerm);

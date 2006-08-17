@@ -105,8 +105,9 @@ namespace Lucene.Net.Search
 			// check result hit ranking
 			if (verbose)
 				System.Console.Out.WriteLine("Query: " + queryStr);
-			Query query = Lucene.Net.QueryParsers.QueryParser.Parse(queryStr, FIELD_NAME, new StandardAnalyzer());
-			Hits multiSearcherHits = multiSearcher.Search(query);
+            Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(FIELD_NAME, new StandardAnalyzer());
+            Lucene.Net.Search.Query query = queryParser.Parse(queryStr);
+            Hits multiSearcherHits = multiSearcher.Search(query);
 			Hits singleSearcherHits = singleSearcher.Search(query);
 			Assert.AreEqual(multiSearcherHits.Length(), singleSearcherHits.Length());
 			for (int i = 0; i < multiSearcherHits.Length(); i++)

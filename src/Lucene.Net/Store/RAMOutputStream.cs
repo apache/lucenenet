@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
 	public class RAMOutputStream : BufferedIndexOutput
 	{
 		private RAMFile file;
-		private int pointer = 0;
+		private long pointer = 0;
 		
 		/// <summary>Construct an empty output buffer. </summary>
 		public RAMOutputStream() : this(new RAMFile())
@@ -83,8 +83,8 @@ namespace Lucene.Net.Store
             int bufferPos = 0;
             while (bufferPos != len)
             {
-                int bufferNumber = pointer / BUFFER_SIZE;
-                int bufferOffset = pointer % BUFFER_SIZE;
+                int bufferNumber = (int) (pointer / BUFFER_SIZE);
+                int bufferOffset = (int) (pointer % BUFFER_SIZE);
                 int bytesInBuffer = BUFFER_SIZE - bufferOffset;
                 int remainInSrcBuffer = len - bufferPos;
                 int bytesToCopy = bytesInBuffer >= remainInSrcBuffer ? remainInSrcBuffer : bytesInBuffer;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Store
 		public override void  Seek(long pos)
 		{
 			base.Seek(pos);
-			pointer = (int) pos;
+			pointer = pos;
 		}
 		public override long Length()
 		{

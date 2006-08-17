@@ -20,8 +20,8 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A range query that returns a constant score equal to it's boost for
-	/// all documents in the range.
+    /// <summary> A range query that returns a constant score equal to its boost for
+    /// all documents in the range.
 	/// <p>
 	/// It does not have an upper bound on the number of clauses covered in the range.
 	/// <p>

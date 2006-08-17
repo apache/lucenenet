@@ -25,14 +25,15 @@ namespace Lucene.Net.Demo
 	//import Lucene.Net.index.Term;
 	
     /// <summary>Deletes documents from an index that do not contain a term. </summary>
-    class DeleteFiles
+    public class DeleteFiles
 	{
 
         private DeleteFiles()
         {
         } // singleton
 		
-		[STAThread]
+        /// <summary>Deletes documents from an index that do not contain a term. </summary>
+        [STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = typeof(DeleteFiles) + " <unique_term>";
@@ -47,7 +48,7 @@ namespace Lucene.Net.Demo
 				IndexReader reader = IndexReader.Open(directory);
 				
 				Term term = new Term("path", args[0]);
-				int deleted = reader.Delete(term);
+				int deleted = reader.DeleteDocuments(term);
 				
 				System.Console.Out.WriteLine("deleted " + deleted + " documents containing " + term);
 				

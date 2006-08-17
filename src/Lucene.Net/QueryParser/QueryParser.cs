@@ -59,8 +59,17 @@ namespace Lucene.Net.QueryParsers
 	/// href="http://lucene.apache.org/java/docs/queryparsersyntax.html">query syntax
 	/// documentation</a>.
 	/// </p>
-	/// 
-	/// <p>Note that QueryParser is <em>not</em> thread-safe.</p>
+    /// 
+    /// <p>In {@link RangeQuery}s, QueryParser tries to detect date values, e.g. <tt>date:[6/1/2005 TO 6/4/2005]</tt>
+    /// produces a range query that searches for "date" fields between 2005-06-01 and 2005-06-04. Note
+    /// that the format of the accpeted input depends on {@link #SetLocale(Locale) the locale}. This
+    /// feature also assumes that your index uses the {@link DateField} class to store dates.
+    /// If you use a different format (e.g. {@link DateTools}) and you still want QueryParser
+    /// to turn local dates in range queries into valid queries you need to create your own
+    /// query parser that inherits QueryParser and overwrites
+    /// {@link #GetRangeQuery(String, String, String, boolean)}.</p>
+    /// 
+    /// <p>Note that QueryParser is <em>not</em> thread-safe.</p>
 	/// 
 	/// </summary>
 	/// <author>  Brian Goetz
@@ -87,13 +96,6 @@ namespace Lucene.Net.QueryParsers
 		private const int MOD_NONE = 0;
 		private const int MOD_NOT = 10;
 		private const int MOD_REQ = 11;
-		
-		/// <deprecated> use {@link #OR_OPERATOR} instead 
-		/// </deprecated>
-		public const int DEFAULT_OPERATOR_OR = 0;
-		/// <deprecated> use {@link #AND_OPERATOR} instead 
-		/// </deprecated>
-		public const int DEFAULT_OPERATOR_AND = 1;
 		
 		// make it possible to call setDefaultOperator() without accessing 
 		// the nested class:
@@ -127,23 +129,6 @@ namespace Lucene.Net.QueryParsers
 			public static readonly Operator AND = new Operator("AND");
 		}
 		
-		/// <summary>Parses a query string, returning a {@link Lucene.Net.search.Query}.</summary>
-		/// <param name="query"> the query string to be parsed.
-		/// </param>
-		/// <param name="field"> the default field for query terms.
-		/// </param>
-		/// <param name="analyzer">  used to find terms in the query text.
-		/// </param>
-		/// <throws>  ParseException if the parsing fails </throws>
-		/// <summary> 
-		/// </summary>
-		/// <deprecated> Use an instance of QueryParser and the {@link #Parse(String)} method instead.
-		/// </deprecated>
-		static public Query Parse(System.String query, System.String field, Analyzer analyzer)
-		{
-			QueryParser parser = new QueryParser(field, analyzer);
-			return parser.Parse(query);
-		}
 		
 		/// <summary>Constructs a query parser.</summary>
 		/// <param name="f"> the default field for query terms.
@@ -235,24 +220,6 @@ namespace Lucene.Net.QueryParsers
 			return phraseSlop;
 		}
 		
-		/// <summary> Sets the boolean operator of the QueryParser.
-		/// In default mode (<code>DEFAULT_OPERATOR_OR</code>) terms without any modifiers
-		/// are considered optional: for example <code>capital of Hungary</code> is equal to
-		/// <code>capital OR of OR Hungary</code>.<br/>
-		/// In <code>DEFAULT_OPERATOR_AND</code> terms are considered to be in conjuction: the
-		/// above mentioned query is parsed as <code>capital AND of AND Hungary</code>
-		/// </summary>
-		/// <deprecated> use {@link #SetDefaultOperator(QueryParser.Operator)} instead
-		/// </deprecated>
-		public virtual void  SetOperator(int op)
-		{
-			if (op == DEFAULT_OPERATOR_AND)
-				this.operator_Renamed = AND_OPERATOR;
-			else if (op == DEFAULT_OPERATOR_OR)
-				this.operator_Renamed = OR_OPERATOR;
-			else
-				throw new System.ArgumentException("Unknown operator " + op);
-		}
 		
 		/// <summary> Sets the boolean operator of the QueryParser.
 		/// In default mode (<code>OR_OPERATOR</code>) terms without any modifiers
@@ -266,22 +233,6 @@ namespace Lucene.Net.QueryParsers
 			this.operator_Renamed = op;
 		}
 		
-		/// <summary> Gets implicit operator setting, which will be either DEFAULT_OPERATOR_AND
-		/// or DEFAULT_OPERATOR_OR.
-		/// </summary>
-		/// <deprecated> use {@link #GetDefaultOperator()} instead
-		/// </deprecated>
-		public virtual int GetOperator()
-		{
-			if (operator_Renamed == AND_OPERATOR)
-				return DEFAULT_OPERATOR_AND;
-			else if (operator_Renamed == OR_OPERATOR)
-				return DEFAULT_OPERATOR_OR;
-			else
-			{
-				throw new System.SystemException("Unknown operator " + operator_Renamed);
-			}
-		}
 		
 		/// <summary> Gets implicit operator setting, which will be either AND_OPERATOR
 		/// or OR_OPERATOR.
@@ -291,15 +242,6 @@ namespace Lucene.Net.QueryParsers
 			return operator_Renamed;
 		}
 		
-		/// <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
-		/// lower-cased or not.  Default is <code>true</code>.
-		/// </summary>
-		/// <deprecated> use {@link #SetLowercaseExpandedTerms(boolean)} instead
-		/// </deprecated>
-		public virtual void  SetLowercaseWildcardTerms(bool lowercaseExpandedTerms)
-		{
-			this.lowercaseExpandedTerms = lowercaseExpandedTerms;
-		}
 		
 		/// <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
 		/// lower-cased or not.  Default is <code>true</code>.
@@ -309,12 +251,6 @@ namespace Lucene.Net.QueryParsers
 			this.lowercaseExpandedTerms = lowercaseExpandedTerms;
 		}
 		
-		/// <deprecated> use {@link #GetLowercaseExpandedTerms()} instead
-		/// </deprecated>
-		public virtual bool GetLowercaseWildcardTerms()
-		{
-			return lowercaseExpandedTerms;
-		}
 		
 		/// <seealso cref="SetLowercaseExpandedTerms(boolean)">
 		/// </seealso>
@@ -392,20 +328,8 @@ namespace Lucene.Net.QueryParsers
 				throw new System.SystemException("Clause cannot be both required and prohibited");
 		}
 		
-		/// <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-		/// use class member analyzer.
-		/// 
-		/// </summary>
-		/// <exception cref="ParseException">throw in overridden method to disallow
-		/// </exception>
-		/// <deprecated> use {@link #GetFieldQuery(String, String)}
-		/// </deprecated>
-		protected internal virtual Query GetFieldQuery(System.String field, Analyzer analyzer, System.String queryText)
-		{
-			return GetFieldQuery(field, queryText);
-		}
 		
-		/// <exception cref="ParseException">throw in overridden method to disallow
+        /// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		protected internal virtual Query GetFieldQuery(System.String field, System.String queryText)
 		{
@@ -472,7 +396,8 @@ namespace Lucene.Net.QueryParsers
 					{
 						// phrase query:
 						MultiPhraseQuery mpq = new MultiPhraseQuery();
-						System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
+                        mpq.SetSlop(phraseSlop);
+                        System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
 						for (int i = 0; i < v.Count; i++)
 						{
 							t = (Lucene.Net.Analysis.Token) v[i];
@@ -499,19 +424,7 @@ namespace Lucene.Net.QueryParsers
 				}
 			}
 		}
-		
-		/// <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-		/// use class member analyzer.
-		/// 
-		/// </summary>
-		/// <exception cref="ParseException">throw in overridden method to disallow
-		/// </exception>
-		/// <deprecated> use {@link #GetFieldQuery(String, String, int)}
-		/// </deprecated>
-		protected internal virtual Query GetFieldQuery(System.String field, Analyzer analyzer, System.String queryText, int slop)
-		{
-			return GetFieldQuery(field, queryText, slop);
-		}
+
 		
 		/// <summary> Base implementation delegates to {@link #GetFieldQuery(String,String)}.
 		/// This method may be overridden, for example, to return
@@ -536,18 +449,6 @@ namespace Lucene.Net.QueryParsers
 			return query;
 		}
 		
-		/// <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-		/// use class member analyzer.
-		/// 
-		/// </summary>
-		/// <exception cref="ParseException">throw in overridden method to disallow
-		/// </exception>
-		/// <deprecated> use {@link #GetRangeQuery(String, String, String, boolean)}
-		/// </deprecated>
-		protected internal virtual Query GetRangeQuery(System.String field, Analyzer analyzer, System.String part1, System.String part2, bool inclusive)
-		{
-			return GetRangeQuery(field, part1, part2, inclusive);
-		}
 		
 		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
@@ -562,10 +463,22 @@ namespace Lucene.Net.QueryParsers
 			{
                 System.DateTime d1 = System.DateTime.Parse(part1, locale);
                 System.DateTime d2 = System.DateTime.Parse(part2, locale);
+                if (inclusive)
+                {
+                    // The user can only specify the date, not the time, so make sure
+                    // the time is set to the latest possible time of that date to really
+                    // include all documents:
+                    System.Globalization.Calendar cal = new System.Globalization.GregorianCalendar();
+                    System.DateTime tempDate = d2;
+                    d2 = tempDate.AddHours(23 - tempDate.Hour);
+                    d2 = tempDate.AddMinutes(59 - tempDate.Minute);
+                    d2 = tempDate.AddMinutes(59 - tempDate.Second);
+                    d2 = tempDate.AddMinutes(999 - tempDate.Millisecond);
+                }
                 part1 = DateField.DateToString(d1);
                 part2 = DateField.DateToString(d2);
             }
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 			}
 			
@@ -689,12 +602,6 @@ namespace Lucene.Net.QueryParsers
 			return new PrefixQuery(t);
 		}
 		
-		/// <deprecated> use {@link #GetFuzzyQuery(String, String, float)}
-		/// </deprecated>
-		protected internal virtual Query GetFuzzyQuery(System.String field, System.String termStr)
-		{
-			return GetFuzzyQuery(field, termStr, fuzzyMinSim);
-		}
 		
 		/// <summary> Factory method for generating a query (similar to
 		/// {@link #getWildcardQuery}). Called when parser parses
@@ -1107,14 +1014,11 @@ label_1_brk: ;
 									throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
 							}
 						}
-						if (fms == fuzzyMinSim)
-							q = GetFuzzyQuery(field, termImage);
-						else
-							q = GetFuzzyQuery(field, termImage, fms);
+						q = GetFuzzyQuery(field, termImage, fms);
 					}
 					else
 					{
-						q = GetFieldQuery(field, analyzer, termImage);
+						q = GetFieldQuery(field, termImage);
 					}
 					break;
 				
@@ -1198,7 +1102,7 @@ label_1_brk: ;
 					{
 						goop2.image = DiscardEscapeChar(goop2.image);
 					}
-					q = GetRangeQuery(field, analyzer, goop1.image, goop2.image, true);
+					q = GetRangeQuery(field, goop1.image, goop2.image, true);
 					break;
 				
 				case Lucene.Net.QueryParsers.QueryParserConstants.RANGEEX_START: 
@@ -1282,7 +1186,7 @@ label_1_brk: ;
 						goop2.image = DiscardEscapeChar(goop2.image);
 					}
 					
-					q = GetRangeQuery(field, analyzer, goop1.image, goop2.image, false);
+					q = GetRangeQuery(field, goop1.image, goop2.image, false);
 					break;
 				
 				case Lucene.Net.QueryParsers.QueryParserConstants.QUOTED: 
@@ -1326,7 +1230,7 @@ label_1_brk: ;
 						{
 						}
 					}
-					q = GetFieldQuery(field, analyzer, term.image.Substring(1, (term.image.Length - 1) - (1)), s);
+					q = GetFieldQuery(field, term.image.Substring(1, (term.image.Length - 1) - (1)), s);
 					break;
 				
 				default: 

@@ -171,6 +171,16 @@ namespace Lucene.Net.Search
 				return new SampleComparable(termtext);
 			}
 		}
+
+        public static SortComparatorSource GetComparatorSource()
+        {
+            return new AnonymousClassSortComparatorSource();
+        }
+
+        public static SortComparator GetComparator()
+        {
+            return new AnonymousClassSortComparator();
+        }
 		
 		internal System.String string_part;
 		internal System.Int32 int_part;
@@ -191,16 +201,6 @@ namespace Lucene.Net.Search
 				return int_part.CompareTo(otherid.int_part);
 			}
 			return i;
-		}
-		
-		public static SortComparatorSource GetComparatorSource()
-		{
-			return new AnonymousClassSortComparatorSource();
-		}
-		
-		public static SortComparator GetComparator()
-		{
-			return new AnonymousClassSortComparator();
 		}
 	}
 }

@@ -68,8 +68,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith(bool create, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
-			{
+            internal AnonymousClassWith(bool create, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+            {
 				InitBlock(create, enclosingInstance);
 			}
 			public override System.Object DoBody()
@@ -83,12 +83,10 @@ namespace Lucene.Net.Index
 		}
 		private class AnonymousClassWith1 : Lock.With
 		{
-			private void  InitBlock(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance)
-			{
-				this.segmentsToDelete = segmentsToDelete;
+            private void  InitBlock(IndexWriter enclosingInstance)
+            {
 				this.enclosingInstance = enclosingInstance;
 			}
-			private System.Collections.ArrayList segmentsToDelete;
 			private IndexWriter enclosingInstance;
 			public IndexWriter Enclosing_Instance
 			{
@@ -98,27 +96,24 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith1(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
-			{
-				InitBlock(segmentsToDelete, enclosingInstance);
-			}
+            internal AnonymousClassWith1(IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+            {
+                InitBlock(enclosingInstance);
+            }
 			public override System.Object DoBody()
 			{
 				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit changes
-				Enclosing_Instance.DeleteSegments(segmentsToDelete); // delete now-unused segments
 				return null;
 			}
 		}
 		private class AnonymousClassWith2 : Lock.With
 		{
-			private void  InitBlock(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance)
-			{
+            private void  InitBlock(System.String mergedName, IndexWriter enclosingInstance)
+            {
 				this.mergedName = mergedName;
-				this.filesToDelete = filesToDelete;
 				this.enclosingInstance = enclosingInstance;
 			}
 			private System.String mergedName;
-			private System.Collections.ArrayList filesToDelete;
 			private IndexWriter enclosingInstance;
 			public IndexWriter Enclosing_Instance
 			{
@@ -128,27 +123,23 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith2(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
-			{
-				InitBlock(mergedName, filesToDelete, enclosingInstance);
-			}
+            internal AnonymousClassWith2(System.String mergedName, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+            {
+                InitBlock(mergedName, enclosingInstance);
+            }
 			public override System.Object DoBody()
 			{
 				// make compound file visible for SegmentReaders
 				Enclosing_Instance.directory.RenameFile(mergedName + ".tmp", mergedName + ".cfs");
-				// delete now unused files of segment 
-				Enclosing_Instance.DeleteFiles(filesToDelete);
 				return null;
 			}
 		}
 		private class AnonymousClassWith3 : Lock.With
 		{
-			private void  InitBlock(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance)
-			{
-				this.segmentsToDelete = segmentsToDelete;
+            private void  InitBlock(IndexWriter enclosingInstance)
+            {
 				this.enclosingInstance = enclosingInstance;
 			}
-			private System.Collections.ArrayList segmentsToDelete;
 			private IndexWriter enclosingInstance;
 			public IndexWriter Enclosing_Instance
 			{
@@ -158,27 +149,24 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith3(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			internal AnonymousClassWith3(IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
 			{
-				InitBlock(segmentsToDelete, enclosingInstance);
+				InitBlock(enclosingInstance);
 			}
 			public override System.Object DoBody()
 			{
 				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit before deleting
-				Enclosing_Instance.DeleteSegments(segmentsToDelete); // delete now-unused segments
 				return null;
 			}
 		}
 		private class AnonymousClassWith4 : Lock.With
 		{
-			private void  InitBlock(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance)
-			{
+            private void  InitBlock(System.String mergedName, IndexWriter enclosingInstance)
+            {
 				this.mergedName = mergedName;
-				this.filesToDelete = filesToDelete;
 				this.enclosingInstance = enclosingInstance;
 			}
 			private System.String mergedName;
-			private System.Collections.ArrayList filesToDelete;
 			private IndexWriter enclosingInstance;
 			public IndexWriter Enclosing_Instance
 			{
@@ -188,16 +176,14 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal AnonymousClassWith4(System.String mergedName, System.Collections.ArrayList filesToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
-			{
-				InitBlock(mergedName, filesToDelete, enclosingInstance);
-			}
+            internal AnonymousClassWith4(System.String mergedName, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
+            {
+                InitBlock(mergedName, enclosingInstance);
+            }
 			public override System.Object DoBody()
 			{
 				// make compound file visible for SegmentReaders
 				Enclosing_Instance.directory.RenameFile(mergedName + ".tmp", mergedName + ".cfs");
-				// delete now unused files of segment 
-				Enclosing_Instance.DeleteFiles(filesToDelete);
 				return null;
 			}
 		}
@@ -206,13 +192,17 @@ namespace Lucene.Net.Index
 			similarity = Similarity.GetDefault();
 		}
 		
-		/// <summary> Default value is 1,000.</summary>
-		public const long WRITE_LOCK_TIMEOUT = 1000;
+        /// <summary> Default value for the write lock timeout (1,000).</summary>
+        public const long WRITE_LOCK_TIMEOUT = 1000;
 		
-		/// <summary> Default value is 10,000.</summary>
-		public const long COMMIT_LOCK_TIMEOUT = 10000;
+        private long writeLockTimeout = WRITE_LOCK_TIMEOUT;
 		
-		public const System.String WRITE_LOCK_NAME = "write.lock";
+        /// <summary> Default value for the commit lock timeout (10,000).</summary>
+        public const long COMMIT_LOCK_TIMEOUT = 10000;
+		
+        private long commitLockTimeout = COMMIT_LOCK_TIMEOUT;
+		
+        public const System.String WRITE_LOCK_NAME = "write.lock";
 		public const System.String COMMIT_LOCK_NAME = "commit.lock";
 		
 		/// <summary> Default value is 10. Change using {@link #SetMergeFactor(int)}.</summary>
@@ -220,10 +210,6 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Default value is 10. Change using {@link #SetMaxBufferedDocs(int)}.</summary>
 		public const int DEFAULT_MAX_BUFFERED_DOCS = 10;
-		
-		/// <deprecated> use {@link #DEFAULT_MAX_BUFFERED_DOCS} instead
-		/// </deprecated>
-		public static readonly int DEFAULT_MIN_MERGE_DOCS = DEFAULT_MAX_BUFFERED_DOCS;
 		
 		/// <summary> Default value is {@link Integer#MAX_VALUE}. Change using {@link #SetMaxMergeDocs(int)}.</summary>
 		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
@@ -404,7 +390,7 @@ namespace Lucene.Net.Index
 			analyzer = a;
 			
 			Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-			if (!writeLock.Obtain(WRITE_LOCK_TIMEOUT))
+			if (!writeLock.Obtain(writeLockTimeout))
 			// obtain write lock
 			{
 				throw new System.IO.IOException("Index locked for write: " + writeLock);
@@ -414,7 +400,7 @@ namespace Lucene.Net.Index
 			lock (directory)
 			{
 				// in- & inter-process sync
-				new AnonymousClassWith(create, this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
+				new AnonymousClassWith(create, this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout).Run();
 			}
 		}
 		
@@ -522,8 +508,34 @@ namespace Lucene.Net.Index
 		{
 			return infoStream;
 		}
+        
+        /// <summary> Sets the maximum time to wait for a commit lock (in milliseconds).</summary>
+        public virtual void SetCommitLockTimeout(long commitLockTimeout)
+        {
+            this.commitLockTimeout = commitLockTimeout;
+        }
+        
+        /// <seealso cref="setCommitLockTimeout">
+        /// </seealso>
+        public virtual long GetCommitLockTimeout()
+        {
+            return commitLockTimeout;
+        }
+        
+        /// <summary> Sets the maximum time to wait for a write lock (in milliseconds).</summary>
+        public virtual void SetWriteLockTimeout(long writeLockTimeout)
+        {
+            this.writeLockTimeout = writeLockTimeout;
+        }
 		
-		/// <summary>Flushes all changes to an index and closes all associated files. </summary>
+        /// <seealso cref="#setWriteLockTimeout">
+        /// </seealso>
+        public virtual long GetWriteLockTimeout()
+        {
+            return writeLockTimeout;
+        }
+		
+        /// <summary>Flushes all changes to an index and closes all associated files. </summary>
 		public virtual void  Close()
 		{
 			lock (this)
@@ -562,9 +574,7 @@ namespace Lucene.Net.Index
 		{
 			return analyzer;
 		}
-		
-		
-		/// <summary>Returns the number of documents currently in this index. </summary>
+        /// <summary>Returns the number of documents currently in this index. </summary>
 		public virtual int DocCount()
 		{
 			lock (this)
@@ -591,9 +601,7 @@ namespace Lucene.Net.Index
 		/// By default, no more than 10,000 terms will be indexed for a field.
 		/// 
 		/// </summary>
-		/// <deprecated> use {@link #setMaxFieldLength} instead
-		/// </deprecated>
-		public int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
+		private int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
 		
 		/// <summary> Adds a document to this index.  If the document contains more than
 		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
@@ -643,40 +651,32 @@ namespace Lucene.Net.Index
 		/// for batch index creation, and smaller values (< 10) for indices that are
 		/// interactively maintained.
 		/// 
-		/// <p>This must never be less than 2.  The default value is 10.
-		/// </summary>
-		/// <deprecated> use {@link #setMergeFactor} instead
-		/// </deprecated>
-		public int mergeFactor = DEFAULT_MERGE_FACTOR;
+        /// <p>This must never be less than 2.  The default value is {@link #DEFAULT_MERGE_FACTOR}.
+        /// </summary>
+        private int mergeFactor = DEFAULT_MERGE_FACTOR;
 		
 		/// <summary>Determines the minimal number of documents required before the buffered
 		/// in-memory documents are merging and a new Segment is created.
 		/// Since Documents are merged in a {@link Lucene.Net.store.RAMDirectory},
 		/// large value gives faster indexing.  At the same time, mergeFactor limits
 		/// the number of files open in a FSDirectory.
-		/// 
-		/// <p> The default value is 10.
-		/// </summary>
-		/// <deprecated> use {@link #setMaxBufferedDocs} instead
-		/// </deprecated>
-		public int minMergeDocs = DEFAULT_MIN_MERGE_DOCS;
+        /// 
+        /// <p> The default value is {@link #DEFAULT_MAX_BUFFERED_DOCS}.
+        /// </summary>
+        private int minMergeDocs = DEFAULT_MAX_BUFFERED_DOCS;
 		
 		
 		/// <summary>Determines the largest number of documents ever merged by addDocument().
 		/// Small values (e.g., less than 10,000) are best for interactive indexing,
 		/// as this limits the length of pauses while indexing to a few seconds.
 		/// Larger values are best for batched indexing and speedier searches.
-		/// 
-		/// <p>The default value is {@link Integer#MAX_VALUE}.
-		/// </summary>
-		/// <deprecated> use {@link #setMaxMergeDocs} instead
-		/// </deprecated>
-		public int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
+        /// 
+        /// <p>The default value is {@link #DEFAULT_MAX_MERGE_DOCS}.
+        /// </summary>
+        private int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
 		
-		/// <summary>If non-null, information about merges will be printed to this.</summary>
-		/// <deprecated> use {@link #setInfoStream} instead 
-		/// </deprecated>
-		public System.IO.TextWriter infoStream = null;
+        /// <summary>If non-null, information about merges will be printed to this.</summary>
+		private System.IO.TextWriter infoStream = null;
 		
 		/// <summary>Merges all segments together into a single segment, optimizing an index
 		/// for search. 
@@ -725,7 +725,7 @@ namespace Lucene.Net.Index
 				// merge newly added segments in log(n) passes
 				while (segmentInfos.Count > start + mergeFactor)
 				{
-					for (int base_Renamed = start + 1; base_Renamed < segmentInfos.Count; base_Renamed++)
+					for (int base_Renamed = start; base_Renamed < segmentInfos.Count; base_Renamed++)
 					{
 						int end = System.Math.Min(segmentInfos.Count, base_Renamed + mergeFactor);
 						if (end - base_Renamed > 1)
@@ -767,7 +767,7 @@ namespace Lucene.Net.Index
 				
 				int docCount = merger.Merge(); // merge 'em
 				
-				segmentInfos.RemoveRange(0, segmentInfos.Count - 0);  // pop old infos & add new
+				segmentInfos.RemoveRange(0, segmentInfos.Count);  // pop old infos & add new
 				segmentInfos.Add(new SegmentInfo(mergedName, docCount, directory));
 				
 				if (sReader != null)
@@ -776,18 +776,23 @@ namespace Lucene.Net.Index
 				lock (directory)
 				{
 					// in- & inter-process sync
-					new AnonymousClassWith1(segmentsToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
-				}
+                    new AnonymousClassWith1(this, directory.MakeLock(COMMIT_LOCK_NAME), commitLockTimeout).Run();
+                }
 				
-				if (useCompoundFile)
+                DeleteSegments(segmentsToDelete); // delete now-unused segments
+				
+                if (useCompoundFile)
 				{
 					System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(mergedName + ".tmp");
 					lock (directory)
 					{
 						// in- & inter-process sync
-						new AnonymousClassWith2(mergedName, filesToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
-					}
-				}
+                        new AnonymousClassWith2(mergedName, this, directory.MakeLock(COMMIT_LOCK_NAME), commitLockTimeout).Run();
+                    }
+					
+                    // delete now unused files of segment 
+                    DeleteFiles(filesToDelete);
+                }
 			}
 		}
 		
@@ -872,10 +877,10 @@ namespace Lucene.Net.Index
 				infoStream.WriteLine(" into " + mergedName + " (" + mergedDocCount + " docs)");
 			}
 			
-			for (int i = end - 1; i >= minSegment; i--)
+			for (int i = end - 1; i > minSegment; i--)
     			// remove old infos & add new
 				segmentInfos.RemoveAt(i);
-			segmentInfos.Add(new SegmentInfo(mergedName, mergedDocCount, directory));
+			segmentInfos[minSegment] = new SegmentInfo(mergedName, mergedDocCount, directory);
 			
 			// close readers before we attempt to delete now-obsolete segments
 			merger.CloseReaders();
@@ -883,18 +888,23 @@ namespace Lucene.Net.Index
 			lock (directory)
 			{
 				// in- & inter-process sync
-				new AnonymousClassWith3(segmentsToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
-			}
+                new AnonymousClassWith3(this, directory.MakeLock(COMMIT_LOCK_NAME), commitLockTimeout).Run();
+            }
 			
-			if (useCompoundFile)
+            DeleteSegments(segmentsToDelete); // delete now-unused segments
+			
+            if (useCompoundFile)
 			{
 				System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(mergedName + ".tmp");
 				lock (directory)
 				{
 					// in- & inter-process sync
-					new AnonymousClassWith4(mergedName, filesToDelete, this, directory.MakeLock(COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).Run();
-				}
-			}
+                    new AnonymousClassWith4(mergedName, this, directory.MakeLock(COMMIT_LOCK_NAME), commitLockTimeout).Run();
+                }
+				
+                // delete now unused files of segment 
+                DeleteFiles(filesToDelete);
+            }
 		}
 		
 		/*
