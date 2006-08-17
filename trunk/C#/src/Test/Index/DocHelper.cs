@@ -155,11 +155,10 @@ namespace Lucene.Net.Index
 		
 		public static int NumFields(Lucene.Net.Documents.Document doc)
 		{
-			System.Collections.IEnumerator fields = doc.Fields();
-			int result = 0;
-			while (fields.MoveNext())
+            int result = 0;
+            foreach (Field field in doc.Fields())
 			{
-				System.String name = fields.Current.ToString();
+				System.String name = field.Name();
 				name += ""; // avoid compiler warning
 				result++;
 			}

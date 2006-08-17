@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		/// <summary>Equality measure on the term </summary>
 		public abstract float Difference();
 		
-		/// <summary>Indiciates the end of the enumeration has been reached </summary>
+		/// <summary>Indicates the end of the enumeration has been reached </summary>
 		public abstract bool EndEnum();
 		
 		protected internal virtual void  SetEnum(TermEnum actualEnum)

@@ -193,15 +193,8 @@ namespace Lucene.Net.Search
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
 		}
 		
-		/// <summary>Call {@link #subSearcher} instead.</summary>
-		/// <deprecated>
-		/// </deprecated>
-		public virtual int SearcherIndex(int n)
-		{
-			return SubSearcher(n);
-		}
 		
-		/// <summary>Returns index of the searcher for document <code>n</code> in the array
+        /// <summary>Returns index of the searcher for document <code>n</code> in the array
 		/// used to construct this searcher. 
 		/// </summary>
 		public virtual int SubSearcher(int n)

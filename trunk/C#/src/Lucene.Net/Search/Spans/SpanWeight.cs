@@ -36,14 +36,15 @@ namespace Lucene.Net.Search.Spans
 		private float queryNorm;
 		private float queryWeight;
 		
-		private System.Collections.ICollection terms;
+		private System.Collections.Hashtable terms;
 		private SpanQuery query;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
 			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-			this.terms = query.GetTerms();
+            terms = new System.Collections.Hashtable();
+            query.ExtractTerms(terms);
 			
 			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
 		}

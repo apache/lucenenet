@@ -2,6 +2,10 @@ Lucene.Net History
 ------------------
 
 
+17Aug06:
+	- Release:  Lucene.Net.2.0 build 001 "Alpha"
+
+
 13Jul06:
 	- Release:  Lucene.Net.1.9.1 build 001
 	- Port: Lucene.Net.Documents.TimeToString() -- re-based with the Java version

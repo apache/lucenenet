@@ -84,7 +84,6 @@ namespace Lucene.Net.Demo
 					deleting = true;
 					IndexDocs(root, index, create);
 				}
-
                 writer = new IndexWriter(index, new StandardAnalyzer(), create);
 				writer.SetMaxFieldLength(1000000);
 				IndexDocs(root, index, create); // add new docs
@@ -127,7 +126,7 @@ namespace Lucene.Net.Demo
 					while (uidIter.Term() != null && (System.Object) uidIter.Term().Field() == (System.Object) "uid")
 					{
 						System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
-						reader.Delete(uidIter.Term());
+						reader.DeleteDocuments(uidIter.Term());
 						uidIter.Next();
 					}
 					deleting = false;
@@ -166,7 +165,7 @@ namespace Lucene.Net.Demo
 						{
 							// delete stale docs
 							System.Console.Out.WriteLine("deleting " + HTMLDocument.Uid2url(uidIter.Term().Text()));
-							reader.Delete(uidIter.Term());
+							reader.DeleteDocuments(uidIter.Term());
 						}
 						uidIter.Next();
 					}

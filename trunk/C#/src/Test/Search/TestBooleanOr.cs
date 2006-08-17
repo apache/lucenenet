@@ -138,6 +138,8 @@ namespace Lucene.Net.Search
 		[SetUp]
         public virtual void  SetUp()
 		{
+            //base.SetUp();
+
 			//
 			RAMDirectory rd = new RAMDirectory();
 			

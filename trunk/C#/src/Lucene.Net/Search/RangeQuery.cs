@@ -185,8 +185,15 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ (lowerTerm != null ? lowerTerm.GetHashCode():0) ^ (upperTerm != null?upperTerm.GetHashCode() : 0) ^ (this.inclusive ? 1 : 0);
-		}
+            int h = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+            h ^= (lowerTerm != null ? lowerTerm.GetHashCode() : 0);
+            // reversible mix to make lower and upper position dependent and
+            // to prevent them from cancelling out.
+            h ^= ((h << 25) | (h >> 8));
+            h ^= (upperTerm != null ? upperTerm.GetHashCode() : 0);
+            h ^= (this.inclusive ? 0x2742E74A : 0);
+            return h;
+        }
 		// {{Aroush-1.9}} Do we need this?!
 		override public System.Object Clone()
 		{

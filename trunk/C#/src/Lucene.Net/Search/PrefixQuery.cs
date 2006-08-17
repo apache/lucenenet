@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode() ^ 0x6634D93C;
 		}
         // {{Aroush-1.9}} Do we need this?!
         override public System.Object Clone()

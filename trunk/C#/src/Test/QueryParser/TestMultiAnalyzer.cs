@@ -80,12 +80,35 @@ namespace Lucene.Net.QueryParser
 			// phrase with non-default boost:
 			Assert.AreEqual("\"(multi multi2) foo\"^2.0", qp.Parse("\"multi foo\"^2").ToString());
 			
-			// non-default operator:
+            // phrase after changing default slop
+            qp.SetPhraseSlop(99);
+            Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
+            Assert.AreEqual("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse("\"multi foo\" \"foo bar\"~2").ToString());
+            qp.SetPhraseSlop(0);
+			
+            // non-default operator:
 			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
 			Assert.AreEqual("+(multi multi2) +foo", qp.Parse("multi foo").ToString());
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  testMultiAnalyzerWithSubclassOfQueryParser()
+        {
+			
+            DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
+            qp.SetPhraseSlop(99); // modified default slop
+			
+            // direct call to (super's) getFieldQuery to demonstrate differnce
+            // between phrase and multiphrase with modified default slop
+            Assert.AreEqual("\"foo bar\"~99", qp.GetSuperFieldQuery("", "foo bar").ToString());
+            Assert.AreEqual("\"(multi multi2) bar\"~99", qp.GetSuperFieldQuery("", "multi bar").ToString());
+			
+			
+            // ask sublcass to parse phrase with modified default slop
+            Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
+        }
+		
+        [Test]
         public virtual void  TestPosIncrementAnalyzer()
 		{
 			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("", new PosIncrementAnalyzer(this));
@@ -264,5 +287,47 @@ namespace Lucene.Net.QueryParser
 				return null;
 			}
 		}
-	}
+		
+        /// <summary>a very simple subclass of QueryParser </summary>
+        public class DumbQueryParser : Lucene.Net.QueryParsers.QueryParser
+        {
+			
+            public DumbQueryParser(System.String f, Analyzer a):base(f, a)
+            {
+            }
+			
+            /// <summary>expose super's version </summary>
+            public Lucene.Net.Search.Query GetSuperFieldQuery(System.String f, System.String t)
+            {
+                return base.GetFieldQuery(f, t);
+            }
+            /// <summary>wrap super's version </summary>
+            protected internal virtual Lucene.Net.Search.Query GetFieldQuery(System.String f, System.String t)
+            {
+                return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
+            }
+        }
+		
+        /// <summary> A very simple wrapper to prevent instanceof checks but uses
+        /// the toString of the query it wraps.
+        /// </summary>
+        [Serializable]
+        private sealed class DumbQueryWrapper : Lucene.Net.Search.Query
+        {
+			
+            private Lucene.Net.Search.Query q;
+            public DumbQueryWrapper(Lucene.Net.Search.Query q):base()
+            {
+                this.q = q;
+            }
+            public override System.String ToString(System.String f)
+            {
+                return q.ToString(f);
+            }
+            override public System.Object Clone()
+            {
+                return null;
+            }
+        }
+    }
 }

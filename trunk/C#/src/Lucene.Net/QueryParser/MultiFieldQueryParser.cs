@@ -96,19 +96,6 @@ namespace Lucene.Net.QueryParsers
 			return GetFieldQuery(field, queryText, 0);
 		}
 		
-		/// <deprecated> use {@link #GetFieldQuery(String, String)}
-		/// </deprecated>
-		protected internal override Query GetFieldQuery(System.String field, Analyzer analyzer, System.String queryText)
-		{
-			return GetFieldQuery(field, queryText);
-		}
-		
-		/// <deprecated> use {@link #GetFuzzyQuery(String, String, float)}
-		/// </deprecated>
-		protected internal override Query GetFuzzyQuery(System.String field, System.String termStr)
-		{
-			return GetFuzzyQuery(field, termStr, fuzzyMinSim);
-		}
 		
 		protected internal override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 		{
@@ -152,15 +139,8 @@ namespace Lucene.Net.QueryParsers
 			return base.GetWildcardQuery(field, termStr);
 		}
 		
-		/// <throws>  ParseException </throws>
-		/// <deprecated> use {@link #GetRangeQuery(String, String, String, boolean)}
-		/// </deprecated>
-		protected internal override Query GetRangeQuery(System.String field, Analyzer analyzer, System.String part1, System.String part2, bool inclusive)
-		{
-			return GetRangeQuery(field, part1, part2, inclusive);
-		}
 		
-		protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
+        protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			if (field == null)
 			{
@@ -175,68 +155,9 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		/// <deprecated> 
-		/// </deprecated>
-		public const int NORMAL_FIELD = 0;
-		/// <deprecated> 
-		/// </deprecated>
-		public const int REQUIRED_FIELD = 1;
-		/// <deprecated> 
-		/// </deprecated>
-		public const int PROHIBITED_FIELD = 2;
 		
-		/// <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-		/// </deprecated>
-		public MultiFieldQueryParser(QueryParserTokenManager tm):base(tm)
-		{
-		}
 		
-		/// <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-		/// </deprecated>
-		public MultiFieldQueryParser(CharStream stream):base(stream)
-		{
-		}
-		
-		/// <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-		/// </deprecated>
-		public MultiFieldQueryParser(System.String f, Analyzer a):base(f, a)
-		{
-		}
-		
-		/// <summary> Parses a query which searches on the fields specified.
-		/// If x fields are specified, this effectively constructs:
-		/// 
-		/// <code>
-		/// (field1:query) (field2:query) (field3:query)...(fieldx:query)
-		/// </code>
-		/// 
-		/// </summary>
-		/// <param name="query">Query string to parse
-		/// </param>
-		/// <param name="fields">Fields to search on
-		/// </param>
-		/// <param name="analyzer">Analyzer to use
-		/// </param>
-		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
-		/// <deprecated> use {@link #Parse(String)} instead but note that it
-		/// returns a different query for queries where all terms are required:
-		/// its query excepts all terms, no matter in what field they occur whereas
-		/// the query built by this (deprecated) method expected all terms in all fields 
-		/// at the same time.
-		/// </deprecated>
-		public static Query Parse(System.String query, System.String[] fields, Analyzer analyzer)
-		{
-			BooleanQuery bQuery = new BooleanQuery();
-			for (int i = 0; i < fields.Length; i++)
-			{
-				Query q = Parse(query, fields[i], analyzer);
-				bQuery.Add(q, BooleanClause.Occur.SHOULD);
-			}
-			return bQuery;
-		}
-		
-		/// <summary> Parses a query which searches on the fields specified.
+        /// <summary> Parses a query which searches on the fields specified.
 		/// <p>
 		/// If x fields are specified, this effectively constructs:
 		/// <pre>
@@ -252,7 +173,6 @@ namespace Lucene.Net.QueryParsers
 		/// <param name="analyzer">Analyzer to use
 		/// </param>
 		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
 		/// <throws>  IllegalArgumentException if the length of the queries array differs </throws>
 		/// <summary>  from the length of the fields array
 		/// </summary>
@@ -270,72 +190,6 @@ namespace Lucene.Net.QueryParsers
 			return bQuery;
 		}
 		
-		/// <summary> Parses a query, searching on the fields specified.
-		/// Use this if you need to specify certain fields as required,
-		/// and others as prohibited.
-		/// <p><pre>
-		/// Usage:
-		/// <code>
-		/// String[] fields = {"filename", "contents", "description"};
-		/// int[] flags = {MultiFieldQueryParser.NORMAL_FIELD,
-		/// MultiFieldQueryParser.REQUIRED_FIELD,
-		/// MultiFieldQueryParser.PROHIBITED_FIELD,};
-		/// parse(query, fields, flags, analyzer);
-		/// </code>
-		/// </pre>
-		/// <p>
-		/// The code above would construct a query:
-		/// <pre>
-		/// <code>
-		/// (filename:query) +(contents:query) -(description:query)
-		/// </code>
-		/// </pre>
-		/// 
-		/// </summary>
-		/// <param name="query">Query string to parse
-		/// </param>
-		/// <param name="fields">Fields to search on
-		/// </param>
-		/// <param name="flags">Flags describing the fields
-		/// </param>
-		/// <param name="analyzer">Analyzer to use
-		/// </param>
-		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
-		/// <throws>  IllegalArgumentException if the length of the fields array differs </throws>
-		/// <summary>  from the length of the flags array
-		/// </summary>
-		/// <deprecated> use {@link #Parse(String, String[], BooleanClause.Occur[], Analyzer)} instead
-		/// </deprecated>
-		public static Query Parse(System.String query, System.String[] fields, int[] flags, Analyzer analyzer)
-		{
-			if (fields.Length != flags.Length)
-				throw new System.ArgumentException("fields.length != flags.length");
-			BooleanQuery bQuery = new BooleanQuery();
-			for (int i = 0; i < fields.Length; i++)
-			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
-				Query q = qp.Parse(query);
-				int flag = flags[i];
-				switch (flag)
-				{
-					
-					case REQUIRED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST);
-						break;
-					
-					case PROHIBITED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST_NOT);
-						break;
-					
-					default: 
-						bQuery.Add(q, BooleanClause.Occur.SHOULD);
-						break;
-					
-				}
-			}
-			return bQuery;
-		}
 		
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
@@ -368,7 +222,6 @@ namespace Lucene.Net.QueryParsers
 		/// <param name="analyzer">Analyzer to use
 		/// </param>
 		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
 		/// <throws>  IllegalArgumentException if the length of the fields array differs </throws>
 		/// <summary>  from the length of the flags array
 		/// </summary>
@@ -386,73 +239,8 @@ namespace Lucene.Net.QueryParsers
 			return bQuery;
 		}
 		
-		/// <summary> Parses a query, searching on the fields specified. Use this if you need to
-		/// specify certain fields as required, and others as prohibited.
-		/// <p>
-		/// <pre>
-		/// Usage:
-		/// <code>
-		/// String[] fields = { &quot;filename&quot;, &quot;contents&quot;, &quot;description&quot; };
-		/// int[] flags = { MultiFieldQueryParser.NORMAL_FIELD,
-		/// MultiFieldQueryParser.REQUIRED_FIELD,
-		/// MultiFieldQueryParser.PROHIBITED_FIELD, };
-		/// parse(query, fields, flags, analyzer);
-		/// </code>
-		/// </pre>
-		/// 
-		/// <p>
-		/// The code above would construct a query:
-		/// <pre>
-		/// <code>
-		/// (filename:query1) +(contents:query2) -(description:query3)
-		/// </code>
-		/// </pre>
-		/// 
-		/// </summary>
-		/// <param name="queries">Queries string to parse
-		/// </param>
-		/// <param name="fields">Fields to search on
-		/// </param>
-		/// <param name="flags">Flags describing the fields
-		/// </param>
-		/// <param name="analyzer">Analyzer to use
-		/// </param>
-		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
-		/// <throws>  IllegalArgumentException if the length of the queries, fields, and flags array differ </throws>
-		/// <deprecated> use {@link #Parse(String[], String[], BooleanClause.Occur[], Analyzer)} instead
-		/// </deprecated>
-		public static Query Parse(System.String[] queries, System.String[] fields, int[] flags, Analyzer analyzer)
-		{
-			if (!(queries.Length == fields.Length && queries.Length == flags.Length))
-				throw new System.ArgumentException("queries, fields, and flags array have have different length");
-			BooleanQuery bQuery = new BooleanQuery();
-			for (int i = 0; i < fields.Length; i++)
-			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
-				Query q = qp.Parse(queries[i]);
-				int flag = flags[i];
-				switch (flag)
-				{
-					
-					case REQUIRED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST);
-						break;
-					
-					case PROHIBITED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST_NOT);
-						break;
-					
-					default: 
-						bQuery.Add(q, BooleanClause.Occur.SHOULD);
-						break;
-					
-				}
-			}
-			return bQuery;
-		}
 		
-		/// <summary> Parses a query, searching on the fields specified.
+        /// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
 		/// <p><pre>
@@ -484,7 +272,6 @@ namespace Lucene.Net.QueryParsers
 		/// <param name="analyzer">Analyzer to use
 		/// </param>
 		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  TokenMgrError if query parsing fails </throws>
 		/// <throws>  IllegalArgumentException if the length of the queries, fields, </throws>
 		/// <summary>  and flags array differ
 		/// </summary>

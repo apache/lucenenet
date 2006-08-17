@@ -141,7 +141,16 @@ namespace Lucene.Net.QueryParser
 			}
 		}
 		
-		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result)
+        public virtual void  AssertEscapedQueryEquals(System.String query, Analyzer a, System.String result)
+        {
+            System.String escapedQuery = Lucene.Net.QueryParsers.QueryParser.Escape(query);
+            if (!escapedQuery.Equals(result))
+            {
+                Assert.Fail("Query /" + query + "/ yielded /" + escapedQuery + "/, expecting /" + result + "/");
+            }
+        }
+		
+        public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result)
 		{
 			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
 			qp.SetLowercaseExpandedTerms(lowercase);
@@ -447,7 +456,44 @@ namespace Lucene.Net.QueryParser
 			AssertQueryEquals("[ a\\\\ TO a\\* ]", null, "[a\\ TO a*]");
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  TestQueryStringEscaping()
+        {
+            Analyzer a = new WhitespaceAnalyzer();
+			
+            AssertEscapedQueryEquals("a-b:c", a, "a\\-b\\:c");
+            AssertEscapedQueryEquals("a+b:c", a, "a\\+b\\:c");
+            AssertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
+            AssertEscapedQueryEquals("a\\b:c", a, "a\\\\b\\:c");
+			
+            AssertEscapedQueryEquals("a:b-c", a, "a\\:b\\-c");
+            AssertEscapedQueryEquals("a:b+c", a, "a\\:b\\+c");
+            AssertEscapedQueryEquals("a:b:c", a, "a\\:b\\:c");
+            AssertEscapedQueryEquals("a:b\\c", a, "a\\:b\\\\c");
+			
+            AssertEscapedQueryEquals("a:b-c*", a, "a\\:b\\-c\\*");
+            AssertEscapedQueryEquals("a:b+c*", a, "a\\:b\\+c\\*");
+            AssertEscapedQueryEquals("a:b:c*", a, "a\\:b\\:c\\*");
+			
+            AssertEscapedQueryEquals("a:b\\\\c*", a, "a\\:b\\\\\\\\c\\*");
+			
+            AssertEscapedQueryEquals("a:b-?c", a, "a\\:b\\-\\?c");
+            AssertEscapedQueryEquals("a:b+?c", a, "a\\:b\\+\\?c");
+            AssertEscapedQueryEquals("a:b:?c", a, "a\\:b\\:\\?c");
+			
+            AssertEscapedQueryEquals("a:b?c", a, "a\\:b\\?c");
+			
+            AssertEscapedQueryEquals("a:b-c~", a, "a\\:b\\-c\\~");
+            AssertEscapedQueryEquals("a:b+c~", a, "a\\:b\\+c\\~");
+            AssertEscapedQueryEquals("a:b:c~", a, "a\\:b\\:c\\~");
+            AssertEscapedQueryEquals("a:b\\c~", a, "a\\:b\\\\c\\~");
+			
+            AssertEscapedQueryEquals("[ a - TO a+ ]", null, "\\[ a \\- TO a\\+ \\]");
+            AssertEscapedQueryEquals("[ a : TO a~ ]", null, "\\[ a \\: TO a\\~ \\]");
+            AssertEscapedQueryEquals("[ a\\ TO a* ]", null, "\\[ a\\\\ TO a\\* \\]");
+        }
+		
+        [Test]
         public virtual void  TestTabNewlineCarriageReturn()
 		{
 			AssertQueryEqualsDOA("+weltbank +worlbank", null, "+weltbank +worlbank");
@@ -571,7 +617,43 @@ namespace Lucene.Net.QueryParser
 			Assert.AreEqual(query1, query2);
 		}
 		
-		[TearDown]
+        [Test]
+        public virtual void  TestLocalDateFormat()
+        {
+            Lucene.Net.Store.RAMDirectory ramDir = new Lucene.Net.Store.RAMDirectory();
+            Lucene.Net.Index.IndexWriter iw = new Lucene.Net.Index.IndexWriter(ramDir, new WhitespaceAnalyzer(), true);
+            AddDateDoc("a", 2005, 12, 2, 10, 15, 33, iw);
+            AddDateDoc("b", 2005, 12, 4, 22, 15, 0, iw);
+            iw.Close();
+            Lucene.Net.Search.IndexSearcher is_Renamed = new Lucene.Net.Search.IndexSearcher(ramDir);
+            AssertHits(1, "[12/1/2005 TO 12/3/2005]", is_Renamed);
+            AssertHits(2, "[12/1/2005 TO 12/4/2005]", is_Renamed);
+            AssertHits(1, "[12/3/2005 TO 12/4/2005]", is_Renamed);
+            AssertHits(1, "{12/1/2005 TO 12/3/2005}", is_Renamed);
+            AssertHits(1, "{12/1/2005 TO 12/4/2005}", is_Renamed);
+            AssertHits(0, "{12/3/2005 TO 12/4/2005}", is_Renamed);
+            is_Renamed.Close();
+        }
+		
+        private void  AssertHits(int expected, System.String query, Lucene.Net.Search.IndexSearcher is_Renamed)
+        {
+            Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("date", new WhitespaceAnalyzer());
+            qp.SetLocale(new System.Globalization.CultureInfo("en"));
+            Query q = qp.Parse(query);
+            Lucene.Net.Search.Hits hits = is_Renamed.Search(q);
+            Assert.AreEqual(expected, hits.Length());
+        }
+		
+        private static void  AddDateDoc(System.String content, int year, int month, int day, int hour, int minute, int second, Lucene.Net.Index.IndexWriter iw)
+        {
+            Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+            d.Add(new Lucene.Net.Documents.Field("f", content, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
+            System.DateTime tempAux = new System.DateTime(year, month - 1, day, hour, minute, second);
+            d.Add(new Lucene.Net.Documents.Field("date", DateField.DateToString(tempAux), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED));
+            iw.AddDocument(d);
+        }
+		
+        [TearDown]
 		public virtual void  TearDown()
 		{
 			BooleanQuery.SetMaxClauseCount(originalMaxClauses);

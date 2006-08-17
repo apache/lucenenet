@@ -88,39 +88,6 @@ namespace Lucene.Net.Analysis
 			return result;
 		}
 		
-		/// <param name="path">     Path to the wordlist
-		/// </param>
-		/// <param name="wordfile"> Name of the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.String path, System.String wordfile)
-		{
-			return GetWordtable(new System.IO.FileInfo(System.IO.Path.Combine(path, wordfile)));
-		}
-		
-		/// <param name="wordfile"> Complete path to the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.String wordfile)
-		{
-			return GetWordtable(new System.IO.FileInfo(wordfile));
-		}
-		
-		/// <param name="wordfile"> File object that points to the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.IO.FileInfo wordfile)
-		{
-			System.Collections.Hashtable wordSet = (System.Collections.Hashtable) GetWordSet(wordfile);
-			System.Collections.Hashtable result = MakeWordTable(wordSet);
-			return result;
-		}
 		
 		/// <summary> Builds a wordlist table, using words as both keys and values
 		/// for backward compatibility.

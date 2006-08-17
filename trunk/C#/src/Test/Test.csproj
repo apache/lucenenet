@@ -90,21 +90,21 @@
                     HintPath = "..\Demo\DemoLib\bin\Debug\DemoLib.dll"
                 />
                 <Reference
-                    Name = "Lucene.Net"
-                    AssemblyName = "Lucene.Net"
-                    HintPath = "..\Lucene.Net\bin\Debug\Lucene.Net.dll"
-                />
-                <Reference
                     Name = "nunit.core"
                     AssemblyName = "nunit.core"
-                    HintPath = ".\NUnit\bin\nunit.core.dll"
+                    HintPath = "D:\DEVS\NUnit\bin\nunit.core.dll"
                     AssemblyFolderKey = "hklm\dn\nunit.framework"
                 />
                 <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
-                    HintPath = ".\NUnit\bin\nunit.framework.dll"
+                    HintPath = "D:\DEVS\NUnit\bin\nunit.framework.dll"
                     AssemblyFolderKey = "hklm\dn\nunit.framework"
+                />
+                <Reference
+                    Name = "Lucene.Net"
+                    AssemblyName = "Lucene.Net"
+                    HintPath = "..\Lucene.Net\bin\Debug\Lucene.Net.dll"
                 />
             </References>
         </Build>
@@ -286,6 +286,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestIndexWriterMerging.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestMultiReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -331,7 +336,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Index\Store\TestFSDirectory.cs"
+                    RelPath = "Index\Store\_delete_TestFSDirectory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -377,6 +382,11 @@
                 />
                 <File
                     RelPath = "Search\SampleComparable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\SingleDocTestFilter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -551,12 +561,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Search\Regex\TestRegexQuery.cs"
+                    RelPath = "Search\Regex\_delete_TestRegexQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Search\Regex\TestSpanRegexQuery.cs"
+                    RelPath = "Search\Regex\_delete_TestSpanRegexQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -582,6 +592,11 @@
                 />
                 <File
                     RelPath = "Store\_TestHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Store\TestLock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

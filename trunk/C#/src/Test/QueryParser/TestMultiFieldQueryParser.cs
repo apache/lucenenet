@@ -99,27 +99,6 @@ namespace Lucene.Net.QueryParser
 			Assert.AreEqual("+(b:\"aa bb cc\" t:\"aa bb cc\") +(b:\"dd ee\" t:\"dd ee\")", q.ToString());
 		}
 		
-		// TODO: remove this for Lucene 2.0
-		[Test]
-        public virtual void  TestOldMethods()
-		{
-			// testing the old static calls that are now deprecated:
-			AssertQueryEquals("b:one t:one", "one");
-			AssertQueryEquals("(b:one b:two) (t:one t:two)", "one two");
-			AssertQueryEquals("(b:one -b:two) (t:one -t:two)", "one -two");
-			AssertQueryEquals("(b:one -(b:two b:three)) (t:one -(t:two t:three))", "one -(two three)");
-			AssertQueryEquals("(+b:one +b:two) (+t:one +t:two)", "+one +two");
-		}
-		
-		// TODO: remove this for Lucene 2.0
-		private void  AssertQueryEquals(System.String expected, System.String query)
-		{
-			System.String[] fields = new System.String[]{"b", "t"};
-			Query q = MultiFieldQueryParser.Parse(query, fields, new StandardAnalyzer());
-			System.String s = q.ToString();
-			Assert.AreEqual(expected, s);
-		}
-		
 		[Test]
         public virtual void  TestStaticMethod1()
 		{
@@ -178,25 +157,28 @@ namespace Lucene.Net.QueryParser
 		[Test]
         public virtual void  TestStaticMethod2Old()
 		{
-			System.String[] fields = new System.String[]{"b", "t"};
-			int[] flags = new int[]{MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
-			Query q = MultiFieldQueryParser.Parse("one", fields, flags, new StandardAnalyzer());
-			Assert.AreEqual("+b:one -t:one", q.ToString());
+            System.String[] fields = new System.String[]{"b", "t"};
+            //int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
+            BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT};
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new StandardAnalyzer());
 			
-			q = MultiFieldQueryParser.Parse("one two", fields, flags, new StandardAnalyzer());
-			Assert.AreEqual("+(b:one b:two) -(t:one t:two)", q.ToString());
+            Query q = MultiFieldQueryParser.Parse("one", fields, flags, new StandardAnalyzer()); //, fields, flags, new StandardAnalyzer());
+            Assert.AreEqual("+b:one -t:one", q.ToString());
 			
-			try
-			{
-				int[] flags2 = new int[]{MultiFieldQueryParser.REQUIRED_FIELD};
-				q = MultiFieldQueryParser.Parse("blah", fields, flags2, new StandardAnalyzer());
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
-		}
+            q = MultiFieldQueryParser.Parse("one two", fields, flags, new StandardAnalyzer());
+            Assert.AreEqual("+(b:one b:two) -(t:one t:two)", q.ToString());
+			
+            try
+            {
+                BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+                q = MultiFieldQueryParser.Parse("blah", fields, flags2, new StandardAnalyzer());
+                Assert.Fail();
+            }
+            catch (System.ArgumentException e)
+            {
+                // expected exception, array length differs
+            }
+        }
 		
 		[Test]
         public virtual void  TestStaticMethod3()
@@ -222,23 +204,23 @@ namespace Lucene.Net.QueryParser
 		[Test]
         public virtual void  TestStaticMethod3Old()
 		{
-			System.String[] queries = new System.String[]{"one", "two"};
-			System.String[] fields = new System.String[]{"b", "t"};
-			int[] flags = new int[]{MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
-			Query q = MultiFieldQueryParser.Parse(queries, fields, flags, new StandardAnalyzer());
-			Assert.AreEqual("+b:one -t:two", q.ToString());
+            System.String[] queries = new System.String[]{"one", "two"};
+            System.String[] fields = new System.String[]{"b", "t"};
+            BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST, BooleanClause.Occur.MUST_NOT};
+            Query q = MultiFieldQueryParser.Parse(queries, fields, flags, new StandardAnalyzer());
+            Assert.AreEqual("+b:one -t:two", q.ToString());
 			
-			try
-			{
-				int[] flags2 = new int[]{MultiFieldQueryParser.REQUIRED_FIELD};
-				q = MultiFieldQueryParser.Parse(queries, fields, flags2, new StandardAnalyzer());
-				Assert.Fail();
-			}
-			catch (System.ArgumentException e)
-			{
-				// expected exception, array length differs
-			}
-		}
+            try
+            {
+                BooleanClause.Occur[] flags2 = new BooleanClause.Occur[]{BooleanClause.Occur.MUST};
+                q = MultiFieldQueryParser.Parse(queries, fields, flags2, new StandardAnalyzer());
+                Assert.Fail();
+            }
+            catch (System.ArgumentException e)
+            {
+                // expected exception, array length differs
+            }
+        }
 		
 		[Test]
         public virtual void  TestAnalyzerReturningNull()

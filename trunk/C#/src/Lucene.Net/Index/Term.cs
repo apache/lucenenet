@@ -119,20 +119,30 @@ namespace Lucene.Net.Index
 			return field + ":" + text;
 		}
 		
-		private void  ReadObject(System.IO.BinaryReader in_Renamed)
-		{
-			// This function is private and is never been called, so this may not be a port issue.          // {{Aroush-1.4.3}}
-            // 'java.io.ObjectInputStream.defaultReadObject' was not converted                              // {{Aroush-1.4.3}}
-			// in_Renamed.defaultReadObject();                                                              // {{Aroush-1.4.3}}
-			field = String.Intern(field);
-		}
-		
-        // {{Aroush-1.4.3: or is this method is what we want (vs. the above)?!!
-        private void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        private Term(System.Runtime.Serialization.SerializationInfo in_Renamed, System.Runtime.Serialization.StreamingContext context)
         {
-            info.AddValue("field", field);
-            info.AddValue("text", text);
+            System.Type thisType = this.GetType();
+            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
+            for (int i = 0 ; i < mi.Length; i++) 
+            {
+                System.Reflection.FieldInfo fi = (System.Reflection.FieldInfo) mi[i];
+                fi.SetValue(this, in_Renamed.GetValue(fi.Name, fi.FieldType));
+            }
+            field = String.Intern(field);
         }
-        // Aroush-1.4.3}}
+
+        public Term()
+        {
+        }
+
+        public void  GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            System.Type thisType = this.GetType();
+            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
+            for (int i = 0 ; i < mi.Length; i++) 
+            {
+                info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
+            }
+        }
     }
 }

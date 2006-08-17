@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
 	class RAMInputStream : BufferedIndexInput, System.ICloneable
 	{
 		private RAMFile file;
-		private int pointer = 0;
+		private long pointer = 0;
 		private long length;
 		
 		public RAMInputStream(RAMFile f)
@@ -40,11 +40,11 @@ namespace Lucene.Net.Store
 		public override void  ReadInternal(byte[] dest, int destOffset, int len)
 		{
 			int remainder = len;
-			int start = pointer;
+			long start = pointer;
 			while (remainder != 0)
 			{
-				int bufferNumber = start / BUFFER_SIZE;
-				int bufferOffset = start % BUFFER_SIZE;
+				int bufferNumber = (int) (start / BUFFER_SIZE);
+				int bufferOffset = (int) (start % BUFFER_SIZE);
 				int bytesInBuffer = BUFFER_SIZE - bufferOffset;
 				int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;
 				byte[] buffer = (byte[]) file.buffers[bufferNumber];
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
 		
 		public override void  SeekInternal(long pos)
 		{
-			pointer = (int) pos;
+			pointer = pos;
 		}
 		
 		public override long Length()

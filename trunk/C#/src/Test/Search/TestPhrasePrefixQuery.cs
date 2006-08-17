@@ -65,9 +65,11 @@ namespace Lucene.Net.Search
 			
 			IndexSearcher searcher = new IndexSearcher(indexStore);
 			
-			PhrasePrefixQuery query1 = new PhrasePrefixQuery();
-			PhrasePrefixQuery query2 = new PhrasePrefixQuery();
-			query1.Add(new Term("body", "blueberry"));
+			//PhrasePrefixQuery query1 = new PhrasePrefixQuery();
+            MultiPhraseQuery query1 = new MultiPhraseQuery();
+            //PhrasePrefixQuery query2 = new PhrasePrefixQuery();
+            MultiPhraseQuery query2 = new MultiPhraseQuery();
+            query1.Add(new Term("body", "blueberry"));
 			query2.Add(new Term("body", "strawberry"));
 			
 			System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();

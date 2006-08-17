@@ -87,7 +87,12 @@ namespace Lucene.Net.Search.Spans
 			return field;
 		}
 		
-		public override System.Collections.ICollection GetTerms()
+        /// <summary>Returns a collection of all terms matched by this query.</summary>
+        /// <deprecated> use extractTerms instead
+        /// </deprecated>
+        /// <seealso cref="#extractTerms(Set)">
+        /// </seealso>
+        public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			System.Collections.IEnumerator i = clauses.GetEnumerator();
@@ -99,7 +104,18 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
-		public override System.String ToString(System.String field)
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            System.Collections.IEnumerator i = clauses.GetEnumerator();
+            while (i.MoveNext())
+            {
+                SpanQuery clause = (SpanQuery) i.Current;
+                clause.ExtractTerms(terms);
+            }
+        }
+		
+		
+        public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanNear([");
@@ -165,7 +181,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			if (this == o)
 				return true;
-			if (o == null || GetType() != o.GetType())
+			if (!(o is SpanNearQuery))
 				return false;
 			
 			SpanNearQuery spanNearQuery = (SpanNearQuery) o;
@@ -174,22 +190,34 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			if (slop != spanNearQuery.slop)
 				return false;
-			if (!clauses.Equals(spanNearQuery.clauses))
-				return false;
-			if (!field.Equals(spanNearQuery.field))
-				return false;
+
+            if (clauses.Count != spanNearQuery.clauses.Count)
+                return false;
+            System.Collections.IEnumerator iter1 = clauses.GetEnumerator();
+            System.Collections.IEnumerator iter2 = spanNearQuery.clauses.GetEnumerator();
+            while (iter1.MoveNext() && iter2.MoveNext())
+            {
+                SpanQuery item1 = (SpanQuery) iter1.Current;
+                SpanQuery item2 = (SpanQuery) iter2.Current;
+                if (!item1.Equals(item2))
+                    return false;
+            }
 			
 			return GetBoost() == spanNearQuery.GetBoost();
 		}
 		
 		public override int GetHashCode()
 		{
-			int result;
-			result = clauses.GetHashCode();
-			result += slop * 29;
-			result += (inOrder?1:0);
-			result ^= field.GetHashCode();
-			return result;
+            long result;
+            result = clauses.GetHashCode();
+            // Mix bits before folding in things like boost, since it could cancel the
+            // last element of clauses.  This particular mix also serves to
+            // differentiate SpanNearQuery hashcodes from others.
+            result ^= ((result << 14) | (result >> 19)); // reversible
+            result += System.Convert.ToInt32(GetBoost());
+            result += slop;
+            result ^= (inOrder ? (long) 0x99AFD3BD : 0);
+            return (int) result;
 		}
 	}
 }

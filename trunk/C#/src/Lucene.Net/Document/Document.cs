@@ -47,6 +47,12 @@ namespace Lucene.Net.Documents
 		{
 		}
 		
+        /// <summary>Returns the number of fields in this document</summary>
+        /// Added as a helper for Lucene.Net
+        public int GetFieldsCount()
+        {
+            return fields.Count;
+        }
 		
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
@@ -169,9 +175,9 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
-		public System.Collections.IEnumerator Fields()
+		public System.Collections.IEnumerable Fields()
 		{
-			return ((System.Collections.ArrayList) fields).GetEnumerator();
+            return fields;
 		}
 		
 		/// <summary> Returns an array of {@link Field}s with the given name.

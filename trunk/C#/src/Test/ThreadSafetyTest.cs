@@ -69,7 +69,7 @@ namespace Lucene.Net
 						Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
 						int n = Lucene.Net.ThreadSafetyTest.RANDOM.Next();
 						d.Add(new Field("id", System.Convert.ToString(n), Field.Store.YES, Field.Index.UN_TOKENIZED));
-						d.Add(new Field("contents", English.IntToEnglish(n), Field.Store.NO, Field.Index.TOKENIZED));
+						d.Add(new Field("contents", Lucene.Net.Util.English.IntToEnglish(n), Field.Store.NO, Field.Index.TOKENIZED));
 						System.Console.Out.WriteLine("Adding " + n);
 						
 						// Switch between single and multiple file segments
@@ -96,7 +96,7 @@ namespace Lucene.Net
 			}
 		}
 		
-		private class SearcherThread:SupportClass.ThreadClass
+		private class SearcherThread : SupportClass.ThreadClass
 		{
 			private void  InitBlock()
 			{
@@ -143,8 +143,9 @@ namespace Lucene.Net
 			private void  searchFor(int n, Searcher searcher)
 			{
 				System.Console.Out.WriteLine("Searching for " + n);
-				Hits hits = searcher.Search(Lucene.Net.QueryParsers.QueryParser.Parse(English.IntToEnglish(n), "contents", Lucene.Net.ThreadSafetyTest.ANALYZER));
-				System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
+                Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", Lucene.Net.ThreadSafetyTest.ANALYZER);
+                Lucene.Net.Search.Hits hits = searcher.Search(parser.Parse(Lucene.Net.Util.English.IntToEnglish(n)));
+                System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
 				for (int j = 0; j < System.Math.Min(3, hits.Length()); j++)
 				{
 					System.Console.Out.WriteLine("Hit for " + n + ": " + hits.Doc(j).Get("id"));

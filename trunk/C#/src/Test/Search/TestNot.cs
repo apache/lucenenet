@@ -51,8 +51,9 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			Searcher searcher = new IndexSearcher(store);
-			Query query = Lucene.Net.QueryParsers.QueryParser.Parse("a NOT b", "field", new SimpleAnalyzer());
-			//System.out.println(query);
+            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
+            Lucene.Net.Search.Query query = parser.Parse("a NOT b");
+            //System.out.println(query);
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length());
 		}

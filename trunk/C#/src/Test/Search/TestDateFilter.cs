@@ -50,8 +50,8 @@ namespace Lucene.Net.Search
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the past
-			doc.Add(new Field("datefield", DateField.TimeToString(now - 1000), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
+            doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 1000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
@@ -59,10 +59,11 @@ namespace Lucene.Net.Search
 			IndexSearcher searcher = new IndexSearcher(indexStore);
 			
 			// filter that should preserve matches
-			DateFilter df1 = DateFilter.Before("datefield", now);
-			
-			// filter that should discard matches
-			DateFilter df2 = DateFilter.Before("datefield", now - 999999);
+			//DateFilter df1 = DateFilter.Before("datefield", now);
+            RangeFilter df1 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 2000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), false, true);
+            // filter that should discard matches
+			//DateFilter df2 = DateFilter.Before("datefield", now - 999999);
+            RangeFilter df2 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(0, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now - 2000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), true, false);
 			
 			// search something that doesn't exist with DateFilter
 			Query query1 = new TermQuery(new Term("body", "NoMatchForThis"));
@@ -106,8 +107,8 @@ namespace Lucene.Net.Search
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the future
-			doc.Add(new Field("datefield", DateField.TimeToString(now + 888888), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
+            doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 888888, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
@@ -115,10 +116,11 @@ namespace Lucene.Net.Search
 			IndexSearcher searcher = new IndexSearcher(indexStore);
 			
 			// filter that should preserve matches
-			DateFilter df1 = DateFilter.After("datefield", now);
-			
-			// filter that should discard matches
-			DateFilter df2 = DateFilter.After("datefield", now + 999999);
+			//DateFilter df1 = DateFilter.After("datefield", now);
+            RangeFilter df1 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now + 999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), true, false);
+            // filter that should discard matches
+			//DateFilter df2 = DateFilter.After("datefield", now + 999999);
+            RangeFilter df2 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now + 999999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), false, true);
 			
 			// search something that doesn't exist with DateFilter
 			Query query1 = new TermQuery(new Term("body", "NoMatchForThis"));
