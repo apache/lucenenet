@@ -587,16 +587,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Search\_delete_.PhrasePrefixQuery.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Search\_delete_DateFilter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Search\BooleanClause.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -951,21 +941,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Search\Regex\_delete_RegexQuery.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Search\Regex\_delete_RegexTermEnum.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Search\Regex\_delete_SpanRegexQuery.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Search\Spans\NearSpans.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1016,16 +991,6 @@
                 />
                 <File
                     RelPath = "Search\Spans\SpanWeight.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Store\_delete_InputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Store\_delete_OutputStream.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
