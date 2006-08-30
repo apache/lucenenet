@@ -461,8 +461,26 @@ namespace Lucene.Net.QueryParsers
 			}
 			try
 			{
-                System.DateTime d1 = System.DateTime.Parse(part1, locale);
-                System.DateTime d2 = System.DateTime.Parse(part2, locale);
+                System.DateTime d1;
+                System.DateTime d2;
+
+                try
+                {
+                    d1 = System.DateTime.Parse(part1, locale);
+                }
+                catch (System.Exception)
+                {
+                    d1 = System.DateTime.Parse(part1);
+                }
+                try
+                {
+                    d2 = System.DateTime.Parse(part2, locale);
+                }
+                catch (System.Exception)
+                {
+                    d2 = System.DateTime.Parse(part2);
+                }
+
                 if (inclusive)
                 {
                     // The user can only specify the date, not the time, so make sure
@@ -470,10 +488,10 @@ namespace Lucene.Net.QueryParsers
                     // include all documents:
                     System.Globalization.Calendar cal = new System.Globalization.GregorianCalendar();
                     System.DateTime tempDate = d2;
-                    d2 = tempDate.AddHours(23 - tempDate.Hour);
-                    d2 = tempDate.AddMinutes(59 - tempDate.Minute);
-                    d2 = tempDate.AddMinutes(59 - tempDate.Second);
-                    d2 = tempDate.AddMinutes(999 - tempDate.Millisecond);
+                    d2 = d2.AddHours(23 - tempDate.Hour);
+                    d2 = d2.AddMinutes(59 - tempDate.Minute);
+                    d2 = d2.AddSeconds(59 - tempDate.Second);
+                    d2 = d2.AddMilliseconds(999 - tempDate.Millisecond);
                 }
                 part1 = DateField.DateToString(d1);
                 part2 = DateField.DateToString(d2);

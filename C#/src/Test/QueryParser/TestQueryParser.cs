@@ -378,22 +378,33 @@ namespace Lucene.Net.QueryParser
 		
 		public virtual System.String GetDate(System.String s)
 		{
-			return DateField.DateToString(System.DateTime.Parse(s));
+            System.DateTime tempAux = System.DateTime.Parse(s);
+            return DateField.DateToString(tempAux);
 		}
 		
-		public virtual System.String GetLocalizedDate(int year, int month, int day)
+		private System.String GetLocalizedDate(int year, int month, int day, bool extendLastDate)
 		{
-            return new System.DateTime(year, month, day).ToString("MM/d/yyy");
+            System.DateTime temp = new System.DateTime(year, month, day);
+			if (extendLastDate)
+			{
+                temp = temp.AddHours(23);
+                temp = temp.AddMinutes(59);
+                temp = temp.AddSeconds(59);
+                temp = temp.AddMilliseconds(999);
+			}
+            return temp.ToString("MM/d/yyy");
 		}
 		
 		[Test]
         public virtual void  TestDateRange()
 		{
-			System.String startDate = GetLocalizedDate(2002, 1, 1);
-			System.String endDate = GetLocalizedDate(2002, 1, 4);
-			AssertQueryEquals("[ " + startDate + " TO " + endDate + "]", null, "[" + GetDate(startDate) + " TO " + GetDate(endDate) + "]");
-			AssertQueryEquals("{  " + startDate + "    " + endDate + "   }", null, "{" + GetDate(startDate) + " TO " + GetDate(endDate) + "}");
-		}
+            System.String startDate = GetLocalizedDate(2002, 2, 1, false);
+            System.String endDate = GetLocalizedDate(2002, 2, 4, false);
+            System.DateTime endDateExpected = new System.DateTime(2002, 2, 4, 23, 59, 59);
+            endDateExpected = endDateExpected.AddMilliseconds(999);
+            AssertQueryEquals("[ " + startDate + " TO " + endDate + "]", null, "[" + GetDate(startDate) + " TO " + DateField.DateToString(endDateExpected) + "]");
+            AssertQueryEquals("{  " + startDate + "    " + endDate + "   }", null, "{" + GetDate(startDate) + " TO " + GetDate(endDate) + "}");
+        }
 		
 		[Test]
         public virtual void  TestEscaped()
@@ -648,7 +659,7 @@ namespace Lucene.Net.QueryParser
         {
             Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
             d.Add(new Lucene.Net.Documents.Field("f", content, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
-            System.DateTime tempAux = new System.DateTime(year, month - 1, day, hour, minute, second);
+            System.DateTime tempAux = new System.DateTime(year, month, day, hour, minute, second);
             d.Add(new Lucene.Net.Documents.Field("date", DateField.DateToString(tempAux), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED));
             iw.AddDocument(d);
         }
