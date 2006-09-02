@@ -590,7 +590,14 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + GetMinimumNumberShouldMatch();
+            int hashCode = 0;
+
+            for (int i = 0; i < clauses.Count; i++)
+            {
+                hashCode += clauses[i].GetHashCode();
+            }
+
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ hashCode + GetMinimumNumberShouldMatch();
 		}
 	}
 }
