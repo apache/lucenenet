@@ -46,7 +46,9 @@ namespace Lucene.Net.Search.Spans
             terms = new System.Collections.Hashtable();
             query.ExtractTerms(terms);
 			
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
+            System.Collections.ArrayList tmp = new System.Collections.ArrayList(terms.Values);
+
+			idf = this.query.GetSimilarity(searcher).Idf(tmp, searcher);
 		}
 		
 		public virtual Query GetQuery()
@@ -87,7 +89,8 @@ namespace Lucene.Net.Search.Spans
 			System.Collections.IEnumerator i = terms.GetEnumerator();
 			while (i.MoveNext())
 			{
-				Term term = (Term) i.Current;
+                System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry) i.Current;
+				Term term = (Term) tmp.Key;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
 				docFreqs.Append(reader.DocFreq(term));
