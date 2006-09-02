@@ -149,7 +149,10 @@ namespace Lucene.Net.Search.Spans
 
         public override void  ExtractTerms(System.Collections.Hashtable terms)
         {
-            terms.Add(term, term);
+            if (terms.Contains(term) == false)
+            {
+                terms.Add(term, term);
+            }
         }
 		
 		public override System.String ToString(System.String field)
