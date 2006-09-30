@@ -33,7 +33,7 @@ using System.IO;
 
 namespace Lucene.Net.Index.Compression
 {
-    public class SharpZipLibAdapter : ICompressionAdapter
+    public class SharpZipLibAdapter : SupportClass.CompressionSupport.ICompressionAdapter
     {
         public byte[] Compress(byte[] input)
         {

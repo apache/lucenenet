@@ -147,8 +147,11 @@ namespace Lucene.Net.Search
 					for (int j = 0; j < clauses.Length; j++)
 					{
                         Query tmp = clauses[j].GetQuery();
-						uniques.Add(tmp, tmp);
-					}
+                        if (uniques.Contains(tmp) == false)
+                        {
+                            uniques.Add(tmp, tmp);
+                        }
+                    }
 				}
 				else
 				{
