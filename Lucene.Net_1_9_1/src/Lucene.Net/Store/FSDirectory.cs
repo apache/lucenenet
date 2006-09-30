@@ -481,11 +481,13 @@ namespace Lucene.Net.Store
 						{
 							buffer = new byte[1024];
 						}
-						int len;
-                        len = in_Renamed.Read(buffer, 0, buffer.Length);
-                        out_Renamed.Write(buffer, 0, len);
+                        int len; 
+                        while ((len = in_Renamed.Read(buffer, 0, buffer.Length)) > 0) 
+                        { 
+                            out_Renamed.Write(buffer, 0, len); 
+                        }
 						
-						// delete the old file.
+                        // delete the old file.
 						bool tmpBool3;
 						if (System.IO.File.Exists(old.FullName))
 						{

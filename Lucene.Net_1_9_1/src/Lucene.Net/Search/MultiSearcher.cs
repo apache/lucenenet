@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
 			// step3
 			Term[] allTermsArray = new Term[terms.Count];
             int index = 0;
-            System.Collections.IEnumerator e = terms.GetEnumerator();
+            System.Collections.IEnumerator e = terms.Keys.GetEnumerator();
             while (e.MoveNext())
                 allTermsArray[index++] = e.Current as Term;
 			int[] aggregatedDfs = new int[terms.Count];
