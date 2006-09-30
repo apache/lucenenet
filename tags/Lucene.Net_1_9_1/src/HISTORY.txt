@@ -4,7 +4,7 @@ Lucene.Net History
 
 29Sep06:
 	- Release:  Lucene.Net.1.9.1 build 002 "final"
-	- Fix: Lucene.Net.Index.SegmentReader.cs and Lucene.Net.Index.SegmentReader.TermInfosReader,cs -- fixed memory leak by removing unused finalizer.
+	- Fix: Lucene.Net.Index.SegmentReader.cs and Lucene.Net.Index.TermInfosReader.cs -- fixed memory leak by removing unused finalizer.
 	- Fix: Lucene.Net.Index.Compression.SharpZipLibAdapter -- provide full name-space to ICompressionAdapter
 	- Fix: Lucene.Net.Store.FSDirectory.RenameFile() -- added a missing while loop
 	- Fix: Lucene.Net.Store.MultiSearcher.CreateWeight() -- wasn't iterating over the term keys correctly
