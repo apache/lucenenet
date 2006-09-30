@@ -177,11 +177,13 @@ namespace Lucene.Net.Index
             }
         }
 		
-        ~SegmentReader()
-        {
-            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-            //System.Threading.Thread.SetData(termVectorsLocal, null);
-        }
+		/*  Leaving this here will cause a memory leak under .NET 1.1
+		~SegmentReader()
+		{
+			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+			//System.Threading.Thread.SetData(termVectorsLocal, null);
+		}
+		*/
 		
         protected internal override void  DoCommit()
         {

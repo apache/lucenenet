@@ -53,11 +53,13 @@ namespace Lucene.Net.Index
 			indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
 		}
 		
+		/*  Leaving this here will cause a memory leak under .NET 1.1
 		~TermInfosReader()
 		{
-            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-            //System.Threading.Thread.SetData(enumerators, null);
+			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+			//System.Threading.Thread.SetData(enumerators, null);
 		}
+		*/
 		
 		public int GetSkipInterval()
 		{
