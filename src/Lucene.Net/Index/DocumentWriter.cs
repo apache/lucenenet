@@ -138,10 +138,8 @@ namespace Lucene.Net.Index
 		// Tokenizes the fields of a document into Postings.
 		private void  InvertDocument(Document doc)
 		{
-			System.Collections.IEnumerator fields = doc.Fields();
-			while (fields.MoveNext())
+			foreach(Field field in doc.Fields())
 			{
-				Field field = (Field) fields.Current;
 				System.String fieldName = field.Name();
 				int fieldNumber = fieldInfos.FieldNumber(fieldName);
 				

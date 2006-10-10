@@ -70,10 +70,8 @@ namespace Lucene.Net.Index
 		/// <summary>Adds field info for a Document. </summary>
 		public void  Add(Document doc)
 		{
-			System.Collections.IEnumerator fields = doc.Fields();
-			while (fields.MoveNext())
+			foreach (Field field in doc.Fields())
 			{
-				Field field = (Field) fields.Current;
 				Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms());
 			}
 		}
