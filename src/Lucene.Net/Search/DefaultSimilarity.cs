@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. </summary>
-		public override float Ldf(int docFreq, int numDocs)
+		public override float Idf(int docFreq, int numDocs)
 		{
 			return (float) (System.Math.Log(numDocs / (double) (docFreq + 1)) + 1.0);
 		}
