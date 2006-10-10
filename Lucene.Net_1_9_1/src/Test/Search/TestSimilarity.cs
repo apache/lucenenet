@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 			{
 				return 1.0f;
 			}
-			public override float Ldf(int docFreq, int numDocs)
+			public override float Idf(int docFreq, int numDocs)
 			{
 				return 1.0f;
 			}

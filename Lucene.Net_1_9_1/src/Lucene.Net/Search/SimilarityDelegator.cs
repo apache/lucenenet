@@ -59,9 +59,9 @@ namespace Lucene.Net.Search
 			return delegee.SloppyFreq(distance);
 		}
 		
-		public override float Ldf(int docFreq, int numDocs)
+		public override float Idf(int docFreq, int numDocs)
 		{
-			return delegee.Ldf(docFreq, numDocs);
+			return delegee.Idf(docFreq, numDocs);
 		}
 		
 		public override float Coord(int overlap, int maxOverlap)
