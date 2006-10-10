@@ -68,10 +68,7 @@ namespace Lucene.Net.Document
 			doc.Add(stringFldCompressed);
 			
 			/** test for field count */
-            System.Collections.IEnumerator iter = doc.Fields();
-            int count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(4, doc.GetFieldsCount());
 			
 			/** add the doc to a ram index */
 			RAMDirectory dir = new RAMDirectory();
