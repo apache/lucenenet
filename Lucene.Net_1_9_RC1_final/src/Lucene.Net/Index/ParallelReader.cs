@@ -152,10 +152,9 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < storedFieldReaders.Count; i++)
 			{
 				IndexReader reader = (IndexReader) storedFieldReaders[i];
-				System.Collections.IEnumerator fields = reader.Document(n).Fields();
-				while (fields.MoveNext())
-				{
-					result.Add((Field) fields.Current);
+                foreach(Field field in reader.Document(n).Fields())
+                {
+					result.Add(field);
 				}
 			}
 			return result;
