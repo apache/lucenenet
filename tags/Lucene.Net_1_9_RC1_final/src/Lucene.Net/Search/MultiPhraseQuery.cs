@@ -337,11 +337,5 @@ namespace Lucene.Net.Search
 			
 			return buffer.ToString();
 		}
-
-        // {{Aroush-1.9}} Do we need this?!
-        override public System.Object Clone()
-		{
-			return null;
-		}
 	}
 }
