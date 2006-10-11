@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 		
 		public int CompareTo(TermBuffer other)
 		{
-			if ((System.Object) field == (System.Object) other.field)
+			if (field == other.field)
     			// fields are interned
 				return CompareChars(text, textLength, other.text, other.textLength);
 			else
