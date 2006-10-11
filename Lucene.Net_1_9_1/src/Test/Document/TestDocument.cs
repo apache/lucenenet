@@ -56,10 +56,7 @@ namespace Lucene.Net.Document
 			doc.Add(stringFld);
 			doc.Add(binaryFld);
 
-            System.Collections.IEnumerator iter = doc.Fields();
-            int count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(2, doc.GetFieldsCount());
 			
 			Assert.IsTrue(binaryFld.IsBinary());
 			Assert.IsTrue(binaryFld.IsStored());
@@ -74,10 +71,7 @@ namespace Lucene.Net.Document
 			
 			doc.Add(binaryFld2);
 			
-            iter = doc.Fields();
-            count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(3, count);
+            Assert.AreEqual(3, doc.GetFieldsCount());
 			
 			byte[][] binaryTests = doc.GetBinaryValues("binary");
 			
@@ -92,16 +86,10 @@ namespace Lucene.Net.Document
 			Assert.IsTrue(binaryTest2.Equals(binaryVal2));
 			
 			doc.RemoveField("string");
-            iter = doc.Fields();
-            count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(2, doc.GetFieldsCount());
 			
 			doc.RemoveFields("binary");
-            iter = doc.Fields();
-            count = 0;
-            while (iter.MoveNext()) count++;
-            Assert.AreEqual(0, count);
+            Assert.AreEqual(0, doc.GetFieldsCount());
 		}
 		
 		/// <summary> Tests {@link Document#RemoveField(String)} method for a brand new Document
@@ -112,40 +100,27 @@ namespace Lucene.Net.Document
 		[Test]
 		public virtual void  TestRemoveForNewDocument()
 		{
-            int count;
-            System.Collections.IEnumerator iter;
-
 			Lucene.Net.Documents.Document doc = MakeDocumentWithFields();
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(8, count);
+            Assert.AreEqual(8, doc.GetFieldsCount());
 			doc.RemoveFields("keyword");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(6, count);
+            Assert.AreEqual(6, doc.GetFieldsCount());
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
 			doc.RemoveFields("keyword"); // removing a field more than once
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(6, count);
+            Assert.AreEqual(6, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(5, count);
+            Assert.AreEqual(5, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveField("doesnotexists"); // removing non-existing fields is siltenlty ignored
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveFields("unindexed");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-			Assert.AreEqual(2, count);
+			Assert.AreEqual(2, doc.GetFieldsCount());
 			doc.RemoveFields("unstored");
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(0, count);
+            Assert.AreEqual(0, doc.GetFieldsCount());
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
-            iter = doc.Fields();    count = 0;  while (iter.MoveNext()) count++;
-            Assert.AreEqual(0, count);
+            Assert.AreEqual(0, doc.GetFieldsCount());
 		}
 		
         [Test]
