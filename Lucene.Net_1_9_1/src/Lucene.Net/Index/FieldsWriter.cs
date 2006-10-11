@@ -53,19 +53,15 @@ namespace Lucene.Net.Index
 			indexStream.WriteLong(fieldsStream.GetFilePointer());
 			
 			int storedCount = 0;
-			System.Collections.IEnumerator fields = doc.Fields();
-			while (fields.MoveNext())
+			foreach (Field field  in doc.Fields())
 			{
-				Field field = (Field) fields.Current;
 				if (field.IsStored())
 					storedCount++;
 			}
 			fieldsStream.WriteVInt(storedCount);
 			
-			fields = doc.Fields();
-			while (fields.MoveNext())
+			foreach (Field field in doc.Fields())
 			{
-				Field field = (Field) fields.Current;
 				if (field.IsStored())
 				{
 					fieldsStream.WriteVInt(fieldInfos.FieldNumber(field.Name()));
