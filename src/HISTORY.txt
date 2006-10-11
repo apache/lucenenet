@@ -2,8 +2,21 @@ Lucene.Net History
 ------------------
 
 
+10Oct06:
+	- Release:  Lucene.Net.1.9 RC1 build 007 "final"
+	- Fix: renamed Ldf function to Idf
+	- Fix: Lucene.Net.Documents.Document.Fields() -- changed from returning an IEnumerator to IEnumerable
+	- Fix: Lucene.Net.Search.TermQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.RangeQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.PrefixQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.PhraseQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.PhrasePrefixQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.MultiPhraseQuery.Clone() -- removed this unused method
+	- Fix: Lucene.Net.Search.MatchAllDocsQuery.Clone() -- removed this unused method
+
+
 29Sep06:
-	- Release:  Lucene.Net.1.9 build 006 "final"
+	- Release:  Lucene.Net.1.9 RC1 build 006 "final"
 	- Fix: Lucene.Net.Index.SegmentReader.cs and Lucene.Net.Index.TermInfosReader.cs -- fixed memory leak by removing unused finalizer.
 	- Fix: Lucene.Net.Index.Compression.SharpZipLibAdapter -- provide full name-space to ICompressionAdapter
 	- Fix: Lucene.Net.Store.FSDirectory.RenameFile() -- added a missing while loop
