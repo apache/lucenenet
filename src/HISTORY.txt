@@ -2,8 +2,9 @@ Lucene.Net History
 ------------------
 
 
-10Oct06:
+11Oct06:
 	- Release:  Lucene.Net.1.9 RC1 build 007 "final"
+	- Fix: Lucene.Net.Index.TermBuffer.CompareTo() -- don't cast to System.Object
 	- Fix: renamed Ldf function to Idf
 	- Fix: Lucene.Net.Documents.Document.Fields() -- changed from returning an IEnumerator to IEnumerable
 	- Fix: Lucene.Net.Search.TermQuery.Clone() -- removed this unused method
