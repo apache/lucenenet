@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 	}
 	public interface FieldCache
 	{
-		
+		void Close(IndexReader reader);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <code>field</code> as integers and returns an array

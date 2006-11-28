@@ -194,10 +194,5 @@ namespace Lucene.Net.Search
             h ^= (this.inclusive ? 0x2742E74A : 0);
             return h;
         }
-		// {{Aroush-1.9}} Do we need this?!
-		override public System.Object Clone()
-		{
-			return null;
-		}
 	}
 }

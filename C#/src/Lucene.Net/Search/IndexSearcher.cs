@@ -109,7 +109,12 @@ namespace Lucene.Net.Search
 		public override void  Close()
 		{
 			if (closeReader)
+			{
+				FieldSortedHitQueue.Close(reader); 
+				Lucene.Net.Search.FieldCache_Fields.DEFAULT.Close(reader);
+
 				reader.Close();
+			}
 		}
 		
 		// inherit javadoc
