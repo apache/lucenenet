@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2004 The Apache Software Foundation
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -127,7 +127,23 @@ namespace Lucene.Net.Search
         // the float field to sort by float
         // the string field to sort by string
         // the i18n field includes accented characters for testing locale-specific sorting
-        private System.String[][] data = new System.String[][]{new System.String[]{"A", "x a", "5", "4f", "c", "A-3", "p\u00EAche"}, new System.String[]{"B", "y a", "5", "3.4028235E38", "i", "B-10", "HAT"}, new System.String[]{"C", "x a b c", "2147483647", "1.0", "j", "A-2", "p\u00E9ch\u00E9"}, new System.String[]{"D", "y a b c", "-1", "0.0f", "a", "C-0", "HUT"}, new System.String[]{"E", "x a b c d", "5", "2f", "h", "B-8", "peach"}, new System.String[]{"F", "y a b c d", "2", "3.14159f", "g", "B-1", "H\u00C5T"}, new System.String[]{"G", "x a b c d", "3", "-1.0", "f", "C-100", "sin"}, new System.String[]{"H", "y a b c d", "0", "1.4E-45", "e", "C-88", "H\u00D8T"}, new System.String[]{"I", "x a b c d e f", "-2147483648", "1.0e+0", "d", "A-10", "s\u00EDn"}, new System.String[]{"J", "y a b c d e f", "4", ".5", "b", "C-7", "HOT"}, new System.String[]{"W", "g", "1", null, null, null, null}, new System.String[]{"X", "g", "1", "0.1", null, null, null}, new System.String[]{"Y", "g", "1", "0.2", null, null, null}, new System.String[]{"Z", "f g", null, null, null, null, null}};
+        private System.String[][] data = new System.String[][]{
+                               // tracer  contents         int            float           string   custom   i18n
+            new System.String[]{   "A",   "x a",           "5",           "4f",           "c",     "A-3",   "p\u00EAche"},
+            new System.String[]{   "B",   "y a",           "5",           "3.4028235E38", "i",     "B-10",  "HAT"},
+            new System.String[]{   "C",   "x a b c",       "2147483647",  "1.0",          "j",     "A-2",   "p\u00E9ch\u00E9"},
+            new System.String[]{   "D",   "y a b c",       "-1",          "0.0f",         "a",     "C-0",   "HUT"},
+            new System.String[]{   "E",   "x a b c d",     "5",           "2f",           "h",     "B-8",   "peach"},
+            new System.String[]{   "F",   "y a b c d",     "2",           "3.14159f",     "g",     "B-1",   "H\u00C5T"},
+            new System.String[]{   "G",   "x a b c d",     "3",           "-1.0",         "f",     "C-100", "sin"},
+            new System.String[]{   "H",   "y a b c d",     "0",           "1.4E-45",      "e",     "C-88",  "H\u00D8T"},
+            new System.String[]{   "I",   "x a b c d e f", "-2147483648", "1.0e+0",       "d",     "A-10",  "s\u00EDn"},
+            new System.String[]{   "J",   "y a b c d e f", "4",           ".5",           "b",     "C-7",   "HOT"},
+            new System.String[]{   "W",   "g",             "1",           null,           null,    null,    null},
+            new System.String[]{   "X",   "g",             "1",           "0.1",          null,    null,    null},
+            new System.String[]{   "Y",   "g",             "1",           "0.2",          null,    null,    null},
+            new System.String[]{   "Z",   "f g",           null,          null,           null,    null,    null}};
+
 		
 		// create an index of all the documents, or just the x, or just the y documents
 		private Searcher GetIndex(bool even, bool odd)

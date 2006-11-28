@@ -38,6 +38,21 @@ namespace Lucene.Net.Search
 	/// </version>
 	class FieldCacheImpl : FieldCache
 	{
+		public virtual void Close(IndexReader reader)
+		{ 
+			lock (this) 
+			{ 
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) cache[reader]; 
+				if (readerCache != null) 
+				{ 
+					readerCache.Clear(); 
+					readerCache = null;
+				}
+
+				cache.Remove(reader); 
+			} 
+		}
+
 		public class AnonymousClassIntParser : IntParser
 		{
 			public virtual int ParseInt(System.String value_Renamed)

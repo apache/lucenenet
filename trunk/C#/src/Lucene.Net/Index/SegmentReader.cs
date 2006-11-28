@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             }
             catch (System.Exception e)
             {
-                throw new System.Exception("cannot load SegmentReader class: " + e, e);
+                throw new System.SystemException("cannot load SegmentReader class: " + e, e);
             }
             instance.Init(dir, sis, closeDir, ownDir);
             instance.Initialize(si);
@@ -624,12 +624,12 @@ namespace Lucene.Net.Index
                     }
                     catch (System.Exception e)
                     {
-                        throw new System.Exception("cannot load default SegmentReader class: " + e, e); // {{Aroush-2.0}} How do we throw a RuntimeException
+                        throw new System.SystemException("cannot load default SegmentReader class: " + e, e);
                     }
                 }
                 catch (System.Exception e)
                 {
-                    throw new System.Exception("cannot load SegmentReader class: " + e, e); // {{Aroush-2.0}} How do we throw a RuntimeException
+                    throw new System.SystemException("cannot load SegmentReader class: " + e, e);
                 }
             }
         }
