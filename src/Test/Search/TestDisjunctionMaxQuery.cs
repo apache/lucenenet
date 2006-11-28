@@ -257,13 +257,13 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-                q.Add(q1, BooleanClause.Occur.SHOULD); //false,false);
+                q.Add(q1, BooleanClause.Occur.MUST); //false,false);
             }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-                q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
+                q.Add(q2, BooleanClause.Occur.MUST); //false,false);
             }
 			
 			

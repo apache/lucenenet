@@ -39,6 +39,21 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	public class FieldSortedHitQueue : PriorityQueue
 	{
+		internal static void Close(IndexReader reader) 
+		{ 
+			lock (Comparators.SyncRoot) 
+			{ 
+				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) Comparators[reader]; 
+				if (readerCache != null) 
+				{ 
+					readerCache.Clear(); 
+					readerCache = null;
+				} 
+
+				Comparators.Remove(reader);
+			} 
+		}
+
 		private class AnonymousClassScoreDocComparator : ScoreDocComparator
 		{
 			public AnonymousClassScoreDocComparator(int[] fieldOrder)

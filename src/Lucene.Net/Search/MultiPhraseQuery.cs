@@ -397,10 +397,5 @@ namespace Lucene.Net.Search
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ termArrays.GetHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
         }
-        // {{Aroush-1.9}} Do we need this?!
-        override public System.Object Clone()
-		{
-			return null;
-		}
 	}
 }

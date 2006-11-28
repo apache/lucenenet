@@ -255,6 +255,12 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public System.String FieldName(int fieldNumber)
 		{
+			FieldInfo fi = FieldInfo(fieldNumber);
+			if (fi != null)
+				return fi.name;
+			return "";
+
+			/*
 			try
 			{
 				return FieldInfo(fieldNumber).name;
@@ -263,6 +269,7 @@ namespace Lucene.Net.Index
 			{
 				return "";
 			}
+			*/
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
@@ -273,7 +280,12 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			try
+			if (fieldNumber > -1 && fieldNumber < byNumber.Count)
+				return (FieldInfo) byNumber[fieldNumber];
+			return null;
+
+			/*
+            try
 			{
 				return (FieldInfo) byNumber[fieldNumber];
 			}
@@ -281,6 +293,7 @@ namespace Lucene.Net.Index
 			{
 				return null;
 			}
+			*/
 		}
 		
 		public int Size()
