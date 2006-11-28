@@ -940,6 +940,10 @@
         <member name="M:Lucene.Net.Documents.Document.#ctor">
             <summary>Constructs a new document with no fields. </summary>
         </member>
+        <member name="M:Lucene.Net.Documents.Document.GetFieldsCount">
+            <summary>Returns the number of fields in this document</summary>
+            Added as a helper for Lucene.Net
+        </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Document.SetBoost(System.Single)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Document.GetBoost" -->
         <member name="M:Lucene.Net.Documents.Document.Add(Lucene.Net.Documents.Field)">
@@ -2288,7 +2292,7 @@
             <returns> true iff exclusive access is obtained
             </returns>
         </member>
-        <member name="M:Lucene.Net.Store.Lock.obtain(System.Int64)">
+        <member name="M:Lucene.Net.Store.Lock.Obtain(System.Int64)">
             <summary>Attempts to obtain an exclusive lock within amount
             of time given. Currently polls once per second until
             lockWaitTimeout is passed.
@@ -4615,7 +4619,7 @@
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Tf(System.Single)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(Lucene.Net.Index.Term,Lucene.Net.Search.Searcher)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(System.Collections.ICollection,Lucene.Net.Search.Searcher)" -->
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Ldf(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Coord(System.Int32,System.Int32)" -->
         <member name="M:Lucene.Net.Search.SimilarityDelegator.#ctor(Lucene.Net.Search.Similarity)">
             <summary>Construct a {@link Similarity} that delegates all methods to another.
@@ -4886,7 +4890,7 @@
         <member name="M:Lucene.Net.Search.DefaultSimilarity.SloppyFreq(System.Int32)">
             <summary>Implemented as <code>1 / (distance + 1)</code>. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.DefaultSimilarity.Ldf(System.Int32,System.Int32)">
+        <member name="M:Lucene.Net.Search.DefaultSimilarity.Idf(System.Int32,System.Int32)">
             <summary>Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. </summary>
         </member>
         <member name="M:Lucene.Net.Search.DefaultSimilarity.Coord(System.Int32,System.Int32)">
@@ -6060,6 +6064,18 @@
             Gets or sets a value indicating whether or not a thread is a background thread.
             </summary>
         </member>
+        <member name="T:SupportClass.FileSupport">
+            <summary>
+            Represents the methods to support some operations over files.
+            </summary>
+        </member>
+        <member name="M:SupportClass.FileSupport.GetFiles(System.IO.FileInfo)">
+            <summary>
+            Returns an array of abstract pathnames representing the files and directories of the specified path.
+            </summary>
+            <param name="path">The abstract pathname to list it childs.</param>
+            <returns>An array of abstract pathnames childs of the path specified or null if the path is not a directory</returns>
+        </member>
         <member name="T:SupportClass.Number">
             <summary>
             A simple class for number conversions.
@@ -6207,6 +6223,11 @@
             <param name="key"></param>
             <param name="defValue"></param>
             <returns></returns>
+        </member>
+        <member name="T:SupportClass.CompressionSupport">
+            <summary>
+            Use for .NET 1.1 Framework only.
+            </summary>
         </member>
         <member name="T:Lucene.Net.Search.PhrasePrefixQuery">
             <summary> PhrasePrefixQuery is a generalized version of PhraseQuery, with an added

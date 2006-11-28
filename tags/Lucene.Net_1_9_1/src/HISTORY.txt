@@ -2,6 +2,15 @@ Lucene.Net History
 ------------------
 
 
+27Nov06:
+	- Release:  Lucene.Net.1.9.1 build 004 "final"
+	- Lucene.Net.Index.FieldInfos.FieldName()/FieldInfo() -- avoid the use of exception throwing
+	- Lucene.Net.Search.StringIndex.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldCacheImpl.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldSortHitQueue.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.IndexSearcher.cs -- added a Close() method (to fix sort memory leak defect)
+
+
 11Oct06:
 	- Release:  Lucene.Net.1.9.1 build 003 "final"
 	- Fix: Lucene.Net.Index.TermBuffer.CompareTo() -- don't cast to System.Object
@@ -21,7 +30,7 @@ Lucene.Net History
 	- Fix: Lucene.Net.Index.SegmentReader.cs and Lucene.Net.Index.TermInfosReader.cs -- fixed memory leak by removing unused finalizer.
 	- Fix: Lucene.Net.Index.Compression.SharpZipLibAdapter -- provide full name-space to ICompressionAdapter
 	- Fix: Lucene.Net.Store.FSDirectory.RenameFile() -- added a missing while loop
-	- Fix: Lucene.Net.Store.MultiSearcher.CreateWeight() -- wasn't iterating over the term keys correctly
+	- Fix: Lucene.Net.Search.MultiSearcher.CreateWeight() -- wasn't iterating over the term keys correctly
 	- Fix: Lucene.Net.Search.Query.Combine() -- wasn't checking for the right key before adding
 
 
