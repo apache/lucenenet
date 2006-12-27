@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 		
 		public /*internal*/ bool omitNorms; // omit norms associated with indexed fields
 		
-        public bool IsIndexed()     // {{Aroush-2.0}} remove this function
+        public bool IsIndexed()
         {
             return isIndexed;
         }

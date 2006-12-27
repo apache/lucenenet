@@ -1100,7 +1100,7 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << (int) curChar;
 MatchLoop1: 
 					do 
 					{
@@ -1851,7 +1851,7 @@ MatchLoop1:
 		
 		protected internal virtual Token JjFillToken()
 		{
-			Token t = Token.newToken(jjmatchedKind);
+			Token t = Token.NewToken(jjmatchedKind);
 			t.kind = jjmatchedKind;
 			System.String im = jjstrLiteralImages[jjmatchedKind];
 			t.image = (im == null)?input_stream.GetImage():im;

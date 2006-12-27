@@ -25,20 +25,6 @@
             implementing this interface.  Can throw any java.io.IOException.
             </summary>
         </member>
-        <member name="M:Lucene.Net.Analysis.Standard.CharStream.GetColumn">
-            <summary> Returns the column position of the character last read.</summary>
-            <deprecated> 
-            </deprecated>
-            <seealso cref="!:getEndColumn">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Analysis.Standard.CharStream.GetLine">
-            <summary> Returns the line number of the character last read.</summary>
-            <deprecated> 
-            </deprecated>
-            <seealso cref="!:getEndLine">
-            </seealso>
-        </member>
         <member name="M:Lucene.Net.Analysis.Standard.CharStream.GetEndColumn">
             <summary> Returns the column number of the last character for current token (being
             matched after the last call to BeginTOken).
@@ -196,15 +182,6 @@
             field name for backward compatibility. 
             </summary>
         </member>
-        <member name="M:Lucene.Net.Analysis.Analyzer.TokenStream(System.IO.TextReader)">
-            <summary>Creates a TokenStream which tokenizes all the text in the provided
-            Reader.  Provided for backward compatibility only.
-            </summary>
-            <deprecated> use tokenStream(String, Reader) instead.
-            </deprecated>
-            <seealso cref="!:TokenStream(String, Reader)">
-            </seealso>
-        </member>
         <member name="M:Lucene.Net.Analysis.Analyzer.GetPositionIncrementGap(System.String)">
             <summary> Invoked before indexing a Field instance if
             terms have already been added to that field.  This allows custom
@@ -263,11 +240,6 @@
         </member>
         <member name="F:Lucene.Net.Analysis.TokenFilter.input">
             <summary>The source of tokens for this filter. </summary>
-        </member>
-        <member name="M:Lucene.Net.Analysis.TokenFilter.#ctor">
-            <summary>Call TokenFilter(TokenStream) instead.</summary>
-            <deprecated> 
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Analysis.TokenFilter.#ctor(Lucene.Net.Analysis.TokenStream)">
             <summary>Construct a token stream filtering the given input. </summary>
@@ -639,24 +611,7 @@
             TokenStream that are named in the array of words.
             </summary>
         </member>
-        <member name="M:Lucene.Net.Analysis.StopFilter.#ctor(Lucene.Net.Analysis.TokenStream,System.Collections.Hashtable)">
-            <summary> Constructs a filter which removes words from the input
-            TokenStream that are named in the Hashtable.
-            
-            </summary>
-            <deprecated> Use {@link #StopFilter(TokenStream, Set)} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Analysis.StopFilter.#ctor(Lucene.Net.Analysis.TokenStream,System.Collections.Hashtable,System.Boolean)">
-            <summary> Constructs a filter which removes words from the input
-            TokenStream that are named in the Hashtable.
-            If ignoreCase is true, all keys in the stopTable should already
-            be lowercased.
-            </summary>
-            <deprecated> Use {@link #StopFilter(TokenStream, Set)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Analysis.StopFilter.#ctor(Lucene.Net.Analysis.TokenStream,System.Collections.Hashtable,System.Boolean,System.Int32)">
             <summary> Construct a token stream filtering the given input.</summary>
             <param name="input">
             </param>
@@ -665,34 +620,15 @@
             <param name="ignoreCase">-Ignore case when stopping.  The stopWords set must be setup to contain only lower case words 
             </param>
         </member>
-        <member name="M:Lucene.Net.Analysis.StopFilter.#ctor(Lucene.Net.Analysis.TokenStream,System.Collections.Hashtable,System.Int32)">
+        <member name="M:Lucene.Net.Analysis.StopFilter.#ctor(Lucene.Net.Analysis.TokenStream,System.Collections.Hashtable)">
             <summary> Constructs a filter which removes words from the input
             TokenStream that are named in the Set.
             It is crucial that an efficient Set implementation is used
             for maximum performance.
             
             </summary>
-            <seealso cref="!:MakeStopSet(java.lang.String[])">
+            <seealso cref="M:Lucene.Net.Analysis.StopFilter.MakeStopSet(System.String[])">
             </seealso>
-        </member>
-        <member name="M:Lucene.Net.Analysis.StopFilter.MakeStopTable(System.String[])">
-            <summary> Builds a Hashtable from an array of stop words,
-            appropriate for passing into the StopFilter constructor.
-            This permits this table construction to be cached once when
-            an Analyzer is constructed.
-            
-            </summary>
-            <deprecated> Use {@link #MakeStopSet(String[])} instead.
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Analysis.StopFilter.makeStopTable(System.String[],System.Boolean)">
-            <summary> Builds a Hashtable from an array of stop words,
-            appropriate for passing into the StopFilter constructor.
-            This permits this table construction to be cached once when
-            an Analyzer is constructed.
-            </summary>
-            <deprecated> Use {@link #MakeStopSet(java.lang.String[], boolean)}  instead.
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Analysis.StopFilter.MakeStopSet(System.String[])">
             <summary> Builds a Set from an array of stop words,
@@ -701,7 +637,7 @@
             an Analyzer is constructed.
             
             </summary>
-            <seealso cref="!:MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+            <seealso cref="!:MakeStopSet(String[], boolean) passing false to ignoreCase">
             </seealso>
         </member>
         <member name="M:Lucene.Net.Analysis.StopFilter.MakeStopSet(System.String[],System.Boolean)">
@@ -806,29 +742,6 @@
             <returns> A HashSet with the reader's words
             </returns>
         </member>
-        <member name="M:Lucene.Net.Analysis.WordlistLoader.GetWordtable(System.String,System.String)">
-            <param name="path">     Path to the wordlist
-            </param>
-            <param name="wordfile"> Name of the wordlist
-            
-            </param>
-            <deprecated> Use {@link #GetWordSet(File)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Analysis.WordlistLoader.GetWordtable(System.String)">
-            <param name="wordfile"> Complete path to the wordlist
-            
-            </param>
-            <deprecated> Use {@link #GetWordSet(File)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Analysis.WordlistLoader.GetWordtable(System.IO.FileInfo)">
-            <param name="wordfile"> File object that points to the wordlist
-            
-            </param>
-            <deprecated> Use {@link #GetWordSet(File)} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Analysis.WordlistLoader.MakeWordTable(System.Collections.Hashtable)">
             <summary> Builds a wordlist table, using words as both keys and values
             for backward compatibility.
@@ -880,7 +793,7 @@
             {@link #Round(long, DateTools.Resolution)}
             </param>
             <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-            depeding on <code>resolution</code>
+            depeding on <code>resolution</code>; using UTC as timezone
             </returns>
         </member>
         <member name="M:Lucene.Net.Documents.DateTools.StringToTime(System.String)">
@@ -936,9 +849,16 @@
             set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT
             </returns>
         </member>
+        <member name="T:Lucene.Net.Documents.DateTools.Resolution">
+            <summary>Specifies the time granularity. </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Documents.Document" -->
         <member name="M:Lucene.Net.Documents.Document.#ctor">
             <summary>Constructs a new document with no fields. </summary>
+        </member>
+        <member name="M:Lucene.Net.Documents.Document.GetFieldsCount">
+            <summary>Returns the number of fields in this document</summary>
+            Added as a helper for Lucene.Net
         </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Document.SetBoost(System.Single)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Document.GetBoost" -->
@@ -1046,81 +966,6 @@
         </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Field.SetBoost(System.Single)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Documents.Field.GetBoost" -->
-        <member name="M:Lucene.Net.Documents.Field.Keyword(System.String,System.String)">
-            <summary>Constructs a String-valued Field that is not tokenized, but is indexed
-            and stored.  Useful for non-text fields, e.g. date or url.  
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-            Field(name, value, Field.Store.YES, Field.Index.UN_TOKENIZED)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.UnIndexed(System.String,System.String)">
-            <summary>Constructs a String-valued Field that is not tokenized nor indexed,
-            but is stored in the index, for return with hits.
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-            Field(name, value, Field.Store.YES, Field.Index.NO)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.Text(System.String,System.String)">
-            <summary>Constructs a String-valued Field that is tokenized and indexed,
-            and is stored in the index, for return with hits.  Useful for short text
-            fields, like "title" or "subject". Term vector will not be stored for this field.
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-            Field(name, value, Field.Store.YES, Field.Index.TOKENIZED)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.Keyword(System.String,System.DateTime)">
-            <summary>Constructs a Date-valued Field that is not tokenized and is indexed,
-            and stored in the index, for return with hits.
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-            Field(name, value, Field.Store.YES, Field.Index.UN_TOKENIZED)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.Text(System.String,System.String,System.Boolean)">
-            <summary>Constructs a String-valued Field that is tokenized and indexed,
-            and is stored in the index, for return with hits.  Useful for short text
-            fields, like "title" or "subject".
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)
-            Field(name, value, Field.Store.YES, Field.Index.TOKENIZED, storeTermVector)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.UnStored(System.String,System.String)">
-            <summary>Constructs a String-valued Field that is tokenized and indexed,
-            but that is not stored in the index.  Term vector will not be stored for this field.
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)
-            Field(name, value, Field.Store.NO, Field.Index.TOKENIZED)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.UnStored(System.String,System.String,System.Boolean)">
-            <summary>Constructs a String-valued Field that is tokenized and indexed,
-            but that is not stored in the index.
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)
-            Field(name, value, Field.Store.NO, Field.Index.TOKENIZED, storeTermVector)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.Text(System.String,System.IO.TextReader)">
-            <summary>Constructs a Reader-valued Field that is tokenized and indexed, but is
-            not stored in the index verbatim.  Useful for longer text fields, like
-            "body". Term vector will not be stored for this field.
-            </summary>
-            <deprecated> use {@link #Field(String, Reader) Field(name, value)} instead 
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.Text(System.String,System.IO.TextReader,System.Boolean)">
-            <summary>Constructs a Reader-valued Field that is tokenized and indexed, but is
-            not stored in the index verbatim.  Useful for longer text fields, like
-            "body".
-            </summary>
-            <deprecated> use {@link #Field(String, Reader, Field.TermVector)
-            Field(name, value, storeTermVector)} instead 
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Documents.Field.Name">
             <summary>Returns the name of the field as an interned string.
             For example "date", "title", "body", ...
@@ -1209,14 +1054,6 @@
             </param>
             <throws>  NullPointerException if name or reader is <code>null</code> </throws>
         </member>
-        <member name="M:Lucene.Net.Documents.Field.#ctor(System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
-            <summary>Create a field by specifying all parameters except for <code>storeTermVector</code>,
-            which is set to <code>false</code>.
-            
-            </summary>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index)} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Documents.Field.#ctor(System.String,System.Byte[],Lucene.Net.Documents.Field.Store)">
             <summary> Create a stored field with binary value. Optionally the value may be compressed.
             
@@ -1227,24 +1064,7 @@
             </param>
             <param name="store">How <code>value</code> should be stored (compressed or not.)
             </param>
-        </member>
-        <member name="M:Lucene.Net.Documents.Field.#ctor(System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
-            <summary> </summary>
-            <param name="name">The name of the field
-            </param>
-            <param name="string">The string to process
-            </param>
-            <param name="store">true if the field should store the string
-            </param>
-            <param name="index">true if the field should be indexed
-            </param>
-            <param name="token">true if the field should be tokenized
-            </param>
-            <param name="storeTermVector">true if we should store the Term Vector info
-            
-            </param>
-            <deprecated> use {@link #Field(String, String, Field.Store, Field.Index, Field.TermVector)} instead
-            </deprecated>
+            <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
         </member>
         <member name="M:Lucene.Net.Documents.Field.IsStored">
             <summary>True iff the value of the field is to be stored in the index for return
@@ -1301,6 +1121,9 @@
         <member name="M:Lucene.Net.Documents.Field.ToString">
             <summary>Prints a Field for human consumption. </summary>
         </member>
+        <member name="T:Lucene.Net.Documents.Field.Store">
+            <summary>Specifies whether and how a field should be stored. </summary>
+        </member>
         <member name="T:Lucene.Net.Util.Parameter">
             <summary> A serializable Enum class.</summary>
         </member>
@@ -1328,6 +1151,9 @@
         <member name="F:Lucene.Net.Documents.Field.Store.NO">
             <summary>Do not store the field value in the index. </summary>
         </member>
+        <member name="T:Lucene.Net.Documents.Field.Index">
+            <summary>Specifies whether and how a field should be indexed. </summary>
+        </member>
         <member name="F:Lucene.Net.Documents.Field.Index.NO">
             <summary>Do not index the field value. This field can thus not be searched,
             but one can still access its contents provided it is 
@@ -1353,6 +1179,9 @@
             less memory usage as norms take up one byte per indexed field
             for every document in the index.
             </summary>
+        </member>
+        <member name="T:Lucene.Net.Documents.Field.TermVector">
+            <summary>Specifies whether and how a field should have term vectors. </summary>
         </member>
         <member name="F:Lucene.Net.Documents.Field.TermVector.NO">
             <summary>Do not store term vectors. </summary>
@@ -1449,18 +1278,10 @@
         <member name="M:Lucene.Net.Store.Directory.FileLength(System.String)">
             <summary>Returns the length of a file in the directory. </summary>
         </member>
-        <member name="M:Lucene.Net.Store.Directory.createFile(System.String)">
-            <deprecated> use {@link #CreateOutput(String)} 
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Store.Directory.CreateOutput(System.String)">
             <summary>Creates a new, empty file in the directory with the given name.
             Returns a stream writing this file. 
             </summary>
-        </member>
-        <member name="M:Lucene.Net.Store.Directory.OpenFile(System.String)">
-            <deprecated> use {@link #OpenInput(String)} 
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Store.Directory.OpenInput(System.String)">
             <summary>Returns a stream reading an existing file. </summary>
@@ -2108,18 +1929,6 @@
             </summary>
             <throws>  IOException If WriteLock cannot be acquired. </throws>
         </member>
-        <member name="M:Lucene.Net.Index.IndexReader.Delete(System.Int32)">
-            <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
-            deleted it will not appear in TermDocs or TermPostitions enumerations.
-            Attempts to read its field with the {@link #document}
-            method will result in an error.  The presence of this document may still be
-            reflected in the {@link #docFreq} statistic, though
-            this will be corrected eventually as the index is further modified.
-            
-            </summary>
-            <deprecated> Use {@link #DeleteDocument(int docNum)} instead.
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Index.IndexReader.DeleteDocument(System.Int32)">
             <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
             deleted it will not appear in TermDocs or TermPostitions enumerations.
@@ -2131,23 +1940,8 @@
         </member>
         <member name="M:Lucene.Net.Index.IndexReader.DoDelete(System.Int32)">
             <summary>Implements deletion of the document numbered <code>docNum</code>.
-            Applications should call {@link #Delete(int)} or {@link #Delete(Term)}.
+            Applications should call {@link #DeleteDocument(int)} or {@link #DeleteDocuments(Term)}.
             </summary>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexReader.Delete(Lucene.Net.Index.Term)">
-            <summary>Deletes all documents containing <code>term</code>.
-            This is useful if one uses a document field to hold a unique ID string for
-            the document.  Then to delete such a document, one merely constructs a
-            term with the appropriate field and the unique ID string as its text and
-            passes it to this method.
-            See {@link #Delete(int)} for information about when this deletion will
-            become effective.
-            </summary>
-            <returns> the number of documents deleted
-            
-            </returns>
-            <deprecated> Use {@link #DeleteDocuments(Term term)} instead.
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.IndexReader.DeleteDocuments(Lucene.Net.Index.Term)">
             <summary>Deletes all documents containing <code>term</code>.
@@ -2187,58 +1981,6 @@
         </member>
         <member name="M:Lucene.Net.Index.IndexReader.Finalize">
             <summary>Release the write lock, if needed. </summary>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexReader.GetFieldNames">
-            <summary> Returns a list of all unique field names that exist in the index pointed
-            to by this IndexReader.
-            </summary>
-            <returns> Collection of Strings indicating the names of the fields
-            </returns>
-            <throws>  IOException if there is a problem with accessing the index </throws>
-            <summary> 
-            </summary>
-            <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexReader.GetFieldNames(System.Boolean)">
-            <summary> Returns a list of all unique field names that exist in the index pointed
-            to by this IndexReader.  The boolean argument specifies whether the fields
-            returned are indexed or not.
-            </summary>
-            <param name="indexed"><code>true</code> if only indexed fields should be returned;
-            <code>false</code> if only unindexed fields should be returned.
-            </param>
-            <returns> Collection of Strings indicating the names of the fields
-            </returns>
-            <throws>  IOException if there is a problem with accessing the index </throws>
-            <summary> 
-            </summary>
-            <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexReader.GetIndexedFieldNames(System.Boolean)">
-            <summary> </summary>
-            <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
-            else only indexed fields without term vector info 
-            </param>
-            <returns> Collection of Strings indicating the names of the fields
-            
-            </returns>
-            <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexReader.GetIndexedFieldNames(Lucene.Net.Documents.Field.TermVector)">
-            <summary> Get a list of unique field names that exist in this index, are indexed, and have
-            the specified term vector information.
-            
-            </summary>
-            <param name="tvSpec">specifies which term vector information should be available for the fields
-            </param>
-            <returns> Collection of Strings indicating the names of the fields
-            
-            </returns>
-            <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.IndexReader.GetFieldNames(Lucene.Net.Index.IndexReader.FieldOption)">
             <summary> Get a list of unique field names that exist in this index and have the specified
@@ -2288,7 +2030,7 @@
             <returns> true iff exclusive access is obtained
             </returns>
         </member>
-        <member name="M:Lucene.Net.Store.Lock.obtain(System.Int64)">
+        <member name="M:Lucene.Net.Store.Lock.Obtain(System.Int64)">
             <summary>Attempts to obtain an exclusive lock within amount
             of time given. Currently polls once per second until
             lockWaitTimeout is passed.
@@ -2309,13 +2051,6 @@
         </member>
         <member name="T:Lucene.Net.Store.Lock.With">
             <summary>Utility class for executing code with exclusive access. </summary>
-        </member>
-        <member name="M:Lucene.Net.Store.Lock.With.#ctor(Lucene.Net.Store.Lock)">
-            <summary>Constructs an executor that will grab the named lock.
-            Defaults lockWaitTimeout to Lock.COMMIT_LOCK_TIMEOUT.
-            </summary>
-            <deprecated> Kept only to avoid breaking existing code.
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Store.Lock.With.#ctor(Lucene.Net.Store.Lock,System.Int64)">
             <summary>Constructs an executor that will grab the named lock. </summary>
@@ -2509,34 +2244,11 @@
             </seealso>
             <throws>  IllegalStateException if the index is closed </throws>
         </member>
-        <member name="M:Lucene.Net.Index.IndexModifier.Delete(Lucene.Net.Index.Term)">
-            <summary> Deletes all documents containing <code>term</code>.
-            This is useful if one uses a document field to hold a unique ID string for
-            the document.  Then to delete such a document, one merely constructs a
-            term with the appropriate field and the unique ID string as its text and
-            passes it to this method.  Returns the number of documents deleted.
-            </summary>
-            <returns> the number of documents deleted
-            </returns>
-            <seealso cref="M:Lucene.Net.Index.IndexReader.DeleteDocuments(Lucene.Net.Index.Term)">
-            </seealso>
-            <throws>  IllegalStateException if the index is closed </throws>
-            <deprecated> Use {@link #DeleteDocuments(Term)} instead.
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.Index.IndexModifier.DeleteDocument(System.Int32)">
             <summary> Deletes the document numbered <code>docNum</code>.</summary>
             <seealso cref="M:Lucene.Net.Index.IndexReader.DeleteDocument(System.Int32)">
             </seealso>
             <throws>  IllegalStateException if the index is closed </throws>
-        </member>
-        <member name="M:Lucene.Net.Index.IndexModifier.Delete(System.Int32)">
-            <summary> Deletes the document numbered <code>docNum</code>.</summary>
-            <seealso cref="M:Lucene.Net.Index.IndexReader.DeleteDocument(System.Int32)">
-            </seealso>
-            <throws>  IllegalStateException if the index is closed </throws>
-            <deprecated> Use {@link #DeleteDocument(int)} instead.
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.IndexModifier.DocCount">
             <summary> Returns the number of documents currently in this index.</summary>
@@ -2630,10 +2342,10 @@
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Index.IndexWriter" -->
         <member name="F:Lucene.Net.Index.IndexWriter.WRITE_LOCK_TIMEOUT">
-            <summary> Default value is 1,000.</summary>
+            <summary> Default value for the write lock timeout (1,000).</summary>
         </member>
         <member name="F:Lucene.Net.Index.IndexWriter.COMMIT_LOCK_TIMEOUT">
-            <summary> Default value is 10,000.</summary>
+            <summary> Default value for the commit lock timeout (10,000).</summary>
         </member>
         <member name="F:Lucene.Net.Index.IndexWriter.DEFAULT_MERGE_FACTOR">
             <summary> Default value is 10. Change using {@link #SetMergeFactor(int)}.</summary>
@@ -2646,10 +2358,6 @@
         </member>
         <member name="F:Lucene.Net.Index.IndexWriter.DEFAULT_TERM_INDEX_INTERVAL">
             <summary> Default value is 128. Change using {@link #SetTermIndexInterval(int)}.</summary>
-        </member>
-        <member name="F:Lucene.Net.Index.IndexWriter.DEFAULT_MIN_MERGE_DOCS">
-            <deprecated> use {@link #DEFAULT_MAX_BUFFERED_DOCS} instead
-            </deprecated>
         </member>
         <member name="F:Lucene.Net.Index.IndexWriter.DEFAULT_MAX_MERGE_DOCS">
             <summary> Default value is {@link Integer#MAX_VALUE}. Change using {@link #SetMaxMergeDocs(int)}.</summary>
@@ -2814,6 +2522,20 @@
             <seealso cref="!:setInfoStream">
             </seealso>
         </member>
+        <member name="M:Lucene.Net.Index.IndexWriter.SetCommitLockTimeout(System.Int64)">
+            <summary> Sets the maximum time to wait for a commit lock (in milliseconds).</summary>
+        </member>
+        <member name="M:Lucene.Net.Index.IndexWriter.GetCommitLockTimeout">
+            <seealso cref="!:setCommitLockTimeout">
+            </seealso>
+        </member>
+        <member name="M:Lucene.Net.Index.IndexWriter.SetWriteLockTimeout(System.Int64)">
+            <summary> Sets the maximum time to wait for a write lock (in milliseconds).</summary>
+        </member>
+        <member name="M:Lucene.Net.Index.IndexWriter.GetWriteLockTimeout">
+            <seealso cref="!:#setWriteLockTimeout">
+            </seealso>
+        </member>
         <member name="M:Lucene.Net.Index.IndexWriter.Close">
             <summary>Flushes all changes to an index and closes all associated files. </summary>
         </member>
@@ -2842,8 +2564,6 @@
             By default, no more than 10,000 terms will be indexed for a field.
             
             </summary>
-            <deprecated> use {@link #setMaxFieldLength} instead
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.IndexWriter.AddDocument(Lucene.Net.Documents.Document)">
             <summary> Adds a document to this index.  If the document contains more than
@@ -2863,8 +2583,6 @@
         <!-- Badly formed XML comment ignored for member "F:Lucene.Net.Index.IndexWriter.maxMergeDocs" -->
         <member name="F:Lucene.Net.Index.IndexWriter.infoStream">
             <summary>If non-null, information about merges will be printed to this.</summary>
-            <deprecated> use {@link #setInfoStream} instead 
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.IndexWriter.Optimize">
             <summary>Merges all segments together into a single segment, optimizing an index
@@ -3002,14 +2720,6 @@
             If no such fields existed, the method returns null.
             </summary>
         </member>
-        <member name="M:Lucene.Net.Index.MultiReader.GetFieldNames">
-            <seealso cref="M:Lucene.Net.Index.IndexReader.GetFieldNames">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Index.MultiReader.GetFieldNames(System.Boolean)">
-            <seealso cref="!:IndexReader.GetFieldNames(boolean)">
-            </seealso>
-        </member>
         <member name="M:Lucene.Net.Index.MultiReader.GetFieldNames(Lucene.Net.Index.IndexReader.FieldOption)">
             <seealso cref="M:Lucene.Net.Index.IndexReader.GetFieldNames(Lucene.Net.Index.IndexReader.FieldOption)">
             </seealso>
@@ -3128,24 +2838,6 @@
         </member>
         <member name="F:Lucene.Net.Index.SegmentReader.IMPL">
             <summary>The class which implements SegmentReader. </summary>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentReader.GetFieldNames">
-            <seealso cref="M:Lucene.Net.Index.IndexReader.GetFieldNames">
-            </seealso>
-            <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentReader.GetFieldNames(System.Boolean)">
-            <seealso cref="!:IndexReader.GetFieldNames(boolean)">
-            </seealso>
-            <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentReader.GetIndexedFieldNames(Lucene.Net.Documents.Field.TermVector)">
-            <seealso cref="!:IndexReader.GetIndexedFieldNames(Field.TermVector tvSpec)">
-            </seealso>
-            <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Index.SegmentReader.GetFieldNames(Lucene.Net.Index.IndexReader.FieldOption)">
             <seealso cref="!:IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
@@ -3543,20 +3235,6 @@
             implementing this interface.  Can throw any java.io.IOException.
             </summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.CharStream.GetColumn">
-            <summary> Returns the column position of the character last read.</summary>
-            <deprecated> 
-            </deprecated>
-            <seealso cref="!:getEndColumn">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.CharStream.GetLine">
-            <summary> Returns the line number of the character last read.</summary>
-            <deprecated> 
-            </deprecated>
-            <seealso cref="!:getEndLine">
-            </seealso>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.CharStream.GetEndColumn">
             <summary> Returns the column number of the last character for current token (being
             matched after the last call to BeginTOken).
@@ -3630,14 +3308,6 @@
             </version>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.QueryParsers.QueryParser" -->
-        <member name="F:Lucene.Net.QueryParsers.QueryParser.DEFAULT_OPERATOR_OR">
-            <deprecated> use {@link #OR_OPERATOR} instead 
-            </deprecated>
-        </member>
-        <member name="F:Lucene.Net.QueryParsers.QueryParser.DEFAULT_OPERATOR_AND">
-            <deprecated> use {@link #AND_OPERATOR} instead 
-            </deprecated>
-        </member>
         <member name="F:Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR">
             <summary>Alternative form of QueryParser.Operator.AND </summary>
         </member>
@@ -3646,20 +3316,6 @@
         </member>
         <member name="F:Lucene.Net.QueryParsers.QueryParser.operator_Renamed">
             <summary>The actual operator that parser uses to combine query terms </summary>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.Parse(System.String,System.String,Lucene.Net.Analysis.Analyzer)">
-            <summary>Parses a query string, returning a {@link Lucene.Net.search.Query}.</summary>
-            <param name="query"> the query string to be parsed.
-            </param>
-            <param name="field"> the default field for query terms.
-            </param>
-            <param name="analyzer">  used to find terms in the query text.
-            </param>
-            <throws>  ParseException if the parsing fails </throws>
-            <summary> 
-            </summary>
-            <deprecated> Use an instance of QueryParser and the {@link #Parse(String)} method instead.
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.#ctor(System.String,Lucene.Net.Analysis.Analyzer)">
             <summary>Constructs a query parser.</summary>
@@ -3708,17 +3364,6 @@
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetPhraseSlop">
             <summary> Gets the default slop for phrases.</summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.SetOperator(System.Int32)">
-            <summary> Sets the boolean operator of the QueryParser.
-            In default mode (<code>DEFAULT_OPERATOR_OR</code>) terms without any modifiers
-            are considered optional: for example <code>capital of Hungary</code> is equal to
-            <code>capital OR of OR Hungary</code>.<br/>
-            In <code>DEFAULT_OPERATOR_AND</code> terms are considered to be in conjuction: the
-            above mentioned query is parsed as <code>capital AND of AND Hungary</code>
-            </summary>
-            <deprecated> use {@link #SetDefaultOperator(QueryParser.Operator)} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.Operator)">
             <summary> Sets the boolean operator of the QueryParser.
             In default mode (<code>OR_OPERATOR</code>) terms without any modifiers
@@ -3728,33 +3373,15 @@
             above mentioned query is parsed as <code>capital AND of AND Hungary</code>
             </summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetOperator">
-            <summary> Gets implicit operator setting, which will be either DEFAULT_OPERATOR_AND
-            or DEFAULT_OPERATOR_OR.
-            </summary>
-            <deprecated> use {@link #GetDefaultOperator()} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetDefaultOperator">
             <summary> Gets implicit operator setting, which will be either AND_OPERATOR
             or OR_OPERATOR.
             </summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.SetLowercaseWildcardTerms(System.Boolean)">
-            <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
-            lower-cased or not.  Default is <code>true</code>.
-            </summary>
-            <deprecated> use {@link #SetLowercaseExpandedTerms(boolean)} instead
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.SetLowercaseExpandedTerms(System.Boolean)">
             <summary> Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
             lower-cased or not.  Default is <code>true</code>.
             </summary>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetLowercaseWildcardTerms">
-            <deprecated> use {@link #GetLowercaseExpandedTerms()} instead
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetLowercaseExpandedTerms">
             <seealso cref="!:SetLowercaseExpandedTerms(boolean)">
@@ -3766,29 +3393,9 @@
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetLocale">
             <summary> Returns current locale, allowing access by subclasses.</summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFieldQuery(System.String,Lucene.Net.Analysis.Analyzer,System.String)">
-            <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-            use class member analyzer.
-            
-            </summary>
-            <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
-            </exception>
-            <deprecated> use {@link #GetFieldQuery(String, String)}
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFieldQuery(System.String,System.String)">
             <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
             </exception>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFieldQuery(System.String,Lucene.Net.Analysis.Analyzer,System.String,System.Int32)">
-            <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-            use class member analyzer.
-            
-            </summary>
-            <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
-            </exception>
-            <deprecated> use {@link #GetFieldQuery(String, String, int)}
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFieldQuery(System.String,System.String,System.Int32)">
             <summary> Base implementation delegates to {@link #GetFieldQuery(String,String)}.
@@ -3798,16 +3405,6 @@
             </summary>
             <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
             </exception>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetRangeQuery(System.String,Lucene.Net.Analysis.Analyzer,System.String,System.String,System.Boolean)">
-            <summary> Note that parameter analyzer is ignored. Calls inside the parser always
-            use class member analyzer.
-            
-            </summary>
-            <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
-            </exception>
-            <deprecated> use {@link #GetRangeQuery(String, String, String, boolean)}
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetRangeQuery(System.String,System.String,System.String,System.Boolean)">
             <exception cref="T:Lucene.Net.QueryParsers.ParseException">throw in overridden method to disallow
@@ -3851,10 +3448,6 @@
         </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.QueryParser.GetWildcardQuery(System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.QueryParser.GetPrefixQuery(System.String,System.String)" -->
-        <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFuzzyQuery(System.String,System.String)">
-            <deprecated> use {@link #GetFuzzyQuery(String, String, float)}
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.QueryParser.GetFuzzyQuery(System.String,System.String,System.Single)">
             <summary> Factory method for generating a query (similar to
             {@link #getWildcardQuery}). Called when parser parses
@@ -3887,18 +3480,6 @@
             Use {@link QueryParser#setDefaultOperator} to change it.
             </summary>
         </member>
-        <member name="F:Lucene.Net.QueryParsers.MultiFieldQueryParser.NORMAL_FIELD">
-            <deprecated> 
-            </deprecated>
-        </member>
-        <member name="F:Lucene.Net.QueryParsers.MultiFieldQueryParser.REQUIRED_FIELD">
-            <deprecated> 
-            </deprecated>
-        </member>
-        <member name="F:Lucene.Net.QueryParsers.MultiFieldQueryParser.PROHIBITED_FIELD">
-            <deprecated> 
-            </deprecated>
-        </member>
         <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.#ctor(System.String[],Lucene.Net.Analysis.Analyzer)">
             <summary> Creates a MultiFieldQueryParser.
             
@@ -3920,59 +3501,8 @@
             what fields they appear.</p>
             </summary>
         </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.GetFieldQuery(System.String,Lucene.Net.Analysis.Analyzer,System.String)">
-            <deprecated> use {@link #GetFieldQuery(String, String)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.GetFuzzyQuery(System.String,System.String)">
-            <deprecated> use {@link #GetFuzzyQuery(String, String, float)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.GetRangeQuery(System.String,Lucene.Net.Analysis.Analyzer,System.String,System.String,System.Boolean)">
-            <throws>  ParseException </throws>
-            <deprecated> use {@link #GetRangeQuery(String, String, String, boolean)}
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.#ctor(Lucene.Net.QueryParsers.QueryParserTokenManager)">
-            <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.#ctor(Lucene.Net.QueryParsers.CharStream)">
-            <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.#ctor(System.String,Lucene.Net.Analysis.Analyzer)">
-            <deprecated> use {@link #MultiFieldQueryParser(String[], Analyzer)} instead
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String,System.String[],Lucene.Net.Analysis.Analyzer)">
-            <summary> Parses a query which searches on the fields specified.
-            If x fields are specified, this effectively constructs:
-            
-            <code>
-            (field1:query) (field2:query) (field3:query)...(fieldx:query)
-            </code>
-            
-            </summary>
-            <param name="query">Query string to parse
-            </param>
-            <param name="fields">Fields to search on
-            </param>
-            <param name="analyzer">Analyzer to use
-            </param>
-            <throws>  ParseException if query parsing fails </throws>
-            <throws>  TokenMgrError if query parsing fails </throws>
-            <deprecated> use {@link #Parse(String)} instead but note that it
-            returns a different query for queries where all terms are required:
-            its query excepts all terms, no matter in what field they occur whereas
-            the query built by this (deprecated) method expected all terms in all fields 
-            at the same time.
-            </deprecated>
-        </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String[],System.String[],Lucene.Net.Analysis.Analyzer)" -->
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String,System.String[],System.Int32[],Lucene.Net.Analysis.Analyzer)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String,System.String[],Lucene.Net.Search.BooleanClause.Occur[],Lucene.Net.Analysis.Analyzer)" -->
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String[],System.String[],System.Int32[],Lucene.Net.Analysis.Analyzer)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.QueryParsers.MultiFieldQueryParser.Parse(System.String[],System.String[],Lucene.Net.Search.BooleanClause.Occur[],Lucene.Net.Analysis.Analyzer)" -->
         <member name="T:Lucene.Net.QueryParsers.ParseException">
             <summary> This exception is thrown when parse errors are encountered.
@@ -4158,7 +3688,35 @@
             from this method for such cases in the release version of your parser.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.MultiTermQuery" -->
+        <member name="T:Lucene.Net.Search.Spans.Spans">
+            <summary>Expert: an enumeration of span matches.  Used to implement span searching.
+            Each span represents a range of term positions within a document.  Matches
+            are enumerated in order, by increasing document number, within that by
+            increasing start position and finally by increasing end position. 
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.Spans.Next">
+            <summary>Move to the next match, returning true iff any such exists. </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Spans.Spans.SkipTo(System.Int32)" -->
+        <member name="M:Lucene.Net.Search.Spans.Spans.Doc">
+            <summary>Returns the document number of the current match.  Initially invalid. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.Spans.Start">
+            <summary>Returns the start position of the current match.  Initially invalid. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.Spans.End">
+            <summary>Returns the end position of the current match.  Initially invalid. </summary>
+        </member>
+        <member name="T:Lucene.Net.Search.Spans.NearSpans.SpansCell">
+            <summary>Wraps a Spans, and can be used to form a linked list. </summary>
+        </member>
+        <member name="T:Lucene.Net.Search.Spans.SpanFirstQuery">
+            <summary>Matches spans near the beginning of a field. </summary>
+        </member>
+        <member name="T:Lucene.Net.Search.Spans.SpanQuery">
+            <summary>Base class for span-based queries. </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.Query" -->
         <member name="M:Lucene.Net.Search.Query.SetBoost(System.Single)">
             <summary>Sets the boost for this query clause to <code>b</code>.  Documents
@@ -4217,47 +3775,6 @@
         <member name="M:Lucene.Net.Search.Query.Clone">
             <summary>Returns a clone of this query. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.MultiTermQuery.#ctor(Lucene.Net.Index.Term)">
-            <summary>Constructs a query for terms matching <code>term</code>. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.MultiTermQuery.GetTerm">
-            <summary>Returns the pattern term. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.MultiTermQuery.GetEnum(Lucene.Net.Index.IndexReader)">
-            <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.MultiTermQuery.ToString(System.String)">
-            <summary>Prints a user-readable version of this query. </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.FilteredTermEnum" -->
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.TermCompare(Lucene.Net.Index.Term)">
-            <summary>Equality compare on the term </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.Difference">
-            <summary>Equality measure on the term </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.EndEnum">
-            <summary>Indiciates the end of the enumeration has been reached </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.DocFreq">
-            <summary> Returns the docFreq of the current Term in the enumeration.
-            Returns -1 if no Term matches or all terms have been enumerated.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.Next">
-            <summary>Increments the enumeration to the next element.  True if one exists. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.Term">
-            <summary>Returns the current Term in the enumeration.
-            Returns null if no Term matches or all terms have been enumerated. 
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.FilteredTermEnum.Close">
-            <summary>Closes the enumeration to further activity, freeing resources.  </summary>
-        </member>
-        <member name="T:Lucene.Net.Search.Spans.SpanQuery">
-            <summary>Base class for span-based queries. </summary>
-        </member>
         <member name="M:Lucene.Net.Search.Spans.SpanQuery.GetSpans(Lucene.Net.Index.IndexReader)">
             <summary>Expert: Returns the matches for this query in an index.  Used internally
             to search for spans. 
@@ -4268,32 +3785,10 @@
         </member>
         <member name="M:Lucene.Net.Search.Spans.SpanQuery.GetTerms">
             <summary>Returns a collection of all terms matched by this query.</summary>
-        </member>
-        <member name="T:Lucene.Net.Search.Spans.Spans">
-            <summary>Expert: an enumeration of span matches.  Used to implement span searching.
-            Each span represents a range of term positions within a document.  Matches
-            are enumerated in order, by increasing document number, within that by
-            increasing start position and finally by increasing end position. 
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Spans.Spans.Next">
-            <summary>Move to the next match, returning true iff any such exists. </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Spans.Spans.SkipTo(System.Int32)" -->
-        <member name="M:Lucene.Net.Search.Spans.Spans.Doc">
-            <summary>Returns the document number of the current match.  Initially invalid. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Spans.Spans.Start">
-            <summary>Returns the start position of the current match.  Initially invalid. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Spans.Spans.End">
-            <summary>Returns the end position of the current match.  Initially invalid. </summary>
-        </member>
-        <member name="T:Lucene.Net.Search.Spans.NearSpans.SpansCell">
-            <summary>Wraps a Spans, and can be used to form a linked list. </summary>
-        </member>
-        <member name="T:Lucene.Net.Search.Spans.SpanFirstQuery">
-            <summary>Matches spans near the beginning of a field. </summary>
+            <deprecated> use extractTerms instead
+            </deprecated>
+            <seealso cref="!:Query#extractTerms(Set)">
+            </seealso>
         </member>
         <member name="M:Lucene.Net.Search.Spans.SpanFirstQuery.#ctor(Lucene.Net.Search.Spans.SpanQuery,System.Int32)">
             <summary>Construct a SpanFirstQuery matching spans in <code>match</code> whose end
@@ -4305,6 +3800,13 @@
         </member>
         <member name="M:Lucene.Net.Search.Spans.SpanFirstQuery.GetEnd">
             <summary>Return the maximum end position permitted in a match. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanFirstQuery.GetTerms">
+            <summary>Returns a collection of all terms matched by this query.</summary>
+            <deprecated> use ExtractTerms instead
+            </deprecated>
+            <seealso cref="!:#ExtractTerms(Set)">
+            </seealso>
         </member>
         <member name="T:Lucene.Net.Search.Spans.SpanNearQuery">
             <summary>Matches spans which are near one another.  One can specify <i>slop</i>, the
@@ -4328,6 +3830,13 @@
         <member name="M:Lucene.Net.Search.Spans.SpanNearQuery.IsInOrder">
             <summary>Return true if matches are required to be in-order.</summary>
         </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanNearQuery.GetTerms">
+            <summary>Returns a collection of all terms matched by this query.</summary>
+            <deprecated> use extractTerms instead
+            </deprecated>
+            <seealso cref="!:#extractTerms(Set)">
+            </seealso>
+        </member>
         <member name="M:Lucene.Net.Search.Spans.SpanNearQuery.Equals(System.Object)">
             <summary>Returns true iff <code>o</code> is equal to this. </summary>
         </member>
@@ -4345,6 +3854,16 @@
         <member name="M:Lucene.Net.Search.Spans.SpanNotQuery.GetExclude">
             <summary>Return the SpanQuery whose matches must not overlap those returned. </summary>
         </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanNotQuery.GetTerms">
+            <summary>Returns a collection of all terms matched by this query.</summary>
+            <deprecated> use extractTerms instead
+            </deprecated>
+            <seealso cref="!:#ExtractTerms(Set)">
+            </seealso>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanNotQuery.Equals(System.Object)">
+            <summary>Returns true iff <code>o</code> is equal to this. </summary>
+        </member>
         <member name="T:Lucene.Net.Search.Spans.SpanOrQuery">
             <summary>Matches the union of its clauses.</summary>
         </member>
@@ -4353,6 +3872,13 @@
         </member>
         <member name="M:Lucene.Net.Search.Spans.SpanOrQuery.GetClauses">
             <summary>Return the clauses whose spans are matched. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanOrQuery.GetTerms">
+            <summary>Returns a collection of all terms matched by this query.</summary>
+            <deprecated> use ExtractTerms instead
+            </deprecated>
+            <seealso cref="!:#ExtractTerms(Set)">
+            </seealso>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.Scorer" -->
         <member name="M:Lucene.Net.Search.Scorer.#ctor(Lucene.Net.Search.Similarity)">
@@ -4400,6 +3926,13 @@
         <member name="M:Lucene.Net.Search.Spans.SpanTermQuery.GetTerm">
             <summary>Return the term whose spans are matched. </summary>
         </member>
+        <member name="M:Lucene.Net.Search.Spans.SpanTermQuery.GetTerms">
+            <summary>Returns a collection of all terms matched by this query.</summary>
+            <deprecated> use extractTerms instead
+            </deprecated>
+            <seealso cref="!:#extractTerms(Set)">
+            </seealso>
+        </member>
         <member name="M:Lucene.Net.Search.Spans.SpanTermQuery.Equals(System.Object)">
             <summary>Returns true iff <code>o</code> is equal to this. </summary>
         </member>
@@ -4430,24 +3963,7 @@
         </member>
         <member name="F:Lucene.Net.Search.BooleanClause.query">
             <summary>The query whose matching documents are combined by the boolean query.</summary>
-            <deprecated> use {@link #SetQuery(Query)} instead 
-            </deprecated>
         </member>
-        <member name="F:Lucene.Net.Search.BooleanClause.required">
-            <summary>If true, documents documents which <i>do not</i>
-            match this sub-query will <i>not</i> match the boolean query.
-            </summary>
-            <deprecated> use {@link #SetOccur(BooleanClause.Occur)} instead 
-            </deprecated>
-        </member>
-        <member name="F:Lucene.Net.Search.BooleanClause.prohibited">
-            <summary>If true, documents documents which <i>do</i>
-            match this sub-query will <i>not</i> match the boolean query.
-            </summary>
-            <deprecated> use {@link #SetOccur(BooleanClause.Occur)} instead 
-            </deprecated>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.BooleanClause.#ctor(Lucene.Net.Search.Query,System.Boolean,System.Boolean)" -->
         <member name="M:Lucene.Net.Search.BooleanClause.#ctor(Lucene.Net.Search.Query,Lucene.Net.Search.BooleanClause.Occur)">
             <summary>Constructs a BooleanClause.</summary>
         </member>
@@ -4456,6 +3972,9 @@
         </member>
         <member name="M:Lucene.Net.Search.BooleanClause.GetHashCode">
             <summary>Returns a hash code value for this object.</summary>
+        </member>
+        <member name="T:Lucene.Net.Search.BooleanClause.Occur">
+            <summary>Specifies how terms may occur in matching documents. </summary>
         </member>
         <member name="F:Lucene.Net.Search.BooleanClause.Occur.MUST">
             <summary>Use this operator for terms that <i>must</i> appear in the matching documents. </summary>
@@ -4477,10 +3996,6 @@
             queries, e.g. {@link TermQuery}s, {@link PhraseQuery}s or other
             BooleanQuerys.
             </summary>
-        </member>
-        <member name="F:Lucene.Net.Search.BooleanQuery.maxClauseCount">
-            <deprecated> use {@link #SetMaxClauseCount(int)} instead
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Search.BooleanQuery.GetMaxClauseCount">
             <summary>Return the maximum number of clauses permitted, 1024 by default.
@@ -4543,7 +4058,6 @@
             which must be satisifed.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.BooleanQuery.Add(Lucene.Net.Search.Query,System.Boolean,System.Boolean)" -->
         <member name="M:Lucene.Net.Search.BooleanQuery.Add(Lucene.Net.Search.Query,Lucene.Net.Search.BooleanClause.Occur)">
             <summary>Adds a clause to a boolean query.
             
@@ -4615,7 +4129,7 @@
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Tf(System.Single)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(Lucene.Net.Index.Term,Lucene.Net.Search.Searcher)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(System.Collections.ICollection,Lucene.Net.Search.Searcher)" -->
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Ldf(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Idf(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Similarity.Coord(System.Int32,System.Int32)" -->
         <member name="M:Lucene.Net.Search.SimilarityDelegator.#ctor(Lucene.Net.Search.Similarity)">
             <summary>Construct a {@link Similarity} that delegates all methods to another.
@@ -4824,53 +4338,6 @@
         <member name="M:Lucene.Net.Search.ConstantScoreRangeQuery.GetHashCode">
             <summary>Returns a hash code value for this object.</summary>
         </member>
-        <member name="T:Lucene.Net.Search.DateFilter">
-            <summary> A Filter that restricts search results to a range of time.
-            
-            <p>For this to work, documents must have been indexed with a
-            {@link DateField}.</p>
-            
-            </summary>
-            <deprecated> Instead, use {@link RangeFilter} combined with 
-            {@link Lucene.Net.document.DateTools}.
-            </deprecated>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.#ctor(System.String,System.DateTime,System.DateTime)">
-            <summary> Constructs a filter for field <code>f</code> matching dates
-            between <code>from</code> and <code>to</code> inclusively.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.#ctor(System.String,System.Int64,System.Int64)">
-            <summary> Constructs a filter for field <code>f</code> matching times
-            between <code>from</code> and <code>to</code> inclusively.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.Before(System.String,System.DateTime)">
-            <summary> Constructs a filter for field <code>f</code> matching
-            dates on or before before <code>date</code>.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.Before(System.String,System.Int64)">
-            <summary> Constructs a filter for field <code>f</code> matching times
-            on or before <code>time</code>.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.After(System.String,System.DateTime)">
-            <summary> Constructs a filter for field <code>f</code> matching
-            dates on or after <code>date</code>.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.After(System.String,System.Int64)">
-            <summary> Constructs a filter for field <code>f</code> matching
-            times on or after <code>time</code>.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.DateFilter.Bits(Lucene.Net.Index.IndexReader)">
-            <summary> Returns a BitSet with true for documents which should be
-            permitted in search results, and false for those that should
-            not.
-            </summary>
-        </member>
         <member name="T:Lucene.Net.Search.DefaultSimilarity">
             <summary>Expert: Default scoring implementation. </summary>
         </member>
@@ -4886,7 +4353,7 @@
         <member name="M:Lucene.Net.Search.DefaultSimilarity.SloppyFreq(System.Int32)">
             <summary>Implemented as <code>1 / (distance + 1)</code>. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.DefaultSimilarity.Ldf(System.Int32,System.Int32)">
+        <member name="M:Lucene.Net.Search.DefaultSimilarity.Idf(System.Int32,System.Int32)">
             <summary>Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. </summary>
         </member>
         <member name="M:Lucene.Net.Search.DefaultSimilarity.Coord(System.Int32,System.Int32)">
@@ -5190,13 +4657,13 @@
         <member name="F:Lucene.Net.Search.FieldCacheImpl.cache">
             <summary>The internal cache. Maps Entry to array of interpreted term values. *</summary>
         </member>
-        <member name="M:Lucene.Net.Search.FieldCacheImpl.Lookup(Lucene.Net.Index.IndexReader,System.String,System.Int32)">
+        <member name="M:Lucene.Net.Search.FieldCacheImpl.Lookup(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Globalization.CultureInfo)">
             <summary>See if an object is in the cache. </summary>
         </member>
         <member name="M:Lucene.Net.Search.FieldCacheImpl.Lookup(Lucene.Net.Index.IndexReader,System.String,System.Object)">
             <summary>See if a custom object is in the cache. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.FieldCacheImpl.Store(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Object)">
+        <member name="M:Lucene.Net.Search.FieldCacheImpl.Store(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Globalization.CultureInfo,System.Object)">
             <summary>Put an object into the cache. </summary>
         </member>
         <member name="M:Lucene.Net.Search.FieldCacheImpl.Store(Lucene.Net.Index.IndexReader,System.String,System.Object,System.Object)">
@@ -5211,7 +4678,7 @@
         <member name="T:Lucene.Net.Search.FieldCacheImpl.Entry">
             <summary>Expert: Every key in the internal cache is of this type. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.FieldCacheImpl.Entry.#ctor(System.String,System.Int32)">
+        <member name="M:Lucene.Net.Search.FieldCacheImpl.Entry.#ctor(System.String,System.Int32,System.Globalization.CultureInfo)">
             <summary>Creates one of these objects. </summary>
         </member>
         <member name="M:Lucene.Net.Search.FieldCacheImpl.Entry.#ctor(System.String,System.Object)">
@@ -5350,10 +4817,10 @@
             caches comparators instead of term values. 
             </summary>
         </member>
-        <member name="M:Lucene.Net.Search.FieldSortedHitQueue.Lookup(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Object)">
+        <member name="M:Lucene.Net.Search.FieldSortedHitQueue.Lookup(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Globalization.CultureInfo,System.Object)">
             <summary>Returns a comparator if it is in the cache. </summary>
         </member>
-        <member name="M:Lucene.Net.Search.FieldSortedHitQueue.Store(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Object,System.Object)">
+        <member name="M:Lucene.Net.Search.FieldSortedHitQueue.Store(Lucene.Net.Index.IndexReader,System.String,System.Int32,System.Globalization.CultureInfo,System.Object,System.Object)">
             <summary>Stores a comparator into the cache. </summary>
         </member>
         <member name="M:Lucene.Net.Search.FieldSortedHitQueue.ComparatorInt(Lucene.Net.Index.IndexReader,System.String)">
@@ -5460,10 +4927,49 @@
         <member name="M:Lucene.Net.Search.FilteredQuery.GetHashCode">
             <summary>Returns a hash code value for this object. </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.FilteredTermEnum" -->
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.TermCompare(Lucene.Net.Index.Term)">
+            <summary>Equality compare on the term </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.Difference">
+            <summary>Equality measure on the term </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.EndEnum">
+            <summary>Indicates the end of the enumeration has been reached </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.DocFreq">
+            <summary> Returns the docFreq of the current Term in the enumeration.
+            Returns -1 if no Term matches or all terms have been enumerated.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.Next">
+            <summary>Increments the enumeration to the next element.  True if one exists. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.Term">
+            <summary>Returns the current Term in the enumeration.
+            Returns null if no Term matches or all terms have been enumerated. 
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.FilteredTermEnum.Close">
+            <summary>Closes the enumeration to further activity, freeing resources.  </summary>
+        </member>
         <member name="T:Lucene.Net.Search.FuzzyQuery">
             <summary>Implements the fuzzy search query. The similiarity measurement
             is based on the Levenshtein (edit distance) algorithm.
             </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.MultiTermQuery" -->
+        <member name="M:Lucene.Net.Search.MultiTermQuery.#ctor(Lucene.Net.Index.Term)">
+            <summary>Constructs a query for terms matching <code>term</code>. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.MultiTermQuery.GetTerm">
+            <summary>Returns the pattern term. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.MultiTermQuery.GetEnum(Lucene.Net.Index.IndexReader)">
+            <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.MultiTermQuery.ToString(System.String)">
+            <summary>Prints a user-readable version of this query. </summary>
         </member>
         <member name="M:Lucene.Net.Search.FuzzyQuery.#ctor(Lucene.Net.Index.Term,System.Single,System.Int32)">
             <summary> Create a new FuzzyQuery that will match terms with a similarity 
@@ -5650,13 +5156,7 @@
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.IndexSearcher" -->
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.Searcher" -->
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.Searchable" -->
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Query,Lucene.Net.Search.Filter,Lucene.Net.Search.HitCollector)" -->
-        <member name="M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,Lucene.Net.Search.HitCollector)">
-            <summary>Expert: Low-level search implementation.
-            Identical to {@link #Search(Query, Filter, HitCollector)}, but takes
-            a Weight instead of a query.
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,Lucene.Net.Search.HitCollector)" -->
         <member name="M:Lucene.Net.Search.Searchable.Close">
             <summary>Frees resources associated with this Searcher.
             Be careful not to call this method while you are still using objects
@@ -5683,13 +5183,7 @@
             <seealso cref="!:IndexReader#maxDoc()">
             </seealso>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Query,Lucene.Net.Search.Filter,System.Int32)" -->
-        <member name="M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,System.Int32)">
-            <summary>Expert: Low-level search implementation.
-            Identical to {@link #Search(Query, Filter, int)}, but takes
-            a Weight instead of a query.
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,System.Int32)" -->
         <member name="M:Lucene.Net.Search.Searchable.Doc(System.Int32)">
             <summary>Expert: Returns the stored fields of document <code>i</code>.
             Called by {@link HitCollector} implementations.
@@ -5701,19 +5195,8 @@
             <summary>Expert: called to re-write queries into primitive queries.</summary>
             <throws>  BooleanQuery.TooManyClauses </throws>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Explain(Lucene.Net.Search.Query,System.Int32)" -->
-        <member name="M:Lucene.Net.Search.Searchable.Explain(Lucene.Net.Search.Weight,System.Int32)">
-            <summary> Identical to {@link #Search(Query, Filter, HitCollector)}, but takes
-            a Weight instead of a query.
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Query,Lucene.Net.Search.Filter,System.Int32,Lucene.Net.Search.Sort)" -->
-        <member name="M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,System.Int32,Lucene.Net.Search.Sort)">
-            <summary>Expert: Low-level search implementation.
-            Identical to {@link #Search(Query, Filter, int, Sort)}, but takes
-            a Weight instead of a query.
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Explain(Lucene.Net.Search.Weight,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.Searchable.Search(Lucene.Net.Search.Weight,Lucene.Net.Search.Filter,System.Int32,Lucene.Net.Search.Sort)" -->
         <member name="M:Lucene.Net.Search.Searcher.Search(Lucene.Net.Search.Query)">
             <summary>Returns the documents matching <code>query</code>. </summary>
             <throws>  BooleanQuery.TooManyClauses </throws>
@@ -5831,11 +5314,18 @@
             <param name="position">
             </param>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.MultiPhraseQuery.GetTermArrays" -->
         <member name="M:Lucene.Net.Search.MultiPhraseQuery.GetPositions">
             <summary> Returns the relative positions of terms in this phrase.</summary>
         </member>
         <member name="M:Lucene.Net.Search.MultiPhraseQuery.ToString(System.String)">
             <summary>Prints a user-readable version of this query. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.MultiPhraseQuery.Equals(System.Object)">
+            <summary>Returns true if <code>o</code> is equal to this. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.MultiPhraseQuery.GetHashCode">
+            <summary>Returns a hash code value for this object.</summary>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.MultiSearcher" -->
         <member name="M:Lucene.Net.Search.MultiSearcher.#ctor(Lucene.Net.Search.Searchable[])">
@@ -5843,11 +5333,6 @@
         </member>
         <member name="M:Lucene.Net.Search.MultiSearcher.GetSearchables">
             <summary>Return the array of {@link Searchable}s this searches. </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.MultiSearcher.SearcherIndex(System.Int32)">
-            <summary>Call {@link #subSearcher} instead.</summary>
-            <deprecated>
-            </deprecated>
         </member>
         <member name="M:Lucene.Net.Search.MultiSearcher.SubSearcher(System.Int32)">
             <summary>Returns index of the searcher for document <code>n</code> in the array
@@ -6060,6 +5545,18 @@
             Gets or sets a value indicating whether or not a thread is a background thread.
             </summary>
         </member>
+        <member name="T:SupportClass.FileSupport">
+            <summary>
+            Represents the methods to support some operations over files.
+            </summary>
+        </member>
+        <member name="M:SupportClass.FileSupport.GetFiles(System.IO.FileInfo)">
+            <summary>
+            Returns an array of abstract pathnames representing the files and directories of the specified path.
+            </summary>
+            <param name="path">The abstract pathname to list it childs.</param>
+            <returns>An array of abstract pathnames childs of the path specified or null if the path is not a directory</returns>
+        </member>
         <member name="T:SupportClass.Number">
             <summary>
             A simple class for number conversions.
@@ -6208,61 +5705,10 @@
             <param name="defValue"></param>
             <returns></returns>
         </member>
-        <member name="T:Lucene.Net.Search.PhrasePrefixQuery">
-            <summary> PhrasePrefixQuery is a generalized version of PhraseQuery, with an added
-            method {@link #Add(Term[])}.
-            To use this class, to search for the phrase "Microsoft app*" first use
-            add(Term) on the term "Microsoft", then find all terms that has "app" as
-            prefix using IndexReader.terms(Term), and use PhrasePrefixQuery.add(Term[]
-            terms) to add them to the query.
-            
+        <member name="T:SupportClass.CompressionSupport">
+            <summary>
+            Use for .NET 1.1 Framework only.
             </summary>
-            <deprecated> use {@link Lucene.Net.search.MultiPhraseQuery} instead
-            </deprecated>
-            <author>  Anders Nielsen
-            </author>
-            <version>  1.0
-            </version>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.SetSlop(System.Int32)">
-            <summary>Sets the phrase slop for this query.</summary>
-            <seealso cref="M:Lucene.Net.Search.PhraseQuery.SetSlop(System.Int32)">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.GetSlop">
-            <summary>Sets the phrase slop for this query.</summary>
-            <seealso cref="M:Lucene.Net.Search.PhraseQuery.GetSlop">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.Add(Lucene.Net.Index.Term)">
-            <summary>Add a single term at the next position in the phrase.</summary>
-            <seealso cref="M:Lucene.Net.Search.PhraseQuery.Add(Lucene.Net.Index.Term)">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.Add(Lucene.Net.Index.Term[])">
-            <summary>Add multiple terms at the next position in the phrase.  Any of the terms
-            may match.
-            
-            </summary>
-            <seealso cref="M:Lucene.Net.Search.PhraseQuery.Add(Lucene.Net.Index.Term)">
-            </seealso>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.Add(Lucene.Net.Index.Term[],System.Int32)">
-            <summary> Allows to specify the relative position of terms within the phrase.
-            
-            </summary>
-            <seealso cref="M:Lucene.Net.Search.PhraseQuery.Add(Lucene.Net.Index.Term,System.Int32)">
-            </seealso>
-            <param name="terms">
-            </param>
-            <param name="position">
-            </param>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.GetPositions">
-            <summary> Returns the relative positions of terms in this phrase.</summary>
-        </member>
-        <member name="M:Lucene.Net.Search.PhrasePrefixQuery.ToString(System.String)">
-            <summary>Prints a user-readable version of this query. </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.PhraseQuery" -->
         <member name="M:Lucene.Net.Search.PhraseQuery.#ctor">
@@ -6351,7 +5797,7 @@
             
             <p>
             This code borrows heavily from {@link RangeQuery}, but is implemented as a Filter
-            (much like {@link DateFilter}).
+            
             </p>
             </summary>
         </member>
@@ -6757,6 +6203,18 @@
         <member name="M:Lucene.Net.Search.TermScorer.ToString">
             <summary>Returns a string representation of this <code>TermScorer</code>. </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.TopDocCollector" -->
+        <member name="M:Lucene.Net.Search.TopDocCollector.#ctor(System.Int32)">
+            <summary>Construct to collect a given number of hits.</summary>
+            <param name="numHits">the maximum number of hits to collect
+            </param>
+        </member>
+        <member name="M:Lucene.Net.Search.TopDocCollector.GetTotalHits">
+            <summary>The total number of documents that matched this query. </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.TopDocCollector.TopDocs">
+            <summary>The top-scoring hits. </summary>
+        </member>
         <member name="T:Lucene.Net.Search.TopDocs">
             <summary>Expert: Returned by low-level search implementations.</summary>
             <seealso cref="M:Lucene.Net.Search.Searcher.Search(Lucene.Net.Search.Query,Lucene.Net.Search.Filter,System.Int32)">
@@ -6781,6 +6239,16 @@
         </member>
         <member name="M:Lucene.Net.Search.TopDocs.#ctor(System.Int32,Lucene.Net.Search.ScoreDoc[],System.Single)">
             <summary>Expert: Constructs a TopDocs.</summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.TopFieldDocCollector" -->
+        <member name="M:Lucene.Net.Search.TopFieldDocCollector.#ctor(Lucene.Net.Index.IndexReader,Lucene.Net.Search.Sort,System.Int32)">
+            <summary>Construct to collect a given number of hits.</summary>
+            <param name="reader">the index to be searched
+            </param>
+            <param name="sort">the sort criteria
+            </param>
+            <param name="numHits">the maximum number of hits to collect
+            </param>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Search.TopFieldDocs" -->
         <member name="F:Lucene.Net.Search.TopFieldDocs.fields">
@@ -7063,16 +6531,7 @@
         <member name="M:Lucene.Net.Store.FSIndexOutput.Seek(System.Int64)">
             <summary>Random-access methods </summary>
         </member>
-        <member name="T:Lucene.Net.Store.InputStream">
-            <deprecated> Use {@link IndexInput} or {@link BufferedIndexInput} instead.
-            </deprecated>
-        </member>
         <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Store.MMapDirectory" -->
-        <member name="T:Lucene.Net.Store.OutputStream">
-            <deprecated> Use {@link IndexOutput} or {@link BufferedIndexOutput}
-            instead.
-            </deprecated>
-        </member>
         <member name="T:Lucene.Net.Store.RAMDirectory">
             <summary> A memory-resident {@link Directory} implementation.
             

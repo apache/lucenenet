@@ -37,6 +37,7 @@ namespace Lucene.Net.Demo.Html
 		internal System.String currentMetaContent = null;
 		internal int length = 0;
 		internal bool titleComplete = false;
+        internal bool summaryComplete = false;
 		internal bool inTitle = false;
 		internal bool inMetaTag = false;
 		internal bool inStyle = false;
@@ -64,20 +65,19 @@ namespace Lucene.Net.Demo.Html
 				
 			}
 			
-            // {{Aroush}} -- fix me
 			//public MyPipedInputStream(HTMLParser enclosingInstance) : base()
 			//{
 			//	InitBlock(enclosingInstance);
 			//}
 			
-			public MyPipedInputStream(HTMLParser enclosingInstance, System.IO.StreamWriter src) : base(src.BaseStream)
+			public MyPipedInputStream(HTMLParser enclosingInstance, System.IO.StreamReader src) : base(src.BaseStream)
 			{
 				InitBlock(enclosingInstance);
 			}
 			
 			public virtual bool Full()
 			{
-				return true; // return this.available() >= PipedInputStream.PIPE_SIZE; // {{Aroush}} -- fix me. 
+                return enclosingInstance.summaryComplete;
 			}
 		}
 		
@@ -142,10 +142,10 @@ namespace Lucene.Net.Demo.Html
 		{
 			if (pipeIn == null)
 			{
-				pipeInStream = null; // pipeInStream = new MyPipedInputStream(this);    // {{Aroush-1.9}} -- fix me. 
+                pipeInStream = new MyPipedInputStream(this, new System.IO.StreamReader(new System.IO.MemoryStream(1024)));
 				pipeOutStream = new System.IO.StreamWriter(pipeInStream.BaseStream);
-				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
-				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
+				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
+				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
 				
 				SupportClass.ThreadClass thread = new ParserThread(this);
 				thread.Start(); // start parsing
@@ -163,6 +163,7 @@ namespace Lucene.Net.Demo.Html
 				{
 					lock (this)
 					{
+                        summaryComplete = true;
 						System.Threading.Monitor.PulseAll(this);
 					}
 				}
@@ -984,7 +985,7 @@ label_6_brk: ;
 							case 0:  Jj_3_1(); break;
 							
 							case 1:  Jj_3_2(); break;
-							}
+						}
 					}
 					p = p.next;
 				}

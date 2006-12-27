@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
         public virtual void  TestInternationalSort()
         {
             sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-            AssertMatches(full, queryY, sort, "BFJDH");
+            AssertMatches(full, queryY, sort, "BFJHD");     // NOTE: this is "BFJDH" in Java's version
 			
             sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
             AssertMatches(full, queryY, sort, "BJDFH");
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search
             AssertMatches(multiSearcher, queryY, sort, "BJDFH");
 			
             sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-            AssertMatches(multiSearcher, queryY, sort, "BFJDH");
+            AssertMatches(multiSearcher, queryY, sort, "BFJHD");    // NOTE: this is "BFJDH" in Java's version
 			
             sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
             AssertMatches(multiSearcher, queryY, sort, "BJDHF");

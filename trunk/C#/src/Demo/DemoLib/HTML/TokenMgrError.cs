@@ -64,7 +64,7 @@ namespace Lucene.Net.Demo.Html
 		/// <summary> Replaces unprintable characters by their espaced (or unicode escaped)
 		/// equivalents in the given string
 		/// </summary>
-		protected internal static System.String addEscapes(System.String str)
+		protected internal static System.String AddEscapes(System.String str)
 		{
 			System.Text.StringBuilder retval = new System.Text.StringBuilder();
 			char ch;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Demo.Html
 		/// </summary>
 		protected internal static System.String LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, System.String errorAfter, char curChar)
 		{
-			return ("Lexical error at line " + errorLine + ", column " + errorColumn + ".  Encountered: " + (EOFSeen?"<EOF> ":("\"" + addEscapes(System.Convert.ToString(curChar)) + "\"") + " (" + (int) curChar + "), ") + "after : \"" + addEscapes(errorAfter) + "\"");
+			return ("Lexical error at line " + errorLine + ", column " + errorColumn + ".  Encountered: " + (EOFSeen?"<EOF> ":("\"" + AddEscapes(System.Convert.ToString(curChar)) + "\"") + " (" + (int) curChar + "), ") + "after : \"" + AddEscapes(errorAfter) + "\"");
 		}
 		
 		/*
