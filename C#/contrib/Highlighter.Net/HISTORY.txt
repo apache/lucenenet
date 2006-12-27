@@ -1,0 +1,11 @@
+Highlighter.Net History
+-----------------------
+
+
+27Dec06:
+	- Release: Highlighter.Net.2.0.0 build 000 "Alpha"
+	- Issues: Not fully tested / validated such that many of the NUnit tests are failing.
+
+
+05Jan05:
+	- Release: Highlighter.Net.1.4.0 RC1 build 001
