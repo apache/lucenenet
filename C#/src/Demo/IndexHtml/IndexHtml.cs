@@ -149,7 +149,7 @@ namespace Lucene.Net.Demo
 				System.Array.Sort(files); // sort the files
 				for (int i = 0; i < files.Length; i++)
 				// recursively index them
-					IndexDocs(new System.IO.FileInfo(file.FullName + "\\" + files[i]));
+					IndexDocs(new System.IO.FileInfo(files[i]));
 			}
 			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
 			{

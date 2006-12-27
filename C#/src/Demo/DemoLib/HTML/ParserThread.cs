@@ -48,10 +48,11 @@ namespace Lucene.Net.Demo.Html
 				}
 				finally
 				{
-					parser.pipeOut.Close();
+					//parser.pipeOut.Close();
 					lock (parser)
 					{
 						parser.summary.Length = HTMLParser.SUMMARY_LENGTH;
+                        parser.summaryComplete = true;
 						parser.titleComplete = true;
 						System.Threading.Monitor.PulseAll(parser);
 					}

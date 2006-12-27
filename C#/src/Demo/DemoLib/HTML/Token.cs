@@ -80,7 +80,7 @@ namespace Lucene.Net.Demo.Html
 		/// to the following switch statement. Then you can cast matchedToken
 		/// variable to the appropriate type and use it in your lexical actions.
 		/// </summary>
-		public static Token newToken(int ofKind)
+		public static Token NewToken(int ofKind)
 		{
 			switch (ofKind)
 			{

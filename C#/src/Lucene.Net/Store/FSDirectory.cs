@@ -228,7 +228,7 @@ namespace Lucene.Net.Store
 		private int refCount;
 		private System.IO.FileInfo lockDir;
 		
-		public FSDirectory() // protected internal FSDirectory() // {{Aroush}} this shouldn't be 'public' but if it's not the line 'System.Activator.CreateInstance(IMPL);' in function GetDirectory() will fail.
+		public FSDirectory()
 		{
 		}
 		
