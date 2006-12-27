@@ -1,10 +1,15 @@
 Lucene.Net History
 ------------------
 
+27Dec06:
+	- Release:  Lucene.Net.2.0 build 003 "final"
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test now passes
+
 
 27Nov06:
 	- Release:  Lucene.Net.2.0 build 002 "Beta"
-	- Lucene.Net.Demo.SearchFiles.cs -- parted new code
+	- Lucene.Net.Demo.SearchFiles.cs -- ported new code
 	- Lucene.Net.Index.SegmentReader.Get() -- changed Exception to SystemException
 	- Lucene.Net.Search.StringIndex.cs -- added a Close() method (to fix sort memory leak defect)
 	- Lucene.Net.Search.FieldCacheImpl.cs -- added a Close() method (to fix sort memory leak defect)
