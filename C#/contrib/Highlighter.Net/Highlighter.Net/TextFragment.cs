@@ -74,7 +74,7 @@ namespace Lucene.Net.Highlight
 		*/
 		public override System.String ToString()
 		{
-			return markedUpText.ToString(textStartPos, textEndPos);
+			return markedUpText.ToString(textStartPos, textEndPos - textStartPos);
 		}
 	}
 }
