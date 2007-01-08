@@ -1,0 +1,163 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Lucene.Net.Highlight</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Highlighter.Net 2.0.0</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Lucene.Net.Highlight Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>
+        <a href="Lucene.Net.HighlightHierarchy.html">Namespace hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.DefaultEncoder.html">DefaultEncoder</a>
+            </td>
+            <td width="50%"> Simple {@link Encoder} implementation that does not modify the output</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.GradientFormatter.html">GradientFormatter</a>
+            </td>
+            <td width="50%"> Formats text with different color intensity depending on the score of the term. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.Highlighter.html">Highlighter</a>
+            </td>
+            <td width="50%"> Class used to markup highlighted terms found in the best sections of a text, using configurable {@link Fragmenter}, {@link Scorer}, {@link Formatter}, {@link Encoder} and tokenizers. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.NullFragmenter.html">NullFragmenter</a>
+            </td>
+            <td width="50%"> {@link Fragmenter} implementation which does not fragment the text. This is useful for highlighting the entire content of a document or field. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.QueryScorer.html">QueryScorer</a>
+            </td>
+            <td width="50%"> {@link Scorer} implementation which scores text fragments by the number of unique query terms found. This class uses the {@link QueryTermExtractor} class to process determine the query terms and their boosts to be used. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.QueryTermExtractor.html">QueryTermExtractor</a>
+            </td>
+            <td width="50%"> Utility class used to extract the terms used in a query, plus any weights. This class will not find terms for MultiTermQuery, RangeQuery and PrefixQuery classes so the caller must pass a rewritten query (see Query.rewrite) to obtain a list of expanded terms. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.SimpleFragmenter.html">SimpleFragmenter</a>
+            </td>
+            <td width="50%"> {@link Fragmenter} implementation which breaks text up into same-size fragments with no concerns over spotting sentence boundaries. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.SimpleHTMLEncoder.html">SimpleHTMLEncoder</a>
+            </td>
+            <td width="50%"> Simple {@link Encoder} implementation to escape text for HTML output</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.SimpleHTMLFormatter.html">SimpleHTMLFormatter</a>
+            </td>
+            <td width="50%"> Simple {@link Formatter} implementation to highlight terms with a pre and post tag</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.SpanGradientFormatter.html">SpanGradientFormatter</a>
+            </td>
+            <td width="50%"> Formats text with different color intensity depending on the score of the term using the span tag. GradientFormatter uses a bgcolor argument to the font tag which doesn't work in Mozilla, thus this class. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.TextFragment.html">TextFragment</a>
+            </td>
+            <td width="50%"> Low-level class used to record information about a section of a document with a score. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.TokenGroup.html">TokenGroup</a>
+            </td>
+            <td width="50%"> One, or several overlapping tokens, along with the score(s) and the scope of the original text </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.TokenSources.html">TokenSources</a>
+            </td>
+            <td width="50%"> Hides implementation issues associated with obtaining a TokenStream for use with the higlighter - can obtain from TermFreqVectors with offsets and (optionally) positions or from Analyzer class reparsing the stored content. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.TokenSources.StoredTokenStream.html">TokenSources.StoredTokenStream</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.WeightedTerm.html">WeightedTerm</a>
+            </td>
+            <td width="50%">Lightweight class to hold term and a weight value used for scoring this term </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Interfaces</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Interface</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.Encoder.html">Encoder</a>
+            </td>
+            <td width="50%"> Encodes original text. The Encoder works with the Formatter to generate the output. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.Formatter.html">Formatter</a>
+            </td>
+            <td width="50%"> Processes terms found in the original text, typically by applying some form of mark-up to highlight terms in HTML search results pages. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.Fragmenter.html">Fragmenter</a>
+            </td>
+            <td width="50%"> Implements the policy for breaking text into multiple fragments for consideration by the {@link Highlighter} class. A sophisticated implementation may do this on the basis of detecting end of sentences in the text. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Highlight.Scorer.html">Scorer</a>
+            </td>
+            <td width="50%"> Adds to the score for a fragment based on its tokens</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
