@@ -123,12 +123,12 @@
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "..\..\Lucene.Net-1.4.3.final-004\bin\Debug\Lucene.Net.dll"
+                    HintPath = "..\Snowball.Net\bin\Debug\Lucene.Net.dll"
                 />
                 <Reference
                     Name = "Snowball.Net"
                     AssemblyName = "Snowball.Net"
-                    HintPath = "..\Snowball.Net\obj\Debug\Snowball.Net.dll"
+                    HintPath = "..\Snowball.Net\bin\Debug\Snowball.Net.dll"
                 />
             </References>
         </Build>
