@@ -82,7 +82,7 @@
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "..\Lucene.Net.dll"
+                    HintPath = "..\..\Lucene.Net-2.0.1-001.src\Lucene.Net\bin\Debug\Lucene.Net.dll"
                 />
             </References>
         </Build>
@@ -90,6 +90,16 @@
             <Include>
                 <File
                     RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DefaultEncoder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Encoder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -104,7 +114,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GradientFormatter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Highlighter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NullFragmenter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -133,7 +153,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SimpleHTMLEncoder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SimpleHTMLFormatter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SpanGradientFormatter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -144,6 +174,11 @@
                 />
                 <File
                     RelPath = "TokenGroup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TokenSources.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

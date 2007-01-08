@@ -61,7 +61,8 @@ namespace Lucene.Net.Search.Highlight
 	[TestFixture]
     public class HighlighterTest : Formatter
 	{
-        /*  // {{Aroush-2.0}} Fix-me
+        // {{Aroush-2.0.0}} Fix me
+        /*
 		private class AnonymousClassScorer : Scorer
 		{
 			public AnonymousClassScorer(HighlighterTest enclosingInstance)
@@ -97,24 +98,25 @@ namespace Lucene.Net.Search.Highlight
             {
                 return false;
             }
+            public override int Doc()
+            {
+                return -1;
+            }
             public override Explanation Explain(int doc)
             {
                 return null;
-            }
-            public override float Score()
-            {
-                return 0;
             }
             public override bool Next()
             {
                 return false;
             }
-            public override int Doc()
+            public override float Score()
             {
-                return -1;
+                return 0;
             }
 		}
         */
+
 		private IndexReader reader;
 		private const System.String FIELD_NAME = "contents";
 		private Query query;
@@ -449,7 +451,10 @@ namespace Lucene.Net.Search.Highlight
 		[Test]
 		public virtual void  TestEncoding()
 		{
-            /*  // {{Aroush-2.0}} Fix-me
+            Assert.Fail("This test is failing because it has porting issues.");
+
+            // {{Aroush-2.0.0}} Fix me
+            /*
 			System.String rawDocContent = "\"Smith & sons' prices < 3 and >4\" claims article";
 			//run the highlighter on the raw content (scorer does not score any tokens for 
 			// highlighting but scores a single fragment for selection
@@ -464,12 +469,10 @@ namespace Lucene.Net.Search.Highlight
 			//UPGRADE_ISSUE: Class 'javax.xml.parsers.DocumentBuilderFactory' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javaxxmlparsersDocumentBuilderFactory_3"'
 			//UPGRADE_ISSUE: Method 'javax.xml.parsers.DocumentBuilderFactory.newInstance' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javaxxmlparsersDocumentBuilderFactory_3"'
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			//UPGRADE_TODO: Class 'javax.xml.parsers.DocumentBuilder' was converted to 'System.Xml.XmlDocument' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javaxxmlparsersDocumentBuilder_3"'
 			System.Xml.XmlDocument db = new System.Xml.XmlDocument();
 			System.Xml.XmlDocument tempDocument;
-			//UPGRADE_TODO: Method 'javax.xml.parsers.DocumentBuilder.parse' was converted to 'System.Xml.XmlDocument.Load' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javaxxmlparsersDocumentBuilderparse_javaioInputStream_3"'
 			tempDocument = (System.Xml.XmlDocument) db.Clone();
-			tempDocument.Load(new System.IO.MemoryStream(SupportClass.ToByteArray(xhtml)));
+			tempDocument.Load(new System.IO.MemoryStream(System.Text.UTF8Encoding.UTF8.GetBytes(xhtml)));
 			System.Xml.XmlDocument doc = tempDocument;
 			System.Xml.XmlElement root = (System.Xml.XmlElement) doc.DocumentElement;
 			System.Xml.XmlNodeList nodes = root.GetElementsByTagName("body");
@@ -645,7 +648,7 @@ namespace Lucene.Net.Search.Highlight
 		/*
 		* @see TestCase#setUp()
 		*/
-		[TestFixtureSetUp]
+		[SetUp]
         protected virtual void  SetUp()
 		{
 			ramDir = new RAMDirectory();
@@ -672,7 +675,7 @@ namespace Lucene.Net.Search.Highlight
 		/*
 		* @see TestCase#tearDown()
 		*/
-        [TestFixtureTearDown]
+        [TearDown]
 		protected virtual void  TearDown()
 		{
 			//base.TearDown();

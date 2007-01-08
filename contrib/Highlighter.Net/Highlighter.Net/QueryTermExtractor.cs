@@ -127,26 +127,16 @@ namespace Lucene.Net.Highlight
 				System.Collections.Hashtable nonWeightedTerms = new System.Collections.Hashtable();
 				query.ExtractTerms(nonWeightedTerms);
 
-                foreach (Term term in terms.Values)
+                System.Collections.IDictionaryEnumerator iter =  nonWeightedTerms.GetEnumerator();
+                while (iter.MoveNext())
                 {
+                    Term term = (Term)iter.Value;
                     if ((fieldName == null) || (term.Field() == fieldName))
                     {
-                        WeightedTerm temp = new WeightedTerm(query.GetBoost(), term.Text());
+                        WeightedTerm temp = new  WeightedTerm(query.GetBoost(), term.Text());
                         terms.Add(temp, temp);
                     }
                 }
-
-                /*
-				for (System.Collections.IEnumerator iter = nonWeightedTerms.GetEnumerator(); iter.MoveNext(); )
-				{
-					Term term = (Term) iter.Current;
-					if ((fieldName == null) || (term.Field() == fieldName))
-					{
-                        WeightedTerm temp = new WeightedTerm(query.GetBoost(), term.Text());
-						terms.Add(temp, temp);
-					}
-				}
-                */
 			}
 			catch (System.NotSupportedException ignore)
 			{

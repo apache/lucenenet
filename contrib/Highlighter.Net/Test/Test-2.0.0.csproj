@@ -121,14 +121,14 @@
                     AssemblyFolderKey = "hklm\dn\nunit.framework"
                 />
                 <Reference
-                    Name = "Lucene.Net"
-                    AssemblyName = "Lucene.Net"
-                    HintPath = "..\..\Lucene.Net-2.0.0-003.src\Lucene.Net\bin\Debug\Lucene.Net.dll"
-                />
-                <Reference
                     Name = "Highlighter.Net"
                     AssemblyName = "Highlighter.Net"
                     HintPath = "..\bin\Debug\Highlighter.Net.dll"
+                />
+                <Reference
+                    Name = "Lucene.Net"
+                    AssemblyName = "Lucene.Net"
+                    HintPath = "..\..\Lucene.Net-2.0.1-001.src\Lucene.Net\bin\Debug\Lucene.Net.dll"
                 />
             </References>
         </Build>
