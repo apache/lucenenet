@@ -1,5 +1,5 @@
-Highlighter.Net History
------------------------
+SpellChecker.Net History
+------------------------
 
 
 29Jan07:
