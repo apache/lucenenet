@@ -7,3 +7,4 @@ Ported code:
 Highlighter.Net
 Snowball.Net
 SpellChecker.Net
+WordNet.Net
