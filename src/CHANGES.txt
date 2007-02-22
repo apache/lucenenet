@@ -1,13 +1,120 @@
 Lucene Change Log
 
-$Id: CHANGES.txt 355181 2005-12-08 19:53:06Z cutting $
+$Id: CHANGES.txt 409697 2006-05-26 16:50:37Z cutting $
+
+Release 2.0.0 2005-05-26
+
+API Changes
+
+ 1. All deprecated methods and fields have been removed, except
+    DateField, which will still be supported for some time
+    so Lucene can read its date fields from old indexes
+    (Yonik Seeley & Grant Ingersoll)
+
+ 2. DisjunctionSumScorer is no longer public.
+    (Paul Elschot via Otis Gospodnetic)
+    
+ 3. Creating a Field with both an empty name and an empty value 
+    now throws an IllegalArgumentException
+    (Daniel Naber)
+
+New features
+
+ 1. LUCENE-496: Command line tool for modifying the field norms of an
+    existing index; added to contrib/miscellaneous.  (Chris Hostetter)
+
+ 2. LUCENE-577: SweetSpotSimilarity added to contrib/miscellaneous.
+    (Chris Hostetter)
+    
+Bug fixes
+
+ 1. LUCENE-330: Fix issue of FilteredQuery not working properly within
+    BooleanQuery.  (Paul Elschot via Erik Hatcher)
+
+ 2. LUCENE-515: Make ConstantScoreRangeQuery and ConstantScoreQuery work
+    with RemoteSearchable.  (Philippe Laflamme via Yonik Seeley)
+
+ 3. Added methods to get/set writeLockTimeout and commitLockTimeout in
+    IndexWriter. These could be set in Lucene 1.4 using a system property.
+    This feature had been removed without adding the corresponding
+    getter/setter methods.  (Daniel Naber)
+
+ 4. LUCENE-413: Fixed ArrayIndexOutOfBoundsException exceptions
+    when using SpanQueries. (Paul Elschot via Yonik Seeley)
+
+ 5. Implemented FilterIndexReader.getVersion() and isCurrent()
+    (Yonik Seeley)
+
+ 6. LUCENE-540: Fixed a bug with IndexWriter.addIndexes(Directory[])
+    that sometimes caused the index order of documents to change.
+    (Yonik Seeley)
+
+ 7. LUCENE-526: Fixed a bug in FieldSortedHitQueue that caused
+    subsequent String sorts with different locales to sort identically.
+    (Paul Cowan via Yonik Seeley)
+
+ 8. LUCENE-541: Add missing extractTerms() to DisjunctionMaxQuery
+    (Stefan Will via Yonik Seeley)
+
+ 9. LUCENE-514: Added getTermArrays() and extractTerms() to
+    MultiPhraseQuery (Eric Jain & Yonik Seeley)
+
+10. LUCENE-512: Fixed ClassCastException in ParallelReader.getTermFreqVectors
+    (frederic via Yonik)
+
+11. LUCENE-352: Fixed bug in SpanNotQuery that manifested as
+    NullPointerException when "exclude" query was not a SpanTermQuery.
+    (Chris Hostetter)
+
+12. LUCENE-572: Fixed bug in SpanNotQuery hashCode, was ignoring exclude clause
+    (Chris Hostetter)
+
+13. LUCENE-561: Fixed some ParallelReader bugs. NullPointerException if the reader
+    didn't know about the field yet, reader didn't keep track if it had deletions,
+    and deleteDocument calls could circumvent synchronization on the subreaders.
+    (Chuck Williams via Yonik Seeley)
+
+14. LUCENE-556: Added empty extractTerms() implementation to MatchAllDocsQuery and
+    ConstantScoreQuery in order to allow their use with a MultiSearcher.
+    (Yonik Seeley)
+
+15. LUCENE-546: Removed 2GB file size limitations for RAMDirectory.
+    (Peter Royal, Michael Chan, Yonik Seeley)
+
+16. LUCENE-485: Don't hold commit lock while removing obsolete index
+    files.  (Luc Vanlerberghe via cutting)
+
+
+1.9.1
+
+Bug fixes
+
+ 1. LUCENE-511: Fix a bug in the BufferedIndexOutput optimization
+    introduced in 1.9-final.  (Shay Banon & Steven Tamm via cutting)
+
+1.9 final
+
+Note that this realease is mostly but not 100% source compatible with
+the previous release of Lucene (1.4.3). In other words, you should
+make sure your application compiles with this version of Lucene before
+you replace the old Lucene JAR with the new one.  Many methods have
+been deprecated in anticipation of release 2.0, so deprecation
+warnings are to be expected when upgrading from 1.4.3 to 1.9.
+
+Bug fixes
+ 
+ 1. The fix that made IndexWriter.setMaxBufferedDocs(1) work had negative 
+    effects on indexing performance and has thus been reverted. The 
+    argument for setMaxBufferedDocs(int) must now at least be 2, otherwise
+    an exception is thrown. (Daniel Naber)
+ 
+Optimizations
+     
+ 1. Optimized BufferedIndexOutput.writeBytes() to use
+    System.arraycopy() in more cases, rather than copying byte-by-byte.
+    (Lukas Zapletal via Cutting)
 
 1.9 RC1
-
-Note that this realease is mostly but not 100% source compatible with the
-latest release of Lucene (1.4.3). In other words, you should make sure
-your application compiles with this version of Lucene before you replace
-the old Lucene JAR with the new one.
 
 Requirements
 
@@ -215,6 +322,10 @@ New features
 32. StopFilter can now ignore case when checking for stop words.
     (Grant Ingersoll via Yonik, LUCENE-248)
 
+33. Add TopDocCollector and TopFieldDocCollector.  These simplify the
+    implementation of hit collectors that collect only the
+    top-scoring or top-sorting hits.
+
 API Changes
 
  1. Several methods and fields have been deprecated. The API documentation
@@ -321,6 +432,20 @@ Bug fixes
 
 20. Fixed MultiReader.undeleteAll() to correctly update numDocs.
     (Robert Kirchgessner via Doug Cutting, LUCENE-479)
+
+21. Race condition in IndexReader.getCurrentVersion() and isCurrent()
+    fixed by aquiring the commit lock.
+    (Luc Vanlerberghe via Yonik Seeley, LUCENE-481)
+
+22. IndexWriter.setMaxBufferedDocs(1) didn't have the expected effect,
+    this has now been fixed. (Daniel Naber)
+
+23. Fixed QueryParser when called with a date in local form like 
+    "[1/16/2000 TO 1/18/2000]". This query did not include the documents
+    of 1/18/2000, i.e. the last day was not included. (Daniel Naber)
+
+24. Removed sorting constraint that threw an exception if there were
+    not yet any values for the sort field (Yonik Seeley, LUCENE-374)
 
 Optimizations
      
