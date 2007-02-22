@@ -1,27 +1,43 @@
-Lucene.Net Snowball.Net README file
+Lucene README file
+
+$Id: README.txt 381415 2006-02-27 19:50:18Z cutting $
 
 INTRODUCTION
 
-Please be advised that other then the English Stemmer, I have not tested or validated the any of the remaining stemmers provided in this release.  This task I can't do since it requires a test data and the understanding of the language of the provided stemmer.  Once those un-tested stemmers have been validated by volunteers who know the language, I will update this documentation to reflect this fact.
+Lucene is a Java full-text search engine.  Lucene is not a complete
+application, but rather a code library and API that can easily be used
+to add search capabilities to applications.
 
-TEST STEMMERS:
+The Lucene web site is at:
+  http://lucene.apache.org/
 
-	- English
+Please join the Lucene-User mailing list by sending a message to:
+  java-user-subscribe@lucene.apache.org
 
-UN-TESTED STEMMERS:
+FILES
 
-	- Danish
-	- Dutch
-	- Finnish
-	- French
-	- German2
-	- German
-	- Italian
-	- Kp
-	- Lovins
-	- Norwegian
-	- Porter
-	- Portuguese
-	- Russian
-	- Spanish
-	- Swedish
+lucene-core-XX.jar
+  The compiled lucene library.
+
+lucene-demos-XX.jar
+  The compiled simple example code.
+
+luceneweb.war
+  The compiled simple example Web Application.
+
+contrib/*
+  Contributed code which extends and enhances Lucene, but is not
+  part of the core library.
+
+docs/index.html
+  The contents of the Lucene website.
+
+docs/api/index.html
+  The Javadoc Lucene API documentation.  This includes the core
+  library, the demo, as well as all of the contrib modules.
+
+src/java
+  The Lucene source code.
+
+src/demo
+  Some example code.
