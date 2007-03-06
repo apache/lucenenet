@@ -1,14 +1,14 @@
-Lucene.Net History
-------------------
+Apache Lucene.Net History
+-------------------------
 
 27Dec06:
-	- Release:  Lucene.Net.2.0 build 003 "final"
+	- Release:  Apache Lucene.Net.2.0 build 003 "final"
 	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
 	- Fix: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test now passes
 
 
 27Nov06:
-	- Release:  Lucene.Net.2.0 build 002 "Beta"
+	- Release:  Apache Lucene.Net.2.0 build 002 "Beta"
 	- Lucene.Net.Demo.SearchFiles.cs -- ported new code
 	- Lucene.Net.Index.SegmentReader.Get() -- changed Exception to SystemException
 	- Lucene.Net.Search.StringIndex.cs -- added a Close() method (to fix sort memory leak defect)
@@ -25,11 +25,11 @@ Lucene.Net History
 
 
 17Aug06:
-	- Release:  Lucene.Net.2.0 build 001 "Alpha"
+	- Release:  Apache Lucene.Net.2.0 build 001 "Alpha"
 
 
 13Jul06:
-	- Release:  Lucene.Net.1.9.1 build 001
+	- Release:  Apache Lucene.Net.1.9.1 build 001
 	- Port: Lucene.Net.Documents.TimeToString() -- re-based with the Java version
 	- Port: Lucene.Net.Index.IndexWriter.SetMaxBufferedDocs() -- re-based with the Java version
 	- Port: Lucene.Net.Store.BufferedIndexOutput.WriteBytes() -- re-based with the Java version
@@ -40,7 +40,7 @@ Lucene.Net History
 
 
 09Jul06:
-	- Release:  Lucene.Net.1.9 RC1 build 005 "final"
+	- Release:  Apache Lucene.Net.1.9 RC1 build 005 "final"
 	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
 	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
 	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value
@@ -63,7 +63,7 @@ Lucene.Net History
 
 
 13Jun06:
-	- Release:  Lucene.Net.1.9 RC1 build 004 Beta
+	- Release:  Apache Lucene.Net.1.9 RC1 build 004 Beta
 	- Fix: Lucene.Net.Search.FieldCacheImpl.GetFloats() -- must remove 'f" or "F" for System.Single.Parse() to work
 	- Fix: Lucene.Net.Index.GetFieldnames() -- was storing the object instead the value in the object
 	- Fix: Test.Lucene.Net.Index.CollectionContains() -- need to compare strings, not objects
@@ -71,7 +71,7 @@ Lucene.Net History
 
 
 03Jun06:
-	- Release: Lucene.Net.1.9 RC1 build 003 Alpha
+	- Release: Apache Lucene.Net.1.9 RC1 build 003 Alpha
 	- Note: This is the first release of Lucene.Net 1.9 to SVN
 	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
 	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code

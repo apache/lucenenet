@@ -1,43 +1,27 @@
-Lucene README file
+Apache Lucene.Net README file
 
-$Id: README.txt 381415 2006-02-27 19:50:18Z cutting $
 
 INTRODUCTION
 
-Lucene is a Java full-text search engine.  Lucene is not a complete
-application, but rather a code library and API that can easily be used
-to add search capabilities to applications.
+Apache Lucene.Net is a C# full-text search engine.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
 
-The Lucene web site is at:
-  http://lucene.apache.org/
+The Apache Lucene.Net web site is at:
+  http://incubator.apache.org/lucene.net/
 
-Please join the Lucene-User mailing list by sending a message to:
-  java-user-subscribe@lucene.apache.org
+Please join the Apache Lucene.Net-User mailing list by sending a message to:
+  lucene-net-user-subscribe@incubator.apache.org
+
 
 FILES
 
-lucene-core-XX.jar
-  The compiled lucene library.
-
-lucene-demos-XX.jar
-  The compiled simple example code.
-
-luceneweb.war
-  The compiled simple example Web Application.
-
-contrib/*
-  Contributed code which extends and enhances Lucene, but is not
-  part of the core library.
-
-docs/index.html
-  The contents of the Lucene website.
-
-docs/api/index.html
-  The Javadoc Lucene API documentation.  This includes the core
-  library, the demo, as well as all of the contrib modules.
-
-src/java
+src/Lucene.Net
   The Lucene source code.
 
-src/demo
+src/Demo
   Some example code.
+
+src/Test
+  Test code.
+
+contrib/*
+  Contributed code which extends and enhances Apache Lucene.Net, but is not part of the core library.
