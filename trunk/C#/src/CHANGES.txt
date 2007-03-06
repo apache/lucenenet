@@ -1,3 +1,11 @@
+
+NOTE: Those changes, outlined in this file, reflect changes made to Java Lucene.
+NOTE: All of those changes are carried over into Apache Lucene.Net as well.
+NOTE: See the file HISTORY.txt for changes specific to Apache Lucene.Net.
+
+
+
+
 Lucene Change Log
 
 $Id: CHANGES.txt 409697 2006-05-26 16:50:37Z cutting $
