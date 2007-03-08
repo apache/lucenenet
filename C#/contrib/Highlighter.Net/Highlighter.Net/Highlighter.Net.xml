@@ -4,6 +4,23 @@
         <name>Highlighter.Net</name>
     </assembly>
     <members>
+        <member name="T:Lucene.Net.Highlight.DefaultEncoder">
+            <summary> Simple {@link Encoder} implementation that does not modify the output</summary>
+            <author>  Nicko Cadell
+            
+            </author>
+        </member>
+        <member name="T:Lucene.Net.Highlight.Encoder">
+            <summary> Encodes original text. The Encoder works with the Formatter to generate the output.
+            
+            </summary>
+            <author>  Nicko Cadell
+            </author>
+        </member>
+        <member name="M:Lucene.Net.Highlight.Encoder.EncodeText(System.String)">
+            <param name="originalText">The section of text being output
+            </param>
+        </member>
         <member name="T:Lucene.Net.Highlight.Formatter">
             <summary> Processes terms found in the original text, typically by applying some form 
             of mark-up to highlight terms in HTML search results pages.
@@ -34,6 +51,58 @@
             <summary> Test to see if this token from the stream should be held in a new TextFragment</summary>
             <param name="">nextToken
             </param>
+        </member>
+        <member name="T:Lucene.Net.Highlight.GradientFormatter">
+            <summary> Formats text with different color intensity depending on the score of the
+            term.
+            
+            </summary>
+            <author>  maharwood
+            </author>
+        </member>
+        <member name="M:Lucene.Net.Highlight.GradientFormatter.#ctor(System.Single,System.String,System.String,System.String,System.String)">
+            <summary> Sets the color range for the IDF scores
+            
+            </summary>
+            <param name="">maxScore
+            The score (and above) displayed as maxColor (See QueryScorer.getMaxWeight 
+            which can be used to callibrate scoring scale)
+            </param>
+            <param name="">minForegroundColor
+            The hex color used for representing IDF scores of zero eg
+            #FFFFFF (white) or null if no foreground color required
+            </param>
+            <param name="">maxForegroundColor
+            The largest hex color used for representing IDF scores eg
+            #000000 (black) or null if no foreground color required
+            </param>
+            <param name="">minBackgroundColor
+            The hex color used for representing IDF scores of zero eg
+            #FFFFFF (white) or null if no background color required
+            </param>
+            <param name="">maxBackgroundColor
+            The largest hex color used for representing IDF scores eg
+            #000000 (black) or null if no background color required
+            </param>
+        </member>
+        <member name="M:Lucene.Net.Highlight.GradientFormatter.HexToInt(System.String)">
+            <summary> Converts a hex string into an int. Integer.parseInt(hex, 16) assumes the
+            input is nonnegative unless there is a preceding minus sign. This method
+            reads the input as twos complement instead, so if the input is 8 bytes
+            long, it will correctly restore a negative int produced by
+            Integer.toHexString() but not neccesarily one produced by
+            Integer.toString(x,16) since that method will produce a string like '-FF'
+            for negative integer values.
+            
+            </summary>
+            <param name="">hex
+            A string in capital or lower case hex, of no more then 16
+            characters.
+            </param>
+            <throws>  NumberFormatException </throws>
+            <summary>             if the string is more than 16 characters long, or if any
+            character is not in the set [0-9a-fA-f]
+            </summary>
         </member>
         <member name="T:Lucene.Net.Highlight.Highlighter">
             <summary> Class used to markup highlighted terms found in the best sections of a 
@@ -196,6 +265,11 @@
             <param name="">scorer
             </param>
         </member>
+        <member name="T:Lucene.Net.Highlight.NullFragmenter">
+            <summary> {@link Fragmenter} implementation which does not fragment the text.
+            This is useful for highlighting the entire content of a document or field.
+            </summary>
+        </member>
         <member name="T:Lucene.Net.Highlight.QueryScorer">
             <summary> {@link Scorer} implementation which scores text fragments by the number of unique query terms found.
             This class uses the {@link QueryTermExtractor} class to process determine the query terms and 
@@ -335,6 +409,15 @@
             <param name="size">size in bytes of each fragment
             </param>
         </member>
+        <member name="T:Lucene.Net.Highlight.SimpleHTMLEncoder">
+            <summary> Simple {@link Encoder} implementation to escape text for HTML output</summary>
+            <author>  Nicko Cadell
+            
+            </author>
+        </member>
+        <member name="M:Lucene.Net.Highlight.SimpleHTMLEncoder.HtmlEncode(System.String)">
+            <summary> Encode string into HTML</summary>
+        </member>
         <member name="T:Lucene.Net.Highlight.SimpleHTMLFormatter">
             <summary> Simple {@link Formatter} implementation to highlight terms with a pre and post tag</summary>
             <author>  MAHarwood
@@ -346,6 +429,17 @@
             
             
             </summary>
+        </member>
+        <member name="T:Lucene.Net.Highlight.SpanGradientFormatter">
+            <summary> Formats text with different color intensity depending on the score of the
+            term using the span tag.  GradientFormatter uses a bgcolor argument to the font tag which
+            doesn't work in Mozilla, thus this class.
+            
+            </summary>
+            <seealso cref="T:Lucene.Net.Highlight.GradientFormatter">
+            </seealso>
+            <author>  David Spencer dave@searchmorph.com
+            </author>
         </member>
         <member name="T:Lucene.Net.Highlight.TextFragment">
             <summary> Low-level class used to record information about a section of a document 
@@ -407,121 +501,6 @@
             <returns> all tokens' scores summed up
             </returns>
         </member>
-        <member name="T:Lucene.Net.Highlight.WeightedTerm">
-            <summary>Lightweight class to hold term and a weight value used for scoring this term </summary>
-            <author>  Mark Harwood
-            </author>
-        </member>
-        <member name="M:Lucene.Net.Highlight.WeightedTerm.GetTerm">
-            <returns> the term value (stemmed)
-            </returns>
-        </member>
-        <member name="M:Lucene.Net.Highlight.WeightedTerm.GetWeight">
-            <returns> the weight associated with this term
-            </returns>
-        </member>
-        <member name="M:Lucene.Net.Highlight.WeightedTerm.SetTerm(System.String)">
-            <param name="term">the term value (stemmed)
-            </param>
-        </member>
-        <member name="M:Lucene.Net.Highlight.WeightedTerm.SetWeight(System.Single)">
-            <param name="weight">the weight associated with this term
-            </param>
-        </member>
-        <member name="T:Lucene.Net.Highlight.DefaultEncoder">
-            <summary> Simple {@link Encoder} implementation that does not modify the output</summary>
-            <author>  Nicko Cadell
-            
-            </author>
-        </member>
-        <member name="T:Lucene.Net.Highlight.Encoder">
-            <summary> Encodes original text. The Encoder works with the Formatter to generate the output.
-            
-            </summary>
-            <author>  Nicko Cadell
-            </author>
-        </member>
-        <member name="M:Lucene.Net.Highlight.Encoder.EncodeText(System.String)">
-            <param name="originalText">The section of text being output
-            </param>
-        </member>
-        <member name="T:Lucene.Net.Highlight.GradientFormatter">
-            <summary> Formats text with different color intensity depending on the score of the
-            term.
-            
-            </summary>
-            <author>  maharwood
-            </author>
-        </member>
-        <member name="M:Lucene.Net.Highlight.GradientFormatter.#ctor(System.Single,System.String,System.String,System.String,System.String)">
-            <summary> Sets the color range for the IDF scores
-            
-            </summary>
-            <param name="">maxScore
-            The score (and above) displayed as maxColor (See QueryScorer.getMaxWeight 
-            which can be used to callibrate scoring scale)
-            </param>
-            <param name="">minForegroundColor
-            The hex color used for representing IDF scores of zero eg
-            #FFFFFF (white) or null if no foreground color required
-            </param>
-            <param name="">maxForegroundColor
-            The largest hex color used for representing IDF scores eg
-            #000000 (black) or null if no foreground color required
-            </param>
-            <param name="">minBackgroundColor
-            The hex color used for representing IDF scores of zero eg
-            #FFFFFF (white) or null if no background color required
-            </param>
-            <param name="">maxBackgroundColor
-            The largest hex color used for representing IDF scores eg
-            #000000 (black) or null if no background color required
-            </param>
-        </member>
-        <member name="M:Lucene.Net.Highlight.GradientFormatter.HexToInt(System.String)">
-            <summary> Converts a hex string into an int. Integer.parseInt(hex, 16) assumes the
-            input is nonnegative unless there is a preceding minus sign. This method
-            reads the input as twos complement instead, so if the input is 8 bytes
-            long, it will correctly restore a negative int produced by
-            Integer.toHexString() but not neccesarily one produced by
-            Integer.toString(x,16) since that method will produce a string like '-FF'
-            for negative integer values.
-            
-            </summary>
-            <param name="">hex
-            A string in capital or lower case hex, of no more then 16
-            characters.
-            </param>
-            <throws>  NumberFormatException </throws>
-            <summary>             if the string is more than 16 characters long, or if any
-            character is not in the set [0-9a-fA-f]
-            </summary>
-        </member>
-        <member name="T:Lucene.Net.Highlight.NullFragmenter">
-            <summary> {@link Fragmenter} implementation which does not fragment the text.
-            This is useful for highlighting the entire content of a document or field.
-            </summary>
-        </member>
-        <member name="T:Lucene.Net.Highlight.SimpleHTMLEncoder">
-            <summary> Simple {@link Encoder} implementation to escape text for HTML output</summary>
-            <author>  Nicko Cadell
-            
-            </author>
-        </member>
-        <member name="M:Lucene.Net.Highlight.SimpleHTMLEncoder.HtmlEncode(System.String)">
-            <summary> Encode string into HTML</summary>
-        </member>
-        <member name="T:Lucene.Net.Highlight.SpanGradientFormatter">
-            <summary> Formats text with different color intensity depending on the score of the
-            term using the span tag.  GradientFormatter uses a bgcolor argument to the font tag which
-            doesn't work in Mozilla, thus this class.
-            
-            </summary>
-            <seealso cref="T:Lucene.Net.Highlight.GradientFormatter">
-            </seealso>
-            <author>  David Spencer dave@searchmorph.com
-            </author>
-        </member>
         <member name="T:Lucene.Net.Highlight.TokenSources">
             <summary> Hides implementation issues associated with obtaining a TokenStream for use with
             the higlighter - can obtain from TermFreqVectors with offsets and (optionally) positions or
@@ -574,6 +553,27 @@
             </param>
             <param name="tokenPositionsGuaranteedContiguous">true if the token position numbers have no overlaps or gaps. If looking
             to eek out the last drops of performance, set to true. If in doubt, set to false.
+            </param>
+        </member>
+        <member name="T:Lucene.Net.Highlight.WeightedTerm">
+            <summary>Lightweight class to hold term and a weight value used for scoring this term </summary>
+            <author>  Mark Harwood
+            </author>
+        </member>
+        <member name="M:Lucene.Net.Highlight.WeightedTerm.GetTerm">
+            <returns> the term value (stemmed)
+            </returns>
+        </member>
+        <member name="M:Lucene.Net.Highlight.WeightedTerm.GetWeight">
+            <returns> the weight associated with this term
+            </returns>
+        </member>
+        <member name="M:Lucene.Net.Highlight.WeightedTerm.SetTerm(System.String)">
+            <param name="term">the term value (stemmed)
+            </param>
+        </member>
+        <member name="M:Lucene.Net.Highlight.WeightedTerm.SetWeight(System.Single)">
+            <param name="weight">the weight associated with this term
             </param>
         </member>
     </members>

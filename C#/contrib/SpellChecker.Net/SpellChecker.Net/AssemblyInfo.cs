@@ -4,17 +4,17 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-// TODO: Review the values of the assembly attributes
-
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTitle("Apache Lucene.Net (SpellChecker)")]
+[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("SpellChecker.Net")]
+[assembly: AssemblyCopyright("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.SpellChecker")]
 [assembly: AssemblyCulture("")]
 
+[assembly: AssemblyInformationalVersionAttribute("2.0")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -53,8 +53,6 @@ using System.Runtime.CompilerServices;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
-
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]

@@ -561,16 +561,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Search\Regex\_delete_TestRegexQuery.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Search\Regex\_delete_TestSpanRegexQuery.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Search\Spans\TestBasics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
