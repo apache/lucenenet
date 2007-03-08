@@ -5,6 +5,8 @@ INTRODUCTION
 
 Apache Lucene.Net is a C# full-text search engine.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
 
+Apache Lucene.Net is compiled against Microsoft .NET Framework 1.1
+
 The Apache Lucene.Net web site is at:
   http://incubator.apache.org/lucene.net/
 
@@ -25,3 +27,9 @@ src/Test
 
 contrib/*
   Contributed code which extends and enhances Apache Lucene.Net, but is not part of the core library.
+
+
+DOCUMENTATION
+
+An MSDN style API documentation for Apache Lucene.Net exist.  Those can be found at this site:
+  http://incubator.apache.org/lucene.net/docs/2.0/

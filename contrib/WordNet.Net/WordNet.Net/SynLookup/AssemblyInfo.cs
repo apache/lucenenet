@@ -6,14 +6,17 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Apache Lucene.Net (WordNet: SynLookup)")]
+[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("WordNet.Net")]
+[assembly: AssemblyCopyright("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.SynLookup")]
+[assembly: AssemblyCulture("")]
+
+[assembly: AssemblyInformationalVersionAttribute("2.0")]
 
 //
 // Version information for an assembly consists of the following four values:

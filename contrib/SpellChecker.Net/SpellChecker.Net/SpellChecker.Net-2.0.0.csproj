@@ -99,7 +99,7 @@
                 <Reference
                     Name = "Lucene.Net"
                     AssemblyName = "Lucene.Net"
-                    HintPath = "Lucene.Net.dll"
+                    HintPath = "..\..\..\src\Lucene.Net\bin\Debug\Lucene.Net.dll"
                 />
             </References>
         </Build>
