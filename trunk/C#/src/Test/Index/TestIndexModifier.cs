@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
 			{
 				try
 				{
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 100));
+					System.Threading.Thread.Sleep(100);
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
 						{
 							rand = random.Next(maxWait);
 							//System.out.println("waiting " + rand + "ms");
-							System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * rand));
+							System.Threading.Thread.Sleep(rand);
 						}
 						catch (System.Threading.ThreadInterruptedException e)
 						{
