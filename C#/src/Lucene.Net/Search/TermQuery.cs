@@ -171,8 +171,11 @@ namespace Lucene.Net.Search
 		
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-            Term term = GetTerm();
-			terms.Add(term, term);
+			Term term = GetTerm();
+			if (terms.Contains(term) == false)
+			{
+				terms.Add(term, term);
+			}
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

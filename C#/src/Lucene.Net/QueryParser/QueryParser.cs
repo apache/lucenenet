@@ -1021,7 +1021,8 @@ label_1_brk: ;
 						float fms = fuzzyMinSim;
 						try
 						{
-							fms = (float) System.Single.Parse(fuzzySlop.image.Substring(1));
+							fms = (float) System.Single.Parse(fuzzySlop.image.Substring(1).Replace(".", 
+								System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
 						}
 						catch (System.Exception ignored)
 						{

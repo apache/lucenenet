@@ -590,16 +590,28 @@ public class SupportClass
         /// <returns></returns>
         public static System.Single Parse(System.String s)
         {
+            System.Double res; 
+
+            if (s.EndsWith("f") || s.EndsWith("F"))
+            {
+                System.Double.TryParse(s.Substring(0, s.Length - 1), 
+                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
+                    null, out res);
+            }
+            else
+            {
+                System.Double.TryParse(s, 
+                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
+                    null, out res);
+            }
+
             try
             {
-                if (s.EndsWith("f") || s.EndsWith("F"))
-                    return System.Single.Parse(s.Substring(0, s.Length - 1));
-                else
-                    return System.Single.Parse(s);
+                return System.Convert.ToSingle(res);
             }
-            catch(System.FormatException fex)
+            catch (System.OverflowException)
             {
-                throw fex;					
+                return 0;
             }
         }
     }
