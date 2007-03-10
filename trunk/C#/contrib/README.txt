@@ -8,6 +8,7 @@ Highlighter.Net
 Snowball.Net
 SpellChecker.Net
 WordNet.Net
+Similarity.Net
 
 
 Contributed code:
