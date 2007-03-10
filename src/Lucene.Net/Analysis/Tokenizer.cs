@@ -44,7 +44,10 @@ namespace Lucene.Net.Analysis
 		/// <summary>By default, closes the input Reader. </summary>
 		public override void  Close()
 		{
-			input.Close();
+			if (input != null)
+			{
+				input.Close();
+			}
 		}
 	}
 }
