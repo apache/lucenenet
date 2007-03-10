@@ -1,6 +1,17 @@
 Apache Lucene.Net History
 -------------------------
 
+
+11Mar07:
+	- Release:  Apache Lucene.Net.2.0 build 004 "final"
+	- Fix: LUCENENET-36 "Countries using "," as decimal separator gets an exception in QueryParser.cs with a query like color~0.5"
+	- Fix: LUCENENET-35 "Tokenizer.Close should check if input is null"
+	- Fix: LUCENENET-33 "Frequent exceptions at Single Parse(String s)" 
+	- Fix: LUCENENET-32 "Check hashtable in PhraseQuery.ExtractTerms for existing keys"
+	- Fix: LUCENENET-31 "elimate exception when casting TermFreqVector"
+	- Fix: LUCENENET-30 "Unnecessary boxing of bytes"
+
+
 27Dec06:
 	- Release:  Apache Lucene.Net.2.0 build 003 "final"
 	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
