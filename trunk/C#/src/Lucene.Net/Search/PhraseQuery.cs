@@ -286,7 +286,10 @@ namespace Lucene.Net.Search
 		{
 			foreach (Term term in terms)
 			{
-				queryTerms.Add(term, term);
+				if (queryTerms.Contains(term) == false)
+				{
+					queryTerms.Add(term, term);
+				}
 			}
 		}
 		
