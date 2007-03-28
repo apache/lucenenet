@@ -31,5 +31,5 @@ contrib/*
 
 DOCUMENTATION
 
-An MSDN style API documentation for Apache Lucene.Net exist.  Those can be found at this site:
+MSDN style API documentation for Apache Lucene.Net exists.  Those can be found at this site:
   http://incubator.apache.org/lucene.net/docs/2.0/
