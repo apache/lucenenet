@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	public sealed class Term : System.IComparable
 	{
 		internal System.String field;
-		public /*internal*/ System.String text;
+		public System.String text;
 		
 		/// <summary>Constructs a Term with the given field and text. </summary>
 		public Term(System.String fld, System.String txt) : this(fld, txt, true)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 		/// <summary>Compares two terms, returning true iff they have the same
 		/// field and text. 
 		/// </summary>
-		public override bool Equals(System.Object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (o == null)
 				return false;
@@ -120,30 +120,14 @@ namespace Lucene.Net.Index
 			return field + ":" + text;
 		}
 		
-        private Term(System.Runtime.Serialization.SerializationInfo in_Renamed, System.Runtime.Serialization.StreamingContext context)
-        {
-            System.Type thisType = this.GetType();
-            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
-            for (int i = 0 ; i < mi.Length; i++) 
-            {
-                System.Reflection.FieldInfo fi = (System.Reflection.FieldInfo) mi[i];
-                fi.SetValue(this, in_Renamed.GetValue(fi.Name, fi.FieldType));
-            }
-            field = String.Intern(field);
-        }
-
-        public Term()
-        {
-        }
-
-        public void  GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            System.Type thisType = this.GetType();
-            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
-            for (int i = 0 ; i < mi.Length; i++) 
-            {
-                info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
-            }
-        }
-    }
+		public void  GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			System.Type thisType = this.GetType();
+			System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
+			for (int i = 0 ; i < mi.Length; i++) 
+			{
+				info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
+			}
+		}
+	}
 }

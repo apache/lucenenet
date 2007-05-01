@@ -16,13 +16,14 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
 {
 	
-    /// <summary> A range query that returns a constant score equal to its boost for
-    /// all documents in the range.
+	/// <summary> A range query that returns a constant score equal to its boost for
+	/// all documents in the range.
 	/// <p>
 	/// It does not have an upper bound on the number of clauses covered in the range.
 	/// <p>
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  yonik
 	/// </author>
-	/// <version>  $Id$
+	/// <version>  $Id: ConstantScoreRangeQuery.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	
 	[Serializable]
@@ -100,7 +101,7 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			// Map to RangeFilter semantics which are slightly different...
-			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal, (System.Object) lowerVal == (System.Object) ""?false:includeLower, upperVal == null?false:includeUpper);
+			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal, (System.Object) lowerVal == (System.Object) "" ? false : includeLower, upperVal == null ? false : includeUpper);
 			Query q = new ConstantScoreQuery(rangeFilt);
 			q.SetBoost(GetBoost());
 			return q;
@@ -161,17 +162,17 @@ namespace Lucene.Net.Search
 			h ^= (includeLower ? 0x665599aa : 0) ^ (includeUpper ? unchecked((int) 0x99aa5566) : 0);    // {{Aroush-1.9}} Is this OK?!
 			return h;
 		}
-
-        override public System.Object Clone()
+		
+		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
-			ConstantScoreRangeQuery clone = (ConstantScoreRangeQuery) base.Clone();
-			clone.fieldName = (System.String) this.fieldName.Clone();
-			clone.lowerVal = (System.String) this.lowerVal.Clone();
-			clone.upperVal = (System.String) this.upperVal.Clone();
-			clone.includeLower = this.includeLower;
-			clone.includeUpper = this.includeUpper;
-			return clone;
+            ConstantScoreRangeQuery clone = (ConstantScoreRangeQuery) base.Clone();
+            clone.fieldName = (System.String) this.fieldName.Clone();
+            clone.lowerVal = (System.String) this.lowerVal.Clone();
+            clone.upperVal = (System.String) this.upperVal.Clone();
+            clone.includeLower = this.includeLower;
+            clone.includeUpper = this.includeUpper;
+            return clone;
         }
 	}
 }

@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 		
 		private SegmentTermEnum indexEnum;
 		
-		public /*internal*/ TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
+		public TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
 		{
 			directory = dir;
 			segment = seg;
@@ -54,20 +54,12 @@ namespace Lucene.Net.Index
 			indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
 		}
 		
-		/*  Leaving this here will cause a memory leak under .NET 1.1
-		~TermInfosReader()
-		{
-			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-			//System.Threading.Thread.SetData(enumerators, null);
-		}
-		*/
-		
 		public int GetSkipInterval()
 		{
 			return origEnum.skipInterval;
 		}
 		
-		public /*internal*/ void  Close()
+		public void  Close()
 		{
 			if (origEnum != null)
 				origEnum.Close();
@@ -148,7 +140,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
-		public /*internal*/ TermInfo Get(Term term)
+		public TermInfo Get(Term term)
 		{
 			if (size == 0)
 				return null;

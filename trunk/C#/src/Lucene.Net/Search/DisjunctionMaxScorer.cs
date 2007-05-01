@@ -133,6 +133,15 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override bool SkipTo(int target)
 		{
+			if (firstTime)
+			{
+				if (!more)
+					return false;
+				Heapify();
+				firstTime = false;
+				return true; // more would have been false if no subScorers had any docs
+			}
+			
 			while (subScorers.Count > 0 && ((Scorer) subScorers[0]).Doc() < target)
 			{
 				if (((Scorer) subScorers[0]).SkipTo(target))

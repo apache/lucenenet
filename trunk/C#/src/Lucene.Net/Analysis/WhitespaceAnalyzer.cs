@@ -20,13 +20,13 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>An Analyzer that uses WhitespaceTokenizer. </summary>
+    /// <summary>An Analyzer that uses WhitespaceTokenizer. </summary>
 	
-	public sealed class WhitespaceAnalyzer : Analyzer
-	{
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			return new WhitespaceTokenizer(reader);
-		}
-	}
+    public sealed class WhitespaceAnalyzer : Analyzer
+    {
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return new WhitespaceTokenizer(reader);
+        }
+    }
 }

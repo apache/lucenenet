@@ -17,7 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 
@@ -54,15 +54,23 @@ namespace Lucene.Net.Index
 			indexStream.WriteLong(fieldsStream.GetFilePointer());
 			
 			int storedCount = 0;
-            foreach (Field field  in doc.Fields())
-            {
+			System.Collections.IEnumerator fieldIterator = doc.GetFields().GetEnumerator();
+			while (fieldIterator.MoveNext())
+			{
+				Fieldable field = (Fieldable) fieldIterator.Current;
 				if (field.IsStored())
 					storedCount++;
 			}
 			fieldsStream.WriteVInt(storedCount);
 			
-			foreach (Field field in doc.Fields())
+			fieldIterator = doc.GetFields().GetEnumerator();
+			while (fieldIterator.MoveNext())
 			{
+				Fieldable field = (Fieldable) fieldIterator.Current;
+				// if the field as an instanceof FieldsReader.FieldForMerge, we're in merge mode
+				// and field.binaryValue() already returns the compressed value for a field
+				// with isCompressed()==true, so we disable compression in that case
+				bool disableCompression = (field is FieldsReader.FieldForMerge);
 				if (field.IsStored())
 				{
 					fieldsStream.WriteVInt(fieldInfos.FieldNumber(field.Name()));
@@ -81,14 +89,24 @@ namespace Lucene.Net.Index
 					{
 						// compression is enabled for the current field
 						byte[] data = null;
-						// check if it is a binary field
-						if (field.IsBinary())
+						
+						if (disableCompression)
 						{
-							data = Compress(field.BinaryValue());
+							// optimized case for merging, the data
+							// is already compressed
+							data = field.BinaryValue();
 						}
 						else
 						{
-							data = Compress(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(field.StringValue()));
+							// check if it is a binary field
+							if (field.IsBinary())
+							{
+								data = Compress(field.BinaryValue());
+							}
+							else
+							{
+								data = Compress(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(field.StringValue()));
+							}
 						}
 						int len = data.Length;
 						fieldsStream.WriteVInt(len);
@@ -115,8 +133,7 @@ namespace Lucene.Net.Index
 		
 		private byte[] Compress(byte[] input)
 		{
-            // {{Aroush-2.0}} For .NET 2.0, replace this call to use the built-in compression support
-            return SupportClass.CompressionSupport.Compress(input);
-		}
+			return SupportClass.CompressionSupport.Compress(input);
+        }
 	}
 }

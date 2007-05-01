@@ -27,16 +27,16 @@ namespace Lucene.Net.Index
 		internal int number;
 		
 		// true if term vector for this field should be stored
-		public /*internal*/ bool storeTermVector;
-		public /*internal*/ bool storeOffsetWithTermVector;
-		public /*internal*/ bool storePositionWithTermVector;
+		public bool storeTermVector;
+		public bool storeOffsetWithTermVector;
+		public bool storePositionWithTermVector;
 		
-		public /*internal*/ bool omitNorms; // omit norms associated with indexed fields
+		public bool omitNorms; // omit norms associated with indexed fields
 		
-        public bool IsIndexed()
-        {
-            return isIndexed;
-        }
+		public bool IsIndexed()
+		{
+			return isIndexed;
+		}
 
 		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
 		{

@@ -17,6 +17,8 @@
 
 using System;
 
+using Pattern = System.Text.RegularExpressions.Regex;
+
 namespace Lucene.Net.Index
 {
 	
@@ -30,23 +32,76 @@ namespace Lucene.Net.Index
 	public class IndexFileNameFilter // : FilenameFilter {{Aroush-1.9}}
 	{
 		
+		internal static IndexFileNameFilter singleton = new IndexFileNameFilter();
+		private System.Collections.Hashtable extensions;
+		
+		public IndexFileNameFilter()
+		{
+			extensions = new System.Collections.Hashtable();
+			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
+			{
+				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i], IndexFileNames.INDEX_EXTENSIONS[i]);
+			}
+		}
+		
 		/* (non-Javadoc)
 		* @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		*/
 		public virtual bool Accept(System.IO.FileInfo dir, System.String name)
 		{
-			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
+			int i = name.LastIndexOf((System.Char) '.');
+			if (i != - 1)
 			{
-				if (name.EndsWith("." + IndexFileNames.INDEX_EXTENSIONS[i]))
+				System.String extension = name.Substring(1 + i);
+				if (extensions.Contains(extension))
+				{
+					return true;
+				}
+				else if (extension.StartsWith("f") && (new System.Text.RegularExpressions.Regex("f\\d+")).Match(extension).Success)
+				{
+					return true;
+				}
+				else if (extension.StartsWith("s") && (new System.Text.RegularExpressions.Regex("s\\d+")).Match(extension).Success)
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (name.Equals(IndexFileNames.DELETABLE))
+					return true;
+				else if (name.StartsWith(IndexFileNames.SEGMENTS))
 					return true;
 			}
-			if (name.Equals(IndexFileNames.DELETABLE))
-				return true;
-			else if (name.Equals(IndexFileNames.SEGMENTS))
-				return true;
-			else if (true) // else if (name.Matches(".+\\.f\\d+")) // {{Aroush-1.9}}
-				return true;
 			return false;
+		}
+		
+		/// <summary> Returns true if this is a file that would be contained
+		/// in a CFS file.  This function should only be called on
+		/// files that pass the above "accept" (ie, are already
+		/// known to be a Lucene index file).
+		/// </summary>
+		public virtual bool IsCFSFile(System.String name)
+		{
+			int i = name.LastIndexOf((System.Char) '.');
+			if (i != - 1)
+			{
+				System.String extension = name.Substring(1 + i);
+				if (extensions.Contains(extension) && !extension.Equals("del") && !extension.Equals("gen") && !extension.Equals("cfs"))
+				{
+					return true;
+				}
+				if (extension.StartsWith("f") && (new System.Text.RegularExpressions.Regex("f\\d+")).Match(extension).Success)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static IndexFileNameFilter GetFilter()
+		{
+			return singleton;
 		}
 	}
 }

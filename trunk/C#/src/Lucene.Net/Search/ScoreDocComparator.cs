@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: ScoreDocComparator.java 150348 2004-05-19 23:05:27Z tjones $
+	/// <version>  $Id: ScoreDocComparator.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public struct ScoreDocComparator_Fields
 	{

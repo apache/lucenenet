@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search

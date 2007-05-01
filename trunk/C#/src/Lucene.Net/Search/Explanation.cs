@@ -38,6 +38,21 @@ namespace Lucene.Net.Search
 			this.description = description;
 		}
 		
+		/// <summary> Indicates wether or not this Explanation models a good match.
+		/// 
+		/// <p>
+		/// By default, an Explanation represents a "match" if the value is positive.
+		/// </p>
+		/// </summary>
+		/// <seealso cref="#getValue">
+		/// </seealso>
+		public virtual bool IsMatch()
+		{
+			return (0.0f < GetValue());
+		}
+		
+		
+		
 		/// <summary>The value assigned to this explanation node. </summary>
 		public virtual float GetValue()
 		{
@@ -58,6 +73,14 @@ namespace Lucene.Net.Search
 		public virtual void  SetDescription(System.String description)
 		{
 			this.description = description;
+		}
+		
+		/// <summary> A short one line summary which should contain all high level
+		/// information about this Explanation, without the "Details"
+		/// </summary>
+		protected internal virtual System.String GetSummary()
+		{
+			return GetValue() + " = " + GetDescription();
 		}
 		
 		/// <summary>The sub-nodes of this explanation node. </summary>
@@ -81,16 +104,14 @@ namespace Lucene.Net.Search
 		{
 			return ToString(0);
 		}
-		private System.String ToString(int depth)
+		protected internal virtual System.String ToString(int depth)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			for (int i = 0; i < depth; i++)
 			{
 				buffer.Append("  ");
 			}
-			buffer.Append(GetValue());
-			buffer.Append(" = ");
-			buffer.Append(GetDescription());
+			buffer.Append(GetSummary());
 			buffer.Append("\n");
 			
 			Explanation[] details = GetDetails();
@@ -113,10 +134,8 @@ namespace Lucene.Net.Search
 			buffer.Append("<ul>\n");
 			
 			buffer.Append("<li>");
-			buffer.Append(GetValue());
-			buffer.Append(" = ");
-			buffer.Append(GetDescription());
-			buffer.Append("</li>\n");
+			buffer.Append(GetSummary());
+			buffer.Append("<br />\n");
 			
 			Explanation[] details = GetDetails();
 			if (details != null)
@@ -127,6 +146,7 @@ namespace Lucene.Net.Search
 				}
 			}
 			
+			buffer.Append("</li>\n");
 			buffer.Append("</ul>\n");
 			
 			return buffer.ToString();

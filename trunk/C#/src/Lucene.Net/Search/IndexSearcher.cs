@@ -16,10 +16,11 @@
  */
 
 using System;
+
+using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Search
 	/// <summary>Implements search over a single IndexReader.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
+	/// or {@link #search(Query,Filter)} methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
 	/// <p>Note that you can only access Hits from an IndexSearcher as long as it is
@@ -75,7 +76,7 @@ namespace Lucene.Net.Search
             get {   return reader;  }
         }
 
-		/// <summary>Creates a searcher searching the index in the named directory. </summary>
+        /// <summary>Creates a searcher searching the index in the named directory. </summary>
 		public IndexSearcher(System.String path) : this(IndexReader.Open(path), true)
 		{
 		}
@@ -110,12 +111,7 @@ namespace Lucene.Net.Search
 		public override void  Close()
 		{
 			if (closeReader)
-			{
-				FieldSortedHitQueue.Close(reader); 
-				Lucene.Net.Search.FieldCache_Fields.DEFAULT.Close(reader);
-
 				reader.Close();
-			}
 		}
 		
 		// inherit javadoc
@@ -140,23 +136,23 @@ namespace Lucene.Net.Search
 		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
 			
-            if (nDocs <= 0)
-                // null might be returned from hq.top() below.
-                throw new System.ArgumentException("nDocs must be > 0");
+			if (nDocs <= 0)
+				// null might be returned from hq.top() below.
+				throw new System.ArgumentException("nDocs must be > 0");
 			
-            TopDocCollector collector = new TopDocCollector(nDocs);
-            Search(weight, filter, collector);
-            return collector.TopDocs();
-        }
+			TopDocCollector collector = new TopDocCollector(nDocs);
+			Search(weight, filter, collector);
+			return collector.TopDocs();
+		}
 		
 		// inherit javadoc
 		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
 		{
 			
-            TopFieldDocCollector collector = new TopFieldDocCollector(reader, sort, nDocs);
-            Search(weight, filter, collector);
-            return (TopFieldDocs) collector.TopDocs();
-        }
+			TopFieldDocCollector collector = new TopFieldDocCollector(reader, sort, nDocs);
+			Search(weight, filter, collector);
+			return (TopFieldDocs) collector.TopDocs();
+		}
 		
 		// inherit javadoc
 		public override void  Search(Weight weight, Filter filter, HitCollector results)

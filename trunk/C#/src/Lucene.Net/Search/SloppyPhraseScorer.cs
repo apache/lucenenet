@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using TermPositions = Lucene.Net.Index.TermPositions;
 
 namespace Lucene.Net.Search

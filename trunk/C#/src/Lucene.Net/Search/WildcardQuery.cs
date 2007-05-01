@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -35,8 +36,11 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class WildcardQuery : MultiTermQuery
 	{
+		private bool termContainsWildcard;
+		
 		public WildcardQuery(Term term) : base(term)
 		{
+			this.termContainsWildcard = (term.Text().IndexOf((System.Char) '*') != - 1) || (term.Text().IndexOf((System.Char) '?') != - 1);
 		}
 		
 		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
@@ -51,6 +55,17 @@ namespace Lucene.Net.Search
 			
 			return false;
 		}
+		
+		public override Query Rewrite(IndexReader reader)
+		{
+			if (this.termContainsWildcard)
+			{
+				return base.Rewrite(reader);
+			}
+			
+			return new TermQuery(GetTerm());
+		}
+		
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();

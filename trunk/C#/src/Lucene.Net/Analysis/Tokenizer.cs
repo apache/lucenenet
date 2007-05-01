@@ -20,34 +20,34 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A Tokenizer is a TokenStream whose input is a Reader.
-	/// <p>
-	/// This is an abstract class.
-	/// </summary>
+    /// <summary>A Tokenizer is a TokenStream whose input is a Reader.
+    /// <p>
+    /// This is an abstract class.
+    /// </summary>
 	
-	public abstract class Tokenizer : TokenStream
-	{
-		/// <summary>The text source for this Tokenizer. </summary>
-		protected internal System.IO.TextReader input;
+    public abstract class Tokenizer : TokenStream
+    {
+        /// <summary>The text source for this Tokenizer. </summary>
+        protected internal System.IO.TextReader input;
 		
-		/// <summary>Construct a tokenizer with null input. </summary>
-		protected internal Tokenizer()
-		{
-		}
+        /// <summary>Construct a tokenizer with null input. </summary>
+        protected internal Tokenizer()
+        {
+        }
 		
-		/// <summary>Construct a token stream processing the given input. </summary>
-		protected internal Tokenizer(System.IO.TextReader input)
-		{
-			this.input = input;
-		}
+        /// <summary>Construct a token stream processing the given input. </summary>
+        protected internal Tokenizer(System.IO.TextReader input)
+        {
+            this.input = input;
+        }
 		
-		/// <summary>By default, closes the input Reader. </summary>
-		public override void  Close()
-		{
-			if (input != null)
-			{
-				input.Close();
-			}
-		}
-	}
+        /// <summary>By default, closes the input Reader. </summary>
+        public override void  Close()
+        {
+            if (input != null)
+            {
+                input.Close();
+            }
+        }
+    }
 }

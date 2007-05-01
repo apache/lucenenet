@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Search

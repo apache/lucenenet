@@ -16,22 +16,24 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Hits = Lucene.Net.Search.Hits;
 using Searcher = Lucene.Net.Search.Searcher;
 
 namespace Lucene.Net.Documents
 {
+	// for javadoc
 	
 	/// <summary>Documents are the unit of indexing and search.
 	/// 
 	/// A Document is a set of fields.  Each field has a name and a textual value.
-	/// A field may be {@link Field#IsStored() stored} with the document, in which
+	/// A field may be {@link Fieldable#IsStored() stored} with the document, in which
 	/// case it is returned with search hits on the document.  Thus each document
 	/// should typically contain one or more stored fields which uniquely identify
 	/// it.
 	/// 
-	/// <p>Note that fields which are <i>not</i> {@link Field#IsStored() stored} are
+	/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
 	/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
 	/// Hits#Doc(int)}, {@link Searcher#Doc(int)} or {@link
 	/// IndexReader#Document(int)}.
@@ -55,15 +57,16 @@ namespace Lucene.Net.Documents
             return fields.Count;
         }
 		
+		
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
 		/// 
-		/// <p>Values are multiplied into the value of {@link Field#GetBoost()} of
+		/// <p>Values are multiplied into the value of {@link Fieldable#GetBoost()} of
 		/// each field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Field.SetBoost(float)">
+		/// <seealso cref="Fieldable#SetBoost(float)">
 		/// </seealso>
 		public void  SetBoost(float boost)
 		{
@@ -80,7 +83,7 @@ namespace Lucene.Net.Documents
 		/// this document was indexed.
 		/// 
 		/// </summary>
-		/// <seealso cref="SetBoost(float)">
+		/// <seealso cref="#SetBoost(float)">
 		/// </seealso>
 		public float GetBoost()
 		{
@@ -96,7 +99,7 @@ namespace Lucene.Net.Documents
 		/// a document has to be deleted from an index and a new changed version of that
 		/// document has to be added.</p>
 		/// </summary>
-		public void  Add(Field field)
+		public void  Add(Fieldable field)
 		{
 			fields.Add(field);
 		}
@@ -115,7 +118,7 @@ namespace Lucene.Net.Documents
 			System.Collections.IEnumerator it = fields.GetEnumerator();
 			while (it.MoveNext())
 			{
-				Field field = (Field) it.Current;
+				Fieldable field = (Fieldable) it.Current;
 				if (field.Name().Equals(name))
 				{
 					fields.Remove(field);
@@ -142,17 +145,34 @@ namespace Lucene.Net.Documents
                     fields.RemoveAt(i);
                 }
             }
-		}
+        }
 		
 		/// <summary>Returns a field with the given name if any exist in this document, or
 		/// null.  If multiple fields exists with this name, this method returns the
 		/// first value added.
+		/// Do not use this method with lazy loaded fields.
 		/// </summary>
 		public Field GetField(System.String name)
 		{
 			for (int i = 0; i < fields.Count; i++)
 			{
 				Field field = (Field) fields[i];
+				if (field.Name().Equals(name))
+					return field;
+			}
+			return null;
+		}
+		
+		
+		/// <summary>Returns a field with the given name if any exist in this document, or
+		/// null.  If multiple fields exists with this name, this method returns the
+		/// first value added.
+		/// </summary>
+		public Fieldable GetFieldable(System.String name)
+		{
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name))
 					return field;
 			}
@@ -168,21 +188,34 @@ namespace Lucene.Net.Documents
 		{
 			for (int i = 0; i < fields.Count; i++)
 			{
-				Field field = (Field) fields[i];
+				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name) && (!field.IsBinary()))
 					return field.StringValue();
 			}
 			return null;
 		}
 		
-		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
+		/// <summary>Returns an Enumeration of all the fields in a document.</summary>
+		/// <deprecated> use {@link #GetFields()} instead
+		/// </deprecated>
 		public System.Collections.IEnumerable Fields()
 		{
-            return fields;
+			return fields;
+		}
+		
+		/// <summary>Returns a List of all the fields in a document.
+		/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
+		/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
+		/// Hits#Doc(int)}, {@link Searcher#Doc(int)} or {@link IndexReader#Document(int)}.
+		/// </summary>
+		public System.Collections.IList GetFields()
+		{
+			return fields;
 		}
 		
 		/// <summary> Returns an array of {@link Field}s with the given name.
 		/// This method can return <code>null</code>.
+		/// Do not use with lazy loaded fields.
 		/// 
 		/// </summary>
 		/// <param name="name">the name of the field
@@ -207,20 +240,48 @@ namespace Lucene.Net.Documents
 			return (Field[]) result.ToArray(typeof(Field));
 		}
 		
+		
+		/// <summary> Returns an array of {@link Fieldable}s with the given name.
+		/// This method can return <code>null</code>.
+		/// 
+		/// </summary>
+		/// <param name="name">the name of the field
+		/// </param>
+		/// <returns> a <code>Fieldable[]</code> array or <code>null</code>
+		/// </returns>
+		public Fieldable[] GetFieldables(System.String name)
+		{
+			System.Collections.ArrayList result = new System.Collections.ArrayList();
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Fieldable field = (Fieldable) fields[i];
+				if (field.Name().Equals(name))
+				{
+					result.Add(field);
+				}
+			}
+			
+			if (result.Count == 0)
+				return null;
+			
+			return (Fieldable[]) result.ToArray(typeof(Field));
+		}
+		
+		
 		/// <summary> Returns an array of values of the field specified as the method parameter.
 		/// This method can return <code>null</code>.
 		/// 
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>String[]</code> of field values
+		/// <returns> a <code>String[]</code> of field values or <code>null</code>
 		/// </returns>
 		public System.String[] GetValues(System.String name)
 		{
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
 			for (int i = 0; i < fields.Count; i++)
 			{
-				Field field = (Field) fields[i];
+				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name) && (!field.IsBinary()))
 					result.Add(field.StringValue());
 			}
@@ -238,24 +299,24 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a  <code>byte[][]</code> of binary field values.
+		/// <returns> a  <code>byte[][]</code> of binary field values or <code>null</code>
 		/// </returns>
 		public byte[][] GetBinaryValues(System.String name)
 		{
 			System.Collections.IList result = new System.Collections.ArrayList();
 			for (int i = 0; i < fields.Count; i++)
 			{
-				Field field = (Field) fields[i];
+				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name) && (field.IsBinary()))
-                {
-                    byte[] byteArray = field.BinaryValue();
-                    byte[] resultByteArray = new byte[byteArray.Length];
-                    for (int index = 0; index < byteArray.Length; index++)
-                        resultByteArray[index] = (byte) byteArray[index];
+				{
+					byte[] byteArray = field.BinaryValue();
+					byte[] resultByteArray = new byte[byteArray.Length];
+					for (int index = 0; index < byteArray.Length; index++)
+						resultByteArray[index] = (byte) byteArray[index];
 
-                    result.Add(resultByteArray);
-                }
-            }
+					result.Add(resultByteArray);
+				}
+			}
 			
 			if (result.Count == 0)
 				return null;
@@ -287,13 +348,13 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">the name of the field.
 		/// </param>
-		/// <returns> a <code>byte[]</code> containing the binary field value.
+		/// <returns> a <code>byte[]</code> containing the binary field value or <code>null</code>
 		/// </returns>
 		public byte[] GetBinaryValue(System.String name)
 		{
 			for (int i = 0; i < fields.Count; i++)
 			{
-				Field field = (Field) fields[i];
+				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name) && (field.IsBinary()))
 					return field.BinaryValue();
 			}
@@ -307,7 +368,7 @@ namespace Lucene.Net.Documents
 			buffer.Append("Document<");
 			for (int i = 0; i < fields.Count; i++)
 			{
-				Field field = (Field) fields[i];
+				Fieldable field = (Fieldable) fields[i];
 				buffer.Append(field.ToString());
 				if (i != fields.Count - 1)
 					buffer.Append(" ");

@@ -20,7 +20,7 @@ using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Fieldable = Lucene.Net.Documents.Fieldable;
 using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
 			this.termIndexInterval = writer.GetTermIndexInterval();
 		}
 		
-		public /*internal*/ void  AddDocument(System.String segment, Document doc)
+		public void  AddDocument(System.String segment, Document doc)
 		{
 			// write field names
 			fieldInfos = new FieldInfos();
@@ -97,11 +97,11 @@ namespace Lucene.Net.Index
 			fieldOffsets = new int[fieldInfos.Size()]; // init fieldOffsets
 			
 			fieldBoosts = new float[fieldInfos.Size()]; // init fieldBoosts
-            float boost = doc.GetBoost();
-            for (int i = 0; i < fieldBoosts.Length; i++)
-            {
-                fieldBoosts[i] = boost;
-            }
+			float boost = doc.GetBoost();
+			for (int i = 0; i < fieldBoosts.Length; i++)
+			{
+				fieldBoosts[i] = boost;
+			}
 			
 			InvertDocument(doc);
 			
@@ -139,8 +139,10 @@ namespace Lucene.Net.Index
 		// Tokenizes the fields of a document into Postings.
 		private void  InvertDocument(Document doc)
 		{
-			foreach(Field field in doc.Fields())
+			System.Collections.IEnumerator fieldIterator = doc.GetFields().GetEnumerator();
+			while (fieldIterator.MoveNext())
 			{
+				Fieldable field = (Fieldable) fieldIterator.Current;
 				System.String fieldName = field.Name();
 				int fieldNumber = fieldInfos.FieldNumber(fieldName);
 				
@@ -188,7 +190,7 @@ namespace Lucene.Net.Index
 									AddPosition(fieldName, t.TermText(), position++, null);
 								
 								lastToken = t;
-								if (++length > maxFieldLength)
+								if (++length >= maxFieldLength)
 								{
 									if (infoStream != null)
 										infoStream.WriteLine("maxFieldLength " + maxFieldLength + " reached, ignoring following tokens");
@@ -229,9 +231,7 @@ namespace Lucene.Net.Index
 					// positions array is full
 					int[] newPositions = new int[freq * 2]; // double size
 					int[] positions = ti.positions;
-					for (int i = 0; i < freq; i++)
-					// copy old positions to new
-						newPositions[i] = positions[i];
+					Array.Copy(positions, 0, newPositions, 0, freq);
 					ti.positions = newPositions;
 				}
 				ti.positions[freq] = position; // add new position
@@ -242,10 +242,7 @@ namespace Lucene.Net.Index
 					{
 						TermVectorOffsetInfo[] newOffsets = new TermVectorOffsetInfo[freq * 2];
 						TermVectorOffsetInfo[] offsets = ti.offsets;
-						for (int i = 0; i < freq; i++)
-						{
-							newOffsets[i] = offsets[i];
-						}
+						Array.Copy(offsets, 0, newOffsets, 0, freq);
 						ti.offsets = newOffsets;
 					}
 					ti.offsets[freq] = offset;

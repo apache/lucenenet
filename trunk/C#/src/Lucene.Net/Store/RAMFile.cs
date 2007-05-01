@@ -20,10 +20,88 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	class RAMFile
+	[Serializable]
+	public class RAMFile
 	{
-		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		
+		private const long serialVersionUID = 1L;
+		
+		// Direct read-only access to state supported for streams since a writing stream implies no other concurrent streams
+		internal System.Collections.ArrayList buffers = new System.Collections.ArrayList();
 		internal long length;
-		internal long lastModified = System.DateTime.Now.Ticks;
+		internal RAMDirectory directory;
+		internal long sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
+		
+		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
+		private long lastModified = System.DateTime.Now.Ticks;
+		
+		// File used as buffer, in no RAMDirectory
+		internal RAMFile()
+		{
+		}
+		
+		internal RAMFile(RAMDirectory directory)
+		{
+			this.directory = directory;
+		}
+		
+		// For non-stream access from thread that might be concurrent with writing
+		internal virtual long GetLength()
+		{
+			lock (this)
+			{
+				return length;
+			}
+		}
+		
+		internal virtual void  SetLength(long length)
+		{
+			lock (this)
+			{
+				this.length = length;
+			}
+		}
+		
+		// For non-stream access from thread that might be concurrent with writing
+		internal virtual long GetLastModified()
+		{
+			lock (this)
+			{
+				return lastModified;
+			}
+		}
+		
+		internal virtual void  SetLastModified(long lastModified)
+		{
+			lock (this)
+			{
+				this.lastModified = lastModified;
+			}
+		}
+		
+		internal byte[] AddBuffer(int size)
+		{
+			byte[] buffer = new byte[size];
+			if (directory != null)
+				lock (directory)
+				{
+					// Ensure addition of buffer and adjustment to directory size are atomic wrt directory
+					buffers.Add(buffer);
+					directory.sizeInBytes += size;
+					sizeInBytes += size;
+				}
+			else
+				buffers.Add(buffer);
+			return buffer;
+		}
+		
+		// Only valid if in a directory
+		internal virtual long GetSizeInBytes()
+		{
+			lock (directory)
+			{
+				return sizeInBytes;
+			}
+		}
 	}
 }

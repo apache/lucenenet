@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -29,11 +30,12 @@ namespace Lucene.Net.Util
 	/// <li>a count() method, which efficiently computes the number of one bits;</li>
 	/// <li>optimized read from and write to disk;</li>
 	/// <li>inlinable get() method;</li>
+	/// <li>store and load, as bit set or d-gaps, depending on sparseness;</li> 
 	/// </ul>
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: BitVector.java 150536 2004-09-28 18:15:52Z cutting $
+	/// <version>  $Id: BitVector.java 494136 2007-01-08 18:11:08Z mikemccand $
 	/// </version>
 	public sealed class BitVector
 	{
@@ -52,6 +54,10 @@ namespace Lucene.Net.Util
 		/// <summary>Sets the value of <code>bit</code> to one. </summary>
 		public void  Set(int bit)
 		{
+			if (bit >= size)
+			{
+				throw new System.IndexOutOfRangeException("Index of bound " + bit);
+			}
 			bits[bit >> 3] |= (byte) (1 << (bit & 7));
 			count = - 1;
 		}
@@ -59,6 +65,10 @@ namespace Lucene.Net.Util
 		/// <summary>Sets the value of <code>bit</code> to zero. </summary>
 		public void  Clear(int bit)
 		{
+			if (bit >= size)
+			{
+				throw new System.IndexOutOfRangeException("Index of bound " + bit);
+			}
 			bits[bit >> 3] &= (byte) (~ (1 << (bit & 7)));
 			count = - 1;
 		}
@@ -68,6 +78,10 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public bool Get(int bit)
 		{
+			if (bit >= size)
+			{
+				throw new System.IndexOutOfRangeException("Index of bound " + bit);
+			}
 			return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
 		}
 		
@@ -109,14 +123,70 @@ namespace Lucene.Net.Util
 			IndexOutput output = d.CreateOutput(name);
 			try
 			{
-				output.WriteInt(Size()); // write size
-				output.WriteInt(Count()); // write count
-				output.WriteBytes(bits, bits.Length); // write bits
+				if (IsSparse())
+				{
+					WriteDgaps(output); // sparse bit-set more efficiently saved as d-gaps.
+				}
+				else
+				{
+					WriteBits(output);
+				}
 			}
 			finally
 			{
 				output.Close();
 			}
+		}
+		
+		/// <summary>Write as a bit set </summary>
+		private void  WriteBits(IndexOutput output)
+		{
+			output.WriteInt(Size()); // write size
+			output.WriteInt(Count()); // write count
+			output.WriteBytes(bits, bits.Length);
+		}
+		
+		/// <summary>Write as a d-gaps list </summary>
+		private void  WriteDgaps(IndexOutput output)
+		{
+			output.WriteInt(- 1); // mark using d-gaps                         
+			output.WriteInt(Size()); // write size
+			output.WriteInt(Count()); // write count
+			int last = 0;
+			int n = Count();
+			int m = bits.Length;
+			for (int i = 0; i < m && n > 0; i++)
+			{
+				if (bits[i] != 0)
+				{
+					output.WriteVInt(i - last);
+					output.WriteByte(bits[i]);
+					last = i;
+					n -= BYTE_COUNTS[bits[i] & 0xFF];
+				}
+			}
+		}
+		
+		/// <summary>Indicates if the bit vector is sparse and should be saved as a d-gaps list, or dense, and should be saved as a bit set. </summary>
+		private bool IsSparse()
+		{
+			// note: order of comparisons below set to favor smaller values (no binary range search.)
+			// note: adding 4 because we start with ((int) -1) to indicate d-gaps format.
+			// note: we write the d-gap for the byte number, and the byte (bits[i]) itself, therefore
+			//       multiplying count by (8+8) or (8+16) or (8+24) etc.:
+			//       - first 8 for writing bits[i] (1 byte vs. 1 bit), and 
+			//       - second part for writing the byte-number d-gap as vint. 
+			// note: factor is for read/write of byte-arrays being faster than vints.  
+			int factor = 10;
+			if (bits.Length < (1 << 7))
+				return factor * (4 + (8 + 8) * Count()) < Size();
+			if (bits.Length < (1 << 14))
+				return factor * (4 + (8 + 16) * Count()) < Size();
+			if (bits.Length < (1 << 21))
+				return factor * (4 + (8 + 24) * Count()) < Size();
+			if (bits.Length < (1 << 28))
+				return factor * (4 + (8 + 32) * Count()) < Size();
+			return factor * (4 + (8 + 40) * Count()) < Size();
 		}
 		
 		/// <summary>Constructs a bit vector from the file <code>name</code> in Directory
@@ -128,13 +198,42 @@ namespace Lucene.Net.Util
 			try
 			{
 				size = input.ReadInt(); // read size
-				count = input.ReadInt(); // read count
-				bits = new byte[(size >> 3) + 1]; // allocate bits
-				input.ReadBytes(bits, 0, bits.Length); // read bits
+				if (size == - 1)
+				{
+					ReadDgaps(input);
+				}
+				else
+				{
+					ReadBits(input);
+				}
 			}
 			finally
 			{
 				input.Close();
+			}
+		}
+		
+		/// <summary>Read as a bit set </summary>
+		private void  ReadBits(IndexInput input)
+		{
+			count = input.ReadInt(); // read count
+			bits = new byte[(size >> 3) + 1]; // allocate bits
+			input.ReadBytes(bits, 0, bits.Length);
+		}
+		
+		/// <summary>read as a d-gaps list </summary>
+		private void  ReadDgaps(IndexInput input)
+		{
+			size = input.ReadInt(); // (re)read size
+			count = input.ReadInt(); // read count
+			bits = new byte[(size >> 3) + 1]; // allocate bits
+			int last = 0;
+			int n = Count();
+			while (n > 0)
+			{
+				last += input.ReadVInt();
+				bits[last] = input.ReadByte();
+				n -= BYTE_COUNTS[bits[last] & 0xFF];
 			}
 		}
 	}

@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 		/// <p>Behaves as if written: <pre>
 		/// boolean skipTo(int target) {
 		/// do {
-		/// if (!next())
+		/// if (!Next())
 		/// return false;
 		/// } while (target > doc());
 		/// return true;

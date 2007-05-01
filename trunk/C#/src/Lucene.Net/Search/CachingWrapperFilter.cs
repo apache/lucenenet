@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -28,7 +29,7 @@ namespace Lucene.Net.Search
 	/// caching, keeping the two concerns decoupled yet composable.
 	/// </summary>
 	[Serializable]
-	public class CachingWrapperFilter:Filter
+	public class CachingWrapperFilter : Filter
 	{
 		private Filter filter;
 		

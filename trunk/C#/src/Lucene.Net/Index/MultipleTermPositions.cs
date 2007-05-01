@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
 		/// <summary> Creates a new <code>MultipleTermPositions</code> instance.
 		/// 
 		/// </summary>
-		/// <exception cref="IOException">
+		/// <exception cref=""> IOException
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{

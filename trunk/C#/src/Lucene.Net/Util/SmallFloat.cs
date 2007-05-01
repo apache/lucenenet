@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 			// Adjustment from a float zero exponent to our zero exponent,
 			// shifted over to our exponent position.
 			int fzero = (63 - zeroExp) << numMantissaBits;
-            int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
+			int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
 			int smallfloat = bits >> (24 - numMantissaBits);
 			if (smallfloat < fzero)
 			{
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public static sbyte FloatToByte315(float f)
 		{
-            int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
+			int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
 			int smallfloat = bits >> (24 - 3);
 			if (smallfloat < (63 - 15) << 3)
 			{
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public static sbyte FloatToByte52(float f)
 		{
-            int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
+			int bits = System.BitConverter.ToInt32(System.BitConverter.GetBytes(f), 0);
 			int smallfloat = bits >> (24 - 5);
 			if (smallfloat < (63 - 2) << 5)
 			{

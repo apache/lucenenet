@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Term = Lucene.Net.Index.Term;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary>Implements parallel search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// or {@link #search(Query,Filter)} methods.
 	/// </summary>
 	public class ParallelMultiSearcher : MultiSearcher
 	{
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -206,7 +207,7 @@ namespace Lucene.Net.Search
 		
 		/*
 		* TODO: this one could be parallelized too
-		* @see Lucene.Net.search.Searchable#rewrite(Lucene.Net.search.Query)
+		* @see Lucene.Net.Search.Searchable#rewrite(Lucene.Net.Search.Query)
 		*/
 		public override Query Rewrite(Query original)
 		{

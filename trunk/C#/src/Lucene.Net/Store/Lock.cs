@@ -16,7 +16,6 @@
  */
 
 using System;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
 
 namespace Lucene.Net.Store
 {
@@ -27,15 +26,15 @@ namespace Lucene.Net.Store
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
-	/// }.Run();
+	/// }.run();
 	/// </pre>
 	/// 
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: Lock.java 179414 2005-06-01 20:10:58Z dnaber $
+	/// <version>  $Id: Lock.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
-	/// <seealso cref="Directory.MakeLock(String)">
+	/// <seealso cref="Directory#MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
@@ -48,6 +47,12 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public abstract bool Obtain();
 		
+		/// <summary> If a lock obtain called, this failureReason may be set
+		/// with the "root cause" Exception as to why the lock was
+		/// not obtained.
+		/// </summary>
+		protected internal System.Exception failureReason;
+		
 		/// <summary>Attempts to obtain an exclusive lock within amount
 		/// of time given. Currently polls once per second until
 		/// lockWaitTimeout is passed.
@@ -59,6 +64,7 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
+			failureReason = null;
 			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
@@ -66,7 +72,17 @@ namespace Lucene.Net.Store
 			{
 				if (sleepCount++ == maxSleepCount)
 				{
-					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
+					System.String reason = "Lock obtain timed out: " + this.ToString();
+					if (failureReason != null)
+					{
+						reason += (": " + failureReason);
+					}
+					System.IO.IOException e = new System.IO.IOException(reason);
+					if (failureReason != null)
+					{
+                        e = new System.IO.IOException(reason, failureReason);
+					}
+					throw e;
 				}
 				try
 				{
@@ -105,7 +121,7 @@ namespace Lucene.Net.Store
 			}
 			
 			/// <summary>Code to execute with exclusive access. </summary>
-			public abstract System.Object DoBody();
+			protected internal abstract System.Object DoBody();
 			
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second

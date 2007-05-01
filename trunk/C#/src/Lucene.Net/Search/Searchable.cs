@@ -16,12 +16,14 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
+	// for javadoc
 	
 	/// <summary>The interface for search implementations.
 	/// 

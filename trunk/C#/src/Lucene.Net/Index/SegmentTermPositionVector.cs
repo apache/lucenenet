@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 		protected internal TermVectorOffsetInfo[][] offsets;
 		public static readonly int[] EMPTY_TERM_POS = new int[0];
 		
-		public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets):base(field, terms, termFreqs)
+		public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets) : base(field, terms, termFreqs)
 		{
 			this.offsets = offsets;
 			this.positions = positions;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <returns> An array of TermVectorOffsetInfo objects or the empty list
 		/// </returns>
-		/// <seealso cref="Lucene.Net.analysis.Token">
+		/// <seealso cref="Lucene.Net.Analysis.Token">
 		/// </seealso>
 		public virtual TermVectorOffsetInfo[] GetOffsets(int index)
 		{

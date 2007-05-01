@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 		public int CompareTo(TermBuffer other)
 		{
 			if (field == other.field)
-    			// fields are interned
+				// fields are interned
 				return CompareChars(text, textLength, other.text, other.textLength);
 			else
 				return String.CompareOrdinal(field, other.field);
@@ -87,12 +87,12 @@ namespace Lucene.Net.Index
 			// copy text into the buffer
 			SetTextLength(term.Text().Length);
 
-            System.String sourceString = term.Text();
-            int sourceEnd = term.Text().Length;
-            for (int i = 0; i < sourceEnd; i++)
-            {
-                text[i] = (char) sourceString[i];
-            }
+			System.String sourceString = term.Text();
+			int sourceEnd = term.Text().Length;
+			for (int i = 0; i < sourceEnd; i++)
+			{
+				text[i] = (char) sourceString[i];
+			}
 			
 			this.field = term.Field();
 			this.term = term;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
 		public Term ToTerm()
 		{
 			if (field == null)
-    			// unset
+				// unset
 				return null;
 			
 			if (term == null)

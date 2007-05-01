@@ -218,7 +218,27 @@ namespace Lucene.Net.Demo.Html
 			return (c);
 		}
 		
-		public virtual int GetEndColumn()
+        /// <deprecated> 
+        /// </deprecated>
+        /// <seealso cref="getEndColumn">
+        /// </seealso>
+		
+        public virtual int GetColumn()
+        {
+            return bufcolumn[bufpos];
+        }
+		
+        /// <deprecated> 
+        /// </deprecated>
+        /// <seealso cref="getEndLine">
+        /// </seealso>
+		
+        public virtual int GetLine()
+        {
+            return bufline[bufpos];
+        }
+		
+        public virtual int GetEndColumn()
 		{
 			return bufcolumn[bufpos];
 		}

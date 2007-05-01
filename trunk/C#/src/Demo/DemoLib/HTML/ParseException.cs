@@ -31,7 +31,7 @@ namespace Lucene.Net.Demo.Html
 	/// mechanisms so long as you retain the public fields.
 	/// </summary>
 	[Serializable]
-	public class ParseException:System.Exception
+	public class ParseException : System.Exception
 	{
 		/// <summary> This method has the standard behavior when this object has been
 		/// created using the standard constructors.  Otherwise, it uses

@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -29,7 +30,7 @@ namespace Lucene.Net.Search
 	/// the enumeration is greater than all that precede it.
 	/// 
 	/// </summary>
-	/// <version>  $Id: WildcardTermEnum.java 329859 2005-10-31 17:05:36Z bmesser $
+	/// <version>  $Id: WildcardTermEnum.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public class WildcardTermEnum : FilteredTermEnum
 	{
@@ -41,7 +42,7 @@ namespace Lucene.Net.Search
 		internal bool endEnum = false;
 		
 		/// <summary> Creates a new <code>WildcardTermEnum</code>.  Passing in a
-		/// {@link Lucene.Net.index.Term Term} that does not contain a
+		/// {@link Lucene.Net.Index.Term Term} that does not contain a
 		/// <code>WILDCARD_CHAR</code> will cause an exception to be thrown.
 		/// <p>
 		/// After calling the constructor the enumeration is already pointing to the first 

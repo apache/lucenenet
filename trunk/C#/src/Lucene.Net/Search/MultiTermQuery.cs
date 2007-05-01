@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;

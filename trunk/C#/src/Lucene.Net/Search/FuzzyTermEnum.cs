@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -60,12 +61,12 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="reader">
+		/// <param name="">reader
 		/// </param>
-		/// <param name="term">
+		/// <param name="">term
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
+		/// <seealso cref="Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term) : this(reader, term, FuzzyQuery.defaultMinSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -77,14 +78,14 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="reader">
+		/// <param name="">reader
 		/// </param>
-		/// <param name="term">
+		/// <param name="">term
 		/// </param>
-		/// <param name="minSimilarity">
+		/// <param name="">minSimilarity
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
+		/// <seealso cref="Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity) : this(reader, term, minSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -325,7 +326,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		private int GetMaxDistance(int m)
 		{
-			return (m < maxDistances.Length)?maxDistances[m]:CalculateMaxDistance(m);
+			return (m < maxDistances.Length) ? maxDistances[m] : CalculateMaxDistance(m);
 		}
 		
 		private void  InitializeMaxDistances()

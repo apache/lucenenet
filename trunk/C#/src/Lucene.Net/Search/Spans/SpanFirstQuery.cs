@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -121,12 +122,12 @@ namespace Lucene.Net.Search.Spans
 			return match.GetField();
 		}
 		
-        /// <summary>Returns a collection of all terms matched by this query.</summary>
-        /// <deprecated> use ExtractTerms instead
-        /// </deprecated>
-        /// <seealso cref="#ExtractTerms(Set)">
-        /// </seealso>
-        public override System.Collections.ICollection GetTerms()
+		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="#ExtractTerms(Set)">
+		/// </seealso>
+		public override System.Collections.ICollection GetTerms()
 		{
 			return match.GetTerms();
 		}
@@ -143,12 +144,12 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            match.ExtractTerms(terms);
-        }
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			match.ExtractTerms(terms);
+		}
 		
-        public override Spans GetSpans(IndexReader reader)
+		public override Spans GetSpans(IndexReader reader)
 		{
 			return new AnonymousClassSpans(reader, this);
 		}
@@ -174,23 +175,23 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-        public  override bool Equals(System.Object o)
-        {
-            if (this == o)
-                return true;
-            if (!(o is SpanFirstQuery))
-                return false;
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is SpanFirstQuery))
+				return false;
 			
-            SpanFirstQuery other = (SpanFirstQuery) o;
-            return this.end == other.end && this.match.Equals(other.match) && this.GetBoost() == other.GetBoost();
-        }
+			SpanFirstQuery other = (SpanFirstQuery) o;
+			return this.end == other.end && this.match.Equals(other.match) && this.GetBoost() == other.GetBoost();
+		}
 		
-        public override int GetHashCode()
-        {
-            int h = match.GetHashCode();
-            h ^= ((h << 8) | ((int) (((uint) h) >> 25))); // reversible
-            h ^= System.Convert.ToInt32(GetBoost()) ^ end;
-            return h;
-        }
-    }
+		public override int GetHashCode()
+		{
+			int h = match.GetHashCode();
+			h ^= ((h << 8) | ((int) (((uint) h) >> 25))); // reversible
+			h ^= System.Convert.ToInt32(GetBoost()) ^ end;
+			return h;
+		}
+	}
 }

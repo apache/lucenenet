@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
@@ -31,12 +32,44 @@ namespace Lucene.Net.QueryParsers
 	/// </summary>
 	/// <author>  <a href="mailto:kelvin@relevanz.com">Kelvin Tan</a>, Daniel Naber
 	/// </author>
-	/// <version>  $Revision: 295117 $
+	/// <version>  $Revision: 472959 $
 	/// </version>
 	public class MultiFieldQueryParser : QueryParser
 	{
 		
 		private System.String[] fields;
+		private System.Collections.IDictionary boosts;
+		
+		/// <summary> Creates a MultiFieldQueryParser. 
+		/// Allows passing of a map with term to Boost, and the boost to apply to each term.
+		/// 
+		/// <p>It will, when parse(String query)
+		/// is called, construct a query like this (assuming the query consists of
+		/// two terms and you specify the two fields <code>title</code> and <code>body</code>):</p>
+		/// 
+		/// <code>
+		/// (title:term1 body:term1) (title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>When setDefaultOperator(AND_OPERATOR) is set, the result will be:</p>
+		/// 
+		/// <code>
+		/// +(title:term1 body:term1) +(title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>When you pass a boost (title=>5 body=>10) you can get </p>
+		/// 
+		/// <code>
+		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
+		/// </code>
+		/// 
+		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
+		/// what fields they appear.</p>
+		/// </summary>
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(fields, analyzer)
+		{
+			this.boosts = boosts;
+		}
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
@@ -57,7 +90,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
 		/// what fields they appear.</p>
 		/// </summary>
-		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer) : base(null, analyzer)
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):base(null, analyzer)
 		{
 			this.fields = fields;
 		}
@@ -72,6 +105,17 @@ namespace Lucene.Net.QueryParsers
 					Query q = base.GetFieldQuery(fields[i], queryText);
 					if (q != null)
 					{
+						//If the user passes a map of boosts
+						if (boosts != null)
+						{
+							//Get the boost from the map and apply them
+							System.Single boost = (System.Single) boosts[fields[i]];
+							//if (boost != null)      // {{Aroush-2.1 there is no null for 'boost'
+                            if (boosts[fields[i]] != null)      // {{Aroush-2.1 will this line do?
+							{
+								q.SetBoost((float) boost);
+							}
+						}
 						if (q is PhraseQuery)
 						{
 							((PhraseQuery) q).SetSlop(slop);
@@ -141,7 +185,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-        protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
+		protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			if (field == null)
 			{
@@ -158,7 +202,7 @@ namespace Lucene.Net.QueryParsers
 		
 		
 		
-        /// <summary> Parses a query which searches on the fields specified.
+		/// <summary> Parses a query which searches on the fields specified.
 		/// <p>
 		/// If x fields are specified, this effectively constructs:
 		/// <pre>
@@ -241,7 +285,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-        /// <summary> Parses a query, searching on the fields specified.
+		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
 		/// <p><pre>
