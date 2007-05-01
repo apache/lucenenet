@@ -2,6 +2,11 @@ Apache Lucene.Net History
 -------------------------
 
 
+30Apr07:
+	- Patch:  Apache Lucene.Net.2.0 build 005 "final"
+	- Fix: LUCENENET-37 "Exception while search in Lucene.Net and Index prepared by Lucene Java"
+
+
 11Mar07:
 	- Release:  Apache Lucene.Net.2.0 build 004 "final"
 	- Fix: LUCENENET-36 "Countries using "," as decimal separator gets an exception in QueryParser.cs with a query like color~0.5"
