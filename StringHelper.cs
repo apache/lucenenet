@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
 	
 	/// <summary> Methods for manipulating strings.
 	/// 
-	/// $Id: StringHelper.java 150248 2004-03-25 13:39:59Z otis $
+	/// $Id: StringHelper.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </summary>
 	public abstract class StringHelper
 	{
