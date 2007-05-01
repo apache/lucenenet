@@ -24,9 +24,9 @@ namespace Lucene.Net.Search
 	/// <br>HitCollectors are primarily meant to be used to implement queries,
 	/// sorting and filtering.
 	/// </summary>
-	/// <seealso cref="Searcher.Search(Query,HitCollector)">
+	/// <seealso cref="Searcher#Search(Query,HitCollector)">
 	/// </seealso>
-	/// <version>  $Id: HitCollector.java 155607 2005-02-27 01:29:53Z otis $
+	/// <version>  $Id: HitCollector.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public abstract class HitCollector
 	{
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 		/// <p>Note: This is called in an inner search loop.  For good search
 		/// performance, implementations of this method should not call
 		/// {@link Searcher#Doc(int)} or
-		/// {@link Lucene.Net.index.IndexReader#Document(int)} on every
+		/// {@link Lucene.Net.Index.IndexReader#Document(int)} on every
 		/// document number encountered.  Doing so can slow searches by an order
 		/// of magnitude or more.
 		/// <p>Note: The <code>score</code> passed to this method is a raw score.

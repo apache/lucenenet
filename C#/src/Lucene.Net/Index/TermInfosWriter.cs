@@ -16,8 +16,8 @@
  */
 
 using System;
-using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using Directory = Lucene.Net.Store.Directory;
 using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Index
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 		
 		private TermInfosWriter other = null;
 		
-		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
+		public TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
 			Initialize(directory, segment, fis, interval, false);
 			other = new TermInfosWriter(directory, segment, fis, interval, true);
@@ -94,12 +94,12 @@ namespace Lucene.Net.Index
 		/// Term must be lexicographically greater than all previous Terms added.
 		/// TermInfo pointers must be positive and greater than all previous.
 		/// </summary>
-		public /*internal*/ void  Add(Term term, TermInfo ti)
+		public void  Add(Term term, TermInfo ti)
 		{
-            if (!isIndex && term.CompareTo(lastTerm) <= 0)
-            {
-                throw new System.IO.IOException("term out of order (\"" + term + "\".compareTo(\"" + lastTerm + "\") <= 0)");
-            }
+			if (!isIndex && term.CompareTo(lastTerm) <= 0)
+			{
+				throw new System.IO.IOException("term out of order (\"" + term + "\".compareTo(\"" + lastTerm + "\") <= 0)");
+			}
 			if (ti.freqPointer < lastTi.freqPointer)
 				throw new System.IO.IOException("freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
 			if (ti.proxPointer < lastTi.proxPointer)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Called to complete TermInfos creation. </summary>
-		public /*internal*/ void  Close()
+		public void  Close()
 		{
 			output.Seek(4); // write size after format
 			output.WriteLong(size);

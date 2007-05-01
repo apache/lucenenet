@@ -20,13 +20,13 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>An Analyzer that filters LetterTokenizer with LowerCaseFilter. </summary>
+    /// <summary>An Analyzer that filters LetterTokenizer with LowerCaseFilter. </summary>
 	
-	public sealed class SimpleAnalyzer : Analyzer
-	{
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			return new LowerCaseTokenizer(reader);
-		}
-	}
+    public sealed class SimpleAnalyzer : Analyzer
+    {
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return new LowerCaseTokenizer(reader);
+        }
+    }
 }

@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 		/// May return null if offsets have not been stored.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.analysis.Token">
+		/// <seealso cref="Lucene.Net.Analysis.Token">
 		/// 
 		/// </seealso>
 		/// <param name="index">The position in the array to get the offsets from

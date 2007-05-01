@@ -16,9 +16,6 @@
  */
 
 using System;
-// using ByteBuffer = java.nio.ByteBuffer;                  // {{Aroush-1.9}}
-// using FileChannel = java.nio.channels.FileChannel;       // {{Aroush-1.9}}
-// using MapMode = java.nio.channels.FileChannel.MapMode;   // {{Aroush-1.9}}
 
 namespace Lucene.Net.Store
 {
@@ -27,7 +24,7 @@ namespace Lucene.Net.Store
 	/// 
 	/// <p>To use this, invoke Java with the System property
 	/// Lucene.Net.FSDirectory.class set to
-	/// Lucene.Net.store.MMapDirectory.  This will cause {@link
+	/// Lucene.Net.Store.MMapDirectory.  This will cause {@link
 	/// FSDirectory#GetDirectory(File,boolean)} to return instances of this class.
 	/// </summary>
 	public class MMapDirectory : FSDirectory
@@ -36,23 +33,25 @@ namespace Lucene.Net.Store
 		private class MMapIndexInput : IndexInput, System.ICloneable
 		{
 			
-			private System.IO.FileStream buffer;    // private ByteBuffer buffer;   // {{Aroush-1.9}}
+			private System.IO.MemoryStream buffer;
 			private long length;
 			
 			internal MMapIndexInput(System.IO.FileStream raf)
 			{
+                byte[] data = new byte[raf.Length];
+                raf.Read(data, 0, (int) raf.Length);
 				this.length = raf.Length;
-				// this.buffer = raf.getChannel().map(MapMode.READ_ONLY, 0, length);    // {{Aroush-1.9}}
+                this.buffer = new System.IO.MemoryStream(data);  // this.buffer = raf.getChannel().map(MapMode.READ_ONLY, 0, length);    // {{Aroush-1.9}}
 			}
 			
 			public override byte ReadByte()
 			{
-				return 0;   // return buffer.get_Renamed(); // {{Aroush-1.9}}
+                return (byte) buffer.ReadByte();
 			}
 			
 			public override void  ReadBytes(byte[] b, int offset, int len)
 			{
-				// buffer.get_Renamed(b, offset, len);  // {{Aroush-1.9}}
+                buffer.Read(b, offset, len);
 			}
 			
 			public override long GetFilePointer()
@@ -85,7 +84,7 @@ namespace Lucene.Net.Store
 		private class MultiMMapIndexInput : IndexInput, System.ICloneable
 		{
 			
-			private System.IO.FileStream[] buffers; // private ByteBuffer[] buffers;    // {{Aroush-1.9}}
+			private System.IO.MemoryStream[] buffers;
 			private int[] bufSizes; // keep here, ByteBuffer.size() method is optional
 			
 			private long length;
@@ -93,7 +92,7 @@ namespace Lucene.Net.Store
 			private int curBufIndex;
 			private int maxBufSize;
 			
-			private System.IO.FileStream curBuf;    // private ByteBuffer curBuf; // {{Aroush-1.9}}    // redundant for speed: buffers[curBufIndex]
+			private System.IO.MemoryStream curBuf;    // redundant for speed: buffers[curBufIndex]
 			private int curAvail; // redundant for speed: (bufSizes[curBufIndex] - curBuf.position())
 			
 			
@@ -114,15 +113,18 @@ namespace Lucene.Net.Store
 				if ((nrBuffers * maxBufSize) < length)
 					nrBuffers++;
 				
-				this.buffers = new System.IO.FileStream[nrBuffers]; // this.buffers = new ByteBuffer[nrBuffers];   // {{Aroush-1.9}}
+				this.buffers = new System.IO.MemoryStream[nrBuffers];   // {{Aroush-1.9}}
 				this.bufSizes = new int[nrBuffers];
 				
 				long bufferStart = 0;
-				System.IO.FileStream rafc = null;   // FileChannel rafc = raf.getChannel();    // {{Aroush-1.9}}
+				System.IO.FileStream rafc = raf;
 				for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
 				{
+                    byte[] data = new byte[rafc.Length];
+                    raf.Read(data, 0, (int) rafc.Length);
+
 					int bufSize = (length > (bufferStart + maxBufSize))?maxBufSize:(int) (length - bufferStart);
-					// this.buffers[bufNr] = rafc.map(MapMode.READ_ONLY, bufferStart, bufSize);    // {{Aroush-1.9}}
+					this.buffers[bufNr] = new System.IO.MemoryStream(data);     // rafc.map(MapMode.READ_ONLY, bufferStart, bufSize);     // {{Aroush-1.9}}
 					this.bufSizes[bufNr] = bufSize;
 					bufferStart += bufSize;
 				}
@@ -141,14 +143,14 @@ namespace Lucene.Net.Store
 					curAvail = bufSizes[curBufIndex];
 				}
 				curAvail--;
-				return 0;   // return curBuf.get_Renamed();     // {{Aroush-1.9}}
+				return (byte) curBuf.ReadByte();
 			}
 			
 			public override void  ReadBytes(byte[] b, int offset, int len)
 			{
 				while (len > curAvail)
 				{
-					// curBuf.get_Renamed(b, offset, curAvail);    // {{Aroush-1.9}}
+					curBuf.Read(b, offset, curAvail);
 					len -= curAvail;
 					offset += curAvail;
 					curBufIndex++;
@@ -156,7 +158,7 @@ namespace Lucene.Net.Store
 					curBuf.Seek(0, System.IO.SeekOrigin.Begin);
 					curAvail = bufSizes[curBufIndex];
 				}
-				// curBuf.get_Renamed(b, offset, len); // {{Aroush-1.9}}
+				curBuf.Read(b, offset, len);
 				curAvail -= len;
 			}
 			
@@ -182,13 +184,13 @@ namespace Lucene.Net.Store
 			public override System.Object Clone()
 			{
 				MultiMMapIndexInput clone = (MultiMMapIndexInput) base.Clone();
-				// clone.buffers = new ByteBuffer[buffers.length];  // {{Aroush-1.9}}
+				clone.buffers = new System.IO.MemoryStream[buffers.Length];
 				// No need to clone bufSizes.
 				// Since most clones will use only one buffer, duplicate() could also be
 				// done lazy in clones, eg. when adapting curBuf.
 				for (int bufNr = 0; bufNr < buffers.Length; bufNr++)
 				{
-					// clone.buffers[bufNr] = buffers[bufNr].duplicate();   // {{Aroush-1.9}}
+					clone.buffers[bufNr] = buffers[bufNr];    // clone.buffers[bufNr] = buffers[bufNr].duplicate();   // {{Aroush-1.9}} how do we clone?!
 				}
 				try
 				{
@@ -196,9 +198,9 @@ namespace Lucene.Net.Store
 				}
 				catch (System.IO.IOException ioe)
 				{
-                    System.Exception newException = new System.Exception("", ioe);  // {{Aroush-2.0}} This should be SystemException
-                    throw newException;
-                }
+					System.Exception newException = new System.Exception("", ioe);  // {{Aroush-2.0}} This should be SystemException
+					throw newException;
+				}
 				return clone;
 			}
 			

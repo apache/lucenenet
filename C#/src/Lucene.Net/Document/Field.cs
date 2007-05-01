@@ -16,9 +16,6 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Hits = Lucene.Net.Search.Hits;
-using Similarity = Lucene.Net.Search.Similarity;
 using Parameter = Lucene.Net.Util.Parameter;
 
 namespace Lucene.Net.Documents
@@ -32,31 +29,15 @@ namespace Lucene.Net.Documents
 	/// </summary>
 	
 	[Serializable]
-	public sealed class Field
+	public sealed class Field:AbstractField, Fieldable
 	{
-		private System.String name = "body";
 		
-		// the one and only data object for all different kind of field values
-		private System.Object fieldsData = null;
-		
-		private bool storeTermVector = false;
-		private bool storeOffsetWithTermVector = false;
-		private bool storePositionWithTermVector = false;
-		private bool omitNorms = false;
-		private bool isStored = false;
-		private bool isIndexed = true;
-		private bool isTokenized = true;
-		private bool isBinary = false;
-		private bool isCompressed = false;
-		
-		private float boost = 1.0f;
-		
-        /// <summary>Specifies whether and how a field should be stored. </summary>
-        [Serializable]
-		public sealed class Store : Parameter
+		/// <summary>Specifies whether and how a field should be stored. </summary>
+		[Serializable]
+		public sealed class Store:Parameter
 		{
 			
-			internal Store(System.String name) : base(name)
+			internal Store(System.String name):base(name)
 			{
 			}
 			
@@ -68,7 +49,7 @@ namespace Lucene.Net.Documents
 			/// <summary>Store the original field value in the index. This is useful for short texts
 			/// like a document's title which should be displayed with the results. The
 			/// value is stored in its original form, i.e. no analyzer is used before it is
-			/// stored. 
+			/// stored.
 			/// </summary>
 			public static readonly Store YES = new Store("YES");
 			
@@ -76,8 +57,8 @@ namespace Lucene.Net.Documents
 			public static readonly Store NO = new Store("NO");
 		}
 		
-        /// <summary>Specifies whether and how a field should be indexed. </summary>
-        [Serializable]
+		/// <summary>Specifies whether and how a field should be indexed. </summary>
+		[Serializable]
 		public sealed class Index : Parameter
 		{
 			
@@ -86,7 +67,7 @@ namespace Lucene.Net.Documents
 			}
 			
 			/// <summary>Do not index the field value. This field can thus not be searched,
-			/// but one can still access its contents provided it is 
+			/// but one can still access its contents provided it is
 			/// {@link Field.Store stored}. 
 			/// </summary>
 			public static readonly Index NO = new Index("NO");
@@ -108,12 +89,16 @@ namespace Lucene.Net.Documents
 			/// and field length normalization will be disabled.  The benefit is
 			/// less memory usage as norms take up one byte per indexed field
 			/// for every document in the index.
+			/// Note that once you index a given field <i>with</i> norms enabled,
+			/// disabling norms will have no effect.  In other words, for NO_NORMS
+			/// to have the above described effect on a field, all instances of that
+			/// field must be indexed with NO_NORMS from the beginning.
 			/// </summary>
 			public static readonly Index NO_NORMS = new Index("NO_NORMS");
 		}
 		
-        /// <summary>Specifies whether and how a field should have term vectors. </summary>
-        [Serializable]
+		/// <summary>Specifies whether and how a field should have term vectors. </summary>
+		[Serializable]
 		public sealed class TermVector : Parameter
 		{
 			
@@ -132,83 +117,35 @@ namespace Lucene.Net.Documents
 			/// <summary> Store the term vector + token position information
 			/// 
 			/// </summary>
-			/// <seealso cref="YES">
+			/// <seealso cref="#YES">
 			/// </seealso>
 			public static readonly TermVector WITH_POSITIONS = new TermVector("WITH_POSITIONS");
 			
 			/// <summary> Store the term vector + Token offset information
 			/// 
 			/// </summary>
-			/// <seealso cref="YES">
+			/// <seealso cref="#YES">
 			/// </seealso>
 			public static readonly TermVector WITH_OFFSETS = new TermVector("WITH_OFFSETS");
 			
 			/// <summary> Store the term vector + Token position and offset information
 			/// 
 			/// </summary>
-			/// <seealso cref="YES">
+			/// <seealso cref="#YES">
 			/// </seealso>
-			/// <seealso cref="WITH_POSITIONS">
+			/// <seealso cref="#WITH_POSITIONS">
 			/// </seealso>
-			/// <seealso cref="WITH_OFFSETS">
+			/// <seealso cref="#WITH_OFFSETS">
 			/// </seealso>
 			public static readonly TermVector WITH_POSITIONS_OFFSETS = new TermVector("WITH_POSITIONS_OFFSETS");
 		}
 		
-		/// <summary>Sets the boost factor hits on this field.  This value will be
-		/// multiplied into the score of all hits on this this field of this
-		/// document.
-		/// 
-		/// <p>The boost is multiplied by {@link Document#GetBoost()} of the document
-		/// containing this field.  If a document has multiple fields with the same
-		/// name, all such values are multiplied together.  This product is then
-		/// multipled by the value {@link Similarity#LengthNorm(String,int)}, and
-		/// rounded by {@link Similarity#EncodeNorm(float)} before it is stored in the
-		/// index.  One should attempt to ensure that this product does not overflow
-		/// the range of that encoding.
-		/// 
-		/// </summary>
-		/// <seealso cref="Document.SetBoost(float)">
-		/// </seealso>
-		/// <seealso cref="Similarity.LengthNorm(String, int)">
-		/// </seealso>
-		/// <seealso cref="Similarity.EncodeNorm(float)">
-		/// </seealso>
-		public void  SetBoost(float boost)
-		{
-			this.boost = boost;
-		}
-		
-		/// <summary>Returns the boost factor for hits for this field.
-		/// 
-		/// <p>The default value is 1.0.
-		/// 
-		/// <p>Note: this value is not stored directly with the document in the index.
-		/// Documents returned from {@link IndexReader#Document(int)} and
-		/// {@link Hits#Doc(int)} may thus not have the same value present as when
-		/// this field was indexed.
-		/// 
-		/// </summary>
-		/// <seealso cref="SetBoost(float)">
-		/// </seealso>
-		public float GetBoost()
-		{
-			return boost;
-		}
-		
-		/// <summary>Returns the name of the field as an interned string.
-		/// For example "date", "title", "body", ...
-		/// </summary>
-		public System.String Name()
-		{
-			return name;
-		}
 		
 		/// <summary>The value of the field as a String, or null.  If null, the Reader value
 		/// or binary value is used.  Exactly one of stringValue(), readerValue(), and
 		/// binaryValue() must be set. 
 		/// </summary>
-		public System.String StringValue()
+		public override System.String StringValue()
 		{
 			return fieldsData is System.String ? (System.String) fieldsData : null;
 		}
@@ -217,7 +154,7 @@ namespace Lucene.Net.Documents
 		/// or binary value is  used.  Exactly one of stringValue(), readerValue(),
 		/// and binaryValue() must be set. 
 		/// </summary>
-		public System.IO.TextReader ReaderValue()
+		public override System.IO.TextReader ReaderValue()
 		{
 			return fieldsData is System.IO.TextReader ? (System.IO.TextReader) fieldsData : null;
 		}
@@ -226,7 +163,7 @@ namespace Lucene.Net.Documents
 		/// String value is used.  Exactly one of stringValue(), readerValue() and
 		/// binaryValue() must be set. 
 		/// </summary>
-		public byte[] BinaryValue()
+		public override byte[] BinaryValue()
 		{
 			return fieldsData is byte[] ? (byte[]) fieldsData : null;
 		}
@@ -278,9 +215,9 @@ namespace Lucene.Net.Documents
 				throw new System.NullReferenceException("name cannot be null");
 			if (value_Renamed == null)
 				throw new System.NullReferenceException("value cannot be null");
-            if (name.Length == 0 && value_Renamed.Length == 0)
-                throw new System.ArgumentException("name and value cannot both be empty");
-            if (index == Index.NO && store == Store.NO)
+			if (name.Length == 0 && value_Renamed.Length == 0)
+				throw new System.ArgumentException("name and value cannot both be empty");
+			if (index == Index.NO && store == Store.NO)
 				throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
 			if (index == Index.NO && termVector != TermVector.NO)
 				throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
@@ -340,7 +277,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
-		/// not be stored.
+		/// not be stored.  The Reader is read only when the Document is added to the index.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
@@ -353,7 +290,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> Create a tokenized and indexed field that is not stored, optionally with 
-		/// storing term vectors.
+		/// storing term vectors.  The Reader is read only when the Document is added to the index.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
@@ -384,19 +321,17 @@ namespace Lucene.Net.Documents
 			SetStoreTermVector(termVector);
 		}
 		
-		
-		
-        /// <summary> Create a stored field with binary value. Optionally the value may be compressed.
+		/// <summary> Create a stored field with binary value. Optionally the value may be compressed.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
 		/// </param>
 		/// <param name="value">The binary value
 		/// </param>
-		/// <param name="store">How <code>value</code> should be stored (compressed or not.)
+		/// <param name="store">How <code>value</code> should be stored (compressed or not)
 		/// </param>
-        /// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
-        public Field(System.String name, byte[] value_Renamed, Store store)
+		/// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
+		public Field(System.String name, byte[] value_Renamed, Store store)
 		{
 			if (name == null)
 				throw new System.ArgumentException("name cannot be null");
@@ -429,191 +364,6 @@ namespace Lucene.Net.Documents
 			this.isBinary = true;
 			
 			SetStoreTermVector(TermVector.NO);
-		}
-		
-		private void  SetStoreTermVector(TermVector termVector)
-		{
-			if (termVector == TermVector.NO)
-			{
-				this.storeTermVector = false;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == TermVector.YES)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == TermVector.WITH_POSITIONS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = true;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == TermVector.WITH_OFFSETS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = true;
-			}
-			else if (termVector == TermVector.WITH_POSITIONS_OFFSETS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = true;
-				this.storeOffsetWithTermVector = true;
-			}
-			else
-			{
-				throw new System.ArgumentException("unknown termVector parameter " + termVector);
-			}
-		}
-		
-		/// <summary>True iff the value of the field is to be stored in the index for return
-		/// with search hits.  It is an error for this to be true if a field is
-		/// Reader-valued. 
-		/// </summary>
-		public bool IsStored()
-		{
-			return isStored;
-		}
-		
-		/// <summary>True iff the value of the field is to be indexed, so that it may be
-		/// searched on. 
-		/// </summary>
-		public bool IsIndexed()
-		{
-			return isIndexed;
-		}
-		
-		/// <summary>True iff the value of the field should be tokenized as text prior to
-		/// indexing.  Un-tokenized fields are indexed as a single word and may not be
-		/// Reader-valued. 
-		/// </summary>
-		public bool IsTokenized()
-		{
-			return isTokenized;
-		}
-		
-		/// <summary>True if the value of the field is stored and compressed within the index </summary>
-		public bool IsCompressed()
-		{
-			return isCompressed;
-		}
-		
-		/// <summary>True iff the term or terms used to index this field are stored as a term
-		/// vector, available from {@link IndexReader#GetTermFreqVector(int,String)}.
-		/// These methods do not provide access to the original content of the field,
-		/// only to terms used to index it. If the original content must be
-		/// preserved, use the <code>stored</code> attribute instead.
-		/// 
-		/// </summary>
-		/// <seealso cref="IndexReader.GetTermFreqVector(int, String)">
-		/// </seealso>
-		public bool IsTermVectorStored()
-		{
-			return storeTermVector;
-		}
-		
-		/// <summary> True iff terms are stored as term vector together with their offsets 
-		/// (start and end positon in source text).
-		/// </summary>
-		public bool IsStoreOffsetWithTermVector()
-		{
-			return storeOffsetWithTermVector;
-		}
-		
-		/// <summary> True iff terms are stored as term vector together with their token positions.</summary>
-		public bool IsStorePositionWithTermVector()
-		{
-			return storePositionWithTermVector;
-		}
-		
-		/// <summary>True iff the value of the filed is stored as binary </summary>
-		public bool IsBinary()
-		{
-			return isBinary;
-		}
-		
-		/// <summary>True if norms are omitted for this indexed field </summary>
-		public bool GetOmitNorms()
-		{
-			return omitNorms;
-		}
-		
-		/// <summary>Expert:
-		/// 
-		/// If set, omit normalization factors associated with this indexed field.
-		/// This effectively disables indexing boosts and length normalization for this field.
-		/// </summary>
-		public void  SetOmitNorms(bool omitNorms)
-		{
-			this.omitNorms = omitNorms;
-		}
-		
-		/// <summary>Prints a Field for human consumption. </summary>
-		public override System.String ToString()
-		{
-			System.Text.StringBuilder result = new System.Text.StringBuilder();
-			if (isStored)
-			{
-				result.Append("stored");
-				if (isCompressed)
-					result.Append("/compressed");
-				else
-					result.Append("/uncompressed");
-			}
-			if (isIndexed)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("indexed");
-			}
-			if (isTokenized)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("tokenized");
-			}
-			if (storeTermVector)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("termVector");
-			}
-			if (storeOffsetWithTermVector)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("termVectorOffsets");
-			}
-			if (storePositionWithTermVector)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("termVectorPosition");
-			}
-			if (isBinary)
-			{
-				if (result.Length > 0)
-					result.Append(",");
-				result.Append("binary");
-			}
-			if (omitNorms)
-			{
-				result.Append(",omitNorms");
-			}
-			result.Append('<');
-			result.Append(name);
-			result.Append(':');
-			
-			if (fieldsData != null)
-			{
-				result.Append(fieldsData);
-			}
-			
-			result.Append('>');
-			return result.ToString();
 		}
 	}
 }

@@ -20,19 +20,31 @@ using System;
 namespace Lucene.Net.Util
 {
 	
+	/// <summary> Licensed to the Apache Software Foundation (ASF) under one or more
+	/// contributor license agreements.  See the NOTICE file distributed with
+	/// this work for additional information regarding copyright ownership.
+	/// The ASF licenses this file to You under the Apache License, Version 2.0
+	/// (the "License"); you may not use this file except in compliance with
+	/// the License.  You may obtain a copy of the License at
+	/// 
+	/// http://www.apache.org/licenses/LICENSE-2.0
+	/// 
+	/// Unless required by applicable law or agreed to in writing, software
+	/// distributed under the License is distributed on an "AS IS" BASIS,
+	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	/// See the License for the specific language governing permissions and
+	/// limitations under the License.
+	/// </summary>
+	
 	/// <summary>A PriorityQueue maintains a partial ordering of its elements such that the
 	/// least element can always be found in constant time.  Put()'s and pop()'s
 	/// require log(size) time. 
 	/// </summary>
-    [Serializable]
-    public abstract class PriorityQueue
+	public abstract class PriorityQueue
 	{
-        [NonSerialized]
-        private System.Object[] heap;
-        [NonSerialized]
-        private int size;
-        [NonSerialized]
-        private int maxSize;
+		private System.Object[] heap;
+		private int size;
+		private int maxSize;
 		
 		/// <summary>Determines the ordering of objects in this priority queue.  Subclasses
 		/// must define this one method. 
@@ -50,7 +62,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Adds an Object to a PriorityQueue in log(size) time.
 		/// If one tries to add more objects than maxSize from initialize
-		/// a RuntimeException (ArrayIndexOutOfBound) is thrown.
+		/// a SystemException (ArrayIndexOutOfBound) is thrown.
 		/// </summary>
 		public void  Put(System.Object element)
 		{
@@ -62,7 +74,7 @@ namespace Lucene.Net.Util
 		/// <summary> Adds element to the PriorityQueue in log(size) time if either
 		/// the PriorityQueue is not full, or not lessThan(element, top()).
 		/// </summary>
-		/// <param name="element">
+		/// <param name="">element
 		/// </param>
 		/// <returns> true if element is added, false otherwise.
 		/// </returns>

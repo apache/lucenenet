@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 		public float score;
 		
 		/// <summary>Expert: A hit document's number.</summary>
-		/// <seealso cref="Searcher.Doc(int)">
+		/// <seealso cref="Searcher#Doc(int)">
 		/// </seealso>
 		public int doc;
 		

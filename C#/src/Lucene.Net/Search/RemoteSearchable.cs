@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using Term = Lucene.Net.Index.Term;
 
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary> A remote searchable implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RemoteSearchable.java 351472 2005-12-01 21:15:53Z bmesser $
+	/// <version>  $Id: RemoteSearchable.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	[Serializable]
 	public class RemoteSearchable : System.MarshalByRefObject, Lucene.Net.Search.Searchable
@@ -91,7 +92,7 @@ namespace Lucene.Net.Search
 		{
 			return local.Explain(weight, doc);
 		}
-
+		
 		/// <summary>Exports a searcher for the index in args[0] named
 		/// "//localhost/Searchable". 
 		/// </summary>
@@ -107,15 +108,15 @@ namespace Lucene.Net.Search
 			
 			if (indexName == null)
 			{
-				System.Console.Out.WriteLine("Usage: Lucene.Net.search.RemoteSearchable <index>");
+				System.Console.Out.WriteLine("Usage: Lucene.Net.Search.RemoteSearchable <index>");
 				return ;
 			}
 			
 			// create and install a security manager
-			if (true)  // if (System_Renamed.getSecurityManager() == null) // {{Aroush-1.4.3}} Do we need this line?!
-			{
-				// System_Renamed.setSecurityManager(new RMISecurityManager());     // {{Aroush-1.4.3}} Do we need this line?!
-			}
+            if (true)  // if (System_Renamed.getSecurityManager() == null) // {{Aroush-1.4.3}} Do we need this line?!
+            {
+                // System_Renamed.setSecurityManager(new RMISecurityManager());     // {{Aroush-1.4.3}} Do we need this line?!
+            }
 			
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexName);
 			RemoteSearchable impl = new RemoteSearchable(local);

@@ -417,6 +417,22 @@ public class SupportClass
                 return (number >> bits) + (2 << ~bits);
         }
 
+
+        /// <summary>
+        /// Performs an unsigned bitwise right shift with the specified number
+        /// </summary>
+        /// <param name="number">Number to operate on</param>
+        /// <param name="bits">Ammount of bits to shift</param>
+        /// <returns>The resulting number from the shift operation</returns>
+        public static long URShift(long number, int bits)
+        {
+            if (number >= 0)
+                return number >> bits;
+            else
+                return (number >> bits) + (2 << ~bits);
+        }
+
+
         /// <summary>
         /// Returns the index of the first bit that is set to true that occurs 
         /// on or after the specified starting index. If no such bit exists 
@@ -590,28 +606,16 @@ public class SupportClass
         /// <returns></returns>
         public static System.Single Parse(System.String s)
         {
-            System.Double res; 
-
-            if (s.EndsWith("f") || s.EndsWith("F"))
-            {
-                System.Double.TryParse(s.Substring(0, s.Length - 1), 
-                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
-                    null, out res);
-            }
-            else
-            {
-                System.Double.TryParse(s, 
-                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
-                    null, out res);
-            }
-
             try
             {
-                return System.Convert.ToSingle(res);
+                if (s.EndsWith("f") || s.EndsWith("F"))
+                    return System.Single.Parse(s.Substring(0, s.Length - 1));
+                else
+                    return System.Single.Parse(s);
             }
-            catch (System.OverflowException)
+            catch(System.FormatException fex)
             {
-                return 0;
+                throw fex;					
             }
         }
     }

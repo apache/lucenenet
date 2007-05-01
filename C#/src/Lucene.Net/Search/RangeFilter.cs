@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
@@ -29,8 +30,8 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>
 	/// This code borrows heavily from {@link RangeQuery}, but is implemented as a Filter
-    /// 
-    /// </p>
+	/// 
+	/// </p>
 	/// </summary>
 	[Serializable]
 	public class RangeFilter : Filter
@@ -113,7 +114,7 @@ namespace Lucene.Net.Search
 				
 				bool checkLower = false;
 				if (!includeLower)
-				    // make adjustments to set to exclusive
+					// make adjustments to set to exclusive
 					checkLower = true;
 				
 				TermDocs termDocs = reader.TermDocs();

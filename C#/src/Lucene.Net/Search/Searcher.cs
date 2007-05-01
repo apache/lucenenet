@@ -16,8 +16,9 @@
  */
 
 using System;
-using Document = Lucene.Net.Documents.Document;
+
 using Term = Lucene.Net.Index.Term;
+using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Search
 {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Search
 		/// <p>Called by {@link Hits}.
 		/// 
 		/// <p>Applications should usually call {@link Searcher#Search(Query)} or
-		/// {@link Searcher#Search(Query,Filter)} instead.
+		/// {@link Searcher#search(Query,Filter)} instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		public virtual TopDocs Search(Query query, Filter filter, int n)
@@ -163,7 +164,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Set the Similarity implementation used by this Searcher.
 		/// 
 		/// </summary>
-		/// <seealso cref="Similarity.SetDefault(Similarity)">
+		/// <seealso cref="Similarity#SetDefault(Similarity)">
 		/// </seealso>
 		public virtual void  SetSimilarity(Similarity similarity)
 		{

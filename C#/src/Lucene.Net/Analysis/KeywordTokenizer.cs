@@ -20,44 +20,44 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Emits the entire input as a single token.</summary>
-	public class KeywordTokenizer : Tokenizer
-	{
+    /// <summary> Emits the entire input as a single token.</summary>
+    public class KeywordTokenizer : Tokenizer
+    {
 		
-		private const int DEFAULT_BUFFER_SIZE = 256;
+        private const int DEFAULT_BUFFER_SIZE = 256;
 		
-		private bool done;
-		private char[] buffer;
+        private bool done;
+        private char[] buffer;
 		
-		public KeywordTokenizer(System.IO.TextReader input) : this(input, DEFAULT_BUFFER_SIZE)
-		{
-		}
+        public KeywordTokenizer(System.IO.TextReader input) : this(input, DEFAULT_BUFFER_SIZE)
+        {
+        }
 		
-		public KeywordTokenizer(System.IO.TextReader input, int bufferSize) : base(input)
-		{
-			this.buffer = new char[bufferSize];
-			this.done = false;
-		}
+        public KeywordTokenizer(System.IO.TextReader input, int bufferSize) : base(input)
+        {
+            this.buffer = new char[bufferSize];
+            this.done = false;
+        }
 		
-		public override Token Next()
-		{
-			if (!done)
-			{
-				done = true;
-				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-				int length;
-				while (true)
-				{
-					length = input.Read((System.Char[]) this.buffer, 0, this.buffer.Length);
-					if (length <= 0)
-						break;
+        public override Token Next()
+        {
+            if (!done)
+            {
+                done = true;
+                System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+                int length;
+                while (true)
+                {
+                    length = input.Read((System.Char[]) this.buffer, 0, this.buffer.Length);
+                    if (length <= 0)
+                        break;
 					
-					buffer.Append(this.buffer, 0, length);
-				}
-				System.String text = buffer.ToString();
-				return new Token(text, 0, text.Length);
-			}
-			return null;
-		}
-	}
+                    buffer.Append(this.buffer, 0, length);
+                }
+                System.String text = buffer.ToString();
+                return new Token(text, 0, text.Length);
+            }
+            return null;
+        }
+    }
 }

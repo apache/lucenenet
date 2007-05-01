@@ -10,25 +10,25 @@ The calculus of spans.
 
 <ul>
 
-<li>A <a href = "SpanTermQuery.html">SpanTermQuery</a> matches all spans
-containing a particular <a href = "index/Term.html">Term</a>.</li>
+<li>A <a href="SpanTermQuery.html">SpanTermQuery</a> matches all spans
+containing a particular <a href="../../index/Term.html">Term</a>.</li>
 
-<li> A <a href = "SpanNearQuery.html">SpanNearQuery</a> matches spans
+<li> A <a href="SpanNearQuery.html">SpanNearQuery</a> matches spans
 which occur near one another, and can be used to implement things like
 phrase search (when constructed from <a
 href="SpanTermQuery.html">SpanTermQueries</a>) and inter-phrase
 proximity (when constructed from other <a
 href="SpanNearQuery.html">SpanNearQueries</a>).</li>
 
-<li>A <a href = "SpanOrQuery.html">SpanOrQuery</a> merges spans from a
-number of other <a href = "SpanQuery.html">SpanQueries</a>.</li>
+<li>A <a href="SpanOrQuery.html">SpanOrQuery</a> merges spans from a
+number of other <a href="SpanQuery.html">SpanQueries</a>.</li>
 
-<li>A <a href = "SpanNotQuery.html">SpanNotQuery</a> removes spans
-matching one <a href = "SpanQuery.html">SpanQuery</a> which overlap
+<li>A <a href="SpanNotQuery.html">SpanNotQuery</a> removes spans
+matching one <a href="SpanQuery.html">SpanQuery</a> which overlap
 another.  This can be used, e.g., to implement within-paragraph
 search.</li>
 
-<li>A <a href = "SpanFirstQuery.html">SpanFirstQuery</a> matches spans
+<li>A <a href="SpanFirstQuery.html">SpanFirstQuery</a> matches spans
 matching <code>q</code> whose end position is less than
 <code>n</code>.  This can be used to constrain matches to the first
 part of the document.</li>

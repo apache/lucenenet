@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -95,7 +96,7 @@ namespace Lucene.Net.Demo
 				
 				System.DateTime end = System.DateTime.Now;
 				
-				System.Console.Out.Write(end.Ticks - start.Ticks);
+				System.Console.Out.Write(end.Millisecond - start.Millisecond);
 				System.Console.Out.WriteLine(" total milliseconds");
 			}
 			catch (System.Exception e)

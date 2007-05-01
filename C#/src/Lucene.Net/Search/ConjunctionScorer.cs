@@ -48,7 +48,10 @@ namespace Lucene.Net.Search
 				return ((Scorer) o1).Doc() - ((Scorer) o2).Doc();
 			}
 		}
-		private System.Collections.ArrayList scorers = new System.Collections.ArrayList();
+		private Scorer[] scorers = new Scorer[2];
+		private int length = 0;
+		private int first = 0;
+		private int last = - 1;
 		private bool firstTime = true;
 		private bool more = true;
 		private float coord;
@@ -59,21 +62,21 @@ namespace Lucene.Net.Search
 		
 		internal void  Add(Scorer scorer)
 		{
-			scorers.Insert(scorers.Count, scorer);
-		}
-		
-		private Scorer First()
-		{
-			return (Scorer) scorers[0];
-		}
-		private Scorer Last()
-		{
-			return (Scorer) scorers[scorers.Count - 1];
+			if (length >= scorers.Length)
+			{
+				// grow the array
+				Scorer[] temps = new Scorer[scorers.Length * 2];
+				Array.Copy(scorers, 0, temps, 0, length);
+				scorers = temps;
+			}
+			last += 1;
+			length += 1;
+			scorers[last] = scorer;
 		}
 		
 		public override int Doc()
 		{
-			return First().Doc();
+			return scorers[first].Doc();
 		}
 		
 		public override bool Next()
@@ -84,21 +87,19 @@ namespace Lucene.Net.Search
 			}
 			else if (more)
 			{
-				more = Last().Next(); // trigger further scanning
+				more = scorers[last].Next(); // trigger further scanning
 			}
 			return DoNext();
 		}
 		
 		private bool DoNext()
 		{
-			while (more && First().Doc() < Last().Doc())
+			while (more && scorers[first].Doc() < scorers[last].Doc())
 			{
 				// find doc w/ all clauses
-				more = First().SkipTo(Last().Doc()); // skip first upto last
-				System.Object tempObject;
-				tempObject = scorers[0];
-				scorers.RemoveAt(0);
-				scorers.Insert(scorers.Count, tempObject); // move first to last
+				more = scorers[first].SkipTo(scorers[last].Doc()); // skip first upto last
+				last = first; // move first to last
+				first = (first == length - 1) ? 0 : first + 1;
 			}
 			return more; // found a doc with all clauses
 		}
@@ -110,10 +111,12 @@ namespace Lucene.Net.Search
 				Init(false);
 			}
 			
-			System.Collections.IEnumerator i = scorers.GetEnumerator();
-			while (more && i.MoveNext())
+			for (int i = 0, pos = first; i < length; i++)
 			{
-				more = ((Scorer) i.Current).SkipTo(target);
+				if (!more)
+					break;
+				more = scorers[pos].SkipTo(target);
+				pos = (pos == length - 1) ? 0 : pos + 1;
 			}
 			
 			if (more)
@@ -124,33 +127,34 @@ namespace Lucene.Net.Search
 		
 		public override float Score()
 		{
-			float score = 0.0f; // sum scores
-			System.Collections.IEnumerator i = scorers.GetEnumerator();
-			while (i.MoveNext())
+			float sum = 0.0f;
+			for (int i = 0; i < length; i++)
 			{
-				score += ((Scorer) i.Current).Score();
+				sum += scorers[i].Score();
 			}
-			score *= coord;
-			return score;
+			return sum * coord;
 		}
 		
 		private void  Init(bool initScorers)
 		{
 			//  compute coord factor
-			coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
+			coord = GetSimilarity().Coord(length, length);
 			
-			more = scorers.Count > 0;
+			more = length > 0;
 			
 			if (initScorers)
 			{
 				// move each scorer to its first entry
-				System.Collections.IEnumerator i = scorers.GetEnumerator();
-				while (more && i.MoveNext())
+				for (int i = 0, pos = first; i < length; i++)
 				{
-					more = ((Scorer) i.Current).Next();
+					if (!more)
+						break;
+					more = scorers[pos].Next();
+					pos = (pos == length - 1) ? 0 : pos + 1;
 				}
+				// initial sort of simulated list
 				if (more)
-					SortScorers(); // initial sort of list
+					SortScorers();
 			}
 			
 			firstTime = false;
@@ -158,17 +162,19 @@ namespace Lucene.Net.Search
 		
 		private void  SortScorers()
 		{
-			// move scorers to an array
-			Scorer[] array = (Scorer[]) scorers.ToArray(typeof(Scorer));
-			scorers.Clear(); // empty the list
+			// squeeze the array down for the sort
+			if (length != scorers.Length)
+			{
+				Scorer[] temps = new Scorer[length];
+				Array.Copy(scorers, 0, temps, 0, length);
+				scorers = temps;
+			}
 			
 			// note that this comparator is not consistent with equals!
-			System.Array.Sort(array, new AnonymousClassComparator(this));
+			System.Array.Sort(scorers, new AnonymousClassComparator(this));
 			
-			for (int i = 0; i < array.Length; i++)
-			{
-				scorers.Insert(scorers.Count, array[i]); // re-build list, now sorted
-			}
+			first = 0;
+			last = length - 1;
 		}
 		
 		public override Explanation Explain(int doc)

@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 
@@ -77,7 +78,7 @@ namespace Lucene.Net.Demo
 				writer.Close();
 				
 				System.DateTime end = System.DateTime.Now;
-				System.Console.Out.WriteLine(end.Ticks - start.Ticks + " total milliseconds");
+				System.Console.Out.WriteLine(end.Millisecond - start.Millisecond + " total milliseconds");
 			}
 			catch (System.IO.IOException e)
 			{

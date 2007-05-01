@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 	/// </CODE>
 	/// 
 	/// </summary>
-	/// <version>  $Id: TermVectorsWriter.java 150689 2004-11-29 21:42:02Z bmesser $
+	/// <version>  $Id: TermVectorsWriter.java 472959 2006-11-09 16:21:50Z yonik $
 	/// 
 	/// </version>
 	public sealed class TermVectorsWriter
@@ -69,19 +69,20 @@ namespace Lucene.Net.Index
 		
 		private TVField currentField = null;
 		private long currentDocPointer = - 1;
-		
-        public static System.String TvxExtension
-        {
-            get {   return TVX_EXTENSION;   }
-        }
-        public static System.String TvdExtension
-        {
-            get {   return TVD_EXTENSION;   }
-        }
-        public static System.String TvfExtension
-        {
-            get {   return TVF_EXTENSION;   }
-        }
+
+		// Those three get'ers are helper for Lucene.Net only
+		public static System.String TvxExtension
+		{
+			get {   return TVX_EXTENSION;   }
+		}
+		public static System.String TvdExtension
+		{
+			get {   return TVD_EXTENSION;   }
+		}
+		public static System.String TvfExtension
+		{
+			get {   return TVF_EXTENSION;   }
+		}
 
 		public TermVectorsWriter(Directory directory, System.String segment, FieldInfos fieldInfos)
 		{
@@ -168,7 +169,7 @@ namespace Lucene.Net.Index
 			return currentField != null;
 		}
 		
-		/// <summary>Add term to the field's term vector. Field must already be open.
+		/// <summary>Add term to the field's term vector. Fieldable must already be open.
 		/// Terms should be added in
 		/// increasing order of terms, one call per unique termNum. ProxPointer
 		/// is a pointer into the TermPosition file (prx). Freq is the number of
@@ -204,7 +205,7 @@ namespace Lucene.Net.Index
 		/// term vectors, add value for tvx.
 		/// 
 		/// </summary>
-		/// <param name="vectors">
+		/// <param name="">vectors
 		/// </param>
 		/// <throws>  IOException </throws>
 		public void  AddAllDocVectors(TermFreqVector[] vectors)
@@ -256,7 +257,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Close all streams. </summary>
-		public /*internal*/ void  Close()
+		public void  Close()
 		{
 			try
 			{
@@ -310,7 +311,7 @@ namespace Lucene.Net.Index
 		{
 			// remember where this field is written
 			currentField.tvfPointer = tvf.GetFilePointer();
-			//System.out.println("Field Pointer: " + currentField.tvfPointer);
+			//System.out.println("Fieldable Pointer: " + currentField.tvfPointer);
 			
 			int size = terms.Count;
 			tvf.WriteVInt(size);

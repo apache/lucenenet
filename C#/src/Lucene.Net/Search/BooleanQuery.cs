@@ -16,8 +16,10 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Occur = Lucene.Net.Search.BooleanClause.Occur;
 
 namespace Lucene.Net.Search
 {
@@ -65,13 +67,24 @@ namespace Lucene.Net.Search
 		[Serializable]
 		public class TooManyClauses : System.SystemException
 		{
+			public override System.String Message
+			{
+				get
+				{
+					return "maxClauseCount is set to " + Lucene.Net.Search.BooleanQuery.maxClauseCount;
+				}
+				
+			}
+			public TooManyClauses()
+			{
+			}
 		}
 		
 		/// <summary>Return the maximum number of clauses permitted, 1024 by default.
 		/// Attempts to add more than the permitted number of clauses cause {@link
 		/// TooManyClauses} to be thrown.
 		/// </summary>
-		/// <seealso cref="SetMaxClauseCount(int)">
+		/// <seealso cref="#SetMaxClauseCount(int)">
 		/// </seealso>
 		public static int GetMaxClauseCount()
 		{
@@ -88,7 +101,7 @@ namespace Lucene.Net.Search
 		/// Filter. For example instead of a {@link RangeQuery} one can use a
 		/// {@link RangeFilter}.
 		/// <p>Normally the buffers are allocated by the JVM. When using for example
-		/// {@link Lucene.Net.store.MMapDirectory} the buffering is left to
+		/// {@link Lucene.Net.Store.MMapDirectory} the buffering is left to
 		/// the operating system.
 		/// </summary>
 		public static void  SetMaxClauseCount(int maxClauseCount)
@@ -98,7 +111,7 @@ namespace Lucene.Net.Search
 			BooleanQuery.maxClauseCount = maxClauseCount;
 		}
 		
-		private System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		private System.Collections.ArrayList clauses = new System.Collections.ArrayList();
 		private bool disableCoord;
 		
 		/// <summary>Constructs an empty boolean query. </summary>
@@ -124,7 +137,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns true iff {@link Similarity#Coord(int,int)} is disabled in
 		/// scoring for this query instance.
 		/// </summary>
-		/// <seealso cref="BooleanQuery(boolean)">
+		/// <seealso cref="#BooleanQuery(boolean)">
 		/// </seealso>
 		public virtual bool IsCoordDisabled()
 		{
@@ -165,7 +178,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="min">the number of optional clauses that must match
 		/// </param>
-		/// <seealso cref="setUseScorer14">
+		/// <seealso cref="#setUseScorer14">
 		/// </seealso>
 		public virtual void  SetMinimumNumberShouldMatch(int min)
 		{
@@ -185,7 +198,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="GetMaxClauseCount()">
+		/// <seealso cref="#GetMaxClauseCount()">
 		/// </seealso>
 		public virtual void  Add(Query query, BooleanClause.Occur occur)
 		{
@@ -194,7 +207,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Adds a clause to a boolean query.</summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="GetMaxClauseCount()">
+		/// <seealso cref="#GetMaxClauseCount()">
 		/// </seealso>
 		public virtual void  Add(BooleanClause clause)
 		{
@@ -208,6 +221,12 @@ namespace Lucene.Net.Search
 		public virtual BooleanClause[] GetClauses()
 		{
 			return (BooleanClause[]) clauses.ToArray(typeof(BooleanClause));
+		}
+		
+		/// <summary>Returns the list of clauses in this query. </summary>
+		public virtual System.Collections.IList Clauses()
+		{
+			return clauses;
 		}
 		
 		[Serializable]
@@ -256,8 +275,11 @@ namespace Lucene.Net.Search
 				{
 					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
 					Weight w = (Weight) weights[i];
+					// call sumOfSquaredWeights for all clauses in case of side effects
+					float s = w.SumOfSquaredWeights(); // sum sub k
 					if (!c.IsProhibited())
-						sum += w.SumOfSquaredWeights(); // sum sub weights
+					// only add to sum for non-prohibited clauses
+						sum += s;
 				}
 				
 				sum *= Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost(); // boost each sub-weight
@@ -273,8 +295,8 @@ namespace Lucene.Net.Search
 				{
 					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
 					Weight w = (Weight) weights[i];
-					if (!c.IsProhibited())
-						w.Normalize(norm);
+					// normalize all clauses, (even if prohibited in case of side affects)
+					w.Normalize(norm);
 				}
 			}
 			
@@ -333,11 +355,14 @@ namespace Lucene.Net.Search
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
-				Explanation sumExpl = new Explanation();
+				int minShouldMatch = Enclosing_Instance.GetMinimumNumberShouldMatch();
+				ComplexExplanation sumExpl = new ComplexExplanation();
 				sumExpl.SetDescription("sum of:");
 				int coord = 0;
 				int maxCoord = 0;
 				float sum = 0.0f;
+				bool fail = false;
+				int shouldMatchCount = 0;
 				for (int i = 0; i < weights.Count; i++)
 				{
 					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
@@ -345,7 +370,7 @@ namespace Lucene.Net.Search
 					Explanation e = w.Explain(reader, doc);
 					if (!c.IsProhibited())
 						maxCoord++;
-					if (e.GetValue() > 0)
+					if (e.IsMatch())
 					{
 						if (!c.IsProhibited())
 						{
@@ -355,19 +380,41 @@ namespace Lucene.Net.Search
 						}
 						else
 						{
-							return new Explanation(0.0f, "match prohibited");
+							Explanation r = new Explanation(0.0f, "match on prohibited clause (" + c.GetQuery().ToString() + ")");
+							r.AddDetail(e);
+							sumExpl.AddDetail(r);
+							fail = true;
 						}
+						if (c.GetOccur().Equals(Occur.SHOULD))
+							shouldMatchCount++;
 					}
 					else if (c.IsRequired())
 					{
-						return new Explanation(0.0f, "match required");
+						Explanation r = new Explanation(0.0f, "no match on required clause (" + c.GetQuery().ToString() + ")");
+						r.AddDetail(e);
+						sumExpl.AddDetail(r);
+						fail = true;
 					}
 				}
-				sumExpl.SetValue(sum);
+				if (fail)
+				{
+					System.Boolean tempAux = false;
+					sumExpl.SetMatch(tempAux);
+					sumExpl.SetValue(0.0f);
+					sumExpl.SetDescription("Failure to meet condition(s) of required/prohibited clause(s)");
+					return sumExpl;
+				}
+				else if (shouldMatchCount < minShouldMatch)
+				{
+					System.Boolean tempAux2 = false;
+					sumExpl.SetMatch(tempAux2);
+					sumExpl.SetValue(0.0f);
+					sumExpl.SetDescription("Failure to match minimum number " + "of optional clauses: " + minShouldMatch);
+					return sumExpl;
+				}
 				
-				if (coord == 1)
-				// only one clause matched
-					sumExpl = sumExpl.GetDetails()[0]; // eliminate wrapper
+				sumExpl.SetMatch(0 < coord ? true : false);
+				sumExpl.SetValue(sum);
 				
 				float coordFactor = similarity.Coord(coord, maxCoord);
 				if (coordFactor == 1.0f)
@@ -376,11 +423,9 @@ namespace Lucene.Net.Search
 				// eliminate wrapper
 				else
 				{
-					Explanation result = new Explanation();
-					result.SetDescription("product of:");
+					ComplexExplanation result = new ComplexExplanation(sumExpl.IsMatch(), sum * coordFactor, "product of:");
 					result.AddDetail(sumExpl);
 					result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + maxCoord + ")"));
-					result.SetValue(sum * coordFactor);
 					return result;
 				}
 			}
@@ -576,29 +621,29 @@ namespace Lucene.Net.Search
 			if (!(o is BooleanQuery))
 				return false;
 			BooleanQuery other = (BooleanQuery) o;
-            if (this.GetBoost() != other.GetBoost())
-                return false;
-            if (this.clauses.Count != other.clauses.Count)
-                return false;
-            for (int i = 0; i < this.clauses.Count; i++)
-            {
-                if (this.clauses[i].Equals(other.clauses[i]) == false)
-                    return false;
-            }
+			if (this.GetBoost() != other.GetBoost())
+				return false;
+			if (this.clauses.Count != other.clauses.Count)
+				return false;
+			for (int i = 0; i < this.clauses.Count; i++)
+			{
+				if (this.clauses[i].Equals(other.clauses[i]) == false)
+					return false;
+			}
 			return this.GetMinimumNumberShouldMatch() == other.GetMinimumNumberShouldMatch();
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            int hashCode = 0;
+			int hashCode = 0;
 
-            for (int i = 0; i < clauses.Count; i++)
-            {
-                hashCode += clauses[i].GetHashCode();
-            }
+			for (int i = 0; i < clauses.Count; i++)
+			{
+				hashCode += clauses[i].GetHashCode();
+			}
 
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ hashCode + GetMinimumNumberShouldMatch();
-		}
+        }
 	}
 }

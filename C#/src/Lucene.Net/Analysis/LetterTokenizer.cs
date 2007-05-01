@@ -20,26 +20,26 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A LetterTokenizer is a tokenizer that divides text at non-letters.  That's
-	/// to say, it defines tokens as maximal strings of adjacent letters, as defined
-	/// by java.lang.Character.isLetter() predicate.
-	/// Note: this does a decent job for most European languages, but does a terrible
-	/// job for some Asian languages, where words are not separated by spaces. 
-	/// </summary>
+    /// <summary>A LetterTokenizer is a tokenizer that divides text at non-letters.  That's
+    /// to say, it defines tokens as maximal strings of adjacent letters, as defined
+    /// by java.lang.Character.isLetter() predicate.
+    /// Note: this does a decent job for most European languages, but does a terrible
+    /// job for some Asian languages, where words are not separated by spaces. 
+    /// </summary>
 	
-	public class LetterTokenizer : CharTokenizer
-	{
-		/// <summary>Construct a new LetterTokenizer. </summary>
-		public LetterTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
-		{
-		}
+    public class LetterTokenizer : CharTokenizer
+    {
+        /// <summary>Construct a new LetterTokenizer. </summary>
+        public LetterTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
+        {
+        }
 		
-		/// <summary>Collects only characters which satisfy
-		/// {@link Character#isLetter(char)}.
-		/// </summary>
-		protected internal override bool IsTokenChar(char c)
-		{
-			return System.Char.IsLetter(c);
-		}
-	}
+        /// <summary>Collects only characters which satisfy
+        /// {@link Character#isLetter(char)}.
+        /// </summary>
+        protected internal override bool IsTokenChar(char c)
+        {
+            return System.Char.IsLetter(c);
+        }
+    }
 }

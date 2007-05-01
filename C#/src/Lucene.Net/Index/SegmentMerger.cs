@@ -16,6 +16,8 @@
  */
 
 using System;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using FieldSelectorResult = Lucene.Net.Documents.FieldSelectorResult;
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
@@ -31,16 +33,44 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	/// <seealso cref="merge">
+	/// <seealso cref="#merge">
 	/// </seealso>
-	/// <seealso cref="add">
+	/// <seealso cref="#add">
 	/// </seealso>
-	public sealed class SegmentMerger
+	sealed class SegmentMerger
 	{
+		private class AnonymousClassFieldSelector : FieldSelector
+		{
+			public AnonymousClassFieldSelector(SegmentMerger enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(SegmentMerger enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SegmentMerger enclosingInstance;
+			public SegmentMerger Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public FieldSelectorResult Accept(System.String fieldName)
+			{
+				return FieldSelectorResult.LOAD_FOR_MERGE;
+			}
+		}
 		private void  InitBlock()
 		{
 			termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
 		}
+		
+		/// <summary>norms header placeholder </summary>
+		internal static readonly byte[] NORMS_HEADER = new byte[]{(byte) 'N', (byte) 'R', (byte) 'M', (byte) 255};
+		
 		private Directory directory;
 		private System.String segment;
 		private int termIndexInterval;
@@ -55,7 +85,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="name">The name of the new segment
 		/// </param>
-		public /*internal*/ SegmentMerger(Directory dir, System.String name)
+		public SegmentMerger(Directory dir, System.String name)
 		{
 			InitBlock();
 			directory = dir;
@@ -71,9 +101,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
-		/// <param name="reader">
+		/// <param name="">reader
 		/// </param>
-		public /*internal*/ void  Add(IndexReader reader)
+		public void  Add(IndexReader reader)
 		{
 			readers.Add(reader);
 		}
@@ -92,7 +122,7 @@ namespace Lucene.Net.Index
 		/// <returns> The number of documents that were merged
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public /*internal*/ int Merge()
+		public int Merge()
 		{
 			int value_Renamed;
 			
@@ -110,7 +140,7 @@ namespace Lucene.Net.Index
 		/// Should not be called before merge().
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public /*internal*/ void  CloseReaders()
+		public void  CloseReaders()
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
@@ -124,7 +154,7 @@ namespace Lucene.Net.Index
 		{
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName);
 			
-			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + fieldInfos.Size()));
+			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + 1));
 			
 			// Basic files
 			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)
@@ -132,13 +162,14 @@ namespace Lucene.Net.Index
 				files.Add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
 			}
 			
-			// Field norm files
+			// Fieldable norm files
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed && !fi.omitNorms)
 				{
-					files.Add(segment + ".f" + i);
+					files.Add(segment + "." + IndexFileNames.NORMS_EXTENSION);
+					break;
 				}
 			}
 			
@@ -169,8 +200,8 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
-                System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
-                System.String field = (System.String) e.Key;
+				System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
+				System.String field = (System.String) e.Key;
 				fieldInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field));
 			}
 		}
@@ -196,6 +227,11 @@ namespace Lucene.Net.Index
 			fieldInfos.Write(directory, segment + ".fnm");
 			
 			FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
+			
+			// for merging we don't want to compress/uncompress the data, so to tell the FieldsReader that we're
+			// in  merge mode, we use this FieldSelector
+			FieldSelector fieldSelectorMerge = new AnonymousClassFieldSelector(this);
+			
 			try
 			{
 				for (int i = 0; i < readers.Count; i++)
@@ -206,7 +242,7 @@ namespace Lucene.Net.Index
 						if (!reader.IsDeleted(j))
 						{
 							// skip deleted docs
-							fieldsWriter.AddDocument(reader.Document(j));
+							fieldsWriter.AddDocument(reader.Document(j, fieldSelectorMerge));
 							docCount++;
 						}
 				}
@@ -379,8 +415,8 @@ namespace Lucene.Net.Index
 						doc = docMap[doc]; // map around deletions
 					doc += base_Renamed; // convert to merged space
 					
-					if (doc < lastDoc)
-						throw new System.SystemException("docs out of order (" + doc + " < " + lastDoc + " )");
+					if (doc < 0 || (df > 0 && doc <= lastDoc))
+						throw new System.SystemException("docs out of order (" + doc + " <= " + lastDoc + " )");
 					
 					df++;
 					
@@ -451,33 +487,56 @@ namespace Lucene.Net.Index
 		
 		private void  MergeNorms()
 		{
-			for (int i = 0; i < fieldInfos.Size(); i++)
+			byte[] normBuffer = null;
+			IndexOutput output = null;
+			try
 			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed && !fi.omitNorms)
+				for (int i = 0; i < fieldInfos.Size(); i++)
 				{
-					IndexOutput output = directory.CreateOutput(segment + ".f" + i);
-					try
+					FieldInfo fi = fieldInfos.FieldInfo(i);
+					if (fi.isIndexed && !fi.omitNorms)
 					{
+						if (output == null)
+						{
+							output = directory.CreateOutput(segment + "." + IndexFileNames.NORMS_EXTENSION);
+							output.WriteBytes(NORMS_HEADER, NORMS_HEADER.Length);
+						}
 						for (int j = 0; j < readers.Count; j++)
 						{
 							IndexReader reader = (IndexReader) readers[j];
 							int maxDoc = reader.MaxDoc();
-							byte[] input = new byte[maxDoc];
-							reader.Norms(fi.name, input, 0);
-							for (int k = 0; k < maxDoc; k++)
+							if (normBuffer == null || normBuffer.Length < maxDoc)
 							{
-								if (!reader.IsDeleted(k))
+								// the buffer is too small for the current segment
+								normBuffer = new byte[maxDoc];
+							}
+							reader.Norms(fi.name, normBuffer, 0);
+							if (!reader.HasDeletions())
+							{
+								//optimized case for segments without deleted docs
+								output.WriteBytes(normBuffer, maxDoc);
+							}
+							else
+							{
+								// this segment has deleted docs, so we have to
+								// check for every doc if it is deleted or not
+								for (int k = 0; k < maxDoc; k++)
 								{
-									output.WriteByte(input[k]);
+									if (!reader.IsDeleted(k))
+									{
+										output.WriteByte(normBuffer[k]);
+									}
 								}
 							}
 						}
 					}
-					finally
-					{
-						output.Close();
-					}
+				}
+			}
+			finally
+			{
+				if (output != null)
+				{
+					output.Close();
 				}
 			}
 		}

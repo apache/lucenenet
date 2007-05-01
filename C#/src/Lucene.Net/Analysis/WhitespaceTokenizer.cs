@@ -20,23 +20,23 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A WhitespaceTokenizer is a tokenizer that divides text at whitespace.
-	/// Adjacent sequences of non-Whitespace characters form tokens. 
-	/// </summary>
+    /// <summary>A WhitespaceTokenizer is a tokenizer that divides text at whitespace.
+    /// Adjacent sequences of non-Whitespace characters form tokens. 
+    /// </summary>
 	
-	public class WhitespaceTokenizer : CharTokenizer
-	{
-		/// <summary>Construct a new WhitespaceTokenizer. </summary>
-		public WhitespaceTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
-		{
-		}
+    public class WhitespaceTokenizer : CharTokenizer
+    {
+        /// <summary>Construct a new WhitespaceTokenizer. </summary>
+        public WhitespaceTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
+        {
+        }
 		
-		/// <summary>Collects only characters which do not satisfy
-		/// {@link Character#isWhitespace(char)}.
-		/// </summary>
-		protected internal override bool IsTokenChar(char c)
-		{
-			return !System.Char.IsWhiteSpace(c);
-		}
-	}
+        /// <summary>Collects only characters which do not satisfy
+        /// {@link Character#isWhitespace(char)}.
+        /// </summary>
+        protected internal override bool IsTokenChar(char c)
+        {
+            return !System.Char.IsWhiteSpace(c);
+        }
+    }
 }

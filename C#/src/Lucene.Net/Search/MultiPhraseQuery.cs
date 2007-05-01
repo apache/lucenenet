@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using MultipleTermPositions = Lucene.Net.Index.MultipleTermPositions;
 using Term = Lucene.Net.Index.Term;
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search
 		private int slop = 0;
 		
 		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery.SetSlop(int)">
+		/// <seealso cref="PhraseQuery#SetSlop(int)">
 		/// </seealso>
 		public virtual void  SetSlop(int s)
 		{
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery.GetSlop()">
+		/// <seealso cref="PhraseQuery#GetSlop()">
 		/// </seealso>
 		public virtual int GetSlop()
 		{
@@ -63,7 +64,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Add a single term at the next position in the phrase.</summary>
-		/// <seealso cref="PhraseQuery.Add(Term)">
+		/// <seealso cref="PhraseQuery#Add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term term)
 		{
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search
 		/// may match.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery.Add(Term)">
+		/// <seealso cref="PhraseQuery#Add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term[] terms)
 		{
@@ -88,11 +89,11 @@ namespace Lucene.Net.Search
 		/// <summary> Allows to specify the relative position of terms within the phrase.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery.Add(Term, int)">
+		/// <seealso cref="int)">
 		/// </seealso>
-		/// <param name="terms">
+		/// <param name="">terms
 		/// </param>
-		/// <param name="position">
+		/// <param name="">position
 		/// </param>
 		public virtual void  Add(Term[] terms, int position)
 		{
@@ -111,15 +112,15 @@ namespace Lucene.Net.Search
 			positions.Add((System.Int32) position);
 		}
 		
-        /// <summary> Returns a List<Term[]> of the terms in the multiphrase.
-        /// Do not modify the List or its contents.
-        /// </summary>
-        public virtual System.Collections.IList GetTermArrays()
-        {
-            return (System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(termArrays));
-        }
-
-        /// <summary> Returns the relative positions of terms in this phrase.</summary>
+		/// <summary> Returns a List<Term[]> of the terms in the multiphrase.
+		/// Do not modify the List or its contents.
+		/// </summary>
+		public virtual System.Collections.IList GetTermArrays()
+		{
+			return (System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(termArrays));
+		}
+		
+		/// <summary> Returns the relative positions of terms in this phrase.</summary>
 		public virtual int[] GetPositions()
 		{
 			int[] result = new int[positions.Count];
@@ -128,22 +129,21 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-        // inherit javadoc
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
-            {
-                Term[] arr = (Term[]) iter.Current;
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    Term tmp = arr[i];
-                    terms.Add(tmp, tmp);
-                }
-            }
-        }
+		// inherit javadoc
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
+			{
+				Term[] arr = (Term[]) iter.Current;
+				for (int i = 0; i < arr.Length; i++)
+				{
+					terms.Add(arr[i], arr[i]);
+				}
+			}
+		}
 		
 		
-        [Serializable]
+		[Serializable]
 		private class MultiPhraseWeight : Weight
 		{
 			private void  InitBlock(MultiPhraseQuery enclosingInstance)
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
 			public virtual Scorer Scorer(IndexReader reader)
 			{
 				if (Enclosing_Instance.termArrays.Count == 0)
-    				// optimize zero-term case
+					// optimize zero-term case
 					return null;
 				
 				TermPositions[] tps = new TermPositions[Enclosing_Instance.termArrays.Count];
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
-				Explanation result = new Explanation();
+				ComplexExplanation result = new ComplexExplanation();
 				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				Explanation idfExpl = new Explanation(idf, "idf(" + GetQuery() + ")");
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
 				result.AddDetail(queryExpl);
 				
 				// explain field weight
-				Explanation fieldExpl = new Explanation();
+				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.SetDescription("fieldWeight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				Explanation tfExpl = Scorer(reader).Explain(doc);
@@ -272,9 +272,12 @@ namespace Lucene.Net.Search
 				fieldNormExpl.SetDescription("fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
+				fieldExpl.SetMatch(tfExpl.IsMatch());
 				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
 				
 				result.AddDetail(fieldExpl);
+				System.Boolean tempAux = fieldExpl.GetMatch();
+				result.SetMatch(tempAux);
 				
 				// combine them
 				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
@@ -321,17 +324,10 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			
-            bool appendSpace = false;
-
 			buffer.Append("\"");
 			System.Collections.IEnumerator i = termArrays.GetEnumerator();
 			while (i.MoveNext())
 			{
-                if (appendSpace == true)
-                    buffer.Append(" ");
-                else
-                    appendSpace = true;
-
 				Term[] terms = (Term[]) i.Current;
 				if (terms.Length > 1)
 				{
@@ -348,6 +344,8 @@ namespace Lucene.Net.Search
 				{
 					buffer.Append(terms[0].Text());
 				}
+				if (i.MoveNext())
+					buffer.Append(" ");
 			}
 			buffer.Append("\"");
 			
@@ -363,12 +361,12 @@ namespace Lucene.Net.Search
 		}
 		
 		
-        /// <summary>Returns true if <code>o</code> is equal to this. </summary>
-        public  override bool Equals(System.Object o)
-        {
-            if (!(o is MultiPhraseQuery))
-                return false;
-            MultiPhraseQuery other = (MultiPhraseQuery) o;
+		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (!(o is MultiPhraseQuery))
+				return false;
+			MultiPhraseQuery other = (MultiPhraseQuery) o;
             if (this.GetBoost() == other.GetBoost() && this.slop == other.slop)
             {
                 System.Collections.IEnumerator iter1 = this.termArrays.GetEnumerator();
@@ -393,10 +391,10 @@ namespace Lucene.Net.Search
             return true;
         }
 		
-        /// <summary>Returns a hash code value for this object.</summary>
-        public override int GetHashCode()
-        {
+		/// <summary>Returns a hash code value for this object.</summary>
+		public override int GetHashCode()
+		{
             return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ termArrays.GetHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
-        }
+		}
 	}
 }

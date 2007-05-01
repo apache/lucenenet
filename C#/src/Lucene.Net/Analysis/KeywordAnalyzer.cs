@@ -20,14 +20,14 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> "Tokenizes" the entire stream as a single token. This is useful
-	/// for data like zip codes, ids, and some product names.
-	/// </summary>
-	public class KeywordAnalyzer : Analyzer
-	{
-		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			return new KeywordTokenizer(reader);
-		}
-	}
+    /// <summary> "Tokenizes" the entire stream as a single token. This is useful
+    /// for data like zip codes, ids, and some product names.
+    /// </summary>
+    public class KeywordAnalyzer : Analyzer
+    {
+        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return new KeywordTokenizer(reader);
+        }
+    }
 }

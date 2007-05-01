@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -27,7 +28,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  yonik
 	/// </author>
-	/// <version>  $Id$
+	/// <version>  $Id: ConstantScoreQuery.java 507374 2007-02-14 03:12:50Z yonik $
 	/// </version>
 	[Serializable]
 	public class ConstantScoreQuery : Query
@@ -39,18 +40,24 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
+		/// <summary>Returns the encapsulated filter </summary>
+		public virtual Filter GetFilter()
+		{
+			return filter;
+		}
+		
 		public override Query Rewrite(IndexReader reader)
 		{
 			return this;
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            // OK to not add any terms when used for MultiSearcher,
-            // but may not be OK for highlighting
-        }
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			// OK to not add any terms when used for MultiSearcher,
+			// but may not be OK for highlighting
+		}
 		
-        [Serializable]
+		[Serializable]
 		protected internal class ConstantWeight : Weight
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
@@ -109,12 +116,14 @@ namespace Lucene.Net.Search
 				ConstantScorer cs = (ConstantScorer) Scorer(reader);
 				bool exists = cs.bits.Get(doc);
 				
-				Explanation result = new Explanation();
+				ComplexExplanation result = new ComplexExplanation();
 				
 				if (exists)
 				{
 					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + "), product of:");
 					result.SetValue(queryWeight);
+					System.Boolean tempAux = true;
+					result.SetMatch(tempAux);
 					result.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
 					result.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				}
@@ -122,6 +131,8 @@ namespace Lucene.Net.Search
 				{
 					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + ") doesn't match id " + doc);
 					result.SetValue(0);
+					System.Boolean tempAux2 = false;
+					result.SetMatch(tempAux2);
 				}
 				return result;
 			}
@@ -146,7 +157,7 @@ namespace Lucene.Net.Search
 			internal float theScore;
 			internal int doc = - 1;
 			
-			public ConstantScorer(ConstantScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, Weight w) : base(similarity)
+			public ConstantScorer(ConstantScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, Weight w):base(similarity)
 			{
 				InitBlock(enclosingInstance);
 				theScore = w.GetValue();
@@ -212,7 +223,7 @@ namespace Lucene.Net.Search
 			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
 		}
 
-        override public System.Object Clone()
+		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
             ConstantScoreQuery clone = (ConstantScoreQuery) base.Clone();
