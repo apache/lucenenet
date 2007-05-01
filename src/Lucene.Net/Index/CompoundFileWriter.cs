@@ -17,8 +17,8 @@
 
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
 	/// </author>
-	/// <version>  $Id: CompoundFileWriter.java 179621 2005-06-02 18:18:50Z dnaber $
+	/// <version>  $Id: CompoundFileWriter.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public sealed class CompoundFileWriter
 	{
@@ -117,14 +117,14 @@ namespace Lucene.Net.Index
 			if (file == null)
 				throw new System.NullReferenceException("file cannot be null");
 			
-            try
-            {
-                ids.Add(file, file);
-            }
-            catch (Exception)
-            {
-                throw new System.ArgumentException("File " + file + " already added");
-            }
+			try
+			{
+				ids.Add(file, file);
+			}
+			catch (Exception)
+			{
+				throw new System.ArgumentException("File " + file + " already added");
+			}
 			
 			FileEntry entry = new FileEntry();
 			entry.file = file;

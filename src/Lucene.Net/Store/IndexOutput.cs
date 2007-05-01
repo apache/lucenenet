@@ -91,7 +91,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = (int) (((uint) i) >> 7);    // {{Aroush-1.9}} Is this OK?!  long to uint, to int conversion.
+				i = SupportClass.Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}

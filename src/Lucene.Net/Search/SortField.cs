@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: SortField.java 150357 2004-05-24 22:51:42Z tjones $
+	/// <version>  $Id: SortField.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <seealso cref="Sort">
 	/// </seealso>
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public SortField(System.String field, int type)
 		{
-			this.field = (field != null)?String.Intern(field):field;
+			this.field = (field != null) ? String.Intern(field) : field;
 			this.type = type;
 		}
 		
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public SortField(System.String field, SortComparatorSource comparator)
 		{
-			this.field = (field != null)?String.Intern(field):field;
+			this.field = (field != null) ? String.Intern(field) : field;
 			this.type = CUSTOM;
 			this.factory = comparator;
 		}
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		public SortField(System.String field, SortComparatorSource comparator, bool reverse)
 		{
-			this.field = (field != null)?String.Intern(field):field;
+			this.field = (field != null) ? String.Intern(field) : field;
 			this.type = CUSTOM;
 			this.reverse = reverse;
 			this.factory = comparator;

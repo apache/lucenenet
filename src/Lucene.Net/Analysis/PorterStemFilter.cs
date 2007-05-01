@@ -20,47 +20,47 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>Transforms the token stream as per the Porter stemming algorithm.
-	/// Note: the input to the stemming filter must already be in lower case,
-	/// so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
-	/// down the Tokenizer chain in order for this to work properly!
-	/// <P>
-	/// To use this filter with other analyzers, you'll want to write an
-	/// Analyzer class that sets up the TokenStream chain as you want it.
-	/// To use this with LowerCaseTokenizer, for example, you'd write an
-	/// analyzer like this:
-	/// <P>
-	/// <PRE>
-	/// class MyAnalyzer extends Analyzer {
-	/// public final TokenStream tokenStream(String fieldName, Reader reader) {
-	/// return new PorterStemFilter(new LowerCaseTokenizer(reader));
-	/// }
-	/// }
-	/// </PRE>
-	/// </summary>
-	public sealed class PorterStemFilter : TokenFilter
-	{
-		private PorterStemmer stemmer;
+    /// <summary>Transforms the token stream as per the Porter stemming algorithm.
+    /// Note: the input to the stemming filter must already be in lower case,
+    /// so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
+    /// down the Tokenizer chain in order for this to work properly!
+    /// <P>
+    /// To use this filter with other analyzers, you'll want to write an
+    /// Analyzer class that sets up the TokenStream chain as you want it.
+    /// To use this with LowerCaseTokenizer, for example, you'd write an
+    /// analyzer like this:
+    /// <P>
+    /// <PRE>
+    /// class MyAnalyzer extends Analyzer {
+    /// public final TokenStream tokenStream(String fieldName, Reader reader) {
+    /// return new PorterStemFilter(new LowerCaseTokenizer(reader));
+    /// }
+    /// }
+    /// </PRE>
+    /// </summary>
+    public sealed class PorterStemFilter : TokenFilter
+    {
+        private PorterStemmer stemmer;
 		
-		public PorterStemFilter(TokenStream in_Renamed) : base(in_Renamed)
-		{
-			stemmer = new PorterStemmer();
-		}
+        public PorterStemFilter(TokenStream in_Renamed) : base(in_Renamed)
+        {
+            stemmer = new PorterStemmer();
+        }
 		
-		/// <summary>Returns the next input Token, after being stemmed </summary>
-		public override Token Next()
-		{
-			Token token = input.Next();
-			if (token == null)
-				return null;
-			else
-			{
-				System.String s = stemmer.Stem(token.termText);
-				if ((System.Object) s != (System.Object) token.termText)
-				// Yes, I mean object reference comparison here
-					token.termText = s;
-				return token;
-			}
-		}
-	}
+        /// <summary>Returns the next input Token, after being stemmed </summary>
+        public override Token Next()
+        {
+            Token token = input.Next();
+            if (token == null)
+                return null;
+            else
+            {
+                System.String s = stemmer.Stem(token.termText);
+                if ((System.Object) s != (System.Object) token.termText)
+                    // Yes, I mean object reference comparison here
+                    token.termText = s;
+                return token;
+            }
+        }
+    }
 }

@@ -16,10 +16,11 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
+
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Demo
 {

@@ -17,6 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 
 namespace Lucene.Net.Index
 {
@@ -152,9 +153,9 @@ namespace Lucene.Net.Index
 			return in_Renamed.MaxDoc();
 		}
 		
-		public override Document Document(int n)
+		public override Document Document(int n, FieldSelector fieldSelector)
 		{
-			return in_Renamed.Document(n);
+			return in_Renamed.Document(n, fieldSelector);
 		}
 		
 		public override bool IsDeleted(int n)
@@ -226,19 +227,19 @@ namespace Lucene.Net.Index
 		}
 		
 		
-        public override System.Collections.ICollection  GetFieldNames(IndexReader.FieldOption fieldNames)
-        {
-            return in_Renamed.GetFieldNames(fieldNames);
-        }
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+		{
+			return in_Renamed.GetFieldNames(fieldNames);
+		}
 		
-        public override long GetVersion()
-        {
-                return in_Renamed.GetVersion();
-        }
-		
-        public override bool IsCurrent()
-        {
-                return in_Renamed.IsCurrent();
-        }
-    }
+		public override long GetVersion()
+		{
+			return in_Renamed.GetVersion();
+		}
+
+		public override bool IsCurrent()
+		{
+			return in_Renamed.IsCurrent();
+		}
+	}
 }

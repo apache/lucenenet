@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -107,6 +108,6 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		/// <seealso cref="ScoreDocComparator">
 		/// </seealso>
-		public /*protected internal*/ abstract System.IComparable GetComparable(System.String termtext);
+		public abstract System.IComparable GetComparable(System.String termtext);
 	}
 }

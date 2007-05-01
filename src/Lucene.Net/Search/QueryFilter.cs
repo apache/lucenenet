@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search
 	/// once per day.
 	/// 
 	/// </summary>
-	/// <version>  $Id: QueryFilter.java 328729 2005-10-26 21:05:35Z yonik $
+	/// <version>  $Id: QueryFilter.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	[Serializable]
 	public class QueryFilter : Filter

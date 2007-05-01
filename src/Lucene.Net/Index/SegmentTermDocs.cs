@@ -16,8 +16,8 @@
  */
 
 using System;
-using IndexInput = Lucene.Net.Store.IndexInput;
 using BitVector = Lucene.Net.Util.BitVector;
+using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {

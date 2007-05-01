@@ -16,9 +16,10 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
+
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -82,9 +83,9 @@ namespace Lucene.Net.Search
 		/// or phrases with gaps (e.g. in connection with stopwords).
 		/// 
 		/// </summary>
-		/// <param name="term">
+		/// <param name="">term
 		/// </param>
-		/// <param name="position">
+		/// <param name="">position
 		/// </param>
 		public virtual void  Add(Term term, int position)
 		{
@@ -248,7 +249,7 @@ namespace Lucene.Net.Search
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(Enclosing_Instance.field);
-				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):0.0f;
+				float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
 				fieldNormExpl.SetValue(fieldNorm);
 				fieldNormExpl.SetDescription("fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
@@ -280,18 +281,18 @@ namespace Lucene.Net.Search
 			return new PhraseWeight(this, searcher);
 		}
 		
-		/// <seealso cref="Lucene.Net.search.Query.ExtractTerms(java.util.Set)">
+		/// <seealso cref="Lucene.Net.Search.Query#ExtractTerms(java.util.Set)">
 		/// </seealso>
 		public override void  ExtractTerms(System.Collections.Hashtable queryTerms)
 		{
-			foreach (Term term in terms)
-			{
-				if (queryTerms.Contains(term) == false)
-				{
-					queryTerms.Add(term, term);
-				}
-			}
-		}
+            foreach (Term term in terms)
+            {
+                if (queryTerms.Contains(term) == false)
+                {
+                    queryTerms.Add(term, term);
+                }
+            }
+        }
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String f)
@@ -323,22 +324,22 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
-		{
-			if (!(o is PhraseQuery))
-				return false;
-			PhraseQuery other = (PhraseQuery) o;
+        /// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+        public  override bool Equals(System.Object o)
+        {
+            if (!(o is PhraseQuery))
+                return false;
+            PhraseQuery other = (PhraseQuery) o;
             return (this.GetBoost() == other.GetBoost()) && 
                 (this.slop == other.slop) && 
                 this.terms.Equals(other.terms) && 
                 this.positions.Equals(other.positions);
-		}
+        }
 		
-		/// <summary>Returns a hash code value for this object.</summary>
-		public override int GetHashCode()
-		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
-		}
-	}
+        /// <summary>Returns a hash code value for this object.</summary>
+        public override int GetHashCode()
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
+        }
+    }
 }

@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Reads eight bytes and returns a long.</summary>
-		/// <seealso cref="IndexOutput.WriteLong(long)">
+		/// <seealso cref="IndexOutput#WriteLong(long)">
 		/// </seealso>
 		public virtual long ReadLong()
 		{
@@ -132,6 +132,38 @@ namespace Lucene.Net.Store
 					buffer[i] = (char) (((b & 0x0F) << 12) | ((ReadByte() & 0x3F) << 6) | (ReadByte() & 0x3F));
 			}
 		}
+		
+		/// <summary> Expert
+		/// 
+		/// Similar to {@link #ReadChars(char[], int, int)} but does not do any conversion operations on the bytes it is reading in.  It still
+		/// has to invoke {@link #ReadByte()} just as {@link #ReadChars(char[], int, int)} does, but it does not need a buffer to store anything
+		/// and it does not have to do any of the bitwise operations, since we don't actually care what is in the byte except to determine
+		/// how many more bytes to read
+		/// </summary>
+		/// <param name="length">The number of chars to read
+		/// </param>
+		public virtual void  SkipChars(int length)
+		{
+			for (int i = 0; i < length; i++)
+			{
+				byte b = ReadByte();
+				if ((b & 0x80) == 0)
+				{
+					//do nothing, we only need one byte
+				}
+				else if ((b & 0xE0) != 0xE0)
+				{
+					ReadByte(); //read an additional byte
+				}
+				else
+				{
+					//read two additional bytes.
+					ReadByte();
+					ReadByte();
+				}
+			}
+		}
+		
 		
 		/// <summary>Closes the stream to futher operations. </summary>
 		public abstract void  Close();

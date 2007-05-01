@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> An iterator over {@link Hits} that provides lazy fetching of each document.
-	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #next()}
+	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #Next()}
 	/// return a {@link Hit} instance.
 	/// 
 	/// </summary>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException </throws>
-		public virtual void  Remove()
+		public virtual void  remove()
 		{
 			throw new System.NotSupportedException();
 		}
@@ -77,11 +77,11 @@ namespace Lucene.Net.Search
 		{
 			return hits.Length();
 		}
-
-        virtual public void  Reset()
+		
+		virtual public void  Reset()
 		{
             // {{Aroush-2.0}} what do we do here?!
             throw new System.Exception("{{Aroush}} Reset() needs to be implemented");
-        }
+		}
 	}
 }

@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -33,11 +34,11 @@ namespace Lucene.Net.Search
 	/// <li> {@link MultiPhraseQuery}
 	/// <li> {@link FuzzyQuery}
 	/// <li> {@link RangeQuery}
-	/// <li> {@link Lucene.Net.search.spans.SpanQuery}
+	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
 	/// </ul>
 	/// <p>A parser for queries is contained in:
 	/// <ul>
-	/// <li>{@link Lucene.Net.queryParser.QueryParser QueryParser}
+	/// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser}
 	/// </ul>
 	/// </summary>
 	[Serializable]
@@ -63,21 +64,21 @@ namespace Lucene.Net.Search
 			return boost;
 		}
 		
-        /// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
-        /// default field and omitted.
-        /// <p>The representation used is one that is supposed to be readable
-        /// by {@link org.apache.lucene.queryParser.QueryParser QueryParser}. However,
-        /// there are the following limitations:
-        /// <ul>
-        /// <li>If the query was created by the parser, the printed
-        /// representation may not be exactly what was parsed. For example,
-        /// characters that need to be escaped will be represented without
-        /// the required backslash.</li>
-        /// <li>Some of the more complicated queries (e.g. span queries)
-        /// don't have a representation that can be parsed by QueryParser.</li>
-        /// </ul>
-        /// </summary>
-        public abstract System.String ToString(System.String field);
+		/// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
+		/// default field and omitted.
+		/// <p>The representation used is one that is supposed to be readable
+		/// by {@link Lucene.Net.QueryParsers.QueryParser QueryParser}. However,
+		/// there are the following limitations:
+		/// <ul>
+		/// <li>If the query was created by the parser, the printed
+		/// representation may not be exactly what was parsed. For example,
+		/// characters that need to be escaped will be represented without
+		/// the required backslash.</li>
+		/// <li>Some of the more complicated queries (e.g. span queries)
+		/// don't have a representation that can be parsed by QueryParser.</li>
+		/// </ul>
+		/// </summary>
+		public abstract System.String ToString(System.String field);
 		
 		/// <summary>Prints a query to a string. </summary>
 		public override System.String ToString()

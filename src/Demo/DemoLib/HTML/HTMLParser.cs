@@ -82,6 +82,12 @@ namespace Lucene.Net.Demo.Html
 			}
 		}
 		
+        /// <deprecated> Use HTMLParser(FileInputStream) instead
+        /// </deprecated>
+        public HTMLParser(System.IO.FileInfo file) : this(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+        {
+        }
+		
 		public virtual System.String GetTitle()
 		{
 			if (pipeIn == null)

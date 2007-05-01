@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
@@ -26,7 +27,7 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary>Matches spans containing a term. </summary>
 	[Serializable]
-	public class SpanTermQuery:SpanQuery
+	public class SpanTermQuery : SpanQuery
 	{
 		private class AnonymousClassSpans : Spans
 		{
@@ -136,25 +137,23 @@ namespace Lucene.Net.Search.Spans
 			return term.Field();
 		}
 		
-        /// <summary>Returns a collection of all terms matched by this query.</summary>
-        /// <deprecated> use extractTerms instead
-        /// </deprecated>
-        /// <seealso cref="#extractTerms(Set)">
-        /// </seealso>
-        public override System.Collections.ICollection GetTerms()
+		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="#ExtractTerms(Set)">
+		/// </seealso>
+		public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			terms.Add(term);
 			return terms;
 		}
 
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            if (terms.Contains(term) == false)
-            {
-                terms.Add(term, term);
-            }
-        }
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			if (terms.Contains(term) == false)
+				terms.Add(term, term);
+		}
 		
 		public override System.String ToString(System.String field)
 		{
@@ -181,7 +180,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode() ^ unchecked((int) 0xD23FE494);    // {{Aroush-1.9}} Is this OK?
+			return GetBoost().ToString().GetHashCode() ^ term.GetHashCode() ^ unchecked((int) 0xD23FE494);    // {{Aroush-1.9}} Is this OK?
 		}
 		
 		public override Spans GetSpans(IndexReader reader)

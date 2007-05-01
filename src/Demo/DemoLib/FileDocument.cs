@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -52,7 +53,7 @@ namespace Lucene.Net.Demo
             // Add the last modified date of the file a field named "modified".  Use 
             // a field that is indexed (i.e. searchable), but don't tokenize the field
             // into words.
-            doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Ticks, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
             // Add the contents of the file to a field named "contents".  Specify a Reader,
             // so that the text of the file is tokenized and indexed, but not stored.

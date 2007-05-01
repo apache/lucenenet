@@ -16,10 +16,11 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
 using Weight = Lucene.Net.Search.Weight;
+using Searcher = Lucene.Net.Search.Searcher;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -36,12 +37,12 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns the name of the field matched by this query.</summary>
 		public abstract System.String GetField();
 		
-        /// <summary>Returns a collection of all terms matched by this query.</summary>
-        /// <deprecated> use extractTerms instead
-        /// </deprecated>
-        /// <seealso cref="Query#extractTerms(Set)">
-        /// </seealso>
-        public abstract System.Collections.ICollection GetTerms();
+		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="Query#ExtractTerms(Set)">
+		/// </seealso>
+		public abstract System.Collections.ICollection GetTerms();
 		
 		protected internal override Weight CreateWeight(Searcher searcher)
 		{

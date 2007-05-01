@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search.Spans
 				this.enclosingInstance = enclosingInstance;
 				includeSpans = Enclosing_Instance.include.GetSpans(reader);
 				excludeSpans = Enclosing_Instance.exclude.GetSpans(reader);
-                moreExclude = excludeSpans.Next();
+				moreExclude = excludeSpans.Next();
 			}
 			private Lucene.Net.Index.IndexReader reader;
 			private SpanNotQuery enclosingInstance;
@@ -156,20 +157,20 @@ namespace Lucene.Net.Search.Spans
 			return include.GetField();
 		}
 		
-        /// <summary>Returns a collection of all terms matched by this query.</summary>
-        /// <deprecated> use extractTerms instead
-        /// </deprecated>
-        /// <seealso cref="#ExtractTerms(Set)">
-        /// </seealso>
-        public override System.Collections.ICollection GetTerms()
+		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="#ExtractTerms(Set)">
+		/// </seealso>
+		public override System.Collections.ICollection GetTerms()
 		{
 			return include.GetTerms();
 		}
-
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            include.ExtractTerms(terms);
-        }
+		
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			include.ExtractTerms(terms);
+		}
 		
 		public override System.String ToString(System.String field)
 		{
@@ -217,26 +218,26 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-        /// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-        public  override bool Equals(System.Object o)
-        {
-            if (this == o)
-                return true;
-            if (!(o is SpanNotQuery))
-                return false;
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is SpanNotQuery))
+				return false;
 			
-            SpanNotQuery other = (SpanNotQuery) o;
-            return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.GetBoost() == other.GetBoost();
-        }
+			SpanNotQuery other = (SpanNotQuery) o;
+			return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.GetBoost() == other.GetBoost();
+		}
 		
-        public override int GetHashCode()
-        {
-            int h = include.GetHashCode();
-            h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
-            h ^= exclude.GetHashCode();
-            h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
-            h ^= System.Convert.ToInt32(GetBoost());
-            return h;
-        }
-    }
+		public override int GetHashCode()
+		{
+			int h = include.GetHashCode();
+			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h ^= exclude.GetHashCode();
+			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h ^= System.Convert.ToInt32(GetBoost());
+			return h;
+		}
+	}
 }

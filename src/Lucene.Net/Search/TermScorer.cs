@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using TermDocs = Lucene.Net.Index.TermDocs;
 
 namespace Lucene.Net.Search
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the current document number matching the query.
-		/// Initially invalid, until {@link #Next()} is called the first time.
+		/// Initially invalid, until {@link #next()} is called the first time.
 		/// </summary>
 		public override int Doc()
 		{
@@ -177,12 +178,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #Next()} method
+		/// <br>When this method is used, the {@link #next()} method
 		/// and the {@link #Score(HitCollector)} method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.
 		/// </param>
-		/// <todo>  Modify to make use of {@link TermDocs#SkipTo(int)}. </todo>
 		public override Explanation Explain(int doc)
 		{
 			TermQuery query = (TermQuery) weight.GetQuery();
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 			}
 			if (tf == 0)
 			{
-				while (termDocs.Next())
+				if (termDocs.SkipTo(doc))
 				{
 					if (termDocs.Doc() == doc)
 					{

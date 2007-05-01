@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 
@@ -26,7 +27,7 @@ namespace Lucene.Net.Search
 	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
-	public abstract class FilteredTermEnum:TermEnum
+	public abstract class FilteredTermEnum : TermEnum
 	{
 		private Term currentTerm = null;
 		private TermEnum actualEnum = null;

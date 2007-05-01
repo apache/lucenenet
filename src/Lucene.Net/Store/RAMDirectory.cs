@@ -20,60 +20,30 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> A memory-resident {@link Directory} implementation.
+	/// <summary> A memory-resident {@link Directory} implementation.  Locking
+	/// implementation is by default the {@link SingleInstanceLockFactory}
+	/// but can be changed with {@link #setLockFactory}.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 351779 2005-12-02 17:37:50Z bmesser $
+	/// <version>  $Id: RAMDirectory.java 503911 2007-02-05 22:49:42Z dnaber $
 	/// </version>
-	public sealed class RAMDirectory : Directory
+	[Serializable]
+	public class RAMDirectory : Directory
 	{
-		private class AnonymousClassLock : Lock
-		{
-			public AnonymousClassLock(System.String name, RAMDirectory enclosingInstance)
-			{
-				InitBlock(name, enclosingInstance);
-			}
-			private void  InitBlock(System.String name, RAMDirectory enclosingInstance)
-			{
-				this.name = name;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private System.String name;
-			private RAMDirectory enclosingInstance;
-			public RAMDirectory Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override bool Obtain()
-			{
-				lock (Enclosing_Instance.files.SyncRoot)
-				{
-					if (!Enclosing_Instance.FileExists(name))
-					{
-						Enclosing_Instance.CreateOutput(name).Close();
-						return true;
-					}
-					return false;
-				}
-			}
-			public override void  Release()
-			{
-				Enclosing_Instance.DeleteFile(name);
-			}
-			public override bool IsLocked()
-			{
-				return Enclosing_Instance.FileExists(name);
-			}
-		}
-		internal System.Collections.Hashtable files = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
+		
+		private const long serialVersionUID = 1L;
+		
+		internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
+		internal long sizeInBytes = 0;
+		
+		// *****
+		// Lock acquisition sequence:  RAMDirectory, then RAMFile
+		// *****
 		
 		/// <summary>Constructs an empty {@link Directory}. </summary>
 		public RAMDirectory()
 		{
+			SetLockFactory(new SingleInstanceLockFactory());
 		}
 		
 		/// <summary> Creates a new <code>RAMDirectory</code> instance from a different
@@ -81,51 +51,36 @@ namespace Lucene.Net.Store
 		/// a disk-based index into memory.
 		/// <P>
 		/// This should be used only with indices that can fit into memory.
+		/// <P>
+		/// Note that the resulting <code>RAMDirectory</code> instance is fully
+		/// independent from the original <code>Directory</code> (it is a
+		/// complete copy).  Any subsequent changes to the
+		/// original <code>Directory</code> will not be visible in the
+		/// <code>RAMDirectory</code> instance.
 		/// 
 		/// </summary>
 		/// <param name="dir">a <code>Directory</code> value
 		/// </param>
-		/// <exception cref="IOException">if an error occurs
+		/// <exception cref=""> IOException if an error occurs
 		/// </exception>
 		public RAMDirectory(Directory dir):this(dir, false)
 		{
 		}
 		
-		private RAMDirectory(Directory dir, bool closeDir)
+		private RAMDirectory(Directory dir, bool closeDir):this()
 		{
-			System.String[] files = dir.List();
-			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
-			for (int i = 0; i < files.Length; i++)
-			{
-				// make place on ram disk
-				IndexOutput os = CreateOutput(System.IO.Path.GetFileName(files[i]));
-				// read current file
-				IndexInput is_Renamed = dir.OpenInput(files[i]);
-				// and copy to ram disk
-				long len = (int) is_Renamed.Length();
-				long readCount = 0;
-				while (readCount < len)
-				{
-					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int) (len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
-					is_Renamed.ReadBytes(buf, 0, toRead);
-					os.WriteBytes(buf, toRead);
-					readCount += toRead;
-				}
-				
-				// graceful cleanup
-				is_Renamed.Close();
-				os.Close();
-			}
-			if (closeDir)
-				dir.Close();
+			Directory.Copy(dir, this, closeDir);
 		}
 		
 		/// <summary> Creates a new <code>RAMDirectory</code> instance from the {@link FSDirectory}.
 		/// 
 		/// </summary>
 		/// <param name="dir">a <code>File</code> specifying the index directory
+		/// 
 		/// </param>
-		public RAMDirectory(System.IO.FileInfo dir) : this(FSDirectory.GetDirectory(dir, false), true)
+		/// <seealso cref="#RAMDirectory(Directory)">
+		/// </seealso>
+		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
 		
@@ -133,44 +88,67 @@ namespace Lucene.Net.Store
 		/// 
 		/// </summary>
 		/// <param name="dir">a <code>String</code> specifying the full index directory path
+		/// 
 		/// </param>
-		public RAMDirectory(System.String dir) : this(FSDirectory.GetDirectory(dir, false), true)
+		/// <seealso cref="#RAMDirectory(Directory)">
+		/// </seealso>
+		public RAMDirectory(System.String dir) : this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
 		
 		/// <summary>Returns an array of strings, one for each file in the directory. </summary>
 		public override System.String[] List()
 		{
-			System.String[] result = new System.String[files.Count];
-			int i = 0;
-			System.Collections.IEnumerator names = files.Keys.GetEnumerator();
-			while (names.MoveNext())
+			lock (this)
 			{
-				result[i++] = ((System.String) names.Current);
+				System.String[] result = new System.String[fileMap.Count];
+				int i = 0;
+				System.Collections.IEnumerator it = fileMap.Keys.GetEnumerator();
+				while (it.MoveNext())
+				{
+					result[i++] = ((System.String) it.Current);
+				}
+				return result;
 			}
-			return result;
 		}
 		
 		/// <summary>Returns true iff the named file exists in this directory. </summary>
 		public override bool FileExists(System.String name)
 		{
-			RAMFile file = (RAMFile) files[name];
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile) fileMap[name];
+			}
 			return file != null;
 		}
 		
-		/// <summary>Returns the time the named file was last modified. </summary>
+		/// <summary>Returns the time the named file was last modified.</summary>
+		/// <throws>  IOException if the file does not exist </throws>
 		public override long FileModified(System.String name)
 		{
-			RAMFile file = (RAMFile) files[name];
-			return file.lastModified;
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile) fileMap[name];
+			}
+			if (file == null)
+				throw new System.IO.FileNotFoundException(name);
+			return file.GetLastModified();
 		}
 		
-		/// <summary>Set the modified time of an existing file to now. </summary>
+		/// <summary>Set the modified time of an existing file to now.</summary>
+		/// <throws>  IOException if the file does not exist </throws>
 		public override void  TouchFile(System.String name)
 		{
-			//     final boolean MONITOR = false;
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile) fileMap[name];
+			}
+			if (file == null)
+				throw new System.IO.FileNotFoundException(name);
 			
-			RAMFile file = (RAMFile) files[name];
 			long ts2, ts1 = System.DateTime.Now.Ticks;
 			do 
 			{
@@ -182,67 +160,112 @@ namespace Lucene.Net.Store
 				{
 				}
 				ts2 = System.DateTime.Now.Ticks;
-				//       if (MONITOR) {
-				//         count++;
-				//       }
 			}
 			while (ts1 == ts2);
 			
-			file.lastModified = ts2;
-			
-			//     if (MONITOR)
-			//         System.out.println("SLEEP COUNT: " + count);
+			file.SetLastModified(ts2);
 		}
 		
-		/// <summary>Returns the length in bytes of a file in the directory. </summary>
+		/// <summary>Returns the length in bytes of a file in the directory.</summary>
+		/// <throws>  IOException if the file does not exist </throws>
 		public override long FileLength(System.String name)
 		{
-			RAMFile file = (RAMFile) files[name];
-			return file.length;
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile) fileMap[name];
+			}
+			if (file == null)
+				throw new System.IO.FileNotFoundException(name);
+			return file.GetLength();
 		}
 		
-		/// <summary>Removes an existing file in the directory. </summary>
+		/// <summary>Return total size in bytes of all files in this
+		/// directory.  This is currently quantized to
+		/// BufferedIndexOutput.BUFFER_SIZE. 
+		/// </summary>
+		public long SizeInBytes()
+		{
+			lock (this)
+			{
+				return sizeInBytes;
+			}
+		}
+		
+		/// <summary>Removes an existing file in the directory.</summary>
+		/// <throws>  IOException if the file does not exist </throws>
 		public override void  DeleteFile(System.String name)
 		{
-			files.Remove(name);
+			lock (this)
+			{
+				RAMFile file = (RAMFile) fileMap[name];
+				if (file != null)
+				{
+					fileMap.Remove(name);
+					file.directory = null;
+					sizeInBytes -= file.sizeInBytes; // updates to RAMFile.sizeInBytes synchronized on directory
+				}
+				else
+					throw new System.IO.FileNotFoundException(name);
+			}
 		}
 		
-		/// <summary>Removes an existing file in the directory. </summary>
+		/// <summary>Renames an existing file in the directory.</summary>
+		/// <throws>  FileNotFoundException if from does not exist </throws>
+		/// <deprecated>
+		/// </deprecated>
 		public override void  RenameFile(System.String from, System.String to)
 		{
-			RAMFile file = (RAMFile) files[from];
-			files.Remove(from);
-			files[to] = file;
+			lock (this)
+			{
+				RAMFile fromFile = (RAMFile) fileMap[from];
+				if (fromFile == null)
+					throw new System.IO.FileNotFoundException(from);
+				RAMFile toFile = (RAMFile) fileMap[to];
+				if (toFile != null)
+				{
+					sizeInBytes -= toFile.sizeInBytes; // updates to RAMFile.sizeInBytes synchronized on directory
+					toFile.directory = null;
+				}
+				fileMap.Remove(from);
+				fileMap[to] = fromFile;
+			}
 		}
 		
-		/// <summary>Creates a new, empty file in the directory with the given name.
-		/// Returns a stream writing this file. 
-		/// </summary>
+		/// <summary>Creates a new, empty file in the directory with the given name. Returns a stream writing this file. </summary>
 		public override IndexOutput CreateOutput(System.String name)
 		{
-			RAMFile file = new RAMFile();
-			files[name] = file;
+			RAMFile file = new RAMFile(this);
+			lock (this)
+			{
+				RAMFile existing = (RAMFile) fileMap[name];
+				if (existing != null)
+				{
+					sizeInBytes -= existing.sizeInBytes;
+					existing.directory = null;
+				}
+				fileMap[name] = file;
+			}
 			return new RAMOutputStream(file);
 		}
 		
 		/// <summary>Returns a stream reading an existing file. </summary>
 		public override IndexInput OpenInput(System.String name)
 		{
-			RAMFile file = (RAMFile) files[name];
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile) fileMap[name];
+			}
+			if (file == null)
+				throw new System.IO.FileNotFoundException(name);
 			return new RAMInputStream(file);
 		}
 		
-		/// <summary>Construct a {@link Lock}.</summary>
-		/// <param name="name">the name of the lock file
-		/// </param>
-		public override Lock MakeLock(System.String name)
-		{
-			return new AnonymousClassLock(name, this);
-		}
-		
-		/// <summary>Closes the store to future operations. </summary>
+		/// <summary>Closes the store to future operations, releasing associated memory. </summary>
 		public override void  Close()
 		{
+			fileMap = null;
 		}
 	}
 }

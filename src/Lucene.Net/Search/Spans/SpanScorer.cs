@@ -16,10 +16,11 @@
  */
 
 using System;
-using Explanation = Lucene.Net.Search.Explanation;
-using Scorer = Lucene.Net.Search.Scorer;
-using Similarity = Lucene.Net.Search.Similarity;
+
 using Weight = Lucene.Net.Search.Weight;
+using Scorer = Lucene.Net.Search.Scorer;
+using Explanation = Lucene.Net.Search.Explanation;
+using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -44,8 +45,8 @@ namespace Lucene.Net.Search.Spans
 			this.norms = norms;
 			this.weight = weight;
 			this.value_Renamed = weight.GetValue();
-            doc = - 1;
-        }
+			doc = - 1;
+		}
 		
 		public override bool Next()
 		{
@@ -54,55 +55,55 @@ namespace Lucene.Net.Search.Spans
 				more = spans.Next();
 				firstTime = false;
 			}
-            return SetFreqCurrentDoc();
-        }
+			return SetFreqCurrentDoc();
+		}
 		
 		public override bool SkipTo(int target)
 		{
-            if (firstTime)
-            {
-                more = spans.SkipTo(target);
-                firstTime = false;
-            }
-            if (!more)
-            {
-                return false;
-            }
-            if (spans.Doc() < target)
-            {
-                // setFreqCurrentDoc() leaves spans.doc() ahead
-                more = spans.SkipTo(target);
-            }
-            return SetFreqCurrentDoc();
-        }
+			if (firstTime)
+			{
+				more = spans.SkipTo(target);
+				firstTime = false;
+			}
+			if (!more)
+			{
+				return false;
+			}
+			if (spans.Doc() < target)
+			{
+				// setFreqCurrentDoc() leaves spans.doc() ahead
+				more = spans.SkipTo(target);
+			}
+			return SetFreqCurrentDoc();
+		}
 		
-        private bool SetFreqCurrentDoc()
-        {
-            if (!more)
-            {
-                return false;
-            }
-            doc = spans.Doc();
-            freq = 0.0f;
-            while (more && doc == spans.Doc())
-            {
-                int matchLength = spans.End() - spans.Start();
-                freq += GetSimilarity().SloppyFreq(matchLength);
-                more = spans.Next();
-            }
-            return more || (freq != 0);
-        }
+		private bool SetFreqCurrentDoc()
+		{
+			if (!more)
+			{
+				return false;
+			}
+			doc = spans.Doc();
+			freq = 0.0f;
+			while (more && doc == spans.Doc())
+			{
+				int matchLength = spans.End() - spans.Start();
+				freq += GetSimilarity().SloppyFreq(matchLength);
+				more = spans.Next();
+			}
+			return more || (freq != 0);
+		}
 		
-        public override int Doc()
-        {
-            return doc;
-        }
+		public override int Doc()
+		{
+			return doc;
+		}
 		
-        public override float Score()
-        {
-            float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
-            return raw * Similarity.DecodeNorm(norms[doc]); // normalize
-        }
+		public override float Score()
+		{
+			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
+			return raw * Similarity.DecodeNorm(norms[doc]); // normalize
+		}
 		
 		public override Explanation Explain(int doc)
 		{

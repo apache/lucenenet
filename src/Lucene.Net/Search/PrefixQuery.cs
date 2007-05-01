@@ -16,9 +16,10 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
+
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search

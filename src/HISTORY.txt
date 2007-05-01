@@ -2,6 +2,13 @@ Apache Lucene.Net History
 -------------------------
 
 
+01May07:
+	- Dev Release:  Apache Lucene.Net.2.1 build 001 "early-Alpha"
+	- Issues: Optimizing an index will cause an exception.
+	- Issues: The "Test" code has not yet be ported for this release.
+	- Issues: Code in "contrib" have not been validated to work with this release.
+
+
 30Apr07:
 	- Patch:  Apache Lucene.Net.2.0 build 005 "final"
 	- Fix: LUCENENET-37 "Exception while search in Lucene.Net and Index prepared by Lucene Java"

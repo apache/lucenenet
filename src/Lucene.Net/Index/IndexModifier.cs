@@ -24,7 +24,12 @@ using FSDirectory = Lucene.Net.Store.FSDirectory;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> A class to modify an index, i.e. to delete and add documents. This
+	/// <summary> <p>[Note that as of <b>2.1</b>, all but one of the
+	/// methods in this class are available via {@link
+	/// IndexWriter}.  The one method that is not available is
+	/// {@link #DeleteDocument(int)}.]</p>
+	/// 
+	/// A class to modify an index, i.e. to delete and add documents. This
 	/// class hides {@link IndexReader} and {@link IndexWriter} so that you
 	/// do not need to care about implementation details such as that adding
 	/// documents is done via IndexWriter and deletion is done via IndexReader.
@@ -133,7 +138,7 @@ namespace Lucene.Net.Index
 		public IndexModifier(System.String dirName, Analyzer analyzer, bool create)
 		{
 			InitBlock();
-			Directory dir = FSDirectory.GetDirectory(dirName, create);
+			Directory dir = FSDirectory.GetDirectory(dirName);
 			Init(dir, analyzer, create);
 		}
 		
@@ -150,7 +155,7 @@ namespace Lucene.Net.Index
 		public IndexModifier(System.IO.FileInfo file, Analyzer analyzer, bool create)
 		{
 			InitBlock();
-			Directory dir = FSDirectory.GetDirectory(file, create);
+			Directory dir = FSDirectory.GetDirectory(file);
 			Init(dir, analyzer, create);
 		}
 		
@@ -239,7 +244,7 @@ namespace Lucene.Net.Index
 		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
-		/// <seealso cref="IndexWriter.AddDocument(Document, Analyzer)">
+		/// <seealso cref="Analyzer)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  AddDocument(Document doc, Analyzer docAnalyzer)
@@ -259,7 +264,7 @@ namespace Lucene.Net.Index
 		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
-		/// <seealso cref="IndexWriter.AddDocument(Document)">
+		/// <seealso cref="IndexWriter#AddDocument(Document)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  AddDocument(Document doc)
@@ -275,7 +280,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> the number of documents deleted
 		/// </returns>
-		/// <seealso cref="IndexReader.DeleteDocuments(Term)">
+		/// <seealso cref="IndexReader#DeleteDocuments(Term)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual int DeleteDocuments(Term term)
@@ -289,7 +294,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Deletes the document numbered <code>docNum</code>.</summary>
-		/// <seealso cref="IndexReader.DeleteDocument(int)">
+		/// <seealso cref="IndexReader#DeleteDocument(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  DeleteDocument(int docNum)
@@ -303,10 +308,10 @@ namespace Lucene.Net.Index
 		}
 		
 		
-        /// <summary> Returns the number of documents currently in this index.</summary>
-		/// <seealso cref="IndexWriter.DocCount()">
+		/// <summary> Returns the number of documents currently in this index.</summary>
+		/// <seealso cref="IndexWriter#DocCount()">
 		/// </seealso>
-		/// <seealso cref="IndexReader.NumDocs()">
+		/// <seealso cref="IndexReader#NumDocs()">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual int DocCount()
@@ -328,7 +333,7 @@ namespace Lucene.Net.Index
 		/// <summary> Merges all segments together into a single segment, optimizing an index
 		/// for search.
 		/// </summary>
-		/// <seealso cref="IndexWriter.Optimize()">
+		/// <seealso cref="IndexWriter#Optimize()">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  Optimize()
@@ -345,7 +350,7 @@ namespace Lucene.Net.Index
 		/// {@link #GetMaxFieldLength()} is reached will be printed to this.
 		/// <p>Example: <tt>index.setInfoStream(System.err);</tt>
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexWriter#SetInfoStream(PrintStream)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetInfoStream(System.IO.StreamWriter infoStream)
@@ -362,7 +367,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier.SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexModifier#SetInfoStream(PrintStream)">
 		/// </seealso>
 		public virtual System.IO.TextWriter GetInfoStream()
 		{
@@ -378,7 +383,7 @@ namespace Lucene.Net.Index
 		/// for each segment are merged into a single file once the segment creation
 		/// is finished. This is done regardless of what directory is in use.
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetUseCompoundFile(boolean)">
+		/// <seealso cref="IndexWriter#SetUseCompoundFile(boolean)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetUseCompoundFile(bool useCompoundFile)
@@ -395,7 +400,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier.SetUseCompoundFile(boolean)">
+		/// <seealso cref="IndexModifier#SetUseCompoundFile(boolean)">
 		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
@@ -418,7 +423,7 @@ namespace Lucene.Net.Index
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
 		/// By default, no more than 10,000 terms will be indexed for a field.
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetMaxFieldLength(int)">
+		/// <seealso cref="IndexWriter#SetMaxFieldLength(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetMaxFieldLength(int maxFieldLength)
@@ -435,7 +440,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier.SetMaxFieldLength(int)">
+		/// <seealso cref="IndexModifier#SetMaxFieldLength(int)">
 		/// </seealso>
 		public virtual int GetMaxFieldLength()
 		{
@@ -447,20 +452,19 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> The maximum number of terms that will be indexed for a single field in a
-		/// document.  This limits the amount of memory required for indexing, so that
-		/// collections with very large files will not crash the indexing process by
-		/// running out of memory.<p/>
-		/// Note that this effectively truncates large documents, excluding from the
-		/// index terms that occur further in the document.  If you know your source
-		/// documents are large, be sure to set this value high enough to accomodate
-		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
-		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-		/// By default, no more than 10,000 terms will be indexed for a field.
+		/// <summary> Determines the minimal number of documents required before the buffered
+		/// in-memory documents are merging and a new Segment is created.
+		/// Since Documents are merged in a {@link Lucene.Net.Store.RAMDirectory},
+		/// large value gives faster indexing.  At the same time, mergeFactor limits
+		/// the number of files open in a FSDirectory.
+		/// 
+		/// <p>The default value is 10.
+		/// 
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetMaxBufferedDocs(int)">
+		/// <seealso cref="IndexWriter#SetMaxBufferedDocs(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <throws>  IllegalArgumentException if maxBufferedDocs is smaller than 2 </throws>
 		public virtual void  SetMaxBufferedDocs(int maxBufferedDocs)
 		{
 			lock (directory)
@@ -475,7 +479,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier.SetMaxBufferedDocs(int)">
+		/// <seealso cref="IndexModifier#SetMaxBufferedDocs(int)">
 		/// </seealso>
 		public virtual int GetMaxBufferedDocs()
 		{
@@ -497,7 +501,7 @@ namespace Lucene.Net.Index
 		/// <p>This must never be less than 2.  The default value is 10.
 		/// 
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetMergeFactor(int)">
+		/// <seealso cref="IndexWriter#SetMergeFactor(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetMergeFactor(int mergeFactor)
@@ -514,7 +518,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier.SetMergeFactor(int)">
+		/// <seealso cref="IndexModifier#SetMergeFactor(int)">
 		/// </seealso>
 		public virtual int GetMergeFactor()
 		{
@@ -562,8 +566,8 @@ namespace Lucene.Net.Index
 		// create an index in /tmp/index, overwriting an existing one:
 		IndexModifier indexModifier = new IndexModifier("/tmp/index", analyzer, true);
 		Document doc = new Document();
-		doc.add(new Field("id", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
-		doc.add(new Field("body", "a simple test", Field.Store.YES, Field.Index.TOKENIZED));
+		doc.add(new Fieldable("id", "1", Fieldable.Store.YES, Fieldable.Index.UN_TOKENIZED));
+		doc.add(new Fieldable("body", "a simple test", Fieldable.Store.YES, Fieldable.Index.TOKENIZED));
 		indexModifier.addDocument(doc);
 		int deleted = indexModifier.delete(new Term("id", "1"));
 		System.out.println("Deleted " + deleted + " document");

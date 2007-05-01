@@ -16,19 +16,32 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
+
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> A Query that matches documents within an exclusive range. A RangeQuery
-	/// is built by QueryParser for input like <code>[010 TO 120]</code>.
+	/// is built by QueryParser for input like <code>[010 TO 120]</code> but only if the QueryParser has 
+	/// the useOldRangeQuery property set to true. The QueryParser default behaviour is to use
+	/// the newer ConstantScoreRangeQuery class. This is generally preferable because:
+	/// <ul>
+	/// <li>It is faster than RangeQuery</li>
+	/// <li>Unlike RangeQuery, it does not cause a BooleanQuery.TooManyClauses exception if the range of values is large</li>
+	/// <li>Unlike RangeQuery it does not influence scoring based on the scarcity of individual terms that may match</li>
+	/// </ul>
+	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: RangeQuery.java 329381 2005-10-29 09:26:21Z ehatcher $
+	/// <seealso cref="ConstantScoreRangeQuery">
+	/// 
+	/// 
+	/// </seealso>
+	/// <version>  $Id: RangeQuery.java 475435 2006-11-15 21:26:09Z mharwood $
 	/// </version>
 	[Serializable]
 	public class RangeQuery : Query
@@ -122,7 +135,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the field name for this query </summary>
 		public virtual System.String GetField()
 		{
-			return (lowerTerm != null?lowerTerm.Field():upperTerm.Field());
+			return (lowerTerm != null ? lowerTerm.Field() : upperTerm.Field());
 		}
 		
 		/// <summary>Returns the lower term of this range query </summary>
@@ -153,7 +166,7 @@ namespace Lucene.Net.Search
 				buffer.Append(GetField());
 				buffer.Append(":");
 			}
-			buffer.Append(inclusive?"[":"{");
+			buffer.Append(inclusive ? "[" : "{");
 			buffer.Append(lowerTerm != null ? lowerTerm.Text() : "null");
 			buffer.Append(" TO ");
 			buffer.Append(upperTerm != null ? upperTerm.Text() : "null");
@@ -186,14 +199,14 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            int h = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
-            h ^= (lowerTerm != null ? lowerTerm.GetHashCode() : 0);
-            // reversible mix to make lower and upper position dependent and
-            // to prevent them from cancelling out.
-            h ^= ((h << 25) | (h >> 8));
-            h ^= (upperTerm != null ? upperTerm.GetHashCode() : 0);
-            h ^= (this.inclusive ? 0x2742E74A : 0);
-            return h;
-        }
+			int h = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+			h ^= (lowerTerm != null ? lowerTerm.GetHashCode() : 0);
+			// reversible mix to make lower and upper position dependent and
+			// to prevent them from cancelling out.
+			h ^= ((h << 25) | (h >> 8));
+			h ^= (upperTerm != null ? upperTerm.GetHashCode() : 0);
+			h ^= (this.inclusive ? 0x2742E74A : 0);
+			return h;
+		}
 	}
 }

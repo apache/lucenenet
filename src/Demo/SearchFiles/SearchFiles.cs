@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -153,7 +154,7 @@ namespace Lucene.Net.Demo
 						hits = searcher.Search(query);
 					}
 					System.DateTime end = System.DateTime.Now;
-					System.Console.Out.WriteLine("Time: " + (end.Ticks - start.Ticks) + "ms");
+					System.Console.Out.WriteLine("Time: " + (end.Millisecond - start.Millisecond) + "ms");
 				}
 				
 				System.Console.Out.WriteLine(hits.Length() + " total matching documents");

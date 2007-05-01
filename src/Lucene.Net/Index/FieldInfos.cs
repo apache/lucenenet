@@ -17,7 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -25,8 +25,8 @@ using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>Access to the Field Info file that describes document fields and whether or
-	/// not they are indexed. Each segment has a separate Field Info file. Objects
+	/// <summary>Access to the Fieldable Info file that describes document fields and whether or
+	/// not they are indexed. Each segment has a separate Fieldable Info file. Objects
 	/// of this class are thread-safe for multiple readers, but only one thread can
 	/// be adding documents at a time, with no other reader or writer threads
 	/// accessing this object.
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
 		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
 		
-		public /*internal*/ FieldInfos()
+		public FieldInfos()
 		{
 		}
 		
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		/// <param name="name">The name of the file to open the IndexInput from in the Directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		public /*internal*/ FieldInfos(Directory d, System.String name)
+		public FieldInfos(Directory d, System.String name)
 		{
 			IndexInput input = d.OpenInput(name);
 			try
@@ -71,8 +71,11 @@ namespace Lucene.Net.Index
 		/// <summary>Adds field info for a Document. </summary>
 		public void  Add(Document doc)
 		{
-            foreach (Field field in doc.Fields())
-            {
+			System.Collections.IList fields = doc.GetFields();
+			System.Collections.IEnumerator fieldIterator = fields.GetEnumerator();
+			while (fieldIterator.MoveNext())
+			{
+				Fieldable field = (Fieldable) fieldIterator.Current;
 				Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms());
 			}
 		}
@@ -106,7 +109,7 @@ namespace Lucene.Net.Index
 		/// <param name="isIndexed">Whether the fields are indexed or not
 		/// 
 		/// </param>
-		/// <seealso cref="Add(String, boolean)">
+		/// <seealso cref="boolean)">
 		/// </seealso>
 		public void  Add(System.Collections.ICollection names, bool isIndexed)
 		{
@@ -121,11 +124,11 @@ namespace Lucene.Net.Index
 		/// <summary> Calls 5 parameter add with false for all TermVector parameters.
 		/// 
 		/// </summary>
-		/// <param name="name">The name of the Field
+		/// <param name="name">The name of the Fieldable
 		/// </param>
 		/// <param name="isIndexed">true if the field is indexed
 		/// </param>
-		/// <seealso cref="Add(String, boolean, boolean, boolean, boolean)">
+		/// <seealso cref="boolean, boolean, boolean, boolean)">
 		/// </seealso>
 		public void  Add(System.String name, bool isIndexed)
 		{
@@ -249,7 +252,7 @@ namespace Lucene.Net.Index
 		/// <summary> Return the fieldName identified by its number.
 		/// 
 		/// </summary>
-		/// <param name="fieldNumber">
+		/// <param name="">fieldNumber
 		/// </param>
 		/// <returns> the fieldName or an empty string when the field
 		/// with the given number doesn't exist.
@@ -260,21 +263,10 @@ namespace Lucene.Net.Index
 			if (fi != null)
 				return fi.name;
 			return "";
-
-			/*
-			try
-			{
-				return FieldInfo(fieldNumber).name;
-			}
-			catch (System.NullReferenceException)
-			{
-				return "";
-			}
-			*/
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
-		/// <param name="fieldNumber">
+		/// <param name="">fieldNumber
 		/// </param>
 		/// <returns> the FieldInfo object or null when the given fieldNumber
 		/// doesn't exist.
@@ -284,17 +276,6 @@ namespace Lucene.Net.Index
 			if (fieldNumber > -1 && fieldNumber < byNumber.Count)
 				return (FieldInfo) byNumber[fieldNumber];
 			return null;
-
-			/*
-            try
-			{
-				return (FieldInfo) byNumber[fieldNumber];
-			}
-			catch (System.ArgumentOutOfRangeException) // (System.IndexOutOfRangeException)
-			{
-				return null;
-			}
-			*/
 		}
 		
 		public int Size()

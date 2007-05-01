@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Search
@@ -129,7 +130,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns a {@link HitIterator} to navigate the Hits.  Each item returned
-		/// from {@link Iterator#next()} is a {@link Hit}.
+		/// from {@link Iterator#Next()} is a {@link Hit}.
 		/// <p>
 		/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
 		/// hits is generally not desirable and may be the source of

@@ -20,19 +20,19 @@ using System;
 namespace Lucene.Net.Util
 {
 	
-	public class ToStringUtils
-	{
-		public static System.String Boost(float boost)
-		{
-			if (boost != 1.0f)
-			{
+    public class ToStringUtils
+    {
+        public static System.String Boost(float boost)
+        {
+            if (boost != 1.0f)
+            {
                 float boostAsLong = (long) boost;
                 if (boostAsLong == boost)
                     return "^" + boost.ToString(".0");
                 return "^" + boost.ToString();
-			}
-			else
-				return "";
-		}
-	}
+            }
+            else
+                return "";
+        }
+    }
 }

@@ -25,17 +25,17 @@ namespace Lucene.Net.Index
 	public sealed class TermInfo
 	{
 		/// <summary>The number of documents which contain the term. </summary>
-		public /*internal*/ int docFreq = 0;
+		public int docFreq = 0;
 		
-		public /*internal*/ long freqPointer = 0;
-		public /*internal*/ long proxPointer = 0;
+		public long freqPointer = 0;
+		public long proxPointer = 0;
 		internal int skipOffset;
 		
 		internal TermInfo()
 		{
 		}
 		
-		public /*internal*/ TermInfo(int df, long fp, long pp)
+		public TermInfo(int df, long fp, long pp)
 		{
 			docFreq = df;
 			freqPointer = fp;

@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers
 {
 	
 	public class QueryParserConstants
-    {
+	{
 		public const int EOF = 0;
 		public const int _NUM_CHAR = 1;
 		public const int _ESCAPED_CHAR = 2;
@@ -38,27 +38,28 @@ namespace Lucene.Net.QueryParsers
 		public const int LPAREN = 12;
 		public const int RPAREN = 13;
 		public const int COLON = 14;
-		public const int CARAT = 15;
-		public const int QUOTED = 16;
-		public const int TERM = 17;
-		public const int FUZZY_SLOP = 18;
-		public const int PREFIXTERM = 19;
-		public const int WILDTERM = 20;
-		public const int RANGEIN_START = 21;
-		public const int RANGEEX_START = 22;
-		public const int NUMBER = 23;
-		public const int RANGEIN_TO = 24;
-		public const int RANGEIN_END = 25;
-		public const int RANGEIN_QUOTED = 26;
-		public const int RANGEIN_GOOP = 27;
-		public const int RANGEEX_TO = 28;
-		public const int RANGEEX_END = 29;
-		public const int RANGEEX_QUOTED = 30;
-		public const int RANGEEX_GOOP = 31;
+		public const int STAR = 15;
+		public const int CARAT = 16;
+		public const int QUOTED = 17;
+		public const int TERM = 18;
+		public const int FUZZY_SLOP = 19;
+		public const int PREFIXTERM = 20;
+		public const int WILDTERM = 21;
+		public const int RANGEIN_START = 22;
+		public const int RANGEEX_START = 23;
+		public const int NUMBER = 24;
+		public const int RANGEIN_TO = 25;
+		public const int RANGEIN_END = 26;
+		public const int RANGEIN_QUOTED = 27;
+		public const int RANGEIN_GOOP = 28;
+		public const int RANGEEX_TO = 29;
+		public const int RANGEEX_END = 30;
+		public const int RANGEEX_QUOTED = 31;
+		public const int RANGEEX_GOOP = 32;
 		public const int Boost = 0;
 		public const int RangeEx = 1;
 		public const int RangeIn = 2;
 		public const int DEFAULT = 3;
-		public static System.String[] tokenImage = new System.String[]{"<EOF>", "<_NUM_CHAR>", "<_ESCAPED_CHAR>", "<_TERM_START_CHAR>", "<_TERM_CHAR>", "<_WHITESPACE>", "<token of kind 6>", "<AND>", "<OR>", "<NOT>", "\"+\"", "\"-\"", "\"(\"", "\")\"", "\":\"", "\"^\"", "<QUOTED>", "<TERM>", "<FUZZY_SLOP>", "<PREFIXTERM>", "<WILDTERM>", "\"[\"", "\"{\"", "<NUMBER>", "\"TO\"", "\"]\"", "<RANGEIN_QUOTED>", "<RANGEIN_GOOP>", "\"TO\"", "\"}\"", "<RANGEEX_QUOTED>", "<RANGEEX_GOOP>"};
+		public static System.String[] tokenImage = new System.String[]{"<EOF>", "<_NUM_CHAR>", "<_ESCAPED_CHAR>", "<_TERM_START_CHAR>", "<_TERM_CHAR>", "<_WHITESPACE>", "<token of kind 6>", "<AND>", "<OR>", "<NOT>", "\"+\"", "\"-\"", "\"(\"", "\")\"", "\":\"", "\"*\"", "\"^\"", "<QUOTED>", "<TERM>", "<FUZZY_SLOP>", "<PREFIXTERM>", "<WILDTERM>", "\"[\"", "\"{\"", "<NUMBER>", "\"TO\"", "\"]\"", "<RANGEIN_QUOTED>", "<RANGEIN_GOOP>", "\"TO\"", "\"}\"", "<RANGEEX_QUOTED>", "<RANGEEX_GOOP>"};
 	}
 }

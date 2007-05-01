@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -30,7 +31,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldCache.java 179605 2005-06-02 16:48:40Z cutting $
+	/// <version>  $Id: FieldCache.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <summary>Expert: Stores term text values and document ordering data. </summary>
 	public class StringIndex
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	public struct FieldCache_Fields
-	{
+    {
 		/// <summary>Indicator for StringIndex values in the cache. </summary>
 		// NOTE: the value assigned to this constant must not be
 		// the same as any of those in SortField!!
@@ -187,18 +188,18 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException  If any error occurs. </throws>
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 	}
-
-    /// <summary>Interface to parse ints from document fields.</summary>
-	/// <seealso cref="GetInts(IndexReader, String, IntParser)">
+	
+	/// <summary>Interface to parse ints from document fields.</summary>
+	/// <seealso cref="String, IntParser)">
 	/// </seealso>
 	public interface IntParser
 	{
 		/// <summary>Return an integer representation of this field's value. </summary>
 		int ParseInt(System.String string_Renamed);
 	}
-
-    /// <summary>Interface to parse floats from document fields.</summary>
-	/// <seealso cref="GetFloats(IndexReader, String, FloatParser)">
+	
+	/// <summary>Interface to parse floats from document fields.</summary>
+	/// <seealso cref="String, FloatParser)">
 	/// </seealso>
 	public interface FloatParser
 	{

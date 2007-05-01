@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
 using Lucene.Net.Documents;
 
@@ -34,7 +35,7 @@ namespace Lucene.Net.Demo
 			// sorting gives the same results as a walk of the file hierarchy.  Thus
 			// null (\u0000) is used both to separate directory components and to
 			// separate the path from the date.
-			return f.FullName.Replace(dirSep, '\u0000') + "\u0000" + DateTools.TimeToString(((f.LastWriteTime.Ticks - 621355968000000000) / 10000), DateTools.Resolution.SECOND);
+			return f.FullName.Replace(dirSep, '\u0000') + "\u0000" + DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.SECOND);
 		}
 		
 		public static System.String Uid2url(System.String uid)
@@ -55,7 +56,7 @@ namespace Lucene.Net.Demo
 			// Add the last modified date of the file a field named "modified".  
 			// Use a field that is indexed (i.e. searchable), but don't tokenize
 			// the field into words.
-			doc.Add(new Field("modified", DateTools.TimeToString(((f.LastWriteTime.Ticks - 621355968000000000) / 10000), DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
 			
 			// Add the uid as a field, so that index can be incrementally maintained.
 			// This field is not stored with document, it is indexed, but it is not

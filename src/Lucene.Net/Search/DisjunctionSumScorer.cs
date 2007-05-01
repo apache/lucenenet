@@ -16,14 +16,16 @@
  */
 
 using System;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+
+using ScorerDocQueue = Lucene.Net.Util.ScorerDocQueue;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A Scorer for OR like queries, counterpart of Lucene's <code>ConjunctionScorer</code>.
+	/// <summary>A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
 	/// This Scorer implements {@link Scorer#SkipTo(int)} and uses skipTo() on the given Scorers. 
 	/// </summary>
+	/// <todo>  Implement score(HitCollector, int). </todo>
 	class DisjunctionSumScorer : Scorer
 	{
 		/// <summary>The number of subscorers. </summary>
@@ -35,19 +37,20 @@ namespace Lucene.Net.Search
 		/// <summary>The minimum number of scorers that should match. </summary>
 		private int minimumNrMatchers;
 		
-		/// <summary>The scorerQueue contains all subscorers ordered by their current doc(),
+		/// <summary>The scorerDocQueue contains all subscorers ordered by their current doc(),
 		/// with the minimum at the top.
-		/// <br>The scorerQueue is initialized the first time next() or skipTo() is called.
-		/// <br>An exhausted scorer is immediately removed from the scorerQueue.
+		/// <br>The scorerDocQueue is initialized the first time next() or skipTo() is called.
+		/// <br>An exhausted scorer is immediately removed from the scorerDocQueue.
 		/// <br>If less than the minimumNrMatchers scorers
-		/// remain in the scorerQueue next() and skipTo() return false.
+		/// remain in the scorerDocQueue next() and skipTo() return false.
 		/// <p>
 		/// After each to call to next() or skipTo()
 		/// <code>currentSumScore</code> is the total score of the current matching doc,
 		/// <code>nrMatchers</code> is the number of matching scorers,
 		/// and all scorers are after the matching doc, or are exhausted.
 		/// </summary>
-		private ScorerQueue scorerQueue = null;
+		private ScorerDocQueue scorerDocQueue = null;
+		private int queueSize = - 1; // used to avoid size() method calls on scorerDocQueue
 		
 		/// <summary>The document number of the current match. </summary>
 		private int currentDoc = - 1;
@@ -94,73 +97,79 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Called the first time next() or skipTo() is called to
-		/// initialize <code>scorerQueue</code>.
+		/// initialize <code>scorerDocQueue</code>.
 		/// </summary>
-		private void  InitScorerQueue()
+		private void  InitScorerDocQueue()
 		{
 			System.Collections.IEnumerator si = subScorers.GetEnumerator();
-			scorerQueue = new ScorerQueue(this, nrScorers);
+			scorerDocQueue = new ScorerDocQueue(nrScorers);
+			queueSize = 0;
 			while (si.MoveNext())
 			{
 				Scorer se = (Scorer) si.Current;
 				if (se.Next())
 				{
-					// doc() method will be used in scorerQueue.
-					scorerQueue.Insert(se);
+					// doc() method will be used in scorerDocQueue.
+					if (scorerDocQueue.Insert(se))
+					{
+						queueSize++;
+					}
 				}
 			}
 		}
 		
-		/// <summary>A <code>PriorityQueue</code> that orders by {@link Scorer#Doc()}. </summary>
-		private class ScorerQueue : PriorityQueue
+		/// <summary>Scores and collects all matching documents.</summary>
+		/// <param name="hc">The collector to which all matching documents are passed through
+		/// {@link HitCollector#Collect(int, float)}.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </param>
+		public override void  Score(HitCollector hc)
 		{
-			private void  InitBlock(DisjunctionSumScorer enclosingInstance)
+			while (Next())
 			{
-				this.enclosingInstance = enclosingInstance;
+				hc.Collect(currentDoc, currentScore);
 			}
-			private DisjunctionSumScorer enclosingInstance;
-			public DisjunctionSumScorer Enclosing_Instance
+		}
+		
+		/// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
+		/// Note that {@link #Next()} must be called once before this method is called
+		/// for the first time.
+		/// </summary>
+		/// <param name="hc">The collector to which all matching documents are passed through
+		/// {@link HitCollector#Collect(int, float)}.
+		/// </param>
+		/// <param name="max">Do not score documents past this.
+		/// </param>
+		/// <returns> true if more matching documents may remain.
+		/// </returns>
+		protected internal override bool Score(HitCollector hc, int max)
+		{
+			while (currentDoc < max)
 			{
-				get
+				hc.Collect(currentDoc, currentScore);
+				if (!Next())
 				{
-					return enclosingInstance;
+					return false;
 				}
-				
 			}
-			internal ScorerQueue(DisjunctionSumScorer enclosingInstance, int size)
-			{
-				InitBlock(enclosingInstance);
-				Initialize(size);
-			}
-			
-			public override bool LessThan(System.Object o1, System.Object o2)
-			{
-				return ((Scorer) o1).Doc() < ((Scorer) o2).Doc();
-			}
+			return true;
 		}
 		
 		public override bool Next()
 		{
-			if (scorerQueue == null)
+			if (scorerDocQueue == null)
 			{
-				InitScorerQueue();
+				InitScorerDocQueue();
 			}
-			if (scorerQueue.Size() < minimumNrMatchers)
-			{
-				return false;
-			}
-			else
-			{
-				return AdvanceAfterCurrent();
-			}
+			return (scorerDocQueue.Size() >= minimumNrMatchers) && AdvanceAfterCurrent();
 		}
 		
 		
 		/// <summary>Advance all subscorers after the current document determined by the
-		/// top of the <code>scorerQueue</code>.
+		/// top of the <code>scorerDocQueue</code>.
 		/// Repeat until at least the minimum number of subscorers match on the same
 		/// document and all subscorers are after that document or are exhausted.
-		/// <br>On entry the <code>scorerQueue</code> has at least <code>minimumNrMatchers</code>
+		/// <br>On entry the <code>scorerDocQueue</code> has at least <code>minimumNrMatchers</code>
 		/// available. At least the scorer with the minimum document number will be advanced.
 		/// </summary>
 		/// <returns> true iff there is a match.
@@ -171,47 +180,35 @@ namespace Lucene.Net.Search
 		/// <todo>  Investigate whether it is possible to use skipTo() when </todo>
 		/// <summary> the minimum number of matchers is bigger than one, ie. try and use the
 		/// character of ConjunctionScorer for the minimum number of matchers.
+		/// Also delay calling score() on the sub scorers until the minimum number of
+		/// matchers is reached.
+		/// <br>For this, a Scorer array with minimumNrMatchers elements might
+		/// hold Scorers at currentDoc that are temporarily popped from scorerQueue.
 		/// </summary>
 		protected internal virtual bool AdvanceAfterCurrent()
 		{
 			do 
 			{
 				// repeat until minimum nr of matchers
-				Scorer top = (Scorer) scorerQueue.Top();
-				currentDoc = top.Doc();
-				currentScore = top.Score();
+				currentDoc = scorerDocQueue.TopDoc();
+				currentScore = scorerDocQueue.TopScore();
 				nrMatchers = 1;
 				do 
 				{
 					// Until all subscorers are after currentDoc
-					if (top.Next())
+					if (!scorerDocQueue.TopNextAndAdjustElsePop())
 					{
-						scorerQueue.AdjustTop();
-					}
-					else
-					{
-						scorerQueue.Pop();
-						if (scorerQueue.Size() < (minimumNrMatchers - nrMatchers))
-						{
-							// Not enough subscorers left for a match on this document,
-							// and also no more chance of any further match.
-							return false;
-						}
-						if (scorerQueue.Size() == 0)
+						if (--queueSize == 0)
 						{
 							break; // nothing more to advance, check for last match.
 						}
 					}
-					top = (Scorer) scorerQueue.Top();
-					if (top.Doc() != currentDoc)
+					if (scorerDocQueue.TopDoc() != currentDoc)
 					{
 						break; // All remaining subscorers are after currentDoc.
 					}
-					else
-					{
-						currentScore += top.Score();
-						nrMatchers++;
-					}
+					currentScore += scorerDocQueue.TopScore();
+					nrMatchers++;
 				}
 				while (true);
 				
@@ -219,7 +216,7 @@ namespace Lucene.Net.Search
 				{
 					return true;
 				}
-				else if (scorerQueue.Size() < minimumNrMatchers)
+				else if (queueSize < minimumNrMatchers)
 				{
 					return false;
 				}
@@ -259,11 +256,11 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override bool SkipTo(int target)
 		{
-			if (scorerQueue == null)
+			if (scorerDocQueue == null)
 			{
-				InitScorerQueue();
+				InitScorerDocQueue();
 			}
-			if (scorerQueue.Size() < minimumNrMatchers)
+			if (queueSize < minimumNrMatchers)
 			{
 				return false;
 			}
@@ -273,19 +270,13 @@ namespace Lucene.Net.Search
 			}
 			do 
 			{
-				Scorer top = (Scorer) scorerQueue.Top();
-				if (top.Doc() >= target)
+				if (scorerDocQueue.TopDoc() >= target)
 				{
 					return AdvanceAfterCurrent();
 				}
-				else if (top.SkipTo(target))
+				else if (!scorerDocQueue.TopSkipToAndAdjustElsePop(target))
 				{
-					scorerQueue.AdjustTop();
-				}
-				else
-				{
-					scorerQueue.Pop();
-					if (scorerQueue.Size() < minimumNrMatchers)
+					if (--queueSize < minimumNrMatchers)
 					{
 						return false;
 					}
@@ -294,16 +285,34 @@ namespace Lucene.Net.Search
 			while (true);
 		}
 		
-		/// <summary>Gives and explanation for the score of a given document.</summary>
-		/// <todo>  Show the resulting score. See BooleanScorer.explain() on how to do this. </todo>
+		/// <returns> An explanation for the score of a given document. 
+		/// </returns>
 		public override Explanation Explain(int doc)
 		{
 			Explanation res = new Explanation();
-			res.SetDescription("At least " + minimumNrMatchers + " of");
 			System.Collections.IEnumerator ssi = subScorers.GetEnumerator();
+			float sumScore = 0.0f;
+			int nrMatches = 0;
 			while (ssi.MoveNext())
 			{
-				res.AddDetail(((Scorer) ssi.Current).Explain(doc));
+				Explanation es = ((Scorer) ssi.Current).Explain(doc);
+				if (es.GetValue() > 0.0f)
+				{
+					// indicates match
+					sumScore += es.GetValue();
+					nrMatches++;
+				}
+				res.AddDetail(es);
+			}
+			if (nrMatchers >= minimumNrMatchers)
+			{
+				res.SetValue(sumScore);
+				res.SetDescription("sum over at least " + minimumNrMatchers + " of " + subScorers.Count + ":");
+			}
+			else
+			{
+				res.SetValue(0.0f);
+				res.SetDescription(nrMatches + " match(es) but at least " + minimumNrMatchers + " of " + subScorers.Count + " needed");
 			}
 			return res;
 		}

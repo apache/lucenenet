@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldDoc.java 164865 2005-04-26 19:30:20Z cutting $
+	/// <version>  $Id: FieldDoc.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <seealso cref="ScoreDoc">
 	/// </seealso>
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="Sort">
 		/// </seealso>
-		/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
+		/// <seealso cref="Searcher#Search(Query,Filter,int,Sort)">
 		/// </seealso>
 		public System.IComparable[] fields;
 		

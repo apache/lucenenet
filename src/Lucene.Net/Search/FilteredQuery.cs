@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   1.4
 	/// </since>
-	/// <version>  $Id: FilteredQuery.java 331113 2005-11-06 15:55:45Z yonik $
+	/// <version>  $Id: FilteredQuery.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <seealso cref="CachingWrapperFilter">
 	/// </seealso>
@@ -58,10 +59,10 @@ namespace Lucene.Net.Search
 					this.scorer = scorer;
 					this.enclosingInstance = enclosingInstance;
 				}
-                private System.Collections.BitArray bitset;
-                private Lucene.Net.Search.Scorer scorer;
-                private AnonymousClassWeight enclosingInstance;
-                public AnonymousClassWeight Enclosing_Instance
+				private System.Collections.BitArray bitset;
+				private Lucene.Net.Search.Scorer scorer;
+				private AnonymousClassWeight enclosingInstance;
+				public AnonymousClassWeight Enclosing_Instance
 				{
 					get
 					{
@@ -69,33 +70,33 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				internal AnonymousClassScorer(System.Collections.BitArray bitset, Lucene.Net.Search.Scorer scorer, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1) : base(Param1)
+				internal AnonymousClassScorer(System.Collections.BitArray bitset, Lucene.Net.Search.Scorer scorer, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1):base(Param1)
 				{
 					InitBlock(bitset, scorer, enclosingInstance);
 				}
 				
 				public override bool Next()
 				{
-                    do 
-                    {
-                        if (!scorer.Next())
-                        {
-                            return false;
-                        }
-                    }
-                    while (!bitset.Get(scorer.Doc()));
-                    /* When skipTo() is allowed on scorer it should be used here
-                    * in combination with bitset.nextSetBit(...)
-                    * See the while loop in skipTo() below.
-                    */
-                    return true;
-                }
+					do 
+					{
+						if (!scorer.Next())
+						{
+							return false;
+						}
+					}
+					while (!bitset.Get(scorer.Doc()));
+					/* When skipTo() is allowed on scorer it should be used here
+					* in combination with bitset.nextSetBit(...)
+					* See the while loop in skipTo() below.
+					*/
+					return true;
+				}
 				public override int Doc()
 				{
 					return scorer.Doc();
 				}
 				
-                public override bool SkipTo(int i)
+				public override bool SkipTo(int i)
 				{
 					if (!scorer.SkipTo(i))
 					{
@@ -118,8 +119,8 @@ namespace Lucene.Net.Search
 				
 				public override float Score()
 				{
-                    return scorer.Score();
-                }
+					return scorer.Score();
+				}
 				
 				// add an explanation about whether the document was filtered
 				public override Explanation Explain(int i)
@@ -165,7 +166,14 @@ namespace Lucene.Net.Search
 			}
 			public virtual Explanation Explain(IndexReader ir, int i)
 			{
-				return weight.Explain(ir, i);
+				Explanation inner = weight.Explain(ir, i);
+				Filter f = Enclosing_Instance.filter;
+				System.Collections.BitArray matches = f.Bits(ir);
+				if (matches.Get(i))
+					return inner;
+				Explanation result = new Explanation(0.0f, "failure to match filter: " + f.ToString());
+				result.AddDetail(inner);
+				return result;
 			}
 			
 			// return this query
@@ -174,8 +182,8 @@ namespace Lucene.Net.Search
 				return Enclosing_Instance;
 			}
 			
-            // return a filtering scorer
-            public virtual Scorer Scorer(IndexReader indexReader)
+			// return a filtering scorer
+			public virtual Scorer Scorer(IndexReader indexReader)
 			{
 				Scorer scorer = weight.Scorer(indexReader);
 				System.Collections.BitArray bitset = Enclosing_Instance.filter.Bits(indexReader);
@@ -261,7 +269,7 @@ namespace Lucene.Net.Search
 			if (o is FilteredQuery)
 			{
 				FilteredQuery fq = (FilteredQuery) o;
-				return (query.Equals(fq.query) && filter.Equals(fq.filter));
+				return (query.Equals(fq.query) && filter.Equals(fq.filter) && GetBoost() == fq.GetBoost());
 			}
 			return false;
 		}
@@ -269,16 +277,16 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ filter.GetHashCode();
+			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(GetBoost());
 		}
 
-        public override System.Object Clone()
-        {
+		override public System.Object Clone()
+		{
             // {{Aroush-2.0}} is this Clone() OK?
             FilteredQuery clone = (FilteredQuery) base.Clone();
             clone.filter = this.filter;
             clone.query = this.query;
             return clone;
         }
-    }
+	}
 }

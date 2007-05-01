@@ -48,51 +48,51 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		public override void  WriteBytes(byte[] b, int length)
 		{
-            int bytesLeft = BUFFER_SIZE - bufferPosition;
-            // is there enough space in the buffer?
-            if (bytesLeft >= length)
-            {
-                // we add the data to the end of the buffer
-                Array.Copy(b, 0, buffer, bufferPosition, length);
-                bufferPosition += length;
-                // if the buffer is full, flush it
-                if (BUFFER_SIZE - bufferPosition == 0)
-                    Flush();
-            }
-            else
-            {
-                // is data larger then buffer?
-                if (length > BUFFER_SIZE)
-                {
-                    // we flush the buffer
-                    if (bufferPosition > 0)
-                        Flush();
-                    // and write data at once
-                    FlushBuffer(b, length);
-                    bufferStart += length;
-                }
-                else
-                {
-                    // we fill/flush the buffer (until the input is written)
-                    int pos = 0; // position in the input data
-                    int pieceLength;
-                    while (pos < length)
-                    {
-                        pieceLength = (length - pos < bytesLeft)?length - pos:bytesLeft;
-                        Array.Copy(b, pos, buffer, bufferPosition, pieceLength);
-                        pos += pieceLength;
-                        bufferPosition += pieceLength;
-                        // if the buffer is full, flush it
-                        bytesLeft = BUFFER_SIZE - bufferPosition;
-                        if (bytesLeft == 0)
-                        {
-                            Flush();
-                            bytesLeft = BUFFER_SIZE;
-                        }
-                    }
-                }
-            }
-        }
+			int bytesLeft = BUFFER_SIZE - bufferPosition;
+			// is there enough space in the buffer?
+			if (bytesLeft >= length)
+			{
+				// we add the data to the end of the buffer
+				Array.Copy(b, 0, buffer, bufferPosition, length);
+				bufferPosition += length;
+				// if the buffer is full, flush it
+				if (BUFFER_SIZE - bufferPosition == 0)
+					Flush();
+			}
+			else
+			{
+				// is data larger then buffer?
+				if (length > BUFFER_SIZE)
+				{
+					// we flush the buffer
+					if (bufferPosition > 0)
+						Flush();
+					// and write data at once
+					FlushBuffer(b, length);
+					bufferStart += length;
+				}
+				else
+				{
+					// we fill/flush the buffer (until the input is written)
+					int pos = 0; // position in the input data
+					int pieceLength;
+					while (pos < length)
+					{
+						pieceLength = (length - pos < bytesLeft)?length - pos:bytesLeft;
+						Array.Copy(b, pos, buffer, bufferPosition, pieceLength);
+						pos += pieceLength;
+						bufferPosition += pieceLength;
+						// if the buffer is full, flush it
+						bytesLeft = BUFFER_SIZE - bufferPosition;
+						if (bytesLeft == 0)
+						{
+							Flush();
+							bytesLeft = BUFFER_SIZE;
+						}
+					}
+				}
+			}
+		}
 		
 		/// <summary>Forces any buffered output to be written. </summary>
 		public override void  Flush()
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the current position in this file, where the next write will
 		/// occur.
 		/// </summary>
-		/// <seealso cref="Seek(long)">
+		/// <seealso cref="#Seek(long)">
 		/// </seealso>
 		public override long GetFilePointer()
 		{
@@ -128,7 +128,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Sets current position in this file, where the next write will occur.</summary>
-		/// <seealso cref="GetFilePointer()">
+		/// <seealso cref="#GetFilePointer()">
 		/// </seealso>
 		public override void  Seek(long pos)
 		{

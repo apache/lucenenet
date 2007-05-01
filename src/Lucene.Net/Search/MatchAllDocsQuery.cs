@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search
 		{
 		}
 		
-		private class MatchAllScorer:Scorer
+		private class MatchAllScorer : Scorer
 		{
 			private void  InitBlock(MatchAllDocsQuery enclosingInstance)
 			{
@@ -52,18 +53,18 @@ namespace Lucene.Net.Search
 			}
 			
 			internal IndexReader reader;
-            internal int id;
+			internal int id;
 			internal int maxId;
-			internal float score_Renamed_Field;
+			internal float score;
 			
-			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity, Weight w) : base(similarity)
+			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity, Weight w):base(similarity)
 			{
-                InitBlock(enclosingInstance);
-                this.reader = reader;
-                id = - 1;
-                maxId = reader.MaxDoc() - 1;
-                score_Renamed_Field = w.GetValue();
-            }
+				InitBlock(enclosingInstance);
+				this.reader = reader;
+				id = - 1;
+				maxId = reader.MaxDoc() - 1;
+				score = w.GetValue();
+			}
 			
 			public override Explanation Explain(int doc)
 			{
@@ -90,13 +91,13 @@ namespace Lucene.Net.Search
 			
 			public override float Score()
 			{
-				return score_Renamed_Field;
+				return score;
 			}
 			
 			public override bool SkipTo(int target)
 			{
-                id = target - 1;
-                return Next();
+				id = target - 1;
+				return Next();
 			}
 		}
 		
@@ -116,14 +117,14 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Searcher searcher;
-            private float queryWeight;
-            private float queryNorm;
+			private Similarity similarity;
+			private float queryWeight;
+			private float queryNorm;
 			
 			public MatchAllDocsWeight(MatchAllDocsQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = searcher.GetSimilarity();
 			}
 			
 			public override System.String ToString()
@@ -143,32 +144,30 @@ namespace Lucene.Net.Search
 			
 			public virtual float SumOfSquaredWeights()
 			{
-                queryWeight = Enclosing_Instance.GetBoost();
-                return queryWeight * queryWeight;
-            }
+				queryWeight = Enclosing_Instance.GetBoost();
+				return queryWeight * queryWeight;
+			}
 			
 			public virtual void  Normalize(float queryNorm)
 			{
-                this.queryNorm = queryNorm;
-                queryWeight *= this.queryNorm;
-            }
+				this.queryNorm = queryNorm;
+				queryWeight *= this.queryNorm;
+			}
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new MatchAllScorer(enclosingInstance, reader, Enclosing_Instance.GetSimilarity(searcher), this);
+				return new MatchAllScorer(enclosingInstance, reader, similarity, this);
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				// explain query weight
-				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("MatchAllDocsQuery, product of:");
-                queryExpl.SetValue(GetValue());
-                if (Enclosing_Instance.GetBoost() != 1.0f)
-                {
-                    queryExpl.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
-                }
-                queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
+				Explanation queryExpl = new ComplexExplanation(true, GetValue(), "MatchAllDocsQuery, product of:");
+				if (Enclosing_Instance.GetBoost() != 1.0f)
+				{
+					queryExpl.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+				}
+				queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				
 				return queryExpl;
 			}
@@ -179,11 +178,11 @@ namespace Lucene.Net.Search
 			return new MatchAllDocsWeight(this, searcher);
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-        }
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+		}
 		
-        public override System.String ToString(System.String field)
+		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("MatchAllDocsQuery");
@@ -201,7 +200,7 @@ namespace Lucene.Net.Search
 		
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ 0x1AA71190;
 		}
 	}
 }

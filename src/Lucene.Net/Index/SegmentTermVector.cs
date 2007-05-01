@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 			if (terms == null)
 				return - 1;
 			int res = System.Array.BinarySearch(terms, termText);
-			return res >= 0?res:- 1;
+			return res >= 0 ? res : - 1;
 		}
 		
 		public virtual int[] IndexesOf(System.String[] termNumbers, int start, int len)

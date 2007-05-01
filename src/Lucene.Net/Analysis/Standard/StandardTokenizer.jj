@@ -26,7 +26,7 @@ options {
 }
 PARSER_BEGIN(StandardTokenizer)
 
-package org.apache.lucene.analysis.standard;
+package Lucene.Net.Analysis.Standard;
 
 import java.io.*;
 
@@ -46,7 +46,7 @@ import java.io.*;
  * not suit your application, please consider copying this source code
  * directory to your project and maintaining your own grammar-based tokenizer.
  */
-public class StandardTokenizer extends org.apache.lucene.analysis.Tokenizer {
+public class StandardTokenizer extends Lucene.Net.Analysis.Tokenizer {
 
   /** Constructs a tokenizer for this Reader. */
   public StandardTokenizer(Reader reader) {
@@ -104,21 +104,39 @@ TOKEN : {					  // token patterns
        "\u00c0"-"\u00d6",
        "\u00d8"-"\u00f6",
        "\u00f8"-"\u00ff",
-       "\u0100"-"\u1fff"
+       "\u0100"-"\u1fff",
+       "\uffa0"-"\uffdc"
       ]
   >
 | < CJ:                                          // Chinese, Japanese
       [
        "\u3040"-"\u318f",
+       "\u3100"-"\u312f",    // BaPoMoFo (aka ZhuYin)
+       "\u3040"-"\u309F",    // Japanese: Hiragana
+       "\u30A0"-"\u30FF",    // Japanese: Katakana
+       "\u31F0"-"\u31FF",    // Japanese: Katakana Phonetic Extensions
        "\u3300"-"\u337f",
-       "\u3400"-"\u3d2d",
+       "\u3400"-"\u4dbf",    // CJK Unified Ideographs Ext. A
        "\u4e00"-"\u9fff",
-       "\uf900"-"\ufaff"
+       "\uf900"-"\ufaff",
+       "\uff65"-"\uff9f"
+
+// Otis: consider adding these, too
+//
+// 2E80-2EFF: CJK Radicals Supplement
+// 2F00-2FDF: Kangxi Radicals
+// 3190-319F: Kanbun
+// 31C0-31EF: CJK Strokes
+// 4E00-9FBF: CJK Unified
+// F900-FAFF: CJK Compatibility Ideographs
+
       ]
   >
 | < KOREAN:                                          // Korean
       [
-       "\uac00"-"\ud7af"
+       "\uac00"-"\ud7af",     // Hangul Syllables
+       "\u1100"-"\u11ff"      // Hangul Jamo
+       // "\uac00"-"\ud7a3"
       ]
   >
 | < #DIGIT:					  // unicode digits
@@ -150,7 +168,7 @@ SKIP : {					  // skip unrecognized chars
  * <p>The returned token's type is set to an element of {@link
  * StandardTokenizerConstants#tokenImage}.
  */
-org.apache.lucene.analysis.Token next() throws IOException :
+Lucene.Net.Analysis.Token next() throws IOException :
 {
   Token token = null;
 }
@@ -170,7 +188,7 @@ org.apache.lucene.analysis.Token next() throws IOException :
 	return null;
       } else {
 	return
-	  new org.apache.lucene.analysis.Token(token.image,
+	  new Lucene.Net.Analysis.Token(token.image,
 					token.beginColumn,token.endColumn,
 					tokenImage[token.kind]);
       }

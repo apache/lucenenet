@@ -16,14 +16,16 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using Explanation = Lucene.Net.Search.Explanation;
 using Query = Lucene.Net.Search.Query;
-using Scorer = Lucene.Net.Search.Scorer;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+using Searcher = Lucene.Net.Search.Searcher;
+using Scorer = Lucene.Net.Search.Scorer;
+using Explanation = Lucene.Net.Search.Explanation;
+using ComplexExplanation = Lucene.Net.Search.ComplexExplanation;
+using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -44,11 +46,11 @@ namespace Lucene.Net.Search.Spans
 		{
 			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-            terms = new System.Collections.Hashtable();
-            query.ExtractTerms(terms);
+			terms = new System.Collections.Hashtable();
+			query.ExtractTerms(terms);
 			
-            System.Collections.ArrayList tmp = new System.Collections.ArrayList(terms.Values);
-
+			System.Collections.ArrayList tmp = new System.Collections.ArrayList(terms.Values);
+			
 			idf = this.query.GetSimilarity(searcher).Idf(tmp, searcher);
 		}
 		
@@ -82,7 +84,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual Explanation Explain(IndexReader reader, int doc)
 		{
 			
-			Explanation result = new Explanation();
+			ComplexExplanation result = new ComplexExplanation();
 			result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 			System.String field = ((SpanQuery) GetQuery()).GetField();
 			
@@ -90,7 +92,7 @@ namespace Lucene.Net.Search.Spans
 			System.Collections.IEnumerator i = terms.GetEnumerator();
 			while (i.MoveNext())
 			{
-                System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry) i.Current;
+				System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry) i.Current;
 				Term term = (Term) tmp.Key;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
@@ -121,7 +123,7 @@ namespace Lucene.Net.Search.Spans
 			result.AddDetail(queryExpl);
 			
 			// explain field weight
-			Explanation fieldExpl = new Explanation();
+			ComplexExplanation fieldExpl = new ComplexExplanation();
 			fieldExpl.SetDescription("fieldWeight(" + field + ":" + query.ToString(field) + " in " + doc + "), product of:");
 			
 			Explanation tfExpl = Scorer(reader).Explain(doc);
@@ -135,9 +137,12 @@ namespace Lucene.Net.Search.Spans
 			fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 			fieldExpl.AddDetail(fieldNormExpl);
 			
+			fieldExpl.SetMatch(tfExpl.IsMatch());
 			fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
 			
 			result.AddDetail(fieldExpl);
+			System.Boolean tempAux = fieldExpl.GetMatch();
+			result.SetMatch(tempAux);
 			
 			// combine them
 			result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());

@@ -30,9 +30,11 @@ namespace Lucene.Net
 		
 		/// <summary>Return Lucene's package, including version information. </summary>
 		// {{Aroush-1.9}}
-		//// public static Package Get()
-		//// {
-		//// 	return typeof(LucenePackage).getPackage();
-		//// }
+        /*
+		public static Package Get()
+		{
+			return typeof(LucenePackage).getPackage();
+		}
+        */
 	}
 }

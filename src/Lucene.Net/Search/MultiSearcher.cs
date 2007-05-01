@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using Term = Lucene.Net.Index.Term;
 
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary>Implements search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// or {@link #search(Query,Filter)} methods.
 	/// </summary>
 	public class MultiSearcher : Searcher
 	{
@@ -195,7 +196,7 @@ namespace Lucene.Net.Search
 		}
 		
 		
-        /// <summary>Returns index of the searcher for document <code>n</code> in the array
+		/// <summary>Returns index of the searcher for document <code>n</code> in the array
 		/// used to construct this searcher. 
 		/// </summary>
 		public virtual int SubSearcher(int n)
@@ -263,7 +264,7 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-			    // put docs in array
+				// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
 			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs2[0].score;
@@ -300,7 +301,7 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-			    // put docs in array
+				// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
 			return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields(), maxScore);
@@ -365,7 +366,7 @@ namespace Lucene.Net.Search
             System.Collections.IEnumerator e = terms.Keys.GetEnumerator();
             while (e.MoveNext())
                 allTermsArray[index++] = e.Current as Term;
-			int[] aggregatedDfs = new int[terms.Count];
+            int[] aggregatedDfs = new int[terms.Count];
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				int[] dfs = searchables[i].DocFreqs(allTermsArray);
