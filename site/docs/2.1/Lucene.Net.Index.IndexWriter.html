@@ -1,0 +1,39 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>IndexWriter Class</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Apache Lucene.Net 2.1 Class Library API</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">IndexWriter Class</h1>
+      </div>
+    </div>
+    <div id="nstext"> An IndexWriter creates and maintains an index. <p> The third argument (<pre class="code">create</pre>) to the <a href="#IndexWriter(Lucene.Net.Store.Directory,&#xD;&#xA;            Lucene.Net.Analysis.Analyzer, boolean)"><b>constructor</b></a> determines whether a new index is created, or whether an existing index is opened for the addition of new documents. Note that you can open an index with create=true even while readers are using the index. The old readers will continue to search the "point in time" snapshot they had opened, and won't see the newly created index until they re-open. </p>
+            
+            <p> In either case, documents are added with the <a href="#addDocument(Lucene.Net.Documents.Document)"><b>addDocument</b></a> method. When finished adding documents, <a href="#close()"><b>close</b></a> should be called. </p>
+            
+            <p> If an index will not have more documents added for a while and optimal search performance is desired, then the <a href="#optimize()"><b>optimize</b></a> method should be called before the index is closed. </p>
+            
+            <p> Opening an IndexWriter creates a lock file for the directory in use. Trying to open another IndexWriter on the same directory will lead to an IOException. The IOException is also thrown if an IndexReader on the same directory is used to delete documents from the index. </p>
+            
+            <p> As of <b>2.1</b>, IndexWriter can now delete documents by {@link Term} (see {@link #deleteDocuments} ) and update (delete then add) documents (see {@link #updateDocument}). Deletes are buffered until {@link #setMaxBufferedDeleteTerms} <pre class="code">Terms</pre> at which point they are flushed to the index. Note that a flush occurs when there are enough buffered deletes or enough added documents, whichever is sooner. When a flush occurs, both pending deletes and added documents are flushed to the index. </p>
+            <p>For a list of all members of this type, see <a href="Lucene.Net.Index.IndexWriterMembers.html">IndexWriter Members</a>.</p><p><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">System.Object</a><br />   <b>Lucene.Net.Index.IndexWriter</b></p><div class="syntax"><div>public class IndexWriter</div></div><H4 class="dtH4">Thread Safety</H4><P>Public static (<b>Shared</b> in Visual Basic) members of this type are 
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be 
+				thread-safe.</P><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="Lucene.Net.Index.html">Lucene.Net.Index</a></p><p><b>Assembly: </b>Lucene.Net (in Lucene.Net.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="Lucene.Net.Index.IndexWriterMembers.html">IndexWriter Members</a> | <a href="Lucene.Net.Index.html">Lucene.Net.Index Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="IndexWriter class, about IndexWriter class"></param></object><hr /><div id="footer"><p></p><p>Generated from assembly Lucene.Net [2.1.0.1]</p></div></div>
+  </body>
+</html>
