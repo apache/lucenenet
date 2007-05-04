@@ -378,10 +378,10 @@ namespace Lucene.Net.Index
 		
 		public override System.Object Clone()
 		{
-			SegmentInfos sis = (SegmentInfos) base.Clone();
+			SegmentInfos sis = new SegmentInfos();
 			for (int i = 0; i < sis.Count; i++)
 			{
-				sis[i] = ((SegmentInfo) sis[i]).Clone();
+				sis.Add(((SegmentInfo) this[i]).Clone());
 			}
 			return sis;
 		}
