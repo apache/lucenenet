@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		
 
 		[SetUp]
-		protected internal virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			directory = new RAMDirectory();
 			
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 		}
 		
         [TearDown]
-		protected internal virtual void  TearDown()
+		public virtual void  TearDown()
 		{
 			
 		}

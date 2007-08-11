@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 		private IndexReader ir2;
 		
         [SetUp]
-		protected internal virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			Lucene.Net.Documents.Document doc;
 			
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 		}
 		
         [TearDown]
-		protected internal virtual void  TearDown()
+		public virtual void  TearDown()
 		{
 			ir1.Close();
 			ir2.Close();

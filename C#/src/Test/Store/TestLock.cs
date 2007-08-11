@@ -73,7 +73,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Lucene.Net.store
+namespace Lucene.Net.Store
 {
 	
     [TestFixture]

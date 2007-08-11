@@ -76,14 +76,14 @@ namespace Lucene.Net.Index
 		
 		
         [SetUp]
-		protected internal virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			similarityOne = new SimilarityOne(this);
 			anlzr = new StandardAnalyzer();
 		}
 		
         [TearDown]
-		protected internal virtual void  TearDown()
+		public virtual void  TearDown()
 		{
 		}
 		
