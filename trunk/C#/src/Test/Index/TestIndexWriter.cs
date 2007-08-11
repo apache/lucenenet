@@ -535,8 +535,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(maxDiskUsage <= 2 * startDiskUsage, "optimized used too much temporary space: starting usage was " + startDiskUsage + " bytes; max temp usage was " + maxDiskUsage + " but should have been " + (2 * startDiskUsage) + " (= 2X starting usage)");
         }
 		
-        [Test]
-        private System.String ArrayToString(System.String[] l)
+        public System.String ArrayToString(System.String[] l)
         {
             System.String s = "";
             for (int i = 0; i < l.Length; i++)
