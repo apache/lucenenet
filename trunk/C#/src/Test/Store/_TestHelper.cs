@@ -41,7 +41,7 @@ namespace Lucene.Net.Store
 		{
 			if (IsFSIndexInput(is_Renamed))
 			{
-				return ((FSIndexInput) is_Renamed).IsClone;
+				return ((FSIndexInput) is_Renamed).isClone_ForNUnitTest;
 			}
 			else
 			{

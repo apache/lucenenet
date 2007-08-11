@@ -16,10 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
 			
 			// add the same document four times
-			Field f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
 			d1.Add(f1);
 			writer.AddDocument(d1);

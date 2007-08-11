@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search

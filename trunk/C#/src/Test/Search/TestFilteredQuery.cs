@@ -16,12 +16,14 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -35,14 +37,13 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>   Tim Jones
 	/// </author>
-	/// <version>  $Id: TestFilteredQuery.java 150585 2004-10-10 15:44:45Z dnaber $
-	/// </version>
+    /// <version>  $Id: TestFilteredQuery.java 472959 2006-11-09 16:21:50Z yonik $
+    /// </version>
 	/// <since>   1.4
 	/// </since>
 	[TestFixture]
     public class TestFilteredQuery
 	{
-		//UPGRADE_NOTE: Field 'EnclosingInstance' was added to class 'AnonymousClassFilter' to access its enclosing instance. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1019'"
 		[Serializable]
 		private class AnonymousClassFilter : Filter
 		{
@@ -125,6 +126,7 @@ namespace Lucene.Net.Search
 			Hits hits = searcher.Search(filteredquery);
 			Assert.AreEqual(1, hits.Length());
 			Assert.AreEqual(1, hits.Id(0));
+            QueryUtils.Check(filteredquery, searcher);
 			
 			hits = searcher.Search(filteredquery, new Sort("sorter"));
 			Assert.AreEqual(1, hits.Length());
@@ -133,16 +135,19 @@ namespace Lucene.Net.Search
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(2, hits.Length());
+            QueryUtils.Check(filteredquery, searcher);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(1, hits.Length());
 			Assert.AreEqual(3, hits.Id(0));
+            QueryUtils.Check(filteredquery, searcher);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter);
 			hits = searcher.Search(filteredquery);
 			Assert.AreEqual(0, hits.Length());
-		}
+            QueryUtils.Check(filteredquery, searcher);
+        }
 		
 		/// <summary> This tests FilteredQuery's rewrite correctness</summary>
 		[Test]
@@ -153,6 +158,20 @@ namespace Lucene.Net.Search
 			Query filteredquery = new FilteredQuery(rq, filter);
 			Hits hits = searcher.Search(filteredquery);
 			Assert.AreEqual(2, hits.Length());
-		}
-	}
+            QueryUtils.Check(filteredquery, searcher);
+        }
+
+        [Test]		
+        public virtual void  TestBoolean()
+        {
+            BooleanQuery bq = new BooleanQuery();
+            Query query = new FilteredQuery(new MatchAllDocsQuery(), new Lucene.Net.search.SingleDocTestFilter(0));
+            bq.Add(query, BooleanClause.Occur.MUST);
+            query = new FilteredQuery(new MatchAllDocsQuery(), new Lucene.Net.search.SingleDocTestFilter(1));
+            bq.Add(query, BooleanClause.Occur.MUST);
+            Hits hits = searcher.Search(bq);
+            Assert.AreEqual(0, hits.Length());
+            QueryUtils.Check(query, searcher);
+        }
+    }
 }

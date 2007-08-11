@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 			int prefixLen = IndexFileNames.SEGMENTS.Length + 1;
 			for (int i = 0; i < files.Length; i++)
 			{
-				System.String file = files[i];
+				System.String file = (new System.IO.FileInfo(files[i])).Name;
 				if (file.StartsWith(IndexFileNames.SEGMENTS) && !file.Equals(IndexFileNames.SEGMENTS_GEN))
 				{
 					if (file.Equals(IndexFileNames.SEGMENTS))
@@ -379,9 +379,16 @@ namespace Lucene.Net.Index
 		public override System.Object Clone()
 		{
 			SegmentInfos sis = new SegmentInfos();
-			for (int i = 0; i < sis.Count; i++)
+
+			// Copy Fields. const and static fields are ignored
+			sis.counter = this.counter;
+			sis.version = this.version;
+			sis.generation = this.generation;
+			sis.lastGeneration = this.lastGeneration;
+
+			for (int i = 0; i < this.Count; i++)
 			{
-				sis.Add(((SegmentInfo) this[i]).Clone());
+				sis.Add(((SegmentInfo)this[i]).Clone());
 			}
 			return sis;
 		}

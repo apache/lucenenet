@@ -51,17 +51,17 @@ namespace Lucene.Net.Util
 		{
 		} // can't construct
 		
-        // {{Aroush-2.1 those next constants are Java specific, what's the equivlant in C#?
-		/// <summary>The value of <tt>System.getProperty("java.version")<tt>. *</summary>
-		public static readonly System.String JAVA_VERSION = System.Configuration.ConfigurationSettings.AppSettings.Get("java.version");     // {{Aroush-1.9}}
-		/// <summary>True iff this is Java version 1.1. </summary>
-		public static readonly bool JAVA_1_1 = JAVA_VERSION.StartsWith("1.1.");
-		/// <summary>True iff this is Java version 1.2. </summary>
-		public static readonly bool JAVA_1_2 = JAVA_VERSION.StartsWith("1.2.");
-		/// <summary>True iff this is Java version 1.3. </summary>
-		public static readonly bool JAVA_1_3 = JAVA_VERSION.StartsWith("1.3.");
+		/// <summary>Lucene.Net Runtime version</summary>
+		public static readonly string DOTNET_VERSION = System.Reflection.Assembly.GetAssembly(typeof(Lucene.Net.Index.IndexReader)).ImageRuntimeVersion.Substring(1);
+		/// <summary>True iff Lucene.Net Runtime version is 1.0</summary>
+		public static readonly bool DOTNET_VERSION_1_0 = DOTNET_VERSION.StartsWith("1.0.");
+		/// <summary>True iff Lucene.Net Runtime version is 1.1</summary>
+		public static readonly bool DOTNET_VERSION_1_1 = DOTNET_VERSION.StartsWith("1.1.");
+		/// <summary>True iff Lucene.Net Runtime version is 2.0</summary>
+		public static readonly bool DOTNET_VERSION_2_0 = DOTNET_VERSION.StartsWith("2.0.");
+		/// <summary>True iff Lucene.Net Runtime version is 3.0</summary>
+		public static readonly bool DOTNET_VERSION_3_0 = DOTNET_VERSION.StartsWith("3.0.");
 		
-        // {{Aroush-2.1 are those envirement variables work with .NET
 		/// <summary>The value of <tt>System.getProperty("os.name")<tt>. *</summary>
 		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS");
 		/// <summary>True iff running on Linux. </summary>

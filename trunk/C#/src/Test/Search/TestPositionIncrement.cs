@@ -16,16 +16,18 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
+using Term = Lucene.Net.Index.Term;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {

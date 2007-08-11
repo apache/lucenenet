@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Index

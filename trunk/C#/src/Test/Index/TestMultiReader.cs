@@ -16,8 +16,12 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -35,7 +39,11 @@ namespace Lucene.Net.Index
 		private SegmentReader[] readers = new SegmentReader[2];
 		private SegmentInfos sis = new SegmentInfos();
 		
-		// This is needed if for the test to pass and mimic what happens wiht JUnit
+        // public TestMultiReader(System.String s)
+        // {
+        // }
+		
+        // This is needed if for the test to pass and mimic what happens wiht JUnit
         // For some reason, JUnit is creating a new member variable for each sub-test
         // but NUnit is not -- who is wrong/right, I don't know.
         private void SetUpInternal()        // {{Aroush-1.9}} See note above
@@ -100,7 +108,22 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(1, reader.NumDocs());
 			reader.UndeleteAll();
 			Assert.AreEqual(2, reader.NumDocs());
-		}
+			
+            // Ensure undeleteAll survives commit/close/reopen:
+            reader.Commit();
+            reader.Close();
+            sis.Read(dir);
+            reader = new MultiReader(dir, sis, false, readers);
+            Assert.AreEqual(2, reader.NumDocs());
+			
+            reader.DeleteDocument(0);
+            Assert.AreEqual(1, reader.NumDocs());
+            reader.Commit();
+            reader.Close();
+            sis.Read(dir);
+            reader = new MultiReader(dir, sis, false, readers);
+            Assert.AreEqual(1, reader.NumDocs());
+        }
 		
 		[Test]
 		public virtual void  TestTermVectors()
@@ -108,5 +131,36 @@ namespace Lucene.Net.Index
 			MultiReader reader = new MultiReader(dir, sis, false, readers);
 			Assert.IsTrue(reader != null);
 		}
-	}
+		
+        /* known to fail, see https://issues.apache.org/jira/browse/LUCENE-781
+        public void testIsCurrent() throws IOException {
+        RAMDirectory ramDir1=new RAMDirectory();
+        addDoc(ramDir1, "test foo", true);
+        RAMDirectory ramDir2=new RAMDirectory();
+        addDoc(ramDir2, "test blah", true);
+        IndexReader[] readers = new IndexReader[]{IndexReader.open(ramDir1), IndexReader.open(ramDir2)};
+        MultiReader mr = new MultiReader(readers);
+        assertTrue(mr.isCurrent());   // just opened, must be current
+        addDoc(ramDir1, "more text", false);
+        assertFalse(mr.isCurrent());   // has been modified, not current anymore
+        addDoc(ramDir2, "even more text", false);
+        assertFalse(mr.isCurrent());   // has been modified even more, not current anymore
+        try {
+        mr.getVersion();
+        fail();
+        } catch (UnsupportedOperationException e) {
+        // expected exception
+        }
+        mr.close();
+        }
+		
+        private void addDoc(RAMDirectory ramDir1, String s, boolean create) throws IOException {
+        IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(), create);
+        Document doc = new Document();
+        doc.add(new Field("body", s, Field.Store.YES, Field.Index.TOKENIZED));
+        iw.addDocument(doc);
+        iw.close();
+        }
+        */
+    }
 }

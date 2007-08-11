@@ -16,14 +16,15 @@
  */
 
 using System;
-using Lucene.Net.Analysis;
+
+using Lucene.Net.Util;
+using Lucene.Net.Store;
 using Lucene.Net.Documents;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
+using Lucene.Net.QueryParsers;
 
 namespace Lucene.Net
 {
@@ -180,7 +181,7 @@ namespace Lucene.Net
 				System.IO.Directory.CreateDirectory(indexDir.FullName);
 			}
 			
-			IndexReader.Unlock(FSDirectory.GetDirectory(indexDir, false));
+			IndexReader.Unlock(FSDirectory.GetDirectory(indexDir));
 			
 			if (!readOnly)
 			{

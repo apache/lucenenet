@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -59,7 +61,23 @@ namespace Lucene.Net.Search
 			Assert.IsFalse(fq.Equals(wq1));
 		}
 		
-		/// <summary> Tests Wildcard queries with an asterisk.</summary>
+        /// <summary> Tests if a WildcardQuery that has no wildcard in the term is rewritten to a single
+        /// TermQuery.
+        /// </summary>
+        [Test]
+        public virtual void  TestTermWithoutWildcard()
+        {
+            RAMDirectory indexStore = GetIndexStore("field", new System.String[]{"nowildcard", "nowildcardx"});
+            IndexSearcher searcher = new IndexSearcher(indexStore);
+			
+            Query wq = new WildcardQuery(new Term("field", "nowildcard"));
+            AssertMatches(searcher, wq, 1);
+			
+            wq = searcher.Rewrite(wq);
+            Assert.IsTrue(wq is TermQuery);
+        }
+		
+        /// <summary> Tests Wildcard queries with an asterisk.</summary>
 		[Test]
         public virtual void  TestAsterisk()
 		{

@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Analysis
@@ -60,9 +62,19 @@ namespace Lucene.Net.Analysis
 			// possessives are actually removed by StardardFilter, not the tokenizer
 			AssertAnalyzesTo(a, "O'Reilly", new System.String[]{"o'reilly"});
 			AssertAnalyzesTo(a, "you're", new System.String[]{"you're"});
-			AssertAnalyzesTo(a, "O'Reilly's", new System.String[]{"o'reilly"});
+            AssertAnalyzesTo(a, "she's", new System.String[]{"she"});
+            AssertAnalyzesTo(a, "Jim's", new System.String[]{"jim"});
+            AssertAnalyzesTo(a, "don't", new System.String[]{"don't"});
+            AssertAnalyzesTo(a, "O'Reilly's", new System.String[]{"o'reilly"});
 			
-			// company names
+            // t and s had been stopwords in Lucene <= 2.0, which made it impossible
+            // to correctly search for these terms:
+            AssertAnalyzesTo(a, "s-class", new System.String[]{"s", "class"});
+            AssertAnalyzesTo(a, "t-com", new System.String[]{"t", "com"});
+            // 'a' is still a stopword:
+            AssertAnalyzesTo(a, "a-class", new System.String[]{"class"});
+			
+            // company names
 			AssertAnalyzesTo(a, "AT&T", new System.String[]{"at&t"});
 			AssertAnalyzesTo(a, "Excite@Home", new System.String[]{"excite@home"});
 			

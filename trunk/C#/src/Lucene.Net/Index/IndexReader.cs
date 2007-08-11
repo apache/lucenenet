@@ -745,7 +745,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		protected internal void  Commit()
+		public void  Commit()
 		{
 			lock (this)
 			{

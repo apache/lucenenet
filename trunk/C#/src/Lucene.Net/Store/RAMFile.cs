@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		internal RAMFile(RAMDirectory directory)
+		public /*internal*/ RAMFile(RAMDirectory directory)
 		{
 			this.directory = directory;
 		}
@@ -103,5 +103,25 @@ namespace Lucene.Net.Store
 				return sizeInBytes;
 			}
 		}
-	}
+
+        public long sizeInBytes_ForNUnitTest
+        {
+            get { return sizeInBytes; }
+        }
+
+        public RAMDirectory directory_ForNUnitTest
+        {
+            set { directory = value; }
+        }
+
+        public long length_ForNUnitTest
+        {
+            get { return length; }
+        }
+
+        public long GetSizeInBytes_ForNUnitTest()
+        {
+            return GetSizeInBytes();
+        }
+    }
 }

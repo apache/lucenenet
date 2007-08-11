@@ -29,12 +29,12 @@ namespace Lucene.Net.Documents
 	/// </summary>
 	
 	[Serializable]
-	public sealed class Field:AbstractField, Fieldable
+	public sealed class Field : AbstractField, Fieldable
 	{
 		
 		/// <summary>Specifies whether and how a field should be stored. </summary>
 		[Serializable]
-		public sealed class Store:Parameter
+		public sealed class Store : Parameter
 		{
 			
 			internal Store(System.String name):base(name)

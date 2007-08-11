@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -48,8 +50,9 @@ namespace Lucene.Net.Search
 		
 		private int Search(Query q)
 		{
-			return searcher.Search(q).Length();
-		}
+            QueryUtils.Check(q, searcher);
+            return searcher.Search(q).Length();
+        }
 		
 		[Test]
         public virtual void  TestElements()

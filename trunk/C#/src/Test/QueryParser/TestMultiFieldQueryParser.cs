@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -24,15 +26,13 @@ using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using MultiFieldQueryParser = Lucene.Net.QueryParsers.MultiFieldQueryParser;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using MultiFieldQueryParser = Lucene.Net.QueryParsers.MultiFieldQueryParser;
 
 namespace Lucene.Net.QueryParser
 {
@@ -100,7 +100,37 @@ namespace Lucene.Net.QueryParser
 			Assert.AreEqual("+(b:\"aa bb cc\" t:\"aa bb cc\") +(b:\"dd ee\" t:\"dd ee\")", q.ToString());
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  TestBoostsSimple()
+        {
+            System.Collections.IDictionary boosts = new System.Collections.Hashtable();
+            boosts["b"] = (float) 5;
+            boosts["t"] = (float) 10;
+            System.String[] fields = new System.String[]{"b", "t"};
+            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(fields, new StandardAnalyzer(), boosts);
+			
+			
+            //Check for simple
+            Query q = mfqp.Parse("one");
+            Assert.AreEqual("b:one^5.0 t:one^10.0", q.ToString());
+			
+            //Check for AND
+            q = mfqp.Parse("one AND two");
+            Assert.AreEqual("+(b:one^5.0 t:one^10.0) +(b:two^5.0 t:two^10.0)", q.ToString());
+			
+            //Check for OR
+            q = mfqp.Parse("one OR two");
+            Assert.AreEqual("(b:one^5.0 t:one^10.0) (b:two^5.0 t:two^10.0)", q.ToString());
+			
+            //Check for AND and a field
+            q = mfqp.Parse("one AND two AND foo:test");
+            Assert.AreEqual("+(b:one^5.0 t:one^10.0) +(b:two^5.0 t:two^10.0) +foo:test", q.ToString());
+			
+            q = mfqp.Parse("one^3 AND two^4");
+            Assert.AreEqual("+((b:one^5.0 t:one^10.0)^3.0) +((b:two^5.0 t:two^10.0)^4.0)", q.ToString());
+        }
+		
+        [Test]
         public virtual void  TestStaticMethod1()
 		{
 			System.String[] fields = new System.String[]{"b", "t"};
@@ -260,7 +290,7 @@ namespace Lucene.Net.QueryParser
 		}
 		
 		/// <summary> Return empty tokens for field "f1".</summary>
-		private class AnalyzerReturningNull:Analyzer
+		private class AnalyzerReturningNull : Analyzer
 		{
 			internal StandardAnalyzer stdAnalyzer = new StandardAnalyzer();
 			
@@ -280,7 +310,7 @@ namespace Lucene.Net.QueryParser
 				}
 			}
 			
-			private class EmptyTokenStream:TokenStream
+			private class EmptyTokenStream : TokenStream
 			{
 				public override Token Next()
 				{

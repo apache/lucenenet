@@ -16,17 +16,17 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -116,7 +116,8 @@ namespace Lucene.Net.Search
 				PrintHits("TestBooleanMinShouldMatch", h);  // PrintHits(NUnit.Framework.TestCase.GetName(), h);    // {{Aroush-1.9}} 'GetName()' gives us the name of the test in JUnit, how is it done in NUnit?
             }
 			Assert.AreEqual(expected, h.Length(), "result count");
-		}
+            QueryUtils.Check(q, s);
+        }
 		
 		[Test]
         public virtual void  TestAllOptional()
@@ -369,7 +370,10 @@ namespace Lucene.Net.Search
 				TopDocs top1 = s.Search(q1, null, 100);
 				TopDocs top2 = s.Search(q2, null, 100);
 				
-				// The constrained query
+                QueryUtils.Check(q1, s);
+                QueryUtils.Check(q2, s);
+				
+                // The constrained query
 				// should be a superset to the unconstrained query.
 				if (top2.totalHits > top1.totalHits)
 				{

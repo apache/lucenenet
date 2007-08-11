@@ -16,12 +16,19 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
+using MapFieldSelector = Lucene.Net.Documents.MapFieldSelector;
+using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+using Hits = Lucene.Net.Search.Hits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Query = Lucene.Net.Search.Query;
+using Searcher = Lucene.Net.Search.Searcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -75,20 +82,31 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(CollectionContains(fieldNames, "f3"));
 			Assert.IsTrue(CollectionContains(fieldNames, "f4"));
 		}
-
-        public static bool CollectionContains(System.Collections.ICollection col, System.String val)
+		
+        [Test]
+        public virtual void  TestDocument()
         {
-            for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
-            {
-                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                System.String s = fi.Key.ToString();
-                if (s == val)
-                    return true;
-            }
-            return false;
+            Directory dir1 = GetDir1();
+            Directory dir2 = GetDir2();
+            ParallelReader pr = new ParallelReader();
+            pr.Add(IndexReader.Open(dir1));
+            pr.Add(IndexReader.Open(dir2));
+			
+            Lucene.Net.Documents.Document doc11 = pr.Document(0, new MapFieldSelector(new System.String[]{"f1"}));
+            Lucene.Net.Documents.Document doc24 = pr.Document(1, new MapFieldSelector(new System.Collections.ArrayList(new System.String[]{"f4"})));
+            Lucene.Net.Documents.Document doc223 = pr.Document(1, new MapFieldSelector(new System.String[]{"f2", "f3"}));
+			
+            Assert.AreEqual(1, doc11.GetFields().Count);
+            Assert.AreEqual(1, doc24.GetFields().Count);
+            Assert.AreEqual(2, doc223.GetFields().Count);
+			
+            Assert.AreEqual("v1", doc11.Get("f1"));
+            Assert.AreEqual("v2", doc24.Get("f4"));
+            Assert.AreEqual("v2", doc223.Get("f2"));
+            Assert.AreEqual("v2", doc223.Get("f3"));
         }
 		
-		[Test]
+        [Test]
         public virtual void  TestIncompatibleIndexes()
 		{
 			// two documents:
@@ -196,5 +214,17 @@ namespace Lucene.Net.Index
 			w2.Close();
 			return dir2;
 		}
-	}
+
+        public static bool CollectionContains(System.Collections.ICollection col, System.String val)
+        {
+            for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
+            {
+                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+                System.String s = fi.Key.ToString();
+                if (s == val)
+                    return true;
+            }
+            return false;
+        }
+    }
 }

@@ -16,13 +16,14 @@
  */
 
 using System;
-using Lucene.Net.Analysis;
+
+using Lucene.Net.Store;
 using Lucene.Net.Documents;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Lucene.Net.Store;
+using Lucene.Net.QueryParsers;
 
 namespace Lucene.Net
 {

@@ -16,15 +16,16 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using Query = Lucene.Net.Search.Query;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseFilter = Lucene.Net.Analysis.LowerCaseFilter;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 
 namespace Lucene.Net.QueryParser
 {

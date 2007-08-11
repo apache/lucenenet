@@ -16,14 +16,16 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using DateField = Lucene.Net.Documents.DateField;
+using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -33,8 +35,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Otis Gospodnetic
 	/// </author>
-	/// <version>  $Revision: 150487 $
-	/// </version>
+    /// <version>  $Revision: 472959 $
+    /// </version>
 	[TestFixture]
     public class TestDateFilter
 	{
@@ -47,7 +49,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 			
-			long now = System.DateTime.Now.Ticks;;
+			long now = System.DateTime.Now.Millisecond;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the past
@@ -104,7 +106,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 			
-			long now = System.DateTime.Now.Ticks;
+			long now = System.DateTime.Now.Millisecond;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the future

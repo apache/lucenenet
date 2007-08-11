@@ -16,13 +16,15 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Lucene.Net.Index;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Lucene.Net.Index;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using Pattern = System.Text.RegularExpressions.Regex;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -316,7 +318,13 @@ namespace Lucene.Net.Search
 			sort.SetSort("string", true);
 			AssertMatches(full, queryF, sort, "IJZ");
 			
-			sort.SetSort("int");
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en")));
+            AssertMatches(full, queryF, sort, "ZJI");
+			
+            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en"), true));
+            AssertMatches(full, queryF, sort, "IJZ");
+			
+            sort.SetSort("int");
 			AssertMatches(full, queryF, sort, "IZJ");
 			
 			sort.SetSort("int", true);

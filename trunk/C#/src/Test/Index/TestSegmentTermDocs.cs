@@ -16,12 +16,14 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Directory = Lucene.Net.Store.Directory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Index
 {
@@ -31,6 +33,10 @@ namespace Lucene.Net.Index
 	{
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private Directory dir = new RAMDirectory();
+		
+        // public TestSegmentTermDocs(System.String s)
+        // {
+        // }
 		
         // This is needed if for the test to pass and mimic what happens wiht JUnit
         // For some reason, JUnit is creating a new member variable for each sub-test
@@ -86,7 +92,7 @@ namespace Lucene.Net.Index
 		{
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 3, dir));
+				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);
@@ -96,7 +102,7 @@ namespace Lucene.Net.Index
 			}
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 3, dir));
+				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);

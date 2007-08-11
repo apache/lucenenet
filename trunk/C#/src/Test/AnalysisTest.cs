@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Token = Lucene.Net.Analysis.Token;

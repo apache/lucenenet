@@ -30,6 +30,11 @@ namespace Lucene.Net.Store
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferLength = 0; // end of valid bytes
 		private int bufferPosition = 0; // next byte to read
+
+        public static int BUFFER_SIZE_ForNUnitTest
+        {
+            get { return BUFFER_SIZE; }
+        }
 		
 		public override byte ReadByte()
 		{
