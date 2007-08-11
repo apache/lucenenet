@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParsers
 			this.fields = fields;
 		}
 		
-		protected internal override Query GetFieldQuery(System.String field, System.String queryText, int slop)
+		public override Query GetFieldQuery(System.String field, System.String queryText, int slop)
 		{
 			if (field == null)
 			{
@@ -136,13 +136,13 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		protected internal override Query GetFieldQuery(System.String field, System.String queryText)
+		public override Query GetFieldQuery(System.String field, System.String queryText)
 		{
 			return GetFieldQuery(field, queryText, 0);
 		}
 		
 		
-		protected internal override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
+		public override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 		{
 			if (field == null)
 			{
@@ -156,7 +156,7 @@ namespace Lucene.Net.QueryParsers
 			return base.GetFuzzyQuery(field, termStr, minSimilarity);
 		}
 		
-		protected internal override Query GetPrefixQuery(System.String field, System.String termStr)
+		public override Query GetPrefixQuery(System.String field, System.String termStr)
 		{
 			if (field == null)
 			{
@@ -170,7 +170,7 @@ namespace Lucene.Net.QueryParsers
 			return base.GetPrefixQuery(field, termStr);
 		}
 		
-		protected internal override Query GetWildcardQuery(System.String field, System.String termStr)
+		public override Query GetWildcardQuery(System.String field, System.String termStr)
 		{
 			if (field == null)
 			{
@@ -185,7 +185,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
+		public override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			if (field == null)
 			{

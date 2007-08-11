@@ -16,12 +16,16 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Index = Lucene.Net.Documents.Field.Index;
+using Store = Lucene.Net.Documents.Field.Store;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;

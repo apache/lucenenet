@@ -61,6 +61,12 @@ namespace Lucene.Net.Index
 			get {   return fieldInfos;  }
 		}
 
+        public IndexInput ProxStream
+        {
+            get {   return proxStream;  }
+            set {   proxStream = value; }
+        }
+
 		private class Norm
 		{
 			private void  InitBlock(SegmentReader enclosingInstance)

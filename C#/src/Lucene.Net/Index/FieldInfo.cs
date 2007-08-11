@@ -48,5 +48,11 @@ namespace Lucene.Net.Index
 			this.storePositionWithTermVector = storePositionWithTermVector;
 			this.omitNorms = omitNorms;
 		}
+
+        // For testing only
+        public System.String Name
+        {
+            get { return name; }
+        }
 	}
 }

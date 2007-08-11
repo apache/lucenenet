@@ -16,17 +16,16 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using BooleanClause = Lucene.Net.Search.BooleanClause;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
+using Lucene.Net.Search;
+using Searchable = Lucene.Net.Search.Searchable;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -139,6 +138,8 @@ namespace Lucene.Net.Search.Spans
 		/// <throws>  IOException </throws>
 		protected internal virtual void  AssertHits(Searcher s, Query query, System.String description, System.String[] expectedIds, float[] expectedScores)
 		{
+            QueryUtils.Check(query, s);
+
             float tolerance = 1e-5f;
 			
             // Hits hits = searcher.search(query);

@@ -16,8 +16,11 @@
  */
 
 using System;
-using KeywordAnalyzer = Lucene.Net.Analysis.KeywordAnalyzer;
+
+using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using KeywordAnalyzer = Lucene.Net.Analysis.KeywordAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,7 +29,6 @@ using Term = Lucene.Net.Index.Term;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -132,7 +134,7 @@ namespace Lucene.Net.Search
 			searchers2[0] = new IndexSearcher(indexStoreB);
 			searchers2[1] = new IndexSearcher(indexStoreA);
 			// creating the mulitSearcher
-			Searcher mSearcher2 = GetMultiSearcherInstance(searchers2);
+			MultiSearcher mSearcher2 = GetMultiSearcherInstance(searchers2);
 			// performing the same search
 			Hits hits2 = mSearcher2.Search(query);
 			
@@ -146,7 +148,18 @@ namespace Lucene.Net.Search
 			}
 			mSearcher2.Close();
 			
-			//--------------------------------------------------------------------
+            // test the subSearcher() method:
+            Query subSearcherQuery = parser.Parse("id:doc1");
+            hits2 = mSearcher2.Search(subSearcherQuery);
+            Assert.AreEqual(2, hits2.Length());
+            Assert.AreEqual(0, mSearcher2.SubSearcher(hits2.Id(0))); // hit from searchers2[0]
+            Assert.AreEqual(1, mSearcher2.SubSearcher(hits2.Id(1))); // hit from searchers2[1]
+            subSearcherQuery = parser.Parse("id:doc2");
+            hits2 = mSearcher2.Search(subSearcherQuery);
+            Assert.AreEqual(1, hits2.Length());
+            Assert.AreEqual(1, mSearcher2.SubSearcher(hits2.Id(0))); // hit from searchers2[1]
+			
+            //--------------------------------------------------------------------
 			// scenario 3
 			//--------------------------------------------------------------------
 			

@@ -16,9 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Fieldable = Lucene.Net.Documents.Fieldable;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -31,6 +33,10 @@ namespace Lucene.Net.Index
 		private RAMDirectory dir = new RAMDirectory();
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private SegmentReader reader = null;
+		
+        // public TestSegmentReader(System.String s)
+        // {
+        // }
 		
         // This is needed if for the test to pass and mimic what happens wiht JUnit
         // For some reason, JUnit is creating a new member variable for each sub-test
@@ -78,7 +84,7 @@ namespace Lucene.Net.Index
 			//There are 2 unstored fields on the document that are not preserved across writing
 			Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(testDoc) - DocHelper.unstored.Count);
 			
-            foreach (Field field in result.Fields())
+            foreach (Lucene.Net.Documents.Field field in result.Fields())
 			{
 				Assert.IsTrue(field != null);
 				Assert.IsTrue(DocHelper.nameValues.Contains(field.Name()));
@@ -197,7 +203,7 @@ namespace Lucene.Net.Index
 			// test omit norms
 			for (int i = 0; i < DocHelper.fields.Length; i++)
 			{
-				Field f = DocHelper.fields[i];
+				Lucene.Net.Documents.Field f = DocHelper.fields[i];
 				if (f.IsIndexed())
 				{
 					Assert.AreEqual(reader.HasNorms(f.Name()), !f.GetOmitNorms());
@@ -239,7 +245,7 @@ namespace Lucene.Net.Index
 			
 			TermFreqVector[] results = reader.GetTermFreqVectors(0);
 			Assert.IsTrue(results != null);
-			Assert.IsTrue(results.Length == 2);
+			Assert.IsTrue(results.Length == 4, "We do not have 4 term freq vectors, we have: " + results.Length);
 		}
 	}
 }

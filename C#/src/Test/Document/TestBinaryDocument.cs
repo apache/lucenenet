@@ -16,15 +16,17 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Fieldable = Lucene.Net.Documents.Fieldable;
+using Field = Lucene.Net.Documents.Field;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
 	
 	/// <summary> Tests {@link Document} class.
@@ -44,10 +46,10 @@ namespace Lucene.Net.Document
 		[Test]
         public virtual void  TestBinaryFieldInIndex()
 		{
-			Field binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
-			Field binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
-			Field stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
-			Field stringFldCompressed = new Field("stringCompressed", binaryValCompressed, Field.Store.COMPRESS, Field.Index.NO, Field.TermVector.NO);
+			Lucene.Net.Documents.Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
+			Lucene.Net.Documents.Fieldable binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
+			Lucene.Net.Documents.Fieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
+			Lucene.Net.Documents.Fieldable stringFldCompressed = new Field("stringCompressed", binaryValCompressed, Field.Store.COMPRESS, Field.Index.NO, Field.TermVector.NO);
 			
 			try
 			{
@@ -68,6 +70,7 @@ namespace Lucene.Net.Document
 			doc.Add(stringFldStored);
 			doc.Add(stringFldCompressed);
 			
+            /** test for field count */
             Assert.AreEqual(4, doc.GetFieldsCount());
 			
 			/** add the doc to a ram index */

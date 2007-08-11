@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
@@ -43,8 +44,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  Tim Jones
 	/// </author>
-	/// <version>  $Id: SampleComparable.java 150348 2004-05-19 23:05:27Z tjones $
-	/// </version>
+    /// <version>  $Id: SampleComparable.java 472959 2006-11-09 16:21:50Z yonik $
+    /// </version>
 	/// <since> 1.4
 	/// </since>
 	[Serializable]

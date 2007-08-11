@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using NUnit.Framework;
 
 namespace Lucene.Net.Util

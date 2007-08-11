@@ -16,15 +16,15 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using BooleanClause = Lucene.Net.Search.BooleanClause;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Hits = Lucene.Net.Search.Hits;
-using Query = Lucene.Net.Search.Query;
+using Lucene.Net.Search;
+using Searchable = Lucene.Net.Search.Searchable;
 
 namespace Lucene.Net.Search.Spans
 {

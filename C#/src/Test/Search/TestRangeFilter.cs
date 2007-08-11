@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -31,16 +33,11 @@ namespace Lucene.Net.Search
 	/// nor does it adequately test 'negative' results.  It also does not test
 	/// that garbage in results in an Exception.
 	/// </summary>
-	public class TestRangeFilter:BaseTestRangeFilter
+    [TestFixture]
+    public class TestRangeFilter : BaseTestRangeFilter
 	{
-		public TestRangeFilter(System.String name) : base(name)
-		{
-		}
 		
-        public TestRangeFilter() : base()
-		{
-		}
-		
+        [Test]
         public virtual void  TestRangeFilterId()
 		{
 			
@@ -123,6 +120,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, result.Length(), "med,med,T,T");
 		}
 		
+        [Test]
         public virtual void  TestRangeFilterRand()
 		{
 			

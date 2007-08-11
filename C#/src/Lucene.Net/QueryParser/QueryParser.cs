@@ -402,7 +402,7 @@ namespace Lucene.Net.QueryParsers
 			return resolution;
 		}
 		
-		protected internal virtual void  AddClause(System.Collections.ArrayList clauses, int conj, int mods, Query q)
+		public virtual void  AddClause(System.Collections.ArrayList clauses, int conj, int mods, Query q)
 		{
 			bool required, prohibited;
 			
@@ -462,7 +462,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetFieldQuery(System.String field, System.String queryText)
+		public virtual Query GetFieldQuery(System.String field, System.String queryText)
 		{
 			// Use the analyzer to get all the tokens, and then build a TermQuery,
 			// PhraseQuery, or nothing based on the term count
@@ -564,7 +564,7 @@ namespace Lucene.Net.QueryParsers
 		/// </summary>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetFieldQuery(System.String field, System.String queryText, int slop)
+		public virtual Query GetFieldQuery(System.String field, System.String queryText, int slop)
 		{
 			Query query = GetFieldQuery(field, queryText);
 			
@@ -583,7 +583,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
+		public virtual Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			if (lowercaseExpandedTerms)
 			{
@@ -668,7 +668,7 @@ namespace Lucene.Net.QueryParsers
 		/// </returns>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetBooleanQuery(System.Collections.ArrayList clauses)
+		public virtual Query GetBooleanQuery(System.Collections.ArrayList clauses)
 		{
 			return GetBooleanQuery(clauses, false);
 		}
@@ -690,7 +690,7 @@ namespace Lucene.Net.QueryParsers
 		/// </returns>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetBooleanQuery(System.Collections.ArrayList clauses, bool disableCoord)
+		public virtual Query GetBooleanQuery(System.Collections.ArrayList clauses, bool disableCoord)
 		{
 			BooleanQuery query = new BooleanQuery(disableCoord);
 			for (int i = 0; i < clauses.Count; i++)
@@ -724,7 +724,7 @@ namespace Lucene.Net.QueryParsers
 		/// </returns>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetWildcardQuery(System.String field, System.String termStr)
+		public virtual Query GetWildcardQuery(System.String field, System.String termStr)
 		{
 			if ("*".Equals(field))
 			{
@@ -767,7 +767,7 @@ namespace Lucene.Net.QueryParsers
 		/// </returns>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetPrefixQuery(System.String field, System.String termStr)
+		public virtual Query GetPrefixQuery(System.String field, System.String termStr)
 		{
 			if (!allowLeadingWildcard && termStr.StartsWith("*"))
 				throw new ParseException("'*' not allowed as first character in PrefixQuery");
@@ -794,7 +794,7 @@ namespace Lucene.Net.QueryParsers
 		/// </returns>
 		/// <exception cref=""> ParseException throw in overridden method to disallow
 		/// </exception>
-		protected internal virtual Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
+		public virtual Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 		{
 			if (lowercaseExpandedTerms)
 			{

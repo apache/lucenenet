@@ -16,10 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Lucene.Net.Documents;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -70,8 +71,8 @@ namespace Lucene.Net.Search
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
 			
-			Field f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
-			Field f2 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
 			f2.SetBoost(2.0f);
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();

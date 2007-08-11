@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 
 namespace Lucene.Net.Index

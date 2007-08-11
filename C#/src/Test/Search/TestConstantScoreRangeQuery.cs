@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -73,6 +75,11 @@ namespace Lucene.Net.Search
 		{
 			Assert.AreEqual(e, a, m, SCORE_COMP_THRESH);
 		}
+		
+        static public void  AssertEquals(System.String m, int e, int a)
+        {
+            Assert.AreEqual(e, a, m);
+        }
 		
         [SetUp]
         public virtual void  SetUp()

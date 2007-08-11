@@ -16,22 +16,24 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <author>  schnee
 	/// </author>
-	/// <version>  $Id: TestBooleanPrefixQuery.java 150492 2004-09-06 22:01:49Z dnaber $
-	/// 
+    /// <version>  $Id: TestBooleanPrefixQuery.java 472959 2006-11-09 16:21:50Z yonik $
+    /// 
 	/// </version>
 	[TestFixture]
 	public class TestBooleanPrefixQuery

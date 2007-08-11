@@ -27,22 +27,22 @@ namespace Lucene.Net.Index
 	/// </author>
 	/// <version>  $rcs = ' $Id: Exp $ ' ;
 	/// </version>
-	sealed class IndexFileNames
+	sealed public class IndexFileNames
 	{
 		
 		/// <summary>Name of the index segment file </summary>
-		internal const System.String SEGMENTS = "segments";
+		public const System.String SEGMENTS = "segments";
 		
 		/// <summary>Name of the generation reference file name </summary>
-		internal const System.String SEGMENTS_GEN = "segments.gen";
+		public const System.String SEGMENTS_GEN = "segments.gen";
 		
 		/// <summary>Name of the index deletable file (only used in
 		/// pre-lockless indices) 
 		/// </summary>
-		internal const System.String DELETABLE = "deletable";
+		public const System.String DELETABLE = "deletable";
 		
 		/// <summary>Extension of norms file </summary>
-		internal const System.String NORMS_EXTENSION = "nrm";
+		public const System.String NORMS_EXTENSION = "nrm";
 		
 		/// <summary> This array contains all filename extensions used by
 		/// Lucene's index files, with two exceptions, namely the
@@ -51,13 +51,13 @@ namespace Lucene.Net.Index
 		/// Lucene's <code>segments_N</code> files do not have any
 		/// filename extension.
 		/// </summary>
-		internal static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del", "tvx", "tvd", "tvf", "gen", "nrm"};
+		public static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del", "tvx", "tvd", "tvf", "gen", "nrm"};
 		
 		/// <summary>File extensions of old-style index files </summary>
-		internal static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{"fnm", "frq", "prx", "fdx", "fdt", "tii", "tis"};
+		public static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{"fnm", "frq", "prx", "fdx", "fdt", "tii", "tis"};
 		
 		/// <summary>File extensions for term vector support </summary>
-		internal static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{"tvx", "tvd", "tvf"};
+		public static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{"tvx", "tvd", "tvf"};
 		
 		/// <summary> Computes the full file name from base, extension and
 		/// generation.  If the generation is -1, the file name is

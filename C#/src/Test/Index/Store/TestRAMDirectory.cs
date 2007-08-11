@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -27,6 +29,7 @@ using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 
 namespace Lucene.Net.Index.Store
 {
@@ -43,8 +46,54 @@ namespace Lucene.Net.Index.Store
 	[TestFixture]
     public class TestRAMDirectory
 	{
+        private class AnonymousClassThread : SupportClass.ThreadClass
+        {
+            public AnonymousClassThread(int num, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.MockRAMDirectory ramDir, TestRAMDirectory enclosingInstance)
+            {
+                InitBlock(num, writer, ramDir, enclosingInstance);
+            }
+            private void  InitBlock(int num, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.MockRAMDirectory ramDir, TestRAMDirectory enclosingInstance)
+            {
+                this.num = num;
+                this.writer = writer;
+                this.ramDir = ramDir;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private int num;
+            private Lucene.Net.Index.IndexWriter writer;
+            private Lucene.Net.Store.MockRAMDirectory ramDir;
+            private TestRAMDirectory enclosingInstance;
+            public TestRAMDirectory Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+				
+            }
+            override public void  Run()
+            {
+                for (int j = 1; j < Enclosing_Instance.docsPerThread; j++)
+                {
+                    Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+                    doc.Add(new Field("sizeContent", English.IntToEnglish(num * Enclosing_Instance.docsPerThread + j).Trim(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+                    try
+                    {
+                        writer.AddDocument(doc);
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        throw new System.SystemException("", e);
+                    }
+                    lock (ramDir)
+                    {
+                        Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+                    }
+                }
+            }
+        }
 		
-		private System.IO.FileInfo indexDir = null;
+        private System.IO.FileInfo indexDir = null;
 		
 		// add enough document so that the index will be larger than RAMDirectory.READ_BUFFER_SIZE
 		private int docsToAdd = 500;
@@ -68,7 +117,6 @@ namespace Lucene.Net.Index.Store
 				writer.AddDocument(doc);
 			}
 			Assert.AreEqual(docsToAdd, writer.DocCount());
-			writer.Optimize();
 			writer.Close();
 		}
 		
@@ -76,13 +124,16 @@ namespace Lucene.Net.Index.Store
         public virtual void  TestRAMDirectory_Renamed_Method()
 		{
 			
-			Directory dir = FSDirectory.GetDirectory(indexDir, false);
-			RAMDirectory ramDir = new RAMDirectory(dir);
+			Directory dir = FSDirectory.GetDirectory(indexDir);
+			MockRAMDirectory ramDir = new MockRAMDirectory(dir);
 			
 			// close the underlaying directory and delete the index
 			dir.Close();
 			
-			// open reader to test document count
+            // Check size
+            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+			
+            // open reader to test document count
 			IndexReader reader = IndexReader.Open(ramDir);
 			Assert.AreEqual(docsToAdd, reader.NumDocs());
 			
@@ -105,9 +156,12 @@ namespace Lucene.Net.Index.Store
 		public virtual void  TestRAMDirectoryFile()
 		{
 			
-			RAMDirectory ramDir = new RAMDirectory(indexDir);
+			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir);
 			
-			// open reader to test document count
+            // Check size
+            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+			
+            // open reader to test document count
 			IndexReader reader = IndexReader.Open(ramDir);
 			Assert.AreEqual(docsToAdd, reader.NumDocs());
 			
@@ -130,9 +184,12 @@ namespace Lucene.Net.Index.Store
         public virtual void  TestRAMDirectoryString()
 		{
 			
-			RAMDirectory ramDir = new RAMDirectory(indexDir.FullName);
+			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.FullName);
 			
-			// open reader to test document count
+            // Check size
+            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+			
+            // open reader to test document count
 			IndexReader reader = IndexReader.Open(ramDir);
 			Assert.AreEqual(docsToAdd, reader.NumDocs());
 			
@@ -150,6 +207,50 @@ namespace Lucene.Net.Index.Store
 			reader.Close();
 			searcher.Close();
 		}
+		
+        private int numThreads = 50;
+        private int docsPerThread = 40;
+		
+        [Test]
+        public virtual void  TestRAMDirectorySize()
+        {
+			
+            MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.FullName);
+            IndexWriter writer = new IndexWriter(ramDir, new WhitespaceAnalyzer(), false);
+            writer.Optimize();
+			
+            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+			
+            SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[numThreads];
+            for (int i = 0; i < numThreads; i++)
+            {
+                int num = i;
+                threads[i] = new AnonymousClassThread(num, writer, ramDir, this);
+            }
+            for (int i = 0; i < numThreads; i++)
+                threads[i].Start();
+            for (int i = 0; i < numThreads; i++)
+                threads[i].Join();
+			
+            writer.Optimize();
+            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
+			
+            writer.Close();
+        }
+		
+		[Test]
+        public virtual void  TestSerializable()
+        {
+            Directory dir = new RAMDirectory();
+            System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
+            Assert.AreEqual(0, bos.Length, "initially empty");
+            System.IO.BinaryWriter out_Renamed = new System.IO.BinaryWriter(bos);
+            long headerSize = bos.Length;
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            formatter.Serialize(out_Renamed.BaseStream, dir);
+            out_Renamed.Close();
+            Assert.IsTrue(headerSize < bos.Length, "contains more then just header");
+        }
 		
         [TearDown]
 		public virtual void  TearDown()

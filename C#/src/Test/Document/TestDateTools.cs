@@ -16,10 +16,12 @@
  */
 
 using System;
-using DateTools = Lucene.Net.Documents.DateTools;
+
 using NUnit.Framework;
 
-namespace Lucene.Net.Document
+using DateTools = Lucene.Net.Documents.DateTools;
+
+namespace Lucene.Net.Documents
 {
 	[TestFixture]
 	public class TestDateTools

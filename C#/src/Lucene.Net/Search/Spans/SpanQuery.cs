@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary>Base class for span-based queries. </summary>
 	[Serializable]
-	public abstract class SpanQuery:Query
+	public abstract class SpanQuery : Query
 	{
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
@@ -48,5 +48,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			return new SpanWeight(this, searcher);
 		}
-	}
+
+        public Weight CreateWeight_ForNUnitTest(Searcher searcher)
+        {
+            return new SpanWeight(this, searcher);
+        }
+    }
 }

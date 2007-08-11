@@ -16,14 +16,16 @@
  */
 
 using System;
-using Lucene.Net.Analysis;
+
+using NUnit.Framework;
+
+using Lucene.Net.Store;
 using Lucene.Net.Documents;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Lucene.Net.Store;
-using NUnit.Framework;
+using Lucene.Net.QueryParsers;
 
 namespace Lucene.Net
 {
@@ -92,7 +94,6 @@ namespace Lucene.Net
 			
 			writer.SetUseCompoundFile(useCompoundFiles);
 			
-			//UPGRADE_NOTE: Final was removed from the declaration of 'MAX_DOCS '. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
 			int MAX_DOCS = 225;
 			
 			for (int j = 0; j < MAX_DOCS; j++)
@@ -111,7 +112,6 @@ namespace Lucene.Net
 			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 			
 			Query query = parser.Parse(HIGH_PRIORITY);
-			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
 			hits = searcher.Search(query);
@@ -127,7 +127,6 @@ namespace Lucene.Net
 			parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
 			
 			query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
-			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
 			hits = searcher.Search(query);
@@ -140,14 +139,12 @@ namespace Lucene.Net
 		
 		private void  PrintHits(System.IO.StreamWriter out_Renamed, Hits hits)
 		{
-			//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 			out_Renamed.WriteLine(hits.Length() + " total results\n");
 			for (int i = 0; i < hits.Length(); i++)
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
 					Lucene.Net.Documents.Document d = hits.Doc(i);
-					//UPGRADE_TODO: Method 'java.io.PrintWriter.println' was converted to 'System.IO.TextWriter.WriteLine' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioPrintWriterprintln_javalangString'"
 					out_Renamed.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}

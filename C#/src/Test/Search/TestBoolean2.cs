@@ -16,15 +16,17 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
+using ParseException = Lucene.Net.QueryParsers.ParseException;
 
 namespace Lucene.Net.Search
 {
@@ -84,7 +86,8 @@ namespace Lucene.Net.Search
 		
 		public virtual Query MakeQuery(System.String queryText)
 		{
-			return (new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
+            Query q = (new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
+            return q;
 		}
 		
 		public virtual void  QueriesTest(System.String queryText, int[] expDocNrs)
@@ -214,7 +217,10 @@ namespace Lucene.Net.Search
 					Sort sort = Sort.INDEXORDER;
 					
 					BooleanQuery.SetUseScorer14(false);
-					Hits hits1 = searcher.Search(q1, sort);
+					
+                    QueryUtils.Check(q1, searcher);
+					
+                    Hits hits1 = searcher.Search(q1, sort);
 					if (hits1.Length() > 0)
 						hits1.Id(hits1.Length() - 1);
 					

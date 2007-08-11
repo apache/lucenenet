@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -28,8 +30,8 @@ namespace Lucene.Net.Util
 	/// </summary>
 	/// <author>  "Peter Mularien" <pmularien@deploy.com>
 	/// </author>
-	/// <version>  $Id: TestBitVector.java 150259 2004-03-29 22:48:07Z cutting $
-	/// </version>
+    /// <version>  $Id: TestBitVector.java 485463 2006-12-11 02:03:38Z yonik $
+    /// </version>
 	[TestFixture]
     public class TestBitVector
 	{
@@ -169,7 +171,53 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		/// <summary> Compare two BitVectors.
+        /// <summary> Test r/w when size/count cause switching between bit-set and d-gaps file formats.  </summary>
+        /// <throws>  Exception </throws>
+        [Test]
+        public virtual void  TestDgaps()
+        {
+            DoTestDgaps(1, 0, 1);
+            DoTestDgaps(10, 0, 1);
+            DoTestDgaps(100, 0, 1);
+            DoTestDgaps(1000, 4, 7);
+            DoTestDgaps(10000, 40, 43);
+            DoTestDgaps(100000, 415, 418);
+            DoTestDgaps(1000000, 3123, 3126);
+        }
+		
+        private void  DoTestDgaps(int size, int count1, int count2)
+        {
+            Directory d = new RAMDirectory();
+            BitVector bv = new BitVector(size);
+            for (int i = 0; i < count1; i++)
+            {
+                bv.Set(i);
+                Assert.AreEqual(i + 1, bv.Count());
+            }
+            bv.Write(d, "TESTBV");
+            // gradually increase number of set bits
+            for (int i = count1; i < count2; i++)
+            {
+                BitVector bv2 = new BitVector(d, "TESTBV");
+                Assert.IsTrue(DoCompare(bv, bv2));
+                bv = bv2;
+                bv.Set(i);
+                Assert.AreEqual(i + 1, bv.Count());
+                bv.Write(d, "TESTBV");
+            }
+            // now start decreasing number of set bits
+            for (int i = count2 - 1; i >= count1; i--)
+            {
+                BitVector bv2 = new BitVector(d, "TESTBV");
+                Assert.IsTrue(DoCompare(bv, bv2));
+                bv = bv2;
+                bv.Clear(i);
+                Assert.AreEqual(i, bv.Count());
+                bv.Write(d, "TESTBV");
+            }
+        }
+
+        /// <summary> Compare two BitVectors.
 		/// This should really be an equals method on the BitVector itself.
 		/// </summary>
 		/// <param name="bv">One bit vector

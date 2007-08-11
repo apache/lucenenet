@@ -14,40 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using NUnit.Framework;
-namespace Lucene.Net.Util
+
+using Query = Lucene.Net.Search.Query;
+using CheckHits = Lucene.Net.Search.CheckHits;
+
+namespace Lucene.Net.Search.Spans
 {
-	[TestFixture]
-	public class StringHelperTest
+	
+	
+	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
+    public class TestSpanExplanationsOfNonMatches : TestSpanExplanations
 	{
-		[TestFixtureSetUp]
-		protected virtual void  SetUp()
-		{
-		}
 		
-        [TestFixtureTearDown]
-		protected virtual void  TearDown()
+		/// <summary> Overrides superclass to ignore matches and focus on non-matches
+		/// 
+		/// </summary>
+		/// <seealso cref="CheckHits.checkNoMatchExplanations">
+		/// </seealso>
+		public override void  Qtest(Query q, int[] expDocNrs)
 		{
-			
-		}
-		
-        [Test]
-		public virtual void  TestStringDifference()
-		{
-			System.String test1 = "test";
-			System.String test2 = "testing";
-			
-			int result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 4);
-			
-			test2 = "foo";
-			result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 0);
-			
-			test2 = "test";
-			result = StringHelper.StringDifference(test1, test2);
-			Assert.IsTrue(result == 4);
+			CheckHits.CheckNoMatchExplanations(q, FIELD, searcher, expDocNrs);
 		}
 	}
 }

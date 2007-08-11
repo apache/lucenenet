@@ -27,15 +27,26 @@ namespace Lucene.Net.Store
 	/// </summary>
 	/// <version>  $Id: RAMDirectory.java 503911 2007-02-05 22:49:42Z dnaber $
 	/// </version>
-	[Serializable]
-	public class RAMDirectory : Directory
-	{
+    [Serializable]
+    public class RAMDirectory : Directory
+    {
 		
-		private const long serialVersionUID = 1L;
+        private const long serialVersionUID = 1L;
 		
-		internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
-		internal long sizeInBytes = 0;
+        internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
+        internal long sizeInBytes = 0;
 		
+        public System.Collections.Hashtable fileMap_ForNUnitTest
+        {
+            get { return fileMap; }
+        }
+
+        public long sizeInBytes_ForNUnitTest
+        {
+            get { return sizeInBytes; }
+            set { sizeInBytes = value; }
+        }
+
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
 		// *****

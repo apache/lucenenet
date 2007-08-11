@@ -16,11 +16,13 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Index
 {

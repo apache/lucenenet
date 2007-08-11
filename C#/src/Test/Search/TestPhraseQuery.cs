@@ -16,14 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StopAnalyzer = Lucene.Net.Analysis.StopAnalyzer;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
@@ -87,7 +84,7 @@ namespace Lucene.Net.Search
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			doc.Add(new Field("field", "one two three four five", Field.Store.YES, Field.Index.TOKENIZED));
 			doc.Add(new Field("repeated", "this is a repeated field - first part", Field.Store.YES, Field.Index.TOKENIZED));
-			Field repeatedField = new Field("repeated", "second part of a repeated field", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable repeatedField = new Field("repeated", "second part of a repeated field", Field.Store.YES, Field.Index.TOKENIZED);
 			doc.Add(repeatedField);
 			writer.AddDocument(doc);
 			
@@ -113,7 +110,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "five"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length());
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		[Test]
         public virtual void  TestBarelyCloseEnough()
@@ -123,7 +121,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "five"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length());
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		/// <summary> Ensures slop of 0 works for exact matches, but not reversed</summary>
 		[Test]
@@ -134,13 +133,16 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "five"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length(), "exact match");
+            QueryUtils.Check(query, searcher);
+
 			
 			query = new PhraseQuery();
 			query.Add(new Term("field", "two"));
 			query.Add(new Term("field", "one"));
 			hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length(), "reverse not exact");
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		[Test]
         public virtual void  TestSlop1()
@@ -151,6 +153,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "two"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length(), "in order");
+            QueryUtils.Check(query, searcher);
+
 			
 			// Ensures slop of 1 does not work for phrases out of order;
 			// must be at least 2.
@@ -160,7 +164,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "one"));
 			hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length(), "reversed, slop not 2 or more");
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		/// <summary> As long as slop is at least 2, terms can be reversed</summary>
 		[Test]
@@ -171,6 +176,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "one"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length(), "just sloppy enough");
+            QueryUtils.Check(query, searcher);
+
 			
 			query = new PhraseQuery();
 			query.SetSlop(2);
@@ -178,7 +185,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "one"));
 			hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length(), "not sloppy enough");
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		/// <summary> slop is the total number of positional moves allowed
 		/// to line up a phrase
@@ -192,6 +200,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "five"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length(), "two total moves");
+            QueryUtils.Check(query, searcher);
+
 			
 			query = new PhraseQuery();
 			query.SetSlop(5); // it takes six moves to match this phrase
@@ -200,11 +210,14 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "one"));
 			hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length(), "slop of 5 not close enough");
+            QueryUtils.Check(query, searcher);
+
 			
 			query.SetSlop(6);
 			hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length(), "slop of 6 just right");
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		[Test]
         public virtual void  TestPhraseQueryWithStopAnalyzer()
@@ -225,6 +238,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "words"));
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length());
+            QueryUtils.Check(query, searcher);
+
 			
 			// currently StopAnalyzer does not leave "holes", so this matches.
 			query = new PhraseQuery();
@@ -232,6 +247,8 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "here"));
 			hits = searcher.Search(query);
 			Assert.AreEqual(1, hits.Length());
+            QueryUtils.Check(query, searcher);
+
 			
 			searcher.Close();
 		}
@@ -261,6 +278,8 @@ namespace Lucene.Net.Search
 			phraseQuery.Add(new Term("source", "info"));
 			Hits hits = searcher.Search(phraseQuery);
 			Assert.AreEqual(2, hits.Length());
+            QueryUtils.Check(phraseQuery, searcher);
+
 			
 			TermQuery termQuery = new TermQuery(new Term("contents", "foobar"));
 			BooleanQuery booleanQuery = new BooleanQuery();
@@ -268,6 +287,8 @@ namespace Lucene.Net.Search
 			booleanQuery.Add(phraseQuery, BooleanClause.Occur.MUST);
 			hits = searcher.Search(booleanQuery);
 			Assert.AreEqual(1, hits.Length());
+            QueryUtils.Check(termQuery, searcher);
+
 			
 			searcher.Close();
 			
@@ -298,6 +319,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(3, hits.Length());
 			hits = searcher.Search(phraseQuery);
 			Assert.AreEqual(2, hits.Length());
+
 			
 			booleanQuery = new BooleanQuery();
 			booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
@@ -310,6 +332,8 @@ namespace Lucene.Net.Search
 			booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
 			hits = searcher.Search(booleanQuery);
 			Assert.AreEqual(2, hits.Length());
+            QueryUtils.Check(booleanQuery, searcher);
+
 			
 			searcher.Close();
 			directory.Close();
@@ -351,7 +375,8 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits.Id(1));
 			Assert.AreEqual(0.31, hits.Score(2), 0.01);
 			Assert.AreEqual(2, hits.Id(2));
-		}
+            QueryUtils.Check(query, searcher);
+        }
 		
 		[Test]
         public virtual void  TestWrappedPhrase()
@@ -364,6 +389,7 @@ namespace Lucene.Net.Search
 			
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length());
-		}
+            QueryUtils.Check(query, searcher);
+        }
 	}
 }

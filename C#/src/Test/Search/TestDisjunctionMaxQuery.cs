@@ -16,6 +16,9 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -24,7 +27,6 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -148,6 +150,7 @@ namespace Lucene.Net.Search
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
 			q.Add(Tq("hed", "albino"));
 			q.Add(Tq("hed", "elephant"));
+            QueryUtils.Check(q, s);
 			
 			Hits h = s.Search(q);
 			
@@ -175,6 +178,8 @@ namespace Lucene.Net.Search
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
 			q.Add(Tq("dek", "albino"));
 			q.Add(Tq("dek", "elephant"));
+            QueryUtils.Check(q, s);
+
 			
 			Hits h = s.Search(q);
 			
@@ -203,6 +208,8 @@ namespace Lucene.Net.Search
 			q.Add(Tq("hed", "elephant"));
 			q.Add(Tq("dek", "albino"));
 			q.Add(Tq("dek", "elephant"));
+            QueryUtils.Check(q, s);
+
 			
 			Hits h = s.Search(q);
 			
@@ -229,6 +236,8 @@ namespace Lucene.Net.Search
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
 			q.Add(Tq("dek", "albino"));
 			q.Add(Tq("dek", "elephant"));
+            QueryUtils.Check(q, s);
+			
 			
 			Hits h = s.Search(q);
 			
@@ -259,14 +268,17 @@ namespace Lucene.Net.Search
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
                 q.Add(q1, BooleanClause.Occur.MUST); //false,false);
+                QueryUtils.Check(q1, s);
             }
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.MUST); //false,false);
+                QueryUtils.Check(q2, s);
             }
 			
+            QueryUtils.Check(q, s);
 			
 			Hits h = s.Search(q);
 			
@@ -303,6 +315,7 @@ namespace Lucene.Net.Search
 				q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
             }
+            QueryUtils.Check(q, s);
 			
 			
 			Hits h = s.Search(q);
@@ -344,6 +357,7 @@ namespace Lucene.Net.Search
 				q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
             }
+            QueryUtils.Check(q, s);
 			
 			
 			Hits h = s.Search(q);
@@ -396,6 +410,7 @@ namespace Lucene.Net.Search
 				q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, BooleanClause.Occur.SHOULD); //false,false);
             }
+            QueryUtils.Check(q, s);
 			
 			
 			Hits h = s.Search(q);
