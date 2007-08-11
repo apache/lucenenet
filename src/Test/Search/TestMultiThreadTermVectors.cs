@@ -16,10 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < numDocs; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				Field fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.YES);
+				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.YES);
 				doc.Add(fld);
 				writer.AddDocument(doc);
 			}
@@ -184,16 +185,16 @@ namespace Lucene.Net.Search
 			long start = 0L;
 			for (int docId = 0; docId < numDocs; docId++)
 			{
-				start = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+				start = System.DateTime.Now.Millisecond;
 				TermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
-				timeElapsed += (System.DateTime.Now.Ticks - 621355968000000000) / 10000 - start;
+				timeElapsed += System.DateTime.Now.Millisecond - start;
 				
 				// verify vectors result
 				VerifyVectors(vectors, docId);
 				
-				start = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+				start = System.DateTime.Now.Millisecond;
 				TermFreqVector vector = reader.GetTermFreqVector(docId, "field");
-				timeElapsed += (System.DateTime.Now.Ticks - 621355968000000000) / 10000 - start;
+				timeElapsed += System.DateTime.Now.Millisecond - start;
 				
 				vectors = new TermFreqVector[1];
 				vectors[0] = vector;

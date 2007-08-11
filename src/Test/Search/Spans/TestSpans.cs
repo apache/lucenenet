@@ -16,16 +16,18 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Query = Lucene.Net.Search.Query;
+using CheckHits = Lucene.Net.Search.CheckHits;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using CheckHits = Lucene.Net.Search.CheckHits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -61,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 		
 		private void  CheckHits(Query query, int[] results)
 		{
-			Lucene.Net.Search.CheckHits.CheckHits_Renamed_Method(query, field, searcher, results);
+			Lucene.Net.Search.CheckHits.CheckHits_Renamed(query, field, searcher, results);
 		}
 		
 		private void  OrderedSlopTest3SQ(SpanQuery q1, SpanQuery q2, SpanQuery q3, int slop, int[] expectedDocs)
@@ -190,5 +192,86 @@ namespace Lucene.Net.Search.Spans
 			
 			Assert.IsFalse(spans.Next(), "third range");
 		}
-	}
+		
+		
+        private Spans OrSpans(System.String[] terms)
+        {
+            SpanQuery[] sqa = new SpanQuery[terms.Length];
+            for (int i = 0; i < terms.Length; i++)
+            {
+                sqa[i] = MakeSpanTermQuery(terms[i]);
+            }
+            return (new SpanOrQuery(sqa)).GetSpans(searcher.GetIndexReader());
+        }
+		
+        private void  TstNextSpans(Spans spans, int doc, int start, int end)
+        {
+            Assert.IsTrue(spans.Next(), "next");
+            Assert.AreEqual(doc, spans.Doc(), "doc");
+            Assert.AreEqual(start, spans.Start(), "start");
+            Assert.AreEqual(end, spans.End(), "end");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrEmpty()
+        {
+            Spans spans = OrSpans(new System.String[0]);
+            Assert.IsFalse(spans.Next(), "empty next");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrSingle()
+        {
+            Spans spans = OrSpans(new System.String[]{"w5"});
+            TstNextSpans(spans, 0, 4, 5);
+            Assert.IsFalse(spans.Next(), "final next");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrDouble()
+        {
+            Spans spans = OrSpans(new System.String[]{"w5", "yy"});
+            TstNextSpans(spans, 0, 4, 5);
+            TstNextSpans(spans, 2, 3, 4);
+            TstNextSpans(spans, 3, 4, 5);
+            TstNextSpans(spans, 7, 3, 4);
+            Assert.IsFalse(spans.Next(), "final next");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrDoubleSkip()
+        {
+            Spans spans = OrSpans(new System.String[]{"w5", "yy"});
+            Assert.IsTrue(spans.SkipTo(3), "initial skipTo");
+            Assert.AreEqual(3, spans.Doc(), "doc");
+            Assert.AreEqual(4, spans.Start(), "start");
+            Assert.AreEqual(5, spans.End(), "end");
+            TstNextSpans(spans, 7, 3, 4);
+            Assert.IsFalse(spans.Next(), "final next");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrUnused()
+        {
+            Spans spans = OrSpans(new System.String[]{"w5", "unusedTerm", "yy"});
+            TstNextSpans(spans, 0, 4, 5);
+            TstNextSpans(spans, 2, 3, 4);
+            TstNextSpans(spans, 3, 4, 5);
+            TstNextSpans(spans, 7, 3, 4);
+            Assert.IsFalse(spans.Next(), "final next");
+        }
+		
+        [Test]
+        public virtual void  TestSpanOrTripleSameDoc()
+        {
+            Spans spans = OrSpans(new System.String[]{"t1", "t2", "t3"});
+            TstNextSpans(spans, 11, 0, 1);
+            TstNextSpans(spans, 11, 1, 2);
+            TstNextSpans(spans, 11, 2, 3);
+            TstNextSpans(spans, 11, 3, 4);
+            TstNextSpans(spans, 11, 4, 5);
+            TstNextSpans(spans, 11, 5, 6);
+            Assert.IsFalse(spans.Next(), "final next");
+        }
+    }
 }

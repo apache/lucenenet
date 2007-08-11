@@ -16,13 +16,14 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Lucene.Net.Documents;
 using Similarity = Lucene.Net.Search.Similarity;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
@@ -63,9 +64,12 @@ namespace Lucene.Net.Index
 			}
 		}
 		private RAMDirectory dir;
-
-
-		[SetUp]
+		
+        // public TestDocumentWriter(System.String s)
+        // {
+        // }
+		
+        [SetUp]
         public virtual void  SetUp()
 		{
 			dir = new RAMDirectory();

@@ -16,10 +16,12 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Document = Lucene.Net.Documents.Document;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +34,11 @@ namespace Lucene.Net.Index
 		
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		
-		[SetUp]
+        // public TestFieldInfos(System.String s)
+        // {
+        // }
+		
+        [SetUp]
         public virtual void  SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);

@@ -16,11 +16,13 @@
  */
 
 using System;
+
 using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net
 {
@@ -52,7 +54,11 @@ namespace Lucene.Net
 			if (ram)
 				store = new RAMDirectory();
 			else
-				store = FSDirectory.GetDirectory("test.store", true);
+			{
+				System.String dirName = "test.store";
+				_TestUtil.RmDir(dirName);
+				store = FSDirectory.GetDirectory(dirName);
+			}
 			
 			int LENGTH_MASK = 0xFFF;
 
@@ -94,7 +100,7 @@ namespace Lucene.Net
 			start = System.DateTime.Now;
 			
 			if (!ram)
-				store = FSDirectory.GetDirectory("test.store", false);
+				store = FSDirectory.GetDirectory("test.store");
 			
 			for (i = 0; i < count; i++)
 			{

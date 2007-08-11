@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		internal RAMOutputStream(RAMFile f)
+		public /*internal*/ RAMOutputStream(RAMFile f)
 		{
 			file = f;
 		}

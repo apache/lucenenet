@@ -912,7 +912,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetSegmentCount()
+		public int GetSegmentCount()
 		{
 			lock (this)
 			{
@@ -921,7 +921,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetRamSegmentCount()
+		public int GetRamSegmentCount()
 		{
 			lock (this)
 			{
@@ -930,7 +930,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetDocCount(int i)
+		public int GetDocCount(int i)
 		{
 			lock (this)
 			{
@@ -2049,7 +2049,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetBufferedDeleteTermsSize()
+		public int GetBufferedDeleteTermsSize()
 		{
 			lock (this)
 			{
@@ -2058,7 +2058,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetNumBufferedDeleteTerms()
+		public int GetNumBufferedDeleteTerms()
 		{
 			lock (this)
 			{

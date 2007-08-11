@@ -16,10 +16,12 @@
  */
 
 using System;
+
 using NUnit.Framework;
-using Document = Lucene.Net.Documents.Document;
+
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Index
 {
@@ -41,6 +43,10 @@ namespace Lucene.Net.Index
 		private System.String merge2Segment = "test-2";
 		private SegmentReader reader2 = null;
 		
+		
+        // public TestSegmentMerger(System.String s)
+        // {
+        // }
 		
         // This is needed if for the test to pass and mimic what happens wiht JUnit
         // For some reason, JUnit is creating a new member variable for each sub-test
@@ -95,7 +101,7 @@ namespace Lucene.Net.Index
 			merger.CloseReaders();
 			Assert.IsTrue(docsMerged == 2);
 			//Should be able to open a new SegmentReader against the new directory
-			SegmentReader mergedReader = SegmentReader.Get(new SegmentInfo(mergedSegment, docsMerged, mergedDir));
+			SegmentReader mergedReader = SegmentReader.Get(new SegmentInfo(mergedSegment, docsMerged, mergedDir, false, true));
 			Assert.IsTrue(mergedReader != null);
 			Assert.IsTrue(mergedReader.NumDocs() == 2);
 			Lucene.Net.Documents.Document newDoc1 = mergedReader.Document(0);
@@ -113,7 +119,7 @@ namespace Lucene.Net.Index
 			System.Collections.ICollection stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(stored != null);
 			//System.out.println("stored size: " + stored.size());
-			Assert.IsTrue(stored.Count == 2);
+			Assert.IsTrue(stored.Count == 4, "We do not have 4 fields that were indexed with term vector");
 			
 			TermFreqVector vector = mergedReader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
 			Assert.IsTrue(vector != null);

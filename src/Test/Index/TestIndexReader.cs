@@ -16,14 +16,21 @@
  */
 
 using System;
+
 using NUnit.Framework;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Hits = Lucene.Net.Search.Hits;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using _TestUtil = Lucene.Net.Util._TestUtil;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 
 namespace Lucene.Net.Index
 {
@@ -41,7 +48,11 @@ namespace Lucene.Net.Index
 			//        TestRunner.run (new TestIndexReader("testFilesOpenClose"));
 		}
 		
-		public virtual void  TestIsCurrent()
+        // public TestIndexReader(System.String name)
+        // {
+        // }
+		
+        public virtual void  TestIsCurrent()
 		{
 			RAMDirectory d = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(d, new StandardAnalyzer(), true);
@@ -220,22 +231,105 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(100, deleted, "deleted count");
 			Assert.AreEqual(100, reader.DocFreq(searchTerm), "deleted docFreq");
 			AssertTermDocsCount("deleted termDocs", reader, searchTerm, 0);
-			reader.Close();
 			
-			// CREATE A NEW READER and re-test
+            // open a 2nd reader to make sure first reader can
+            // commit its changes (.del) while second reader
+            // is open:
+            IndexReader reader2 = IndexReader.Open(dir);
+            reader.Close();
+			
+            // CREATE A NEW READER and re-test
 			reader = IndexReader.Open(dir);
 			Assert.AreEqual(100, reader.DocFreq(searchTerm), "deleted docFreq");
 			AssertTermDocsCount("deleted termDocs", reader, searchTerm, 0);
 			reader.Close();
 		}
 		
-		[Test]
+        // Make sure you can set norms & commit even if a reader
+        // is open against the index:
+        [Test]
+        public virtual void  TestWritingNorms()
+        {
+            //UPGRADE_ISSUE: Method 'java.lang.System.getProperty' was not converted. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1000_javalangSystem'"
+            System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
+            if (tempDir == null)
+                throw new System.IO.IOException("tempDir undefined, cannot run test");
+			
+            System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestnormwriter"));
+            Directory dir = FSDirectory.GetDirectory(indexDir);
+            IndexWriter writer = null;
+            IndexReader reader = null;
+            Term searchTerm = new Term("content", "aaa");
+			
+            //  add 1 documents with term : aaa
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDoc(writer, searchTerm.Text());
+            writer.Close();
+			
+            //  now open reader & set norm for doc 0
+            reader = IndexReader.Open(dir);
+            reader.SetNorm(0, "content", (float) 2.0);
+			
+            // we should be holding the write lock now:
+            Assert.IsTrue(IndexReader.IsLocked(dir), "locked");
+			
+            reader.Commit();
+			
+            // we should not be holding the write lock now:
+            Assert.IsTrue(!IndexReader.IsLocked(dir), "not locked");
+			
+            // open a 2nd reader:
+            IndexReader reader2 = IndexReader.Open(dir);
+			
+            // set norm again for doc 0
+            reader.SetNorm(0, "content", (float) 3.0);
+            Assert.IsTrue(IndexReader.IsLocked(dir), "locked");
+			
+            reader.Close();
+			
+            // we should not be holding the write lock now:
+            Assert.IsTrue(!IndexReader.IsLocked(dir), "not locked");
+			
+            reader2.Close();
+            dir.Close();
+			
+            RmDir(indexDir);
+        }
+		
+		
+        [Test]
 		public virtual void  TestDeleteReaderWriterConflictUnoptimized()
 		{
 			DeleteReaderWriterConflict(false);
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  TestOpenEmptyDirectory()
+        {
+            System.String dirName = "test.empty";
+            System.IO.FileInfo fileDirName = new System.IO.FileInfo(dirName);
+            bool tmpBool;
+            if (System.IO.File.Exists(fileDirName.FullName))
+                tmpBool = true;
+            else
+                tmpBool = System.IO.Directory.Exists(fileDirName.FullName);
+            if (!tmpBool)
+            {
+                System.IO.Directory.CreateDirectory(fileDirName.FullName);
+            }
+            try
+            {
+                IndexReader reader = IndexReader.Open(fileDirName);
+                Assert.Fail("opening IndexReader on empty directory failed to produce FileNotFoundException");
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                // GOOD
+            }
+            RmDir(fileDirName);
+        }
+		
+        [Test]
         public virtual void  TestDeleteReaderWriterConflictOptimized()
 		{
 			DeleteReaderWriterConflict(true);
@@ -244,7 +338,7 @@ namespace Lucene.Net.Index
 		private void  DeleteReaderWriterConflict(bool optimize)
 		{
 			//Directory dir = new RAMDirectory();
-			Directory dir = GetDirectory(true);
+			Directory dir = GetDirectory();
 			
 			Term searchTerm = new Term("content", "aaa");
 			Term searchTerm2 = new Term("content", "bbb");
@@ -327,38 +421,65 @@ namespace Lucene.Net.Index
 			reader.Close();
 		}
 		
-		private Directory GetDirectory(bool create)
+        [Test]
+        public virtual void  TestFilesOpenClose()
+        {
+            // Create initial data set
+            System.IO.FileInfo dirFile = new System.IO.FileInfo(System.IO.Path.Combine("tempDir", "testIndex"));
+            Directory dir = GetDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDoc(writer, "test");
+            writer.Close();
+            dir.Close();
+			
+            // Try to erase the data - this ensures that the writer closed all files
+            _TestUtil.RmDir(dirFile);
+            dir = GetDirectory();
+			
+            // Now create the data set again, just as before
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDoc(writer, "test");
+            writer.Close();
+            dir.Close();
+			
+            // Now open existing directory and test that reader closes all files
+            dir = GetDirectory();
+            IndexReader reader1 = IndexReader.Open(dir);
+            reader1.Close();
+            dir.Close();
+			
+            // The following will fail if reader did not Close
+            // all files
+            _TestUtil.RmDir(dirFile);
+        }
+		
+		public virtual void  testLastModified()
 		{
-			return FSDirectory.GetDirectory(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"), create);
+			Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
+			Directory dir = new RAMDirectory();
+			Assert.IsFalse(IndexReader.IndexExists(dir));
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			Assert.IsTrue(IndexReader.IsLocked(dir)); // writer open, so dir is locked
+			writer.Close();
+			Assert.IsTrue(IndexReader.IndexExists(dir));
+			IndexReader reader = IndexReader.Open(dir);
+			Assert.IsFalse(IndexReader.IsLocked(dir)); // reader only, no lock
+			long version = IndexReader.LastModified(dir);
+			reader.Close();
+			// modify index and check version has been
+			// incremented:
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDocumentWithFields(writer);
+			writer.Close();
+			reader = IndexReader.Open(dir);
+			Assert.IsTrue(version <= IndexReader.LastModified(dir), "old lastModified is " + version + "; new lastModified is " + IndexReader.LastModified(dir));
+			reader.Close();
 		}
 		
-		[Test]
-        public virtual void  TestFilesOpenClose()
+        private Directory GetDirectory()
 		{
-			// Create initial data set
-			Directory dir = GetDirectory(true);
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			AddDoc(writer, "test");
-			writer.Close();
-			dir.Close();
-			
-			// Try to erase the data - this ensures that the writer closed all files
-			dir = GetDirectory(true);
-			
-			// Now create the data set again, just as before
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			AddDoc(writer, "test");
-			writer.Close();
-			dir.Close();
-			
-			// Now open existing directory and test that reader closes all files
-			dir = GetDirectory(false);
-			IndexReader reader1 = IndexReader.Open(dir);
-			reader1.Close();
-			dir.Close();
-			
-			// The following will fail if reader did not close all files
-			dir = GetDirectory(true);
+            return FSDirectory.GetDirectory(new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex")));
 		}
 		
 		[Test]
@@ -377,15 +498,41 @@ namespace Lucene.Net.Index
 			long version = IndexReader.LastModified(dir);
 			reader.Close();
 			// modify index and check version has been incremented:
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            // incremented:
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			AddDocumentWithFields(writer);
 			writer.Close();
 			reader = IndexReader.Open(dir);
-			Assert.IsTrue(version < IndexReader.GetCurrentVersion(dir));
-			reader.Close();
+            Assert.IsTrue(version <= IndexReader.LastModified(dir), "old lastModified is " + version + "; new lastModified is " + IndexReader.LastModified(dir));
+            reader.Close();
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  TestVersion()
+        {
+            Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
+            Directory dir = new RAMDirectory();
+            Assert.IsFalse(IndexReader.IndexExists(dir));
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDocumentWithFields(writer);
+            Assert.IsTrue(IndexReader.IsLocked(dir)); // writer open, so dir is locked
+            writer.Close();
+            Assert.IsTrue(IndexReader.IndexExists(dir));
+            IndexReader reader = IndexReader.Open(dir);
+            Assert.IsFalse(IndexReader.IsLocked(dir)); // reader only, no lock
+            long version = IndexReader.GetCurrentVersion(dir);
+            reader.Close();
+            // modify index and check version has been
+            // incremented:
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDocumentWithFields(writer);
+            writer.Close();
+            reader = IndexReader.Open(dir);
+            Assert.IsTrue(version < IndexReader.GetCurrentVersion(dir), "old version is " + version + "; new version is " + IndexReader.GetCurrentVersion(dir));
+            reader.Close();
+        }
+		
+        [Test]
         public virtual void  TestLock()
 		{
 			Directory dir = new RAMDirectory();
@@ -427,7 +574,45 @@ namespace Lucene.Net.Index
 			reader.Close();
 		}
 		
-		[Test]
+        [Test]
+        public virtual void  TestUndeleteAllAfterClose()
+        {
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDocumentWithFields(writer);
+            AddDocumentWithFields(writer);
+            writer.Close();
+            IndexReader reader = IndexReader.Open(dir);
+            reader.DeleteDocument(0);
+            reader.DeleteDocument(1);
+            reader.Close();
+            reader = IndexReader.Open(dir);
+            reader.UndeleteAll();
+            Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
+            reader.Close();
+        }
+		
+        [Test]
+        public virtual void  TestUndeleteAllAfterCloseThenReopen()
+        {
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDocumentWithFields(writer);
+            AddDocumentWithFields(writer);
+            writer.Close();
+            IndexReader reader = IndexReader.Open(dir);
+            reader.DeleteDocument(0);
+            reader.DeleteDocument(1);
+            reader.Close();
+            reader = IndexReader.Open(dir);
+            reader.UndeleteAll();
+            reader.Close();
+            reader = IndexReader.Open(dir);
+            Assert.AreEqual(2, reader.NumDocs()); // nothing has really been deleted thanks to undeleteAll()
+            reader.Close();
+        }
+		
+        [Test]
         public virtual void  TestDeleteReaderReaderConflictUnoptimized()
 		{
 			DeleteReaderReaderConflict(false);
@@ -439,9 +624,342 @@ namespace Lucene.Net.Index
 			DeleteReaderReaderConflict(true);
 		}
 		
-		private void  DeleteReaderReaderConflict(bool optimize)
+        /// <summary> Make sure if reader tries to commit but hits disk
+        /// full that reader remains consistent and usable.
+        /// </summary>
+        [Test]
+        public virtual void  TestDiskFull()
+        {
+			
+            bool debug = false;
+            Term searchTerm = new Term("content", "aaa");
+            int START_COUNT = 157;
+            int END_COUNT = 144;
+			
+            // First build up a starting index:
+            RAMDirectory startDir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(startDir, new WhitespaceAnalyzer(), true);
+            for (int i = 0; i < 157; i++)
+            {
+                Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+                d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED));
+                d.Add(new Field("content", "aaa " + i, Field.Store.NO, Field.Index.TOKENIZED));
+                writer.AddDocument(d);
+            }
+            writer.Close();
+			
+            long diskUsage = startDir.SizeInBytes();
+            long diskFree = diskUsage + 100;
+			
+            System.IO.IOException err = null;
+			
+            bool done = false;
+			
+            // Iterate w/ ever increasing free disk space:
+            while (!done)
+            {
+                MockRAMDirectory dir = new MockRAMDirectory(startDir);
+                IndexReader reader = IndexReader.Open(dir);
+				
+                // For each disk size, first try to commit against
+                // dir that will hit random IOExceptions & disk
+                // full; after, give it infinite disk space & turn
+                // off random IOExceptions & retry w/ same reader:
+                bool success = false;
+				
+                for (int x = 0; x < 2; x++)
+                {
+					
+                    double rate = 0.05;
+                    double diskRatio = ((double) diskFree) / diskUsage;
+                    long thisDiskFree;
+                    System.String testName;
+					
+                    if (0 == x)
+                    {
+                        thisDiskFree = diskFree;
+                        if (diskRatio >= 2.0)
+                        {
+                            rate /= 2;
+                        }
+                        if (diskRatio >= 4.0)
+                        {
+                            rate /= 2;
+                        }
+                        if (diskRatio >= 6.0)
+                        {
+                            rate = 0.0;
+                        }
+                        if (debug)
+                        {
+                            System.Console.Out.WriteLine("\ncycle: " + diskFree + " bytes");
+                        }
+                        testName = "disk full during reader.Close() @ " + thisDiskFree + " bytes";
+                    }
+                    else
+                    {
+                        thisDiskFree = 0;
+                        rate = 0.0;
+                        if (debug)
+                        {
+                            System.Console.Out.WriteLine("\ncycle: same writer: unlimited disk space");
+                        }
+                        testName = "reader re-use after disk full";
+                    }
+					
+                    dir.SetMaxSizeInBytes(thisDiskFree);
+                    dir.SetRandomIOExceptionRate(rate, diskFree);
+					
+                    try
+                    {
+                        if (0 == x)
+                        {
+                            int docId = 12;
+                            for (int i = 0; i < 13; i++)
+                            {
+                                reader.DeleteDocument(docId);
+                                reader.SetNorm(docId, "contents", (float) 2.0);
+                                docId += 12;
+                            }
+                        }
+                        reader.Close();
+                        success = true;
+                        if (0 == x)
+                        {
+                            done = true;
+                        }
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        if (debug)
+                        {
+                            System.Console.Out.WriteLine("  hit IOException: " + e);
+                        }
+                        err = e;
+                        if (1 == x)
+                        {
+                            System.Console.Error.WriteLine(e.StackTrace);
+                            Assert.Fail(testName + " hit IOException after disk space was freed up");
+                        }
+                    }
+					
+                    // Whether we succeeded or failed, check that all
+                    // un-referenced files were in fact deleted (ie,
+                    // we did not create garbage).  Just create a
+                    // new IndexFileDeleter, have it delete
+                    // unreferenced files, then verify that in fact
+                    // no files were deleted:
+                    System.String[] startFiles = dir.List();
+                    SegmentInfos infos = new SegmentInfos();
+                    infos.Read(dir);
+                    IndexFileDeleter d = new IndexFileDeleter(infos, dir);
+                    d.FindDeletableFiles();
+                    d.DeleteFiles();
+                    System.String[] endFiles = dir.List();
+					
+                    System.Array.Sort(startFiles);
+                    System.Array.Sort(endFiles);
+					
+                    //for(int i=0;i<startFiles.length;i++) {
+                    //  System.out.println("  startFiles: " + i + ": " + startFiles[i]);
+                    //}
+					
+                    if (!startFiles.Equals(endFiles))
+                    {
+                        System.String successStr;
+                        if (success)
+                        {
+                            successStr = "success";
+                        }
+                        else
+                        {
+                            successStr = "IOException";
+                            System.Console.Error.WriteLine(err.StackTrace);
+                        }
+                        Assert.Fail("reader.Close() failed to delete unreferenced files after " + successStr + " (" + diskFree + " bytes): before delete:\n    " + ArrayToString(startFiles) + "\n  after delete:\n    " + ArrayToString(endFiles));
+                    }
+					
+                    // Finally, verify index is not corrupt, and, if
+                    // we succeeded, we see all docs changed, and if
+                    // we failed, we see either all docs or no docs
+                    // changed (transactional semantics):
+                    IndexReader newReader = null;
+                    try
+                    {
+                        newReader = IndexReader.Open(dir);
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        System.Console.Error.WriteLine(e.StackTrace);
+                        Assert.Fail(testName + ":exception when creating IndexReader after disk full during Close: " + e);
+                    }
+                    /*
+                    int result = newReader.docFreq(searchTerm);
+                    if (success) {
+                    if (result != END_COUNT) {
+                    fail(testName + ": method did not throw exception but docFreq('aaa') is " + result + " instead of expected " + END_COUNT);
+                    }
+                    } else {
+                    // On hitting exception we still may have added
+                    // all docs:
+                    if (result != START_COUNT && result != END_COUNT) {
+                    err.printStackTrace();
+                    fail(testName + ": method did throw exception but docFreq('aaa') is " + result + " instead of expected " + START_COUNT + " or " + END_COUNT);
+                    }
+                    }
+                    */
+					
+                    IndexSearcher searcher = new IndexSearcher(newReader);
+                    Hits hits = null;
+                    try
+                    {
+                        hits = searcher.Search(new TermQuery(searchTerm));
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        System.Console.Error.WriteLine(e.StackTrace);
+                        Assert.Fail(testName + ": exception when searching: " + e);
+                    }
+                    int result2 = hits.Length();
+                    if (success)
+                    {
+                        if (result2 != END_COUNT)
+                        {
+                            Assert.Fail(testName + ": method did not throw exception but hits.length for search on term 'aaa' is " + result2 + " instead of expected " + END_COUNT);
+                        }
+                    }
+                    else
+                    {
+                        // On hitting exception we still may have added
+                        // all docs:
+                        if (result2 != START_COUNT && result2 != END_COUNT)
+                        {
+                            System.Console.Error.WriteLine(err.StackTrace);
+                            Assert.Fail(testName + ": method did throw exception but hits.length for search on term 'aaa' is " + result2 + " instead of expected " + START_COUNT);
+                        }
+                    }
+					
+                    searcher.Close();
+                    newReader.Close();
+					
+                    if (result2 == END_COUNT)
+                    {
+                        break;
+                    }
+                }
+				
+                dir.Close();
+				
+                // Try again with 10 more bytes of free space:
+                diskFree += 10;
+            }
+        }
+		
+        [Test]
+        public virtual void  TestDocsOutOfOrderJIRA140()
+        {
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            for (int i = 0; i < 11; i++)
+            {
+                AddDoc(writer, "aaa");
+            }
+            writer.Close();
+            IndexReader reader = IndexReader.Open(dir);
+			
+            // Try to delete an invalid docId, yet, within range
+            // of the final bits of the BitVector:
+			
+            bool gotException = false;
+            try
+            {
+                reader.DeleteDocument(11);
+            }
+            catch (System.IndexOutOfRangeException e)
+            {
+                gotException = true;
+            }
+            reader.Close();
+			
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			
+            // We must add more docs to get a new segment written
+            for (int i = 0; i < 11; i++)
+            {
+                AddDoc(writer, "aaa");
+            }
+			
+            // Without the fix for LUCENE-140 this call will
+            // [incorrectly] hit a "docs out of order"
+            // IllegalStateException because above out-of-bounds
+            // deleteDocument corrupted the index:
+            writer.Optimize();
+			
+            if (!gotException)
+            {
+                Assert.Fail("delete of out-of-bounds doc number failed to hit exception");
+            }
+        }
+		
+        [Test]
+        public virtual void  TestExceptionReleaseWriteLockJIRA768()
+        {
+			
+            Directory dir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            AddDoc(writer, "aaa");
+            writer.Close();
+			
+            IndexReader reader = IndexReader.Open(dir);
+            try
+            {
+                reader.DeleteDocument(1);
+                Assert.Fail("did not hit exception when deleting an invalid doc number");
+            }
+            catch (System.IndexOutOfRangeException e)
+            {
+                // expected
+            }
+            reader.Close();
+            if (IndexReader.IsLocked(dir))
+            {
+                Assert.Fail("write lock is still held after Close");
+            }
+			
+            reader = IndexReader.Open(dir);
+            try
+            {
+                reader.SetNorm(1, "content", (float) 2.0);
+                Assert.Fail("did not hit exception when calling setNorm on an invalid doc number");
+            }
+            catch (System.IndexOutOfRangeException e)
+            {
+                // expected
+            }
+            reader.Close();
+            if (IndexReader.IsLocked(dir))
+            {
+                Assert.Fail("write lock is still held after Close");
+            }
+        }
+		
+        private System.String ArrayToString(System.String[] l)
+        {
+            System.String s = "";
+            for (int i = 0; i < l.Length; i++)
+            {
+                if (i > 0)
+                {
+                    s += "\n    ";
+                }
+                s += l[i];
+            }
+            return s;
+        }
+		
+        private void  DeleteReaderReaderConflict(bool optimize)
 		{
-			Directory dir = GetDirectory(true);
+			Directory dir = GetDirectory();
 			
 			Term searchTerm1 = new Term("content", "aaa");
 			Term searchTerm2 = new Term("content", "bbb");
@@ -584,5 +1102,41 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.TOKENIZED));
 			writer.AddDocument(doc);
 		}
-	}
+
+        private void  RmDir(System.IO.FileInfo dir)
+        {
+            System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
+            for (int i = 0; i < files.Length; i++)
+            {
+                bool tmpBool;
+                if (System.IO.File.Exists(files[i].FullName))
+                {
+                    System.IO.File.Delete(files[i].FullName);
+                    tmpBool = true;
+                }
+                else if (System.IO.Directory.Exists(files[i].FullName))
+                {
+                    System.IO.Directory.Delete(files[i].FullName);
+                    tmpBool = true;
+                }
+                else
+                    tmpBool = false;
+                bool generatedAux = tmpBool;
+            }
+            bool tmpBool2;
+            if (System.IO.File.Exists(dir.FullName))
+            {
+                System.IO.File.Delete(dir.FullName);
+                tmpBool2 = true;
+            }
+            else if (System.IO.Directory.Exists(dir.FullName))
+            {
+                System.IO.Directory.Delete(dir.FullName);
+                tmpBool2 = true;
+            }
+            else
+                tmpBool2 = false;
+            bool generatedAux2 = tmpBool2;
+        }
+    }
 }

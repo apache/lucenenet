@@ -16,10 +16,12 @@
  */
 
 using System;
-using NumberTools = Lucene.Net.Documents.NumberTools;
+
 using NUnit.Framework;
 
-namespace Lucene.Net.Document
+using NumberTools = Lucene.Net.Documents.NumberTools;
+
+namespace Lucene.Net.Documents
 {
 	[TestFixture]
 	public class TestNumberTools

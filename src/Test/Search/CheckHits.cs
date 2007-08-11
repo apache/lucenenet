@@ -16,48 +16,142 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using Directory = Lucene.Net.Store.Directory;
+using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
 {
 	
 	public class CheckHits
 	{
-		/// <summary>Tests that a query has expected document number results.</summary>
-		public static void  CheckHits_Renamed_Method(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
-		{
-			Hits hits = searcher.Search(query);
-			
-			System.Collections.Hashtable correct = new System.Collections.Hashtable();
-			for (int i = 0; i < results.Length; i++)
-			{
-				correct.Add((System.Int32) results[i], (System.Int32) results[i]);
-			}
-			
-			System.Collections.Hashtable actual = new System.Collections.Hashtable();
-			for (int i = 0; i < hits.Length(); i++)
-			{
-				actual.Add((System.Int32) hits.Id(i), (System.Int32) hits.Id(i));
-			}
-			
-            if (correct.Count != 0)
+        private class AnonymousClassHitCollector : HitCollector
+        {
+            public AnonymousClassHitCollector(System.Collections.Hashtable actual)
             {
-                System.Collections.IDictionaryEnumerator iter = correct.GetEnumerator();
-                System.Collections.IDictionaryEnumerator iter2 = actual.GetEnumerator();
-                bool status = true;
-                while (iter2.MoveNext() && iter.MoveNext())
-                {
-                    if (iter2.Key.ToString() != iter.Key.ToString())
-                    {
-                        status = false;
-                        break;
-                    }
-                }
-                Assert.IsTrue(status, query.ToString(defaultFieldName));
+                InitBlock(actual);
             }
-		}
+            private void  InitBlock(System.Collections.Hashtable actual)
+            {
+                this.actual = actual;
+            }
+            private System.Collections.Hashtable actual;
+            public override void  Collect(int doc, float score)
+            {
+                actual.Add((System.Int32) doc, (System.Int32) doc);
+            }
+        }
 		
-		/// <summary>Tests that a Hits has an expected order of documents </summary>
+        /// <summary> Tests that all documents up to maxDoc which are *not* in the
+        /// expected result set, have an explanation which indicates no match
+        /// (ie: Explanation value of 0.0f)
+        /// </summary>
+        public static void  CheckNoMatchExplanations(Query q, System.String defaultFieldName, Searcher searcher, int[] results)
+        {
+			
+            System.String d = q.ToString(defaultFieldName);
+            System.Collections.Hashtable ignore = new System.Collections.Hashtable();
+            for (int i = 0; i < results.Length; i++)
+            {
+                ignore.Add((System.Int32) results[i], (System.Int32) results[i]);
+            }
+			
+            int maxDoc = searcher.MaxDoc();
+            for (int doc = 0; doc < maxDoc; doc++)
+            {
+                if (ignore.Contains((System.Int32) doc))
+                    continue;
+				
+                Explanation exp = searcher.Explain(q, doc);
+                Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
+                Assert.AreEqual(0.0f, exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
+            }
+        }
+		
+        /// <summary> Tests that a query matches the an expected set of documents using a
+        /// HitCollector.
+        /// 
+        /// <p>
+        /// Note that when using the HitCollector API, documents will be collected
+        /// if they "match" regardless of what their score is.
+        /// </p>
+        /// </summary>
+        /// <param name="query">the query to test
+        /// </param>
+        /// <param name="searcher">the searcher to test the query against
+        /// </param>
+        /// <param name="defaultFieldName">used for displaing the query in assertion messages
+        /// </param>
+        /// <param name="results">a list of documentIds that must match the query
+        /// </param>
+        /// <seealso cref="Searcher.Search(Query,HitCollector)">
+        /// </seealso>
+        /// <seealso cref="checkHits">
+        /// </seealso>
+        public static void  CheckHitCollector(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
+        {
+			
+            System.Collections.Hashtable correct = new System.Collections.Hashtable();
+            for (int i = 0; i < results.Length; i++)
+            {
+                correct.Add((System.Int32) results[i], (System.Int32) results[i]);
+            }
+			
+            System.Collections.Hashtable actual = new System.Collections.Hashtable();
+            searcher.Search(query, new AnonymousClassHitCollector(actual));
+            Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
+			
+            QueryUtils.Check(query, searcher);
+        }
+		
+        /// <summary> Tests that a query matches the an expected set of documents using Hits.
+        /// 
+        /// <p>
+        /// Note that when using the Hits API, documents will only be returned
+        /// if they have a positive normalized score.
+        /// </p>
+        /// </summary>
+        /// <param name="query">the query to test
+        /// </param>
+        /// <param name="searcher">the searcher to test the query against
+        /// </param>
+        /// <param name="defaultFieldName">used for displaing the query in assertion messages
+        /// </param>
+        /// <param name="results">a list of documentIds that must match the query
+        /// </param>
+        /// <seealso cref="Searcher.Search(Query)">
+        /// </seealso>
+        /// <seealso cref="CheckHitCollector">
+        /// </seealso>
+        public static void  CheckHits_Renamed(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
+        {
+            if (searcher is IndexSearcher)
+            {
+                QueryUtils.Check(query, (IndexSearcher) searcher);
+            }
+			
+            Hits hits = searcher.Search(query);
+			
+            System.Collections.Hashtable correct = new System.Collections.Hashtable();
+            for (int i = 0; i < results.Length; i++)
+            {
+                correct.Add((System.Int32) results[i], (System.Int32) results[i]);
+            }
+			
+            System.Collections.Hashtable actual = new System.Collections.Hashtable();
+            for (int i = 0; i < hits.Length(); i++)
+            {
+                actual.Add((System.Int32) hits.Id(i), (System.Int32) hits.Id(i));
+            }
+			
+            Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
+			
+            QueryUtils.Check(query, searcher);
+        }
+		
+        /// <summary>Tests that a Hits has an expected order of documents </summary>
 		public static void  CheckDocIds(System.String mes, int[] results, Hits hits)
 		{
 			Assert.AreEqual(results.Length, hits.Length(), mes + " nr of hits");
@@ -154,5 +248,119 @@ namespace Lucene.Net.Search
 			}
 			return sb.ToString();
 		}
-	}
+		
+        /// <summary> Asserts that the score explanation for every document matching a
+        /// query corrisponds with the true score.
+        /// 
+        /// </summary>
+        /// <seealso cref="ExplanationAsserter">
+        /// </seealso>
+        /// <param name="query">the query to test
+        /// </param>
+        /// <param name="searcher">the searcher to test the query against
+        /// </param>
+        /// <param name="defaultFieldName">used for displaing the query in assertion messages
+        /// </param>
+        public static void  CheckExplanations(Query query, System.String defaultFieldName, Searcher searcher)
+        {
+			
+            searcher.Search(query, new ExplanationAsserter(query, defaultFieldName, searcher));
+        }
+		
+        /// <summary> an IndexSearcher that implicitly checks hte explanation of every match
+        /// whenever it executes a search
+        /// </summary>
+        public class ExplanationAssertingSearcher : IndexSearcher
+        {
+            public ExplanationAssertingSearcher(Directory d) : base(d)
+            {
+            }
+            public ExplanationAssertingSearcher(IndexReader r) : base(r)
+            {
+            }
+            protected internal virtual void  CheckExplanations(Query q)
+            {
+                base.Search(q, null, new ExplanationAsserter(q, null, this));
+            }
+            public virtual Hits search(Query query, Filter filter)
+            {
+                CheckExplanations(query);
+                return base.Search(query, filter);
+            }
+            public override Hits Search(Query query, Sort sort)
+            {
+                CheckExplanations(query);
+                return base.Search(query, sort);
+            }
+            public override Hits Search(Query query, Filter filter, Sort sort)
+            {
+                CheckExplanations(query);
+                return base.Search(query, filter, sort);
+            }
+            public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+            {
+				
+                CheckExplanations(query);
+                return base.Search(query, filter, n, sort);
+            }
+            public override void  Search(Query query, HitCollector results)
+            {
+                CheckExplanations(query);
+                base.Search(query, results);
+            }
+            public override void  Search(Query query, Filter filter, HitCollector results)
+            {
+                CheckExplanations(query);
+                base.Search(query, filter, results);
+            }
+            public override TopDocs Search(Query query, Filter filter, int n)
+            {
+				
+                CheckExplanations(query);
+                return base.Search(query, filter, n);
+            }
+        }
+		
+        /// <summary> Asserts that the score explanation for every document matching a
+        /// query corrisponds with the true score.
+        /// 
+        /// NOTE: this HitCollector should only be used with the Query and Searcher
+        /// specified at when it is constructed.
+        /// </summary>
+        public class ExplanationAsserter : HitCollector
+        {
+			
+            /// <summary> Some explains methods calculate their vlaues though a slightly
+            /// differnet  order of operations from the acctaul scoring method ...
+            /// this allows for a small amount of variation
+            /// </summary>
+            public static float SCORE_TOLERANCE_DELTA = 0.00005f;
+			
+            internal Query q;
+            internal Searcher s;
+            internal System.String d;
+            public ExplanationAsserter(Query q, System.String defaultFieldName, Searcher s)
+            {
+                this.q = q;
+                this.s = s;
+                this.d = q.ToString(defaultFieldName);
+            }
+            public override void  Collect(int doc, float score)
+            {
+                Explanation exp = null;
+				
+                try
+                {
+                    exp = s.Explain(q, doc);
+                }
+                catch (System.IO.IOException e)
+                {
+                    throw new System.SystemException("exception in hitcollector of [[" + d + "]] for #" + doc, e);
+                }
+				
+                Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
+                Assert.AreEqual(score, exp.GetValue(), SCORE_TOLERANCE_DELTA, "Score of [[" + d + "]] for #" + doc + " does not match explanation: " + exp.ToString());
+            }
+        }
+    }
 }

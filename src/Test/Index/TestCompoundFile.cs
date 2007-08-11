@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -58,9 +60,10 @@ namespace Lucene.Net.Index
 		[SetUp]
 		public virtual void  SetUp()
 		{
-			//dir = new RAMDirectory();
-            dir = FSDirectory.GetDirectory(new System.IO.FileInfo(System.Configuration.ConfigurationSettings.AppSettings.Get("tempDir") + "\\" + "testIndex"), true);
-		}
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
+            Lucene.Net.Util._TestUtil.RmDir(file);
+            dir = FSDirectory.GetDirectory(file);
+        }
 		
 		
 		/// <summary>Creates a file of the specified size with random data. </summary>
@@ -665,6 +668,5 @@ namespace Lucene.Net.Index
                 os.Close();
             }
         }
-
-	}
+ 	}
 }

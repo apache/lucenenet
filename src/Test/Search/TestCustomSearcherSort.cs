@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;

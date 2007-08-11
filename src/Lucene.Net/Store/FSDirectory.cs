@@ -258,7 +258,7 @@ namespace Lucene.Net.Store
 				tmpBool = System.IO.Directory.Exists(directory.FullName);
 			if (tmpBool)
 			{
-                System.String[] files = System.IO.Directory.GetFileSystemEntries(directory.FullName);   // directory.list(IndexFileNameFilter.GetFilter()); // clear old files  // {{Aroush-2.1}} we don't want all files in the directory but a filtered list
+                System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
 				if (files == null)
 					throw new System.IO.IOException("Cannot read directory " + directory.FullName);
 				for (int i = 0; i < files.Length; i++)
@@ -370,7 +370,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns an array of strings, one for each Lucene index file in the directory. </summary>
 		public override System.String[] List()
 		{
-            System.String[] files = System.IO.Directory.GetFileSystemEntries(directory.FullName);   // IndexFileNameFilter.GetFilter());   // {{Aroush-2.1}} we want to limit the files to the list
+            System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
             for (int i = 0; i < files.Length; i++)
             {
                 System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
@@ -704,13 +704,9 @@ namespace Lucene.Net.Store
 		/// <summary>Method used for testing. Returns true if the underlying
 		/// file descriptor is valid.
 		/// </summary>
-		virtual internal bool FDValid
+		public virtual bool IsFDValid()
 		{
-			get
-			{
-				return true; // return file.getFD().valid();    // {{Aroush-2.1 in .NET, how do we do this?
-			}
-			
+			return true; // return file.getFD().valid();    // {{Aroush-2.1 in .NET, how do we do this?
 		}
 		
 		private class Descriptor : System.IO.BinaryReader
@@ -752,6 +748,11 @@ namespace Lucene.Net.Store
 		private Descriptor file;
 		internal bool isClone;
 		
+        public bool isClone_ForNUnitTest
+        {
+            get { return isClone; }
+        }
+
 		public FSIndexInput(System.IO.FileInfo path)
 		{
 			file = new Descriptor(this, path, System.IO.FileAccess.Read);

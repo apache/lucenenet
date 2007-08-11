@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 	/// </seealso>
 	/// <seealso cref="#add">
 	/// </seealso>
-	sealed class SegmentMerger
+	public sealed class SegmentMerger
 	{
 		private class AnonymousClassFieldSelector : FieldSelector
 		{

@@ -16,13 +16,15 @@
  */
 
 using System;
+
 using NUnit.Framework;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Search
 {

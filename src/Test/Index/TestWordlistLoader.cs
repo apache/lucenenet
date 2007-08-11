@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WordlistLoader = Lucene.Net.Analysis.WordlistLoader;
 
 namespace Lucene.Net.Index

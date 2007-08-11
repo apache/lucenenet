@@ -231,7 +231,25 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\index.prelockless.cfs.zip"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Index\index.prelockless.nocfs.zip"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "Index\MockIndexInput.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestAddIndexesNoOptimize.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestBackwardsCompatibility.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -266,6 +284,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestIndexFileDeleter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestIndexInput.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -286,7 +309,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestIndexWriterDelete.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestIndexWriterLockRelease.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestIndexWriterMergePolicy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestIndexWriterMerging.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestLazyBug.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestLazyProxSkipping.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -296,7 +344,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestNorms.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestParallelReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestParallelTermEnum.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -321,6 +379,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Index\TestStressIndexing.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Index\TestTermdocPerf.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Index\TestTermVectorsReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -332,11 +400,6 @@
                 />
                 <File
                     RelPath = "Index\TestWordlistLoader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Index\Store\_delete_TestFSDirectory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -426,6 +489,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestComplexExplanations.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestComplexExplanationsOfNonMatches.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestConstantScoreRangeQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -447,6 +520,11 @@
                 />
                 <File
                     RelPath = "Search\TestDocBoost.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestExplanations.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -511,6 +589,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestPrefixFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestPrefixQuery.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -536,6 +619,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestScorerPerf.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestSetNorm.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -546,12 +634,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestSimpleExplanations.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestSimpleExplanationsOfNonMatches.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestSort.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Search\TestTermScorer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Search\TestTermVectors.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\TestThreadSafe.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -562,6 +670,21 @@
                 />
                 <File
                     RelPath = "Search\Spans\TestBasics.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Spans\TestNearSpansOrdered.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Spans\TestSpanExplanations.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Search\Spans\TestSpanExplanationsOfNonMatches.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -586,7 +709,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Store\MockRAMDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Store\MockRAMOutputStream.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Store\TestBufferedIndexInput.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Store\TestLock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Store\TestLockFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Store\TestWindowsMMap.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\_TestUtil.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

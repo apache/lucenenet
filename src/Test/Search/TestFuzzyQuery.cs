@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;

@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Analysis.Standard

@@ -16,6 +16,9 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -28,7 +31,6 @@ using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net
 {

@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Search

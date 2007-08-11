@@ -16,16 +16,18 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using English = Lucene.Net.Util.English;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using English = Lucene.Net.Util.English;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -330,8 +332,7 @@ namespace Lucene.Net.Search.Spans
 		
 		private void  CheckHits(Query query, int[] results)
 		{
-            Lucene.Net.Search.CheckHits.CheckHits_Renamed_Method(query, "field", searcher, results);
-            QueryUtils.Check(query);
+            Lucene.Net.Search.CheckHits.CheckHits_Renamed(query, "field", searcher, results);
         }
 	}
 }

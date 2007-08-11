@@ -16,20 +16,22 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Searcher = Lucene.Net.Search.Searcher;
+using Hits = Lucene.Net.Search.Hits;
+using Fieldable = Lucene.Net.Documents.Fieldable;
+using Field = Lucene.Net.Documents.Field;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
 	
 	/// <summary> Tests {@link Document} class.
@@ -50,9 +52,9 @@ namespace Lucene.Net.Document
 		public virtual void  TestBinaryField()
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			Field stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
-			Field binaryFld = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal), Field.Store.YES);
-			Field binaryFld2 = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal2), Field.Store.YES);
+			Fieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
+			Fieldable binaryFld = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal), Field.Store.YES);
+			Fieldable binaryFld2 = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal2), Field.Store.YES);
 
 			doc.Add(stringFld);
 			doc.Add(binaryFld);

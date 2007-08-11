@@ -16,12 +16,14 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -64,9 +66,9 @@ namespace Lucene.Net.Index
 			
             writer.AddIndexes(new Directory[]{indexA, indexB});
             writer.Close();
-            merged.Close();
 			
             fail = VerifyIndex(merged, 0);
+            merged.Close();
 			
             Assert.IsFalse(fail, "The merged index is invalid");
         }

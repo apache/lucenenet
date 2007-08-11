@@ -16,21 +16,23 @@
  */
 
 using System;
+
+using NUnit.Framework;
+
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <author>  Christoph Goller
 	/// </author>
-	/// <version>  $rcs = ' $Id: TestBooleanScorer.java 150700 2004-12-10 19:36:40Z goller $ ' ;
-	/// </version>
+    /// <version>  $rcs = ' $Id: TestBooleanScorer.java 472959 2006-11-09 16:21:50Z yonik $ ' ;
+    /// </version>
 	[TestFixture]
     public class TestBooleanScorer
 	{

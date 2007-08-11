@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using FileDocument = Lucene.Net.Demo.FileDocument;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
