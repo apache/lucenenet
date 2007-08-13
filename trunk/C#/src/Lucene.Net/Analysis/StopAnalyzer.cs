@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
         /// <summary>An array containing some common English words that are not usually useful
         /// for searching. 
         /// </summary>
-        public static readonly System.String[] ENGLISH_STOP_WORDS = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "t", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
+        public static readonly System.String[] ENGLISH_STOP_WORDS = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
 		
         /// <summary>Builds an analyzer which removes words in ENGLISH_STOP_WORDS. </summary>
         public StopAnalyzer()
