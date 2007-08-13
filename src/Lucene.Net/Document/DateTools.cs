@@ -181,7 +181,7 @@ namespace Lucene.Net.Documents
 				lock (YEAR_FORMAT)
 				{
 					date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        0, 0, 0, 0, 0, 0);
+                        1, 1, 0, 0, 0, 0);
 				}
 			}
 			else if (dateString.Length == 6)
@@ -190,7 +190,7 @@ namespace Lucene.Net.Documents
 				{
                     date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
                         Convert.ToInt16(dateString.Substring(4, 2)),
-                        0, 0, 0, 0, 0);
+                        1, 0, 0, 0, 0);
 				}
 			}
 			else if (dateString.Length == 8)
