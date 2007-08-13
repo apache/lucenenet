@@ -682,7 +682,7 @@ namespace Lucene.Net.Store
 			System.String[] files = System.IO.Directory.GetFileSystemEntries(dir.FullName); // clear old files
 			for (int i = 0; i < files.Length; i++)
 			{
-				System.IO.FileInfo file = new System.IO.FileInfo(dir.FullName + "\\" + files[i]);
+				System.IO.FileInfo file = new System.IO.FileInfo(files[i]);
 				bool tmpBool;
 				if (System.IO.File.Exists(file.FullName))
 				{
