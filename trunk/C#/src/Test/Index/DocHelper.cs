@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
 				
                 try
                 {
-                    LAZY_FIELD_BINARY_BYTES = System.Text.Encoding.GetEncoding("UTF8").GetBytes("These are some binary field bytes");
+                    LAZY_FIELD_BINARY_BYTES = System.Text.Encoding.UTF8.GetBytes("These are some binary field bytes");
                 }
                 catch (System.IO.IOException e)
                 {
