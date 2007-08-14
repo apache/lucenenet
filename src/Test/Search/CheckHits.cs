@@ -93,15 +93,20 @@ namespace Lucene.Net.Search
         public static void  CheckHitCollector(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
         {
 			
-            System.Collections.Hashtable correct = new System.Collections.Hashtable();
+            System.Collections.ArrayList correct = new System.Collections.ArrayList(results.Length);
             for (int i = 0; i < results.Length; i++)
             {
-                correct.Add((System.Int32) results[i], (System.Int32) results[i]);
+                correct.Add(results[i]);
             }
 			
             System.Collections.Hashtable actual = new System.Collections.Hashtable();
             searcher.Search(query, new AnonymousClassHitCollector(actual));
-            Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
+
+            System.Collections.IDictionaryEnumerator e = actual.GetEnumerator();
+            while (e.MoveNext())
+            {
+                Assert.Contains(e.Key, correct, query.ToString(defaultFieldName));
+            }
 			
             QueryUtils.Check(query, searcher);
         }
@@ -134,19 +139,16 @@ namespace Lucene.Net.Search
 			
             Hits hits = searcher.Search(query);
 			
-            System.Collections.Hashtable correct = new System.Collections.Hashtable();
+            System.Collections.ArrayList correct = new System.Collections.ArrayList(results.Length);
             for (int i = 0; i < results.Length; i++)
             {
-                correct.Add((System.Int32) results[i], (System.Int32) results[i]);
+                correct.Add(results[i]);
             }
 			
-            System.Collections.Hashtable actual = new System.Collections.Hashtable();
             for (int i = 0; i < hits.Length(); i++)
             {
-                actual.Add((System.Int32) hits.Id(i), (System.Int32) hits.Id(i));
+                Assert.Contains(hits.Id(i), correct, query.ToString(defaultFieldName));
             }
-			
-            Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 			
             QueryUtils.Check(query, searcher);
         }
