@@ -56,39 +56,36 @@ namespace Lucene.Net.Index
 		first */
 		public virtual void  Unzip(System.String dirName)
 		{
-            Assert.Fail("needs integration with SharpZipLib");
+            Assert.Fail("Needs integration with SharpZipLib");
 
-            /*
+#if SHARP_ZIP_LIB
 			RmDir(dirName);
-			
-			System.Collections.IEnumerator entries;
-			ZipFile zipFile;
-			zipFile = new ZipFile(dirName + ".zip");
-			
+
+			ICSharpCode.SharpZipLib.Zip.ZipInputStream zipFile;
+            zipFile = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(System.IO.File.OpenRead(dirName + ".zip"));
+
 			entries = zipFile.Entries();
 			System.IO.FileInfo fileDir = new System.IO.FileInfo(dirName);
 			System.IO.Directory.CreateDirectory(fileDir.FullName);
-			
-			while (entries.MoveNext())
+
+            ICSharpCode.SharpZipLib.Zip.ZipEntry entry;
+
+            while ((entry = zipFile.GetNextEntry()) != null)
 			{
-				ZipEntry entry = (ZipEntry) entries.Current;
-				
-				System.IO.Stream in_Renamed = zipFile.GetInputStream(entry);
-				System.IO.Stream out_Renamed = new System.IO.BufferedStream(new System.IO.FileStream(new System.IO.FileInfo(System.IO.Path.Combine(fileDir.FullName, entry.getName())).FullName, System.IO.FileMode.Create));
+				System.IO.Stream streamout = new System.IO.BufferedStream(new System.IO.FileStream(new System.IO.FileInfo(System.IO.Path.Combine(fileDir.FullName, entry.Name)).FullName, System.IO.FileMode.Create));
 				
 				byte[] buffer = new byte[8192];
 				int len;
-				while ((len = SupportClass.ReadInput(in_Renamed, buffer, 0, buffer.Length)) >= 0)
+				while ((len = zipFile.Read(buffer, 0, buffer.Length)) > 0)
 				{
-					out_Renamed.Write(SupportClass.ToByteArray(buffer), 0, len);
+					streamout.Write(buffer, 0, len);
 				}
 				
-				in_Renamed.Close();
-				out_Renamed.Close();
+                streamout.Close();
 			}
 			
 			zipFile.Close();
-            */
+#endif
 		}
 		
         [Test]
@@ -113,7 +110,7 @@ namespace Lucene.Net.Index
 			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
 				Unzip(dirName);
 				SearchIndex(dirName);
 				RmDir(dirName);
@@ -126,7 +123,7 @@ namespace Lucene.Net.Index
 			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
 				Unzip(dirName);
 				ChangeIndexNoAdds(dirName);
 				RmDir(dirName);
@@ -139,7 +136,7 @@ namespace Lucene.Net.Index
 			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
 				Unzip(dirName);
 				ChangeIndexWithAdds(dirName);
 				RmDir(dirName);
