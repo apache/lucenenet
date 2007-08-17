@@ -56,15 +56,12 @@ namespace Lucene.Net.Index
 		first */
 		public virtual void  Unzip(System.String dirName)
 		{
-            Assert.Fail("Needs integration with SharpZipLib");
-
 #if SHARP_ZIP_LIB
 			RmDir(dirName);
 
 			ICSharpCode.SharpZipLib.Zip.ZipInputStream zipFile;
             zipFile = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(System.IO.File.OpenRead(dirName + ".zip"));
 
-			entries = zipFile.Entries();
 			System.IO.FileInfo fileDir = new System.IO.FileInfo(dirName);
 			System.IO.Directory.CreateDirectory(fileDir.FullName);
 
@@ -85,6 +82,8 @@ namespace Lucene.Net.Index
 			}
 			
 			zipFile.Close();
+#else
+            Assert.Fail("Needs integration with SharpZipLib");
 #endif
 		}
 		
