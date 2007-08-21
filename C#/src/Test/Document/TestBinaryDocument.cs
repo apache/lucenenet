@@ -85,11 +85,11 @@ namespace Lucene.Net.Documents
 			Assert.IsTrue(docFromReader != null);
 			
 			/** fetch the binary stored field and compare it's content with the original one */
-			System.String binaryFldStoredTest = docFromReader.GetBinaryValue("binaryStored").ToString();
+			System.String binaryFldStoredTest = System.Text.UTF8Encoding.UTF8.GetString(docFromReader.GetBinaryValue("binaryStored"));
 			Assert.IsTrue(binaryFldStoredTest.Equals(binaryValStored));
 			
 			/** fetch the binary compressed field and compare it's content with the original one */
-			System.String binaryFldCompressedTest = docFromReader.GetBinaryValue("binaryCompressed").ToString();
+			System.String binaryFldCompressedTest = System.Text.UTF8Encoding.UTF8.GetString(docFromReader.GetBinaryValue("binaryCompressed"));
 			Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** fetch the string field and compare it's content with the original one */
