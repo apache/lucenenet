@@ -227,7 +227,6 @@ namespace Lucene.Net.Index
 			document.Add(new Field("tvtest", "", Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.YES));
 			ir.AddDocument(document);
 			ir.Close();
-			dir.Close();
 		}
 	}
 }
