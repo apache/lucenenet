@@ -248,7 +248,7 @@ namespace Lucene.Net.Index.Store
             long headerSize = bos.Length;
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             formatter.Serialize(out_Renamed.BaseStream, dir);
-            out_Renamed.Close();
+            // out_Renamed.Close();
             Assert.IsTrue(headerSize < bos.Length, "contains more then just header");
         }
 		
