@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
 				if (fieldIterator == null)
 				{
 					fieldIterator = SupportClass.TailMap(Enclosing_Instance.fieldToReader, field).Keys.GetEnumerator();
-					System.Object generatedAux = fieldIterator.Current; // Skip field to get next one
+                    fieldIterator.MoveNext();                     // Skip field to get next one
 				}
 				while (fieldIterator.MoveNext())
 				{
