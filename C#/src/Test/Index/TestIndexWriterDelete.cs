@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
 					// System.out.println(" startFiles: " + i + ": " + startFiles[i]);
 					// }
 					
-					if (!startFiles.Equals(endFiles))
+					if (Test.SupportClass.Compare.CompareStringArrays(startFiles, endFiles) == false)
 					{
 						System.String successStr;
 						if (success)
