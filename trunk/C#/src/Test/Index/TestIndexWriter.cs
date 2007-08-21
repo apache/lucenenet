@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
                         }
                         */
 						
-                        if (CompareStringArrays(startFiles, endFiles) == false)
+                        if (Test.SupportClass.Compare.CompareStringArrays(startFiles, endFiles) == false)
                         {
                             System.String successStr;
                             if (success)
@@ -908,18 +908,6 @@ namespace Lucene.Net.Index
             else
                 tmpBool2 = false;
             bool generatedAux2 = tmpBool2;
-        }
-
-        bool CompareStringArrays(System.String[] l1, System.String[] l2)
-        {
-            if (l1.Length != l2.Length)
-                return false;
-            for (int i = 0; i < l1.Length; i++)
-            {
-                if (l1[i] != l2[i])
-                    return false;
-            }
-            return true;
         }
     }
 }
