@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
 			FSDirectory dir;
 			lock (DIRECTORIES.SyncRoot)
 			{
-				dir = (FSDirectory) DIRECTORIES[file];
+				dir = (FSDirectory) DIRECTORIES[file.FullName];
 				if (dir == null)
 				{
 					try
@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
 						throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
 					}
 					dir.Init(file, lockFactory);
-					DIRECTORIES[file] = dir;
+					DIRECTORIES[file.FullName] = dir;
 				}
 				else
 				{
@@ -644,7 +644,7 @@ namespace Lucene.Net.Store
 				{
 					lock (DIRECTORIES.SyncRoot)
 					{
-						DIRECTORIES.Remove(directory);
+						DIRECTORIES.Remove(directory.FullName);
 					}
 				}
 			}
