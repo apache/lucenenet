@@ -157,7 +157,7 @@ namespace Lucene.Net.Store
 			}
             try
             {
-                System.IO.FileStream createdFile = lockFile.Create();
+                System.IO.FileStream createdFile = new System.IO.FileStream(lockFile.FullName, System.IO.FileMode.CreateNew);
                 createdFile.Close();
                 return true;
             }
