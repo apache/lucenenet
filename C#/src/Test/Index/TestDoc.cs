@@ -116,8 +116,8 @@ namespace Lucene.Net.Index
 				{
 					pw.Close();
 				}
-				if (fw != null)
-					fw.Close();
+				// if (fw != null)
+				//	fw.Close();     // No need to close fw in .NET as it is clased when pw is cloased
 			}
 		}
 		
