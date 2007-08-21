@@ -706,7 +706,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		public virtual bool IsFDValid()
 		{
-			return true; // return file.getFD().valid();    // {{Aroush-2.1 in .NET, how do we do this?
+			return (file.BaseStream != null);
 		}
 		
 		private class Descriptor : System.IO.BinaryReader
