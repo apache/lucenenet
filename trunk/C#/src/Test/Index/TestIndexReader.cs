@@ -453,7 +453,8 @@ namespace Lucene.Net.Index
             _TestUtil.RmDir(dirFile);
         }
 		
-		public virtual void  testLastModified()
+        [Test]
+		public virtual void  TestLastModified()
 		{
 			Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
 			Directory dir = new RAMDirectory();
@@ -480,31 +481,6 @@ namespace Lucene.Net.Index
         private Directory GetDirectory()
 		{
             return FSDirectory.GetDirectory(new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex")));
-		}
-		
-		[Test]
-        public virtual void  TestLastModified()
-		{
-			Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
-			Directory dir = new RAMDirectory();
-			Assert.IsFalse(IndexReader.IndexExists(dir));
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			AddDocumentWithFields(writer);
-			Assert.IsTrue(IndexReader.IsLocked(dir)); // writer open, so dir is locked
-			writer.Close();
-			Assert.IsTrue(IndexReader.IndexExists(dir));
-			IndexReader reader = IndexReader.Open(dir);
-			Assert.IsFalse(IndexReader.IsLocked(dir)); // reader only, no lock
-			long version = IndexReader.LastModified(dir);
-			reader.Close();
-			// modify index and check version has been incremented:
-            // incremented:
-            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			AddDocumentWithFields(writer);
-			writer.Close();
-			reader = IndexReader.Open(dir);
-            Assert.IsTrue(version <= IndexReader.LastModified(dir), "old lastModified is " + version + "; new lastModified is " + IndexReader.LastModified(dir));
-            reader.Close();
 		}
 		
         [Test]
@@ -764,7 +740,7 @@ namespace Lucene.Net.Index
                     //  System.out.println("  startFiles: " + i + ": " + startFiles[i]);
                     //}
 					
-                    if (!startFiles.Equals(endFiles))
+                    if (Test.SupportClass.Compare.CompareStringArrays(startFiles, endFiles) == false)
                     {
                         System.String successStr;
                         if (success)
