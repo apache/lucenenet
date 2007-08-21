@@ -313,7 +313,10 @@ namespace Lucene.Net.Index
 			{
 				pending = new System.Collections.Hashtable();
 			}
-			pending.Add(fileName, fileName);
+            if (pending.ContainsKey(fileName) == false)
+            {
+                pending.Add(fileName, fileName);
+            }
 		}
 		
 		internal void  CommitPendingFiles()
