@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 			
-			long now = System.DateTime.Now.Millisecond;
+			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the past
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 			
-			long now = System.DateTime.Now.Millisecond;
+			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the future
