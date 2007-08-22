@@ -281,6 +281,7 @@ namespace Lucene.Net.Search
 			}
 			if (cb != null)
 				cb.PostCreate(current);
+            ((System.Collections.ArrayList)current.Clauses()).TrimToSize();
 			return current;
 		}
 	}
