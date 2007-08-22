@@ -73,6 +73,8 @@ namespace Lucene.Net.Search
 		[SetUp]
         public override void  SetUp()
 		{
+            if (searcher == null)
+                base.SetUp();
 			searcher.SetSimilarity(new AnonymousClassDefaultSimilarity(this));
 		}
 		
