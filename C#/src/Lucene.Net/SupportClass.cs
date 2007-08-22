@@ -649,9 +649,9 @@ public class SupportClass
             try
             {
                 if (s.EndsWith("f") || s.EndsWith("F"))
-                    return System.Single.Parse(s.Substring(0, s.Length - 1));
+                    return System.Single.Parse(s.Substring(0, s.Length - 1).Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
                 else
-                    return System.Single.Parse(s);
+                    return System.Single.Parse(s.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
             }
             catch(System.FormatException fex)
             {
