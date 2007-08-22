@@ -612,7 +612,7 @@ namespace Lucene.Net.Search
 				buffer.Append(ToStringUtils.Boost(GetBoost()));
 			}
 			
-			return buffer.ToString();
+            return buffer.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
