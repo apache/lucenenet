@@ -736,6 +736,50 @@ public class SupportClass
     }
 
     /// <summary>
+    /// Summary description for TestSupportClass.
+    /// </summary>
+    public class Compare
+    {
+        /// <summary>
+        /// Compares two Term arrays for equality.
+        /// </summary>
+        /// <param name="t1">First Term array to compare</param>
+        /// <param name="t2">Second Term array to compare</param>
+        /// <returns>true if the Terms are equal in both arrays, false otherwise</returns>
+        public static bool CompareTermArrays(Lucene.Net.Index.Term[] t1, Lucene.Net.Index.Term[] t2)
+        {
+            if (t1.Length != t2.Length)
+                return false;
+            for (int i = 0; i < t1.Length; i++)
+            {
+                if (t1[i].CompareTo(t2[i]) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Compares two string arrays for equality.
+        /// </summary>
+        /// <param name="l1">First string array list to compare</param>
+        /// <param name="l2">Second string array list to compare</param>
+        /// <returns>true if the strings are equal in both arrays, false otherwise</returns>
+        public static bool CompareStringArrays(System.String[] l1, System.String[] l2)
+        {
+            if (l1.Length != l2.Length)
+                return false;
+            for (int i = 0; i < l1.Length; i++)
+            {
+                if (l1[i] != l2[i])
+                    return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Use for .NET 1.1 Framework only.
     /// </summary>
     public class CompressionSupport

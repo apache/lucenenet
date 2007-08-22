@@ -111,8 +111,7 @@ namespace Lucene.Net.Search
 		
 		public static void  CheckUnequal(Query q1, Query q2)
 		{
-			Assert.IsTrue(!q1.Equals(q2));
-			Assert.IsTrue(!q2.Equals(q1));
+            Assert.IsTrue(q1.ToString() != q2.ToString());
 			
 			// possible this test can fail on a hash collision... if that
 			// happens, please change test to use a different example.
