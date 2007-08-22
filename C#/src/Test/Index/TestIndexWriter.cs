@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
                         }
                         */
 						
-                        if (Test.SupportClass.Compare.CompareStringArrays(startFiles, endFiles) == false)
+                        if (SupportClass.Compare.CompareStringArrays(startFiles, endFiles) == false)
                         {
                             System.String successStr;
                             if (success)
