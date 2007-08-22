@@ -56,7 +56,11 @@ namespace Lucene.Net.Search
         [TearDown]
 		public virtual void  TearDown()
 		{
-			searcher.Close();
+            if (searcher != null)
+            {
+                searcher.Close();
+                searcher = null;
+            }
 		}
 		
         [SetUp]
