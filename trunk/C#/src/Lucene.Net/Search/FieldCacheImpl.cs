@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 		{
 			public virtual float ParseFloat(System.String value_Renamed)
 			{
-				return System.Single.Parse(value_Renamed);
+                return SupportClass.Single.Parse(value_Renamed);
 			}
 		}
 		
