@@ -504,7 +504,7 @@ namespace Lucene.Net.QueryParser
                 temp = temp.AddSeconds(59);
                 temp = temp.AddMilliseconds(999);
 			}
-            return temp.ToString("MM/d/yyy");
+            return temp.ToShortDateString();    // ToString("MM/d/yyy");
 		}
 		
         /// <summary>for testing legacy DateField support </summary>
@@ -515,7 +515,7 @@ namespace Lucene.Net.QueryParser
             System.String endDate = GetLocalizedDate(2002, 2, 4, false);
             System.Globalization.Calendar endDateExpected = new System.Globalization.GregorianCalendar();
             // endDateExpected should be set to: "2002, 1, 4, 23, 59, 59, 999" otherwise what's the point of useing GregorianCalendar()   // {{Aroush-2.1}}
-            System.DateTime tempAux = new System.DateTime(2002, 1, 4, 23, 59, 59, 999);
+            System.DateTime tempAux = new System.DateTime(2002, 2, 4, 23, 59, 59, 999);
             AssertQueryEquals("[ " + startDate + " TO " + endDate + "]", null, "[" + GetLegacyDate(startDate) + " TO " + DateField.DateToString(tempAux) + "]");
             AssertQueryEquals("{  " + startDate + "    " + endDate + "   }", null, "{" + GetLegacyDate(startDate) + " TO " + GetLegacyDate(endDate) + "}");
         }
