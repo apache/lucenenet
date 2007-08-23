@@ -658,6 +658,27 @@ public class SupportClass
                 throw fex;					
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static string ToString(float f)
+        {
+            return f.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static string ToString(float f, string format)
+        {
+            return f.ToString(format).Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+        }
     }
 
     /// <summary>
