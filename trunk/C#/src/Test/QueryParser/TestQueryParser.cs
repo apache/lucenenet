@@ -907,7 +907,7 @@ namespace Lucene.Net.QueryParser
         private void  AssertHits(int expected, System.String query, Lucene.Net.Search.IndexSearcher is_Renamed)
         {
             Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("date", new WhitespaceAnalyzer());
-            qp.SetLocale(new System.Globalization.CultureInfo("en"));
+            qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
             Query q = qp.Parse(query);
             Lucene.Net.Search.Hits hits = is_Renamed.Search(q);
             Assert.AreEqual(expected, hits.Length());
