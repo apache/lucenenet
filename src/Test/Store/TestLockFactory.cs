@@ -373,7 +373,6 @@ namespace Lucene.Net.Store
 
 			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
 			
-			//UPGRADE_ISSUE: Method 'java.lang.System.getProperty' was not converted. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1000_javalangSystem'"
 			NativeFSLockFactory f2 = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
 			
 			f.SetLockPrefix("test");

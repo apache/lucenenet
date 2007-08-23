@@ -253,7 +253,6 @@ namespace Lucene.Net.Search
 		// more than once.
 		public static BooleanQuery RandBoolQuery(System.Random rnd, int level, System.String field, System.String[] vals, TestBoolean2.Callback cb)
 		{
-			//UPGRADE_TODO: Method 'java.util.Random.nextInt' was converted to 'System.Random.Next' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073'"
 			BooleanQuery current = new BooleanQuery(rnd.Next() < 0);
 			for (int i = 0; i < rnd.Next(vals.Length) + 1; i++)
 			{

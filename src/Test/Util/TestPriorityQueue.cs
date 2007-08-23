@@ -32,7 +32,6 @@ namespace Lucene.Net.Util
 				Initialize(count);
 			}
 			
-			//UPGRADE_NOTE: Access modifiers of method 'LessThan' were changed to 'public'. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1204'"
 			public override bool LessThan(System.Object a, System.Object b)
 			{
 				return ((System.Int32) a) < ((System.Int32) b);
@@ -53,7 +52,6 @@ namespace Lucene.Net.Util
 			
 			for (int i = 0; i < count; i++)
 			{
-				//UPGRADE_TODO: Method 'java.util.Random.nextInt' was converted to 'System.Random.Next' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073'"
 				int next = gen.Next();
 				sum += next;
 				pq.Put((System.Object) next);

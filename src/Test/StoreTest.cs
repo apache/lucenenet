@@ -95,7 +95,6 @@ namespace Lucene.Net
 			System.Console.Out.Write(end.Ticks - start.Ticks);
 			System.Console.Out.WriteLine(" total milliseconds to create");
 			
-			//UPGRADE_TODO: The differences in the expected value  of parameters for constructor 'java.util.Random.Random'  may cause compilation errors.  "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1092'"
 			gen = new System.Random((System.Int32) 1251971);
 			start = System.DateTime.Now;
 			
