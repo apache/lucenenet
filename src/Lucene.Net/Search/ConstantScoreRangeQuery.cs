@@ -121,11 +121,7 @@ namespace Lucene.Net.Search
 			buffer.Append(" TO ");
 			buffer.Append(upperVal != null ? upperVal : "*");
 			buffer.Append(includeUpper ? ']' : '}');
-			if (GetBoost() != 1.0f)
-			{
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString());
-			}
+            buffer.Append(Lucene.Net.Util.ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		

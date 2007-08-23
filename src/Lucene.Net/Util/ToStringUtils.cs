@@ -28,8 +28,8 @@ namespace Lucene.Net.Util
             {
                 float boostAsLong = (long) boost;
                 if (boostAsLong == boost)
-                    return "^" + boost.ToString(".0");
-                return "^" + boost.ToString();
+                    return "^" + boost.ToString(".0").Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                return "^" + boost.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
             }
             else
                 return "";
