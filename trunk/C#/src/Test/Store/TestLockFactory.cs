@@ -220,10 +220,9 @@ namespace Lucene.Net.Store
 		{
             Assert.Fail("TestLockClassProperty() needs conversion to C#");
 
-			/*
             System.String indexDirName = "index.TestLockFactory3";
 			
-			System_Renamed.setProperty("Lucene.Net.Store.FSDirectoryLockFactoryClass", "Lucene.Net.Store.NoLockFactory");
+			//System.Configuration.ConfigurationSettings.AppSettings.Set("Lucene.Net.Store.FSDirectoryLockFactoryClass", "Lucene.Net.Store.NoLockFactory");
 			
 			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
 			
@@ -231,12 +230,11 @@ namespace Lucene.Net.Store
 			
 			// Put back to the correct default for subsequent tests:
 			// System.clearProperty("Lucene.Net.Store.FSDirectoryLockFactoryClass");
-			System_Renamed.setProperty("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
+			//System.Configuration.ConfigurationSettings.AppSettings.Set("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
 			
 			writer.Close();
 			// Cleanup
 			RmDir(indexDirName);
-            */
 		}
 		
 		// Verify: setDisableLocks works
@@ -369,11 +367,11 @@ namespace Lucene.Net.Store
         [Test]
 		public virtual void  TestNativeFSLockFactory()
 		{
-            Assert.Fail("TestLockClassProperty() needs conversion to C#");
+            System.String altTempDir = System.IO.Path.GetTempPath();
 
-			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
+			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", altTempDir));
 			
-			NativeFSLockFactory f2 = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
+			NativeFSLockFactory f2 = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", altTempDir));
 			
 			f.SetLockPrefix("test");
 			Lock l = f.MakeLock("commit");
