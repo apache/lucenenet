@@ -128,7 +128,6 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-					//UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Throwable.toString' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
 					System.Console.Out.WriteLine(e.ToString());
 					System.Console.Error.WriteLine(e.StackTrace);
 					failed = true;
@@ -181,7 +180,6 @@ namespace Lucene.Net.Index
 			directory.Close();
 			
 			// Second in an FSDirectory:
-			//UPGRADE_TODO: Method 'java.lang.System.getProperty' was converted to 'System.IO.Path.GetTempPath' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javalangSystemgetProperty_javalangString'"
 			System.String tempDir = System.IO.Path.GetTempPath();
 			System.IO.FileInfo dirPath = new System.IO.FileInfo(tempDir + "\\" + "lucene.test.stress");
 			directory = FSDirectory.GetDirectory(dirPath);

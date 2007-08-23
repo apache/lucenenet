@@ -200,7 +200,6 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
 			//System.out.println("Explanation: " + explanation.toString());
 			//All this Explain does is return the term frequency
-			//UPGRADE_WARNING: Data types in Visual C# might be different.  Verify the accuracy of narrowing conversions. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1042'"
 			float sqrtTwo = (float) System.Math.Sqrt(2.0f);
 			Assert.IsTrue(explanation.GetValue() == sqrtTwo, "term frq: " + explanation.GetValue() + " is not the square root of 2");
 			
