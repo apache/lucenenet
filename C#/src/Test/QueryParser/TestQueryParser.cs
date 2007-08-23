@@ -36,7 +36,7 @@ using Term = Lucene.Net.Index.Term;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using ParseException = Lucene.Net.Analysis.Standard.ParseException;
+using ParseException = Lucene.Net.QueryParsers.ParseException;
 
 namespace Lucene.Net.QueryParser
 {
