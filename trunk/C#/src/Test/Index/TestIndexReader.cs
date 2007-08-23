@@ -250,7 +250,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void  TestWritingNorms()
         {
-            //UPGRADE_ISSUE: Method 'java.lang.System.getProperty' was not converted. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1000_javalangSystem'"
             System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
             if (tempDir == null)
                 throw new System.IO.IOException("tempDir undefined, cannot run test");

@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
 			System.String s = "ONE\n  two \nthree";
 			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
 			CheckSet(wordSet1);
-			//UPGRADE_ISSUE: Constructor 'java.io.BufferedReader.BufferedReader' was not converted. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1000_javaioBufferedReaderBufferedReader_javaioReader'"
 			System.Collections.Hashtable wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
 			CheckSet(wordSet2);
 		}
