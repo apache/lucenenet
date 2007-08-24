@@ -72,14 +72,14 @@ namespace Lucene.Net.QueryParser
                 type[0] = 1;
                 return new TermQuery(new Term(field, termStr));
             }
-            public Lucene.Net.Search.Query GetPrefixQuery(System.String field, System.String termStr)
+            public override Lucene.Net.Search.Query GetPrefixQuery(System.String field, System.String termStr)
             {
                 // override error checking of superclass
                 type[0] = 2;
                 return new TermQuery(new Term(field, termStr));
             }
 			
-            public Lucene.Net.Search.Query GetFieldQuery(System.String field, System.String queryText)
+            public override Lucene.Net.Search.Query GetFieldQuery(System.String field, System.String queryText)
             {
                 type[0] = 3;
                 return base.GetFieldQuery(field, queryText);
