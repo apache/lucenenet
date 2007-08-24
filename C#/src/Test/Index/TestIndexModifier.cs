@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 			i.AddDocument(GetDoc());
 			i.AddDocument(GetDoc());
 			i.Flush();
-			Assert.AreEqual(3, i.DocCount());
+			// depend on merge policy - assertEquals(3, i.docCount());
 			i.DeleteDocuments(allDocTerm);
 			Assert.AreEqual(0, i.DocCount());
 			i.Optimize();
