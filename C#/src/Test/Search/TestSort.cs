@@ -213,6 +213,8 @@ namespace Lucene.Net.Search
 			queryF = new TermQuery(new Term("contents", "f"));
 			queryG = new TermQuery(new Term("contents", "g"));
 			sort = new Sort();
+
+            StartServer();
 		}
 		
 		// test the sorts by score and document number
@@ -759,33 +761,33 @@ namespace Lucene.Net.Search
 		
 		private Lucene.Net.Search.Searchable GetRemote()
 		{
-			try
-			{
-				return LookupRemote();
-			}
-			catch (System.Exception e)
-			{
-				StartServer();
-				return LookupRemote();
-			}
+            return LookupRemote();
 		}
 		
 		private Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), "http://localhost/SortedSearchable");
+			return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"http://localhost:1099/SortedSearchable");
 		}
 		
-		private void  StartServer()
+		public void  StartServer()
 		{
+            try
+            {
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                if (ex.ErrorCode == 10048) return; // EADDRINUSE?
+                throw ex;
+            }
+
 			// construct an index
 			Searcher local = GetFullIndex();
 			// local.search (queryA, new Sort());
 			
 			// publish it
-			//System.Runtime.Remoting.RemotingConfiguration reg = LocateRegistry.createRegistry(1099);
-			//RemoteSearchable impl = new RemoteSearchable(local);
-			//System.Runtime.Remoting.RemotingServices.Marshal(impl, SupportClass.ParseURIBind("//localhost/SortedSearchable"));
-            Assert.Fail("Need to port Java to C#");     // {{Aroush-1.9}} We need to do this in C#
-		}
+            RemoteSearchable impl = new RemoteSearchable(local);
+            System.Runtime.Remoting.RemotingServices.Marshal(impl, "SortedSearchable");
+        }
 	}
 }
