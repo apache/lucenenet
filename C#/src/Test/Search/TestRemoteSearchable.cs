@@ -35,26 +35,30 @@ namespace Lucene.Net.Search
     public class TestRemoteSearchable
 	{
 		
-		private static Lucene.Net.Search.Searchable GetRemote()
+		private Lucene.Net.Search.Searchable GetRemote()
 		{
-			try
-			{
-				return LookupRemote();
-			}
-			catch (System.Exception e)
-			{
-				StartServer();
-				return LookupRemote();
-			}
+            return LookupRemote();
 		}
 		
-		private static Lucene.Net.Search.Searchable LookupRemote()
+		private  Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), "http://localhost/Searchable");
+            return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"http://localhost:1099/Searchable");
 		}
 		
-		private static void  StartServer()
+		[SetUp]
+        public void StartServer()
 		{
+            try
+            {
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                if (ex.ErrorCode == 10048)
+                    return;     // EADDRINUSE?
+                throw ex;
+            }
+
 			// construct an index
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
@@ -65,13 +69,12 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			// publish it
-			// LocateRegistry.createRegistry(1099); // {{Aroush-1.9}}
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexStore);
 			RemoteSearchable impl = new RemoteSearchable(local);
-			System.Runtime.Remoting.RemotingServices.Marshal(impl, "http://localhost/Searchable");
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, "Searchable");
 		}
 		
-		private static void  Search(Query query)
+		private void  Search(Query query)
 		{
 			// try to search the published index
 			Lucene.Net.Search.Searchable[] searchables = new Lucene.Net.Search.Searchable[]{GetRemote()};
