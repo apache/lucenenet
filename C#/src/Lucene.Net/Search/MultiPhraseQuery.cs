@@ -344,9 +344,9 @@ namespace Lucene.Net.Search
 				{
 					buffer.Append(terms[0].Text());
 				}
-				if (i.MoveNext())
-					buffer.Append(" ");
+				buffer.Append(" ");
 			}
+            buffer.Length--;
 			buffer.Append("\"");
 			
 			if (slop != 0)
