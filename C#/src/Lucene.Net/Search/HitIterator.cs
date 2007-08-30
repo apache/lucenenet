@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException </throws>
-		public virtual void  remove()
+		public virtual void  Remove()
 		{
 			throw new System.NotSupportedException();
 		}
