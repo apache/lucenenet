@@ -94,7 +94,7 @@ namespace Lucene.Net.QueryParser
 		}
 		
         [Test]
-        public virtual void  testMultiAnalyzerWithSubclassOfQueryParser()
+        public virtual void  TestMultiAnalyzerWithSubclassOfQueryParser()
         {
 			
             DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
