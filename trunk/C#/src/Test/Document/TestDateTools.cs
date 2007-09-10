@@ -210,7 +210,6 @@ namespace Lucene.Net.Documents
                 System.String d1 = DateTools.DateToString(tempAux, DateTools.Resolution.MINUTE);
                 System.DateTime tempAux2 = time2;
                 System.String d2 = DateTools.DateToString(tempAux2, DateTools.Resolution.MINUTE);
-                System.Console.Out.WriteLine("d1: " + d1 + " d2: " + d2);
                 Assert.IsFalse(d1.Equals(d2), "different times");
                 Assert.AreEqual(DateTools.StringToTime(d1), time1.Ticks, "midnight");
                 Assert.AreEqual(DateTools.StringToTime(d2), time2.Ticks, "later");
