@@ -137,6 +137,38 @@ namespace Lucene.Net.Store
 			AcquireTestLock();
 		}
 		
+        /// <summary>
+        /// </summary>
+        internal NativeFSLockFactory()
+        {
+            lockDir = null;
+        }
+
+        /// <summary>
+        /// Set the lock directory.  This is package-private and is
+        /// only used externally by FSDirectory when creating this
+        /// LockFactory via the System property
+        /// org.apache.lucene.store.FSDirectoryLockFactoryClass.
+        /// </summary>
+        /// <param name="lockDir"></param>
+        internal void SetLockDir(System.IO.FileInfo lockDir)
+        {
+            this.lockDir = lockDir;
+            if (lockDir != null)
+            {
+                // Ensure that lockDir exists and is a directory.
+                if (!lockDir.Exists)
+                {
+                    if (System.IO.Directory.CreateDirectory(lockDir.FullName) == null)
+                        throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
+                }
+                else if (!new System.IO.DirectoryInfo(lockDir.FullName).Exists)
+                {
+                    throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
+                }
+            }
+        }
+
 		public override Lock MakeLock(System.String lockName)
 		{
 			lock (this)
