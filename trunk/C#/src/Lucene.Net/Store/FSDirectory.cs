@@ -332,7 +332,7 @@ namespace Lucene.Net.Store
 						
 						try
 						{
-							lockFactory = (LockFactory) System.Activator.CreateInstance(c);
+							lockFactory = (LockFactory) System.Activator.CreateInstance(c, true);
 						}
 						catch (System.UnauthorizedAccessException e)
 						{
@@ -342,9 +342,18 @@ namespace Lucene.Net.Store
 						{
 							throw new System.IO.IOException("unable to cast LockClass " + lockClassName + " instance to a LockFactory");
 						}
-                        catch (System.Exception)
+                        catch (System.Exception ex)
                         {
-                            throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockClassName);
+                            throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockClassName + "\nDetails:" + ex.Message);
+                        }
+
+                        if (lockFactory is NativeFSLockFactory)
+                        {
+                            ((NativeFSLockFactory) lockFactory).SetLockDir(path);
+                        }
+                        else if (lockFactory is SimpleFSLockFactory)
+                        {
+                            ((SimpleFSLockFactory) lockFactory).SetLockDir(path);
                         }
                     }
 					else
