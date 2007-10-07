@@ -45,16 +45,16 @@ namespace Lucene.Net.Documents
 		// NB: NEGATIVE_PREFIX must be < POSITIVE_PREFIX
 		private const char POSITIVE_PREFIX = '0';
 		
-		//NB: this must be less than
+		// NB: this must be less than
 		/// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
-#if !LUCENE_NET_COMPATIBLE
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
         public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
 #else
         public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
 #endif
 		
 		/// <summary> Equivalent to longToString(Long.MAX_VALUE)</summary>
-#if !LUCENE_NET_COMPATIBLE
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
 		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "1y2p0ij32e8e7";
 #else
         public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
@@ -84,7 +84,7 @@ namespace Lucene.Net.Documents
 			{
 				buf.Append(POSITIVE_PREFIX);
 			}
-#if !LUCENE_NET_COMPATIBLE
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
 			System.String num = ToString(l);
 #else
             System.String num = System.Convert.ToString(l, RADIX);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Documents
 			}
 			
 			char prefix = str[0];
-#if !LUCENE_NET_COMPATIBLE
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
 			long l = ToLong(str.Substring(1));
 #else
             long l = System.Convert.ToInt64(str.Substring(1), RADIX);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Documents
 			return l;
 		}
 
-#if !LUCENE_NET_COMPATIBLE
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
         #region BASE36 OPS 
         static System.String digits = "0123456789abcdefghijklmnopqrstuvwxyz";
         static long[] powersOf36 = 

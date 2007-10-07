@@ -83,7 +83,11 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+                return base_Renamed + "_" + Lucene.Net.Documents.NumberTools.ToString(gen) + extension;
+#else
 				return base_Renamed + "_" + System.Convert.ToString(gen, 16) + extension;
+#endif
 			}
 		}
 	}
