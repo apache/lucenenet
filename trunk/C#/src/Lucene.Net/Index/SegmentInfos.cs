@@ -162,7 +162,11 @@ namespace Lucene.Net.Index
 					}
 					else
 					{
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+                        long v = Lucene.Net.Documents.NumberTools.ToLong(file.Substring(prefixLen));
+#else
 						long v = System.Convert.ToInt64(file.Substring(prefixLen), 16);
+#endif
 						if (v > max)
 						{
 							max = v;
@@ -254,7 +258,11 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+                generation = Lucene.Net.Documents.NumberTools.ToLong(segmentFileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
+#else
 				generation = System.Convert.ToInt64(segmentFileName.Substring(1 + IndexFileNames.SEGMENTS.Length), 16);
+#endif
 			}
 			lastGeneration = generation;
 			

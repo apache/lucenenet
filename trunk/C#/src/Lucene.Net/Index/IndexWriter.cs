@@ -907,7 +907,11 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+                return "_ram_" + Lucene.Net.Documents.NumberTools.ToString(ramSegmentInfos.counter++);
+#else
 				return "_ram_" + System.Convert.ToString(ramSegmentInfos.counter++, 16);
+#endif
 			}
 		}
 		
@@ -949,7 +953,11 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+                return "_" + Lucene.Net.Documents.NumberTools.ToString(segmentInfos.counter++);
+#else
 				return "_" + System.Convert.ToString(segmentInfos.counter++, 16);
+#endif
 			}
 		}
 		
