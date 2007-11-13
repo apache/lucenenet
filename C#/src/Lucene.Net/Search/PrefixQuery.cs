@@ -56,8 +56,12 @@ namespace Lucene.Net.Search
 				do 
 				{
 					Term term = enumerator.Term();
-					if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
-					{
+#if !FRAMEWORK_1_1
+                    if (term != null && term.Text().StartsWith(prefixText, StringComparison.Ordinal) && term.Field() == prefixField)
+#else
+                    if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
+#endif
+                    {
 						TermQuery tq = new TermQuery(term); // found a match
 						tq.SetBoost(GetBoost()); // set the boost
 						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
