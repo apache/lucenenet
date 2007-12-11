@@ -2,6 +2,49 @@ Apache Lucene.Net History
 -------------------------
 
 
+10Dec07:
+	- Release:  Apache Lucene.Net.2.1 build 003 "Release Candidate"
+	- Fix: LUCENENET-55 "Documents.DateTools has issue creating a Date in StringToDate()"
+	- Fix: LUCENENET-56 "Incorrect file in TestLockFactory.RmDir()"
+	- Fix: LUCENENET-57 "DocHelper in Tests not creating UTF8 Cleanly"
+	- Fix: LUCENENET-58 "Issue in CheckHits c# doesn't perform an Assert against a hashtable"
+	- Fix: LUCENENET-59 "QueryUtils has some invalid Asserts"
+	- Fix: LUCENENET-61 "Issue testing Backwards Compatibility"
+	- Fix: LUCENENET-62 "IndexReader.IndexExists() Fails if directory doesn't exists."
+	- Fix: LUCENENET-63 "FieldCacheImpl tries to parse a float in f format"
+	- Fix: LUCENENET-64 "TestDateFilter incorrectly gets total milliseconds"
+	- Fix: LUCENENET-65 "Test case "TestSerializable" uses the stream after closing"
+	- Fix: LUCENENET-66 "TestMergeAfterCopy fails in IndexFileDeleter"
+	- Fix: LUCENENET-67 "Bug in TestIndexWriter.TestAddIndexOnDiskFull"
+	- Fix: LUCENENET-68 "Bug in TestIndexWriterDelete.TestOperationsOnDiskFull"
+	- Fix: LUCENENET-69 "FSIndexInput.isFDValid() not ported correctly"
+	- Fix: LUCENENET-70 "TestParallelReader.TestDocument fails because of bug in "ParallelReader.Document(int n, FieldSelector fieldSelector)" method"
+	- Fix: LUCENENET-71 "TestParallelTermEnum.Test1 fails because of bug in "ParallelReader.Next" method"
+	- Fix: LUCENENET-72 "TestIndexReader bugs"
+	- Fix: LUCENENET-73 "TestDoc.cs --> access to a closed stream"
+	- Fix: LUCENENET-74 "SimpleFSLockFactory can not obtain lock correctly."
+	- Fix: LUCENENET-75 "FSDirectory does not correctly handle directory cache "DIRECTORIES""
+	- Fix: LUCENENET-76 "DisjunctionMaxQuery has unnecessary clone which causes it to fail unit tests"
+	- Fix: LUCENENET-77 "Bug in TestBinaryDocument.cs"
+	- Fix: LUCENENET-81 "TestTermVectorsWriter.cs bug"
+	- Fix: LUCENENET-82 "NUnite test for TestSimpleExplanations"
+	- Fix: LUCENENET-83 "NUnite test for TestComplexExplanations"
+	- Fix: LUCENENET-84 "Nunit test for TestMultiFieldQueryParser"
+	- Fix: LUCENENET-85 "SupportClass.Parse and System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator"
+	- Fix: LUCENENET-87 "NUnite test for TestQueryParser"
+	- Fix: LUCENENET-88 "NUnit test for TestQueryParser -2"
+	- Fix: LUCENENET-89 "NUnit test for TestQueryParser -3"
+	- Fix: LUCENENET-90 "Nunit test for TestIndexModifier.TestIndex"
+	- Fix: LUCENENET-91 "NUnit test for TestQueryParser.TestStarParsing"
+	- Fix: LUCENENET-92 "NUnite test for QueryParser.TestMultiAnalyzer."
+	- Fix: LUCENENET-93 "NUnite test for Search.TestRemoteSearchable"
+	- Fix: LUCENENET-94 "NUnit test for Search.TestSort (RemoteSearchable issues)" (only TestSort.patch applied)
+	- Fix: LUCENENET-96 "NUnit test for Lucene.Net.Store.TestLockFactory.TestLockClassProperty"
+	- Fix: LUCENENET-101 "Using incorrect base when opening index"
+	- Fix: LUCENENET-100 "Problem with remoting of IComparable[] in FieldDoc.cs"
+	- Fix: LUCENENET-104 "Name of first index segment is empty string"
+
+
 11Aug07:
 	- Release:  Apache Lucene.Net.2.1 build 002 "Beta"
 	- Port: Ported the "Test" code from Java to C#
@@ -200,8 +243,8 @@ Apache Lucene.Net History
 	- Release: Lucene.Net.1.4.0 beta build 001
 	- Release Note: 159 test run, 7 failed due to non-existing remote-Lucene setup
 	- Failed Test:
-		- Search.TestRemoteSearchable.*
-		- Search.TestSort.TestNormalizedScores/TestRemoteCustomSort/TestRemoteSort
+	- Search.TestRemoteSearchable.*
+	- Search.TestSort.TestNormalizedScores/TestRemoteCustomSort/TestRemoteSort
 	- Fix: Removed 'ref' keyword usage from DateTime.
 	- Port: TestQueryParser.cs -- done. thanks to Radu.
 	- Fix: TestQueryParser.cs -- date-range formatting issues.
