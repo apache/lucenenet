@@ -172,6 +172,11 @@ namespace Lucene.Net.Documents
 
         public static System.String ToString(long lval)
         {
+            if (lval == 0)
+            {
+                return "0";
+            }
+
             int maxStrLen = powersOf36.Length;
             long curval = lval;
 
