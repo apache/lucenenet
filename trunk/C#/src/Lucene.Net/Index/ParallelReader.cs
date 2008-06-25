@@ -16,10 +16,11 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
-using Fieldable = Lucene.Net.Documents.Fieldable;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using FieldSelectorResult = Lucene.Net.Documents.FieldSelectorResult;
+using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Index
 {
@@ -45,22 +46,37 @@ namespace Lucene.Net.Index
 	public class ParallelReader : IndexReader
 	{
 		private System.Collections.ArrayList readers = new System.Collections.ArrayList();
+		private System.Collections.IList decrefOnClose = new System.Collections.ArrayList(); // remember which subreaders to decRef on close
+		internal bool incRefReaders = false;
 		private System.Collections.SortedList fieldToReader = new System.Collections.SortedList();
 		private System.Collections.IDictionary readerToFields = new System.Collections.Hashtable();
-		private System.Collections.ArrayList storedFieldReaders = new System.Collections.ArrayList();
+		private System.Collections.IList storedFieldReaders = new System.Collections.ArrayList();
 		
 		private int maxDoc;
 		private int numDocs;
 		private bool hasDeletions;
 		
-		/// <summary>Construct a ParallelReader. </summary>
-		public ParallelReader() : base(null)
+		/// <summary>Construct a ParallelReader. 
+		/// <p>Note that all subreaders are closed if this ParallelReader is closed.</p>
+		/// </summary>
+		public ParallelReader() : this(true)
 		{
 		}
 		
+		/// <summary>Construct a ParallelReader. </summary>
+		/// <param name="closeSubReaders">indicates whether the subreaders should be closed
+		/// when this ParallelReader is closed
+		/// </param>
+		public ParallelReader(bool closeSubReaders) : base()
+		{
+			this.incRefReaders = !closeSubReaders;
+		}
+		
 		/// <summary>Add an IndexReader. </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Add(IndexReader reader)
 		{
+			EnsureOpen();
 			Add(reader, false);
 		}
 		
@@ -75,9 +91,11 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalArgumentException if not all indexes have the same value </throws>
 		/// <summary>     of {@link IndexReader#MaxDoc()}
 		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Add(IndexReader reader, bool ignoreStoredFields)
 		{
 			
+			EnsureOpen();
 			if (readers.Count == 0)
 			{
 				this.maxDoc = reader.MaxDoc();
@@ -107,26 +125,143 @@ namespace Lucene.Net.Index
 			if (!ignoreStoredFields)
 				storedFieldReaders.Add(reader); // add to storedFieldReaders
 			readers.Add(reader);
+			
+			if (incRefReaders)
+			{
+				reader.IncRef();
+			}
+			decrefOnClose.Add(incRefReaders);
 		}
+		
+		/// <summary> Tries to reopen the subreaders.
+		/// <br>
+		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
+		/// returned a new instance != subReader), then a new ParallelReader instance 
+		/// is returned, otherwise this instance is returned.
+		/// <p>
+		/// A re-opened instance might share one or more subreaders with the old 
+		/// instance. Index modification operations result in undefined behavior
+		/// when performed before the old instance is closed.
+		/// (see {@link IndexReader#Reopen()}).
+		/// <p>
+		/// If subreaders are shared, then the reference count of those
+		/// readers is increased to ensure that the subreaders remain open
+		/// until the last referring reader is closed.
+		/// 
+		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error  </throws>
+		public override IndexReader Reopen()
+		{
+			EnsureOpen();
+			
+			bool reopened = false;
+			System.Collections.IList newReaders = new System.Collections.ArrayList();
+			System.Collections.IList newDecrefOnClose = new System.Collections.ArrayList();
+			
+			bool success = false;
+			
+			try
+			{
+				
+				for (int i = 0; i < readers.Count; i++)
+				{
+					IndexReader oldReader = (IndexReader) readers[i];
+					IndexReader newReader = oldReader.Reopen();
+					newReaders.Add(newReader);
+					// if at least one of the subreaders was updated we remember that
+					// and return a new MultiReader
+					if (newReader != oldReader)
+					{
+						reopened = true;
+					}
+				}
+				
+				if (reopened)
+				{
+					ParallelReader pr = new ParallelReader();
+					for (int i = 0; i < readers.Count; i++)
+					{
+						IndexReader oldReader = (IndexReader) readers[i];
+						IndexReader newReader = (IndexReader) newReaders[i];
+						if (newReader == oldReader)
+						{
+							newDecrefOnClose.Add(true);
+							newReader.IncRef();
+						}
+						else
+						{
+							// this is a new subreader instance, so on close() we don't
+							// decRef but close it 
+							newDecrefOnClose.Add(false);
+						}
+						pr.Add(newReader, !storedFieldReaders.Contains(oldReader));
+					}
+					pr.decrefOnClose = newDecrefOnClose;
+					pr.incRefReaders = incRefReaders;
+					success = true;
+					return pr;
+				}
+				else
+				{
+					success = true;
+					// No subreader was refreshed
+					return this;
+				}
+			}
+			finally
+			{
+				if (!success && reopened)
+				{
+					for (int i = 0; i < newReaders.Count; i++)
+					{
+						IndexReader r = (IndexReader) newReaders[i];
+						if (r != null)
+						{
+							try
+							{
+								if (((System.Boolean) newDecrefOnClose[i]))
+								{
+									r.DecRef();
+								}
+								else
+								{
+									r.Close();
+								}
+							}
+							catch (System.IO.IOException ignore)
+							{
+								// keep going - we want to clean up as much as possible
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		
 		public override int NumDocs()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return numDocs;
 		}
 		
 		public override int MaxDoc()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return maxDoc;
 		}
 		
 		public override bool HasDeletions()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return hasDeletions;
 		}
 		
 		// check first reader
 		public override bool IsDeleted(int n)
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			if (readers.Count > 0)
 				return ((IndexReader) readers[0]).IsDeleted(n);
 			return false;
@@ -155,6 +290,7 @@ namespace Lucene.Net.Index
 		// append fields from storedFieldReaders
 		public override Document Document(int n, FieldSelector fieldSelector)
 		{
+			EnsureOpen();
 			Document result = new Document();
 			for (int i = 0; i < storedFieldReaders.Count; i++)
 			{
@@ -188,6 +324,7 @@ namespace Lucene.Net.Index
 		// get all vectors
 		public override TermFreqVector[] GetTermFreqVectors(int n)
 		{
+			EnsureOpen();
 			System.Collections.ArrayList results = new System.Collections.ArrayList();
 			System.Collections.IEnumerator i = new System.Collections.Hashtable(fieldToReader).GetEnumerator();
 			while (i.MoveNext())
@@ -204,24 +341,54 @@ namespace Lucene.Net.Index
 		
 		public override TermFreqVector GetTermFreqVector(int n, System.String field)
 		{
+			EnsureOpen();
 			IndexReader reader = ((IndexReader) fieldToReader[field]);
 			return reader == null ? null : reader.GetTermFreqVector(n, field);
 		}
 		
+		
+		public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			if (reader != null)
+			{
+				reader.GetTermFreqVector(docNumber, field, mapper);
+			}
+		}
+		
+		public override void  GetTermFreqVector(int docNumber, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			EnsureOpen();
+			
+			System.Collections.IEnumerator i = fieldToReader.GetEnumerator();
+			while (i.MoveNext())
+			{
+				System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
+				System.String field = (System.String) e.Key;
+				IndexReader reader = (IndexReader) e.Value;
+				reader.GetTermFreqVector(docNumber, field, mapper);
+			}
+		}
+		
 		public override bool HasNorms(System.String field)
 		{
+			EnsureOpen();
 			IndexReader reader = ((IndexReader) fieldToReader[field]);
 			return reader == null ? false : reader.HasNorms(field);
 		}
 		
 		public override byte[] Norms(System.String field)
 		{
+			EnsureOpen();
 			IndexReader reader = ((IndexReader) fieldToReader[field]);
 			return reader == null ? null : reader.Norms(field);
 		}
 		
 		public override void  Norms(System.String field, byte[] result, int offset)
 		{
+			EnsureOpen();
 			IndexReader reader = ((IndexReader) fieldToReader[field]);
 			if (reader != null)
 				reader.Norms(field, result, offset);
@@ -236,38 +403,89 @@ namespace Lucene.Net.Index
 		
 		public override TermEnum Terms()
 		{
+			EnsureOpen();
 			return new ParallelTermEnum(this);
 		}
 		
 		public override TermEnum Terms(Term term)
 		{
+			EnsureOpen();
 			return new ParallelTermEnum(this, term);
 		}
 		
 		public override int DocFreq(Term term)
 		{
+			EnsureOpen();
 			IndexReader reader = ((IndexReader) fieldToReader[term.Field()]);
 			return reader == null ? 0 : reader.DocFreq(term);
 		}
 		
 		public override TermDocs TermDocs(Term term)
 		{
+			EnsureOpen();
 			return new ParallelTermDocs(this, term);
 		}
 		
 		public override TermDocs TermDocs()
 		{
+			EnsureOpen();
 			return new ParallelTermDocs(this);
 		}
 		
 		public override TermPositions TermPositions(Term term)
 		{
+			EnsureOpen();
 			return new ParallelTermPositions(this, term);
 		}
 		
 		public override TermPositions TermPositions()
 		{
+			EnsureOpen();
 			return new ParallelTermPositions(this);
+		}
+		
+		/// <summary> Checks recursively if all subreaders are up to date. </summary>
+		public override bool IsCurrent()
+		{
+			for (int i = 0; i < readers.Count; i++)
+			{
+				if (!((IndexReader) readers[i]).IsCurrent())
+				{
+					return false;
+				}
+			}
+			
+			// all subreaders are up to date
+			return true;
+		}
+		
+		/// <summary> Checks recursively if all subindexes are optimized </summary>
+		public override bool IsOptimized()
+		{
+			for (int i = 0; i < readers.Count; i++)
+			{
+				if (!((IndexReader) readers[i]).IsOptimized())
+				{
+					return false;
+				}
+			}
+			
+			// all subindexes are optimized
+			return true;
+		}
+		
+		
+		/// <summary>Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public override long GetVersion()
+		{
+			throw new System.NotSupportedException("ParallelReader does not support this method.");
+		}
+		
+		// for testing
+		internal virtual IndexReader[] GetSubReaders()
+		{
+			return (IndexReader[]) readers.ToArray(typeof(IndexReader));
 		}
 		
 		protected internal override void  DoCommit()
@@ -281,13 +499,22 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				for (int i = 0; i < readers.Count; i++)
-					((IndexReader) readers[i]).Close();
+				{
+					if (((System.Boolean) decrefOnClose[i]))
+					{
+						((IndexReader) readers[i]).DecRef();
+					}
+					else
+					{
+						((IndexReader) readers[i]).Close();
+					}
+				}
 			}
 		}
 		
-		
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
+			EnsureOpen();
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < readers.Count; i++)
 			{
@@ -511,6 +738,23 @@ namespace Lucene.Net.Index
 			{
 				// It is an error to call this if there is no next position, e.g. if termDocs==null
 				return ((TermPositions) termDocs).NextPosition();
+			}
+			
+			public virtual int GetPayloadLength()
+			{
+				return ((TermPositions) termDocs).GetPayloadLength();
+			}
+			
+			public virtual byte[] GetPayload(byte[] data, int offset)
+			{
+				return ((TermPositions) termDocs).GetPayload(data, offset);
+			}
+			
+			
+			// TODO: Remove warning after API has been finalized
+			public virtual bool IsPayloadAvailable()
+			{
+				return ((TermPositions) termDocs).IsPayloadAvailable();
 			}
 		}
 	}

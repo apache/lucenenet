@@ -16,8 +16,10 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
@@ -90,6 +92,22 @@ namespace Lucene.Net.Index
 			{
 				return ((TermPositions) this.in_Renamed).NextPosition();
 			}
+			
+			public virtual int GetPayloadLength()
+			{
+				return ((TermPositions) this.in_Renamed).GetPayloadLength();
+			}
+			
+			public virtual byte[] GetPayload(byte[] data, int offset)
+			{
+				return ((TermPositions) this.in_Renamed).GetPayload(data, offset);
+			}
+			
+			
+			public virtual bool IsPayloadAvailable()
+			{
+				return ((TermPositions) this.in_Renamed).IsPayloadAvailable();
+			}
 		}
 		
 		/// <summary>Base class for filtering {@link TermEnum} implementations. </summary>
@@ -129,43 +147,71 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="in">specified base reader.
 		/// </param>
-		public FilterIndexReader(IndexReader in_Renamed):base(in_Renamed.Directory())
+		public FilterIndexReader(IndexReader in_Renamed) : base()
 		{
 			this.in_Renamed = in_Renamed;
 		}
 		
+		public override Directory Directory()
+		{
+			return in_Renamed.Directory();
+		}
+		
 		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
+			EnsureOpen();
 			return in_Renamed.GetTermFreqVectors(docNumber);
 		}
 		
 		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
 		{
+			EnsureOpen();
 			return in_Renamed.GetTermFreqVector(docNumber, field);
+		}
+		
+		
+		public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			in_Renamed.GetTermFreqVector(docNumber, field, mapper);
+		}
+		
+		public override void  GetTermFreqVector(int docNumber, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			in_Renamed.GetTermFreqVector(docNumber, mapper);
 		}
 		
 		public override int NumDocs()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.NumDocs();
 		}
+
 		public override int MaxDoc()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.MaxDoc();
 		}
 		
 		public override Document Document(int n, FieldSelector fieldSelector)
 		{
+			EnsureOpen();
 			return in_Renamed.Document(n, fieldSelector);
 		}
 		
 		public override bool IsDeleted(int n)
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.IsDeleted(n);
 		}
+
 		public override bool HasDeletions()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.HasDeletions();
 		}
+
 		protected internal override void  DoUndeleteAll()
 		{
 			in_Renamed.UndeleteAll();
@@ -173,17 +219,22 @@ namespace Lucene.Net.Index
 		
 		public override bool HasNorms(System.String field)
 		{
+			EnsureOpen();
 			return in_Renamed.HasNorms(field);
 		}
 		
 		public override byte[] Norms(System.String f)
 		{
+			EnsureOpen();
 			return in_Renamed.Norms(f);
 		}
+
 		public override void  Norms(System.String f, byte[] bytes, int offset)
 		{
+			EnsureOpen();
 			in_Renamed.Norms(f, bytes, offset);
 		}
+
 		protected internal override void  DoSetNorm(int d, System.String f, byte b)
 		{
 			in_Renamed.SetNorm(d, f, b);
@@ -191,25 +242,31 @@ namespace Lucene.Net.Index
 		
 		public override TermEnum Terms()
 		{
+			EnsureOpen();
 			return in_Renamed.Terms();
 		}
+
 		public override TermEnum Terms(Term t)
 		{
+			EnsureOpen();
 			return in_Renamed.Terms(t);
 		}
 		
 		public override int DocFreq(Term t)
 		{
+			EnsureOpen();
 			return in_Renamed.DocFreq(t);
 		}
 		
 		public override TermDocs TermDocs()
 		{
+			EnsureOpen();
 			return in_Renamed.TermDocs();
 		}
 		
 		public override TermPositions TermPositions()
 		{
+			EnsureOpen();
 			return in_Renamed.TermPositions();
 		}
 		
@@ -229,17 +286,26 @@ namespace Lucene.Net.Index
 		
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
+			EnsureOpen();
 			return in_Renamed.GetFieldNames(fieldNames);
 		}
 		
 		public override long GetVersion()
 		{
+			EnsureOpen();
 			return in_Renamed.GetVersion();
 		}
 
 		public override bool IsCurrent()
 		{
+			EnsureOpen();
 			return in_Renamed.IsCurrent();
+		}
+		
+		public override bool IsOptimized()
+		{
+			EnsureOpen();
+			return in_Renamed.IsOptimized();
 		}
 	}
 }

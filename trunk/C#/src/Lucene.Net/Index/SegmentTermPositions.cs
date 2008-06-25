@@ -1,20 +1,24 @@
-/// <summary> Licensed to the Apache Software Foundation (ASF) under one or more
-/// contributor license agreements.  See the NOTICE file distributed with
-/// this work for additional information regarding copyright ownership.
-/// The ASF licenses this file to You under the Apache License, Version 2.0
-/// (the "License"); you may not use this file except in compliance with
-/// the License.  You may obtain a copy of the License at
-/// 
-/// http://www.apache.org/licenses/LICENSE-2.0
-/// 
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-/// </summary>
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using System;
+
 using IndexInput = Lucene.Net.Store.IndexInput;
+
 namespace Lucene.Net.Index
 {
 	
@@ -24,30 +28,39 @@ namespace Lucene.Net.Index
 		private int proxCount;
 		private int position;
 		
+		// the current payload length
+		private int payloadLength;
+		// indicates whether the payload of the currend position has
+		// been read from the proxStream yet
+		private bool needToLoadPayload;
+		
 		// these variables are being used to remember information
 		// for a lazy skip
-		private long lazySkipPointer = 0;
-		private int lazySkipDocCount = 0;
+		private long lazySkipPointer = - 1;
+		private int lazySkipProxCount = 0;
 		
-		internal SegmentTermPositions(SegmentReader p) : base(p)
+		internal SegmentTermPositions(SegmentReader p):base(p)
 		{
-			this.proxStream = (IndexInput) parent.proxStream.Clone();
+			this.proxStream = null; // the proxStream will be cloned lazily when nextPosition() is called for the first time
 		}
 		
-		internal override void  Seek(TermInfo ti)
+		internal override void  Seek(TermInfo ti, Term term)
 		{
-			base.Seek(ti);
+			base.Seek(ti, term);
 			if (ti != null)
 				lazySkipPointer = ti.proxPointer;
 			
-			lazySkipDocCount = 0;
+			lazySkipProxCount = 0;
 			proxCount = 0;
+			payloadLength = 0;
+			needToLoadPayload = false;
 		}
 		
 		public override void  Close()
 		{
 			base.Close();
-			proxStream.Close();
+			if (proxStream != null)
+				proxStream.Close();
 		}
 		
 		public int NextPosition()
@@ -55,20 +68,39 @@ namespace Lucene.Net.Index
 			// perform lazy skips if neccessary
 			LazySkip();
 			proxCount--;
-			return position += proxStream.ReadVInt();
+			return position += ReadDeltaPosition();
+		}
+		
+		private int ReadDeltaPosition()
+		{
+			int delta = proxStream.ReadVInt();
+			if (currentFieldStoresPayloads)
+			{
+				// if the current field stores payloads then
+				// the position delta is shifted one bit to the left.
+				// if the LSB is set, then we have to read the current
+				// payload length
+				if ((delta & 1) != 0)
+				{
+					payloadLength = proxStream.ReadVInt();
+				}
+				delta = (int) (((uint) delta) >> 1);
+				needToLoadPayload = true;
+			}
+			return delta;
 		}
 		
 		protected internal override void  SkippingDoc()
 		{
-			// we remember to skip the remaining positions of the current
-			// document lazily
-			lazySkipDocCount += freq;
+			// we remember to skip a document lazily
+			lazySkipProxCount += freq;
 		}
 		
 		public override bool Next()
 		{
-			// we remember to skip a document lazily
-			lazySkipDocCount += proxCount;
+			// we remember to skip the remaining positions of the current
+			// document lazily
+			lazySkipProxCount += proxCount;
 			
 			if (base.Next())
 			{
@@ -87,19 +119,33 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Called by super.skipTo(). </summary>
-		protected internal override void  SkipProx(long proxPointer)
+		protected internal override void  SkipProx(long proxPointer, int payloadLength)
 		{
 			// we save the pointer, we might have to skip there lazily
 			lazySkipPointer = proxPointer;
-			lazySkipDocCount = 0;
+			lazySkipProxCount = 0;
 			proxCount = 0;
+			this.payloadLength = payloadLength;
+			needToLoadPayload = false;
 		}
 		
 		private void  SkipPositions(int n)
 		{
 			for (int f = n; f > 0; f--)
-			// skip unread positions
-				proxStream.ReadVInt();
+			{
+				// skip unread positions
+				ReadDeltaPosition();
+				SkipPayload();
+			}
+		}
+		
+		private void  SkipPayload()
+		{
+			if (needToLoadPayload && payloadLength > 0)
+			{
+				proxStream.Seek(proxStream.GetFilePointer() + payloadLength);
+			}
+			needToLoadPayload = false;
 		}
 		
 		// It is not always neccessary to move the prox pointer
@@ -114,17 +160,64 @@ namespace Lucene.Net.Index
 		// as soon as positions are requested.
 		private void  LazySkip()
 		{
-			if (lazySkipPointer != 0)
+			if (proxStream == null)
 			{
-				proxStream.Seek(lazySkipPointer);
-				lazySkipPointer = 0;
+				// clone lazily
+				proxStream = (IndexInput) parent.proxStream.Clone();
 			}
 			
-			if (lazySkipDocCount != 0)
+			// we might have to skip the current payload
+			// if it was not read yet
+			SkipPayload();
+			
+			if (lazySkipPointer != - 1)
 			{
-				SkipPositions(lazySkipDocCount);
-				lazySkipDocCount = 0;
+				proxStream.Seek(lazySkipPointer);
+				lazySkipPointer = - 1;
 			}
+			
+			if (lazySkipProxCount != 0)
+			{
+				SkipPositions(lazySkipProxCount);
+				lazySkipProxCount = 0;
+			}
+		}
+		
+		public int GetPayloadLength()
+		{
+			return payloadLength;
+		}
+		
+		public byte[] GetPayload(byte[] data, int offset)
+		{
+			if (!needToLoadPayload)
+			{
+				throw new System.IO.IOException("Payload cannot be loaded more than once for the same term position.");
+			}
+			
+			// read payloads lazily
+			byte[] retArray;
+			int retOffset;
+			if (data == null || data.Length - offset < payloadLength)
+			{
+				// the array is too small to store the payload data,
+				// so we allocate a new one
+				retArray = new byte[payloadLength];
+				retOffset = 0;
+			}
+			else
+			{
+				retArray = data;
+				retOffset = offset;
+			}
+			proxStream.ReadBytes(retArray, retOffset, payloadLength);
+			needToLoadPayload = false;
+			return retArray;
+		}
+		
+		public bool IsPayloadAvailable()
+		{
+			return needToLoadPayload && payloadLength > 0;
 		}
 	}
 }

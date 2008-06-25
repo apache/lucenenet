@@ -16,9 +16,12 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using Directory = Lucene.Net.Store.Directory;
+using MultiTermDocs = Lucene.Net.Index.MultiSegmentReader.MultiTermDocs;
+using MultiTermEnum = Lucene.Net.Index.MultiSegmentReader.MultiTermEnum;
+using MultiTermPositions = Lucene.Net.Index.MultiSegmentReader.MultiTermPositions;
 
 namespace Lucene.Net.Index
 {
@@ -26,12 +29,13 @@ namespace Lucene.Net.Index
 	/// <summary>An IndexReader which reads multiple indexes, appending their content.
 	/// 
 	/// </summary>
-	/// <version>  $Id: MultiReader.java 499176 2007-01-23 22:54:40Z dnaber $
+	/// <version>  $Id: MultiReader.java 596004 2007-11-17 21:34:23Z buschmi $
 	/// </version>
 	public class MultiReader : IndexReader
 	{
-		private IndexReader[] subReaders;
+		protected internal IndexReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
+		private bool[] decrefOnClose; // remember which subreaders to decRef on close
 		private System.Collections.Hashtable normsCache = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		private int maxDoc = 0;
 		private int numDocs = - 1;
@@ -45,25 +49,45 @@ namespace Lucene.Net.Index
 		/// <param name="subReaders">set of (sub)readers
 		/// </param>
 		/// <throws>  IOException </throws>
-		public MultiReader(IndexReader[] subReaders):base(subReaders.Length == 0?null:subReaders[0].Directory())
+		public MultiReader(IndexReader[] subReaders)
 		{
-			Initialize(subReaders);
+			Initialize(subReaders, true);
 		}
 		
-		/// <summary>Construct reading the named set of readers. </summary>
-		public MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders) : base(directory, sis, closeDirectory)
+		/// <summary> <p>Construct a MultiReader aggregating the named set of (sub)readers.
+		/// Directory locking for delete, undeleteAll, and setNorm operations is
+		/// left to the subreaders. </p>
+		/// </summary>
+		/// <param name="closeSubReaders">indicates whether the subreaders should be closed
+		/// when this MultiReader is closed
+		/// </param>
+		/// <param name="subReaders">set of (sub)readers
+		/// </param>
+		/// <throws>  IOException </throws>
+		public MultiReader(IndexReader[] subReaders, bool closeSubReaders)
 		{
-			Initialize(subReaders);
+			Initialize(subReaders, closeSubReaders);
 		}
 		
-		private void  Initialize(IndexReader[] subReaders)
+		private void  Initialize(IndexReader[] subReaders, bool closeSubReaders)
 		{
 			this.subReaders = subReaders;
 			starts = new int[subReaders.Length + 1]; // build starts array
+			decrefOnClose = new bool[subReaders.Length];
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				starts[i] = maxDoc;
 				maxDoc += subReaders[i].MaxDoc(); // compute maxDocs
+				
+				if (!closeSubReaders)
+				{
+					subReaders[i].IncRef();
+					decrefOnClose[i] = true;
+				}
+				else
+				{
+					decrefOnClose[i] = false;
+				}
 				
 				if (subReaders[i].HasDeletions())
 					hasDeletions = true;
@@ -71,29 +95,139 @@ namespace Lucene.Net.Index
 			starts[subReaders.Length] = maxDoc;
 		}
 		
-		
-		/// <summary>Return an array of term frequency vectors for the specified document.
-		/// The array contains a vector for each vectorized field in the document.
-		/// Each vector vector contains term numbers and frequencies for all terms
-		/// in a given vectorized field.
-		/// If no such fields existed, the method returns null.
+		/// <summary> Tries to reopen the subreaders.
+		/// <br>
+		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
+		/// returned a new instance != subReader), then a new MultiReader instance 
+		/// is returned, otherwise this instance is returned.
+		/// <p>
+		/// A re-opened instance might share one or more subreaders with the old 
+		/// instance. Index modification operations result in undefined behavior
+		/// when performed before the old instance is closed.
+		/// (see {@link IndexReader#Reopen()}).
+		/// <p>
+		/// If subreaders are shared, then the reference count of those
+		/// readers is increased to ensure that the subreaders remain open
+		/// until the last referring reader is closed.
+		/// 
 		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error  </throws>
+		public override IndexReader Reopen()
+		{
+			EnsureOpen();
+			
+			bool reopened = false;
+			IndexReader[] newSubReaders = new IndexReader[subReaders.Length];
+			bool[] newDecrefOnClose = new bool[subReaders.Length];
+			
+			bool success = false;
+			try
+			{
+				for (int i = 0; i < subReaders.Length; i++)
+				{
+					newSubReaders[i] = subReaders[i].Reopen();
+					// if at least one of the subreaders was updated we remember that
+					// and return a new MultiReader
+					if (newSubReaders[i] != subReaders[i])
+					{
+						reopened = true;
+						// this is a new subreader instance, so on close() we don't
+						// decRef but close it 
+						newDecrefOnClose[i] = false;
+					}
+				}
+				
+				if (reopened)
+				{
+					for (int i = 0; i < subReaders.Length; i++)
+					{
+						if (newSubReaders[i] == subReaders[i])
+						{
+							newSubReaders[i].IncRef();
+							newDecrefOnClose[i] = true;
+						}
+					}
+					
+					MultiReader mr = new MultiReader(newSubReaders);
+					mr.decrefOnClose = newDecrefOnClose;
+					success = true;
+					return mr;
+				}
+				else
+				{
+					success = true;
+					return this;
+				}
+			}
+			finally
+			{
+				if (!success && reopened)
+				{
+					for (int i = 0; i < newSubReaders.Length; i++)
+					{
+						if (newSubReaders[i] != null)
+						{
+							try
+							{
+								if (newDecrefOnClose[i])
+								{
+									newSubReaders[i].DecRef();
+								}
+								else
+								{
+									newSubReaders[i].Close();
+								}
+							}
+							catch (System.IO.IOException ignore)
+							{
+								// keep going - we want to clean up as much as possible
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		public override TermFreqVector[] GetTermFreqVectors(int n)
 		{
+			EnsureOpen();
 			int i = ReaderIndex(n); // find segment num
 			return subReaders[i].GetTermFreqVectors(n - starts[i]); // dispatch to segment
 		}
 		
 		public override TermFreqVector GetTermFreqVector(int n, System.String field)
 		{
+			EnsureOpen();
 			int i = ReaderIndex(n); // find segment num
 			return subReaders[i].GetTermFreqVector(n - starts[i], field);
+		}
+		
+		
+		public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			int i = ReaderIndex(docNumber); // find segment num
+			subReaders[i].GetTermFreqVector(docNumber - starts[i], field, mapper);
+		}
+		
+		public override void  GetTermFreqVector(int docNumber, TermVectorMapper mapper)
+		{
+			EnsureOpen();
+			int i = ReaderIndex(docNumber); // find segment num
+			subReaders[i].GetTermFreqVector(docNumber - starts[i], mapper);
+		}
+		
+		public override bool IsOptimized()
+		{
+			return false;
 		}
 		
 		public override int NumDocs()
 		{
 			lock (this)
 			{
+				// Don't call ensureOpen() here (it could affect performance)
 				if (numDocs == - 1)
 				{
 					// check cache
@@ -108,23 +242,28 @@ namespace Lucene.Net.Index
 		
 		public override int MaxDoc()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return maxDoc;
 		}
 		
+		// inherit javadoc
 		public override Document Document(int n, FieldSelector fieldSelector)
 		{
+			EnsureOpen();
 			int i = ReaderIndex(n); // find segment num
 			return subReaders[i].Document(n - starts[i], fieldSelector); // dispatch to segment reader
 		}
 		
 		public override bool IsDeleted(int n)
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			int i = ReaderIndex(n); // find segment num
 			return subReaders[i].IsDeleted(n - starts[i]); // dispatch to segment reader
 		}
 		
 		public override bool HasDeletions()
 		{
+			// Don't call ensureOpen() here (it could affect performance)
 			return hasDeletions;
 		}
 		
@@ -140,6 +279,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < subReaders.Length; i++)
 				subReaders[i].UndeleteAll();
+			
 			hasDeletions = false;
 			numDocs = - 1; // invalidate cache
 		}
@@ -147,32 +287,12 @@ namespace Lucene.Net.Index
 		private int ReaderIndex(int n)
 		{
 			// find reader for doc n:
-			int lo = 0; // search starts array
-			int hi = subReaders.Length - 1; // for first element less
-			
-			while (hi >= lo)
-			{
-				int mid = (lo + hi) >> 1;
-				int midValue = starts[mid];
-				if (n < midValue)
-					hi = mid - 1;
-				else if (n > midValue)
-					lo = mid + 1;
-				else
-				{
-					// found a match
-					while (mid + 1 < subReaders.Length && starts[mid + 1] == midValue)
-					{
-						mid++; // scan to last match
-					}
-					return mid;
-				}
-			}
-			return hi;
+			return MultiSegmentReader.ReaderIndex(n, this.starts, this.subReaders.Length);
 		}
 		
 		public override bool HasNorms(System.String field)
 		{
+			EnsureOpen();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				if (subReaders[i].HasNorms(field))
@@ -182,7 +302,7 @@ namespace Lucene.Net.Index
 		}
 		
 		private byte[] ones;
-		private byte[] fakeNorms()
+		private byte[] FakeNorms()
 		{
 			if (ones == null)
 				ones = SegmentReader.CreateFakeNorms(MaxDoc());
@@ -193,11 +313,12 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				byte[] bytes = (byte[]) normsCache[field];
 				if (bytes != null)
 					return bytes; // cache hit
 				if (!HasNorms(field))
-					return fakeNorms();
+					return FakeNorms();
 				
 				bytes = new byte[MaxDoc()];
 				for (int i = 0; i < subReaders.Length; i++)
@@ -211,15 +332,16 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				byte[] bytes = (byte[]) normsCache[field];
 				if (bytes == null && !HasNorms(field))
-					bytes = fakeNorms();
+					bytes = FakeNorms();
 				if (bytes != null)
-					// cache hit
+				// cache hit
 					Array.Copy(bytes, 0, result, offset, MaxDoc());
 				
 				for (int i = 0; i < subReaders.Length; i++)
-					// read from segments
+				// read from segments
 					subReaders[i].Norms(field, result, offset + starts[i]);
 			}
 		}
@@ -233,16 +355,19 @@ namespace Lucene.Net.Index
 		
 		public override TermEnum Terms()
 		{
+			EnsureOpen();
 			return new MultiTermEnum(subReaders, starts, null);
 		}
 		
 		public override TermEnum Terms(Term term)
 		{
+			EnsureOpen();
 			return new MultiTermEnum(subReaders, starts, term);
 		}
 		
 		public override int DocFreq(Term t)
 		{
+			EnsureOpen();
 			int total = 0; // sum freqs in segments
 			for (int i = 0; i < subReaders.Length; i++)
 				total += subReaders[i].DocFreq(t);
@@ -251,20 +376,14 @@ namespace Lucene.Net.Index
 		
 		public override TermDocs TermDocs()
 		{
+			EnsureOpen();
 			return new MultiTermDocs(subReaders, starts);
 		}
 		
 		public override TermPositions TermPositions()
 		{
+			EnsureOpen();
 			return new MultiTermPositions(subReaders, starts);
-		}
-		
-		protected internal override void  SetDeleter(IndexFileDeleter deleter)
-		{
-			// Share deleter to our SegmentReaders:
-			this.deleter = deleter;
-			for (int i = 0; i < subReaders.Length; i++)
-				subReaders[i].SetDeleter(deleter);
 		}
 		
 		protected internal override void  DoCommit()
@@ -273,291 +392,56 @@ namespace Lucene.Net.Index
 				subReaders[i].Commit();
 		}
 		
-		internal override void  StartCommit()
-		{
-			base.StartCommit();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				subReaders[i].StartCommit();
-			}
-		}
-		
-		internal override void  RollbackCommit()
-		{
-			base.RollbackCommit();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				subReaders[i].RollbackCommit();
-			}
-		}
-		
 		protected internal override void  DoClose()
 		{
 			lock (this)
 			{
 				for (int i = 0; i < subReaders.Length; i++)
-					subReaders[i].Close();
-			}
-		}
-		
-		/// <seealso cref="IndexReader#GetFieldNames(IndexReader.FieldOption)">
-		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-	}
-	
-	class MultiTermEnum : TermEnum
-	{
-		private SegmentMergeQueue queue;
-		
-		private Term term;
-		private int docFreq;
-		
-		public MultiTermEnum(IndexReader[] readers, int[] starts, Term t)
-		{
-			queue = new SegmentMergeQueue(readers.Length);
-			for (int i = 0; i < readers.Length; i++)
-			{
-				IndexReader reader = readers[i];
-				TermEnum termEnum;
-				
-				if (t != null)
 				{
-					termEnum = reader.Terms(t);
-				}
-				else
-					termEnum = reader.Terms();
-				
-				SegmentMergeInfo smi = new SegmentMergeInfo(starts[i], termEnum, reader);
-				if (t == null?smi.Next():termEnum.Term() != null)
-					queue.Put(smi);
-				// initialize queue
-				else
-					smi.Close();
-			}
-			
-			if (t != null && queue.Size() > 0)
-			{
-				Next();
-			}
-		}
-		
-		public override bool Next()
-		{
-			SegmentMergeInfo top = (SegmentMergeInfo) queue.Top();
-			if (top == null)
-			{
-				term = null;
-				return false;
-			}
-			
-			term = top.term;
-			docFreq = 0;
-			
-			while (top != null && term.CompareTo(top.term) == 0)
-			{
-				queue.Pop();
-				docFreq += top.termEnum.DocFreq(); // increment freq
-				if (top.Next())
-					queue.Put(top);
-				// restore queue
-				else
-					top.Close(); // done with a segment
-				top = (SegmentMergeInfo) queue.Top();
-			}
-			return true;
-		}
-		
-		public override Term Term()
-		{
-			return term;
-		}
-		
-		public override int DocFreq()
-		{
-			return docFreq;
-		}
-		
-		public override void  Close()
-		{
-			queue.Close();
-		}
-	}
-	
-	class MultiTermDocs : TermDocs
-	{
-		protected internal IndexReader[] readers;
-		protected internal int[] starts;
-		protected internal Term term;
-		
-		protected internal int base_Renamed = 0;
-		protected internal int pointer = 0;
-		
-		private TermDocs[] readerTermDocs;
-		protected internal TermDocs current; // == readerTermDocs[pointer]
-		
-		public MultiTermDocs(IndexReader[] r, int[] s)
-		{
-			readers = r;
-			starts = s;
-			
-			readerTermDocs = new TermDocs[r.Length];
-		}
-		
-		public virtual int Doc()
-		{
-			return base_Renamed + current.Doc();
-		}
-		public virtual int Freq()
-		{
-			return current.Freq();
-		}
-		
-		public virtual void  Seek(Term term)
-		{
-			this.term = term;
-			this.base_Renamed = 0;
-			this.pointer = 0;
-			this.current = null;
-		}
-		
-		public virtual void  Seek(TermEnum termEnum)
-		{
-			Seek(termEnum.Term());
-		}
-		
-		public virtual bool Next()
-		{
-			for (; ; )
-			{
-				if (current != null && current.Next())
-				{
-					return true;
-				}
-				else if (pointer < readers.Length)
-				{
-					base_Renamed = starts[pointer];
-					current = TermDocs(pointer++);
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
-		
-		/// <summary>Optimized implementation. </summary>
-		public virtual int Read(int[] docs, int[] freqs)
-		{
-			while (true)
-			{
-				while (current == null)
-				{
-					if (pointer < readers.Length)
+					if (decrefOnClose[i])
 					{
-						// try next segment
-						base_Renamed = starts[pointer];
-						current = TermDocs(pointer++);
+						subReaders[i].DecRef();
 					}
 					else
 					{
-						return 0;
+						subReaders[i].Close();
 					}
 				}
-				int end = current.Read(docs, freqs);
-				if (end == 0)
-				{
-					// none left in segment
-					current = null;
-				}
-				else
-				{
-					// got some
-					int b = base_Renamed; // adjust doc numbers
-					for (int i = 0; i < end; i++)
-						docs[i] += b;
-					return end;
-				}
 			}
 		}
 		
-		/* A Possible future optimization could skip entire segments */
-		public virtual bool SkipTo(int target)
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
-			for (; ; )
+			EnsureOpen();
+			return MultiSegmentReader.GetFieldNames(fieldNames, this.subReaders);
+		}
+		
+		/// <summary> Checks recursively if all subreaders are up to date. </summary>
+		public override bool IsCurrent()
+		{
+			for (int i = 0; i < subReaders.Length; i++)
 			{
-				if (current != null && current.SkipTo(target - base_Renamed))
+				if (!subReaders[i].IsCurrent())
 				{
-					return true;
-				}
-				else if (pointer < readers.Length)
-				{
-					base_Renamed = starts[pointer];
-					current = TermDocs(pointer++);
-				}
-				else
 					return false;
+				}
 			}
+			
+			// all subreaders are up to date
+			return true;
 		}
 		
-		private TermDocs TermDocs(int i)
+		/// <summary>Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public override long GetVersion()
 		{
-			if (term == null)
-				return null;
-			TermDocs result = readerTermDocs[i];
-			if (result == null)
-				result = readerTermDocs[i] = TermDocs(readers[i]);
-			result.Seek(term);
-			return result;
+			throw new System.NotSupportedException("MultiReader does not support this method.");
 		}
 		
-		protected internal virtual TermDocs TermDocs(IndexReader reader)
+		// for testing
+		internal virtual IndexReader[] GetSubReaders()
 		{
-			return reader.TermDocs();
-		}
-		
-		public virtual void  Close()
-		{
-			for (int i = 0; i < readerTermDocs.Length; i++)
-			{
-				if (readerTermDocs[i] != null)
-					readerTermDocs[i].Close();
-			}
-		}
-	}
-	
-	class MultiTermPositions : MultiTermDocs, TermPositions
-	{
-		public MultiTermPositions(IndexReader[] r, int[] s):base(r, s)
-		{
-		}
-		
-		protected internal override TermDocs TermDocs(IndexReader reader)
-		{
-			return (TermDocs) reader.TermPositions();
-		}
-		
-		public virtual int NextPosition()
-		{
-			return ((TermPositions) current).NextPosition();
+			return subReaders;
 		}
 	}
 }

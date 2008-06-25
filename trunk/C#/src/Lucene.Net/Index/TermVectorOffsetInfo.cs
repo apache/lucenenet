@@ -20,8 +20,13 @@ using System;
 namespace Lucene.Net.Index
 {
 	
+	/// <summary> The TermVectorOffsetInfo class holds information pertaining to a Term in a {@link Lucene.Net.Index.TermPositionVector}'s
+	/// offset information.  This offset information is the character offset as set during the Analysis phase (and thus may not be the actual offset in the
+	/// original content).
+	/// </summary>
 	public class TermVectorOffsetInfo
 	{
+		/// <summary> Convenience declaration when creating a {@link Lucene.Net.Index.TermPositionVector} that stores only position information.</summary>
 		public static readonly TermVectorOffsetInfo[] EMPTY_OFFSET_INFO = new TermVectorOffsetInfo[0];
 		private int startOffset;
 		private int endOffset;
@@ -36,6 +41,9 @@ namespace Lucene.Net.Index
 			this.startOffset = startOffset;
 		}
 		
+		/// <summary> The accessor for the ending offset for the term</summary>
+		/// <returns> The offset
+		/// </returns>
 		public virtual int GetEndOffset()
 		{
 			return endOffset;
@@ -46,6 +54,11 @@ namespace Lucene.Net.Index
 			this.endOffset = endOffset;
 		}
 		
+		/// <summary> The accessor for the starting offset of the term.
+		/// 
+		/// </summary>
+		/// <returns> The offset
+		/// </returns>
 		public virtual int GetStartOffset()
 		{
 			return startOffset;
@@ -56,6 +69,11 @@ namespace Lucene.Net.Index
 			this.startOffset = startOffset;
 		}
 		
+		/// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
+		/// <param name="o">The comparison Object
+		/// </param>
+		/// <returns> true if both {@link #GetStartOffset()} and {@link #GetEndOffset()} are the same for both objects.
+		/// </returns>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

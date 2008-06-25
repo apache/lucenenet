@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Index
@@ -216,6 +217,30 @@ namespace Lucene.Net.Index
 		public virtual int Read(int[] arg0, int[] arg1)
 		{
 			throw new System.NotSupportedException();
+		}
+		
+		
+		/// <summary> Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public virtual int GetPayloadLength()
+		{
+			throw new System.NotSupportedException();
+		}
+		
+		/// <summary> Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public virtual byte[] GetPayload(byte[] data, int offset)
+		{
+			throw new System.NotSupportedException();
+		}
+		
+		/// <summary> </summary>
+		/// <returns> false
+		/// </returns>
+		// TODO: Remove warning after API has been finalized
+		public virtual bool IsPayloadAvailable()
+		{
+			return false;
 		}
 	}
 }

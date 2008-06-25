@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using StringHelper = Lucene.Net.Util.StringHelper;
@@ -23,404 +24,189 @@ using StringHelper = Lucene.Net.Util.StringHelper;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Writer works by opening a document and then opening the fields within the document and then
-	/// writing out the vectors for each field.
-	/// 
-	/// Rough usage:
-	/// 
-	/// <CODE>
-	/// for each document
-	/// {
-	/// writer.openDocument();
-	/// for each field on the document
-	/// {
-	/// writer.openField(field);
-	/// for all of the terms
-	/// {
-	/// writer.addTerm(...)
-	/// }
-	/// writer.closeField
-	/// }
-	/// writer.closeDocument()    
-	/// }
-	/// </CODE>
-	/// 
-	/// </summary>
-	/// <version>  $Id: TermVectorsWriter.java 472959 2006-11-09 16:21:50Z yonik $
-	/// 
-	/// </version>
 	public sealed class TermVectorsWriter
 	{
-		internal const byte STORE_POSITIONS_WITH_TERMVECTOR = (byte) (0x1);
-		internal const byte STORE_OFFSET_WITH_TERMVECTOR = (byte) (0x2);
-		
-		internal const int FORMAT_VERSION = 2;
-		//The size in bytes that the FORMAT_VERSION will take up at the beginning of each file 
-		internal const int FORMAT_SIZE = 4;
-		
-		internal const System.String TVX_EXTENSION = ".tvx";
-		internal const System.String TVD_EXTENSION = ".tvd";
-		internal const System.String TVF_EXTENSION = ".tvf";
 		
 		private IndexOutput tvx = null, tvd = null, tvf = null;
-		private System.Collections.ArrayList fields = null;
-		private System.Collections.ArrayList terms = null;
 		private FieldInfos fieldInfos;
 		
-		private TVField currentField = null;
-		private long currentDocPointer = - 1;
-
-		// Those three get'ers are helper for Lucene.Net only
-		public static System.String TvxExtension
-		{
-			get {   return TVX_EXTENSION;   }
-		}
-		public static System.String TvdExtension
-		{
-			get {   return TVD_EXTENSION;   }
-		}
-		public static System.String TvfExtension
-		{
-			get {   return TVF_EXTENSION;   }
-		}
-
 		public TermVectorsWriter(Directory directory, System.String segment, FieldInfos fieldInfos)
 		{
 			// Open files for TermVector storage
-			tvx = directory.CreateOutput(segment + TVX_EXTENSION);
-			tvx.WriteInt(FORMAT_VERSION);
-			tvd = directory.CreateOutput(segment + TVD_EXTENSION);
-			tvd.WriteInt(FORMAT_VERSION);
-			tvf = directory.CreateOutput(segment + TVF_EXTENSION);
-			tvf.WriteInt(FORMAT_VERSION);
+			tvx = directory.CreateOutput(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
+			tvx.WriteInt(TermVectorsReader.FORMAT_VERSION);
+			tvd = directory.CreateOutput(segment + "." + IndexFileNames.VECTORS_DOCUMENTS_EXTENSION);
+			tvd.WriteInt(TermVectorsReader.FORMAT_VERSION);
+			tvf = directory.CreateOutput(segment + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION);
+			tvf.WriteInt(TermVectorsReader.FORMAT_VERSION);
 			
 			this.fieldInfos = fieldInfos;
-			fields = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(fieldInfos.Size()));
-			terms = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
-		}
-		
-		
-		public void  OpenDocument()
-		{
-			CloseDocument();
-			currentDocPointer = tvd.GetFilePointer();
-		}
-		
-		
-		public void  CloseDocument()
-		{
-			if (IsDocumentOpen())
-			{
-				CloseField();
-				WriteDoc();
-				fields.Clear();
-				currentDocPointer = - 1;
-			}
-		}
-		
-		
-		public bool IsDocumentOpen()
-		{
-			return currentDocPointer != - 1;
-		}
-		
-		
-		/// <summary>Start processing a field. This can be followed by a number of calls to
-		/// addTerm, and a final call to closeField to indicate the end of
-		/// processing of this field. If a field was previously open, it is
-		/// closed automatically.
-		/// </summary>
-		public void  OpenField(System.String field)
-		{
-			FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-			OpenField(fieldInfo.number, fieldInfo.storePositionWithTermVector, fieldInfo.storeOffsetWithTermVector);
-		}
-		
-		private void  OpenField(int fieldNumber, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
-		{
-			if (!IsDocumentOpen())
-				throw new System.SystemException("Cannot open field when no document is open.");
-			CloseField();
-			currentField = new TVField(fieldNumber, storePositionWithTermVector, storeOffsetWithTermVector);
-		}
-		
-		/// <summary>Finished processing current field. This should be followed by a call to
-		/// openField before future calls to addTerm.
-		/// </summary>
-		public void  CloseField()
-		{
-			if (IsFieldOpen())
-			{
-				/* DEBUG */
-				//System.out.println("closeField()");
-				/* DEBUG */
-				
-				// save field and terms
-				WriteField();
-				fields.Add(currentField);
-				terms.Clear();
-				currentField = null;
-			}
-		}
-		
-		/// <summary>Return true if a field is currently open. </summary>
-		public bool IsFieldOpen()
-		{
-			return currentField != null;
-		}
-		
-		/// <summary>Add term to the field's term vector. Fieldable must already be open.
-		/// Terms should be added in
-		/// increasing order of terms, one call per unique termNum. ProxPointer
-		/// is a pointer into the TermPosition file (prx). Freq is the number of
-		/// times this term appears in this field, in this document.
-		/// </summary>
-		/// <throws>  IllegalStateException if document or field is not open </throws>
-		public void  AddTerm(System.String termText, int freq)
-		{
-			AddTerm(termText, freq, null, null);
-		}
-		
-		public void  AddTerm(System.String termText, int freq, int[] positions, TermVectorOffsetInfo[] offsets)
-		{
-			if (!IsDocumentOpen())
-				throw new System.SystemException("Cannot add terms when document is not open");
-			if (!IsFieldOpen())
-				throw new System.SystemException("Cannot add terms when field is not open");
-			
-			AddTermInternal(termText, freq, positions, offsets);
-		}
-		
-		private void  AddTermInternal(System.String termText, int freq, int[] positions, TermVectorOffsetInfo[] offsets)
-		{
-			TVTerm term = new TVTerm();
-			term.termText = termText;
-			term.freq = freq;
-			term.positions = positions;
-			term.offsets = offsets;
-			terms.Add(term);
 		}
 		
 		/// <summary> Add a complete document specified by all its term vectors. If document has no
 		/// term vectors, add value for tvx.
 		/// 
 		/// </summary>
-		/// <param name="">vectors
+		/// <param name="vectors">
 		/// </param>
 		/// <throws>  IOException </throws>
 		public void  AddAllDocVectors(TermFreqVector[] vectors)
 		{
-			OpenDocument();
+			
+			tvx.WriteLong(tvd.GetFilePointer());
 			
 			if (vectors != null)
 			{
-				for (int i = 0; i < vectors.Length; i++)
+				int numFields = vectors.Length;
+				tvd.WriteVInt(numFields);
+				
+				long[] fieldPointers = new long[numFields];
+				
+				for (int i = 0; i < numFields; i++)
 				{
-					bool storePositionWithTermVector = false;
-					bool storeOffsetWithTermVector = false;
+					fieldPointers[i] = tvf.GetFilePointer();
+					
+					int fieldNumber = fieldInfos.FieldNumber(vectors[i].GetField());
+					
+					// 1st pass: write field numbers to tvd
+					tvd.WriteVInt(fieldNumber);
+					
+					int numTerms = vectors[i].Size();
+					tvf.WriteVInt(numTerms);
+					
+					TermPositionVector tpVector;
+					
+					byte bits;
+					bool storePositions;
+					bool storeOffsets;
 					
 					if (vectors[i] is TermPositionVector)
 					{
-						
-						TermPositionVector tpVector = (TermPositionVector) vectors[i];
-						
-						if (tpVector.Size() > 0 && tpVector.GetTermPositions(0) != null)
-							storePositionWithTermVector = true;
-						if (tpVector.Size() > 0 && tpVector.GetOffsets(0) != null)
-							storeOffsetWithTermVector = true;
-						
-						FieldInfo fieldInfo = fieldInfos.FieldInfo(tpVector.GetField());
-						OpenField(fieldInfo.number, storePositionWithTermVector, storeOffsetWithTermVector);
-						
-						for (int j = 0; j < tpVector.Size(); j++)
-							AddTermInternal(tpVector.GetTerms()[j], tpVector.GetTermFrequencies()[j], tpVector.GetTermPositions(j), tpVector.GetOffsets(j));
-						
-						CloseField();
+						// May have positions & offsets
+						tpVector = (TermPositionVector) vectors[i];
+						storePositions = tpVector.Size() > 0 && tpVector.GetTermPositions(0) != null;
+						storeOffsets = tpVector.Size() > 0 && tpVector.GetOffsets(0) != null;
+						bits = (byte) ((storePositions ? TermVectorsReader.STORE_POSITIONS_WITH_TERMVECTOR : (byte) 0) + (storeOffsets ? TermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR : (byte) 0));
 					}
 					else
 					{
+						tpVector = null;
+						bits = 0;
+						storePositions = false;
+						storeOffsets = false;
+					}
+					
+					tvf.WriteVInt(bits);
+					
+					System.String[] terms = vectors[i].GetTerms();
+					int[] freqs = vectors[i].GetTermFrequencies();
+					
+					System.String lastTermText = "";
+					for (int j = 0; j < numTerms; j++)
+					{
+						System.String termText = terms[j];
+						int start = StringHelper.StringDifference(lastTermText, termText);
+						int length = termText.Length - start;
+						tvf.WriteVInt(start); // write shared prefix length
+						tvf.WriteVInt(length); // write delta length
+						tvf.WriteChars(termText, start, length); // write delta chars
+						lastTermText = termText;
 						
-						TermFreqVector tfVector = vectors[i];
+						int termFreq = freqs[j];
 						
-						FieldInfo fieldInfo = fieldInfos.FieldInfo(tfVector.GetField());
-						OpenField(fieldInfo.number, storePositionWithTermVector, storeOffsetWithTermVector);
+						tvf.WriteVInt(termFreq);
 						
-						for (int j = 0; j < tfVector.Size(); j++)
-							AddTermInternal(tfVector.GetTerms()[j], tfVector.GetTermFrequencies()[j], null, null);
+						if (storePositions)
+						{
+							int[] positions = tpVector.GetTermPositions(j);
+							if (positions == null)
+								throw new System.SystemException("Trying to write positions that are null!");
+							System.Diagnostics.Debug.Assert(positions.Length == termFreq);
+							
+							// use delta encoding for positions
+							int lastPosition = 0;
+							for (int k = 0; k < positions.Length; k++)
+							{
+								int position = positions[k];
+								tvf.WriteVInt(position - lastPosition);
+								lastPosition = position;
+							}
+						}
 						
-						CloseField();
+						if (storeOffsets)
+						{
+							TermVectorOffsetInfo[] offsets = tpVector.GetOffsets(j);
+							if (offsets == null)
+								throw new System.SystemException("Trying to write offsets that are null!");
+							System.Diagnostics.Debug.Assert(offsets.Length == termFreq);
+							
+							// use delta encoding for offsets
+							int lastEndOffset = 0;
+							for (int k = 0; k < offsets.Length; k++)
+							{
+								int startOffset = offsets[k].GetStartOffset();
+								int endOffset = offsets[k].GetEndOffset();
+								tvf.WriteVInt(startOffset - lastEndOffset);
+								tvf.WriteVInt(endOffset - startOffset);
+								lastEndOffset = endOffset;
+							}
+						}
 					}
 				}
+				
+				// 2nd pass: write field pointers to tvd
+				long lastFieldPointer = 0;
+				for (int i = 0; i < numFields; i++)
+				{
+					long fieldPointer = fieldPointers[i];
+					tvd.WriteVLong(fieldPointer - lastFieldPointer);
+					lastFieldPointer = fieldPointer;
+				}
 			}
-			
-			CloseDocument();
+			else
+				tvd.WriteVInt(0);
 		}
 		
 		/// <summary>Close all streams. </summary>
-		public void  Close()
+		internal void  Close()
 		{
-			try
-			{
-				CloseDocument();
-			}
-			finally
-			{
-				// make an effort to close all streams we can but remember and re-throw
-				// the first exception encountered in this process
-				System.IO.IOException keep = null;
-				if (tvx != null)
-					try
-					{
-						tvx.Close();
-					}
-					catch (System.IO.IOException e)
-					{
-						if (keep == null)
-							keep = e;
-					}
-				if (tvd != null)
-					try
-					{
-						tvd.Close();
-					}
-					catch (System.IO.IOException e)
-					{
-						if (keep == null)
-							keep = e;
-					}
-				if (tvf != null)
-					try
-					{
-						tvf.Close();
-					}
-					catch (System.IO.IOException e)
-					{
-						if (keep == null)
-							keep = e;
-					}
-				if (keep != null)
+			// make an effort to close all streams we can but remember and re-throw
+			// the first exception encountered in this process
+			System.IO.IOException keep = null;
+			if (tvx != null)
+				try
 				{
-					throw new System.IO.IOException(keep.StackTrace);
+					tvx.Close();
 				}
-			}
-		}
-		
-		
-		
-		private void  WriteField()
-		{
-			// remember where this field is written
-			currentField.tvfPointer = tvf.GetFilePointer();
-			//System.out.println("Fieldable Pointer: " + currentField.tvfPointer);
-			
-			int size = terms.Count;
-			tvf.WriteVInt(size);
-			
-			bool storePositions = currentField.storePositions;
-			bool storeOffsets = currentField.storeOffsets;
-			byte bits = (byte) (0x0);
-			if (storePositions)
-				bits |= STORE_POSITIONS_WITH_TERMVECTOR;
-			if (storeOffsets)
-				bits |= STORE_OFFSET_WITH_TERMVECTOR;
-			tvf.WriteByte(bits);
-			
-			System.String lastTermText = "";
-			for (int i = 0; i < size; i++)
-			{
-				TVTerm term = (TVTerm) terms[i];
-				int start = StringHelper.StringDifference(lastTermText, term.termText);
-				int length = term.termText.Length - start;
-				tvf.WriteVInt(start); // write shared prefix length
-				tvf.WriteVInt(length); // write delta length
-				tvf.WriteChars(term.termText, start, length); // write delta chars
-				tvf.WriteVInt(term.freq);
-				lastTermText = term.termText;
-				
-				if (storePositions)
+				catch (System.IO.IOException e)
 				{
-					if (term.positions == null)
-						throw new System.SystemException("Trying to write positions that are null!");
-					
-					// use delta encoding for positions
-					int position = 0;
-					for (int j = 0; j < term.freq; j++)
-					{
-						tvf.WriteVInt(term.positions[j] - position);
-						position = term.positions[j];
-					}
+					if (keep == null)
+						keep = e;
 				}
-				
-				if (storeOffsets)
+			if (tvd != null)
+				try
 				{
-					if (term.offsets == null)
-						throw new System.SystemException("Trying to write offsets that are null!");
-					
-					// use delta encoding for offsets
-					int position = 0;
-					for (int j = 0; j < term.freq; j++)
-					{
-						tvf.WriteVInt(term.offsets[j].GetStartOffset() - position);
-						tvf.WriteVInt(term.offsets[j].GetEndOffset() - term.offsets[j].GetStartOffset()); //Save the diff between the two.
-						position = term.offsets[j].GetEndOffset();
-					}
+					tvd.Close();
 				}
-			}
-		}
-		
-		private void  WriteDoc()
-		{
-			if (IsFieldOpen())
-				throw new System.SystemException("Field is still open while writing document");
-			//System.out.println("Writing doc pointer: " + currentDocPointer);
-			// write document index record
-			tvx.WriteLong(currentDocPointer);
-			
-			// write document data record
-			int size = fields.Count;
-			
-			// write the number of fields
-			tvd.WriteVInt(size);
-			
-			// write field numbers
-			for (int i = 0; i < size; i++)
+				catch (System.IO.IOException e)
+				{
+					if (keep == null)
+						keep = e;
+				}
+			if (tvf != null)
+				try
+				{
+					tvf.Close();
+				}
+				catch (System.IO.IOException e)
+				{
+					if (keep == null)
+						keep = e;
+				}
+			if (keep != null)
 			{
-				TVField field = (TVField) fields[i];
-				tvd.WriteVInt(field.number);
+				throw new System.IO.IOException(keep.StackTrace);
 			}
-			
-			// write field pointers
-			long lastFieldPointer = 0;
-			for (int i = 0; i < size; i++)
-			{
-				TVField field = (TVField) fields[i];
-				tvd.WriteVLong(field.tvfPointer - lastFieldPointer);
-				lastFieldPointer = field.tvfPointer;
-			}
-			//System.out.println("After writing doc pointer: " + tvx.getFilePointer());
-		}
-		
-		
-		private class TVField
-		{
-			internal int number;
-			internal long tvfPointer = 0;
-			internal bool storePositions = false;
-			internal bool storeOffsets = false;
-			internal TVField(int number, bool storePos, bool storeOff)
-			{
-				this.number = number;
-				storePositions = storePos;
-				storeOffsets = storeOff;
-			}
-		}
-		
-		private class TVTerm
-		{
-			internal System.String termText;
-			internal int freq = 0;
-			internal int[] positions = null;
-			internal TermVectorOffsetInfo[] offsets = null;
 		}
 	}
 }

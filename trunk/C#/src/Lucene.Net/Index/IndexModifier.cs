@@ -16,10 +16,12 @@
  */
 
 using System;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
+
 using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
 
 namespace Lucene.Net.Index
 {
@@ -86,6 +88,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Daniel Naber
 	/// </author>
+	/// <deprecated> Please use {@link IndexWriter} instead.
+	/// </deprecated>
 	public class IndexModifier
 	{
 		private void  InitBlock()
@@ -119,6 +123,12 @@ namespace Lucene.Net.Index
 		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
 		/// <code>false</code> to append to the existing index
 		/// </param>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public IndexModifier(Directory directory, Analyzer analyzer, bool create)
 		{
 			InitBlock();
@@ -135,6 +145,12 @@ namespace Lucene.Net.Index
 		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
 		/// <code>false</code> to append to the existing index
 		/// </param>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public IndexModifier(System.String dirName, Analyzer analyzer, bool create)
 		{
 			InitBlock();
@@ -152,6 +168,12 @@ namespace Lucene.Net.Index
 		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
 		/// <code>false</code> to append to the existing index
 		/// </param>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public IndexModifier(System.IO.FileInfo file, Analyzer analyzer, bool create)
 		{
 			InitBlock();
@@ -160,7 +182,12 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Initialize an IndexWriter.</summary>
-		/// <throws>  IOException </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		protected internal virtual void  Init(Directory directory, Analyzer analyzer, bool create)
 		{
 			this.directory = directory;
@@ -183,7 +210,12 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Close the IndexReader and open an IndexWriter.</summary>
-		/// <throws>  IOException </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		protected internal virtual void  CreateIndexWriter()
 		{
 			if (indexWriter == null)
@@ -194,16 +226,22 @@ namespace Lucene.Net.Index
 					indexReader = null;
 				}
 				indexWriter = new IndexWriter(directory, analyzer, false);
+				// IndexModifier cannot use ConcurrentMergeScheduler
+				// because it synchronizes on the directory which can
+				// cause deadlock
+				indexWriter.SetMergeScheduler(new SerialMergeScheduler());
 				indexWriter.SetInfoStream(infoStream);
 				indexWriter.SetUseCompoundFile(useCompoundFile);
-				indexWriter.SetMaxBufferedDocs(maxBufferedDocs);
+				if (maxBufferedDocs != IndexWriter.DISABLE_AUTO_FLUSH)
+					indexWriter.SetMaxBufferedDocs(maxBufferedDocs);
 				indexWriter.SetMaxFieldLength(maxFieldLength);
 				indexWriter.SetMergeFactor(mergeFactor);
 			}
 		}
 		
 		/// <summary> Close the IndexWriter and open an IndexReader.</summary>
-		/// <throws>  IOException </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		protected internal virtual void  CreateIndexReader()
 		{
 			if (indexReader == null)
@@ -218,7 +256,12 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Make sure all changes are written to disk.</summary>
-		/// <throws>  IOException </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Flush()
 		{
 			lock (directory)
@@ -244,9 +287,15 @@ namespace Lucene.Net.Index
 		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
-		/// <seealso cref="Analyzer)">
+		/// <seealso cref="IndexWriter.AddDocument(Document, Analyzer)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  AddDocument(Document doc, Analyzer docAnalyzer)
 		{
 			lock (directory)
@@ -264,9 +313,15 @@ namespace Lucene.Net.Index
 		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
-		/// <seealso cref="IndexWriter#AddDocument(Document)">
+		/// <seealso cref="IndexWriter.AddDocument(Document)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  AddDocument(Document doc)
 		{
 			AddDocument(doc, null);
@@ -280,9 +335,18 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> the number of documents deleted
 		/// </returns>
-		/// <seealso cref="IndexReader#DeleteDocuments(Term)">
+		/// <seealso cref="IndexReader.DeleteDocuments(Term)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <throws>  StaleReaderException if the index has changed </throws>
+		/// <summary>  since this reader was opened
+		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual int DeleteDocuments(Term term)
 		{
 			lock (directory)
@@ -294,8 +358,16 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Deletes the document numbered <code>docNum</code>.</summary>
-		/// <seealso cref="IndexReader#DeleteDocument(int)">
+		/// <seealso cref="IndexReader.DeleteDocument(int)">
 		/// </seealso>
+		/// <throws>  StaleReaderException if the index has changed </throws>
+		/// <summary>  since this reader was opened
+		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  DeleteDocument(int docNum)
 		{
@@ -309,9 +381,9 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary> Returns the number of documents currently in this index.</summary>
-		/// <seealso cref="IndexWriter#DocCount()">
+		/// <seealso cref="IndexWriter.DocCount()">
 		/// </seealso>
-		/// <seealso cref="IndexReader#NumDocs()">
+		/// <seealso cref="IndexReader.NumDocs()">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual int DocCount()
@@ -333,9 +405,15 @@ namespace Lucene.Net.Index
 		/// <summary> Merges all segments together into a single segment, optimizing an index
 		/// for search.
 		/// </summary>
-		/// <seealso cref="IndexWriter#Optimize()">
+		/// <seealso cref="IndexWriter.Optimize()">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Optimize()
 		{
 			lock (directory)
@@ -350,7 +428,7 @@ namespace Lucene.Net.Index
 		/// {@link #GetMaxFieldLength()} is reached will be printed to this.
 		/// <p>Example: <tt>index.setInfoStream(System.err);</tt>
 		/// </summary>
-		/// <seealso cref="IndexWriter#SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexWriter.SetInfoStream(PrintStream)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetInfoStream(System.IO.StreamWriter infoStream)
@@ -366,9 +444,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier#SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexModifier.SetInfoStream(PrintStream)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual System.IO.TextWriter GetInfoStream()
 		{
 			lock (directory)
@@ -383,7 +466,7 @@ namespace Lucene.Net.Index
 		/// for each segment are merged into a single file once the segment creation
 		/// is finished. This is done regardless of what directory is in use.
 		/// </summary>
-		/// <seealso cref="IndexWriter#SetUseCompoundFile(boolean)">
+		/// <seealso cref="IndexWriter.SetUseCompoundFile(boolean)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetUseCompoundFile(bool useCompoundFile)
@@ -399,9 +482,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier#SetUseCompoundFile(boolean)">
+		/// <seealso cref="IndexModifier.SetUseCompoundFile(boolean)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual bool GetUseCompoundFile()
 		{
 			lock (directory)
@@ -423,7 +511,7 @@ namespace Lucene.Net.Index
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
 		/// By default, no more than 10,000 terms will be indexed for a field.
 		/// </summary>
-		/// <seealso cref="IndexWriter#SetMaxFieldLength(int)">
+		/// <seealso cref="IndexWriter.SetMaxFieldLength(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetMaxFieldLength(int maxFieldLength)
@@ -439,9 +527,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier#SetMaxFieldLength(int)">
+		/// <seealso cref="IndexModifier.SetMaxFieldLength(int)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual int GetMaxFieldLength()
 		{
 			lock (directory)
@@ -461,7 +554,7 @@ namespace Lucene.Net.Index
 		/// <p>The default value is 10.
 		/// 
 		/// </summary>
-		/// <seealso cref="IndexWriter#SetMaxBufferedDocs(int)">
+		/// <seealso cref="IndexWriter.SetMaxBufferedDocs(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		/// <throws>  IllegalArgumentException if maxBufferedDocs is smaller than 2 </throws>
@@ -478,9 +571,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier#SetMaxBufferedDocs(int)">
+		/// <seealso cref="IndexModifier.SetMaxBufferedDocs(int)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual int GetMaxBufferedDocs()
 		{
 			lock (directory)
@@ -501,7 +599,7 @@ namespace Lucene.Net.Index
 		/// <p>This must never be less than 2.  The default value is 10.
 		/// 
 		/// </summary>
-		/// <seealso cref="IndexWriter#SetMergeFactor(int)">
+		/// <seealso cref="IndexWriter.SetMergeFactor(int)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetMergeFactor(int mergeFactor)
@@ -517,9 +615,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <throws>  IOException </throws>
-		/// <seealso cref="IndexModifier#SetMergeFactor(int)">
+		/// <seealso cref="IndexModifier.SetMergeFactor(int)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  LockObtainFailedException if another writer </throws>
+		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// be obtained)
+		/// </summary>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual int GetMergeFactor()
 		{
 			lock (directory)
@@ -534,6 +637,8 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IllegalStateException if the index has been closed before already </throws>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Close()
 		{
 			lock (directory)

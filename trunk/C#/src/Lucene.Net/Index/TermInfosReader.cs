@@ -16,6 +16,8 @@
  */
 
 using System;
+
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -42,21 +44,91 @@ namespace Lucene.Net.Index
 		
 		private SegmentTermEnum indexEnum;
 		
-		public TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
+		private int indexDivisor = 1;
+		private int totalIndexInterval;
+		
+		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis) : this(dir, seg, fis, BufferedIndexInput.BUFFER_SIZE)
 		{
-			directory = dir;
-			segment = seg;
-			fieldInfos = fis;
+		}
+		
+		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis, int readBufferSize)
+		{
+			bool success = false;
 			
-			origEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tis"), fieldInfos, false);
-			size = origEnum.size;
-			
-			indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
+			try
+			{
+				directory = dir;
+				segment = seg;
+				fieldInfos = fis;
+				
+				origEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tis", readBufferSize), fieldInfos, false);
+				size = origEnum.size;
+				totalIndexInterval = origEnum.indexInterval;
+				
+				indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii", readBufferSize), fieldInfos, true);
+				
+				success = true;
+			}
+			finally
+			{
+				// With lock-less commits, it's entirely possible (and
+				// fine) to hit a FileNotFound exception above. In
+				// this case, we want to explicitly close any subset
+				// of things that were opened so that we don't have to
+				// wait for a GC to do so.
+				if (!success)
+				{
+					Close();
+				}
+			}
 		}
 		
 		public int GetSkipInterval()
 		{
 			return origEnum.skipInterval;
+		}
+		
+		public int GetMaxSkipLevels()
+		{
+			return origEnum.maxSkipLevels;
+		}
+		
+		/// <summary> <p>Sets the indexDivisor, which subsamples the number
+		/// of indexed terms loaded into memory.  This has a
+		/// similar effect as {@link
+		/// IndexWriter#setTermIndexInterval} except that setting
+		/// must be done at indexing time while this setting can be
+		/// set per reader.  When set to N, then one in every
+		/// N*termIndexInterval terms in the index is loaded into
+		/// memory.  By setting this to a value > 1 you can reduce
+		/// memory usage, at the expense of higher latency when
+		/// loading a TermInfo.  The default value is 1.</p>
+		/// 
+		/// <b>NOTE:</b> you must call this before the term
+		/// index is loaded.  If the index is already loaded,
+		/// an IllegalStateException is thrown.
+		/// 
+		/// + @throws IllegalStateException if the term index has
+		/// already been loaded into memory.
+		/// </summary>
+		public void  SetIndexDivisor(int indexDivisor)
+		{
+			if (indexDivisor < 1)
+				throw new System.ArgumentException("indexDivisor must be > 0: got " + indexDivisor);
+			
+			if (indexTerms != null)
+				throw new System.SystemException("index terms are already loaded");
+			
+			this.indexDivisor = indexDivisor;
+			totalIndexInterval = origEnum.indexInterval * indexDivisor;
+		}
+		
+		/// <summary>Returns the indexDivisor.</summary>
+		/// <seealso cref="setIndexDivisor">
+		/// </seealso>
+		public int GetIndexDivisor()
+		{
+			return indexDivisor;
 		}
 		
 		public void  Close()
@@ -93,7 +165,7 @@ namespace Lucene.Net.Index
 					return ; // do nothing
 				try
 				{
-					int indexSize = (int) indexEnum.size; // otherwise read index
+					int indexSize = 1 + ((int) indexEnum.size - 1) / indexDivisor; // otherwise read index
 					
 					indexTerms = new Term[indexSize];
 					indexInfos = new TermInfo[indexSize];
@@ -104,6 +176,10 @@ namespace Lucene.Net.Index
 						indexTerms[i] = indexEnum.Term();
 						indexInfos[i] = indexEnum.TermInfo();
 						indexPointers[i] = indexEnum.indexPointer;
+						
+						for (int j = 1; j < indexDivisor; j++)
+							if (!indexEnum.Next())
+								break;
 					}
 				}
 				finally
@@ -136,7 +212,7 @@ namespace Lucene.Net.Index
 		
 		private void  SeekEnum(int indexOffset)
 		{
-			GetEnum().Seek(indexPointers[indexOffset], (indexOffset * GetEnum().indexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
+			GetEnum().Seek(indexPointers[indexOffset], (indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
 		}
 		
 		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
@@ -151,7 +227,7 @@ namespace Lucene.Net.Index
 			SegmentTermEnum enumerator = GetEnum();
 			if (enumerator.Term() != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
 			{
-				int enumOffset = (int) (enumerator.position / enumerator.indexInterval) + 1;
+				int enumOffset = (int) (enumerator.position / totalIndexInterval) + 1;
 				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
 					return ScanEnum(term); // no need to seek
 			}
@@ -179,10 +255,10 @@ namespace Lucene.Net.Index
 				return null;
 			
 			SegmentTermEnum enumerator = GetEnum();
-			if (enumerator != null && enumerator.Term() != null && position >= enumerator.position && position < (enumerator.position + enumerator.indexInterval))
+			if (enumerator != null && enumerator.Term() != null && position >= enumerator.position && position < (enumerator.position + totalIndexInterval))
 				return ScanEnum(position); // can avoid seek
 			
-			SeekEnum(position / enumerator.indexInterval); // must seek
+			SeekEnum(position / totalIndexInterval); // must seek
 			return ScanEnum(position);
 		}
 		

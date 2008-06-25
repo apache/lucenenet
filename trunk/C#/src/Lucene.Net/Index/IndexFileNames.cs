@@ -27,22 +27,70 @@ namespace Lucene.Net.Index
 	/// </author>
 	/// <version>  $rcs = ' $Id: Exp $ ' ;
 	/// </version>
-	sealed public class IndexFileNames
+	sealed class IndexFileNames
 	{
 		
 		/// <summary>Name of the index segment file </summary>
-		public const System.String SEGMENTS = "segments";
+		internal const System.String SEGMENTS = "segments";
 		
 		/// <summary>Name of the generation reference file name </summary>
-		public const System.String SEGMENTS_GEN = "segments.gen";
+		internal const System.String SEGMENTS_GEN = "segments.gen";
 		
 		/// <summary>Name of the index deletable file (only used in
 		/// pre-lockless indices) 
 		/// </summary>
-		public const System.String DELETABLE = "deletable";
+		internal const System.String DELETABLE = "deletable";
 		
 		/// <summary>Extension of norms file </summary>
-		public const System.String NORMS_EXTENSION = "nrm";
+		internal const System.String NORMS_EXTENSION = "nrm";
+		
+		/// <summary>Extension of freq postings file </summary>
+		internal const System.String FREQ_EXTENSION = "frq";
+		
+		/// <summary>Extension of prox postings file </summary>
+		internal const System.String PROX_EXTENSION = "prx";
+		
+		/// <summary>Extension of terms file </summary>
+		internal const System.String TERMS_EXTENSION = "tis";
+		
+		/// <summary>Extension of terms index file </summary>
+		internal const System.String TERMS_INDEX_EXTENSION = "tii";
+		
+		/// <summary>Extension of stored fields index file </summary>
+		internal const System.String FIELDS_INDEX_EXTENSION = "fdx";
+		
+		/// <summary>Extension of stored fields file </summary>
+		internal const System.String FIELDS_EXTENSION = "fdt";
+		
+		/// <summary>Extension of vectors fields file </summary>
+		internal const System.String VECTORS_FIELDS_EXTENSION = "tvf";
+		
+		/// <summary>Extension of vectors documents file </summary>
+		internal const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
+		
+		/// <summary>Extension of vectors index file </summary>
+		internal const System.String VECTORS_INDEX_EXTENSION = "tvx";
+		
+		/// <summary>Extension of compound file </summary>
+		internal const System.String COMPOUND_FILE_EXTENSION = "cfs";
+		
+		/// <summary>Extension of compound file for doc store files</summary>
+		internal const System.String COMPOUND_FILE_STORE_EXTENSION = "cfx";
+		
+		/// <summary>Extension of deletes </summary>
+		internal const System.String DELETES_EXTENSION = "del";
+		
+		/// <summary>Extension of field infos </summary>
+		internal const System.String FIELD_INFOS_EXTENSION = "fnm";
+		
+		/// <summary>Extension of plain norms </summary>
+		internal const System.String PLAIN_NORMS_EXTENSION = "f";
+		
+		/// <summary>Extension of separate norms </summary>
+		internal const System.String SEPARATE_NORMS_EXTENSION = "s";
+		
+		/// <summary>Extension of gen file </summary>
+		internal const System.String GEN_EXTENSION = "gen";
 		
 		/// <summary> This array contains all filename extensions used by
 		/// Lucene's index files, with two exceptions, namely the
@@ -51,13 +99,22 @@ namespace Lucene.Net.Index
 		/// Lucene's <code>segments_N</code> files do not have any
 		/// filename extension.
 		/// </summary>
-		public static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del", "tvx", "tvd", "tvf", "gen", "nrm"};
+		internal static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{COMPOUND_FILE_EXTENSION, FIELD_INFOS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, DELETES_EXTENSION, VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION, GEN_EXTENSION, NORMS_EXTENSION, COMPOUND_FILE_STORE_EXTENSION};
+		
+		/// <summary>File extensions that are added to a compound file
+		/// (same as above, minus "del", "gen", "cfs"). 
+		/// </summary>
+		internal static readonly System.String[] INDEX_EXTENSIONS_IN_COMPOUND_FILE = new System.String[]{FIELD_INFOS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION, NORMS_EXTENSION};
+		
+		internal static readonly System.String[] STORE_INDEX_EXTENSIONS = new System.String[]{VECTORS_INDEX_EXTENSION, VECTORS_FIELDS_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION};
+		
+		internal static readonly System.String[] NON_STORE_INDEX_EXTENSIONS = new System.String[]{FIELD_INFOS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, TERMS_EXTENSION, TERMS_INDEX_EXTENSION, NORMS_EXTENSION};
 		
 		/// <summary>File extensions of old-style index files </summary>
-		public static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{"fnm", "frq", "prx", "fdx", "fdt", "tii", "tis"};
+		internal static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{FIELD_INFOS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION};
 		
 		/// <summary>File extensions for term vector support </summary>
-		public static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{"tvx", "tvd", "tvf"};
+		internal static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION};
 		
 		/// <summary> Computes the full file name from base, extension and
 		/// generation.  If the generation is -1, the file name is
@@ -71,24 +128,38 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="gen">-- generation
 		/// </param>
-		public static System.String FileNameFromGeneration(System.String base_Renamed, System.String extension, long gen)
+		internal static System.String FileNameFromGeneration(System.String base_Renamed, System.String extension, long gen)
 		{
-			if (gen == - 1)
+			if (gen == SegmentInfo.NO)
 			{
 				return null;
 			}
-			else if (gen == 0)
+			else if (gen == SegmentInfo.WITHOUT_GEN)
 			{
 				return base_Renamed + extension;
 			}
 			else
 			{
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-                return base_Renamed + "_" + Lucene.Net.Documents.NumberTools.ToString(gen) + extension;
+				return base_Renamed + "_" + SupportClass.Number.ToString(gen) + extension;
 #else
 				return base_Renamed + "_" + System.Convert.ToString(gen, 16) + extension;
 #endif
 			}
+		}
+		
+		/// <summary> Returns true if the provided filename is one of the doc
+		/// store files (ends with an extension in
+		/// STORE_INDEX_EXTENSIONS).
+		/// </summary>
+		internal static bool IsDocStoreFile(System.String fileName)
+		{
+			if (fileName.EndsWith(COMPOUND_FILE_STORE_EXTENSION))
+				return true;
+			for (int i = 0; i < STORE_INDEX_EXTENSIONS.Length; i++)
+				if (fileName.EndsWith(STORE_INDEX_EXTENSIONS[i]))
+					return true;
+			return false;
 		}
 	}
 }
