@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Returns the line number of the character last read.</summary>
 		/// <deprecated> 
 		/// </deprecated>
-		/// <seealso cref="#getEndLine">
+		/// <seealso cref="GetEndLine">
 		/// </seealso>
 		int GetLine();
 		
