@@ -48,7 +48,12 @@ namespace Lucene.Net.Store
 		[NonSerialized]
 		protected internal LockFactory lockFactory;
 		
-		/// <summary>Returns an array of strings, one for each file in the directory. </summary>
+		/// <summary>Returns an array of strings, one for each file in the
+		/// directory.  This method may return null (for example for
+		/// {@link FSDirectory} if the underlying directory doesn't
+		/// exist in the filesystem or there are permissions
+		/// problems).
+		/// </summary>
 		public abstract System.String[] List();
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
@@ -84,6 +89,18 @@ namespace Lucene.Net.Store
 		/// <summary>Returns a stream reading an existing file. </summary>
 		public abstract IndexInput OpenInput(System.String name);
 		
+		/// <summary>Returns a stream reading an existing file, with the
+		/// specified read buffer size.  The particular Directory
+		/// implementation may ignore the buffer size.  Currently
+		/// the only Directory implementations that respect this
+		/// parameter are {@link FSDirectory} and {@link
+		/// Lucene.Net.Index.CompoundFileReader}.
+		/// </summary>
+		public virtual IndexInput OpenInput(System.String name, int bufferSize)
+		{
+			return OpenInput(name);
+		}
+		
 		/// <summary>Construct a {@link Lock}.</summary>
 		/// <param name="name">the name of the lock file
 		/// </param>
@@ -95,7 +112,7 @@ namespace Lucene.Net.Store
 		/// specified lock.  Only call this at a time when you are
 		/// certain this lock is no longer in use.
 		/// </summary>
-		/// <param name="lockName">name of the lock to be cleared.
+		/// <param name="name">name of the lock to be cleared.
 		/// </param>
 		public virtual void  ClearLock(System.String name)
 		{
@@ -160,6 +177,12 @@ namespace Lucene.Net.Store
 		public static void  Copy(Directory src, Directory dest, bool closeDirSrc)
 		{
 			System.String[] files = src.List();
+
+			if (files == null)
+			{
+				throw new System.IO.IOException("cannot read directory " + src + ": list() returned null");
+			}
+
 			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)
 			{
@@ -176,7 +199,7 @@ namespace Lucene.Net.Store
 					long readCount = 0;
 					while (readCount < len)
 					{
-						int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?(int) (len - readCount):BufferedIndexOutput.BUFFER_SIZE;
+						int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int) (len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
 						is_Renamed.ReadBytes(buf, 0, toRead);
 						os.WriteBytes(buf, toRead);
 						readCount += toRead;

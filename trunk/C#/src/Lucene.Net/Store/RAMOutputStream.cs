@@ -23,22 +23,35 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexOutput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java 488330 2006-12-18 16:45:29Z mikemccand $
+	/// <version>  $Id: RAMOutputStream.java 598693 2007-11-27 17:01:21Z mikemccand $
 	/// </version>
 	
-	public class RAMOutputStream : BufferedIndexOutput
+	public class RAMOutputStream:IndexOutput
 	{
+		internal const int BUFFER_SIZE = 1024;
+		
 		private RAMFile file;
-		private long pointer = 0;
+		
+		private byte[] currentBuffer;
+		private int currentBufferIndex;
+		
+		private int bufferPosition;
+		private long bufferStart;
+		private int bufferLength;
 		
 		/// <summary>Construct an empty output buffer. </summary>
-		public RAMOutputStream() : this(new RAMFile())
+		public RAMOutputStream():this(new RAMFile())
 		{
 		}
 		
 		public /*internal*/ RAMOutputStream(RAMFile f)
 		{
 			file = f;
+			
+			// make sure that we switch to the
+			// first needed buffer lazily
+			currentBufferIndex = - 1;
+			currentBuffer = null;
 		}
 		
 		/// <summary>Copy the current contents of this buffer to the named output. </summary>
@@ -57,7 +70,7 @@ namespace Lucene.Net.Store
 					// at the last buffer
 					length = (int) (end - pos);
 				}
-				out_Renamed.WriteBytes((byte[]) file.buffers[buffer++], length);
+				out_Renamed.WriteBytes((byte[]) file.GetBuffer(buffer++), length);
 				pos = nextPos;
 			}
 		}
@@ -78,47 +91,92 @@ namespace Lucene.Net.Store
 			file.SetLength(0);
 		}
 		
-		public override void  FlushBuffer(byte[] src, int len)
-		{
-			byte[] buffer;
-			int bufferPos = 0;
-			while (bufferPos != len)
-			{
-				int bufferNumber = (int) (pointer / BUFFER_SIZE);
-				int bufferOffset = (int) (pointer % BUFFER_SIZE);
-				int bytesInBuffer = BUFFER_SIZE - bufferOffset;
-				int remainInSrcBuffer = len - bufferPos;
-				int bytesToCopy = bytesInBuffer >= remainInSrcBuffer ? remainInSrcBuffer : bytesInBuffer;
-				
-				if (bufferNumber == file.buffers.Count)
-					buffer = file.AddBuffer(BUFFER_SIZE);
-				else
-					buffer = (byte[]) file.buffers[bufferNumber];
-				
-				Array.Copy(src, bufferPos, buffer, bufferOffset, bytesToCopy);
-				bufferPos += bytesToCopy;
-				pointer += bytesToCopy;
-			}
-			
-			if (pointer > file.length)
-				file.SetLength(pointer);
-			
-			file.SetLastModified(System.DateTime.Now.Ticks);
-		}
-		
 		public override void  Close()
 		{
-			base.Close();
+			Flush();
 		}
 		
 		public override void  Seek(long pos)
 		{
-			base.Seek(pos);
-			pointer = pos;
+			// set the file length in case we seek back
+			// and flush() has not been called yet
+			SetFileLength();
+			if (pos < bufferStart || pos >= bufferStart + bufferLength)
+			{
+				currentBufferIndex = (int) (pos / BUFFER_SIZE);
+				SwitchCurrentBuffer();
+			}
+			
+			bufferPosition = (int) (pos % BUFFER_SIZE);
 		}
+		
 		public override long Length()
 		{
 			return file.length;
+		}
+		
+		public override void  WriteByte(byte b)
+		{
+			if (bufferPosition == bufferLength)
+			{
+				currentBufferIndex++;
+				SwitchCurrentBuffer();
+			}
+			currentBuffer[bufferPosition++] = b;
+		}
+		
+		public override void  WriteBytes(byte[] b, int offset, int len)
+		{
+			while (len > 0)
+			{
+				if (bufferPosition == bufferLength)
+				{
+					currentBufferIndex++;
+					SwitchCurrentBuffer();
+				}
+				
+				int remainInBuffer = currentBuffer.Length - bufferPosition;
+				int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
+				Array.Copy(b, offset, currentBuffer, bufferPosition, bytesToCopy);
+				offset += bytesToCopy;
+				len -= bytesToCopy;
+				bufferPosition += bytesToCopy;
+			}
+		}
+		
+		private void  SwitchCurrentBuffer()
+		{
+			if (currentBufferIndex == file.NumBuffers())
+			{
+				currentBuffer = file.AddBuffer(BUFFER_SIZE);
+			}
+			else
+			{
+				currentBuffer = (byte[]) file.GetBuffer(currentBufferIndex);
+			}
+			bufferPosition = 0;
+			bufferStart = (long) BUFFER_SIZE * (long) currentBufferIndex;
+			bufferLength = currentBuffer.Length;
+		}
+		
+		private void  SetFileLength()
+		{
+			long pointer = bufferStart + bufferPosition;
+			if (pointer > file.length)
+			{
+				file.SetLength(pointer);
+			}
+		}
+		
+		public override void  Flush()
+		{
+			file.SetLastModified((System.DateTime.Now.Ticks - 621355968000000000) / 10000);
+			SetFileLength();
+		}
+		
+		public override long GetFilePointer()
+		{
+			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
 		}
 	}
 }

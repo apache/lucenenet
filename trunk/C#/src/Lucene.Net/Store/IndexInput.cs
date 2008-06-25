@@ -45,6 +45,29 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		public abstract void  ReadBytes(byte[] b, int offset, int len);
 		
+		/// <summary>Reads a specified number of bytes into an array at the
+		/// specified offset with control over whether the read
+		/// should be buffered (callers who have their own buffer
+		/// should pass in "false" for useBuffer).  Currently only
+		/// {@link BufferedIndexInput} respects this parameter.
+		/// </summary>
+		/// <param name="b">the array to read bytes into
+		/// </param>
+		/// <param name="offset">the offset in the array to start storing bytes
+		/// </param>
+		/// <param name="len">the number of bytes to read
+		/// </param>
+		/// <param name="useBuffer">set to false if the caller will handle
+		/// buffering.
+		/// </param>
+		/// <seealso cref="IndexOutput.WriteBytes(byte[],int)">
+		/// </seealso>
+		public virtual void  ReadBytes(byte[] b, int offset, int len, bool useBuffer)
+		{
+			// Default to ignoring useBuffer entirely
+			ReadBytes(b, offset, len);
+		}
+		
 		/// <summary>Reads four bytes and returns an int.</summary>
 		/// <seealso cref="IndexOutput.WriteInt(int)">
 		/// </seealso>

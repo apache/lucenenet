@@ -29,16 +29,24 @@ namespace Lucene.Net.Store
 	/// }.run();
 	/// </pre>
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Id: Lock.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: Lock.java 595448 2007-11-15 20:42:54Z mikemccand $
 	/// </version>
-	/// <seealso cref="Directory#MakeLock(String)">
+	/// <seealso cref="Directory.MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
+		
+		/// <summary>How long {@link #Obtain(long)} waits, in milliseconds,
+		/// in between attempts to acquire the lock. 
+		/// </summary>
 		public static long LOCK_POLL_INTERVAL = 1000;
+
+		/// <summary>Pass this value to {@link #Obtain(long)} to try
+		/// forever to obtain the lock. 
+		/// </summary>
+		public const long LOCK_OBTAIN_WAIT_FOREVER = - 1;
 		
 		/// <summary>Attempts to obtain exclusive access and immediately return
 		/// upon success or failure.
@@ -53,34 +61,48 @@ namespace Lucene.Net.Store
 		/// </summary>
 		protected internal System.Exception failureReason;
 		
-		/// <summary>Attempts to obtain an exclusive lock within amount
-		/// of time given. Currently polls once per second until
-		/// lockWaitTimeout is passed.
+		/// <summary>Attempts to obtain an exclusive lock within amount of
+		/// time given. Polls once per {@link #LOCK_POLL_INTERVAL}
+		/// (currently 1000) milliseconds until lockWaitTimeout is
+		/// passed.
 		/// </summary>
-		/// <param name="lockWaitTimeout">length of time to wait in ms
+		/// <param name="lockWaitTimeout">length of time to wait in
+		/// milliseconds or {@link
+		/// #LOCK_OBTAIN_WAIT_FOREVER} to retry forever
 		/// </param>
 		/// <returns> true if lock was obtained
 		/// </returns>
-		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
+		/// <throws>  LockObtainFailedException if lock wait times out </throws>
+		/// <throws>  IllegalArgumentException if lockWaitTimeout is </throws>
+		/// <summary>         out of bounds
+		/// </summary>
+		/// <throws>  IOException if obtain() throws IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
 			failureReason = null;
 			bool locked = Obtain();
-			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
-			int sleepCount = 0;
+			if (lockWaitTimeout < 0 && lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER)
+				throw new System.ArgumentException("lockWaitTimeout should be LOCK_OBTAIN_WAIT_FOREVER or a non-negative number (got " + lockWaitTimeout + ")");
+			
+			long maxSleepCount = lockWaitTimeout / LOCK_POLL_INTERVAL;
+			long sleepCount = 0;
 			while (!locked)
 			{
-				if (sleepCount++ == maxSleepCount)
+				if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount)
 				{
 					System.String reason = "Lock obtain timed out: " + this.ToString();
 					if (failureReason != null)
 					{
 						reason += (": " + failureReason);
 					}
-					System.IO.IOException e = new System.IO.IOException(reason);
+					LockObtainFailedException e;
 					if (failureReason != null)
 					{
-                        e = new System.IO.IOException(reason, failureReason);
+						e = new LockObtainFailedException(reason, failureReason);
+					}
+					else
+					{
+						e = new LockObtainFailedException(reason);
 					}
 					throw e;
 				}
@@ -126,8 +148,12 @@ namespace Lucene.Net.Store
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second
 			/// until it is obtained, or until it has tried ten times. Lock is released when
-			/// {@link #doBody} exits. 
+			/// {@link #doBody} exits.
 			/// </summary>
+			/// <throws>  LockObtainFailedException if lock could not </throws>
+			/// <summary> be obtained
+			/// </summary>
+			/// <throws>  IOException if {@link Lock#obtain} throws IOException </throws>
 			public virtual System.Object Run()
 			{
 				bool locked = false;
