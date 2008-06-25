@@ -17,6 +17,8 @@
 
 using System;
 
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+
 namespace Lucene.Net.Documents
 {
 	
@@ -39,11 +41,11 @@ namespace Lucene.Net.Documents
 		/// the range of that encoding.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Document#SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Document.SetBoost(float)">
 		/// </seealso>
-		/// <seealso cref="int)">
+		/// <seealso cref="Lucene.Net.Search.Similarity.LengthNorm(String, int)">
 		/// </seealso>
-		/// <seealso cref="Lucene.Net.Search.Similarity#EncodeNorm(float)">
+		/// <seealso cref="Lucene.Net.Search.Similarity.EncodeNorm(float)">
 		/// </seealso>
 		void  SetBoost(float boost);
 		
@@ -66,23 +68,29 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		System.String Name();
 		
-		/// <summary>The value of the field as a String, or null.  If null, the Reader value
-		/// or binary value is used.  Exactly one of stringValue(), readerValue(), and
-		/// binaryValue() must be set. 
+		/// <summary>The value of the field as a String, or null.  If null, the Reader value,
+		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		System.String StringValue();
 		
-		/// <summary>The value of the field as a Reader, or null.  If null, the String value
-		/// or binary value is  used.  Exactly one of stringValue(), readerValue(),
-		/// and binaryValue() must be set. 
+		/// <summary>The value of the field as a Reader, or null.  If null, the String value,
+		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		System.IO.TextReader ReaderValue();
 		
-		/// <summary>The value of the field in Binary, or null.  If null, the Reader or
-		/// String value is used.  Exactly one of stringValue(), readerValue() and
-		/// binaryValue() must be set. 
+		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
+		/// String value, or TokenStream value is used. Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		byte[] BinaryValue();
+		
+		/// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
+		/// String value, or binary value is used. Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// </summary>
+		TokenStream TokenStreamValue();
 		
 		/// <summary>True iff the value of the field is to be stored in the index for return
 		/// with search hits.  It is an error for this to be true if a field is
@@ -111,7 +119,7 @@ namespace Lucene.Net.Documents
 		/// preserved, use the <code>stored</code> attribute instead.
 		/// 
 		/// </summary>
-		/// <seealso cref="String)">
+		/// <seealso cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int, String)">
 		/// </seealso>
 		bool IsTermVectorStored();
 		

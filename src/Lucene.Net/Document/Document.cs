@@ -42,7 +42,60 @@ namespace Lucene.Net.Documents
 	[Serializable]
 	public sealed class Document
 	{
-		internal System.Collections.IList fields = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		private class AnonymousClassEnumeration : System.Collections.IEnumerator
+		{
+			public AnonymousClassEnumeration(Document enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(Document enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+				iter = Enclosing_Instance.fields.GetEnumerator();
+			}
+			private System.Object tempAuxObj;
+			public bool MoveNext()
+			{
+                bool result = HasMoreElements();
+				if (result)
+				{
+					tempAuxObj = NextElement();
+				}
+				return result;
+			}
+			public void  Reset()
+			{
+				tempAuxObj = null;
+			}
+			public System.Object Current
+			{
+				get
+				{
+					return tempAuxObj;
+				}
+				
+			}
+			private Document enclosingInstance;
+			public Document Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal System.Collections.IEnumerator iter;
+			public bool HasMoreElements()
+			{
+				return iter.MoveNext();
+			}
+            public System.Object NextElement()
+			{
+				return iter.Current;
+			}
+		}
+
+        internal System.Collections.IList fields = new System.Collections.ArrayList();
 		private float boost = 1.0f;
 		
 		/// <summary>Constructs a new document with no fields. </summary>
@@ -61,29 +114,32 @@ namespace Lucene.Net.Documents
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
 		/// 
+		/// <p>The default value is 1.0.
+		/// 
 		/// <p>Values are multiplied into the value of {@link Fieldable#GetBoost()} of
 		/// each field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Fieldable#SetBoost(float)">
+		/// <seealso cref="Fieldable.SetBoost(float)">
 		/// </seealso>
 		public void  SetBoost(float boost)
 		{
 			this.boost = boost;
 		}
 		
-		/// <summary>Returns the boost factor for hits on any field of this document.
+		/// <summary>Returns, at indexing time, the boost factor as set by {@link #SetBoost(float)}. 
 		/// 
-		/// <p>The default value is 1.0.
-		/// 
-		/// <p>Note: This value is not stored directly with the document in the index.
-		/// Documents returned from {@link IndexReader#Document(int)} and
-		/// {@link Hits#Doc(int)} may thus not have the same value present as when
-		/// this document was indexed.
+		/// <p>Note that once a document is indexed this value is no longer available
+		/// from the index.  At search time, for retrieved documents, this method always 
+		/// returns 1. This however does not mean that the boost value set at  indexing 
+		/// time was ignored - it was just combined with other indexing time factors and 
+		/// stored elsewhere, for better indexing and search performance. (For more 
+		/// information see the "norm(t,d)" part of the scoring formula in 
+		/// {@link Lucene.Net.Search.Similarity Similarity}.)
 		/// 
 		/// </summary>
-		/// <seealso cref="#SetBoost(float)">
+		/// <seealso cref="SetBoost(float)">
 		/// </seealso>
 		public float GetBoost()
 		{
@@ -198,9 +254,9 @@ namespace Lucene.Net.Documents
 		/// <summary>Returns an Enumeration of all the fields in a document.</summary>
 		/// <deprecated> use {@link #GetFields()} instead
 		/// </deprecated>
-		public System.Collections.IEnumerable Fields()
+		public System.Collections.IEnumerator Fields()
 		{
-			return fields;
+            return new AnonymousClassEnumeration(this); // {{Aroush-2.3.1}} will "return fields;" do it?
 		}
 		
 		/// <summary>Returns a List of all the fields in a document.

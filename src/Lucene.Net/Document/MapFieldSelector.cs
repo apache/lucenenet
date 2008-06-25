@@ -15,13 +15,6 @@
  * limitations under the License.
  */
 
-/*
-* MapFieldSelector.java
-*
-* Created on May 2, 2006, 6:49 PM
-*
-*/
-
 using System;
 
 namespace Lucene.Net.Documents
@@ -32,13 +25,14 @@ namespace Lucene.Net.Documents
 	/// </summary>
 	/// <author>  Chuck Williams
 	/// </author>
+	[Serializable]
 	public class MapFieldSelector : FieldSelector
 	{
 		
 		internal System.Collections.IDictionary fieldSelections;
 		
 		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fieldSelections">maps from field names to FieldSelectorResults
+		/// <param name="fieldSelections">maps from field names (String) to FieldSelectorResults
 		/// </param>
 		public MapFieldSelector(System.Collections.IDictionary fieldSelections)
 		{
@@ -46,7 +40,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fields">fields to LOAD.  All other fields are NO_LOAD.
+		/// <param name="fields">fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
 		/// </param>
 		public MapFieldSelector(System.Collections.IList fields)
 		{

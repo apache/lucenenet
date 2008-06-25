@@ -16,7 +16,10 @@
  */
 
 using System;
+
+using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Parameter = Lucene.Net.Util.Parameter;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Documents
 {
@@ -37,7 +40,7 @@ namespace Lucene.Net.Documents
 		public sealed class Store : Parameter
 		{
 			
-			internal Store(System.String name):base(name)
+			internal Store(System.String name) : base(name)
 			{
 			}
 			
@@ -141,31 +144,79 @@ namespace Lucene.Net.Documents
 		}
 		
 		
-		/// <summary>The value of the field as a String, or null.  If null, the Reader value
-		/// or binary value is used.  Exactly one of stringValue(), readerValue(), and
-		/// binaryValue() must be set. 
+		/// <summary>The value of the field as a String, or null.  If null, the Reader value,
+		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override System.String StringValue()
 		{
 			return fieldsData is System.String ? (System.String) fieldsData : null;
 		}
 		
-		/// <summary>The value of the field as a Reader, or null.  If null, the String value
-		/// or binary value is  used.  Exactly one of stringValue(), readerValue(),
-		/// and binaryValue() must be set. 
+		/// <summary>The value of the field as a Reader, or null.  If null, the String value,
+		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override System.IO.TextReader ReaderValue()
 		{
 			return fieldsData is System.IO.TextReader ? (System.IO.TextReader) fieldsData : null;
 		}
 		
-		/// <summary>The value of the field in Binary, or null.  If null, the Reader or
-		/// String value is used.  Exactly one of stringValue(), readerValue() and
-		/// binaryValue() must be set. 
+		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
+		/// String value, or TokenStream value is used. Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override byte[] BinaryValue()
 		{
 			return fieldsData is byte[] ? (byte[]) fieldsData : null;
+		}
+		
+		/// <summary>The value of the field as a TokesStream, or null.  If null, the Reader value,
+		/// String value, or binary value is used. Exactly one of stringValue(), 
+		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// </summary>
+		public override TokenStream TokenStreamValue()
+		{
+			return fieldsData is TokenStream ? (TokenStream) fieldsData : null;
+		}
+		
+		
+		/// <summary><p>Expert: change the value of this field.  This can
+		/// be used during indexing to re-use a single Field
+		/// instance to improve indexing speed by avoiding GC cost
+		/// of new'ing and reclaiming Field instances.  Typically
+		/// a single {@link Document} instance is re-used as
+		/// well.  This helps most on small documents.</p>
+		/// 
+		/// <p>Note that you should only use this method after the
+		/// Field has been consumed (ie, the {@link Document}
+		/// containing this Field has been added to the index).
+		/// Also, each Field instance should only be used once
+		/// within a single {@link Document} instance.  See <a
+		/// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
+		/// for details.</p> 
+		/// </summary>
+		public void  SetValue(System.String value_Renamed)
+		{
+			fieldsData = value_Renamed;
+		}
+		
+		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
+		public void  SetValue(System.IO.TextReader value_Renamed)
+		{
+			fieldsData = value_Renamed;
+		}
+		
+		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
+		public void  SetValue(byte[] value_Renamed)
+		{
+			fieldsData = value_Renamed;
+		}
+		
+		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
+		public void  SetValue(TokenStream value_Renamed)
+		{
+			fieldsData = value_Renamed;
 		}
 		
 		/// <summary> Create a field by specifying its name, value and how it will
@@ -277,7 +328,9 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
-		/// not be stored.  The Reader is read only when the Document is added to the index.
+		/// not be stored.  The Reader is read only when the Document is added to the index,
+		/// i.e. you may not close the Reader until {@link IndexWriter#AddDocument(Document)}
+		/// has been called.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
@@ -290,7 +343,9 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> Create a tokenized and indexed field that is not stored, optionally with 
-		/// storing term vectors.  The Reader is read only when the Document is added to the index.
+		/// storing term vectors.  The Reader is read only when the Document is added to the index,
+		/// i.e. you may not close the Reader until {@link IndexWriter#AddDocument(Document)}
+		/// has been called.
 		/// 
 		/// </summary>
 		/// <param name="name">The name of the field
@@ -320,6 +375,58 @@ namespace Lucene.Net.Documents
 			
 			SetStoreTermVector(termVector);
 		}
+		
+		/// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
+		/// not be stored. This is useful for pre-analyzed fields.
+		/// The TokenStream is read only when the Document is added to the index,
+		/// i.e. you may not close the TokenStream until {@link IndexWriter#AddDocument(Document)}
+		/// has been called.
+		/// 
+		/// </summary>
+		/// <param name="name">The name of the field
+		/// </param>
+		/// <param name="tokenStream">The TokenStream with the content
+		/// </param>
+		/// <throws>  NullPointerException if name or tokenStream is <code>null</code> </throws>
+		public Field(System.String name, TokenStream tokenStream):this(name, tokenStream, TermVector.NO)
+		{
+		}
+		
+		/// <summary> Create a tokenized and indexed field that is not stored, optionally with 
+		/// storing term vectors.  This is useful for pre-analyzed fields.
+		/// The TokenStream is read only when the Document is added to the index,
+		/// i.e. you may not close the TokenStream until {@link IndexWriter#AddDocument(Document)}
+		/// has been called.
+		/// 
+		/// </summary>
+		/// <param name="name">The name of the field
+		/// </param>
+		/// <param name="tokenStream">The TokenStream with the content
+		/// </param>
+		/// <param name="termVector">Whether term vector should be stored
+		/// </param>
+		/// <throws>  NullPointerException if name or tokenStream is <code>null</code> </throws>
+		public Field(System.String name, TokenStream tokenStream, TermVector termVector)
+		{
+			if (name == null)
+				throw new System.NullReferenceException("name cannot be null");
+			if (tokenStream == null)
+				throw new System.NullReferenceException("tokenStream cannot be null");
+			
+			this.name = String.Intern(name); // field names are interned
+			this.fieldsData = tokenStream;
+			
+			this.isStored = false;
+			this.isCompressed = false;
+			
+			this.isIndexed = true;
+			this.isTokenized = true;
+			
+			this.isBinary = false;
+			
+			SetStoreTermVector(termVector);
+		}
+		
 		
 		/// <summary> Create a stored field with binary value. Optionally the value may be compressed.
 		/// 
