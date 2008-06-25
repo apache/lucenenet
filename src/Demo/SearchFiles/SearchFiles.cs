@@ -17,12 +17,12 @@
 
 using System;
 
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using FilterIndexReader = Lucene.Net.Index.FilterIndexReader;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
@@ -31,8 +31,8 @@ using Searcher = Lucene.Net.Search.Searcher;
 namespace Lucene.Net.Demo
 {
 	
-    /// <summary>Simple command-line based search demo. </summary>
-    public class SearchFiles
+	/// <summary>Simple command-line based search demo. </summary>
+	public class SearchFiles
 	{
 		
 		/// <summary>Use the norms from one field for all fields.  Norms are read into memory,
@@ -41,11 +41,11 @@ namespace Lucene.Net.Demo
 		/// memory.  If all of the fields contain only a single token, then the norms
 		/// are all identical, then single norm vector may be shared. 
 		/// </summary>
-		private class OneNormsReader : FilterIndexReader
+		private class OneNormsReader:FilterIndexReader
 		{
 			private System.String field;
 			
-			public OneNormsReader(IndexReader in_Renamed, System.String field):base(in_Renamed)
+			public OneNormsReader(IndexReader in_Renamed, System.String field) : base(in_Renamed)
 			{
 				this.field = field;
 			}
@@ -56,12 +56,12 @@ namespace Lucene.Net.Demo
 			}
 		}
 		
-        private SearchFiles()
-        {
-        }
+		private SearchFiles()
+		{
+		}
 		
-        /// <summary>Simple command-line based search demo. </summary>
-        [STAThread]
+		/// <summary>Simple command-line based search demo. </summary>
+		[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = "Usage: " + typeof(SearchFiles) + " [-index dir] [-field f] [-repeat n] [-queries file] [-raw] [-norms field]";
@@ -132,7 +132,7 @@ namespace Lucene.Net.Demo
 			while (true)
 			{
 				if (queries == null)
-    				// prompt the user
+                    // prompt the user
 					System.Console.Out.Write("Query: ");
 				
 				System.String line = in_Renamed.ReadLine();
@@ -191,7 +191,7 @@ namespace Lucene.Net.Demo
 					}
 					
 					if (queries != null)
-    					// non-interactive
+					// non-interactive
 						break;
 					
 					if (hits.Length() > end)

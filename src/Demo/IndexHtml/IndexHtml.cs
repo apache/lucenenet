@@ -17,30 +17,30 @@
 
 using System;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Demo
 {
 	
-    /// <summary>Indexer for HTML files. </summary>
-    public class IndexHTML
+	/// <summary>Indexer for HTML files. </summary>
+	public class IndexHTML
 	{
-        private IndexHTML()
-        {
-        }
+		private IndexHTML()
+		{
+		}
 		
-        private static bool deleting = false; // true during deletion pass
+		private static bool deleting = false; // true during deletion pass
 		private static IndexReader reader; // existing index
 		private static IndexWriter writer; // new index being built
 		private static TermEnum uidIter; // document id iterator
 		
-        /// <summary>Indexer for HTML files.</summary>
-        [STAThread]
+		/// <summary>Indexer for HTML files.</summary>
+		[STAThread]
 		public static void  Main(System.String[] argv)
 		{
 			try
@@ -86,7 +86,7 @@ namespace Lucene.Net.Demo
 					deleting = true;
 					IndexDocs(root, index, create);
 				}
-                writer = new IndexWriter(index, new StandardAnalyzer(), create);
+				writer = new IndexWriter(index, new StandardAnalyzer(), create);
 				writer.SetMaxFieldLength(1000000);
 				IndexDocs(root, index, create); // add new docs
 				
@@ -150,7 +150,7 @@ namespace Lucene.Net.Demo
 				System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName); // list its files
 				System.Array.Sort(files); // sort the files
 				for (int i = 0; i < files.Length; i++)
-				// recursively index them
+                    // recursively index them
 					IndexDocs(new System.IO.FileInfo(files[i]));
 			}
 			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))

@@ -126,7 +126,7 @@ namespace Lucene.Net.Demo.Html
 		/// these constructors.
 		/// </summary>
 		
-		public ParseException():base()
+		public ParseException() : base()
 		{
 			specialConstructor = false;
 		}

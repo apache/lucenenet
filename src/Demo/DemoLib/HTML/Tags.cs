@@ -25,8 +25,8 @@ namespace Lucene.Net.Demo.Html
 	{
 		
 		/// <summary> contains all tags for which whitespaces have to be inserted for proper tokenization</summary>
-        public static readonly System.Collections.Hashtable WS_ELEMS = new System.Collections.Hashtable();
-        static Tags()
+		public static readonly System.Collections.Hashtable WS_ELEMS = new System.Collections.Hashtable();
+		static Tags()
 		{
 			{
                 WS_ELEMS.Add("<hr", "<hr");
@@ -59,7 +59,7 @@ namespace Lucene.Net.Demo.Html
                 WS_ELEMS.Add("</h5", "</h5");
                 WS_ELEMS.Add("<h6", "<h6");
                 WS_ELEMS.Add("</h6", "</h6");
-            }
+			}
 		}
 	}
 }

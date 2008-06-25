@@ -78,15 +78,15 @@ namespace Lucene.Net.Demo.Html
 			
 			public virtual bool Full()
 			{
-                return enclosingInstance.summaryComplete;
+				return enclosingInstance.summaryComplete;
 			}
 		}
 		
-        /// <deprecated> Use HTMLParser(FileInputStream) instead
-        /// </deprecated>
-        public HTMLParser(System.IO.FileInfo file) : this(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-        {
-        }
+		/// <deprecated> Use HTMLParser(FileInputStream) instead
+		/// </deprecated>
+		public HTMLParser(System.IO.FileInfo file) : this(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+		{
+		}
 		
 		public virtual System.String GetTitle()
 		{
@@ -149,7 +149,7 @@ namespace Lucene.Net.Demo.Html
 		{
 			if (pipeIn == null)
 			{
-                pipeInStream = new MyPipedInputStream(this, new System.IO.StreamReader(new System.IO.MemoryStream(1024)));
+				pipeInStream = new MyPipedInputStream(this, new System.IO.StreamReader(new System.IO.MemoryStream(1024)));
 				pipeOutStream = new System.IO.StreamWriter(pipeInStream.BaseStream);
 				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
 				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
@@ -805,8 +805,8 @@ label_6_brk: ;
 		private sealed class LookaheadSuccess : System.ApplicationException
 		{
 		}
-
-        private LookaheadSuccess jj_ls;
+		
+		private LookaheadSuccess jj_ls;
 		private bool Jj_scan_token(int kind)
 		{
 			if (jj_scanpos == jj_lastpos)
@@ -992,7 +992,7 @@ label_6_brk: ;
 							case 0:  Jj_3_1(); break;
 							
 							case 1:  Jj_3_2(); break;
-						}
+							}
 					}
 					p = p.next;
 				}
