@@ -46,21 +46,18 @@ namespace Lucene.Net.Analysis
         {
             stemmer = new PorterStemmer();
         }
-		
-        /// <summary>Returns the next input Token, after being stemmed </summary>
-        public override Token Next()
+
+        public override Token Next(Token result)
         {
-            Token token = input.Next();
-            if (token == null)
-                return null;
-            else
+            result = input.Next(result);
+            if (result != null)
             {
-                System.String s = stemmer.Stem(token.termText);
-                if ((System.Object) s != (System.Object) token.termText)
-                    // Yes, I mean object reference comparison here
-                    token.termText = s;
-                return token;
+                if (stemmer.Stem(result.TermBuffer(), 0, result.termLength))
+                    result.SetTermBuffer(stemmer.GetResultBuffer(), 0, stemmer.GetResultLength());
+                return result;
             }
+            else
+                return null;
         }
     }
 }

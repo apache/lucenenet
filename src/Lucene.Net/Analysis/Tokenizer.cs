@@ -20,10 +20,16 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary>A Tokenizer is a TokenStream whose input is a Reader.
-    /// <p>
-    /// This is an abstract class.
-    /// </summary>
+	/// <summary>A Tokenizer is a TokenStream whose input is a Reader.
+	/// <p>
+	/// This is an abstract class.
+	/// <p>
+	/// NOTE: subclasses must override at least one of {@link
+	/// #Next()} or {@link #Next(Token)}.
+	/// <p>
+	/// NOTE: subclasses overriding {@link #Next(Token)} must  
+	/// call {@link Token#Clear()}.
+	/// </summary>
 	
     public abstract class Tokenizer : TokenStream
     {
@@ -49,5 +55,14 @@ namespace Lucene.Net.Analysis
                 input.Close();
             }
         }
+		
+		/// <summary>Expert: Reset the tokenizer to a new reader.  Typically, an
+		/// analyzer (in its reusableTokenStream method) will use
+		/// this to re-use a previously created tokenizer. 
+		/// </summary>
+		public virtual void  Reset(System.IO.TextReader input)
+		{
+			this.input = input;
+		}
     }
 }

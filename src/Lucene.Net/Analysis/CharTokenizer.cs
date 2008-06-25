@@ -30,7 +30,6 @@ namespace Lucene.Net.Analysis
         private int offset = 0, bufferIndex = 0, dataLen = 0;
         private const int MAX_WORD_LEN = 255;
         private const int IO_BUFFER_SIZE = 1024;
-        private char[] buffer = new char[MAX_WORD_LEN];
         private char[] ioBuffer = new char[IO_BUFFER_SIZE];
 		
         /// <summary>Returns true iff a character should be included in a token.  This
@@ -48,43 +47,44 @@ namespace Lucene.Net.Analysis
         {
             return c;
         }
-		
-        /// <summary>Returns the next token in the stream, or null at EOS. </summary>
-        public override Token Next()
+
+        public override Token Next(Token token)
         {
+            token.Clear();
             int length = 0;
-            int start = offset;
+            int start = bufferIndex;
+            char[] buffer = token.TermBuffer();
             while (true)
             {
-                char c;
-				
-                offset++;
+
                 if (bufferIndex >= dataLen)
                 {
-                    dataLen = input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
+                    offset += dataLen;
+                    dataLen = input is Lucene.Net.Index.DocumentsWriter.ReusableStringReader ? ((Lucene.Net.Index.DocumentsWriter.ReusableStringReader) input).Read(ioBuffer) : input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
+                    if (dataLen == -1)
+                    {
+                        if (length > 0)
+                            break;
+                        else
+                            return null;
+                    }
                     bufferIndex = 0;
                 }
-                ;
-                if (dataLen <= 0)
-                {
-                    if (length > 0)
-                        break;
-                    else
-                        return null;
-                }
-                else
-                    c = ioBuffer[bufferIndex++];
-				
+
+                char c = ioBuffer[bufferIndex++];
+
                 if (IsTokenChar(c))
                 {
                     // if it's a token char
-					
+
                     if (length == 0)
                         // start of token
-                        start = offset - 1;
-					
+                        start = offset + bufferIndex - 1;
+                    else if (length == buffer.Length)
+                        buffer = token.ResizeTermBuffer(1 + length);
+
                     buffer[length++] = Normalize(c); // buffer it, normalized
-					
+
                     if (length == MAX_WORD_LEN)
                         // buffer overflow!
                         break;
@@ -93,8 +93,19 @@ namespace Lucene.Net.Analysis
                     // at non-Letter w/ chars
                     break; // return 'em
             }
-			
-            return new Token(new System.String(buffer, 0, length), start, start + length);
+
+            token.termLength = length;
+            token.startOffset = start;
+            token.endOffset = start + length;
+            return token;
+        }
+
+        public override void Reset(System.IO.TextReader input)
+        {
+            base.Reset(input);
+            bufferIndex = 0;
+            offset = 0;
+            dataLen = 0;
         }
     }
 }

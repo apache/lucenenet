@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// {{Aroush-2.3.1}} remove this file from SVN
+/*
 using System;
 
 namespace Lucene.Net.Analysis.Standard
@@ -149,3 +150,4 @@ namespace Lucene.Net.Analysis.Standard
         }
     }
 }
+*/
