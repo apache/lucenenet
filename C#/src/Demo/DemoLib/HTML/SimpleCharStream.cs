@@ -124,14 +124,35 @@ namespace Lucene.Net.Demo.Html
 			int i;
 			try
 			{
-				if ((i = inputStream.Read(buffer, maxNextCharInd, available - maxNextCharInd)) == - 1)
-				{
-					inputStream.Close();
-					throw new System.IO.IOException();
-				}
-				else
-					maxNextCharInd += i;
-				return ;
+                // {DOUG-2.3.1}:
+                //   java.io.Reader throws java.io.IOException when trying to read from a closed reader
+                //   the structure of this program depends on this, as a subsequent call is made after the
+                //   reader is closed, and (i hope) the state of the program is such that it exits cleanly.
+                //   however...
+                //   System.IO.StreamReader throws ObjectDisposedException, which is not a subclass
+                //   of System.IO.IOException and causes the program to fail
+                //   so...
+                //   i'm adding an extra try/catch that will catch the ObjectDisposedException and
+                //   throw an IOException with the former being the cause of the latter
+                try
+                {
+                    // {DOUG-2.3.1}:
+                    //   java.io.Reader.read(...) returns -1 at EOS
+                    //   System.IO.TextReader.Read(...) returns 0 at EOS
+                    //if ((i = inputStream.Read(buffer, maxNextCharInd, available - maxNextCharInd)) == -1)
+                    if ((i = inputStream.Read(buffer, maxNextCharInd, available - maxNextCharInd)) == 0)
+                    {
+                        inputStream.Close();
+                        throw new System.IO.IOException();
+                    }
+                    else
+                        maxNextCharInd += i;
+                    return;
+                }
+                catch (ObjectDisposedException ode)
+                {
+                    throw new System.IO.IOException("cannot read from a closed Reader", ode);
+                }
 			}
 			catch (System.IO.IOException e)
 			{
@@ -218,27 +239,27 @@ namespace Lucene.Net.Demo.Html
 			return (c);
 		}
 		
-        /// <deprecated> 
-        /// </deprecated>
-        /// <seealso cref="getEndColumn">
-        /// </seealso>
+		/// <deprecated> 
+		/// </deprecated>
+		/// <seealso cref="getEndColumn">
+		/// </seealso>
 		
-        public virtual int GetColumn()
-        {
-            return bufcolumn[bufpos];
-        }
+		public virtual int GetColumn()
+		{
+			return bufcolumn[bufpos];
+		}
 		
-        /// <deprecated> 
-        /// </deprecated>
-        /// <seealso cref="getEndLine">
-        /// </seealso>
+		/// <deprecated> 
+		/// </deprecated>
+		/// <seealso cref="getEndLine">
+		/// </seealso>
 		
-        public virtual int GetLine()
-        {
-            return bufline[bufpos];
-        }
+		public virtual int GetLine()
+		{
+			return bufline[bufpos];
+		}
 		
-        public virtual int GetEndColumn()
+		public virtual int GetEndColumn()
 		{
 			return bufcolumn[bufpos];
 		}
@@ -282,11 +303,11 @@ namespace Lucene.Net.Demo.Html
 		{
 		}
 		
-		public SimpleCharStream(System.IO.StreamReader dstream):this(dstream, 1, 1, 4096)
+		public SimpleCharStream(System.IO.StreamReader dstream) : this(dstream, 1, 1, 4096)
 		{
 		}
-
-        public virtual void  ReInit(System.IO.StreamReader dstream, int startline, int startcolumn, int buffersize)
+		
+		public virtual void  ReInit(System.IO.StreamReader dstream, int startline, int startcolumn, int buffersize)
 		{
 			inputStream = dstream;
 			line = startline;
