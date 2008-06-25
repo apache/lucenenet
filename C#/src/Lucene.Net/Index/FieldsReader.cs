@@ -16,9 +16,13 @@
  */
 
 using System;
+
 using Lucene.Net.Documents;
+using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Index
 {
@@ -28,7 +32,7 @@ namespace Lucene.Net.Index
 	/// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
 	/// 
 	/// </summary>
-	/// <version>  $Id: FieldsReader.java 507009 2007-02-13 14:06:52Z gsingers $
+	/// <version>  $Id: FieldsReader.java 620759 2008-02-12 11:10:21Z mikemccand $
 	/// </version>
 	public sealed class FieldsReader
 	{
@@ -42,18 +46,76 @@ namespace Lucene.Net.Index
 		private IndexInput fieldsStream;
 		
 		private IndexInput indexStream;
+		private int numTotalDocs;
 		private int size;
+		private bool closed;
+		
+		// The docID offset where our docs begin in the index
+		// file.  This will be 0 if we have our own private file.
+		private int docStoreOffset;
 		
 		private System.LocalDataStoreSlot fieldsStreamTL = System.Threading.Thread.AllocateDataSlot();
 		
-		public FieldsReader(Directory d, System.String segment, FieldInfos fn)
+		internal FieldsReader(Directory d, System.String segment, FieldInfos fn) : this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, - 1, 0)
 		{
-			fieldInfos = fn;
+		}
+		
+		internal FieldsReader(Directory d, System.String segment, FieldInfos fn, int readBufferSize) : this(d, segment, fn, readBufferSize, - 1, 0)
+		{
+		}
+		
+		internal FieldsReader(Directory d, System.String segment, FieldInfos fn, int readBufferSize, int docStoreOffset, int size)
+		{
+			bool success = false;
 			
-			cloneableFieldsStream = d.OpenInput(segment + ".fdt");
-			fieldsStream = (IndexInput) cloneableFieldsStream.Clone();
-			indexStream = d.OpenInput(segment + ".fdx");
-			size = (int) (indexStream.Length() / 8);
+			try
+			{
+				fieldInfos = fn;
+				
+				cloneableFieldsStream = d.OpenInput(segment + ".fdt", readBufferSize);
+				fieldsStream = (IndexInput) cloneableFieldsStream.Clone();
+				indexStream = d.OpenInput(segment + ".fdx", readBufferSize);
+				
+				if (docStoreOffset != - 1)
+				{
+					// We read only a slice out of this shared fields file
+					this.docStoreOffset = docStoreOffset;
+					this.size = size;
+					
+					// Verify the file is long enough to hold all of our
+					// docs
+					System.Diagnostics.Debug.Assert(((int)(indexStream.Length() / 8)) >= size + this.docStoreOffset);
+				}
+				else
+				{
+					this.docStoreOffset = 0;
+					this.size = (int) (indexStream.Length() >> 3);
+				}
+				
+				numTotalDocs = (int) (indexStream.Length() >> 3);
+				success = true;
+			}
+			finally
+			{
+				// With lock-less commits, it's entirely possible (and
+				// fine) to hit a FileNotFound exception above. In
+				// this case, we want to explicitly close any subset
+				// of things that were opened so that we don't have to
+				// wait for a GC to do so.
+				if (!success)
+				{
+					Close();
+				}
+			}
+		}
+		
+		/// <throws>  AlreadyClosedException if this FieldsReader is closed </throws>
+		internal void  EnsureOpen()
+		{
+			if (closed)
+			{
+				throw new AlreadyClosedException("this FieldsReader is closed");
+			}
 		}
 		
 		/// <summary> Closes the underlying {@link Lucene.Net.Store.IndexInput} streams, including any ones associated with a
@@ -63,14 +125,27 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public void  Close()
 		{
-			fieldsStream.Close();
-			cloneableFieldsStream.Close();
-			indexStream.Close();
-			IndexInput localFieldsStream = (IndexInput) System.Threading.Thread.GetData(fieldsStreamTL);
-			if (localFieldsStream != null)
+			if (!closed)
 			{
-				localFieldsStream.Close();
-				System.Threading.Thread.SetData(fieldsStreamTL, null);
+				if (fieldsStream != null)
+				{
+					fieldsStream.Close();
+				}
+				if (cloneableFieldsStream != null)
+				{
+					cloneableFieldsStream.Close();
+				}
+				if (indexStream != null)
+				{
+					indexStream.Close();
+				}
+				IndexInput localFieldsStream = (IndexInput) System.Threading.Thread.GetData(fieldsStreamTL);
+				if (localFieldsStream != null)
+				{
+					localFieldsStream.Close();
+					System.Threading.Thread.SetData(fieldsStreamTL, null);
+				}
+				closed = true;
 			}
 		}
 		
@@ -94,6 +169,8 @@ namespace Lucene.Net.Index
 				FieldSelectorResult acceptField = fieldSelector == null ? FieldSelectorResult.LOAD : fieldSelector.Accept(fi.name);
 				
 				byte bits = fieldsStream.ReadByte();
+				System.Diagnostics.Debug.Assert(bits <= FieldsWriter.FIELD_IS_COMPRESSED + FieldsWriter.FIELD_IS_TOKENIZED + FieldsWriter.FIELD_IS_BINARY);
+
 				bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
 				bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
 				bool binary = (bits & FieldsWriter.FIELD_IS_BINARY) != 0;
@@ -132,6 +209,35 @@ namespace Lucene.Net.Index
 			}
 			
 			return doc;
+		}
+		
+		/// <summary>Returns the length in bytes of each raw document in a
+		/// contiguous range of length numDocs starting with
+		/// startDocID.  Returns the IndexInput (the fieldStream),
+		/// already seeked to the starting point for startDocID.
+		/// </summary>
+		internal IndexInput RawDocs(int[] lengths, int startDocID, int numDocs)
+		{
+			indexStream.Seek((docStoreOffset + startDocID) * 8L);
+			long startOffset = indexStream.ReadLong();
+			long lastOffset = startOffset;
+			int count = 0;
+			while (count < numDocs)
+			{
+				long offset;
+				int docID = docStoreOffset + startDocID + count + 1;
+				System.Diagnostics.Debug.Assert(docID <= numTotalDocs);
+				if (docID < numTotalDocs)
+					offset = indexStream.ReadLong();
+				else
+					offset = fieldsStream.Length();
+				lengths[count++] = (int) (offset - lastOffset);
+				lastOffset = offset;
+			}
+			
+			fieldsStream.Seek(startOffset);
+			
+			return fieldsStream;
 		}
 		
 		/// <summary> Skip the field.  We still have to read some of the information about the field, but can skip past the actual content.
@@ -373,12 +479,13 @@ namespace Lucene.Net.Index
 				return localFieldsStream;
 			}
 			
-			/// <summary> The value of the field in Binary, or null.  If null, the Reader or
-			/// String value is used.  Exactly one of stringValue(), readerValue() and
-			/// binaryValue() must be set.
+			/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
+			/// String value, or TokenStream value is used. Exactly one of stringValue(), 
+			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 			/// </summary>
 			public override byte[] BinaryValue()
 			{
+				Enclosing_Instance.EnsureOpen();
 				if (fieldsData == null)
 				{
 					byte[] b = new byte[toRead];
@@ -406,21 +513,34 @@ namespace Lucene.Net.Index
 				return fieldsData is byte[] ? (byte[]) fieldsData : null;
 			}
 			
-			/// <summary> The value of the field as a Reader, or null.  If null, the String value
-			/// or binary value is  used.  Exactly one of stringValue(), readerValue(),
-			/// and binaryValue() must be set.
+			/// <summary>The value of the field as a Reader, or null.  If null, the String value,
+			/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 			/// </summary>
 			public override System.IO.TextReader ReaderValue()
 			{
+				Enclosing_Instance.EnsureOpen();
 				return fieldsData is System.IO.TextReader ? (System.IO.TextReader) fieldsData : null;
 			}
 			
-			/// <summary> The value of the field as a String, or null.  If null, the Reader value
-			/// or binary value is used.  Exactly one of stringValue(), readerValue(), and
-			/// binaryValue() must be set.
+			/// <summary>The value of the field as a TokesStream, or null.  If null, the Reader value,
+			/// String value, or binary value is used. Exactly one of stringValue(), 
+			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+			/// </summary>
+			public override TokenStream TokenStreamValue()
+			{
+				Enclosing_Instance.EnsureOpen();
+				return fieldsData is TokenStream ? (TokenStream) fieldsData : null;
+			}
+			
+			
+			/// <summary>The value of the field as a String, or null.  If null, the Reader value,
+			/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
+			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 			/// </summary>
 			public override System.String StringValue()
 			{
+				Enclosing_Instance.EnsureOpen();
 				if (fieldsData == null)
 				{
 					IndexInput localFieldsStream = GetFieldStream();
@@ -451,21 +571,25 @@ namespace Lucene.Net.Index
 			
 			public long GetPointer()
 			{
+				Enclosing_Instance.EnsureOpen();
 				return pointer;
 			}
 			
 			public void  SetPointer(long pointer)
 			{
+				Enclosing_Instance.EnsureOpen();
 				this.pointer = pointer;
 			}
 			
 			public int GetToRead()
 			{
+				Enclosing_Instance.EnsureOpen();
 				return toRead;
 			}
 			
 			public void  SetToRead(int toRead)
 			{
+				Enclosing_Instance.EnsureOpen();
 				this.toRead = toRead;
 			}
 		}
@@ -494,6 +618,12 @@ namespace Lucene.Net.Index
 			public override byte[] BinaryValue()
 			{
 				return (byte[]) this.fieldsData;
+			}
+			
+			public override TokenStream TokenStreamValue()
+			{
+				// not needed for merge
+				return null;
 			}
 			
 			public FieldForMerge(System.Object value_Renamed, FieldInfo fi, bool binary, bool compressed, bool tokenize)

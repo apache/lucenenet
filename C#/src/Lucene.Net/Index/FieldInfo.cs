@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	public sealed class FieldInfo
+	public sealed class FieldInfo : System.ICloneable
 	{
 		internal System.String name;
 		internal bool isIndexed;
@@ -37,8 +37,10 @@ namespace Lucene.Net.Index
 		{
 			return isIndexed;
 		}
-
-		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
+		
+		internal bool storePayloads; // whether this field stores payloads together with term positions
+		
+		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads)
 		{
 			name = na;
 			isIndexed = tk;
@@ -47,6 +49,12 @@ namespace Lucene.Net.Index
 			this.storeOffsetWithTermVector = storeOffsetWithTermVector;
 			this.storePositionWithTermVector = storePositionWithTermVector;
 			this.omitNorms = omitNorms;
+			this.storePayloads = storePayloads;
+		}
+		
+		public System.Object Clone()
+		{
+			return new FieldInfo(name, isIndexed, number, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads);
 		}
 
         // For testing only

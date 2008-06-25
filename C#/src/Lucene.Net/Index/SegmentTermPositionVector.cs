@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	public class SegmentTermPositionVector : SegmentTermVector, TermPositionVector
+	class SegmentTermPositionVector : SegmentTermVector, TermPositionVector
 	{
 		protected internal int[][] positions;
 		protected internal TermVectorOffsetInfo[][] offsets;

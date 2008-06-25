@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
@@ -39,6 +40,7 @@ namespace Lucene.Net.Index
 		internal long indexPointer = 0;
 		internal int indexInterval;
 		internal int skipInterval;
+		internal int maxSkipLevels;
 		private int formatM1SkipInterval;
 		
 		internal SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
@@ -46,6 +48,7 @@ namespace Lucene.Net.Index
 			input = i;
 			fieldInfos = fis;
 			isIndex = isi;
+			maxSkipLevels = 1; // use single-level skip lists for formats > -3 
 			
 			int firstInt = input.ReadInt();
 			if (firstInt >= 0)
@@ -65,7 +68,7 @@ namespace Lucene.Net.Index
 				
 				// check that it is a format we can understand
 				if (format < TermInfosWriter.FORMAT)
-					throw new System.IO.IOException("Unknown format version:" + format);
+					throw new CorruptIndexException("Unknown format version:" + format);
 				
 				size = input.ReadLong(); // read the size
 				
@@ -84,6 +87,11 @@ namespace Lucene.Net.Index
 				{
 					indexInterval = input.ReadInt();
 					skipInterval = input.ReadInt();
+					if (format == - 3)
+					{
+						// this new format introduces multi-level skipping
+						maxSkipLevels = input.ReadInt();
+					}
 				}
 			}
 		}
@@ -123,6 +131,7 @@ namespace Lucene.Net.Index
 		{
 			if (position++ >= size - 1)
 			{
+				prevBuffer.Set(termBuffer);
 				termBuffer.Reset();
 				return false;
 			}

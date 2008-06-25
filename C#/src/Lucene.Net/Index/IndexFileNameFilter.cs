@@ -34,6 +34,7 @@ namespace Lucene.Net.Index
 		
 		internal static IndexFileNameFilter singleton = new IndexFileNameFilter();
 		private System.Collections.Hashtable extensions;
+		private System.Collections.Hashtable extensionsInCFS;
 		
 		public IndexFileNameFilter()
 		{
@@ -41,6 +42,11 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
 				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i], IndexFileNames.INDEX_EXTENSIONS[i]);
+			}
+			extensionsInCFS = new System.Collections.Hashtable();
+			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE.Length; i++)
+			{
+                extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i], IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
 			}
 		}
 		
@@ -87,7 +93,7 @@ namespace Lucene.Net.Index
 			if (i != - 1)
 			{
 				System.String extension = name.Substring(1 + i);
-				if (extensions.Contains(extension) && !extension.Equals("del") && !extension.Equals("gen") && !extension.Equals("cfs"))
+				if (extensions.Contains(extension))
 				{
 					return true;
 				}

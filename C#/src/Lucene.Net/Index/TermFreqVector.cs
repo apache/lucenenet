@@ -21,12 +21,14 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary>Provides access to stored term vector of 
-	/// a document field.
+	/// a document field.  The vector consists of the name of the field, an array of the terms tha occur in the field of the
+	/// {@link Lucene.Net.Documents.Document} and a parallel array of frequencies.  Thus, getTermFrequencies()[5] corresponds with the
+	/// frequency of getTerms()[5], assuming there are at least 5 terms in the Document.
 	/// </summary>
 	public interface TermFreqVector
 	{
-		/// <summary> </summary>
-		/// <returns> The field this vector is associated with.
+		/// <summary> The {@link Lucene.Net.Documents.Fieldable} name. </summary>
+		/// <returns> The name of the field this vector is associated with.
 		/// 
 		/// </returns>
 		System.String GetField();
