@@ -35,10 +35,9 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>Created: Apr 21, 2004 5:08:38 PM
 	/// 
+	/// 
 	/// </summary>
-	/// <author>   Tim Jones
-	/// </author>
-	/// <version>  $Id: SortComparator.java 150541 2004-09-29 15:09:02Z goller $
+	/// <version>  $Id: SortComparator.java 564236 2007-08-09 15:21:19Z gsingers $
 	/// </version>
 	/// <since>   1.4
 	/// </since>

@@ -31,10 +31,9 @@ namespace Lucene.Net.Search
 	/// Either or both endpoints may be open.  Open endpoints may not be exclusive
 	/// (you can't select all but the first or last term without explicitly specifying the term to exclude.)
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
-	/// <version>  $Id: ConstantScoreRangeQuery.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: ConstantScoreRangeQuery.java 564236 2007-08-09 15:21:19Z gsingers $
 	/// </version>
 	
 	[Serializable]

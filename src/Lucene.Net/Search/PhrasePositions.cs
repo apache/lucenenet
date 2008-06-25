@@ -22,6 +22,7 @@ using Lucene.Net.Index;
 namespace Lucene.Net.Search
 {
 	
+	/// <summary> Position of a term in a document that takes into account the term offset within the phrase. </summary>
 	sealed class PhrasePositions
 	{
 		internal int doc; // current doc
@@ -30,6 +31,7 @@ namespace Lucene.Net.Search
 		internal int offset; // position in phrase
 		internal TermPositions tp; // stream of positions
 		internal PhrasePositions next; // used to make lists
+		internal bool repeats; // there's other pp for same term (e.g. query="1st word 2nd word"~1) 
 		
 		internal PhrasePositions(TermPositions t, int o)
 		{
@@ -71,6 +73,11 @@ namespace Lucene.Net.Search
 			NextPosition();
 		}
 		
+		/// <summary> Go to next location of this term current document, and set 
+		/// <code>position</code> as <code>location - offset</code>, so that a 
+		/// matching exact phrase is easily identified when all PhrasePositions 
+		/// have exactly the same <code>position</code>.
+		/// </summary>
 		internal bool NextPosition()
 		{
 			if (count-- > 0)

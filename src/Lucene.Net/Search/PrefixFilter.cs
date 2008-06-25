@@ -25,8 +25,7 @@ using TermDocs = Lucene.Net.Index.TermDocs;
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  yonik
-	/// </author>
+	/// <summary> </summary>
 	/// <version>  $Id$
 	/// </version>
 	[Serializable]
@@ -73,7 +72,7 @@ namespace Lucene.Net.Search
 		
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
-			System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
+			System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
 			new AnonymousClassPrefixGenerator(bitSet, this, prefix).Generate(reader);
 			return bitSet;
 		}
@@ -122,6 +121,7 @@ namespace Lucene.Net.Search
 				{
 					Term term = enumerator.Term();
 					if (term != null && term.Text().StartsWith(prefixText) && (System.Object) term.Field() == (System.Object) prefixField)
+					// interned comparison
 					{
 						termDocs.Seek(term);
 						while (termDocs.Next())

@@ -19,7 +19,6 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search.Spans
@@ -29,96 +28,7 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	public class SpanTermQuery : SpanQuery
 	{
-		private class AnonymousClassSpans : Spans
-		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanTermQuery enclosingInstance)
-			{
-				InitBlock(reader, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanTermQuery enclosingInstance)
-			{
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-				positions = reader.TermPositions(Enclosing_Instance.term);
-			}
-			private Lucene.Net.Index.IndexReader reader;
-			private SpanTermQuery enclosingInstance;
-			public SpanTermQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private TermPositions positions;
-			
-			private int doc = - 1;
-			private int freq;
-			private int count;
-			private int position;
-			
-			public virtual bool Next()
-			{
-				if (count == freq)
-				{
-					if (!positions.Next())
-					{
-						doc = System.Int32.MaxValue;
-						return false;
-					}
-					doc = positions.Doc();
-					freq = positions.Freq();
-					count = 0;
-				}
-				position = positions.NextPosition();
-				count++;
-				return true;
-			}
-			
-			public virtual bool SkipTo(int target)
-			{
-				// are we already at the correct position?
-				if (doc >= target)
-				{
-					return true;
-				}
-				
-				if (!positions.SkipTo(target))
-				{
-					doc = System.Int32.MaxValue;
-					return false;
-				}
-				
-				doc = positions.Doc();
-				freq = positions.Freq();
-				count = 0;
-				
-				position = positions.NextPosition();
-				count++;
-				
-				return true;
-			}
-			
-			public virtual int Doc()
-			{
-				return doc;
-			}
-			public virtual int Start()
-			{
-				return position;
-			}
-			public virtual int End()
-			{
-				return position + 1;
-			}
-			
-			public override System.String ToString()
-			{
-				return "spans(" + Enclosing_Instance.ToString() + ")@" + (doc == - 1 ? "START" : ((doc == System.Int32.MaxValue) ? "END" : doc + "-" + position));
-			}
-		}
-		private Term term;
+		protected internal Term term;
 		
 		/// <summary>Construct a SpanTermQuery matching the named term's spans. </summary>
 		public SpanTermQuery(Term term)
@@ -185,7 +95,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new AnonymousClassSpans(reader, this);
+			return new TermSpans(reader.TermPositions(term), term);
 		}
 	}
 }

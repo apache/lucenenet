@@ -139,7 +139,6 @@ namespace Lucene.Net.Search
 					return false;
 				Heapify();
 				firstTime = false;
-				return true; // more would have been false if no subScorers had any docs
 			}
 			
 			while (subScorers.Count > 0 && ((Scorer) subScorers[0]).Doc() < target)

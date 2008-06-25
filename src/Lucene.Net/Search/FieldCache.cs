@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldCache.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: FieldCache.java 544546 2007-06-05 16:29:35Z doronc $
 	/// </version>
 	/// <summary>Expert: Stores term text values and document ordering data. </summary>
 	public class StringIndex
@@ -50,8 +50,7 @@ namespace Lucene.Net.Search
 			this.lookup = lookup;
 		}
 	}
-	public struct FieldCache_Fields
-    {
+	public struct FieldCache_Fields{
 		/// <summary>Indicator for StringIndex values in the cache. </summary>
 		// NOTE: the value assigned to this constant must not be
 		// the same as any of those in SortField!!
@@ -65,7 +64,66 @@ namespace Lucene.Net.Search
 	}
 	public interface FieldCache
 	{
-		void Close(IndexReader reader);
+		
+		/// <summary>Checks the internal cache for an appropriate entry, and if none is
+		/// found, reads the terms in <code>field</code> as a single byte and returns an array
+		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// has in the given field.
+		/// </summary>
+		/// <param name="reader"> Used to get field values.
+		/// </param>
+		/// <param name="field">  Which field contains the single byte values.
+		/// </param>
+		/// <returns> The values in the given field for each document.
+		/// </returns>
+		/// <throws>  IOException  If any error occurs. </throws>
+		byte[] GetBytes(IndexReader reader, System.String field);
+		
+		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
+		/// reads the terms in <code>field</code> as bytes and returns an array of
+		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// given field.
+		/// </summary>
+		/// <param name="reader"> Used to get field values.
+		/// </param>
+		/// <param name="field">  Which field contains the bytes.
+		/// </param>
+		/// <param name="parser"> Computes byte for string values.
+		/// </param>
+		/// <returns> The values in the given field for each document.
+		/// </returns>
+		/// <throws>  IOException  If any error occurs. </throws>
+		byte[] GetBytes(IndexReader reader, System.String field, ByteParser parser);
+		
+		/// <summary>Checks the internal cache for an appropriate entry, and if none is
+		/// found, reads the terms in <code>field</code> as shorts and returns an array
+		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// has in the given field.
+		/// </summary>
+		/// <param name="reader"> Used to get field values.
+		/// </param>
+		/// <param name="field">  Which field contains the shorts.
+		/// </param>
+		/// <returns> The values in the given field for each document.
+		/// </returns>
+		/// <throws>  IOException  If any error occurs. </throws>
+		short[] GetShorts(IndexReader reader, System.String field);
+		
+		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
+		/// reads the terms in <code>field</code> as shorts and returns an array of
+		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// given field.
+		/// </summary>
+		/// <param name="reader"> Used to get field values.
+		/// </param>
+		/// <param name="field">  Which field contains the shorts.
+		/// </param>
+		/// <param name="parser"> Computes short for string values.
+		/// </param>
+		/// <returns> The values in the given field for each document.
+		/// </returns>
+		/// <throws>  IOException  If any error occurs. </throws>
+		short[] GetShorts(IndexReader reader, System.String field, ShortParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <code>field</code> as integers and returns an array
@@ -189,8 +247,26 @@ namespace Lucene.Net.Search
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 	}
 	
+	/// <summary>Interface to parse bytes from document fields.</summary>
+	/// <seealso cref="FieldCache.GetBytes(IndexReader, String, FieldCache.ByteParser)">
+	/// </seealso>
+	public interface ByteParser
+	{
+		/// <summary>Return a single Byte representation of this field's value. </summary>
+		byte ParseByte(System.String string_Renamed);
+	}
+	
+	/// <summary>Interface to parse shorts from document fields.</summary>
+	/// <seealso cref="FieldCache.GetShorts(IndexReader, String, FieldCache.ShortParser)">
+	/// </seealso>
+	public interface ShortParser
+	{
+		/// <summary>Return a short representation of this field's value. </summary>
+		short ParseShort(System.String string_Renamed);
+	}
+	
 	/// <summary>Interface to parse ints from document fields.</summary>
-	/// <seealso cref="String, IntParser)">
+	/// <seealso cref="FieldCache.GetInts(IndexReader, String, FieldCache.IntParser)">
 	/// </seealso>
 	public interface IntParser
 	{
@@ -199,7 +275,7 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse floats from document fields.</summary>
-	/// <seealso cref="String, FloatParser)">
+	/// <seealso cref="FieldCache.GetFloats(IndexReader, String, FieldCache.FloatParser)">
 	/// </seealso>
 	public interface FloatParser
 	{

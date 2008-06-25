@@ -37,8 +37,8 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   1.4
 	/// </since>
-	/// <version>  $Id: FilteredQuery.java 472959 2006-11-09 16:21:50Z yonik $
-	/// </version>
+    /// <version>  $Id: FilteredQuery.java 544254 2007-06-04 20:41:06Z doronc $
+    /// </version>
 	/// <seealso cref="CachingWrapperFilter">
 	/// </seealso>
 	[Serializable]
@@ -119,13 +119,15 @@ namespace Lucene.Net.Search
 				
 				public override float Score()
 				{
-					return scorer.Score();
+					return Enclosing_Instance.Enclosing_Instance.GetBoost() * scorer.Score();
 				}
 				
 				// add an explanation about whether the document was filtered
 				public override Explanation Explain(int i)
 				{
 					Explanation exp = scorer.Explain(i);
+					exp.SetValue(Enclosing_Instance.Enclosing_Instance.GetBoost() * exp.GetValue());
+					
 					if (bitset.Get(i))
 						exp.SetDescription("allowed by filter: " + exp.GetDescription());
 					else
@@ -150,23 +152,32 @@ namespace Lucene.Net.Search
 				}
 				
 			}
+			private float value_Renamed;
 			
 			// pass these methods through to enclosed query's weight
 			public virtual float GetValue()
 			{
-				return weight.GetValue();
-			}
+                return value_Renamed;
+            }
 			public virtual float SumOfSquaredWeights()
 			{
-				return weight.SumOfSquaredWeights();
+				return weight.SumOfSquaredWeights() * Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost();
 			}
 			public virtual void  Normalize(float v)
 			{
 				weight.Normalize(v);
+				value_Renamed = weight.GetValue() * Enclosing_Instance.GetBoost();
 			}
 			public virtual Explanation Explain(IndexReader ir, int i)
 			{
 				Explanation inner = weight.Explain(ir, i);
+				if (Enclosing_Instance.GetBoost() != 1)
+				{
+					Explanation preBoost = inner;
+					inner = new Explanation(inner.GetValue() * Enclosing_Instance.GetBoost(), "product of:");
+					inner.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
+					inner.AddDetail(preBoost);
+				}
 				Filter f = Enclosing_Instance.filter;
 				System.Collections.BitArray matches = f.Bits(ir);
 				if (matches.Get(i))

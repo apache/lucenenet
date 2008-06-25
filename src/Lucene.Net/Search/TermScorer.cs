@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 			{
 				// for docs in window
 				int f = freqs[pointer];
-				float score = f < SCORE_CACHE_SIZE?scoreCache[f]:similarity.Tf(f) * weightValue; // cache miss
+				float score = f < SCORE_CACHE_SIZE ? scoreCache[f] : similarity.Tf(f) * weightValue; // cache miss
 				
 				score *= normDecoder[norms[doc] & 0xFF]; // normalize for field
 				

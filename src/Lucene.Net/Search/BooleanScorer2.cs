@@ -20,9 +20,10 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>An alternative to BooleanScorer.
-	/// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
+	/// <summary>An alternative to BooleanScorer that also allows a minimum number
+	/// of optional scorers that should match.
 	/// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
+	/// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
 	/// </summary>
 	class BooleanScorer2 : Scorer
 	{
@@ -76,7 +77,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity Param1):base(Param1)
+			internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity Param1, System.Collections.ICollection scorers) : base(Param1, scorers)
 			{
 				InitBlock(requiredNrMatchers, enclosingInstance);
 			}
@@ -158,6 +159,12 @@ namespace Lucene.Net.Search
 		/// <summary>The number of optionalScorers that need to match (if there are any) </summary>
 		private int minNrShouldMatch;
 		
+		/// <summary>Whether it is allowed to return documents out of order.
+		/// This can accelerate the scoring of disjunction queries.  
+		/// </summary>
+		private bool allowDocsOutOfOrder;
+		
+		
 		/// <summary>Create a BooleanScorer2.</summary>
 		/// <param name="similarity">The similarity to be used.
 		/// </param>
@@ -167,7 +174,10 @@ namespace Lucene.Net.Search
 		/// at least one of the optional scorers will have to
 		/// match during the search.
 		/// </param>
-		public BooleanScorer2(Similarity similarity, int minNrShouldMatch) : base(similarity)
+		/// <param name="allowDocsOutOfOrder">Whether it is allowed to return documents out of order.
+		/// This can accelerate the scoring of disjunction queries.                         
+		/// </param>
+		public BooleanScorer2(Similarity similarity, int minNrShouldMatch, bool allowDocsOutOfOrder) : base(similarity)
 		{
 			if (minNrShouldMatch < 0)
 			{
@@ -175,6 +185,7 @@ namespace Lucene.Net.Search
 			}
 			coordinator = new Coordinator(this);
 			this.minNrShouldMatch = minNrShouldMatch;
+			this.allowDocsOutOfOrder = allowDocsOutOfOrder;
 		}
 		
 		/// <summary>Create a BooleanScorer2.
@@ -183,7 +194,23 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="similarity">The similarity to be used.
 		/// </param>
-		public BooleanScorer2(Similarity similarity) : this(similarity, 0)
+		/// <param name="minNrShouldMatch">The minimum number of optional added scorers
+		/// that should match during the search.
+		/// In case no required scorers are added,
+		/// at least one of the optional scorers will have to
+		/// match during the search.
+		/// </param>
+		public BooleanScorer2(Similarity similarity, int minNrShouldMatch) : this(similarity, minNrShouldMatch, false)
+		{
+		}
+		
+		/// <summary>Create a BooleanScorer2.
+		/// In no required scorers are added,
+		/// at least one of the optional scorers will have to match during the search.
+		/// </summary>
+		/// <param name="similarity">The similarity to be used.
+		/// </param>
+		public BooleanScorer2(Similarity similarity):this(similarity, 0, false)
 		{
 		}
 		
@@ -251,7 +278,7 @@ namespace Lucene.Net.Search
 			}
 			public override float Score()
 			{
-				if (this.Doc() > lastScoredDoc)
+				if (this.Doc() >= lastScoredDoc)
 				{
 					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers++;
@@ -284,31 +311,21 @@ namespace Lucene.Net.Search
 		
 		private static Similarity defaultSimilarity = new DefaultSimilarity();
 		
-		private Scorer countingConjunctionSumScorer(System.Collections.IList requiredScorers)
+		private Scorer CountingConjunctionSumScorer(System.Collections.IList requiredScorers)
 		{
 			// each scorer from the list counted as a single matcher
 			int requiredNrMatchers = requiredScorers.Count;
-			ConjunctionScorer cs = new AnonymousClassConjunctionScorer(requiredNrMatchers, this, defaultSimilarity);
-			System.Collections.IEnumerator rsi = requiredScorers.GetEnumerator();
-			while (rsi.MoveNext())
-			{
-				cs.Add((Scorer) rsi.Current);
-			}
-			return cs;
+			return new AnonymousClassConjunctionScorer(requiredNrMatchers, this, defaultSimilarity, requiredScorers);
 		}
 		
 		private Scorer DualConjunctionSumScorer(Scorer req1, Scorer req2)
 		{
 			// non counting. 
-			int requiredNrMatchers = requiredScorers.Count;
-			ConjunctionScorer cs = new ConjunctionScorer(defaultSimilarity);
-			// All scorers match, so defaultSimilarity super.score() always has 1 as
+			return new ConjunctionScorer(defaultSimilarity, new Scorer[]{req1, req2});
+			// All scorers match, so defaultSimilarity always has 1 as
 			// the coordination factor.
 			// Therefore the sum of the scores of two scorers
 			// is used as score.
-			cs.Add(req1);
-			cs.Add(req2);
-			return cs;
 		}
 		
 		/// <summary>Returns the scorer to be used for match counting and score summing.
@@ -317,7 +334,7 @@ namespace Lucene.Net.Search
 		private Scorer MakeCountingSumScorer()
 		{
 			// each scorer counted as a single matcher
-			return (requiredScorers.Count == 0)?MakeCountingSumScorerNoReq():MakeCountingSumScorerSomeReq();
+			return (requiredScorers.Count == 0) ? MakeCountingSumScorerNoReq() : MakeCountingSumScorerSomeReq();
 		}
 		
 		private Scorer MakeCountingSumScorerNoReq()
@@ -331,7 +348,7 @@ namespace Lucene.Net.Search
 			{
 				// No required scorers. At least one optional scorer.
 				// minNrShouldMatch optional scorers are required, but at least 1
-				int nrOptRequired = (minNrShouldMatch < 1)?1:minNrShouldMatch;
+				int nrOptRequired = (minNrShouldMatch < 1) ? 1 : minNrShouldMatch;
 				if (optionalScorers.Count < nrOptRequired)
 				{
 					return new NonMatchingScorer(); // fewer optional clauses than minimum (at least 1) that should match
@@ -339,7 +356,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// optionalScorers.size() >= nrOptRequired, no required scorers
-					Scorer requiredCountingSumScorer = (optionalScorers.Count > nrOptRequired)?countingDisjunctionSumScorer(optionalScorers, nrOptRequired):((optionalScorers.Count == 1)?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):countingConjunctionSumScorer(optionalScorers));
+					Scorer requiredCountingSumScorer = (optionalScorers.Count > nrOptRequired) ? countingDisjunctionSumScorer(optionalScorers, nrOptRequired) : ((optionalScorers.Count == 1) ? new SingleMatchScorer(this, (Scorer) optionalScorers[0]) : CountingConjunctionSumScorer(optionalScorers));
 					return AddProhibitedScorers(requiredCountingSumScorer);
 				}
 			}
@@ -357,12 +374,12 @@ namespace Lucene.Net.Search
 				// all optional scorers also required.
 				System.Collections.ArrayList allReq = new System.Collections.ArrayList(requiredScorers);
 				allReq.AddRange(optionalScorers);
-				return AddProhibitedScorers(countingConjunctionSumScorer(allReq));
+				return AddProhibitedScorers(CountingConjunctionSumScorer(allReq));
 			}
 			else
 			{
 				// optionalScorers.size() > minNrShouldMatch, and at least one required scorer
-				Scorer requiredCountingSumScorer = (requiredScorers.Count == 1) ? new SingleMatchScorer(this, (Scorer) requiredScorers[0]) : countingConjunctionSumScorer(requiredScorers);
+				Scorer requiredCountingSumScorer = (requiredScorers.Count == 1) ? new SingleMatchScorer(this, (Scorer) requiredScorers[0]) : CountingConjunctionSumScorer(requiredScorers);
 				if (minNrShouldMatch > 0)
 				{
 					// use a required disjunction scorer over the optional scorers
@@ -393,13 +410,32 @@ namespace Lucene.Net.Search
 		/// </param>
 		public override void  Score(HitCollector hc)
 		{
-			if (countingSumScorer == null)
+			if (allowDocsOutOfOrder && requiredScorers.Count == 0 && prohibitedScorers.Count < 32)
 			{
-				InitCountingSumScorer();
+				// fall back to BooleanScorer, scores documents somewhat out of order
+				BooleanScorer bs = new BooleanScorer(GetSimilarity(), minNrShouldMatch);
+				System.Collections.IEnumerator si = optionalScorers.GetEnumerator();
+				while (si.MoveNext())
+				{
+					bs.Add((Scorer) si.Current, false, false);
+				}
+				si = prohibitedScorers.GetEnumerator();
+				while (si.MoveNext())
+				{
+					bs.Add((Scorer) si.Current, false, true);
+				}
+				bs.Score(hc);
 			}
-			while (countingSumScorer.Next())
+			else
 			{
-				hc.Collect(countingSumScorer.Doc(), Score());
+				if (countingSumScorer == null)
+				{
+					InitCountingSumScorer();
+				}
+				while (countingSumScorer.Next())
+				{
+					hc.Collect(countingSumScorer.Doc(), Score());
+				}
 			}
 		}
 		

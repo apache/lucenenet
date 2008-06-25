@@ -18,6 +18,7 @@
 using System;
 
 using Document = Lucene.Net.Documents.Document;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 
 namespace Lucene.Net.Search
 {
@@ -53,8 +54,10 @@ namespace Lucene.Net.Search
 		/// <summary> Returns document for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits#Doc(int)">
+		/// <seealso cref="Hits.Doc(int)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual Document GetDocument()
 		{
 			if (!resolved)
@@ -65,7 +68,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns score for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits#Score(int)">
+		/// <seealso cref="Hits.Score(int)">
 		/// </seealso>
 		public virtual float GetScore()
 		{
@@ -93,8 +96,10 @@ namespace Lucene.Net.Search
 		/// <summary> Returns the boost factor for this hit on any field of the underlying document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Document#GetBoost()">
+		/// <seealso cref="Document.GetBoost()">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual float GetBoost()
 		{
 			return GetDocument().GetBoost();
@@ -106,8 +111,10 @@ namespace Lucene.Net.Search
 		/// exist, returns null.
 		/// 
 		/// </summary>
-		/// <seealso cref="Document#Get(String)">
+		/// <seealso cref="Document.Get(String)">
 		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual System.String Get(System.String name)
 		{
 			return GetDocument().Get(name);

@@ -61,12 +61,12 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="">reader
+		/// <param name="reader">
 		/// </param>
-		/// <param name="">term
+		/// <param name="term">
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="Term, float, int)">
+		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term) : this(reader, term, FuzzyQuery.defaultMinSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -78,14 +78,14 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="">reader
+		/// <param name="reader">
 		/// </param>
-		/// <param name="">term
+		/// <param name="term">
 		/// </param>
-		/// <param name="">minSimilarity
+		/// <param name="minSimilarity">
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="Term, float, int)">
+		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity) : this(reader, term, minSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 			//The prefix could be longer than the word.
 			//It's kind of silly though.  It means we must match the entire word.
 			int fullSearchTermLength = searchTerm.Text().Length;
-			int realPrefixLength = prefixLength > fullSearchTermLength?fullSearchTermLength:prefixLength;
+			int realPrefixLength = prefixLength > fullSearchTermLength ? fullSearchTermLength : prefixLength;
 			
 			this.text = searchTerm.Text().Substring(realPrefixLength);
 			this.prefix = searchTerm.Text().Substring(0, (realPrefixLength) - (0));

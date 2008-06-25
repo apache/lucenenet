@@ -17,29 +17,29 @@
 
 using System;
 
-using Weight = Lucene.Net.Search.Weight;
-using Scorer = Lucene.Net.Search.Scorer;
 using Explanation = Lucene.Net.Search.Explanation;
+using Scorer = Lucene.Net.Search.Scorer;
 using Similarity = Lucene.Net.Search.Similarity;
+using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
 {
 	
-	
+	/// <summary> Public for extension only.</summary>
 	class SpanScorer : Scorer
 	{
-		private Spans spans;
-		private Weight weight;
-		private byte[] norms;
-		private float value_Renamed;
+		protected internal Spans spans;
+		protected internal Weight weight;
+		protected internal byte[] norms;
+		protected internal float value_Renamed;
 		
-		private bool firstTime = true;
-		private bool more = true;
+		protected internal bool firstTime = true;
+		protected internal bool more = true;
 		
-		private int doc;
-		private float freq;
+		protected internal int doc;
+		protected internal float freq;
 		
-		internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms) : base(similarity)
+		protected internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms) : base(similarity)
 		{
 			this.spans = spans;
 			this.norms = norms;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Spans
 			return SetFreqCurrentDoc();
 		}
 		
-		private bool SetFreqCurrentDoc()
+		protected internal virtual bool SetFreqCurrentDoc()
 		{
 			if (!more)
 			{

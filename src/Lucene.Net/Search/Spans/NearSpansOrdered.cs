@@ -241,7 +241,7 @@ namespace Lucene.Net.Search.Spans
 			int start1 = spans1.Start();
 			int start2 = spans2.Start();
 			/* Do not call DocSpansOrdered(int,int,int,int) to avoid invoking .end() : */
-			return (start1 == start2)?(spans1.End() < spans2.End()):(start1 < start2);
+			return (start1 == start2) ? (spans1.End() < spans2.End()) : (start1 < start2);
 		}
 		
 		/// <summary>Like {@link #DocSpansOrdered(Spans,Spans)}, but use the spans
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override System.String ToString()
 		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
+			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc() + ":" + Start() + "-" + End()) : "END"));
 		}
 	}
 }
