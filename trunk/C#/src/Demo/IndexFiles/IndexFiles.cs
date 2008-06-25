@@ -17,24 +17,24 @@
 
 using System;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Demo
 {
 	
-    /// <summary>Index all text files under a directory. </summary>
-    class IndexFiles
+	/// <summary>Index all text files under a directory. </summary>
+	public class IndexFiles
 	{
-
-        private IndexFiles()
-        {
-        }
+		
+		private IndexFiles()
+		{
+		}
 		
 		internal static readonly System.IO.FileInfo INDEX_DIR = new System.IO.FileInfo("index");
 		
-        /// <summary>Index all text files under a directory. </summary>
-        [STAThread]
+		/// <summary>Index all text files under a directory. </summary>
+		[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = typeof(IndexFiles) + " <root_directory>";

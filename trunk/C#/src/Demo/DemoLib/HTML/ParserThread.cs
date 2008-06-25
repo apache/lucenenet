@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Demo.Html
 {
 	
-	class ParserThread:SupportClass.ThreadClass
+	class ParserThread : SupportClass.ThreadClass
 	{
 		internal HTMLParser parser;
 		

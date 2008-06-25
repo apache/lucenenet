@@ -17,8 +17,8 @@
 
 using System;
 
-using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
 using Lucene.Net.Documents;
+using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
 
 namespace Lucene.Net.Demo
 {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Demo
 		public static System.String Uid2url(System.String uid)
 		{
 			System.String url = uid.Replace('\u0000', '/'); // replace nulls with slashes
-			return url.Substring(0, (url.LastIndexOf((System.Char) '/')) - (0)); // remove date from end
+			return url.Substring(0, (url.LastIndexOf('/')) - (0)); // remove date from end
 		}
 		
 		public static Document Document(System.IO.FileInfo f)

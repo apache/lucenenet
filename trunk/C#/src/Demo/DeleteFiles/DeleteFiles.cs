@@ -17,25 +17,24 @@
 
 using System;
 
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
 
 namespace Lucene.Net.Demo
 {
-	//import Lucene.Net.index.Term;
 	
-    /// <summary>Deletes documents from an index that do not contain a term. </summary>
-    public class DeleteFiles
+	/// <summary>Deletes documents from an index that do not contain a term. </summary>
+	public class DeleteFiles
 	{
-
-        private DeleteFiles()
-        {
-        } // singleton
 		
-        /// <summary>Deletes documents from an index that do not contain a term. </summary>
-        [STAThread]
+		private DeleteFiles()
+		{
+		} // singleton
+		
+		/// <summary>Deletes documents from an index that do not contain a term. </summary>
+		[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			System.String usage = typeof(DeleteFiles) + " <unique_term>";
