@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
 		{
 			int len1 = s1.Length;
 			int len2 = s2.Length;
-			int len = len1 < len2?len1:len2;
+			int len = len1 < len2 ? len1:len2;
 			for (int i = 0; i < len; i++)
 			{
 				if (s1[i] != s2[i])
