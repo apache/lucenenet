@@ -16,9 +16,10 @@
  */
 
 using System;
+
 using Directory = Lucene.Net.Store.Directory;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
 using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
 {
@@ -43,10 +44,9 @@ namespace Lucene.Net.Index
 	/// contains a long pointer to the start of this file's data section, and a String
 	/// with that file's name.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Dmitry Serebrennikov
-	/// </author>
-	/// <version>  $Id: CompoundFileWriter.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: CompoundFileWriter.java 606441 2007-12-22 10:06:28Z mikemccand $
 	/// </version>
 	public sealed class CompoundFileWriter
 	{
@@ -69,19 +69,23 @@ namespace Lucene.Net.Index
 		private System.Collections.Hashtable ids;
 		private System.Collections.ArrayList entries;
 		private bool merged = false;
-		
+		private SegmentMerger.CheckAbort checkAbort;
 		
 		/// <summary>Create the compound stream in the specified file. The file name is the
 		/// entire name (no extensions are added).
 		/// </summary>
 		/// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
-		public CompoundFileWriter(Directory dir, System.String name)
+		public CompoundFileWriter(Directory dir, System.String name) : this(dir, name, null)
+		{
+		}
+		
+		internal CompoundFileWriter(Directory dir, System.String name, SegmentMerger.CheckAbort checkAbort)
 		{
 			if (dir == null)
 				throw new System.NullReferenceException("directory cannot be null");
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");
-			
+			this.checkAbort = checkAbort;
 			directory = dir;
 			fileName = name;
 			ids = new System.Collections.Hashtable();
@@ -172,7 +176,7 @@ namespace Lucene.Net.Index
 				
 				// Open the files and copy their data into the stream.
 				// Remember the locations of each file's data section.
-				byte[] buffer = new byte[1024];
+				byte[] buffer = new byte[16384];
 				it = entries.GetEnumerator();
 				while (it.MoveNext())
 				{
@@ -233,6 +237,10 @@ namespace Lucene.Net.Index
 					is_Renamed.ReadBytes(buffer, 0, len);
 					os.WriteBytes(buffer, len);
 					remainder -= len;
+					if (checkAbort != null)
+					// Roughly every 2 MB we will check if
+					// it's time to abort
+						checkAbort.Work(80);
 				}
 				
 				// Verify that remainder is 0

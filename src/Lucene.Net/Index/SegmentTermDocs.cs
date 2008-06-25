@@ -16,8 +16,9 @@
  */
 
 using System;
-using BitVector = Lucene.Net.Util.BitVector;
+
 using IndexInput = Lucene.Net.Store.IndexInput;
+using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index
 {
@@ -33,14 +34,16 @@ namespace Lucene.Net.Index
 		internal int freq;
 		
 		private int skipInterval;
-		private int numSkips;
-		private int skipCount;
-		private IndexInput skipStream;
-		private int skipDoc;
-		private long freqPointer;
-		private long proxPointer;
+		private int maxSkipLevels;
+		private DefaultSkipListReader skipListReader;
+		
+		private long freqBasePointer;
+		private long proxBasePointer;
+		
 		private long skipPointer;
 		private bool haveSkipped;
+		
+		protected internal bool currentFieldStoresPayloads;
 		
 		public SegmentTermDocs(SegmentReader parent)
 		{
@@ -48,32 +51,43 @@ namespace Lucene.Net.Index
 			this.freqStream = (IndexInput) parent.freqStream.Clone();
 			this.deletedDocs = parent.deletedDocs;
 			this.skipInterval = parent.tis.GetSkipInterval();
+			this.maxSkipLevels = parent.tis.GetMaxSkipLevels();
 		}
 		
 		public virtual void  Seek(Term term)
 		{
 			TermInfo ti = parent.tis.Get(term);
-			Seek(ti);
+			Seek(ti, term);
 		}
 		
 		public virtual void  Seek(TermEnum termEnum)
 		{
 			TermInfo ti;
+			Term term;
 			
 			// use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
 			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.fieldInfos)
-			// optimized case
-				ti = ((SegmentTermEnum) termEnum).TermInfo();
-			// punt case
+			{
+				// optimized case
+				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
+				term = segmentTermEnum.Term();
+				ti = segmentTermEnum.TermInfo();
+			}
 			else
-				ti = parent.tis.Get(termEnum.Term());
+			{
+				// punt case
+				term = termEnum.Term();
+				ti = parent.tis.Get(term);
+			}
 			
-			Seek(ti);
+			Seek(ti, term);
 		}
 		
-		internal virtual void  Seek(TermInfo ti)
+		internal virtual void  Seek(TermInfo ti, Term term)
 		{
 			count = 0;
+			FieldInfo fi = parent.fieldInfos.FieldInfo(term.field);
+			currentFieldStoresPayloads = (fi != null) ? fi.storePayloads : false;
 			if (ti == null)
 			{
 				df = 0;
@@ -82,13 +96,10 @@ namespace Lucene.Net.Index
 			{
 				df = ti.docFreq;
 				doc = 0;
-				skipDoc = 0;
-				skipCount = 0;
-				numSkips = df / skipInterval;
-				freqPointer = ti.freqPointer;
-				proxPointer = ti.proxPointer;
-				skipPointer = freqPointer + ti.skipOffset;
-				freqStream.Seek(freqPointer);
+				freqBasePointer = ti.freqPointer;
+				proxBasePointer = ti.proxPointer;
+				skipPointer = freqBasePointer + ti.skipOffset;
+				freqStream.Seek(freqBasePointer);
 				haveSkipped = false;
 			}
 		}
@@ -96,8 +107,8 @@ namespace Lucene.Net.Index
 		public virtual void  Close()
 		{
 			freqStream.Close();
-			if (skipStream != null)
-				skipStream.Close();
+			if (skipListReader != null)
+				skipListReader.Close();
 		}
 		
 		public int Doc()
@@ -172,56 +183,34 @@ namespace Lucene.Net.Index
 		{
 		}
 		
+        protected internal virtual void SkipProx(long proxPointer, int payloadLength)
+        {
+        }
+		
 		/// <summary>Optimized implementation. </summary>
 		public virtual bool SkipTo(int target)
 		{
 			if (df >= skipInterval)
 			{
 				// optimized case
-				
-				if (skipStream == null)
-					skipStream = (IndexInput) freqStream.Clone(); // lazily clone
+				if (skipListReader == null)
+					skipListReader = new DefaultSkipListReader((IndexInput) freqStream.Clone(), maxSkipLevels, skipInterval); // lazily clone
 				
 				if (!haveSkipped)
 				{
-					// lazily seek skip stream
-					skipStream.Seek(skipPointer);
+					// lazily initialize skip stream
+					skipListReader.Init(skipPointer, freqBasePointer, proxBasePointer, df, currentFieldStoresPayloads);
 					haveSkipped = true;
 				}
 				
-				// scan skip data
-				int lastSkipDoc = skipDoc;
-				long lastFreqPointer = freqStream.GetFilePointer();
-				long lastProxPointer = - 1;
-				int numSkipped = - 1 - (count % skipInterval);
-				
-				while (target > skipDoc)
+				int newCount = skipListReader.SkipTo(target);
+				if (newCount > count)
 				{
-					lastSkipDoc = skipDoc;
-					lastFreqPointer = freqPointer;
-					lastProxPointer = proxPointer;
+					freqStream.Seek(skipListReader.GetFreqPointer());
+					SkipProx(skipListReader.GetProxPointer(), skipListReader.GetPayloadLength());
 					
-					if (skipDoc != 0 && skipDoc >= doc)
-						numSkipped += skipInterval;
-					
-					if (skipCount >= numSkips)
-						break;
-					
-					skipDoc += skipStream.ReadVInt();
-					freqPointer += skipStream.ReadVInt();
-					proxPointer += skipStream.ReadVInt();
-					
-					skipCount++;
-				}
-				
-				// if we found something to skip, then skip it
-				if (lastFreqPointer > freqStream.GetFilePointer())
-				{
-					freqStream.Seek(lastFreqPointer);
-					SkipProx(lastProxPointer);
-					
-					doc = lastSkipDoc;
-					count += numSkipped;
+					doc = skipListReader.GetDoc();
+					count = newCount;
 				}
 			}
 			

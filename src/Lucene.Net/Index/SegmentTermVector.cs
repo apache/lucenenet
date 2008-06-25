@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 		
 		public virtual int Size()
 		{
-			return terms == null?0:terms.Length;
+			return terms == null ? 0 : terms.Length;
 		}
 		
 		public virtual System.String[] GetTerms()

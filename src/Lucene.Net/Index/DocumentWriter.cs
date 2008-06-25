@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// {{Aroush-2.3.1}} remove this file from SVN
+/*
 using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
@@ -509,4 +510,4 @@ namespace Lucene.Net.Index
 				offsets = null;
 		}
 	}
-}
+}*/

@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
@@ -31,7 +32,7 @@ namespace Lucene.Net.Index
 	/// be adding documents at a time, with no other reader or writer threads
 	/// accessing this object.
 	/// </summary>
-	public sealed class FieldInfos
+	public sealed class FieldInfos : System.ICloneable
 	{
 		
 		internal const byte IS_INDEXED = (byte) (0x1);
@@ -39,6 +40,7 @@ namespace Lucene.Net.Index
 		internal const byte STORE_POSITIONS_WITH_TERMVECTOR = (byte) (0x4);
 		internal const byte STORE_OFFSET_WITH_TERMVECTOR = (byte) (0x8);
 		internal const byte OMIT_NORMS = (byte) (0x10);
+		internal const byte STORE_PAYLOADS = (byte) (0x20);
 		
 		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
 		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
@@ -66,6 +68,20 @@ namespace Lucene.Net.Index
 			{
 				input.Close();
 			}
+		}
+		
+		/// <summary> Returns a deep clone of this FieldInfos instance.</summary>
+		public System.Object Clone()
+		{
+			FieldInfos fis = new FieldInfos();
+			int numField = byNumber.Count;
+			for (int i = 0; i < numField; i++)
+			{
+				FieldInfo fi = (FieldInfo) ((FieldInfo) byNumber[i]).Clone();
+				fis.byNumber.Add(fi);
+				fis.byName[fi.name] = fi;
+			}
+			return fis;
 		}
 		
 		/// <summary>Adds field info for a Document. </summary>
@@ -109,7 +125,7 @@ namespace Lucene.Net.Index
 		/// <param name="isIndexed">Whether the fields are indexed or not
 		/// 
 		/// </param>
-		/// <seealso cref="boolean)">
+		/// <seealso cref="Add(String, boolean)">
 		/// </seealso>
 		public void  Add(System.Collections.ICollection names, bool isIndexed)
 		{
@@ -128,7 +144,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="isIndexed">true if the field is indexed
 		/// </param>
-		/// <seealso cref="boolean, boolean, boolean, boolean)">
+		/// <seealso cref="Add(String, boolean, boolean, boolean, boolean)">
 		/// </seealso>
 		public void  Add(System.String name, bool isIndexed)
 		{
@@ -191,10 +207,35 @@ namespace Lucene.Net.Index
 		/// </param>
 		public void  Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
 		{
+			Add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, false);
+		}
+		
+		/// <summary>If the field is not yet known, adds it. If it is known, checks to make
+		/// sure that the isIndexed flag is the same as was given previously for this
+		/// field. If not - marks it as being indexed.  Same goes for the TermVector
+		/// parameters.
+		/// 
+		/// </summary>
+		/// <param name="name">The name of the field
+		/// </param>
+		/// <param name="isIndexed">true if the field is indexed
+		/// </param>
+		/// <param name="storeTermVector">true if the term vector should be stored
+		/// </param>
+		/// <param name="storePositionWithTermVector">true if the term vector with positions should be stored
+		/// </param>
+		/// <param name="storeOffsetWithTermVector">true if the term vector with offsets should be stored
+		/// </param>
+		/// <param name="omitNorms">true if the norms for the indexed field should be omitted
+		/// </param>
+		/// <param name="storePayloads">true if payloads should be stored for this field
+		/// </param>
+		public FieldInfo Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads)
+		{
 			FieldInfo fi = FieldInfo(name);
 			if (fi == null)
 			{
-				AddInternal(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms);
+				return AddInternal(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads);
 			}
 			else
 			{
@@ -218,30 +259,26 @@ namespace Lucene.Net.Index
 				{
 					fi.omitNorms = false; // once norms are stored, always store
 				}
+				if (fi.storePayloads != storePayloads)
+				{
+					fi.storePayloads = true;
+				}
 			}
+			return fi;
 		}
 		
-		
-		private void  AddInternal(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
+		private FieldInfo AddInternal(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads)
 		{
-			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms);
+			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads);
 			byNumber.Add(fi);
 			byName[name] = fi;
+			return fi;
 		}
 		
 		public int FieldNumber(System.String fieldName)
 		{
-			try
-			{
-				FieldInfo fi = FieldInfo(fieldName);
-				if (fi != null)
-					return fi.number;
-			}
-			catch (System.IndexOutOfRangeException ioobe)
-			{
-				return - 1;
-			}
-			return - 1;
+			FieldInfo fi = FieldInfo(fieldName);
+			return (fi != null) ? fi.number : -1;
 		}
 		
 		public FieldInfo FieldInfo(System.String fieldName)
@@ -260,22 +297,18 @@ namespace Lucene.Net.Index
 		public System.String FieldName(int fieldNumber)
 		{
 			FieldInfo fi = FieldInfo(fieldNumber);
-			if (fi != null)
-				return fi.name;
-			return "";
+			return (fi != null) ? fi.name : "";
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
-		/// <param name="">fieldNumber
+		/// <param name="fieldNumber">
 		/// </param>
 		/// <returns> the FieldInfo object or null when the given fieldNumber
 		/// doesn't exist.
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			if (fieldNumber > -1 && fieldNumber < byNumber.Count)
-				return (FieldInfo) byNumber[fieldNumber];
-			return null;
+			return (fieldNumber >= 0) ? (FieldInfo) byNumber[fieldNumber] : null;
 		}
 		
 		public int Size()
@@ -327,6 +360,8 @@ namespace Lucene.Net.Index
 					bits |= STORE_OFFSET_WITH_TERMVECTOR;
 				if (fi.omitNorms)
 					bits |= OMIT_NORMS;
+				if (fi.storePayloads)
+					bits |= STORE_PAYLOADS;
 				output.WriteString(fi.name);
 				output.WriteByte(bits);
 			}
@@ -344,8 +379,9 @@ namespace Lucene.Net.Index
 				bool storePositionsWithTermVector = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
 				bool storeOffsetWithTermVector = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
 				bool omitNorms = (bits & OMIT_NORMS) != 0;
+				bool storePayloads = (bits & STORE_PAYLOADS) != 0;
 				
-				AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector, omitNorms);
+				AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads);
 			}
 		}
 	}

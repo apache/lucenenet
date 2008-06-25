@@ -16,9 +16,9 @@
  */
 
 using System;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
+
 using Directory = Lucene.Net.Store.Directory;
-using StringHelper = Lucene.Net.Util.StringHelper;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 namespace Lucene.Net.Index
 {
@@ -30,13 +30,12 @@ namespace Lucene.Net.Index
 	public sealed class TermInfosWriter
 	{
 		/// <summary>The file format version, a negative number. </summary>
-		public const int FORMAT = - 2;
+		public const int FORMAT = - 3;
 		
 		private FieldInfos fieldInfos;
 		private IndexOutput output;
-		private Term lastTerm = new Term("", "");
 		private TermInfo lastTi = new TermInfo();
-		private long size = 0;
+		private long size;
 		
 		// TODO: the default values for these two parameters should be settable from
 		// IndexWriter.  However, once that's done, folks will start setting them to
@@ -61,10 +60,20 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal int skipInterval = 16;
 		
-		private long lastIndexPointer = 0;
-		private bool isIndex = false;
+		/// <summary>Expert: The maximum number of skip levels. Smaller values result in 
+		/// slightly smaller indexes, but slower skipping in big posting lists.
+		/// </summary>
+		internal int maxSkipLevels = 10;
 		
-		private TermInfosWriter other = null;
+		private long lastIndexPointer;
+		private bool isIndex;
+		private char[] lastTermText = new char[10];
+		private int lastTermTextLength;
+		private int lastFieldNumber = - 1;
+		
+		private char[] termTextBuffer = new char[10];
+		
+		private TermInfosWriter other;
 		
 		public TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
@@ -88,27 +97,86 @@ namespace Lucene.Net.Index
 			output.WriteLong(0); // leave space for size
 			output.WriteInt(indexInterval); // write indexInterval
 			output.WriteInt(skipInterval); // write skipInterval
+			output.WriteInt(maxSkipLevels); // write maxSkipLevels
 		}
 		
-		/// <summary>Adds a new <Term, TermInfo> pair to the set.
+		internal void  Add(Term term, TermInfo ti)
+		{
+			
+			int length = term.text.Length;
+			if (termTextBuffer.Length < length)
+			{
+				termTextBuffer = new char[(int) (length * 1.25)];
+			}
+
+            int i = 0;
+            System.Collections.Generic.IEnumerator<char> chars = term.text.GetEnumerator();
+            while (chars.MoveNext())
+            {
+                termTextBuffer[i++] = (char)chars.Current;
+            }
+			
+			Add(fieldInfos.FieldNumber(term.field), termTextBuffer, 0, length, ti);
+		}
+		
+		// Currently used only by assert statement
+		private int CompareToLastTerm(int fieldNumber, char[] termText, int start, int length)
+		{
+			int pos = 0;
+			
+			if (lastFieldNumber != fieldNumber)
+			{
+				int cmp = String.CompareOrdinal(fieldInfos.FieldName(lastFieldNumber), fieldInfos.FieldName(fieldNumber));
+				// If there is a field named "" (empty string) then we
+				// will get 0 on this comparison, yet, it's "OK".  But
+				// it's not OK if two different field numbers map to
+				// the same name.
+				if (cmp != 0 || lastFieldNumber != - 1)
+					return cmp;
+			}
+			
+			while (pos < length && pos < lastTermTextLength)
+			{
+				char c1 = lastTermText[pos];
+				char c2 = termText[pos + start];
+				if (c1 < c2)
+					return - 1;
+				else if (c1 > c2)
+					return 1;
+				pos++;
+			}
+			
+			if (pos < lastTermTextLength)
+			// Last term was longer
+				return 1;
+			else if (pos < length)
+			// Last term was shorter
+				return - 1;
+			else
+				return 0;
+		}
+		
+		/// <summary>Adds a new <<fieldNumber, termText>, TermInfo> pair to the set.
 		/// Term must be lexicographically greater than all previous Terms added.
 		/// TermInfo pointers must be positive and greater than all previous.
 		/// </summary>
-		public void  Add(Term term, TermInfo ti)
+		internal void  Add(int fieldNumber, char[] termText, int termTextStart, int termTextLength, TermInfo ti)
 		{
-			if (!isIndex && term.CompareTo(lastTerm) <= 0)
-			{
-				throw new System.IO.IOException("term out of order (\"" + term + "\".compareTo(\"" + lastTerm + "\") <= 0)");
-			}
-			if (ti.freqPointer < lastTi.freqPointer)
-				throw new System.IO.IOException("freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
-			if (ti.proxPointer < lastTi.proxPointer)
-				throw new System.IO.IOException("proxPointer out of order (" + ti.proxPointer + " < " + lastTi.proxPointer + ")");
+			
+			System.Diagnostics.Debug.Assert(CompareToLastTerm(fieldNumber, termText, termTextStart, termTextLength) < 0 ||
+				(isIndex && termTextLength == 0 && lastTermTextLength == 0),
+				"Terms are out of order: field=" + fieldInfos.FieldName(fieldNumber) +  "(number " + fieldNumber + ")" + 
+				" lastField=" + fieldInfos.FieldName(lastFieldNumber) + " (number " + lastFieldNumber + ")" + 
+				" text=" + new String(termText, termTextStart, termTextLength) + " lastText=" + new String(lastTermText, 0, lastTermTextLength));
+			
+			System.Diagnostics.Debug.Assert(ti.freqPointer >= lastTi.freqPointer, "freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
+			System.Diagnostics.Debug.Assert(ti.proxPointer >= lastTi.proxPointer, "proxPointer out of order (" + ti.proxPointer + " < " + lastTi.proxPointer + ")");
 			
 			if (!isIndex && size % indexInterval == 0)
-				other.Add(lastTerm, lastTi); // add an index term
+				other.Add(lastFieldNumber, lastTermText, 0, lastTermTextLength, lastTi); // add an index term
 			
-			WriteTerm(term); // write term
+			WriteTerm(fieldNumber, termText, termTextStart, termTextLength); // write term
+			
 			output.WriteVInt(ti.docFreq); // write doc freq
 			output.WriteVLong(ti.freqPointer - lastTi.freqPointer); // write pointers
 			output.WriteVLong(ti.proxPointer - lastTi.proxPointer);
@@ -124,28 +192,41 @@ namespace Lucene.Net.Index
 				lastIndexPointer = other.output.GetFilePointer(); // write pointer
 			}
 			
+			if (lastTermText.Length < termTextLength)
+			{
+				lastTermText = new char[(int) (termTextLength * 1.25)];
+			}
+			Array.Copy(termText, termTextStart, lastTermText, 0, termTextLength);
+			lastTermTextLength = termTextLength;
+			lastFieldNumber = fieldNumber;
+			
 			lastTi.Set(ti);
 			size++;
 		}
 		
-		private void  WriteTerm(Term term)
+		private void  WriteTerm(int fieldNumber, char[] termText, int termTextStart, int termTextLength)
 		{
-			int start = StringHelper.StringDifference(lastTerm.text, term.text);
-			int length = term.text.Length - start;
+			
+			// Compute prefix in common with last term:
+			int start = 0;
+			int limit = termTextLength < lastTermTextLength ? termTextLength : lastTermTextLength;
+			while (start < limit)
+			{
+				if (termText[termTextStart + start] != lastTermText[start])
+					break;
+				start++;
+			}
+			
+			int length = termTextLength - start;
 			
 			output.WriteVInt(start); // write shared prefix length
 			output.WriteVInt(length); // write delta length
-			output.WriteChars(term.text, start, length); // write delta chars
-			
-			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write field num
-			
-			lastTerm = term;
+			output.WriteChars(termText, start + termTextStart, length); // write delta chars
+			output.WriteVInt(fieldNumber); // write field num
 		}
 		
-		
-		
 		/// <summary>Called to complete TermInfos creation. </summary>
-		public void  Close()
+		internal void  Close()
 		{
 			output.Seek(4); // write size after format
 			output.WriteLong(size);

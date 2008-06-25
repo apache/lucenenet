@@ -35,9 +35,11 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs a new runtime exception with the specified cause and a
-		/// detail message of <tt>(cause==null ? null : cause.toString())</tt>
+		/// detail message of <tt>(cause==null &#63; null : cause.toString())</tt>
 		/// (which typically contains the class and detail message of
-		/// <tt>cause</tt>).  This constructor is useful for runtime exceptions
+		/// <tt>cause</tt>).  
+		/// <p>
+		/// This constructor is useful for runtime exceptions
 		/// that are little more than wrappers for other throwables.
 		/// 
 		/// </summary>
@@ -48,7 +50,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.Exception cause)
+		public FieldReaderException(System.Exception cause) : base((cause == null)? null : cause.ToString(), cause)
 		{
 		}
 		
@@ -60,7 +62,7 @@ namespace Lucene.Net.Index
 		/// <param name="message">the detail message. The detail message is saved for
 		/// later retrieval by the {@link #getMessage()} method.
 		/// </param>
-		public FieldReaderException(System.String message)
+		public FieldReaderException(System.String message) : base(message)
 		{
 		}
 		
@@ -80,7 +82,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.String message, System.Exception cause)
+		public FieldReaderException(System.String message, System.Exception cause) : base(message, cause)
 		{
 		}
 	}

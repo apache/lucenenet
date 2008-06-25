@@ -33,7 +33,10 @@ namespace Lucene.Net.Index
 		internal System.String field;
 		public System.String text;
 		
-		/// <summary>Constructs a Term with the given field and text. </summary>
+		/// <summary>Constructs a Term with the given field and text.
+		/// <p>Note that a null field or null text value results in undefined
+		/// behavior for most Lucene APIs that accept a Term parameter. 
+		/// </summary>
 		public Term(System.String fld, System.String txt) : this(fld, txt, true)
 		{
 		}
@@ -77,7 +80,11 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public  override bool Equals(System.Object o)
 		{
+			if (o == this)
+				return true;
 			if (o == null)
+				return false;
+			if (!(o is Term))
 				return false;
 			Term other = (Term) o;
 			return field == other.field && text.Equals(other.text);
