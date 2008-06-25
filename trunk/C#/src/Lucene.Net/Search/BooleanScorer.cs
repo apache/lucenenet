@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	{
 		private void  InitBlock()
 		{
-			bucketTable = new BucketTable(this);
+			bucketTable = new BucketTable();
 		}
 		private SubScorer scorers = null;
 		private BucketTable bucketTable;
@@ -36,9 +36,16 @@ namespace Lucene.Net.Search
 		private int prohibitedMask = 0;
 		private int nextMask = 1;
 		
-		internal BooleanScorer(Similarity similarity) : base(similarity)
+		private int minNrShouldMatch;
+		
+		internal BooleanScorer(Similarity similarity) : this(similarity, 1)
+		{
+		}
+		
+		internal BooleanScorer(Similarity similarity, int minNrShouldMatch) : base(similarity)
 		{
 			InitBlock();
+			this.minNrShouldMatch = minNrShouldMatch;
 		}
 		
 		internal sealed class SubScorer
@@ -131,7 +138,10 @@ namespace Lucene.Net.Search
 							continue;
 						}
 						
-						hc.Collect(current.doc, current.score * coordFactors[current.coord]);
+						if (current.coord >= minNrShouldMatch)
+						{
+							hc.Collect(current.doc, current.score * coordFactors[current.coord]);
+						}
 					}
 					
 					current = current.next; // pop the queue
@@ -179,8 +189,8 @@ namespace Lucene.Net.Search
 					current = bucketTable.first;
 					bucketTable.first = current.next; // pop the queue
 					
-					// check prohibited & required
-					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask)
+					// check prohibited & required, and minNrShouldMatch
+					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask && current.coord >= minNrShouldMatch)
 					{
 						return true;
 					}
@@ -237,12 +247,8 @@ namespace Lucene.Net.Search
 			internal Bucket[] buckets;
 			internal Bucket first = null; // head of valid list
 			
-			private BooleanScorer scorer;
-			
-			public BucketTable(BooleanScorer scorer)
+			public BucketTable()
 			{
-                InitBlock();
-				this.scorer = scorer;
 			}
 			
 			public int Size()

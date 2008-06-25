@@ -18,6 +18,8 @@
 using System;
 
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
@@ -67,10 +69,11 @@ namespace Lucene.Net.Search
 			private System.Collections.IDictionary dfMap; // Map from Terms to corresponding doc freqs
 			private int maxDoc; // document count
 			
-			public CachedDfSource(System.Collections.IDictionary dfMap, int maxDoc)
+			public CachedDfSource(System.Collections.IDictionary dfMap, int maxDoc, Similarity similarity)
 			{
 				this.dfMap = dfMap;
 				this.maxDoc = maxDoc;
+				SetSimilarity(similarity);
 			}
 			
 			public override int DocFreq(Term term)
@@ -121,6 +124,11 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
+			public override Document Doc(int i, FieldSelector fieldSelector)
+			{
+				throw new System.NotSupportedException();
+			}
+			
 			public override Explanation Explain(Weight weight, int doc)
 			{
 				throw new System.NotSupportedException();
@@ -141,7 +149,6 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 		}
-		
 		
 		
 		private Lucene.Net.Search.Searchable[] searchables;
@@ -195,6 +202,12 @@ namespace Lucene.Net.Search
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
 		}
 		
+		// inherit javadoc
+		public override Document Doc(int n, FieldSelector fieldSelector)
+		{
+			int i = SubSearcher(n); // find searcher index
+			return searchables[i].Doc(n - starts[i], fieldSelector); // dispatch to searcher
+		}
 		
 		/// <summary>Returns index of the searcher for document <code>n</code> in the array
 		/// used to construct this searcher. 
@@ -384,7 +397,7 @@ namespace Lucene.Net.Search
 			
 			// step4
 			int numDocs = MaxDoc();
-			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs);
+			CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs, GetSimilarity());
 			
 			return rewrittenQuery.Weight(cacheSim);
 		}

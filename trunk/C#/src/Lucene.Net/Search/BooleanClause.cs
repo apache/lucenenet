@@ -48,9 +48,12 @@ namespace Lucene.Net.Search
 			/// <summary>Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
 			public static readonly Occur MUST = new Occur("MUST");
 			/// <summary>Use this operator for clauses that <i>should</i> appear in the 
-			/// matching documents. For a BooleanQuery with two <code>SHOULD</code> 
-			/// subqueries, at least one of the clauses must appear in the matching documents. 
+			/// matching documents. For a BooleanQuery with no <code>MUST</code> 
+			/// clauses one or more <code>SHOULD</code> clauses must match a document 
+			/// for the BooleanQuery to match.
 			/// </summary>
+			/// <seealso cref="BooleanQuery.setMinimumNumberShouldMatch">
+			/// </seealso>
 			public static readonly Occur SHOULD = new Occur("SHOULD");
 			/// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.
 			/// Note that it is not possible to search for queries that only consist

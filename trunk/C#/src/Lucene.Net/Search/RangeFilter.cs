@@ -101,8 +101,8 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
-			TermEnum enumerator = (null != lowerTerm?reader.Terms(new Term(fieldName, lowerTerm)):reader.Terms(new Term(fieldName, "")));
+			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+			TermEnum enumerator = (null != lowerTerm ? reader.Terms(new Term(fieldName, lowerTerm)) : reader.Terms(new Term(fieldName, "")));
 			
 			try
 			{
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append(fieldName);
 			buffer.Append(":");
-			buffer.Append(includeLower?"[":"{");
+			buffer.Append(includeLower ? "[" : "{");
 			if (null != lowerTerm)
 			{
 				buffer.Append(lowerTerm);

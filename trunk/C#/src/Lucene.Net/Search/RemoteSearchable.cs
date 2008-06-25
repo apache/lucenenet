@@ -1,4 +1,4 @@
-/*
+    /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,8 @@
 using System;
 
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
@@ -83,6 +85,11 @@ namespace Lucene.Net.Search
 			return local.Doc(i);
 		}
 		
+		public virtual Document Doc(int i, FieldSelector fieldSelector)
+		{
+			return local.Doc(i, fieldSelector);
+		}
+		
 		public virtual Query Rewrite(Query original)
 		{
 			return local.Rewrite(original);
@@ -99,8 +106,8 @@ namespace Lucene.Net.Search
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
-			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
+			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config", false);
+			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099), false);
 			System.String indexName = null;
 			
 			if (args != null && args.Length == 1)
@@ -122,7 +129,7 @@ namespace Lucene.Net.Search
 			RemoteSearchable impl = new RemoteSearchable(local);
 			
 			// bind the implementation to "Searchable"
-			System.Runtime.Remoting.RemotingServices.Marshal(impl, "tcp://localhost:1099/Searchable");
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, "localhost/Searchable");
 			System.Console.ReadLine();
 		}
 	}

@@ -61,6 +61,7 @@ namespace Lucene.Net.Search
 #else
                     if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
 #endif
+					// interned comparison 
                     {
 						TermQuery tq = new TermQuery(term); // found a match
 						tq.SetBoost(GetBoost()); // set the boost

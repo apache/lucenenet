@@ -26,10 +26,9 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>Created: Apr 21, 2004 3:49:28 PM
 	/// 
+	/// 
 	/// </summary>
-	/// <author>   Tim Jones
-	/// </author>
-	/// <version>  $Id: SortComparatorSource.java 413201 2006-06-10 01:23:22Z gsingers $
+	/// <version>  $Id: SortComparatorSource.java 564236 2007-08-09 15:21:19Z gsingers $
 	/// </version>
 	/// <since>   1.4
 	/// </since>
@@ -39,7 +38,7 @@ namespace Lucene.Net.Search
 		/// <summary> Creates a comparator for the field in the given index.</summary>
 		/// <param name="reader">Index to create comparator for.
 		/// </param>
-		/// <param name="fieldname"> Fieldable to create comparator for.
+		/// <param name="fieldname"> Name of the field to create comparator for.
 		/// </param>
 		/// <returns> Comparator of ScoreDoc objects.
 		/// </returns>

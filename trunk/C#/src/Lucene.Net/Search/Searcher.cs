@@ -17,8 +17,9 @@
 
 using System;
 
-using Term = Lucene.Net.Index.Term;
 using Document = Lucene.Net.Documents.Document;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+using Term = Lucene.Net.Index.Term;
 
 namespace Lucene.Net.Search
 {
@@ -212,5 +213,6 @@ namespace Lucene.Net.Search
 		abstract public Explanation Explain(Weight weight, int doc);
 		abstract public TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
 		/* End patch for GCJ bug #15411. */
+		public abstract Lucene.Net.Documents.Document Doc(int param1, Lucene.Net.Documents.FieldSelector param2);
 	}
 }

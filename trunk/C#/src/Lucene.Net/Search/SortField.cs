@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: SortField.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: SortField.java 598296 2007-11-26 14:52:01Z mikemccand $
 	/// </version>
 	/// <seealso cref="Sort">
 	/// </seealso>
@@ -69,6 +69,16 @@ namespace Lucene.Net.Search
 		/// lower values are at the front. 
 		/// </summary>
 		public const int FLOAT = 5;
+		
+		/// <summary>Sort using term values as encoded Longs.  Sort values are Long and
+		/// lower values are at the front. 
+		/// </summary>
+		public const int LONG = 6;
+		
+		/// <summary>Sort using term values as encoded Doubles.  Sort values are Double and
+		/// lower values are at the front. 
+		/// </summary>
+		public const int DOUBLE = 7;
 		
 		/// <summary>Sort using a custom Comparator.  Sort values are any Comparable and
 		/// sorting is done according to natural order. 
@@ -216,7 +226,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the type of contents in the field.</summary>
 		/// <returns> One of the constants SCORE, DOC, AUTO, STRING, INT or FLOAT.
 		/// </returns>
-		public virtual int GetType()
+		public new virtual int GetType()
 		{
 			return type;
 		}
@@ -259,17 +269,18 @@ namespace Lucene.Net.Search
 				
 				
 				case CUSTOM:
-					buffer.Append("<custom:\"" + field + "\": " + factory + ">");
+					buffer.Append("<custom:\"").Append(field).Append("\": ").Append(factory).Append('>');
 					break;
 				
 				
-				default:  buffer.Append("\"" + field + "\"");
+				default: 
+					buffer.Append('\"').Append(field).Append('\"');
 					break;
 				
 			}
 			
 			if (locale != null)
-				buffer.Append("(" + locale + ")");
+				buffer.Append('(').Append(locale).Append(')');
 			if (reverse)
 				buffer.Append('!');
 			

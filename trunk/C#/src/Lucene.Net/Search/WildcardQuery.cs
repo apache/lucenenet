@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		
 		public WildcardQuery(Term term) : base(term)
 		{
-			this.termContainsWildcard = (term.Text().IndexOf((System.Char) '*') != - 1) || (term.Text().IndexOf((System.Char) '?') != - 1);
+			this.termContainsWildcard = (term.Text().IndexOf('*') != - 1) || (term.Text().IndexOf('?') != - 1);
 		}
 		
 		protected internal override FilteredTermEnum GetEnum(IndexReader reader)

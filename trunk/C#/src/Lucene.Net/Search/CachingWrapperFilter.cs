@@ -23,21 +23,19 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Wraps another filter's result and caches it.  The caching
-	/// behavior is like {@link QueryFilter}.  The purpose is to allow
-	/// filters to simply filter, and then wrap with this class to add
-	/// caching, keeping the two concerns decoupled yet composable.
+	/// <summary> Wraps another filter's result and caches it.  The purpose is to allow
+	/// filters to simply filter, and then wrap with this class to add caching.
 	/// </summary>
 	[Serializable]
 	public class CachingWrapperFilter : Filter
 	{
-		private Filter filter;
+		protected internal Filter filter;
 		
-		/// <todo>  What about serialization in RemoteSearchable?  Caching won't work. </todo>
-		/// <summary>       Should transient be removed?
+		/// <summary> A transient Filter cache.  To cache Filters even when using {@link RemoteSearchable} use
+		/// {@link RemoteCachingWrapperFilter} instead.
 		/// </summary>
 		[NonSerialized]
-		private System.Collections.IDictionary cache;
+		protected internal System.Collections.IDictionary cache;
 		
 		/// <param name="filter">Filter to cache results of
 		/// </param>

@@ -18,6 +18,8 @@
 using System;
 
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -69,7 +71,7 @@ namespace Lucene.Net.Search
         /// <summary>Expert: Returns the number of documents containing <code>term</code>.
         /// Called by search code to compute term weights.
         /// </summary>
-        /// <seealso cref="IndexReader#docFreq(Term)">
+		/// <seealso cref="IndexReader.DocFreq(Term)">
         /// </seealso>
         int DocFreq(Term term);
 		
@@ -82,7 +84,7 @@ namespace Lucene.Net.Search
         /// <summary>Expert: Returns one greater than the largest possible document number.
         /// Called by search code to compute term weights.
         /// </summary>
-        /// <seealso cref="IndexReader#maxDoc()">
+		/// <seealso cref="IndexReader.MaxDoc()">
         /// </seealso>
         int MaxDoc();
 		
@@ -97,12 +99,45 @@ namespace Lucene.Net.Search
         /// <throws>  BooleanQuery.TooManyClauses </throws>
         TopDocs Search(Weight weight, Filter filter, int n);
 		
-        /// <summary>Expert: Returns the stored fields of document <code>i</code>.
-        /// Called by {@link HitCollector} implementations.
-        /// </summary>
-        /// <seealso cref="IndexReader#document(int)">
-        /// </seealso>
+		/// <summary>Expert: Returns the stored fields of document <code>i</code>.
+		/// Called by {@link HitCollector} implementations.
+		/// </summary>
+		/// <seealso cref="IndexReader.Document(int)">
+		/// </seealso>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
         Document Doc(int i);
+		
+		/// <summary> Get the {@link Lucene.Net.Documents.Document} at the <code>n</code><sup>th</sup> position. The {@link Lucene.Net.Documents.FieldSelector}
+		/// may be used to determine what {@link Lucene.Net.Documents.Field}s to load and how they should be loaded.
+		/// 
+		/// <b>NOTE:</b> If the underlying Reader (more specifically, the underlying <code>FieldsReader</code>) is closed before the lazy {@link Lucene.Net.Documents.Field} is
+		/// loaded an exception may be thrown.  If you want the value of a lazy {@link Lucene.Net.Documents.Field} to be available after closing you must
+		/// explicitly load it or fetch the Document again with a new loader.
+		/// 
+		/// 
+		/// </summary>
+		/// <param name="n">Get the document at the <code>n</code><sup>th</sup> position
+		/// </param>
+		/// <param name="fieldSelector">The {@link Lucene.Net.Documents.FieldSelector} to use to determine what Fields should be loaded on the Document.  May be null, in which case all Fields will be loaded.
+		/// </param>
+		/// <returns> The stored fields of the {@link Lucene.Net.Documents.Document} at the nth position
+		/// </returns>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
+		/// <summary> 
+		/// </summary>
+		/// <seealso cref="IndexReader.Document(int, FieldSelector)">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.Fieldable">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.FieldSelector">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.SetBasedFieldSelector">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.LoadFirstFieldSelector">
+		/// </seealso>
+		Document Doc(int n, FieldSelector fieldSelector);
 		
         /// <summary>Expert: called to re-write queries into primitive queries.</summary>
         /// <throws>  BooleanQuery.TooManyClauses </throws>

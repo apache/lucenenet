@@ -20,11 +20,20 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Expert: Common scoring functionality for different types of queries.
-	/// <br>A <code>Scorer</code> either iterates over documents matching a query,
-	/// or provides an explanation of the score for a query for a given document.
-	/// <br>Document scores are computed using a given <code>Similarity</code> implementation.
+	/// <summary> Expert: Common scoring functionality for different types of queries.
+	/// 
+	/// <p>
+	/// A <code>Scorer</code> either iterates over documents matching a
+	/// query in increasing order of doc Id, or provides an explanation of
+	/// the score for a query for a given document.
+	/// </p>
+	/// <p>
+	/// Document scores are computed using a given <code>Similarity</code>
+	/// implementation.
+	/// </p>
 	/// </summary>
+	/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
+	/// </seealso>
 	public abstract class Scorer
 	{
 		private Similarity similarity;
@@ -78,10 +87,21 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
-		/// <summary>Advances to the next document matching the query.</summary>
+		/// <summary> Advances to the document matching this Scorer with the lowest doc Id
+		/// greater than the current value of {@link #Doc()} (or to the matching
+		/// document with the lowest doc Id if next has never been called on
+		/// this Scorer).
+		/// 
+		/// <p>
+		/// When this method is used the {@link #Explain(int)} method should not
+		/// be used.
+		/// </p>
+		/// 
+		/// </summary>
 		/// <returns> true iff there is another document matching the query.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </returns>
+		/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
+		/// </seealso>
 		public abstract bool Next();
 		
 		/// <summary>Returns the current document number matching the query.
@@ -95,23 +115,38 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public abstract float Score();
 		
-		/// <summary>Skips to the first match beyond the current whose document number is
+		/// <summary> Skips to the document matching this Scorer with the lowest doc Id
 		/// greater than or equal to a given target.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
-		/// </summary>
-		/// <param name="target">The target document number.
-		/// </param>
-		/// <returns> true iff there is such a match.
-		/// <p>Behaves as if written: <pre>
+		/// 
+		/// <p>
+		/// The behavior of this method is undefined if the target specified is
+		/// less than or equal to the current value of {@link #Doc()}.
+		/// <p>
+		/// Behaves as if written:
+		/// <pre>
 		/// boolean skipTo(int target) {
 		/// do {
-		/// if (!Next())
+		/// if (!next())
 		/// return false;
 		/// } while (target > doc());
 		/// return true;
 		/// }
-		/// </pre>Most implementations are considerably more efficient than that.
+		/// </pre>
+		/// Most implementations are considerably more efficient than that.
+		/// </p>
+		/// 
+		/// <p>
+		/// When this method is used the {@link #Explain(int)} method should not
+		/// be used.
+		/// </p>
+		/// 
+		/// </summary>
+		/// <param name="target">The target document number.
+		/// </param>
+		/// <returns> true iff there is such a match.
 		/// </returns>
+		/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
+		/// </seealso>
 		public abstract bool SkipTo(int target);
 		
 		/// <summary>Returns an explanation of the score for a document.

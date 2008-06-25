@@ -108,15 +108,15 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			
-			private Searcher searcher; // The searcher with which we are associated.
+
+			private Similarity similarity;
 			private System.Collections.ArrayList weights = new System.Collections.ArrayList(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 			
 			/* Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights. */
 			public DisjunctionMaxWeight(DisjunctionMaxQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = searcher.GetSimilarity();
 				for (int i = 0; i < Enclosing_Instance.disjuncts.Count; i++)
 					weights.Add(((Query) Enclosing_Instance.disjuncts[i]).CreateWeight(searcher));
 			}
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 			/* Create the scorer used to score our associated DisjunctionMaxQuery */
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				DisjunctionMaxScorer result = new DisjunctionMaxScorer(Enclosing_Instance.tieBreakerMultiplier, Enclosing_Instance.GetSimilarity(searcher));
+				DisjunctionMaxScorer result = new DisjunctionMaxScorer(Enclosing_Instance.tieBreakerMultiplier, similarity);
 				for (int i = 0; i < weights.Count; i++)
 				{
 					Weight w = (Weight) weights[i];

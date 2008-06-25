@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: ScoreDocComparator.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: ScoreDocComparator.java 518518 2007-03-15 08:48:00Z buschmi $
 	/// </version>
 	public struct ScoreDocComparator_Fields
 	{
@@ -85,7 +85,6 @@ namespace Lucene.Net.Search
 	public interface ScoreDocComparator
 	{
 		
-		
 		/// <summary> Compares two ScoreDoc objects and returns a result indicating their
 		/// sort order.
 		/// </summary>
@@ -93,16 +92,18 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="j">Second ScoreDoc
 		/// </param>
-		/// <returns> <code>-1</code> if <code>i</code> should come before <code>j</code><br><code>1</code> if <code>i</code> should come after <code>j</code><br><code>0</code> if they are equal
+		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br>
+		/// a positive integer if <code>i</code> should come after <code>j</code><br>
+		/// <code>0</code> if they are equal
 		/// </returns>
 		/// <seealso cref="java.util.Comparator">
 		/// </seealso>
 		int Compare(ScoreDoc i, ScoreDoc j);
 		
-		
 		/// <summary> Returns the value used to sort the given document.  The
 		/// object returned must implement the java.io.Serializable
-		/// interface.  This is used by multisearchers to determine how to collate results from their searchers.
+		/// interface.  This is used by multisearchers to determine how
+		/// to collate results from their searchers.
 		/// </summary>
 		/// <seealso cref="FieldDoc">
 		/// </seealso>
@@ -112,10 +113,13 @@ namespace Lucene.Net.Search
 		/// </returns>
 		System.IComparable SortValue(ScoreDoc i);
 		
-		
-		/// <summary> Returns the type of sort.  Should return <code>SortField.SCORE</code>, <code>SortField.DOC</code>, <code>SortField.STRING</code>, <code>SortField.INTEGER</code>, 
-		/// <code>SortField.FLOAT</code> or <code>SortField.CUSTOM</code>.  It is not valid to return <code>SortField.AUTO</code>.
-		/// This is used by multisearchers to determine how to collate results from their searchers.
+		/// <summary> Returns the type of sort.  Should return <code>SortField.SCORE</code>,
+		/// <code>SortField.DOC</code>, <code>SortField.STRING</code>,
+		/// <code>SortField.INTEGER</code>, <code>SortField.FLOAT</code> or
+		/// <code>SortField.CUSTOM</code>.  It is not valid to return
+		/// <code>SortField.AUTO</code>.
+		/// This is used by multisearchers to determine how to collate results
+		/// from their searchers.
 		/// </summary>
 		/// <returns> One of the constants in SortField.
 		/// </returns>

@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Expert: Constructs a TopDocs.</summary>
-		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
+		public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
 		{
 			this.totalHits = totalHits;
 			this.scoreDocs = scoreDocs;

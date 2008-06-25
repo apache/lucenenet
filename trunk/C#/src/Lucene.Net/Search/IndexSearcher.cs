@@ -17,10 +17,12 @@
 
 using System;
 
-using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search
 {
@@ -76,12 +78,16 @@ namespace Lucene.Net.Search
             get {   return reader;  }
         }
 
-        /// <summary>Creates a searcher searching the index in the named directory. </summary>
+		/// <summary>Creates a searcher searching the index in the named directory.</summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public IndexSearcher(System.String path) : this(IndexReader.Open(path), true)
 		{
 		}
 		
-		/// <summary>Creates a searcher searching the index in the provided directory. </summary>
+		/// <summary>Creates a searcher searching the index in the provided directory.</summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
 		public IndexSearcher(Directory directory) : this(IndexReader.Open(directory), true)
 		{
 		}
@@ -124,6 +130,12 @@ namespace Lucene.Net.Search
 		public override Document Doc(int i)
 		{
 			return reader.Document(i);
+		}
+		
+		// inherit javadoc
+		public override Document Doc(int i, FieldSelector fieldSelector)
+		{
+			return reader.Document(i, fieldSelector);
 		}
 		
 		// inherit javadoc
