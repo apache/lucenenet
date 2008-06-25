@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers
 						if ((ch = str[i]) < 0x20 || ch > 0x7e)
 						{
 							System.String s = "0000" + System.Convert.ToString(ch, 16);
-							retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
+							retval.Append("\\u").Append(s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
 						}
 						else
 						{

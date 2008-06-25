@@ -113,7 +113,7 @@ namespace Lucene.Net.QueryParsers
 						if ((ch = str[i]) < 0x20 || ch > 0x7e)
 						{
 							System.String s = "0000" + System.Convert.ToString(ch, 16);
-							retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
+							retval.Append("\\u").Append(s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
 						}
 						else
 						{
@@ -139,7 +139,7 @@ namespace Lucene.Net.QueryParsers
 		/// </summary>
 		protected internal static System.String LexicalError(bool EOFSeen, int lexState, int errorLine, int errorColumn, System.String errorAfter, char curChar)
 		{
-			return ("Lexical error at line " + errorLine + ", column " + errorColumn + ".  Encountered: " + (EOFSeen?"<EOF> ":("\"" + addEscapes(System.Convert.ToString(curChar)) + "\"") + " (" + (int) curChar + "), ") + "after : \"" + addEscapes(errorAfter) + "\"");
+			return ("Lexical error at line " + errorLine + ", column " + errorColumn + ".  Encountered: " + (EOFSeen ? "<EOF> " : ("\"" + addEscapes(System.Convert.ToString(curChar)) + "\"") + " (" + (int) curChar + "), ") + "after : \"" + addEscapes(errorAfter) + "\"");
 		}
 		
 		/*

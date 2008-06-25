@@ -19,12 +19,12 @@
 
 using System;
 
-using Term = Lucene.Net.Index.Term;
-using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
+using Term = Lucene.Net.Index.Term;
+using Parameter = Lucene.Net.Util.Parameter;
+using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Parameter = Lucene.Net.Util.Parameter;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers
 					return JjStopAtPos(0, 13);
 				
 				case (char) (42): 
-					return JjStartNfaWithStates_3(0, 15, 37);
+					return JjStartNfaWithStates_3(0, 15, 36);
 				
 				case (char) (43): 
 					return JjStopAtPos(0, 10);
@@ -154,7 +154,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			int[] nextStates;
 			int startsAt = 0;
-			jjnewStateCnt = 37;
+			jjnewStateCnt = 36;
 			int i = 1;
 			jjstateSet[0] = startState;
 			int j, kind = 0x7fffffff;
@@ -164,27 +164,21 @@ namespace Lucene.Net.QueryParsers
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
-MatchLoop: 
+					ulong l = (ulong) (1L << (int) curChar);
+
+//// MatchLoop: 
 					do 
 					{
 						switch (jjstateSet[--i])
 						{
 							
-							case 37: 
-								if ((0xfbfffcf8ffffd9ffL & l) != (ulong) 0L)
-								{
-									if (kind > 21)
-										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
-								}
-								if ((0x7bfff8f8ffffd9ffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								else if (curChar == 42)
-								{
-									if (kind > 20)
-										kind = 20;
-								}
+							case 36: 
+							case 25: 
+								if ((0xfbfffcf8ffffd9ffL & l) == (ulong) 0L)
+									break;
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 0: 
@@ -192,7 +186,7 @@ MatchLoop:
 								{
 									if (kind > 21)
 										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
+									JjCheckNAddTwoStates(25, 26);
 								}
 								else if ((0x100002600L & l) != (ulong) 0L)
 								{
@@ -200,19 +194,22 @@ MatchLoop:
 										kind = 6;
 								}
 								else if (curChar == 34)
-									JjCheckNAddTwoStates(15, 17);
+									JjCheckNAddStates(0, 2);
 								else if (curChar == 33)
 								{
 									if (kind > 9)
 										kind = 9;
 								}
-								if ((0x7bffd4f8ffffd9ffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
 								if ((0x7bffd0f8ffffd9ffL & l) != (ulong) 0L)
 								{
 									if (kind > 18)
 										kind = 18;
-									JjCheckNAddTwoStates(20, 21);
+									JjCheckNAddStates(3, 7);
+								}
+								else if (curChar == 42)
+								{
+									if (kind > 20)
+										kind = 20;
 								}
 								if (curChar == 38)
 									jjstateSet[jjnewStateCnt++] = 4;
@@ -234,18 +231,14 @@ MatchLoop:
 								break;
 							
 							case 14: 
+							case 16: 
 								if (curChar == 34)
-									JjCheckNAddTwoStates(15, 17);
+									JjCheckNAddStates(0, 2);
 								break;
 							
 							case 15: 
 								if ((0xfffffffbffffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(3, 5);
-								break;
-							
-							case 16: 
-								if (curChar == 34)
-									JjCheckNAddStates(3, 5);
+									JjCheckNAddStates(0, 2);
 								break;
 							
 							case 18: 
@@ -253,93 +246,75 @@ MatchLoop:
 									kind = 17;
 								break;
 							
-							case 19: 
-								if ((0x7bffd0f8ffffd9ffL & l) == (ulong) 0L)
+							case 20: 
+								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
-								if (kind > 18)
-									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
+								if (kind > 19)
+									kind = 19;
+								JjAddStates(8, 9);
 								break;
 							
-							case 20: 
-								if ((0x7bfff8f8ffffd9ffL & l) == (ulong) 0L)
-									break;
-								if (kind > 18)
-									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
+							case 21: 
+								if (curChar == 46)
+									JjCheckNAdd(22);
 								break;
 							
 							case 22: 
-								if ((0x84002f0600000000L & l) == (ulong) 0L)
-									break;
-								if (kind > 18)
-									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
-								break;
-							
-							case 24: 
 								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
 								if (kind > 19)
 									kind = 19;
-								JjAddStates(6, 7);
+								JjCheckNAdd(22);
 								break;
 							
-							case 25: 
-								if (curChar == 46)
-									JjCheckNAdd(26);
-								break;
-							
-							case 26: 
-								if ((0x3ff000000000000L & l) == (ulong) 0L)
-									break;
-								if (kind > 19)
-									kind = 19;
-								JjCheckNAdd(26);
-								break;
-							
-							case 27: 
-								if ((0x7bffd4f8ffffd9ffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								break;
-							
-							case 28: 
-								if ((0x7bfff8f8ffffd9ffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								break;
-							
-							case 29: 
+							case 23: 
 								if (curChar == 42 && kind > 20)
 									kind = 20;
 								break;
 							
-							case 31: 
-								if ((0x84002f0600000000L & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								break;
-							
-							case 32: 
+							case 24: 
 								if ((0xfbffd4f8ffffd9ffL & l) == (ulong) 0L)
 									break;
 								if (kind > 21)
 									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+								JjCheckNAddTwoStates(25, 26);
 								break;
 							
-							case 33: 
-								if ((0xfbfffcf8ffffd9ffL & l) == (ulong) 0L)
-									break;
+							case 27: 
 								if (kind > 21)
 									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+								JjCheckNAddTwoStates(25, 26);
 								break;
 							
-							case 35: 
-								if ((0x84002f0600000000L & l) == (ulong) 0L)
+							case 28: 
+								if ((0x7bffd0f8ffffd9ffL & l) == (ulong) 0L)
 									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddStates(3, 7);
+								break;
+							
+							case 29: 
+								if ((0x7bfff8f8ffffd9ffL & l) == (ulong) 0L)
+									break;
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddTwoStates(29, 30);
+								break;
+							
+							case 31: 
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddTwoStates(29, 30);
+								break;
+							
+							case 32: 
+								if ((0x7bfff8f8ffffd9ffL & l) != (ulong) 0L)
+									JjCheckNAddStates(10, 12);
+								break;
+							
+							case 34: 
+								JjCheckNAddStates(10, 12);
 								break;
 							
 							default:  break;
@@ -350,52 +325,47 @@ MatchLoop:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
 						{
 							
-							case 37: 
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
+							case 36: 
+								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
 									if (kind > 21)
 										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
+									JjCheckNAddTwoStates(25, 26);
 								}
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								if (curChar == 92)
-									JjCheckNAddTwoStates(31, 31);
-								if (curChar == 92)
-									JjCheckNAddTwoStates(35, 35);
+								else if (curChar == 92)
+									JjCheckNAddTwoStates(27, 27);
 								break;
 							
 							case 0: 
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
+								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 21)
-										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
+									if (kind > 18)
+										kind = 18;
+									JjCheckNAddStates(3, 7);
 								}
+								else if (curChar == 92)
+									JjCheckNAddStates(13, 15);
 								else if (curChar == 126)
 								{
 									if (kind > 19)
 										kind = 19;
-									jjstateSet[jjnewStateCnt++] = 24;
+									jjstateSet[jjnewStateCnt++] = 20;
 								}
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
+								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 18)
-										kind = 18;
-									JjCheckNAddTwoStates(20, 21);
+									if (kind > 21)
+										kind = 21;
+									JjCheckNAddTwoStates(25, 26);
 								}
-								if (curChar == 92)
-									JjCheckNAddStates(8, 10);
-								else if (curChar == 78)
+								if (curChar == 78)
 									jjstateSet[jjnewStateCnt++] = 11;
 								else if (curChar == 124)
 									jjstateSet[jjnewStateCnt++] = 8;
@@ -456,7 +426,7 @@ MatchLoop1:
 								break;
 							
 							case 15: 
-								JjAddStates(3, 5);
+								JjAddStates(0, 2);
 								break;
 							
 							case 17: 
@@ -465,43 +435,54 @@ MatchLoop1:
 								break;
 							
 							case 19: 
-							case 20: 
-								if ((0x97ffffff97ffffffL & l) == (ulong) 0L)
-									break;
-								if (kind > 18)
-									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
-								break;
-							
-							case 21: 
-								if (curChar == 92)
-									JjCheckNAddTwoStates(22, 22);
-								break;
-							
-							case 22: 
-								if ((0x6800000078000000L & l) == (ulong) 0L)
-									break;
-								if (kind > 18)
-									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
-								break;
-							
-							case 23: 
 								if (curChar != 126)
 									break;
 								if (kind > 19)
 									kind = 19;
-								jjstateSet[jjnewStateCnt++] = 24;
+								jjstateSet[jjnewStateCnt++] = 20;
+								break;
+							
+							case 24: 
+								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
+									break;
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
+								break;
+							
+							case 25: 
+								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
+									break;
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
+								break;
+							
+							case 26: 
+								if (curChar == 92)
+									JjCheckNAddTwoStates(27, 27);
 								break;
 							
 							case 27: 
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 28: 
-								if ((0x97ffffff97ffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(0, 2);
+								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
+									break;
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddStates(3, 7);
+								break;
+							
+							case 29: 
+								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
+									break;
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddTwoStates(29, 30);
 								break;
 							
 							case 30: 
@@ -510,42 +491,28 @@ MatchLoop1:
 								break;
 							
 							case 31: 
-								if ((0x6800000078000000L & l) != 0L)
-									JjCheckNAddStates(0, 2);
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddTwoStates(29, 30);
 								break;
 							
 							case 32: 
-								if ((0x97ffffff97ffffffL & l) == (ulong) 0L)
-									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
+									JjCheckNAddStates(10, 12);
 								break;
 							
 							case 33: 
-								if ((0x97ffffff97ffffffL & l) == (ulong) 0L)
-									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+								if (curChar == 92)
+									JjCheckNAddTwoStates(34, 34);
 								break;
 							
 							case 34: 
-								if (curChar == 92)
-									JjCheckNAddTwoStates(35, 35);
+								JjCheckNAddStates(10, 12);
 								break;
 							
 							case 35: 
-								if ((0x6800000078000000L & l) == (ulong) 0L)
-									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
-								break;
-							
-							case 36: 
 								if (curChar == 92)
-									JjCheckNAddStates(8, 10);
+									JjCheckNAddStates(13, 15);
 								break;
 							
 							default:  break;
@@ -560,79 +527,73 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
 						{
 							
-							case 37: 
-								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjCheckNAddStates(0, 2);
-								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-								{
-									if (kind > 21)
-										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
-								}
+							case 36: 
+							case 25: 
+							case 27: 
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+									break;
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 0: 
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 								{
-									if (kind > 18)
-										kind = 18;
-									JjCheckNAddTwoStates(20, 21);
-								}
-								if (JjCanMove_0(hiByte, i1, i2, l1, l2))
-									JjCheckNAddStates(0, 2);
-								if (JjCanMove_0(hiByte, i1, i2, l1, l2))
-								{
 									if (kind > 21)
 										kind = 21;
-									JjCheckNAddTwoStates(33, 34);
+									JjCheckNAddTwoStates(25, 26);
+								}
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								{
+									if (kind > 18)
+										kind = 18;
+									JjCheckNAddStates(3, 7);
 								}
 								break;
 							
 							case 15: 
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjAddStates(3, 5);
+									JjAddStates(0, 2);
 								break;
 							
-							case 19: 
-							case 20: 
+							case 24: 
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+									break;
+								if (kind > 21)
+									kind = 21;
+								JjCheckNAddTwoStates(25, 26);
+								break;
+							
+							case 28: 
 								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
 								if (kind > 18)
 									kind = 18;
-								JjCheckNAddTwoStates(20, 21);
+								JjCheckNAddStates(3, 7);
 								break;
 							
-							case 27: 
-								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjCheckNAddStates(0, 2);
-								break;
-							
-							case 28: 
-								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjCheckNAddStates(0, 2);
+							case 29: 
+							case 31: 
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) 2))
+									break;
+								if (kind > 18)
+									kind = 18;
+								JjCheckNAddTwoStates(29, 30);
 								break;
 							
 							case 32: 
-								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
-								break;
-							
-							case 33: 
-								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									break;
-								if (kind > 21)
-									kind = 21;
-								JjCheckNAddTwoStates(33, 34);
+							case 34: 
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+									JjCheckNAddStates(10, 12);
 								break;
 							
 							default:  break;
@@ -648,7 +609,7 @@ MatchLoop1:
 					kind = 0x7fffffff;
 				}
 				++curPos;
-				if ((i = jjnewStateCnt) == (startsAt = 37 - (jjnewStateCnt = startsAt)))
+				if ((i = jjnewStateCnt) == (startsAt = 36 - (jjnewStateCnt = startsAt)))
 					return curPos;
 				try
 				{
@@ -690,7 +651,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				return pos + 1;
 			}
@@ -718,7 +679,7 @@ MatchLoop1:
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				JjStopStringLiteralDfa_1(0, (ulong) active0);
 				return 1;
@@ -751,8 +712,9 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << curChar;
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -781,12 +743,12 @@ MatchLoop1:
 							
 							case 2: 
 								if ((0xfffffffbffffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(11, 13);
+									JjCheckNAddStates(16, 18);
 								break;
 							
 							case 3: 
 								if (curChar == 34)
-									JjCheckNAddStates(11, 13);
+									JjCheckNAddStates(16, 18);
 								break;
 							
 							case 5: 
@@ -810,8 +772,9 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << (curChar & 63);
+
+/// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -827,7 +790,7 @@ MatchLoop1:
 								break;
 							
 							case 2: 
-								JjAddStates(11, 13);
+								JjAddStates(16, 18);
 								break;
 							
 							case 4: 
@@ -847,8 +810,9 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -865,7 +829,7 @@ MatchLoop1:
 							
 							case 2: 
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjAddStates(11, 13);
+									JjAddStates(16, 18);
 								break;
 							
 							default:  break;
@@ -887,7 +851,7 @@ MatchLoop1:
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException)
+				catch (System.IO.IOException e)
 				{
 					return curPos;
 				}
@@ -911,8 +875,9 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << curChar;
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -923,7 +888,7 @@ MatchLoop1:
 									break;
 								if (kind > 24)
 									kind = 24;
-								JjAddStates(14, 15);
+								JjAddStates(19, 20);
 								break;
 							
 							case 1: 
@@ -947,8 +912,9 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -966,8 +932,9 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -1089,8 +1056,9 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << curChar;
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -1119,12 +1087,12 @@ MatchLoop1:
 							
 							case 2: 
 								if ((0xfffffffbffffffffL & l) != (ulong) 0L)
-									JjCheckNAddStates(11, 13);
+									JjCheckNAddStates(16, 18);
 								break;
 							
 							case 3: 
 								if (curChar == 34)
-									JjCheckNAddStates(11, 13);
+									JjCheckNAddStates(16, 18);
 								break;
 							
 							case 5: 
@@ -1148,8 +1116,9 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -1165,7 +1134,7 @@ MatchLoop1:
 								break;
 							
 							case 2: 
-								JjAddStates(11, 13);
+								JjAddStates(16, 18);
 								break;
 							
 							case 4: 
@@ -1185,8 +1154,9 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
-MatchLoop1: 
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
+
+//// MatchLoop1: 
 					do 
 					{
 						switch (jjstateSet[--i])
@@ -1203,7 +1173,7 @@ MatchLoop1:
 							
 							case 2: 
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
-									JjAddStates(11, 13);
+									JjAddStates(16, 18);
 								break;
 							
 							default:  break;
@@ -1231,7 +1201,7 @@ MatchLoop1:
 				}
 			}
 		}
-		internal static readonly int[] jjnextStates = new int[]{28, 29, 30, 15, 17, 18, 24, 25, 22, 31, 35, 2, 4, 5, 0, 1};
+		internal static readonly int[] jjnextStates = new int[]{15, 17, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27, 2, 4, 5, 0, 1};
 		private static bool JjCanMove_0(int hiByte, int i1, int i2, ulong l1, ulong l2)
 		{
 			switch (hiByte)
@@ -1253,8 +1223,8 @@ MatchLoop1:
 		internal static readonly ulong[] jjtoToken = new ulong[]{0x1ffffff81L};
 		internal static readonly long[] jjtoSkip = new long[]{0x40L};
 		protected internal CharStream input_stream;
-		private uint[] jjrounds = new uint[37];
-		private int[] jjstateSet = new int[74];
+		private uint[] jjrounds = new uint[36];
+		private int[] jjstateSet = new int[72];
 		protected internal char curChar;
 		public QueryParserTokenManager(CharStream stream)
 		{
@@ -1276,7 +1246,7 @@ MatchLoop1:
 		{
 			int i;
 			jjround = 0x80000001;
-			for (i = 37; i-- > 0; )
+			for (i = 36; i-- > 0; )
 				jjrounds[i] = 0x80000000;
 		}
 		public virtual void  ReInit(CharStream stream, int lexState)
@@ -1294,7 +1264,7 @@ MatchLoop1:
 		
 		protected internal virtual Token JjFillToken()
 		{
-			Token t = Token.newToken(jjmatchedKind);
+			Token t = Token.NewToken(jjmatchedKind);
 			t.kind = jjmatchedKind;
 			System.String im = jjstrLiteralImages[jjmatchedKind];
 			t.image = (im == null) ? input_stream.GetImage() : im;
