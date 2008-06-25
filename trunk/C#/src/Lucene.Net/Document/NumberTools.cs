@@ -32,9 +32,8 @@ namespace Lucene.Net.Documents
 	/// This class handles <b>all</b> long values (unlike
 	/// {@link Lucene.Net.Documents.DateField}).
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Matt Quail (spud at madbean dot com)
-	/// </author>
 	public class NumberTools
 	{
 		

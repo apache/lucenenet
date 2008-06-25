@@ -23,6 +23,7 @@ namespace Lucene.Net.Documents
 	/// <p/>
 	/// See {@link FieldSelectorResult#LOAD_AND_BREAK}
 	/// </summary>
+	[Serializable]
 	public class LoadFirstFieldSelector : FieldSelector
 	{
 		
