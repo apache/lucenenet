@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis
     /// <summary> Normalizes token text to lower case.
     /// 
     /// </summary>
-    /// <version>  $Id: LowerCaseFilter.java 150259 2004-03-29 22:48:07Z cutting $
+    /// <version>  $Id: LowerCaseFilter.java 564715 2007-08-10 18:34:33Z mikemccand $
     /// </version>
     public sealed class LowerCaseFilter : TokenFilter
     {
@@ -31,16 +31,21 @@ namespace Lucene.Net.Analysis
         {
         }
 		
-        public override Token Next()
+        public override Token Next(Token result)
         {
-            Token t = input.Next();
-			
-            if (t == null)
+            result = input.Next(result);
+            if (result != null)
+            {
+
+                char[] buffer = result.TermBuffer();
+                int length = result.termLength;
+                for (int i = 0; i < length; i++)
+                    buffer[i] = System.Char.ToLower(buffer[i]);
+
+                return result;
+            }
+            else
                 return null;
-			
-            t.termText = t.termText.ToLower();
-			
-            return t;
         }
     }
 }

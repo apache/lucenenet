@@ -22,10 +22,9 @@ namespace Lucene.Net.Analysis
 	
     /// <summary> Removes words that are too long and too short from the stream.
     /// 
+    /// 
     /// </summary>
-    /// <author>  David Spencer
-    /// </author>
-    /// <version>  $Id: LengthFilter.java 347992 2005-11-21 21:41:43Z dnaber $
+    /// <version>  $Id: LengthFilter.java 564715 2007-08-10 18:34:33Z mikemccand $
     /// </version>
     public sealed class LengthFilter : TokenFilter
     {
@@ -43,10 +42,10 @@ namespace Lucene.Net.Analysis
         }
 		
         /// <summary> Returns the next input Token whose termText() is the right len</summary>
-        public override Token Next()
+        public override Token Next(Token result)
         {
             // return the first non-stop word found
-            for (Token token = input.Next(); token != null; token = input.Next())
+            for (Token token = input.Next(result); token != null; token = input.Next(result))
             {
                 int len = token.TermText().Length;
                 if (len >= min && len <= max)

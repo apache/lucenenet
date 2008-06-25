@@ -39,9 +39,41 @@ namespace Lucene.Net.Analysis
 		/// field name for backward compatibility. 
 		/// </summary>
 		public abstract TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader);
-		
-		
-		/// <summary> Invoked before indexing a Fieldable instance if
+
+        /// <summary>Creates a TokenStream that is allowed to be re-used
+        /// from the previous time that the same thread called
+        /// this method.  Callers that do not need to use more
+        /// than one TokenStream at the same time from this
+        /// analyzer should use this method for better
+        /// performance.
+        /// </summary>
+        public virtual TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            return TokenStream(fieldName, reader);
+        }
+
+        private System.LocalDataStoreSlot tokenStreams = System.Threading.Thread.AllocateDataSlot();
+
+        /// <summary>Used by Analyzers that implement reusableTokenStream
+        /// to retrieve previously saved TokenStreams for re-use
+        /// by the same thread. 
+        /// </summary>
+        protected internal virtual System.Object GetPreviousTokenStream()
+        {
+            return System.Threading.Thread.GetData(tokenStreams);
+        }
+
+        /// <summary>Used by Analyzers that implement reusableTokenStream
+        /// to save a TokenStream for later re-use by the same
+        /// thread. 
+        /// </summary>
+        protected internal virtual void SetPreviousTokenStream(System.Object obj)
+        {
+            System.Threading.Thread.SetData(tokenStreams, obj);
+        }
+
+
+        /// <summary> Invoked before indexing a Fieldable instance if
 		/// terms have already been added to that field.  This allows custom
 		/// analyzers to place an automatic position increment gap between
 		/// Fieldable instances using the same field name.  The default value

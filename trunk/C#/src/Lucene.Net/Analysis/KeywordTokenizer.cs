@@ -27,7 +27,6 @@ namespace Lucene.Net.Analysis
         private const int DEFAULT_BUFFER_SIZE = 256;
 		
         private bool done;
-        private char[] buffer;
 		
         public KeywordTokenizer(System.IO.TextReader input) : this(input, DEFAULT_BUFFER_SIZE)
         {
@@ -35,29 +34,36 @@ namespace Lucene.Net.Analysis
 		
         public KeywordTokenizer(System.IO.TextReader input, int bufferSize) : base(input)
         {
-            this.buffer = new char[bufferSize];
             this.done = false;
         }
-		
-        public override Token Next()
+
+        public override Token Next(Token result)
         {
             if (!done)
             {
                 done = true;
-                System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-                int length;
+                int upto = 0;
+                result.Clear();
+                char[] buffer = result.TermBuffer();
                 while (true)
                 {
-                    length = input.Read((System.Char[]) this.buffer, 0, this.buffer.Length);
-                    if (length <= 0)
+                    int length = input.Read(buffer, upto, buffer.Length - upto);
+                    if (length == -1)
                         break;
-					
-                    buffer.Append(this.buffer, 0, length);
+                    upto += length;
+                    if (upto == buffer.Length)
+                        buffer = result.ResizeTermBuffer(1 + buffer.Length);
                 }
-                System.String text = buffer.ToString();
-                return new Token(text, 0, text.Length);
+                result.termLength = upto;
+                return result;
             }
             return null;
+        }
+
+        public override void Reset(System.IO.TextReader input)
+        {
+            base.Reset(input);
+            this.done = false;
         }
     }
 }

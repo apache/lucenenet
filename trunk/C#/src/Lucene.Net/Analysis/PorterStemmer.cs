@@ -84,8 +84,7 @@ namespace Lucene.Net.Analysis
             if (b.Length <= i + EXTRA)
             {
                 char[] new_b = new char[b.Length + INC];
-                for (int c = 0; c < b.Length; c++)
-                    new_b[c] = b[c];
+                Array.Copy(b, 0, new_b, 0, b.Length);
                 b = new_b;
             }
             b[i++] = ch;
@@ -643,8 +642,7 @@ namespace Lucene.Net.Analysis
                 char[] new_b = new char[wordLen + EXTRA];
                 b = new_b;
             }
-            for (int j = 0; j < wordLen; j++)
-                b[j] = wordBuffer[offset + j];
+            Array.Copy(wordBuffer, offset, b, 0, wordLen);
             i = wordLen;
             return Stem(0);
         }

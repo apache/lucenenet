@@ -78,7 +78,16 @@ namespace Lucene.Net.Analysis
 			
             return analyzer.TokenStream(fieldName, reader);
         }
-		
+
+        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+        {
+            Analyzer analyzer = (Analyzer)analyzerMap[fieldName];
+            if (analyzer == null)
+                analyzer = defaultAnalyzer;
+
+            return analyzer.ReusableTokenStream(fieldName, reader);
+        }
+
         /// <summary>Return the positionIncrementGap from the analyzer assigned to fieldName </summary>
         public override int GetPositionIncrementGap(System.String fieldName)
         {

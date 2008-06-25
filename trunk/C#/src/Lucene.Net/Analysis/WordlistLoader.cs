@@ -20,13 +20,12 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> Loader for text files that represent a list of stopwords.
-    /// 
-    /// </summary>
-    /// <author>  Gerhard Schwarz
-    /// </author>
-    /// <version>  $Id: WordlistLoader.java 192989 2005-06-22 19:59:03Z dnaber $
-    /// </version>
+	/// <summary> Loader for text files that represent a list of stopwords.
+	/// 
+	/// 
+	/// </summary>
+	/// <version>  $Id: WordlistLoader.java 564236 2007-08-09 15:21:19Z gsingers $
+	/// </version>
     public class WordlistLoader
     {
 		
