@@ -22,6 +22,7 @@ namespace Lucene.Net.Util
 	
     public class ToStringUtils
     {
+		/// <summary>for printing boost only if not 1.0 </summary>
         public static System.String Boost(float boost)
         {
             if (boost != 1.0f)
