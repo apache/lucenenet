@@ -28,9 +28,10 @@ namespace Lucene.Net.Documents
 	{
 		
 		/// <summary> </summary>
-		/// <param name="">fieldName
+		/// <param name="fieldName">the field to accept or reject
 		/// </param>
-		/// <returns> true if the {@link Field} with <code>fieldName</code> should be loaded or not
+		/// <returns> an instance of {@link FieldSelectorResult}
+		/// if the {@link Field} named <code>fieldName</code> should be loaded.
 		/// </returns>
 		FieldSelectorResult Accept(System.String fieldName);
 	}

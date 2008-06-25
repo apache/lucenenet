@@ -23,6 +23,7 @@ namespace Lucene.Net.Documents
 	/// 
 	/// 
 	/// </summary>
+	[Serializable]
 	public class SetBasedFieldSelector : FieldSelector
 	{
 		

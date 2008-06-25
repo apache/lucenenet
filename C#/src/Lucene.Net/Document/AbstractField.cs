@@ -346,7 +346,8 @@ namespace Lucene.Net.Documents
 			return result.ToString();
 		}
 		public abstract byte[] BinaryValue();
-		public abstract System.String StringValue();
 		public abstract System.IO.TextReader ReaderValue();
+		public abstract System.String StringValue();
+		public abstract Lucene.Net.Analysis.TokenStream TokenStreamValue();
 	}
 }
