@@ -216,7 +216,7 @@ public class SupportClass
         /// </summary>
         public void Resume()
         {
-            threadField.Resume();
+            System.Threading.Monitor.PulseAll(threadField);
         }
 	      
         /// <summary>
@@ -249,7 +249,7 @@ public class SupportClass
         /// </summary>
         public void Suspend()
         {
-            threadField.Suspend();
+            System.Threading.Monitor.Wait(threadField);
         }
 	      
         /// <summary>
@@ -337,6 +337,45 @@ public class SupportClass
 
         private const System.String digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+
+        /// <summary>
+        /// Converts a number to System.String.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static System.String ToString(long number)
+        {
+            System.Text.StringBuilder s = new System.Text.StringBuilder();
+
+            if (number == 0)
+            {
+                s.Append("0");
+            }
+            else
+            {
+                if (number < 0)
+                {
+                    s.Append("-");
+                    number = -number;
+                }
+
+                while (number > 0)
+                {
+                    char c = digits[(int)number % 36];
+                    s.Append(c);
+                    number = number / 36;
+                }
+            }
+
+            return s.ToString();
+        }
+
+
+        /// <summary>
+        /// Converts a number to System.String.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public static System.String ToString(float f)
         {
             if (((float)(int)f) == f)
@@ -491,6 +530,44 @@ public class SupportClass
                     count++;
             }
             return count;
+        }
+
+        
+        /// <summary>
+        /// Converts a System.String number to long.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static long ToInt64(System.String s)
+        {
+            long number = 0;
+            int factor;
+
+            // handle negative number
+            if (s.StartsWith("-"))
+            {
+                s = s.Substring(1);
+                factor = -1;
+            }
+            else
+            {
+                factor = 1;
+            }
+
+            // generate number
+            for (int i = s.Length - 1; i > -1; i--)
+            {
+                int n = digits.IndexOf(s[i]);
+
+                // not supporting fractional or scientific notations
+                if (n < 0)
+                    throw new System.ArgumentException("Invalid or unsupported character in number: " + s[i]);
+
+                number += (n * factor);
+                factor *= 36;
+            }
+
+            return number;
         }
     }
 
@@ -731,7 +808,7 @@ public class SupportClass
                 return (int) settings[key];
             }
 
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+            System.String theValue = System.Configuration.ConfigurationManager.AppSettings.Get(key);
             if (theValue == null)
             {
                 return defValue;
@@ -752,7 +829,7 @@ public class SupportClass
                 return (long) settings[key];
             }
 
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+            System.String theValue = System.Configuration.ConfigurationManager.AppSettings.Get(key);
             if (theValue == null)
             {
                 return defValue;
@@ -773,7 +850,7 @@ public class SupportClass
                 return (System.String) settings[key];
             }
 
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+            System.String theValue = System.Configuration.ConfigurationManager.AppSettings.Get(key);
             if (theValue == null)
             {
                 return defValue;
