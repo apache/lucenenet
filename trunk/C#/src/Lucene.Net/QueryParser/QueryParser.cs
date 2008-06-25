@@ -19,12 +19,12 @@
 
 using System;
 
-using Term = Lucene.Net.Index.Term;
-using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
+using Term = Lucene.Net.Index.Term;
+using Parameter = Lucene.Net.Util.Parameter;
+using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Parameter = Lucene.Net.Util.Parameter;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers
 	/// By default a date is converted into a search term using the deprecated
 	/// {@link DateField} for compatibility reasons.
 	/// To use the new {@link DateTools} to convert dates, a
-	/// {@link DateTools.Resolution} has to be set.
+	/// {@link Lucene.Net.Documents.DateTools.Resolution} has to be set.
 	/// </p>
 	/// <p>
 	/// The date resolution that shall be used for RangeQueries can be set
@@ -128,6 +128,7 @@ namespace Lucene.Net.QueryParsers
 		internal bool lowercaseExpandedTerms = true;
 		internal bool useOldRangeQuery = false;
 		internal bool allowLeadingWildcard = false;
+		internal bool enablePositionIncrements = false;
 		
 		internal Analyzer analyzer;
 		internal System.String field;
@@ -175,7 +176,9 @@ namespace Lucene.Net.QueryParsers
 			ReInit(new FastCharStream(new System.IO.StringReader(query)));
 			try
 			{
-				return Query(field);
+				// TopLevelQuery is a Query followed by the end-of-input (EOF)
+				Query res = TopLevelQuery(field);
+				return res != null ? res : new BooleanQuery();
 			}
 			catch (ParseException tme)
 			{
@@ -251,20 +254,46 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		/// <summary> Set to <code>true</code> to allow <code>*</code> and <code>?</code> as the first character 
-		/// of a PrefixQuery and WildcardQuery. Note that this can produce very slow
-		/// queries on big indexes. Default: false.
+		/// <summary> Set to <code>true</code> to allow leading wildcard characters.
+		/// <p>
+		/// When set, <code>*</code> or <code>?</code> are allowed as 
+		/// the first character of a PrefixQuery and WildcardQuery.
+		/// Note that this can produce very slow
+		/// queries on big indexes. 
+		/// <p>
+		/// Default: false.
 		/// </summary>
 		public virtual void  SetAllowLeadingWildcard(bool allowLeadingWildcard)
 		{
 			this.allowLeadingWildcard = allowLeadingWildcard;
 		}
 		
-		/// <seealso cref="#setAllowLeadingWildcard">
+		/// <seealso cref="SetAllowLeadingWildcard(boolean)">
 		/// </seealso>
 		public virtual bool GetAllowLeadingWildcard()
 		{
 			return allowLeadingWildcard;
+		}
+		
+		/// <summary> Set to <code>true</code> to enable position increments in result query.
+		/// <p>
+		/// When set, result phrase and multi-phrase queries will
+		/// be aware of position increments.
+		/// Useful when e.g. a StopFilter increases the position increment of
+		/// the token that follows an omitted token.
+		/// <p>
+		/// Default: false.
+		/// </summary>
+		public virtual void  SetEnablePositionIncrements(bool enable)
+		{
+			this.enablePositionIncrements = enable;
+		}
+		
+		/// <seealso cref="SetEnablePositionIncrements(boolean)">
+		/// </seealso>
+		public virtual bool GetEnablePositionIncrements()
+		{
+			return enablePositionIncrements;
 		}
 		
 		/// <summary> Sets the boolean operator of the QueryParser.
@@ -319,7 +348,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		/// <seealso cref="#SetUseOldRangeQuery(boolean)">
+		/// <seealso cref="SetUseOldRangeQuery(boolean)">
 		/// </seealso>
 		public virtual bool GetUseOldRangeQuery()
 		{
@@ -354,7 +383,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Sets the date resolution used by RangeQueries for a specific field.
 		/// 
 		/// </summary>
-		/// <param name="field">field for which the date resolution is to be set 
+		/// <param name="fieldName">field for which the date resolution is to be set 
 		/// </param>
 		/// <param name="dateResolution">date resolution to set
 		/// </param>
@@ -529,29 +558,55 @@ namespace Lucene.Net.QueryParsers
 						MultiPhraseQuery mpq = new MultiPhraseQuery();
 						mpq.SetSlop(phraseSlop);
 						System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
+						int position = - 1;
 						for (int i = 0; i < v.Count; i++)
 						{
 							t = (Lucene.Net.Analysis.Token) v[i];
-							if (t.GetPositionIncrement() == 1 && multiTerms.Count > 0)
+							if (t.GetPositionIncrement() > 0 && multiTerms.Count > 0)
 							{
-								mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)));
+								if (enablePositionIncrements)
+								{
+									mpq.Add((Term[])multiTerms.ToArray(typeof(Term)), position);
+								}
+								else
+								{
+									mpq.Add((Term[])multiTerms.ToArray(typeof(Term)));
+								}
 								multiTerms.Clear();
 							}
+							position += t.GetPositionIncrement();
 							multiTerms.Add(new Term(field, t.TermText()));
 						}
-						mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)));
+						if (enablePositionIncrements)
+						{
+							mpq.Add((Term[])multiTerms.ToArray(typeof(Term)), position);
+						}
+						else
+						{
+							mpq.Add((Term[])multiTerms.ToArray(typeof(Term)));
+						}
 						return mpq;
 					}
 				}
 				else
 				{
-					PhraseQuery q = new PhraseQuery();
-					q.SetSlop(phraseSlop);
+					PhraseQuery pq = new PhraseQuery();
+					pq.SetSlop(phraseSlop);
+					int position = - 1;
 					for (int i = 0; i < v.Count; i++)
 					{
-						q.Add(new Term(field, ((Lucene.Net.Analysis.Token) v[i]).TermText()));
+						t = (Lucene.Net.Analysis.Token) v[i];
+						if (enablePositionIncrements)
+						{
+							position += t.GetPositionIncrement();
+							pq.Add(new Term(field, t.TermText()), position);
+						}
+						else
+						{
+							pq.Add(new Term(field, t.TermText()));
+						}
 					}
-					return q;
+					return pq;
 				}
 			}
 		}
@@ -562,7 +617,7 @@ namespace Lucene.Net.QueryParsers
 		/// a SpanNearQuery instead of a PhraseQuery.
 		/// 
 		/// </summary>
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetFieldQuery(System.String field, System.String queryText, int slop)
 		{
@@ -581,7 +636,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
@@ -666,7 +721,7 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <returns> Resulting {@link Query} object.
 		/// </returns>
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetBooleanQuery(System.Collections.ArrayList clauses)
 		{
@@ -692,6 +747,10 @@ namespace Lucene.Net.QueryParsers
 		/// </exception>
 		public virtual Query GetBooleanQuery(System.Collections.ArrayList clauses, bool disableCoord)
 		{
+			if (clauses.Count == 0)
+			{
+				return null; // all clause words were filtered away by the analyzer.
+			}
 			BooleanQuery query = new BooleanQuery(disableCoord);
 			for (int i = 0; i < clauses.Count; i++)
 			{
@@ -722,7 +781,7 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <returns> Resulting {@link Query} built for the term
 		/// </returns>
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetWildcardQuery(System.String field, System.String termStr)
 		{
@@ -765,7 +824,7 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <returns> Resulting {@link Query} built for the term
 		/// </returns>
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetPrefixQuery(System.String field, System.String termStr)
 		{
@@ -792,7 +851,7 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <returns> Resulting {@link Query} built for the term
 		/// </returns>
-		/// <exception cref=""> ParseException throw in overridden method to disallow
+		/// <exception cref="ParseException">throw in overridden method to disallow
 		/// </exception>
 		public virtual Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 		{
@@ -917,8 +976,8 @@ namespace Lucene.Net.QueryParsers
 			for (int i = 0; i < s.Length; i++)
 			{
 				char c = s[i];
-				// NOTE: keep this in sync with _ESCAPED_CHAR below!
-				if (c == '\\' || c == '+' || c == '-' || c == '!' || c == '(' || c == ')' || c == ':' || c == '^' || c == '[' || c == ']' || c == '\"' || c == '{' || c == '}' || c == '~' || c == '*' || c == '?')
+				// These characters are part of the query syntax and must be escaped
+				if (c == '\\' || c == '+' || c == '-' || c == '!' || c == '(' || c == ')' || c == ':' || c == '^' || c == '[' || c == ']' || c == '\"' || c == '{' || c == '}' || c == '~' || c == '*' || c == '?' || c == '|' || c == '&')
 				{
 					sb.Append('\\');
 				}
@@ -985,7 +1044,7 @@ namespace Lucene.Net.QueryParsers
 				if (true)
 					return ret;
 			}
-			throw new System.ApplicationException("Missing return statement in function");
+			//// throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		public int Modifiers()
@@ -1033,7 +1092,20 @@ namespace Lucene.Net.QueryParsers
 				if (true)
 					return ret;
 			}
-			throw new System.ApplicationException("Missing return statement in function");
+			//// throw new System.ApplicationException("Missing return statement in function");
+		}
+		
+		// This makes sure that there is no garbage after the query string
+		public Query TopLevelQuery(System.String field)
+		{
+			Query q;
+			q = Query(field);
+			Jj_consume_token(0);
+			{
+				if (true)
+					return q;
+			}
+			//// throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		public Query Query(System.String field)
@@ -1093,7 +1165,7 @@ label_1_brk: ;
 						return GetBooleanQuery(clauses);
 				}
 			}
-			throw new System.ApplicationException("Missing return statement in function");
+			//// throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		public Query Clause(System.String field)
@@ -1102,7 +1174,7 @@ label_1_brk: ;
 			Token fieldToken = null, boost = null;
 			if (Jj_2_1(2))
 			{
-				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
+				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
 				{
 					
 					case Lucene.Net.QueryParsers.QueryParserConstants.TERM: 
@@ -1184,7 +1256,7 @@ label_1_brk: ;
 				if (true)
 					return q;
 			}
-			throw new System.ApplicationException("Missing return statement in function");
+			//// throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		public Query Term(System.String field)
@@ -1536,7 +1608,7 @@ label_1_brk: ;
 				if (true)
 					return q;
 			}
-			throw new System.ApplicationException("Missing return statement in function");
+			//// throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		private bool Jj_2_1(int xla)
@@ -1554,15 +1626,6 @@ label_1_brk: ;
 			{
 				Jj_save(0, xla);
 			}
-		}
-		
-		private bool Jj_3R_3()
-		{
-			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.STAR))
-				return true;
-			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.COLON))
-				return true;
-			return false;
 		}
 		
 		private bool Jj_3R_2()
@@ -1584,6 +1647,15 @@ label_1_brk: ;
 				if (Jj_3R_3())
 					return true;
 			}
+			return false;
+		}
+		
+		private bool Jj_3R_3()
+		{
+			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.STAR))
+				return true;
+			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.COLON))
+				return true;
 			return false;
 		}
 		

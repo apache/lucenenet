@@ -29,16 +29,14 @@ namespace Lucene.Net.QueryParsers
 	
 	/// <summary> A QueryParser which constructs queries to search multiple fields.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  <a href="mailto:kelvin@relevanz.com">Kelvin Tan</a>, Daniel Naber
-	/// </author>
-	/// <version>  $Revision: 472959 $
+	/// <version>  $Revision: 564236 $
 	/// </version>
 	public class MultiFieldQueryParser : QueryParser
 	{
-		
-		private System.String[] fields;
-		private System.Collections.IDictionary boosts;
+		protected internal System.String[] fields;
+		protected internal System.Collections.IDictionary boosts;
 		
 		/// <summary> Creates a MultiFieldQueryParser. 
 		/// Allows passing of a map with term to Boost, and the boost to apply to each term.
@@ -90,7 +88,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
 		/// what fields they appear.</p>
 		/// </summary>
-		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):base(null, analyzer)
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer) : base(null, analyzer)
 		{
 			this.fields = fields;
 		}
@@ -102,7 +100,7 @@ namespace Lucene.Net.QueryParsers
 				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 				for (int i = 0; i < fields.Length; i++)
 				{
-					Query q = base.GetFieldQuery(fields[i], queryText);
+					Query q = GetFieldQuery(fields[i], queryText);
 					if (q != null)
 					{
 						//If the user passes a map of boosts
@@ -149,7 +147,7 @@ namespace Lucene.Net.QueryParsers
 				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 				for (int i = 0; i < fields.Length; i++)
 				{
-					clauses.Add(new BooleanClause(base.GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
+					clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
 				}
 				return GetBooleanQuery(clauses, true);
 			}
@@ -163,7 +161,7 @@ namespace Lucene.Net.QueryParsers
 				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 				for (int i = 0; i < fields.Length; i++)
 				{
-					clauses.Add(new BooleanClause(base.GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+					clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
 				}
 				return GetBooleanQuery(clauses, true);
 			}
@@ -177,7 +175,7 @@ namespace Lucene.Net.QueryParsers
 				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 				for (int i = 0; i < fields.Length; i++)
 				{
-					clauses.Add(new BooleanClause(base.GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+					clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
 				}
 				return GetBooleanQuery(clauses, true);
 			}
@@ -192,15 +190,12 @@ namespace Lucene.Net.QueryParsers
 				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 				for (int i = 0; i < fields.Length; i++)
 				{
-					clauses.Add(new BooleanClause(base.GetRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));
+					clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));
 				}
 				return GetBooleanQuery(clauses, true);
 			}
 			return base.GetRangeQuery(field, part1, part2, inclusive);
 		}
-		
-		
-		
 		
 		/// <summary> Parses a query which searches on the fields specified.
 		/// <p>
@@ -230,11 +225,13 @@ namespace Lucene.Net.QueryParsers
 			{
 				QueryParser qp = new QueryParser(fields[i], analyzer);
 				Query q = qp.Parse(queries[i]);
-				bQuery.Add(q, BooleanClause.Occur.SHOULD);
+				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
+				{
+					bQuery.Add(q, BooleanClause.Occur.SHOULD);
+				}
 			}
 			return bQuery;
 		}
-		
 		
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
@@ -279,11 +276,13 @@ namespace Lucene.Net.QueryParsers
 			{
 				QueryParser qp = new QueryParser(fields[i], analyzer);
 				Query q = qp.Parse(query);
-				bQuery.Add(q, flags[i]);
+				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
+				{
+					bQuery.Add(q, flags[i]);
+				}
 			}
 			return bQuery;
 		}
-		
 		
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
@@ -329,7 +328,10 @@ namespace Lucene.Net.QueryParsers
 			{
 				QueryParser qp = new QueryParser(fields[i], analyzer);
 				Query q = qp.Parse(queries[i]);
-				bQuery.Add(q, flags[i]);
+				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
+				{
+					bQuery.Add(q, flags[i]);
+				}
 			}
 			return bQuery;
 		}
