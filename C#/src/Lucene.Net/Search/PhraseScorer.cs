@@ -22,6 +22,16 @@ using Lucene.Net.Index;
 namespace Lucene.Net.Search
 {
 	
+	/// <summary>Expert: Scoring functionality for phrase queries.
+	/// <br>A document is considered matching if it contains the phrase-query terms  
+	/// at "valid" positons. What "valid positions" are
+	/// depends on the type of the phrase query: for an exact phrase query terms are required 
+	/// to appear in adjacent locations, while for a sloppy phrase query some distance between 
+	/// the terms is allowed. The abstract method {@link #PhraseFreq()} of extending classes
+	/// is invoked for each document containing all the phrase query terms, in order to 
+	/// compute the frequency of the phrase query in that document. A non zero frequency
+	/// means a match. 
+	/// </summary>
 	abstract class PhraseScorer : Scorer
 	{
 		private Weight weight;
@@ -33,19 +43,23 @@ namespace Lucene.Net.Search
 		protected internal PhraseQueue pq;
 		protected internal PhrasePositions first, last;
 		
-		private float freq;
+		private float freq; //prhase frequency in current doc as computed by phraseFreq().
 		
 		
-		internal PhraseScorer(Weight weight, TermPositions[] tps, int[] positions, Similarity similarity, byte[] norms) : base(similarity)
+        internal PhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.norms = norms;
 			this.weight = weight;
 			this.value_Renamed = weight.GetValue();
 			
-			// convert tps to a list
+			// convert tps to a list of phrase positions.
+			// note: phrase-position differs from term-position in that its position
+			// reflects the phrase offset: pp.pos = tp.pos - offset.
+			// this allows to easily identify a matching (exact) phrase 
+			// when all PhrasePositions have exactly the same position.
 			for (int i = 0; i < tps.Length; i++)
 			{
-				PhrasePositions pp = new PhrasePositions(tps[i], positions[i]);
+				PhrasePositions pp = new PhrasePositions(tps[i], offsets[i]);
 				if (last != null)
 				{
 					// add next to end of list
@@ -114,6 +128,7 @@ namespace Lucene.Net.Search
 		
 		public override bool SkipTo(int target)
 		{
+			firstTime = false;
 			for (PhrasePositions pp = first; more && pp != null; pp = pp.next)
 			{
 				more = pp.SkipTo(target);
@@ -123,6 +138,13 @@ namespace Lucene.Net.Search
 			return DoNext();
 		}
 		
+		/// <summary> For a document containing all the phrase query terms, compute the
+		/// frequency of the phrase in that document. 
+		/// A non zero frequency means a match.
+		/// <br>Note, that containing all phrase terms does not guarantee a match - they have to be found in matching locations.  
+		/// </summary>
+		/// <returns> frequency of the phrase in current doc, 0 if not found. 
+		/// </returns>
 		protected internal abstract float PhraseFreq();
 		
 		private void  Init()
@@ -175,7 +197,7 @@ namespace Lucene.Net.Search
 			{
 			}
 			
-			float phraseFreq = (Doc() == doc)?freq:0.0f;
+			float phraseFreq = (Doc() == doc) ? freq : 0.0f;
 			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
 			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
 			

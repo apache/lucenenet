@@ -19,28 +19,24 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using Query = Lucene.Net.Search.Query;
-using Weight = Lucene.Net.Search.Weight;
-using Searcher = Lucene.Net.Search.Searcher;
-using Scorer = Lucene.Net.Search.Scorer;
-using Explanation = Lucene.Net.Search.Explanation;
-using ComplexExplanation = Lucene.Net.Search.ComplexExplanation;
-using Similarity = Lucene.Net.Search.Similarity;
+using Lucene.Net.Search;
+using Searchable = Lucene.Net.Search.Searchable;
 
 namespace Lucene.Net.Search.Spans
 {
 	
+	/// <summary> Expert-only.  Public for use by other weight implementations</summary>
 	[Serializable]
-	class SpanWeight : Weight
+	public class SpanWeight : Weight
 	{
-		private Similarity similarity;
-		private float value_Renamed;
-		private float idf;
-		private float queryNorm;
-		private float queryWeight;
+		protected internal Similarity similarity;
+		protected internal float value_Renamed;
+		protected internal float idf;
+		protected internal float queryNorm;
+		protected internal float queryWeight;
 		
-		private System.Collections.Hashtable terms;
-		private SpanQuery query;
+		protected internal System.Collections.Hashtable terms;
+		protected internal SpanQuery query;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{

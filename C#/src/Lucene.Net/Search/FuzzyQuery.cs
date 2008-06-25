@@ -108,24 +108,35 @@ namespace Lucene.Net.Search
 			FilteredTermEnum enumerator = GetEnum(reader);
 			int maxClauseCount = BooleanQuery.GetMaxClauseCount();
 			ScoreTermQueue stQueue = new ScoreTermQueue(maxClauseCount);
+			ScoreTerm reusableST = null;
 			
 			try
 			{
 				do 
 				{
-					float minScore = 0.0f;
 					float score = 0.0f;
 					Term t = enumerator.Term();
 					if (t != null)
 					{
 						score = enumerator.Difference();
-						// terms come in alphabetical order, therefore if queue is full and score
-						// not bigger than minScore, we can skip
-						if (stQueue.Size() < maxClauseCount || score > minScore)
+						if (reusableST == null)
 						{
-							stQueue.Insert(new ScoreTerm(t, score));
-							minScore = ((ScoreTerm) stQueue.Top()).score; // maintain minScore
+							reusableST = new ScoreTerm(t, score);
 						}
+						else if (score >= reusableST.score)
+						{
+							// reusableST holds the last "rejected" entry, so, if
+							// this new score is not better than that, there's no
+							// need to try inserting it
+							reusableST.score = score;
+							reusableST.term = t;
+						}
+						else
+						{
+							continue;
+						}
+						
+						reusableST = (ScoreTerm) stQueue.InsertWithOverflow(reusableST);
 					}
 				}
 				while (enumerator.Next());

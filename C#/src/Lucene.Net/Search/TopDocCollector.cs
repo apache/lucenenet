@@ -33,8 +33,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public class TopDocCollector : HitCollector
 	{
-		private int numHits;
-		private float minScore = 0.0f;
+		
+		private ScoreDoc reusableSD;
 		
 		internal int totalHits;
 		internal PriorityQueue hq;
@@ -48,7 +48,6 @@ namespace Lucene.Net.Search
 		
 		internal TopDocCollector(int numHits, PriorityQueue hq)
 		{
-			this.numHits = numHits;
 			this.hq = hq;
 		}
 		
@@ -58,11 +57,23 @@ namespace Lucene.Net.Search
 			if (score > 0.0f)
 			{
 				totalHits++;
-				if (hq.Size() < numHits || score >= minScore)
+				if (reusableSD == null)
 				{
-					hq.Insert(new ScoreDoc(doc, score));
-					minScore = ((ScoreDoc) hq.Top()).score; // maintain minScore
+					reusableSD = new ScoreDoc(doc, score);
 				}
+				else if (score >= reusableSD.score)
+				{
+					// reusableSD holds the last "rejected" entry, so, if
+					// this new score is not better than that, there's no
+					// need to try inserting it
+					reusableSD.doc = doc;
+					reusableSD.score = score;
+				}
+				else
+				{
+					return ;
+				}
+				reusableSD = (ScoreDoc) hq.InsertWithOverflow(reusableSD);
 			}
 		}
 		

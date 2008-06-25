@@ -34,6 +34,8 @@ namespace Lucene.Net.Search
 	public class TopFieldDocCollector : TopDocCollector
 	{
 		
+		private FieldDoc reusableFD;
+		
 		/// <summary>Construct to collect a given number of hits.</summary>
 		/// <param name="reader">the index to be searched
 		/// </param>
@@ -51,7 +53,19 @@ namespace Lucene.Net.Search
 			if (score > 0.0f)
 			{
 				totalHits++;
-				hq.Insert(new FieldDoc(doc, score));
+				if (reusableFD == null)
+					reusableFD = new FieldDoc(doc, score);
+				else
+				{
+					// Whereas TopDocCollector can skip this if the
+					// score is not competitive, we cannot because the
+					// comparators in the FieldSortedHitQueue.lessThan
+					// aren't in general congruent with "higher score
+					// wins"
+					reusableFD.score = score;
+					reusableFD.doc = doc;
+				}
+				reusableFD = (FieldDoc) hq.InsertWithOverflow(reusableFD);
 			}
 		}
 		

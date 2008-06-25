@@ -25,10 +25,9 @@ namespace Lucene.Net.Search
 	/// <summary> A query that wraps a filter and simply returns a constant score equal to the
 	/// query boost for every document in the filter.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
-	/// <version>  $Id: ConstantScoreQuery.java 507374 2007-02-14 03:12:50Z yonik $
+	/// <version>  $Id: ConstantScoreQuery.java 564236 2007-08-09 15:21:19Z gsingers $
 	/// </version>
 	[Serializable]
 	public class ConstantScoreQuery : Query

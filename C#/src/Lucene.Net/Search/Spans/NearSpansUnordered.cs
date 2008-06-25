@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Spans
 		
 		public override System.String ToString()
 		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
+			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc() + ":" + Start() + "-" + End()) : "END"));
 		}
 		
 		private void  InitList(bool next)

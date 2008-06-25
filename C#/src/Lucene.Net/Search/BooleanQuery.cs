@@ -158,27 +158,27 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Specifies a minimum number of the optional BooleanClauses
-		/// which must be satisifed.
+		/// which must be satisfied.
 		/// 
 		/// <p>
-		/// By default no optional clauses are neccessary for a match
+		/// By default no optional clauses are necessary for a match
 		/// (unless there are no required clauses).  If this method is used,
-		/// then the specified numebr of clauses is required.
+		/// then the specified number of clauses is required.
 		/// </p>
 		/// <p>
-		/// Use of this method is totally independant of specifying that
+		/// Use of this method is totally independent of specifying that
 		/// any specific clauses are required (or prohibited).  This number will
 		/// only be compared against the number of matching optional clauses.
 		/// </p>
 		/// <p>
-		/// EXPERT NOTE: Using this method will force the use of BooleanWeight2,
-		/// regardless of wether setUseScorer14(true) has been called.
+		/// EXPERT NOTE: Using this method may force collecting docs in order,
+		/// regardless of whether setAllowDocsOutOfOrder(true) has been called.
 		/// </p>
 		/// 
 		/// </summary>
 		/// <param name="min">the number of optional clauses that must match
 		/// </param>
-		/// <seealso cref="#setUseScorer14">
+		/// <seealso cref="setAllowDocsOutOfOrder">
 		/// </seealso>
 		public virtual void  SetMinimumNumberShouldMatch(int min)
 		{
@@ -293,51 +293,18 @@ namespace Lucene.Net.Search
 				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
 				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
 					Weight w = (Weight) weights[i];
 					// normalize all clauses, (even if prohibited in case of side affects)
 					w.Normalize(norm);
 				}
 			}
 			
-			/// <returns> A good old 1.4 Scorer 
+			/// <returns> Returns BooleanScorer2 that uses and provides skipTo(),
+			/// and scores documents in document number order.
 			/// </returns>
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				// First see if the (faster) ConjunctionScorer will work.  This can be
-				// used when all clauses are required.  Also, at this point a
-				// BooleanScorer cannot be embedded in a ConjunctionScorer, as the hits
-				// from a BooleanScorer are not always sorted by document number (sigh)
-				// and hence BooleanScorer cannot implement skipTo() correctly, which is
-				// required by ConjunctionScorer.
-				bool allRequired = true;
-				bool noneBoolean = true;
-				for (int i = 0; i < weights.Count; i++)
-				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
-					if (!c.IsRequired())
-						allRequired = false;
-					if (c.GetQuery() is BooleanQuery)
-						noneBoolean = false;
-				}
-				
-				if (allRequired && noneBoolean)
-				{
-					// ConjunctionScorer is okay
-					ConjunctionScorer result = new ConjunctionScorer(similarity);
-					for (int i = 0; i < weights.Count; i++)
-					{
-						Weight w = (Weight) weights[i];
-						Scorer subScorer = w.Scorer(reader);
-						if (subScorer == null)
-							return null;
-						result.Add(subScorer);
-					}
-					return result;
-				}
-				
-				// Use good-old BooleanScorer instead.
-				BooleanScorer result2 = new BooleanScorer(similarity);
+				BooleanScorer2 result = new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch, Lucene.Net.Search.BooleanQuery.allowDocsOutOfOrder);
 				
 				for (int i = 0; i < weights.Count; i++)
 				{
@@ -345,12 +312,12 @@ namespace Lucene.Net.Search
 					Weight w = (Weight) weights[i];
 					Scorer subScorer = w.Scorer(reader);
 					if (subScorer != null)
-						result2.Add(subScorer, c.IsRequired(), c.IsProhibited());
+						result.Add(subScorer, c.IsRequired(), c.IsProhibited());
 					else if (c.IsRequired())
 						return null;
 				}
 				
-				return result2;
+				return result;
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
@@ -431,73 +398,59 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		[Serializable]
-		private class BooleanWeight2 : BooleanWeight
+		/// <summary>Whether hit docs may be collected out of docid order. </summary>
+		private static bool allowDocsOutOfOrder = false;
+		
+		/// <summary> Expert: Indicates whether hit docs may be collected out of docid
+		/// order.
+		/// 
+		/// <p>
+		/// Background: although the contract of the Scorer class requires that
+		/// documents be iterated in order of doc id, this was not true in early
+		/// versions of Lucene.  Many pieces of functionality in the current
+		/// Lucene code base have undefined behavior if this contract is not
+		/// upheld, but in some specific simple cases may be faster.  (For
+		/// example: disjunction queries with less than 32 prohibited clauses;
+		/// This setting has no effect for other queries.)
+		/// </p>
+		/// 
+		/// <p>
+		/// Specifics: By setting this option to true, calls to 
+		/// {@link HitCollector#Collect(int,float)} might be
+		/// invoked first for docid N and only later for docid N-1.
+		/// Being static, this setting is system wide.
+		/// </p>
+		/// </summary>
+		public static void  SetAllowDocsOutOfOrder(bool allow)
 		{
-			private void  InitBlock(BooleanQuery enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private BooleanQuery enclosingInstance;
-			public new BooleanQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			/* Merge into BooleanWeight in case the 1.4 BooleanScorer is dropped */
-			public BooleanWeight2(BooleanQuery enclosingInstance, Searcher searcher):base(enclosingInstance, searcher)
-			{
-				InitBlock(enclosingInstance);
-			}
-			
-			/// <returns> An alternative Scorer that uses and provides skipTo(),
-			/// and scores documents in document number order.
-			/// </returns>
-			public override Scorer Scorer(IndexReader reader)
-			{
-				BooleanScorer2 result = new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch);
-				
-				for (int i = 0; i < weights.Count; i++)
-				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
-					Weight w = (Weight) weights[i];
-					Scorer subScorer = w.Scorer(reader);
-					if (subScorer != null)
-						result.Add(subScorer, c.IsRequired(), c.IsProhibited());
-					else if (c.IsRequired())
-						return null;
-				}
-				
-				return result;
-			}
+			allowDocsOutOfOrder = allow;
 		}
 		
-		/// <summary>Indicates whether to use good old 1.4 BooleanScorer. </summary>
-		private static bool useScorer14 = false;
+		/// <summary> Whether hit docs may be collected out of docid order.</summary>
+		/// <seealso cref="SetAllowDocsOutOfOrder(boolean)">
+		/// </seealso>
+		public static bool GetAllowDocsOutOfOrder()
+		{
+			return allowDocsOutOfOrder;
+		}
 		
+		/// <deprecated> Use {@link #SetAllowDocsOutOfOrder(boolean)} instead. 
+		/// </deprecated>
 		public static void  SetUseScorer14(bool use14)
 		{
-			useScorer14 = use14;
+			SetAllowDocsOutOfOrder(use14);
 		}
 		
+		/// <deprecated> Use {@link #GetAllowDocsOutOfOrder()} instead.
+		/// </deprecated>
 		public static bool GetUseScorer14()
 		{
-			return useScorer14;
+			return GetAllowDocsOutOfOrder();
 		}
 		
 		protected internal override Weight CreateWeight(Searcher searcher)
 		{
-			
-			if (0 < minNrShouldMatch)
-			{
-				// :TODO: should we throw an exception if getUseScorer14 ?
-				return new BooleanWeight2(this, searcher);
-			}
-			
-			return GetUseScorer14() ? (Weight) new BooleanWeight(this, searcher) : (Weight) new BooleanWeight2(this, searcher);
+			return new BooleanWeight(this, searcher);
 		}
 		
 		public override Query Rewrite(IndexReader reader)

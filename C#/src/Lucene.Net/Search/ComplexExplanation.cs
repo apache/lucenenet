@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		/// uses it; otherwise it defers to the superclass.
 		/// </p>
 		/// </summary>
-		/// <seealso cref="#GetMatch">
+		/// <seealso cref="GetMatch">
 		/// </seealso>
 		public override bool IsMatch()
 		{
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 		
 		protected internal override System.String GetSummary()
 		{
-			if (isMatchSet == false)
+            if (isMatchSet == false)
 				return base.GetSummary();
 			
 			return GetValue() + " = " + (IsMatch() ? "(MATCH) " : "(NON-MATCH) ") + GetDescription();

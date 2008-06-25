@@ -27,102 +27,30 @@ namespace Lucene.Net.Search
 	/// query.  Results are cached, so that searches after the first on the same
 	/// index using this filter are much faster.
 	/// 
-	/// <p> This could be used, for example, with a {@link RangeQuery} on a suitably
-	/// formatted date field to implement date filtering.  One could re-use a single
-	/// QueryFilter that matches, e.g., only documents modified within the last
-	/// week.  The QueryFilter and RangeQuery would only need to be reconstructed
-	/// once per day.
-	/// 
 	/// </summary>
-	/// <version>  $Id: QueryFilter.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: QueryFilter.java 528298 2007-04-13 00:59:28Z hossman $
 	/// </version>
+	/// <deprecated> use a CachingWrapperFilter with QueryWrapperFilter
+	/// </deprecated>
 	[Serializable]
-	public class QueryFilter : Filter
+	public class QueryFilter:CachingWrapperFilter
 	{
-		private class AnonymousClassHitCollector : HitCollector
-		{
-			public AnonymousClassHitCollector(System.Collections.BitArray bits, QueryFilter enclosingInstance)
-			{
-				InitBlock(bits, enclosingInstance);
-			}
-			private void  InitBlock(System.Collections.BitArray bits, QueryFilter enclosingInstance)
-			{
-				this.bits = bits;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private System.Collections.BitArray bits;
-			private QueryFilter enclosingInstance;
-			public QueryFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override void  Collect(int doc, float score)
-			{
-				bits.Set(doc, true); // set bit for hit
-			}
-		}
-		private Query query;
-		[NonSerialized]
-		private System.Collections.Hashtable cache = null;
 		
 		/// <summary>Constructs a filter which only matches documents matching
 		/// <code>query</code>.
 		/// </summary>
-		public QueryFilter(Query query)
+		public QueryFilter(Query query):base(new QueryWrapperFilter(query))
 		{
-			this.query = query;
-		}
-		
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			
-			if (cache == null)
-			{
-				cache = new System.Collections.Hashtable();
-			}
-			
-			lock (cache.SyncRoot)
-			{
-				// check cache
-				System.Collections.BitArray cached = (System.Collections.BitArray) cache[reader];
-				if (cached != null)
-				{
-					return cached;
-				}
-			}
-			
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
-			
-			new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector(bits, this));
-			
-			lock (cache.SyncRoot)
-			{
-				// update cache
-				cache[reader] = bits;
-			}
-			
-			return bits;
-		}
-		
-		public override System.String ToString()
-		{
-			return "QueryFilter(" + query + ")";
 		}
 		
 		public  override bool Equals(System.Object o)
 		{
-			if (!(o is QueryFilter))
-				return false;
-			return this.query.Equals(((QueryFilter) o).query);
+			return base.Equals((QueryFilter) o);
 		}
 		
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ (unchecked((int) 0x923F64B9L));     // {{Aroush-1.9}} Is this OK?!
+			return base.GetHashCode() ^ unchecked((int) 0x923F64B9);
 		}
 	}
 }

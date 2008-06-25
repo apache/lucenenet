@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </seealso>
-	/// <version>  $Id: RangeQuery.java 475435 2006-11-15 21:26:09Z mharwood $
+	/// <version>  $Id: RangeQuery.java 520891 2007-03-21 13:58:47Z yonik $
 	/// </version>
 	[Serializable]
 	public class RangeQuery : Query
@@ -102,6 +102,7 @@ namespace Lucene.Net.Search
 					Term term = enumerator.Term();
 					if (term != null && term.Field() == testField)
 					{
+						// interned comparison
 						if (!checkLower || String.CompareOrdinal(term.Text(), lowerTerm.Text()) > 0)
 						{
 							checkLower = false;
@@ -189,9 +190,9 @@ namespace Lucene.Net.Search
 			if (this.inclusive != other.inclusive)
 				return false;
 			// one of lowerTerm and upperTerm can be null
-			if (this.lowerTerm != null?!this.lowerTerm.Equals(other.lowerTerm):other.lowerTerm != null)
+			if (this.lowerTerm != null ? !this.lowerTerm.Equals(other.lowerTerm) : other.lowerTerm != null)
 				return false;
-			if (this.upperTerm != null?!this.upperTerm.Equals(other.upperTerm):other.upperTerm != null)
+			if (this.upperTerm != null ? !this.upperTerm.Equals(other.upperTerm) : other.upperTerm != null)
 				return false;
 			return true;
 		}

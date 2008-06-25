@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 				return reqScore;
 			}
 			// assert (optScorer != null) && (optScorer.doc() >= curDoc);
-			return (optScorer.Doc() == curDoc)?reqScore + optScorer.Score():reqScore;
+			return (optScorer.Doc() == curDoc) ? reqScore + optScorer.Score() : reqScore;
 		}
 		
 		/// <summary>Explain the score of a document.</summary>

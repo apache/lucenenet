@@ -17,8 +17,6 @@
 
 using System;
 
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using SmallFloat = Lucene.Net.Util.SmallFloat;
 
@@ -350,9 +348,11 @@ namespace Lucene.Net.Search
 		/// method usually return smaller values when <code>numTokens</code> is large,
 		/// and larger values when <code>numTokens</code> is small.
 		/// 
-		/// <p>That these values are computed under {@link
-		/// IndexWriter#AddDocument(Lucene.Net.Documents.Document)} and stored then using
-		/// {@link #EncodeNorm(float)}.  Thus they have limited precision, and documents
+		/// <p>That these values are computed under 
+		/// {@link Lucene.Net.Index.IndexWriter#AddDocument(Lucene.Net.Documents.Document)} 
+		/// and stored then using
+		/// {@link #EncodeNorm(float)}.  
+		/// Thus they have limited precision, and documents
 		/// must be re-indexed if this method is altered.
 		/// 
 		/// </summary>
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
 		/// <returns> a normalization factor for hits on this field of this document
 		/// 
 		/// </returns>
-		/// <seealso cref="Lucene.Net.Documents.Field#SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
 		/// </seealso>
 		public abstract float LengthNorm(System.String fieldName, int numTokens);
 		
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
 		/// when it is large.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery#SetSlop(int)">
+		/// <seealso cref="PhraseQuery.SetSlop(int)">
 		/// </seealso>
 		/// <param name="distance">the edit distance of this sloppy phrase match
 		/// </param>
@@ -541,6 +541,30 @@ namespace Lucene.Net.Search
 		/// <returns> a score factor based on term overlap with the query
 		/// </returns>
 		public abstract float Coord(int overlap, int maxOverlap);
+		
+		
+		/// <summary> Calculate a scoring factor based on the data in the payload.  Overriding implementations
+		/// are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
+		/// what is in the byte array.
+		/// <p>
+		/// The default implementation returns 1.
+		/// 
+		/// </summary>
+		/// <param name="fieldName">The fieldName of the term this payload belongs to
+		/// </param>
+		/// <param name="payload">The payload byte array to be scored
+		/// </param>
+		/// <param name="offset">The offset into the payload array
+		/// </param>
+		/// <param name="length">The length in the array
+		/// </param>
+		/// <returns> An implementation dependent float to be used as a scoring factor 
+		/// </returns>
+		public virtual float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
+		{
+			//Do nothing
+			return 1;
+		}
 		static Similarity()
 		{
 			{

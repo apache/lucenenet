@@ -17,9 +17,9 @@
 
 using System;
 
+using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 				ComplexExplanation result = new ComplexExplanation();
 				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + reader.DocFreq(Enclosing_Instance.term) + ")");
+				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + reader.DocFreq(Enclosing_Instance.term) + ", numDocs=" + reader.NumDocs() + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();

@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 		public virtual int IndexOf(System.String term)
 		{
 			int res = System.Array.BinarySearch(terms, term);
-			return res >= 0?res:- 1;
+			return res >= 0 ? res : - 1;
 		}
 		
 		public virtual int[] IndexesOf(System.String[] terms, int start, int len)

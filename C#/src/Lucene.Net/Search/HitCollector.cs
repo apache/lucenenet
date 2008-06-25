@@ -24,14 +24,14 @@ namespace Lucene.Net.Search
 	/// <br>HitCollectors are primarily meant to be used to implement queries,
 	/// sorting and filtering.
 	/// </summary>
-	/// <seealso cref="Searcher#Search(Query,HitCollector)">
+	/// <seealso cref="Searcher.Search(Query,HitCollector)">
 	/// </seealso>
-	/// <version>  $Id: HitCollector.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: HitCollector.java 596462 2007-11-19 22:03:22Z hossman $
 	/// </version>
 	public abstract class HitCollector
 	{
-		/// <summary>Called once for every non-zero scoring document, with the document number
-		/// and its score.
+		/// <summary>Called once for every document matching a query, with the document
+		/// number and its raw score.
 		/// 
 		/// <P>If, for example, an application wished to collect all of the hits for a
 		/// query in a BitSet, then it might:<pre>
