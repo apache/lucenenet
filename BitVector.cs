@@ -33,9 +33,7 @@ namespace Lucene.Net.Util
 	/// <li>store and load, as bit set or d-gaps, depending on sparseness;</li> 
 	/// </ul>
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Id: BitVector.java 494136 2007-01-08 18:11:08Z mikemccand $
+	/// <version>  $Id: BitVector.java 564236 2007-08-09 15:21:19Z gsingers $
 	/// </version>
 	public sealed class BitVector
 	{
