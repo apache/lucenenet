@@ -25,7 +25,7 @@ namespace Lucene.Net.Store
 	/// but can be changed with {@link #setLockFactory}.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 503911 2007-02-05 22:49:42Z dnaber $
+	/// <version>  $Id: RAMDirectory.java 581625 2007-10-03 15:24:12Z mikemccand $
 	/// </version>
     [Serializable]
     public class RAMDirectory : Directory
@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
 		/// <param name="dir">a <code>File</code> specifying the index directory
 		/// 
 		/// </param>
-		/// <seealso cref="#RAMDirectory(Directory)">
+		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
 		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
@@ -101,7 +101,7 @@ namespace Lucene.Net.Store
 		/// <param name="dir">a <code>String</code> specifying the full index directory path
 		/// 
 		/// </param>
-		/// <seealso cref="#RAMDirectory(Directory)">
+		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
 		public RAMDirectory(System.String dir) : this(FSDirectory.GetDirectory(dir), true)
 		{
@@ -112,6 +112,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				System.String[] result = new System.String[fileMap.Count];
 				int i = 0;
 				System.Collections.IEnumerator it = fileMap.Keys.GetEnumerator();
@@ -126,6 +127,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns true iff the named file exists in this directory. </summary>
 		public override bool FileExists(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file;
 			lock (this)
 			{
@@ -138,6 +140,7 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if the file does not exist </throws>
 		public override long FileModified(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file;
 			lock (this)
 			{
@@ -152,6 +155,7 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if the file does not exist </throws>
 		public override void  TouchFile(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file;
 			lock (this)
 			{
@@ -181,6 +185,7 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if the file does not exist </throws>
 		public override long FileLength(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file;
 			lock (this)
 			{
@@ -193,12 +198,13 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Return total size in bytes of all files in this
 		/// directory.  This is currently quantized to
-		/// BufferedIndexOutput.BUFFER_SIZE. 
+		/// RAMOutputStream.BUFFER_SIZE. 
 		/// </summary>
 		public long SizeInBytes()
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				return sizeInBytes;
 			}
 		}
@@ -209,6 +215,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				RAMFile file = (RAMFile) fileMap[name];
 				if (file != null)
 				{
@@ -229,6 +236,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
+				EnsureOpen();
 				RAMFile fromFile = (RAMFile) fileMap[from];
 				if (fromFile == null)
 					throw new System.IO.FileNotFoundException(from);
@@ -246,6 +254,7 @@ namespace Lucene.Net.Store
 		/// <summary>Creates a new, empty file in the directory with the given name. Returns a stream writing this file. </summary>
 		public override IndexOutput CreateOutput(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file = new RAMFile(this);
 			lock (this)
 			{
@@ -263,6 +272,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns a stream reading an existing file. </summary>
 		public override IndexInput OpenInput(System.String name)
 		{
+			EnsureOpen();
 			RAMFile file;
 			lock (this)
 			{
@@ -277,6 +287,15 @@ namespace Lucene.Net.Store
 		public override void  Close()
 		{
 			fileMap = null;
+		}
+		
+		/// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
+		protected internal void  EnsureOpen()
+		{
+			if (fileMap == null)
+			{
+				throw new AlreadyClosedException("this RAMDirectory is closed");
+			}
 		}
 	}
 }

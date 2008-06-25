@@ -23,18 +23,17 @@ namespace Lucene.Net.Store
 	/// <summary>Base implementation class for buffered {@link IndexInput}. </summary>
 	public abstract class BufferedIndexInput : IndexInput, System.ICloneable
 	{
-		internal static readonly int BUFFER_SIZE;
+		
+		/// <summary>Default buffer size </summary>
+		public const int BUFFER_SIZE = 1024;
+		
+		private int bufferSize = BUFFER_SIZE;
 		
 		private byte[] buffer;
 		
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferLength = 0; // end of valid bytes
 		private int bufferPosition = 0; // next byte to read
-
-        public static int BUFFER_SIZE_ForNUnitTest
-        {
-            get { return BUFFER_SIZE; }
-        }
 		
 		public override byte ReadByte()
 		{
@@ -43,11 +42,70 @@ namespace Lucene.Net.Store
 			return buffer[bufferPosition++];
 		}
 		
+		public BufferedIndexInput()
+		{
+		}
+		
+		/// <summary>Inits BufferedIndexInput with a specific bufferSize </summary>
+		public BufferedIndexInput(int bufferSize)
+		{
+			CheckBufferSize(bufferSize);
+			this.bufferSize = bufferSize;
+		}
+		
+		/// <summary>Change the buffer size used by this IndexInput </summary>
+		public virtual void  SetBufferSize(int newSize)
+		{
+			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length);
+			if (newSize != bufferSize)
+			{
+				CheckBufferSize(newSize);
+				bufferSize = newSize;
+				if (buffer != null)
+				{
+					// Resize the existing buffer and carefully save as
+					// many bytes as possible starting from the current
+					// bufferPosition
+					byte[] newBuffer = new byte[newSize];
+					int leftInBuffer = bufferLength - bufferPosition;
+					int numToCopy;
+					if (leftInBuffer > newSize)
+						numToCopy = newSize;
+					else
+						numToCopy = leftInBuffer;
+					Array.Copy(buffer, bufferPosition, newBuffer, 0, numToCopy);
+					bufferStart += bufferPosition;
+					bufferPosition = 0;
+					bufferLength = numToCopy;
+					buffer = newBuffer;
+				}
+			}
+		}
+		
+		/// <seealso cref="setBufferSize">
+		/// </seealso>
+		public virtual int GetBufferSize()
+		{
+			return bufferSize;
+		}
+		
+		private void  CheckBufferSize(int bufferSize)
+		{
+			if (bufferSize <= 0)
+				throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+		}
+		
 		public override void  ReadBytes(byte[] b, int offset, int len)
 		{
+			ReadBytes(b, offset, len, true);
+		}
+		
+		public override void  ReadBytes(byte[] b, int offset, int len, bool useBuffer)
+		{
+			
 			if (len <= (bufferLength - bufferPosition))
 			{
-				// the buffer contains enough data to satistfy this request
+				// the buffer contains enough data to satisfy this request
 				if (len > 0)
 				// to allow b to be null if len is 0...
 					Array.Copy(buffer, bufferPosition, b, offset, len);
@@ -65,9 +123,10 @@ namespace Lucene.Net.Store
 					bufferPosition += available;
 				}
 				// and now, read the remaining 'len' bytes:
-				if (len < BUFFER_SIZE)
+				if (useBuffer && len < bufferSize)
 				{
-					// If the amount left to read is small enough, do it in the usual
+					// If the amount left to read is small enough, and
+					// we are allowed to use our buffer, do it in the usual
 					// buffered way: fill the buffer and copy from it:
 					Refill();
 					if (bufferLength < len)
@@ -84,10 +143,13 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					// The amount left to read is larger than the buffer - there's no
-					// performance reason not to read it all at once. Note that unlike
-					// the previous code of this function, there is no need to do a seek
-					// here, because there's no need to reread what we had in the buffer.
+					// The amount left to read is larger than the buffer
+					// or we've been asked to not use our buffer -
+					// there's no performance reason not to read it all
+					// at once. Note that unlike the previous code of
+					// this function, there is no need to do a seek
+					// here, because there's no need to reread what we
+					// had in the buffer.
 					long after = bufferStart + bufferPosition + len;
 					if (after > Length())
 						throw new System.IO.IOException("read past EOF");
@@ -102,16 +164,19 @@ namespace Lucene.Net.Store
 		private void  Refill()
 		{
 			long start = bufferStart + bufferPosition;
-			long end = start + BUFFER_SIZE;
+			long end = start + bufferSize;
 			if (end > Length())
-				// don't read past EOF
+			// don't read past EOF
 				end = Length();
 			bufferLength = (int) (end - start);
 			if (bufferLength <= 0)
 				throw new System.IO.IOException("read past EOF");
 			
 			if (buffer == null)
-				buffer = new byte[BUFFER_SIZE]; // allocate buffer lazily
+			{
+				buffer = new byte[bufferSize]; // allocate buffer lazily
+				SeekInternal(bufferStart);
+			}
 			ReadInternal(buffer, 0, bufferLength);
 			
 			bufferStart = start;
@@ -127,7 +192,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="length">the number of bytes to read
 		/// </param>
-		public abstract void  ReadInternal(byte[] b, int offset, int length);
+		protected internal abstract void  ReadInternal(byte[] b, int offset, int length);
 		
 		public override long GetFilePointer()
 		{
@@ -138,7 +203,7 @@ namespace Lucene.Net.Store
 		{
 			if (pos >= bufferStart && pos < (bufferStart + bufferLength))
 				bufferPosition = (int) (pos - bufferStart);
-				// seek within buffer
+			// seek within buffer
 			else
 			{
 				bufferStart = pos;
@@ -151,26 +216,20 @@ namespace Lucene.Net.Store
 		/// <summary>Expert: implements seek.  Sets current position in this file, where the
 		/// next {@link #ReadInternal(byte[],int,int)} will occur.
 		/// </summary>
-		/// <seealso cref="#ReadInternal(byte[],int,int)">
+		/// <seealso cref="ReadInternal(byte[],int,int)">
 		/// </seealso>
-		public abstract void  SeekInternal(long pos);
+		protected internal abstract void  SeekInternal(long pos);
 		
 		public override System.Object Clone()
 		{
 			BufferedIndexInput clone = (BufferedIndexInput) base.Clone();
 			
-			if (buffer != null)
-			{
-				clone.buffer = new byte[BUFFER_SIZE];
-				Array.Copy(buffer, 0, clone.buffer, 0, bufferLength);
-			}
+			clone.buffer = null;
+			clone.bufferLength = 0;
+			clone.bufferPosition = 0;
+			clone.bufferStart = GetFilePointer();
 			
 			return clone;
-		}
-
-		static BufferedIndexInput()
-		{
-			BUFFER_SIZE = BufferedIndexOutput.BUFFER_SIZE;
 		}
 	}
 }
