@@ -2,6 +2,14 @@ Apache Lucene.Net History
 -------------------------
 
 
+24Jun08:
+	- Dev Release:  Apache Lucene.Net.2.3.1 build 001 "Alpha"
+	- Port: Prted teh "Core" and "Demo" code from Java to C#.
+	- Issues: Test code is not released yet.
+	- Note: Requires Visual Studio 2005 or later and .NET 2.0 or later.
+	- Note: There is no 2.3.0 or 2.2 release (to correspond with the Java Lucene release).
+
+
 10Dec07:
 	- Release:  Apache Lucene.Net.2.1 build 003 "Release Candidate"
 	- Fix: LUCENENET-55 "Documents.DateTools has issue creating a Date in StringToDate()"
