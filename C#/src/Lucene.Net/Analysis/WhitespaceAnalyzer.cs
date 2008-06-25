@@ -28,5 +28,18 @@ namespace Lucene.Net.Analysis
         {
             return new WhitespaceTokenizer(reader);
         }
+
+        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+		{
+			Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
+			if (tokenizer == null)
+			{
+				tokenizer = new WhitespaceTokenizer(reader);
+				SetPreviousTokenStream(tokenizer);
+			}
+			else
+				tokenizer.Reset(reader);
+			return tokenizer;
+		}
     }
 }

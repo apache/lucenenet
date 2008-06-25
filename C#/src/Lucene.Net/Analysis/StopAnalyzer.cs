@@ -70,5 +70,44 @@ namespace Lucene.Net.Analysis
         {
             return new StopFilter(new LowerCaseTokenizer(reader), stopWords);
         }
+
+		/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
+		private class SavedStreams
+		{
+			public SavedStreams(StopAnalyzer enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(StopAnalyzer enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private StopAnalyzer enclosingInstance;
+			public StopAnalyzer Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal Tokenizer source;
+			internal TokenStream result;
+		}
+		
+		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+		{
+			SavedStreams streams = (SavedStreams) GetPreviousTokenStream();
+			if (streams == null)
+			{
+				streams = new SavedStreams(this);
+				streams.source = new LowerCaseTokenizer(reader);
+				streams.result = new StopFilter(streams.source, stopWords);
+				SetPreviousTokenStream(streams);
+			}
+			else
+				streams.source.Reset(reader);
+			return streams.result;
+		}
     }
 }
