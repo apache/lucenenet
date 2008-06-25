@@ -260,7 +260,7 @@ namespace Lucene.Net.Store
 			{
                 System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
 				if (files == null)
-					throw new System.IO.IOException("Cannot read directory " + directory.FullName);
+					throw new System.IO.IOException("cannot read directory " + directory.FullName + ": list() returned null");
 				for (int i = 0; i < files.Length; i++)
 				{
 					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, files[i]));
@@ -605,10 +605,16 @@ namespace Lucene.Net.Store
 			return new FSIndexOutput(file);
 		}
 		
-		/// <summary>Returns a stream reading an existing file. </summary>
+		// Inherit javadoc
 		public override IndexInput OpenInput(System.String name)
 		{
 			return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+		}
+		
+		// Inherit javadoc
+		public override IndexInput OpenInput(System.String name, int bufferSize)
+		{
+			return new FSIndexInput(new System.IO.FileInfo(directory.FullName + "\\" + name), bufferSize);
 		}
 		
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
@@ -669,7 +675,162 @@ namespace Lucene.Net.Store
 		{
 			return this.GetType().FullName + "@" + directory;
 		}
+		
+		protected internal class FSIndexInput : BufferedIndexInput, System.ICloneable
+		{
+		
+			private class Descriptor : System.IO.BinaryReader
+			{
+				// remember if the file is open, so that we don't try to close it
+				// more than once
+				private bool isOpen;
+				internal long position;
+				internal long length;
+			
+	            public Descriptor(FSIndexInput enclosingInstance, System.IO.FileInfo file, System.IO.FileAccess mode) 
+	                : base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, mode, System.IO.FileShare.ReadWrite))
+	            {
+					isOpen = true;
+	                length = file.Length;
+				}
+			
+				public override void  Close()
+				{
+					if (isOpen)
+					{
+						isOpen = false;
+						base.Close();
+					}
+				}
+			
+				~Descriptor()
+				{
+					try
+					{
+						Close();
+					}
+					finally
+					{
+					}
+				}
+			}
+		
+			private Descriptor file;
+			internal bool isClone;
+			
+	        public bool isClone_ForNUnitTest
+	        {
+	            get { return isClone; }
+	        }
+			
+			public FSIndexInput(System.IO.FileInfo path) : this(path, BufferedIndexInput.BUFFER_SIZE)
+			{
+			}
+			
+			public FSIndexInput(System.IO.FileInfo path, int bufferSize) : base(bufferSize)
+			{
+				file = new Descriptor(this, path, System.IO.FileAccess.Read);
+			}
+		
+			/// <summary>IndexInput methods </summary>
+			protected internal override void  ReadInternal(byte[] b, int offset, int len)
+			{
+				lock (file)
+				{
+					long position = GetFilePointer();
+					if (position != file.position)
+					{
+						file.BaseStream.Seek(position, System.IO.SeekOrigin.Begin);
+						file.position = position;
+					}
+					int total = 0;
+					do 
+					{
+						int i = file.Read(b, offset + total, len - total);
+						if (i <= 0)
+							throw new System.IO.IOException("read past EOF");
+						file.position += i;
+						total += i;
+					}
+					while (total < len);
+				}
+			}
+			
+			public override void  Close()
+			{
+				// only close the file if this is not a clone
+				if (!isClone)
+					file.Close();
+	            System.GC.SuppressFinalize(this);
+			}
+		
+			protected internal override void  SeekInternal(long position)
+			{
+			}
+			
+			public override long Length()
+			{
+				return file.length;
+			}
+			
+			public override System.Object Clone()
+			{
+				FSIndexInput clone = (FSIndexInput) base.Clone();
+				clone.isClone = true;
+				return clone;
+			}
 
+			/// <summary>Method used for testing. Returns true if the underlying
+			/// file descriptor is valid.
+			/// </summary>
+			public virtual bool IsFDValid()
+			{
+				return (file.BaseStream != null);
+			}
+		}
+		
+		protected internal class FSIndexOutput : BufferedIndexOutput
+		{
+			internal System.IO.BinaryWriter file = null;
+		
+			// remember if the file is open, so that we don't try to close it
+			// more than once
+			private bool isOpen;
+		
+			public FSIndexOutput(System.IO.FileInfo path)
+			{
+				file = new System.IO.BinaryWriter(new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite));
+				isOpen = true;
+			}
+		
+			/// <summary>output methods: </summary>
+			public override void  FlushBuffer(byte[] b, int offset, int size)
+			{
+				file.Write(b, offset, size);
+			}
+			public override void  Close()
+			{
+				// only close the file if it has not been closed yet
+				if (isOpen)
+				{
+					base.Close();
+					file.Close();
+					isOpen = false;
+	                System.GC.SuppressFinalize(this);
+				}
+			}
+		
+			/// <summary>Random-access methods </summary>
+			public override void  Seek(long pos)
+			{
+				base.Seek(pos);
+				file.BaseStream.Seek(pos, System.IO.SeekOrigin.Begin);
+			}
+			public override long Length()
+			{
+				return file.BaseStream.Length;
+			}
+		}
 		static FSDirectory()
 		{
 			{
@@ -704,159 +865,6 @@ namespace Lucene.Net.Store
 					throw new System.SystemException(e.ToString(), e);
 				}
 			}
-		}
-	}
-	
-	
-	public class FSIndexInput : BufferedIndexInput, System.ICloneable
-	{
-		/// <summary>Method used for testing. Returns true if the underlying
-		/// file descriptor is valid.
-		/// </summary>
-		public virtual bool IsFDValid()
-		{
-			return (file.BaseStream != null);
-		}
-		
-		private class Descriptor : System.IO.BinaryReader
-		{
-			// remember if the file is open, so that we don't try to close it
-			// more than once
-			private bool isOpen;
-			internal long position;
-			internal long length;
-			
-            public Descriptor(FSIndexInput enclosingInstance, System.IO.FileInfo file, System.IO.FileAccess mode) 
-                : base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, mode, System.IO.FileShare.ReadWrite))
-            {
-				isOpen = true;
-                length = file.Length;
-			}
-			
-			public override void  Close()
-			{
-				if (isOpen)
-				{
-					isOpen = false;
-					base.Close();
-				}
-			}
-			
-			~Descriptor()
-			{
-				try
-				{
-					Close();
-				}
-				finally
-				{
-				}
-			}
-		}
-		
-		private Descriptor file;
-		internal bool isClone;
-		
-        public bool isClone_ForNUnitTest
-        {
-            get { return isClone; }
-        }
-
-		public FSIndexInput(System.IO.FileInfo path)
-		{
-			file = new Descriptor(this, path, System.IO.FileAccess.Read);
-		}
-		
-		/// <summary>IndexInput methods </summary>
-		public override void  ReadInternal(byte[] b, int offset, int len)
-		{
-			lock (file)
-			{
-				long position = GetFilePointer();
-				if (position != file.position)
-				{
-					file.BaseStream.Seek(position, System.IO.SeekOrigin.Begin);
-					file.position = position;
-				}
-				int total = 0;
-				do 
-				{
-					int i = file.Read(b, offset + total, len - total);
-					if (i <= 0)
-						throw new System.IO.IOException("read past EOF");
-					file.position += i;
-					total += i;
-				}
-				while (total < len);
-			}
-		}
-		
-		public override void  Close()
-		{
-			// only close the file if this is not a clone
-			if (!isClone)
-				file.Close();
-            System.GC.SuppressFinalize(this);
-		}
-		
-		public override void  SeekInternal(long position)
-		{
-		}
-		
-		public override long Length()
-		{
-			return file.length;
-		}
-		
-		public override System.Object Clone()
-		{
-			FSIndexInput clone = (FSIndexInput) base.Clone();
-			clone.isClone = true;
-			return clone;
-		}
-	}
-	
-	
-	class FSIndexOutput : BufferedIndexOutput
-	{
-		internal System.IO.BinaryWriter file = null;
-		
-		// remember if the file is open, so that we don't try to close it
-		// more than once
-		private bool isOpen;
-		
-		public FSIndexOutput(System.IO.FileInfo path)
-		{
-			file = new System.IO.BinaryWriter(new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite));
-			isOpen = true;
-		}
-		
-		/// <summary>output methods: </summary>
-		public override void  FlushBuffer(byte[] b, int size)
-		{
-			file.Write(b, 0, size);
-		}
-		public override void  Close()
-		{
-			// only close the file if it has not been closed yet
-			if (isOpen)
-			{
-				base.Close();
-				file.Close();
-				isOpen = false;
-                System.GC.SuppressFinalize(this);
-			}
-		}
-		
-		/// <summary>Random-access methods </summary>
-		public override void  Seek(long pos)
-		{
-			base.Seek(pos);
-			file.BaseStream.Seek(pos, System.IO.SeekOrigin.Begin);
-		}
-		public override long Length()
-		{
-			return file.BaseStream.Length;
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary>Base implementation class for buffered {@link IndexOutput}. </summary>
 	public abstract class BufferedIndexOutput : IndexOutput
 	{
-		internal const int BUFFER_SIZE = 1024;
+		internal const int BUFFER_SIZE = 16384;
 		
 		private byte[] buffer = new byte[BUFFER_SIZE];
 		private long bufferStart = 0; // position in file of buffer
@@ -46,14 +46,14 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <seealso cref="IndexInput.ReadBytes(byte[],int,int)">
 		/// </seealso>
-		public override void  WriteBytes(byte[] b, int length)
+		public override void  WriteBytes(byte[] b, int offset, int length)
 		{
 			int bytesLeft = BUFFER_SIZE - bufferPosition;
 			// is there enough space in the buffer?
 			if (bytesLeft >= length)
 			{
 				// we add the data to the end of the buffer
-				Array.Copy(b, 0, buffer, bufferPosition, length);
+				Array.Copy(b, offset, buffer, bufferPosition, length);
 				bufferPosition += length;
 				// if the buffer is full, flush it
 				if (BUFFER_SIZE - bufferPosition == 0)
@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
 					if (bufferPosition > 0)
 						Flush();
 					// and write data at once
-					FlushBuffer(b, length);
+					FlushBuffer(b, offset, length);
 					bufferStart += length;
 				}
 				else
@@ -79,7 +79,7 @@ namespace Lucene.Net.Store
 					while (pos < length)
 					{
 						pieceLength = (length - pos < bytesLeft)?length - pos:bytesLeft;
-						Array.Copy(b, pos, buffer, bufferPosition, pieceLength);
+						Array.Copy(b, pos + offset, buffer, bufferPosition, pieceLength);
 						pos += pieceLength;
 						bufferPosition += pieceLength;
 						// if the buffer is full, flush it
@@ -109,7 +109,21 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="len">the number of bytes to write
 		/// </param>
-		public abstract void  FlushBuffer(byte[] b, int len);
+		private void  FlushBuffer(byte[] b, int len)
+		{
+			FlushBuffer(b, 0, len);
+		}
+		
+		/// <summary>Expert: implements buffer write.  Writes bytes at the current position in
+		/// the output.
+		/// </summary>
+		/// <param name="b">the bytes to write
+		/// </param>
+		/// <param name="offset">the offset in the byte array
+		/// </param>
+		/// <param name="len">the number of bytes to write
+		/// </param>
+		public abstract void  FlushBuffer(byte[] b, int offset, int len);
 		
 		/// <summary>Closes this stream to further operations. </summary>
 		public override void  Close()
@@ -120,7 +134,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the current position in this file, where the next write will
 		/// occur.
 		/// </summary>
-		/// <seealso cref="#Seek(long)">
+		/// <seealso cref="Seek(long)">
 		/// </seealso>
 		public override long GetFilePointer()
 		{
@@ -128,7 +142,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Sets current position in this file, where the next write will occur.</summary>
-		/// <seealso cref="#GetFilePointer()">
+		/// <seealso cref="GetFilePointer()">
 		/// </seealso>
 		public override void  Seek(long pos)
 		{

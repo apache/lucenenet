@@ -26,8 +26,7 @@ namespace Lucene.Net.Store
 		
 		private const long serialVersionUID = 1L;
 		
-		// Direct read-only access to state supported for streams since a writing stream implies no other concurrent streams
-		internal System.Collections.ArrayList buffers = new System.Collections.ArrayList();
+		private System.Collections.ArrayList buffers = new System.Collections.ArrayList();
 		internal long length;
 		internal RAMDirectory directory;
 		internal long sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
@@ -81,18 +80,49 @@ namespace Lucene.Net.Store
 		
 		internal byte[] AddBuffer(int size)
 		{
-			byte[] buffer = new byte[size];
-			if (directory != null)
-				lock (directory)
-				{
-					// Ensure addition of buffer and adjustment to directory size are atomic wrt directory
+			lock (this)
+			{
+				byte[] buffer = new byte[size];
+				if (directory != null)
+					lock (directory)
+					{
+						// Ensure addition of buffer and adjustment to directory size are atomic wrt directory
+						buffers.Add(buffer);
+						directory.sizeInBytes += size;
+						sizeInBytes += size;
+					}
+				else
 					buffers.Add(buffer);
-					directory.sizeInBytes += size;
-					sizeInBytes += size;
-				}
-			else
-				buffers.Add(buffer);
-			return buffer;
+				return buffer;
+			}
+		}
+		
+		internal byte[] GetBuffer(int index)
+		{
+			lock (this)
+			{
+				return (byte[]) buffers[index];
+			}
+		}
+		
+		internal int NumBuffers()
+		{
+			lock (this)
+			{
+				return buffers.Count;
+			}
+		}
+		
+		/// <summary> Expert: allocate a new buffer. 
+		/// Subclasses can allocate differently. 
+		/// </summary>
+		/// <param name="size">size of allocated buffer.
+		/// </param>
+		/// <returns> allocated buffer.
+		/// </returns>
+		internal virtual byte[] NewBuffer(int size)
+		{
+			return new byte[size];
 		}
 		
 		// Only valid if in a directory

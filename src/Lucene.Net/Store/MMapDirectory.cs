@@ -123,7 +123,7 @@ namespace Lucene.Net.Store
                     byte[] data = new byte[rafc.Length];
                     raf.Read(data, 0, (int) rafc.Length);
 
-					int bufSize = (length > (bufferStart + maxBufSize))?maxBufSize:(int) (length - bufferStart);
+					int bufSize = (length > (bufferStart + maxBufSize)) ? maxBufSize : (int) (length - bufferStart);
 					this.buffers[bufNr] = new System.IO.MemoryStream(data);     // rafc.map(MapMode.READ_ONLY, bufferStart, bufSize);     // {{Aroush-1.9}}
 					this.bufSizes[bufNr] = bufSize;
 					bufferStart += bufSize;
@@ -223,6 +223,11 @@ namespace Lucene.Net.Store
 			{
 				raf.Close();
 			}
+		}
+		
+		public override IndexInput OpenInput(System.String name, int bufferSize)
+		{
+			return OpenInput(name);
 		}
 	}
 }

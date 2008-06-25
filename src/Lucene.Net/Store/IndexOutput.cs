@@ -42,7 +42,21 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <seealso cref="IndexInput.ReadBytes(byte[],int,int)">
 		/// </seealso>
-		public abstract void  WriteBytes(byte[] b, int length);
+		public virtual void  WriteBytes(byte[] b, int length)
+		{
+			WriteBytes(b, 0, length);
+		}
+		
+		/// <summary>Writes an array of bytes.</summary>
+		/// <param name="b">the bytes to write
+		/// </param>
+		/// <param name="offset">the offset in the byte array
+		/// </param>
+		/// <param name="length">the number of bytes to write
+		/// </param>
+		/// <seealso cref="IndexInput.ReadBytes(byte[],int,int)">
+		/// </seealso>
+		public abstract void  WriteBytes(byte[] b, int offset, int length);
 		
 		/// <summary>Writes an int as four bytes.</summary>
 		/// <seealso cref="IndexInput.ReadInt()">
@@ -134,6 +148,59 @@ namespace Lucene.Net.Store
 					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
 					WriteByte((byte) (0x80 | (code & 0x3F)));
 				}
+			}
+		}
+		
+		/// <summary>Writes a sequence of UTF-8 encoded characters from a char[].</summary>
+		/// <param name="s">the source of the characters
+		/// </param>
+		/// <param name="start">the first character in the sequence
+		/// </param>
+		/// <param name="length">the number of characters in the sequence
+		/// </param>
+		/// <seealso cref="IndexInput.ReadChars(char[],int,int)">
+		/// </seealso>
+		public virtual void  WriteChars(char[] s, int start, int length)
+		{
+			int end = start + length;
+			for (int i = start; i < end; i++)
+			{
+				int code = (int) s[i];
+				if (code >= 0x01 && code <= 0x7F)
+					WriteByte((byte) code);
+				else if (((code >= 0x80) && (code <= 0x7FF)) || code == 0)
+				{
+					WriteByte((byte) (0xC0 | (code >> 6)));
+					WriteByte((byte) (0x80 | (code & 0x3F)));
+				}
+				else
+				{
+					WriteByte((byte) (0xE0 | (SupportClass.Number.URShift(code, 12))));
+					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
+					WriteByte((byte) (0x80 | (code & 0x3F)));
+				}
+			}
+		}
+		
+		private static int COPY_BUFFER_SIZE = 16384;
+		private byte[] copyBuffer;
+		
+		/// <summary>Copy numBytes bytes from input to ourself. </summary>
+		public virtual void  CopyBytes(IndexInput input, long numBytes)
+		{
+			long left = numBytes;
+			if (copyBuffer == null)
+				copyBuffer = new byte[COPY_BUFFER_SIZE];
+			while (left > 0)
+			{
+				int toCopy;
+				if (left > COPY_BUFFER_SIZE)
+					toCopy = COPY_BUFFER_SIZE;
+				else
+					toCopy = (int) left;
+				input.ReadBytes(copyBuffer, 0, toCopy);
+				WriteBytes(copyBuffer, 0, toCopy);
+				left -= toCopy;
 			}
 		}
 		

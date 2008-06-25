@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class SingleInstanceLockFactory:LockFactory
+	public class SingleInstanceLockFactory : LockFactory
 	{
 		
 		private System.Collections.Hashtable locks = new System.Collections.Hashtable();
@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
 	}
 	
 	
-	class SingleInstanceLock:Lock
+	class SingleInstanceLock : Lock
 	{
 		
 		internal System.String lockName;
