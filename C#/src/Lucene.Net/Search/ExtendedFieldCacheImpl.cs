@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	class ExtendedFieldCacheImpl : FieldCacheImpl, ExtendedFieldCache
+	public class ExtendedFieldCacheImpl : FieldCacheImpl, ExtendedFieldCache
 	{
 		public ExtendedFieldCacheImpl()
 		{
@@ -204,32 +204,36 @@ namespace Lucene.Net.Search
 						*/
 						
 						// Java 1.3 level code:
-						try
-						{
-							System.Int32.Parse(termtext);
-							ret = Enclosing_Instance.GetInts(reader, field);
-						}
-						catch (System.FormatException nfe1)
-						{
-							try
-							{
-								System.Int64.Parse(termtext);
-								ret = ((ExtendedFieldCacheImpl) Enclosing_Instance).GetLongs(reader, field);
-							}
-							catch (System.FormatException nfe2)
-							{
-								try
-								{
-									System.Single.Parse(termtext);
-									ret = Enclosing_Instance.GetFloats(reader, field);
-								}
-								catch (System.FormatException nfe3)
-								{
-									ret = Enclosing_Instance.GetStringIndex(reader, field);
-								}
-							}
-						}
-					}
+                        try
+                        {
+                            int parsedIntValue;
+                            long parsedLongValue;
+                            if (int.TryParse(termtext, out parsedIntValue))
+                            {
+                                ret = Enclosing_Instance.GetInts(reader, field);
+                            }
+                            else if (long.TryParse(termtext, out parsedLongValue))
+                            {
+                                ret = ((ExtendedFieldCacheImpl)Enclosing_Instance).GetLongs(reader, field);
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    SupportClass.Single.Parse(termtext);
+                                    ret = Enclosing_Instance.GetFloats(reader, field);
+                                }
+                                catch (System.FormatException)
+                                {
+                                    ret = Enclosing_Instance.GetStringIndex(reader, field);
+                                }
+                            }
+                        }
+                        catch (System.Exception)
+                        {
+                            ret = Enclosing_Instance.GetStringIndex(reader, field);
+                        }
+                    }
 					else
 					{
 						throw new System.SystemException("field \"" + field + "\" does not appear to be indexed");

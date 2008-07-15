@@ -19,11 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
@@ -31,12 +33,12 @@ namespace Lucene.Net.Index
 	/// <author>  goller
 	/// </author>
 	[TestFixture]
-    public class TestSegmentTermEnum
+	public class TestSegmentTermEnum : LuceneTestCase
 	{
 		internal Directory dir = new RAMDirectory();
 		
 		[Test]
-        public virtual void  TestTermEnum()
+		public virtual void  TestTermEnum()
 		{
 			IndexWriter writer = null;
 			
@@ -63,6 +65,24 @@ namespace Lucene.Net.Index
 			
 			// verify document frequency of terms in an optimized index
 			VerifyDocFreq();
+		}
+		
+		[Test]
+		public virtual void  TestPrevTermAtEnd()
+		{
+			Directory dir = new MockRAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			AddDoc(writer, "aaa bbb");
+			writer.Close();
+			IndexReader reader = IndexReader.Open(dir);
+			SegmentTermEnum termEnum = (SegmentTermEnum) reader.Terms();
+			Assert.IsTrue(termEnum.Next());
+			Assert.AreEqual("aaa", termEnum.Term().Text());
+			Assert.IsTrue(termEnum.Next());
+			Assert.AreEqual("aaa", termEnum.Prev().Text());
+			Assert.AreEqual("bbb", termEnum.Term().Text());
+			Assert.IsFalse(termEnum.Next());
+			Assert.AreEqual("bbb", termEnum.Prev().Text());
 		}
 		
 		private void  VerifyDocFreq()

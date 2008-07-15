@@ -84,12 +84,12 @@
     </Reference>
     <Reference Include="nunit.core">
       <Name>nunit.core</Name>
-      <HintPath>D:\DEVS\NUnit\bin\nunit.core.dll</HintPath>
+      <HintPath>..\..\..\NUnit\bin\nunit.core.dll</HintPath>
       <AssemblyFolderKey>hklm\dn\nunit.framework</AssemblyFolderKey>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>D:\DEVS\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
       <AssemblyFolderKey>hklm\dn\nunit.framework</AssemblyFolderKey>
     </Reference>
     <Reference Include="System">
@@ -109,9 +109,12 @@
     <Compile Include="AnalysisTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TeeSinkTokenTest.cs" />
     <Compile Include="Analysis\TestAnalyzers.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TestCachingTokenFilter.cs" />
+    <Compile Include="Analysis\TestCharArraySet.cs" />
     <Compile Include="Analysis\TestISOLatin1AccentFilter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -133,42 +136,44 @@
     <Compile Include="Analysis\TestStopFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TestToken.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Document\TestBinaryDocument.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\TestDateTools.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\TestDocument.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Document\TestNumberTools.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Document\TestBinaryDocument.cs" />
+    <Compile Include="Document\TestDateTools.cs" />
+    <Compile Include="Document\TestDocument.cs" />
+    <Compile Include="Document\TestNumberTools.cs" />
     <Compile Include="IndexTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\DocHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\DocTest.cs" />
     <Compile Include="Index\MockIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\MockInputStream.cs" />
+    <Compile Include="Index\Store\FSDirectoryTestCase.cs" />
+    <Compile Include="Index\Store\TestFSDirectory.cs" />
     <Compile Include="Index\Store\TestRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TermInfosTest.cs" />
     <Compile Include="Index\TestAddIndexesNoOptimize.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestAtomicUpdate.cs" />
     <Compile Include="Index\TestBackwardsCompatibility.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestCheckIndex.cs" />
     <Compile Include="Index\TestCompoundFile.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\TestDeletionPolicy.cs" />
     <Compile Include="Index\TestDoc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -196,6 +201,7 @@
     <Compile Include="Index\TestIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestIndexReaderReopen.cs" />
     <Compile Include="Index\TestIndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -211,15 +217,18 @@
     <Compile Include="Index\TestIndexWriterMerging.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestInputStream.cs" />
     <Compile Include="Index\TestLazyBug.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestLazyProxSkipping.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestMultiLevelSkipList.cs" />
     <Compile Include="Index\TestMultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestMultiSegmentReader.cs" />
     <Compile Include="Index\TestNorms.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -229,6 +238,8 @@
     <Compile Include="Index\TestParallelTermEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestPayloads.cs" />
+    <Compile Include="Index\TestPositionBasedTermVectorMapper.cs" />
     <Compile Include="Index\TestSegmentMerger.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -244,6 +255,8 @@
     <Compile Include="Index\TestStressIndexing.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestStressIndexing2.cs" />
+    <Compile Include="Index\TestTerm.cs" />
     <Compile Include="Index\TestTermdocPerf.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -253,6 +266,7 @@
     <Compile Include="Index\TestTermVectorsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestThreadedOptimize.cs" />
     <Compile Include="Index\TestWordlistLoader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -271,24 +285,19 @@
     <Compile Include="SearchTestForDuplicates.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\BaseTestRangeFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\CheckHits.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\MockFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\QueryUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\SampleComparable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\SingleDocTestFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\BaseTestRangeFilter.cs" />
+    <Compile Include="Search\CachingWrapperFilterHelper.cs" />
+    <Compile Include="Search\CheckHits.cs" />
+    <Compile Include="Search\Function\FunctionTestSetup.cs" />
+    <Compile Include="Search\Function\TestCustomScoreQuery.cs" />
+    <Compile Include="Search\Function\TestFieldScoreQuery.cs" />
+    <Compile Include="Search\Function\TestOrdValues.cs" />
+    <Compile Include="Search\MockFilter.cs" />
+    <Compile Include="Search\Payloads\TestBoostingTermQuery.cs" />
+    <Compile Include="Search\QueryUtils.cs" />
+    <Compile Include="Search\RemoteCachingWrapperFilterHelper.cs" />
+    <Compile Include="Search\SampleComparable.cs" />
+    <Compile Include="Search\SingleDocTestFilter.cs" />
     <Compile Include="Search\Spans\TestBasics.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -310,153 +319,75 @@
     <Compile Include="Search\Spans\TestSpansAdvanced2.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\TestBoolean2.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestBooleanMinShouldMatch.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestBooleanOr.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestBooleanPrefixQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestBooleanQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestBooleanScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestCachingWrapperFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestComplexExplanations.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestComplexExplanationsOfNonMatches.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestConstantScoreRangeQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestCustomSearcherSort.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestDateFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestDisjunctionMaxQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestDocBoost.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestExplanations.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestFilteredQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestFuzzyQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestMatchAllDocsQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestMultiPhraseQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestMultiSearcher.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestMultiSearcherRanking.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestMultiThreadTermVectors.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestNot.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestParallelMultiSearcher.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestPhrasePrefixQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestPhraseQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestPositionIncrement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestPrefixFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestPrefixQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestQueryTermVector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestRangeFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestRangeQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestRemoteSearchable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestScorerPerf.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestSetNorm.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestSimilarity.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestSimpleExplanations.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestSimpleExplanationsOfNonMatches.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestSort.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestTermScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestTermVectors.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestThreadSafe.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\TestWildcard.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\TestBoolean2.cs" />
+    <Compile Include="Search\TestBooleanMinShouldMatch.cs" />
+    <Compile Include="Search\TestBooleanOr.cs" />
+    <Compile Include="Search\TestBooleanPrefixQuery.cs" />
+    <Compile Include="Search\TestBooleanQuery.cs" />
+    <Compile Include="Search\TestBooleanScorer.cs" />
+    <Compile Include="Search\TestCachingWrapperFilter.cs" />
+    <Compile Include="Search\TestComplexExplanations.cs" />
+    <Compile Include="Search\TestComplexExplanationsOfNonMatches.cs" />
+    <Compile Include="Search\TestConstantScoreRangeQuery.cs" />
+    <Compile Include="Search\TestCustomSearcherSort.cs" />
+    <Compile Include="Search\TestDateFilter.cs" />
+    <Compile Include="Search\TestDateSort.cs" />
+    <Compile Include="Search\TestDisjunctionMaxQuery.cs" />
+    <Compile Include="Search\TestDocBoost.cs" />
+    <Compile Include="Search\TestExplanations.cs" />
+    <Compile Include="Search\TestExtendedFieldCache.cs" />
+    <Compile Include="Search\TestFilteredQuery.cs" />
+    <Compile Include="Search\TestFuzzyQuery.cs" />
+    <Compile Include="Search\TestMatchAllDocsQuery.cs" />
+    <Compile Include="Search\TestMultiPhraseQuery.cs" />
+    <Compile Include="Search\TestMultiSearcher.cs" />
+    <Compile Include="Search\TestMultiSearcherRanking.cs" />
+    <Compile Include="Search\TestMultiThreadTermVectors.cs" />
+    <Compile Include="Search\TestNot.cs" />
+    <Compile Include="Search\TestParallelMultiSearcher.cs" />
+    <Compile Include="Search\TestPhrasePrefixQuery.cs" />
+    <Compile Include="Search\TestPhraseQuery.cs" />
+    <Compile Include="Search\TestPositionIncrement.cs" />
+    <Compile Include="Search\TestPrefixFilter.cs" />
+    <Compile Include="Search\TestPrefixQuery.cs" />
+    <Compile Include="Search\TestQueryTermVector.cs" />
+    <Compile Include="Search\TestRangeFilter.cs" />
+    <Compile Include="Search\TestRangeQuery.cs" />
+    <Compile Include="Search\TestRemoteCachingWrapperFilter.cs" />
+    <Compile Include="Search\TestRemoteSearchable.cs" />
+    <Compile Include="Search\TestScorerPerf.cs" />
+    <Compile Include="Search\TestSearchHitsWithDeletions.cs" />
+    <Compile Include="Search\TestSetNorm.cs" />
+    <Compile Include="Search\TestSimilarity.cs" />
+    <Compile Include="Search\TestSimpleExplanations.cs" />
+    <Compile Include="Search\TestSimpleExplanationsOfNonMatches.cs" />
+    <Compile Include="Search\TestSort.cs" />
+    <Compile Include="Search\TestSpanQueryFilter.cs" />
+    <Compile Include="Search\TestTermScorer.cs" />
+    <Compile Include="Search\TestTermVectors.cs" />
+    <Compile Include="Search\TestThreadSafe.cs" />
+    <Compile Include="Search\TestWildcard.cs" />
     <Compile Include="StoreTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\MockRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\MockRAMInputStream.cs" />
     <Compile Include="Store\MockRAMOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\TestBufferedIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TestHugeRamFile.cs" />
     <Compile Include="Store\TestLock.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\TestLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TestMMapDirectory.cs" />
     <Compile Include="Store\TestWindowsMMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -475,12 +406,15 @@
     <Compile Include="TestSearchForDuplicates.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestSnapshotDeletionPolicy.cs" />
     <Compile Include="ThreadSafetyTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\LuceneTestCase.cs" />
+    <Compile Include="Util\StringHelperTest.cs" />
     <Compile Include="Util\TestBitVector.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -496,8 +430,11 @@
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="App.config" />
     <None Include="Index\index.prelockless.cfs.zip" />
     <None Include="Index\index.prelockless.nocfs.zip" />
+    <None Include="Index\index.presharedstores.cfs.zip" />
+    <None Include="Index\index.presharedstores.nocfs.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

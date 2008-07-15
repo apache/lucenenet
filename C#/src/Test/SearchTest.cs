@@ -84,8 +84,8 @@ namespace Lucene.Net
 		
 		internal static long Time(int year, int month, int day)
 		{
-            System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
-            return calendar.Ticks;
+			System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+			return calendar.Ticks;
 		}
 	}
 }

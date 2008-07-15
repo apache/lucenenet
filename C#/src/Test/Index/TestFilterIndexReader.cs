@@ -19,16 +19,19 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+//using TestRunner = junit.textui.TestRunner;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestFilterIndexReader
+	public class TestFilterIndexReader : LuceneTestCase
 	{
 		
 		private class TestReader : FilterIndexReader
@@ -56,7 +59,7 @@ namespace Lucene.Net.Index
 			/// <summary>Filter that only returns odd numbered documents. </summary>
 			private class TestTermPositions : FilterTermPositions
 			{
-                public TestTermPositions(TermPositions in_Renamed) : base(in_Renamed)
+				public TestTermPositions(TermPositions in_Renamed) : base(in_Renamed)
 				{
 				}
 				
@@ -100,9 +103,9 @@ namespace Lucene.Net.Index
 		/// <summary> Tests the IndexReader.getFieldNames implementation</summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-        public virtual void  TestFilterIndexReader_Renamed_Method()
+		public virtual void  TestFilterIndexReader_Renamed_Method()
 		{
-			RAMDirectory directory = new RAMDirectory();
+			RAMDirectory directory = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
@@ -121,6 +124,8 @@ namespace Lucene.Net.Index
 			
 			IndexReader reader = new TestReader(IndexReader.Open(directory));
 			
+			Assert.IsTrue(reader.IsOptimized());
+			
 			TermEnum terms = reader.Terms();
 			while (terms.Next())
 			{
@@ -135,6 +140,7 @@ namespace Lucene.Net.Index
 			}
 			
 			reader.Close();
+			directory.Close();
 		}
 	}
 }

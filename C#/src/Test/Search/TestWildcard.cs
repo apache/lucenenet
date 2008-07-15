@@ -19,12 +19,15 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -32,15 +35,14 @@ namespace Lucene.Net.Search
 	/// <summary> TestWildcard tests the '*' and '?' wildcard characters.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestWildcard.java 329860 2005-10-31 17:06:29Z bmesser $
+	/// <version>  $Id: TestWildcard.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// 
 	/// </version>
-	/// <author>  Otis Gospodnetic
-	/// </author>
 	[TestFixture]
-    public class TestWildcard
+	public class TestWildcard : LuceneTestCase
 	{
 		[Test]
-        public virtual void  TestEquals()
+		public virtual void  TestEquals()
 		{
 			WildcardQuery wq1 = new WildcardQuery(new Term("field", "b*a"));
 			WildcardQuery wq2 = new WildcardQuery(new Term("field", "b*a"));
@@ -61,25 +63,25 @@ namespace Lucene.Net.Search
 			Assert.IsFalse(fq.Equals(wq1));
 		}
 		
-        /// <summary> Tests if a WildcardQuery that has no wildcard in the term is rewritten to a single
-        /// TermQuery.
-        /// </summary>
-        [Test]
-        public virtual void  TestTermWithoutWildcard()
-        {
-            RAMDirectory indexStore = GetIndexStore("field", new System.String[]{"nowildcard", "nowildcardx"});
-            IndexSearcher searcher = new IndexSearcher(indexStore);
-			
-            Query wq = new WildcardQuery(new Term("field", "nowildcard"));
-            AssertMatches(searcher, wq, 1);
-			
-            wq = searcher.Rewrite(wq);
-            Assert.IsTrue(wq is TermQuery);
-        }
-		
-        /// <summary> Tests Wildcard queries with an asterisk.</summary>
+		/// <summary> Tests if a WildcardQuery that has no wildcard in the term is rewritten to a single
+		/// TermQuery.
+		/// </summary>
 		[Test]
-        public virtual void  TestAsterisk()
+		public virtual void  TestTermWithoutWildcard()
+		{
+			RAMDirectory indexStore = GetIndexStore("field", new System.String[]{"nowildcard", "nowildcardx"});
+			IndexSearcher searcher = new IndexSearcher(indexStore);
+			
+			Query wq = new WildcardQuery(new Term("field", "nowildcard"));
+			AssertMatches(searcher, wq, 1);
+			
+			wq = searcher.Rewrite(wq);
+			Assert.IsTrue(wq is TermQuery);
+		}
+		
+		/// <summary> Tests Wildcard queries with an asterisk.</summary>
+		[Test]
+		public virtual void  TestAsterisk()
 		{
 			RAMDirectory indexStore = GetIndexStore("body", new System.String[]{"metal", "metals"});
 			IndexSearcher searcher = new IndexSearcher(indexStore);
@@ -117,7 +119,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <throws>  IOException if an error occurs </throws>
 		[Test]
-        public virtual void  TestQuestionmark()
+		public virtual void  TestQuestionmark()
 		{
 			RAMDirectory indexStore = GetIndexStore("body", new System.String[]{"metal", "metals", "mXtals", "mXtXls"});
 			IndexSearcher searcher = new IndexSearcher(indexStore);
@@ -156,6 +158,107 @@ namespace Lucene.Net.Search
 		{
 			Hits result = searcher.Search(q);
 			Assert.AreEqual(expectedMatches, result.Length());
+		}
+		
+		/// <summary> Test that wild card queries are parsed to the correct type and are searched correctly.
+		/// This test looks at both parsing and execution of wildcard queries.
+		/// Although placed here, it also tests prefix queries, verifying that
+		/// prefix queries are not parsed into wild card queries, and viceversa.
+		/// </summary>
+		/// <throws>  Exception </throws>
+		[Test]
+		public virtual void  TestParsingAndSearching()
+		{
+			System.String field = "content";
+			bool dbg = false;
+			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer());
+			qp.SetAllowLeadingWildcard(true);
+			System.String[] docs = new System.String[]{"\\ abcdefg1", "\\79 hijklmn1", "\\\\ opqrstu1"};
+			// queries that should find all docs
+			System.String[] matchAll = new System.String[]{"*", "*1", "**1", "*?", "*?1", "?*1", "**", "***", "\\\\*"};
+			// queries that should find no docs
+			System.String[] matchNone = new System.String[]{"a*h", "a?h", "*a*h", "?a", "a?"};
+			// queries that should be parsed to prefix queries
+			System.String[][] matchOneDocPrefix = new System.String[][]{new System.String[]{"a*", "ab*", "abc*"}, new System.String[]{"h*", "hi*", "hij*", "\\\\7*"}, new System.String[]{"o*", "op*", "opq*", "\\\\\\\\*"}};
+			// queries that should be parsed to wildcard queries
+			System.String[][] matchOneDocWild = new System.String[][]{new System.String[]{"*a*", "*ab*", "*abc**", "ab*e*", "*g?", "*f?1", "abc**"}, new System.String[]{"*h*", "*hi*", "*hij**", "hi*k*", "*n?", "*m?1", "hij**"}, new System.String[]{"*o*", "*op*", "*opq**", "op*q*", "*u?", "*t?1", "opq**"}};
+			
+			// prepare the index
+			RAMDirectory dir = new RAMDirectory();
+			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer());
+			for (int i = 0; i < docs.Length; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field(field, docs[i], Field.Store.NO, Field.Index.TOKENIZED));
+				iw.AddDocument(doc);
+			}
+			iw.Close();
+			
+			IndexSearcher searcher = new IndexSearcher(dir);
+			
+			// test queries that must find all
+			for (int i = 0; i < matchAll.Length; i++)
+			{
+				System.String qtxt = matchAll[i];
+				Query q = qp.Parse(qtxt);
+				if (dbg)
+				{
+					System.Console.Out.WriteLine("matchAll: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
+				}
+				Hits hits = searcher.Search(q);
+				Assert.AreEqual(docs.Length, hits.Length());
+			}
+			
+			// test queries that must find none
+			for (int i = 0; i < matchNone.Length; i++)
+			{
+				System.String qtxt = matchNone[i];
+				Query q = qp.Parse(qtxt);
+				if (dbg)
+				{
+					System.Console.Out.WriteLine("matchNone: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
+				}
+				Hits hits = searcher.Search(q);
+				Assert.AreEqual(0, hits.Length());
+			}
+			
+			// test queries that must be prefix queries and must find only one doc
+			for (int i = 0; i < matchOneDocPrefix.Length; i++)
+			{
+				for (int j = 0; j < matchOneDocPrefix[i].Length; j++)
+				{
+					System.String qtxt = matchOneDocPrefix[i][j];
+					Query q = qp.Parse(qtxt);
+					if (dbg)
+					{
+						System.Console.Out.WriteLine("match 1 prefix: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
+					}
+					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
+					Hits hits = searcher.Search(q);
+					Assert.AreEqual(1, hits.Length());
+					Assert.AreEqual(i, hits.Id(0));
+				}
+			}
+			
+			// test queries that must be wildcard queries and must find only one doc
+			for (int i = 0; i < matchOneDocPrefix.Length; i++)
+			{
+				for (int j = 0; j < matchOneDocWild[i].Length; j++)
+				{
+					System.String qtxt = matchOneDocWild[i][j];
+					Query q = qp.Parse(qtxt);
+					if (dbg)
+					{
+						System.Console.Out.WriteLine("match 1 wild: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
+					}
+					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
+					Hits hits = searcher.Search(q);
+					Assert.AreEqual(1, hits.Length());
+					Assert.AreEqual(i, hits.Id(0));
+				}
+			}
+			
+			searcher.Close();
 		}
 	}
 }

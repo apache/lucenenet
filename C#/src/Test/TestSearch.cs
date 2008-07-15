@@ -19,24 +19,25 @@ using System;
 
 using NUnit.Framework;
 
-using Lucene.Net.Store;
 using Lucene.Net.Documents;
-using Lucene.Net.Analysis;
 using Lucene.Net.Index;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
+using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Lucene.Net.QueryParsers;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
 {
 	
-	/// <summary>JUnit adaptation of an older test case SearchTest.</summary>
-	/// <author>  dmitrys@earthlink.net
-	/// </author>
-	/// <version>  $Id: TestSearch.java 150494 2004-09-06 22:29:22Z dnaber $
+	/// <summary>JUnit adaptation of an older test case SearchTest.
+	/// 
+	/// </summary>
+	/// <version>  $Id: TestSearch.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestSearch
+	public class TestSearch : LuceneTestCase
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
@@ -56,10 +57,10 @@ namespace Lucene.Net
 		/// single-file formats, even if the results are wrong.
 		/// </summary>
 		[Test]
-        public virtual void  TestSearch_Renamed_Method()
+		public virtual void  TestSearch_Renamed_Method()
 		{
-            System.IO.MemoryStream sw = new System.IO.MemoryStream();
-            System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
+			System.IO.MemoryStream sw = new System.IO.MemoryStream();
+			System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
 			DoTestSearch(pw, false);
 			pw.Close();
 			sw.Close();
@@ -125,8 +126,8 @@ namespace Lucene.Net
 		
 		internal static long Time(int year, int month, int day)
 		{
-            System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
-            return calendar.Ticks;
+			System.DateTime calendar = new System.DateTime(year, month, day, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+			return calendar.Ticks;
 		}
 	}
 }

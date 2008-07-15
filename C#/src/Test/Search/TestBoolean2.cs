@@ -19,14 +19,15 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search
 	/// This also tests the scoring order of BooleanQuery.
 	/// </summary>
 	[TestFixture]
-    public class TestBoolean2
+	public class TestBoolean2 : LuceneTestCase
 	{
 		[Serializable]
 		private class AnonymousClassDefaultSimilarity:DefaultSimilarity
@@ -68,8 +69,9 @@ namespace Lucene.Net.Search
 		public const System.String field = "field";
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			for (int i = 0; i < docFields.Length; i++)
@@ -86,8 +88,8 @@ namespace Lucene.Net.Search
 		
 		public virtual Query MakeQuery(System.String queryText)
 		{
-            Query q = (new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
-            return q;
+			Query q = (new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
+			return q;
 		}
 		
 		public virtual void  QueriesTest(System.String queryText, int[] expDocNrs)
@@ -97,11 +99,11 @@ namespace Lucene.Net.Search
 			try
 			{
 				Query query1 = MakeQuery(queryText);
-				BooleanQuery.SetUseScorer14(true);
+				BooleanQuery.SetAllowDocsOutOfOrder(true);
 				Hits hits1 = searcher.Search(query1);
 				
 				Query query2 = MakeQuery(queryText); // there should be no need to parse again...
-				BooleanQuery.SetUseScorer14(false);
+				BooleanQuery.SetAllowDocsOutOfOrder(false);
 				Hits hits2 = searcher.Search(query2);
 				
 				CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
@@ -109,12 +111,12 @@ namespace Lucene.Net.Search
 			finally
 			{
 				// even when a test fails.
-				BooleanQuery.SetUseScorer14(false);
+				BooleanQuery.SetAllowDocsOutOfOrder(false);
 			}
 		}
 		
 		[Test]
-        public virtual void  TestQueries01()
+		public virtual void  TestQueries01()
 		{
 			System.String queryText = "+w3 +xx";
 			int[] expDocNrs = new int[]{2, 3};
@@ -122,7 +124,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries02()
+		public virtual void  TestQueries02()
 		{
 			System.String queryText = "+w3 xx";
 			int[] expDocNrs = new int[]{2, 3, 1, 0};
@@ -130,7 +132,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries03()
+		public virtual void  TestQueries03()
 		{
 			System.String queryText = "w3 xx";
 			int[] expDocNrs = new int[]{2, 3, 1, 0};
@@ -138,7 +140,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries04()
+		public virtual void  TestQueries04()
 		{
 			System.String queryText = "w3 -xx";
 			int[] expDocNrs = new int[]{1, 0};
@@ -146,7 +148,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries05()
+		public virtual void  TestQueries05()
 		{
 			System.String queryText = "+w3 -xx";
 			int[] expDocNrs = new int[]{1, 0};
@@ -154,7 +156,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries06()
+		public virtual void  TestQueries06()
 		{
 			System.String queryText = "+w3 -xx -w5";
 			int[] expDocNrs = new int[]{1};
@@ -162,7 +164,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries07()
+		public virtual void  TestQueries07()
 		{
 			System.String queryText = "-w3 -xx -w5";
 			int[] expDocNrs = new int[]{};
@@ -170,7 +172,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries08()
+		public virtual void  TestQueries08()
 		{
 			System.String queryText = "+w3 xx -w5";
 			int[] expDocNrs = new int[]{2, 3, 1};
@@ -178,7 +180,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries09()
+		public virtual void  TestQueries09()
 		{
 			System.String queryText = "+w3 +xx +w2 zz";
 			int[] expDocNrs = new int[]{2, 3};
@@ -186,7 +188,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestQueries10()
+		public virtual void  TestQueries10()
 		{
 			System.String queryText = "+w3 +xx +w2 zz";
 			int[] expDocNrs = new int[]{2, 3};
@@ -195,7 +197,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestRandomQueries()
+		public virtual void  TestRandomQueries()
 		{
 			System.Random rnd = new System.Random((System.Int32) 0);
 			
@@ -216,15 +218,15 @@ namespace Lucene.Net.Search
 					// match up.
 					Sort sort = Sort.INDEXORDER;
 					
-					BooleanQuery.SetUseScorer14(false);
+					BooleanQuery.SetAllowDocsOutOfOrder(false);
 					
-                    QueryUtils.Check(q1, searcher);
+					QueryUtils.Check(q1, searcher);
 					
-                    Hits hits1 = searcher.Search(q1, sort);
+					Hits hits1 = searcher.Search(q1, sort);
 					if (hits1.Length() > 0)
 						hits1.Id(hits1.Length() - 1);
 					
-					BooleanQuery.SetUseScorer14(true);
+					BooleanQuery.SetAllowDocsOutOfOrder(true);
 					Hits hits2 = searcher.Search(q1, sort);
 					if (hits2.Length() > 0)
 						hits2.Id(hits1.Length() - 1);
@@ -235,7 +237,7 @@ namespace Lucene.Net.Search
 			finally
 			{
 				// even when a test fails.
-				BooleanQuery.SetUseScorer14(false);
+				BooleanQuery.SetAllowDocsOutOfOrder(false);
 			}
 			
 			// System.out.println("Total hits:"+tot);
@@ -280,7 +282,7 @@ namespace Lucene.Net.Search
 			}
 			if (cb != null)
 				cb.PostCreate(current);
-            ((System.Collections.ArrayList)current.Clauses()).TrimToSize();
+			((System.Collections.ArrayList)current.Clauses()).TrimToSize();
 			return current;
 		}
 	}

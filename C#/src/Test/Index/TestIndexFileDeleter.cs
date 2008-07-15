@@ -19,16 +19,17 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Hits = Lucene.Net.Search.Hits;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Hits = Lucene.Net.Search.Hits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
@@ -37,16 +38,17 @@ namespace Lucene.Net.Index
 	Verify we can read the pre-2.1 file format, do searches
 	against it, and add documents to it.*/
 	
-    [TestFixture]
-    public class TestIndexFileDeleter
+	[TestFixture]
+	public class TestIndexFileDeleter : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestDeleteLeftoverFiles()
 		{
 			
 			Directory dir = new RAMDirectory();
 			
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			writer.SetMaxBufferedDocs(10);
 			int i;
 			for (i = 0; i < 35; i++)
 			{
@@ -91,7 +93,7 @@ namespace Lucene.Net.Index
 			for (i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.Name.Equals("content"))
+				if (fi.Name_ForNUnitTest.Equals("content"))
 				{
 					contentFieldIndex = i;
 					break;
@@ -196,6 +198,8 @@ namespace Lucene.Net.Index
 				out_Renamed.WriteBytes(b, len);
 				remainder -= len;
 			}
+			in_Renamed.Close();
+			out_Renamed.Close();
 		}
 		
 		private void  AddDoc(IndexWriter writer, int id)
@@ -206,28 +210,28 @@ namespace Lucene.Net.Index
 			writer.AddDocument(doc);
 		}
 
-        public static bool ArrayEquals(System.Array array1, System.Array array2)
-        {
-            bool result = false;
-            if ((array1 == null) && (array2 == null))
-                result = true;
-            else if ((array1 != null) && (array2 != null))
-            {
-                if (array1.Length == array2.Length)
-                {
-                    int length = array1.Length;
-                    result = true;
-                    for (int index = 0; index < length; index++)
-                    {
-                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
-                        {
-                            result = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-    }
+		public static bool ArrayEquals(System.Array array1, System.Array array2)
+		{
+			bool result = false;
+			if ((array1 == null) && (array2 == null))
+				result = true;
+			else if ((array1 != null) && (array2 != null))
+			{
+				if (array1.Length == array2.Length)
+				{
+					int length = array1.Length;
+					result = true;
+					for (int index = 0; index < length; index++)
+					{
+						if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
+						{
+							result = false;
+							break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+	}
 }

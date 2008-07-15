@@ -19,24 +19,24 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Document boost unit test.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Revision: 150492 $
+	/// <version>  $Revision: 583534 $
 	/// </version>
 	[TestFixture]
-    public class TestDocBoost
+	public class TestDocBoost : LuceneTestCase
 	{
 		private class AnonymousClassHitCollector : HitCollector
 		{
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestDocBoost_Renamed_Method()
+		public virtual void  TestDocBoost_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);

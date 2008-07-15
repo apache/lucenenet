@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -32,20 +33,21 @@ namespace Lucene.Net.Search
 	/// <author>  goller
 	/// </author>
 	[TestFixture]
-    public class TestRangeQuery
+	public class TestRangeQuery : LuceneTestCase
 	{
 		
 		private int docCount = 0;
 		private RAMDirectory dir;
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			dir = new RAMDirectory();
 		}
 		
 		[Test]
-        public virtual void  TestExclusive()
+		public virtual void  TestExclusive()
 		{
 			Query query = new RangeQuery(new Term("content", "A"), new Term("content", "C"), false);
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
@@ -68,7 +70,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestInclusive()
+		public virtual void  TestInclusive()
 		{
 			Query query = new RangeQuery(new Term("content", "A"), new Term("content", "C"), true);
 			
@@ -92,7 +94,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestEqualsHashcode()
+		public virtual void  TestEqualsHashcode()
 		{
 			Query query = new RangeQuery(new Term("content", "A"), new Term("content", "C"), true);
 			query.SetBoost(1.0f);

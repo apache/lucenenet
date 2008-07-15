@@ -55,6 +55,13 @@ namespace Lucene.Net.Index
 		
 		internal IndexInput freqStream;
 		internal IndexInput proxStream;
+
+        // for testing
+        public IndexInput ProxStream_ForNUnitTest
+        {
+            get { return proxStream; }
+            set { proxStream = value; }
+        }
 		
 		// optionally used for the .nrm file shared by multiple norms
 		private IndexInput singleNormStream;
@@ -1039,7 +1046,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing only
-		internal virtual bool NormsClosed()
+		public /*internal*/ virtual bool NormsClosed()
 		{
 			if (singleNormStream != null)
 			{
@@ -1058,7 +1065,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing only
-		internal virtual bool NormsClosed(System.String field)
+		public /*internal*/ virtual bool NormsClosed(System.String field)
 		{
 			Norm norm = (Norm) norms[field];
 			return norm.refCount == 0;
@@ -1152,7 +1159,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the field infos of this segment </summary>
-		internal virtual FieldInfos FieldInfos()
+		public /*internal*/ virtual FieldInfos FieldInfos()
 		{
 			return fieldInfos;
 		}

@@ -19,10 +19,13 @@ using System;
 
 using NUnit.Framework;
 
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
 namespace Lucene.Net.Analysis
 {
+	
 	[TestFixture]
-	public class TestLengthFilter
+	public class TestLengthFilter : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestFilter()

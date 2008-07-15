@@ -19,36 +19,34 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using Query = Lucene.Net.Search.Query;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Searcher = Lucene.Net.Search.Searcher;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Hits = Lucene.Net.Search.Hits;
-using Fieldable = Lucene.Net.Documents.Fieldable;
-using Field = Lucene.Net.Documents.Field;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Query = Lucene.Net.Search.Query;
+using Searcher = Lucene.Net.Search.Searcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {
 	
 	/// <summary> Tests {@link Document} class.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Otis Gospodnetic
-	/// </author>
-	/// <version>  $Id: TestDocument.java 208846 2005-07-02 16:40:44Z dnaber $
+	/// <version>  $Id: TestDocument.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestDocument
+	public class TestDocument : LuceneTestCase
 	{
 		
 		internal System.String binaryVal = "this text will be stored as a byte array in the index";
 		internal System.String binaryVal2 = "this text will be also stored as a byte array in the index";
 		
-        [Test]
+		[Test]
 		public virtual void  TestBinaryField()
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
@@ -59,14 +57,14 @@ namespace Lucene.Net.Documents
 			doc.Add(stringFld);
 			doc.Add(binaryFld);
 
-            Assert.AreEqual(2, doc.GetFieldsCount());
+			Assert.AreEqual(2, doc.GetFieldsCount());
 			
 			Assert.IsTrue(binaryFld.IsBinary());
 			Assert.IsTrue(binaryFld.IsStored());
 			Assert.IsFalse(binaryFld.IsIndexed());
 			Assert.IsFalse(binaryFld.IsTokenized());
 			
-            System.String binaryTest = (new System.Text.ASCIIEncoding()).GetString(doc.GetBinaryValue("binary"));
+			System.String binaryTest = (new System.Text.ASCIIEncoding()).GetString(doc.GetBinaryValue("binary"));
 			Assert.IsTrue(binaryTest.Equals(binaryVal));
 			
 			System.String stringTest = doc.Get("string");
@@ -74,7 +72,7 @@ namespace Lucene.Net.Documents
 			
 			doc.Add(binaryFld2);
 			
-            Assert.AreEqual(3, doc.GetFieldsCount());
+			Assert.AreEqual(3, doc.GetFieldsCount());
 			
 			byte[][] binaryTests = doc.GetBinaryValues("binary");
 			
@@ -89,10 +87,10 @@ namespace Lucene.Net.Documents
 			Assert.IsTrue(binaryTest2.Equals(binaryVal2));
 			
 			doc.RemoveField("string");
-            Assert.AreEqual(2, doc.GetFieldsCount());
+			Assert.AreEqual(2, doc.GetFieldsCount());
 			
 			doc.RemoveFields("binary");
-            Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.GetFieldsCount());
 		}
 		
 		/// <summary> Tests {@link Document#RemoveField(String)} method for a brand new Document
@@ -104,29 +102,29 @@ namespace Lucene.Net.Documents
 		public virtual void  TestRemoveForNewDocument()
 		{
 			Lucene.Net.Documents.Document doc = MakeDocumentWithFields();
-            Assert.AreEqual(8, doc.GetFieldsCount());
+			Assert.AreEqual(8, doc.GetFieldsCount());
 			doc.RemoveFields("keyword");
-            Assert.AreEqual(6, doc.GetFieldsCount());
+			Assert.AreEqual(6, doc.GetFieldsCount());
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
 			doc.RemoveFields("keyword"); // removing a field more than once
-            Assert.AreEqual(6, doc.GetFieldsCount());
+			Assert.AreEqual(6, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            Assert.AreEqual(5, doc.GetFieldsCount());
+			Assert.AreEqual(5, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveField("text");
-            Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveField("doesnotexists"); // removing non-existing fields is siltenlty ignored
-            Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.GetFieldsCount());
 			doc.RemoveFields("unindexed");
 			Assert.AreEqual(2, doc.GetFieldsCount());
 			doc.RemoveFields("unstored");
-            Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.GetFieldsCount());
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
-            Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.GetFieldsCount());
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestConstructorExceptions()
 		{
 			new Field("name", "value", Field.Store.YES, Field.Index.NO); // okay
@@ -136,7 +134,7 @@ namespace Lucene.Net.Documents
 				new Field("name", "value", Field.Store.NO, Field.Index.NO);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// expected exception
 			}
@@ -146,7 +144,7 @@ namespace Lucene.Net.Documents
 				new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// expected exception
 			}
@@ -158,7 +156,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-        public virtual void  TestGetValuesForNewDocument()
+		public virtual void  TestGetValuesForNewDocument()
 		{
 			DoAssert(MakeDocumentWithFields(), false);
 		}
@@ -169,7 +167,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-        public virtual void  TestGetValuesForIndexedDocument()
+		public virtual void  TestGetValuesForIndexedDocument()
 		{
 			RAMDirectory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
@@ -233,6 +231,50 @@ namespace Lucene.Net.Documents
 				Assert.IsTrue(unstoredFieldValues[0].Equals("test1"));
 				Assert.IsTrue(unstoredFieldValues[1].Equals("test2"));
 			}
+		}
+		
+		[Test]
+		public virtual void  TestFieldSetValue()
+		{
+			
+			Field field = new Field("id", "id1", Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Document doc = new Document();
+			doc.Add(field);
+			doc.Add(new Field("keyword", "test", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			
+			RAMDirectory dir = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			writer.AddDocument(doc);
+			field.SetValue("id2");
+			writer.AddDocument(doc);
+			field.SetValue("id3");
+			writer.AddDocument(doc);
+			writer.Close();
+			
+			Searcher searcher = new IndexSearcher(dir);
+			
+			Query query = new TermQuery(new Term("keyword", "test"));
+			
+			// ensure that queries return expected results without DateFilter first
+			Hits hits = searcher.Search(query);
+			Assert.AreEqual(3, hits.Length());
+			int result = 0;
+			for (int i = 0; i < 3; i++)
+			{
+				Document doc2 = hits.Doc(i);
+				Field f = doc2.GetField("id");
+				if (f.StringValue().Equals("id1"))
+					result |= 1;
+				else if (f.StringValue().Equals("id2"))
+					result |= 2;
+				else if (f.StringValue().Equals("id3"))
+					result |= 4;
+				else
+					Assert.Fail("unexpected id field");
+			}
+			searcher.Close();
+			dir.Close();
+			Assert.AreEqual(7, result, "did not see all IDs");
 		}
 	}
 }

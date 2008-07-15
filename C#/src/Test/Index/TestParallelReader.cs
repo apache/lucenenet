@@ -19,10 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MapFieldSelector = Lucene.Net.Documents.MapFieldSelector;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -30,27 +33,27 @@ using Query = Lucene.Net.Search.Query;
 using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	[TestFixture]
-	public class TestParallelReader
+	public class TestParallelReader : LuceneTestCase
 	{
 		
 		private Searcher parallel;
 		private Searcher single;
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			single = Single();
 			parallel = Parallel();
 		}
 		
 		[Test]
-        public virtual void  TestQueries()
+		public virtual void  TestQueries()
 		{
 			QueryTest(new TermQuery(new Term("f1", "v1")));
 			QueryTest(new TermQuery(new Term("f1", "v2")));
@@ -68,7 +71,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestFieldNames()
+		public virtual void  TestFieldNames()
 		{
 			Directory dir1 = GetDir1();
 			Directory dir2 = GetDir2();
@@ -83,37 +86,37 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(CollectionContains(fieldNames, "f4"));
 		}
 		
-        [Test]
-        public virtual void  TestDocument()
-        {
-            Directory dir1 = GetDir1();
-            Directory dir2 = GetDir2();
-            ParallelReader pr = new ParallelReader();
-            pr.Add(IndexReader.Open(dir1));
-            pr.Add(IndexReader.Open(dir2));
+		[Test]
+		public virtual void  TestDocument()
+		{
+			Directory dir1 = GetDir1();
+			Directory dir2 = GetDir2();
+			ParallelReader pr = new ParallelReader();
+			pr.Add(IndexReader.Open(dir1));
+			pr.Add(IndexReader.Open(dir2));
 			
-            Lucene.Net.Documents.Document doc11 = pr.Document(0, new MapFieldSelector(new System.String[]{"f1"}));
-            Lucene.Net.Documents.Document doc24 = pr.Document(1, new MapFieldSelector(new System.Collections.ArrayList(new System.String[]{"f4"})));
-            Lucene.Net.Documents.Document doc223 = pr.Document(1, new MapFieldSelector(new System.String[]{"f2", "f3"}));
+			Lucene.Net.Documents.Document doc11 = pr.Document(0, new MapFieldSelector(new System.String[]{"f1"}));
+			Lucene.Net.Documents.Document doc24 = pr.Document(1, new MapFieldSelector(new System.Collections.ArrayList(new System.String[]{"f4"})));
+			Lucene.Net.Documents.Document doc223 = pr.Document(1, new MapFieldSelector(new System.String[]{"f2", "f3"}));
 			
-            Assert.AreEqual(1, doc11.GetFields().Count);
-            Assert.AreEqual(1, doc24.GetFields().Count);
-            Assert.AreEqual(2, doc223.GetFields().Count);
+			Assert.AreEqual(1, doc11.GetFields().Count);
+			Assert.AreEqual(1, doc24.GetFields().Count);
+			Assert.AreEqual(2, doc223.GetFields().Count);
 			
-            Assert.AreEqual("v1", doc11.Get("f1"));
-            Assert.AreEqual("v2", doc24.Get("f4"));
-            Assert.AreEqual("v2", doc223.Get("f2"));
-            Assert.AreEqual("v2", doc223.Get("f3"));
-        }
+			Assert.AreEqual("v1", doc11.Get("f1"));
+			Assert.AreEqual("v2", doc24.Get("f4"));
+			Assert.AreEqual("v2", doc223.Get("f2"));
+			Assert.AreEqual("v2", doc223.Get("f3"));
+		}
 		
-        [Test]
-        public virtual void  TestIncompatibleIndexes()
+		[Test]
+		public virtual void  TestIncompatibleIndexes()
 		{
 			// two documents:
 			Directory dir1 = GetDir1();
 			
 			// one document only:
-			Directory dir2 = new RAMDirectory();
+			Directory dir2 = new MockRAMDirectory();
 			IndexWriter w2 = new IndexWriter(dir2, new StandardAnalyzer(), true);
 			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
 			d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.TOKENIZED));
@@ -127,11 +130,88 @@ namespace Lucene.Net.Index
 				pr.Add(IndexReader.Open(dir2));
 				Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// expected exception
 			}
 		}
+		
+		[Test]
+		public virtual void  TestIsCurrent()
+		{
+			Directory dir1 = GetDir1();
+			Directory dir2 = GetDir1();
+			ParallelReader pr = new ParallelReader();
+			pr.Add(IndexReader.Open(dir1));
+			pr.Add(IndexReader.Open(dir2));
+			
+			Assert.IsTrue(pr.IsCurrent());
+			IndexReader modifier = IndexReader.Open(dir1);
+			modifier.SetNorm(0, "f1", 100);
+			modifier.Close();
+			
+			// one of the two IndexReaders which ParallelReader is using
+			// is not current anymore
+			Assert.IsFalse(pr.IsCurrent());
+			
+			modifier = IndexReader.Open(dir2);
+			modifier.SetNorm(0, "f3", 100);
+			modifier.Close();
+			
+			// now both are not current anymore
+			Assert.IsFalse(pr.IsCurrent());
+		}
+		
+		[Test]
+		public virtual void  TestIsOptimized()
+		{
+			Directory dir1 = GetDir1();
+			Directory dir2 = GetDir1();
+			
+			// add another document to ensure that the indexes are not optimized
+			IndexWriter modifier = new IndexWriter(dir1, new StandardAnalyzer());
+			Document d = new Document();
+			d.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			modifier.AddDocument(d);
+			modifier.Close();
+			
+			modifier = new IndexWriter(dir2, new StandardAnalyzer());
+			d = new Document();
+			d.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.TOKENIZED));
+			modifier.AddDocument(d);
+			modifier.Close();
+			
+			
+			ParallelReader pr = new ParallelReader();
+			pr.Add(IndexReader.Open(dir1));
+			pr.Add(IndexReader.Open(dir2));
+			Assert.IsFalse(pr.IsOptimized());
+			pr.Close();
+			
+			modifier = new IndexWriter(dir1, new StandardAnalyzer());
+			modifier.Optimize();
+			modifier.Close();
+			
+			pr = new ParallelReader();
+			pr.Add(IndexReader.Open(dir1));
+			pr.Add(IndexReader.Open(dir2));
+			// just one of the two indexes are optimized
+			Assert.IsFalse(pr.IsOptimized());
+			pr.Close();
+			
+			
+			modifier = new IndexWriter(dir2, new StandardAnalyzer());
+			modifier.Optimize();
+			modifier.Close();
+			
+			pr = new ParallelReader();
+			pr.Add(IndexReader.Open(dir1));
+			pr.Add(IndexReader.Open(dir2));
+			// now both indexes are optimized
+			Assert.IsTrue(pr.IsOptimized());
+			pr.Close();
+		}
+		
 		
 		private void  QueryTest(Query query)
 		{
@@ -150,10 +230,10 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		// Fiels 1-4 indexed together:
+		// Fields 1-4 indexed together:
 		private Searcher Single()
 		{
-			Directory dir = new RAMDirectory();
+			Directory dir = new MockRAMDirectory();
 			IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), true);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
 			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
@@ -185,7 +265,7 @@ namespace Lucene.Net.Index
 		
 		private Directory GetDir1()
 		{
-			Directory dir1 = new RAMDirectory();
+			Directory dir1 = new MockRAMDirectory();
 			IndexWriter w1 = new IndexWriter(dir1, new StandardAnalyzer(), true);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
 			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
@@ -215,16 +295,16 @@ namespace Lucene.Net.Index
 			return dir2;
 		}
 
-        public static bool CollectionContains(System.Collections.ICollection col, System.String val)
-        {
-            for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
-            {
-                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                System.String s = fi.Key.ToString();
-                if (s == val)
-                    return true;
-            }
-            return false;
-        }
-    }
+		public static bool CollectionContains(System.Collections.ICollection col, System.String val)
+		{
+			for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
+			{
+				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+				System.String s = fi.Key.ToString();
+				if (s == val)
+					return true;
+			}
+			return false;
+		}
+	}
 }

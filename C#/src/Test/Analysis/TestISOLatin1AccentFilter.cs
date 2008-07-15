@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,15 @@ using System;
 
 using NUnit.Framework;
 
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
 namespace Lucene.Net.Analysis
 {
+	
 	[TestFixture]
-	public class TestISOLatin1AccentFilter
+	public class TestISOLatin1AccentFilter : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestU()
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ð Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ"));

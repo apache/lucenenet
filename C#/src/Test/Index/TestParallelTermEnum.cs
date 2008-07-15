@@ -19,25 +19,28 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
 using Store = Lucene.Net.Documents.Field.Store;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-    [TestFixture]
-    public class TestParallelTermEnum
+	[TestFixture]
+	public class TestParallelTermEnum : LuceneTestCase
 	{
 		private IndexReader ir1;
 		private IndexReader ir2;
 		
-        [SetUp]
-		public virtual void  SetUp()
+		[SetUp]
+		public override void SetUp()
 		{
+			base.SetUp();
+			base.SetUp();
 			Lucene.Net.Documents.Document doc;
 			
 			RAMDirectory rd1 = new RAMDirectory();
@@ -65,14 +68,17 @@ namespace Lucene.Net.Index
 			this.ir2 = IndexReader.Open(rd2);
 		}
 		
-        [TearDown]
-		public virtual void  TearDown()
+		[TearDown]
+		public override void TearDown()
 		{
+			base.TearDown();
+			base.TearDown();
+			
 			ir1.Close();
 			ir2.Close();
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  Test1()
 		{
 			ParallelReader pr = new ParallelReader();

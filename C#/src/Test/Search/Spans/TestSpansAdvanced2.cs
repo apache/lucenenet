@@ -19,10 +19,10 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
 
@@ -36,12 +36,13 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	/// <author>  Reece Wilton
 	/// </author>
+	[TestFixture]
 	public class TestSpansAdvanced2:TestSpansAdvanced
 	{
 		internal IndexSearcher searcher2;
 		/// <summary> Initializes the tests by adding documents to the index.</summary>
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
 			base.SetUp();
 			
@@ -53,16 +54,16 @@ namespace Lucene.Net.Search.Spans
 			AddDocument(writer, "D", "Should we, should we, should we.");
 			writer.Close();
 			
-            // re-open the searcher since we added more docs
-            searcher2 = new IndexSearcher(mDirectory);
-        }
+			// re-open the searcher since we added more docs
+			searcher2 = new IndexSearcher(mDirectory);
+		}
 		
 		/// <summary> Verifies that the index has the correct number of documents.
 		/// 
 		/// </summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestVerifyIndex()
+		public virtual void  TestVerifyIndex()
 		{
 			IndexReader reader = IndexReader.Open(mDirectory);
 			Assert.AreEqual(8, reader.NumDocs());
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search.Spans
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestSingleSpanQuery()
+		public virtual void  TestSingleSpanQuery()
 		{
 			
 			Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
@@ -88,7 +89,7 @@ namespace Lucene.Net.Search.Spans
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestMultipleDifferentSpanQueries()
+		public virtual void  TestMultipleDifferentSpanQueries()
 		{
 			
 			Query spanQuery1 = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
@@ -97,10 +98,10 @@ namespace Lucene.Net.Search.Spans
 			query.Add(spanQuery1, BooleanClause.Occur.MUST);
 			query.Add(spanQuery2, BooleanClause.Occur.MUST);
 			System.String[] expectedIds = new System.String[]{"D", "A"};
-            // these values were pre LUCENE-413
-            // float[] expectedScores = new float[]{0.93163157f, 0.20698164f};
-            float[] expectedScores = new float[]{1.0191123f, 0.93163157f};
-            AssertHits(searcher2, query, "multiple different span queries", expectedIds, expectedScores);
+			// these values were pre LUCENE-413
+			// float[] expectedScores = new float[]{0.93163157f, 0.20698164f};
+			float[] expectedScores = new float[]{1.0191123f, 0.93163157f};
+			AssertHits(searcher2, query, "multiple different span queries", expectedIds, expectedScores);
 		}
 		
 		/// <summary> Tests two span queries.
@@ -108,7 +109,7 @@ namespace Lucene.Net.Search.Spans
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public override void  TestBooleanQueryWithSpanQueries()
+		public override void  TestBooleanQueryWithSpanQueries()
 		{
 			
 			DoTestBooleanQueryWithSpanQueries(searcher2, 0.73500174f);

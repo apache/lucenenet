@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+// {{Aroush-2.3.1}} remove this file from SVN
+/*
 using System;
 
 using NUnit.Framework;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Index
 		e.printStackTrace();
 		Assert.IsTrue(false);
 		}
-		}  */
+		}  *
 		
 		[Test]
         public virtual void  TestWriter()
@@ -230,3 +231,4 @@ namespace Lucene.Net.Index
 		}
 	}
 }
+*/

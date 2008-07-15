@@ -19,25 +19,25 @@ using System;
 
 using NUnit.Framework;
 
-using Term = Lucene.Net.Index.Term;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Similarity unit test.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Revision: 150497 $
+	/// <version>  $Revision: 583534 $
 	/// </version>
 	[TestFixture]
-    public class TestSimilarity
+	public class TestSimilarity : LuceneTestCase
 	{
 		private class AnonymousClassHitCollector : HitCollector
 		{
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        private class AnonymousClassHitCollector1 : HitCollector
+		private class AnonymousClassHitCollector1 : HitCollector
 		{
 			public AnonymousClassHitCollector1(TestSimilarity enclosingInstance)
 			{
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        private class AnonymousClassHitCollector2 : HitCollector
+		private class AnonymousClassHitCollector2 : HitCollector
 		{
 			public AnonymousClassHitCollector2(TestSimilarity enclosingInstance)
 			{
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        private class AnonymousClassHitCollector3 : HitCollector
+		private class AnonymousClassHitCollector3 : HitCollector
 		{
 			public AnonymousClassHitCollector3(TestSimilarity enclosingInstance)
 			{
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestSimilarity_Renamed_Method()
+		public virtual void  TestSimilarity_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);

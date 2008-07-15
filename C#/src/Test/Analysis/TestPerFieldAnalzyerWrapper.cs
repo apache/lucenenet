@@ -19,12 +19,15 @@ using System;
 
 using NUnit.Framework;
 
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
 namespace Lucene.Net.Analysis
 {
-    [TestFixture]	
-	public class TestPerFieldAnalzyerWrapper
+	
+	[TestFixture]	
+	public class TestPerFieldAnalzyerWrapper : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestPerField()
 		{
 			System.String text = "Qwerty";

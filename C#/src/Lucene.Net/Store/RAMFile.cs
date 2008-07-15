@@ -35,7 +35,7 @@ namespace Lucene.Net.Store
 		private long lastModified = System.DateTime.Now.Ticks;
 		
 		// File used as buffer, in no RAMDirectory
-		internal RAMFile()
+		protected internal RAMFile()
 		{
 		}
 		
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> allocated buffer.
 		/// </returns>
-		internal virtual byte[] NewBuffer(int size)
+		protected internal virtual byte[] NewBuffer(int size)
 		{
 			return new byte[size];
 		}

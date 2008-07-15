@@ -19,13 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
-using Token = Lucene.Net.Analysis.Token;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using Token = Lucene.Net.Analysis.Token;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Index
 {
@@ -34,6 +35,7 @@ namespace Lucene.Net.Index
 	/// </author>
 	/// <version>  $Id$
 	/// </version>
+	
 	class RepeatingTokenStream : TokenStream
 	{
 		public int num;
@@ -51,7 +53,7 @@ namespace Lucene.Net.Index
 	}
 	
 	[TestFixture]
-	public class TestTermdocPerf
+	public class TestTermdocPerf : LuceneTestCase
 	{
 		private class AnonymousClassAnalyzer:Analyzer
 		{
@@ -144,7 +146,7 @@ namespace Lucene.Net.Index
 			return ret;
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestTermDocPerf()
 		{
 			// performance test for 10% of documents containing a term

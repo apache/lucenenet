@@ -19,15 +19,16 @@ using System;
 
 using NUnit.Framework;
 
-using English = Lucene.Net.Util.English;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
+using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -46,13 +47,14 @@ namespace Lucene.Net.Search.Spans
 	/// <author>  Doug Cutting
 	/// </author>
 	[TestFixture]
-    public class TestBasics
+	public class TestBasics : LuceneTestCase
 	{
 		private IndexSearcher searcher;
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
 			//writer.infoStream = System.out;
@@ -69,21 +71,21 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestTerm()
+		public virtual void  TestTerm()
 		{
 			Query query = new TermQuery(new Term("field", "seventy"));
 			CheckHits(query, new int[]{70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979});
 		}
 		
 		[Test]
-        public virtual void  TestTerm2()
+		public virtual void  TestTerm2()
 		{
 			Query query = new TermQuery(new Term("field", "seventish"));
 			CheckHits(query, new int[]{});
 		}
 		
 		[Test]
-        public virtual void  TestPhrase()
+		public virtual void  TestPhrase()
 		{
 			PhraseQuery query = new PhraseQuery();
 			query.Add(new Term("field", "seventy"));
@@ -92,7 +94,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestPhrase2()
+		public virtual void  TestPhrase2()
 		{
 			PhraseQuery query = new PhraseQuery();
 			query.Add(new Term("field", "seventish"));
@@ -101,7 +103,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestBoolean()
+		public virtual void  TestBoolean()
 		{
 			BooleanQuery query = new BooleanQuery();
 			query.Add(new TermQuery(new Term("field", "seventy")), BooleanClause.Occur.MUST);
@@ -110,7 +112,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestBoolean2()
+		public virtual void  TestBoolean2()
 		{
 			BooleanQuery query = new BooleanQuery();
 			query.Add(new TermQuery(new Term("field", "sevento")), BooleanClause.Occur.MUST);
@@ -119,7 +121,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearExact()
+		public virtual void  TestSpanNearExact()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "seventy"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "seven"));
@@ -129,23 +131,24 @@ namespace Lucene.Net.Search.Spans
 			Assert.IsTrue(searcher.Explain(query, 77).GetValue() > 0.0f);
 			Assert.IsTrue(searcher.Explain(query, 977).GetValue() > 0.0f);
 			
-            QueryUtils.Check(term1);
-            QueryUtils.Check(term2);
-            QueryUtils.CheckUnequal(term1, term2);
-        }
+			QueryUtils.Check(term1);
+			QueryUtils.Check(term2);
+			QueryUtils.CheckUnequal(term1, term2);
+		}
 		
 		[Test]
-        public virtual void  TestSpanNearUnordered()
+		public virtual void  TestSpanNearUnordered()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "nine"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "six"));
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, false);
-			
-			CheckHits(query, new int[]{609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996});
+
+			//CheckHits(query, new int[] { 609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996 });
+			CheckHits(query, new int[] { 609, 906, 629, 639, 649, 659, 669, 679, 689, 699, 926, 936, 946, 956, 966, 976, 986, 996 });
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered()
+		public virtual void  TestSpanNearOrdered()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "nine"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "six"));
@@ -154,7 +157,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanNot()
+		public virtual void  TestSpanNot()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
@@ -168,81 +171,81 @@ namespace Lucene.Net.Search.Spans
 			Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
 		}
 		
-        [Test]
-        public virtual void  TestSpanWithMultipleNotSingle()
-        {
-            SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
-            SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
-            SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
-            SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
+		[Test]
+		public virtual void  TestSpanWithMultipleNotSingle()
+		{
+			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
+			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
+			SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
+			SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
 			
-            SpanOrQuery or = new SpanOrQuery(new SpanQuery[]{term3});
+			SpanOrQuery or = new SpanOrQuery(new SpanQuery[]{term3});
 			
-            SpanNotQuery query = new SpanNotQuery(near, or);
+			SpanNotQuery query = new SpanNotQuery(near, or);
 			
-            CheckHits(query, new int[]{801, 821, 831, 851, 861, 871, 881, 891});
+			CheckHits(query, new int[]{801, 821, 831, 851, 861, 871, 881, 891});
 			
-            Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
-            Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
-        }
+			Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
+			Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
+		}
 		
-        [Test]
-        public virtual void  TestSpanWithMultipleNotMany()
-        {
-            SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
-            SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
-            SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
-            SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
-            SpanTermQuery term4 = new SpanTermQuery(new Term("field", "sixty"));
-            SpanTermQuery term5 = new SpanTermQuery(new Term("field", "eighty"));
+		[Test]
+		public virtual void  TestSpanWithMultipleNotMany()
+		{
+			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
+			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
+			SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
+			SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
+			SpanTermQuery term4 = new SpanTermQuery(new Term("field", "sixty"));
+			SpanTermQuery term5 = new SpanTermQuery(new Term("field", "eighty"));
 			
-            SpanOrQuery or = new SpanOrQuery(new SpanQuery[]{term3, term4, term5});
+			SpanOrQuery or = new SpanOrQuery(new SpanQuery[]{term3, term4, term5});
 			
-            SpanNotQuery query = new SpanNotQuery(near, or);
+			SpanNotQuery query = new SpanNotQuery(near, or);
 			
-            CheckHits(query, new int[]{801, 821, 831, 851, 871, 891});
+			CheckHits(query, new int[]{801, 821, 831, 851, 871, 891});
 			
-            Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
-            Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
-        }
+			Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
+			Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
+		}
 		
-        [Test]
-        public virtual void  TestNpeInSpanNearWithSpanNot()
-        {
-            SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
-            SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
-            SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
-            SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
-            SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
-            SpanNearQuery exclude = new SpanNearQuery(new SpanQuery[]{hun, term3}, 1, true);
+		[Test]
+		public virtual void  TestNpeInSpanNearWithSpanNot()
+		{
+			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
+			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
+			SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, true);
+			SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
+			SpanTermQuery term3 = new SpanTermQuery(new Term("field", "forty"));
+			SpanNearQuery exclude = new SpanNearQuery(new SpanQuery[]{hun, term3}, 1, true);
 			
-            SpanNotQuery query = new SpanNotQuery(near, exclude);
+			SpanNotQuery query = new SpanNotQuery(near, exclude);
 			
-            CheckHits(query, new int[]{801, 821, 831, 851, 861, 871, 881, 891});
+			CheckHits(query, new int[]{801, 821, 831, 851, 861, 871, 881, 891});
 			
-            Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
-            Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
-        }
+			Assert.IsTrue(searcher.Explain(query, 801).GetValue() > 0.0f);
+			Assert.IsTrue(searcher.Explain(query, 891).GetValue() > 0.0f);
+		}
 		
 		
-        [Test]
-        public virtual void  TestNpeInSpanNearInSpanFirstInSpanNot()
-        {
-            int n = 5;
-            SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
-            SpanTermQuery term40 = new SpanTermQuery(new Term("field", "forty"));
-            SpanTermQuery term40c = (SpanTermQuery) term40.Clone();
+		[Test]
+		public virtual void  TestNpeInSpanNearInSpanFirstInSpanNot()
+		{
+			int n = 5;
+			SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
+			SpanTermQuery term40 = new SpanTermQuery(new Term("field", "forty"));
+			SpanTermQuery term40c = (SpanTermQuery) term40.Clone();
 			
-            SpanFirstQuery include = new SpanFirstQuery(term40, n);
-            SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{hun, term40c}, n - 1, true);
-            SpanFirstQuery exclude = new SpanFirstQuery(near, n - 1);
-            SpanNotQuery q = new SpanNotQuery(include, exclude);
+			SpanFirstQuery include = new SpanFirstQuery(term40, n);
+			SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{hun, term40c}, n - 1, true);
+			SpanFirstQuery exclude = new SpanFirstQuery(near, n - 1);
+			SpanNotQuery q = new SpanNotQuery(include, exclude);
 			
-            CheckHits(q, new int[]{40, 41, 42, 43, 44, 45, 46, 47, 48, 49});
-        }
+			CheckHits(q, new int[]{40, 41, 42, 43, 44, 45, 46, 47, 48, 49});
+		}
 		
-        [Test]
-        public virtual void  TestSpanFirst()
+		[Test]
+		public virtual void  TestSpanFirst()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
 			SpanFirstQuery query = new SpanFirstQuery(term1, 1);
@@ -254,7 +257,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanOr()
+		public virtual void  TestSpanOr()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "thirty"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "three"));
@@ -272,7 +275,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanExactNested()
+		public virtual void  TestSpanExactNested()
 		{
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "three"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "hundred"));
@@ -289,7 +292,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOr()
+		public virtual void  TestSpanNearOr()
 		{
 			
 			SpanTermQuery t1 = new SpanTermQuery(new Term("field", "six"));
@@ -302,12 +305,13 @@ namespace Lucene.Net.Search.Spans
 			SpanOrQuery to2 = new SpanOrQuery(new SpanQuery[]{t5, t6});
 			
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{to1, to2}, 10, true);
-			
-			CheckHits(query, new int[]{606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797});
+
+			//CheckHits(query, new int[] { 606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
+			CheckHits(query, new int[] { 606, 607, 706, 707, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
 		}
 		
 		[Test]
-        public virtual void  TestSpanComplex1()
+		public virtual void  TestSpanComplex1()
 		{
 			
 			SpanTermQuery t1 = new SpanTermQuery(new Term("field", "six"));
@@ -325,14 +329,15 @@ namespace Lucene.Net.Search.Spans
 			SpanOrQuery to2 = new SpanOrQuery(new SpanQuery[]{t5, t6});
 			
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{to1, to2}, 100, true);
-			
-			CheckHits(query, new int[]{606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797});
+
+			//CheckHits(query, new int[] { 606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
+			CheckHits(query, new int[] { 606, 607, 706, 707, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
 		}
 		
 		
 		private void  CheckHits(Query query, int[] results)
 		{
-            Lucene.Net.Search.CheckHits.CheckHits_Renamed(query, "field", searcher, results);
-        }
+			Lucene.Net.Search.CheckHits.CheckHits_Renamed(query, "field", searcher, results);
+		}
 	}
 }

@@ -19,70 +19,64 @@ using System;
 
 using NUnit.Framework;
 
+using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Document = Lucene.Net.Documents.Document;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestSegmentMerger
+	public class TestSegmentMerger : LuceneTestCase
 	{
 		//The variables for the new merged segment
 		private Directory mergedDir = new RAMDirectory();
 		private System.String mergedSegment = "test";
 		//First segment to be merged
 		private Directory merge1Dir = new RAMDirectory();
-		private Lucene.Net.Documents.Document doc1 = new Lucene.Net.Documents.Document();
-		private System.String merge1Segment = "test-1";
+		private Document doc1 = new Document();
 		private SegmentReader reader1 = null;
 		//Second Segment to be merged
 		private Directory merge2Dir = new RAMDirectory();
-		private Lucene.Net.Documents.Document doc2 = new Lucene.Net.Documents.Document();
-		private System.String merge2Segment = "test-2";
+		private Document doc2 = new Document();
 		private SegmentReader reader2 = null;
-		
-		
-        // public TestSegmentMerger(System.String s)
-        // {
-        // }
-		
-        // This is needed if for the test to pass and mimic what happens wiht JUnit
-        // For some reason, JUnit is creating a new member variable for each sub-test
-        // but NUnit is not -- who is wrong/right, I don't know.
-        private void SetUpInternal()        // {{Aroush-1.9}} See note above
-        {
-		    //The variables for the new merged segment
-		    mergedDir = new RAMDirectory();
-		    mergedSegment = "test";
-		    //First segment to be merged
-		    merge1Dir = new RAMDirectory();
-		    doc1 = new Lucene.Net.Documents.Document();
-		    merge1Segment = "test-1";
-		    reader1 = null;
-		    //Second Segment to be merged
-		    merge2Dir = new RAMDirectory();
-		    doc2 = new Lucene.Net.Documents.Document();
-		    merge2Segment = "test-2";
-		    reader2 = null;
-        }
+
+		// This is needed if for the test to pass and mimic what happens wiht JUnit
+		// For some reason, JUnit is creating a new member variable for each sub-test
+		// but NUnit is not -- who is wrong/right, I don't know.
+		private void SetUpInternal()        // {{Aroush-1.9}} See note above
+		{
+			//The variables for the new merged segment
+			mergedDir = new RAMDirectory();
+			mergedSegment = "test";
+			//First segment to be merged
+			merge1Dir = new RAMDirectory();
+			doc1 = new Lucene.Net.Documents.Document();
+			//merge1Segment = "test-1";
+			reader1 = null;
+			//Second Segment to be merged
+			merge2Dir = new RAMDirectory();
+			doc2 = new Lucene.Net.Documents.Document();
+			//merge2Segment = "test-2";
+			reader2 = null;
+		}
 
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
-            SetUpInternal();    // We need this for NUnit; see note above
-
+			base.SetUp();
+			SetUpInternal();
 			DocHelper.SetupDoc(doc1);
-			DocHelper.WriteDoc(merge1Dir, merge1Segment, doc1);
+			SegmentInfo info1 = DocHelper.WriteDoc(merge1Dir, doc1);
 			DocHelper.SetupDoc(doc2);
-			DocHelper.WriteDoc(merge2Dir, merge2Segment, doc2);
-			reader1 = SegmentReader.Get(new SegmentInfo(merge1Segment, 1, merge1Dir));
-			reader2 = SegmentReader.Get(new SegmentInfo(merge2Segment, 1, merge2Dir));
+			SegmentInfo info2 = DocHelper.WriteDoc(merge2Dir, doc2);
+			reader1 = SegmentReader.Get(info1);
+			reader2 = SegmentReader.Get(info2);
 		}
 		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			Assert.IsTrue(mergedDir != null);
 			Assert.IsTrue(merge1Dir != null);
@@ -92,7 +86,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestMerge()
+		public virtual void  TestMerge()
 		{
 			SegmentMerger merger = new SegmentMerger(mergedDir, mergedSegment);
 			merger.Add(reader1);

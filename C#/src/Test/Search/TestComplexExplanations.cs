@@ -21,15 +21,6 @@ using NUnit.Framework;
 
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
 using Lucene.Net.Search.Spans;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
 
 namespace Lucene.Net.Search
 {
@@ -38,29 +29,12 @@ namespace Lucene.Net.Search
 	/// on the assumption that if the explanations work out right for them,
 	/// they should work for anything.
 	/// </summary>
-    [TestFixture]
-    public class TestComplexExplanations : TestExplanations
+	[TestFixture]
+	public class TestComplexExplanations : TestExplanations
 	{
 		[Serializable]
 		private class AnonymousClassDefaultSimilarity : DefaultSimilarity
 		{
-			public AnonymousClassDefaultSimilarity(TestComplexExplanations enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(TestComplexExplanations enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestComplexExplanations enclosingInstance;
-			public TestComplexExplanations Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
 			public override float QueryNorm(float sumOfSquaredWeights)
 			{
 				return 1.0f; // / (float) Math.sqrt(1.0f + sumOfSquaredWeights);
@@ -71,16 +45,21 @@ namespace Lucene.Net.Search
 		/// nice with boosts of 0.0
 		/// </summary>
 		[SetUp]
-        public override void  SetUp()
+		public override void  SetUp()
 		{
-            if (searcher == null)
-                base.SetUp();
-			searcher.SetSimilarity(new AnonymousClassDefaultSimilarity(this));
+			base.SetUp();
+			searcher.SetSimilarity(new AnonymousClassDefaultSimilarity());
+		}
+		
+		// must be static for weight serialization tests 
+		private static DefaultSimilarity CreateQnorm1Similarity()
+		{
+			return new AnonymousClassDefaultSimilarity();
 		}
 		
 		
-        [Test]
-        public virtual void  Test1()
+		[Test]
+		public virtual void  Test1()
 		{
 			
 			BooleanQuery q = new BooleanQuery();
@@ -122,7 +101,7 @@ namespace Lucene.Net.Search
 			Qtest(q, new int[]{0, 1, 2});
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  Test2()
 		{
 			
@@ -175,36 +154,36 @@ namespace Lucene.Net.Search
 		// complex, and they expose weakness in dealing with queries that match
 		// with scores of 0 wrapped in other queries
 		
-        [Test]
-        public virtual void  TestT3()
+		[Test]
+		public virtual void  TestT3()
 		{
 			Bqtest("w1^0.0", new int[]{0, 1, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestMA3()
+		[Test]
+		public virtual void  TestMA3()
 		{
 			Query q = new MatchAllDocsQuery();
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestFQ5()
+		[Test]
+		public virtual void  TestFQ5()
 		{
 			Bqtest(new FilteredQuery(qp.Parse("xx^0"), new ItemizedFilter(new int[]{1, 3})), new int[]{3});
 		}
 		
-        [Test]
-        public virtual void  TestCSQ4()
+		[Test]
+		public virtual void  TestCSQ4()
 		{
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{3}));
 			q.SetBoost(0);
 			Bqtest(q, new int[]{3});
 		}
 		
-        [Test]
-        public virtual void  TestDMQ10()
+		[Test]
+		public virtual void  TestDMQ10()
 		{
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);
 			q.Add(qp.Parse("yy w5^100"));
@@ -213,8 +192,8 @@ namespace Lucene.Net.Search
 			Bqtest(q, new int[]{0, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestMPQ7()
+		[Test]
+		public virtual void  TestMPQ7()
 		{
 			MultiPhraseQuery q = new MultiPhraseQuery();
 			q.Add(Ta(new System.String[]{"w1"}));
@@ -224,89 +203,89 @@ namespace Lucene.Net.Search
 			Bqtest(q, new int[]{0, 1, 2});
 		}
 		
-        [Test]
-        public virtual void  TestBQ12()
+		[Test]
+		public virtual void  TestBQ12()
 		{
 			// NOTE: using qtest not bqtest
 			Qtest("w1 w2^0.0", new int[]{0, 1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestBQ13()
+		[Test]
+		public virtual void  TestBQ13()
 		{
 			// NOTE: using qtest not bqtest
 			Qtest("w1 -w5^0.0", new int[]{1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestBQ18()
+		[Test]
+		public virtual void  TestBQ18()
 		{
 			// NOTE: using qtest not bqtest
 			Qtest("+w1^0.0 w2", new int[]{0, 1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestBQ21()
+		[Test]
+		public virtual void  TestBQ21()
 		{
 			Bqtest("(+w1 w2)^0.0", new int[]{0, 1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestBQ22()
+		[Test]
+		public virtual void  TestBQ22()
 		{
 			Bqtest("(+w1^0.0 w2)^0.0", new int[]{0, 1, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestST3()
+		[Test]
+		public virtual void  TestST3()
 		{
 			SpanQuery q = St("w1");
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestST6()
+		[Test]
+		public virtual void  TestST6()
 		{
 			SpanQuery q = St("xx");
 			q.SetBoost(0);
 			Qtest(q, new int[]{2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestSF3()
+		[Test]
+		public virtual void  TestSF3()
 		{
 			SpanQuery q = Sf(("w1"), 1);
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 
-        [Test]
-        public virtual void  TestSF7()
+		[Test]
+		public virtual void  TestSF7()
 		{
 			SpanQuery q = Sf(("xx"), 3);
 			q.SetBoost(0);
 			Bqtest(q, new int[]{2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestSNot3()
+		[Test]
+		public virtual void  TestSNot3()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("QQ"));
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestSNot6()
+		[Test]
+		public virtual void  TestSNot6()
 		{
 			SpanQuery q = Snot(Sf("w1", 10), St("xx"));
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
 		
-        [Test]
-        public virtual void  TestSNot8()
+		[Test]
+		public virtual void  TestSNot8()
 		{
 			// NOTE: using qtest not bqtest
 			SpanQuery f = Snear("w1", "w3", 10, true);
@@ -315,8 +294,8 @@ namespace Lucene.Net.Search
 			Qtest(q, new int[]{0, 1, 3});
 		}
 
-        [Test]
-        public virtual void  TestSNot9()
+		[Test]
+		public virtual void  TestSNot9()
 		{
 			// NOTE: using qtest not bqtest
 			SpanQuery t = St("xx");

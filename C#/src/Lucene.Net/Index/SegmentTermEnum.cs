@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the previous Term enumerated. Initially null.</summary>
-		internal Term Prev()
+		public /*internal*/ Term Prev()
 		{
 			return prevBuffer.ToTerm();
 		}

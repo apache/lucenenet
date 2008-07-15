@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class BooleanQuery : Query, System.ICloneable
 	{
+        [Serializable]
 		private class AnonymousClassSimilarityDelegator : SimilarityDelegator
 		{
 			private void  InitBlock(BooleanQuery enclosingInstance)

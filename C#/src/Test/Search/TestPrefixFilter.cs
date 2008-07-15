@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -36,11 +37,11 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <author>  yonik
 	/// </author>
-    [TestFixture]
-    public class TestPrefixFilter
+	[TestFixture]
+	public class TestPrefixFilter : LuceneTestCase
 	{
-        [Test]
-		public virtual void  _TestPrefixFilter()
+		[Test]
+		public virtual void  TestPrefixFilter_Renamed_Method()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			

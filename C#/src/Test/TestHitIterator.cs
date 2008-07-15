@@ -19,17 +19,18 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Hits = Lucene.Net.Search.Hits;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Hit = Lucene.Net.Search.Hit;
 using HitIterator = Lucene.Net.Search.HitIterator;
+using Hits = Lucene.Net.Search.Hits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
 {
@@ -38,9 +39,9 @@ namespace Lucene.Net
 	/// to test HitIterator and Hit package protection.
 	/// </summary>
 	[TestFixture]
-    public class TestHitIterator
+	public class TestHitIterator : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestIterator()
 		{
 			RAMDirectory directory = new RAMDirectory();
@@ -76,7 +77,7 @@ namespace Lucene.Net
 			{
 				System.Object generatedAux = iterator.Current;
 			}
-			catch (System.ArgumentOutOfRangeException e)
+			catch (System.ArgumentOutOfRangeException)
 			{
 				Assert.IsTrue(true);
 				caughtException = true;

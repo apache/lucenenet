@@ -19,29 +19,29 @@ using System;
 
 using NUnit.Framework;
 
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Similarity unit test.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	/// <version>  $Revision: 150497 $
+	/// <version>  $Revision: 583534 $
 	/// </version>
 	[TestFixture]
-    public class TestNot
+	public class TestNot : LuceneTestCase
 	{
 		
 		[Test]
-        public virtual void  TestNot_Renamed_Method()
+		public virtual void  TestNot_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
@@ -54,9 +54,9 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			Searcher searcher = new IndexSearcher(store);
-            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
-            Lucene.Net.Search.Query query = parser.Parse("a NOT b");
-            //System.out.println(query);
+			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
+			Lucene.Net.Search.Query query = parser.Parse("a NOT b");
+			//System.out.println(query);
 			Hits hits = searcher.Search(query);
 			Assert.AreEqual(0, hits.Length());
 		}

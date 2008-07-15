@@ -19,29 +19,30 @@ using System;
 
 using NUnit.Framework;
 
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  yonik
-	/// </author>
+	/// <summary> </summary>
 	/// <version>  $Id$
 	/// </version>
-    [TestFixture]
-    public class TestScorerPerf
+	[TestFixture]
+	public class TestScorerPerf : LuceneTestCase
 	{
 		internal System.Random r = new System.Random((System.Int32) 0);
 		internal bool validate = true; // set to false when doing performance testing
 		
 		internal System.Collections.BitArray[] sets;
+		internal Term[] terms;
 		internal IndexSearcher s;
 		
 		public virtual void  CreateDummySearcher()
@@ -61,10 +62,10 @@ namespace Lucene.Net.Search
 			{
 				int f = (nTerms + 1) - i; // make first terms less frequent
 				freq[i] = (int) System.Math.Ceiling(System.Math.Pow(f, power));
+				terms[i] = new Term("f", System.Convert.ToString((char) ('A' + i)));
 			}
 			
 			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			iw.SetMaxBufferedDocs(123);
 			for (int i = 0; i < nDocs; i++)
 			{
 				Document d = new Document();
@@ -72,11 +73,13 @@ namespace Lucene.Net.Search
 				{
 					if (r.Next(freq[j]) == 0)
 					{
-						d.Add(new Field("f", j.ToString(), Field.Store.NO, Field.Index.UN_TOKENIZED));
+						d.Add(new Field("f", terms[j].Text(), Field.Store.NO, Field.Index.UN_TOKENIZED));
+						//System.out.println(d);
 					}
 				}
 				iw.AddDocument(d);
 			}
+			iw.Optimize();
 			iw.Close();
 		}
 		
@@ -86,7 +89,7 @@ namespace Lucene.Net.Search
 			System.Collections.BitArray set_Renamed = new System.Collections.BitArray((sz % 64 == 0 ? sz / 64 : sz / 64 + 1) * 64);
 			for (int i = 0; i < numBitsToSet; i++)
 			{
-                set_Renamed.Set(r.Next(sz), true);
+				set_Renamed.Set(r.Next(sz), true);
 			}
 			return set_Renamed;
 		}
@@ -117,22 +120,6 @@ namespace Lucene.Net.Search
 		
 		public class CountingHitCollector : HitCollector
 		{
-			virtual public int Count
-			{
-				get
-				{
-					return count;
-				}
-				
-			}
-			virtual public int Sum
-			{
-				get
-				{
-					return sum;
-				}
-				
-			}
 			internal int count = 0;
 			internal int sum = 0;
 			
@@ -140,6 +127,15 @@ namespace Lucene.Net.Search
 			{
 				count++;
 				sum += doc; // use it to avoid any possibility of being optimized away
+			}
+			
+			public virtual int GetCount()
+			{
+				return count;
+			}
+			public virtual int GetSum()
+			{
+				return sum;
 			}
 		}
 		
@@ -199,9 +195,9 @@ namespace Lucene.Net.Search
 				
 				CountingHitCollector hc = validate?new MatchingHitCollector(result):new CountingHitCollector();
 				s.Search(bq, hc);
-				ret += hc.Sum;
+				ret += hc.GetSum();
 				if (validate)
-					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.Count);
+					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			
@@ -211,6 +207,7 @@ namespace Lucene.Net.Search
 		public virtual int DoNestedConjunctions(int iter, int maxOuterClauses, int maxClauses)
 		{
 			int ret = 0;
+			long nMatches = 0;
 			
 			for (int i = 0; i < iter; i++)
 			{
@@ -231,15 +228,15 @@ namespace Lucene.Net.Search
 					oq.Add(bq, BooleanClause.Occur.MUST);
 				} // outer
 				
-				
-				CountingHitCollector hc = validate ? new MatchingHitCollector(result) : new CountingHitCollector();
+				CountingHitCollector hc = validate?new MatchingHitCollector(result):new CountingHitCollector();
 				s.Search(oq, hc);
-				ret += hc.Sum;
+				nMatches += hc.GetCount();
+				ret += hc.GetSum();
 				if (validate)
-					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.Count);
+					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
-			
+			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
 			return ret;
 		}
 		
@@ -248,28 +245,54 @@ namespace Lucene.Net.Search
 		{
 			int ret = 0;
 			
+			long nMatches = 0;
 			for (int i = 0; i < iter; i++)
 			{
 				int nClauses = r.Next(maxClauses - 1) + 2; // min 2 clauses
 				BooleanQuery bq = new BooleanQuery();
-				System.Collections.BitArray terms = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
+				System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
 				for (int j = 0; j < nClauses; j++)
 				{
 					int tnum;
 					// don't pick same clause twice
-					do 
+					tnum = r.Next(termsInIndex);
+					if (termflag.Get(tnum))
 					{
-						tnum = r.Next(termsInIndex);
+						int nextClearBit = -1;
+						for (int k = tnum + 1; k < termflag.Count; k++)
+						{
+							if (!termflag.Get(k))
+							{
+								nextClearBit = k;
+								break;
+							}
+						}
+						tnum = nextClearBit;
 					}
-					while (terms.Get(tnum));
-					Query tq = new TermQuery(new Term("f", tnum.ToString()));
+					if (tnum < 0 || tnum >= termsInIndex)
+					{
+						int nextClearBit = -1;
+						for (int k = 0; k < termflag.Count; k++)
+						{
+							if (!termflag.Get(k))
+							{
+								nextClearBit = k;
+								break;
+							}
+						}
+						tnum = nextClearBit;
+					}
+					termflag.Set(tnum, true);
+					Query tq = new TermQuery(terms[tnum]);
 					bq.Add(tq, BooleanClause.Occur.MUST);
 				}
 				
 				CountingHitCollector hc = new CountingHitCollector();
 				s.Search(bq, hc);
-				ret += hc.Sum;
+				nMatches += hc.GetCount();
+				ret += hc.GetSum();
 			}
+			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
 			
 			return ret;
 		}
@@ -278,7 +301,7 @@ namespace Lucene.Net.Search
 		public virtual int DoNestedTermConjunctions(IndexSearcher s, int termsInIndex, int maxOuterClauses, int maxClauses, int iter)
 		{
 			int ret = 0;
-			
+			long nMatches = 0;
 			for (int i = 0; i < iter; i++)
 			{
 				int oClauses = r.Next(maxOuterClauses - 1) + 2;
@@ -288,17 +311,40 @@ namespace Lucene.Net.Search
 					
 					int nClauses = r.Next(maxClauses - 1) + 2; // min 2 clauses
 					BooleanQuery bq = new BooleanQuery();
-					System.Collections.BitArray terms = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
+					System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
 					for (int j = 0; j < nClauses; j++)
 					{
 						int tnum;
 						// don't pick same clause twice
-						do 
+						tnum = r.Next(termsInIndex);
+						if (termflag.Get(tnum))
 						{
-							tnum = r.Next(termsInIndex);
+							int nextClearBit = -1;
+							for (int k = tnum + 1; k < termflag.Count; k++)
+							{
+								if (!termflag.Get(k))
+								{
+									nextClearBit = k;
+									break;
+								}
+							}
+							tnum = nextClearBit;
 						}
-						while (terms.Get(tnum));
-						Query tq = new TermQuery(new Term("f", tnum.ToString()));
+						if (tnum < 0 || tnum >= 25)
+						{
+							int nextClearBit = -1;
+							for (int k = 0; k < termflag.Count; k++)
+							{
+								if (!termflag.Get(k))
+								{
+									nextClearBit = k;
+									break;
+								}
+							}
+							tnum = nextClearBit;
+						}
+						termflag.Set(tnum, true);
+						Query tq = new TermQuery(terms[tnum]);
 						bq.Add(tq, BooleanClause.Occur.MUST);
 					} // inner
 					
@@ -308,9 +354,10 @@ namespace Lucene.Net.Search
 				
 				CountingHitCollector hc = new CountingHitCollector();
 				s.Search(oq, hc);
-				ret += hc.Sum;
+				nMatches += hc.GetCount();
+				ret += hc.GetSum();
 			}
-			
+			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
 			return ret;
 		}
 		
@@ -326,13 +373,13 @@ namespace Lucene.Net.Search
 				for (int j = 0; j < nClauses; j++)
 				{
 					int tnum = r.Next(termsInIndex);
-					q.Add(new Term("f", tnum.ToString()), j);
+					q.Add(new Term("f", System.Convert.ToString((char)(tnum + 'A'))), j);
 				}
 				q.SetSlop(termsInIndex); // this could be random too
 				
 				CountingHitCollector hc = new CountingHitCollector();
 				s.Search(q, hc);
-				ret += hc.Sum;
+				ret += hc.GetSum();
 			}
 			
 			return ret;
@@ -351,7 +398,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> 
-		/// int bigIter=6;
+		/// int bigIter=10;
 		/// public void testConjunctionPerf() throws Exception {
 		/// CreateDummySearcher();
 		/// validate=false;
@@ -380,7 +427,7 @@ namespace Lucene.Net.Search
 		/// validate=false;
 		/// RAMDirectory dir = new RAMDirectory();
 		/// System.out.println("Creating index");
-		/// CreateRandomTerms(100000,25,2, dir);
+		/// createRandomTerms(100000,25,.5, dir);
 		/// s = new IndexSearcher(dir);
 		/// System.out.println("Starting performance test");
 		/// for (int i=0; i<bigIter; i++) {
@@ -395,12 +442,12 @@ namespace Lucene.Net.Search
 		/// validate=false;    
 		/// RAMDirectory dir = new RAMDirectory();
 		/// System.out.println("Creating index");
-		/// CreateRandomTerms(100000,25,2, dir);
+		/// createRandomTerms(100000,25,.2, dir);
 		/// s = new IndexSearcher(dir);
 		/// System.out.println("Starting performance test");
 		/// for (int i=0; i<bigIter; i++) {
 		/// long start = System.currentTimeMillis();
-		/// DoNestedTermConjunctions(s,25,5,5,1000);
+		/// doNestedTermConjunctions(s,25,3,3,200);
 		/// long end = System.currentTimeMillis();
 		/// System.out.println("milliseconds="+(end-start));
 		/// }

@@ -432,5 +432,15 @@ namespace Lucene.Net.Index
 		{
 			allInstances = new System.Collections.ArrayList();
 		}
+
+        public void SetSuppressExceptions_ForNUnitTest()
+        {
+            SetSuppressExceptions();
+        }
+        
+        public void ClearSuppressExceptions_ForNUnitTest()
+        {
+            ClearSuppressExceptions();
+        }
 	}
 }

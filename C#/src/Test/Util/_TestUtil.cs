@@ -17,6 +17,10 @@
 
 using System;
 
+using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using MergeScheduler = Lucene.Net.Index.MergeScheduler;
+
 namespace Lucene.Net.Util
 {
 	
@@ -73,6 +77,17 @@ namespace Lucene.Net.Util
 		public static void  RmDir(System.String dir)
 		{
 			RmDir(new System.IO.FileInfo(dir));
+		}
+		
+		public static void  SyncConcurrentMerges(IndexWriter writer)
+		{
+			SyncConcurrentMerges(writer.GetMergeScheduler());
+		}
+		
+		public static void  SyncConcurrentMerges(MergeScheduler ms)
+		{
+			if (ms is ConcurrentMergeScheduler)
+				((ConcurrentMergeScheduler) ms).Sync();
 		}
 	}
 }

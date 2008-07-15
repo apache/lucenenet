@@ -38,11 +38,11 @@ namespace Lucene.Net
 			}
 			catch (System.Exception e)
 			{
-                System.Console.Out.WriteLine(e.StackTrace);
+				System.Console.Out.WriteLine(e.StackTrace);
 			}
 		}
 		
-        public static void  Test(int count, bool ram, bool buffered)
+		public static void  Test(int count, bool ram, bool buffered)
 		{
 			System.Random gen = new System.Random((System.Int32) 1251971);
 			int i;
@@ -62,7 +62,7 @@ namespace Lucene.Net
 			
 			int LENGTH_MASK = 0xFFF;
 
-            byte[] buffer = new byte[LENGTH_MASK];
+			byte[] buffer = new byte[LENGTH_MASK];
 			
 			for (i = 0; i < count; i++)
 			{
@@ -73,17 +73,17 @@ namespace Lucene.Net
 				
 				IndexOutput file = store.CreateOutput(name);
 				
-                if (buffered)
-                {
-                    for (int j = 0; j < length; j++)
-                        buffer[j] = b;
-                    file.WriteBytes(buffer, length);
-                }
-                else
-                {
-                    for (int j = 0; j < length; j++)
-                        file.WriteByte(b);
-                }
+				if (buffered)
+				{
+					for (int j = 0; j < length; j++)
+						buffer[j] = b;
+					file.WriteBytes(buffer, length);
+				}
+				else
+				{
+					for (int j = 0; j < length; j++)
+						file.WriteByte(b);
+				}
 				
 				file.Close();
 			}
@@ -113,21 +113,21 @@ namespace Lucene.Net
 				if (file.Length() != length)
 					throw new System.Exception("length incorrect");
 				
-                byte[] content = new byte[length];
-                if (buffered)
-                {
-                    file.ReadBytes(content, 0, length);
-                    // check the buffer
-                    for (int j = 0; j < length; j++)
-                        if (content[j] != b)
-                            throw new System.Exception("contents incorrect");
-                }
-                else
-                {
-                    for (int j = 0; j < length; j++)
-                        if (file.ReadByte() != b)
-                            throw new System.Exception("contents incorrect");
-                }
+				byte[] content = new byte[length];
+				if (buffered)
+				{
+					file.ReadBytes(content, 0, length);
+					// check the buffer
+					for (int j = 0; j < length; j++)
+						if (content[j] != b)
+							throw new System.Exception("contents incorrect");
+				}
+				else
+				{
+					for (int j = 0; j < length; j++)
+						if (file.ReadByte() != b)
+							throw new System.Exception("contents incorrect");
+				}
 				
 				file.Close();
 			}
