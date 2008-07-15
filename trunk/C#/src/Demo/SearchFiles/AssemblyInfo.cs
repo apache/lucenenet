@@ -28,8 +28,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net.SearchFiles")]
-[assembly: AssemblyCopyright("Copyright 2007 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2008 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2008 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
@@ -46,7 +46,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.3.1.001")]
+[assembly: AssemblyVersion("2.3.1.002")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

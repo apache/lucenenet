@@ -19,28 +19,32 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  Christoph Goller
-	/// </author>
-    /// <version>  $rcs = ' $Id: TestBooleanScorer.java 472959 2006-11-09 16:21:50Z yonik $ ' ;
-    /// </version>
+	/// <summary> </summary>
+	/// <version>  $rcs = ' $Id: TestBooleanScorer.java 583534 2007-10-10 16:46:35Z mikemccand $ ' ;
+	/// </version>
 	[TestFixture]
-    public class TestBooleanScorer
+	public class TestBooleanScorer : LuceneTestCase
 	{
+		
+		//public TestBooleanScorer(System.String name) : base(name)
+		//{
+		//}
 		
 		private const System.String FIELD = "category";
 		
 		[Test]
-        public virtual void  TestMethod()
+		public virtual void  TestMethod()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			

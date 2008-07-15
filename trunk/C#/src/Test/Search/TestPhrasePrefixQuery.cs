@@ -19,7 +19,6 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -27,24 +26,24 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> This class tests PhrasePrefixQuery class.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Otis Gospodnetic
-	/// </author>
-	/// <version>  $Id: TestPhrasePrefixQuery.java 150497 2004-09-07 18:26:36Z dnaber $
+	/// <version>  $Id: TestPhrasePrefixQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestPhrasePrefixQuery
+	public class TestPhrasePrefixQuery : LuceneTestCase
 	{
-		
 		/// <summary> </summary>
 		[Test]
-        public virtual void  TestPhrasePrefix()
+		public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
@@ -69,10 +68,10 @@ namespace Lucene.Net.Search
 			IndexSearcher searcher = new IndexSearcher(indexStore);
 			
 			//PhrasePrefixQuery query1 = new PhrasePrefixQuery();
-            MultiPhraseQuery query1 = new MultiPhraseQuery();
-            //PhrasePrefixQuery query2 = new PhrasePrefixQuery();
-            MultiPhraseQuery query2 = new MultiPhraseQuery();
-            query1.Add(new Term("body", "blueberry"));
+			MultiPhraseQuery query1 = new MultiPhraseQuery();
+			//PhrasePrefixQuery query2 = new PhrasePrefixQuery();
+			MultiPhraseQuery query2 = new MultiPhraseQuery();
+			query1.Add(new Term("body", "blueberry"));
 			query2.Add(new Term("body", "strawberry"));
 			
 			System.Collections.ArrayList termsWithPrefix = new System.Collections.ArrayList();

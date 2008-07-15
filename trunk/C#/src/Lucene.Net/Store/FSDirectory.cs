@@ -676,7 +676,7 @@ namespace Lucene.Net.Store
 			return this.GetType().FullName + "@" + directory;
 		}
 		
-		protected internal class FSIndexInput : BufferedIndexInput, System.ICloneable
+		public /*protected internal*/ class FSIndexInput : BufferedIndexInput, System.ICloneable
 		{
 		
 			private class Descriptor : System.IO.BinaryReader

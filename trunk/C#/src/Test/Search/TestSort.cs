@@ -19,11 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Lucene.Net.Index;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+
 using Pattern = System.Text.RegularExpressions.Regex;
 
 namespace Lucene.Net.Search
@@ -38,12 +41,12 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: TestSort.java 332651 2005-11-11 21:19:02Z yonik $
+	/// <version>  $Id: TestSort.java 590530 2007-10-31 01:28:25Z gsingers $
 	/// </version>
 	
 	[Serializable]
 	[TestFixture]
-    public class TestSort
+	public class TestSort
 	{
 		[Serializable]
 		private class AnonymousClassFilter : Filter
@@ -58,10 +61,10 @@ namespace Lucene.Net.Search
 				this.enclosingInstance = enclosingInstance;
 			}
 
-            private Lucene.Net.Search.TopDocs docs1;
+			private Lucene.Net.Search.TopDocs docs1;
 			private TestSort enclosingInstance;
 
-            public TestSort Enclosing_Instance
+			public TestSort Enclosing_Instance
 			{
 				get
 				{
@@ -70,7 +73,7 @@ namespace Lucene.Net.Search
 				
 			}
 
-            public override System.Collections.BitArray Bits(IndexReader reader)
+			public override System.Collections.BitArray Bits(IndexReader reader)
 			{
 				System.Collections.BitArray bs = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
 				bs.Set(docs1.scoreDocs[0].doc, true);
@@ -88,66 +91,68 @@ namespace Lucene.Net.Search
 		private Query queryF;
 		private Query queryG;
 		private Sort sort;
+
+		private bool serverStarted = false;
+		private int port;
 		
+		//public TestSort(System.String name) : base(name)
+		//{
+		//}
 		
 		[STAThread]
 		public static void  Main(System.String[] argv)
 		{
-			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.TestSort.config");
-			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(8080));
-            if (argv == null || argv.Length < 1)
-            {
-                // NUnit.Core.TestRunner.Run(Suite());    // {{Aroush-1.9}} where is "Run" in NUnit?
-            }
-            else if ("server".Equals(argv[0]))
-            {
-                TestSort test = new TestSort();
-                try
-                {
-                    test.StartServer();
-                    System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 500000));
-                }
-                catch (System.Exception e)
-                {
-                    System.Console.Out.WriteLine(e);
-                    System.Console.Error.WriteLine(e.StackTrace);
-                }
-            }
+			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.TestSort.config", false);
+			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(8080), false);
+			if (argv == null || argv.Length < 1)
+			{
+				// NUnit.Core.TestRunner.Run(Suite());    // {{Aroush-1.9}} where is "Run" in NUnit?
+			}
+			else if ("server".Equals(argv[0]))
+			{
+				TestSort test = new TestSort();
+				try
+				{
+					test.StartServer();
+					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 500000));
+				}
+				catch (System.Exception e)
+				{
+					System.Console.Out.WriteLine(e);
+					System.Console.Error.WriteLine(e.StackTrace);
+				}
+			}
 
-            System.Console.ReadLine();
-		}
-		
-		public static NUnit.Framework.TestCase Suite()
-		{
-			return null; // return new NUnit.Core.TestSuite(typeof(TestSort)); {{Aroush-1.9}} how do you do this in NUnit?
+			System.Console.ReadLine();
 		}
 		
 		static string NDS = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 		
-        // document data:
-        // the tracer field is used to determine which document was hit
-        // the contents field is used to search and sort by relevance
-        // the int field to sort by int
-        // the float field to sort by float
-        // the string field to sort by string
-        // the i18n field includes accented characters for testing locale-specific sorting
-        private System.String[][] data = new System.String[][]{
-                               // tracer  contents         int            float                     string   custom   i18n
-            new System.String[]{   "A",   "x a",           "5",           "4f",                     "c",     "A-3",   "p\u00EAche"},
-            new System.String[]{   "B",   "y a",           "5",           "3" + NDS + "4028235E38", "i",     "B-10",  "HAT"},
-            new System.String[]{   "C",   "x a b c",       "2147483647",  "1" + NDS + "0",          "j",     "A-2",   "p\u00E9ch\u00E9"},
-            new System.String[]{   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT"},
-            new System.String[]{   "E",   "x a b c d",     "5",           "2f",                     "h",     "B-8",   "peach"},
-            new System.String[]{   "F",   "y a b c d",     "2",           "3" + NDS + "14159f",     "g",     "B-1",   "H\u00C5T"},
-            new System.String[]{   "G",   "x a b c d",     "3",           "-1" + NDS + "0",         "f",     "C-100", "sin"},
-            new System.String[]{   "H",   "y a b c d",     "0",           "1" + NDS + "4E-45",      "e",     "C-88",  "H\u00D8T"},
-            new System.String[]{   "I",   "x a b c d e f", "-2147483648", "1" + NDS + "0e+0",       "d",     "A-10",  "s\u00EDn"},
-            new System.String[]{   "J",   "y a b c d e f", "4",           "" + NDS + "5",           "b",     "C-7",   "HOT"},
-            new System.String[]{   "W",   "g",             "1",           null,                     null,    null,    null},
-            new System.String[]{   "X",   "g",             "1",           "0" + NDS + "1",          null,    null,    null},
-            new System.String[]{   "Y",   "g",             "1",           "0" + NDS + "2",          null,    null,    null},
-            new System.String[]{   "Z",   "f g",           null,          null,                     null,    null,    null}};
-		
+		// document data:
+		// the tracer field is used to determine which document was hit
+		// the contents field is used to search and sort by relevance
+		// the int field to sort by int
+		// the float field to sort by float
+		// the string field to sort by string
+		// the i18n field includes accented characters for testing locale-specific sorting
+		private System.String[][] data = new System.String[][]{
+							   // tracer  contents         int            float                     string   custom   i18n                  long             double
+			new System.String[]{   "A",   "x a",           "5",           "4f",                     "c",     "A-3",   "p\u00EAche",         "10",            "-4" + NDS + "0"}, 
+			new System.String[]{   "B",   "y a",           "5",           "3" + NDS + "4028235E38", "i",     "B-10",  "HAT",                "1000000000",    "40" + NDS + "0"}, 
+			new System.String[]{   "C",   "x a b c",       "2147483647",  "1" + NDS + "0",          "j",     "A-2",   "p\u00E9ch\u00E9",    "99999999",      "40" + NDS + "00002343"}, 
+			//new System.String[]{   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT",                System.Convert.ToString(System.Int64.MaxValue), System.Convert.ToString(System.Double.MinValue)}, 
+			//new System.String[]{   "E",   "x a b c d",     "5",           "2f",                     "h",     "B-8",   "peach",              System.Convert.ToString(System.Int64.MinValue), System.Convert.ToString(System.Double.MaxValue)}, 
+			new System.String[]{   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT",                System.Convert.ToString(System.Int64.MaxValue), System.Double.MinValue.ToString("R")}, 
+			new System.String[]{   "E",   "x a b c d",     "5",           "2f",                     "h",     "B-8",   "peach",              System.Convert.ToString(System.Int64.MinValue), System.Double.MaxValue.ToString("R")}, 
+			new System.String[]{   "F",   "y a b c d",     "2",           "3" + NDS + "14159f",     "g",     "B-1",   "H\u00C5T",           "-44",           "343" + NDS + "034435444"}, 
+			new System.String[]{   "G",   "x a b c d",     "3",           "-1" + NDS + "0",         "f",     "C-100", "sin",                "323254543543",  "4" + NDS + "043544"}, 
+			new System.String[]{   "H",   "y a b c d",     "0",           "1" + NDS + "4E-45",      "e",     "C-88",  "H\u00D8T",           "1023423423005", "4" + NDS + "043545"}, 
+			new System.String[]{   "I",   "x a b c d e f", "-2147483648", "1" + NDS + "0e+0",       "d",     "A-10",  "s\u00EDn",           "332422459999",  "4" + NDS + "043546"}, 
+			new System.String[]{   "J",   "y a b c d e f", "4",           "" + NDS + "5",           "b",     "C-7",   "HOT",                "34334543543",   "4" + NDS + "0000220343"}, 
+			new System.String[]{   "W",   "g",             "1",           null,                     null,    null,    null,                 null,            null}, 
+			new System.String[]{   "X",   "g",             "1",           "0" + NDS + "1",          null,    null,    null,                 null,            null}, 
+			new System.String[]{   "Y",   "g",             "1",           "0" + NDS + "2",          null,    null,    null,                 null,            null}, 
+			new System.String[]{   "Z",   "f g",           null,          null,                     null,    null,    null,                 null,            null}};
 		
 		// create an index of all the documents, or just the x, or just the y documents
 		private Searcher GetIndex(bool even, bool odd)
@@ -169,9 +174,13 @@ namespace Lucene.Net.Search
 						doc.Add(new Field("string", data[i][4], Field.Store.NO, Field.Index.UN_TOKENIZED));
 					if (data[i][5] != null)
 						doc.Add(new Field("custom", data[i][5], Field.Store.NO, Field.Index.UN_TOKENIZED));
-                    if (data[i][6] != null)
-                        doc.Add(new Field("i18n", data[i][6], Field.Store.NO, Field.Index.UN_TOKENIZED));
-                    doc.SetBoost(2); // produce some scores above 1.0
+					if (data[i][6] != null)
+						doc.Add(new Field("i18n", data[i][6], Field.Store.NO, Field.Index.UN_TOKENIZED));
+					if (data[i][7] != null)
+						doc.Add(new Field("long", data[i][7], Field.Store.NO, Field.Index.UN_TOKENIZED));
+					if (data[i][8] != null)
+						doc.Add(new Field("double", data[i][8], Field.Store.NO, Field.Index.UN_TOKENIZED));
+					doc.SetBoost(2); // produce some scores above 1.0
 					writer.AddDocument(doc);
 				}
 			}
@@ -201,7 +210,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			full = GetFullIndex();
 			searchX = GetXIndex();
@@ -214,12 +223,13 @@ namespace Lucene.Net.Search
 			queryG = new TermQuery(new Term("contents", "g"));
 			sort = new Sort();
 
-            StartServer();
+			if (!serverStarted)
+				StartServer();
 		}
 		
 		// test the sorts by score and document number
 		[Test]
-        public virtual void  TestBuiltInSorts()
+		public virtual void  TestBuiltInSorts()
 		{
 			sort = new Sort();
 			AssertMatches(full, queryX, sort, "ACEGI");
@@ -232,7 +242,7 @@ namespace Lucene.Net.Search
 		
 		// test sorts where the type of field is specified
 		[Test]
-        public virtual void  TestTypedSort()
+		public virtual void  TestTypedSort()
 		{
 			sort.SetSort(new SortField[]{new SortField("int", SortField.INT), SortField.FIELD_DOC});
 			AssertMatches(full, queryX, sort, "IGAEC");
@@ -245,11 +255,19 @@ namespace Lucene.Net.Search
 			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), SortField.FIELD_DOC});
 			AssertMatches(full, queryX, sort, "AIGEC");
 			AssertMatches(full, queryY, sort, "DJHFB");
-		}
+			
+			sort.SetSort(new SortField[]{new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC});
+			AssertMatches(full, queryX, sort, "AGICE");
+			AssertMatches(full, queryY, sort, "DJHBF");
+			
+			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), SortField.FIELD_DOC});
+			AssertMatches(full, queryX, sort, "AIGEC");
+			AssertMatches(full, queryY, sort, "DJHFB");
+			}
 		
 		// test sorts when there's nothing in the index
 		[Test]
-        public virtual void  TestEmptyIndex()
+		public virtual void  TestEmptyIndex()
 		{
 			Searcher empty = GetEmptyIndex();
 			
@@ -271,7 +289,7 @@ namespace Lucene.Net.Search
 		
 		// test sorts where the type of field is determined dynamically
 		[Test]
-        public virtual void  TestAutoSort()
+		public virtual void  TestAutoSort()
 		{
 			sort.SetSort("int");
 			AssertMatches(full, queryX, sort, "IGAEC");
@@ -288,7 +306,7 @@ namespace Lucene.Net.Search
 		
 		// test sorts in reverse
 		[Test]
-        public virtual void  TestReverseSort()
+		public virtual void  TestReverseSort()
 		{
 			sort.SetSort(new SortField[]{new SortField(null, SortField.SCORE, true), SortField.FIELD_DOC});
 			AssertMatches(full, queryX, sort, "IEGCA");
@@ -313,7 +331,7 @@ namespace Lucene.Net.Search
 		
 		// test sorting when the sort field is empty (undefined) for some of the documents
 		[Test]
-        public virtual void  TestEmptyFieldSort()
+		public virtual void  TestEmptyFieldSort()
 		{
 			sort.SetSort("string");
 			AssertMatches(full, queryF, sort, "ZJI");
@@ -321,13 +339,13 @@ namespace Lucene.Net.Search
 			sort.SetSort("string", true);
 			AssertMatches(full, queryF, sort, "IJZ");
 			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en")));
-            AssertMatches(full, queryF, sort, "ZJI");
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en")));
+			AssertMatches(full, queryF, sort, "ZJI");
 			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en"), true));
-            AssertMatches(full, queryF, sort, "IJZ");
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en"), true));
+			AssertMatches(full, queryF, sort, "IJZ");
 			
-            sort.SetSort("int");
+			sort.SetSort("int");
 			AssertMatches(full, queryF, sort, "IZJ");
 			
 			sort.SetSort("int", true);
@@ -375,7 +393,7 @@ namespace Lucene.Net.Search
 		
 		// test sorts using a series of fields
 		[Test]
-        public virtual void  TestSortCombos()
+		public virtual void  TestSortCombos()
 		{
 			sort.SetSort(new System.String[]{"int", "float"});
 			AssertMatches(full, queryX, sort, "IGEAC");
@@ -389,7 +407,7 @@ namespace Lucene.Net.Search
 		
 		// test using a Locale for sorting strings
 		[Test]
-        public virtual void  TestLocaleSort()
+		public virtual void  TestLocaleSort()
 		{
 			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-US"))});
 			AssertMatches(full, queryX, sort, "AIGEC");
@@ -400,47 +418,47 @@ namespace Lucene.Net.Search
 			AssertMatches(full, queryY, sort, "BFHJD");
 		}
 		
-        // test using various international locales with accented characters
-        // (which sort differently depending on locale)
-        [Test]
-        public virtual void  TestInternationalSort()
-        {
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-            AssertMatches(full, queryY, sort, "BFJHD");     // NOTE: this is "BFJDH" in Java's version
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
-            AssertMatches(full, queryY, sort, "BJDFH");
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
-            AssertMatches(full, queryY, sort, "BJDHF");
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-            AssertMatches(full, queryX, sort, "ECAGI");
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("fr-FR")));
-            AssertMatches(full, queryX, sort, "EACGI");
-        }
-		
-        // Test the MultiSearcher's ability to preserve locale-sensitive ordering
-        // by wrapping it around a single searcher
-        [Test]
-        public virtual void  TestInternationalMultiSearcherSort()
-        {
-            Searcher multiSearcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{full});
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
-            AssertMatches(multiSearcher, queryY, sort, "BJDFH");
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-            AssertMatches(multiSearcher, queryY, sort, "BFJHD");    // NOTE: this is "BFJDH" in Java's version
-			
-            sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
-            AssertMatches(multiSearcher, queryY, sort, "BJDHF");
-        }
-		
-        // test a custom sort function
+		// test using various international locales with accented characters
+		// (which sort differently depending on locale)
 		[Test]
-        public virtual void  TestCustomSorts()
+		public virtual void  TestInternationalSort()
+		{
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+			AssertMatches(full, queryY, sort, "BFJHD");     // NOTE: this is "BFJDH" in Java's version
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
+			AssertMatches(full, queryY, sort, "BJDFH");
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
+			AssertMatches(full, queryY, sort, "BJDHF");
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+			AssertMatches(full, queryX, sort, "ECAGI");
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("fr-FR")));
+			AssertMatches(full, queryX, sort, "EACGI");
+		}
+		
+		// Test the MultiSearcher's ability to preserve locale-sensitive ordering
+		// by wrapping it around a single searcher
+		[Test]
+		public virtual void  TestInternationalMultiSearcherSort()
+		{
+			Searcher multiSearcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{full});
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
+			AssertMatches(multiSearcher, queryY, sort, "BJDFH");
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
+			AssertMatches(multiSearcher, queryY, sort, "BFJHD");    // NOTE: this is "BFJDH" in Java's version
+			
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
+			AssertMatches(multiSearcher, queryY, sort, "BJDHF");
+		}
+		
+		// test a custom sort function
+		[Test]
+		public virtual void  TestCustomSorts()
 		{
 			sort.SetSort(new SortField("custom", SampleComparable.GetComparatorSource()));
 			AssertMatches(full, queryX, sort, "CAIEG");
@@ -455,7 +473,7 @@ namespace Lucene.Net.Search
 		
 		// test a variety of sorts using more than one searcher
 		[Test]
-        public virtual void  TestMultiSort()
+		public virtual void  TestMultiSort()
 		{
 			MultiSearcher searcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{searchX, searchY});
 			RunMultiSorts(searcher);
@@ -463,7 +481,7 @@ namespace Lucene.Net.Search
 		
 		// test a variety of sorts using a parallel multisearcher
 		[Test]
-        public virtual void  TestParallelMultiSort()
+		public virtual void  TestParallelMultiSort()
 		{
 			Searcher searcher = new ParallelMultiSearcher(new Lucene.Net.Search.Searchable[]{searchX, searchY});
 			RunMultiSorts(searcher);
@@ -471,7 +489,7 @@ namespace Lucene.Net.Search
 		
 		// test a variety of sorts using a remote searcher
 		[Test]
-        public virtual void  TestRemoteSort()
+		public virtual void  TestRemoteSort()
 		{
 			Lucene.Net.Search.Searchable searcher = GetRemote();
 			MultiSearcher multi = new MultiSearcher(new Lucene.Net.Search.Searchable[]{searcher});
@@ -480,7 +498,7 @@ namespace Lucene.Net.Search
 		
 		// test custom search when remote
 		[Test]
-        public virtual void  TestRemoteCustomSort()
+		public virtual void  TestRemoteCustomSort()
 		{
 			Lucene.Net.Search.Searchable searcher = GetRemote();
 			MultiSearcher multi = new MultiSearcher(new Lucene.Net.Search.Searchable[]{searcher});
@@ -498,7 +516,7 @@ namespace Lucene.Net.Search
 		// test that the relevancy scores are the same even if
 		// hits are sorted
 		[Test]
-        public virtual void  TestNormalizedScores()
+		public virtual void  TestNormalizedScores()
 		{
 			
 			// capture relevancy scores
@@ -601,7 +619,7 @@ namespace Lucene.Net.Search
 			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestTopDocsScores()
 		{
 			
@@ -718,7 +736,7 @@ namespace Lucene.Net.Search
 				}
 			}
 			// System.out.println ("matching \""+buff+"\" against pattern \""+pattern+"\"");
-            Pattern p = new System.Text.RegularExpressions.Regex(pattern);
+			Pattern p = new System.Text.RegularExpressions.Regex(pattern);
 			Assert.IsTrue(p.Match(buff.ToString()).Success);
 		}
 		
@@ -761,33 +779,84 @@ namespace Lucene.Net.Search
 		
 		private Lucene.Net.Search.Searchable GetRemote()
 		{
-            return LookupRemote();
+			return LookupRemote();
 		}
-		
+
 		private Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"http://localhost:1099/SortedSearchable");
+			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), string.Format("http://localhost:{0}/SortedSearchable", port));
 		}
-		
-		public void  StartServer()
+
+		private System.Runtime.Remoting.Channels.Http.HttpChannel GetHttpChannel()
 		{
-            try
-            {
-                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
-            }
-            catch (System.Net.Sockets.SocketException ex)
-            {
-                if (ex.ErrorCode == 10048) return; // EADDRINUSE?
-                throw ex;
-            }
+			Random rnd = new Random();
+			port = rnd.Next(1099, 9999);
+			System.Runtime.Remoting.Channels.Http.HttpChannel ch = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
+			return ch;
+		}
+
+		public void StartServer()
+		{
+			System.Runtime.Remoting.Channels.Http.HttpChannel httpChannel = null;
+
+			while (httpChannel == null)
+			{
+				try
+				{
+					httpChannel = GetHttpChannel();
+				}
+				catch (System.Net.Sockets.SocketException ex)
+				{
+					if (ex.ErrorCode != 10048)
+						throw ex;
+				}
+			}
+
+			try
+			{
+				System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(httpChannel, false);
+			}
+			catch (System.Net.Sockets.SocketException ex)
+			{
+				if (ex.ErrorCode == 10048) return; // EADDRINUSE?
+				throw ex;
+			}
 
 			// construct an index
 			Searcher local = GetFullIndex();
 			// local.search (queryA, new Sort());
-			
+
 			// publish it
-            RemoteSearchable impl = new RemoteSearchable(local);
-            System.Runtime.Remoting.RemotingServices.Marshal(impl, "SortedSearchable");
-        }
+			RemoteSearchable impl = new RemoteSearchable(local);
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, "SortedSearchable");
+			serverStarted = true;
+		}
+
+
+		//private Lucene.Net.Search.Searchable LookupRemote()
+		//{
+		//    return (Lucene.Net.Search.Searchable) Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"http://localhost:1099/SortedSearchable");
+		//}
+		
+		//public void  StartServer()
+		//{
+		//    try
+		//    {
+		//        System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099), false);
+		//    }
+		//    catch (System.Net.Sockets.SocketException ex)
+		//    {
+		//        if (ex.ErrorCode == 10048) return; // EADDRINUSE?
+		//        throw ex;
+		//    }
+
+		//    // construct an index
+		//    Searcher local = GetFullIndex();
+		//    // local.search (queryA, new Sort());
+			
+		//    // publish it
+		//    RemoteSearchable impl = new RemoteSearchable(local);
+		//    System.Runtime.Remoting.RemotingServices.Marshal(impl, "SortedSearchable");
+		//}
 	}
 }

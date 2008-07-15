@@ -22,27 +22,27 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.search
 {
 	
-    [Serializable]
-    public class SingleDocTestFilter : Lucene.Net.Search.Filter
-    {
-        private int doc;
+	[Serializable]
+	public class SingleDocTestFilter : Lucene.Net.Search.Filter
+	{
+		private int doc;
 		
-        public SingleDocTestFilter(int doc)
-        {
-            this.doc = doc;
-        }
+		public SingleDocTestFilter(int doc)
+		{
+			this.doc = doc;
+		}
 		
-        public override System.Collections.BitArray Bits(IndexReader reader)
-        {
-            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+		public override System.Collections.BitArray Bits(IndexReader reader)
+		{
+			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
 
-            for (int increment = 0; doc >= bits.Length; increment =+ 64)
-            {
-                bits.Length += increment;
-            }
-            bits.Set(doc, true);
-            
-            return bits;
-        }
-    }
+			for (int increment = 0; doc >= bits.Length; increment =+ 64)
+			{
+				bits.Length += increment;
+			}
+			bits.Set(doc, true);
+			
+			return bits;
+		}
+	}
 }

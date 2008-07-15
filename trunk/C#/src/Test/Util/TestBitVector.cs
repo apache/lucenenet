@@ -27,19 +27,18 @@ namespace Lucene.Net.Util
 	
 	/// <summary> <code>TestBitVector</code> tests the <code>BitVector</code>, obviously.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  "Peter Mularien" <pmularien@deploy.com>
-	/// </author>
-    /// <version>  $Id: TestBitVector.java 485463 2006-12-11 02:03:38Z yonik $
-    /// </version>
+	/// <version>  $Id: TestBitVector.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// </version>
 	[TestFixture]
-    public class TestBitVector
+	public class TestBitVector : LuceneTestCase
 	{
 		
 		/// <summary> Test the default constructor on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestConstructSize()
+		public virtual void  TestConstructSize()
 		{
 			DoTestConstructOfSize(8);
 			DoTestConstructOfSize(20);
@@ -56,7 +55,7 @@ namespace Lucene.Net.Util
 		/// <summary> Test the get() and set() methods on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestGetSet()
+		public virtual void  TestGetSet()
 		{
 			DoTestGetSetVectorOfSize(8);
 			DoTestGetSetVectorOfSize(20);
@@ -79,7 +78,7 @@ namespace Lucene.Net.Util
 		/// <summary> Test the clear() method on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestClear()
+		public virtual void  TestClear()
 		{
 			DoTestClearVectorOfSize(8);
 			DoTestClearVectorOfSize(20);
@@ -104,7 +103,7 @@ namespace Lucene.Net.Util
 		/// <summary> Test the count() method on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestCount()
+		public virtual void  TestCount()
 		{
 			DoTestCountVectorOfSize(8);
 			DoTestCountVectorOfSize(20);
@@ -143,7 +142,7 @@ namespace Lucene.Net.Util
 		/// <summary> Test writing and construction to/from Directory.</summary>
 		/// <throws>  Exception </throws>
 		[Test]
-        public virtual void  TestWriteRead()
+		public virtual void  TestWriteRead()
 		{
 			DoTestWriteRead(8);
 			DoTestWriteRead(20);
@@ -171,53 +170,53 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-        /// <summary> Test r/w when size/count cause switching between bit-set and d-gaps file formats.  </summary>
-        /// <throws>  Exception </throws>
-        [Test]
-        public virtual void  TestDgaps()
-        {
-            DoTestDgaps(1, 0, 1);
-            DoTestDgaps(10, 0, 1);
-            DoTestDgaps(100, 0, 1);
-            DoTestDgaps(1000, 4, 7);
-            DoTestDgaps(10000, 40, 43);
-            DoTestDgaps(100000, 415, 418);
-            DoTestDgaps(1000000, 3123, 3126);
-        }
+		/// <summary> Test r/w when size/count cause switching between bit-set and d-gaps file formats.  </summary>
+		/// <throws>  Exception </throws>
+		[Test]
+		public virtual void  TestDgaps()
+		{
+			DoTestDgaps(1, 0, 1);
+			DoTestDgaps(10, 0, 1);
+			DoTestDgaps(100, 0, 1);
+			DoTestDgaps(1000, 4, 7);
+			DoTestDgaps(10000, 40, 43);
+			DoTestDgaps(100000, 415, 418);
+			DoTestDgaps(1000000, 3123, 3126);
+		}
 		
-        private void  DoTestDgaps(int size, int count1, int count2)
-        {
-            Directory d = new RAMDirectory();
-            BitVector bv = new BitVector(size);
-            for (int i = 0; i < count1; i++)
-            {
-                bv.Set(i);
-                Assert.AreEqual(i + 1, bv.Count());
-            }
-            bv.Write(d, "TESTBV");
-            // gradually increase number of set bits
-            for (int i = count1; i < count2; i++)
-            {
-                BitVector bv2 = new BitVector(d, "TESTBV");
-                Assert.IsTrue(DoCompare(bv, bv2));
-                bv = bv2;
-                bv.Set(i);
-                Assert.AreEqual(i + 1, bv.Count());
-                bv.Write(d, "TESTBV");
-            }
-            // now start decreasing number of set bits
-            for (int i = count2 - 1; i >= count1; i--)
-            {
-                BitVector bv2 = new BitVector(d, "TESTBV");
-                Assert.IsTrue(DoCompare(bv, bv2));
-                bv = bv2;
-                bv.Clear(i);
-                Assert.AreEqual(i, bv.Count());
-                bv.Write(d, "TESTBV");
-            }
-        }
+		private void  DoTestDgaps(int size, int count1, int count2)
+		{
+			Directory d = new RAMDirectory();
+			BitVector bv = new BitVector(size);
+			for (int i = 0; i < count1; i++)
+			{
+				bv.Set(i);
+				Assert.AreEqual(i + 1, bv.Count());
+			}
+			bv.Write(d, "TESTBV");
+			// gradually increase number of set bits
+			for (int i = count1; i < count2; i++)
+			{
+				BitVector bv2 = new BitVector(d, "TESTBV");
+				Assert.IsTrue(DoCompare(bv, bv2));
+				bv = bv2;
+				bv.Set(i);
+				Assert.AreEqual(i + 1, bv.Count());
+				bv.Write(d, "TESTBV");
+			}
+			// now start decreasing number of set bits
+			for (int i = count2 - 1; i >= count1; i--)
+			{
+				BitVector bv2 = new BitVector(d, "TESTBV");
+				Assert.IsTrue(DoCompare(bv, bv2));
+				bv = bv2;
+				bv.Clear(i);
+				Assert.AreEqual(i, bv.Count());
+				bv.Write(d, "TESTBV");
+			}
+		}
 
-        /// <summary> Compare two BitVectors.
+		/// <summary> Compare two BitVectors.
 		/// This should really be an equals method on the BitVector itself.
 		/// </summary>
 		/// <param name="bv">One bit vector

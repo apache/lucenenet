@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using NUnit.Framework;
+
 using System;
 
 using Query = Lucene.Net.Search.Query;
@@ -25,7 +27,8 @@ namespace Lucene.Net.Search.Spans
 	
 	
 	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
-    public class TestSpanExplanationsOfNonMatches : TestSpanExplanations
+	[TestFixture]
+	public class TestSpanExplanationsOfNonMatches : TestSpanExplanations
 	{
 		
 		/// <summary> Overrides superclass to ignore matches and focus on non-matches

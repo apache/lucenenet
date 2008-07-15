@@ -33,12 +33,12 @@ namespace Lucene.Net.Search
 	/// nor does it adequately test 'negative' results.  It also does not test
 	/// that garbage in results in an Exception.
 	/// </summary>
-    [TestFixture]
-    public class TestRangeFilter : BaseTestRangeFilter
+	[TestFixture]
+	public class TestRangeFilter : BaseTestRangeFilter
 	{
 		
-        [Test]
-        public virtual void  TestRangeFilterId()
+		[Test]
+		public virtual void  TestRangeFilterId()
 		{
 			
 			IndexReader reader = IndexReader.Open(index);
@@ -120,8 +120,8 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, result.Length(), "med,med,T,T");
 		}
 		
-        [Test]
-        public virtual void  TestRangeFilterRand()
+		[Test]
+		public virtual void  TestRangeFilterRand()
 		{
 			
 			IndexReader reader = IndexReader.Open(index);

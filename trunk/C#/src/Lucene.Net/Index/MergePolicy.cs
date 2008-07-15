@@ -86,6 +86,12 @@ namespace Lucene.Net.Index
 				this.segments = segments;
 				this.useCompoundFile = useCompoundFile;
 			}
+
+            // added for testing
+            public SegmentInfos Segments_ForNUnitTest
+            {
+                get { return segments; }
+            }
 			
 			/// <summary>Record that an exception occurred while executing
 			/// this merge 

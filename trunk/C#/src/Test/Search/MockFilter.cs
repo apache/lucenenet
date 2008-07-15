@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	{
 		private bool wasCalled;
 		
-        public override System.Collections.BitArray Bits(IndexReader reader)
+		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			wasCalled = true;
 			return new System.Collections.BitArray(64);

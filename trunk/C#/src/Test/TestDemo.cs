@@ -19,18 +19,19 @@ using System;
 
 using NUnit.Framework;
 
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
 {
@@ -41,8 +42,9 @@ namespace Lucene.Net
 	/// <author>  Daniel Naber
 	/// </author>
 	[TestFixture]
-    public class TestDemo
+	public class TestDemo : LuceneTestCase
 	{
+		
 		[Test]
 		public virtual void  TestDemo_Renamed_Method()
 		{
@@ -57,7 +59,7 @@ namespace Lucene.Net
 			//Directory directory = FSDirectory.getDirectory("/tmp/testindex", true);
 			IndexWriter iwriter = new IndexWriter(directory, analyzer, true);
 			iwriter.SetMaxFieldLength(25000);
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			System.String text = "This is the text to be indexed.";
 			doc.Add(new Field("fieldname", text, Field.Store.YES, Field.Index.TOKENIZED));
 			iwriter.AddDocument(doc);
@@ -66,14 +68,14 @@ namespace Lucene.Net
 			// Now search the index:
 			IndexSearcher isearcher = new IndexSearcher(directory);
 			// Parse a simple query that searches for "text":
-            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("fieldname", analyzer);
-            Lucene.Net.Search.Query query = parser.Parse("text");
-            Hits hits = isearcher.Search(query);
+			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("fieldname", analyzer);
+			Query query = parser.Parse("text");
+			Hits hits = isearcher.Search(query);
 			Assert.AreEqual(1, hits.Length());
 			// Iterate through the results:
 			for (int i = 0; i < hits.Length(); i++)
 			{
-				Lucene.Net.Documents.Document hitDoc = hits.Doc(i);
+				Document hitDoc = hits.Doc(i);
 				Assert.AreEqual("This is the text to be indexed.", hitDoc.Get("fieldname"));
 			}
 			isearcher.Close();

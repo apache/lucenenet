@@ -22,7 +22,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
+	public sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
 	{
 		private IndexInput proxStream;
 		private int proxCount;

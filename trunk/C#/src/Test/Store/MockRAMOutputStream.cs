@@ -31,13 +31,15 @@ namespace Lucene.Net.Store
 		private MockRAMDirectory dir;
 		private bool first = true;
 		
+		internal byte[] singleByte = new byte[1];
+		
 		/// <summary>Construct an empty output buffer. </summary>
 		public MockRAMOutputStream(MockRAMDirectory dir, RAMFile f) : base(f)
 		{
 			this.dir = dir;
 		}
 		
-		public virtual void  Close()
+		public override void  Close()
 		{
 			base.Close();
 			
@@ -50,7 +52,19 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		public override void  FlushBuffer(byte[] src, int len)
+		public override void  Flush()
+		{
+			dir.MaybeThrowDeterministicException();
+			base.Flush();
+		}
+		
+		public override void  WriteByte(byte b)
+		{
+			singleByte[0] = b;
+			WriteBytes(singleByte, 0, 1);
+		}
+		
+		public override void  WriteBytes(byte[] b, int offset, int len)
 		{
 			long freeSpace = dir.maxSize - dir.SizeInBytes();
 			long realUsage = 0;
@@ -69,18 +83,20 @@ namespace Lucene.Net.Store
 				if (freeSpace > 0 && freeSpace < len)
 				{
 					realUsage += freeSpace;
-					base.FlushBuffer(src, (int) freeSpace);
+					base.WriteBytes(b, offset, (int) freeSpace);
 				}
 				if (realUsage > dir.maxUsedSize)
 				{
 					dir.maxUsedSize = realUsage;
 				}
-				throw new System.IO.IOException("fake disk full at " + dir.SizeInBytes() + " bytes");
+				throw new System.IO.IOException("fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes");
 			}
 			else
 			{
-				base.FlushBuffer(src, len);
+				base.WriteBytes(b, offset, len);
 			}
+			
+			dir.MaybeThrowDeterministicException();
 			
 			if (first)
 			{

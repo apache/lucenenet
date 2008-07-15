@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		private int lengthAtStart; // this is the number apps usually count on (although deletions can bring it down). 
 		private int nDeletedHits = 0; // # of already collected hits that were meanwhile deleted.
 		
-		internal bool debugCheckedForDeletions = false; // for test purposes.
+		public /*internal*/ bool debugCheckedForDeletions = false; // for test purposes.
 		
 		internal Hits(Searcher s, Query q, Filter f)
 		{
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 			
 			int end = scoreDocs.Length < length ? scoreDocs.Length : length;
 			length += nDeletedHits;
-			for (int i = hitDocs.Count; i < end; i++)
+			for (int i = start; i < end; i++)
 			{
 				hitDocs.Add(new HitDoc(scoreDocs[i].score * scoreNorm, scoreDocs[i].doc));
 			}

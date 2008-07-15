@@ -26,6 +26,7 @@ using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 using BitVector = Lucene.Net.Util.BitVector;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Similarity = Lucene.Net.Search.Similarity;
+using System.Collections;
 
 namespace Lucene.Net.Index
 {
@@ -1682,7 +1683,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetSegmentCount()
+		public /*internal*/ int GetSegmentCount()
 		{
 			lock (this)
 			{
@@ -1691,7 +1692,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetNumBufferedDocuments()
+		public /*internal*/ int GetNumBufferedDocuments()
 		{
 			lock (this)
 			{
@@ -1700,7 +1701,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetDocCount(int i)
+		public /*internal*/ int GetDocCount(int i)
 		{
 			lock (this)
 			{
@@ -1864,7 +1865,8 @@ namespace Lucene.Net.Index
 				segmentsToOptimize = new System.Collections.Hashtable();
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
-					segmentsToOptimize.Add(segmentInfos.Info(i), segmentInfos.Info(i));
+                    if (!segmentsToOptimize.ContainsKey(segmentInfos.Info(i)))
+                        segmentsToOptimize.Add(segmentInfos.Info(i), segmentInfos.Info(i));
 				
 				// Now mark all pending & running merges as optimize
 				// merge:
@@ -1879,7 +1881,7 @@ namespace Lucene.Net.Index
 				it = runningMerges.GetEnumerator();
 				while (it.MoveNext())
 				{
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
+					MergePolicy.OneMerge merge = (MergePolicy.OneMerge)((DictionaryEntry)it.Current).Value;
 					merge.optimize = true;
 					merge.maxNumSegmentsOptimize = maxNumSegments;
 				}
@@ -1943,7 +1945,7 @@ namespace Lucene.Net.Index
 				it = runningMerges.GetEnumerator();
 				while (it.MoveNext())
 				{
-					if (((MergePolicy.OneMerge) it.Current).optimize)
+					if (((MergePolicy.OneMerge) ((DictionaryEntry)it.Current).Value).optimize)
 						return true;
 				}
 				
@@ -2017,7 +2019,7 @@ namespace Lucene.Net.Index
 		/// to retrieve the next merge requested by the
 		/// MergePolicy 
 		/// </summary>
-		internal virtual MergePolicy.OneMerge GetNextMerge()
+		public /*internal*/ virtual MergePolicy.OneMerge GetNextMerge()
 		{
 			lock (this)
 			{
@@ -2243,7 +2245,7 @@ namespace Lucene.Net.Index
 					it = runningMerges.GetEnumerator();
 					while (it.MoveNext())
 					{
-						MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
+						MergePolicy.OneMerge merge = (MergePolicy.OneMerge)((DictionaryEntry)it.Current).Value;
 						if (infoStream != null)
 							Message("now abort running merge " + merge.SegString(directory));
 						merge.Abort();
@@ -2675,7 +2677,7 @@ namespace Lucene.Net.Index
 		/// <param name="flushDocStores">if false we are allowed to keep
 		/// doc stores open to share with the next segment
 		/// </param>
-		protected internal void  Flush(bool triggerMerge, bool flushDocStores)
+		public /*protected internal*/ void  Flush(bool triggerMerge, bool flushDocStores)
 		{
 			EnsureOpen();
 			
@@ -3146,7 +3148,7 @@ namespace Lucene.Net.Index
 		/// single segment.
 		/// </summary>
 		
-		internal void  Merge(MergePolicy.OneMerge merge)
+		public /*internal*/ void  Merge(MergePolicy.OneMerge merge)
 		{
 			
 			System.Diagnostics.Debug.Assert(merge.registerDone);
@@ -3704,7 +3706,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetBufferedDeleteTermsSize()
+		public /*internal*/ int GetBufferedDeleteTermsSize()
 		{
 			lock (this)
 			{
@@ -3713,7 +3715,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetNumBufferedDeleteTerms()
+		public /*internal*/ int GetNumBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -3777,7 +3779,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// utility routines for tests
-		internal virtual SegmentInfo NewestSegment()
+		public /*internal*/ virtual SegmentInfo NewestSegment()
 		{
 			return segmentInfos.Info(segmentInfos.Count - 1);
 		}

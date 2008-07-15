@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 		private volatile int refCount;
 		
 		// for testing
-		internal virtual int GetRefCount()
+		public /*internal*/ virtual int GetRefCount()
 		{
 			lock (this)
 			{
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
-		protected internal void  EnsureOpen()
+		public /*protected internal*/ void  EnsureOpen()
 		{
 			if (refCount <= 0)
 			{
@@ -558,7 +558,14 @@ namespace Lucene.Net.Index
 		
 		public static bool IndexExists(System.IO.FileInfo directory)
 		{
-			return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory.FullName)) != - 1;
+			if (System.IO.Directory.Exists(directory.FullName))
+			{
+				return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory.FullName)) != -1;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		
 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
@@ -925,7 +932,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		protected internal void  Commit()
+		public /*protected internal*/ void  Commit()
 		{
 			lock (this)
 			{

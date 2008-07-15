@@ -76,15 +76,15 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(e, a, m, SCORE_COMP_THRESH);
 		}
 		
-        static public void  AssertEquals(System.String m, int e, int a)
-        {
-            Assert.AreEqual(e, a, m);
-        }
-		
-        [SetUp]
-        public virtual void  SetUp()
+		static public void  AssertEquals(System.String m, int e, int a)
 		{
-			
+			Assert.AreEqual(e, a, m);
+		}
+		
+		[SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();	
 			System.String[] data = new System.String[]{"A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6"};
 			
 			small = new RAMDirectory();
@@ -93,12 +93,12 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < data.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-                doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id",String.valueOf(i)));
-                doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("all","all"));
+				doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id",String.valueOf(i)));
+				doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("all","all"));
 				if (null != data[i])
 				{
-                    doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("data",data[i]));
-                }
+					doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("data",data[i]));
+				}
 				writer.AddDocument(doc);
 			}
 			
@@ -114,16 +114,16 @@ namespace Lucene.Net.Search
 			return new ConstantScoreRangeQuery(f, l, h, il, ih);
 		}
 		
-        [Test]
-        public virtual void  TestBasics()
+		[Test]
+		public virtual void  TestBasics()
 		{
 			QueryUtils.Check(Csrq("data", "1", "6", T, T));
 			QueryUtils.Check(Csrq("data", "A", "Z", T, T));
 			QueryUtils.CheckUnequal(Csrq("data", "1", "6", T, T), Csrq("data", "A", "Z", T, T));
 		}
 		
-        [Test]
-        public virtual void  TestEqualScores()
+		[Test]
+		public virtual void  TestEqualScores()
 		{
 			// NOTE: uses index build in *this* SetUp
 			
@@ -144,8 +144,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        [Test]
-        public virtual void  TestBoost()
+		[Test]
+		public virtual void  TestBoost()
 		{
 			// NOTE: uses index build in *this* SetUp
 			
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestBooleanOrderUnAffected()
+		public virtual void  TestBooleanOrderUnAffected()
 		{
 			// NOTE: uses index build in *this* SetUp
 			
@@ -208,8 +208,8 @@ namespace Lucene.Net.Search
 			// ConstantScoreRangeQuery and make sure hte order is the same
 			
 			BooleanQuery q = new BooleanQuery();
-            q.Add(rq, BooleanClause.Occur.MUST); //T, F);
-            q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur.MUST); //T, F);
+			q.Add(rq, BooleanClause.Occur.MUST); //T, F);
+			q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur.MUST); //T, F);
 			
 			Hits actual = search.Search(q);
 			
@@ -223,8 +223,8 @@ namespace Lucene.Net.Search
 		
 		
 		
-        [Test]
-        public virtual void  TestRangeQueryId()
+		[Test]
+		public virtual void  TestRangeQueryId()
 		{
 			// NOTE: uses index build in *super* SetUp
 			
@@ -306,8 +306,8 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, result.Length(), "med,med,T,T");
 		}
 		
-        [Test]
-        public virtual void  TestRangeQueryRand()
+		[Test]
+		public virtual void  TestRangeQueryRand()
 		{
 			// NOTE: uses index build in *super* SetUp
 			

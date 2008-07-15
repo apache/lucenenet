@@ -19,26 +19,30 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Lucene.Net.Index;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	[TestFixture]
-	public class TestTermVectors
+	public class TestTermVectors : LuceneTestCase
 	{
 		private IndexSearcher searcher;
 		private RAMDirectory directory = new RAMDirectory();
-
+		//public TestTermVectors(System.String s) : base(s)
+		//{
+		//}
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
 			//writer.setUseCompoundFile(true);
 			//writer.infoStream = System.out;
@@ -71,20 +75,14 @@ namespace Lucene.Net.Search
 			searcher = new IndexSearcher(directory);
 		}
 		
-		[TearDown]
-        public virtual void  TearDown()
-		{
-			
-		}
-		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			Assert.IsTrue(searcher != null);
 		}
 		
 		[Test]
-        public virtual void  TestTermVectors_Renamed_Method()
+		public virtual void  TestTermVectors_Renamed_Method()
 		{
 			Query query = new TermQuery(new Term("field", "seventy"));
 			try
@@ -99,14 +97,14 @@ namespace Lucene.Net.Search
 					Assert.IsTrue(vector.Length == 1);
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
 		}
 		
 		[Test]
-        public virtual void  TestTermPositionVectors()
+		public virtual void  TestTermPositionVectors()
 		{
 			Query query = new TermQuery(new Term("field", "zero"));
 			try
@@ -161,7 +159,7 @@ namespace Lucene.Net.Search
 							TermPositionVector posVec = (TermPositionVector) vector[0];
 							Assert.IsTrue(false);
 						}
-						catch (System.InvalidCastException ignore)
+						catch (System.InvalidCastException)
 						{
 							TermFreqVector freqVec = vector[0];
 							System.String[] terms = freqVec.GetTerms();
@@ -170,14 +168,14 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
 		}
 		
 		[Test]
-        public virtual void  TestTermOffsetVectors()
+		public virtual void  TestTermOffsetVectors()
 		{
 			Query query = new TermQuery(new Term("field", "fifty"));
 			try
@@ -194,14 +192,14 @@ namespace Lucene.Net.Search
 					//Assert.IsTrue();
 				}
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}
 		}
 		
 		[Test]
-        public virtual void  TestKnownSetOfDocuments()
+		public virtual void  TestKnownSetOfDocuments()
 		{
 			System.String test1 = "eating chocolate in a computer lab"; //6 terms
 			System.String test2 = "computer in a computer lab"; //5 terms
@@ -303,22 +301,47 @@ namespace Lucene.Net.Search
 					//System.out.println("Term: " + term);
 					int freq = freqs2[i];
 					Assert.IsTrue(test4.IndexOf(term) != - 1);
-                    System.Int32 freqInt = -1;
-                    try
-                    {
-                        freqInt = (System.Int32) test4Map[term];
-                    }
-                    catch (Exception)
-                    {
-                        Assert.IsTrue(false);
-                    }
-                    Assert.IsTrue(freqInt == freq);
+					System.Int32 freqInt = -1;
+					try
+					{
+						freqInt = (System.Int32) test4Map[term];
+					}
+					catch (Exception)
+					{
+						Assert.IsTrue(false);
+					}
+					Assert.IsTrue(freqInt == freq);
 				}
+				SortedTermVectorMapper mapper = new SortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
+				knownSearcher.Reader.GetTermFreqVector(hits.Id(1), mapper);
+				System.Collections.Generic.SortedDictionary<Object,Object> vectorEntrySet = mapper.GetTermVectorEntrySet();
+				Assert.IsTrue(vectorEntrySet.Count == 10, "mapper.getTermVectorEntrySet() Size: " + vectorEntrySet.Count + " is not: " + 10);
+				TermVectorEntry last = null;
+				for (System.Collections.IEnumerator iterator = vectorEntrySet.Keys.GetEnumerator(); iterator.MoveNext(); )
+				{
+					TermVectorEntry tve = (TermVectorEntry)iterator.Current;
+					if (tve != null && last != null)
+					{
+						Assert.IsTrue(last.GetFrequency() >= tve.GetFrequency(), "terms are not properly sorted");
+						System.Int32 expectedFreq = (System.Int32)test4Map[tve.GetTerm()];
+						//we expect double the expectedFreq, since there are two fields with the exact same text and we are collapsing all fields
+						Assert.IsTrue(tve.GetFrequency() == 2 * expectedFreq, "Frequency is not correct:");
+					}
+					last = tve;
+				}
+
+				FieldSortedTermVectorMapper fieldMapper = new FieldSortedTermVectorMapper(new TermVectorEntryFreqSortedComparator());
+				knownSearcher.Reader.GetTermFreqVector(hits.Id(1), fieldMapper);
+				System.Collections.IDictionary map = fieldMapper.GetFieldToTerms();
+				Assert.IsTrue(map.Count == 2, "map Size: " + map.Count + " is not: " + 2);
+				vectorEntrySet = (System.Collections.Generic.SortedDictionary<Object,Object>) map["field"];
+				Assert.IsTrue(vectorEntrySet != null, "vectorEntrySet is null and it shouldn't be");
+				Assert.IsTrue(vectorEntrySet.Count == 10, "vectorEntrySet Size: " + vectorEntrySet.Count + " is not: " + 10);
 				knownSearcher.Close();
 			}
 			catch (System.IO.IOException e)
 			{
-                System.Console.Error.WriteLine(e.StackTrace);
+				System.Console.Error.WriteLine(e.StackTrace);
 				Assert.IsTrue(false);
 			}
 		}
@@ -326,7 +349,85 @@ namespace Lucene.Net.Search
 		private void  SetupDoc(Lucene.Net.Documents.Document doc, System.String text)
 		{
 			doc.Add(new Field("field", text, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.YES));
+			doc.Add(new Field("field2", text, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			//System.out.println("Document: " + doc);
+		}
+		
+		// Test only a few docs having vectors
+		[Test]
+		public virtual void  TestRareVectors()
+		{
+			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			for (int i = 0; i < 100; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO));
+				writer.AddDocument(doc);
+			}
+			for (int i = 0; i < 10; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field("field", English.IntToEnglish(100 + i), Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				writer.AddDocument(doc);
+			}
+			
+			writer.Close();
+			searcher = new IndexSearcher(directory);
+			
+			Query query = new TermQuery(new Term("field", "hundred"));
+			Hits hits = searcher.Search(query);
+			Assert.AreEqual(10, hits.Length());
+			for (int i = 0; i < hits.Length(); i++)
+			{
+				TermFreqVector[] vector = searcher.Reader.GetTermFreqVectors(hits.Id(i));
+				Assert.IsTrue(vector != null);
+				Assert.IsTrue(vector.Length == 1);
+			}
+		}
+		
+		
+		// In a single doc, for the same field, mix the term
+		// vectors up
+		[Test]
+		public virtual void  TestMixedVectrosVectors()
+		{
+			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			Document doc = new Document();
+			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO));
+			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.YES));
+			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS));
+			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_OFFSETS));
+			doc.Add(new Field("field", "one", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			writer.AddDocument(doc);
+			writer.Close();
+			
+			searcher = new IndexSearcher(directory);
+			
+			Query query = new TermQuery(new Term("field", "one"));
+			Hits hits = searcher.Search(query);
+			Assert.AreEqual(1, hits.Length());
+
+			TermFreqVector[] vector = searcher.Reader.GetTermFreqVectors(hits.Id(0));
+			Assert.IsTrue(vector != null);
+			Assert.IsTrue(vector.Length == 1);
+			TermPositionVector tfv = (TermPositionVector) vector[0];
+			Assert.IsTrue(tfv.GetField().Equals("field"));
+			System.String[] terms = tfv.GetTerms();
+			Assert.AreEqual(1, terms.Length);
+			Assert.AreEqual(terms[0], "one");
+			Assert.AreEqual(5, tfv.GetTermFrequencies()[0]);
+			
+			int[] positions = tfv.GetTermPositions(0);
+			Assert.AreEqual(5, positions.Length);
+			for (int i = 0; i < 5; i++)
+				Assert.AreEqual(i, positions[i]);
+			TermVectorOffsetInfo[] offsets = tfv.GetOffsets(0);
+			Assert.AreEqual(5, offsets.Length);
+			for (int i = 0; i < 5; i++)
+			{
+				Assert.AreEqual(4 * i, offsets[i].GetStartOffset());
+				Assert.AreEqual(4 * i + 3, offsets[i].GetEndOffset());
+			}
 		}
 	}
 }

@@ -19,14 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-using NumberTools = Lucene.Net.Documents.NumberTools;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {
 	[TestFixture]
-	public class TestNumberTools
+	public class TestNumberTools : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestNearZero()
 		{
 			for (int i = - 100; i <= 100; i++)
@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestMax()
 		{
 			// make sure the constants convert to their equivelents
@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestMin()
 		{
 			// make sure the constants convert to their equivelents

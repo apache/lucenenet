@@ -19,32 +19,32 @@ using System;
 
 using NUnit.Framework;
 
-using Term = Lucene.Net.Index.Term;
-using TermEnum = Lucene.Net.Index.TermEnum;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using TermEnum = Lucene.Net.Index.TermEnum;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
+
 	/// <summary> This class tests the MultiPhraseQuery class.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Otis Gospodnetic, Daniel Naber
-	/// </author>
-	/// <version>  $Id: TestMultiPhraseQuery.java 219387 2005-07-17 10:47:14Z dnaber $
+	/// <version>  $Id: TestMultiPhraseQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestMultiPhraseQuery
+	public class TestMultiPhraseQuery : LuceneTestCase
 	{
 		
 		[Test]
-        public virtual void  TestPhrasePrefix()
+		public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 				query4.Add(new Term("field2", "foobar"));
 				Assert.Fail();
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// okay, all terms must belong to the same field
 			}
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestBooleanQueryContainingSingleTermPrefixQuery()
+		public virtual void  TestBooleanQueryContainingSingleTermPrefixQuery()
 		{
 			// this tests against bug 33161 (now fixed)
 			// In order to cause the bug, the outer query must have more than one term 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestPhrasePrefixWithBooleanQuery()
+		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.String[]{}), true);

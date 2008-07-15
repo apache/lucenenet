@@ -22,8 +22,11 @@ using NUnit.Framework;
 namespace Lucene.Net.Util
 {
 	[TestFixture]
-	public class TestPriorityQueue
+	public class TestPriorityQueue : LuceneTestCase
 	{
+		//public TestPriorityQueue(System.String name) : base(name)
+		//{
+		//}
 		
 		private class IntegerQueue : PriorityQueue
 		{
@@ -39,12 +42,12 @@ namespace Lucene.Net.Util
 		}
 		
 		[Test]
-        public virtual void  TestPQ()
+		public virtual void  TestPQ()
 		{
-			_TestPQ2(10000);
+			TestPQ(10000);
 		}
 		
-        public static void  _TestPQ2(int count)
+		public static void  TestPQ(int count)
 		{
 			PriorityQueue pq = new IntegerQueue(count);
 			System.Random gen = new System.Random();
@@ -81,7 +84,7 @@ namespace Lucene.Net.Util
 		}
 		
 		[Test]
-        public virtual void  TestClear()
+		public virtual void  TestClear()
 		{
 			PriorityQueue pq = new IntegerQueue(3);
 			pq.Put((System.Object) 2);
@@ -93,7 +96,7 @@ namespace Lucene.Net.Util
 		}
 		
 		[Test]
-        public virtual void  TestFixedSize()
+		public virtual void  TestFixedSize()
 		{
 			PriorityQueue pq = new IntegerQueue(3);
 			pq.Insert((System.Object) 2);
@@ -104,6 +107,28 @@ namespace Lucene.Net.Util
 			pq.Insert((System.Object) 1);
 			Assert.AreEqual(3, pq.Size());
 			Assert.AreEqual(3, ((System.Int32) pq.Top()));
+		}
+		
+		[Test]
+		public virtual void  TestInsertWithOverflow()
+		{
+			int size = 4;
+			PriorityQueue pq = new IntegerQueue(size);
+			System.Int32 i1 = 2;
+			System.Int32 i2 = 3;
+			System.Int32 i3 = 1;
+			System.Int32 i4 = 5;
+			System.Int32 i5 = 7;
+			System.Int32 i6 = 1;
+			
+			Assert.IsNull(pq.InsertWithOverflow((System.Object) i1));
+			Assert.IsNull(pq.InsertWithOverflow((System.Object) i2));
+			Assert.IsNull(pq.InsertWithOverflow((System.Object) i3));
+			Assert.IsNull(pq.InsertWithOverflow((System.Object) i4));
+			Assert.IsTrue((int)pq.InsertWithOverflow((System.Object)i5) == i3); // i3 should have been dropped
+			Assert.IsTrue((int)pq.InsertWithOverflow((System.Object)i6) == i6); // i6 should not have been inserted
+			Assert.AreEqual(size, pq.Size());
+			Assert.AreEqual(2, ((System.Int32) pq.Top()));
 		}
 	}
 }

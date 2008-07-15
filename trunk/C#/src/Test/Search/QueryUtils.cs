@@ -16,7 +16,9 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 	
@@ -37,50 +39,100 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        private class AnonymousClassHitCollector : HitCollector
-        {
-            public AnonymousClassHitCollector(int[] which, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
-            {
-                InitBlock(which, scorer, sdoc, maxDiff, q, s);
-            }
-            private void  InitBlock(int[] which, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
-            {
-                this.which = which;
-                this.scorer = scorer;
-                this.sdoc = sdoc;
-                this.maxDiff = maxDiff;
-                this.q = q;
-                this.s = s;
-            }
-            private int[] which;
-            private Lucene.Net.Search.Scorer scorer;
-            private int[] sdoc;
-            private float maxDiff;
-            private Lucene.Net.Search.Query q;
-            private Lucene.Net.Search.IndexSearcher s;
-            public override void  Collect(int doc, float score)
-            {
-                try
-                {
-                    bool more = (which[0]++ & 0x02) == 0?scorer.SkipTo(sdoc[0] + 1):scorer.Next();
-                    sdoc[0] = scorer.Doc();
-                    float scorerScore = scorer.Score();
-                    float scoreDiff = System.Math.Abs(score - scorerScore);
-                    scoreDiff = 0; // TODO: remove this go get LUCENE-697
-                    // failures
-                    if (more == false || doc != sdoc[0] || scoreDiff > maxDiff)
-                    {
-                        throw new System.SystemException("ERROR matching docs:" + "\n\tscorer.more=" + more + " doc=" + sdoc[0] + " score=" + scorerScore + "\n\thitCollector.doc=" + doc + " score=" + score + "\n\t Scorer=" + scorer + "\n\t Query=" + q + "\n\t Searcher=" + s);
-                    }
-                }
-                catch (System.IO.IOException e)
-                {
-                    throw new System.SystemException("", e);
-                }
-            }
-        }
+		private class AnonymousClassHitCollector : HitCollector
+		{
+			public AnonymousClassHitCollector(int[] order, int[] opidx, int skip_op, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
+			{
+				InitBlock(order, opidx, skip_op, scorer, sdoc, maxDiff, q, s);
+			}
+			private void  InitBlock(int[] order, int[] opidx, int skip_op, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
+			{
+				this.order = order;
+				this.opidx = opidx;
+				this.skip_op = skip_op;
+				this.scorer = scorer;
+				this.sdoc = sdoc;
+				this.maxDiff = maxDiff;
+				this.q = q;
+				this.s = s;
+			}
+			private int[] order;
+			private int[] opidx;
+			private int skip_op;
+			private Lucene.Net.Search.Scorer scorer;
+			private int[] sdoc;
+			private float maxDiff;
+			private Lucene.Net.Search.Query q;
+			private Lucene.Net.Search.IndexSearcher s;
+			public override void  Collect(int doc, float score)
+			{
+				try
+				{
+					int op = order[(opidx[0]++) % order.Length];
+					//System.out.println(op==skip_op ? "skip("+(sdoc[0]+1)+")":"next()");
+					bool more = op == skip_op?scorer.SkipTo(sdoc[0] + 1):scorer.Next();
+					sdoc[0] = scorer.Doc();
+					float scorerScore = scorer.Score();
+					float scorerScore2 = scorer.Score();
+					float scoreDiff = System.Math.Abs(score - scorerScore);
+					float scorerDiff = System.Math.Abs(scorerScore2 - scorerScore);
+					if (!more || doc != sdoc[0] || scoreDiff > maxDiff || scorerDiff > maxDiff)
+					{
+						System.Text.StringBuilder sbord = new System.Text.StringBuilder();
+						for (int i = 0; i < order.Length; i++)
+							sbord.Append(order[i] == skip_op?" skip()":" next()");
+						throw new System.SystemException("ERROR matching docs:" + "\n\t" + (doc != sdoc[0]?"--> ":"") + "doc=" + sdoc[0] + "\n\t" + (!more?"--> ":"") + "tscorer.more=" + more + "\n\t" + (scoreDiff > maxDiff?"--> ":"") + "scorerScore=" + scorerScore + " scoreDiff=" + scoreDiff + " maxDiff=" + maxDiff + "\n\t" + (scorerDiff > maxDiff?"--> ":"") + "scorerScore2=" + scorerScore2 + " scorerDiff=" + scorerDiff + "\n\thitCollector.doc=" + doc + " score=" + score + "\n\t Scorer=" + scorer + "\n\t Query=" + q + "  " + q.GetType().FullName + "\n\t Searcher=" + s + "\n\t Order=" + sbord + "\n\t Op=" + (op == skip_op?" skip()":" next()"));
+					}
+				}
+				catch (System.IO.IOException e)
+				{
+					throw new System.Exception("", e);
+				}
+			}
+		}
 		
-        /// <summary>Check the types of things query objects should be able to do. </summary>
+		private class AnonymousClassHitCollector1 : HitCollector
+		{
+			public AnonymousClassHitCollector1(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
+			{
+				InitBlock(lastDoc, q, s, maxDiff);
+			}
+			private void  InitBlock(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
+			{
+				this.lastDoc = lastDoc;
+				this.q = q;
+				this.s = s;
+				this.maxDiff = maxDiff;
+			}
+			private int[] lastDoc;
+			private Lucene.Net.Search.Query q;
+			private Lucene.Net.Search.IndexSearcher s;
+			private float maxDiff;
+			public override void  Collect(int doc, float score)
+			{
+				//System.out.println("doc="+doc);
+				try
+				{
+					for (int i = lastDoc[0] + 1; i <= doc; i++)
+					{
+						Weight w = q.Weight(s);
+						Scorer scorer = w.Scorer(s.GetIndexReader());
+						Assert.IsTrue(scorer.SkipTo(i), "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
+						Assert.AreEqual(doc, scorer.Doc(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer.Doc());
+						float skipToScore = scorer.Score();
+						Assert.AreEqual(skipToScore, scorer.Score(), maxDiff, "unstable skipTo(" + i + ") score!");
+						Assert.AreEqual(score, skipToScore, maxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
+					}
+					lastDoc[0] = doc;
+				}
+				catch (System.IO.IOException e)
+				{
+					throw new System.Exception("", e);
+				}
+			}
+		}
+		
+		/// <summary>Check the types of things query objects should be able to do. </summary>
 		public static void  Check(Query q)
 		{
 			CheckHashEquals(q);
@@ -111,53 +163,125 @@ namespace Lucene.Net.Search
 		
 		public static void  CheckUnequal(Query q1, Query q2)
 		{
-            Assert.IsTrue(q1.ToString() != q2.ToString());
-            Assert.IsTrue(q2.ToString() != q1.ToString());
+			Assert.IsTrue(q1.ToString() != q2.ToString());
+			Assert.IsTrue(q2.ToString() != q1.ToString());
 			
 			// possible this test can fail on a hash collision... if that
 			// happens, please change test to use a different example.
 			Assert.IsTrue(q1.GetHashCode() != q2.GetHashCode());
 		}
 		
-        /// <summary>various query sanity checks on a searcher </summary>
-        public static void  Check(Query q1, Searcher s)
-        {
-            try
-            {
-                Check(q1);
-                if (s != null && s is IndexSearcher)
-                {
-                    IndexSearcher is_Renamed = (IndexSearcher) s;
-                    CheckSkipTo(q1, is_Renamed);
-                }
-            }
-            catch (System.IO.IOException e)
-            {
-                throw new System.SystemException("", e);
-            }
-        }
+		/// <summary>deep check that explanations of a query 'score' correctly </summary>
+		public static void  CheckExplanations(Query q, Searcher s)
+		{
+			CheckHits.CheckExplanations(q, null, s, true);
+		}
 		
-        /// <summary> alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
-        /// and ensure a hitcollector receives same docs and scores
-        /// </summary>
-        public static void  CheckSkipTo(Query q, IndexSearcher s)
-        {
-            // System.out.println("Checking "+q);
-            Weight w = q.Weight(s);
-            Scorer scorer = w.Scorer(s.GetIndexReader());
+		/// <summary> various query sanity checks on a searcher, including explanation checks.</summary>
+		/// <seealso cref="checkExplanations">
+		/// </seealso>
+		/// <seealso cref="checkSkipTo">
+		/// </seealso>
+		/// <seealso cref="Check(Query)">
+		/// </seealso>
+		public static void  Check(Query q1, Searcher s)
+		{
+			try
+			{
+				Check(q1);
+				if (s != null)
+				{
+					if (s is IndexSearcher)
+					{
+						IndexSearcher is_Renamed = (IndexSearcher) s;
+						CheckFirstSkipTo(q1, is_Renamed);
+						CheckSkipTo(q1, is_Renamed);
+					}
+					CheckExplanations(q1, s);
+					CheckSerialization(q1, s);
+				}
+			}
+			catch (System.IO.IOException e)
+			{
+				throw new System.Exception("", e);
+			}
+		}
+		
+		/// <summary>check that the query weight is serializable. </summary>
+		/// <throws>  IOException if serialization check fail.  </throws>
+		private static void  CheckSerialization(Query q, Searcher s)
+		{
+			Weight w = q.Weight(s);
+			try
+			{
+				System.IO.MemoryStream bos = new System.IO.MemoryStream();
+				System.IO.BinaryWriter oos = new System.IO.BinaryWriter(bos);
+				System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				formatter.Serialize(oos.BaseStream, w);
+				oos.Close();
+				System.IO.BinaryReader ois = new System.IO.BinaryReader(new System.IO.MemoryStream(bos.ToArray()));
+				formatter.Deserialize(ois.BaseStream);
+				ois.Close();
+				
+				//skip rquals() test for now - most weights don't overide equals() and we won't add this just for the tests.
+				//TestCase.assertEquals("writeObject(w) != w.  ("+w+")",w2,w);   
+			}
+			catch (System.Exception e)
+			{
+				System.IO.IOException e2 = new System.IO.IOException("Serialization failed for " + w, e);
+				throw e2;
+			}
+		}
+		
+		
+		/// <summary>alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
+		/// and ensure a hitcollector receives same docs and scores
+		/// </summary>
+		public static void  CheckSkipTo(Query q, IndexSearcher s)
+		{
+			//System.out.println("Checking "+q);
 			
-            // FUTURE: ensure scorer.doc()==-1
+			if (BooleanQuery.GetAllowDocsOutOfOrder())
+				return ; // in this case order of skipTo() might differ from that of next().
 			
-            if (BooleanQuery.GetUseScorer14())
-                return ; // 1.4 doesn't support skipTo
-			
-            int[] which = new int[1];
-            int[] sdoc = new int[]{- 1};
-            float maxDiff = 1e-5f;
-            s.Search(q, new AnonymousClassHitCollector(which, scorer, sdoc, maxDiff, q, s));
-			
-            // make sure next call to scorer is false.
-            Assert.IsFalse((which[0]++ & 0x02) == 0 ? scorer.SkipTo(sdoc[0] + 1) : scorer.Next());
-        }
-    }
+			int skip_op = 0;
+			int next_op = 1;
+			int[][] orders = new int[][]{new int[]{next_op}, new int[]{skip_op}, new int[]{skip_op, next_op}, new int[]{next_op, skip_op}, new int[]{skip_op, skip_op, next_op, next_op}, new int[]{next_op, next_op, skip_op, skip_op}, new int[]{skip_op, skip_op, skip_op, next_op, next_op}};
+			for (int k = 0; k < orders.Length; k++)
+			{
+				int[] order = orders[k];
+				//System.out.print("Order:");for (int i = 0; i < order.length; i++) System.out.print(order[i]==skip_op ? " skip()":" next()"); System.out.println();
+				int[] opidx = new int[]{0};
+				
+				Weight w = q.Weight(s);
+				Scorer scorer = w.Scorer(s.GetIndexReader());
+				
+				// FUTURE: ensure scorer.doc()==-1
+				
+				int[] sdoc = new int[]{- 1};
+				float maxDiff = 1e-5f;
+				s.Search(q, new AnonymousClassHitCollector(order, opidx, skip_op, scorer, sdoc, maxDiff, q, s));
+				
+				// make sure next call to scorer is false.
+				int op = order[(opidx[0]++) % order.Length];
+				//System.out.println(op==skip_op ? "last: skip()":"last: next()");
+				bool more = op == skip_op?scorer.SkipTo(sdoc[0] + 1):scorer.Next();
+				Assert.IsFalse(more);
+			}
+		}
+		
+		// check that first skip on just created scorers always goes to the right doc
+		private static void  CheckFirstSkipTo(Query q, IndexSearcher s)
+		{
+			//System.out.println("checkFirstSkipTo: "+q);
+			float maxDiff = 1e-5f;
+			int[] lastDoc = new int[]{- 1};
+			s.Search(q, new AnonymousClassHitCollector1(lastDoc, q, s, maxDiff));
+			Weight w = q.Weight(s);
+			Scorer scorer = w.Scorer(s.GetIndexReader());
+			bool more = scorer.SkipTo(lastDoc[0] + 1);
+			if (more)
+				Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.Doc());
+		}
+	}
 }

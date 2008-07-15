@@ -20,8 +20,9 @@ using System;
 using NUnit.Framework;
 
 using Document = Lucene.Net.Documents.Document;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
@@ -29,28 +30,23 @@ namespace Lucene.Net.Index
 	
 	//import org.cnlp.utils.properties.ResourceBundleHelper;
 	[TestFixture]
-	public class TestFieldInfos
+	public class TestFieldInfos : LuceneTestCase
 	{
 		
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		
-        // public TestFieldInfos(System.String s)
-        // {
-        // }
+		// public TestFieldInfos(System.String s)
+		// {
+		// }
 		
-        [SetUp]
-        public virtual void  SetUp()
+		[SetUp]
+		public override void SetUp()
 		{
 			DocHelper.SetupDoc(testDoc);
 		}
 		
-		[TearDown]
-        public virtual void  TearDown()
-		{
-		}
-		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			//Positive test of FieldInfos
 			Assert.IsTrue(testDoc != null);
@@ -93,7 +89,7 @@ namespace Lucene.Net.Index
 				
 				dir.Close();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				Assert.IsTrue(false);
 			}

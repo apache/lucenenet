@@ -19,9 +19,6 @@ using System;
 
 using NUnit.Framework;
 
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
@@ -29,6 +26,10 @@ using Store = Lucene.Net.Documents.Field.Store;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Index
 {
@@ -39,8 +40,10 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Daniel Naber
 	/// </author>
+	/// <deprecated>
+	/// </deprecated>
 	[TestFixture]
-    public class TestIndexModifier
+	public class TestIndexModifier : LuceneTestCase
 	{
 		
 		private int docCount = 0;
@@ -48,7 +51,7 @@ namespace Lucene.Net.Index
 		private Term allDocTerm = new Term("all", "x");
 		
 		[Test]
-        public virtual void  TestIndex()
+		public virtual void  TestIndex()
 		{
 			Directory ramDir = new RAMDirectory();
 			IndexModifier i = new IndexModifier(ramDir, new StandardAnalyzer(), true);
@@ -76,7 +79,7 @@ namespace Lucene.Net.Index
 			//  Lucene defaults:
 			Assert.IsNull(i.GetInfoStream());
 			Assert.IsTrue(i.GetUseCompoundFile());
-			Assert.AreEqual(10, i.GetMaxBufferedDocs());
+			Assert.AreEqual(IndexWriter.DISABLE_AUTO_FLUSH, i.GetMaxBufferedDocs());
 			Assert.AreEqual(10000, i.GetMaxFieldLength());
 			Assert.AreEqual(10, i.GetMergeFactor());
 			// test setting properties:
@@ -110,14 +113,14 @@ namespace Lucene.Net.Index
 				i.DocCount();
 				Assert.Fail();
 			}
-			catch (System.SystemException e)
+			catch (System.SystemException)
 			{
 				// expected exception
 			}
 		}
 		
 		[Test]
-        public virtual void  TestExtendedIndex()
+		public virtual void  TestExtendedIndex()
 		{
 			Directory ramDir = new RAMDirectory();
 			PowerIndex powerIndex = new PowerIndex(this, ramDir, new StandardAnalyzer(), true);
@@ -134,21 +137,21 @@ namespace Lucene.Net.Index
 		private Lucene.Net.Documents.Document GetDoc()
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("body", ((System.Int32) docCount).ToString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("body", System.Convert.ToString(docCount), Field.Store.YES, Field.Index.UN_TOKENIZED));
 			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.UN_TOKENIZED));
 			docCount++;
 			return doc;
 		}
 		
 		[Test]
-        public virtual void  TestIndexWithThreads()
+		public virtual void  TestIndexWithThreads()
 		{
 			_TestIndexInternal(0);
 			_TestIndexInternal(10);
 			_TestIndexInternal(50);
 		}
 		
-        private void  _TestIndexInternal(int maxWait)
+		private void  _TestIndexInternal(int maxWait)
 		{
 			bool create = true;
 			//Directory rd = new RAMDirectory();
@@ -187,7 +190,7 @@ namespace Lucene.Net.Index
 				index.Close();
 				Assert.Fail();
 			}
-			catch (System.SystemException e)
+			catch (System.SystemException)
 			{
 				// expected exception
 			}
@@ -311,10 +314,10 @@ namespace Lucene.Net.Index
 						System.String delId = null;
 						try
 						{
-                            delId = idStack[idStack.Count - 1] as System.String;
-                            idStack.RemoveAt(idStack.Count - 1);
+							delId = idStack[idStack.Count - 1] as System.String;
+							idStack.RemoveAt(idStack.Count - 1);
 						}
-						catch (System.ArgumentOutOfRangeException e)
+						catch (System.ArgumentOutOfRangeException)
 						{
 							continue;
 						}
@@ -352,12 +355,12 @@ namespace Lucene.Net.Index
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			lock (GetType())
 			{
-				doc.Add(new Field("id", ((System.Int32) id).ToString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.UN_TOKENIZED));
 				id++;
 			}
 			// add random stuff:
-			doc.Add(new Field("content", ((System.Int32) random.Next(1000)).ToString(), Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("content", ((System.Int32) random.Next(1000)).ToString(), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.TOKENIZED));
 			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.TOKENIZED));
 			return doc;
 		}

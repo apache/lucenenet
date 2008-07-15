@@ -19,19 +19,20 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-    [TestFixture]
-    public class TestAddIndexesNoOptimize
+	[TestFixture]
+	public class TestAddIndexesNoOptimize : LuceneTestCase
 	{
-        [Test]
+		[Test]
 		public virtual void  TestSimpleCase()
 		{
 			// main directory
@@ -126,7 +127,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// case 0: add self or exceed maxMergeDocs, expect exception
-        [Test]
+		[Test]
 		public virtual void  TestAddSelf()
 		{
 			// main directory
@@ -164,9 +165,10 @@ namespace Lucene.Net.Index
 				writer.AddIndexesNoOptimize(new Directory[]{aux});
 				Assert.IsTrue(false);
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				Assert.AreEqual(100, writer.DocCount());
+				Assert.AreEqual(1, writer.GetSegmentCount());
 			}
 			
 			writer.SetMaxMergeDocs(maxMergeDocs);
@@ -176,7 +178,7 @@ namespace Lucene.Net.Index
 				writer.AddIndexesNoOptimize(new Directory[]{aux, dir});
 				Assert.IsTrue(false);
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				Assert.AreEqual(100, writer.DocCount());
 			}
@@ -189,7 +191,7 @@ namespace Lucene.Net.Index
 		// in all the remaining tests, make the doc count of the oldest segment
 		// in dir large so that it is never merged in addIndexesNoOptimize()
 		// case 1: no tail segments
-        [Test]
+		[Test]
 		public virtual void  TestNoTailSegments()
 		{
 			// main directory
@@ -215,7 +217,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// case 2: tail segments, invariants hold, no copy
-        [Test]
+		[Test]
 		public virtual void  TestNoCopySegments()
 		{
 			// main directory
@@ -241,7 +243,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// case 3: tail segments, invariants hold, copy, invariants hold
-        [Test]
+		[Test]
 		public virtual void  TestNoMergeAfterCopy()
 		{
 			// main directory
@@ -250,12 +252,11 @@ namespace Lucene.Net.Index
 			Directory aux = new RAMDirectory();
 			
 			SetUpDirs(dir, aux);
-			
+
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(4);
-			
-			writer.AddIndexesNoOptimize(new Directory[]{aux, aux});
+			writer.AddIndexesNoOptimize(new Directory[] { aux, aux });
 			Assert.AreEqual(1060, writer.DocCount());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
@@ -265,7 +266,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// case 4: tail segments, invariants hold, copy, invariants not hold
-        [Test]
+		[Test]
 		public virtual void  TestMergeAfterCopy()
 		{
 			// main directory
@@ -289,7 +290,6 @@ namespace Lucene.Net.Index
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux, aux});
 			Assert.AreEqual(1020, writer.DocCount());
-			Assert.AreEqual(2, writer.GetSegmentCount());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
 			
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// case 5: tail segments, invariants not hold
-        [Test]
+		[Test]
 		public virtual void  TestMoreMerges()
 		{
 			// main directory
@@ -348,7 +348,9 @@ namespace Lucene.Net.Index
 		
 		private IndexWriter NewWriter(Directory dir, bool create)
 		{
-			return new IndexWriter(dir, new WhitespaceAnalyzer(), create);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), create);
+			writer.SetMergePolicy(new LogDocMergePolicy());
+			return writer;
 		}
 		
 		private void  AddDocs(IndexWriter writer, int numDocs)
@@ -396,7 +398,7 @@ namespace Lucene.Net.Index
 			
 			writer = NewWriter(dir, true);
 			writer.SetMaxBufferedDocs(1000);
-			// add 1000 documents
+			// add 1000 documents in 1 segment
 			AddDocs(writer, 1000);
 			Assert.AreEqual(1000, writer.DocCount());
 			Assert.AreEqual(1, writer.GetSegmentCount());

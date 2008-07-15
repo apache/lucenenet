@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search
 	/// <author>  Daniel Naber
 	/// </author>
 	[TestFixture]
-    public class TestFuzzyQuery
+	public class TestFuzzyQuery : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestFuzziness()
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestFuzzinessLong()
+		public virtual void  TestFuzzinessLong()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
@@ -245,7 +246,7 @@ namespace Lucene.Net.Search
 				query = new FuzzyQuery(new Term("field", "student"), 1.1f);
 				Assert.Fail("Expected IllegalArgumentException");
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// expecting exception
 			}
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search
 				query = new FuzzyQuery(new Term("field", "student"), - 0.1f);
 				Assert.Fail("Expected IllegalArgumentException");
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// expecting exception
 			}

@@ -20,11 +20,12 @@ using System;
 using NUnit.Framework;
 
 using WordlistLoader = Lucene.Net.Analysis.WordlistLoader;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	[TestFixture]
-	public class TestWordlistLoader
+	public class TestWordlistLoader : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestWordlistLoading()

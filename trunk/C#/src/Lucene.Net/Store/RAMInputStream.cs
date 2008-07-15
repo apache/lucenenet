@@ -39,8 +39,14 @@ namespace Lucene.Net.Store
 		private int bufferPosition;
 		private long bufferStart;
 		private int bufferLength;
+
+        // for testing
+        public static RAMInputStream RAMInputStream_ForNUnitTest(RAMFile f)
+        {
+            return new RAMInputStream(f);
+        }
 		
-		internal RAMInputStream(RAMFile f)
+		public /*internal*/ RAMInputStream(RAMFile f)
 		{
 			file = f;
 			length = file.length;

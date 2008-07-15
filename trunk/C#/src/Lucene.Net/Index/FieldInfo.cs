@@ -58,9 +58,15 @@ namespace Lucene.Net.Index
 		}
 
         // For testing only
-        public System.String Name
+        public System.String Name_ForNUnitTest
         {
             get { return name; }
         }
-	}
+
+        // For testing only
+        public bool StorePayloads_ForNUnitTest
+        {
+            get { return storePayloads; }
+        }
+    }
 }

@@ -19,39 +19,42 @@ using System;
 
 using NUnit.Framework;
 
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using CheckHits = Lucene.Net.Search.CheckHits;
 using Explanation = Lucene.Net.Search.Explanation;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Scorer = Lucene.Net.Search.Scorer;
 using Weight = Lucene.Net.Search.Weight;
-using CheckHits = Lucene.Net.Search.CheckHits;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Spans
 {
 	
-    [TestFixture]
-	public class TestNearSpansOrdered
+	[TestFixture]
+	public class TestNearSpansOrdered : LuceneTestCase
 	{
 		protected internal IndexSearcher searcher;
 		
 		public const System.String FIELD = "field";
 		public static readonly Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(FIELD, new WhitespaceAnalyzer());
 		
-        [TearDown]
-		public virtual void  TearDown()
+		[TearDown]
+		public override void TearDown()
 		{
+			base.TearDown();
 			searcher.Close();
 		}
 		
-        [SetUp]
-		public virtual void  SetUp()
+		[SetUp]
+		public override void SetUp()
 		{
+			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			for (int i = 0; i < docFields.Length; i++)
@@ -76,7 +79,7 @@ namespace Lucene.Net.Search.Spans
 			return MakeQuery("w1", "w2", "w3", 1, true);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestSpanNearQuery()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -93,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 			return "s(" + doc + "," + start + "," + end + ")";
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansNext()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -121,7 +124,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(false, span.SkipTo(2));
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansNextThenSkipTo()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -133,7 +136,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(false, span.Next());
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansNextThenSkipPast()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -143,7 +146,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(false, span.SkipTo(2));
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansSkipPast()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -151,7 +154,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(false, span.SkipTo(2));
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansSkipTo0()
 		{
 			SpanNearQuery q = MakeQuery();
@@ -160,7 +163,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(S(0, 0, 3), S(span));
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNearSpansSkipTo1()
 		{
 			SpanNearQuery q = MakeQuery();

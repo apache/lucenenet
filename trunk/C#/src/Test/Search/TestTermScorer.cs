@@ -19,19 +19,20 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-    [TestFixture]
-    public class TestTermScorer
+	[TestFixture]
+	public class TestTermScorer : LuceneTestCase
 	{
 		private class AnonymousClassHitCollector : HitCollector
 		{
@@ -68,10 +69,15 @@ namespace Lucene.Net.Search
 		protected internal IndexSearcher indexSearcher;
 		protected internal IndexReader indexReader;
 		
-
+		
+		//public TestTermScorer(System.String s) : base(s)
+		//{
+		//}
+		
 		[SetUp]
-		public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			directory = new RAMDirectory();
 			
 			
@@ -87,14 +93,8 @@ namespace Lucene.Net.Search
 			indexReader = indexSearcher.GetIndexReader();
 		}
 		
-        [TearDown]
-		public virtual void  TearDown()
-		{
-			
-		}
-		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			
 			Term allTerm = new Term(FIELD, "all");
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(doc0.score == 1.6931472f, doc0.score + " does not equal: " + 1.6931472f);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNext()
 		{
 			
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(ts.Next() == false, "next returned a doc and it should not have");
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestSkipTo()
 		{
 			
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(ts.Doc() == 5, "doc should be number 5");
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestExplain()
 		{
 			Term allTerm = new Term(FIELD, "all");

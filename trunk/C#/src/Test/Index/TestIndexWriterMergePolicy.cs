@@ -19,21 +19,23 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-    [TestFixture]
-    public class TestIndexWriterMergePolicy
+	[TestFixture]
+	public class TestIndexWriterMergePolicy : LuceneTestCase
 	{
 		
 		// Test the normal case
-        [Test]
+		[Test]
 		public virtual void  TestNormalCase()
 		{
 			Directory dir = new RAMDirectory();
@@ -41,6 +43,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			
 			for (int i = 0; i < 100; i++)
 			{
@@ -52,7 +55,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// Test to see if there is over merge
-        [Test]
+		[Test]
 		public virtual void  TestNoOverMerge()
 		{
 			Directory dir = new RAMDirectory();
@@ -60,13 +63,14 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			
 			bool noOverMerge = false;
 			for (int i = 0; i < 100; i++)
 			{
 				AddDoc(writer);
 				CheckInvariants(writer);
-				if (writer.GetRamSegmentCount() + writer.GetSegmentCount() >= 18)
+				if (writer.GetNumBufferedDocuments() + writer.GetSegmentCount() >= 18)
 				{
 					noOverMerge = true;
 				}
@@ -77,7 +81,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// Test the case where flush is forced after every AddDoc
-        [Test]
+		[Test]
 		public virtual void  TestForceFlush()
 		{
 			Directory dir = new RAMDirectory();
@@ -85,6 +89,9 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
+			LogDocMergePolicy mp = new LogDocMergePolicy();
+			mp.SetMinMergeDocs(100);
+			writer.SetMergePolicy(mp);
 			
 			for (int i = 0; i < 100; i++)
 			{
@@ -94,6 +101,8 @@ namespace Lucene.Net.Index
 				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetMergeFactor(10);
+				mp.SetMinMergeDocs(100);
+				writer.SetMergeFactor(10);
 				CheckInvariants(writer);
 			}
 			
@@ -101,7 +110,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// Test the case where mergeFactor changes
-        [Test]
+		[Test]
 		public virtual void  TestMergeFactorChange()
 		{
 			Directory dir = new RAMDirectory();
@@ -109,6 +118,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(100);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			
 			for (int i = 0; i < 250; i++)
 			{
@@ -130,7 +140,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// Test the case where both mergeFactor and maxBufferedDocs change
-        [Test]
+		[Test]
 		public virtual void  TestMaxBufferedDocsChange()
 		{
 			Directory dir = new RAMDirectory();
@@ -138,6 +148,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 			writer.SetMaxBufferedDocs(101);
 			writer.SetMergeFactor(101);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			
 			// leftmost* segment has 1 doc
 			// rightmost* segment has 100 docs
@@ -153,6 +164,7 @@ namespace Lucene.Net.Index
 				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
 				writer.SetMaxBufferedDocs(101);
 				writer.SetMergeFactor(101);
+				writer.SetMergePolicy(new LogDocMergePolicy());
 			}
 			
 			writer.SetMaxBufferedDocs(10);
@@ -176,12 +188,13 @@ namespace Lucene.Net.Index
 		}
 		
 		// Test the case where a merge results in no doc at all
-        [Test]
+		[Test]
 		public virtual void  TestMergeDocCount0()
 		{
 			Directory dir = new RAMDirectory();
 			
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(100);
 			
@@ -197,6 +210,7 @@ namespace Lucene.Net.Index
 			reader.Close();
 			
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			writer.SetMergePolicy(new LogDocMergePolicy());
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(5);
 			
@@ -220,11 +234,12 @@ namespace Lucene.Net.Index
 		
 		private void  CheckInvariants(IndexWriter writer)
 		{
+			_TestUtil.SyncConcurrentMerges(writer);
 			int maxBufferedDocs = writer.GetMaxBufferedDocs();
 			int mergeFactor = writer.GetMergeFactor();
 			int maxMergeDocs = writer.GetMaxMergeDocs();
 			
-			int ramSegmentCount = writer.GetRamSegmentCount();
+			int ramSegmentCount = writer.GetNumBufferedDocuments();
 			Assert.IsTrue(ramSegmentCount < maxBufferedDocs);
 			
 			int lowerBound = - 1;

@@ -29,47 +29,80 @@ namespace Lucene.Net.Store
 	[Serializable]
 	public class MockRAMDirectory : RAMDirectory
 	{
-        internal long maxSize;
+		internal long maxSize;
 		
 		// Max actual bytes used. This is set by MockRAMOutputStream:
 		internal long maxUsedSize;
 		internal double randomIOExceptionRate;
 		internal System.Random randomState;
+		internal bool noDeleteOpenFile = true;
+		
+		// NOTE: we cannot initialize the Map here due to the
+		// order in which our constructor actually does this
+		// member initialization vs when it calls super.  It seems
+		// like super is called, then our members are initialized:
+		internal System.Collections.IDictionary openFiles;
 		
 		public MockRAMDirectory() : base()
 		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
 		}
 		public MockRAMDirectory(System.String dir) : base(dir)
 		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
 		}
 		public MockRAMDirectory(Directory dir) : base(dir)
 		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
 		}
 		public MockRAMDirectory(System.IO.FileInfo dir) : base(dir)
 		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
 		}
-
-        virtual public long GetMaxSizeInBytes()
-        {
-            return this.maxSize;
-        }
-
-        virtual public void SetMaxSizeInBytes(long maxSize)
-        {
-            this.maxSize = maxSize;
-        }
-
-        /// <summary> Returns the peek actual storage used (bytes) in this
-        /// directory.
-        /// </summary>
-        virtual public long GetMaxUsedSizeInBytes()
-        {
-            return this.maxUsedSize;
-        }
-
-        public virtual void  ResetMaxUsedSizeInBytes()
+		
+		public virtual void  SetMaxSizeInBytes(long maxSize)
+		{
+			this.maxSize = maxSize;
+		}
+		public virtual long GetMaxSizeInBytes()
+		{
+			return this.maxSize;
+		}
+		
+		/// <summary> Returns the peek actual storage used (bytes) in this
+		/// directory.
+		/// </summary>
+		public virtual long GetMaxUsedSizeInBytes()
+		{
+			return this.maxUsedSize;
+		}
+		public virtual void  ResetMaxUsedSizeInBytes()
 		{
 			this.maxUsedSize = GetRecomputedActualSizeInBytes();
+		}
+		
+		/// <summary> Emulate windows whereby deleting an open file is not
+		/// allowed (raise IOException).
+		/// </summary>
+		public virtual void  SetNoDeleteOpenFile(bool value_Renamed)
+		{
+			this.noDeleteOpenFile = value_Renamed;
+		}
+		public virtual bool GetNoDeleteOpenFile()
+		{
+			return noDeleteOpenFile;
 		}
 		
 		/// <summary> If 0.0, no exceptions will be thrown.  Else this should
@@ -83,7 +116,6 @@ namespace Lucene.Net.Store
 			// seed so we have deterministic behaviour:
 			randomState = new System.Random((System.Int32) seed);
 		}
-
 		public virtual double GetRandomIOExceptionRate()
 		{
 			return randomIOExceptionRate;
@@ -91,62 +123,218 @@ namespace Lucene.Net.Store
 		
 		internal virtual void  MaybeThrowIOException()
 		{
-            if (randomIOExceptionRate > 0.0)
-            {
-                int number = System.Math.Abs(randomState.Next() % 1000);
-                if (number < randomIOExceptionRate * 1000)
-                {
-                    throw new System.IO.IOException("a random IOException");
-                }
-            }
-        }
+			if (randomIOExceptionRate > 0.0)
+			{
+				int number = System.Math.Abs(randomState.Next() % 1000);
+				if (number < randomIOExceptionRate * 1000)
+				{
+					throw new System.IO.IOException("a random IOException");
+				}
+			}
+		}
+		
+		public override void  DeleteFile(System.String name)
+		{
+			lock (this)
+			{
+				lock (openFiles.SyncRoot)
+				{
+					if (noDeleteOpenFile && openFiles.Contains(name))
+					{
+						throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot delete");
+					}
+				}
+				base.DeleteFile(name);
+			}
+		}
 		
 		public override IndexOutput CreateOutput(System.String name)
 		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
+			lock (openFiles.SyncRoot)
+			{
+				if (noDeleteOpenFile && openFiles.Contains(name))
+					throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot overwrite");
+			}
 			RAMFile file = new RAMFile(this);
 			lock (this)
 			{
 				RAMFile existing = (RAMFile) fileMap_ForNUnitTest[name];
-				if (existing != null)
+				// Enforce write once:
+				if (existing != null && !name.Equals("segments.gen"))
+					throw new System.IO.IOException("file " + name + " already exists");
+				else
 				{
-					sizeInBytes_ForNUnitTest -= existing.sizeInBytes_ForNUnitTest;
-					existing.directory_ForNUnitTest = null;
+					if (existing != null)
+					{
+						sizeInBytes_ForNUnitTest -= existing.sizeInBytes_ForNUnitTest;
+						existing.directory_ForNUnitTest = null;
+					}
+
+					fileMap_ForNUnitTest[name] = file;
 				}
-				fileMap_ForNUnitTest[name] = file;
 			}
 			
 			return new MockRAMOutputStream(this, file);
 		}
-
-        /// <summary>Provided for testing purposes.  Use sizeInBytes() instead. </summary>
-        virtual internal long GetRecomputedSizeInBytes()
-        {
-            lock (this)
-            {
-                long size = 0;
-                System.Collections.IEnumerator it = fileMap_ForNUnitTest.Values.GetEnumerator();
-                while (it.MoveNext())
-                {
-                    size += ((RAMFile) it.Current).GetSizeInBytes_ForNUnitTest();
-                }
-                return size;
-            }
-        }
-
-        /// <summary>Like getRecomputedSizeInBytes(), but, uses actual file
-        /// lengths rather than buffer allocations (which are
-        /// quantized up to nearest
-        /// BufferedIndexOutput.BUFFER_SIZE (now 1024) bytes.
-        /// </summary>
-        virtual internal long GetRecomputedActualSizeInBytes()
-        {
-            long size = 0;
-            System.Collections.IEnumerator it = fileMap_ForNUnitTest.Values.GetEnumerator();
-            while (it.MoveNext())
-            {
-                size += ((RAMFile) it.Current).length_ForNUnitTest;
-            }
-            return size;
-        }
-    }
+		
+		public override IndexInput OpenInput(System.String name)
+		{
+			RAMFile file;
+			lock (this)
+			{
+				file = (RAMFile)fileMap_ForNUnitTest[name];
+			}
+			if (file == null)
+				throw new System.IO.FileNotFoundException(name);
+			else
+			{
+				lock (openFiles.SyncRoot)
+				{
+					if (openFiles.Contains(name))
+					{
+						System.Int32 v = (System.Int32) openFiles[name];
+						v = (System.Int32) (v + 1);
+						openFiles[name] = v;
+					}
+					else
+					{
+						openFiles[name] = 1;
+					}
+				}
+			}
+			return new MockRAMInputStream(this, name, file);
+		}
+		
+		/// <summary>Provided for testing purposes.  Use sizeInBytes() instead. </summary>
+		public long GetRecomputedSizeInBytes()
+		{
+			lock (this)
+			{
+				long size = 0;
+				System.Collections.IEnumerator it = fileMap_ForNUnitTest.Values.GetEnumerator();
+				while (it.MoveNext())
+				{
+					size += ((RAMFile)it.Current).GetSizeInBytes_ForNUnitTest();
+				}
+				return size;
+			}
+		}
+		
+		/// <summary>Like getRecomputedSizeInBytes(), but, uses actual file
+		/// lengths rather than buffer allocations (which are
+		/// quantized up to nearest
+		/// RAMOutputStream.BUFFER_SIZE (now 1024) bytes.
+		/// </summary>
+		
+		public long GetRecomputedActualSizeInBytes()
+		{
+			lock (this)
+			{
+				long size = 0;
+				System.Collections.IEnumerator it = fileMap_ForNUnitTest.Values.GetEnumerator();
+				while (it.MoveNext())
+				{
+					size += ((RAMFile)it.Current).length_ForNUnitTest;
+				}
+				return size;
+			}
+		}
+		
+		public override void  Close()
+		{
+			if (openFiles == null)
+			{
+				openFiles = new System.Collections.Hashtable();
+			}
+			lock (openFiles.SyncRoot)
+			{
+				if (noDeleteOpenFile && openFiles.Count > 0)
+				{
+					// RuntimeException instead of IOException because
+					// super() does not throw IOException currently:
+					throw new System.SystemException("MockRAMDirectory: cannot close: there are still open files: " + openFiles.ToString());
+				}
+			}
+		}
+		
+		/// <summary> Objects that represent fail-able conditions. Objects of a derived
+		/// class are created and registered with the mock directory. After
+		/// register, each object will be invoked once for each first write
+		/// of a file, giving the object a chance to throw an IOException.
+		/// </summary>
+		public class Failure
+		{
+			/// <summary> eval is called on the first write of every new file.</summary>
+			public virtual void  Eval(MockRAMDirectory dir)
+			{
+			}
+			
+			/// <summary> reset should set the state of the failure to its default
+			/// (freshly constructed) state. Reset is convenient for tests
+			/// that want to create one failure object and then reuse it in
+			/// multiple cases. This, combined with the fact that Failure
+			/// subclasses are often anonymous classes makes reset difficult to
+			/// do otherwise.
+			/// 
+			/// A typical example of use is
+			/// Failure failure = new Failure() { ... };
+			/// ...
+			/// mock.failOn(failure.reset())
+			/// </summary>
+			public virtual Failure Reset()
+			{
+				return this;
+			}
+			
+			protected internal bool doFail;
+			
+			public virtual void  SetDoFail()
+			{
+				doFail = true;
+			}
+			
+			public virtual void  ClearDoFail()
+			{
+				doFail = false;
+			}
+		}
+		
+		internal System.Collections.ArrayList failures;
+		
+		/// <summary> add a Failure object to the list of objects to be evaluated
+		/// at every potential failure point
+		/// </summary>
+		public virtual void  FailOn(Failure fail)
+		{
+			lock (this)
+			{
+				if (failures == null)
+				{
+					failures = new System.Collections.ArrayList();
+				}
+				failures.Add(fail);
+			}
+		}
+		
+		/// <summary> Iterate through the failures list, giving each object a
+		/// chance to throw an IOE
+		/// </summary>
+		internal virtual void  MaybeThrowDeterministicException()
+		{
+			lock (this)
+			{
+				if (failures != null)
+				{
+					for (int i = 0; i < failures.Count; i++)
+					{
+						((Failure) failures[i]).Eval(this);
+					}
+				}
+			}
+		}
+	}
 }

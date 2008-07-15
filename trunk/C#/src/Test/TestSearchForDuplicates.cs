@@ -19,25 +19,26 @@ using System;
 
 using NUnit.Framework;
 
-using Lucene.Net.Store;
 using Lucene.Net.Documents;
-using Lucene.Net.Analysis;
 using Lucene.Net.Index;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
+using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 using Searchable = Lucene.Net.Search.Searchable;
-using Lucene.Net.QueryParsers;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
 {
 	
 	
-	/// <summary>JUnit adaptation of an older test case DocTest.</summary>
-	/// <author>  dmitrys@earthlink.net
-	/// </author>
-	/// <version>  $Id: TestSearchForDuplicates.java 150494 2004-09-06 22:29:22Z dnaber $
+	/// <summary>JUnit adaptation of an older test case DocTest.
+	/// 
+	/// </summary>
+	/// <version>  $Id: TestSearchForDuplicates.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestSearchForDuplicates
+	public class TestSearchForDuplicates : LuceneTestCase
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
@@ -65,25 +66,25 @@ namespace Lucene.Net
 		/// validate this output and make any changes to the checkHits method.
 		/// </summary>
 		[Test]
-        public virtual void  TestRun()
+		public virtual void  TestRun()
 		{
-            System.IO.MemoryStream sw = new System.IO.MemoryStream();
-            System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
-            DoTest(pw, false);
-            pw.Close();
-            sw.Close();
-            System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
-            //System.out.println(multiFileOutput);
+			System.IO.MemoryStream sw = new System.IO.MemoryStream();
+			System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
+			DoTest(pw, false);
+			pw.Close();
+			sw.Close();
+			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+			//System.out.println(multiFileOutput);
 			
-            sw = new System.IO.MemoryStream();
-            pw = new System.IO.StreamWriter(sw);
-            DoTest(pw, true);
-            pw.Close();
-            sw.Close();
-            System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+			sw = new System.IO.MemoryStream();
+			pw = new System.IO.StreamWriter(sw);
+			DoTest(pw, true);
+			pw.Close();
+			sw.Close();
+			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
-            Assert.AreEqual(multiFileOutput, singleFileOutput);
-        }
+			Assert.AreEqual(multiFileOutput, singleFileOutput);
+		}
 		
 		
 		private void  DoTest(System.IO.StreamWriter out_Renamed, bool useCompoundFiles)

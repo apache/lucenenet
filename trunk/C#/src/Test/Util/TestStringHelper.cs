@@ -22,7 +22,7 @@ using NUnit.Framework;
 namespace Lucene.Net.Util
 {
 	[TestFixture]
-	public class TestStringHelper
+	public class TestStringHelper : LuceneTestCase
 	{
 		
 		[Test]
