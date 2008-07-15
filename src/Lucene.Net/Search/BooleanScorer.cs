@@ -249,6 +249,7 @@ namespace Lucene.Net.Search
 			
 			public BucketTable()
 			{
+                InitBlock();
 			}
 			
 			public int Size()

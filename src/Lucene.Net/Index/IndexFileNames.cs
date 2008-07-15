@@ -27,14 +27,14 @@ namespace Lucene.Net.Index
 	/// </author>
 	/// <version>  $rcs = ' $Id: Exp $ ' ;
 	/// </version>
-	sealed class IndexFileNames
+	public sealed class IndexFileNames
 	{
 		
 		/// <summary>Name of the index segment file </summary>
-		internal const System.String SEGMENTS = "segments";
+		public /*internal*/ const System.String SEGMENTS = "segments";
 		
 		/// <summary>Name of the generation reference file name </summary>
-		internal const System.String SEGMENTS_GEN = "segments.gen";
+		public /*internal*/ const System.String SEGMENTS_GEN = "segments.gen";
 		
 		/// <summary>Name of the index deletable file (only used in
 		/// pre-lockless indices) 
@@ -66,10 +66,10 @@ namespace Lucene.Net.Index
 		internal const System.String VECTORS_FIELDS_EXTENSION = "tvf";
 		
 		/// <summary>Extension of vectors documents file </summary>
-		internal const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
+		public /*internal*/ const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
 		
 		/// <summary>Extension of vectors index file </summary>
-		internal const System.String VECTORS_INDEX_EXTENSION = "tvx";
+		public /*internal*/ const System.String VECTORS_INDEX_EXTENSION = "tvx";
 		
 		/// <summary>Extension of compound file </summary>
 		internal const System.String COMPOUND_FILE_EXTENSION = "cfs";
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 		internal const System.String DELETES_EXTENSION = "del";
 		
 		/// <summary>Extension of field infos </summary>
-		internal const System.String FIELD_INFOS_EXTENSION = "fnm";
+		public /*internal*/ const System.String FIELD_INFOS_EXTENSION = "fnm";
 		
 		/// <summary>Extension of plain norms </summary>
 		internal const System.String PLAIN_NORMS_EXTENSION = "f";
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="gen">-- generation
 		/// </param>
-		internal static System.String FileNameFromGeneration(System.String base_Renamed, System.String extension, long gen)
+		public /*internal*/ static System.String FileNameFromGeneration(System.String base_Renamed, System.String extension, long gen)
 		{
 			if (gen == SegmentInfo.NO)
 			{

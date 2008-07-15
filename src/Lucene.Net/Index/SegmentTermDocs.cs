@@ -44,6 +44,13 @@ namespace Lucene.Net.Index
 		private bool haveSkipped;
 		
 		protected internal bool currentFieldStoresPayloads;
+
+        // for testing
+        public IndexInput FreqStream_ForNUnitTest
+        {
+            get { return freqStream; }
+            set { freqStream = value; }
+        }
 		
 		public SegmentTermDocs(SegmentReader parent)
 		{

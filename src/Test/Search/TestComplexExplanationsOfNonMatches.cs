@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
+	[TestFixture]
 	public class TestComplexExplanationsOfNonMatches : TestComplexExplanations
 	{
 		

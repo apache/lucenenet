@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search
 	/// <author>  Daniel Naber
 	/// </author>
 	[TestFixture]
-    public class TestMatchAllDocsQuery
+	public class TestMatchAllDocsQuery : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestQuery()
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestEquals()
+		public virtual void  TestEquals()
 		{
 			Query q1 = new MatchAllDocsQuery();
 			Query q2 = new MatchAllDocsQuery();

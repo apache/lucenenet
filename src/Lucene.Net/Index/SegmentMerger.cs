@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	/// </seealso>
 	/// <seealso cref="add">
 	/// </seealso>
-	sealed class SegmentMerger
+	public sealed class SegmentMerger
 	{
 		[Serializable]
 		private class AnonymousClassFieldSelector : FieldSelector
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="name">The name of the new segment
 		/// </param>
-		internal SegmentMerger(Directory dir, System.String name)
+		public /*internal*/ SegmentMerger(Directory dir, System.String name)
 		{
 			InitBlock();
 			directory = dir;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 		/// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
 		/// <param name="reader">
 		/// </param>
-		internal void  Add(IndexReader reader)
+		public /*internal*/ void  Add(IndexReader reader)
 		{
 			readers.Add(reader);
 		}
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		internal int Merge()
+		public /*internal*/ int Merge()
 		{
 			return Merge(true);
 		}
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 		/// Should not be called before merge().
 		/// </summary>
 		/// <throws>  IOException </throws>
-		internal void  CloseReaders()
+		public /*internal*/ void  CloseReaders()
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal System.Collections.ArrayList CreateCompoundFile(System.String fileName)
+		public /*internal*/ System.Collections.ArrayList CreateCompoundFile(System.String fileName)
 		{
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
 			

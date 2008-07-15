@@ -73,64 +73,66 @@ using System;
 
 using NUnit.Framework;
 
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
 namespace Lucene.Net.Store
 {
 	
-    [TestFixture]
-    public class TestLock
-    {
+	[TestFixture]
+	public class TestLock : LuceneTestCase
+	{
 		
-        [Test]
-        public virtual void  TestObtain()
-        {
-            LockMock lock_Renamed = new LockMock(this);
-            Lucene.Net.Store.Lock.LOCK_POLL_INTERVAL = 10;
+		[Test]
+		public virtual void  TestObtain()
+		{
+			LockMock lock_Renamed = new LockMock(this);
+			Lucene.Net.Store.Lock.LOCK_POLL_INTERVAL = 10;
 			
-            try
-            {
-                lock_Renamed.Obtain(Lucene.Net.Store.Lock.LOCK_POLL_INTERVAL);
-                Assert.Fail("Should have failed to obtain lock");
-            }
-            catch (System.IO.IOException e)
-            {
-                Assert.AreEqual(lock_Renamed.lockAttempts, 2, "should attempt to lock more than once");
-            }
-        }
+			try
+			{
+				lock_Renamed.Obtain(Lucene.Net.Store.Lock.LOCK_POLL_INTERVAL);
+				Assert.Fail("Should have failed to obtain lock");
+			}
+			catch (System.IO.IOException)
+			{
+				Assert.AreEqual(lock_Renamed.lockAttempts, 2, "should attempt to lock more than once");
+			}
+		}
 		
-        private class LockMock : Lucene.Net.Store.Lock
-        {
-            public LockMock(TestLock enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestLock enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestLock enclosingInstance;
-            override public bool IsLocked()
-            {
-                return false;
-            }
-            public TestLock Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
+		private class LockMock : Lucene.Net.Store.Lock
+		{
+			public LockMock(TestLock enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(TestLock enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestLock enclosingInstance;
+			override public bool IsLocked()
+			{
+				return false;
+			}
+			public TestLock Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
 				
-            }
-            public int lockAttempts;
+			}
+			public int lockAttempts;
 			
-            public override bool Obtain()
-            {
-                lockAttempts++;
-                return false;
-            }
-            public override void  Release()
-            {
-                // do nothing
-            }
-        }
-    }
+			public override bool Obtain()
+			{
+				lockAttempts++;
+				return false;
+			}
+			public override void  Release()
+			{
+				// do nothing
+			}
+		}
+	}
 }

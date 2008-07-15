@@ -19,16 +19,17 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Searcher = Lucene.Net.Search.Searcher;
-using Directory = Lucene.Net.Store.Directory;
-using IndexInput = Lucene.Net.Store.IndexInput;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Index
 	/// 
 	/// </summary>
 	[TestFixture]
-    public class TestLazyProxSkipping
+	public class TestLazyProxSkipping : LuceneTestCase
 	{
 		private Searcher searcher;
 		private int seeksCounter = 0;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Index
 			
 			Directory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
-			
+			writer.SetMaxBufferedDocs(10);
 			for (int i = 0; i < numDocs; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
@@ -86,7 +87,7 @@ namespace Lucene.Net.Index
 			SegmentReader reader = (SegmentReader) IndexReader.Open(directory);
 			
 			// we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
-			reader.ProxStream = new SeeksCountingStream(this, reader.ProxStream);
+			reader.ProxStream_ForNUnitTest = new SeeksCountingStream(this, reader.ProxStream_ForNUnitTest);
 			
 			this.searcher = new IndexSearcher(reader);
 		}
@@ -109,15 +110,46 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(numHits, hits.Length());
 			
 			// check if the number of calls of seek() does not exceed the number of hits
-			Assert.AreEqual(numHits, this.seeksCounter);
+			Assert.IsTrue(this.seeksCounter <= numHits + 1);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestLazySkipping()
 		{
 			// test whether only the minimum amount of seeks() are performed
 			PerformTest(5);
 			PerformTest(10);
+		}
+		
+		[Test]
+		public virtual void  TestSeek()
+		{
+			Directory directory = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			for (int i = 0; i < 10; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field(this.field, "a b", Field.Store.YES, Field.Index.TOKENIZED));
+				writer.AddDocument(doc);
+			}
+			
+			writer.Close();
+			IndexReader reader = IndexReader.Open(directory);
+			TermPositions tp = reader.TermPositions();
+			tp.Seek(new Term(this.field, "b"));
+			for (int i = 0; i < 10; i++)
+			{
+				tp.Next();
+				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.NextPosition(), 1);
+			}
+			tp.Seek(new Term(this.field, "a"));
+			for (int i = 0; i < 10; i++)
+			{
+				tp.Next();
+				Assert.AreEqual(tp.Doc(), i);
+				Assert.AreEqual(tp.NextPosition(), 0);
+			}
 		}
 		
 		

@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis
                 {
                     offset += dataLen;
                     dataLen = input is Lucene.Net.Index.DocumentsWriter.ReusableStringReader ? ((Lucene.Net.Index.DocumentsWriter.ReusableStringReader) input).Read(ioBuffer) : input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
-                    if (dataLen == -1)
+                    if (dataLen <= 0)
                     {
                         if (length > 0)
                             break;

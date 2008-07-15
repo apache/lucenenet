@@ -19,24 +19,25 @@ using System;
 
 using NUnit.Framework;
 
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Hits = Lucene.Net.Search.Hits;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Hits = Lucene.Net.Search.Hits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
 	/*
-	Verify we can read the pre-XXX file format, do searches
+	Verify we can read the pre-2.1 file format, do searches
 	against it, and add documents to it.*/
 	
-    [TestFixture]
-	public class TestBackwardsCompatibility
+	[TestFixture]
+	public class TestBackwardsCompatibility : LuceneTestCase
 	{
 		
 		// Uncomment these cases & run in a pre-lockless checkout
@@ -54,20 +55,24 @@ namespace Lucene.Net.Index
 		
 		/* Unzips dirName + ".zip" --> dirName, removing dirName
 		first */
-		public virtual void  Unzip(System.String dirName)
+		public virtual void  Unzip(System.String zipName, System.String destDirName)
 		{
 #if SHARP_ZIP_LIB
-			RmDir(dirName);
-
+			// get zip input stream
 			ICSharpCode.SharpZipLib.Zip.ZipInputStream zipFile;
-            zipFile = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(System.IO.File.OpenRead(dirName + ".zip"));
+			zipFile = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(System.IO.File.OpenRead(zipName + ".zip"));
 
+			// get dest directory name
+			System.String dirName = FullDir(destDirName);
 			System.IO.FileInfo fileDir = new System.IO.FileInfo(dirName);
+
+			// clean up old directory (if there) and create new directory
+			RmDir(fileDir.FullName);
 			System.IO.Directory.CreateDirectory(fileDir.FullName);
 
-            ICSharpCode.SharpZipLib.Zip.ZipEntry entry;
-
-            while ((entry = zipFile.GetNextEntry()) != null)
+			// copy file entries from zip stream to directory
+			ICSharpCode.SharpZipLib.Zip.ZipEntry entry;
+			while ((entry = zipFile.GetNextEntry()) != null)
 			{
 				System.IO.Stream streamout = new System.IO.BufferedStream(new System.IO.FileStream(new System.IO.FileInfo(System.IO.Path.Combine(fileDir.FullName, entry.Name)).FullName, System.IO.FileMode.Create));
 				
@@ -78,16 +83,16 @@ namespace Lucene.Net.Index
 					streamout.Write(buffer, 0, len);
 				}
 				
-                streamout.Close();
+				streamout.Close();
 			}
 			
 			zipFile.Close();
 #else
-            Assert.Fail("Needs integration with SharpZipLib");
+			Assert.Fail("Needs integration with SharpZipLib");
 #endif
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestCreateCFS()
 		{
 			System.String dirName = "testindex.cfs";
@@ -95,7 +100,7 @@ namespace Lucene.Net.Index
 			RmDir(dirName);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestCreateNoCFS()
 		{
 			System.String dirName = "testindex.nocfs";
@@ -103,42 +108,49 @@ namespace Lucene.Net.Index
 			RmDir(dirName);
 		}
 		
-        [Test]
+		internal System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs", "presharedstores.cfs", "presharedstores.nocfs"};
+		
+		[Test]
 		public virtual void  TestSearchOldIndex()
 		{
-			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
-				Unzip(dirName);
-				SearchIndex(dirName);
-				RmDir(dirName);
+				System.String dirName = @"Index\index." + oldNames[i];
+				Unzip(dirName, oldNames[i]);
+				SearchIndex(oldNames[i]);
+				RmDir(oldNames[i]);
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestIndexOldIndexNoAdds()
 		{
-			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
-				Unzip(dirName);
-				ChangeIndexNoAdds(dirName);
-				RmDir(dirName);
+				System.String dirName = @"Index\index." + oldNames[i];
+				Unzip(dirName, oldNames[i]);
+				ChangeIndexNoAdds(oldNames[i], true);
+				RmDir(oldNames[i]);
+				
+				Unzip(dirName, oldNames[i]);
+				ChangeIndexNoAdds(oldNames[i], false);
+				RmDir(oldNames[i]);
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestIndexOldIndex()
 		{
-			System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs"};
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = @"C#\src\test\index\index." + oldNames[i];
-				Unzip(dirName);
-				ChangeIndexWithAdds(dirName);
-				RmDir(dirName);
+				System.String dirName = @"Index\index." + oldNames[i];
+				Unzip(dirName, oldNames[i]);
+				ChangeIndexWithAdds(oldNames[i], true);
+				RmDir(oldNames[i]);
+				
+				Unzip(dirName, oldNames[i]);
+				ChangeIndexWithAdds(oldNames[i], false);
+				RmDir(oldNames[i]);
 			}
 		}
 		
@@ -147,12 +159,14 @@ namespace Lucene.Net.Index
 			//QueryParser parser = new QueryParser("contents", new WhitespaceAnalyzer());
 			//Query query = parser.parse("handle:1");
 			
+			dirName = FullDir(dirName);
+			
 			Directory dir = FSDirectory.GetDirectory(dirName);
 			IndexSearcher searcher = new IndexSearcher(dir);
 			
 			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
 			Assert.AreEqual(34, hits.Length());
-			Lucene.Net.Documents.Document d = hits.Doc(0);
+			Document d = hits.Doc(0);
 			
 			// First document should be #21 since it's norm was increased:
 			Assert.AreEqual("21", d.Get("id"), "didn't get the right document first");
@@ -163,12 +177,15 @@ namespace Lucene.Net.Index
 		
 		/* Open pre-lockless index, add docs, do a delete &
 		* setNorm, and search */
-		public virtual void  ChangeIndexWithAdds(System.String dirName)
+		public virtual void  ChangeIndexWithAdds(System.String dirName, bool autoCommit)
 		{
 			
+			dirName = FullDir(dirName);
+			
 			Directory dir = FSDirectory.GetDirectory(dirName);
+			
 			// open writer
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false);
 			
 			// add 10 docs
 			for (int i = 0; i < 10; i++)
@@ -184,11 +201,11 @@ namespace Lucene.Net.Index
 			IndexSearcher searcher = new IndexSearcher(dir);
 			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
 			Assert.AreEqual(44, hits.Length(), "wrong number of hits");
-			Lucene.Net.Documents.Document d = hits.Doc(0);
+			Document d = hits.Doc(0);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
 			searcher.Close();
 			
-			// make sure we can do another delete & another setNorm against this
+			// make sure we can do delete & setNorm against this
 			// pre-lockless segment:
 			IndexReader reader = IndexReader.Open(dir);
 			Term searchTerm = new Term("id", "6");
@@ -197,7 +214,7 @@ namespace Lucene.Net.Index
 			reader.SetNorm(22, "content", (float) 2.0);
 			reader.Close();
 			
-			// make sure 2nd delete & 2nd norm "took":
+			// make sure they "took":
 			searcher = new IndexSearcher(dir);
 			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
 			Assert.AreEqual(43, hits.Length(), "wrong number of hits");
@@ -206,7 +223,7 @@ namespace Lucene.Net.Index
 			searcher.Close();
 			
 			// optimize
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false);
 			writer.Optimize();
 			writer.Close();
 			
@@ -222,8 +239,10 @@ namespace Lucene.Net.Index
 		
 		/* Open pre-lockless index, add docs, do a delete &
 		* setNorm, and search */
-		public virtual void  ChangeIndexNoAdds(System.String dirName)
+		public virtual void ChangeIndexNoAdds(System.String dirName, bool autoCommit)
 		{
+			
+			dirName = FullDir(dirName);
 			
 			Directory dir = FSDirectory.GetDirectory(dirName);
 			
@@ -231,11 +250,11 @@ namespace Lucene.Net.Index
 			IndexSearcher searcher = new IndexSearcher(dir);
 			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
 			Assert.AreEqual(34, hits.Length(), "wrong number of hits");
-			Lucene.Net.Documents.Document d = hits.Doc(0);
+			Document d = hits.Doc(0);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
 			searcher.Close();
 			
-			// make sure we can do another delete & another setNorm against this
+			// make sure we can do a delete & setNorm against this
 			// pre-lockless segment:
 			IndexReader reader = IndexReader.Open(dir);
 			Term searchTerm = new Term("id", "6");
@@ -244,7 +263,7 @@ namespace Lucene.Net.Index
 			reader.SetNorm(22, "content", (float) 2.0);
 			reader.Close();
 			
-			// make sure 2nd delete & 2nd norm "took":
+			// make sure they "took":
 			searcher = new IndexSearcher(dir);
 			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
 			Assert.AreEqual(33, hits.Length(), "wrong number of hits");
@@ -253,7 +272,7 @@ namespace Lucene.Net.Index
 			searcher.Close();
 			
 			// optimize
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false);
 			writer.Optimize();
 			writer.Close();
 			
@@ -269,6 +288,10 @@ namespace Lucene.Net.Index
 		
 		public virtual void  CreateIndex(System.String dirName, bool doCFS)
 		{
+			
+			RmDir(dirName);
+			
+			dirName = FullDir(dirName);
 			
 			Directory dir = FSDirectory.GetDirectory(dirName);
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
@@ -293,66 +316,85 @@ namespace Lucene.Net.Index
 		}
 		
 		/* Verifies that the expected file names were produced */
-		
-		// disable until hardcoded file names are fixes:
-        [Test]
+
+		[Test]
 		public virtual void  TestExactFileNames()
 		{
 			
-			System.String outputDir = "lucene.backwardscompat0.index";
-			Directory dir = FSDirectory.GetDirectory(outputDir);
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
-			for (int i = 0; i < 35; i++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				AddDoc(writer, i);
-			}
-			Assert.AreEqual(35, writer.DocCount(), "wrong doc count");
-			writer.Close();
-			
-			// Delete one doc so we get a .del file:
-			IndexReader reader = IndexReader.Open(dir);
-			Term searchTerm = new Term("id", "7");
-			int delCount = reader.DeleteDocuments(searchTerm);
-			Assert.AreEqual(1, delCount, "didn't delete the right number of documents");
-			
-			// Set one norm so we get a .s0 file:
-			reader.SetNorm(21, "content", (float) 1.5);
-			reader.Close();
-			
-			// The numbering of fields can vary depending on which
-			// JRE is in use.  On some JREs we see content bound to
-			// field 0; on others, field 1.  So, here we have to
-			// figure out which field number corresponds to
-			// "content", and then set our expected file names below
-			// accordingly:
-			CompoundFileReader cfsReader = new CompoundFileReader(dir, "_2.cfs");
-			FieldInfos fieldInfos = new FieldInfos(cfsReader, "_2.fnm");
-			int contentFieldIndex = - 1;
-			for (int i = 0; i < fieldInfos.Size(); i++)
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.Name.Equals("content"))
+				
+				System.String outputDir = "lucene.backwardscompat0.index";
+				RmDir(outputDir);
+				
+				try
 				{
-					contentFieldIndex = i;
-					break;
+					Directory dir = FSDirectory.GetDirectory(FullDir(outputDir));
+					
+					bool autoCommit = 0 == pass;
+					
+					IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
+					writer.SetRAMBufferSizeMB(16.0);
+					//IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+					for (int i = 0; i < 35; i++)
+					{
+						AddDoc(writer, i);
+					}
+					Assert.AreEqual(35, writer.DocCount());
+					writer.Close();
+					
+					// Delete one doc so we get a .del file:
+					IndexReader reader = IndexReader.Open(dir);
+					Term searchTerm = new Term("id", "7");
+					int delCount = reader.DeleteDocuments(searchTerm);
+					Assert.AreEqual(1, delCount, "didn't delete the right number of documents");
+					
+					// Set one norm so we get a .s0 file:
+					reader.SetNorm(21, "content", (float) 1.5);
+					reader.Close();
+					
+					// The numbering of fields can vary depending on which
+					// JRE is in use.  On some JREs we see content bound to
+					// field 0; on others, field 1.  So, here we have to
+					// figure out which field number corresponds to
+					// "content", and then set our expected file names below
+					// accordingly:
+					CompoundFileReader cfsReader = new CompoundFileReader(dir, "_0.cfs");
+					FieldInfos fieldInfos = new FieldInfos(cfsReader, "_0.fnm");
+					int contentFieldIndex = - 1;
+					for (int i = 0; i < fieldInfos.Size(); i++)
+					{
+						FieldInfo fi = fieldInfos.FieldInfo(i);
+						if (fi.Name_ForNUnitTest.Equals("content"))
+						{
+							contentFieldIndex = i;
+							break;
+						}
+					}
+					cfsReader.Close();
+					Assert.IsTrue(contentFieldIndex != - 1, "could not locate the 'content' field number in the _2.cfs segment");
+					
+					// Now verify file names:
+					System.String[] expected;
+					expected = new System.String[]{"_0.cfs", "_0_1.del", "_0_1.s" + contentFieldIndex, "segments_4", "segments.gen"};
+					
+					if (!autoCommit)
+						expected[3] = "segments_3";
+					
+					System.String[] actual = dir.List();
+					System.Array.Sort(expected);
+					System.Array.Sort(actual);
+					if (!ArrayEquals(expected, actual))
+					{
+						Assert.Fail("incorrect filenames in index: expected:\n    " + AsString(expected) + "\n  actual:\n    " + AsString(actual));
+					}
+					dir.Close();
+				}
+				finally
+				{
+					RmDir(outputDir);
 				}
 			}
-			cfsReader.Close();
-			Assert.IsTrue(contentFieldIndex != - 1, "could not locate the 'content' field number in the _2.cfs segment");
-			
-			// Now verify file names:
-			System.String[] expected = new System.String[]{"_0.cfs", "_0_1.del", "_1.cfs", "_2.cfs", "_2_1.s" + contentFieldIndex, "_3.cfs", "segments_a", "segments.gen"};
-			
-			System.String[] actual = dir.List();
-			System.Array.Sort(expected);
-			System.Array.Sort(actual);
-			if (!ArrayEquals(expected, actual))
-			{
-				Assert.Fail("incorrect filenames in index: expected:\n    " + AsString(expected) + "\n  actual:\n    " + AsString(actual));
-			}
-			dir.Close();
-			
-			RmDir(outputDir);
 		}
 		
 		private System.String AsString(System.String[] l)
@@ -379,7 +421,7 @@ namespace Lucene.Net.Index
 		
 		private void  RmDir(System.String dir)
 		{
-			System.IO.FileInfo fileDir = new System.IO.FileInfo(dir);
+			System.IO.FileInfo fileDir = new System.IO.FileInfo(FullDir(dir));
 			bool tmpBool;
 			if (System.IO.File.Exists(fileDir.FullName))
 				tmpBool = true;
@@ -387,7 +429,7 @@ namespace Lucene.Net.Index
 				tmpBool = System.IO.Directory.Exists(fileDir.FullName);
 			if (tmpBool)
 			{
-                System.String[] files = System.IO.Directory.GetFileSystemEntries(fileDir.FullName);
+				System.String[] files = System.IO.Directory.GetFileSystemEntries(fileDir.FullName);
 				if (files != null)
 				{
 					for (int i = 0; i < files.Length; i++)
@@ -424,29 +466,34 @@ namespace Lucene.Net.Index
 				bool generatedAux2 = tmpBool3;
 			}
 		}
+		
+		public static System.String FullDir(System.String dirName)
+		{
+			return new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), dirName)).FullName;
+		}
 
-        public static bool ArrayEquals(System.Array array1, System.Array array2)
-        {
-            bool result = false;
-            if ((array1 == null) && (array2 == null))
-                result = true;
-            else if ((array1 != null) && (array2 != null))
-            {
-                if (array1.Length == array2.Length)
-                {
-                    int length = array1.Length;
-                    result = true;
-                    for (int index = 0; index < length; index++)
-                    {
-                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
-                        {
-                            result = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-    }
+		public static bool ArrayEquals(System.Array array1, System.Array array2)
+		{
+			bool result = false;
+			if ((array1 == null) && (array2 == null))
+				result = true;
+			else if ((array1 != null) && (array2 != null))
+			{
+				if (array1.Length == array2.Length)
+				{
+					int length = array1.Length;
+					result = true;
+					for (int index = 0; index < length; index++)
+					{
+						if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
+						{
+							result = false;
+							break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+	}
 }

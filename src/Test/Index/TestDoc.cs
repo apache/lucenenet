@@ -19,25 +19,27 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using Directory = Lucene.Net.Store.Directory;
+//using TestRunner = junit.textui.TestRunner;
 using Document = Lucene.Net.Documents.Document;
-using Similarity = Lucene.Net.Search.Similarity;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using FileDocument = Lucene.Net.Demo.FileDocument;
+using Similarity = Lucene.Net.Search.Similarity;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
 	
-	/// <summary>JUnit adaptation of an older test case DocTest.</summary>
-	/// <author>  dmitrys@earthlink.net
-	/// </author>
-	/// <version>  $Id: TestDoc.java 150536 2004-09-28 18:15:52Z cutting $
+	/// <summary>JUnit adaptation of an older test case DocTest.
+	/// 
+	/// </summary>
+	/// <version>  $Id: TestDoc.java 583534 2007-10-10 16:46:35Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestDoc
+	public class TestDoc
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
@@ -57,7 +59,7 @@ namespace Lucene.Net.Index
 		/// a few text files created in the current working directory.
 		/// </summary>
 		[SetUp]
-        public virtual void  SetUp()
+		public virtual void  SetUp()
 		{
 			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", "tempDir"), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
@@ -131,76 +133,74 @@ namespace Lucene.Net.Index
 		/// assert various things about the segment.
 		/// </summary>
 		[Test]
-        public virtual void  TestIndexAndMerge()
+		public virtual void  TestIndexAndMerge()
 		{
-            System.IO.MemoryStream sw = new System.IO.MemoryStream();
-            System.IO.StreamWriter out_Renamed = new System.IO.StreamWriter(sw);
+			System.IO.MemoryStream sw = new System.IO.MemoryStream();
+			System.IO.StreamWriter out_Renamed = new System.IO.StreamWriter(sw);
 			
-			Directory directory = FSDirectory.GetDirectory(indexDir, true);
+			Directory directory = FSDirectory.GetDirectory(indexDir);
+			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			
+			SegmentInfo si1 = IndexDoc(writer, "test.txt");
+			PrintSegment(out_Renamed, si1);
+			
+			SegmentInfo si2 = IndexDoc(writer, "test2.txt");
+			PrintSegment(out_Renamed, si2);
+			writer.Close();
 			directory.Close();
 			
-            SegmentInfo si1 = IndexDoc("one", "test.txt");
-            PrintSegment(out_Renamed, si1);
+			SegmentInfo siMerge = Merge(si1, si2, "merge", false);
+			PrintSegment(out_Renamed, siMerge);
 			
-            SegmentInfo si2 = IndexDoc("two", "test2.txt");
-            PrintSegment(out_Renamed, si2);
+			SegmentInfo siMerge2 = Merge(si1, si2, "merge2", false);
+			PrintSegment(out_Renamed, siMerge2);
 			
-            SegmentInfo siMerge = Merge(si1, si2, "merge", false);
-            PrintSegment(out_Renamed, siMerge);
-			
-            SegmentInfo siMerge2 = Merge(si1, si2, "merge2", false);
-            PrintSegment(out_Renamed, siMerge2);
-			
-            SegmentInfo siMerge3 = Merge(siMerge, siMerge2, "merge3", false);
-            PrintSegment(out_Renamed, siMerge3);
+			SegmentInfo siMerge3 = Merge(siMerge, siMerge2, "merge3", false);
+			PrintSegment(out_Renamed, siMerge3);
 			
 			out_Renamed.Close();
 			sw.Close();
-            System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
-            //System.out.println(multiFileOutput);
+			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+			//System.out.println(multiFileOutput);
 			
-            sw = new System.IO.MemoryStream();
-            out_Renamed = new System.IO.StreamWriter(sw);
+			sw = new System.IO.MemoryStream();
+			out_Renamed = new System.IO.StreamWriter(sw);
 			
-			directory = FSDirectory.GetDirectory(indexDir, true);
+			directory = FSDirectory.GetDirectory(indexDir);
+			writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			
+			si1 = IndexDoc(writer, "test.txt");
+			PrintSegment(out_Renamed, si1);
+			
+			si2 = IndexDoc(writer, "test2.txt");
+			PrintSegment(out_Renamed, si2);
+			writer.Close();
 			directory.Close();
 			
-            si1 = IndexDoc("one", "test.txt");
-            PrintSegment(out_Renamed, si1);
+			siMerge = Merge(si1, si2, "merge", true);
+			PrintSegment(out_Renamed, siMerge);
 			
-            si2 = IndexDoc("two", "test2.txt");
-            PrintSegment(out_Renamed, si2);
+			siMerge2 = Merge(si1, si2, "merge2", true);
+			PrintSegment(out_Renamed, siMerge2);
 			
-            siMerge = Merge(si1, si2, "merge", true);
-            PrintSegment(out_Renamed, siMerge);
-			
-            siMerge2 = Merge(si1, si2, "merge2", true);
-            PrintSegment(out_Renamed, siMerge2);
-			
-            siMerge3 = Merge(siMerge, siMerge2, "merge3", true);
-            PrintSegment(out_Renamed, siMerge3);
+			siMerge3 = Merge(siMerge, siMerge2, "merge3", true);
+			PrintSegment(out_Renamed, siMerge3);
 			
 			out_Renamed.Close();
 			sw.Close();
-            System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
+			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
 			Assert.AreEqual(multiFileOutput, singleFileOutput);
 		}
 		
 		
-		private SegmentInfo IndexDoc(System.String segment, System.String fileName)
+		private SegmentInfo IndexDoc(IndexWriter writer, System.String fileName)
 		{
-			Directory directory = FSDirectory.GetDirectory(indexDir, false);
-			Analyzer analyzer = new SimpleAnalyzer();
-			DocumentWriter writer = new DocumentWriter(directory, analyzer, Similarity.GetDefault(), 1000);
-			
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, fileName));
-			Lucene.Net.Documents.Document doc = FileDocument.Document(file);
-			
-			writer.AddDocument(segment, doc);
-			
-			directory.Close();
-            return new SegmentInfo(segment, 1, directory, false, false);
+			System.IO.FileInfo file = new System.IO.FileInfo(workDir.FullName + "\\" + fileName);
+			Document doc = FileDocument.Document(file);
+			writer.AddDocument(doc);
+			writer.Flush();
+			return writer.NewestSegment();
 		}
 		
 		
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
 			}
 			
 			directory.Close();
-            return new SegmentInfo(merged, si1.docCount + si2.docCount, directory, useCompoundFile, true);
-        }
+			return new SegmentInfo(merged, si1.docCount + si2.docCount, directory, useCompoundFile, true);
+		}
 		
 		
 		private void  PrintSegment(System.IO.StreamWriter out_Renamed, SegmentInfo si)

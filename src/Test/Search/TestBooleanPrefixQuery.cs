@@ -19,24 +19,26 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+//using TestRunner = junit.textui.TestRunner;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  schnee
-	/// </author>
-    /// <version>  $Id: TestBooleanPrefixQuery.java 472959 2006-11-09 16:21:50Z yonik $
-    /// 
+	/// <summary> </summary>
+	/// <version>  $Id: TestBooleanPrefixQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// 
 	/// </version>
+	
 	[TestFixture]
-	public class TestBooleanPrefixQuery
+	public class TestBooleanPrefixQuery : LuceneTestCase
 	{
 		
 		[STAThread]
@@ -46,14 +48,14 @@ namespace Lucene.Net.Search
 		}
 		
 		/*  // {{Aroush}} Do we need this method?
-        public static NUnit.Framework.TestCase Suite()
+		public static TestCase Suite()
 		{
 			return new NUnit.Core.TestSuite(typeof(TestBooleanPrefixQuery));
 		}
-        */
+		*/
 		
 		[Test]
-        public virtual void  TestMethod()
+		public virtual void  TestMethod()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			

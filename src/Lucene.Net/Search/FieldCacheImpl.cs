@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 	/// </since>
 	/// <version>  $Id: FieldCacheImpl.java 605225 2007-12-18 15:13:05Z gsingers $
 	/// </version>
-	class FieldCacheImpl : FieldCache
+	public class FieldCacheImpl : FieldCache
 	{
         public virtual void Close(IndexReader reader)
         {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 		{
 			public virtual float ParseFloat(System.String value_Renamed)
 			{
-				return System.Single.Parse(value_Renamed);
+				return SupportClass.Single.Parse(value_Renamed);
 			}
 		}
 		

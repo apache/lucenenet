@@ -19,23 +19,26 @@ using System;
 
 using NUnit.Framework;
 
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
 using Store = Lucene.Net.Documents.Field.Store;
-using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
-using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
+using Similarity = Lucene.Net.Search.Similarity;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Test that norms info is preserved during index life - incluidng seprate norms, addDocument, addIndexes, optimize.</summary>
-    [TestFixture]
-    public class TestNorms
+	/// <summary> Test that norms info is preserved during index life - including
+	/// separate norms, addDocument, addIndexes, optimize.
+	/// </summary>
+	[TestFixture]
+	public class TestNorms : LuceneTestCase
 	{
 		
 		[Serializable]
@@ -75,16 +78,12 @@ namespace Lucene.Net.Index
 		private float normDelta = (float) 0.001;
 		
 		
-        [SetUp]
-		public virtual void  SetUp()
+		[SetUp]
+		public override void SetUp()
 		{
+			base.SetUp();
 			similarityOne = new SimilarityOne(this);
 			anlzr = new StandardAnalyzer();
-		}
-		
-        [TearDown]
-		public virtual void  TearDown()
-		{
 		}
 		
 		/// <summary> Test that norms values are preserved as the index is maintained.
@@ -93,7 +92,7 @@ namespace Lucene.Net.Index
 		/// Including optimize. 
 		/// </summary>
 		[Test]
-        public virtual void  _TestNorms()
+		public virtual void  _TestNorms()
 		{
 			// tmp dir
 			System.String tempDir = System.IO.Path.GetTempPath();

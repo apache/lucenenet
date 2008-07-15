@@ -32,6 +32,13 @@ namespace Lucene.Net.Analysis
 
     public class CharArraySet : System.Collections.Hashtable
 	{
+        public override int Count
+        {
+            get
+            {
+                return count;
+            }
+        }
 
 		private const int INIT_SIZE = 8;
 		private char[][] entries;
@@ -68,13 +75,6 @@ namespace Lucene.Net.Analysis
 			return entries[GetSlot(text, off, len)] != null;
 		}
 		
-		// {{Doug-2.3.1}}: commented to determine if used internally to library
-		// /// <summary>true if the <code>CharSequence</code> is in the set </summary>
-		// public virtual bool Contains(CharSequence cs)
-		// {
-		// 	return entries[GetSlot(cs)] != null;
-		// }
-		
 		private int GetSlot(char[] text, int off, int len)
 		{
 			int code = GetHashCode(text, off, len);
@@ -93,34 +93,6 @@ namespace Lucene.Net.Analysis
 			}
 			return pos;
 		}
-		
-		// {{Doug-2.3.1}}: commented to determine if used internally to library
-		// /// <summary>Returns true if the String is in the set </summary>
-		// private int GetSlot(CharSequence text)
-		// {
-		// 	int code = GetHashCode(text);
-		// 	int pos = code & (entries.Length - 1);
-		// 	char[] text2 = entries[pos];
-		// 	if (text2 != null && !Equals(text, text2))
-		// 	{
-		// 		int inc = ((code >> 8) + code) | 1;
-		// 		do 
-		// 		{
-		// 			code += inc;
-		// 			pos = code & (entries.Length - 1);
-		// 			text2 = entries[pos];
-		// 		}
-		// 		while (text2 != null && !Equals(text, text2));
-		// 	}
-		// 	return pos;
-		// }
-		
-		// {{Doug-2.3.1}}: commented to determine if used internally to library
-		// /// <summary>Add this CharSequence into the set </summary>
-		// public virtual bool Add(CharSequence text)
-		// {
-		// 	return Add(text.toString()); // could be more efficient
-		// }
 		
 		/// <summary>Add this String into the set </summary>
 		public virtual bool Add(System.String text)
@@ -174,31 +146,6 @@ namespace Lucene.Net.Analysis
 			return true;
 		}
 		
-		// {{Doug-2.3.1}}: commented to determine if used internally to library
-		// private bool Equals(CharSequence text1, char[] text2)
-		// {
-		// 	int len = text1.length();
-		// 	if (len != text2.Length)
-		// 		return false;
-		// 	if (ignoreCase)
-		// 	{
-		// 		for (int i = 0; i < len; i++)
-		// 		{
-		// 			if (Character.toLowerCase(text1.charAt(i)) != text2[i])
-		// 				return false;
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		for (int i = 0; i < len; i++)
-		// 		{
-		// 			if (text1.charAt(i) != text2[i])
-		// 				return false;
-		// 		}
-		// 	}
-		// 	return true;
-		// }
-		
 		private void  Rehash()
 		{
 			int newSize = 2 * entries.Length;
@@ -237,38 +184,6 @@ namespace Lucene.Net.Analysis
 			return code;
 		}
 		
-		// {{Doug-2.3.1}}: commented to determine if used internally to library
-		// private int GetHashCode(CharSequence text)
-		// {
-		// 	int code;
-		// 	if (ignoreCase)
-		// 	{
-		// 		code = 0;
-		// 		int len = text.length();
-		// 		for (int i = 0; i < len; i++)
-		// 		{
-		// 			code = code * 31 + Character.toLowerCase(text.charAt(i));
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		if (false && text is System.String)
-		// 		{
-		// 			code = text.hashCode();
-		// 		}
-		// 		else
-		// 		{
-		// 			code = 0;
-		// 			int len = text.length();
-		// 			for (int i = 0; i < len; i++)
-		// 			{
-		// 				code = code * 31 + text.charAt(i);
-		// 			}
-		// 		}
-		// 	}
-		// 	return code;
-		// }
-		
 		public virtual int Size()
 		{
 			return count;
@@ -288,13 +203,9 @@ namespace Lucene.Net.Analysis
 			}
             else if (o is String)
             {
-                return Contains((String) o);
-            }
-			// {{Doug-2.3.1}}: commented to determine if used internally to library
-			// else if (o is CharSequence)
-			// {
-			// 	return Contains((CharSequence) o);
-			// }
+                String s = (String)o;
+				return Contains(s.ToCharArray(), 0, s.Length);
+			}
 			return false;
 		}
 		
@@ -308,11 +219,6 @@ namespace Lucene.Net.Analysis
 			{
 				return Add((System.String) o);
 			}
-			// {{Doug-2.3.1}}: commented to determine if used internally to library
-			// else if (o is CharSequence)
-			// {
-			// 	return Add((CharSequence) o);
-			// }
 			else
 			{
 				return Add(o.ToString());

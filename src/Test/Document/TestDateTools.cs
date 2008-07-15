@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
-using DateTools = Lucene.Net.Documents.DateTools;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {
 	[TestFixture]
-	public class TestDateTools
+	public class TestDateTools : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestStringToDate()
@@ -45,7 +45,7 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("97"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				/* expected exception */
 			}
@@ -54,7 +54,7 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("200401011235009999"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				/* expected exception */
 			}
@@ -63,29 +63,29 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("aaaa"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException e)
+			catch (System.FormatException)
 			{
 				/* expected exception */
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestStringtoTime()
 		{
 			long time = DateTools.StringToTime("197001010000");
 
-            System.DateTime cal = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());  // hour, minute, second
-            Assert.AreEqual(cal.Ticks, time);
+			System.DateTime cal = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());  // hour, minute, second
+			Assert.AreEqual(cal.Ticks, time);
 
-            cal = new System.DateTime(1980, 2, 2, 11, 5, 0, 0, new System.Globalization.GregorianCalendar()); // hour, minute, second
+			cal = new System.DateTime(1980, 2, 2, 11, 5, 0, 0, new System.Globalization.GregorianCalendar()); // hour, minute, second
 			time = DateTools.StringToTime("198002021105");
 			Assert.AreEqual(cal.Ticks, time);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestDateAndTimetoString()
 		{
-            System.DateTime cal = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
+			System.DateTime cal = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
 			
 			System.String dateString;
 			System.DateTime tempAux = new System.DateTime(cal.Ticks);
@@ -131,7 +131,7 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(tempAux14));
 			
 			// date before 1970:
-            cal = new System.DateTime(1961, 3, 5, 23, 9, 51, 444, new System.Globalization.GregorianCalendar());
+			cal = new System.DateTime(1961, 3, 5, 23, 9, 51, 444, new System.Globalization.GregorianCalendar());
 			System.DateTime tempAux15 = new System.DateTime(cal.Ticks);
 			dateString = DateTools.DateToString(tempAux15, DateTools.Resolution.MILLISECOND);
 			Assert.AreEqual("19610305230951444", dateString);
@@ -145,19 +145,19 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual("1961-03-05 23:00:00:000", IsoFormat(tempAux18));
 			
 			// timeToString:
-            cal = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
+			cal = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
 			dateString = DateTools.TimeToString(cal.Ticks, DateTools.Resolution.MILLISECOND);
 			Assert.AreEqual("19700101000000000", dateString);
 			
-            cal = new System.DateTime(1970, 1, 1, 1, 2, 3, 0, new System.Globalization.GregorianCalendar());
+			cal = new System.DateTime(1970, 1, 1, 1, 2, 3, 0, new System.Globalization.GregorianCalendar());
 			dateString = DateTools.TimeToString(cal.Ticks, DateTools.Resolution.MILLISECOND);
 			Assert.AreEqual("19700101010203000", dateString);
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestRound()
 		{
-            System.DateTime date = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
+			System.DateTime date = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
 			Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(date));
 			
 			System.DateTime dateYear = DateTools.Round(date, DateTools.Resolution.YEAR);
@@ -193,31 +193,31 @@ namespace Lucene.Net.Documents
 		
 		private System.String IsoFormat(System.DateTime date)
 		{
-            return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
-        }
+			return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
+		}
 	
-	    [Test]
-        public virtual void  TestDateToolsUTC()
-        {
-            // Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
-            //long time = 1130630400;
-            DateTime time1 = new DateTime(2005, 10, 30);
-            DateTime time2 = time1.AddHours(1);
-            try
-            {
-                //TimeZone.setDefault(TimeZone.getTimeZone("Europe/London")); // {{Aroush-2.0}} need porting 'java.util.TimeZone.getTimeZone'
-                System.DateTime tempAux = time1;
-                System.String d1 = DateTools.DateToString(tempAux, DateTools.Resolution.MINUTE);
-                System.DateTime tempAux2 = time2;
-                System.String d2 = DateTools.DateToString(tempAux2, DateTools.Resolution.MINUTE);
-                Assert.IsFalse(d1.Equals(d2), "different times");
-                Assert.AreEqual(DateTools.StringToTime(d1), time1.Ticks, "midnight");
-                Assert.AreEqual(DateTools.StringToTime(d2), time2.Ticks, "later");
-            }
-            finally
-            {
-                //TimeZone.SetDefault(null);    // {{Aroush-2.0}} need porting 'java.util.TimeZone.setDefault'
-            }
-        }
-    }
+		[Test]
+		public virtual void  TestDateToolsUTC()
+		{
+			// Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
+			//long time = 1130630400;
+			DateTime time1 = new DateTime(2005, 10, 30);
+			DateTime time2 = time1.AddHours(1);
+			try
+			{
+				//TimeZone.setDefault(TimeZone.getTimeZone("Europe/London")); // {{Aroush-2.0}} need porting 'java.util.TimeZone.getTimeZone'
+				System.DateTime tempAux = time1;
+				System.String d1 = DateTools.DateToString(tempAux, DateTools.Resolution.MINUTE);
+				System.DateTime tempAux2 = time2;
+				System.String d2 = DateTools.DateToString(tempAux2, DateTools.Resolution.MINUTE);
+				Assert.IsFalse(d1.Equals(d2), "different times");
+				Assert.AreEqual(DateTools.StringToTime(d1), time1.Ticks, "midnight");
+				Assert.AreEqual(DateTools.StringToTime(d2), time2.Ticks, "later");
+			}
+			finally
+			{
+				//TimeZone.SetDefault(null);    // {{Aroush-2.0}} need porting 'java.util.TimeZone.setDefault'
+			}
+		}
+	}
 }

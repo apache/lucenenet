@@ -19,29 +19,29 @@ using System;
 
 using NUnit.Framework;
 
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  yonik
-	/// </author>
-	/// <version>  $Id: TestThreadSafe.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <summary> </summary>
+	/// <version>  $Id: TestThreadSafe.java 598296 2007-11-26 14:52:01Z mikemccand $
 	/// </version>
-    [TestFixture]
-    public class TestThreadSafe
+	[TestFixture]
+	public class TestThreadSafe : LuceneTestCase
 	{
 		internal System.Random r = new System.Random();
 		internal Directory dir1;
-		internal Directory dir2;
+		//internal Directory dir2;
 		
 		internal IndexReader ir1;
-		internal IndexReader ir2;
+		//internal IndexReader ir2;
 		
 		internal System.String failure = null;
 		
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 				catch (System.Exception th)
 				{
 					Enclosing_Instance.failure = th.ToString();
-					TestCase.Fail(Enclosing_Instance.failure);
+					Assert.Fail(Enclosing_Instance.failure);
 				}
 			}
 			
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 					int flen = r.Next(maxFieldLen);
 					System.Text.StringBuilder sb = new System.Text.StringBuilder("^ ");
 					while (sb.Length < flen)
-						sb.Append(" " + words[r.Next(words.Length)]);
+						sb.Append(' ').Append(words[r.Next(words.Length)]);
 					sb.Append(" $");
 					Field.Store store = Field.Store.YES; // make random later
 					Field.Index index = Field.Index.TOKENIZED; // make random later
@@ -196,11 +196,11 @@ namespace Lucene.Net.Search
 			}
 			if (failure != null)
 			{
-				TestCase.Fail(failure);
+				Assert.Fail(failure);
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestLazyLoadThreadSafety()
 		{
 			dir1 = new RAMDirectory();

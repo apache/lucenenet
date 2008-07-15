@@ -44,6 +44,12 @@ namespace Lucene.Net.Search.Function
 	public class ValueSourceQuery : Query
 	{
 		internal ValueSource valSrc;
+
+        // for testing
+        public ValueSource ValSrc_ForNUnitTest
+        {
+            get { return valSrc; }
+        }
 		
 		/// <summary> Create a value source query</summary>
 		/// <param name="valSrc">provides the values defines the function to be used for scoring
@@ -251,7 +257,7 @@ namespace Lucene.Net.Search.Function
 		}
 		override public System.Object Clone()
 		{
-			return null;    /// {{Aroush-2.3.1}} Do we need this Clone() method?
+			return this.MemberwiseClone();
 		}
 	}
 }

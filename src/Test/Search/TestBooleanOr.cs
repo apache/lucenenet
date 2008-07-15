@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search
 	/// <author>  appler@gmail.com
 	/// </author>
 	[TestFixture]
-    public class TestBooleanOr
+	public class TestBooleanOr : LuceneTestCase
 	{
 		
 		private static System.String FIELD_T = "T";
@@ -50,12 +51,12 @@ namespace Lucene.Net.Search
 		
 		private int Search(Query q)
 		{
-            QueryUtils.Check(q, searcher);
-            return searcher.Search(q).Length();
-        }
+			QueryUtils.Check(q, searcher);
+			return searcher.Search(q).Length();
+		}
 		
 		[Test]
-        public virtual void  TestElements()
+		public virtual void  TestElements()
 		{
 			Assert.AreEqual(1, Search(t1));
 			Assert.AreEqual(1, Search(t2));
@@ -69,7 +70,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestFlat()
+		public virtual void  TestFlat()
 		{
 			BooleanQuery q = new BooleanQuery();
 			q.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
@@ -85,7 +86,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestParenthesisMust()
+		public virtual void  TestParenthesisMust()
 		{
 			BooleanQuery q3 = new BooleanQuery();
 			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestParenthesisMust2()
+		public virtual void  TestParenthesisMust2()
 		{
 			BooleanQuery q3 = new BooleanQuery();
 			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
@@ -125,7 +126,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <throws>  IOException </throws>
 		[Test]
-        public virtual void  TestParenthesisShould()
+		public virtual void  TestParenthesisShould()
 		{
 			BooleanQuery q3 = new BooleanQuery();
 			q3.Add(new BooleanClause(t1, BooleanClause.Occur.SHOULD));
@@ -140,9 +141,10 @@ namespace Lucene.Net.Search
 		}
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
-            //base.SetUp();
+			//base.SetUp();
+			base.SetUp();
 
 			//
 			RAMDirectory rd = new RAMDirectory();

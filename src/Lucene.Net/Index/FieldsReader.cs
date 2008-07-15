@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 		
 		private System.LocalDataStoreSlot fieldsStreamTL = System.Threading.Thread.AllocateDataSlot();
 		
-		internal FieldsReader(Directory d, System.String segment, FieldInfos fn) : this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, - 1, 0)
+		public FieldsReader(Directory d, System.String segment, FieldInfos fn) : this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, - 1, 0)
 		{
 		}
 		

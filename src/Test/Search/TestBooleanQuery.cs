@@ -20,15 +20,16 @@ using System;
 using NUnit.Framework;
 
 using Term = Lucene.Net.Index.Term;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	[TestFixture]
-	public class TestBooleanQuery
+	public class TestBooleanQuery : LuceneTestCase
 	{
 		
 		[Test]
-        public virtual void  TestEquality()
+		public virtual void  TestEquality()
 		{
 			BooleanQuery bq1 = new BooleanQuery();
 			bq1.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur.SHOULD);
@@ -50,14 +51,14 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  TestException()
+		public virtual void  TestException()
 		{
 			try
 			{
 				BooleanQuery.SetMaxClauseCount(0);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException e)
+			catch (System.ArgumentException)
 			{
 				// okay
 			}

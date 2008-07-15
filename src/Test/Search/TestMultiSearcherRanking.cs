@@ -19,7 +19,6 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -27,6 +26,8 @@ using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Search
 	/// <version>  $Id: TestMultiSearcher.java 150492 2004-09-06 22:01:49Z dnaber $
 	/// </version>
 	[TestFixture]
-    public class TestMultiSearcherRanking
+	public class TestMultiSearcherRanking : LuceneTestCase
 	{
 		
 		private bool verbose = false; // set to true to output hits
@@ -47,43 +48,43 @@ namespace Lucene.Net.Search
 		private Searcher singleSearcher;
 		
 		[Test]
-        public virtual void  TestOneTermQuery()
+		public virtual void  TestOneTermQuery()
 		{
 			CheckQuery("three");
 		}
 		
 		[Test]
-        public virtual void  TestTwoTermQuery()
+		public virtual void  TestTwoTermQuery()
 		{
 			CheckQuery("three foo");
 		}
 		
 		[Test]
-        public virtual void  TestPrefixQuery()
+		public virtual void  TestPrefixQuery()
 		{
 			CheckQuery("multi*");
 		}
 		
 		[Test]
-        public virtual void  TestFuzzyQuery()
+		public virtual void  TestFuzzyQuery()
 		{
 			CheckQuery("multiThree~");
 		}
 		
 		[Test]
-        public virtual void  TestRangeQuery()
+		public virtual void  TestRangeQuery()
 		{
 			CheckQuery("{multiA TO multiP}");
 		}
 		
 		[Test]
-        public virtual void  TestMultiPhraseQuery()
+		public virtual void  TestMultiPhraseQuery()
 		{
 			CheckQuery("\"blueberry pi*\"");
 		}
 		
 		[Test]
-        public virtual void  TestNoMatchQuery()
+		public virtual void  TestNoMatchQuery()
 		{
 			CheckQuery("+three +nomatch");
 		}
@@ -108,9 +109,9 @@ namespace Lucene.Net.Search
 			// check result hit ranking
 			if (verbose)
 				System.Console.Out.WriteLine("Query: " + queryStr);
-            Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(FIELD_NAME, new StandardAnalyzer());
-            Lucene.Net.Search.Query query = queryParser.Parse(queryStr);
-            Hits multiSearcherHits = multiSearcher.Search(query);
+			Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(FIELD_NAME, new StandardAnalyzer());
+			Lucene.Net.Search.Query query = queryParser.Parse(queryStr);
+			Hits multiSearcherHits = multiSearcher.Search(query);
 			Hits singleSearcherHits = singleSearcher.Search(query);
 			Assert.AreEqual(multiSearcherHits.Length(), singleSearcherHits.Length());
 			for (int i = 0; i < multiSearcherHits.Length(); i++)
@@ -130,8 +131,9 @@ namespace Lucene.Net.Search
 		
 		/// <summary> initializes multiSearcher and singleSearcher with the same document set</summary>
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			// create MultiSearcher from two seperate searchers
 			Directory d1 = new RAMDirectory();
 			IndexWriter iw1 = new IndexWriter(d1, new StandardAnalyzer(), true);

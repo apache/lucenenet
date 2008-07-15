@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
+using NUnit.Framework;
 using System;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
+	[TestFixture]
 	public class TestParallelMultiSearcher : TestMultiSearcher
 	{
 		

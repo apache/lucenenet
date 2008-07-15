@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,15 @@ using System;
 using NUnit.Framework;
 
 using IndexInput = Lucene.Net.Store.IndexInput;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	[TestFixture]
-	public class TestIndexInput
+	public class TestIndexInput : LuceneTestCase
 	{
 		[Test]
-        public virtual void  TestRead()
+		public virtual void  TestRead()
 		{
 			IndexInput is_Renamed = new MockIndexInput(new byte[]{(byte) (0x80), (byte) (0x01), (byte) (0xFF), (byte) (0x7F), (byte) (0x80), (byte) (0x80), (byte) (0x01), (byte) (0x81), (byte) (0x80), (byte) (0x01), (byte) (0x06), (byte) 'L', (byte) 'u', (byte) 'c', (byte) 'e', (byte) 'n', (byte) 'e'});
 			Assert.AreEqual(128, is_Renamed.ReadVInt());
@@ -37,40 +38,40 @@ namespace Lucene.Net.Index
 			Assert.AreEqual("Lucene", is_Renamed.ReadString());
 		}
 		
-        /// <summary> Expert
-        /// 
-        /// </summary>
-        /// <throws>  IOException </throws>
-        [Test]
-        public virtual void  TestSkipChars()
-        {
-            byte[] bytes = new byte[]{(byte) 0x80, (byte) 0x01, (byte) 0xFF, (byte) 0x7F, (byte) 0x80, (byte) 0x80, (byte) 0x01, (byte) 0x81, (byte) 0x80, (byte) 0x01, (byte) 0x06, (byte) 'L', (byte) 'u', (byte) 'c', (byte) 'e', (byte) 'n', (byte) 'e'};
-            System.String utf8Str = "\u0634\u1ea1";
-            byte[] utf8Bytes = System.Text.Encoding.GetEncoding("UTF-8").GetBytes(utf8Str);
-            byte[] theBytes = new byte[bytes.Length + 1 + utf8Bytes.Length];
-            Array.Copy(bytes, 0, theBytes, 0, bytes.Length);
-            theBytes[bytes.Length] = (byte) utf8Str.Length; //Add in the number of chars we are storing, which should fit in a byte for this test 
-            Array.Copy(utf8Bytes, 0, theBytes, bytes.Length + 1, utf8Bytes.Length);
-            IndexInput is_Renamed = new MockIndexInput(theBytes);
-            Assert.AreEqual(128, is_Renamed.ReadVInt());
-            Assert.AreEqual(16383, is_Renamed.ReadVInt());
-            Assert.AreEqual(16384, is_Renamed.ReadVInt());
-            Assert.AreEqual(16385, is_Renamed.ReadVInt());
-            int charsToRead = is_Renamed.ReadVInt(); //number of chars in the Lucene string
-            Assert.IsTrue(0x06 == charsToRead, 0x06 + " does not equal: " + charsToRead);
-            is_Renamed.SkipChars(3);
-            char[] chars = new char[3]; //there should be 6 chars remaining
-            is_Renamed.ReadChars(chars, 0, 3);
-            System.String tmpStr = new System.String(chars);
-            Assert.IsTrue(tmpStr.Equals("ene") == true, tmpStr + " is not equal to " + "ene");
-            //Now read the UTF8 stuff
-            charsToRead = is_Renamed.ReadVInt() - 1; //since we are skipping one
-            is_Renamed.SkipChars(1);
-            Assert.IsTrue(utf8Str.Length - 1 == charsToRead, utf8Str.Length - 1 + " does not equal: " + charsToRead);
-            chars = new char[charsToRead];
-            is_Renamed.ReadChars(chars, 0, charsToRead);
-            tmpStr = new System.String(chars);
-            Assert.IsTrue(tmpStr.Equals(utf8Str.Substring(1)) == true, tmpStr + " is not equal to " + utf8Str.Substring(1));
-        }
-    }
+		/// <summary> Expert
+		/// 
+		/// </summary>
+		/// <throws>  IOException </throws>
+		[Test]
+		public virtual void  TestSkipChars()
+		{
+			byte[] bytes = new byte[]{(byte) 0x80, (byte) 0x01, (byte) 0xFF, (byte) 0x7F, (byte) 0x80, (byte) 0x80, (byte) 0x01, (byte) 0x81, (byte) 0x80, (byte) 0x01, (byte) 0x06, (byte) 'L', (byte) 'u', (byte) 'c', (byte) 'e', (byte) 'n', (byte) 'e'};
+			System.String utf8Str = "\u0634\u1ea1";
+			byte[] utf8Bytes = System.Text.Encoding.GetEncoding("UTF-8").GetBytes(utf8Str);
+			byte[] theBytes = new byte[bytes.Length + 1 + utf8Bytes.Length];
+			Array.Copy(bytes, 0, theBytes, 0, bytes.Length);
+			theBytes[bytes.Length] = (byte) utf8Str.Length; //Add in the number of chars we are storing, which should fit in a byte for this test 
+			Array.Copy(utf8Bytes, 0, theBytes, bytes.Length + 1, utf8Bytes.Length);
+			IndexInput is_Renamed = new MockIndexInput(theBytes);
+			Assert.AreEqual(128, is_Renamed.ReadVInt());
+			Assert.AreEqual(16383, is_Renamed.ReadVInt());
+			Assert.AreEqual(16384, is_Renamed.ReadVInt());
+			Assert.AreEqual(16385, is_Renamed.ReadVInt());
+			int charsToRead = is_Renamed.ReadVInt(); //number of chars in the Lucene string
+			Assert.IsTrue(0x06 == charsToRead, 0x06 + " does not equal: " + charsToRead);
+			is_Renamed.SkipChars(3);
+			char[] chars = new char[3]; //there should be 6 chars remaining
+			is_Renamed.ReadChars(chars, 0, 3);
+			System.String tmpStr = new System.String(chars);
+			Assert.IsTrue(tmpStr.Equals("ene") == true, tmpStr + " is not equal to " + "ene");
+			//Now read the UTF8 stuff
+			charsToRead = is_Renamed.ReadVInt() - 1; //since we are skipping one
+			is_Renamed.SkipChars(1);
+			Assert.IsTrue(utf8Str.Length - 1 == charsToRead, utf8Str.Length - 1 + " does not equal: " + charsToRead);
+			chars = new char[charsToRead];
+			is_Renamed.ReadChars(chars, 0, charsToRead);
+			tmpStr = new System.String(chars);
+			Assert.IsTrue(tmpStr.Equals(utf8Str.Substring(1)) == true, tmpStr + " is not equal to " + utf8Str.Substring(1));
+		}
+	}
 }

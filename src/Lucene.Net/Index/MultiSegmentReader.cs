@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> An IndexReader which reads indexes with multiple segments.</summary>
-	class MultiSegmentReader : DirectoryIndexReader
+	public class MultiSegmentReader : DirectoryIndexReader
 	{
 		protected internal SegmentReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
@@ -516,17 +516,18 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-				System.Collections.IEnumerator names = reader.GetFieldNames(fieldNames).GetEnumerator();
+				System.Collections.IEnumerator names = ((System.Collections.IDictionary)reader.GetFieldNames(fieldNames)).Keys.GetEnumerator();
 				while (names.MoveNext())
 				{
-					fieldSet.Add(names.Current, names.Current);
+					if (!fieldSet.ContainsKey(names.Current))
+						fieldSet.Add(names.Current, names.Current);
 				}
 			}
-			return fieldSet.Keys;
+			return fieldSet;
 		}
 		
 		// for testing
-		internal virtual SegmentReader[] GetSubReaders()
+		public /*internal*/ virtual SegmentReader[] GetSubReaders()
 		{
 			return subReaders;
 		}

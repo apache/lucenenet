@@ -19,22 +19,24 @@ using System;
 
 using NUnit.Framework;
 
+//using TestRunner = junit.textui.TestRunner;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using _TestHelper = Lucene.Net.Store._TestHelper;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
 	
 	
-	/// <author>  dmitrys@earthlink.net
-	/// </author>
-	/// <version>  $Id: TestCompoundFile.java 208807 2005-07-01 22:13:53Z dnaber $
+	/// <summary> </summary>
+	/// <version>  $Id: TestCompoundFile.java 602165 2007-12-07 17:42:33Z mikemccand $
 	/// </version>
 	[TestFixture]
-    public class TestCompoundFile
+	public class TestCompoundFile : LuceneTestCase
 	{
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
@@ -58,12 +60,12 @@ namespace Lucene.Net.Index
 		private Directory dir;
 		
 		[SetUp]
-		public virtual void  SetUp()
+		public override void SetUp()
 		{
-            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
-            Lucene.Net.Util._TestUtil.RmDir(file);
-            dir = FSDirectory.GetDirectory(file);
-        }
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
+			Lucene.Net.Util._TestUtil.RmDir(file);
+			dir = FSDirectory.GetDirectory(file);
+		}
 		
 		
 		/// <summary>Creates a file of the specified size with random data. </summary>
@@ -177,7 +179,7 @@ namespace Lucene.Net.Index
 		/// Files of different sizes are tested: 0, 1, 10, 100 bytes.
 		/// </summary>
 		[Test]
-        public virtual void  TestSingleFile()
+		public virtual void  TestSingleFile()
 		{
 			int[] data = new int[]{0, 1, 10, 100};
 			for (int i = 0; i < data.Length; i++)
@@ -204,7 +206,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		[Test]
-        public virtual void  TestTwoFiles()
+		public virtual void  TestTwoFiles()
 		{
 			CreateSequenceFile(dir, "d1", (byte) 0, 15);
 			CreateSequenceFile(dir, "d2", (byte) 0, 114);
@@ -238,7 +240,7 @@ namespace Lucene.Net.Index
 		/// the length of the buffer used internally by the compound file logic.
 		/// </summary>
 		[Test]
-        public virtual void  TestRandomFiles()
+		public virtual void  TestRandomFiles()
 		{
 			// Setup the test segment
 			System.String segment = "test";
@@ -337,7 +339,7 @@ namespace Lucene.Net.Index
 				b = in_Renamed.ReadByte();
 				Assert.Fail("expected readByte() to throw exception");
 			}
-			catch (System.Exception e)
+			catch (System.Exception)
 			{
 				// expected exception
 			}
@@ -426,7 +428,7 @@ namespace Lucene.Net.Index
 		/// their file positions are independent of each other.
 		/// </summary>
 		[Test]
-        public virtual void  TestRandomAccess()
+		public virtual void  TestRandomAccess()
 		{
 			SetUp_2();
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
@@ -507,7 +509,7 @@ namespace Lucene.Net.Index
 		/// their file positions are independent of each other.
 		/// </summary>
 		[Test]
-        public virtual void  TestRandomAccessClones()
+		public virtual void  TestRandomAccessClones()
 		{
 			SetUp_2();
 			CompoundFileReader cr = new CompoundFileReader(dir, "f.comp");
@@ -596,7 +598,7 @@ namespace Lucene.Net.Index
 				IndexInput e1 = cr.OpenInput("bogus");
 				Assert.Fail("File not found");
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				/* success */
 				//System.out.println("SUCCESS: File Not Found: " + e);
@@ -620,7 +622,7 @@ namespace Lucene.Net.Index
 				byte test = is_Renamed.ReadByte();
 				Assert.Fail("Single byte read past end of file");
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				/* success */
 				//System.out.println("SUCCESS: single byte read past end of file: " + e);
@@ -632,7 +634,7 @@ namespace Lucene.Net.Index
 				is_Renamed.ReadBytes(b, 0, 50);
 				Assert.Fail("Block read past end of file");
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				/* success */
 				//System.out.println("SUCCESS: block read past end of file: " + e);
@@ -642,31 +644,31 @@ namespace Lucene.Net.Index
 			cr.Close();
 		}
 
-        /// <summary>This test that writes larger than the size of the buffer output
-        /// will correctly increment the file pointer.
-        /// </summary>
-        [Test]
-        public virtual void  TestLargeWrites()
-                                               {
-            IndexOutput os = dir.CreateOutput("testBufferStart.txt");
+		/// <summary>This test that writes larger than the size of the buffer output
+		/// will correctly increment the file pointer.
+		/// </summary>
+		[Test]
+		public virtual void  TestLargeWrites()
+											   {
+			IndexOutput os = dir.CreateOutput("testBufferStart.txt");
 
-            byte[] largeBuf = new byte[2048];
-            for (int i=0; i<largeBuf.Length; i++)
-            {
-                largeBuf[i] = (byte) ((new System.Random().NextDouble()) * 256);
-            }
+			byte[] largeBuf = new byte[2048];
+			for (int i=0; i<largeBuf.Length; i++)
+			{
+				largeBuf[i] = (byte) ((new System.Random().NextDouble()) * 256);
+			}
 
-            long currentPos = os.GetFilePointer();
-            os.WriteBytes(largeBuf, largeBuf.Length);
+			long currentPos = os.GetFilePointer();
+			os.WriteBytes(largeBuf, largeBuf.Length);
 
-            try
-            {
-                Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());
-            }
-            finally
-            {
-                os.Close();
-            }
-        }
- 	}
+			try
+			{
+				Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());
+			}
+			finally
+			{
+				os.Close();
+			}
+		}
+	}
 }

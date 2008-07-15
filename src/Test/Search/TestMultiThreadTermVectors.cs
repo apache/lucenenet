@@ -19,23 +19,23 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <author>  Bernhard Messer
-	/// </author>
-	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 150569 2004-10-06 10:40:23Z goller $ ' ;
+	/// <summary> </summary>
+	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 583534 2007-10-10 16:46:35Z mikemccand $ ' ;
 	/// </version>
 	[TestFixture]
-    public class TestMultiThreadTermVectors
+	public class TestMultiThreadTermVectors : LuceneTestCase
 	{
 		private RAMDirectory directory = new RAMDirectory();
 		public int numDocs = 100;
@@ -43,8 +43,9 @@ namespace Lucene.Net.Search
 		
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
 			//writer.setUseCompoundFile(false);
 			//writer.infoStream = System.out;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			
 			IndexReader reader = null;
@@ -91,7 +92,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-        public virtual void  _TestTermPositionVectors(IndexReader reader, int threadCount)
+		public virtual void  _TestTermPositionVectors(IndexReader reader, int threadCount)
 		{
 			MultiThreadTermVectorsReader[] mtr = new MultiThreadTermVectorsReader[threadCount];
 			for (int i = 0; i < threadCount; i++)
@@ -120,7 +121,7 @@ namespace Lucene.Net.Search
 						threadsAlive--;
 					}
 				}
-				catch (System.Threading.ThreadInterruptedException ie)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
 			}
@@ -178,7 +179,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-        private void  TestTermVectors()
+		private void  TestTermVectors()
 		{
 			// check:
 			int numDocs = reader.NumDocs();

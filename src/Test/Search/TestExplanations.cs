@@ -19,16 +19,17 @@ using System;
 
 using NUnit.Framework;
 
-using Lucene.Net.Search.Spans;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Lucene.Net.Search.Spans;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -46,26 +47,28 @@ namespace Lucene.Net.Search
 	/// <seealso cref=""Subclasses for actual tests"">
 	/// </seealso>
 	[TestFixture]
-    public class TestExplanations
+	public class TestExplanations : LuceneTestCase
 	{
 		protected internal IndexSearcher searcher;
 		
 		public const System.String FIELD = "field";
 		public static readonly Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(FIELD, new WhitespaceAnalyzer());
 		
-        [TearDown]
-		public virtual void  TearDown()
+		[TearDown]
+		public override void TearDown()
 		{
-            if (searcher != null)
-            {
-                searcher.Close();
-                searcher = null;
-            }
+			base.TearDown();
+			if (searcher != null)
+			{
+				searcher.Close();
+				searcher = null;
+			}
 		}
 		
-        [SetUp]
-		public virtual void  SetUp()
+		[SetUp]
+		public override void SetUp()
 		{
+			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			for (int i = 0; i < docFields.Length; i++)
@@ -85,15 +88,16 @@ namespace Lucene.Net.Search
 			return qp.Parse(queryText);
 		}
 		
+		/// <summary>check the expDocNrs first, then check the query (and the explanations) </summary>
 		public virtual void  Qtest(System.String queryText, int[] expDocNrs)
 		{
 			Qtest(MakeQuery(queryText), expDocNrs);
 		}
+		
+		/// <summary>check the expDocNrs first, then check the query (and the explanations) </summary>
 		public virtual void  Qtest(Query q, int[] expDocNrs)
 		{
-			// check that the expDocNrs first, then check the explanations
 			CheckHits.CheckHitCollector(q, FIELD, searcher, expDocNrs);
-			CheckHits.CheckExplanations(q, FIELD, searcher);
 		}
 		
 		/// <summary> Tests a query using qtest after wrapping it with both optB and reqB</summary>
@@ -253,8 +257,8 @@ namespace Lucene.Net.Search
 		/// <summary> Placeholder: JUnit freaks if you don't have one test ... making
 		/// class abstract doesn't help
 		/// </summary>
-        [Test]
-        public virtual void  TestNoop()
+		[Test]
+		public virtual void  TestNoop()
 		{
 			/* NOOP */
 		}

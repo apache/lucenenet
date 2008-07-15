@@ -41,11 +41,10 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// <p>Created: Apr 21, 2004 5:34:47 PM
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Tim Jones
-	/// </author>
-    /// <version>  $Id: SampleComparable.java 472959 2006-11-09 16:21:50Z yonik $
-    /// </version>
+	/// <version>  $Id: SampleComparable.java 564236 2007-08-09 15:21:19Z gsingers $
+	/// </version>
 	/// <since> 1.4
 	/// </since>
 	[Serializable]
@@ -81,7 +80,7 @@ namespace Lucene.Net.Search
 					
 				}
 
-                protected internal System.IComparable[] cachedValues;
+				protected internal System.IComparable[] cachedValues;
 				
 				public virtual int Compare(ScoreDoc i, ScoreDoc j)
 				{
@@ -174,15 +173,15 @@ namespace Lucene.Net.Search
 			}
 		}
 
-        public static SortComparatorSource GetComparatorSource()
-        {
-            return new AnonymousClassSortComparatorSource();
-        }
+		public static SortComparatorSource GetComparatorSource()
+		{
+			return new AnonymousClassSortComparatorSource();
+		}
 
-        public static SortComparator GetComparator()
-        {
-            return new AnonymousClassSortComparator();
-        }
+		public static SortComparator GetComparator()
+		{
+			return new AnonymousClassSortComparator();
+		}
 		
 		internal System.String string_part;
 		internal System.Int32 int_part;

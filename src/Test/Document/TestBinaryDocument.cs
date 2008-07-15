@@ -19,32 +19,30 @@ using System;
 
 using NUnit.Framework;
 
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Fieldable = Lucene.Net.Documents.Fieldable;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Documents
 {
 	
 	/// <summary> Tests {@link Document} class.
 	/// 
+	/// 
 	/// </summary>
-	/// <author>  Bernhard Messer
-	/// </author>
-    /// <version>  $Id: TestBinaryDocument.java 387550 2006-03-21 15:36:32Z yonik $
-    /// </version>
+	/// <version>  $Id: TestBinaryDocument.java 598296 2007-11-26 14:52:01Z mikemccand $
+	/// </version>
 	[TestFixture]
-    public class TestBinaryDocument
+	public class TestBinaryDocument : LuceneTestCase    
 	{
 		
 		internal System.String binaryValStored = "this text will be stored as a byte array in the index";
 		internal System.String binaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 		
 		[Test]
-        public virtual void  TestBinaryFieldInIndex()
+		public virtual void  TestBinaryFieldInIndex()
 		{
 			Lucene.Net.Documents.Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
 			Lucene.Net.Documents.Fieldable binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
@@ -57,9 +55,8 @@ namespace Lucene.Net.Documents
 				new Field("fail", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.NO);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException iae)
+			catch (System.ArgumentException)
 			{
-				;
 			}
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
@@ -70,8 +67,8 @@ namespace Lucene.Net.Documents
 			doc.Add(stringFldStored);
 			doc.Add(stringFldCompressed);
 			
-            /** test for field count */
-            Assert.AreEqual(4, doc.GetFieldsCount());
+			/** test for field count */
+			Assert.AreEqual(4, doc.GetFieldsCount());
 			
 			/** add the doc to a ram index */
 			RAMDirectory dir = new RAMDirectory();
@@ -93,11 +90,11 @@ namespace Lucene.Net.Documents
 			Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** fetch the string field and compare it's content with the original one */
-			System.String stringFldStoredTest = new System.Text.StringBuilder(docFromReader.Get("stringStored")).ToString();
+			System.String stringFldStoredTest = docFromReader.Get("stringStored");
 			Assert.IsTrue(stringFldStoredTest.Equals(binaryValStored));
 			
 			/** fetch the compressed string field and compare it's content with the original one */
-			System.String stringFldCompressedTest = new System.Text.StringBuilder(docFromReader.Get("stringCompressed")).ToString();
+			System.String stringFldCompressedTest = docFromReader.Get("stringCompressed");
 			Assert.IsTrue(stringFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** delete the document from index */

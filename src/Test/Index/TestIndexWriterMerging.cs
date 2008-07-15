@@ -19,95 +19,97 @@ using System;
 
 using NUnit.Framework;
 
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
 	
-    [TestFixture]
-    public class TestIndexWriterMerging
-    {
+	[TestFixture]
+	public class TestIndexWriterMerging : LuceneTestCase
+	{
 		
-        /// <summary> Tests that index merging (specifically addIndexes()) doesn't
-        /// change the index order of documents.
-        /// </summary>
-        [Test]
-        public virtual void  TestLucene()
-        {
+		/// <summary> Tests that index merging (specifically addIndexes()) doesn't
+		/// change the index order of documents.
+		/// </summary>
+		[Test]
+		public virtual void  TestLucene()
+		{
 			
-            int num = 100;
+			int num = 100;
+
+			Directory indexA = new MockRAMDirectory();
+			Directory indexB = new MockRAMDirectory();
 			
-            Directory indexA = new RAMDirectory();
-            Directory indexB = new RAMDirectory();
+			FillIndex(indexA, 0, num);
+			bool fail = VerifyIndex(indexA, 0);
+			if (fail)
+			{
+				Assert.Fail("Index a is invalid");
+			}
 			
-            FillIndex(indexA, 0, num);
-            bool fail = VerifyIndex(indexA, 0);
-            if (fail)
-            {
-                Assert.Fail("Index a is invalid");
-            }
+			FillIndex(indexB, num, num);
+			fail = VerifyIndex(indexB, num);
+			if (fail)
+			{
+				Assert.Fail("Index b is invalid");
+			}
+
+			Directory merged = new MockRAMDirectory();
 			
-            FillIndex(indexB, num, num);
-            fail = VerifyIndex(indexB, num);
-            if (fail)
-            {
-                Assert.Fail("Index b is invalid");
-            }
+			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true);
+			writer.SetMergeFactor(2);
 			
-            Directory merged = new RAMDirectory();
+			writer.AddIndexes(new Directory[]{indexA, indexB});
+			writer.Close();
 			
-            IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true);
-            writer.SetMergeFactor(2);
+			fail = VerifyIndex(merged, 0);
+			merged.Close();
 			
-            writer.AddIndexes(new Directory[]{indexA, indexB});
-            writer.Close();
-			
-            fail = VerifyIndex(merged, 0);
-            merged.Close();
-			
-            Assert.IsFalse(fail, "The merged index is invalid");
-        }
+			Assert.IsFalse(fail, "The merged index is invalid");
+		}
 		
-        private bool VerifyIndex(Directory directory, int startAt)
-        {
-            bool fail = false;
-            IndexReader reader = IndexReader.Open(directory);
+		private bool VerifyIndex(Directory directory, int startAt)
+		{
+			bool fail = false;
+			IndexReader reader = IndexReader.Open(directory);
 			
-            int max = reader.MaxDoc();
-            for (int i = 0; i < max; i++)
-            {
-                Lucene.Net.Documents.Document temp = reader.Document(i);
-                //System.out.println("doc "+i+"="+temp.getField("count").stringValue());
-                //compare the index doc number to the value that it should be
-                if (!temp.GetField("count").StringValue().Equals((i + startAt) + ""))
-                {
-                    fail = true;
-                    System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue());
-                }
-            }
-            return fail;
-        }
+			int max = reader.MaxDoc();
+			for (int i = 0; i < max; i++)
+			{
+				Lucene.Net.Documents.Document temp = reader.Document(i);
+				//System.out.println("doc "+i+"="+temp.getField("count").stringValue());
+				//compare the index doc number to the value that it should be
+				if (!temp.GetField("count").StringValue().Equals((i + startAt) + ""))
+				{
+					fail = true;
+					System.Console.Out.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").StringValue());
+				}
+			}
+			reader.Close();
+			return fail;
+		}
 		
-        private void  FillIndex(Directory dir, int start, int numDocs)
-        {
+		private void  FillIndex(Directory dir, int start, int numDocs)
+		{
 			
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
-            writer.SetMergeFactor(2);
-            writer.SetMaxBufferedDocs(2);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			writer.SetMergeFactor(2);
+			writer.SetMaxBufferedDocs(2);
 			
-            for (int i = start; i < (start + numDocs); i++)
-            {
-                Lucene.Net.Documents.Document temp = new Lucene.Net.Documents.Document();
-                temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			for (int i = start; i < (start + numDocs); i++)
+			{
+				Lucene.Net.Documents.Document temp = new Lucene.Net.Documents.Document();
+				temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.UN_TOKENIZED));
 				
-                writer.AddDocument(temp);
-            }
-            writer.Close();
-        }
-    }
+				writer.AddDocument(temp);
+			}
+			writer.Close();
+		}
+	}
 }

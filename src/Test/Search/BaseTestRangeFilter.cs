@@ -19,16 +19,17 @@ using System;
 
 using NUnit.Framework;
 
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Search
 {
 	[TestFixture]
-	public class BaseTestRangeFilter
+	public class BaseTestRangeFilter : LuceneTestCase
 	{
 		
 		public const bool F = false;

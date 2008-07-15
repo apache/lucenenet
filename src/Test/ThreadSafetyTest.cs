@@ -23,8 +23,8 @@ using Lucene.Net.Documents;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.QueryParsers;
+using Searchable = Lucene.Net.Search.Searchable;
 
 namespace Lucene.Net
 {
@@ -145,9 +145,9 @@ namespace Lucene.Net
 			private void  searchFor(int n, Searcher searcher)
 			{
 				System.Console.Out.WriteLine("Searching for " + n);
-                Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", Lucene.Net.ThreadSafetyTest.ANALYZER);
-                Lucene.Net.Search.Hits hits = searcher.Search(parser.Parse(Lucene.Net.Util.English.IntToEnglish(n)));
-                System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
+				Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", Lucene.Net.ThreadSafetyTest.ANALYZER);
+				Lucene.Net.Search.Hits hits = searcher.Search(parser.Parse(Lucene.Net.Util.English.IntToEnglish(n)));
+				System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
 				for (int j = 0; j < System.Math.Min(3, hits.Length()); j++)
 				{
 					System.Console.Out.WriteLine("Hit for " + n + ": " + hits.Doc(j).Get("id"));

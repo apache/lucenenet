@@ -19,15 +19,16 @@ using System;
 
 using NUnit.Framework;
 
-using Query = Lucene.Net.Search.Query;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseFilter = Lucene.Net.Analysis.LowerCaseFilter;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
+using Query = Lucene.Net.Search.Query;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-namespace Lucene.Net.QueryParser
+namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary> Test QueryParser's ability to deal with Analyzers that return more
@@ -38,13 +39,13 @@ namespace Lucene.Net.QueryParser
 	/// <author>  Daniel Naber
 	/// </author>
 	[TestFixture]
-    public class TestMultiAnalyzer
+	public class TestMultiAnalyzer : LuceneTestCase
 	{
 		
 		private static int multiToken = 0;
 		
 		[Test]
-        public virtual void  TestMultiAnalyzer_Renamed_Method()
+		public virtual void  TestMultiAnalyzer_Renamed_Method()
 		{
 			
 			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("", new MultiAnalyzer(this));
@@ -82,36 +83,36 @@ namespace Lucene.Net.QueryParser
 			// phrase with non-default boost:
 			Assert.AreEqual("\"(multi multi2) foo\"^2.0", qp.Parse("\"multi foo\"^2").ToString());
 			
-            // phrase after changing default slop
-            qp.SetPhraseSlop(99);
-            Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
-            Assert.AreEqual("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse("\"multi foo\" \"foo bar\"~2").ToString());
-            qp.SetPhraseSlop(0);
+			// phrase after changing default slop
+			qp.SetPhraseSlop(99);
+			Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
+			Assert.AreEqual("\"(multi multi2) foo\"~99 \"foo bar\"~2", qp.Parse("\"multi foo\" \"foo bar\"~2").ToString());
+			qp.SetPhraseSlop(0);
 			
-            // non-default operator:
+			// non-default operator:
 			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
 			Assert.AreEqual("+(multi multi2) +foo", qp.Parse("multi foo").ToString());
 		}
 		
-        [Test]
-        public virtual void  TestMultiAnalyzerWithSubclassOfQueryParser()
-        {
+		[Test]
+		public virtual void  TestMultiAnalyzerWithSubclassOfQueryParser()
+		{
 			
-            DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
-            qp.SetPhraseSlop(99); // modified default slop
+			DumbQueryParser qp = new DumbQueryParser("", new MultiAnalyzer(this));
+			qp.SetPhraseSlop(99); // modified default slop
 			
-            // direct call to (super's) getFieldQuery to demonstrate differnce
-            // between phrase and multiphrase with modified default slop
-            Assert.AreEqual("\"foo bar\"~99", qp.GetSuperFieldQuery("", "foo bar").ToString());
-            Assert.AreEqual("\"(multi multi2) bar\"~99", qp.GetSuperFieldQuery("", "multi bar").ToString());
+			// direct call to (super's) getFieldQuery to demonstrate differnce
+			// between phrase and multiphrase with modified default slop
+			Assert.AreEqual("\"foo bar\"~99", qp.GetSuperFieldQuery("", "foo bar").ToString());
+			Assert.AreEqual("\"(multi multi2) bar\"~99", qp.GetSuperFieldQuery("", "multi bar").ToString());
 			
 			
-            // ask sublcass to parse phrase with modified default slop
-            Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
-        }
+			// ask sublcass to parse phrase with modified default slop
+			Assert.AreEqual("\"(multi multi2) foo\"~99 bar", qp.Parse("\"multi foo\" bar").ToString());
+		}
 		
-        [Test]
-        public virtual void  TestPosIncrementAnalyzer()
+		[Test]
+		public virtual void  TestPosIncrementAnalyzer()
 		{
 			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("", new PosIncrementAnalyzer(this));
 			Assert.AreEqual("quick brown", qp.Parse("the quick brown").ToString());
@@ -131,7 +132,7 @@ namespace Lucene.Net.QueryParser
 			}
 			private TestMultiAnalyzer enclosingInstance;
 			
-            public TestMultiAnalyzer Enclosing_Instance
+			public TestMultiAnalyzer Enclosing_Instance
 			{
 				get
 				{
@@ -172,18 +173,18 @@ namespace Lucene.Net.QueryParser
 			
 			private Lucene.Net.Analysis.Token prevToken;
 			
-            public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
+			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
 			}
 			
 			public override Lucene.Net.Analysis.Token Next()
 			{
-				if (Lucene.Net.QueryParser.TestMultiAnalyzer.multiToken > 0)
+				if (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken > 0)
 				{
-					Lucene.Net.Analysis.Token token = new Lucene.Net.Analysis.Token("multi" + (Lucene.Net.QueryParser.TestMultiAnalyzer.multiToken + 1), prevToken.StartOffset(), prevToken.EndOffset(), prevToken.Type());
+					Lucene.Net.Analysis.Token token = new Lucene.Net.Analysis.Token("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1), prevToken.StartOffset(), prevToken.EndOffset(), prevToken.Type());
 					token.SetPositionIncrement(0);
-					Lucene.Net.QueryParser.TestMultiAnalyzer.multiToken--;
+					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
 					return token;
 				}
 				else
@@ -195,12 +196,12 @@ namespace Lucene.Net.QueryParser
 					System.String text = t.TermText();
 					if (text.Equals("triplemulti"))
 					{
-						Lucene.Net.QueryParser.TestMultiAnalyzer.multiToken = 2;
+						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 2;
 						return t;
 					}
 					else if (text.Equals("multi"))
 					{
-						Lucene.Net.QueryParser.TestMultiAnalyzer.multiToken = 1;
+						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 1;
 						return t;
 					}
 					else
@@ -260,14 +261,14 @@ namespace Lucene.Net.QueryParser
 				
 			}
 			
-            public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
+			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
 			}
 			
 			public override Lucene.Net.Analysis.Token Next()
 			{
-				for (Token t = input.Next(); t != null; t = input.Next())
+				for (Lucene.Net.Analysis.Token t = input.Next(); t != null; t = input.Next())
 				{
 					if (t.TermText().Equals("the"))
 					{
@@ -290,46 +291,46 @@ namespace Lucene.Net.QueryParser
 			}
 		}
 		
-        /// <summary>a very simple subclass of QueryParser </summary>
-        public class DumbQueryParser : Lucene.Net.QueryParsers.QueryParser
-        {
+		/// <summary>a very simple subclass of QueryParser </summary>
+		public class DumbQueryParser : Lucene.Net.QueryParsers.QueryParser
+		{
 			
-            public DumbQueryParser(System.String f, Analyzer a):base(f, a)
-            {
-            }
+			public DumbQueryParser(System.String f, Analyzer a):base(f, a)
+			{
+			}
 			
-            /// <summary>expose super's version </summary>
-            public Lucene.Net.Search.Query GetSuperFieldQuery(System.String f, System.String t)
-            {
-                return base.GetFieldQuery(f, t);
-            }
-            /// <summary>wrap super's version </summary>
-            protected internal virtual Lucene.Net.Search.Query GetFieldQuery(System.String f, System.String t)
-            {
-                return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
-            }
-        }
+			/// <summary>expose super's version </summary>
+			public Lucene.Net.Search.Query GetSuperFieldQuery(System.String f, System.String t)
+			{
+				return base.GetFieldQuery(f, t);
+			}
+			/// <summary>wrap super's version </summary>
+			public override Lucene.Net.Search.Query GetFieldQuery(System.String f, System.String t)
+			{
+				return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
+			}
+		}
 		
-        /// <summary> A very simple wrapper to prevent instanceof checks but uses
-        /// the toString of the query it wraps.
-        /// </summary>
-        [Serializable]
-        private sealed class DumbQueryWrapper : Lucene.Net.Search.Query
-        {
+		/// <summary> A very simple wrapper to prevent instanceof checks but uses
+		/// the toString of the query it wraps.
+		/// </summary>
+		[Serializable]
+		private sealed class DumbQueryWrapper : Lucene.Net.Search.Query
+		{
 			
-            private Lucene.Net.Search.Query q;
-            public DumbQueryWrapper(Lucene.Net.Search.Query q):base()
-            {
-                this.q = q;
-            }
-            public override System.String ToString(System.String f)
-            {
-                return q.ToString(f);
-            }
-            override public System.Object Clone()
-            {
-                return null;
-            }
-        }
-    }
+			private Lucene.Net.Search.Query q;
+			public DumbQueryWrapper(Lucene.Net.Search.Query q):base()
+			{
+				this.q = q;
+			}
+			public override System.String ToString(System.String f)
+			{
+				return q.ToString(f);
+			}
+			override public System.Object Clone()
+			{
+				return null;
+			}
+		}
+	}
 }

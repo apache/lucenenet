@@ -19,11 +19,12 @@ using System;
 
 using NUnit.Framework;
 
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
@@ -33,8 +34,9 @@ namespace Lucene.Net.Index
 	/// if other docs have allready been accessed.
 	/// </summary>
 	[TestFixture]
-    public class TestLazyBug
+	public class TestLazyBug : LuceneTestCase
 	{
+		[Serializable]
 		public class AnonymousClassFieldSelector : FieldSelector
 		{
 			public virtual FieldSelectorResult Accept(System.String f)
@@ -91,13 +93,13 @@ namespace Lucene.Net.Index
 		
 		public static void  DoTest(int[] docs)
 		{
-            if (dataset.Count == 0)
-            {
-                for (int i = 0; i < data.Length; i++)
-                {
-                    dataset.Add(data[i], data[i]);
-                }
-            }
+			if (dataset.Count == 0)
+			{
+				for (int i = 0; i < data.Length; i++)
+				{
+					dataset.Add(data[i], data[i]);
+				}
+			}
 
 			Directory dir = MakeIndex();
 			IndexReader reader = IndexReader.Open(dir);
@@ -131,19 +133,19 @@ namespace Lucene.Net.Index
 			reader.Close();
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestLazyWorks()
 		{
 			DoTest(new int[]{399});
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestLazyAlsoWorks()
 		{
 			DoTest(new int[]{399, 150});
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestLazyBroken()
 		{
 			DoTest(new int[]{150, 399});

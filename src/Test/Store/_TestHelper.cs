@@ -17,6 +17,8 @@
 
 using System;
 
+using FSIndexInput = Lucene.Net.Store.FSDirectory.FSIndexInput;
+
 namespace Lucene.Net.Store
 {
 	

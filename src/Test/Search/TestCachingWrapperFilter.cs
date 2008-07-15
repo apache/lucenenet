@@ -19,19 +19,20 @@ using System;
 
 using NUnit.Framework;
 
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	[TestFixture]
-	public class TestCachingWrapperFilter
+	public class TestCachingWrapperFilter : LuceneTestCase
 	{
 		[Test]
-        public virtual void  TestCachingWorks()
+		public virtual void  TestCachingWorks()
 		{
 			Directory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);

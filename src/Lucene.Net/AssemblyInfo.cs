@@ -24,16 +24,16 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("Apache Lucene.Net")]
-[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net full-text search library")]
+[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net")]
-[assembly: AssemblyCopyright("Copyright 2007 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2008 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2008 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("2.1")]
+[assembly: AssemblyInformationalVersionAttribute("2.3.1")]
 
 
 //
@@ -47,7 +47,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.1.0.003")]
+[assembly: AssemblyVersion("2.3.1.002")]
 
 
 //

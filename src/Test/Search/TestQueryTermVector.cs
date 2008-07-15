@@ -20,25 +20,15 @@ using System;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	[TestFixture]
-	public class TestQueryTermVector
+	public class TestQueryTermVector : LuceneTestCase
 	{
 		
-		[SetUp]
-        public virtual void  SetUp()
-		{
-		}
-		
-		[TearDown]
-        public virtual void  TearDown()
-		{
-			
-		}
-		
-        [Test]
+		[Test]
 		public virtual void  TestConstructor()
 		{
 			System.String[] queryTerm = new System.String[]{"foo", "bar", "foo", "again", "foo", "bar", "go", "go", "go"};

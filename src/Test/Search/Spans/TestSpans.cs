@@ -19,28 +19,30 @@ using System;
 
 using NUnit.Framework;
 
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using CheckHits = Lucene.Net.Search.CheckHits;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using CheckHits = Lucene.Net.Search.CheckHits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Query = Lucene.Net.Search.Query;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Spans
 {
 	[TestFixture]
-	public class TestSpans
+	public class TestSpans : LuceneTestCase
 	{
 		private IndexSearcher searcher;
 		
 		public const System.String field = "field";
 		
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
 			for (int i = 0; i < docFields.Length; i++)
@@ -89,91 +91,91 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered01()
+		public virtual void  TestSpanNearOrdered01()
 		{
 			OrderedSlopTest3(0, new int[]{0});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered02()
+		public virtual void  TestSpanNearOrdered02()
 		{
 			OrderedSlopTest3(1, new int[]{0, 1});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered03()
+		public virtual void  TestSpanNearOrdered03()
 		{
 			OrderedSlopTest3(2, new int[]{0, 1, 2});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered04()
+		public virtual void  TestSpanNearOrdered04()
 		{
 			OrderedSlopTest3(3, new int[]{0, 1, 2, 3});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrdered05()
+		public virtual void  TestSpanNearOrdered05()
 		{
 			OrderedSlopTest3(4, new int[]{0, 1, 2, 3});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual01()
+		public virtual void  TestSpanNearOrderedEqual01()
 		{
 			OrderedSlopTest3Equal(0, new int[]{});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual02()
+		public virtual void  TestSpanNearOrderedEqual02()
 		{
 			OrderedSlopTest3Equal(1, new int[]{1});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual03()
+		public virtual void  TestSpanNearOrderedEqual03()
 		{
 			OrderedSlopTest3Equal(2, new int[]{1});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual04()
+		public virtual void  TestSpanNearOrderedEqual04()
 		{
 			OrderedSlopTest3Equal(3, new int[]{1, 3});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual11()
+		public virtual void  TestSpanNearOrderedEqual11()
 		{
 			OrderedSlopTest1Equal(0, new int[]{4});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual12()
+		public virtual void  TestSpanNearOrderedEqual12()
 		{
 			OrderedSlopTest1Equal(0, new int[]{4});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual13()
+		public virtual void  TestSpanNearOrderedEqual13()
 		{
 			OrderedSlopTest1Equal(1, new int[]{4, 5, 6});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual14()
+		public virtual void  TestSpanNearOrderedEqual14()
 		{
 			OrderedSlopTest1Equal(2, new int[]{4, 5, 6, 7});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedEqual15()
+		public virtual void  TestSpanNearOrderedEqual15()
 		{
 			OrderedSlopTest1Equal(3, new int[]{4, 5, 6, 7});
 		}
 		
 		[Test]
-        public virtual void  TestSpanNearOrderedOverlap()
+		public virtual void  TestSpanNearOrderedOverlap()
 		{
 			bool ordered = true;
 			int slop = 1;
@@ -194,84 +196,84 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		
-        private Spans OrSpans(System.String[] terms)
-        {
-            SpanQuery[] sqa = new SpanQuery[terms.Length];
-            for (int i = 0; i < terms.Length; i++)
-            {
-                sqa[i] = MakeSpanTermQuery(terms[i]);
-            }
-            return (new SpanOrQuery(sqa)).GetSpans(searcher.GetIndexReader());
-        }
+		private Spans OrSpans(System.String[] terms)
+		{
+			SpanQuery[] sqa = new SpanQuery[terms.Length];
+			for (int i = 0; i < terms.Length; i++)
+			{
+				sqa[i] = MakeSpanTermQuery(terms[i]);
+			}
+			return (new SpanOrQuery(sqa)).GetSpans(searcher.GetIndexReader());
+		}
 		
-        private void  TstNextSpans(Spans spans, int doc, int start, int end)
-        {
-            Assert.IsTrue(spans.Next(), "next");
-            Assert.AreEqual(doc, spans.Doc(), "doc");
-            Assert.AreEqual(start, spans.Start(), "start");
-            Assert.AreEqual(end, spans.End(), "end");
-        }
+		private void  TstNextSpans(Spans spans, int doc, int start, int end)
+		{
+			Assert.IsTrue(spans.Next(), "next");
+			Assert.AreEqual(doc, spans.Doc(), "doc");
+			Assert.AreEqual(start, spans.Start(), "start");
+			Assert.AreEqual(end, spans.End(), "end");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrEmpty()
-        {
-            Spans spans = OrSpans(new System.String[0]);
-            Assert.IsFalse(spans.Next(), "empty next");
-        }
+		[Test]
+		public virtual void  TestSpanOrEmpty()
+		{
+			Spans spans = OrSpans(new System.String[0]);
+			Assert.IsFalse(spans.Next(), "empty next");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrSingle()
-        {
-            Spans spans = OrSpans(new System.String[]{"w5"});
-            TstNextSpans(spans, 0, 4, 5);
-            Assert.IsFalse(spans.Next(), "final next");
-        }
+		[Test]
+		public virtual void  TestSpanOrSingle()
+		{
+			Spans spans = OrSpans(new System.String[]{"w5"});
+			TstNextSpans(spans, 0, 4, 5);
+			Assert.IsFalse(spans.Next(), "final next");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrDouble()
-        {
-            Spans spans = OrSpans(new System.String[]{"w5", "yy"});
-            TstNextSpans(spans, 0, 4, 5);
-            TstNextSpans(spans, 2, 3, 4);
-            TstNextSpans(spans, 3, 4, 5);
-            TstNextSpans(spans, 7, 3, 4);
-            Assert.IsFalse(spans.Next(), "final next");
-        }
+		[Test]
+		public virtual void  TestSpanOrDouble()
+		{
+			Spans spans = OrSpans(new System.String[]{"w5", "yy"});
+			TstNextSpans(spans, 0, 4, 5);
+			TstNextSpans(spans, 2, 3, 4);
+			TstNextSpans(spans, 3, 4, 5);
+			TstNextSpans(spans, 7, 3, 4);
+			Assert.IsFalse(spans.Next(), "final next");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrDoubleSkip()
-        {
-            Spans spans = OrSpans(new System.String[]{"w5", "yy"});
-            Assert.IsTrue(spans.SkipTo(3), "initial skipTo");
-            Assert.AreEqual(3, spans.Doc(), "doc");
-            Assert.AreEqual(4, spans.Start(), "start");
-            Assert.AreEqual(5, spans.End(), "end");
-            TstNextSpans(spans, 7, 3, 4);
-            Assert.IsFalse(spans.Next(), "final next");
-        }
+		[Test]
+		public virtual void  TestSpanOrDoubleSkip()
+		{
+			Spans spans = OrSpans(new System.String[]{"w5", "yy"});
+			Assert.IsTrue(spans.SkipTo(3), "initial skipTo");
+			Assert.AreEqual(3, spans.Doc(), "doc");
+			Assert.AreEqual(4, spans.Start(), "start");
+			Assert.AreEqual(5, spans.End(), "end");
+			TstNextSpans(spans, 7, 3, 4);
+			Assert.IsFalse(spans.Next(), "final next");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrUnused()
-        {
-            Spans spans = OrSpans(new System.String[]{"w5", "unusedTerm", "yy"});
-            TstNextSpans(spans, 0, 4, 5);
-            TstNextSpans(spans, 2, 3, 4);
-            TstNextSpans(spans, 3, 4, 5);
-            TstNextSpans(spans, 7, 3, 4);
-            Assert.IsFalse(spans.Next(), "final next");
-        }
+		[Test]
+		public virtual void  TestSpanOrUnused()
+		{
+			Spans spans = OrSpans(new System.String[]{"w5", "unusedTerm", "yy"});
+			TstNextSpans(spans, 0, 4, 5);
+			TstNextSpans(spans, 2, 3, 4);
+			TstNextSpans(spans, 3, 4, 5);
+			TstNextSpans(spans, 7, 3, 4);
+			Assert.IsFalse(spans.Next(), "final next");
+		}
 		
-        [Test]
-        public virtual void  TestSpanOrTripleSameDoc()
-        {
-            Spans spans = OrSpans(new System.String[]{"t1", "t2", "t3"});
-            TstNextSpans(spans, 11, 0, 1);
-            TstNextSpans(spans, 11, 1, 2);
-            TstNextSpans(spans, 11, 2, 3);
-            TstNextSpans(spans, 11, 3, 4);
-            TstNextSpans(spans, 11, 4, 5);
-            TstNextSpans(spans, 11, 5, 6);
-            Assert.IsFalse(spans.Next(), "final next");
-        }
-    }
+		[Test]
+		public virtual void  TestSpanOrTripleSameDoc()
+		{
+			Spans spans = OrSpans(new System.String[]{"t1", "t2", "t3"});
+			TstNextSpans(spans, 11, 0, 1);
+			TstNextSpans(spans, 11, 1, 2);
+			TstNextSpans(spans, 11, 2, 3);
+			TstNextSpans(spans, 11, 3, 4);
+			TstNextSpans(spans, 11, 4, 5);
+			TstNextSpans(spans, 11, 5, 6);
+			Assert.IsFalse(spans.Next(), "final next");
+		}
+	}
 }

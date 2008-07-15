@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	/// <version>  $Id$
 	/// </version>
 	[TestFixture]
-    public class TestSmallFloat
+	public class TestSmallFloat : LuceneTestCase
 	{
 		
 		// original lucene byteToFloat
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
 			return (sbyte) ((exponent << 3) | mantissa); // pack into a byte
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestByteToFloat()
 		{
 			for (int i = 0; i < 256; i++)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
 		}
 		
 		[Test]
-        public virtual void  TestFloatToByte()
+		public virtual void  TestFloatToByte()
 		{
 			System.Random rand = new System.Random((System.Int32) 0);
 			// up iterations for more exhaustive test after changing something

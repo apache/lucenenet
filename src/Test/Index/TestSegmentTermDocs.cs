@@ -19,60 +19,62 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Directory = Lucene.Net.Store.Directory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Similarity = Lucene.Net.Search.Similarity;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestSegmentTermDocs
+	public class TestSegmentTermDocs : LuceneTestCase
 	{
 		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
 		private Directory dir = new RAMDirectory();
+		private SegmentInfo info;
 		
-        // public TestSegmentTermDocs(System.String s)
-        // {
-        // }
-		
-        // This is needed if for the test to pass and mimic what happens wiht JUnit
-        // For some reason, JUnit is creating a new member variable for each sub-test
-        // but NUnit is not -- who is wrong/right, I don't know.
-        private void SetUpInternal()        // {{Aroush-1.9}} See note above
-        {
-		    testDoc = new Lucene.Net.Documents.Document();
-		    dir = new RAMDirectory();
-        }
+		// got the idea for this from George's note in TestSegmentReader
+		// it seems that JUnit creates a new instance of the class for each test invocation
+		// while NUnit does not (seems like a flaw in JUnit, to be honest)
+		// forcing the re-init of the variables for each run solves the problem
+		private void SetUpInternal()
+		{
+			dir = new RAMDirectory();
+			testDoc = new Lucene.Net.Documents.Document();
+			info = null;
+		}
 
 		[SetUp]
-        public virtual void  SetUp()
+		public override void SetUp()
 		{
-            SetUpInternal();    // We need this for NUnit; see note above
-
+			base.SetUp();
+			SetUpInternal();
 			DocHelper.SetupDoc(testDoc);
-			DocHelper.WriteDoc(dir, testDoc);
-		}
-		
-		[TearDown]
-		public virtual void  TearDown()
-		{
-			
+			info = DocHelper.WriteDoc(dir, testDoc);
 		}
 		
 		[Test]
-        public virtual void  Test()
+		public virtual void  Test()
 		{
 			Assert.IsTrue(dir != null);
 		}
 		
 		[Test]
-        public virtual void  TestTermDocs()
+		public virtual void  TestTermDocs()
+		{
+			TestTermDocs(1);
+		}
+		
+		public virtual void  TestTermDocs(int indexDivisor)
 		{
 			//After adding the document, we should be able to read it back in
-			SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
+			SegmentReader reader = SegmentReader.Get(info);
+			reader.SetTermInfosIndexDivisor(indexDivisor);
 			Assert.IsTrue(reader != null);
 			SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 			Assert.IsTrue(segTermDocs != null);
@@ -88,11 +90,17 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestBadSeek()
+		public virtual void  TestBadSeek()
+		{
+			TestBadSeek(1);
+		}
+		
+		public virtual void  TestBadSeek(int indexDivisor)
 		{
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
+				SegmentReader reader = SegmentReader.Get(info);
+				reader.SetTermInfosIndexDivisor(indexDivisor);
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);
@@ -102,7 +110,8 @@ namespace Lucene.Net.Index
 			}
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(new SegmentInfo("test", 1, dir));
+				SegmentReader reader = SegmentReader.Get(info);
+				reader.SetTermInfosIndexDivisor(indexDivisor);
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);
@@ -113,7 +122,12 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-        public virtual void  TestSkipTo()
+		public virtual void  TestSkipTo()
+		{
+			TestSkipTo(1);
+		}
+		
+		public virtual void  TestSkipTo(int indexDivisor)
 		{
 			Directory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
@@ -135,6 +149,9 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			IndexReader reader = IndexReader.Open(dir);
+			reader.SetTermInfosIndexDivisor(indexDivisor);
+			Assert.AreEqual(indexDivisor, reader.GetTermInfosIndexDivisor());
+			
 			TermDocs tdocs = reader.TermDocs();
 			
 			// without optimization (assumption skipInterval == 16)
@@ -236,6 +253,38 @@ namespace Lucene.Net.Index
 			tdocs.Close();
 			reader.Close();
 			dir.Close();
+		}
+		
+		[Test]
+		public virtual void  TestIndexDivisor()
+		{
+			dir = new MockRAMDirectory();
+			testDoc = new Document();
+			DocHelper.SetupDoc(testDoc);
+			DocHelper.WriteDoc(dir, testDoc);
+			TestTermDocs(2);
+			TestBadSeek(2);
+			TestSkipTo(2);
+		}
+		
+		[Test]
+		public virtual void  TestIndexDivisorAfterLoad()
+		{
+			dir = new MockRAMDirectory();
+			testDoc = new Document();
+			DocHelper.SetupDoc(testDoc);
+			SegmentInfo si = DocHelper.WriteDoc(dir, testDoc);
+			SegmentReader reader = SegmentReader.Get(si);
+			Assert.AreEqual(1, reader.DocFreq(new Term("keyField", "Keyword")));
+			try
+			{
+				reader.SetTermInfosIndexDivisor(2);
+				Assert.Fail("did not hit IllegalStateException exception");
+			}
+			catch (System.SystemException)
+			{
+				// expected
+			}
 		}
 		
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)

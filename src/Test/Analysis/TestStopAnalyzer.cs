@@ -19,28 +19,32 @@ using System;
 
 using NUnit.Framework;
 
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
 namespace Lucene.Net.Analysis
 {
+	
 	[TestFixture]
-	public class TestStopAnalyzer
+	public class TestStopAnalyzer : LuceneTestCase
 	{
 		
 		private StopAnalyzer stop = new StopAnalyzer();
 		private System.Collections.Hashtable inValidTokens = new System.Collections.Hashtable();
 		
-        [SetUp]
-		public virtual void  SetUp()
+		[SetUp]
+		public override void  SetUp()
 		{
-            stop = new StopAnalyzer();
-            inValidTokens = new System.Collections.Hashtable();
+			base.SetUp();
+			stop = new StopAnalyzer();
+			inValidTokens = new System.Collections.Hashtable();
 
 			for (int i = 0; i < StopAnalyzer.ENGLISH_STOP_WORDS.Length; i++)
 			{
-                inValidTokens.Add(StopAnalyzer.ENGLISH_STOP_WORDS[i], StopAnalyzer.ENGLISH_STOP_WORDS[i]);
-            }
+				inValidTokens.Add(StopAnalyzer.ENGLISH_STOP_WORDS[i], StopAnalyzer.ENGLISH_STOP_WORDS[i]);
+			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestDefaults()
 		{
 			Assert.IsTrue(stop != null);
@@ -54,7 +58,7 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestStopList()
 		{
 			System.Collections.Hashtable stopWordsSet = new System.Collections.Hashtable();
@@ -70,6 +74,38 @@ namespace Lucene.Net.Analysis
 			{
 				System.String text = token.TermText();
 				Assert.IsFalse(stopWordsSet.Contains(text));
+				Assert.AreEqual(1, token.GetPositionIncrement()); // by default stop tokenizer does not apply increments.
+			}
+		}
+
+		[Test]
+		public virtual void  TestStopListPositions()
+		{
+			bool defaultEnable = StopFilter.GetEnablePositionIncrementsDefault();
+			StopFilter.SetEnablePositionIncrementsDefault(true);
+			try
+			{
+				System.Collections.Hashtable stopWordsSet = new System.Collections.Hashtable();
+				stopWordsSet.Add("good", "good");
+				stopWordsSet.Add("test", "test");
+				stopWordsSet.Add("analyzer", "analyzer");
+				StopAnalyzer newStop = new StopAnalyzer(stopWordsSet);
+				System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer with positions");
+				int[] expectedIncr = new int[]{1, 1, 1, 3, 1, 1, 1, 2, 1};
+				TokenStream stream = newStop.TokenStream("test", reader);
+				Assert.IsNotNull(stream);
+				Token token = null;
+				int i = 0;
+				while ((token = stream.Next()) != null)
+				{
+					System.String text = token.TermText();
+					Assert.IsFalse(stopWordsSet.Contains(text));
+					Assert.AreEqual(expectedIncr[i++], token.GetPositionIncrement());
+				}
+			}
+			finally
+			{
+				StopFilter.SetEnablePositionIncrementsDefault(defaultEnable);
 			}
 		}
 	}
