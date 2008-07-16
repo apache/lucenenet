@@ -31,8 +31,14 @@ namespace Lucene.Net.Index
 	public sealed class Term : System.IComparable
 	{
 		internal System.String field;
-		public System.String text;
-		
+		internal System.String text;
+
+        // For testing only
+        public System.String text_ForNUnitTest
+        {
+            get { return text; }
+        }
+
 		/// <summary>Constructs a Term with the given field and text.
 		/// <p>Note that a null field or null text value results in undefined
 		/// behavior for most Lucene APIs that accept a Term parameter. 
