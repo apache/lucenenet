@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (int i = 0; i < terms.Length; i++)
 			{
-				sb.Append(terms[i].text);
+				sb.Append(terms[i].text_ForNUnitTest);
 				sb.Append(" ");
 			}
 			System.String content = sb.ToString();
@@ -634,7 +634,7 @@ namespace Lucene.Net.Index
 					{
 						tp.NextPosition();
 						System.String s = System.Text.Encoding.UTF8.GetString(tp.GetPayload(new byte[5], 0));
-						Assert.AreEqual(s, terms.Term().text);
+						Assert.AreEqual(s, terms.Term().text_ForNUnitTest);
 					}
 				}
 				tp.Close();
