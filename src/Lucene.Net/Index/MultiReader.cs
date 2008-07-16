@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing
-		internal virtual IndexReader[] GetSubReaders()
+		public /*internal*/ virtual IndexReader[] GetSubReaders()
 		{
 			return subReaders;
 		}
