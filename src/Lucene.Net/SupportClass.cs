@@ -362,7 +362,7 @@ public class SupportClass
                 while (number > 0)
                 {
                     char c = digits[(int)number % 36];
-                    s.Append(c);
+                    s.Insert(0, c);
                     number = number / 36;
                 }
             }
