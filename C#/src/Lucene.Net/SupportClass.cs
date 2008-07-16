@@ -773,6 +773,7 @@ public class SupportClass
         public static void Set(System.String key, int defValue)
         {
             settings[key] = defValue;
+            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue.ToString()); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -783,6 +784,7 @@ public class SupportClass
         public static void Set(System.String key, long defValue)
         {
             settings[key] = defValue;
+            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue.ToString()); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -793,6 +795,7 @@ public class SupportClass
         public static void Set(System.String key, System.String defValue)
         {
             settings[key] = defValue;
+            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
