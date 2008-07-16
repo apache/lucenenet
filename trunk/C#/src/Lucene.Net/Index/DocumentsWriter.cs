@@ -2471,7 +2471,8 @@ namespace Lucene.Net.Index
 				prox.Init(field.threadState.postingsPool, p.proxStart, p.proxUpto);
 				
 				// Should always be true
-				System.Diagnostics.Debug.Assert(NextDoc());
+				bool result = NextDoc();
+				System.Diagnostics.Debug.Assert(result);
 				
 				return true;
 			}
@@ -2545,7 +2546,8 @@ namespace Lucene.Net.Index
 				System.Diagnostics.Debug.Assert(fms.field.fieldInfo == fields [0].fieldInfo);
 				
 				// Should always be true
-				System.Diagnostics.Debug.Assert(fms.NextTerm());
+				bool result = fms.NextTerm();
+				System.Diagnostics.Debug.Assert(result);
 			}
 			
 			int skipInterval = termsOut.skipInterval;
