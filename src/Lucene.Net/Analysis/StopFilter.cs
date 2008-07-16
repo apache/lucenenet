@@ -70,9 +70,9 @@ namespace Lucene.Net.Analysis
 			else
 			{
 				this.stopWords = new CharArraySet(stopWords.Count, ignoreCase);
-				for (int i = 0; i < stopWords.Count; i++)
+				foreach (System.String sw in stopWords.Values)
 				{
-					this.stopWords.Add(stopWords[i]);
+					this.stopWords.Add(sw);
 				}
 			}
 		}
