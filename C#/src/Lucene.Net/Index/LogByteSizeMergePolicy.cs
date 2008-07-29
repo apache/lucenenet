@@ -31,11 +31,11 @@ namespace Lucene.Net.Index
 		public const double DEFAULT_MIN_MERGE_MB = 1.6;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="setMaxMergeMB">
+		/// <seealso cref="SetMaxMergeMB">
 		/// </seealso>
-		public static readonly double DEFAULT_MAX_MERGE_MB = (double) System.Int64.MaxValue;
+		public static readonly double DEFAULT_MAX_MERGE_MB = (double) (System.Int64.MaxValue / (1024 * 1024));
 		
-		public LogByteSizeMergePolicy():base()
+		public LogByteSizeMergePolicy() : base()
 		{
 			minMergeSize = (long) (DEFAULT_MIN_MERGE_MB * 1024 * 1024);
 			maxMergeSize = (long) (DEFAULT_MAX_MERGE_MB * 1024 * 1024);
