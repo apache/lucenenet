@@ -315,6 +315,11 @@ namespace Lucene.Net.Index
 			si.docStoreOffset = docStoreOffset;
 			si.docStoreSegment = docStoreSegment;
 			si.docStoreIsCompoundFile = docStoreIsCompoundFile;
+			si.docCount = docCount;
+			si.dir = dir;
+			si.files = files;
+			si.name = name;
+			si.sizeInBytes = sizeInBytes;
 			return si;
 		}
 		
