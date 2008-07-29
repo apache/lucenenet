@@ -53,19 +53,12 @@ namespace Lucene.Net.Index
 			{
 				if (doFail)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					if (new System.Exception().StackTrace.Contains("doFlush"))
-						throw new System.IO.IOException("now failing during flush");
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("doFlush".Equals(trace[i].getMethodName()))
-					//    {
-					//        //new RuntimeException().printStackTrace(System.out);
-					//        throw new System.IO.IOException("now failing during flush");
-					//    }
-					//}
+					System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
+					foreach (System.Diagnostics.StackFrame f in st.GetFrames())
+					{
+						if ("DoFlush" == f.GetMethod().Name)
+							throw new System.IO.IOException("now failing during flush");
+					}
 				}
 			}
 		}
