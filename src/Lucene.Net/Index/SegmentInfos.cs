@@ -413,7 +413,14 @@ namespace Lucene.Net.Index
 		
 		public override System.Object Clone()
 		{
-            return new SegmentInfos(this);
+			SegmentInfos si = new SegmentInfos();
+			for (int i = 0; i < base.Count; i++)
+			{
+				si.Add(((SegmentInfo) base[i]).Clone());
+			}
+			si.generation = this.generation;
+			si.lastGeneration = this.lastGeneration;
+			return si;
 		}
 
         private SegmentInfos(SegmentInfos si) : base(si)
