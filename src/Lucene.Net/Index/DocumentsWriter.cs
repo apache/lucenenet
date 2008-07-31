@@ -3842,7 +3842,7 @@ namespace Lucene.Net.Index
 								numToFree = postingsFreeChunk;
 							else
 								numToFree = postingsFreeCount;
-							Array.Clear(postingsFreeList, postingsFreeCount - numToFree, postingsFreeCount);
+							Array.Clear(postingsFreeList, postingsFreeCount - numToFree, numToFree);
 							postingsFreeCount -= numToFree;
 							postingsAllocCount -= numToFree;
 							numBytesAlloc -= numToFree * POSTING_NUM_BYTE;
