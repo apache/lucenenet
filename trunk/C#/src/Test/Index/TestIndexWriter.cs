@@ -2365,7 +2365,7 @@ namespace Lucene.Net.Index
 		private class FailOnlyOnFlush : MockRAMDirectory.Failure
 		{
 			new internal bool doFail = false;
-			//internal int count;
+			internal int count;
 			
 			public override void  SetDoFail()
 			{
@@ -2380,23 +2380,18 @@ namespace Lucene.Net.Index
 			{
 				if (doFail)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					System.Exception e = new System.Exception();
-					if (e.ToString().Contains("Lucene.Net.Index.DocumentsWriter") && e.StackTrace.Contains("appendPostings"))
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
 					{
-						doFail = false;
-						throw new System.IO.IOException("now failing during flush");
+						System.String methodName = frames[i].GetMethod().Name;
+						System.String className = frames[i].GetMethod().DeclaringType.ToString();
+						if ("Lucene.Net.Index.DocumentsWriter".Equals(className) &&
+							"AppendPostings".Equals(methodName) && count++ == 30)
+						{
+							doFail = false;
+							throw new System.IO.IOException("now failing during flush");
+						}
 					}
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("Lucene.Net.Index.DocumentsWriter".Equals(trace[i].getClassName()) && "appendPostings".Equals(trace[i].getMethodName()) && count++ == 30)
-					//    {
-					//        doFail = false;
-					//        throw new System.IO.IOException("now failing during flush");
-					//    }
-					//}
 				}
 			}
 		}
@@ -3051,25 +3046,17 @@ namespace Lucene.Net.Index
 			{
 				if (doFail)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					System.String trace = new System.Exception().StackTrace;
-					if (trace.Contains("abort") || trace.Contains("flushDocument"))
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
 					{
-						if (onlyOnce)
-							doFail = false;
-						throw new System.IO.IOException("now failing on purpose");
-					}  
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("abort".Equals(trace[i].getMethodName()) || "flushDocument".Equals(trace[i].getMethodName()))
-					//    {
-					//        if (onlyOnce)
-					//            doFail = false;
-					//        throw new System.IO.IOException("now failing on purpose");
-					//    }
-					//}
+						String methodName = frames[i].GetMethod().Name;
+						if ("Abort".Equals(methodName) || "FlushDocument".Equals(methodName))
+						{
+							if (onlyOnce)
+								doFail = false;
+							throw new System.IO.IOException("now failing on purpose");
+						}
+					}
 				}
 			}
 		}
@@ -3235,24 +3222,17 @@ namespace Lucene.Net.Index
 			{
 				if (doFail)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					if (new System.Exception().StackTrace.Contains("closeDocStore"))
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
 					{
-						if (onlyOnce)
-							doFail = false;
-						throw new System.IO.IOException("now failing on purpose");
+						String methodName = frames[i].GetMethod().Name;
+						if ("CloseDocStore".Equals(methodName))
+						{
+							if (onlyOnce)
+								doFail = false;
+							throw new System.IO.IOException("now failing on purpose");
+						}
 					}
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("closeDocStore".Equals(trace[i].getMethodName()))
-					//    {
-					//        if (onlyOnce)
-					//            doFail = false;
-					//        throw new System.IO.IOException("now failing on purpose");
-					//    }
-					//}
 				}
 			}
 		}
@@ -3297,26 +3277,17 @@ namespace Lucene.Net.Index
 			{
 				if (doFail)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					if (new System.Exception().StackTrace.Contains("writeSegment"))
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
 					{
-						if (onlyOnce)
-							doFail = false;
-						// new RuntimeException().printStackTrace(System.out);
-						throw new System.IO.IOException("now failing on purpose");
+						String methodName = frames[i].GetMethod().Name;
+						if ("WriteSegment".Equals(methodName))
+						{
+							if (onlyOnce)
+								doFail = false;
+							throw new System.IO.IOException("now failing on purpose");
+						}
 					}
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("writeSegment".Equals(trace[i].getMethodName()))
-					//    {
-					//        if (onlyOnce)
-					//            doFail = false;
-					//        // new RuntimeException().printStackTrace(System.out);
-					//        throw new System.IO.IOException("now failing on purpose");
-					//    }
-					//}
 				}
 			}
 		}
