@@ -3253,7 +3253,8 @@ namespace Lucene.Net.Index
 				// condition where two conflicting merges from different
 				// threads, start
 				for (int i = 0; i < count; i++)
-					mergingSegments.Add(merge.segments.Info(i), merge.segments.Info(i));
+					if (!mergingSegments.Contains(merge.segments.Info(i)))
+						mergingSegments.Add(merge.segments.Info(i), merge.segments.Info(i));
 				
 				// Merge is now registered
 				merge.registerDone = true;
@@ -3420,7 +3421,8 @@ namespace Lucene.Net.Index
 				int end = sourceSegments.Count;
 				for (int i = 0; i < end; i++)
 					mergingSegments.Remove(sourceSegments.Info(i));
-				mergingSegments.Remove(merge.info);
+				if (merge.info != null)
+					mergingSegments.Remove(merge.info);
 				merge.registerDone = false;
 			}
 		}
