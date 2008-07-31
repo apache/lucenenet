@@ -69,18 +69,16 @@ namespace Lucene.Net.Index
 				if (sawMaybe && !failed)
 				{
 					bool seen = false;
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					seen = new System.Exception().StackTrace.Contains("applyDeletes");
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("applyDeletes".Equals(trace[i].getMethodName()))
-					//    {
-					//        seen = true;
-					//        break;
-					//    }
-					//}
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
+					{
+						System.String methodName = frames[i].GetMethod().Name;
+						if ("ApplyDeletes".Equals(methodName))
+						{
+							seen = true;
+							break;
+						}
+					}
 					if (!seen)
 					{
 						// Only fail once we are no longer in applyDeletes
@@ -90,18 +88,16 @@ namespace Lucene.Net.Index
 				}
 				if (!failed)
 				{
-					// {{DOUG-2.3.1}} this code is suspect.  i have preserved the original (below) for 
-					// comparative purposes.
-					sawMaybe = new System.Exception().StackTrace.Contains("applyDeletes");
-					//StackTraceElement[] trace = new System.Exception().getStackTrace();
-					//for (int i = 0; i < trace.Length; i++)
-					//{
-					//    if ("applyDeletes".Equals(trace[i].getMethodName()))
-					//    {
-					//        sawMaybe = true;
-					//        break;
-					//    }
-					//}
+					System.Diagnostics.StackFrame[] frames = new System.Diagnostics.StackTrace().GetFrames();
+					for (int i = 0; i < frames.Length; i++)
+					{
+						System.String methodName = frames[i].GetMethod().Name;
+						if ("ApplyDeletes".Equals(methodName))
+						{
+							sawMaybe = true;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -621,7 +617,7 @@ namespace Lucene.Net.Index
 						// System.out.println(" startFiles: " + i + ": " + startFiles[i]);
 						// }
 						
-						if (!startFiles.Equals(endFiles))
+						if (!SupportClass.Compare.CompareStringArrays(startFiles, endFiles))
 						{
 							System.String successStr;
 							if (success)
@@ -880,7 +876,7 @@ namespace Lucene.Net.Index
 				new IndexFileDeleter(dir, new KeepOnlyLastCommitDeletionPolicy(), infos, null, null);
 				System.String[] endFiles = dir.List();
 				
-				if (!startFiles.Equals(endFiles))
+				if (!SupportClass.Compare.CompareStringArrays(startFiles, endFiles))
 				{
 					Assert.Fail("docswriter abort() failed to delete unreferenced files:\n  before delete:\n    " + ArrayToString(startFiles) + "\n  after delete:\n    " + ArrayToString(endFiles));
 				}
