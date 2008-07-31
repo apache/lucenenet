@@ -111,7 +111,10 @@ namespace Lucene.Net.Search
 			expectedOrder[3] = "Document 2";
 			expectedOrder[4] = "Document 1";
 			
-			Assert.AreEqual(new System.Collections.ArrayList(expectedOrder), new System.Collections.ArrayList(actualOrder));
+			for (int i = 0; i < expectedOrder.Length; i++)
+			{
+				Assert.AreEqual(expectedOrder[i], actualOrder[i]);
+			}
 		}
 		
 		private static Document CreateDocument(System.String text, long time)
