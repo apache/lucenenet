@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 			long max = - 1;
 			for (int i = 0; i < files.Length; i++)
 			{
-				System.String file = files[i];
+				System.String file = System.IO.Path.GetFileName(files[i]);
 				if (file.StartsWith(IndexFileNames.SEGMENTS) && !file.Equals(IndexFileNames.SEGMENTS_GEN))
 				{
 					long gen = GenerationFromSegmentsFileName(file);
