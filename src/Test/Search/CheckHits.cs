@@ -159,7 +159,11 @@ namespace Lucene.Net.Search
 				actual.Add(hits.Id(i));
 			}
 			
-			Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
+			Assert.AreEqual(correct.Count, actual.Count);
+			for (int i = 0; i < correct.Count; i++)
+			{
+				Assert.AreEqual(correct[i], actual[i]);
+			}
 			
 			QueryUtils.Check(query, searcher);
 		}
