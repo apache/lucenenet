@@ -130,15 +130,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\SinkTokenizer.cs" />
-    <Compile Include="Analysis\Standard\CharStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\FastCharStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\ParseException.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Analysis\Standard\StandardAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -148,16 +139,7 @@
     <Compile Include="Analysis\Standard\StandardTokenizer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\Standard\StandardTokenizerConstants.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Analysis\Standard\StandardTokenizerImpl.cs" />
-    <Compile Include="Analysis\Standard\StandardTokenizerTokenManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\Standard\Token.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Analysis\StopAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
