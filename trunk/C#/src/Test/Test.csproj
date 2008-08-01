@@ -167,9 +167,6 @@
     <Compile Include="Index\Store\TestRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\Store\_delete_TestFSDirectory.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Index\TestAddIndexesNoOptimize.cs" />
     <Compile Include="Index\TestAtomicUpdate.cs" />
     <Compile Include="Index\TestBackwardsCompatibility.cs" />
