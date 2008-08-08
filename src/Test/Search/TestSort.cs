@@ -789,8 +789,8 @@ namespace Lucene.Net.Search
 
 		private System.Runtime.Remoting.Channels.Http.HttpChannel GetHttpChannel()
 		{
-			Random rnd = new Random();
-			port = rnd.Next(1099, 9999);
+			Random rnd = new Random((int) (DateTime.Now.Ticks & 0x7fffffff));
+			port = rnd.Next(System.Net.IPEndPoint.MinPort, System.Net.IPEndPoint.MaxPort);
 			System.Runtime.Remoting.Channels.Http.HttpChannel ch = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
 			return ch;
 		}
