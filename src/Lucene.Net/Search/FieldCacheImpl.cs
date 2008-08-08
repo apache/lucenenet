@@ -480,7 +480,7 @@ namespace Lucene.Net.Search
 						{
 							try
 							{
-								System.Single.Parse(termtext);
+								SupportClass.Single.Parse(termtext);
 								ret = Enclosing_Instance.GetFloats(reader, field);
 							}
 							catch (System.FormatException nfe3)
