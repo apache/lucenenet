@@ -360,7 +360,7 @@ namespace Lucene.Net.Search
 							int k2 = descr.IndexOf(" ", k1);
 							try
 							{
-								x = System.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
+								x = SupportClass.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
 								if (descr.Substring(k2).Trim().Equals("times others of:"))
 								{
 									maxTimesOthers = true;
