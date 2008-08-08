@@ -42,40 +42,45 @@ namespace Lucene.Net.Search
 		public override void SetUp()
 		{
 			base.SetUp();
-			Random rnd = new Random();
-			port = rnd.Next(1099, 9999);
+			Random rnd = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
+			port = rnd.Next(System.Net.IPEndPoint.MinPort, System.Net.IPEndPoint.MaxPort);
 			httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
+			if (!serverStarted)
+				StartServer();
 		}
 
 		[TearDown]
 		public override void TearDown()
 		{
-			httpChannel = null;
+            try
+            {
+                System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
+            }
+            catch
+            {
+            }
+
+            httpChannel = null;
 			base.TearDown();
 		}
 
 		private static Lucene.Net.Search.Searchable GetRemote()
 		{
-			try
-			{
-				if (!serverStarted)
-					StartServer();
-				return LookupRemote();
-			}
-			catch (System.Exception)
-			{
-				StartServer();
-				return LookupRemote();
-			}
+			return LookupRemote();
 		}
 
 		private static Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), string.Format("http://localhost:{0}/Searchable", port));
+			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), string.Format("http://localhost:{0}/RemoteSearchable", port));
 		}
 
 		public static void StartServer()
 		{
+			if (serverStarted)
+			{
+				return;
+			}
+
 			try
 			{
 				System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(httpChannel, false);
@@ -102,7 +107,7 @@ namespace Lucene.Net.Search
 			// publish it
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexStore);
 			RemoteSearchable impl = new RemoteSearchable(local);
-			System.Runtime.Remoting.RemotingServices.Marshal(impl, "Searchable");
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, "RemoteSearchable");
 			serverStarted = true;
 		}
 		

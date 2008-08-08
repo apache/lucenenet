@@ -46,31 +46,31 @@ namespace Lucene.Net.Search
 		public override void SetUp()
 		{
 			base.SetUp();
-			Random rnd = new Random();
-			port = rnd.Next(1099, 9999);
+			Random rnd = new Random((int) (DateTime.Now.Ticks & 0x7fffffff));
+			port = rnd.Next(System.Net.IPEndPoint.MinPort, System.Net.IPEndPoint.MaxPort);
 			httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
+			if (!serverStarted)
+				StartServer();
 		}
 
 		[TearDown]
 		public override void TearDown()
 		{
+			try
+			{
+				System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
+			}
+			catch
+			{
+			}
+            
 			httpChannel = null;
 			base.TearDown();
 		}
 
 		private static Lucene.Net.Search.Searchable GetRemote()
 		{
-			try
-			{
-				if (!serverStarted)
-					StartServer();
-				return LookupRemote();
-			}
-			catch (System.Exception)
-			{
-				StartServer();
-				return LookupRemote();
-			}
+			return LookupRemote();
 		}
 
 		private static Lucene.Net.Search.Searchable LookupRemote()
@@ -80,6 +80,11 @@ namespace Lucene.Net.Search
 
 		private static void StartServer()
 		{
+			if (serverStarted)
+			{
+				return;
+			}
+
 			// construct an index
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
