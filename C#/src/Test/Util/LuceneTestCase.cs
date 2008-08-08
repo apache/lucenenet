@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
 	/// </summary>
 	
 	[TestFixture]
-	public abstract class LuceneTestCase
+	public /*abstract*/ class LuceneTestCase
 	{
 		
 		public LuceneTestCase() : base()
@@ -51,14 +51,11 @@ namespace Lucene.Net.Util
 		{
 			ConcurrentMergeScheduler.SetTestMode();
 		}
-		
-		[TearDown]
-		public virtual void  TearDown()
+
+		[Test]
+		public virtual void  TestDummy()
 		{
-			if (ConcurrentMergeScheduler.AnyUnhandledExceptions())
-			{
-				Assert.Fail("ConcurrentMergeScheduler hit unhandled exceptions");
-			}
+			// So that NUnit doesn't complain
 		}
 	}
 }
