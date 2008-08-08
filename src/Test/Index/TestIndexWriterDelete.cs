@@ -459,7 +459,6 @@ namespace Lucene.Net.Index
 		/// <summary> Make sure if modifier tries to commit but hits disk full that modifier
 		/// remains consistent and usable. Similar to TestIndexReader.testDiskFull().
 		/// </summary>
-		[Test]
 		private void  TestOperationsOnDiskFull(bool updates)
 		{
 			
