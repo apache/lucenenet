@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Function
 	
 	/// <summary> Setup for function tests</summary>
 	[TestFixture]
-	public abstract class FunctionTestSetup : LuceneTestCase
+	public /*abstract*/ class FunctionTestSetup : LuceneTestCase
 	{
 		
 		/// <summary> Actual score computation order is slightly different than assumptios
@@ -152,6 +152,12 @@ namespace Lucene.Net.Search.Function
 			{
 				System.Console.Out.WriteLine(o.ToString());
 			}
+		}
+
+		[Test]
+		public virtual void  TestDummy()
+		{
+            // So that NUnit doesn't complain
 		}
 	}
 }
