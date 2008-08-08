@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 			private int lastScoredDoc = - 1;
 			public override float Score()
 			{
-				if (this.Doc() > lastScoredDoc)
+				if (this.Doc() >= lastScoredDoc)
 				{
 					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers += base.nrMatchers;
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 			
 			public override float Score()
 			{
-				if (this.Doc() > lastScoredDoc)
+				if (this.Doc() >= lastScoredDoc)
 				{
 					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers += requiredNrMatchers;
