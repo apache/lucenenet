@@ -51,6 +51,15 @@ namespace Lucene.Net.Util
 		{
 			ConcurrentMergeScheduler.SetTestMode();
 		}
+		
+		[TearDown]
+		public virtual void  TearDown()
+		{
+			if (ConcurrentMergeScheduler.AnyUnhandledExceptions())
+			{
+				Assert.Fail("ConcurrentMergeScheduler hit unhandled exceptions");
+			}
+		}
 
 		[Test]
 		public virtual void  TestDummy()
