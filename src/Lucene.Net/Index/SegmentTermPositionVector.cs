@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 			TermVectorOffsetInfo[] result = TermVectorOffsetInfo.EMPTY_OFFSET_INFO;
 			if (offsets == null)
 				return null;
-			if (index >= 0 && index < offsets.Length)
+			if (index >= 0 && index < offsets.GetLength(0))
 			{
 				result = offsets[index];
 			}
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 			int[] result = EMPTY_TERM_POS;
 			if (positions == null)
 				return null;
-			if (index >= 0 && index < positions.Length)
+			if (index >= 0 && index < positions.GetLength(0))
 			{
 				result = positions[index];
 			}
