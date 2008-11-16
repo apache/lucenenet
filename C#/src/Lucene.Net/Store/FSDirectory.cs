@@ -726,10 +726,25 @@ namespace Lucene.Net.Store
 			public FSIndexInput(System.IO.FileInfo path) : this(path, BufferedIndexInput.BUFFER_SIZE)
 			{
 			}
-			
+            
 			public FSIndexInput(System.IO.FileInfo path, int bufferSize) : base(bufferSize)
 			{
-				file = new Descriptor(this, path, System.IO.FileAccess.Read);
+                UnauthorizedAccessException ex = null;
+                for (int i = 0; i < 10; i++)
+                {
+                    try
+                    {
+                        file = new Descriptor(this, path, System.IO.FileAccess.Read);
+                        return;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        ex = e;
+                        System.Threading.Thread.Sleep(100);
+                        GC.Collect();
+                    }
+                }
+                throw ex;
 			}
 		
 			/// <summary>IndexInput methods </summary>
@@ -799,9 +814,24 @@ namespace Lucene.Net.Store
 		
 			public FSIndexOutput(System.IO.FileInfo path)
 			{
-				file = new System.IO.BinaryWriter(new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite));
-				isOpen = true;
-			}
+                UnauthorizedAccessException ex = null;
+                for (int i = 0; i < 10; i++)
+                {
+                    try
+                    {
+   				        file = new System.IO.BinaryWriter(new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite));
+				        isOpen = true;
+                        return;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        ex = e;
+                        System.Threading.Thread.Sleep(100);
+                        GC.Collect();
+                    }
+                }
+                throw ex;
+            }
 		
 			/// <summary>output methods: </summary>
 			public override void  FlushBuffer(byte[] b, int offset, int size)
