@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 			base.SetUp();
 			if (this.__test_dir == null)
 			{
-				System.String tmp_dir = SupportClass.AppSettings.Get("java.io.tmpdir", "tmp");
+                System.String tmp_dir = SupportClass.AppSettings.Get("tempDir", "");
 				this.__test_dir = new System.IO.FileInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
 				
 				bool tmpBool;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 		public override void TearDown()
 		{
 			base.TearDown();
-			if (this.__test_dir != null)
+            if (this.__test_dir != null && System.IO.Directory.Exists(this.__test_dir.FullName))
 			{
 				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(this.__test_dir);
 				
