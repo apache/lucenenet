@@ -114,10 +114,11 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator i = fields.GetEnumerator();
 			while (i.MoveNext())
 			{
-				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) i.Current;
+                //System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) i.Current;
 
-				// update fieldToReader map
-				System.String field = fi.Key.ToString();
+                //// update fieldToReader map
+                //System.String field = fi.Key.ToString();
+                System.String field = (String) i.Current;
 				if (fieldToReader[field] == null)
 					fieldToReader[field] = reader;
 			}
@@ -302,7 +303,7 @@ namespace Lucene.Net.Index
 					System.Collections.IEnumerator it = ((System.Collections.ICollection) readerToFields[reader]).GetEnumerator();
 					while (it.MoveNext())
 					{
-						if (fieldSelector.Accept((System.String)((System.Collections.DictionaryEntry)it.Current).Value) != FieldSelectorResult.NO_LOAD)
+						if (fieldSelector.Accept((System.String)it.Current) != FieldSelectorResult.NO_LOAD)
 						{
 							include = true;
 							break;
@@ -522,15 +523,14 @@ namespace Lucene.Net.Index
 				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
 				for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
 				{
-					System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-					System.String s = fi.Key.ToString();
+                    System.String s = (System.String)iterator.Current;
 					if (fieldSet.ContainsKey(s) == false)
 					{
 						fieldSet.Add(s, s);
 					}
 				}
 			}
-			return fieldSet;
+			return fieldSet.Keys;
 		}
 		
 		private class ParallelTermEnum : TermEnum

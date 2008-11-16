@@ -1373,17 +1373,17 @@ namespace Lucene.Net.Index
 			System.Collections.ICollection fields1 = index1.GetFieldNames(FieldOption.ALL);
 			System.Collections.ICollection fields2 = index2.GetFieldNames(FieldOption.ALL);
 			Assert.AreEqual(fields1.Count, fields2.Count, "IndexReaders have different numbers of fields.");
-			System.Collections.IEnumerator it1 = ((System.Collections.IDictionary) fields1).Keys.GetEnumerator();
-			System.Collections.IEnumerator it2 = ((System.Collections.IDictionary) fields2).Keys.GetEnumerator();
-			while (it1.MoveNext())
+            System.Collections.IEnumerator it1 = fields1.GetEnumerator();
+            System.Collections.IEnumerator it2 = fields2.GetEnumerator();
+            while (it1.MoveNext())
 			{
 				Assert.IsTrue(it2.MoveNext());
 				Assert.AreEqual((System.String) it1.Current, (System.String) it2.Current, "Different field names.");
 			}
 			
 			// check norms
-			it1 = ((System.Collections.IDictionary) fields1).Keys.GetEnumerator();
-			while (it1.MoveNext())
+            it1 = fields1.GetEnumerator();
+            while (it1.MoveNext())
 			{
 				System.String curField = (System.String) it1.Current;
 				byte[] norms1 = index1.Norms(curField);

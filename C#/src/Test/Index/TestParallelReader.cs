@@ -299,9 +299,8 @@ namespace Lucene.Net.Index
 		{
 			for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
 			{
-				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-				System.String s = fi.Key.ToString();
-				if (s == val)
+                System.String s = (System.String)iterator.Current;
+                if (s == val)
 					return true;
 			}
 			return false;

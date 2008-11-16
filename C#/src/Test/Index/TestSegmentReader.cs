@@ -129,24 +129,23 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(result.Count == DocHelper.all.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iter.Current;
-				System.String s = fi.Key.ToString();
-				//System.out.println("Name: " + s);
-				Assert.IsTrue(DocHelper.nameValues.Contains(s) == true || s.Equals(""));
+                System.String s = (System.String)iter.Current;
+                Assert.IsTrue(DocHelper.nameValues.Contains(s) == true || s.Equals(""));
 			}
+
 			result = reader.GetFieldNames(IndexReader.FieldOption.INDEXED);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.indexed.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iter.Current;
-				System.String s = fi.Key.ToString();
-				Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
+                System.String s = (System.String)iter.Current;
+                Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
 			}
 			
 			result = reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.unindexed.Count);
+
 			//Get all indexed fields that are storing term vectors
 			result = reader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(result != null);
