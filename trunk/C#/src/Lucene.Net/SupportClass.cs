@@ -44,15 +44,17 @@ public class SupportClass
         /// The instance of System.Threading.Thread
         /// </summary>
         private System.Threading.Thread threadField;
-	      
+
+
         /// <summary>
         /// Initializes a new instance of the ThreadClass class
         /// </summary>
         public ThreadClass()
         {
             threadField = new System.Threading.Thread(new System.Threading.ThreadStart(Run));
+            This = this;
         }
-	 
+
         /// <summary>
         /// Initializes a new instance of the Thread class.
         /// </summary>
@@ -61,8 +63,9 @@ public class SupportClass
         {
             threadField = new System.Threading.Thread(new System.Threading.ThreadStart(Run));
             this.Name = Name;
+            This = this;
         }
-	      
+
         /// <summary>
         /// Initializes a new instance of the Thread class.
         /// </summary>
@@ -70,8 +73,9 @@ public class SupportClass
         public ThreadClass(System.Threading.ThreadStart Start)
         {
             threadField = new System.Threading.Thread(Start);
+            This = this;
         }
-	 
+
         /// <summary>
         /// Initializes a new instance of the Thread class.
         /// </summary>
@@ -81,23 +85,29 @@ public class SupportClass
         {
             threadField = new System.Threading.Thread(Start);
             this.Name = Name;
+            This = this;
         }
-	      
+
         /// <summary>
         /// This method has no functionality unless the method is overridden
         /// </summary>
         public virtual void Run()
         {
         }
-	      
+
         /// <summary>
         /// Causes the operating system to change the state of the current thread instance to ThreadState.Running
         /// </summary>
         public virtual void Start()
         {
             threadField.Start();
+            if (This == null)
+            {
+                This = this;
+                This.Instance = threadField;
+            }
         }
-	      
+
         /// <summary>
         /// Interrupts a thread that is in the WaitSleepJoin thread state
         /// </summary>
@@ -105,7 +115,7 @@ public class SupportClass
         {
             threadField.Interrupt();
         }
-	      
+
         /// <summary>
         /// Gets the current thread instance
         /// </summary>
@@ -120,7 +130,7 @@ public class SupportClass
                 threadField = value;
             }
         }
-	      
+
         /// <summary>
         /// Gets or sets the name of the thread
         /// </summary>
@@ -133,10 +143,10 @@ public class SupportClass
             set
             {
                 if (threadField.Name == null)
-                    threadField.Name = value; 
+                    threadField.Name = value;
             }
         }
-	      
+
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
@@ -144,14 +154,26 @@ public class SupportClass
         {
             get
             {
-                return threadField.Priority;
+                try
+                {
+                    return threadField.Priority;
+                }
+                catch
+                {
+                    return System.Threading.ThreadPriority.Normal;
+                }
             }
             set
             {
-                threadField.Priority = value;
+                try
+                {
+                    threadField.Priority = value;
+                }
+                catch{}
+                
             }
         }
-	      
+
         /// <summary>
         /// Gets a value indicating the execution status of the current thread
         /// </summary>
@@ -162,7 +184,7 @@ public class SupportClass
                 return threadField.IsAlive;
             }
         }
-	      
+
         /// <summary>
         /// Gets or sets a value indicating whether or not a thread is a background thread.
         /// </summary>
@@ -171,13 +193,13 @@ public class SupportClass
             get
             {
                 return threadField.IsBackground;
-            } 
+            }
             set
             {
                 threadField.IsBackground = value;
             }
         }
-	      
+
         /// <summary>
         /// Blocks the calling thread until a thread terminates
         /// </summary>
@@ -185,19 +207,19 @@ public class SupportClass
         {
             threadField.Join();
         }
-	      
+
         /// <summary>
         /// Blocks the calling thread until a thread terminates or the specified time elapses
         /// </summary>
         /// <param name="MiliSeconds">Time of wait in milliseconds</param>
         public void Join(long MiliSeconds)
         {
-            lock(this)
+            lock (this)
             {
                 threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
             }
         }
-	      
+
         /// <summary>
         /// Blocks the calling thread until a thread terminates or the specified time elapses
         /// </summary>
@@ -205,12 +227,12 @@ public class SupportClass
         /// <param name="NanoSeconds">Time of wait in nanoseconds</param>
         public void Join(long MiliSeconds, int NanoSeconds)
         {
-            lock(this)
+            lock (this)
             {
                 threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
             }
         }
-	      
+
         /// <summary>
         /// Resumes a thread that has been suspended
         /// </summary>
@@ -218,7 +240,7 @@ public class SupportClass
         {
             System.Threading.Monitor.PulseAll(threadField);
         }
-	      
+
         /// <summary>
         /// Raises a ThreadAbortException in the thread on which it is invoked, 
         /// to begin the process of terminating the thread. Calling this method 
@@ -228,7 +250,7 @@ public class SupportClass
         {
             threadField.Abort();
         }
-	      
+
         /// <summary>
         /// Raises a ThreadAbortException in the thread on which it is invoked, 
         /// to begin the process of terminating the thread while also providing
@@ -238,12 +260,12 @@ public class SupportClass
         /// <param name="stateInfo">An object that contains application-specific information, such as state, which can be used by the thread being aborted</param>
         public void Abort(System.Object stateInfo)
         {
-            lock(this)
+            lock (this)
             {
                 threadField.Abort(stateInfo);
             }
         }
-	      
+
         /// <summary>
         /// Suspends the thread, if the thread is already suspended it has no effect
         /// </summary>
@@ -251,7 +273,7 @@ public class SupportClass
         {
             System.Threading.Monitor.Wait(threadField);
         }
-	      
+
         /// <summary>
         /// Obtain a String that represents the current Object
         /// </summary>
@@ -260,16 +282,22 @@ public class SupportClass
         {
             return "Thread[" + Name + "," + Priority.ToString() + "," + "" + "]";
         }
-	     
+
+        [ThreadStatic]
+        static ThreadClass This = null;
+
         /// <summary>
         /// Gets the currently running thread
         /// </summary>
         /// <returns>The currently running thread</returns>
         public static ThreadClass Current()
         {
-            ThreadClass CurrentThread = new ThreadClass();
-            CurrentThread.Instance = System.Threading.Thread.CurrentThread;
-            return CurrentThread;
+            if (This == null)
+            {
+                This = new ThreadClass();
+                This.Instance = System.Threading.Thread.CurrentThread;
+            }
+            return This;
         }
     }
 
