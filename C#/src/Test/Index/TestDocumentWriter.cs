@@ -187,6 +187,7 @@ namespace Lucene.Net.Index
 		[SetUp]
 		public override void  SetUp()
 		{
+            base.SetUp();
 			dir = new RAMDirectory();
 		}
 		

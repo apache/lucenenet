@@ -62,6 +62,7 @@ namespace Lucene.Net.Index
 		[SetUp]
 		public override void SetUp()
 		{
+            base.SetUp();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
 			Lucene.Net.Util._TestUtil.RmDir(file);
 			dir = FSDirectory.GetDirectory(file);
