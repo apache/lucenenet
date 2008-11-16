@@ -132,8 +132,7 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
-				System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
-				Add((System.String) t.Key, isIndexed);
+				Add((System.String) i.Current, isIndexed);
 			}
 		}
 		

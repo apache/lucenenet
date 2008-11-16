@@ -872,7 +872,7 @@ namespace Lucene.Net.Index
                     fieldSet.Add(fi.name, fi.name);
 				}
 			}
-			return fieldSet;
+			return fieldSet.Keys;
 		}
 		
 		

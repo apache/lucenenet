@@ -179,8 +179,8 @@ namespace Lucene.Net.Index
 						out_Renamed.WriteLine("OK");
 					
 					out_Renamed.Write("    test: fields, norms.......");
-					System.Collections.IDictionary fieldNames = (System.Collections.IDictionary) reader.GetFieldNames(IndexReader.FieldOption.ALL);
-					System.Collections.IEnumerator it = fieldNames.Keys.GetEnumerator();
+                    System.Collections.ICollection fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+                    System.Collections.IEnumerator it = fieldNames.GetEnumerator();
 					while (it.MoveNext())
 					{
 						System.String fieldName = (System.String) it.Current;

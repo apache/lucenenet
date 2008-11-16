@@ -516,14 +516,14 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-				System.Collections.IEnumerator names = ((System.Collections.IDictionary)reader.GetFieldNames(fieldNames)).Keys.GetEnumerator();
-				while (names.MoveNext())
+                System.Collections.IEnumerator names = reader.GetFieldNames(fieldNames).GetEnumerator();
+                while (names.MoveNext())
 				{
 					if (!fieldSet.ContainsKey(names.Current))
 						fieldSet.Add(names.Current, names.Current);
 				}
 			}
-			return fieldSet;
+			return fieldSet.Keys;
 		}
 		
 		// for testing
