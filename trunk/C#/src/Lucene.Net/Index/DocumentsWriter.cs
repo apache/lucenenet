@@ -3464,7 +3464,7 @@ namespace Lucene.Net.Index
 					
 					for (int i = 0; i < bufferUpto; i++)
 						// Fully zero fill buffers that we fully used
-						Array.Clear(buffers[i], 0, buffers.Length);
+						Array.Clear(buffers[i], 0, buffers[i].Length);
 					
 					// Partial zero fill the final buffer
 					Array.Clear(buffers[bufferUpto], 0, byteUpto);
@@ -3483,10 +3483,10 @@ namespace Lucene.Net.Index
 			
 			public void  NextBuffer()
 			{
-				if (1 + bufferUpto == buffers.Length)
+				if (1 + bufferUpto == buffers.GetLength(0))
 				{
-					byte[][] newBuffers = new byte[(int) (buffers.Length * 1.5)][];
-					Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
+					byte[][] newBuffers = new byte[(int) (buffers.GetLength(0) * 1.5)][];
+					Array.Copy(buffers, 0, newBuffers, 0, buffers.GetLength(0));
 					buffers = newBuffers;
 				}
 				buffer = buffers[1 + bufferUpto] = Enclosing_Instance.GetByteBlock();
@@ -3579,10 +3579,10 @@ namespace Lucene.Net.Index
 			
 			public void  NextBuffer()
 			{
-				if (1 + bufferUpto == buffers.Length)
+				if (1 + bufferUpto == buffers.GetLength(0))
 				{
-					char[][] newBuffers = new char[(int) (buffers.Length * 1.5)][];
-					Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
+					char[][] newBuffers = new char[(int) (buffers.GetLength(0) * 1.5)][];
+					Array.Copy(buffers, 0, newBuffers, 0, buffers.GetLength(0));
 					buffers = newBuffers;
 				}
 				buffer = buffers[1 + bufferUpto] = Enclosing_Instance.GetCharBlock();
