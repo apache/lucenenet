@@ -126,11 +126,9 @@ namespace Lucene.Net.Search.Spans
 			{
 				SpanQuery clause = (SpanQuery) i.Current;
 				buffer.Append(clause.ToString(field));
-				if (i.MoveNext())
-				{
-					buffer.Append(", ");
-				}
+				buffer.Append(", ");
 			}
+            if (clauses.Count > 0) buffer.Length -= 2;
 			buffer.Append("], ");
 			buffer.Append(slop);
 			buffer.Append(", ");
