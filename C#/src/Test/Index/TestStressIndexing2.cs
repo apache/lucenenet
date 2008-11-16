@@ -32,9 +32,13 @@ namespace Lucene.Net.Index
 	{
 		internal class AnonymousClassComparator : System.Collections.IComparer
 		{
+            Fieldable f1, f2;
 			public virtual int Compare(System.Object o1, System.Object o2)
 			{
-				return String.CompareOrdinal(((Fieldable) o1).Name(), ((Fieldable) o2).Name());
+                if (o1 == o2) return 0;
+                f1 = (Fieldable)o1;
+                f2 = (Fieldable)o2;
+                return String.CompareOrdinal(f1.Name() + f1.StringValue(), f2.Name() + f2.StringValue());
 			}
 		}
 		internal static int maxFields = 4;
@@ -47,21 +51,13 @@ namespace Lucene.Net.Index
 		
 		internal static System.Random r = new System.Random((System.Int32) 0);
 		
-		
 		[Test]
 		public virtual void  TestRandom()
 		{
 			Directory dir1 = new MockRAMDirectory();
-			// dir1 = FSDirectory.getDirectory("foofoofoo");
 			Directory dir2 = new MockRAMDirectory();
-			// mergeFactor=2; maxBufferedDocs=2; Map docs = indexRandom(1, 3, 2, dir1);
-			System.Collections.IDictionary docs = IndexRandom(10, 100, 100, dir1);
+            System.Collections.IDictionary docs = IndexRandom(10, 100, 100, dir1);
 			IndexSerial(docs, dir2);
-			
-			// verifying verify
-			// verifyEquals(dir1, dir1, "id");
-			// verifyEquals(dir2, dir2, "id");
-			
 			VerifyEquals(dir1, dir2, "id");
 		}
 		
@@ -84,7 +80,7 @@ namespace Lucene.Net.Index
 				
 				Directory dir1 = new MockRAMDirectory();
 				Directory dir2 = new MockRAMDirectory();
-				System.Collections.IDictionary docs = IndexRandom(nThreads, iter, range, dir1);
+                System.Collections.IDictionary docs = IndexRandom(nThreads, iter, range, dir1);
 				IndexSerial(docs, dir2);
 				VerifyEquals(dir1, dir2, "id");
 			}
@@ -103,12 +99,6 @@ namespace Lucene.Net.Index
 		{
 			IndexWriter w = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
 			w.SetUseCompoundFile(false);
-			/***
-			w.setMaxMergeDocs(Integer.MAX_VALUE);
-			w.setMaxFieldLength(10000);
-			w.setRAMBufferSizeMB(1);
-			w.setMergeFactor(10);
-			***/
 			
 			// force many merges
 			w.SetMergeFactor(mergeFactor);
@@ -167,8 +157,17 @@ namespace Lucene.Net.Index
 				Document d = (Document) iter.Current;
 				System.Collections.ArrayList fields = new System.Collections.ArrayList();
 				fields.AddRange(d.GetFields());
-				// put fields in same order each time
-				fields.Sort(fieldNameComparator);
+                
+                // nonono - can't do this (below)
+                //
+                // if multiple fields w/ same name, each instance must be
+                // added in the same order as orginal doc, as the fields
+                // are effectively concatendated
+                //
+                // term position/offset information must be maintained 
+                
+                // put fields in same order each time
+                //fields.Sort(fieldNameComparator);
 
 				Document d1 = new Document();
 				d1.SetBoost(d.GetBoost());
@@ -347,9 +346,21 @@ namespace Lucene.Net.Index
 			
 			if (ff1.Count != ff2.Count)
 			{
-				System.Console.Out.WriteLine(ff1);
-				System.Console.Out.WriteLine(ff2);
-				Assert.AreEqual(ff1.Count, ff2.Count);
+                // print out whole doc on error
+                System.Console.Write("Doc 1:");
+                for (int j = 0; j < ff1.Count; j++)
+                {
+                    Fieldable field = (Fieldable)ff1[j];
+                    System.Console.Write(" {0}={1};", field.Name(), field.StringValue());
+                }
+                System.Console.WriteLine();
+                System.Console.Write("Doc 2:");
+                for (int j = 0; j < ff2.Count; j++)
+                {
+                    Fieldable field = (Fieldable)ff2[j];
+                    System.Console.Write(" {0}={1};", field.Name(), field.StringValue());
+                }
+                System.Console.WriteLine(); Assert.AreEqual(ff1.Count, ff2.Count);
 			}			
 			
 			for (int i = 0; i < ff1.Count; i++)
@@ -368,9 +379,21 @@ namespace Lucene.Net.Index
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-						System.Console.Out.WriteLine(ff1);
-						System.Console.Out.WriteLine(ff2);
-						Assert.AreEqual(s1, s2);
+                        System.Console.Write("Doc 1:");
+                        for (int j = 0; j < ff1.Count; j++)
+                        {
+                            Fieldable field = (Fieldable)ff1[j];
+                            System.Console.Write(" {0}={1};", field.Name(), field.StringValue());
+                        }
+                        System.Console.WriteLine();
+                        System.Console.Write("Doc 2:");
+                        for (int j = 0; j < ff2.Count; j++)
+                        {
+                            Fieldable field = (Fieldable)ff2[j];
+                            System.Console.Write(" {0}={1};", field.Name(), field.StringValue());
+                        }
+                        System.Console.WriteLine();
+                        Assert.AreEqual(s1, s2);
 					}
 				}
 			}
@@ -420,7 +443,7 @@ namespace Lucene.Net.Index
 							Assert.IsTrue(offsets2 != null);
 						for (int k = 0; k < pos1.Length; k++)
 						{
-							Assert.AreEqual(pos1[k], pos2[k]);
+                            Assert.AreEqual(pos1[k], pos2[k]);
 							if (offsets1 != null)
 							{
 								Assert.AreEqual(offsets1[k].GetStartOffset(), offsets2[k].GetStartOffset());
@@ -475,46 +498,46 @@ namespace Lucene.Net.Index
 				{
 					
 					Field.TermVector tvVal = Field.TermVector.NO;
-					switch (NextInt(4))
-					{
-						
-						case 0: 
-							tvVal = Field.TermVector.NO;
-							break;
-						
-						case 1: 
-							tvVal = Field.TermVector.YES;
-							break;
-						
-						case 2: 
-							tvVal = Field.TermVector.WITH_POSITIONS;
-							break;
-						
-						case 3: 
-							tvVal = Field.TermVector.WITH_POSITIONS_OFFSETS;
-							break;
-						}
-					
-					switch (NextInt(4))
-					{
-						
-						case 0: 
-							fields.Add(new Field("f0", GetString(1), Field.Store.YES, Field.Index.NO_NORMS, tvVal));
-							break;
-						
-						case 1: 
-							fields.Add(new Field("f1", GetString(0), Field.Store.NO, Field.Index.TOKENIZED, tvVal));
-							break;
-						
-						case 2: 
-							fields.Add(new Field("f2", GetString(0), Field.Store.YES, Field.Index.NO, Field.TermVector.NO));
-							break;
-						
-						case 3: 
-							fields.Add(new Field("f3", GetString(Lucene.Net.Index.TestStressIndexing2.bigFieldSize), Field.Store.YES, Field.Index.TOKENIZED, tvVal));
-							break;
-						}
-				}
+                    switch (NextInt(4))
+                    {
+
+                        case 0:
+                            tvVal = Field.TermVector.NO;
+                            break;
+
+                        case 1:
+                            tvVal = Field.TermVector.YES;
+                            break;
+
+                        case 2:
+                            tvVal = Field.TermVector.WITH_POSITIONS;
+                            break;
+
+                        case 3:
+                            tvVal = Field.TermVector.WITH_POSITIONS_OFFSETS;
+                            break;
+                    }
+
+                    switch (NextInt(4))
+                    {
+
+                        case 0:
+                            fields.Add(new Field("f0", GetString(1), Field.Store.YES, Field.Index.NO_NORMS, tvVal));
+                            break;
+
+                        case 1:
+                            fields.Add(new Field("f1", GetString(0), Field.Store.NO, Field.Index.TOKENIZED, tvVal));
+                            break;
+
+                        case 2:
+                            fields.Add(new Field("f2", GetString(0), Field.Store.YES, Field.Index.NO, Field.TermVector.NO));
+                            break;
+
+                        case 3:
+                            fields.Add(new Field("f3", GetString(Lucene.Net.Index.TestStressIndexing2.bigFieldSize), Field.Store.YES, Field.Index.TOKENIZED, tvVal));
+                            break;
+                    }
+                }
 				
 				if (Lucene.Net.Index.TestStressIndexing2.sameFieldOrder)
 				{
@@ -523,7 +546,9 @@ namespace Lucene.Net.Index
 				else
 				{
 					// random placement of id field also
-					fields[NextInt(fields.Count)] = 0;
+                    int index = NextInt(fields.Count);
+                    fields[0] = fields[index];
+                    fields[index] = idField;
 				}
 				
 				for (int i = 0; i < fields.Count; i++)
