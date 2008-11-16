@@ -137,7 +137,8 @@ namespace Lucene.Net.Search
 				Term[] arr = (Term[]) iter.Current;
 				for (int i = 0; i < arr.Length; i++)
 				{
-					terms.Add(arr[i], arr[i]);
+                    if (!terms.Contains(arr[i]))
+					    terms.Add(arr[i], arr[i]);
 				}
 			}
 		}
