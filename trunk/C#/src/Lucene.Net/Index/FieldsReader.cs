@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 		
 		public Document Doc(int n, FieldSelector fieldSelector)
 		{
-			indexStream.Seek(n * 8L);
+			indexStream.Seek((n + docStoreOffset) * 8L);
 			long position = indexStream.ReadLong();
 			fieldsStream.Seek(position);
 			
