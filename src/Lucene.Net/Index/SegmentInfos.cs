@@ -620,19 +620,24 @@ namespace Lucene.Net.Index
 							for (int i = 0; i < Lucene.Net.Index.SegmentInfos.defaultGenFileRetryCount; i++)
 							{
 								IndexInput genInput = null;
-								try
-								{
-									genInput = directory.OpenInput(IndexFileNames.SEGMENTS_GEN);
-								}
-								catch (System.IO.FileNotFoundException e)
-								{
-									Lucene.Net.Index.SegmentInfos.Message("segments.gen open: FileNotFoundException " + e);
-									break;
-								}
-								catch (System.IO.IOException e)
-								{
-									Lucene.Net.Index.SegmentInfos.Message("segments.gen open: IOException " + e);
-								}
+                                try
+                                {
+                                    genInput = directory.OpenInput(IndexFileNames.SEGMENTS_GEN);
+                                }
+                                catch (System.IO.FileNotFoundException e)
+                                {
+                                    Lucene.Net.Index.SegmentInfos.Message("segments.gen open: FileNotFoundException " + e);
+                                    break;
+                                }
+                                catch (System.IO.IOException e)
+                                {
+                                    Lucene.Net.Index.SegmentInfos.Message("segments.gen open: IOException " + e);
+                                }
+                                catch (UnauthorizedAccessException e)
+                                {
+                                    Lucene.Net.Index.SegmentInfos.Message("segments.gen open: UnauthorizedAccessException " + e);
+                                    System.Threading.Thread.Sleep(10);
+                                }
 								
 								if (genInput != null)
 								{
