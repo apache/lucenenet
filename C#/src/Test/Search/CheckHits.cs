@@ -160,6 +160,8 @@ namespace Lucene.Net.Search
 			}
 			
 			Assert.AreEqual(correct.Count, actual.Count);
+			correct.Sort();
+			actual.Sort();
 			for (int i = 0; i < correct.Count; i++)
 			{
 				Assert.AreEqual(correct[i], actual[i]);
