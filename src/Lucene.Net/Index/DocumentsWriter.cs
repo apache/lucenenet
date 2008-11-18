@@ -3253,7 +3253,12 @@ namespace Lucene.Net.Index
 			public override void  Close()
 			{
 			}
-			
+            public override string ReadToEnd()
+            {
+                if (left == 0) return null;
+                left = 0;
+                return s;
+            }
 		}
 		
 		/* IndexInput that knows how to read the byte slices written
