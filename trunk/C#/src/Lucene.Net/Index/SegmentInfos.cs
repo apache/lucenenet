@@ -786,10 +786,10 @@ namespace Lucene.Net.Index
 							else
 							{
 								bool tmpBool;
-								if (System.IO.File.Exists(new System.IO.FileInfo(fileDirectory.FullName + "\\" + prevSegmentFileName).FullName))
+                                if (System.IO.File.Exists(new System.IO.FileInfo(fileDirectory.FullName + System.IO.Path.DirectorySeparatorChar + prevSegmentFileName).FullName))
 									tmpBool = true;
 								else
-									tmpBool = System.IO.Directory.Exists(new System.IO.FileInfo(fileDirectory.FullName + "\\" + prevSegmentFileName).FullName);
+                                    tmpBool = System.IO.Directory.Exists(new System.IO.FileInfo(fileDirectory.FullName + System.IO.Path.DirectorySeparatorChar + prevSegmentFileName).FullName);
 								prevExists = tmpBool;
 							}
 							
