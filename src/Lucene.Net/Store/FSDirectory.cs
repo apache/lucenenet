@@ -614,7 +614,7 @@ namespace Lucene.Net.Store
 		// Inherit javadoc
 		public override IndexInput OpenInput(System.String name, int bufferSize)
 		{
-			return new FSIndexInput(new System.IO.FileInfo(directory.FullName + "\\" + name), bufferSize);
+            return new FSIndexInput(new System.IO.FileInfo(directory.FullName + System.IO.Path.DirectorySeparatorChar + name), bufferSize);
 		}
 		
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
