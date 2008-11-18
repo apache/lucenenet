@@ -218,12 +218,12 @@ namespace Lucene.Net.Search
                             }
                             else
                             {
-                                try
+                                float f = 0.0f;
+                                if (SupportClass.Single.TryParse(termtext, out f))
                                 {
-                                    SupportClass.Single.Parse(termtext);
                                     ret = Enclosing_Instance.GetFloats(reader, field);
                                 }
-                                catch (System.FormatException)
+                                else
                                 {
                                     ret = Enclosing_Instance.GetStringIndex(reader, field);
                                 }
