@@ -39,10 +39,6 @@ namespace Lucene.Net.Search
 	/// </version>
 	public class FieldCacheImpl : FieldCache
 	{
-        public virtual void Close(IndexReader reader)
-        {
-        }
-
 		public FieldCacheImpl()
 		{
 			InitBlock();
@@ -569,7 +565,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Internal cache. </summary>
 		internal abstract class Cache
 		{
-			private System.Collections.IDictionary readerCache = new System.Collections.Hashtable();
+            private System.Collections.IDictionary readerCache = new Lucene.Net.Util.WeakHashTable();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, System.Object key);
 			
