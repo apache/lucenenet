@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		{
 			if (cache == null)
 			{
-				cache = new System.Collections.Hashtable();
+                cache = new Lucene.Net.Util.WeakHashTable();
 			}
 			
 			lock (cache.SyncRoot)
