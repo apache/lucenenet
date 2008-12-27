@@ -1013,3 +1013,164 @@ public class SupportClass
         }
     }
 }
+
+
+
+namespace Lucene.Net.Util
+{
+    #region WEAKHASHTABLE
+    internal class WeakHashTable : System.Collections.IDictionary
+    {
+        class WeakEntry
+        {
+            public WeakReference Key = null;
+            public object Value = null;
+            public int HashCode = 0;
+            public WeakEntry(object Key, object Value)
+            {
+                this.Key = new WeakReference(Key);
+                this.Value = Value;
+                this.HashCode = Key.GetHashCode();
+            }
+        }
+
+        System.Collections.Hashtable InternalTable = new System.Collections.Hashtable();
+
+        void CleanUp()
+        {
+            WeakEntry[] entries = new WeakEntry[InternalTable.Count];
+            InternalTable.Values.CopyTo(entries, 0);
+
+            for (int i = 0; i < entries.Length; i++)
+            {
+                if (entries[i].Key.IsAlive == false || entries[i].Key.Target == null)
+                {
+                    InternalTable.Remove(entries[i].HashCode);
+                }
+            }
+        }
+
+
+
+        #region IDictionary Members
+
+        public void Add(object key, object value)
+        {
+            CleanUp();
+            InternalTable.Add(key.GetHashCode(), new WeakEntry(key, value));
+        }
+
+        public void Clear()
+        {
+            InternalTable.Clear();
+        }
+
+        public bool Contains(object key)
+        {
+            return InternalTable.Contains(key.GetHashCode());
+        }
+
+        public System.Collections.IDictionaryEnumerator GetEnumerator()
+        {
+            return InternalTable.GetEnumerator();
+        }
+
+        public bool IsFixedSize
+        {
+            get { return InternalTable.IsFixedSize; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return InternalTable.IsReadOnly; }
+        }
+
+        public System.Collections.ICollection Keys
+        {
+            get
+            {
+                CleanUp();
+
+                System.Collections.ArrayList keys = new System.Collections.ArrayList();
+                foreach (WeakEntry w in InternalTable.Values)
+                {
+                    keys.Add(w.Key.Target);
+                }
+                return keys;
+
+            }
+        }
+
+        public void Remove(object key)
+        {
+            InternalTable.Remove(key.GetHashCode());
+        }
+
+        public System.Collections.ICollection Values
+        {
+            get
+            {
+                CleanUp();
+
+                System.Collections.ArrayList values = new System.Collections.ArrayList();
+                foreach (WeakEntry w in InternalTable.Values)
+                {
+                    values.Add(w.Value);
+                }
+                return values;
+            }
+        }
+
+        public object this[object key]
+        {
+            get
+            {
+                WeakEntry weakEntry = (WeakEntry)InternalTable[key.GetHashCode()];
+                if (weakEntry == null) return null;
+                return weakEntry.Value;
+
+            }
+            set
+            {
+                if (Contains(key)) Remove(key);
+                Add(key, value);
+            }
+        }
+
+        #endregion
+
+        #region ICollection Members
+
+        public void CopyTo(Array array, int index)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public int Count
+        {
+            get { return InternalTable.Count; }
+        }
+
+        public bool IsSynchronized
+        {
+            get { return InternalTable.IsSynchronized; }
+        }
+
+        public object SyncRoot
+        {
+            get { return InternalTable.SyncRoot; }
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return InternalTable.GetEnumerator();
+        }
+
+        #endregion
+    }
+    #endregion
+}
