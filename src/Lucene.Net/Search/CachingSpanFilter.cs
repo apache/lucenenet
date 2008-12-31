@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 			SpanFilterResult result = null;
 			if (cache == null)
 			{
-                cache = new Lucene.Net.Util.WeakHashTable();
+				cache = new SupportClass.WeakHashTable();
 			}
 			
 			lock (cache.SyncRoot)

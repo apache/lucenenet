@@ -565,7 +565,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Internal cache. </summary>
 		internal abstract class Cache
 		{
-            private System.Collections.IDictionary readerCache = new Lucene.Net.Util.WeakHashTable();
+			private System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, System.Object key);
 			
