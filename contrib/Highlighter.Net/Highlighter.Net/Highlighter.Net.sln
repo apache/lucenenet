@@ -1,24 +1,26 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Highlighter.Net-2.0.0", "Highlighter.Net-2.0.0.csproj", "{901D5415-383C-4AA6-A256-879558841BEA}"
-	ProjectSection(ProjectDependencies) = postProject
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Highlighter.Net", "Highlighter.Net.csproj", "{901D5415-383C-4AA6-A256-879558841BEA}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{901D5415-383C-4AA6-A256-879558841BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{901D5415-383C-4AA6-A256-879558841BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
-	EndGlobalSection
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
-	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{901D5415-383C-4AA6-A256-879558841BEA}.Debug.ActiveCfg = Debug|.NET
-		{901D5415-383C-4AA6-A256-879558841BEA}.Debug.Build.0 = Debug|.NET
-		{901D5415-383C-4AA6-A256-879558841BEA}.Release.ActiveCfg = Release|.NET
-		{901D5415-383C-4AA6-A256-879558841BEA}.Release.Build.0 = Release|.NET
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
 	EndGlobalSection
 EndGlobal

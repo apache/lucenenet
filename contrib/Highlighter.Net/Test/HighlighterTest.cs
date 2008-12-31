@@ -16,8 +16,11 @@
  */
 
 using System;
+
 using NUnit.Framework;
+
 using Analyzer = Lucene.Net.Analysis.Analyzer;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -37,6 +40,7 @@ using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Query = Lucene.Net.Search.Query;
 using RangeFilter = Lucene.Net.Search.RangeFilter;
 using Searcher = Lucene.Net.Search.Searcher;
+using TermQuery = Lucene.Net.Search.TermQuery;
 using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
 using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
 using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
@@ -118,6 +122,88 @@ namespace Lucene.Net.Search.Highlight
 		}
         */
 
+		private class AnonymousClassTokenStream : TokenStream
+		{
+			public AnonymousClassTokenStream(HighlighterTest enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(HighlighterTest enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+				lst = new System.Collections.ArrayList();
+				Token t;
+				t = new Token("hi", 0, 2);
+				lst.Add(t);
+				t = new Token("hispeed", 0, 8);
+				lst.Add(t);
+				t = new Token("speed", 3, 8);
+				t.SetPositionIncrement(0);
+				lst.Add(t);
+				t = new Token("10", 8, 10);
+				lst.Add(t);
+				t = new Token("foo", 11, 14);
+				lst.Add(t);
+				iter = lst.GetEnumerator();
+			}
+			private HighlighterTest enclosingInstance;
+			public HighlighterTest Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal System.Collections.IEnumerator iter;
+			internal System.Collections.ArrayList lst;
+			public override Token Next()
+			{
+				return iter.MoveNext() ? (Token) iter.Current : null;
+			}
+		}
+
+		private class AnonymousClassTokenStream1 : TokenStream
+		{
+			public AnonymousClassTokenStream1(HighlighterTest enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(HighlighterTest enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+				lst = new System.Collections.ArrayList();
+				Token t;
+				t = new Token("hispeed", 0, 8);
+				lst.Add(t);
+				t = new Token("hi", 0, 2);
+				t.SetPositionIncrement(0);
+				lst.Add(t);
+				t = new Token("speed", 3, 8);
+				lst.Add(t);
+				t = new Token("10", 8, 10);
+				lst.Add(t);
+				t = new Token("foo", 11, 14);
+				lst.Add(t);
+				iter = lst.GetEnumerator();
+			}
+			private HighlighterTest enclosingInstance;
+			public HighlighterTest Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal System.Collections.IEnumerator iter;
+			internal System.Collections.ArrayList lst;
+			public override Token Next()
+			{
+				return iter.MoveNext() ? (Token) iter.Current : null;
+			}
+		}
+
 		private IndexReader reader;
 		private const System.String FIELD_NAME = "contents";
 		private Query query;
@@ -190,7 +276,14 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public virtual void  TestGetRangeFragments()
 		{
-			DoSearching(FIELD_NAME + ":[kannedy TO kznnedy]"); //bug?needs lower case
+			System.String queryString = FIELD_NAME + ":[kannedy TO kznnedy]";
+			
+			//Need to explicitly set the QueryParser property to use RangeQuery rather than RangeFilters
+			QueryParser parser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+			parser.SetUseOldRangeQuery(true);
+			query = parser.Parse(queryString);
+			DoSearching(query);
+			
 			DoStandardHighlights();
 			Assert.IsTrue(numHighlights == 5, "Failed to find correct number of highlights " + numHighlights + " found");
 		}
@@ -214,6 +307,18 @@ namespace Lucene.Net.Search.Highlight
 			DoStandardHighlights();
 			//Currently highlights "John" and "Kennedy" separately
 			Assert.IsTrue(numHighlights == 2, "Failed to find correct number of highlights " + numHighlights + " found");
+		}
+		
+        [Test]
+		public virtual void  TestOffByOne()
+		{
+			TermQuery query = new TermQuery(new Term("data", "help"));
+			Highlighter hg = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(query));
+			hg.SetTextFragmenter(new NullFragmenter());
+			
+			System.String match = null;
+			match = hg.GetBestFragment(new StandardAnalyzer(), "data", "help me [54-65]");
+			Assert.AreEqual("<B>help</B> me [54-65]", match);
 		}
 		
         [Test]
@@ -396,6 +501,38 @@ namespace Lucene.Net.Search.Highlight
 			Assert.IsTrue(numHighlights == 0, "Setting MaxDocBytesToAnalyze should have prevented " + "us from finding matches for this record: " + numHighlights + " found");
 		}
 		
+        [Test]
+		public virtual void  TestMaxSizeHighlightTruncates()
+		{
+			System.String goodWord = "goodtoken";
+			System.String[] stopWords = new System.String[]{"stoppedtoken"};
+			
+			TermQuery query = new TermQuery(new Term("data", goodWord));
+			SimpleHTMLFormatter fm = new SimpleHTMLFormatter();
+			Highlighter hg = new Highlighter(fm, new QueryScorer(query));
+			hg.SetTextFragmenter(new NullFragmenter());
+			
+			System.String match = null;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append(goodWord);
+			for (int i = 0; i < 10000; i++)
+			{
+				sb.Append(" ");
+				sb.Append(stopWords[0]);
+			}
+			
+			hg.SetMaxDocBytesToAnalyze(100);
+			match = hg.GetBestFragment(new StandardAnalyzer(stopWords), "data", sb.ToString());
+			Assert.IsTrue(match.Length < hg.GetMaxDocBytesToAnalyze(), "Matched text should be no more than 100 chars in length ");
+			
+			//add another tokenized word to the overrall length - but set way beyond 
+			//the length of text under consideration (after a large slug of stop words + whitespace)
+			sb.Append(" ");
+			sb.Append(goodWord);
+			match = hg.GetBestFragment(new StandardAnalyzer(stopWords), "data", sb.ToString());
+			Assert.IsTrue(match.Length < hg.GetMaxDocBytesToAnalyze(), "Matched text should be no more than 100 chars in length ");
+		}
+		
 		
 		[Test]
 		public virtual void  TestUnRewrittenQuery()
@@ -567,6 +704,88 @@ namespace Lucene.Net.Search.Highlight
 			reader.Close();
 		}
 		
+		protected internal virtual TokenStream GetTS2()
+		{
+			//String s = "Hi-Speed10 foo";
+			return new AnonymousClassTokenStream(this);
+		}
+		
+		// same token-stream as above, but the bigger token comes first this time
+		protected internal virtual TokenStream GetTS2a()
+		{
+			//String s = "Hi-Speed10 foo";
+			return new AnonymousClassTokenStream1(this);
+		}
+		
+        [Test]
+		public virtual void  TestOverlapAnalyzer2()
+		{
+			
+			System.String s = "Hi-Speed10 foo";
+			
+			Query query; Highlighter highlighter; System.String result;
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("foo");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-Speed10 <B>foo</B>");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("10");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-Speed<B>10</B> foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hi");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi</B>-Speed10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("speed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-<B>Speed</B>10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hispeed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi-Speed</B>10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hi speed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi-Speed</B>10 foo");
+			
+			/////////////////// same tests, just put the bigger overlapping token first
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("foo");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-Speed10 <B>foo</B>");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("10");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-Speed<B>10</B> foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hi");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi</B>-Speed10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("speed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "Hi-<B>Speed</B>10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hispeed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi-Speed</B>10 foo");
+			
+			query = new QueryParser("text", new WhitespaceAnalyzer()).Parse("hi speed");
+			highlighter = new Highlighter(new QueryScorer(query));
+			result = highlighter.GetBestFragments(GetTS2a(), s, 3, "...");
+			Assert.AreEqual(result, "<B>Hi-Speed</B>10 foo");
+		}
 		
 		
 		/*

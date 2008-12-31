@@ -18,6 +18,9 @@
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using BooleanClause = Lucene.Net.Search.BooleanClause;
+using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+using FilteredQuery = Lucene.Net.Search.FilteredQuery;
 using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Highlight
@@ -125,24 +128,55 @@ namespace Lucene.Net.Highlight
 		{
 			try
 			{
-				System.Collections.Hashtable nonWeightedTerms = new System.Collections.Hashtable();
-				query.ExtractTerms(nonWeightedTerms);
+				if (query is BooleanQuery)
+					GetTermsFromBooleanQuery((BooleanQuery) query, terms, prohibited, fieldName);
+				else if (query is FilteredQuery)
+					GetTermsFromFilteredQuery((FilteredQuery) query, terms, prohibited, fieldName);
+				else
+				{
+					System.Collections.Hashtable nonWeightedTerms = new System.Collections.Hashtable();
+					query.ExtractTerms(nonWeightedTerms);
 
-                System.Collections.IDictionaryEnumerator iter =  nonWeightedTerms.GetEnumerator();
-                while (iter.MoveNext())
-                {
-                    Term term = (Term)iter.Value;
-                    if ((fieldName == null) || (term.Field() == fieldName))
+                    System.Collections.IDictionaryEnumerator iter =  nonWeightedTerms.GetEnumerator();
+                    while (iter.MoveNext())
                     {
-                        WeightedTerm temp = new  WeightedTerm(query.GetBoost(), term.Text());
-                        terms.Add(temp, temp);
+                        Term term = (Term)iter.Value;
+                        if ((fieldName == null) || (term.Field() == fieldName))
+                        {
+                            WeightedTerm temp = new  WeightedTerm(query.GetBoost(), term.Text());
+                            terms.Add(temp, temp);
+                        }
                     }
-                }
+				}
 			}
 			catch (System.NotSupportedException ignore)
 			{
 				//this is non-fatal for our purposes
 			}
+		}
+		
+		/// <summary> extractTerms is currently the only query-independent means of introspecting queries but it only reveals
+		/// a list of terms for that query - not the boosts each individual term in that query may or may not have.
+		/// "Container" queries such as BooleanQuery should be unwrapped to get at the boost info held
+		/// in each child element. 
+		/// Some discussion around this topic here:
+		/// http://www.gossamer-threads.com/lists/lucene/java-dev/34208?search_string=introspection;#34208
+		/// Unfortunately there seemed to be limited interest in requiring all Query objects to implement
+		/// something common which would allow access to child queries so what follows here are query-specific
+		/// implementations for accessing embedded query elements. 
+		/// </summary>
+		private static void  GetTermsFromBooleanQuery(BooleanQuery query, System.Collections.Hashtable terms, bool prohibited, System.String fieldName)
+		{
+			BooleanClause[] queryClauses = query.GetClauses();
+			for (int i = 0; i < queryClauses.Length; i++)
+			{
+				if (prohibited || queryClauses[i].GetOccur() != BooleanClause.Occur.MUST_NOT)
+					GetTerms(queryClauses[i].GetQuery(), terms, prohibited, fieldName);
+			}
+		}
+		private static void  GetTermsFromFilteredQuery(FilteredQuery query, System.Collections.Hashtable terms, bool prohibited, System.String fieldName)
+		{
+			GetTerms(query.GetQuery(), terms, prohibited, fieldName);
 		}
 	}
 }

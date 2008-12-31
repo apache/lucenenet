@@ -35,6 +35,9 @@ namespace Lucene.Net.Highlight
 		internal int numTokens = 0;
 		internal int startOffset = 0;
 		internal int endOffset = 0;
+		internal float tot;
+		
+		internal int matchStartOffset, matchEndOffset;
 		
 		
 		internal virtual void  AddToken(Token token, float score)
@@ -43,13 +46,28 @@ namespace Lucene.Net.Highlight
 			{
 				if (numTokens == 0)
 				{
-					startOffset = token.StartOffset();
-					endOffset = token.EndOffset();
+					startOffset = matchStartOffset = token.StartOffset();
+					endOffset = matchEndOffset = token.EndOffset();
+					tot += score;
 				}
 				else
 				{
 					startOffset = Math.Min(startOffset, token.StartOffset());
 					endOffset = Math.Max(endOffset, token.EndOffset());
+					if (score > 0)
+					{
+						if (tot == 0)
+						{
+							matchStartOffset = token.StartOffset();
+							matchEndOffset = token.EndOffset();
+						}
+						else
+						{
+							matchStartOffset = Math.Min(matchStartOffset, token.StartOffset());
+							matchEndOffset = Math.Max(matchEndOffset, token.EndOffset());
+						}
+						tot += score;
+					}
 				}
 				tokens[numTokens] = token;
 				scores[numTokens] = score;
@@ -66,6 +84,7 @@ namespace Lucene.Net.Highlight
 		internal virtual void  Clear()
 		{
 			numTokens = 0;
+			tot = 0;
 		}
 		
 		/// <summary> </summary>
@@ -113,12 +132,7 @@ namespace Lucene.Net.Highlight
 		/// </returns>
 		public virtual float GetTotalScore()
 		{
-			float total = 0;
-			for (int i = 0; i < numTokens; i++)
-			{
-				total += scores[i];
-			}
-			return total;
+			return tot;
 		}
 	}
 }
