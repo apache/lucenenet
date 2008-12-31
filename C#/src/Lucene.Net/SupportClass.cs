@@ -1012,12 +1012,7 @@ public class SupportClass
             }
         }
     }
-}
 
-
-
-namespace Lucene.Net.Util
-{
     #region WEAKHASHTABLE
     internal class WeakHashTable : System.Collections.IDictionary
     {
