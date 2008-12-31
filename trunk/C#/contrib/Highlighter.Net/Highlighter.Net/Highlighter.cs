@@ -17,6 +17,7 @@
 
 using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
+using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
@@ -216,22 +217,22 @@ namespace Lucene.Net.Highlight
 				textFragmenter.Start(text);
 				
 				TokenGroup tokenGroup = new TokenGroup();
-				
-				while ((token = tokenStream.Next()) != null)
+				token = tokenStream.Next();
+				while ((token != null) && (token.StartOffset() < maxDocBytesToAnalyze))
 				{
 					if ((tokenGroup.numTokens > 0) && (tokenGroup.IsDistinct(token)))
 					{
 						//the current token is distinct from previous tokens - 
 						// markup the cached token group info
-						startOffset = tokenGroup.startOffset;
-						endOffset = tokenGroup.endOffset;
+						startOffset = tokenGroup.matchStartOffset;
+						endOffset = tokenGroup.matchEndOffset;
 						tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
 						System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
 						//store any whitespace etc from between this and last group
 						if (startOffset > lastEndOffset)
 							newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
 						newText.Append(markedUpText);
-						lastEndOffset = endOffset;
+						lastEndOffset = System.Math.Max(endOffset, lastEndOffset);
 						tokenGroup.Clear();
 						
 						//check if current token marks the start of a new fragment						
@@ -248,30 +249,34 @@ namespace Lucene.Net.Highlight
 					
 					tokenGroup.AddToken(token, fragmentScorer.GetTokenScore(token));
 					
-					if (lastEndOffset > maxDocBytesToAnalyze)
-					{
-						break;
-					}
+					//				if(lastEndOffset>maxDocBytesToAnalyze)
+					//				{
+					//					break;
+					//				}
+					token = tokenStream.Next();
 				}
 				currentFrag.SetScore(fragmentScorer.GetFragmentScore());
 				
 				if (tokenGroup.numTokens > 0)
 				{
 					//flush the accumulated text (same code as in above loop)
-					startOffset = tokenGroup.startOffset;
-					endOffset = tokenGroup.endOffset;
+					startOffset = tokenGroup.matchStartOffset;
+					endOffset = tokenGroup.matchEndOffset;
 					tokenText = text.Substring(startOffset, (endOffset) - (startOffset));
 					System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
 					//store any whitespace etc from between this and last group
 					if (startOffset > lastEndOffset)
 						newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
 					newText.Append(markedUpText);
-					lastEndOffset = endOffset;
+					lastEndOffset = System.Math.Max(lastEndOffset, endOffset);
 				}
 				
-				// append text after end of last token
-				//			if (lastEndOffset < text.length())
-				//				newText.append(encoder.encodeText(text.substring(lastEndOffset)));
+				//Test what remains of the original text beyond the point where we stopped analyzing 
+				if ((lastEndOffset < text.Length) && (text.Length < maxDocBytesToAnalyze))
+				{
+					//append it to the last fragment
+					newText.Append(encoder.EncodeText(text.Substring(lastEndOffset)));
+				}
 				
 				currentFrag.textEndPos = newText.Length;
 				
