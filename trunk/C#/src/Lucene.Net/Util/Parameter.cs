@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 	
 	/// <summary> A serializable Enum class.</summary>
 	[Serializable]
-	public abstract class Parameter
+    public abstract class Parameter : System.Runtime.Serialization.IObjectReference
 	{
 		internal static System.Collections.IDictionary allParameters = new System.Collections.Hashtable();
 		
@@ -71,5 +71,12 @@ namespace Lucene.Net.Util
 			
 			return par;
 		}
+        
+        // "ReadResolve"s equivalent for .NET
+        // https://issues.apache.org/jira/browse/LUCENENET-170
+        public Object GetRealObject(System.Runtime.Serialization.StreamingContext context)
+        {
+            return ReadResolve();
+        }
 	}
 }
