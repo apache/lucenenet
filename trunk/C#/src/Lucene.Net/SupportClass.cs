@@ -16,7 +16,6 @@
  */
 
 using System;
-using System.Collections;
 
 /// <summary>
 /// This interface should be implemented by any class whose instances are intended 
@@ -1015,245 +1014,159 @@ public class SupportClass
     }
 
     #region WEAKHASHTABLE
-    /// <summary>
-    /// A Hashtable which holds weak references to its keys so they
-    /// can be collected during GC. 
-    /// </summary>
-    [System.Diagnostics.DebuggerDisplay("Count = {Values.Count}")]
-    public class WeakHashTable : Hashtable, IEnumerable
+    internal class WeakHashTable : System.Collections.IDictionary
     {
-        /// <summary>
-        /// A weak referene wrapper for the hashtable keys. Whenever a key\value pair 
-        /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
-        /// value of the original object hashcode for fast comparison.
-        /// </summary>
-        class WeakKey : WeakReference
+        class WeakEntry
         {
-            int hashCode;
-
-            public WeakKey(object key)
-                : base(key)
+            public WeakReference Key = null;
+            public object Value = null;
+            public int HashCode = 0;
+            public WeakEntry(object Key, object Value)
             {
-                if (key == null)
-                    throw new ArgumentNullException("key");
-
-                hashCode = key.GetHashCode();
-            }
-
-            public override int GetHashCode()
-            {
-                return hashCode;
+                this.Key = new WeakReference(Key);
+                this.Value = Value;
+                this.HashCode = Key.GetHashCode();
             }
         }
 
-        /// <summary>
-        /// A Dictionary enumerator which wraps the original hashtable enumerator 
-        /// and performs 2 tasks: Extract the real key from a WeakKey and skip keys
-        /// that were already collected.
-        /// </summary>
-        class WeakDictionaryEnumerator : IDictionaryEnumerator
+        System.Collections.Hashtable InternalTable = new System.Collections.Hashtable();
+
+        void CleanUp()
         {
-            IDictionaryEnumerator baseEnumerator;
-            object currentKey;
-            object currentValue;
+            WeakEntry[] entries = new WeakEntry[InternalTable.Count];
+            InternalTable.Values.CopyTo(entries, 0);
 
-            public WeakDictionaryEnumerator(IDictionaryEnumerator baseEnumerator)
+            for (int i = 0; i < entries.Length; i++)
             {
-                this.baseEnumerator = baseEnumerator;
-            }
-
-            public DictionaryEntry Entry
-            {
-                get
+                if (entries[i].Key.IsAlive == false || entries[i].Key.Target == null)
                 {
-                    return new DictionaryEntry(this.currentKey, this.currentValue);
+                    InternalTable.Remove(entries[i].HashCode);
                 }
             }
-
-            public object Key
-            {
-                get
-                {
-                    return this.currentKey;
-                }
-            }
-
-            public object Value
-            {
-                get
-                {
-                    return this.currentValue;
-                }
-            }
-
-            public object Current
-            {
-                get
-                {
-                    return Entry;
-                }
-            }
-
-            public bool MoveNext()
-            {
-                while (baseEnumerator.MoveNext())
-                {
-                    object key = ((WeakKey)baseEnumerator.Key).Target;
-                    if (key != null)
-                    {
-                        this.currentKey = key;
-                        this.currentValue = baseEnumerator.Value;
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            public void Reset()
-            {
-                baseEnumerator.Reset();
-                this.currentKey = null;
-                this.currentValue = null;
-            }
         }
 
 
-        /// <summary>
-        /// Serves as a simple "GC Monitor" that indicates whether cleanup is needed. 
-        /// If collectableObject.IsAlive is false, GC has occurred and we should perform cleanup
-        /// </summary>
-        WeakReference collectableObject = new WeakReference(new Object());
 
-        /// <summary>
-        /// Customize the hashtable lookup process by overriding KeyEquals. KeyEquals
-        /// will compare both WeakKey to WeakKey and WeakKey to real keys
-        /// </summary>
-        protected override bool KeyEquals(object x, object y)
+        #region IDictionary Members
+
+        public void Add(object key, object value)
         {
-            if (x == y)
-                return true;
-
-            if (x is WeakKey)
-            {
-                x = ((WeakKey)x).Target;
-                if (x == null)
-                    return false;
-            }
-
-            if (y is WeakKey)
-            {
-                y = ((WeakKey)y).Target;
-                if (y == null)
-                    return false;
-            }
-
-            return x.Equals(y);
+            CleanUp();
+            InternalTable.Add(key.GetHashCode(), new WeakEntry(key, value));
         }
 
-        protected override int GetHash(object key)
+        public void Clear()
         {
-            return key.GetHashCode();
+            InternalTable.Clear();
         }
 
-        /// <summary>
-        /// Perform cleanup if GC occurred
-        /// </summary>
-        private void CleanIfNeeded()
+        public bool Contains(object key)
         {
-            if (collectableObject.Target == null)
-            {
-                Clean();
-                collectableObject = new WeakReference(new Object());
-            }
+            return InternalTable.Contains(key.GetHashCode());
         }
 
-        /// <summary>
-        /// Iterate over all keys and remove keys that were collected
-        /// </summary>
-        private void Clean()
+        public System.Collections.IDictionaryEnumerator GetEnumerator()
         {
-            ArrayList keysToDelete = new ArrayList();
-            foreach (WeakKey wtk in base.Keys)
-            {
-                if (!wtk.IsAlive)
-                {
-                    keysToDelete.Add(wtk);
-                }
-            }
-
-            foreach (WeakKey wtk in keysToDelete)
-                Remove(wtk);
+            return InternalTable.GetEnumerator();
         }
 
-
-        /// <summary>
-        /// Wrap each key with a WeakKey and add it to the hashtable
-        /// </summary>
-        public override void Add(object key, object value)
+        public bool IsFixedSize
         {
-            CleanIfNeeded();
-            base.Add(new WeakKey(key), value);
+            get { return InternalTable.IsFixedSize; }
         }
 
-        public override IDictionaryEnumerator GetEnumerator()
+        public bool IsReadOnly
         {
-            return new WeakDictionaryEnumerator(base.GetEnumerator());
+            get { return InternalTable.IsReadOnly; }
         }
 
-        /// <summary>
-        /// Create a temporary copy of the real keys and return that
-        /// </summary>
-        public override ICollection Keys
+        public System.Collections.ICollection Keys
         {
             get
             {
-                ArrayList keys = new ArrayList(Count);
-                foreach (WeakKey key in base.Keys)
+                CleanUp();
+
+                System.Collections.ArrayList keys = new System.Collections.ArrayList();
+                foreach (WeakEntry w in InternalTable.Values)
                 {
-                    object realKey = key.Target;
-                    if (realKey != null)
-                        keys.Add(realKey);
+                    keys.Add(w.Key.Target);
                 }
                 return keys;
+
             }
         }
 
-        public override object this[object key]
+        public void Remove(object key)
+        {
+            InternalTable.Remove(key.GetHashCode());
+        }
+
+        public System.Collections.ICollection Values
         {
             get
             {
-                return base[key];
+                CleanUp();
+
+                System.Collections.ArrayList values = new System.Collections.ArrayList();
+                foreach (WeakEntry w in InternalTable.Values)
+                {
+                    values.Add(w.Value);
+                }
+                return values;
+            }
+        }
+
+        public object this[object key]
+        {
+            get
+            {
+                WeakEntry weakEntry = (WeakEntry)InternalTable[key.GetHashCode()];
+                if (weakEntry == null) return null;
+                return weakEntry.Value;
+
             }
             set
             {
-                CleanIfNeeded();
-                base[new WeakKey(key)] = value;
+                if (Contains(key)) Remove(key);
+                Add(key, value);
             }
         }
 
-        public override void CopyTo(Array array, int index)
+        #endregion
+
+        #region ICollection Members
+
+        public void CopyTo(Array array, int index)
         {
-            int arrayIndex = index;
-            foreach (DictionaryEntry de in this)
-            {
-                array.SetValue(de, arrayIndex++);
-            }
+            throw new Exception("The method or operation is not implemented.");
         }
 
-        public override int Count
+        public int Count
         {
-            get
-            {
-                CleanIfNeeded();
-                return base.Count;
-            }
+            get { return InternalTable.Count; }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public bool IsSynchronized
         {
-            return GetEnumerator();
+            get { return InternalTable.IsSynchronized; }
         }
+
+        public object SyncRoot
+        {
+            get { return InternalTable.SyncRoot; }
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return InternalTable.GetEnumerator();
+        }
+
+        #endregion
     }
     #endregion
-
+	
 }
