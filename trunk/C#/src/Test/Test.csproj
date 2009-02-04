@@ -449,6 +449,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestSnapshotDeletionPolicy.cs" />
+    <Compile Include="TestWeakHashTable.cs" />
     <Compile Include="ThreadSafetyTest.cs">
       <SubType>Code</SubType>
     </Compile>
