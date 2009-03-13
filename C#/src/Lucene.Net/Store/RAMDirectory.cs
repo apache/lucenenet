@@ -47,6 +47,16 @@ namespace Lucene.Net.Store
             set { sizeInBytes = value; }
         }
 
+        //https://issues.apache.org/jira/browse/LUCENENET-174
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
+        {
+            if (lockFactory == null)
+            {
+                SetLockFactory(new SingleInstanceLockFactory());
+            }
+        }
+
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
 		// *****
