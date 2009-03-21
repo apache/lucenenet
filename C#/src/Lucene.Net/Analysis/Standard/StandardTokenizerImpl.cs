@@ -223,21 +223,21 @@ namespace Lucene.Net.Analysis.Standard
 		
 		/* user code: */
 		
-		public const int ALPHANUM = 0;
-		public const int APOSTROPHE = 1;
-		public const int ACRONYM = 2;
-		public const int COMPANY = 3;
-		public const int EMAIL = 4;
-		public const int HOST = 5;
-		public const int NUM = 6;
-		public const int CJ = 7;
+		public const int ALPHANUM = StandardTokenizer.ALPHANUM;
+		public const int APOSTROPHE = StandardTokenizer.APOSTROPHE;
+		public const int ACRONYM = StandardTokenizer.ACRONYM;
+		public const int COMPANY = StandardTokenizer.COMPANY;
+		public const int EMAIL = StandardTokenizer.EMAIL;
+		public const int HOST = StandardTokenizer.HOST;
+		public const int NUM = StandardTokenizer.NUM;
+		public const int CJ = StandardTokenizer.CJ;
 		/// <deprecated> this solves a bug where HOSTs that end with '.' are identified
 		/// as ACRONYMs. It is deprecated and will be removed in the next
 		/// release.
 		/// </deprecated>
-		public const int ACRONYM_DEP = 8;
-		
-		public static readonly System.String[] TOKEN_TYPES = new System.String[]{"<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>"};
+		public const int ACRONYM_DEP = StandardTokenizer.ACRONYM_DEP;
+
+        public static readonly System.String[] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 		
 		public int Yychar()
 		{

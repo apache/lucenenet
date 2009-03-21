@@ -237,7 +237,8 @@ namespace Lucene.Net.Index
 		private static System.Object MESSAGE_ID_LOCK = new System.Object();
 		private static int MESSAGE_ID = 0;
 		private int messageID = - 1;
-		
+        volatile private bool hitOOM;
+
 		private Directory directory; // where this index resides
 		private Analyzer analyzer; // how to analyze text
 		
@@ -1236,6 +1237,13 @@ namespace Lucene.Net.Index
 		public virtual void  Close(bool waitForMerges)
 		{
 			bool doClose;
+
+            // If any methods have hit OutOfMemoryError, then abort
+            // on close, in case theinternal state of IndexWriter
+            // or DocumentsWriter is corrupt
+            if (hitOOM)
+                Abort();
+
 			lock (this)
 			{
 				// Ensure that only one thread actually gets to do the closing:
@@ -1285,6 +1293,11 @@ namespace Lucene.Net.Index
 				// Only allow a new merge to be triggered if we are
 				// going to wait for merges:
 				Flush(waitForMerges, true);
+
+                if (waitForMerges)
+                    // Give merge scheduler last chance to run, in case
+                    // any pending merges are waiting
+                    mergeScheduler.Merge(this);
 				
 				mergePolicy.Close();
 				
@@ -1338,12 +1351,21 @@ namespace Lucene.Net.Index
 				}
 				closed = true;
 			}
+            catch (OutOfMemoryException oom) 
+            {
+                hitOOM = true;
+                throw oom;
+            }
 			finally
 			{
 				lock (this)
 				{
-					if (!closed)
-						closing = false;
+                    if (!closed)
+                    {
+                        closing = false;
+                        if (infoStream != null)
+                            Message("hit exception while closing");
+                    }
 					System.Threading.Monitor.PulseAll(this);
 				}
 			}
@@ -1557,34 +1579,42 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			bool doFlush = false;
 			bool success = false;
-			try
-			{
-				doFlush = docWriter.AddDocument(doc, analyzer);
-				success = true;
-			}
-			finally
-			{
-				if (!success)
-				{
-					
-					if (infoStream != null)
-						Message("hit exception adding document");
-					
-					lock (this)
-					{
-						// If docWriter has some aborted files that were
-						// never incref'd, then we clean them up here
-						if (docWriter != null)
-						{
-							System.Collections.IList files = docWriter.AbortedFiles();
-							if (files != null)
-								deleter.DeleteNewFiles(files);
-						}
-					}
-				}
-			}
-			if (doFlush)
-				Flush(true, false);
+            try
+            {
+                try
+                {
+                    doFlush = docWriter.AddDocument(doc, analyzer);
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+
+                        if (infoStream != null)
+                            Message("hit exception adding document");
+
+                        lock (this)
+                        {
+                            // If docWriter has some aborted files that were
+                            // never incref'd, then we clean them up here
+                            if (docWriter != null)
+                            {
+                                System.Collections.IList files = docWriter.AbortedFiles();
+                                if (files != null)
+                                    deleter.DeleteNewFiles(files);
+                            }
+                        }
+                    }
+                }
+                if (doFlush)
+                    Flush(true, false);
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
 		}
 		
 		/// <summary> Deletes the document(s) containing <code>term</code>.</summary>
@@ -1595,9 +1625,17 @@ namespace Lucene.Net.Index
 		public virtual void  DeleteDocuments(Term term)
 		{
 			EnsureOpen();
-			bool doFlush = docWriter.BufferDeleteTerm(term);
-			if (doFlush)
-				Flush(true, false);
+            try
+            {
+                bool doFlush = docWriter.BufferDeleteTerm(term);
+                if (doFlush)
+                    Flush(true, false);
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
 		}
 		
 		/// <summary> Deletes the document(s) containing any of the
@@ -1610,11 +1648,19 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  DeleteDocuments(Term[] terms)
 		{
-			EnsureOpen();
-			bool doFlush = docWriter.BufferDeleteTerms(terms);
-			if (doFlush)
-				Flush(true, false);
-		}
+            EnsureOpen();
+            try
+            {
+                bool doFlush = docWriter.BufferDeleteTerms(terms);
+                if (doFlush)
+                    Flush(true, false);
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
+        }
 		
 		/// <summary> Updates a document by first deleting the document(s)
 		/// containing <code>term</code> and then adding the new
@@ -1653,34 +1699,43 @@ namespace Lucene.Net.Index
 		public virtual void  UpdateDocument(Term term, Document doc, Analyzer analyzer)
 		{
 			EnsureOpen();
-			bool doFlush = false;
-			bool success = false;
-			try
-			{
-				doFlush = docWriter.UpdateDocument(term, doc, analyzer);
-				success = true;
-			}
-			finally
-			{
-				if (!success)
-				{
-					
-					if (infoStream != null)
-						Message("hit exception updating document");
-					
-					lock (this)
-					{
-						// If docWriter has some aborted files that were
-						// never incref'd, then we clean them up here
-						System.Collections.IList files = docWriter.AbortedFiles();
-						if (files != null)
-							deleter.DeleteNewFiles(files);
-					}
-				}
-			}
-			if (doFlush)
-				Flush(true, false);
-		}
+            try
+            {
+                bool doFlush = false;
+                bool success = false;
+                try
+                {
+                    doFlush = docWriter.UpdateDocument(term, doc, analyzer);
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+
+                        if (infoStream != null)
+                            Message("hit exception updating document");
+
+                        lock (this)
+                        {
+                            // If docWriter has some aborted files that were
+                            // never incref'd, then we clean them up here
+                            System.Collections.IList files = docWriter.AbortedFiles();
+                            if (files != null)
+                                deleter.DeleteNewFiles(files);
+                        }
+                    }
+                }
+                if (doFlush)
+                    Flush(true, false);
+
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
+        }
 		
 		// for test purpose
 		public /*internal*/ int GetSegmentCount()
@@ -1838,7 +1893,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public virtual void  Optimize(bool doWait)
 		{
-			Optimize(1, true);
+			Optimize(1, doWait);
 		}
 		
 		/// <summary>Just like {@link #Optimize(int)}, except you can
@@ -2053,30 +2108,32 @@ namespace Lucene.Net.Index
 		*/
 		private void  StartTransaction()
 		{
-			
-			if (infoStream != null)
-				Message("now start transaction");
-			
-			System.Diagnostics.Debug.Assert(docWriter.GetNumBufferedDeleteTerms() == 0, "calling startTransaction with buffered delete terms not supported");
-			System.Diagnostics.Debug.Assert(docWriter.GetNumDocsInRAM() == 0, "calling startTransaction with buffered documents not supported");
-			
-			localRollbackSegmentInfos = (SegmentInfos) segmentInfos.Clone();
-			localAutoCommit = autoCommit;
-			
-			if (localAutoCommit)
-			{
-				
-				if (infoStream != null)
-					Message("flush at startTransaction");
-				
-				Flush();
-				// Turn off auto-commit during our local transaction:
-				autoCommit = false;
-			}
-			// We must "protect" our files at this point from
-			// deletion in case we need to rollback:
-			else
-				deleter.IncRef(segmentInfos, false);
+            lock (this)
+            {
+                if (infoStream != null)
+                    Message("now start transaction");
+
+                System.Diagnostics.Debug.Assert(docWriter.GetNumBufferedDeleteTerms() == 0, "calling startTransaction with buffered delete terms not supported");
+                System.Diagnostics.Debug.Assert(docWriter.GetNumDocsInRAM() == 0, "calling startTransaction with buffered documents not supported");
+
+                localRollbackSegmentInfos = (SegmentInfos)segmentInfos.Clone();
+                localAutoCommit = autoCommit;
+
+                if (localAutoCommit)
+                {
+
+                    if (infoStream != null)
+                        Message("flush at startTransaction");
+
+                    Flush();
+                    // Turn off auto-commit during our local transaction:
+                    autoCommit = false;
+                }
+                // We must "protect" our files at this point from
+                // deletion in case we need to rollback:
+                else
+                    deleter.IncRef(segmentInfos, false);
+            }
 		}
 		
 		/*
@@ -2085,32 +2142,34 @@ namespace Lucene.Net.Index
 		*/
 		private void  RollbackTransaction()
 		{
-			
-			if (infoStream != null)
-				Message("now rollback transaction");
-			
-			// First restore autoCommit in case we hit an exception below:
-			autoCommit = localAutoCommit;
-			
-			// Keep the same segmentInfos instance but replace all
-			// of its SegmentInfo instances.  This is so the next
-			// attempt to commit using this instance of IndexWriter
-			// will always write to a new generation ("write once").
-			segmentInfos.Clear();
-			segmentInfos.AddRange(localRollbackSegmentInfos);
-			localRollbackSegmentInfos = null;
-			
-			// Ask deleter to locate unreferenced files we had
-			// created & remove them:
-			deleter.Checkpoint(segmentInfos, false);
-			
-			if (!autoCommit)
-			// Remove the incRef we did in startTransaction:
-				deleter.DecRef(segmentInfos);
-			
-			deleter.Refresh();
-			FinishMerges(false);
-			stopMerges = false;
+            lock (this)
+            {
+                if (infoStream != null)
+                    Message("now rollback transaction");
+
+                // First restore autoCommit in case we hit an exception below:
+                autoCommit = localAutoCommit;
+
+                // Keep the same segmentInfos instance but replace all
+                // of its SegmentInfo instances.  This is so the next
+                // attempt to commit using this instance of IndexWriter
+                // will always write to a new generation ("write once").
+                segmentInfos.Clear();
+                segmentInfos.AddRange(localRollbackSegmentInfos);
+                localRollbackSegmentInfos = null;
+
+                // Ask deleter to locate unreferenced files we had
+                // created & remove them:
+                deleter.Checkpoint(segmentInfos, false);
+
+                if (!autoCommit)
+                    // Remove the incRef we did in startTransaction:
+                    deleter.DecRef(segmentInfos);
+
+                deleter.Refresh();
+                FinishMerges(false);
+                stopMerges = false;
+            }
 		}
 		
 		/*
@@ -2120,38 +2179,40 @@ namespace Lucene.Net.Index
 		*/
 		private void  CommitTransaction()
 		{
-			
-			if (infoStream != null)
-				Message("now commit transaction");
-			
-			// First restore autoCommit in case we hit an exception below:
-			autoCommit = localAutoCommit;
-			
-			bool success = false;
-			try
-			{
-				Checkpoint();
-				success = true;
-			}
-			finally
-			{
-				if (!success)
-				{
-					if (infoStream != null)
-						Message("hit exception committing transaction");
-					
-					RollbackTransaction();
-				}
-			}
-			
-			if (!autoCommit)
-			// Remove the incRef we did in startTransaction.
-				deleter.DecRef(localRollbackSegmentInfos);
-			
-			localRollbackSegmentInfos = null;
-			
-			// Give deleter a chance to remove files now:
-			deleter.Checkpoint(segmentInfos, autoCommit);
+            lock (this)
+            {
+                if (infoStream != null)
+                    Message("now commit transaction");
+
+                // First restore autoCommit in case we hit an exception below:
+                autoCommit = localAutoCommit;
+
+                bool success = false;
+                try
+                {
+                    Checkpoint();
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        if (infoStream != null)
+                            Message("hit exception committing transaction");
+
+                        RollbackTransaction();
+                    }
+                }
+
+                if (!autoCommit)
+                    // Remove the incRef we did in startTransaction.
+                    deleter.DecRef(localRollbackSegmentInfos);
+
+                localRollbackSegmentInfos = null;
+
+                // Give deleter a chance to remove files now:
+                deleter.Checkpoint(segmentInfos, autoCommit);
+            }
 		}
 		
 		/// <summary> Close the <code>IndexWriter</code> without committing
@@ -2331,7 +2392,11 @@ namespace Lucene.Net.Index
 		/// each input Directory, so it is up to the caller to
 		/// enforce this.
 		/// 
-		/// <p>After this completes, the index is optimized.
+        /// <p><b>NOTE:</b> while this is running, any attempts to
+        /// add or delete documents (with another thread) will be
+        /// paused until this method completes.
+        /// 
+        /// <p>After this completes, the index is optimized.
 		/// 
 		/// <p>This method is transactional in how Exceptions are
 		/// handled: it does not commit a new segments_N file until
@@ -2371,47 +2436,64 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  AddIndexes(Directory[] dirs)
 		{
-			lock (this)
-			{
-				
-				EnsureOpen();
-				if (infoStream != null)
-					Message("flush at addIndexes");
-				Flush();
-				
-				bool success = false;
-				
-				StartTransaction();
-				
-				try
-				{
-					for (int i = 0; i < dirs.Length; i++)
-					{
-						SegmentInfos sis = new SegmentInfos(); // read infos from dir
-						sis.Read(dirs[i]);
-						for (int j = 0; j < sis.Count; j++)
-						{
-							segmentInfos.Add(sis.Info(j)); // add each info
-						}
-					}
-					
-					Optimize();
-					
-					success = true;
-				}
-				finally
-				{
-					if (success)
-					{
-						CommitTransaction();
-					}
-					else
-					{
-						RollbackTransaction();
-					}
-				}
-			}
-		}
+
+            EnsureOpen();
+        
+            // Do not allow add docs or deletes while we are running:
+            docWriter.PauseAllThreads();
+
+            try
+            {
+                if (infoStream != null)
+                    Message("flush at addIndexes");
+                Flush();
+
+                bool success = false;
+
+                StartTransaction();
+
+                try
+                {
+                    lock (this)
+                    {
+                        for (int i = 0; i < dirs.Length; i++)
+                        {
+                            SegmentInfos sis = new SegmentInfos(); // read infos from dir
+                            sis.Read(dirs[i]);
+                            for (int j = 0; j < sis.Count; j++)
+                            {
+                                SegmentInfo info = sis.Info(j);
+                                segmentInfos.Add(sis.Info(j)); // add each info
+                            }
+                        }
+                    }
+
+                    Optimize();
+
+                    success = true;
+                }
+                finally
+                {
+                    if (success)
+                    {
+                        CommitTransaction();
+                    }
+                    else
+                    {
+                        RollbackTransaction();
+                    }
+                }
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
+            finally
+            {
+                docWriter.ResumeAllThreads();
+            }
+        }
 		
 		private void  ResetMergeExceptions()
 		{
@@ -2434,7 +2516,11 @@ namespace Lucene.Net.Index
 		/// each input Directory, so it is up to the caller to
 		/// enforce this.
 		/// 
-		/// <p>
+        /// <p><b>NOTE:</b> while this is running, any attempts to
+        /// add or delete documents (with another thread) will be
+        /// paused until this method completes.
+        /// 
+        /// <p>
 		/// This requires this index not be among those to be added, and the
 		/// upper bound* of those segment doc counts not exceed maxMergeDocs.
 		/// 
@@ -2447,102 +2533,155 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  AddIndexesNoOptimize(Directory[] dirs)
 		{
-			lock (this)
-			{
-				
-				EnsureOpen();
-				if (infoStream != null)
-					Message("flush at addIndexesNoOptimize");
-				Flush();
-				
-				bool success = false;
-				
-				StartTransaction();
-				
-				try
-				{
-					
-					for (int i = 0; i < dirs.Length; i++)
-					{
-						if (directory == dirs[i])
-						{
-							// cannot add this index: segments may be deleted in merge before added
-							throw new System.ArgumentException("Cannot add this index to itself");
-						}
-						
-						SegmentInfos sis = new SegmentInfos(); // read infos from dir
-						sis.Read(dirs[i]);
-						for (int j = 0; j < sis.Count; j++)
-						{
-							SegmentInfo info = sis.Info(j);
-							segmentInfos.Add(info); // add each info
-						}
-					}
-					
-					MaybeMerge();
-					
-					// If after merging there remain segments in the index
-					// that are in a different directory, just copy these
-					// over into our index.  This is necessary (before
-					// finishing the transaction) to avoid leaving the
-					// index in an unusable (inconsistent) state.
-					CopyExternalSegments();
-					
-					success = true;
-				}
-				finally
-				{
-					if (success)
-					{
-						CommitTransaction();
-					}
-					else
-					{
-						RollbackTransaction();
-					}
-				}
-			}
-		}
+
+            EnsureOpen();
+
+            // Do not allow add socs or deletes while we are running:
+            docWriter.PauseAllThreads();
+
+            try
+            {
+                if (infoStream != null)
+                    Message("flush at addIndexesNoOptimize");
+                Flush();
+
+                bool success = false;
+
+                StartTransaction();
+
+                try
+                {
+
+                    lock (this)
+                    {
+                        for (int i = 0; i < dirs.Length; i++)
+                        {
+                            if (directory == dirs[i])
+                            {
+                                // cannot add this index: segments may be deleted in merge before added
+                                throw new System.ArgumentException("Cannot add this index to itself");
+                            }
+
+                            SegmentInfos sis = new SegmentInfos(); // read infos from dir
+                            sis.Read(dirs[i]);
+                            for (int j = 0; j < sis.Count; j++)
+                            {
+                                SegmentInfo info = sis.Info(j);
+                                segmentInfos.Add(info); // add each info
+                            }
+                        }
+                    }
+
+                    MaybeMerge();
+
+                    // If after merging there remain segments in the index
+                    // that are in a different directory, just copy these
+                    // over into our index.  This is necessary (before
+                    // finishing the transaction) to avoid leaving the
+                    // index in an unusable (inconsistent) state.
+                    CopyExternalSegments();
+
+                    success = true;
+                }
+                finally
+                {
+                    if (success)
+                    {
+                        CommitTransaction();
+                    }
+                    else
+                    {
+                        RollbackTransaction();
+                    }
+                }
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
+            finally
+            {
+                docWriter.ResumeAllThreads();
+            }
+        }
 		
 		/* If any of our segments are using a directory != ours
 		* then copy them over.  Currently this is only used by
 		* addIndexesNoOptimize(). */
 		private void  CopyExternalSegments()
 		{
-			lock (this)
-			{
-				int numSegments = segmentInfos.Count;
-				for (int i = 0; i < numSegments; i++)
-				{
-					SegmentInfo info = segmentInfos.Info(i);
-					if (info.dir != directory)
-					{
-						MergePolicy.OneMerge merge = new MergePolicy.OneMerge(segmentInfos.Range(i, 1 + i), info.GetUseCompoundFile());
-						if (RegisterMerge(merge))
-						{
-							pendingMerges.Remove(merge);
-							runningMerges.Add(merge, merge);
-							Merge(merge);
-						}
-						// This means there is a bug in the
-						// MergeScheduler.  MergeSchedulers in general are
-						// not allowed to run a merge involving segments
-						// external to this IndexWriter's directory in the
-						// background because this would put the index
-						// into an inconsistent state (where segmentInfos
-						// has been written with such external segments
-						// that an IndexReader would fail to load).
-						else
-							throw new MergePolicy.MergeException("segment \"" + info.name + " exists in external directory yet the MergeScheduler executed the merge in a separate thread");
-					}
-				}
-			}
-		}
+            bool any = false;
+
+            while (true)
+            {
+                SegmentInfo info = null;
+                MergePolicy.OneMerge merge = null;
+
+                lock (this)
+                {
+                    int numSegments = segmentInfos.Count;
+                    for (int i = 0; i < numSegments; i++)
+                    {
+                        info = segmentInfos.Info(i);
+                        if (info.dir != directory)
+                        {
+                            merge = new MergePolicy.OneMerge(segmentInfos.Range(i, 1 + i), info.GetUseCompoundFile());
+                            break;
+                        }
+                    }
+                }
+                if (merge != null)
+                {
+                    if (RegisterMerge(merge))
+                    {
+                        pendingMerges.Remove(merge);
+                        runningMerges.Add(merge, merge);
+                        any = true;
+                        Merge(merge);
+                    }
+                    else
+                    {
+                        // This means there is a bug in the
+                        // MergeScheduler.  MergeSchedulers in general are
+                        // not allowed to run a merge involving segments
+                        // external to this IndexWriter's directory in the
+                        // background because this would put the index
+                        // into an inconsistent state (where segmentInfos
+                        // has been written with such external segments
+                        // that an IndexReader would fail to load).
+                        throw new MergePolicy.MergeException("segment \"" + info.name + " exists in external directory yet the MergeScheduler executed the merge in a separate thread");
+                    }
+                }
+                else
+                {
+                    // No more external segments
+                    break;
+                }
+            }
+
+            if (any)
+                // Sometimes, on copying an external segment over,
+                // more merges may become necessary:
+                mergeScheduler.Merge(this);
+        }
 		
 		/// <summary>Merges the provided indexes into this index.
 		/// <p>After this completes, the index is optimized. </p>
 		/// <p>The provided IndexReaders are not closed.</p>
-		/// <p>See {@link #AddIndexes(Directory[])} for
+        /// 
+        /// <p><b>NOTE:</b> the index in each Directory must not be
+        /// changed (opened by a writer) while this method is
+        /// running.  Thiw method does not acquire a write lock in
+        /// each input Directory, so it is up to the caller to
+        /// enforce this.
+        /// </p>
+        /// 
+        /// <p><b>NOTE:</b> while this is running, any attempts to
+        /// add or delete documents (with another thread) will be 
+        /// paused until this method completes.</p>
+        /// 
+        /// <p>See {@link #AddIndexes(Directory[])} for
 		/// details on transactional semantics, temporary free
 		/// space required in the Directory, and non-CFS segments
 		/// on an Exception.</p>
@@ -2551,108 +2690,130 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  AddIndexes(IndexReader[] readers)
 		{
-			lock (this)
-			{
-				
-				EnsureOpen();
-				Optimize(); // start with zero or 1 seg
-				
-				System.String mergedName = NewSegmentName();
-				SegmentMerger merger = new SegmentMerger(this, mergedName, null);
-				
-				SegmentInfo info;
-				
-				IndexReader sReader = null;
-				try
-				{
-					if (segmentInfos.Count == 1)
-					{
-						// add existing index, if any
-						sReader = SegmentReader.Get(segmentInfos.Info(0));
-						merger.Add(sReader);
-					}
-					
-					for (int i = 0; i < readers.Length; i++)
-					// add new indexes
-						merger.Add(readers[i]);
-					
-					bool success = false;
-					
-					StartTransaction();
-					
-					try
-					{
-						int docCount = merger.Merge(); // merge 'em
-						
-						if (sReader != null)
-						{
-							sReader.Close();
-							sReader = null;
-						}
-						
-						segmentInfos.RemoveRange(0, segmentInfos.Count); // pop old infos & add new
-						info = new SegmentInfo(mergedName, docCount, directory, false, true, - 1, null, false);
-						segmentInfos.Add(info);
-						
-						success = true;
-					}
-					finally
-					{
-						if (!success)
-						{
-							if (infoStream != null)
-								Message("hit exception in addIndexes during merge");
-							
-							RollbackTransaction();
-						}
-						else
-						{
-							CommitTransaction();
-						}
-					}
-				}
-				finally
-				{
-					if (sReader != null)
-					{
-						sReader.Close();
-					}
-				}
-				
-				if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
-				{
-					
-					bool success = false;
-					
-					StartTransaction();
-					
-					try
-					{
-						merger.CreateCompoundFile(mergedName + ".cfs");
-						info.SetUseCompoundFile(true);
-					}
-					finally
-					{
-						if (!success)
-						{
-							if (infoStream != null)
-								Message("hit exception building compound file in addIndexes during merge");
-							
-							RollbackTransaction();
-						}
-						else
-						{
-							CommitTransaction();
-						}
-					}
-				}
-			}
-		}
+		
+            EnsureOpen();
+
+            // Do not allow add docs or deletes while we are running:
+            docWriter.PauseAllThreads();
+
+            try
+            {
+                Optimize(); // start with zero or 1 seg
+
+                System.String mergedName = NewSegmentName();
+                SegmentMerger merger = new SegmentMerger(this, mergedName, null);
+
+                SegmentInfo info;
+
+                IndexReader sReader = null;
+                try
+                {
+                    lock (this)
+                    {
+                        if (segmentInfos.Count == 1)
+                        {
+                            // add existing index, if any
+                            sReader = SegmentReader.Get(segmentInfos.Info(0));
+                            merger.Add(sReader);
+                        }
+                    }
+
+
+                    for (int i = 0; i < readers.Length; i++)
+                        // add new indexes
+                        merger.Add(readers[i]);
+
+                    bool success = false;
+
+                    StartTransaction();
+
+                    try
+                    {
+                        int docCount = merger.Merge(); // merge 'em
+
+                        if (sReader != null)
+                        {
+                            sReader.Close();
+                            sReader = null;
+                        }
+
+                        lock (this)
+                        {
+                            segmentInfos.RemoveRange(0, segmentInfos.Count); // pop old infos & add new
+                            info = new SegmentInfo(mergedName, docCount, directory, false, true, -1, null, false);
+                            segmentInfos.Add(info);
+                        }
+                        success = true;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            if (infoStream != null)
+                                Message("hit exception in addIndexes during merge");
+
+                            RollbackTransaction();
+                        }
+                        else
+                        {
+                            CommitTransaction();
+                        }
+                    }
+                }
+                finally
+                {
+                    if (sReader != null)
+                    {
+                        sReader.Close();
+                    }
+                }
+
+                if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
+                {
+
+                    bool success = false;
+
+                    StartTransaction();
+
+                    try
+                    {
+                        merger.CreateCompoundFile(mergedName + ".cfs");
+                        lock (this)
+                        {
+                            info.SetUseCompoundFile(true);
+                        }
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            if (infoStream != null)
+                                Message("hit exception building compound file in addIndexes during merge");
+
+                            RollbackTransaction();
+                        }
+                        else
+                        {
+                            CommitTransaction();
+                        }
+                    }
+                }
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
+            finally
+            {
+                docWriter.ResumeAllThreads();
+            }
+        }
 		
 		// This is called after pending added and deleted
 		// documents have been flushed to the Directory but before
 		// the change is committed (new segments_N file written).
-		internal virtual void  DoAfterFlush()
+		protected virtual void  DoAfterFlush()
 		{
 		}
 		
@@ -2699,189 +2860,195 @@ namespace Lucene.Net.Index
 					docWriter.ResumeAllThreads();
 					return false;
 				}
-				
-				try
-				{
-					
-					SegmentInfo newSegment = null;
-					
-					int numDocs = docWriter.GetNumDocsInRAM();
-					
-					// Always flush docs if there are any
-					bool flushDocs = numDocs > 0;
-					
-					// With autoCommit=true we always must flush the doc
-					// stores when we flush
-					flushDocStores |= autoCommit;
-					System.String docStoreSegment = docWriter.GetDocStoreSegment();
-					if (docStoreSegment == null)
-						flushDocStores = false;
-					
-					// Always flush deletes if there are any delete terms.
-					// TODO: when autoCommit=false we don't have to flush
-					// deletes with every flushed segment; we can save
-					// CPU/IO by buffering longer & flushing deletes only
-					// when they are full or writer is being closed.  We
-					// have to fix the "applyDeletesSelectively" logic to
-					// apply to more than just the last flushed segment
-					bool flushDeletes = docWriter.HasDeletes();
-					
-					if (infoStream != null)
-					{
-						Message("  flush: segment=" + docWriter.GetSegment() + " docStoreSegment=" + docWriter.GetDocStoreSegment() + " docStoreOffset=" + docWriter.GetDocStoreOffset() + " flushDocs=" + flushDocs + " flushDeletes=" + flushDeletes + " flushDocStores=" + flushDocStores + " numDocs=" + numDocs + " numBufDelTerms=" + docWriter.GetNumBufferedDeleteTerms());
-						Message("  index before flush " + SegString());
-					}
-					
-					int docStoreOffset = docWriter.GetDocStoreOffset();
-					
-					// docStoreOffset should only be non-zero when
-					// autoCommit == false
-					System.Diagnostics.Debug.Assert(!autoCommit || 0 == docStoreOffset);
-					
-					bool docStoreIsCompoundFile = false;
-					
-					// Check if the doc stores must be separately flushed
-					// because other segments, besides the one we are about
-					// to flush, reference it
-					if (flushDocStores && (!flushDocs || !docWriter.GetSegment().Equals(docWriter.GetDocStoreSegment())))
-					{
-						// We must separately flush the doc store
-						if (infoStream != null)
-							Message("  flush shared docStore segment " + docStoreSegment);
-						
-						docStoreIsCompoundFile = FlushDocStores();
-						flushDocStores = false;
-					}
-					
-					System.String segment = docWriter.GetSegment();
-					
-					// If we are flushing docs, segment must not be null:
-					System.Diagnostics.Debug.Assert(segment != null || !flushDocs);
-					
-					if (flushDocs || flushDeletes)
-					{
-						
-						SegmentInfos rollback = null;
-						
-						if (flushDeletes)
-							rollback = (SegmentInfos) segmentInfos.Clone();
-						
-						bool success = false;
-						
-						try
-						{
-							if (flushDocs)
-							{
-								
-								if (0 == docStoreOffset && flushDocStores)
-								{
-									// This means we are flushing private doc stores
-									// with this segment, so it will not be shared
-									// with other segments
-									System.Diagnostics.Debug.Assert(docStoreSegment != null);
-									System.Diagnostics.Debug.Assert(docStoreSegment.Equals(segment));
-									docStoreOffset = - 1;
-									docStoreIsCompoundFile = false;
-									docStoreSegment = null;
-								}
-								
-								int flushedDocCount = docWriter.Flush(flushDocStores);
-								
-								newSegment = new SegmentInfo(segment, flushedDocCount, directory, false, true, docStoreOffset, docStoreSegment, docStoreIsCompoundFile);
-								segmentInfos.Add(newSegment);
-							}
-							
-							if (flushDeletes)
-							{
-								// we should be able to change this so we can
-								// buffer deletes longer and then flush them to
-								// multiple flushed segments, when
-								// autoCommit=false
-								ApplyDeletes(flushDocs);
-								DoAfterFlush();
-							}
-							
-							Checkpoint();
-							success = true;
-						}
-						finally
-						{
-							if (!success)
-							{
-								
-								if (infoStream != null)
-									Message("hit exception flushing segment " + segment);
-								
-								if (flushDeletes)
-								{
-									
-									// Carefully check if any partial .del files
-									// should be removed:
-									int size = rollback.Count;
-									for (int i = 0; i < size; i++)
-									{
-										System.String newDelFileName = segmentInfos.Info(i).GetDelFileName();
-										System.String delFileName = rollback.Info(i).GetDelFileName();
-										if (newDelFileName != null && !newDelFileName.Equals(delFileName))
-											deleter.DeleteFile(newDelFileName);
-									}
-									
-									// Fully replace the segmentInfos since flushed
-									// deletes could have changed any of the
-									// SegmentInfo instances:
-									segmentInfos.Clear();
-									segmentInfos.AddRange(rollback);
-								}
-								else
-								{
-									// Remove segment we added, if any:
-									if (newSegment != null && segmentInfos.Count > 0 && segmentInfos.Info(segmentInfos.Count - 1) == newSegment)
-										segmentInfos.RemoveAt(segmentInfos.Count - 1);
-								}
-								if (flushDocs)
-									docWriter.Abort(null);
-								DeletePartialSegmentsFile();
-								deleter.Checkpoint(segmentInfos, false);
-								
-								if (segment != null)
-									deleter.Refresh(segment);
-							}
-						}
-						
-						deleter.Checkpoint(segmentInfos, autoCommit);
-						
-						if (flushDocs && mergePolicy.UseCompoundFile(segmentInfos, newSegment))
-						{
-							success = false;
-							try
-							{
-								docWriter.CreateCompoundFile(segment);
-								newSegment.SetUseCompoundFile(true);
-								Checkpoint();
-								success = true;
-							}
-							finally
-							{
-								if (!success)
-								{
-									if (infoStream != null)
-										Message("hit exception creating compound file for newly flushed segment " + segment);
-									newSegment.SetUseCompoundFile(false);
-									deleter.DeleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
-									DeletePartialSegmentsFile();
-								}
-							}
-							
-							deleter.Checkpoint(segmentInfos, autoCommit);
-						}
-						
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				}
+
+                try
+                {
+
+                    SegmentInfo newSegment = null;
+
+                    int numDocs = docWriter.GetNumDocsInRAM();
+
+                    // Always flush docs if there are any
+                    bool flushDocs = numDocs > 0;
+
+                    // With autoCommit=true we always must flush the doc
+                    // stores when we flush
+                    flushDocStores |= autoCommit;
+                    System.String docStoreSegment = docWriter.GetDocStoreSegment();
+                    if (docStoreSegment == null)
+                        flushDocStores = false;
+
+                    // Always flush deletes if there are any delete terms.
+                    // TODO: when autoCommit=false we don't have to flush
+                    // deletes with every flushed segment; we can save
+                    // CPU/IO by buffering longer & flushing deletes only
+                    // when they are full or writer is being closed.  We
+                    // have to fix the "applyDeletesSelectively" logic to
+                    // apply to more than just the last flushed segment
+                    bool flushDeletes = docWriter.HasDeletes();
+
+                    if (infoStream != null)
+                    {
+                        Message("  flush: segment=" + docWriter.GetSegment() + " docStoreSegment=" + docWriter.GetDocStoreSegment() + " docStoreOffset=" + docWriter.GetDocStoreOffset() + " flushDocs=" + flushDocs + " flushDeletes=" + flushDeletes + " flushDocStores=" + flushDocStores + " numDocs=" + numDocs + " numBufDelTerms=" + docWriter.GetNumBufferedDeleteTerms());
+                        Message("  index before flush " + SegString());
+                    }
+
+                    int docStoreOffset = docWriter.GetDocStoreOffset();
+
+                    // docStoreOffset should only be non-zero when
+                    // autoCommit == false
+                    System.Diagnostics.Debug.Assert(!autoCommit || 0 == docStoreOffset);
+
+                    bool docStoreIsCompoundFile = false;
+
+                    // Check if the doc stores must be separately flushed
+                    // because other segments, besides the one we are about
+                    // to flush, reference it
+                    if (flushDocStores && (!flushDocs || !docWriter.GetSegment().Equals(docWriter.GetDocStoreSegment())))
+                    {
+                        // We must separately flush the doc store
+                        if (infoStream != null)
+                            Message("  flush shared docStore segment " + docStoreSegment);
+
+                        docStoreIsCompoundFile = FlushDocStores();
+                        flushDocStores = false;
+                    }
+
+                    System.String segment = docWriter.GetSegment();
+
+                    // If we are flushing docs, segment must not be null:
+                    System.Diagnostics.Debug.Assert(segment != null || !flushDocs);
+
+                    if (flushDocs || flushDeletes)
+                    {
+
+                        SegmentInfos rollback = null;
+
+                        if (flushDeletes)
+                            rollback = (SegmentInfos)segmentInfos.Clone();
+
+                        bool success = false;
+
+                        try
+                        {
+                            if (flushDocs)
+                            {
+
+                                if (0 == docStoreOffset && flushDocStores)
+                                {
+                                    // This means we are flushing private doc stores
+                                    // with this segment, so it will not be shared
+                                    // with other segments
+                                    System.Diagnostics.Debug.Assert(docStoreSegment != null);
+                                    System.Diagnostics.Debug.Assert(docStoreSegment.Equals(segment));
+                                    docStoreOffset = -1;
+                                    docStoreIsCompoundFile = false;
+                                    docStoreSegment = null;
+                                }
+
+                                int flushedDocCount = docWriter.Flush(flushDocStores);
+
+                                newSegment = new SegmentInfo(segment, flushedDocCount, directory, false, true, docStoreOffset, docStoreSegment, docStoreIsCompoundFile);
+                                segmentInfos.Add(newSegment);
+                            }
+
+                            if (flushDeletes)
+                            {
+                                // we should be able to change this so we can
+                                // buffer deletes longer and then flush them to
+                                // multiple flushed segments, when
+                                // autoCommit=false
+                                ApplyDeletes(flushDocs);
+                            }
+
+                            DoAfterFlush();
+
+                            Checkpoint();
+                            success = true;
+                        }
+                        finally
+                        {
+                            if (!success)
+                            {
+
+                                if (infoStream != null)
+                                    Message("hit exception flushing segment " + segment);
+
+                                if (flushDeletes)
+                                {
+
+                                    // Carefully check if any partial .del files
+                                    // should be removed:
+                                    int size = rollback.Count;
+                                    for (int i = 0; i < size; i++)
+                                    {
+                                        System.String newDelFileName = segmentInfos.Info(i).GetDelFileName();
+                                        System.String delFileName = rollback.Info(i).GetDelFileName();
+                                        if (newDelFileName != null && !newDelFileName.Equals(delFileName))
+                                            deleter.DeleteFile(newDelFileName);
+                                    }
+
+                                    // Fully replace the segmentInfos since flushed
+                                    // deletes could have changed any of the
+                                    // SegmentInfo instances:
+                                    segmentInfos.Clear();
+                                    segmentInfos.AddRange(rollback);
+                                }
+                                else
+                                {
+                                    // Remove segment we added, if any:
+                                    if (newSegment != null && segmentInfos.Count > 0 && segmentInfos.Info(segmentInfos.Count - 1) == newSegment)
+                                        segmentInfos.RemoveAt(segmentInfos.Count - 1);
+                                }
+                                if (flushDocs)
+                                    docWriter.Abort(null);
+                                DeletePartialSegmentsFile();
+                                deleter.Checkpoint(segmentInfos, false);
+
+                                if (segment != null)
+                                    deleter.Refresh(segment);
+                            }
+                        }
+
+                        deleter.Checkpoint(segmentInfos, autoCommit);
+
+                        if (flushDocs && mergePolicy.UseCompoundFile(segmentInfos, newSegment))
+                        {
+                            success = false;
+                            try
+                            {
+                                docWriter.CreateCompoundFile(segment);
+                                newSegment.SetUseCompoundFile(true);
+                                Checkpoint();
+                                success = true;
+                            }
+                            finally
+                            {
+                                if (!success)
+                                {
+                                    if (infoStream != null)
+                                        Message("hit exception creating compound file for newly flushed segment " + segment);
+                                    newSegment.SetUseCompoundFile(false);
+                                    deleter.DeleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+                                    DeletePartialSegmentsFile();
+                                }
+                            }
+
+                            deleter.Checkpoint(segmentInfos, autoCommit);
+                        }
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (OutOfMemoryException oom)
+                {
+                    hitOOM = true;
+                    throw oom;
+                }
 				finally
 				{
 					docWriter.ClearFlushPending();
@@ -2946,6 +3113,12 @@ namespace Lucene.Net.Index
 			{
 				
 				System.Diagnostics.Debug.Assert(merge.registerDone);
+
+                if (hitOOM)
+                    return false;
+
+                if (infoStream != null)
+                    Message("CommitMerge: " + merge.SegString(directory));
 				
 				// If merge was explicitly aborted, or, if abort() or
 				// rollbackTransaction() had been called since our merge
@@ -3155,61 +3328,74 @@ namespace Lucene.Net.Index
 			System.Diagnostics.Debug.Assert(!merge.optimize || merge.maxNumSegmentsOptimize > 0);
 			
 			bool success = false;
-			
-			try
-			{
-				
-				try
-				{
-					if (merge.info == null)
-						MergeInit(merge);
-					
-					if (infoStream != null)
-						Message("now merge\n  merge=" + merge.SegString(directory) + "\n  index=" + SegString());
-					
-					MergeMiddle(merge);
-					success = true;
-				}
-				catch (MergePolicy.MergeAbortedException e)
-				{
-					merge.SetException(e);
-					AddMergeException(merge);
-					// We can ignore this exception, unless the merge
-					// involves segments from external directories, in
-					// which case we must throw it so, for example, the
-					// rollbackTransaction code in addIndexes* is
-					// executed.
-					if (merge.isExternal)
-						throw e;
-				}
-			}
-			finally
-			{
-				lock (this)
-				{
-					try
-					{
-						if (!success && infoStream != null)
-							Message("hit exception during merge");
-						
-						MergeFinish(merge);
-						
-						// This merge (and, generally, any change to the
-						// segments) may now enable new merges, so we call
-						// merge policy & update pending merges.
-						if (success && !merge.IsAborted() && !closed && !closing)
-							UpdatePendingMerges(merge.maxNumSegmentsOptimize, merge.optimize);
-					}
-					finally
-					{
-						runningMerges.Remove(merge);
-						// Optimize may be waiting on the final optimize
-						// merge to finish; and finishMerges() may be
-						// waiting for all merges to finish:
-						System.Threading.Monitor.PulseAll(this);
-					}
-				}
-			}
+
+            try
+            {
+                try
+                {
+                    try
+                    {
+                        if (merge.info == null)
+                            MergeInit(merge);
+
+                        if (infoStream != null)
+                            Message("now merge\n  merge=" + merge.SegString(directory) + "\n  index=" + SegString());
+
+                        MergeMiddle(merge);
+                        success = true;
+                    }
+                    catch (MergePolicy.MergeAbortedException e)
+                    {
+                        merge.SetException(e);
+                        AddMergeException(merge);
+                        // We can ignore this exception, unless the merge
+                        // involves segments from external directories, in
+                        // which case we must throw it so, for example, the
+                        // rollbackTransaction code in addIndexes* is
+                        // executed.
+                        if (merge.isExternal)
+                            throw e;
+                    }
+                }
+                finally
+                {
+                    lock (this)
+                    {
+                        try
+                        {
+                            MergeFinish(merge);
+
+                            if (!success)
+                            {
+                                if (infoStream != null)
+                                    Message("hit exception during merge");
+                                AddMergeException(merge);
+                                if (merge.info != null && !segmentInfos.Contains(merge.info))
+                                    deleter.Refresh(merge.info.name);
+                            }
+
+                            // This merge (and, generally, any change to the
+                            // segments) may now enable new merges, so we call
+                            // merge policy & update pending merges.
+                            if (success && !merge.IsAborted() && !closed && !closing)
+                                UpdatePendingMerges(merge.maxNumSegmentsOptimize, merge.optimize);
+                        }
+                        finally
+                        {
+                            runningMerges.Remove(merge);
+                            // Optimize may be waiting on the final optimize
+                            // merge to finish; and finishMerges() may be
+                            // waiting for all merges to finish:
+                            System.Threading.Monitor.PulseAll(this);
+                        }
+                    }
+                }
+            }
+            catch (OutOfMemoryException oom)
+            {
+                hitOOM = true;
+                throw oom;
+            }
 		}
 		
 		/// <summary>Checks whether this merge involves any segments
@@ -3265,13 +3451,39 @@ namespace Lucene.Net.Index
 		/// <summary>Does initial setup for a merge, which is fast but holds
 		/// the synchronized lock on IndexWriter instance. 
 		/// </summary>
-		internal void  MergeInit(MergePolicy.OneMerge merge)
+        internal void MergeInit(MergePolicy.OneMerge merge)
+        {
+            lock (this)
+            {
+                bool success = false;
+                try
+                {
+                    _MergeInit(merge);
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        MergeFinish(merge);
+                        runningMerges.Remove(merge);
+                    }
+                }
+            }
+        }
+				
+		internal void  _MergeInit(MergePolicy.OneMerge merge)
 		{
 			lock (this)
 			{
-				
+                System.Diagnostics.Debug.Assert(TestPoint("startMergeInit"));
+
 				System.Diagnostics.Debug.Assert(merge.registerDone);
-				
+
+                if (merge.info != null)
+                    // mergeInit already done
+                    return;
+
 				if (merge.IsAborted())
 					return ;
 				
@@ -3809,5 +4021,11 @@ namespace Lucene.Net.Index
 			DEFAULT_MAX_MERGE_DOCS = LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 			MAX_TERM_LENGTH = DocumentsWriter.MAX_TERM_LENGTH;
 		}
-	}
+
+        // Used only by assert for testing.
+        virtual protected internal bool TestPoint(string name)
+        {
+            return true;
+        }
+    }
 }

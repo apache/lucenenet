@@ -308,13 +308,6 @@ namespace Lucene.Net.Index
 				SegmentInfo info = infos.Info(i);
 				long size = Size(info);
 				
-				// Refuse to import a segment that's too large
-				if (info.docCount > maxMergeDocs && info.dir != directory)
-					throw new System.ArgumentException("Segment is too large (" + info.docCount + " docs vs max docs " + maxMergeDocs + ")");
-				
-				if (size >= maxMergeSize && info.dir != directory)
-					throw new System.ArgumentException("Segment is too large (" + size + " vs max size " + maxMergeSize + ")");
-				
 				// Floor tiny segments
 				if (size < 1)
 					size = 1;

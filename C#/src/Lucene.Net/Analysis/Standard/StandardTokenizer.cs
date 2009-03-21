@@ -42,13 +42,34 @@ namespace Lucene.Net.Analysis.Standard
 	
 	public class StandardTokenizer : Tokenizer
 	{
-		private void  InitBlock()
-		{
-			maxTokenLength = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
-		}
-		/// <summary>A private instance of the JFlex-constructed scanner </summary>
-		private StandardTokenizerImpl scanner;
-		
+        private void InitBlock()
+        {
+            maxTokenLength = StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH;
+        }
+
+        /// <summary>A private instance of the JFlex-constructed scanner </summary>
+        private StandardTokenizerImpl scanner;
+
+        public const int ALPHANUM = 0;
+        public const int APOSTROPHE = 1;
+        public const int ACRONYM = 2;
+        public const int COMPANY = 3;
+        public const int EMAIL = 4;
+        public const int HOST = 5;
+        public const int NUM = 6;
+        public const int CJ = 7;
+
+        /// <deprecated> this solves a bug where HOSTs that end with '.' are identified
+        /// as ACRONYMs. It is deprecated and will be removed in the next
+        /// release.
+        /// </deprecated>
+        public const int ACRONYM_DEP = 8;
+
+        public static readonly System.String[] TOKEN_TYPES = new System.String[] { "<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>" };
+
+        /** @deprecated Please use {@link #TOKEN_TYPES} instead */
+        public static readonly String[] tokenImage = TOKEN_TYPES;
+
 		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
 		/// This is false by default to support backward compatibility.
 		/// <p/>

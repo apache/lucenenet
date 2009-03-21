@@ -165,11 +165,10 @@ namespace Lucene.Net.Store
 		{
 			long start = bufferStart + bufferPosition;
 			long end = start + bufferSize;
-			if (end > Length())
-			// don't read past EOF
+			if (end > Length()) // don't read past EOF
 				end = Length();
-			bufferLength = (int) (end - start);
-			if (bufferLength <= 0)
+            int newLength = (int)(end - start);
+			if (newLength <= 0)
 				throw new System.IO.IOException("read past EOF");
 			
 			if (buffer == null)
@@ -177,8 +176,9 @@ namespace Lucene.Net.Store
 				buffer = new byte[bufferSize]; // allocate buffer lazily
 				SeekInternal(bufferStart);
 			}
-			ReadInternal(buffer, 0, bufferLength);
-			
+
+			ReadInternal(buffer, 0, newLength);
+            bufferLength = newLength;			
 			bufferStart = start;
 			bufferPosition = 0;
 		}
