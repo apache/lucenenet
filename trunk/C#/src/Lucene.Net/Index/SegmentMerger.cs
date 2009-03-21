@@ -395,6 +395,11 @@ namespace Lucene.Net.Index
 				{
 					fieldsWriter.Close();
 				}
+
+                System.Diagnostics.Debug.Assert(docCount*8 == directory.FileLength(segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION),
+                    "after MergeFields: fdx size mismatch: " + docCount + " docs vs " + 
+                    directory.FileLength(segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION) +
+                    " length in bytes of " + segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION); 
 			}
 			// If we are skipping the doc stores, that means there
 			// are no deletions in any of these segments, so we
@@ -433,6 +438,11 @@ namespace Lucene.Net.Index
 			{
 				termVectorsWriter.Close();
 			}
+
+            System.Diagnostics.Debug.Assert(4 + mergedDocs * 8 == directory.FileLength(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION),
+                "after MergeVectors: tvx size mismatch: " + mergedDocs + " docs vs " +
+                directory.FileLength(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION) +
+                " length in bytes of " + segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
 		}
 		
 		private IndexOutput freqOutput = null;

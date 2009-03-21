@@ -297,6 +297,9 @@ namespace Lucene.Net.Index
 					tvf.Close();
 					tvd.Close();
 					tvx = null;
+                    System.Diagnostics.Debug.Assert(4 + numDocsInStore * 8 == directory.FileLength(docStoreSegment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION),
+                        "after flush: tvx size mismatch: " + numDocsInStore + " docs vs " + directory.FileLength(docStoreSegment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION) +
+                        " length in bytes of " + docStoreSegment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
 				}
 				
 				if (fieldsWriter != null)
@@ -304,7 +307,10 @@ namespace Lucene.Net.Index
 					System.Diagnostics.Debug.Assert(docStoreSegment != null);
 					fieldsWriter.Close();
 					fieldsWriter = null;
-				}
+                    System.Diagnostics.Debug.Assert(numDocsInStore * 8 == directory.FileLength(docStoreSegment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION),
+                        "after flush: fdx size mismatch: " + numDocsInStore + " docs vs " + directory.FileLength(docStoreSegment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION) +
+                        " length in bytes of " + docStoreSegment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
+                }
 				
 				System.String s = docStoreSegment;
 				docStoreSegment = null;
@@ -717,8 +723,8 @@ namespace Lucene.Net.Index
 			{
 				this.enclosingInstance = enclosingInstance;
 				allFieldDataArray = new FieldData[10];
-				postingsPool = new ByteBlockPool(enclosingInstance);
-				vectorsPool = new ByteBlockPool(enclosingInstance);
+				postingsPool = new ByteBlockPool(true, enclosingInstance);
+				vectorsPool = new ByteBlockPool(false, enclosingInstance);
 				charPool = new CharBlockPool(enclosingInstance);
 			}
 			private DocumentsWriter enclosingInstance;
@@ -878,8 +884,9 @@ namespace Lucene.Net.Index
 			/// <summary>Initializes shared state for this new document </summary>
 			internal void  Init(Document doc, int docID)
 			{
-				
-				System.Diagnostics.Debug.Assert(!isIdle);
+
+                System.Diagnostics.Debug.Assert(!isIdle);
+                System.Diagnostics.Debug.Assert(Enclosing_Instance.writer.TestPoint("DocumentsWriter.ThreadState.init start"));
 				
 				this.docID = docID;
 				docBoost = doc.GetBoost();
@@ -1799,10 +1806,9 @@ namespace Lucene.Net.Index
 						try
 						{
 							offsetEnd = offset - 1;
-							Token token;
 							for (; ; )
 							{
-								token = stream.Next(localToken);
+								Token token = stream.Next(localToken);
 								if (token == null)
 									break;
 								position += (token.GetPositionIncrement() - 1);
@@ -2774,19 +2780,6 @@ namespace Lucene.Net.Index
 				if (segment == null)
 					segment = writer.NewSegmentName();
 				
-				numDocsInRAM++;
-				
-				// We must at this point commit to flushing to ensure we
-				// always get N docs when we flush by doc count, even if
-				// > 1 thread is adding documents:
-				if (!flushPending && maxBufferedDocs != IndexWriter.DISABLE_AUTO_FLUSH && numDocsInRAM >= maxBufferedDocs)
-				{
-					flushPending = true;
-					state.doFlushAfter = true;
-				}
-				else
-					state.doFlushAfter = false;
-				
 				state.isIdle = false;
 				
 				try
@@ -2798,12 +2791,22 @@ namespace Lucene.Net.Index
 						if (delTerm != null)
 						{
 							AddDeleteTerm(delTerm, state.docID);
-							if (!state.doFlushAfter)
-								state.doFlushAfter = TimeToFlushDeletes();
+							state.doFlushAfter = TimeToFlushDeletes();
 						}
-						// Only increment nextDocID on successful init
+						// Only increment nextDocID and numDocsInRAM on successful init
 						nextDocID++;
-						success = true;
+                        numDocsInRAM++;
+
+                        // We must at this point commit to flushing to ensure we
+                        // always get N docs when we flush by doc count, even if
+                        // > 1 thread is adding documents:
+                        if (!flushPending && maxBufferedDocs != IndexWriter.DISABLE_AUTO_FLUSH && numDocsInRAM >= maxBufferedDocs)
+                        {
+                            flushPending = true;
+                            state.doFlushAfter = true;
+                        }
+
+                        success = true;
 					}
 					finally
 					{
@@ -2870,6 +2873,15 @@ namespace Lucene.Net.Index
 					{
 						lock (this)
 						{
+                            // If this thread state had decided to flush, we
+                            // must clear is so another thread can flush
+                            if (state.doFlushAfter)
+                            {
+                                state.doFlushAfter = false;
+                                flushPending = false;
+                                System.Threading.Monitor.PulseAll(this);
+                            }
+
 							// Immediately mark this document as deleted
 							// since likely it was partially added.  This
 							// keeps indexing as "all or none" (atomic) when
@@ -3434,10 +3446,14 @@ namespace Lucene.Net.Index
 		* hit a non-zero byte. */
 		sealed internal class ByteBlockPool
 		{
-			public ByteBlockPool(DocumentsWriter enclosingInstance)
+            private bool trackAllocations;
+
+			public ByteBlockPool(bool trackAllocations, DocumentsWriter enclosingInstance)
 			{
+                trackAllocations = trackAllocations;
 				InitBlock(enclosingInstance);
 			}
+
 			private void  InitBlock(DocumentsWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
@@ -3494,7 +3510,7 @@ namespace Lucene.Net.Index
 					Array.Copy(buffers, 0, newBuffers, 0, buffers.GetLength(0));
 					buffers = newBuffers;
 				}
-				buffer = buffers[1 + bufferUpto] = Enclosing_Instance.GetByteBlock();
+				buffer = buffers[1 + bufferUpto] = Enclosing_Instance.GetByteBlock(trackAllocations);
 				bufferUpto++;
 				
 				byteUpto = 0;
@@ -3688,7 +3704,7 @@ namespace Lucene.Net.Index
 		private System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
 		
 		/* Allocate another byte[] from the shared pool */
-		internal byte[] GetByteBlock()
+		internal byte[] GetByteBlock(bool trackAllocations)
 		{
 			lock (this)
 			{
@@ -3707,7 +3723,8 @@ namespace Lucene.Net.Index
 					freeByteBlocks.RemoveAt(size - 1);
 					b = (byte[]) tempObject;
 				}
-				numBytesUsed += BYTE_BLOCK_SIZE;
+                if (trackAllocations)
+				    numBytesUsed += BYTE_BLOCK_SIZE;
 				return b;
 			}
 		}

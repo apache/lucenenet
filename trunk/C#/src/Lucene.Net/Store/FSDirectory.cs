@@ -604,19 +604,19 @@ namespace Lucene.Net.Store
 			
 			return new FSIndexOutput(file);
 		}
-		
-		// Inherit javadoc
-		public override IndexInput OpenInput(System.String name)
-		{
-			return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
-		}
-		
-		// Inherit javadoc
-		public override IndexInput OpenInput(System.String name, int bufferSize)
-		{
-            return new FSIndexInput(new System.IO.FileInfo(directory.FullName + System.IO.Path.DirectorySeparatorChar + name), bufferSize);
-		}
-		
+
+        // Inherit javadoc
+        public override IndexInput OpenInput(System.String name)
+        {
+            return OpenInput(name, BufferedIndexInput.BUFFER_SIZE);
+        }
+
+        // Inherit javadoc
+        public override IndexInput OpenInput(System.String name, int bufferSize)
+        {
+            return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize);
+        }
+
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 		

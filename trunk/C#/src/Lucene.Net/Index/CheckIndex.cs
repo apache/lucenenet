@@ -230,11 +230,11 @@ namespace Lucene.Net.Index
 							for (int j = 0; j < freq; j++)
 							{
 								int pos = termPositions.NextPosition();
-								if (pos < 0)
+								if (pos < -1)
 								{
 									throw new System.SystemException("term " + term + ": doc " + doc + ": pos " + pos + " is out of bounds");
 								}
-								if (pos <= lastPos)
+								if (pos < lastPos)
 								{
 									throw new System.SystemException("term " + term + ": doc " + doc + ": pos " + pos + " < lastPos " + lastPos);
 								}
@@ -375,7 +375,15 @@ namespace Lucene.Net.Index
 			
 			return false;
 		}
-		
+
+        static bool assertsOn;
+
+        private static bool TestAsserts()
+        {
+            assertsOn = true;
+            return true;
+        }
+
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
@@ -393,7 +401,11 @@ namespace Lucene.Net.Index
 				out_Renamed.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  This means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "This tool exits with exit code 1 if the index cannot be opened or has has any\n" + "corruption, else 0.\n");
 				System.Environment.Exit(1);
 			}
-			
+
+            System.Diagnostics.Debug.Assert(TestAsserts());
+            if (!assertsOn)
+                System.Console.WriteLine("\nNote: testing will be more thorough if you run with System.Diagnostic.Debug.Assert() enabled.");
+
 			System.String dirName = args[0];
 			out_Renamed.WriteLine("\nOpening index @ " + dirName + "\n");
 			Directory dir = null;
