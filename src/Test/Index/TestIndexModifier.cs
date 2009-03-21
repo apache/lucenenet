@@ -304,8 +304,11 @@ namespace Lucene.Net.Index
 					{
 						Lucene.Net.Documents.Document doc = GetDocument();
 						index.AddDocument(doc);
-						idStack.Add(doc.Get("id"));
-						added++;
+                        lock (idStack)
+                        {
+                            idStack.Add(doc.Get("id"));
+                            added++;
+                        }
 					}
 					else
 					{
@@ -314,8 +317,11 @@ namespace Lucene.Net.Index
 						System.String delId = null;
 						try
 						{
-							delId = idStack[idStack.Count - 1] as System.String;
-							idStack.RemoveAt(idStack.Count - 1);
+                            lock (idStack)
+                            {
+                                delId = idStack[idStack.Count - 1] as System.String;
+                                idStack.RemoveAt(idStack.Count - 1);
+                            }
 						}
 						catch (System.ArgumentOutOfRangeException)
 						{

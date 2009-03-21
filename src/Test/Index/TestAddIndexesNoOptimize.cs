@@ -25,6 +25,7 @@ using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 
 namespace Lucene.Net.Index
 {
@@ -156,22 +157,6 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			writer = NewWriter(dir, false);
-			int maxMergeDocs = writer.GetMaxMergeDocs();
-			writer.SetMaxMergeDocs(99);
-			
-			try
-			{
-				// upper bound cannot exceed maxMergeDocs
-				writer.AddIndexesNoOptimize(new Directory[]{aux});
-				Assert.IsTrue(false);
-			}
-			catch (System.ArgumentException)
-			{
-				Assert.AreEqual(100, writer.DocCount());
-				Assert.AreEqual(1, writer.GetSegmentCount());
-			}
-			
-			writer.SetMaxMergeDocs(maxMergeDocs);
 			try
 			{
 				// cannot add self
@@ -422,5 +407,45 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(3, writer.GetSegmentCount());
 			writer.Close();
 		}
-	}
+
+        // LUCENE-1270
+        [Test]
+        public void TestHangOnClose()
+        {
+            Directory dir = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, false, new WhitespaceAnalyzer(), true);
+            writer.SetMergePolicy(new LogByteSizeMergePolicy());
+            writer.SetMaxBufferedDocs(5);
+            writer.SetUseCompoundFile(false);
+            writer.SetMergeFactor(100);
+
+            Document doc = new Document();
+            doc.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+            for (int i = 0; i < 60; i++)
+                writer.AddDocument(doc);
+            writer.SetMaxBufferedDocs(200);
+            Document doc2 = new Document();
+            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+            for (int i = 0; i < 10; i++)
+                writer.AddDocument(doc2);
+            writer.Close();
+
+            Directory dir2 = new MockRAMDirectory();
+            writer = new IndexWriter(dir2, false, new WhitespaceAnalyzer(), true);
+            LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
+            lmp.SetMinMergeMB(0.0001);
+            writer.SetMergePolicy(lmp);
+            writer.SetMergeFactor(4);
+            writer.SetUseCompoundFile(false);
+            writer.SetMergeScheduler(new SerialMergeScheduler());
+            writer.AddIndexesNoOptimize(new Directory[] { dir });
+            writer.Close();
+
+            dir.Close();
+            dir2.Close();
+        }
+    }
 }

@@ -32,6 +32,7 @@ using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SinkTokenizer = Lucene.Net.Analysis.SinkTokenizer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -42,6 +43,9 @@ using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
 using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
+using Query = Lucene.Net.Search.Query;
+using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
 
@@ -3525,5 +3529,225 @@ namespace Lucene.Net.Index
 			writer.AddDocument(doc);
 			writer.Close();
 		}
-	}
+
+        // LUCENE-1198
+        public class MockIndexWriter : IndexWriter
+        {
+            public MockIndexWriter(Directory dir, bool autoCommit, Analyzer a, bool create)
+                : base(dir, autoCommit, a, create)
+            {
+            }
+            internal bool doFail;
+            bool TestPoint(String name)
+            {
+                if (doFail && name.Equals("DocumentsWriter.ThreadState.init start"))
+                    throw new SystemException("intentionally failing");
+                return true;
+            }
+        }
+
+        [Test]
+        public void TestExceptionDocumentsWriterInit()
+        {
+            MockRAMDirectory dir = new MockRAMDirectory();
+            MockIndexWriter w = new MockIndexWriter(dir, false, new WhitespaceAnalyzer(), true);
+            Document doc = new Document();
+            doc.Add(new Field("field", "a field", Field.Store.YES,
+                              Field.Index.TOKENIZED));
+            w.AddDocument(doc);
+            w.doFail = true;
+            try
+            {
+                w.AddDocument(doc);
+                Assert.Fail("did not hit exception");
+            }
+            catch (System.Exception)
+            {
+                // expected
+            }
+            w.Close();
+            _TestUtil.CheckIndex(dir);
+            dir.Close();
+        }
+
+
+        // LUCENE-1208
+        private class AnonymousClassAnalyzer3 : Analyzer
+        {
+            public AnonymousClassAnalyzer3(TestIndexWriter enclosingInstance)
+            {
+                InitBlock(enclosingInstance);
+            }
+            private void InitBlock(TestIndexWriter enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private TestIndexWriter enclosingInstance;
+            public TestIndexWriter Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+            {
+                return new CrashingFilter(Enclosing_Instance, fieldName, new WhitespaceTokenizer(reader));
+            }
+        }
+
+        [Test]
+        public void TestExceptionJustBeforeFlush()
+        {
+            MockRAMDirectory dir = new MockRAMDirectory();
+            MockIndexWriter w = new MockIndexWriter(dir, false, new WhitespaceAnalyzer(), true);
+            w.SetMaxBufferedDocs(2);
+            Document doc = new Document();
+            doc.Add(new Field("field", "a field", Field.Store.YES,
+                              Field.Index.TOKENIZED));
+            w.AddDocument(doc);
+            Analyzer analyzer = new AnonymousClassAnalyzer3(this);
+            Document crashDoc = new Document();
+            crashDoc.Add(new Field("crash", "do it on token 4", Field.Store.YES,
+                                   Field.Index.TOKENIZED));
+            try
+            {
+                w.AddDocument(crashDoc, analyzer);
+                Assert.Fail("did not hit expected exception");
+            }
+            catch (System.IO.IOException)
+            {
+                // expected
+            }
+            w.AddDocument(doc);
+            w.Close();
+            dir.Close();
+        }
+
+        // LUCENE-1210
+        public class MockIndexWriter2 : IndexWriter
+        {
+            public MockIndexWriter2(Directory dir, bool autoCommit, Analyzer a, bool create)
+                :
+              base(dir, autoCommit, a, create)
+            {
+            }
+            internal bool doFail;
+            internal bool failed;
+            protected override bool TestPoint(String name)
+            {
+                if (doFail && name.Equals("startMergeInit"))
+                {
+                    failed = true;
+                    throw new SystemException("intentionally failing");
+                }
+                return true;
+            }
+        }
+
+        [Test]
+        public void TestExceptionOnMergeInit()
+        {
+            MockRAMDirectory dir = new MockRAMDirectory();
+            MockIndexWriter2 w = new MockIndexWriter2(dir, false, new WhitespaceAnalyzer(), true);
+            w.SetMaxBufferedDocs(2);
+            w.SetMergeFactor(2);
+            w.doFail = true;
+            w.SetMergeScheduler(new ConcurrentMergeScheduler());
+            Document doc = new Document();
+            doc.Add(new Field("field", "a field", Field.Store.YES,
+                              Field.Index.TOKENIZED));
+            for (int i = 0; i < 10; i++)
+                try
+                {
+                    w.AddDocument(doc);
+                }
+                catch (System.Exception)
+                {
+                    break;
+                }
+            ((ConcurrentMergeScheduler)w.GetMergeScheduler()).Sync();
+            Assert.IsTrue(w.failed);
+            w.Close();
+            dir.Close();
+        }
+
+        // LUCENE-1222
+        public class MockIndexWriter3 : IndexWriter
+        {
+            public MockIndexWriter3(Directory dir, bool autoCommit, Analyzer a, bool create)
+                :
+              base(dir, autoCommit, a, create)
+            {
+            }
+            internal bool wasCalled;
+            protected override void DoAfterFlush()
+            {
+                wasCalled = true;
+            }
+        }
+
+        [Test]
+        public void TestDoAfterFlush()
+        {
+            MockRAMDirectory dir = new MockRAMDirectory();
+            MockIndexWriter3 w = new MockIndexWriter3(dir, false, new WhitespaceAnalyzer(), true);
+            Document doc = new Document();
+            doc.Add(new Field("field", "a field", Field.Store.YES,
+                              Field.Index.TOKENIZED));
+            w.AddDocument(doc);
+            w.Flush();
+            Assert.IsTrue(w.wasCalled);
+            w.wasCalled = true;
+            w.DeleteDocuments(new Term("field", "field"));
+            w.Flush();
+            Assert.IsTrue(w.wasCalled);
+            w.Close();
+            dir.Close();
+            IndexReader ir = IndexReader.Open(dir);
+            Assert.AreEqual(1, ir.MaxDoc());
+            Assert.AreEqual(0, ir.NumDocs());
+            ir.Close();
+        }
+
+        // LUCENE-1255
+        [Test]
+        public void TestNegativePositions()
+        {
+            SinkTokenizer tokens = new SinkTokenizer();
+            Token t = new Token();
+            t.SetTermText("a");
+            t.SetPositionIncrement(0);
+            tokens.Add(t);
+            t.SetTermText("b");
+            t.SetPositionIncrement(1);
+            tokens.Add(t);
+            t.SetTermText("c");
+            tokens.Add(t);
+            MockRAMDirectory dir = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(dir, false, new WhitespaceAnalyzer(), true);
+            Document doc = new Document();
+            doc.Add(new Field("field", tokens));
+            w.AddDocument(doc);
+            w.Close();
+            IndexSearcher s = new IndexSearcher(dir);
+            PhraseQuery pq = new PhraseQuery();
+            pq.Add(new Term("field", "a"));
+            pq.Add(new Term("field", "b"));
+            pq.Add(new Term("field", "c"));
+            Hits hits = s.Search(pq);
+            Assert.AreEqual(1, hits.Length());
+            Query q = new SpanTermQuery(new Term("field", "a"));
+            hits = s.Search(q);
+            Assert.AreEqual(1, hits.Length());
+            TermPositions tps = s.GetIndexReader().TermPositions(new Term("field", "a"));
+            Assert.IsTrue(tps.Next());
+            Assert.AreEqual(1, tps.Freq());
+            Assert.AreEqual(-1, tps.NextPosition());
+            Assert.IsTrue(_TestUtil.CheckIndex(dir));
+            s.Close();
+            dir.Close();
+        }
+    }
 }
