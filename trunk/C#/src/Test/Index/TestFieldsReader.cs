@@ -27,6 +27,10 @@ using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+using Directory = Lucene.Net.Store.Directory;
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 
 namespace Lucene.Net.Index
 {
@@ -331,5 +335,141 @@ namespace Lucene.Net.Index
 			Assert.AreEqual((byte) (size >> 8), sizebytes[2]);
 			Assert.AreEqual((byte) size, sizebytes[3]);
 		}
-	}
+
+        public class FaultyFSDirectory : Directory
+        {
+            FSDirectory fsDir;
+            public FaultyFSDirectory(System.IO.FileInfo dir)
+            {
+                fsDir = FSDirectory.GetDirectory(dir);
+                lockFactory = fsDir.GetLockFactory();
+            }
+            public override IndexInput OpenInput(String name)
+            {
+                return new FaultyIndexInput(fsDir.OpenInput(name));
+            }
+            public override string[] List()
+            {
+                return fsDir.List();
+            }
+            public override bool FileExists(string name)
+            {
+                return fsDir.FileExists(name);
+            }
+            public override long FileModified(string name)
+            {
+                return fsDir.FileModified(name);
+            }
+            public override void TouchFile(string name)
+            {
+                fsDir.TouchFile(name);
+            }
+            public override void DeleteFile(string name)
+            {
+                fsDir.DeleteFile(name);
+            }
+            public override void RenameFile(string name, string newName)
+            {
+                fsDir.RenameFile(name, newName);
+            }
+            public override long FileLength(string name)
+            {
+                return fsDir.FileLength(name);
+            }
+            public override IndexOutput CreateOutput(string name)
+            {
+                return fsDir.CreateOutput(name);
+            }
+            public override void Close()
+            {
+                fsDir.Close();
+            }
+        }
+
+        public class FaultyIndexInput : BufferedIndexInput
+        {
+            IndexInput indexInput;
+            internal static bool doFail;
+            int count;
+            public FaultyIndexInput(IndexInput indexInput)
+            {
+                this.indexInput = indexInput;
+            }
+            private void SimOutage()
+            {
+                if (doFail && count++ % 2 == 1)
+                {
+                    throw new System.IO.IOException("Simulated network outage");
+                }
+            }
+            protected override void ReadInternal(byte[] b, int offset, int length)
+            {
+                SimOutage();
+                indexInput.ReadBytes(b, offset, length);
+            }
+            protected override void SeekInternal(long pos)
+            {
+                //simOutage();
+                indexInput.Seek(pos);
+            }
+            public override long Length()
+            {
+                return indexInput.Length();
+            }
+            public override void Close()
+            {
+                indexInput.Close();
+            }
+        }
+
+        // LUCENE-1262
+        [Test]
+        public void TestExceptions()
+        {
+            string tempDir = SupportClass.AppSettings.Get("tempDir", "");
+            if (tempDir == null)
+                throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
+            System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "testfieldswriterexceptions"));
+            try
+            {
+                Directory dir = new FaultyFSDirectory(indexDir);
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+                for (int i = 0; i < 2; i++)
+                    writer.AddDocument(testDoc);
+                writer.Optimize();
+                writer.Close();
+                IndexReader reader = IndexReader.Open(dir);
+                FaultyIndexInput.doFail = true;
+                bool exc = false;
+                for (int i = 0; i < 2; i++)
+                {
+                    try
+                    {
+                        reader.Document(i);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        // expected
+                        exc = true;
+                    }
+                    try
+                    {
+                        reader.Document(i);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        // expected
+                        exc = true;
+                    }
+                }
+                Assert.IsTrue(exc);
+                reader.Close();
+                dir.Close();
+            }
+            finally
+            {
+                _TestUtil.RmDir(indexDir);
+            }
+        }
+    }
 }
