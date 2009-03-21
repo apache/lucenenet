@@ -89,5 +89,18 @@ namespace Lucene.Net.Util
 			if (ms is ConcurrentMergeScheduler)
 				((ConcurrentMergeScheduler) ms).Sync();
 		}
+
+        public static bool CheckIndex(Lucene.Net.Store.Directory dir)
+        {
+            Lucene.Net.Index.CheckIndex.out_Renamed = new System.IO.StringWriter();
+            if (!Lucene.Net.Index.CheckIndex.Check(dir, false))
+            {
+                System.Console.WriteLine("CheckIndex failed");
+                System.Console.WriteLine(Lucene.Net.Index.CheckIndex.out_Renamed.ToString());
+                return false;
+            }
+            else
+                return true;
+        }
 	}
 }

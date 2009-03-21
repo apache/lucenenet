@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
 using Payload = Lucene.Net.Index.Payload;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -109,6 +110,21 @@ namespace Lucene.Net.Analysis
 			ts = new BuffTokenFilter(ts);
 			VerifyPayload(ts);
 		}
+
+        // LUCENE-1150: Just a compile time test to ensure the
+        // StandardAnalyzer constants remain publicly accessible
+        public virtual void _TestStandardConstants()
+        {
+            int x = StandardTokenizer.ALPHANUM;
+            x = StandardTokenizer.APOSTROPHE;
+            x = StandardTokenizer.ACRONYM;
+            x = StandardTokenizer.COMPANY;
+            x = StandardTokenizer.EMAIL;
+            x = StandardTokenizer.HOST;
+            x = StandardTokenizer.NUM;
+            x = StandardTokenizer.CJ;
+            string[] y = StandardTokenizer.TOKEN_TYPES;
+        }
 	}
 	
 	class BuffTokenFilter : TokenFilter
