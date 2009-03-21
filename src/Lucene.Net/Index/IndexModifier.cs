@@ -380,7 +380,11 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary> Returns the number of documents currently in this index.</summary>
+		/// <summary>
+        /// Returns the number of documents currently in this index.  If the writer is currently open,
+        /// this returns IndexWriter.DocCount(), else IndexReader.NumDocs().  But, note that
+        /// IndexWriter.DocCount() does not take deltions into account, unlike IndexReader.NumDocs().
+        /// </summary>
 		/// <seealso cref="IndexWriter.DocCount()">
 		/// </seealso>
 		/// <seealso cref="IndexReader.NumDocs()">
@@ -650,7 +654,7 @@ namespace Lucene.Net.Index
 					indexWriter.Close();
 					indexWriter = null;
 				}
-				else
+				else if (indexReader != null)
 				{
 					indexReader.Close();
 					indexReader = null;

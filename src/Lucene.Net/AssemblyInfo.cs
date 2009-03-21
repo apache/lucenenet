@@ -33,7 +33,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("2.3.1")]
+[assembly: AssemblyInformationalVersionAttribute("2.3.2")]
 
 
 //
@@ -47,7 +47,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.3.1.003")]
+[assembly: AssemblyVersion("2.3.1.001")]
 
 
 //
