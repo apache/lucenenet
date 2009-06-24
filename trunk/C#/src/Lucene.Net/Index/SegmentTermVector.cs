@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 		{
 			if (terms == null)
 				return - 1;
-			int res = System.Array.BinarySearch(terms, termText);
+			int res = System.Array.BinarySearch(terms, termText,StringComparer.Ordinal);
 			return res >= 0 ? res : - 1;
 		}
 		
