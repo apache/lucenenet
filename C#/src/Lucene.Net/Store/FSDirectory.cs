@@ -383,13 +383,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns an array of strings, one for each Lucene index file in the directory. </summary>
 		public override System.String[] List()
 		{
-            System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
-            for (int i = 0; i < files.Length; i++)
-            {
-                System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
-                files[i] = fi.Name;
-            }
-			return files;
+            return SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
