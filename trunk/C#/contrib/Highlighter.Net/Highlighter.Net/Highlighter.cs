@@ -266,7 +266,7 @@ namespace Lucene.Net.Highlight
 					System.String markedUpText = formatter.HighlightTerm(encoder.EncodeText(tokenText), tokenGroup);
 					//store any whitespace etc from between this and last group
 					if (startOffset > lastEndOffset)
-						newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset))));
+						newText.Append(encoder.EncodeText(text.Substring(lastEndOffset, (startOffset) - (lastEndOffset)+1)));
 					newText.Append(markedUpText);
 					lastEndOffset = System.Math.Max(lastEndOffset, endOffset);
 				}
