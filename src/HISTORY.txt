@@ -1,8 +1,13 @@
 Apache Lucene.Net History
 -------------------------
 
- 19Mar09:
-
+24Jul09:
+	-Fix:  LUCENENET-175 Add FIPS compliance to lucene.net
+	-Fix:  LUCENENET-182 Public fields of StringIndex class should have C# like names
+	-Fix:  LUCENENET-183 SegmentTermVector IndexOf method always fails
+	-Port: LUCENENET-184 Port of org.apache.lucene.analysis.br to C# - analyser, stemfilter and stemmer
+ 
+19Mar09:
    	-Release: Apache Lucene.Net.2.3.1 build 003 "final"
 	-Fix: LUCENENET-106 (Lucene.NET is leaking memory)
 	-Fix: LUCENENET-116: Ambiguous name "text" in term class when in VB.NET
