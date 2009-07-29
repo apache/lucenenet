@@ -2,6 +2,7 @@ Apache Lucene.Net History
 -------------------------
 
 24Jul09:
+	-Release: Apache Lucene.Net.2.3.2 build 001 "final"
 	-Fix:  LUCENENET-175 Add FIPS compliance to lucene.net
 	-Fix:  LUCENENET-182 Public fields of StringIndex class should have C# like names
 	-Fix:  LUCENENET-183 SegmentTermVector IndexOf method always fails
