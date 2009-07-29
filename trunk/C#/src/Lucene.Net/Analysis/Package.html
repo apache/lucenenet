@@ -1,4 +1,20 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -29,20 +45,20 @@ and proximity searches (though sentence identification is not provided by Lucene
 In some cases simply breaking the input text into tokens is not enough &ndash; a deeper <i>Analysis</i> is needed,
 providing for several functions, including (but not limited to):
 <ul>
-  <li><a href = "http://en.wikipedia.org//wiki/Stemming">Stemming</a> &ndash; 
+  <li><a href="http://en.wikipedia.org/wiki/Stemming">Stemming</a> &ndash; 
       Replacing of words by their stems. 
       For instance with English stemming "bikes" is replaced by "bike"; 
       now query "bike" can find both documents containing "bike" and those containing "bikes".
   </li>
-  <li><a href = "http://en.wikipedia.org//wiki/Stop_words">Stop Words Filtering</a> &ndash; 
+  <li><a href="http://en.wikipedia.org/wiki/Stop_words">Stop Words Filtering</a> &ndash; 
       Common words like "the", "and" and "a" rarely add any value to a search.
       Removing them shrinks the index size and increases performance.
       It may also reduce some "noise" and actually improve search quality.
   </li>
-  <li><a href = "http://en.wikipedia.org//wiki/Text_normalization">Text Normalization</a> &ndash; 
+  <li><a href="http://en.wikipedia.org/wiki/Text_normalization">Text Normalization</a> &ndash; 
       Stripping accents and other character markings can make for better searching.
   </li>
-  <li><a href = "http://en.wikipedia.org//wiki/Synonym">Synonym Expansion</a> &ndash; 
+  <li><a href="http://en.wikipedia.org/wiki/Synonym">Synonym Expansion</a> &ndash; 
       Adding in synonyms at the same token position as the current word can mean better 
       matching when users search with words in the synonym set.
   </li>
@@ -93,10 +109,10 @@ providing for several functions, including (but not limited to):
       {@link org.apache.lucene.document.Field}s.</li>
     <li>The contrib/analyzers library located at the root of the Lucene distribution has a number of different Analyzer implementations to solve a variety
     of different problems related to searching.  Many of the Analyzers are designed to analyze non-English languages.</li>
-    <li>The {@link org.apache.lucene.analysis.snowball contrib/snowball library} 
+    <li>The contrib/snowball library 
         located at the root of the Lucene distribution has Analyzer and TokenFilter 
         implementations for a variety of Snowball stemmers.  
-        See <a href = "http://snowball.tartarus.org">http://snowball.tartarus.org</a> 
+        See <a href="http://snowball.tartarus.org">http://snowball.tartarus.org</a> 
         for more information on Snowball stemmers.</li>
     <li>There are a variety of Tokenizer and TokenFilter implementations in this package.  Take a look around, chances are someone has implemented what you need.</li>
   </ol>
@@ -137,7 +153,7 @@ providing for several functions, including (but not limited to):
   for search quality, and can also affect indexing and search performance.
   The "correct" analyzer differs between applications.
   Lucene java's wiki page 
-  <a href = "http://wiki.apache.org//lucene-java/AnalysisParalysis">AnalysisParalysis</a> 
+  <a href="http://wiki.apache.org/lucene-java/AnalysisParalysis">AnalysisParalysis</a> 
   provides some data on "analyzing your analyzer".
   Here are some rules of thumb:
   <ol>

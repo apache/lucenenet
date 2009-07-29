@@ -36,14 +36,14 @@ namespace Lucene.Net.Index.Compression
 {
     public class SharpZipLibAdapter : SupportClass.CompressionSupport.ICompressionAdapter
     {
-        public byte[] Compress(byte[] input)
+        public byte[] Compress(byte[] input, int offset, int length)
         {
             // Create the compressor with highest level of compression
             Deflater compressor = new Deflater();
             compressor.SetLevel(Deflater.BEST_COMPRESSION);
 
             // Give the compressor the data to compress
-            compressor.SetInput(input);
+            compressor.SetInput(input, offset, length);
             compressor.Finish();
 
             /*

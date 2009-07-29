@@ -22,13 +22,11 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A query that wraps a filter and simply returns a constant score equal to the
+	/// <summary>
+    /// A query that wraps a filter and simply returns a constant score equal to the
 	/// query boost for every document in the filter.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: ConstantScoreQuery.java 564236 2007-08-09 15:21:19Z gsingers $
-	/// </version>
+	/// <version>$Id:$</version>
 	[Serializable]
 	public class ConstantScoreQuery : Query
 	{
@@ -113,7 +111,7 @@ namespace Lucene.Net.Search
 			{
 				
 				ConstantScorer cs = (ConstantScorer) Scorer(reader);
-				bool exists = cs.bits.Get(doc);
+                bool exists = cs.docIdSetIterator.SkipTo(doc) && cs.docIdSetIterator.Doc() == doc;
 				
 				ComplexExplanation result = new ComplexExplanation();
 				
@@ -152,7 +150,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal System.Collections.BitArray bits;
+            internal DocIdSetIterator docIdSetIterator;
 			internal float theScore;
 			internal int doc = - 1;
 			
@@ -160,18 +158,17 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 				theScore = w.GetValue();
-				bits = Enclosing_Instance.filter.Bits(reader);
+                docIdSetIterator = Enclosing_Instance.filter.GetDocIdSet(reader).Iterator();
 			}
 			
 			public override bool Next()
 			{
-				doc = SupportClass.Number.NextSetBit(bits, doc + 1);
-				return doc >= 0;
+				return docIdSetIterator.Next();
 			}
 			
 			public override int Doc()
 			{
-				return doc;
+                return docIdSetIterator.Doc(); ;
 			}
 			
 			public override float Score()
@@ -181,8 +178,7 @@ namespace Lucene.Net.Search
 			
 			public override bool SkipTo(int target)
 			{
-				doc = SupportClass.Number.NextSetBit(bits, target); // requires JDK 1.4
-				return doc >= 0;
+				return docIdSetIterator.SkipTo(target);
 			}
 			
 			public override Explanation Explain(int doc)
@@ -205,7 +201,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
@@ -222,7 +218,7 @@ namespace Lucene.Net.Search
 			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
 		}
 
-		override public System.Object Clone()
+		override public object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
             ConstantScoreQuery clone = (ConstantScoreQuery) base.Clone();

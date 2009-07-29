@@ -182,7 +182,7 @@ namespace Lucene.Net.Search.Function
 			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(TEXT_FIELD, anlzr);
 			System.String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
 			
-			// regular (boolean) query.
+			// regular (bool) query.
 			Query q1 = qp.Parse(qtxt);
 			Log(q1);
 			

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
 
 using NUnit.Framework;
@@ -25,7 +24,7 @@ using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Searcher = Lucene.Net.Search.Searcher;
@@ -53,7 +52,7 @@ namespace Lucene.Net.Index
 			int numDocs = 500;
 			
 			Directory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -75,7 +74,7 @@ namespace Lucene.Net.Index
 					content = this.term3 + " " + this.term2;
 				}
 				
-				doc.Add(new Field(this.field, content, Field.Store.YES, Field.Index.TOKENIZED));
+				doc.Add(new Field(this.field, content, Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			
@@ -92,22 +91,22 @@ namespace Lucene.Net.Index
 			this.searcher = new IndexSearcher(reader);
 		}
 		
-		private Hits Search()
+		private ScoreDoc[] Search()
 		{
 			// create PhraseQuery "term1 term2" and search
 			PhraseQuery pq = new PhraseQuery();
 			pq.Add(new Term(this.field, this.term1));
 			pq.Add(new Term(this.field, this.term2));
-			return this.searcher.Search(pq);
+			return this.searcher.Search(pq, null, 1000).scoreDocs;
 		}
 		
 		private void  PerformTest(int numHits)
 		{
 			CreateIndex(numHits);
 			this.seeksCounter = 0;
-			Hits hits = Search();
+			ScoreDoc[] hits = Search();
 			// verify that the right number of docs was found
-			Assert.AreEqual(numHits, hits.Length());
+			Assert.AreEqual(numHits, hits.Length);
 			
 			// check if the number of calls of seek() does not exceed the number of hits
 			Assert.IsTrue(this.seeksCounter <= numHits + 1);
@@ -125,11 +124,11 @@ namespace Lucene.Net.Index
 		public virtual void  TestSeek()
 		{
 			Directory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 10; i++)
 			{
 				Document doc = new Document();
-				doc.Add(new Field(this.field, "a b", Field.Store.YES, Field.Index.TOKENIZED));
+				doc.Add(new Field(this.field, "a b", Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			

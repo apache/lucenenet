@@ -44,23 +44,23 @@ namespace Lucene.Net.Search
 			RAMDirectory directory = new RAMDirectory();
 			
 			System.String[] categories = new System.String[]{"/Computers", "/Computers/Mac", "/Computers/Windows"};
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < categories.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();
 			
 			PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
 			IndexSearcher searcher = new IndexSearcher(directory);
-			Hits hits = searcher.Search(query);
-			Assert.AreEqual(3, hits.Length(), "All documents in /Computers category and below");
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
 			
 			query = new PrefixQuery(new Term("category", "/Computers/Mac"));
-			hits = searcher.Search(query);
-			Assert.AreEqual(1, hits.Length(), "One in /Computers/Mac");
+			hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length, "One in /Computers/Mac");
 		}
 	}
 }

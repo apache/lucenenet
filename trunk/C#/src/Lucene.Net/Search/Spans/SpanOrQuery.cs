@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
 
+using System.Collections.Generic;
+
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Matches the union of its clauses.</summary>
-	[Serializable]
+	[System.Serializable]
 	public class SpanOrQuery : SpanQuery
 	{
-		private class AnonymousClassSpans : Spans
+		private class AnonymousClassPayloadSpans : PayloadSpans
 		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
+			public AnonymousClassPayloadSpans(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
 			{
 				InitBlock(reader, enclosingInstance);
 			}
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
 				System.Collections.IEnumerator i = Enclosing_Instance.clauses.GetEnumerator();
 				while (i.MoveNext())
 				{
-					Spans spans = ((SpanQuery) i.Current).GetSpans(reader);
+					PayloadSpans spans = ((SpanQuery) i.Current).GetPayloadSpans(reader);
 					if (((target == - 1) && spans.Next()) || ((target != - 1) && spans.SkipTo(target)))
 					{
 						queue.Put(spans);
@@ -91,9 +91,9 @@ namespace Lucene.Net.Search.Spans
 				return queue.Size() != 0;
 			}
 			
-			private Spans Top()
+			private PayloadSpans Top()
 			{
-				return (Spans) queue.Top();
+				return (PayloadSpans) queue.Top();
 			}
 			
 			public virtual bool SkipTo(int target)
@@ -130,7 +130,22 @@ namespace Lucene.Net.Search.Spans
 			{
 				return Top().End();
 			}
-			
+
+            public ICollection<byte[]> GetPayload()
+            {
+                List<byte[]> result = null;
+                PayloadSpans theTop = (PayloadSpans)Top();
+                if (theTop != null && theTop.IsPayloadAvailable())
+                    result = new List<byte[]>(theTop.GetPayload());
+                return result;
+            }
+
+            public bool IsPayloadAvailable()
+            {
+                PayloadSpans top = Top();
+                return top != null && top.IsPayloadAvailable();
+            }
+
 			public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance + ")@" + ((queue == null) ? "START" : (queue.Size() > 0 ? (Doc() + ":" + Start() + "-" + End()) : "END"));
@@ -233,15 +248,17 @@ namespace Lucene.Net.Search.Spans
 			{
 				SpanQuery clause = (SpanQuery) i.Current;
 				buffer.Append(clause.ToString(field));
-				buffer.Append(", ");
+				if (i.MoveNext())
+				{
+					buffer.Append(", ");
+				}
 			}
-            if(clauses.Count>0) buffer.Length -= 2;
 			buffer.Append("])");
 			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
@@ -287,7 +304,7 @@ namespace Lucene.Net.Search.Spans
 				Initialize(size);
 			}
 			
-			public override bool LessThan(System.Object o1, System.Object o2)
+			public override bool LessThan(object o1, object o2)
 			{
 				Spans spans1 = (Spans) o1;
 				Spans spans2 = (Spans) o2;
@@ -308,15 +325,19 @@ namespace Lucene.Net.Search.Spans
 				}
 			}
 		}
-		
-		
+
+        public override PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return (PayloadSpans)GetSpans(reader);
+        }
+
 		public override Spans GetSpans(IndexReader reader)
 		{
 			if (clauses.Count == 1)
 				// optimize 1-clause case
-				return ((SpanQuery) clauses[0]).GetSpans(reader);
+				return ((SpanQuery) clauses[0]).GetPayloadSpans(reader);
 			
-			return new AnonymousClassSpans(reader, this);
+			return new AnonymousClassPayloadSpans(reader, this);
 		}
 	}
 }

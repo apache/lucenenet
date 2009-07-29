@@ -27,19 +27,26 @@ namespace Lucene.Net
 	
 	class AnalysisTest
 	{
-		[STAThread]
+        static System.IO.FileInfo tmpFile;
+		
+        [STAThread]
 		public static void  Main(System.String[] args)
 		{
 			try
 			{
 				Test("This is a test", true);
-				// FIXME: OG: what's with this hard-coded file name??
-				Test(new System.IO.FileInfo("words.txt"), false);
+
+                tmpFile = new System.IO.FileInfo(
+                    System.IO.Path.Combine(
+                    System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName())
+                    , "words.txt"));
+				Test(tmpFile, false);
 			}
 			catch (System.Exception e)
 			{
 				System.Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
 			}
+            tmpFile.Delete();
 		}
 		
 		internal static void  Test(System.IO.FileInfo file, bool verbose)
@@ -69,11 +76,12 @@ namespace Lucene.Net
 			System.DateTime start = System.DateTime.Now;
 			
 			int count = 0;
-			for (Token t = stream.Next(); t != null; t = stream.Next())
+            Token reusableToken = new Token();
+			for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 			{
 				if (verbose)
 				{
-					System.Console.Out.WriteLine("Text=" + t.TermText() + " start=" + t.StartOffset() + " end=" + t.EndOffset());
+					System.Console.Out.WriteLine("Text=" + nextToken.TermText() + " start=" + nextToken.StartOffset() + " end=" + nextToken.EndOffset());
 				}
 				count++;
 			}

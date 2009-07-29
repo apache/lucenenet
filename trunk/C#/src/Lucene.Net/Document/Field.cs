@@ -75,29 +75,51 @@ namespace Lucene.Net.Documents
 			/// </summary>
 			public static readonly Index NO = new Index("NO");
 			
-			/// <summary>Index the field's value so it can be searched. An Analyzer will be used
-			/// to tokenize and possibly further normalize the text before its
-			/// terms will be stored in the index. This is useful for common text.
+			/// <summary>
+            /// Index the tokens produced by running the field's value through
+            /// an Analyzer. This is useful for common text.
 			/// </summary>
-			public static readonly Index TOKENIZED = new Index("TOKENIZED");
+            public static readonly Index ANALYZED = new Index("ANALYZED");
+            /// <summary>
+            /// Deprecated.  This has been renamed to ANALYZED.
+            /// </summary>
+            public static readonly Index TOKENIZED = ANALYZED;
 			
 			/// <summary>Index the field's value without using an Analyzer, so it can be searched.
 			/// As no analyzer is used the value will be stored as a single term. This is
 			/// useful for unique Ids like product numbers.
 			/// </summary>
-			public static readonly Index UN_TOKENIZED = new Index("UN_TOKENIZED");
-			
-			/// <summary>Index the field's value without an Analyzer, and disable
-			/// the storing of norms.  No norms means that index-time boosting
-			/// and field length normalization will be disabled.  The benefit is
-			/// less memory usage as norms take up one byte per indexed field
-			/// for every document in the index.
-			/// Note that once you index a given field <i>with</i> norms enabled,
-			/// disabling norms will have no effect.  In other words, for NO_NORMS
-			/// to have the above described effect on a field, all instances of that
-			/// field must be indexed with NO_NORMS from the beginning.
-			/// </summary>
-			public static readonly Index NO_NORMS = new Index("NO_NORMS");
+            public static readonly Index NOT_ANALYZED = new Index("NOT_ANALYZED");
+            /// <summary>
+            /// Deprecated.  This has been renamed to NOT_ANALYZED.
+            /// </summary>
+            public static readonly Index UN_TOKENIZED = NOT_ANALYZED;
+
+            /// <summary>
+            /// Expert: Index the field's value without an Analyzer, and also
+            /// disable the storing of norms.. Note that you can also separately
+            /// enable/disable norms by calling SetOmitNorms(bool).  No norms means
+            /// that index-time field and document boosting and field length normalization
+            /// are disabled.  The benfit is less memory ysage as norms take up one byte
+            /// of RAM per indexed field for every document in the index, during searching.
+            /// Note that once you index a given field <i>with</i> norms enabled, disabling
+            /// norms will have no effect.  In other words, for this to have the above
+            /// described effect on a field, all instances of that field must be indexed
+            /// with NOT_ANALYZED_NO_NORMS from the beginning.
+            /// </summary>
+            public static readonly Index NOT_ANALYZED_NO_NORMS = new Index("NOT_ANALYZED_NO_NORMS");
+            /// <summary>
+            /// Deprecated.  This has been renamed to NOT_ANALYZED_NO_NORMS.
+            /// </summary>
+            public static readonly Index NO_NORMS = NOT_ANALYZED_NO_NORMS;
+
+            /// <summary>
+            /// Expert: Index the tokens produced by running the field's value 
+            /// through an Analyzer, and also separately disable the storing of norms.
+            /// See {@link #NOT_ANALYZED_NO_NORMS} for what norms are and why you
+            /// may want to disable them.
+            /// </summary>
+            public static readonly Index ANALYZED_NO_NORMS = new Index("ANALYZED_NO_NORMS");
 		}
 		
 		/// <summary>Specifies whether and how a field should have term vectors. </summary>
@@ -146,7 +168,7 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>The value of the field as a String, or null.  If null, the Reader value,
 		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// readerValue(), getBinaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override System.String StringValue()
 		{
@@ -155,7 +177,7 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>The value of the field as a Reader, or null.  If null, the String value,
 		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// readerValue(), getBinaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override System.IO.TextReader ReaderValue()
 		{
@@ -164,22 +186,24 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
 		/// String value, or TokenStream value is used. Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// readerValue(), GetBinaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
-		public override byte[] BinaryValue()
+        [Obsolete(
+            "This method must allocate a new byte[] if the AbstractField.GetBinaryOffset() is non-zero or AbstractField.GetBinaryLength() is not the full length of the byte[]. Please use AbstractField.GetBinaryValue() instead, which simply returns the byte[]."
+            )]
+        public override byte[] BinaryValue()
 		{
 			return fieldsData is byte[] ? (byte[]) fieldsData : null;
 		}
 		
 		/// <summary>The value of the field as a TokesStream, or null.  If null, the Reader value,
 		/// String value, or binary value is used. Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// readerValue(), GetBinaryValue(), and tokenStreamValue() must be set. 
 		/// </summary>
 		public override TokenStream TokenStreamValue()
 		{
 			return fieldsData is TokenStream ? (TokenStream) fieldsData : null;
 		}
-		
 		
 		/// <summary><p>Expert: change the value of this field.  This can
 		/// be used during indexing to re-use a single Field
@@ -211,9 +235,19 @@ namespace Lucene.Net.Documents
 		public void  SetValue(byte[] value_Renamed)
 		{
 			fieldsData = value_Renamed;
-		}
-		
-		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
+            binaryOffset = 0;
+            binaryLength = value_Renamed.Length;
+        }
+
+        /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
+        public void SetValue(byte[] value_Renamed, int offset, int length)
+        {
+            fieldsData = value_Renamed;
+            binaryOffset = offset;
+            binaryLength = length;
+        }
+
+        /// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
 		public void  SetValue(TokenStream value_Renamed)
 		{
 			fieldsData = value_Renamed;
@@ -301,23 +335,29 @@ namespace Lucene.Net.Documents
 				this.isIndexed = false;
 				this.isTokenized = false;
 			}
-			else if (index == Index.TOKENIZED)
+			else if (index == Index.ANALYZED)
 			{
 				this.isIndexed = true;
 				this.isTokenized = true;
 			}
-			else if (index == Index.UN_TOKENIZED)
+			else if (index == Index.NOT_ANALYZED)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 			}
-			else if (index == Index.NO_NORMS)
+            else if (index == Index.NOT_ANALYZED_NO_NORMS)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 				this.omitNorms = true;
 			}
-			else
+            else if (index == Index.ANALYZED_NO_NORMS)
+            {
+                this.isIndexed = true;
+                this.isTokenized = true;
+                this.omitNorms = true;
+            }
+            else
 			{
 				throw new System.ArgumentException("unknown index parameter " + index);
 			}
@@ -428,35 +468,46 @@ namespace Lucene.Net.Documents
 		}
 		
 		
-		/// <summary> Create a stored field with binary value. Optionally the value may be compressed.
-		/// 
+		/// <summary>
+        /// Create a stored field with binary value. Optionally the value may be compressed.
 		/// </summary>
-		/// <param name="name">The name of the field
-		/// </param>
-		/// <param name="value">The binary value
-		/// </param>
-		/// <param name="store">How <code>value</code> should be stored (compressed or not)
-		/// </param>
-		/// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
+		/// <param name="name">The name of the field</param>
+		/// <param name="value">The binary value</param>
+		/// <param name="store">How <code>value</code> should be stored (compressed or not)</param>
+		/// <throws>System.ArgumentException if store is <code>Store.NO</code></throws>
 		public Field(System.String name, byte[] value_Renamed, Store store)
+            : this(name, value_Renamed, 0, value_Renamed.Length, store)
 		{
+        }
+
+		/// <summary>
+        /// Create a stored field with binary value. Optionally the value may be compressed.
+		/// </summary>
+		/// <param name="name">The name of the field</param>
+		/// <param name="value">The binary value</param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
+		/// <param name="store">How <code>value</code> should be stored (compressed or not)</param>
+		/// <throws>System.ArgumentException if store is <code>Store.NO</code></throws>
+		public Field(System.String name, byte[] value_Renamed, int offset, int length, Store store)
+        {
 			if (name == null)
 				throw new System.ArgumentException("name cannot be null");
 			if (value_Renamed == null)
 				throw new System.ArgumentException("value cannot be null");
 			
 			this.name = String.Intern(name);
-			this.fieldsData = value_Renamed;
+			fieldsData = value_Renamed;
 			
 			if (store == Store.YES)
 			{
-				this.isStored = true;
-				this.isCompressed = false;
+				isStored = true;
+				isCompressed = false;
 			}
 			else if (store == Store.COMPRESS)
 			{
-				this.isStored = true;
-				this.isCompressed = true;
+				isStored = true;
+				isCompressed = true;
 			}
 			else if (store == Store.NO)
 				throw new System.ArgumentException("binary values can't be unstored");
@@ -465,11 +516,13 @@ namespace Lucene.Net.Documents
 				throw new System.ArgumentException("unknown store parameter " + store);
 			}
 			
-			this.isIndexed = false;
-			this.isTokenized = false;
+			isIndexed = false;
+			isTokenized = false;
 			
-			this.isBinary = true;
-			
+			isBinary = true;
+            binaryLength = length;
+            binaryOffset = offset;
+
 			SetStoreTermVector(TermVector.NO);
 		}
 	}

@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 			Initialize(size);
 		}
 		
-		public override bool LessThan(System.Object a, System.Object b)
+		public override bool LessThan(object a, object b)
 		{
 			ScoreDoc hitA = (ScoreDoc) a;
 			ScoreDoc hitB = (ScoreDoc) b;

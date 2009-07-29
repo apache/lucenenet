@@ -22,12 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Stores information about how to sort documents by terms in an individual
 	/// field.  Fields must be indexed in order to sort by them.
-	/// 
-	/// <p>Created: Feb 11, 2004 1:25:29 PM
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
 	/// <version>  $Id: SortField.java 598296 2007-11-26 14:52:01Z mikemccand $
@@ -79,13 +74,25 @@ namespace Lucene.Net.Search
 		/// lower values are at the front. 
 		/// </summary>
 		public const int DOUBLE = 7;
-		
-		/// <summary>Sort using a custom Comparator.  Sort values are any Comparable and
+
+        /// <summary>
+        /// Sort using term values as encoded shorts.
+        /// Sort values are shorts and lower values are at the front. 
+        /// </summary>
+        public const int SHORT = 8;
+
+        /// <summary>Sort using a custom Comparator.  Sort values are any Comparable and
 		/// sorting is done according to natural order. 
 		/// </summary>
 		public const int CUSTOM = 9;
-		
-		// IMPLEMENTATION NOTE: the FieldCache.STRING_INDEX is in the same "namespace"
+
+        /// <summary>
+        /// Sort using term values as encoded bytes.
+        /// Sort values are bytes and lower values are at the front. 
+        /// </summary>
+        public const int BYTE = 10;
+
+        // IMPLEMENTATION NOTE: the FieldCache.STRING_INDEX is in the same "namespace"
 		// as the above static int values.  Any new values must not have the same value
 		// as FieldCache.STRING_INDEX.
 		

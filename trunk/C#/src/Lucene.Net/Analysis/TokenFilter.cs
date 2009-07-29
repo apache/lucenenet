@@ -23,8 +23,9 @@ namespace Lucene.Net.Analysis
     /// <summary>A TokenFilter is a TokenStream whose input is another token stream.
     /// <p>
     /// This is an abstract class.
-	/// NOTE: subclasses must override at least one of {@link
-	/// #Next()} or {@link #Next(Token)}.
+    /// NOTE: subclasses must override {@link #Next(Token)}.
+    /// It's also OK to instead override {@link #Next()}, but
+    /// that method is now deprecated in favor of {@link #Next(Token)}.
 	/// </summary>
     public abstract class TokenFilter : TokenStream
     {
@@ -41,6 +42,15 @@ namespace Lucene.Net.Analysis
         public override void  Close()
         {
             input.Close();
+        }
+
+        /// <summary>
+        /// Reset the filter as well as the input TokenStream.
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
+            input.Reset();
         }
     }
 }

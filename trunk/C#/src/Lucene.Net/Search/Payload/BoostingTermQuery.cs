@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Payloads
 				return new BoostingSpanScorer(this, (TermSpans) query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
 			}
 			
-			internal class BoostingSpanScorer : SpanScorer
+			protected internal class BoostingSpanScorer : SpanScorer
 			{
 				private void  InitBlock(BoostingTermWeight enclosingInstance)
 				{
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Payloads
 				
 				public override Explanation Explain(int doc)
 				{
-					Explanation result = new Explanation();
+					ComplexExplanation result = new ComplexExplanation();
 					Explanation nonPayloadExpl = base.Explain(doc);
 					result.AddDetail(nonPayloadExpl);
 					//QUESTION: Is there a wau to avoid this skipTo call?  We need to know whether to load the payload or not
@@ -181,13 +181,14 @@ namespace Lucene.Net.Search.Payloads
 					payloadBoost.SetDescription("scorePayload(...)");
 					result.SetValue(nonPayloadExpl.GetValue() * avgPayloadScore);
 					result.SetDescription("btq, product of:");
+                    result.SetMatch(nonPayloadExpl.GetValue() == 0 ? false : true); // LUCENE-1303
 					return result;
 				}
 			}
 		}
 		
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is BoostingTermQuery))
 				return false;

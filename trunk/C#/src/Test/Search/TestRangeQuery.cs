@@ -157,8 +157,8 @@ namespace Lucene.Net.Search
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			
-			doc.Add(new Field("id", "id" + docCount, Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("content", content, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("id", "id" + docCount, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("content", content, Field.Store.NO, Field.Index.ANALYZED));
 			
 			writer.AddDocument(doc);
 			docCount++;

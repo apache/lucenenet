@@ -69,6 +69,11 @@ namespace Lucene.Net.Store
 			long freeSpace = dir.maxSize - dir.SizeInBytes();
 			long realUsage = 0;
 			
+
+            // If MockRAMDirectory crashed since we were opened, then don't write anything
+            if (dir.crashed)
+                throw new System.IO.IOException("MockRAMDirectory was crashed");
+
 			// Enforce disk full:
 			if (dir.maxSize != 0 && freeSpace <= len)
 			{

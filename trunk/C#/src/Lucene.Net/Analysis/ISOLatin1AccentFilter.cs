@@ -35,26 +35,27 @@ namespace Lucene.Net.Analysis
         private char[] output = new char[256];
         private int outputPos;
 
-        public override Token Next(Token result)
+        public override Token Next(/* in */ Token reusableToken)
 		{
-            result = input.Next(result);
-            if (result != null)
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+            Token nextToken = input.Next(reusableToken);
+            if (nextToken != null)
             {
-                char[] buffer = result.TermBuffer();
-                int length = result.TermLength();
+                char[] buffer = nextToken.TermBuffer();
+                int length = nextToken.TermLength();
                 // If no characters actually require rewriting then we
                 // just return token as-is:
                 for (int i = 0; i < length; i++)
                 {
                     char c = buffer[i];
-                    if (c >= '\u00c0' && c <= '\u0178')
+                    if (c >= '\u00c0' && c <= '\ufb06')
                     {
                         RemoveAccents(buffer, length);
-                        result.SetTermBuffer(output, 0, outputPos);
+                        nextToken.SetTermBuffer(output, 0, outputPos);
                         break;
                     }
                 }
-                return result;
+                return nextToken;
             }
             else
                 return null;
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis
 
                 // Quick test: if it's not in range then just keep
                 // current character
-                if (c < '\u00c0')
+                if (c < '\u00c0' || c > '\ufb06')
                     output[outputPos++] = c;
                 else
                 {
@@ -132,6 +133,11 @@ namespace Lucene.Net.Analysis
                         // ÃŽ
                         case '\u00CF':  // Ã
                             output[outputPos++] = 'I';
+                            break;
+
+                        case '\u0132': // Ĳ
+                            output[outputPos++] = 'I';
+                            output[outputPos++] = 'J';
                             break;
 
                         case '\u00D0':  // Ã
@@ -225,6 +231,11 @@ namespace Lucene.Net.Analysis
                             output[outputPos++] = 'i';
                             break;
 
+                        case '\u0133': // ĳ
+                            output[outputPos++] = 'i';
+                            output[outputPos++] = 'j';
+                            break;
+
                         case '\u00F0':  // Ã°
                             output[outputPos++] = 'd';
                             break;
@@ -276,6 +287,38 @@ namespace Lucene.Net.Analysis
                         // Ã½
                         case '\u00FF':  // Ã¿
                             output[outputPos++] = 'y';
+                            break;
+
+                        case '\uFB00': // ﬀ
+                            output[outputPos++] = 'f';
+                            output[outputPos++] = 'f';
+                            break;
+                        case '\uFB01': // ﬁ
+                            output[outputPos++] = 'f';
+                            output[outputPos++] = 'i';
+                            break;
+                        case '\uFB02': // ﬂ
+                            output[outputPos++] = 'f';
+                            output[outputPos++] = 'l';
+                            break;
+                        // following 2 are commented as they can break the maxSizeNeeded (and doing *3 could be expensive)
+                        //        case '\uFB03': // ﬃ
+                        //            output[outputPos++] = 'f';
+                        //            output[outputPos++] = 'f';
+                        //            output[outputPos++] = 'i';
+                        //            break;
+                        //        case '\uFB04': // ﬄ
+                        //            output[outputPos++] = 'f';
+                        //            output[outputPos++] = 'f';
+                        //            output[outputPos++] = 'l';
+                        //            break;
+                        case '\uFB05': // ﬅ
+                            output[outputPos++] = 'f';
+                            output[outputPos++] = 't';
+                            break;
+                        case '\uFB06': // ﬆ
+                            output[outputPos++] = 's';
+                            output[outputPos++] = 't';
                             break;
 
                         default:

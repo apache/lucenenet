@@ -31,8 +31,6 @@ namespace Lucene.Net.Search
 	/// The cache is periodically cleaned up from a separate thread to ensure the
 	/// cache doesn't exceed the maximum size.
 	/// </summary>
-	/// <author>  Matt Ericson
-	/// </author>
 	public class FilterManager
 	{
 		
@@ -165,7 +163,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal class FilterCleaner : IThreadRunnable
 		{
-			private class AnonymousClassComparator : System.Collections.Generic.IComparer<Object>
+			private class AnonymousClassComparator : System.Collections.Generic.IComparer<object>
 			{
 				public AnonymousClassComparator(FilterCleaner enclosingInstance)
 				{
@@ -184,7 +182,7 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				public virtual int Compare(System.Object a, System.Object b)
+				public virtual int Compare(object a, object b)
 				{
 					if (a is System.Collections.DictionaryEntry && b is System.Collections.DictionaryEntry)
 					{
@@ -204,7 +202,7 @@ namespace Lucene.Net.Search
 					}
 					else
 					{
-						throw new System.InvalidCastException("Objects are not Map.Entry");
+						throw new System.InvalidCastException("objects are not Map.Entry");
 					}
 				}
 			}
@@ -223,12 +221,12 @@ namespace Lucene.Net.Search
 			}
 			
 			private bool running = true;
-			System.Collections.Generic.SortedDictionary<Object, Object> sortedFilterItems;
+			System.Collections.Generic.SortedDictionary<object, object> sortedFilterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
-				sortedFilterItems = new System.Collections.Generic.SortedDictionary<Object, Object>(new AnonymousClassComparator(this));
+				sortedFilterItems = new System.Collections.Generic.SortedDictionary<object, object>(new AnonymousClassComparator(this));
 			}
 			
 			public virtual void  Run()
@@ -267,7 +265,7 @@ namespace Lucene.Net.Search
 					{
 						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Enclosing_Instance.cleanSleepTime));
 					}
-					catch (System.Threading.ThreadInterruptedException e)
+					catch (System.Threading.ThreadInterruptedException)
 					{
 						// just keep going
 					}

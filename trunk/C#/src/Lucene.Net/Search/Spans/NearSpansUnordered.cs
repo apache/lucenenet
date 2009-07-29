@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
+using System.Collections.Generic;
+
 namespace Lucene.Net.Search.Spans
 {
-	
-	class NearSpansUnordered : Spans
+	internal class NearSpansUnordered : PayloadSpans
 	{
 		private SpanNearQuery query;
 		
@@ -62,7 +61,7 @@ namespace Lucene.Net.Search.Spans
 				Initialize(size);
 			}
 			
-			public override bool LessThan(System.Object o1, System.Object o2)
+			public override bool LessThan(object o1, object o2)
 			{
 				SpansCell spans1 = (SpansCell) o1;
 				SpansCell spans2 = (SpansCell) o2;
@@ -79,7 +78,7 @@ namespace Lucene.Net.Search.Spans
 		
 		
 		/// <summary>Wraps a Spans, and can be used to form a linked list. </summary>
-		private class SpansCell : Spans
+		private class SpansCell : PayloadSpans
 		{
 			private void  InitBlock(NearSpansUnordered enclosingInstance)
 			{
@@ -94,12 +93,12 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			private Spans spans;
+			private PayloadSpans spans;
 			internal SpansCell next;
 			private int length = - 1;
 			private int index;
 			
-			public SpansCell(NearSpansUnordered enclosingInstance, Spans spans, int index)
+			public SpansCell(NearSpansUnordered enclosingInstance, PayloadSpans spans, int index)
 			{
 				InitBlock(enclosingInstance);
 				this.spans = spans;
@@ -148,7 +147,17 @@ namespace Lucene.Net.Search.Spans
 			{
 				return spans.End();
 			}
-			
+
+            public ICollection<byte[]> GetPayload()
+            {
+                return new List<byte[]>(spans.GetPayload());
+            }
+
+            public bool IsPayloadAvailable()
+            {
+                return spans.IsPayloadAvailable();
+            }
+
 			public override System.String ToString()
 			{
 				return spans.ToString() + "#" + index;
@@ -165,7 +174,7 @@ namespace Lucene.Net.Search.Spans
 			queue = new CellQueue(this, clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
-				SpansCell cell = new SpansCell(this, clauses[i].GetSpans(reader), i);
+				SpansCell cell = new SpansCell(this, clauses[i].GetPayloadSpans(reader), i);
 				ordered.Add(cell);
 			}
 		}
@@ -290,7 +299,28 @@ namespace Lucene.Net.Search.Spans
 		{
 			return max.End();
 		}
-		
+
+        public ICollection<byte[]> GetPayload()
+        {
+            Dictionary<byte[], byte[]> matchPayload = new Dictionary<byte[], byte[]>();
+            for (SpansCell cell = first; cell != null; cell = cell.next)
+                if (cell.IsPayloadAvailable())
+                    for (IEnumerator<byte[]> e = cell.GetPayload().GetEnumerator(); e.MoveNext(); )
+                        matchPayload[e.Current] = e.Current;
+            return matchPayload.Keys;
+        }
+
+        public bool IsPayloadAvailable()
+        {
+            SpansCell pointer = Min();
+            while (pointer != null)
+            {
+                if (pointer.IsPayloadAvailable())
+                    return true;
+                pointer = pointer.next;
+            }
+            return false;
+        }
 		
 		public override System.String ToString()
 		{

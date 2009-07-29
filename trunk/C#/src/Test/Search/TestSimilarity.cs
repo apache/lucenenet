@@ -180,14 +180,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestSimilarity_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetSimilarity(new SimpleSimilarity());
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			d1.Add(new Field("field", "a c", Field.Store.YES, Field.Index.TOKENIZED));
+			d1.Add(new Field("field", "a c", Field.Store.YES, Field.Index.ANALYZED));
 			
 			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-			d2.Add(new Field("field", "a b c", Field.Store.YES, Field.Index.TOKENIZED));
+			d2.Add(new Field("field", "a b c", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(d1);
 			writer.AddDocument(d2);

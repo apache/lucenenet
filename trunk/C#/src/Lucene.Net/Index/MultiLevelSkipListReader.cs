@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
 				this.pos = (int) (pos - pointer);
 			}
 			
-			//override public System.Object Clone()  // {{Aroush-2.3.1}} Do we need this?
+			//override public object Clone()  // {{Aroush-2.3.1}} Do we need this?
 			//{
 			//	return null;
 			//}

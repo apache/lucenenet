@@ -19,14 +19,15 @@ using System;
 
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using Lucene.Net.Analysis;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
+using TermQuery = Lucene.Net.Search.TermQuery;
 
 using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-	
 	[TestFixture]
 	public class TestStressIndexing2 : LuceneTestCase
 	{
@@ -50,7 +51,22 @@ namespace Lucene.Net.Index
 		internal static int seed = 0;
 		
 		internal static System.Random r = new System.Random((System.Int32) 0);
-		
+
+        public class MockIndexWriter : IndexWriter
+        {
+            public MockIndexWriter(Directory dir, bool autoCommit, Analyzer a, bool create)
+                : base(dir, autoCommit, a, create)
+            {
+            }
+
+            protected override bool TestPoint(string name)
+            {
+                if (TestStressIndexing2.r.Next(4) == 2)
+                    System.Threading.Thread.Sleep(1);
+                return true;
+            }
+        }
+
 		[Test]
 		public virtual void  TestRandom()
 		{
@@ -65,8 +81,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestMultiConfig()
 		{
 			// test lots of smaller different params together
-			for (int i = 0; i < 100; i++)
-			{
+            for (int i = 0; i < 100; i++)
+            {
 				// increase iterations for better testing
 				sameFieldOrder = r.NextDouble() > 0.5;
 				autoCommit = r.NextDouble() > 0.5;
@@ -97,50 +113,55 @@ namespace Lucene.Net.Index
 		
 		public virtual System.Collections.IDictionary IndexRandom(int nThreads, int iterations, int range, Directory dir)
 		{
-			IndexWriter w = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
-			w.SetUseCompoundFile(false);
-			
-			// force many merges
-			w.SetMergeFactor(mergeFactor);
-			w.SetRAMBufferSizeMB(.1);
-			w.SetMaxBufferedDocs(maxBufferedDocs);
-			
-			threads = new IndexingThread[nThreads];
-			for (int i = 0; i < threads.Length; i++)
-			{
-				IndexingThread th = new IndexingThread();
-				th.w = w;
-				th.base_Renamed = 1000000 * i;
-				th.range = range;
-				th.iterations = iterations;
-				threads[i] = th;
-			}
-			
-			for (int i = 0; i < threads.Length; i++)
-			{
-				threads[i].Start();
-			}
-			for (int i = 0; i < threads.Length; i++)
-			{
-				threads[i].Join();
-			}
-			
-			// w.optimize();
-			w.Close();
-			
-			System.Collections.IDictionary docs = new System.Collections.Hashtable();
-			for (int i = 0; i < threads.Length; i++)
-			{
-				IndexingThread th = threads[i];
-				lock (th)
-				{
-					System.Collections.IEnumerator e = th.docs.Keys.GetEnumerator();
-					while (e.MoveNext())
-					{
-						docs[e.Current] = th.docs[e.Current];
-					}
-				}
-			}
+            System.Collections.Hashtable docs = new System.Collections.Hashtable();
+            for (int iter = 0; iter < 3; iter++)
+            {
+                IndexWriter w = new MockIndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
+                w.SetUseCompoundFile(false);
+
+                // force many merges
+                w.SetMergeFactor(mergeFactor);
+                w.SetRAMBufferSizeMB(.1);
+                w.SetMaxBufferedDocs(maxBufferedDocs);
+
+                threads = new IndexingThread[nThreads];
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    IndexingThread th = new IndexingThread();
+                    th.w = w;
+                    th.base_Renamed = 1000000 * i;
+                    th.range = range;
+                    th.iterations = iterations;
+                    threads[i] = th;
+                }
+
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    threads[i].Start();
+                }
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    threads[i].Join();
+                }
+
+                // w.optimize();
+                w.Close();
+
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    IndexingThread th = threads[i];
+                    lock (th)
+                    {
+                        System.Collections.IEnumerator e = th.docs.Keys.GetEnumerator();
+                        while (e.MoveNext())
+                        {
+                            docs[e.Current] = th.docs[e.Current];
+                        }
+                    }
+                }
+            }
+
+            _TestUtil.CheckIndex(dir);
 			
 			return docs;
 		}
@@ -148,7 +169,7 @@ namespace Lucene.Net.Index
 		
 		public static void  IndexSerial(System.Collections.IDictionary docs, Directory dir)
 		{
-			IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer());
+			IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 			
 			// index all docs in a single thread
 			System.Collections.IEnumerator iter = docs.Values.GetEnumerator();
@@ -212,7 +233,14 @@ namespace Lucene.Net.Index
 					break;
 				
 				termDocs1.Seek(termEnum);
-				Assert.IsTrue(termDocs1.Next());
+                if (!termDocs1.Next())
+                {
+                    // This doc is deleted and wasn't replaced
+                    termDocs2.Seek(termEnum);
+                    Assert.IsFalse(termDocs2.Next());
+                    continue;
+                }
+
 				int id1 = termDocs1.Doc();
 				Assert.IsFalse(termDocs1.Next());
 				
@@ -231,7 +259,7 @@ namespace Lucene.Net.Index
 					// verify term vectors are equivalent        
 					VerifyEquals(r1.GetTermFreqVectors(id1), r2.GetTermFreqVectors(id2));
 				}
-				catch (System.ApplicationException e)
+				catch (System.Exception e)
 				{
 					System.Console.Out.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
 					TermFreqVector[] tv1 = r1.GetTermFreqVectors(id1);
@@ -413,7 +441,9 @@ namespace Lucene.Net.Index
 			{
 				TermFreqVector v1 = d1[i];
 				TermFreqVector v2 = d2[i];
-				Assert.AreEqual(v1.Size(), v2.Size());
+                if (v1 == null || v2 == null)
+                    System.Console.Out.WriteLine("v1=" + v1 + " v2=" + v2 + " i=" + i + " of " + d1.Length);
+                Assert.AreEqual(v1.Size(), v2.Size());
 				int numTerms = v1.Size();
 				System.String[] terms1 = v1.GetTerms();
 				System.String[] terms2 = v2.GetTerms();
@@ -468,10 +498,65 @@ namespace Lucene.Net.Index
 			{
 				return r.Next(lim);
 			}
-			
-			public virtual System.String GetString(int nTokens)
+
+            // start is inclusive and end is exclusive
+            public int NextInt(int start, int end)
+            {
+                return start + r.Next(end - start);
+            }
+
+            internal char[] buffer = new char[100];
+
+            private int AddUTF8Token(int start)
+            {
+                int end = start + NextInt(20);
+                if (buffer.Length < 1 + end)
+                {
+                    char[] newBuffer = new char[(int)((1 + end) * 1.25)];
+                    System.Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
+                    buffer = newBuffer;
+                }
+
+                for (int i = start; i < end; i++)
+                {
+                    int t = NextInt(6);
+                    if (0 == t && i < end - 1)
+                    {
+                        // make a surrogate pair
+                        // high surrogate
+                        buffer[i++] = (char)NextInt(0xD800, 0xDC00);
+                        // low surrogate
+                        buffer[i] = (char)NextInt(0xDC00, 0xE000);
+                    }
+                    else if (t <= 1)
+                        buffer[i] = (char)NextInt(0x80);
+                    else if (t == 2)
+                        buffer[i] = (char)NextInt(0x80, 0x800);
+                    else if (t == 3)
+                        buffer[i] = (char)NextInt(0x800, 0xD800);
+                    else if (t == 4)
+                        buffer[i] = (char)NextInt(0xE000, 0xFFFF);
+                    else if (t == 5)
+                    {
+                        // illegal unpaired surrogate
+                        if (r.Next(2) == 0)
+                            buffer[i] = (char)NextInt(0xD800, 0xDC00);
+                        else
+                            buffer[i] = (char)NextInt(0xDC00, 0xE000);
+                    }
+                }
+                buffer[end] = ' ';
+                return 1 + end;
+            }
+
+            public virtual System.String GetString(int nTokens)
 			{
 				nTokens = nTokens != 0?nTokens:r.Next(4) + 1;
+
+                // 1/2 the time, make a random UTF-8 string
+                if (r.Next(2) == 0)
+                    return GetUTF8String(nTokens);
+
 				// avoid StringBuffer because it adds extra synchronization.
 				char[] arr = new char[nTokens * 2];
 				for (int i = 0; i < nTokens; i++)
@@ -481,16 +566,28 @@ namespace Lucene.Net.Index
 				}
 				return new System.String(arr);
 			}
-			
-			
-			public virtual void  IndexDoc()
+
+            public string GetUTF8String(int nTokens)
+            {
+                int upto = 0;
+                SupportClass.CollectionsSupport.ArrayFill(buffer, (char)0);
+                for (int i = 0; i < nTokens; i++)
+                    upto = AddUTF8Token(upto);
+                return new string(buffer, 0, upto);
+            }
+
+            public string GetIdString()
+            {
+                return "" + (base_Renamed + NextInt(range));
+            }
+
+            public virtual void IndexDoc()
 			{
 				Document d = new Document();
 				
 				System.Collections.ArrayList fields = new System.Collections.ArrayList();
-				int id = base_Renamed + NextInt(range);
-				System.String idString = "" + id;
-				Field idField = new Field("id", idString, Field.Store.YES, Field.Index.NO_NORMS);
+                System.String idString = GetIdString();
+				Field idField = new Field(idTerm.Field(), idString, Field.Store.YES, Field.Index.NOT_ANALYZED);
 				fields.Add(idField);
 				
 				int nFields = NextInt(Lucene.Net.Index.TestStressIndexing2.maxFields);
@@ -522,19 +619,19 @@ namespace Lucene.Net.Index
                     {
 
                         case 0:
-                            fields.Add(new Field("f0", GetString(1), Field.Store.YES, Field.Index.NO_NORMS, tvVal));
+                            fields.Add(new Field("f" + NextInt(100), GetString(1), Field.Store.YES, Field.Index.NOT_ANALYZED, tvVal));
                             break;
 
                         case 1:
-                            fields.Add(new Field("f1", GetString(0), Field.Store.NO, Field.Index.TOKENIZED, tvVal));
+                            fields.Add(new Field("f" + NextInt(100), GetString(0), Field.Store.NO, Field.Index.ANALYZED, tvVal));
                             break;
 
                         case 2:
-                            fields.Add(new Field("f2", GetString(0), Field.Store.YES, Field.Index.NO, Field.TermVector.NO));
+                            fields.Add(new Field("f" + NextInt(100), GetString(0), Field.Store.YES, Field.Index.NO, Field.TermVector.NO));
                             break;
 
                         case 3:
-                            fields.Add(new Field("f3", GetString(Lucene.Net.Index.TestStressIndexing2.bigFieldSize), Field.Store.YES, Field.Index.TOKENIZED, tvVal));
+                            fields.Add(new Field("f" + NextInt(100), GetString(Lucene.Net.Index.TestStressIndexing2.bigFieldSize), Field.Store.YES, Field.Index.ANALYZED, tvVal));
                             break;
                     }
                 }
@@ -560,6 +657,20 @@ namespace Lucene.Net.Index
 				docs[idString] = d;
 			}
 			
+            public void DeleteDoc()
+            {
+                string idString = GetIdString();
+                w.DeleteDocuments(idTerm.CreateTerm(idString));
+                docs.Remove(idString);
+            }
+
+            public void DeleteByQuery()
+            {
+                string idString = GetIdString();
+                w.DeleteDocuments(new TermQuery(idTerm.CreateTerm(idString)));
+                docs.Remove(idString);
+            }
+
 			override public void  Run()
 			{
 				try
@@ -567,8 +678,20 @@ namespace Lucene.Net.Index
 					r = new System.Random((System.Int32) (base_Renamed + range + Lucene.Net.Index.TestStressIndexing2.seed));
 					for (int i = 0; i < iterations; i++)
 					{
-						IndexDoc();
-					}
+                        int what = NextInt(100);
+                        if (what < 5)
+                        {
+                            DeleteDoc();
+                        }
+                        else if (what < 10)
+                        {
+                            DeleteByQuery();
+                        }
+                        else
+                        {
+						    IndexDoc();
+					    }
+                    }
 				}
 				catch (System.Exception e)
 				{

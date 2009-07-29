@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary> Public for extension only.</summary>
-	class SpanScorer : Scorer
+	public class SpanScorer : Scorer
 	{
 		protected internal Spans spans;
 		protected internal Weight weight;
@@ -85,13 +85,13 @@ namespace Lucene.Net.Search.Spans
 			}
 			doc = spans.Doc();
 			freq = 0.0f;
-			while (more && doc == spans.Doc())
-			{
-				int matchLength = spans.End() - spans.Start();
-				freq += GetSimilarity().SloppyFreq(matchLength);
-				more = spans.Next();
-			}
-			return more || (freq != 0);
+            do
+            {
+                int matchLength = spans.End() - spans.Start();
+                freq += GetSimilarity().SloppyFreq(matchLength);
+                more = spans.Next();
+            } while (more && doc == spans.Doc());
+			return true;
 		}
 		
 		public override int Doc()

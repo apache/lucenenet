@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>Queries, filters and sort criteria are designed to be compact so that
 	/// they may be efficiently passed to a remote index, with only the top-scoring
-	/// hits being returned, rather than every non-zero scoring hit.
+	/// hits being returned, rather than every matching hit.
 	/// </summary>
 	
     public interface Searchable
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="weight">to match documents
         /// </param>
-        /// <param name="filter">if non-null, a bitset used to eliminate some documents
+        /// <param name="filter">if non-null, used permit documents to be collected
         /// </param>
         /// <param name="results">to receive hits
         /// </param>

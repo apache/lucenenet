@@ -43,6 +43,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Returns the documents matching <code>query</code>. </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
+        /// 
+        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int) instead.")]
 		public Hits Search(Query query)
 		{
 			return Search(query, (Filter) null);
@@ -52,7 +54,8 @@ namespace Lucene.Net.Search
 		/// <code>filter</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		public virtual Hits Search(Query query, Filter filter)
+        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int) instead.")]
+        public virtual Hits Search(Query query, Filter filter)
 		{
 			return new Hits(this, query, filter);
 		}
@@ -61,7 +64,8 @@ namespace Lucene.Net.Search
 		/// <code>sort</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		public virtual Hits Search(Query query, Sort sort)
+        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int, Sort) instead.")]
+        public virtual Hits Search(Query query, Sort sort)
 		{
 			return new Hits(this, query, null, sort);
 		}
@@ -70,12 +74,13 @@ namespace Lucene.Net.Search
 		/// sorted by <code>sort</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		public virtual Hits Search(Query query, Filter filter, Sort sort)
+        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int, Sort) instead.")]
+        public virtual Hits Search(Query query, Filter filter, Sort sort)
 		{
 			return new Hits(this, query, filter, sort);
 		}
 		
-		/// <summary>Expert: Low-level search implementation with arbitrary sorting.  Finds
+		/// <summary>Search implementation with arbitrary sorting.  Finds
 		/// the top <code>n</code> hits for <code>query</code>, applying
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
@@ -91,8 +96,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every non-zero
-		/// scoring document.
+		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
@@ -110,19 +114,18 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every non-zero
-		/// scoring document.
+		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
 		/// <br>HitCollector-based access to remote indexes is discouraged.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
-		/// Searcher#Search(Query)}) is usually more efficient, as it skips
+		/// Searcher#Search(Query, Filter, int)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.
 		/// 
 		/// </summary>
 		/// <param name="query">to match documents
 		/// </param>
-		/// <param name="filter">if non-null, a bitset used to eliminate some documents
+		/// <param name="filter">if non-null, used to permit documents to be collected
 		/// </param>
 		/// <param name="results">to receive hits
 		/// </param>
@@ -132,21 +135,25 @@ namespace Lucene.Net.Search
 			Search(CreateWeight(query), filter, results);
 		}
 		
-		/// <summary>Expert: Low-level search implementation.  Finds the top <code>n</code>
+		/// <summary>Finds the top <code>n</code>
 		/// hits for <code>query</code>, applying <code>filter</code> if non-null.
-		/// 
-		/// <p>Called by {@link Hits}.
-		/// 
-		/// <p>Applications should usually call {@link Searcher#Search(Query)} or
-		/// {@link Searcher#search(Query,Filter)} instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		public virtual TopDocs Search(Query query, Filter filter, int n)
 		{
 			return Search(CreateWeight(query), filter, n);
 		}
-		
-		/// <summary>Returns an Explanation that describes how <code>doc</code> scored against
+
+        /// <summary>Finds the top <code>n</code>
+        /// hits for <code>query</code>, applying <code>filter</code> if non-null.
+        /// </summary>
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public virtual TopDocs Search(Query query, int n)
+        {
+            return Search(CreateWeight(query), null, n);
+        }
+
+        /// <summary>Returns an Explanation that describes how <code>doc</code> scored against
 		/// <code>query</code>.
 		/// 
 		/// <p>This is intended to be used in developing Similarity implementations,

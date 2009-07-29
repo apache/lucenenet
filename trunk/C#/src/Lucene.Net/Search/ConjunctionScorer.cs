@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 				
 			}
 			// sort the array
-			public virtual int Compare(System.Object o1, System.Object o2)
+			public virtual int Compare(object o1, object o2)
 			{
 				return ((Scorer) o1).Doc() - ((Scorer) o2).Doc();
 			}
@@ -130,12 +130,12 @@ namespace Lucene.Net.Search
 			// Keep last scorer in it's last place (it will be the first
 			// to be skipped on), but reverse all of the others so that
 			// they will be skipped on in order of original high skip.
-			int end = (scorers.Length - 1) - 1;
+			int end = (scorers.Length - 1);
 			for (int i = 0; i < (end >> 1); i++)
 			{
 				Scorer tmp = scorers[i];
-				scorers[i] = scorers[end - i];
-				scorers[end - i] = tmp;
+				scorers[i] = scorers[end - i - 1];
+                scorers[end - i - 1] = tmp;
 			}
 			
 			return more;

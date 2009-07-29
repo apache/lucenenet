@@ -23,15 +23,12 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A query that matches all documents.
-	/// 
+	/// <summary>
+    /// A query that matches all documents.
 	/// </summary>
-	/// <author>  John Wang
-	/// </author>
 	[Serializable]
 	public class MatchAllDocsQuery : Query
 	{
-		
 		public MatchAllDocsQuery()
 		{
 		}
@@ -190,7 +187,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is MatchAllDocsQuery))
 				return false;

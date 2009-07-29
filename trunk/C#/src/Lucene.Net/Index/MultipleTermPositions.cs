@@ -23,10 +23,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> Describe class <code>MultipleTermPositions</code> here.
-	/// 
 	/// </summary>
-	/// <author>  Anders Nielsen
-	/// </author>
 	/// <version>  1.0
 	/// </version>
 	public class MultipleTermPositions : TermPositions
@@ -52,7 +49,7 @@ namespace Lucene.Net.Index
 				return (TermPositions) Top();
 			}
 			
-			public override bool LessThan(System.Object a, System.Object b)
+			public override bool LessThan(object a, object b)
 			{
 				return ((TermPositions) a).Doc() < ((TermPositions) b).Doc();
 			}

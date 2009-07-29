@@ -38,9 +38,13 @@ namespace Lucene.Net.Documents
 		protected internal bool isBinary = false;
 		protected internal bool isCompressed = false;
 		protected internal bool lazy = false;
-		protected internal float boost = 1.0f;
+        protected internal bool omitTf = false;
+        protected internal float boost = 1.0f;
 		// the one and only data object for all different kind of field values
-		protected internal System.Object fieldsData = null;
+		protected internal object fieldsData = null;
+        // length/offset for all primitive types
+        protected int binaryLength;
+        protected int binaryOffset;
 		
 		protected internal AbstractField()
 		{
@@ -77,23 +81,29 @@ namespace Lucene.Net.Documents
 				this.isIndexed = false;
 				this.isTokenized = false;
 			}
-			else if (index == Field.Index.TOKENIZED)
+			else if (index == Field.Index.ANALYZED)
 			{
 				this.isIndexed = true;
 				this.isTokenized = true;
 			}
-			else if (index == Field.Index.UN_TOKENIZED)
+            else if (index == Field.Index.NOT_ANALYZED)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 			}
-			else if (index == Field.Index.NO_NORMS)
+            else if (index == Field.Index.NOT_ANALYZED_NO_NORMS)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 				this.omitNorms = true;
 			}
-			else
+            else if (index == Field.Index.ANALYZED_NO_NORMS)
+            {
+                this.isIndexed = true;
+                this.isTokenized = false;
+                this.omitNorms = true;
+            }
+            else
 			{
 				throw new System.ArgumentException("unknown index parameter " + index);
 			}
@@ -255,14 +265,71 @@ namespace Lucene.Net.Documents
 		{
 			return isBinary;
 		}
-		
-		/// <summary>True if norms are omitted for this indexed field </summary>
-		public virtual bool GetOmitNorms()
+
+        /// <summary>
+        /// Return the raw byte[] for the binary field.  Note that
+        /// you must also call {@link #GetBinaryLength} and
+        /// {@link #GetBinaryOffset} to know which range of bytes in 
+        /// this returned array belong to the field.
+        /// </summary>
+        /// <returns>reference to the field value as byte[]</returns>
+        public byte[] GetBinaryValue()
+        {
+            return GetBinaryValue(null);
+        }
+
+        public virtual byte[] GetBinaryValue(byte[] result)
+        {
+            if (isBinary || fieldsData is byte[])
+                return (byte[])fieldsData;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Returns the length of byte[] segment that is used as value.
+        /// If Field is not binary returned value is undefined.
+        /// </summary>
+        /// <returns>length of byte[] segment that represents this Field value</returns>
+        public int GetBinaryLength()
+        {
+            if (isBinary)
+                if (!isCompressed)
+                    return binaryLength;
+                else
+                    return ((byte[])fieldsData).Length;
+            else if (fieldsData is byte[])
+                return ((byte[])fieldsData).Length;
+            else
+                return 0;
+        }
+
+        /// <summary>
+        /// Returns offset into byte[] segment that is used as value.
+        /// If Field is not binary returned value is undefined.
+        /// </summary>
+        /// <returns>index of the byte[] segment that represents this Field value</returns>
+        public int GetBinaryOffset()
+        {
+            return binaryOffset;
+        }
+
+        /// <summary>True if norms are omitted for this indexed field </summary>
+        public virtual bool GetOmitNorms()
 		{
 			return omitNorms;
 		}
-		
-		/// <summary>Expert:
+
+        /// <summary>
+        /// Returns true if tf is omitted for this indexed field.
+        /// </summary>
+        /// <returns>true if tf is omitted for this indexed field</returns>
+        public virtual bool GetOmitTf()
+        {
+            return omitTf;
+        }
+
+        /// <summary>Expert:
 		/// 
 		/// If set, omit normalization factors associated with this indexed field.
 		/// This effectively disables indexing boosts and length normalization for this field.
@@ -271,8 +338,17 @@ namespace Lucene.Net.Documents
 		{
 			this.omitNorms = omitNorms;
 		}
-		
-		public virtual bool IsLazy()
+
+        /// <summary>
+        /// Expert: If set, omit tf from postings of this indexed field.
+        /// </summary>
+        /// <param name="omitTf"></param>
+        public void SetOmitTf(bool omitTf)
+        {
+            this.omitTf = omitTf;
+        }
+
+        public virtual bool IsLazy()
 		{
 			return lazy;
 		}
@@ -329,7 +405,11 @@ namespace Lucene.Net.Documents
 			{
 				result.Append(",omitNorms");
 			}
-			if (lazy)
+            if (omitTf)
+            {
+                result.Append(",omitTf");
+            }
+            if (lazy)
 			{
 				result.Append(",lazy");
 			}

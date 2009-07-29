@@ -21,7 +21,7 @@ using NUnit.Framework;
 
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexCommitPoint = Lucene.Net.Index.IndexCommitPoint;
+using IndexCommit = Lucene.Net.Index.IndexCommit;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using KeepOnlyLastCommitDeletionPolicy = Lucene.Net.Index.KeepOnlyLastCommitDeletionPolicy;
 using SnapshotDeletionPolicy = Lucene.Net.Index.SnapshotDeletionPolicy;
@@ -71,7 +71,7 @@ namespace Lucene.Net
 			override public void  Run()
 			{
 				Document doc = new Document();
-				doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 				while ((System.DateTime.Now.Ticks - 621355968000000000) / 10000 < stopTime)
 				{
 					for (int i = 0; i < 27; i++)
@@ -80,10 +80,10 @@ namespace Lucene.Net
 						{
 							writer.AddDocument(doc);
 						}
-						catch (System.IO.IOException cie)
+						catch (System.Exception t)
 						{
-							System.SystemException re = new System.SystemException("addDocument failed", cie);
-							throw re;
+                            System.Console.Out.WriteLine(t.StackTrace);
+                            Assert.Fail("addDocument failed");
 						}
 					}
 					try
@@ -117,8 +117,48 @@ namespace Lucene.Net
 			MockRAMDirectory dir2 = new MockRAMDirectory();
 			RunTest(dir2);
 		}
-		
-		private void  RunTest(Directory dir)
+
+        [Test]
+        public void TestReuseAcrossWriters()
+        {
+            Directory dir = new MockRAMDirectory();
+
+            SnapshotDeletionPolicy dp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+            IndexWriter writer = new IndexWriter(dir, true, new StandardAnalyzer(), dp);
+            // Force frequent commits
+            writer.SetMaxBufferedDocs(2);
+            Document doc = new Document();
+            doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            for (int i = 0; i < 7; i++)
+                writer.AddDocument(doc);
+            IndexCommit cp = (IndexCommit)dp.Snapshot();
+            CopyFiles(dir, cp);
+            writer.Close();
+            CopyFiles(dir, cp);
+
+            writer = new IndexWriter(dir, true, new StandardAnalyzer(), dp);
+            CopyFiles(dir, cp);
+            for (int i = 0; i < 7; i++)
+                writer.AddDocument(doc);
+            CopyFiles(dir, cp);
+            writer.Close();
+            CopyFiles(dir, cp);
+            dp.Release();
+            writer = new IndexWriter(dir, true, new StandardAnalyzer(), dp);
+            writer.Close();
+            try
+            {
+                CopyFiles(dir, cp);
+                Assert.Fail("did not hit expected IOException");
+            }
+            catch (System.IO.IOException)
+            {
+                // expected
+            }
+            dir.Close();
+        }
+
+        private void RunTest(Directory dir)
 		{
 			// Run for ~7 seconds
 			long stopTime = (System.DateTime.Now.Ticks - 621355968000000000) / 10000 + 7000;
@@ -163,7 +203,7 @@ namespace Lucene.Net
 			// final segment, so deletion policy has a chance to
 			// delete again:
 			Document doc = new Document();
-			doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			writer.AddDocument(doc);
 			
 			// Make sure we don't have any leftover files in the
@@ -182,33 +222,35 @@ namespace Lucene.Net
 		{
 			
 			// To backup an index we first take a snapshot:
-			IndexCommitPoint cp = dp.Snapshot();
-			try
+            try
+            {
+                CopyFiles(dir, (IndexCommit)dp.Snapshot());
+            }
+            finally
+            {
+                // Make sure to release the snapshot, otherwise these files will never be
+                // deleted during this IndexWriter session.
+                dp.Release();
+            }
+        }
+
+        private void CopyFiles(Directory dir, IndexCommit cp)
+        {
+			// While we hold the snapshot, and no matter how long
+			// we take to do the backup, the IndexWriter will
+			// never delete the files in the snapshot:
+			System.Collections.Generic.ICollection<string> files = cp.GetFileNames();
+			System.Collections.Generic.IEnumerator<string> it = files.GetEnumerator();
+			while (it.MoveNext())
 			{
-				
-				// While we hold the snapshot, and nomatter how long
-				// we take to do the backup, the IndexWriter will
-				// never delete the files in the snapshot:
-				System.Collections.ICollection files = cp.GetFileNames();
-				System.Collections.IEnumerator it = files.GetEnumerator();
-				while (it.MoveNext())
-				{
-					System.String fileName = (System.String) it.Current;
-					// NOTE: in a real backup you would not use
-					// readFile; you would need to use something else
-					// that copies the file to a backup location.  This
-					// could even be a spawned shell process (eg "tar",
-					// "zip") that takes the list of files and builds a
-					// backup.
-					ReadFile(dir, fileName);
-				}
-			}
-			finally
-			{
-				// Make sure to release the snapshot, otherwise these
-				// files will never be deleted during this IndexWriter
-				// session:
-				dp.Release();
+				string fileName = it.Current;
+				// NOTE: in a real backup you would not use
+				// readFile; you would need to use something else
+				// that copies the file to a backup location.  This
+				// could even be a spawned shell process (eg "tar",
+				// "zip") that takes the list of files and builds a
+				// backup.
+				ReadFile(dir, fileName);
 			}
 		}
 		

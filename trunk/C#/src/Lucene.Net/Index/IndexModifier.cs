@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;create&nbsp;an&nbsp;index&nbsp;in&nbsp;/tmp/index,&nbsp;overwriting&nbsp;an&nbsp;existing&nbsp;one:</font><br/>
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">IndexModifier&nbsp;indexModifier&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">IndexModifier</font><font color="#000000">(</font><font color="#2a00ff">&#34;/tmp/index&#34;</font><font color="#000000">,&nbsp;analyzer,&nbsp;</font><font color="#7f0055"><b>true</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Document&nbsp;doc&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Document</font><font color="#000000">()</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.UN_TOKENIZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;body&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;a&nbsp;simple&nbsp;test&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.TOKENIZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.NOT_ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;body&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;a&nbsp;simple&nbsp;test&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">indexModifier.addDocument</font><font color="#000000">(</font><font color="#000000">doc</font><font color="#000000">)</font><font color="#000000">;</font><br/>
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>int&nbsp;</b></font><font color="#000000">deleted&nbsp;=&nbsp;indexModifier.delete</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Term</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">))</font><font color="#000000">;</font><br/>
 	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">System.out.println</font><font color="#000000">(</font><font color="#2a00ff">&#34;Deleted&nbsp;&#34;&nbsp;</font><font color="#000000">+&nbsp;deleted&nbsp;+&nbsp;</font><font color="#2a00ff">&#34;&nbsp;document&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
@@ -86,8 +86,6 @@ namespace Lucene.Net.Index
 	/// then add all the new documents.
 	/// 
 	/// </summary>
-	/// <author>  Daniel Naber
-	/// </author>
 	/// <deprecated> Please use {@link IndexWriter} instead.
 	/// </deprecated>
 	public class IndexModifier
@@ -194,7 +192,7 @@ namespace Lucene.Net.Index
 			lock (this.directory)
 			{
 				this.analyzer = analyzer;
-				indexWriter = new IndexWriter(directory, analyzer, create);
+				indexWriter = new IndexWriter(directory, analyzer, create, IndexWriter.MaxFieldLength.LIMITED);
 				open = true;
 			}
 		}
@@ -225,7 +223,7 @@ namespace Lucene.Net.Index
 					indexReader.Close();
 					indexReader = null;
 				}
-				indexWriter = new IndexWriter(directory, analyzer, false);
+				indexWriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(maxFieldLength));
 				// IndexModifier cannot use ConcurrentMergeScheduler
 				// because it synchronizes on the directory which can
 				// cause deadlock
@@ -234,7 +232,6 @@ namespace Lucene.Net.Index
 				indexWriter.SetUseCompoundFile(useCompoundFile);
 				if (maxBufferedDocs != IndexWriter.DISABLE_AUTO_FLUSH)
 					indexWriter.SetMaxBufferedDocs(maxBufferedDocs);
-				indexWriter.SetMaxFieldLength(maxFieldLength);
 				indexWriter.SetMergeFactor(mergeFactor);
 			}
 		}
@@ -675,8 +672,8 @@ namespace Lucene.Net.Index
 		// create an index in /tmp/index, overwriting an existing one:
 		IndexModifier indexModifier = new IndexModifier("/tmp/index", analyzer, true);
 		Document doc = new Document();
-		doc.add(new Fieldable("id", "1", Fieldable.Store.YES, Fieldable.Index.UN_TOKENIZED));
-		doc.add(new Fieldable("body", "a simple test", Fieldable.Store.YES, Fieldable.Index.TOKENIZED));
+		doc.add(new Fieldable("id", "1", Fieldable.Store.YES, Fieldable.Index.NOT_ANALYZED));
+		doc.add(new Fieldable("body", "a simple test", Fieldable.Store.YES, Fieldable.Index.ANALYZED));
 		indexModifier.addDocument(doc);
 		int deleted = indexModifier.delete(new Term("id", "1"));
 		System.out.println("Deleted " + deleted + " document");

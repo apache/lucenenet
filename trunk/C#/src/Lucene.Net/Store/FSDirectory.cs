@@ -39,8 +39,6 @@ namespace Lucene.Net.Store
 	/// </summary>
 	/// <seealso cref="Directory">
 	/// </seealso>
-	/// <author>  Doug Cutting
-	/// </author>
 	public class FSDirectory : Directory
 	{
 		
@@ -89,16 +87,12 @@ namespace Lucene.Net.Store
 		/// the <code>getDirectory</code> methods that take a
 		/// <code>lockFactory</code> (for example, {@link #GetDirectory(String, LockFactory)}).
 		/// </deprecated>
-        
-        //Deprecated. As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. 
-        //If you really want to store locks elsewhere you can create your own SimpleFSLockFactory (or NativeFSLockFactory, etc.) passing in your preferred lock directory. 
-        //Then, pass this LockFactory instance to one of the getDirectory methods that take a lockFactory (for example, getDirectory(String, LockFactory)).
-		//public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
+		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		private static System.Type IMPL;
 		
-        private static System.Security.Cryptography.HashAlgorithm DIGESTER;
+		private static System.Security.Cryptography.MD5 DIGESTER;
 		
 		/// <summary>A buffer optionally used in renameTo method </summary>
 		private byte[] buffer = null;
@@ -338,7 +332,7 @@ namespace Lucene.Net.Store
 						{
 							lockFactory = (LockFactory) System.Activator.CreateInstance(c, true);
 						}
-						catch (System.UnauthorizedAccessException e)
+						catch (System.UnauthorizedAccessException)
 						{
 							throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockClassName);
 						}
@@ -383,13 +377,21 @@ namespace Lucene.Net.Store
 		/// <summary>Returns an array of strings, one for each Lucene index file in the directory. </summary>
 		public override System.String[] List()
 		{
-            return SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
+            EnsureOpen();
+            System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
+            for (int i = 0; i < files.Length; i++)
+            {
+                System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
+                files[i] = fi.Name;
+            }
+			return files;
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+            EnsureOpen();
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			bool tmpBool;
 			if (System.IO.File.Exists(file.FullName))
 				tmpBool = true;
@@ -401,7 +403,8 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public override long FileModified(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+            EnsureOpen();
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			return (file.LastWriteTime.Ticks);
 		}
 		
@@ -415,26 +418,36 @@ namespace Lucene.Net.Store
 		/// <summary>Set the modified time of an existing file to now. </summary>
 		public override void  TouchFile(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+            EnsureOpen();
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			file.LastWriteTime = System.DateTime.Now;
 		}
 		
 		/// <summary>Returns the length in bytes of a file in the directory. </summary>
 		public override long FileLength(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+            EnsureOpen();
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			return file.Exists ? file.Length : 0;
 		}
 		
 		/// <summary>Removes an existing file in the directory. </summary>
 		public override void  DeleteFile(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+            EnsureOpen();
+            System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			bool tmpBool;
 			if (System.IO.File.Exists(file.FullName))
 			{
-				System.IO.File.Delete(file.FullName);
-				tmpBool = true;
+                try
+                {
+                    System.IO.File.Delete(file.FullName);
+                }
+                catch (System.UnauthorizedAccessException e)
+                {
+                    throw new System.IO.IOException(e.Message, e);
+                }
+                tmpBool = true;
 			}
 			else if (System.IO.Directory.Exists(file.FullName))
 			{
@@ -454,9 +467,10 @@ namespace Lucene.Net.Store
 		/// </deprecated>
 		public override void  RenameFile(System.String from, System.String to)
 		{
-			lock (this)
+            lock (this)
 			{
-				System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
+                EnsureOpen();
+                System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
 				System.IO.FileInfo nu = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, to));
 				
 				/* This is not atomic.  If the program crashes between the call to
@@ -576,6 +590,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		public override IndexOutput CreateOutput(System.String name)
 		{
+            EnsureOpen();
 			
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
 			bool tmpBool;
@@ -603,25 +618,87 @@ namespace Lucene.Net.Store
 			return new FSIndexOutput(file);
 		}
 
+        public override void Sync(string name)
+        {
+            EnsureOpen();
+
+            string fullName = System.IO.Path.Combine(directory.FullName, name);
+            bool success = false;
+            int retryCount = 0;
+            UnauthorizedAccessException exc = null;
+
+            while (!success && retryCount < 5)
+            {
+                retryCount++;
+                System.IO.FileStream file = null;
+
+                try
+                {
+                    try
+                    {
+                        file = new System.IO.FileStream(fullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        
+                        //TODO
+                        // {{dougsale-2.4}}:
+                        // 
+                        // in Lucene (Java):
+                        // file.getFD().sync();
+                        // file is a java.io.RandomAccessFile
+                        // getFD() returns java.io.FileDescriptor
+                        // sync() documentation states: "Force all system buffers to synchronize with the underlying device."
+                        //
+                        // what they try to do here is get ahold of the underlying file descriptor
+                        // for the given file name and make sure all (downstream) associated system buffers are
+                        // flushed to disk
+                        // 
+                        // how do i do that in .Net?  flushing the created stream might inadvertently do it, or it
+                        // may do nothing at all.  I can find references to the file HANDLE, but it's not really
+                        // a type, simply an int pointer.
+                        //
+                        // where is FSDirectory.Sync(string name) called from - if this isn't a new feature but rather a refactor, maybe
+                        // i can snip the old code from where it was re-factored...
+
+                        success = true;
+                    }
+                    finally
+                    {
+                        if (file != null)
+                            file.Close();
+                    }
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    exc = e;
+                    System.Threading.Thread.Sleep(5);
+                }
+            }
+            if (!success)
+                // throw original exception
+                throw exc;
+        }
+
         // Inherit javadoc
         public override IndexInput OpenInput(System.String name)
         {
+            EnsureOpen();
             return OpenInput(name, BufferedIndexInput.BUFFER_SIZE);
         }
 
         // Inherit javadoc
         public override IndexInput OpenInput(System.String name, int bufferSize)
         {
+            EnsureOpen();
             return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize);
         }
-
+ 
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 		
 		
 		public override System.String GetLockID()
 		{
-			System.String dirName; // name to be hashed
+            EnsureOpen();
+            System.String dirName; // name to be hashed
 			try
 			{
 				dirName = directory.FullName;
@@ -653,8 +730,9 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				if (--refCount <= 0)
+				if (isOpen && --refCount <= 0)
 				{
+                    isOpen = false;
 					lock (DIRECTORIES.SyncRoot)
 					{
 						DIRECTORIES.Remove(directory.FullName);
@@ -665,7 +743,8 @@ namespace Lucene.Net.Store
 		
 		public virtual System.IO.FileInfo GetFile()
 		{
-			return directory;
+            EnsureOpen();
+            return directory;
 		}
 		
 		/// <summary>For debug output. </summary>
@@ -677,11 +756,11 @@ namespace Lucene.Net.Store
 		public /*protected internal*/ class FSIndexInput : BufferedIndexInput, System.ICloneable
 		{
 		
-			private class Descriptor : System.IO.BinaryReader
+			protected internal class Descriptor : System.IO.BinaryReader
 			{
 				// remember if the file is open, so that we don't try to close it
 				// more than once
-				private bool isOpen;
+				protected internal volatile bool isOpen;
 				internal long position;
 				internal long length;
 			
@@ -713,7 +792,7 @@ namespace Lucene.Net.Store
 				}
 			}
 		
-			private Descriptor file;
+			protected internal Descriptor file;
 			internal bool isClone;
 			
 	        public bool isClone_ForNUnitTest
@@ -786,7 +865,7 @@ namespace Lucene.Net.Store
 				return file.length;
 			}
 			
-			public override System.Object Clone()
+			public override object Clone()
 			{
 				FSIndexInput clone = (FSIndexInput) base.Clone();
 				clone.isClone = true;
@@ -808,7 +887,7 @@ namespace Lucene.Net.Store
 		
 			// remember if the file is open, so that we don't try to close it
 			// more than once
-			private bool isOpen;
+			private volatile bool isOpen;
 		
 			public FSIndexOutput(System.IO.FileInfo path)
 			{
@@ -835,6 +914,13 @@ namespace Lucene.Net.Store
 			public override void  FlushBuffer(byte[] b, int offset, int size)
 			{
 				file.Write(b, offset, size);
+                // {{dougsale-2.4.0}}
+                // When writing frequently with small amounts of data, the data isn't flushed to disk.
+                // Thus, attempting to read the data soon after this method is invoked leads to
+                // BufferedIndexInput.Refill() throwing an IOException for reading past EOF.
+                // Test\Index\TestDoc.cs demonstrates such a situation.
+                // Forcing a flush here prevents said issue.
+                file.Flush();
 			}
 			public override void  Close()
 			{
@@ -858,7 +944,13 @@ namespace Lucene.Net.Store
 			{
 				return file.BaseStream.Length;
 			}
+            public override void SetLength(long length)
+            {
+                System.IO.FileStream fs = (System.IO.FileStream)file.BaseStream;
+                fs.SetLength(length);
+            }
 		}
+
 		static FSDirectory()
 		{
 			{
@@ -886,7 +978,7 @@ namespace Lucene.Net.Store
 			{
 				try
 				{
-                    DIGESTER = SupportClass.Cryptography.GetHashAlgorithm();
+					DIGESTER = System.Security.Cryptography.MD5.Create();
 				}
 				catch (System.Exception e)
 				{

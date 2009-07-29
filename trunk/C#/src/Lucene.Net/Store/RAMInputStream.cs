@@ -23,9 +23,6 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexInput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMInputStream.java 598693 2007-11-27 17:01:21Z mikemccand $
-	/// </version>
-	
 	public class RAMInputStream : IndexInput, System.ICloneable
 	{
 		internal static readonly int BUFFER_SIZE;
@@ -76,7 +73,7 @@ namespace Lucene.Net.Store
 			if (bufferPosition >= bufferLength)
 			{
 				currentBufferIndex++;
-				SwitchCurrentBuffer();
+				SwitchCurrentBuffer(true);
 			}
 			return currentBuffer[bufferPosition++];
 		}
@@ -88,7 +85,7 @@ namespace Lucene.Net.Store
 				if (bufferPosition >= bufferLength)
 				{
 					currentBufferIndex++;
-					SwitchCurrentBuffer();
+					SwitchCurrentBuffer(true);
 				}
 				
 				int remainInBuffer = bufferLength - bufferPosition;
@@ -100,12 +97,19 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		private void  SwitchCurrentBuffer()
+		private void  SwitchCurrentBuffer(bool enforceEOF)
 		{
 			if (currentBufferIndex >= file.NumBuffers())
 			{
 				// end of file reached, no more buffers left
-				throw new System.IO.IOException("Read past EOF");
+                if (enforceEOF)
+                    throw new System.IO.IOException("Read past EOF");
+                else
+                {
+                    // Force EOF if a read takes place at this position
+                    currentBufferIndex--;
+                    bufferPosition = BUFFER_SIZE;
+                }
 			}
 			else
 			{
@@ -127,13 +131,13 @@ namespace Lucene.Net.Store
 			if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
 			{
 				currentBufferIndex = (int) (pos / BUFFER_SIZE);
-				SwitchCurrentBuffer();
+				SwitchCurrentBuffer(false);
 			}
 			bufferPosition = (int) (pos % BUFFER_SIZE);
 		}
 
         // {{Aroush-1.9}} Do we need this Clone()?!
-        /* override public System.Object Clone()
+        /* override public object Clone()
         {
             return null;
         }

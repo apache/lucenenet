@@ -44,12 +44,13 @@ namespace Lucene.Net.Index
 		public RepeatingTokenStream(System.String val)
 		{
 			t = new Token(val, 0, val.Length);
+            t.SetTermBuffer(val);
 		}
 		
-		public override Token Next()
+		public override Token Next(Token reusableToken)
 		{
-			return --num < 0?null:t;
-		}
+            return --num < 0 ? null : (Token)(t.Clone());
+        }
 	}
 	
 	[TestFixture]
@@ -100,8 +101,8 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new AnonymousClassAnalyzer(random, percentDocs, ts, maxTF, this);
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field(field, val, Field.Store.NO, Field.Index.NO_NORMS));
-			IndexWriter writer = new IndexWriter(dir, analyzer, true);
+			doc.Add(new Field(field, val, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(100);
 			writer.SetMergeFactor(100);
 			

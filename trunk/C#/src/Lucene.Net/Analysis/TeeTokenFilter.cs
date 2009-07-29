@@ -62,11 +62,12 @@ namespace Lucene.Net.Analysis
 			this.sink = sink;
 		}
 		
-		public override Token Next(Token result)
+		public override Token Next(/* in */ Token reusableToken)
 		{
-			Token t = input.Next(result);
-			sink.Add(t);
-			return t;
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+			Token nextToken = input.Next(reusableToken);
+			sink.Add(nextToken);
+			return nextToken;
 		}
 	}
 }

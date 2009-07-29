@@ -17,9 +17,11 @@
 
 using System;
 
+using CheckIndex = Lucene.Net.Index.CheckIndex;
 using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using MergeScheduler = Lucene.Net.Index.MergeScheduler;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Util
 {
@@ -90,14 +92,24 @@ namespace Lucene.Net.Util
 				((ConcurrentMergeScheduler) ms).Sync();
 		}
 
-        public static bool CheckIndex(Lucene.Net.Store.Directory dir)
+        /// <summary>
+        /// This runs the CheckIndex tool on the index in dir.
+        /// If any issues are hit, a System.Exception is thrown; else,
+        /// true is returned.
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static bool CheckIndex(Directory dir)
         {
-            Lucene.Net.Index.CheckIndex.out_Renamed = new System.IO.StringWriter();
-            if (!Lucene.Net.Index.CheckIndex.Check(dir, false))
+            System.IO.StringWriter sw = new System.IO.StringWriter();
+            CheckIndex checker = new CheckIndex(dir);
+            checker.SetInfoStream(sw);
+            CheckIndex.Status indexStatus = checker.CheckIndex_Renamed();
+            if (indexStatus == null || !indexStatus.clean)
             {
                 System.Console.WriteLine("CheckIndex failed");
-                System.Console.WriteLine(Lucene.Net.Index.CheckIndex.out_Renamed.ToString());
-                return false;
+                System.Console.WriteLine(sw.ToString());
+                throw new System.Exception("CheckIndex failed");
             }
             else
                 return true;

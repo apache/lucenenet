@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Function
 	/// Values for the numeric field are loaded once and cached in memory for further use with the same IndexReader. 
 	/// To take advantage of this, it is extremely important to reuse index-readers or index-searchers, 
 	/// otherwise, for instance if for each query a new index reader is opened, large penalties would be 
-	/// payd for loading the field values into memory over and over again!
+	/// paid for loading the field values into memory over and over again!
 	/// 
 	/// <p><font color="#FF0000">
 	/// WARNING: The status of the <b>search.function</b> package is experimental. 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Function
 			{
 				this.typeName = name;
 			}
-			/*(non-Javadoc) @see java.lang.Object#toString() */
+			/*(non-Javadoc) @see java.lang.object#toString() */
 			public override System.String ToString()
 			{
 				return GetType().FullName + "::" + typeName;

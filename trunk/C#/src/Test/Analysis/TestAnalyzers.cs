@@ -33,13 +33,14 @@ namespace Lucene.Net.Analysis
 		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
 		{
 			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
+            Token reusableToken = new Token();
 			for (int i = 0; i < output.Length; i++)
 			{
-				Token t = ts.Next();
-				Assert.IsNotNull(t);
-				Assert.AreEqual(t.TermText(), output[i]);
+				Token nextToken = ts.Next(reusableToken);
+				Assert.IsNotNull(nextToken);
+				Assert.AreEqual(nextToken.Term(), output[i]);
 			}
-			Assert.IsNull(ts.Next());
+			Assert.IsNull(ts.Next(reusableToken));
 			ts.Close();
 		}
 		
@@ -81,16 +82,16 @@ namespace Lucene.Net.Analysis
 		
 		internal virtual void  VerifyPayload(TokenStream ts)
 		{
-			Token t = new Token();
+            Token reusableToken = new Token();
 			for (byte b = 1; ; b++)
 			{
-				t.Clear();
-				t = ts.Next(t);
-				if (t == null)
+                reusableToken.Clear();
+                Token nextToken = ts.Next(reusableToken);
+				if (nextToken == null)
 					break;
-				// System.out.println("id="+System.identityHashCode(t) + " " + t);
-				// System.out.println("payload=" + (int)t.getPayload().toByteArray()[0]);
-				Assert.AreEqual(b, t.GetPayload().ToByteArray()[0]);
+				// System.out.println("id="+System.identityHashCode(nextToken) + " " + nextToken);
+				// System.out.println("payload=" + (int)nextToken.getPayload().toByteArray()[0]);
+				Assert.AreEqual(b, nextToken.GetPayload().ToByteArray()[0]);
 			}
 		}
 		
@@ -135,21 +136,17 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		public override Token Next()
+		public override Token Next(Token reusableToken)
 		{
 			if (lst == null)
 			{
 				lst = new System.Collections.ArrayList();
-				for (; ; )
+                for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
 				{
-					Token t = input.Next();
-					if (t == null)
-						break;
-					lst.Add(t);
+					lst.Add(nextToken.Clone());
 				}
 			}
-			System.Object tempObject;
-			tempObject = lst[0];
+			object tempObject = lst[0];
 			lst.RemoveAt(0);
 			return lst.Count == 0 ? null : (Token) tempObject;
 		}
@@ -169,14 +166,14 @@ namespace Lucene.Net.Analysis
 		internal byte[] data = new byte[1];
 		internal Payload p;
 		
-		public override Token Next(Token target)
+		public override Token Next(Token reusableToken)
 		{
-			target = input.Next(target);
-			if (target == null)
-				return null;
-			target.SetPayload(p); // reuse the payload / byte[]
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+            Token nextToken = input.Next(reusableToken);
+			if (nextToken == null) return null;
+			nextToken.SetPayload(p); // reuse the payload / byte[]
 			data[0]++;
-			return target;
+			return nextToken;
 		}
 	}
 }

@@ -15,22 +15,20 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
 
+using BitVector = Lucene.Net.Util.BitVector;
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
+using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
+using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
+using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
-using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
-using BitVector = Lucene.Net.Util.BitVector;
-using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <version>  $Id: SegmentReader.java 603061 2007-12-10 21:49:41Z gsingers $
-	/// </version>
 	public class SegmentReader : DirectoryIndexReader
 	{
 		private System.String segment;
@@ -42,16 +40,19 @@ namespace Lucene.Net.Index
 		
 		internal TermInfosReader tis;
 		internal TermVectorsReader termVectorsReaderOrig = null;
-		internal System.LocalDataStoreSlot termVectorsLocal = System.Threading.Thread.AllocateDataSlot();
+        internal CloseableThreadLocal termVectorsLocal = new CloseableThreadLocal();
 		
 		internal BitVector deletedDocs = null;
 		private bool deletedDocsDirty = false;
 		private bool normsDirty = false;
 		private bool undeleteAll = false;
+        private int pendingDeleteCount;
 		
 		private bool rollbackDeletedDocsDirty = false;
 		private bool rollbackNormsDirty = false;
 		private bool rollbackUndeleteAll = false;
+        private int rollbackPendingDeleteCount;
+        new private bool readOnly;
 		
 		internal IndexInput freqStream;
 		internal IndexInput proxStream;
@@ -167,7 +168,7 @@ namespace Lucene.Net.Index
 		/// <summary> Increments the RC of this reader, as well as
 		/// of all norms this reader is using
 		/// </summary>
-		protected internal override void  IncRef()
+		public override void IncRef()
 		{
 			lock (this)
 			{
@@ -194,7 +195,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		protected internal override void  DecRef()
+		public override void DecRef()
 		{
 			lock (this)
 			{
@@ -203,7 +204,7 @@ namespace Lucene.Net.Index
 				while (it.MoveNext())
 				{
 					Norm norm = (Norm) it.Current;
-					norm.DecRef();
+				  	norm.DecRef();
 				}
 			}
 		}
@@ -221,62 +222,79 @@ namespace Lucene.Net.Index
 		/// <summary>The class which implements SegmentReader. </summary>
 		private static System.Type IMPL;
 		
+        private static System.Type READONLY_IMPL;
+
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static SegmentReader Get(SegmentInfo si)
 		{
-			return Get(si.dir, si, null, false, false, BufferedIndexInput.BUFFER_SIZE, true);
+			return Get(READ_ONLY_DEFAULT, si.dir, si, null, false, false, BufferedIndexInput.BUFFER_SIZE, true);
 		}
 		
+        public static SegmentReader Get(bool readOnly, SegmentInfo si)
+        {
+            return Get(readOnly, si.dir, si, null, false, false, BufferedIndexInput.BUFFER_SIZE, true);
+        }
+
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		internal static SegmentReader Get(SegmentInfo si, bool doOpenStores)
 		{
-			return Get(si.dir, si, null, false, false, BufferedIndexInput.BUFFER_SIZE, doOpenStores);
+            return Get(READ_ONLY_DEFAULT, si.dir, si, null, false, false, BufferedIndexInput.BUFFER_SIZE, doOpenStores);
 		}
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static SegmentReader Get(SegmentInfo si, int readBufferSize)
 		{
-			return Get(si.dir, si, null, false, false, readBufferSize, true);
+            return Get(READ_ONLY_DEFAULT, si.dir, si, null, false, false, readBufferSize, true);
 		}
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		internal static SegmentReader Get(SegmentInfo si, int readBufferSize, bool doOpenStores)
 		{
-			return Get(si.dir, si, null, false, false, readBufferSize, doOpenStores);
+            return Get(READ_ONLY_DEFAULT, si.dir, si, null, false, false, readBufferSize, doOpenStores);
 		}
-		
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+
+        /// <throws>  CorruptIndexException if the index is corrupt </throws>
+        /// <throws>  IOException if there is a low-level IO error </throws>
+        internal static SegmentReader Get(bool readOnly, SegmentInfo si, int readBufferSize, bool doOpenStores)
+        {
+            return Get(readOnly, si.dir, si, null, false, false, readBufferSize, doOpenStores);
+        }
+
+        /// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public static SegmentReader Get(SegmentInfos sis, SegmentInfo si, bool closeDir)
+		public static SegmentReader Get(bool readOnly, SegmentInfos sis, SegmentInfo si, bool closeDir)
 		{
-			return Get(si.dir, si, sis, closeDir, true, BufferedIndexInput.BUFFER_SIZE, true);
+			return Get(readOnly, si.dir, si, sis, closeDir, true, BufferedIndexInput.BUFFER_SIZE, true);
 		}
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static SegmentReader Get(Directory dir, SegmentInfo si, SegmentInfos sis, bool closeDir, bool ownDir, int readBufferSize)
 		{
-			return Get(dir, si, sis, closeDir, ownDir, readBufferSize, true);
+            return Get(READ_ONLY_DEFAULT, dir, si, sis, closeDir, ownDir, readBufferSize, true);
 		}
 		
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public static SegmentReader Get(Directory dir, SegmentInfo si, SegmentInfos sis, bool closeDir, bool ownDir, int readBufferSize, bool doOpenStores)
+		public static SegmentReader Get(bool readOnly, Directory dir, SegmentInfo si, SegmentInfos sis, bool closeDir, bool ownDir, int readBufferSize, bool doOpenStores)
 		{
 			SegmentReader instance;
 			try
 			{
-				instance = (SegmentReader) System.Activator.CreateInstance(IMPL);
-			}
+                if (readOnly)
+                    instance = (SegmentReader)System.Activator.CreateInstance(READONLY_IMPL);
+                else
+                    instance = (SegmentReader)System.Activator.CreateInstance(IMPL);
+            }
 			catch (System.Exception e)
 			{
 				throw new System.Exception("cannot load SegmentReader class: " + e, e);
 			}
-			instance.Init(dir, sis, closeDir);
+			instance.Init(dir, sis, closeDir, readOnly);
 			instance.Initialize(si, readBufferSize, doOpenStores);
 			return instance;
 		}
@@ -323,9 +341,14 @@ namespace Lucene.Net.Index
 				else
 					storeDir = null;
 				
-				// No compound file exists - use the multi-file format
 				fieldInfos = new FieldInfos(cfsDir, segment + ".fnm");
-				
+
+                bool anyProx = false;
+                int numFields = fieldInfos.Size();
+                for (int i = 0; !anyProx && i < numFields; i++)
+                    if (!fieldInfos.FieldInfo(i).omitTf)
+                        anyProx = true;
+
 				System.String fieldsSegment;
 				
 				if (si.GetDocStoreOffset() != - 1)
@@ -351,8 +374,9 @@ namespace Lucene.Net.Index
 				// make sure that all index files have been read or are kept open
 				// so that if an index update removes them we'll still have them
 				freqStream = cfsDir.OpenInput(segment + ".frq", readBufferSize);
-				proxStream = cfsDir.OpenInput(segment + ".prx", readBufferSize);
-				OpenNorms(cfsDir, readBufferSize);
+                if (anyProx)
+                    proxStream = cfsDir.OpenInput(segment + ".prx", readBufferSize);
+                OpenNorms(cfsDir, readBufferSize);
 				
 				if (doOpenStores && fieldInfos.HasVectors())
 				{
@@ -380,21 +404,24 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		private void  LoadDeletedDocs()
-		{
-			// NOTE: the bitvector is stored using the regular directory, not cfs
-			if (HasDeletions(si))
-			{
-				deletedDocs = new BitVector(Directory(), si.GetDelFileName());
-				
-				// Verify # deletes does not exceed maxDoc for this segment:
-				if (deletedDocs.Count() > MaxDoc())
-				{
-					throw new CorruptIndexException("number of deletes (" + deletedDocs.Count() + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
-				}
-			}
-		}
+
+        private void LoadDeletedDocs()
+        {
+            // NOTE: the bitvector is stored using the regular directory, not cfs
+            if (HasDeletions(si))
+            {
+                deletedDocs = new BitVector(Directory(), si.GetDelFileName());
+
+                System.Diagnostics.Debug.Assert(si.GetDelCount() == deletedDocs.Count(),
+                    "delete count mismatch: info=" + si.GetDelCount() + " vs BitVector=" + deletedDocs.Count());
+
+                // Verify # deletes does not exceed maxDoc for this segment:
+                System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc(),
+                  "delete count mismatch: " + deletedDocs.Count() + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
+            }
+            else
+                System.Diagnostics.Debug.Assert(si.GetDelCount() == 0);
+        }
 		
 		protected internal override DirectoryIndexReader DoReopen(SegmentInfos infos)
 		{
@@ -413,13 +440,16 @@ namespace Lucene.Net.Index
 					{
 						// segment not referenced anymore, reopen not possible
 						// or segment format changed
-						newReader = SegmentReader.Get(infos, infos.Info(0), false);
+						newReader = SegmentReader.Get(readOnly, infos, infos.Info(0), false);
 					}
 				}
 				else
 				{
-					return new MultiSegmentReader(directory, infos, closeDirectory, new SegmentReader[]{this}, null, null);
-				}
+                    if (readOnly)
+                        return new ReadOnlyMultiSegmentReader(directory, infos, closeDirectory, new SegmentReader[] { this }, null, null);
+                    else
+                        return new MultiSegmentReader(directory, infos, closeDirectory, new SegmentReader[] { this }, null, null, false);
+                }
 				
 				return newReader;
 			}
@@ -453,10 +483,16 @@ namespace Lucene.Net.Index
 				
 				
 				// clone reader
-				SegmentReader clone = new SegmentReader();
-				bool success = false;
+				SegmentReader clone;
+                if (readOnly)
+                    clone = new ReadOnlySegmentReader();
+                else
+                    clone = new SegmentReader();
+
+                bool success = false;
 				try
 				{
+                    clone.readOnly = readOnly;
 					clone.directory = directory;
 					clone.si = si;
 					clone.segment = segment;
@@ -609,11 +645,14 @@ namespace Lucene.Net.Index
 				// .tmp & renaming it) because the file is not live
 				// until segments file is written:
 				deletedDocs.Write(Directory(), si.GetDelFileName());
+
+                si.SetDelCount(si.GetDelCount() + pendingDeleteCount);
 			}
 			if (undeleteAll && si.HasDeletions())
 			{
 				si.ClearDelGen();
-			}
+                si.SetDelCount(0);
+            }
 			if (normsDirty)
 			{
 				// re-write norms
@@ -637,60 +676,69 @@ namespace Lucene.Net.Index
 		{
 			return fieldsReader;
 		}
-		
+
+        public void foo()
+        { 
+            //termVectorsLocal.Clear();
+            termVectorsLocal.Close(); 
+        }
+
 		protected internal override void  DoClose()
 		{
-			bool hasReferencedReader = (referencedSegmentReader != null);
-			
-			if (hasReferencedReader)
-			{
-				referencedSegmentReader.DecRefReaderNotNorms();
-				referencedSegmentReader = null;
-			}
-			
-			deletedDocs = null;
-			
-			// close the single norms stream
-			if (singleNormStream != null)
-			{
-				// we can close this stream, even if the norms
-				// are shared, because every reader has it's own 
-				// singleNormStream
-				singleNormStream.Close();
-				singleNormStream = null;
-			}
-			
-			// re-opened SegmentReaders have their own instance of FieldsReader
-			if (fieldsReader != null)
-			{
-				fieldsReader.Close();
-			}
-			
-			if (!hasReferencedReader)
-			{
-				// close everything, nothing is shared anymore with other readers
-				if (tis != null)
-				{
-					tis.Close();
-				}
-				
-				if (freqStream != null)
-					freqStream.Close();
-				if (proxStream != null)
-					proxStream.Close();
-				
-				if (termVectorsReaderOrig != null)
-					termVectorsReaderOrig.Close();
-				
-				if (cfsReader != null)
-					cfsReader.Close();
-				
-				if (storeCFSReader != null)
-					storeCFSReader.Close();
-				
-				// maybe close directory
-				base.DoClose();
-			}
+            bool hasReferencedReader = (referencedSegmentReader != null);
+
+            termVectorsLocal.Close();
+            //termVectorsLocal.Clear();
+
+            if (hasReferencedReader)
+            {
+                referencedSegmentReader.DecRefReaderNotNorms();
+                referencedSegmentReader = null;
+            }
+
+            deletedDocs = null;
+
+            // close the single norms stream
+            if (singleNormStream != null)
+            {
+                // we can close this stream, even if the norms
+                // are shared, because every reader has it's own 
+                // singleNormStream
+                singleNormStream.Close();
+                singleNormStream = null;
+            }
+
+            // re-opened SegmentReaders have their own instance of FieldsReader
+            if (fieldsReader != null)
+            {
+                fieldsReader.Close();
+            }
+
+            if (!hasReferencedReader)
+            {
+                // close everything, nothing is shared anymore with other readers
+                if (tis != null)
+                {
+                    tis.Close();
+                }
+
+                if (freqStream != null)
+                    freqStream.Close();
+                if (proxStream != null)
+                    proxStream.Close();
+
+                if (termVectorsReaderOrig != null)
+                    termVectorsReaderOrig.Close();
+
+                if (cfsReader != null)
+                    cfsReader.Close();
+
+                if (storeCFSReader != null)
+                    storeCFSReader.Close();
+
+                // maybe close directory
+                base.DoClose();
+            }
 		}
 		
 		internal static bool HasDeletions(SegmentInfo si)
@@ -721,7 +769,8 @@ namespace Lucene.Net.Index
 				deletedDocs = new BitVector(MaxDoc());
 			deletedDocsDirty = true;
 			undeleteAll = false;
-			deletedDocs.Set(docNum);
+			if (!deletedDocs.GetAndSet(docNum))
+                pendingDeleteCount++;
 		}
 		
 		protected internal override void  DoUndeleteAll()
@@ -731,12 +780,14 @@ namespace Lucene.Net.Index
 			undeleteAll = true;
 		}
 		
-		internal virtual System.Collections.ArrayList Files()
+		internal virtual List<string> Files()
 		{
-			return System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(si.Files()));
-		}
-		
-		public override TermEnum Terms()
+            List<string> copy = new List<string>(si.Files().Count);
+            copy.AddRange(si.Files());
+            return copy;
+        }
+
+        public override TermEnum Terms()
 		{
 			EnsureOpen();
 			return tis.Terms();
@@ -823,54 +874,58 @@ namespace Lucene.Net.Index
 		
 		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
 		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldOption)
+		public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
 			EnsureOpen();
 
-            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<string, string> fieldSet = new System.Collections.Generic.Dictionary<string, string>();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fieldOption == IndexReader.FieldOption.ALL)
 				{
-                    fieldSet.Add(fi.name, fi.name);
+                    fieldSet[fi.name] = fi.name;
 				}
 				else if (!fi.isIndexed && fieldOption == IndexReader.FieldOption.UNINDEXED)
 				{
-                    fieldSet.Add(fi.name, fi.name);
+                    fieldSet[fi.name] = fi.name;
 				}
-				else if (fi.storePayloads && fieldOption == IndexReader.FieldOption.STORES_PAYLOADS)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.isIndexed && fieldOption == IndexReader.FieldOption.INDEXED)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.isIndexed && fi.storeTermVector == false && fieldOption == IndexReader.FieldOption.INDEXED_NO_TERMVECTOR)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.storeTermVector == true && fi.storePositionWithTermVector == false && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.isIndexed && fi.storeTermVector && fieldOption == IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.storePositionWithTermVector && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if (fi.storeOffsetWithTermVector && fi.storePositionWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
-				else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
-				{
-                    fieldSet.Add(fi.name, fi.name);
-				}
+                else if (fi.omitTf && fieldOption == IndexReader.FieldOption.OMIT_TF)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.storePayloads && fieldOption == IndexReader.FieldOption.STORES_PAYLOADS)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.isIndexed && fieldOption == IndexReader.FieldOption.INDEXED)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.isIndexed && fi.storeTermVector == false && fieldOption == IndexReader.FieldOption.INDEXED_NO_TERMVECTOR)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.storeTermVector == true && fi.storePositionWithTermVector == false && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.isIndexed && fi.storeTermVector && fieldOption == IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.storePositionWithTermVector && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if (fi.storeOffsetWithTermVector && fi.storePositionWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
+                else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
+                {
+                    fieldSet[fi.name] = fi.name;
+                }
 			}
 			return fieldSet.Keys;
 		}
@@ -934,7 +989,13 @@ namespace Lucene.Net.Index
 			{
 				EnsureOpen();
 				byte[] bytes = GetNorms(field);
-				if (bytes == null)
+
+//for (int i = 0; i < bytes.Length; i++)
+//    if (bytes[i] == 0)
+//        System.Console.Error.WriteLine("in directory " + directory + " norm for " + field + " = 0 for doc " + i);
+//    System.Diagnostics.Debug.Assert(bytes[i] > 0, "norm for " + field + " = 0 for doc " + i);
+
+                if (bytes == null)
 					bytes = FakeNorms();
 				return bytes;
 			}
@@ -963,7 +1024,7 @@ namespace Lucene.Net.Index
 				Norm norm = (Norm) norms[field];
 				if (norm == null)
 				{
-					Array.Copy(FakeNorms(), 0, bytes, offset, MaxDoc());
+					System.Array.Copy(FakeNorms(), 0, bytes, offset, MaxDoc());
 					return ;
 				}
 				
@@ -972,7 +1033,7 @@ namespace Lucene.Net.Index
 					if (norm.bytes != null)
 					{
 						// can copy from cache
-						Array.Copy(norm.bytes, 0, bytes, offset, MaxDoc());
+						System.Array.Copy(norm.bytes, 0, bytes, offset, MaxDoc());
 						return ;
 					}
 					
@@ -1076,12 +1137,20 @@ namespace Lucene.Net.Index
 		/// </returns>
 		private TermVectorsReader GetTermVectorsReader()
 		{
-			TermVectorsReader tvReader = (TermVectorsReader) System.Threading.Thread.GetData(termVectorsLocal);
-			if (tvReader == null)
-			{
-				tvReader = (TermVectorsReader) termVectorsReaderOrig.Clone();
-				System.Threading.Thread.SetData(termVectorsLocal, tvReader);
-			}
+            System.Diagnostics.Debug.Assert(termVectorsReaderOrig != null);
+            TermVectorsReader tvReader = (TermVectorsReader)termVectorsLocal.Get();
+            if (tvReader == null)
+            {
+                try
+                {
+                    tvReader = (TermVectorsReader)termVectorsReaderOrig.Clone();
+                }
+                catch (System.Exception)
+                {
+                    return null;
+                }
+                termVectorsLocal.Set(tvReader);
+            }
 			return tvReader;
 		}
 		
@@ -1105,7 +1174,6 @@ namespace Lucene.Net.Index
 			
 			return termVectorsReader.Get(docNumber, field);
 		}
-		
 		
 		public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
 		{
@@ -1187,6 +1255,7 @@ namespace Lucene.Net.Index
 			rollbackDeletedDocsDirty = deletedDocsDirty;
 			rollbackNormsDirty = normsDirty;
 			rollbackUndeleteAll = undeleteAll;
+            rollbackPendingDeleteCount = pendingDeleteCount;
 			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
 			while (it.MoveNext())
 			{
@@ -1201,6 +1270,7 @@ namespace Lucene.Net.Index
 			deletedDocsDirty = rollbackDeletedDocsDirty;
 			normsDirty = rollbackNormsDirty;
 			undeleteAll = rollbackUndeleteAll;
+            pendingDeleteCount = rollbackPendingDeleteCount;
 			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
 			while (it.MoveNext())
 			{
@@ -1210,28 +1280,42 @@ namespace Lucene.Net.Index
 		}
 		static SegmentReader()
 		{
-			{
-				try
-				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
-					IMPL = System.Type.GetType(name);
-				}
-				catch (System.Security.SecurityException se)
-				{
-					try
-					{
-						IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
-					}
-					catch (System.Exception e)
-					{
-						throw new System.Exception("cannot load default SegmentReader class: " + e, e);
-					}
-				}
-				catch (System.Exception e)
-				{
-					throw new System.Exception("cannot load SegmentReader class: " + e, e);
-				}
-			}
-		}
-	}
+            // IMPL type
+            try
+            {
+                string name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
+                IMPL = System.Type.GetType(name);
+            }
+            catch (System.Security.SecurityException)
+            {
+                try
+                {
+                    IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
+                }
+                catch (System.Exception e)
+                {
+                    throw new System.Exception("cannot load default SegmentReader class: " + e, e);
+                }
+            }
+            catch (System.Exception e) { throw new System.Exception("cannot load SegmentReader class: " + e, e); }
+            // READONLY_IMPL type
+            try
+            {
+                string name = SupportClass.AppSettings.Get("Lucene.Net.ReadOnlySegmentReader.class", typeof(ReadOnlySegmentReader).FullName);
+                READONLY_IMPL = System.Type.GetType(name);
+            }
+            catch (System.Security.SecurityException)
+            {
+                try
+                {
+                    READONLY_IMPL = System.Type.GetType(typeof(ReadOnlySegmentReader).FullName);
+                }
+                catch (System.Exception e)
+                {
+                    throw new System.Exception("cannot load default ReadOnlySegmentReader class: " + e, e);
+                }
+            }
+            catch (System.Exception e) { throw new System.Exception("cannot load ReadOnlSegmentReader class: " + e, e); }
+        }
+    }
 }

@@ -44,24 +44,24 @@ namespace Lucene.Net.Analysis
 		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] expectedImages, System.String[] expectedTypes, int[] expectedPosIncrs)
 		{
 			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
+            Token reusableToken = new Token();
 			for (int i = 0; i < expectedImages.Length; i++)
 			{
-				Token t = ts.Next();
-				Assert.IsNotNull(t);
-				Assert.AreEqual(expectedImages[i], t.TermText());
+				Token nextToken = ts.Next(reusableToken);
+				Assert.IsNotNull(nextToken);
+				Assert.AreEqual(expectedImages[i], nextToken.Term());
 				if (expectedTypes != null)
 				{
-					Assert.AreEqual(expectedTypes[i], t.Type());
+					Assert.AreEqual(expectedTypes[i], nextToken.Type());
 				}
 				if (expectedPosIncrs != null)
 				{
-					Assert.AreEqual(expectedPosIncrs[i], t.GetPositionIncrement());
+					Assert.AreEqual(expectedPosIncrs[i], nextToken.GetPositionIncrement());
 				}
 			}
-			Assert.IsNull(ts.Next());
+			Assert.IsNull(ts.Next(reusableToken));
 			ts.Close();
 		}
-		
 		
 		[Test]
 		public virtual void  TestMaxTermLength()
@@ -167,14 +167,16 @@ namespace Lucene.Net.Analysis
 		[Test]
 		public virtual void  TestDomainNames()
 		{
+            // don't reuse because we alter its state (SetReplaceInvalidAcronym)
+            StandardAnalyzer a2 = new StandardAnalyzer();
 			// domain names
-			AssertAnalyzesTo(a, "www.nutch.org", new System.String[]{"www.nutch.org"});
+			AssertAnalyzesTo(a2, "www.nutch.org", new System.String[]{"www.nutch.org"});
 			//Notice the trailing .  See https://issues.apache.org/jira/browse/LUCENE-1068.
-			//TODO: Remove in 3.x
-			AssertAnalyzesTo(a, "www.nutch.org.", new System.String[]{"wwwnutchorg"}, new System.String[]{"<ACRONYM>"});
+			// the following should be recognized as HOST
+			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
 			// the following should be recognized as HOST. The code that sets replaceDepAcronym should be removed in the next release.
-			((StandardAnalyzer) a).SetReplaceInvalidAcronym(true);
-			AssertAnalyzesTo(a, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
+			a2.SetReplaceInvalidAcronym(false);
+			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"wwwnutchorg"}, new System.String[]{"<ACRONYM>"});
 		}
 		
 		[Test]
@@ -290,7 +292,7 @@ namespace Lucene.Net.Analysis
 		{
 			// test backward compatibility for applications that require the old behavior.
 			// this should be removed once replaceDepAcronym is removed.
-			AssertAnalyzesTo(a, "lucene.apache.org.", new System.String[]{"luceneapacheorg"}, new System.String[]{"<ACRONYM>"});
+			AssertAnalyzesTo(a, "lucene.apache.org.", new System.String[]{"lucene.apache.org"}, new System.String[]{"<HOST>"});
 		}
 	}
 }

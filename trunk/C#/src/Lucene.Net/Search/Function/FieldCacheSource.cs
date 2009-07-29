@@ -39,8 +39,6 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
 	[Serializable]
 	public abstract class FieldCacheSource : ValueSource
 	{
@@ -73,8 +71,8 @@ namespace Lucene.Net.Search.Function
 		/// </seealso>
 		public abstract DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader);
 		
-		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
-		public  override bool Equals(System.Object o)
+		/*(non-Javadoc) @see java.lang.object#equals(java.lang.object) */
+		public  override bool Equals(object o)
 		{
 			if (!(o is FieldCacheSource))
 			{
@@ -84,21 +82,21 @@ namespace Lucene.Net.Search.Function
 			return this.field.Equals(other.field) && CachedFieldSourceEquals(other);
 		}
 		
-		/*(non-Javadoc) @see java.lang.Object#hashCode() */
+		/*(non-Javadoc) @see java.lang.object#hashCode() */
 		public override int GetHashCode()
 		{
 			return field.GetHashCode() + CachedFieldSourceHashCode();
 		}
 		
 		/// <summary> Check if equals to another {@link FieldCacheSource}, already knowing that cache and field are equal.  </summary>
-		/// <seealso cref="Object.equals(java.lang.Object)">
+		/// <seealso cref="object.equals(java.lang.object)">
 		/// </seealso>
 		public abstract bool CachedFieldSourceEquals(FieldCacheSource other);
 		
 		/// <summary> Return a hash code of a {@link FieldCacheSource}, without the hash-codes of the field 
 		/// and the cache (those are taken care of elsewhere).  
 		/// </summary>
-		/// <seealso cref="Object.hashCode()">
+		/// <seealso cref="object.hashCode()">
 		/// </seealso>
 		public abstract int CachedFieldSourceHashCode();
 	}

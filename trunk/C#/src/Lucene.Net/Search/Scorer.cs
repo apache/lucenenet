@@ -18,8 +18,7 @@
 using System;
 
 namespace Lucene.Net.Search
-{
-	
+{	
 	/// <summary> Expert: Common scoring functionality for different types of queries.
 	/// 
 	/// <p>
@@ -34,7 +33,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
 	/// </seealso>
-	public abstract class Scorer
+	public abstract class Scorer : DocIdSetIterator
 	{
 		private Similarity similarity;
 		
@@ -87,68 +86,12 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
-		/// <summary> Advances to the document matching this Scorer with the lowest doc Id
-		/// greater than the current value of {@link #Doc()} (or to the matching
-		/// document with the lowest doc Id if next has never been called on
-		/// this Scorer).
-		/// 
-		/// <p>
-		/// When this method is used the {@link #Explain(int)} method should not
-		/// be used.
-		/// </p>
-		/// 
-		/// </summary>
-		/// <returns> true iff there is another document matching the query.
-		/// </returns>
-		/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
-		/// </seealso>
-		public abstract bool Next();
-		
-		/// <summary>Returns the current document number matching the query.
-		/// Initially invalid, until {@link #Next()} is called the first time.
-		/// </summary>
-		public abstract int Doc();
-		
 		/// <summary>Returns the score of the current document matching the query.
 		/// Initially invalid, until {@link #Next()} or {@link #SkipTo(int)}
 		/// is called the first time.
 		/// </summary>
 		public abstract float Score();
-		
-		/// <summary> Skips to the document matching this Scorer with the lowest doc Id
-		/// greater than or equal to a given target.
-		/// 
-		/// <p>
-		/// The behavior of this method is undefined if the target specified is
-		/// less than or equal to the current value of {@link #Doc()}.
-		/// <p>
-		/// Behaves as if written:
-		/// <pre>
-		/// boolean skipTo(int target) {
-		/// do {
-		/// if (!next())
-		/// return false;
-		/// } while (target > doc());
-		/// return true;
-		/// }
-		/// </pre>
-		/// Most implementations are considerably more efficient than that.
-		/// </p>
-		/// 
-		/// <p>
-		/// When this method is used the {@link #Explain(int)} method should not
-		/// be used.
-		/// </p>
-		/// 
-		/// </summary>
-		/// <param name="target">The target document number.
-		/// </param>
-		/// <returns> true iff there is such a match.
-		/// </returns>
-		/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
-		/// </seealso>
-		public abstract bool SkipTo(int target);
-		
+
 		/// <summary>Returns an explanation of the score for a document.
 		/// <br>When this method is used, the {@link #Next()}, {@link #SkipTo(int)} and
 		/// {@link #Score(HitCollector)} methods should not be used.

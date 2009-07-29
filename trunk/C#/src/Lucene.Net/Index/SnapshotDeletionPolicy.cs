@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
+
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
@@ -29,36 +31,43 @@ namespace Lucene.Net.Index
 	/// we wrap another arbitrary {@link IndexDeletionPolicy}, this
 	/// gives you the freedom to continue using whatever {@link
 	/// IndexDeletionPolicy} you would normally want to use with your
-	/// index. 
+    /// index.  Note that you can re-use a single instance of
+    /// SnapshotDeletionPolicy across multiple writers as long
+    /// as they are against the same index Directory.  Any 
+    /// snapshot held when a writer is closed will "survive"
+    /// when the next writer is opened.
+    /// <para>
+    /// WARNING: This API is new and experimental and may suddnely changendex. 
+    /// </para>
 	/// </summary>
 	
 	public class SnapshotDeletionPolicy : IndexDeletionPolicy
 	{
 		
-		private IndexCommitPoint lastCommit;
+		private IndexCommit lastCommit;
 		private IndexDeletionPolicy primary;
-		private IndexCommitPoint snapshot;
+		private string snapshot;
 		
 		public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
 		{
 			this.primary = primary;
 		}
-		
-		public virtual void  OnInit(System.Collections.IList commits)
+
+        public virtual void OnInit(List<IndexCommitPoint> commits)
 		{
 			lock (this)
 			{
 				primary.OnInit(WrapCommits(commits));
-				lastCommit = (IndexCommitPoint) commits[commits.Count - 1];
+				lastCommit = (IndexCommit)(commits[commits.Count - 1]);
 			}
 		}
-		
-		public virtual void  OnCommit(System.Collections.IList commits)
+
+        public virtual void OnCommit(List<IndexCommitPoint> commits)
 		{
 			lock (this)
 			{
 				primary.OnCommit(WrapCommits(commits));
-				lastCommit = (IndexCommitPoint) commits[commits.Count - 1];
+                lastCommit = (IndexCommit)(commits[commits.Count - 1]);
 			}
 		}
 		
@@ -72,15 +81,16 @@ namespace Lucene.Net.Index
 		/// consume an extra 1X of your total index size, until
 		/// you release the snapshot. 
 		/// </summary>
+        /// // TODO: 3.9: change this to return IndexCommit instead
 		public virtual IndexCommitPoint Snapshot()
 		{
 			lock (this)
 			{
 				if (snapshot == null)
-					snapshot = lastCommit;
+					snapshot = lastCommit.GetSegmentsFileName();
 				else
 					throw new System.SystemException("snapshot is already set; please call release() first");
-				return snapshot;
+				return lastCommit;
 			}
 		}
 		
@@ -111,8 +121,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal IndexCommitPoint cp;
-			internal MyCommitPoint(SnapshotDeletionPolicy enclosingInstance, IndexCommitPoint cp)
+			internal IndexCommit cp;
+			internal MyCommitPoint(SnapshotDeletionPolicy enclosingInstance, IndexCommit cp)
 			{
 				InitBlock(enclosingInstance);
 				this.cp = cp;
@@ -121,28 +131,36 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetSegmentsFileName();
 			}
-			public virtual System.Collections.ICollection GetFileNames()
+			public virtual System.Collections.Generic.ICollection<string> GetFileNames()
 			{
 				return cp.GetFileNames();
 			}
+            public Directory GetDirectory()
+            {
+                return cp.GetDirectory();
+            }
 			public virtual void  Delete()
 			{
 				lock (Enclosing_Instance)
 				{
 					// Suppress the delete request if this commit point is
 					// our current snapshot.
-					if (Enclosing_Instance.snapshot != cp)
+					if (Enclosing_Instance.snapshot == null || !Enclosing_Instance.snapshot.Equals(GetSegmentsFileName()))
 						cp.Delete();
 				}
 			}
+            public bool IsDeleted() { return cp.IsDeleted(); }
+            public int GetVersion() { return (int) cp.GetVersion(); }
+            public int GetGeneration() { return (int) cp.GetGeneration(); }
+
 		}
-		
-		private System.Collections.IList WrapCommits(System.Collections.IList commits)
+
+        private List<IndexCommitPoint> WrapCommits(List<IndexCommitPoint> commits)
 		{
 			int count = commits.Count;
-			System.Collections.IList myCommits = new System.Collections.ArrayList(count);
+            List<IndexCommitPoint> myCommits = new List<IndexCommitPoint>(count);
 			for (int i = 0; i < count; i++)
-				myCommits.Add(new MyCommitPoint(this, (IndexCommitPoint) commits[i]));
+				myCommits.Add(new MyCommitPoint(this, (IndexCommit) commits[i]));
 			return myCommits;
 		}
 	}

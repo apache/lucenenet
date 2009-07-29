@@ -126,9 +126,11 @@ namespace Lucene.Net.Search.Spans
 			{
 				SpanQuery clause = (SpanQuery) i.Current;
 				buffer.Append(clause.ToString(field));
-				buffer.Append(", ");
+				if (i.MoveNext())
+				{
+					buffer.Append(", ");
+				}
 			}
-            if (clauses.Count > 0) buffer.Length -= 2;
 			buffer.Append("], ");
 			buffer.Append(slop);
 			buffer.Append(", ");
@@ -142,15 +144,20 @@ namespace Lucene.Net.Search.Spans
 		{
 			if (clauses.Count == 0)
 			// optimize 0-clause case
-				return new SpanOrQuery(GetClauses()).GetSpans(reader);
+				return new SpanOrQuery(GetClauses()).GetPayloadSpans(reader);
 			
 			if (clauses.Count == 1)
 			// optimize 1-clause case
-				return ((SpanQuery) clauses[0]).GetSpans(reader);
+				return ((SpanQuery) clauses[0]).GetPayloadSpans(reader);
 			
-			return inOrder ? (Spans) new NearSpansOrdered(this, reader) : (Spans) new NearSpansUnordered(this, reader);
+			return inOrder ? (PayloadSpans) new NearSpansOrdered(this, reader) : (PayloadSpans) new NearSpansUnordered(this, reader);
 		}
 		
+        public override PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return (PayloadSpans) GetSpans(reader);
+        }
+
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanNearQuery clone = null;
@@ -177,7 +184,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

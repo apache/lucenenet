@@ -24,9 +24,10 @@ namespace Lucene.Net.Analysis
 	/// <p>
 	/// This is an abstract class.
 	/// <p>
-	/// NOTE: subclasses must override at least one of {@link
-	/// #Next()} or {@link #Next(Token)}.
-	/// <p>
+    /// NOTE: subclasses must override {@link #Next(Token)}.
+    /// It's also OK to instead override {@link #Next()}, but
+    /// that method is now deprecated in favor of {@link #Next(Token)}.
+    /// <p>
 	/// NOTE: subclasses overriding {@link #Next(Token)} must  
 	/// call {@link Token#Clear()}.
 	/// </summary>

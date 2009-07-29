@@ -141,11 +141,11 @@ namespace Lucene.Net.Search
 		private RAMDirectory GetIndexStore(System.String field, System.String[] contents)
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < contents.Length; ++i)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(new Field(field, contents[i], Field.Store.YES, Field.Index.TOKENIZED));
+				doc.Add(new Field(field, contents[i], Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();
@@ -156,8 +156,8 @@ namespace Lucene.Net.Search
 		
 		private void  AssertMatches(IndexSearcher searcher, Query q, int expectedMatches)
 		{
-			Hits result = searcher.Search(q);
-			Assert.AreEqual(expectedMatches, result.Length());
+			ScoreDoc[] result = searcher.Search(q, null, 1000).scoreDocs;
+			Assert.AreEqual(expectedMatches, result.Length);
 		}
 		
 		/// <summary> Test that wild card queries are parsed to the correct type and are searched correctly.
@@ -185,11 +185,11 @@ namespace Lucene.Net.Search
 			
 			// prepare the index
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer());
+			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < docs.Length; i++)
 			{
 				Document doc = new Document();
-				doc.Add(new Field(field, docs[i], Field.Store.NO, Field.Index.TOKENIZED));
+				doc.Add(new Field(field, docs[i], Field.Store.NO, Field.Index.ANALYZED));
 				iw.AddDocument(doc);
 			}
 			iw.Close();
@@ -205,8 +205,8 @@ namespace Lucene.Net.Search
 				{
 					System.Console.Out.WriteLine("matchAll: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 				}
-				Hits hits = searcher.Search(q);
-				Assert.AreEqual(docs.Length, hits.Length());
+				ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+				Assert.AreEqual(docs.Length, hits.Length);
 			}
 			
 			// test queries that must find none
@@ -218,8 +218,8 @@ namespace Lucene.Net.Search
 				{
 					System.Console.Out.WriteLine("matchNone: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 				}
-				Hits hits = searcher.Search(q);
-				Assert.AreEqual(0, hits.Length());
+				ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+				Assert.AreEqual(0, hits.Length);
 			}
 			
 			// test queries that must be prefix queries and must find only one doc
@@ -234,9 +234,9 @@ namespace Lucene.Net.Search
 						System.Console.Out.WriteLine("match 1 prefix: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 					}
 					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
-					Hits hits = searcher.Search(q);
-					Assert.AreEqual(1, hits.Length());
-					Assert.AreEqual(i, hits.Id(0));
+					ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+					Assert.AreEqual(1, hits.Length);
+					Assert.AreEqual(i, hits[0].doc);
 				}
 			}
 			
@@ -252,9 +252,9 @@ namespace Lucene.Net.Search
 						System.Console.Out.WriteLine("match 1 wild: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 					}
 					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
-					Hits hits = searcher.Search(q);
-					Assert.AreEqual(1, hits.Length());
-					Assert.AreEqual(i, hits.Id(0));
+					ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+					Assert.AreEqual(1, hits.Length);
+					Assert.AreEqual(i, hits[0].doc);
 				}
 			}
 			

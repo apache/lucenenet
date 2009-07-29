@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
 {
 	
 	[TestFixture]	
-	public class TestPerFieldAnalzyerWrapper : LuceneTestCase
+	public class TestPerFieldAnalyzerWrapper : LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestPerField()
@@ -35,12 +35,13 @@ namespace Lucene.Net.Analysis
 			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
 			
 			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
-			Token token = tokenStream.Next();
-			Assert.AreEqual("Qwerty", token.TermText(), "WhitespaceAnalyzer does not lowercase");
+            Token reusableToken = new Token();
+			Token nextToken = tokenStream.Next(reusableToken);
+			Assert.AreEqual("Qwerty", nextToken.Term(), "WhitespaceAnalyzer does not lowercase");
 			
 			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
-			token = tokenStream.Next();
-			Assert.AreEqual("qwerty", token.TermText(), "SimpleAnalyzer lowercases");
+			nextToken = tokenStream.Next(reusableToken);
+			Assert.AreEqual("qwerty", nextToken.Term(), "SimpleAnalyzer lowercases");
 		}
 	}
 }

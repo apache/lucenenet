@@ -41,16 +41,17 @@ namespace Lucene.Net.Analysis
             this.max = max;
         }
 		
-        /// <summary> Returns the next input Token whose termText() is the right len</summary>
-        public override Token Next(Token result)
+        /// <summary> Returns the next input Token whose term() is the right len</summary>
+        public override Token Next(/* in */ Token reusableToken)
         {
+            System.Diagnostics.Debug.Assert(reusableToken != null);
             // return the first non-stop word found
-            for (Token token = input.Next(result); token != null; token = input.Next(result))
+            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
             {
-                int len = token.TermText().Length;
+                int len = nextToken.TermLength();
                 if (len >= min && len <= max)
                 {
-                    return token;
+                    return nextToken;
                 }
                 // note: else we ignore it but should we index each part of it?
             }

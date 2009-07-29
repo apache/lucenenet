@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 			}
 			System.Array.Sort(tokens);
 			
-			IndexWriter writer = new IndexWriter(dir, new MyAnalyzer(this), true);
+			IndexWriter writer = new IndexWriter(dir, new MyAnalyzer(this), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetUseCompoundFile(false);
 			Document doc = new Document();
 			for (int i = 0; i < testFields.Length; i++)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 					tv = Field.TermVector.WITH_OFFSETS;
 				else
 					tv = Field.TermVector.YES;
-				doc.Add(new Field(testFields[i], "", Field.Store.NO, Field.Index.TOKENIZED, tv));
+				doc.Add(new Field(testFields[i], "", Field.Store.NO, Field.Index.ANALYZED, tv));
 			}
 			
 			//Create 5 documents for testing, they all have the same
@@ -167,22 +167,19 @@ namespace Lucene.Net.Index
 				
 			}
 			internal int tokenUpto;
-			public override Token Next()
+			public override Token Next(Token reusableToken)
 			{
 				if (tokenUpto >= Enclosing_Instance.tokens.Length)
 					return null;
 				else
 				{
-					Token t = new Token();
 					TestToken testToken = Enclosing_Instance.tokens[tokenUpto++];
-					t.SetTermText(testToken.text);
+                    reusableToken.Reinit(testToken.text, testToken.startOffset, testToken.endOffset);
 					if (tokenUpto > 1)
-						t.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
+						reusableToken.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
 					else
-						t.SetPositionIncrement(testToken.pos + 1);
-					t.SetStartOffset(testToken.startOffset);
-					t.SetEndOffset(testToken.endOffset);
-					return t;
+                        reusableToken.SetPositionIncrement(testToken.pos + 1);
+                    return reusableToken;
 				}
 			}
 		}

@@ -32,10 +32,11 @@ namespace Lucene.Net.Analysis
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
 			LengthFilter filter = new LengthFilter(stream, 2, 6);
-			Assert.AreEqual("short", filter.Next().TermText());
-			Assert.AreEqual("ab", filter.Next().TermText());
-			Assert.AreEqual("foo", filter.Next().TermText());
-			Assert.IsNull(filter.Next());
+            Token reusableToken = new Token();
+            Assert.AreEqual("short", filter.Next(reusableToken).Term());
+            Assert.AreEqual("ab", filter.Next(reusableToken).Term());
+            Assert.AreEqual("foo", filter.Next(reusableToken).Term());
+			Assert.IsNull(filter.Next(reusableToken));
 		}
 	}
 }

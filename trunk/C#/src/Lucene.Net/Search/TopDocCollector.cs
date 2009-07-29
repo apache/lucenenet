@@ -29,29 +29,45 @@ namespace Lucene.Net.Search
 	/// <p>This may be extended, overriding the collect method to, e.g.,
 	/// conditionally invoke <code>super()</code> in order to filter which
 	/// documents are collected.
-	/// 
 	/// </summary>
 	public class TopDocCollector : HitCollector
 	{
 		
 		private ScoreDoc reusableSD;
 		
-		internal int totalHits;
-		internal PriorityQueue hq;
+        /// <summary>
+        /// The total number of hits the collector encountered.
+        /// </summary>
+		protected internal int totalHits;
+
+        /// <summary>
+        /// The priority queue which holds the top-scoring document.
+        /// </summary>
+		protected internal PriorityQueue hq;
 		
 		/// <summary>Construct to collect a given number of hits.</summary>
 		/// <param name="numHits">the maximum number of hits to collect
 		/// </param>
-		public TopDocCollector(int numHits) : this(numHits, new HitQueue(numHits))
+		public TopDocCollector(int numHits) : this(new HitQueue(numHits))
 		{
 		}
 		
+        [System.Obsolete("Use TopDocCollector(PriorityQueue) instead.  numHits is not used by this constructor.")]
 		internal TopDocCollector(int numHits, PriorityQueue hq)
 		{
 			this.hq = hq;
 		}
-		
-		// javadoc inherited
+
+        /// <summary>
+        /// Constructor to collect the top-scoring documents by using the given PriorityQueue.
+        /// </summary>
+        /// <param name="hq"></param>
+        internal TopDocCollector(PriorityQueue hq)
+        {
+            this.hq = hq;
+        }
+
+        // javadoc inherited
 		public override void  Collect(int doc, float score)
 		{
 			if (score > 0.0f)

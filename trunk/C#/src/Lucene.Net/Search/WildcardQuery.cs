@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 			return new WildcardTermEnum(reader, GetTerm());
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (o is WildcardQuery)
 				return base.Equals(o);

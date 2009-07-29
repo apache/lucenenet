@@ -19,15 +19,9 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	
-	
-	/// <summary>Floating point numbers smaller than 32 bits.
-	/// 
+	/// <summary>
+    /// Floating point numbers smaller than 32 bits.
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
-	/// <version>  $Id$
-	/// </version>
 	public class SmallFloat
 	{
 		

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using CompareInfo = System.Globalization.CompareInfo;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -30,13 +30,8 @@ namespace Lucene.Net.Search
 	/// If an endpoint is null, it is said to be "open".
 	/// Either or both endpoints may be open.  Open endpoints may not be exclusive
 	/// (you can't select all but the first or last term without explicitly specifying the term to exclude.)
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: ConstantScoreRangeQuery.java 564236 2007-08-09 15:21:19Z gsingers $
-	/// </version>
-	
-	[Serializable]
+    [Serializable]
 	public class ConstantScoreRangeQuery : Query
 	{
 		private System.String fieldName;
@@ -44,7 +39,7 @@ namespace Lucene.Net.Search
 		private System.String upperVal;
 		private bool includeLower;
 		private bool includeUpper;
-		
+		private CompareInfo collator;
 		
 		public ConstantScoreRangeQuery(System.String fieldName, System.String lowerVal, System.String upperVal, bool includeLower, bool includeUpper)
 		{
@@ -70,7 +65,13 @@ namespace Lucene.Net.Search
 			this.includeLower = includeLower;
 			this.includeUpper = includeUpper;
 		}
-		
+
+        public ConstantScoreRangeQuery(string fieldName, string lowerVal, string upperVal, bool includeLower, bool includeUpper, CompareInfo collator)
+            : this(fieldName, lowerVal, upperVal, includeLower, includeUpper)
+        {
+            this.collator = collator;
+        }
+
 		/// <summary>Returns the field name for this query </summary>
 		public virtual System.String GetField()
 		{
@@ -100,7 +101,9 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			// Map to RangeFilter semantics which are slightly different...
-			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal, (System.Object) lowerVal == (System.Object) "" ? false : includeLower, upperVal == null ? false : includeUpper);
+			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal,
+                (object) lowerVal == (object) "" ? false : includeLower,
+                upperVal == null ? false : includeUpper, collator);
 			Query q = new ConstantScoreQuery(rangeFilt);
 			q.SetBoost(GetBoost());
 			return q;
@@ -125,7 +128,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
@@ -133,7 +136,10 @@ namespace Lucene.Net.Search
 				return false;
 			ConstantScoreRangeQuery other = (ConstantScoreRangeQuery) o;
 			
-			if ((System.Object) this.fieldName != (System.Object) other.fieldName || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+			if ((object) this.fieldName != (object) other.fieldName ||
+                this.includeLower != other.includeLower ||
+                this.includeUpper != other.includeUpper ||
+                (this.collator != null && !this.collator.Equals(other.collator)))
 			{
 				return false;
 			}
@@ -155,10 +161,11 @@ namespace Lucene.Net.Search
 			h ^= ((h << 17) | (SupportClass.Number.URShift(h, 16))); // a reversible (one to one) 32 bit mapping mix
 			h ^= (upperVal != null ? (upperVal.GetHashCode()) : 0x5a695a69);
 			h ^= (includeLower ? 0x665599aa : 0) ^ (includeUpper ? unchecked((int) 0x99aa5566) : 0);    // {{Aroush-1.9}} Is this OK?!
+            h ^= collator != null ? collator.GetHashCode() : 0;
 			return h;
 		}
 		
-		override public System.Object Clone()
+		override public object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
             ConstantScoreRangeQuery clone = (ConstantScoreRangeQuery) base.Clone();
@@ -167,6 +174,8 @@ namespace Lucene.Net.Search
             clone.upperVal = (System.String) this.upperVal.Clone();
             clone.includeLower = this.includeLower;
             clone.includeUpper = this.includeUpper;
+            if (this.collator != null)
+                clone.collator = this.collator; // {{DSale-2.4}} need to clone collator?
             return clone;
         }
 	}

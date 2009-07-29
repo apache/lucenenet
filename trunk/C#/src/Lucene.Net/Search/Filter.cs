@@ -18,19 +18,40 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Abstract base class providing a mechanism to restrict searches to a subset
-	/// of an index. 
+	/// <summary>
+    /// Abstract base class providing a mechanism to limit index search results
+    /// to a subset of an index.
+	/// <para>
+    /// Note: In Lucene 3.0, Bits(IndexReader) will be removed and GetDocIdSet(IndexReader)
+    /// will be made abstract.  All implementin classes must therefore implement
+    /// GetDocIdSet(IndexReader) in order to work with Lucene 3.0.
+    /// </para>
 	/// </summary>
 	[Serializable]
 	public abstract class Filter
 	{
-		/// <summary>Returns a BitSet with true for documents which should be permitted in
+		/// <summary>
+        /// Returns a BitSet with true for documents which should be permitted in
 		/// search results, and false for those that should not. 
 		/// </summary>
-		public abstract System.Collections.BitArray Bits(IndexReader reader);
+		[System.Obsolete("Use GetDocIdSet(IndexReader) instead.")]
+        public abstract System.Collections.BitArray Bits(IndexReader reader);
+
+        /// <summary>
+        /// Return a DocIdSet that provides the documents which are permitted
+        /// or prohibited in search results.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        /// <see cref="DocIdBitSet"/>
+        public virtual DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            return new DocIdBitSet(Bits(reader));
+        }
 	}
 }

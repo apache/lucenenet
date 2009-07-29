@@ -112,26 +112,26 @@ namespace Lucene.Net.Search
 			
 			// creating a document to store
 			Document lDoc = new Document();
-			lDoc.Add(new Field("fulltext", "Once upon a time.....", Field.Store.YES, Field.Index.TOKENIZED));
-			lDoc.Add(new Field("id", "doc1", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			lDoc.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc.Add(new Field("fulltext", "Once upon a time.....", Field.Store.YES, Field.Index.ANALYZED));
+			lDoc.Add(new Field("id", "doc1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			lDoc.Add(new Field("handle", "1", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			// creating a document to store
 			Document lDoc2 = new Document();
-			lDoc2.Add(new Field("fulltext", "in a galaxy far far away.....", Field.Store.YES, Field.Index.TOKENIZED));
-			lDoc2.Add(new Field("id", "doc2", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			lDoc2.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc2.Add(new Field("fulltext", "in a galaxy far far away.....", Field.Store.YES, Field.Index.ANALYZED));
+			lDoc2.Add(new Field("id", "doc2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			lDoc2.Add(new Field("handle", "1", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			// creating a document to store
 			Document lDoc3 = new Document();
-			lDoc3.Add(new Field("fulltext", "a bizarre bug manifested itself....", Field.Store.YES, Field.Index.TOKENIZED));
-			lDoc3.Add(new Field("id", "doc3", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			lDoc3.Add(new Field("handle", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			lDoc3.Add(new Field("fulltext", "a bizarre bug manifested itself....", Field.Store.YES, Field.Index.ANALYZED));
+			lDoc3.Add(new Field("id", "doc3", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			lDoc3.Add(new Field("handle", "1", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			// creating an index writer for the first index
-			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true);
+			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			// creating an index writer for the second index, but writing nothing
-			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), true);
+            IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			//--------------------------------------------------------------------
 			// scenario 1
@@ -159,14 +159,14 @@ namespace Lucene.Net.Search
 			// creating the multiSearcher
 			Searcher mSearcher = GetMultiSearcherInstance(searchers);
 			// performing the search
-			Hits hits = mSearcher.Search(query);
+			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).scoreDocs;
 			
-			Assert.AreEqual(3, hits.Length());
+			Assert.AreEqual(3, hits.Length);
 			
 			// iterating over the hit documents
-			for (int i = 0; i < hits.Length(); i++)
+			for (int i = 0; i < hits.Length; i++)
 			{
-				Document d = hits.Doc(i);
+				Document d = mSearcher.Doc(hits[i].doc);
 			}
 			mSearcher.Close();
 			
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
 			//--------------------------------------------------------------------
 			
 			// adding one document to the empty index
-			writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), false);
+			writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writerB.AddDocument(lDoc);
 			writerB.Optimize();
 			writerB.Close();
@@ -189,27 +189,27 @@ namespace Lucene.Net.Search
 			// creating the mulitSearcher
 			MultiSearcher mSearcher2 = GetMultiSearcherInstance(searchers2);
 			// performing the same search
-			Hits hits2 = mSearcher2.Search(query);
+			ScoreDoc[] hits2 = mSearcher2.Search(query, null, 1000).scoreDocs;
 			
-			Assert.AreEqual(4, hits2.Length());
+			Assert.AreEqual(4, hits2.Length);
 			
 			// iterating over the hit documents
-			for (int i = 0; i < hits2.Length(); i++)
+			for (int i = 0; i < hits2.Length; i++)
 			{
 				// no exception should happen at this point
-				Document d = hits2.Doc(i);
+                Document d = mSearcher2.Doc(hits2[i].doc);
 			}
 			
 			// test the subSearcher() method:
 			Query subSearcherQuery = parser.Parse("id:doc1");
-			hits2 = mSearcher2.Search(subSearcherQuery);
-			Assert.AreEqual(2, hits2.Length());
-			Assert.AreEqual(0, mSearcher2.SubSearcher(hits2.Id(0))); // hit from searchers2[0]
-			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2.Id(1))); // hit from searchers2[1]
+            hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).scoreDocs;
+			Assert.AreEqual(2, hits2.Length);
+			Assert.AreEqual(0, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[0]
+			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[1].doc)); // hit from searchers2[1]
 			subSearcherQuery = parser.Parse("id:doc2");
-			hits2 = mSearcher2.Search(subSearcherQuery);
-			Assert.AreEqual(1, hits2.Length());
-			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2.Id(0))); // hit from searchers2[1]
+            hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits2.Length);
+			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[1]
 			mSearcher2.Close();
 			
 			//--------------------------------------------------------------------
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
 			readerB.Close();
 			
 			// optimizing the index with the writer
-			writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), false);
+            writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writerB.Optimize();
 			writerB.Close();
 			
@@ -235,14 +235,14 @@ namespace Lucene.Net.Search
 			// creating the mulitSearcher
 			Searcher mSearcher3 = GetMultiSearcherInstance(searchers3);
 			// performing the same search
-			Hits hits3 = mSearcher3.Search(query);
+            ScoreDoc[] hits3 = mSearcher3.Search(query, null, 1000).scoreDocs;
 			
-			Assert.AreEqual(3, hits3.Length());
+			Assert.AreEqual(3, hits3.Length);
 			
 			// iterating over the hit documents
-			for (int i = 0; i < hits3.Length(); i++)
+			for (int i = 0; i < hits3.Length; i++)
 			{
-				Document d = hits3.Doc(i);
+                Document d = mSearcher3.Doc(hits3[i].doc);
 			}
 			mSearcher3.Close();
 			indexStoreA.Close();
@@ -253,11 +253,11 @@ namespace Lucene.Net.Search
 		{
 			Document document = new Document();
 			
-			document.Add(new Field("contents", contents1, Field.Store.YES, Field.Index.UN_TOKENIZED));
-			document.Add(new Field("other", "other contents", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			document.Add(new Field("contents", contents1, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			document.Add(new Field("other", "other contents", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			if (contents2 != null)
 			{
-				document.Add(new Field("contents", contents2, Field.Store.YES, Field.Index.UN_TOKENIZED));
+				document.Add(new Field("contents", contents2, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			}
 			
 			return document;
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
 			
 			try
 			{
-				indexWriter = new IndexWriter(directory, new KeywordAnalyzer(), create);
+                indexWriter = new IndexWriter(directory, new KeywordAnalyzer(), create, IndexWriter.MaxFieldLength.LIMITED);
 				
 				for (int i = 0; i < nDocs; i++)
 				{
@@ -304,10 +304,10 @@ namespace Lucene.Net.Search
 			
 			MultiSearcher searcher = GetMultiSearcherInstance(new Searcher[]{indexSearcher1, indexSearcher2});
 			Assert.IsTrue(searcher != null, "searcher is null and it shouldn't be");
-			Hits hits = searcher.Search(query);
+            ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-			Assert.IsTrue(hits.Length() == 2, hits.Length() + " does not equal: " + 2);
-			Document document = searcher.Doc(hits.Id(0));
+			Assert.IsTrue(hits.Length == 2, hits.Length + " does not equal: " + 2);
+			Document document = searcher.Doc(hits[0].doc);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 2, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 2);
 			//Should be one document from each directory
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable ftl = new System.Collections.Hashtable();
 			ftl.Add("other", "other");
 			SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, new System.Collections.Hashtable());
-			document = searcher.Doc(hits.Id(0), fs);
+			document = searcher.Doc(hits[0].doc, fs);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 1, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 1);
 			System.String value_Renamed = document.Get("contents");
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search
 			ftl.Clear();
 			ftl.Add("contents", "contents");
 			fs = new SetBasedFieldSelector(ftl, new System.Collections.Hashtable());
-			document = searcher.Doc(hits.Id(1), fs);
+			document = searcher.Doc(hits[1].doc, fs);
 			value_Renamed = document.Get("contents");
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			value_Renamed = document.Get("other");
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 			
 			RAMDirectory ramDirectory1;
 			IndexSearcher indexSearcher1;
-			Hits hits;
+			ScoreDoc[] hits;
 			
 			ramDirectory1 = new MockRAMDirectory();
 			
@@ -359,15 +359,13 @@ namespace Lucene.Net.Search
 			InitIndex(ramDirectory1, nDocs, false, "x"); // documents with two tokens "doc0" and "x", "doc1" and x, etc...
 			
 			indexSearcher1 = new IndexSearcher(ramDirectory1);
+
+            hits = indexSearcher1.Search(query, null, 1000).scoreDocs;
 			
-			hits = indexSearcher1.Search(query);
-			
-			Assert.AreEqual(2, hits.Length(), message);
-			
-			Assert.AreEqual(1, hits.Score(0), 1e-6, message); // hits.score(0) is 0.594535 if only a single document is in first index
+			Assert.AreEqual(2, hits.Length, message);
 			
 			// Store the scores for use later
-			float[] scores = new float[]{hits.Score(0), hits.Score(1)};
+			float[] scores = new float[]{hits[0].score, hits[1].score};
 			
 			Assert.IsTrue(scores[0] > scores[1], message);
 			
@@ -391,24 +389,24 @@ namespace Lucene.Net.Search
 			indexSearcher2 = new IndexSearcher(ramDirectory2);
 			
 			Searcher searcher = GetMultiSearcherInstance(new Searcher[]{indexSearcher1, indexSearcher2});
+
+            hits = searcher.Search(query, null, 1000).scoreDocs;
 			
-			hits = searcher.Search(query);
-			
-			Assert.AreEqual(2, hits.Length(), message);
+			Assert.AreEqual(2, hits.Length, message);
 			
 			// The scores should be the same (within reason)
-			Assert.AreEqual(scores[0], hits.Score(0), 1e-6, message); // This will a document from ramDirectory1
-			Assert.AreEqual(scores[1], hits.Score(1), 1e-6, message); // This will a document from ramDirectory2
+			Assert.AreEqual(scores[0], hits[0].score, 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits[1].score, 1e-6, message); // This will a document from ramDirectory2
 			
 			
 			
 			// Adding a Sort.RELEVANCE object should not change anything
-			hits = searcher.Search(query, Sort.RELEVANCE);
+            hits = searcher.Search(query, null, 1000, Sort.RELEVANCE).scoreDocs;
 			
-			Assert.AreEqual(2, hits.Length(), message);
+			Assert.AreEqual(2, hits.Length, message);
 			
-			Assert.AreEqual(scores[0], hits.Score(0), 1e-6, message); // This will a document from ramDirectory1
-			Assert.AreEqual(scores[1], hits.Score(1), 1e-6, message); // This will a document from ramDirectory2
+			Assert.AreEqual(scores[0], hits[0].score, 1e-6, message); // This will a document from ramDirectory1
+			Assert.AreEqual(scores[1], hits[1].score, 1e-6, message); // This will a document from ramDirectory2
 			
 			searcher.Close();
 			

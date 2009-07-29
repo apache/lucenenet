@@ -106,18 +106,18 @@ namespace Lucene.Net.Index
 		public virtual void  TestFilterIndexReader_Renamed_Method()
 		{
 			RAMDirectory directory = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			d1.Add(new Field("default", "one two", Field.Store.YES, Field.Index.TOKENIZED));
+			d1.Add(new Field("default", "one two", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d1);
 			
 			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-			d2.Add(new Field("default", "one three", Field.Store.YES, Field.Index.TOKENIZED));
+			d2.Add(new Field("default", "one three", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d2);
 			
 			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-			d3.Add(new Field("default", "two four", Field.Store.YES, Field.Index.TOKENIZED));
+			d3.Add(new Field("default", "two four", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d3);
 			
 			writer.Close();

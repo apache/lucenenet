@@ -32,32 +32,34 @@ namespace Lucene.Net.Analysis
 	/// <li>{@link TokenFilter}, a TokenStream
 	/// whose input is another TokenStream.
 	/// </ul>
-	/// NOTE: subclasses must override at least one of {@link
-	/// #Next()} or {@link #Next(Token)}.
-	/// </summary>
+    /// NOTE: subclasses must override {@link #next(Token)}.  It's
+    /// also OK to instead override {@link #next()} but that
+    /// method is now deprecated in favor of {@link #next(Token)}.
+    /// </summary>
 	
 	public abstract class TokenStream
 	{
 		
 		/// <summary>Returns the next token in the stream, or null at EOS.
-		/// The returned Token is a "full private copy" (not
+		/// @deprecated The returned Token is a "full private copy" (not
 		/// re-used across calls to next()) but will be slower
 		/// than calling {@link #Next(Token)} instead.. 
 		/// </summary>
 		public virtual Token Next()
 		{
-			Token result = Next(new Token());
+            Token reusableToken = new Token();
+			Token nextToken = Next(reusableToken);
 			
-			if (result != null)
+			if (nextToken != null)
 			{
-				Payload p = result.GetPayload();
+				Payload p = nextToken.GetPayload();
 				if (p != null)
 				{
-					result.SetPayload((Payload) p.Clone());
+					nextToken.SetPayload((Payload) p.Clone());
 				}
 			}
 			
-			return result;
+			return nextToken;
 		}
 		
 		/// <summary>Returns the next token in the stream, or null at EOS.
@@ -77,14 +79,23 @@ namespace Lucene.Net.Analysis
 		/// <li>A producer must call {@link Token#Clear()}
 		/// before setting the fields in it & returning it</li>
 		/// </ul>
+        /// Also, the producer must make no assumptions about a
+        /// Token after it has been returned: the caller may
+        /// arbitrarily change it.  If the producer needs to hold
+        /// onto the token for subsequent calls, it must clone()
+        /// it before storing it.
 		/// Note that a {@link TokenFilter} is considered a consumer.
 		/// </summary>
-		/// <param name="result">a Token that may or may not be used to return
+		/// <param name="reusableToken">a Token that may or may not be used to
+        /// return; this parameter should never be null (the callee
+        /// is not required to chedk for null before using it, but it is a
+        /// good idea to assert that it is not null.)
 		/// </param>
 		/// <returns> next token in the stream or null if end-of-stream was hit
 		/// </returns>
-		public virtual Token Next(Token result)
+		public virtual Token Next(/* in */ Token reusableToken)
 		{
+            // We don't actually use inputToken, but still add the assert
 			return Next();
 		}
 		
@@ -93,7 +104,13 @@ namespace Lucene.Net.Analysis
 		/// implement this method. Reset() is not needed for
 		/// the standard indexing process. However, if the Tokens 
 		/// of a TokenStream are intended to be consumed more than 
-		/// once, it is necessary to implement reset(). 
+		/// once, it is necessary to implement reset().
+   		/// once, it is necessary to implement reset().  Note that
+		/// if your TokenStream caches tokens and feeds them back
+		/// again after a reset, it is imperative that you
+		/// clone the tokens when you store them away (on the
+		/// first pass) as well as when you return them (on future
+        /// passes after reset()).
 		/// </summary>
 		public virtual void  Reset()
 		{

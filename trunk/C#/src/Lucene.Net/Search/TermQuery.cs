@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is TermQuery))
 				return false;

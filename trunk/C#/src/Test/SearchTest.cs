@@ -22,12 +22,10 @@ using Lucene.Net.Documents;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 using Lucene.Net.QueryParsers;
 
 namespace Lucene.Net
 {
-	
 	class SearchTest
 	{
 		[STAThread]
@@ -37,13 +35,13 @@ namespace Lucene.Net
 			{
 				Directory directory = new RAMDirectory();
 				Analyzer analyzer = new SimpleAnalyzer();
-				IndexWriter writer = new IndexWriter(directory, analyzer, true);
+				IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 				
 				System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
 				for (int j = 0; j < docs.Length; j++)
 				{
 					Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
-					d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.TOKENIZED));
+					d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.ANALYZED));
 					writer.AddDocument(d);
 				}
 				writer.Close();
@@ -51,7 +49,6 @@ namespace Lucene.Net
 				Searcher searcher = new IndexSearcher(directory);
 				
 				System.String[] queries = new System.String[]{"\"a c e\""};
-				Hits hits = null;
 				
 				Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", analyzer);
 				parser.SetPhraseSlop(4);
@@ -65,13 +62,13 @@ namespace Lucene.Net
 					//DateFilter filter = DateFilter.Before("modified", Time(1997,00,01));
 					//System.out.println(filter);
 					
-					hits = searcher.Search(query);
+					ScoreDoc[] hits = searcher.Search(query, null, docs.Length).scoreDocs;
 					
-					System.Console.Out.WriteLine(hits.Length() + " total results");
-					for (int i = 0; i < hits.Length() && i < 10; i++)
+					System.Console.Out.WriteLine(hits.Length + " total results");
+					for (int i = 0; i < hits.Length && i < 10; i++)
 					{
-						Lucene.Net.Documents.Document d = hits.Doc(i);
-						System.Console.Out.WriteLine(i + " " + hits.Score(i) + " " + d.Get("contents"));
+						Lucene.Net.Documents.Document d = searcher.Doc(hits[i].doc);
+						System.Console.Out.WriteLine(i + " " + hits[i].score + " " + d.Get("contents"));
 					}
 				}
 				searcher.Close();

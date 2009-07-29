@@ -23,14 +23,12 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Wrapper used by {@link HitIterator} to provide a lazily loaded hit
-	/// from {@link Hits}.
-	/// 
+	/// <summary>
+    /// Wrapper used by {@link HitIterator} to provide a lazily loaded hit from {@link Hits}.
 	/// </summary>
-	/// <author>  Jeremy Rayner
-	/// </author>
 	[Serializable]
-	public class Hit
+    [System.Obsolete("Hits will be removed indexer Lucene 3.0.  Use TopDocCollector and TopDocs instead.")]
+    public class Hit
 	{
 		
 		private Document doc = null;

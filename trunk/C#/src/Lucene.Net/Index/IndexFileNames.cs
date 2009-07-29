@@ -21,12 +21,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> Useful constants representing filenames and extensions used by lucene
-	/// 
 	/// </summary>
-	/// <author>  Bernhard Messer
-	/// </author>
-	/// <version>  $rcs = ' $Id: Exp $ ' ;
-	/// </version>
 	public sealed class IndexFileNames
 	{
 		

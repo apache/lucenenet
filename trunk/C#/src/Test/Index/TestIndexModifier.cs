@@ -38,8 +38,6 @@ namespace Lucene.Net.Index
 	/// same time.
 	/// 
 	/// </summary>
-	/// <author>  Daniel Naber
-	/// </author>
 	/// <deprecated>
 	/// </deprecated>
 	[TestFixture]
@@ -137,8 +135,8 @@ namespace Lucene.Net.Index
 		private Lucene.Net.Documents.Document GetDoc()
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("body", System.Convert.ToString(docCount), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("body", System.Convert.ToString(docCount), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			docCount++;
 			return doc;
 		}
@@ -267,11 +265,12 @@ namespace Lucene.Net.Index
 	class IndexThread : SupportClass.ThreadClass
 	{
 		
-		private const int ITERATIONS = 500; // iterations of thread test
+		private const int TEST_SECONDS = 3; // how many seconds to tun each test
 		
 		internal static int id = 0;
-		internal static System.Collections.ArrayList idStack = new System.Collections.ArrayList();
-		
+		//internal static System.Collections.ArrayList idStack = new System.Collections.ArrayList();
+        internal static System.Collections.Stack idStack = new System.Collections.Stack();
+
 		internal int added = 0;
 		internal int deleted = 0;
 		
@@ -291,10 +290,11 @@ namespace Lucene.Net.Index
 		
 		override public void  Run()
 		{
+            System.DateTime endTime = System.DateTime.Now.AddSeconds(3.0);
 			try
 			{
-				for (int i = 0; i < ITERATIONS; i++)
-				{
+                while (System.DateTime.Now < endTime)
+                {
 					int rand = random.Next(101);
 					if (rand < 5)
 					{
@@ -304,11 +304,11 @@ namespace Lucene.Net.Index
 					{
 						Lucene.Net.Documents.Document doc = GetDocument();
 						index.AddDocument(doc);
-                        lock (idStack)
+                        lock (idStack.SyncRoot)
                         {
-                            idStack.Add(doc.Get("id"));
-                            added++;
+                            idStack.Push(doc.Get("id"));
                         }
+						added++;
 					}
 					else
 					{
@@ -317,13 +317,12 @@ namespace Lucene.Net.Index
 						System.String delId = null;
 						try
 						{
-                            lock (idStack)
+                            lock (idStack.SyncRoot)
                             {
-                                delId = idStack[idStack.Count - 1] as System.String;
-                                idStack.RemoveAt(idStack.Count - 1);
+                                delId = (string)idStack.Pop();
                             }
 						}
-						catch (System.ArgumentOutOfRangeException)
+						catch (System.InvalidOperationException)
 						{
 							continue;
 						}
@@ -361,13 +360,13 @@ namespace Lucene.Net.Index
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			lock (GetType())
 			{
-				doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				id++;
 			}
 			// add random stuff:
-			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("content", System.Convert.ToString(random.Next(1000)), Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.ANALYZED));
 			return doc;
 		}
 	}

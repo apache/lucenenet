@@ -25,14 +25,36 @@ PARSER_BEGIN(QueryParser)
 
 package org.apache.lucene.queryParser;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
-import java.io.*;
-import java.text.*;
-import java.util.*;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.document.DateField;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.document.*;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ConstantScoreRangeQuery;
+import org.apache.lucene.search.FuzzyQuery;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.PrefixQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.util.Parameter;
 
 /**
@@ -122,7 +144,7 @@ public class QueryParser {
   private Operator operator = OR_OPERATOR;
 
   boolean lowercaseExpandedTerms = true;
-  boolean useOldRangeQuery= false;  
+  boolean useOldRangeQuery= false;
   boolean allowLeadingWildcard = false;
   boolean enablePositionIncrements = false;
 
@@ -137,6 +159,10 @@ public class QueryParser {
   DateTools.Resolution dateResolution = null;
   // maps field names to date resolutions
   Map fieldToDateResolution = null;
+
+  // The collator to use when determining range inclusion,
+  // for use when constructing RangeQuerys and ConstantScoreRangeQuerys.
+  Collator rangeCollator = null;
 
   /** The default operator for parsing queries. 
    * Use {@link QueryParser#setDefaultOperator} to change it.
@@ -167,9 +193,9 @@ public class QueryParser {
   public Query parse(String query) throws ParseException {
     ReInit(new FastCharStream(new StringReader(query)));
     try {
-	  // TopLevelQuery is a Query followed by the end-of-input (EOF)
+      // TopLevelQuery is a Query followed by the end-of-input (EOF)
       Query res = TopLevelQuery(field);
-      return res!=null ? res : new BooleanQuery();
+      return res!=null ? res : newBooleanQuery(false);
     }
     catch (ParseException tme) {
       // rethrow to include the original query:
@@ -182,28 +208,28 @@ public class QueryParser {
       throw new ParseException("Cannot parse '" +query+ "': too many boolean clauses");
     }
   }
-  
+
    /**
    * @return Returns the analyzer.
    */
   public Analyzer getAnalyzer() {
     return analyzer;
   }
-  
+
   /**
    * @return Returns the field.
    */
   public String getField() {
     return field;
   }
-  
+
    /**
    * Get the minimal similarity for fuzzy queries.
    */
   public float getFuzzyMinSim() {
       return fuzzyMinSim;
   }
-  
+
   /**
    * Set the minimum similarity for fuzzy queries.
    * Default is 0.5f.
@@ -211,7 +237,7 @@ public class QueryParser {
   public void setFuzzyMinSim(float fuzzyMinSim) {
       this.fuzzyMinSim = fuzzyMinSim;
   }
-  
+
    /**
    * Get the prefix length for fuzzy queries. 
    * @return Returns the fuzzyPrefixLength.
@@ -219,7 +245,7 @@ public class QueryParser {
   public int getFuzzyPrefixLength() {
     return fuzzyPrefixLength;
   }
-  
+
   /**
    * Set the prefix length for fuzzy queries. Default is 0.
    * @param fuzzyPrefixLength The fuzzyPrefixLength to set.
@@ -291,7 +317,7 @@ public class QueryParser {
    * In default mode (<code>OR_OPERATOR</code>) terms without any modifiers
    * are considered optional: for example <code>capital of Hungary</code> is equal to
    * <code>capital OR of OR Hungary</code>.<br/>
-   * In <code>AND_OPERATOR</code> mode terms are considered to be in conjuction: the
+   * In <code>AND_OPERATOR</code> mode terms are considered to be in conjunction: the
    * above mentioned query is parsed as <code>capital AND of AND Hungary</code>
    */
   public void setDefaultOperator(Operator op) {
@@ -323,7 +349,7 @@ public class QueryParser {
   public boolean getLowercaseExpandedTerms() {
     return lowercaseExpandedTerms;
   }
-  
+
   /**
    * By default QueryParser uses new ConstantScoreRangeQuery in preference to RangeQuery
    * for range queries. This implementation is generally preferable because it 
@@ -344,7 +370,6 @@ public class QueryParser {
   public boolean getUseOldRangeQuery() {
     return useOldRangeQuery;
   }
-  
 
   /**
    * Set locale used by date range parsing.
@@ -370,7 +395,7 @@ public class QueryParser {
   public void setDateResolution(DateTools.Resolution dateResolution) {
     this.dateResolution = dateResolution;
   }
-  
+
   /**
    * Sets the date resolution used by RangeQueries for a specific field.
    *  
@@ -381,12 +406,12 @@ public class QueryParser {
     if (fieldName == null) {
       throw new IllegalArgumentException("Field cannot be null.");
     }
-    
+
     if (fieldToDateResolution == null) {
       // lazily initialize HashMap
       fieldToDateResolution = new HashMap();
     }
-    
+
     fieldToDateResolution.put(fieldName, dateResolution);
   }
 
@@ -400,28 +425,64 @@ public class QueryParser {
     if (fieldName == null) {
       throw new IllegalArgumentException("Field cannot be null.");
     }
-    
+
     if (fieldToDateResolution == null) {
       // no field specific date resolutions set; return default date resolution instead
       return this.dateResolution;
     }
-    
+
     DateTools.Resolution resolution = (DateTools.Resolution) fieldToDateResolution.get(fieldName);
     if (resolution == null) {
       // no date resolutions set for the given field; return default date resolution instead
       resolution = this.dateResolution;
     }
-    
+
     return resolution;
   }
+  
+  /** 
+   * Sets the collator used to determine index term inclusion in ranges
+   * specified either for ConstantScoreRangeQuerys or RangeQuerys (if
+   * {@link #setUseOldRangeQuery(boolean)} is called with a <code>true</code>
+   * value.)
+   * <p/>
+   * <strong>WARNING:</strong> Setting the rangeCollator to a non-null
+   * collator using this method will cause every single index Term in the
+   * Field referenced by lowerTerm and/or upperTerm to be examined.
+   * Depending on the number of index Terms in this Field, the operation could
+   * be very slow.
+   *
+   *  @param rc  the collator to use when constructing RangeQuerys
+   *             and ConstantScoreRangeQuerys
+   */
+  public void setRangeCollator(Collator rc) {
+    rangeCollator = rc;
+  }
+  
+  /**
+   * @return the collator used to determine index term inclusion in ranges
+   *  specified either for ConstantScoreRangeQuerys or RangeQuerys (if
+   *  {@link #setUseOldRangeQuery(boolean)} is called with a <code>true</code>
+   *  value.)
+   */
+  public Collator getRangeCollator() {
+    return rangeCollator;
+  }
 
+  /**
+   * @deprecated use {@link #addClause(List, int, int, Query)} instead.
+   */
   protected void addClause(Vector clauses, int conj, int mods, Query q) {
+    addClause((List) clauses, conj, mods, q);
+  }
+
+  protected void addClause(List clauses, int conj, int mods, Query q) {
     boolean required, prohibited;
 
     // If this term is introduced by AND, make the preceding term required,
     // unless it's already prohibited
     if (clauses.size() > 0 && conj == CONJ_AND) {
-      BooleanClause c = (BooleanClause) clauses.elementAt(clauses.size()-1);
+      BooleanClause c = (BooleanClause) clauses.get(clauses.size()-1);
       if (!c.isProhibited())
         c.setOccur(BooleanClause.Occur.MUST);
     }
@@ -431,7 +492,7 @@ public class QueryParser {
       // unless it's prohibited (that means we leave -a OR b but +a OR b-->a OR b)
       // notice if the input is a OR b, first term is parsed as required; without
       // this modification a OR b would parsed as +a OR b
-      BooleanClause c = (BooleanClause) clauses.elementAt(clauses.size()-1);
+      BooleanClause c = (BooleanClause) clauses.get(clauses.size()-1);
       if (!c.isProhibited())
         c.setOccur(BooleanClause.Occur.SHOULD);
     }
@@ -456,11 +517,11 @@ public class QueryParser {
       required   = (!prohibited && conj != CONJ_OR);
     }
     if (required && !prohibited)
-      clauses.addElement(new BooleanClause(q, BooleanClause.Occur.MUST));
+      clauses.add(newBooleanClause(q, BooleanClause.Occur.MUST));
     else if (!required && !prohibited)
-      clauses.addElement(new BooleanClause(q, BooleanClause.Occur.SHOULD));
+      clauses.add(newBooleanClause(q, BooleanClause.Occur.SHOULD));
     else if (!required && prohibited)
-      clauses.addElement(new BooleanClause(q, BooleanClause.Occur.MUST_NOT));
+      clauses.add(newBooleanClause(q, BooleanClause.Occur.MUST_NOT));
     else
       throw new RuntimeException("Clause cannot be both required and prohibited");
   }
@@ -474,23 +535,24 @@ public class QueryParser {
     // PhraseQuery, or nothing based on the term count
 
     TokenStream source = analyzer.tokenStream(field, new StringReader(queryText));
-    Vector v = new Vector();
-    org.apache.lucene.analysis.Token t;
+    List list = new ArrayList();
+    final org.apache.lucene.analysis.Token reusableToken = new org.apache.lucene.analysis.Token();
+    org.apache.lucene.analysis.Token nextToken;
     int positionCount = 0;
     boolean severalTokensAtSamePosition = false;
 
     while (true) {
       try {
-        t = source.next();
+        nextToken = source.next(reusableToken);
       }
       catch (IOException e) {
-        t = null;
+        nextToken = null;
       }
-      if (t == null)
+      if (nextToken == null)
         break;
-      v.addElement(t);
-      if (t.getPositionIncrement() != 0)
-        positionCount += t.getPositionIncrement();
+      list.add(nextToken.clone());
+      if (nextToken.getPositionIncrement() != 0)
+        positionCount += nextToken.getPositionIncrement();
       else
         severalTokensAtSamePosition = true;
     }
@@ -501,33 +563,33 @@ public class QueryParser {
       // ignore
     }
 
-    if (v.size() == 0)
+    if (list.size() == 0)
       return null;
-    else if (v.size() == 1) {
-      t = (org.apache.lucene.analysis.Token) v.elementAt(0);
-      return new TermQuery(new Term(field, t.termText()));
+    else if (list.size() == 1) {
+      nextToken = (org.apache.lucene.analysis.Token) list.get(0);
+      return newTermQuery(new Term(field, nextToken.term()));
     } else {
       if (severalTokensAtSamePosition) {
         if (positionCount == 1) {
           // no phrase query:
-          BooleanQuery q = new BooleanQuery(true);
-          for (int i = 0; i < v.size(); i++) {
-            t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-            TermQuery currentQuery = new TermQuery(
-                new Term(field, t.termText()));
+          BooleanQuery q = newBooleanQuery(true);
+          for (int i = 0; i < list.size(); i++) {
+            nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+            Query currentQuery = newTermQuery(
+                new Term(field, nextToken.term()));
             q.add(currentQuery, BooleanClause.Occur.SHOULD);
           }
           return q;
         }
         else {
           // phrase query:
-          MultiPhraseQuery mpq = new MultiPhraseQuery();
-          mpq.setSlop(phraseSlop);          
+          MultiPhraseQuery mpq = newMultiPhraseQuery();
+          mpq.setSlop(phraseSlop);
           List multiTerms = new ArrayList();
           int position = -1;
-          for (int i = 0; i < v.size(); i++) {
-            t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-            if (t.getPositionIncrement() > 0 && multiTerms.size() > 0) {
+          for (int i = 0; i < list.size(); i++) {
+            nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+            if (nextToken.getPositionIncrement() > 0 && multiTerms.size() > 0) {
               if (enablePositionIncrements) {
                 mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
               } else {
@@ -535,8 +597,8 @@ public class QueryParser {
               }
               multiTerms.clear();
             }
-            position += t.getPositionIncrement();
-            multiTerms.add(new Term(field, t.termText()));
+            position += nextToken.getPositionIncrement();
+            multiTerms.add(new Term(field, nextToken.term()));
           }
           if (enablePositionIncrements) {
             mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
@@ -547,16 +609,16 @@ public class QueryParser {
         }
       }
       else {
-        PhraseQuery pq = new PhraseQuery();
+        PhraseQuery pq = newPhraseQuery();
         pq.setSlop(phraseSlop);
         int position = -1;
-        for (int i = 0; i < v.size(); i++) {
-          t = (org.apache.lucene.analysis.Token) v.elementAt(i);
+        for (int i = 0; i < list.size(); i++) {
+          nextToken = (org.apache.lucene.analysis.Token) list.get(i);
           if (enablePositionIncrements) {
-            position += t.getPositionIncrement();
-            pq.add(new Term(field, t.termText()),position);
+            position += nextToken.getPositionIncrement();
+            pq.add(new Term(field, nextToken.term()),position);
           } else {
-            pq.add(new Term(field, t.termText()));
+            pq.add(new Term(field, nextToken.term()));
           }
         }
         return pq;
@@ -572,8 +634,8 @@ public class QueryParser {
    *
    * @exception ParseException throw in overridden method to disallow
    */
-  protected Query getFieldQuery(String field, String queryText, int slop) 
-  	throws ParseException {
+  protected Query getFieldQuery(String field, String queryText, int slop)
+        throws ParseException {
     Query query = getFieldQuery(field, queryText);
 
     if (query instanceof PhraseQuery) {
@@ -630,16 +692,110 @@ public class QueryParser {
     }
     catch (Exception e) { }
 
+    return newRangeQuery(field, part1, part2, inclusive);
+  }
+
+ /**
+  * Builds a new BooleanQuery instance
+  * @param disableCoord disable coord
+  * @return new BooleanQuery instance
+  */
+  protected BooleanQuery newBooleanQuery(boolean disableCoord) {
+    return new BooleanQuery(disableCoord); 
+  }
+
+ /**
+  * Builds a new BooleanClause instance
+  * @param q sub query
+  * @param occur how this clause should occur when matching documents
+  * @return new BooleanClause instance
+  */
+  protected BooleanClause newBooleanClause(Query q, BooleanClause.Occur occur) {
+    return new BooleanClause(q, occur);
+  }
+ 
+  /**
+   * Builds a new TermQuery instance
+   * @param term term
+   * @return new TermQuery instance
+   */
+  protected Query newTermQuery(Term term){
+    return new TermQuery(term);
+  }
+ 
+  /**
+   * Builds a new PhraseQuery instance
+   * @return new PhraseQuery instance
+   */
+  protected PhraseQuery newPhraseQuery(){
+    return new PhraseQuery();
+  }
+ 
+  /**
+   * Builds a new MultiPhraseQuery instance
+   * @return new MultiPhraseQuery instance
+   */
+  protected MultiPhraseQuery newMultiPhraseQuery(){
+    return new MultiPhraseQuery();
+  }
+ 
+  /**
+   * Builds a new PrefixQuery instance
+   * @param prefix Prefix term
+   * @return new PrefixQuery instance
+   */
+  protected Query newPrefixQuery(Term prefix){
+    return new PrefixQuery(prefix);
+  }
+ 
+  /**
+   * Builds a new FuzzyQuery instance
+   * @param term Term
+   * @param minimumSimilarity minimum similarity
+   * @param prefixLength prefix length
+   * @return new FuzzyQuery Instance
+   */
+  protected Query newFuzzyQuery(Term term, float minimumSimilarity, int prefixLength) {
+    return new FuzzyQuery(term,minimumSimilarity,prefixLength);
+  }
+
+  /**
+   * Builds a new RangeQuery instance
+   * @param field Field
+   * @param part1 min
+   * @param part2 max
+   * @param inclusive true if range is inclusive
+   * @return new RangeQuery instance
+   */
+  protected Query newRangeQuery(String field, String part1, String part2, boolean inclusive) {
     if(useOldRangeQuery)
     {
-	    return new RangeQuery(new Term(field, part1),
-                          new Term(field, part2),
-                          inclusive);
+      return new RangeQuery(new Term(field, part1),
+                            new Term(field, part2),
+                            inclusive, rangeCollator);
     }
     else
     {
-      return new ConstantScoreRangeQuery(field,part1,part2,inclusive,inclusive);
+      return new ConstantScoreRangeQuery
+        (field, part1, part2, inclusive, inclusive, rangeCollator);
     }
+  }
+
+  /**
+   * Builds a new MatchAllDocsQuery instance
+   * @return new MatchAllDocsQuery instance
+   */
+  protected Query newMatchAllDocsQuery() {
+    return new MatchAllDocsQuery(); 
+  }
+
+  /**
+   * Builds a new WildcardQuery instance
+   * @param t wildcard term
+   * @return new WildcardQuery instance
+   */
+  protected Query newWildcardQuery(Term t) {
+    return new WildcardQuery(t); 
   }
 
   /**
@@ -649,13 +805,31 @@ public class QueryParser {
    * Can be overridden by extending classes, to modify query being
    * returned.
    *
-   * @param clauses Vector that contains {@link BooleanClause} instances
+   * @param clauses List that contains {@link BooleanClause} instances
+   *    to join.
+   *
+   * @return Resulting {@link Query} object.
+   * @exception ParseException throw in overridden method to disallow
+   * @deprecated use {@link #getBooleanQuery(List)} instead
+   */
+  protected Query getBooleanQuery(Vector clauses) throws ParseException {
+    return getBooleanQuery((List) clauses, false);
+  }
+
+  /**
+   * Factory method for generating query, given a set of clauses.
+   * By default creates a boolean query composed of clauses passed in.
+   *
+   * Can be overridden by extending classes, to modify query being
+   * returned.
+   *
+   * @param clauses List that contains {@link BooleanClause} instances
    *    to join.
    *
    * @return Resulting {@link Query} object.
    * @exception ParseException throw in overridden method to disallow
    */
-  protected Query getBooleanQuery(Vector clauses) throws ParseException {
+  protected Query getBooleanQuery(List clauses) throws ParseException {
     return getBooleanQuery(clauses, false);
   }
 
@@ -666,22 +840,43 @@ public class QueryParser {
    * Can be overridden by extending classes, to modify query being
    * returned.
    *
-   * @param clauses Vector that contains {@link BooleanClause} instances
+   * @param clauses List that contains {@link BooleanClause} instances
+   *    to join.
+   * @param disableCoord true if coord scoring should be disabled.
+   *
+   * @return Resulting {@link Query} object.
+   * @exception ParseException throw in overridden method to disallow
+   * @deprecated use {@link #getBooleanQuery(List, boolean)} instead
+   */
+  protected Query getBooleanQuery(Vector clauses, boolean disableCoord)
+    throws ParseException
+  {
+    return getBooleanQuery((List) clauses, disableCoord);
+  }
+
+  /**
+   * Factory method for generating query, given a set of clauses.
+   * By default creates a boolean query composed of clauses passed in.
+   *
+   * Can be overridden by extending classes, to modify query being
+   * returned.
+   *
+   * @param clauses List that contains {@link BooleanClause} instances
    *    to join.
    * @param disableCoord true if coord scoring should be disabled.
    *
    * @return Resulting {@link Query} object.
    * @exception ParseException throw in overridden method to disallow
    */
-  protected Query getBooleanQuery(Vector clauses, boolean disableCoord)
+  protected Query getBooleanQuery(List clauses, boolean disableCoord)
     throws ParseException
   {
     if (clauses.size()==0) {
       return null; // all clause words were filtered away by the analyzer.
     }
-    BooleanQuery query = new BooleanQuery(disableCoord);
+    BooleanQuery query = newBooleanQuery(disableCoord);
     for (int i = 0; i < clauses.size(); i++) {
-      query.add((BooleanClause)clauses.elementAt(i));
+      query.add((BooleanClause)clauses.get(i));
     }
     return query;
   }
@@ -710,7 +905,7 @@ public class QueryParser {
   protected Query getWildcardQuery(String field, String termStr) throws ParseException
   {
     if ("*".equals(field)) {
-      if ("*".equals(termStr)) return new MatchAllDocsQuery();
+      if ("*".equals(termStr)) return newMatchAllDocsQuery();
     }
     if (!allowLeadingWildcard && (termStr.startsWith("*") || termStr.startsWith("?")))
       throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery");
@@ -718,7 +913,7 @@ public class QueryParser {
       termStr = termStr.toLowerCase();
     }
     Term t = new Term(field, termStr);
-    return new WildcardQuery(t);
+    return newWildcardQuery(t);
   }
 
   /**
@@ -752,10 +947,9 @@ public class QueryParser {
       termStr = termStr.toLowerCase();
     }
     Term t = new Term(field, termStr);
-    return new PrefixQuery(t);
+    return newPrefixQuery(t);
   }
 
-  
    /**
    * Factory method for generating a query (similar to
    * {@link #getWildcardQuery}). Called when parser parses
@@ -773,7 +967,7 @@ public class QueryParser {
       termStr = termStr.toLowerCase();
     }
     Term t = new Term(field, termStr);
-    return new FuzzyQuery(t, minSimilarity, fuzzyPrefixLength);
+    return newFuzzyQuery(t, minSimilarity, fuzzyPrefixLength);
   }
 
   /**
@@ -781,29 +975,29 @@ public class QueryParser {
    * removed, or kept only once if there was a double escape.
    * 
    * Supports escaped unicode characters, e. g. translates
-   * <code>\u0041</code> to <code>A</code>.
+   * <code>\\u0041</code> to <code>A</code>.
    * 
    */
   private String discardEscapeChar(String input) throws ParseException {
     // Create char array to hold unescaped char sequence
     char[] output = new char[input.length()];
-      
+
     // The length of the output can be less than the input
     // due to discarded escape chars. This variable holds
     // the actual length of the output
     int length = 0;
-      
+
     // We remember whether the last processed character was 
     // an escape character
     boolean lastCharWasEscapeChar = false;
-      
+
     // The multiplier the current unicode digit must be multiplied with.
     // E. g. the first digit must be multiplied with 16^3, the second with 16^2...
     int codePointMultiplier = 0;
-      
+
     // Used to calculate the codepoint of the escaped unicode character
     int codePoint = 0;
-      
+
     for (int i = 0; i < input.length(); i++) {
       char curChar = input.charAt(i);
       if (codePointMultiplier > 0) {
@@ -817,9 +1011,9 @@ public class QueryParser {
         if (curChar == 'u') {
           // found an escaped unicode character
           codePointMultiplier = 16 * 16 * 16;
-        } else { 
+        } else {
           // this character was escaped
-          output[length] = curChar;    
+          output[length] = curChar;
           length++;
         }
         lastCharWasEscapeChar = false;
@@ -832,18 +1026,18 @@ public class QueryParser {
         }
       }
     }
-      
+
     if (codePointMultiplier > 0) {
       throw new ParseException("Truncated unicode escape sequence.");
     }
-    
+
     if (lastCharWasEscapeChar) {
       throw new ParseException("Term can not end with escape character.");
     }
-      
+
     return new String(output, 0, length);
   }
-  
+
   /** Returns the numeric value of the hexadecimal character */
   private static final int hexToInt(char c) throws ParseException {
     if ('0' <= c && c <= '9') {
@@ -856,7 +1050,7 @@ public class QueryParser {
       throw new ParseException("None-hex character in unicode escape sequence: " + c);
     }
   }
-  
+
   /**
    * Returns a String where those characters that QueryParser
    * expects to be escaped are escaped by a preceding <code>\</code>.
@@ -908,6 +1102,7 @@ PARSER_END(QueryParser)
                        | <_ESCAPED_CHAR> ) >
 | <#_TERM_CHAR: ( <_TERM_START_CHAR> | <_ESCAPED_CHAR> | "-" | "+" ) >
 | <#_WHITESPACE: ( " " | "\t" | "\n" | "\r") >
+| <#_QUOTED_CHAR: ( ~[ "\"", "\\" ] | <_ESCAPED_CHAR> ) >
 }
 
 <DEFAULT, RangeIn, RangeEx> SKIP : {
@@ -925,7 +1120,7 @@ PARSER_END(QueryParser)
 | <COLON:     ":" >
 | <STAR:      "*" >
 | <CARAT:     "^" > : Boost
-| <QUOTED:     "\"" (~["\""] | "\\\"")* "\"">
+| <QUOTED:     "\"" (<_QUOTED_CHAR>)* "\"">
 | <TERM:      <_TERM_START_CHAR> (<_TERM_CHAR>)*  >
 | <FUZZY_SLOP:     "~" ( (<_NUM_CHAR>)+ ( "." (<_NUM_CHAR>)+ )? )? >
 | <PREFIXTERM:  ("*") | ( <_TERM_START_CHAR> (<_TERM_CHAR>)* "*" ) >
@@ -992,7 +1187,7 @@ Query TopLevelQuery(String field) :
 
 Query Query(String field) :
 {
-  Vector clauses = new Vector();
+  List clauses = new ArrayList();
   Query q, firstQuery=null;
   int conj, mods;
 }

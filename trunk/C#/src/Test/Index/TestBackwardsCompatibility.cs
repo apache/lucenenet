@@ -19,15 +19,16 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+using TermQuery = Lucene.Net.Search.TermQuery;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
@@ -40,16 +41,20 @@ namespace Lucene.Net.Index
 	public class TestBackwardsCompatibility : LuceneTestCase
 	{
 		
-		// Uncomment these cases & run in a pre-lockless checkout
-		// to create indices:
+		// Uncomment these cases & run them on an older Lucene version
+        // to generate an index to test backwards compatibility.
+        // Then cd to build/test/index.cfs and run "zip index.<VERSION>.cfs.zip *";
+        // cd to build/test/index.nocfs and run "zip index.<VERSION>.nocfs.zip *".
+        // Then move those 2 zip files to your trunk checkout and add them to the
+        // oldNames array.
 		
 		/*
 		public void testCreatePreLocklessCFS() throws IOException {
-		CreateIndex("src/test/org/apache/lucene/index/index.prelockless.cfs", true);
+		CreateIndex("index.cfs", true);
 		}
 		
 		public void testCreatePreLocklessNoCFS() throws IOException {
-		CreateIndex("src/test/org/apache/lucene/index/index.prelockless.nocfs", false);
+		CreateIndex("index.nocfs", false);
 		}
 		*/
 		
@@ -108,16 +113,46 @@ namespace Lucene.Net.Index
 			RmDir(dirName);
 		}
 		
-		internal System.String[] oldNames = new System.String[]{"prelockless.cfs", "prelockless.nocfs", "presharedstores.cfs", "presharedstores.nocfs"};
-		
-		[Test]
-		public virtual void  TestSearchOldIndex()
+		internal readonly string[] oldNames = new string[] {
+            "19.cfs",    
+            "19.nocfs",    
+            "20.cfs",    
+            "20.nocfs",    
+            "21.cfs",    
+            "21.nocfs",    
+            "22.cfs",    
+            "22.nocfs",    
+            "23.cfs",    
+            "23.nocfs",    
+        };
+
+        [Test]
+        public void TestOptimizeOldIndex()
+        {
+            for (int i = 0; i < oldNames.Length; i++)
+            {
+                string dirName = @"Index\index." + oldNames[i];
+                Unzip(dirName, oldNames[i]);
+                string fullPath = FullDir(oldNames[i]);
+                Directory dir = FSDirectory.GetDirectory(fullPath);
+                IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+                w.Optimize();
+                w.Close();
+
+                _TestUtil.CheckIndex(dir);
+                dir.Close();
+                RmDir(oldNames[i]);
+            }
+        }
+
+        [Test]
+        public virtual void TestSearchOldIndex()
 		{
 			for (int i = 0; i < oldNames.Length; i++)
 			{
 				System.String dirName = @"Index\index." + oldNames[i];
 				Unzip(dirName, oldNames[i]);
-				SearchIndex(oldNames[i]);
+				SearchIndex(oldNames[i], oldNames[i]);
 				RmDir(oldNames[i]);
 			}
 		}
@@ -153,8 +188,19 @@ namespace Lucene.Net.Index
 				RmDir(oldNames[i]);
 			}
 		}
-		
-		public virtual void  SearchIndex(System.String dirName)
+
+        private void TestHits(ScoreDoc[] hits, int expectedCount, IndexReader reader)
+        {
+            int hitCount = hits.Length;
+            Assert.AreEqual(expectedCount, hitCount, "wrong number of hits");
+            for (int i = 0; i < hitCount; i++)
+            {
+                reader.Document(hits[i].doc);
+                reader.GetTermFreqVectors(hits[i].doc);
+            }
+        }
+
+        public virtual void SearchIndex(string dirName, string oldName)
 		{
 			//QueryParser parser = new QueryParser("contents", new WhitespaceAnalyzer());
 			//Query query = parser.parse("handle:1");
@@ -163,13 +209,58 @@ namespace Lucene.Net.Index
 			
 			Directory dir = FSDirectory.GetDirectory(dirName);
 			IndexSearcher searcher = new IndexSearcher(dir);
-			
-			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(34, hits.Length());
-			Document d = hits.Doc(0);
-			
+            IndexReader reader = searcher.GetIndexReader();
+
+            _TestUtil.CheckIndex(dir);
+
+            for (int i = 0; i < 35; i++)
+            {
+                if (!reader.IsDeleted(i))
+                {
+                    Document d = reader.Document(i);
+                    System.Collections.IList fields = d.GetFields();
+                    if (oldName.StartsWith("23."))
+                    {
+                        Assert.AreEqual(4, fields.Count);
+                        Field f = (Field)d.GetField("id");
+                        Assert.AreEqual("" + i, f.StringValue());
+
+                        f = (Field)d.GetField("utf8");
+                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue());
+
+                        f = (Field)d.GetField("autf8");
+                        Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue());
+
+                        f = (Field)d.GetField("content2");
+                        Assert.AreEqual("here is more content with aaa aaa aaa", f.StringValue());
+                    }
+                }
+                else
+                    // only ID 7 is deleted
+                    Assert.AreEqual(7, i);
+            }
+
+            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+
 			// First document should be #21 since it's norm was increased:
-			Assert.AreEqual("21", d.Get("id"), "didn't get the right document first");
+			Document d2 = searcher.Doc(hits[0].doc);
+			Assert.AreEqual("21", d2.Get("id"), "didn't get the right document first");
+			
+            TestHits(hits, 34, searcher.GetIndexReader());
+
+            if (!oldName.StartsWith("19.") &&
+                !oldName.StartsWith("20.") &&
+                !oldName.StartsWith("21.") &&
+                !oldName.StartsWith("22."))
+            {
+                // Test on indices >= 2.3
+                hits = searcher.Search(new TermQuery(new Term("utf8", "\u0000")), null, 1000).scoreDocs;
+                Assert.AreEqual(34, hits.Length);
+                hits = searcher.Search(new TermQuery(new Term("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne")), null, 1000).scoreDocs;
+                Assert.AreEqual(34, hits.Length);
+                hits = searcher.Search(new TermQuery(new Term("utf8", "ab\ud917\udc17cd")), null, 1000).scoreDocs;
+                Assert.AreEqual(34, hits.Length);
+            }
 			
 			searcher.Close();
 			dir.Close();
@@ -199,10 +290,10 @@ namespace Lucene.Net.Index
 			
 			// make sure searching sees right # hits
 			IndexSearcher searcher = new IndexSearcher(dir);
-			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(44, hits.Length(), "wrong number of hits");
-			Document d = hits.Doc(0);
+			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			Document d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
+            TestHits(hits, 44, searcher.GetIndexReader());
 			searcher.Close();
 			
 			// make sure we can do delete & setNorm against this
@@ -216,10 +307,11 @@ namespace Lucene.Net.Index
 			
 			// make sure they "took":
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(43, hits.Length(), "wrong number of hits");
-			d = hits.Doc(0);
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			Assert.AreEqual(43, hits.Length, "wrong number of hits");
+			d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
+            TestHits(hits, 43, searcher.GetIndexReader());
 			searcher.Close();
 			
 			// optimize
@@ -228,9 +320,10 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(43, hits.Length(), "wrong number of hits");
-			d = hits.Doc(0);
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			Assert.AreEqual(43, hits.Length, "wrong number of hits");
+			d = searcher.Doc(hits[0].doc);
+            TestHits(hits, 43, searcher.GetIndexReader());
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
 			searcher.Close();
 			
@@ -248,9 +341,9 @@ namespace Lucene.Net.Index
 			
 			// make sure searching sees right # hits
 			IndexSearcher searcher = new IndexSearcher(dir);
-			Hits hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(34, hits.Length(), "wrong number of hits");
-			Document d = hits.Doc(0);
+            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+            Assert.AreEqual(34, hits.Length, "wrong number of hits");
+			Document d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
 			searcher.Close();
 			
@@ -265,11 +358,12 @@ namespace Lucene.Net.Index
 			
 			// make sure they "took":
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(33, hits.Length(), "wrong number of hits");
-			d = hits.Doc(0);
+            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+            Assert.AreEqual(33, hits.Length, "wrong number of hits");
+            d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
-			searcher.Close();
+            TestHits(hits, 33, searcher.GetIndexReader());
+            searcher.Close();
 			
 			// optimize
 			IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false);
@@ -277,11 +371,12 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")));
-			Assert.AreEqual(33, hits.Length(), "wrong number of hits");
-			d = hits.Doc(0);
-			Assert.AreEqual("22", d.Get("id"), "wrong first document");
-			searcher.Close();
+            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+            Assert.AreEqual(33, hits.Length, "wrong number of hits");
+            d = searcher.Doc(hits[0].doc);
+            Assert.AreEqual("22", d.Get("id"), "wrong first document");
+            TestHits(hits, 33, searcher.GetIndexReader());
+            searcher.Close();
 			
 			dir.Close();
 		}
@@ -294,8 +389,9 @@ namespace Lucene.Net.Index
 			dirName = FullDir(dirName);
 			
 			Directory dir = FSDirectory.GetDirectory(dirName);
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetUseCompoundFile(doCFS);
+            writer.SetMaxBufferedDocs(10);
 			
 			for (int i = 0; i < 35; i++)
 			{
@@ -335,7 +431,6 @@ namespace Lucene.Net.Index
 					
 					IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true);
 					writer.SetRAMBufferSizeMB(16.0);
-					//IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
 					for (int i = 0; i < 35; i++)
 					{
 						AddDoc(writer, i);
@@ -376,10 +471,7 @@ namespace Lucene.Net.Index
 					
 					// Now verify file names:
 					System.String[] expected;
-					expected = new System.String[]{"_0.cfs", "_0_1.del", "_0_1.s" + contentFieldIndex, "segments_4", "segments.gen"};
-					
-					if (!autoCommit)
-						expected[3] = "segments_3";
+					expected = new System.String[]{"_0.cfs", "_0_1.del", "_0_1.s" + contentFieldIndex, "segments_3", "segments.gen"};
 					
 					System.String[] actual = dir.List();
 					System.Array.Sort(expected);
@@ -414,9 +506,12 @@ namespace Lucene.Net.Index
 		private void  AddDoc(IndexWriter writer, int id)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.TOKENIZED));
-			doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			writer.AddDocument(doc);
+			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
+			doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field("autf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            doc.Add(new Field("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            doc.Add(new Field("content2", "here is more content with aaa aaa aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            writer.AddDocument(doc);
 		}
 		
 		private void  RmDir(System.String dir)

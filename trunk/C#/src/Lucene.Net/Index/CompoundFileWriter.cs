@@ -46,8 +46,6 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: CompoundFileWriter.java 606441 2007-12-22 10:06:28Z mikemccand $
-	/// </version>
 	public sealed class CompoundFileWriter
 	{
 		
@@ -166,14 +164,25 @@ namespace Lucene.Net.Index
 				// Remember the positions of directory entries so that we can
 				// adjust the offsets later
 				System.Collections.IEnumerator it = entries.GetEnumerator();
+                long totalSize = 0;
 				while (it.MoveNext())
 				{
 					FileEntry fe = (FileEntry) it.Current;
 					fe.directoryOffset = os.GetFilePointer();
 					os.WriteLong(0); // for now
 					os.WriteString(fe.file);
+                    totalSize += directory.FileLength(fe.file);
 				}
 				
+                // Pre-allocate size of file as optimization --
+                // this can potentially help IO performances as
+                // we write the file and also later during
+                // searchin.  It also uncovers a disk-full
+                // situation earlier and hopefully without
+                // actually filling disk to 100%:
+                long finalLength = totalSize + os.GetFilePointer();
+                os.SetLength(finalLength);
+
 				// Open the files and copy their data into the stream.
 				// Remember the locations of each file's data section.
 				byte[] buffer = new byte[16384];
@@ -193,7 +202,9 @@ namespace Lucene.Net.Index
 					os.Seek(fe.directoryOffset);
 					os.WriteLong(fe.dataOffset);
 				}
-				
+
+                System.Diagnostics.Debug.Assert(finalLength == os.Length());
+
 				// Close the output stream. Set the os to null before trying to
 				// close so that if an exception occurs during the close, the
 				// finally clause below will not attempt to close the stream
@@ -234,7 +245,7 @@ namespace Lucene.Net.Index
 				while (remainder > 0)
 				{
 					int len = (int) System.Math.Min(chunk, remainder);
-					is_Renamed.ReadBytes(buffer, 0, len);
+					is_Renamed.ReadBytes(buffer, 0, len, false);
 					os.WriteBytes(buffer, len);
 					remainder -= len;
 					if (checkAbort != null)

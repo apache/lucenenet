@@ -52,26 +52,26 @@ namespace Lucene.Net.Search
 			
 			try
 			{
-				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				for (int i = 0; i < values.Length; i++)
 				{
 					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-					doc.Add(new Field(FIELD, values[i], Field.Store.YES, Field.Index.UN_TOKENIZED));
+					doc.Add(new Field(FIELD, values[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
 					writer.AddDocument(doc);
 				}
 				writer.Close();
 				
-				BooleanQuery booleanQuery1 = new BooleanQuery();
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
-				booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
+				BooleanQuery boolQuery1 = new BooleanQuery();
+				boolQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
+				boolQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
 				
 				BooleanQuery query = new BooleanQuery();
-				query.Add(booleanQuery1, BooleanClause.Occur.MUST);
+				query.Add(boolQuery1, BooleanClause.Occur.MUST);
 				query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
 				
 				IndexSearcher indexSearcher = new IndexSearcher(directory);
-				Hits hits = indexSearcher.Search(query);
-				Assert.AreEqual(2, hits.Length(), "Number of matched documents");
+				ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).scoreDocs;
+				Assert.AreEqual(2, hits.Length, "Number of matched documents");
 			}
 			catch (System.IO.IOException e)
 			{

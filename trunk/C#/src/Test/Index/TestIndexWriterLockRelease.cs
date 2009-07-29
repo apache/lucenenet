@@ -28,8 +28,6 @@ namespace Lucene.Net.Index
 	/// exist).
 	/// 
 	/// </summary>
-	/// <author>  mbogosian
-	/// </author>
 	/// <version>  $Id$
 	/// </version>
 	
@@ -130,13 +128,13 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false);
+				im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			}
 			catch (System.IO.FileNotFoundException)
 			{
 				try
 				{
-					im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false);
+                    im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				}
 				catch (System.IO.FileNotFoundException)
 				{

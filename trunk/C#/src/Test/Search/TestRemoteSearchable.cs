@@ -34,32 +34,34 @@ namespace Lucene.Net.Search
 	[TestFixture]
 	public class TestRemoteSearchable : LuceneTestCase
 	{
-		private static readonly string RemoteTypeName = typeof(RemoteSearchable).Name;
 		private static System.Runtime.Remoting.Channels.Http.HttpChannel httpChannel;
+		private static int port;
 		private static bool serverStarted;
 
-		[TestFixtureSetUp]
-		public void FixtureSetup()
+		[SetUp]
+		public override void SetUp()
 		{
-			if (!serverStarted) //should always evaluate to true
-			{
-				httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(0);
+			base.SetUp();
+			Random rnd = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
+			port = rnd.Next(System.Net.IPEndPoint.MinPort, System.Net.IPEndPoint.MaxPort);
+			httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
+			if (!serverStarted)
 				StartServer();
-			}
 		}
 
-		[TestFixtureTearDown]
-		public void FixtureTeardown()
+		[TearDown]
+		public override void TearDown()
 		{
-			try
-			{
-				System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
-			}
-			catch
-			{
-			}
+            try
+            {
+                System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
+            }
+            catch
+            {
+            }
 
-			httpChannel = null;
+            httpChannel = null;
+			base.TearDown();
 		}
 
 		private static Lucene.Net.Search.Searchable GetRemote()
@@ -69,7 +71,7 @@ namespace Lucene.Net.Search
 
 		private static Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), httpChannel.GetUrlsForUri(RemoteTypeName)[0]);
+			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), string.Format("http://localhost:{0}/RemoteSearchable", port));
 		}
 
 		public static void StartServer()
@@ -92,11 +94,11 @@ namespace Lucene.Net.Search
 
 			// construct an index
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("test", "test text", Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("other", "other test text", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("test", "test text", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("other", "other test text", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 
 			writer.Optimize();
@@ -105,7 +107,7 @@ namespace Lucene.Net.Search
 			// publish it
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexStore);
 			RemoteSearchable impl = new RemoteSearchable(local);
-			System.Runtime.Remoting.RemotingServices.Marshal(impl, RemoteTypeName);
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, "RemoteSearchable");
 			serverStarted = true;
 		}
 		
@@ -145,8 +147,8 @@ namespace Lucene.Net.Search
 		//    RAMDirectory indexStore = new RAMDirectory();
 		//    IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
 		//    Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-		//    doc.Add(new Field("test", "test text", Field.Store.YES, Field.Index.TOKENIZED));
-		//    doc.Add(new Field("other", "other test text", Field.Store.YES, Field.Index.TOKENIZED));
+		//    doc.Add(new Field("test", "test text", Field.Store.YES, Field.Index.ANALYZED));
+		//    doc.Add(new Field("other", "other test text", Field.Store.YES, Field.Index.ANALYZED));
 		//    writer.AddDocument(doc);
 		//    writer.Optimize();
 		//    writer.Close();
@@ -162,10 +164,10 @@ namespace Lucene.Net.Search
 			// try to search the published index
 			Lucene.Net.Search.Searchable[] searchables = new Lucene.Net.Search.Searchable[]{GetRemote()};
 			Searcher searcher = new MultiSearcher(searchables);
-			Hits result = searcher.Search(query);
+            ScoreDoc[] result = searcher.Search(query, null, 1000).scoreDocs;
 			
-			Assert.AreEqual(1, result.Length());
-			Document document = result.Doc(0);
+			Assert.AreEqual(1, result.Length);
+			Document document = searcher.Doc(result[0].doc);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.AreEqual(document.Get("test"), "test text");
 			Assert.IsTrue(document.GetFields().Count == 2, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 2);
@@ -211,10 +213,10 @@ namespace Lucene.Net.Search
 			// try to search the published index
 			Lucene.Net.Search.Searchable[] searchables = new Lucene.Net.Search.Searchable[]{GetRemote()};
 			Searcher searcher = new MultiSearcher(searchables);
-			Hits hits = searcher.Search(new TermQuery(new Term("test", "text")), new QueryFilter(new TermQuery(new Term("test", "test"))));
-			Assert.AreEqual(1, hits.Length());
-			Hits nohits = searcher.Search(new TermQuery(new Term("test", "text")), new QueryFilter(new TermQuery(new Term("test", "non-existent-term"))));
-			Assert.AreEqual(0, nohits.Length());
+			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("test", "text")), new QueryWrapperFilter(new TermQuery(new Term("test", "test"))), 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
+            ScoreDoc[] nohits = searcher.Search(new TermQuery(new Term("test", "text")), new QueryWrapperFilter(new TermQuery(new Term("test", "non-existent-term"))), 1000).scoreDocs;
+			Assert.AreEqual(0, nohits.Length);
 		}
 		
 		[Test]
@@ -223,8 +225,8 @@ namespace Lucene.Net.Search
 			// try to search the published index
 			Lucene.Net.Search.Searchable[] searchables = new Lucene.Net.Search.Searchable[]{GetRemote()};
 			Searcher searcher = new MultiSearcher(searchables);
-			Hits hits = searcher.Search(new ConstantScoreQuery(new QueryFilter(new TermQuery(new Term("test", "test")))));
-			Assert.AreEqual(1, hits.Length());
+            ScoreDoc[] hits = searcher.Search(new ConstantScoreQuery(new QueryWrapperFilter(new TermQuery(new Term("test", "test")))), 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
 		}
 	}
 }

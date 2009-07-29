@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 		{
 			IndexWriter writer = null;
 			
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// add 100 documents with term : aaa
 			// add 100 documents with terms: aaa bbb
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 			VerifyDocFreq();
 			
 			// merge segments by optimizing the index
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Optimize();
 			writer.Close();
 			
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestPrevTermAtEnd()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDoc(writer, "aaa bbb");
 			writer.Close();
 			IndexReader reader = IndexReader.Open(dir);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 	}

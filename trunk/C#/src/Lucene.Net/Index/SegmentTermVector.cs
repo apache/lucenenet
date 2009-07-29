@@ -19,8 +19,6 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	
 	public class SegmentTermVector : TermFreqVector
 	{
 		private System.String field;
@@ -80,7 +78,7 @@ namespace Lucene.Net.Index
 		{
 			if (terms == null)
 				return - 1;
-			int res = System.Array.BinarySearch(terms, termText,StringComparer.Ordinal);
+			int res = System.Array.BinarySearch(terms, termText);
 			return res >= 0 ? res : - 1;
 		}
 		

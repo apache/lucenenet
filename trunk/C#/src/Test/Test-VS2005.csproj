@@ -82,16 +82,8 @@
       <Name>Lucene.Net</Name>
       <HintPath>..\Lucene.Net\bin\Debug\Lucene.Net.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core">
-      <Name>nunit.core</Name>
-      <HintPath>..\..\..\NUnit\bin\nunit.core.dll</HintPath>
-      <AssemblyFolderKey>hklm\dn\nunit.framework</AssemblyFolderKey>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <Name>nunit.framework</Name>
-      <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
-      <AssemblyFolderKey>hklm\dn\nunit.framework</AssemblyFolderKey>
-    </Reference>
+    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -155,8 +147,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\MockInputStream.cs" />
-    <Compile Include="Index\Store\FSDirectoryTestCase.cs" />
-    <Compile Include="Index\Store\TestFSDirectory.cs" />
     <Compile Include="Index\Store\TestRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -168,11 +158,14 @@
     <Compile Include="Index\TestBackwardsCompatibility.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestByteSlices.cs" />
     <Compile Include="Index\TestCheckIndex.cs" />
+    <Compile Include="Index\TestCloseableThreadLocal.cs" />
     <Compile Include="Index\TestCompoundFile.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\TestCrash.cs" />
     <Compile Include="Index\TestDeletionPolicy.cs" />
     <Compile Include="Index\TestDoc.cs">
       <SubType>Code</SubType>
@@ -208,6 +201,7 @@
     <Compile Include="Index\TestIndexWriterDelete.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestIndexWriterExceptions.cs" />
     <Compile Include="Index\TestIndexWriterLockRelease.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -232,6 +226,7 @@
     <Compile Include="Index\TestNorms.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestOmitTf.cs" />
     <Compile Include="Index\TestParallelReader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -267,6 +262,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestThreadedOptimize.cs" />
+    <Compile Include="Index\TestTransactions.cs" />
     <Compile Include="Index\TestWordlistLoader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -293,6 +289,7 @@
     <Compile Include="Search\Function\TestFieldScoreQuery.cs" />
     <Compile Include="Search\Function\TestOrdValues.cs" />
     <Compile Include="Search\MockFilter.cs" />
+    <Compile Include="Search\Payloads\PayloadHelper.cs" />
     <Compile Include="Search\Payloads\TestBoostingTermQuery.cs" />
     <Compile Include="Search\QueryUtils.cs" />
     <Compile Include="Search\RemoteCachingWrapperFilterHelper.cs" />
@@ -304,6 +301,7 @@
     <Compile Include="Search\Spans\TestNearSpansOrdered.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Spans\TestPayloadSpans.cs" />
     <Compile Include="Search\Spans\TestSpanExplanations.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -337,6 +335,7 @@
     <Compile Include="Search\TestExplanations.cs" />
     <Compile Include="Search\TestExtendedFieldCache.cs" />
     <Compile Include="Search\TestFilteredQuery.cs" />
+    <Compile Include="Search\TestFilteredSearch.cs" />
     <Compile Include="Search\TestFuzzyQuery.cs" />
     <Compile Include="Search\TestMatchAllDocsQuery.cs" />
     <Compile Include="Search\TestMultiPhraseQuery.cs" />
@@ -361,6 +360,7 @@
     <Compile Include="Search\TestSimilarity.cs" />
     <Compile Include="Search\TestSimpleExplanations.cs" />
     <Compile Include="Search\TestSimpleExplanationsOfNonMatches.cs" />
+    <Compile Include="Search\TestSloppyPhraseQuery.cs" />
     <Compile Include="Search\TestSort.cs" />
     <Compile Include="Search\TestSpanQueryFilter.cs" />
     <Compile Include="Search\TestTermScorer.cs" />
@@ -380,6 +380,7 @@
     <Compile Include="Store\TestBufferedIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\TestDirectory.cs" />
     <Compile Include="Store\TestHugeRamFile.cs" />
     <Compile Include="Store\TestLock.cs">
       <SubType>Code</SubType>
@@ -400,6 +401,7 @@
     <Compile Include="TestHitIterator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestMergeSchedulerExternal.cs" />
     <Compile Include="TestSearch.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -410,6 +412,7 @@
     <Compile Include="ThreadSafetyTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -418,12 +421,14 @@
     <Compile Include="Util\TestBitVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\TestOpenBitSet.cs" />
     <Compile Include="Util\TestPriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\TestSmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\TestSortedVIntList.cs" />
     <Compile Include="Util\TestStringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -431,10 +436,16 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="App.config" />
-    <None Include="Index\index.prelockless.cfs.zip" />
-    <None Include="Index\index.prelockless.nocfs.zip" />
-    <None Include="Index\index.presharedstores.cfs.zip" />
-    <None Include="Index\index.presharedstores.nocfs.zip" />
+    <None Include="Index\index.19.cfs.zip" />
+    <None Include="Index\index.19.nocfs.zip" />
+    <None Include="Index\index.20.cfs.zip" />
+    <None Include="Index\index.20.nocfs.zip" />
+    <None Include="Index\index.21.cfs.zip" />
+    <None Include="Index\index.21.nocfs.zip" />
+    <None Include="Index\index.22.cfs.zip" />
+    <None Include="Index\index.22.nocfs.zip" />
+    <None Include="Index\index.23.cfs.zip" />
+    <None Include="Index\index.23.nocfs.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

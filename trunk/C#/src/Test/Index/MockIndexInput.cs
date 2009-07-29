@@ -24,7 +24,8 @@ namespace Lucene.Net.Index
 	
 	public class MockIndexInput : BufferedIndexInput
 	{
-		private byte[] buffer;
+        // i consider this weird
+		new private byte[] buffer;
 		private int pointer = 0;
 		private long length;
 		

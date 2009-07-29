@@ -196,9 +196,9 @@ namespace Lucene.Net.Search
 			}
 			
 			/* (non-Javadoc)
-			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
+			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.object, java.lang.object)
 			*/
-			public override bool LessThan(System.Object a, System.Object b)
+			public override bool LessThan(object a, object b)
 			{
 				ScoreTerm termA = (ScoreTerm) a;
 				ScoreTerm termB = (ScoreTerm) b;
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

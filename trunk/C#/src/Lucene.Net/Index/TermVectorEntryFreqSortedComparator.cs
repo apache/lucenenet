@@ -19,29 +19,29 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary> Compares {@link Lucene.Net.Index.TermVectorEntry}s first by frequency and then by
-	/// the term (case-sensitive)
-	/// 
-	/// 
-	/// </summary>
-	public class TermVectorEntryFreqSortedComparator : System.Collections.Generic.IComparer<Object>
-	{
-		public virtual int Compare(System.Object object_Renamed, System.Object object1)
-		{
-			int result = 0;
-			TermVectorEntry entry = (TermVectorEntry) object_Renamed;
-			TermVectorEntry entry1 = (TermVectorEntry) object1;
-			result = entry1.GetFrequency() - entry.GetFrequency();
-			if (result == 0)
-			{
-				result = String.CompareOrdinal(entry.GetTerm(), entry1.GetTerm());
-				if (result == 0)
-				{
-					result = String.CompareOrdinal(entry.GetField(), entry1.GetField());
-				}
-			}
-			return result;
-		}
-	}
+
+    /// <summary> Compares {@link Lucene.Net.Index.TermVectorEntry}s first by frequency and then by
+    /// the term (case-sensitive)
+    /// 
+    /// 
+    /// </summary>
+    public class TermVectorEntryFreqSortedComparator : System.Collections.Generic.IComparer<object>
+    {
+        public virtual int Compare(object object_Renamed, object object1)
+        {
+            int result = 0;
+            TermVectorEntry entry = (TermVectorEntry)object_Renamed;
+            TermVectorEntry entry1 = (TermVectorEntry)object1;
+            result = entry1.GetFrequency() - entry.GetFrequency();
+            if (result == 0)
+            {
+                result = String.CompareOrdinal(entry.GetTerm(), entry1.GetTerm());
+                if (result == 0)
+                {
+                    result = String.CompareOrdinal(entry.GetField(), entry1.GetField());
+                }
+            }
+            return result;
+        }
+    }
 }

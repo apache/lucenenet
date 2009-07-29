@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
 		
 		abstract protected internal long Size(SegmentInfo info);
 		
-		private bool IsOptimized(SegmentInfos infos, IndexWriter writer, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		private bool IsOptimized(SegmentInfos infos, IndexWriter writer, int maxNumSegments, Dictionary<SegmentInfo,SegmentInfo> segmentsToOptimize)
 		{
 			int numSegments = infos.Count;
 			int numToOptimize = 0;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < numSegments && numToOptimize <= maxNumSegments; i++)
 			{
 				SegmentInfo info = infos.Info(i);
-				if (segmentsToOptimize.Contains(info))
+				if (segmentsToOptimize.ContainsKey(info))
 				{
 					numToOptimize++;
 					optimizeInfo = info;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
 		/// (mergeFactor at a time) so the {@link MergeScheduler}
 		/// in use may make use of concurrency. 
 		/// </summary>
-		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, IndexWriter writer, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, IndexWriter writer, int maxNumSegments, Dictionary<SegmentInfo,SegmentInfo> segmentsToOptimize)
 		{
 			MergeSpecification spec;
 			
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
 				while (last > 0)
 				{
 					SegmentInfo info = infos.Info(--last);
-					if (segmentsToOptimize.Contains(info))
+					if (segmentsToOptimize.ContainsKey(info))
 					{
 						last++;
 						break;
@@ -280,7 +280,59 @@ namespace Lucene.Net.Index
 			
 			return spec;
 		}
-		
+
+        /// <summary>
+        /// Finds merges necessary to expunge all deletes from the
+        /// index.  We simply merge adjacent segments that have
+        /// deletes, up to mergeFactor at a time.
+        /// </summary>
+        public override MergeSpecification FindMergesToExpungeDeletes(SegmentInfos segmentInfos, IndexWriter writer)
+        {
+            this.writer = writer;
+
+            int numSegments = segmentInfos.Count;
+
+            Message("findMergesToExpungeDeletes: " + numSegments + " segments");
+
+            MergeSpecification spec = new MergeSpecification();
+            int firstSegmentWithDeletions = -1;
+            for (int i = 0; i < numSegments; i++)
+            {
+                SegmentInfo info = segmentInfos.Info(i);
+                if (info.HasDeletions())
+                {
+                    Message("  segment " + info.name + " has deletions");
+                    if (firstSegmentWithDeletions == -1)
+                        firstSegmentWithDeletions = i;
+                    else if (i - firstSegmentWithDeletions == mergeFactor)
+                    {
+                        // We've seen mergeFactor segments in a row with
+                        // deletions, so force a merge now:
+                        Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
+                        spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, i), useCompoundFile));
+                        firstSegmentWithDeletions = i;
+                    }
+                }
+                else if (firstSegmentWithDeletions != -1)
+                {
+                    // End of a sequence of segments with deletions, so,
+                    // merge those past segments even if it's fewer than
+                    // mergeFactor segments
+                    Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
+                    spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, i), useCompoundFile));
+                    firstSegmentWithDeletions = -1;
+                }
+            }
+
+            if (firstSegmentWithDeletions != -1)
+            {
+                Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
+                spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, numSegments), useCompoundFile));
+            }
+
+            return spec;
+        }
+
 		/// <summary>Checks if any merges are now necessary and returns a
 		/// {@link MergePolicy.MergeSpecification} if so.  A merge
 		/// is necessary when there are more than {@link

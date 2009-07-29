@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.UN_TOKENIZED));</code></p>
+	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NO_ANALYZED));</code></p>
 	/// 
 	/// 
 	/// <p><h3>Valid Types of Values</h3>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 	/// of term value has higher memory requirements than the other
 	/// two types.
 	/// 
-	/// <p><h3>Object Reuse</h3>
+	/// <p><h3>object Reuse</h3>
 	/// 
 	/// <p>One of these objects can be
 	/// used multiple times and the sort order changed between usages.
@@ -95,8 +95,6 @@ namespace Lucene.Net.Search
 	/// <p>Created: Feb 12, 2004 10:53:57 AM
 	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
 	/// <version>  $Id: Sort.java 598376 2007-11-26 18:45:39Z dnaber $

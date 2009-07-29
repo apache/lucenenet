@@ -41,9 +41,10 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
 			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopWords);
-			Assert.AreEqual("Now", stream.Next().TermText());
-			Assert.AreEqual("The", stream.Next().TermText());
-			Assert.AreEqual(null, stream.Next());
+            Token reusableToken = new Token();
+			Assert.AreEqual("Now", stream.Next(reusableToken).Term());
+			Assert.AreEqual("The", stream.Next(reusableToken).Term());
+			Assert.AreEqual(null, stream.Next(reusableToken));
 		}
 		
 		[Test]
@@ -52,8 +53,9 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
 			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopWords, true);
-			Assert.AreEqual("Now", stream.Next().TermText());
-			Assert.AreEqual(null, stream.Next());
+            Token reusableToken = new Token();
+            Assert.AreEqual("Now", stream.Next(reusableToken).Term());
+			Assert.AreEqual(null, stream.Next(reusableToken));
 		}
 		
 		[Test]
@@ -63,9 +65,10 @@ namespace Lucene.Net.Analysis
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
 			System.Collections.Hashtable stopSet = StopFilter.MakeStopSet(stopWords);
 			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopSet);
-			Assert.AreEqual("Now", stream.Next().TermText());
-			Assert.AreEqual("The", stream.Next().TermText());
-			Assert.AreEqual(null, stream.Next());
+            Token reusableToken = new Token();
+            Assert.AreEqual("Now", stream.Next(reusableToken).Term());
+			Assert.AreEqual("The", stream.Next(reusableToken).Term());
+			Assert.AreEqual(null, stream.Next(reusableToken));
 		}
 		
 		/// <summary> Test Position increments applied by StopFilter with and without enabling this option.</summary>
@@ -127,15 +130,16 @@ namespace Lucene.Net.Analysis
 		{
 			Log("---> test with enable-increments-" + (enableIcrements?"enabled":"disabled"));
 			stpf.SetEnablePositionIncrements(enableIcrements);
-			for (int i = 0; i < 20; i += 3)
+            Token reusableToken = new Token();
+            for (int i = 0; i < 20; i += 3)
 			{
-				Token t = stpf.Next();
-				Log("Token " + i + ": " + t);
+				Token nextToken = stpf.Next(reusableToken);
+				Log("Token " + i + ": " + nextToken);
 				System.String w = English.IntToEnglish(i).Trim();
-				Assert.AreEqual(w, t.TermText(), "expecting token " + i + " to be " + w);
-				Assert.AreEqual(enableIcrements ? (i == 0 ? 1 : 3) : 1, t.GetPositionIncrement(), "all but first token must have position increment of 3");
+				Assert.AreEqual(w, nextToken.Term(), "expecting token " + i + " to be " + w);
+				Assert.AreEqual(enableIcrements ? (i == 0 ? 1 : 3) : 1, nextToken.GetPositionIncrement(), "all but first token must have position increment of 3");
 			}
-			Assert.IsNull(stpf.Next());
+			Assert.IsNull(stpf.Next(reusableToken));
 		}
 		
 		// print debug info depending on VERBOSE

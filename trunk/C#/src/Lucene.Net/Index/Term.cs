@@ -46,6 +46,18 @@ namespace Lucene.Net.Index
 		public Term(System.String fld, System.String txt) : this(fld, txt, true)
 		{
 		}
+
+        /// <summary>Constructs a Term with the given field and empty text.
+        /// This serves 2 purposes:
+        /// 1) reuse of a Term with the same field
+        /// 2) pattern for a query
+        /// </summary>
+        /// <param name="fld"/>
+        public Term(System.String fld)
+            : this(fld, "", true)
+        {
+        }
+
 		internal Term(System.String fld, System.String txt, bool intern)
 		{
 			field = intern ? String.Intern(fld) : fld; // field names are interned
@@ -84,7 +96,7 @@ namespace Lucene.Net.Index
 		/// <summary>Compares two terms, returning true iff they have the same
 		/// field and text. 
 		/// </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (o == this)
 				return true;
@@ -102,7 +114,7 @@ namespace Lucene.Net.Index
 			return field.GetHashCode() + text.GetHashCode();
 		}
 		
-		public int CompareTo(System.Object other)
+		public int CompareTo(object other)
 		{
 			return CompareTo((Term) other);
 		}
@@ -133,7 +145,7 @@ namespace Lucene.Net.Index
 			return field + ":" + text;
 		}
 		
-		public void  GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		public void  GetobjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			System.Type thisType = this.GetType();
 			System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);

@@ -36,7 +36,22 @@ namespace Lucene.Net.Index
 	{
 		private static readonly Analyzer ANALYZER = new SimpleAnalyzer();
 		private static readonly System.Random RANDOM = new System.Random();
-		
+
+        public class MockIndexWriter : IndexWriter
+        {
+            public MockIndexWriter(Directory d, bool autoCommit, Analyzer a, bool create)
+                : base(d, autoCommit, a, create)
+            {
+            }
+
+            override protected bool TestPoint(string name)
+            {
+                if (RANDOM.Next(4) == 2)
+                    System.Threading.Thread.Sleep(1);
+                return true;
+            }
+        }
+
 		abstract public class TimedThread : SupportClass.ThreadClass
 		{
 			internal bool failed;
@@ -67,7 +82,8 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-					System.Console.Out.WriteLine(e.StackTrace);
+                    System.Console.Out.WriteLine(System.Threading.Thread.CurrentThread.Name + ": exc");
+                    System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}
 			}
@@ -97,9 +113,8 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < 100; i++)
 				{
 					Document d = new Document();
-					int n = Lucene.Net.Index.TestAtomicUpdate.RANDOM.Next();
-					d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED));
-					d.Add(new Field("contents", English.IntToEnglish(i + 10 * count), Field.Store.NO, Field.Index.TOKENIZED));
+					d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED));
+					d.Add(new Field("contents", English.IntToEnglish(i + 10 * count), Field.Store.NO, Field.Index.ANALYZED));
 					writer.UpdateDocument(new Term("id", System.Convert.ToString(i)), d);
 				}
 			}
@@ -117,14 +132,7 @@ namespace Lucene.Net.Index
 			public override void  DoWork()
 			{
 				IndexReader r = IndexReader.Open(directory);
-				try
-				{
-					Assert.AreEqual(100, r.NumDocs());
-				}
-				catch (System.Exception t)
-				{
-					throw t;
-				}
+				Assert.AreEqual(100, r.NumDocs());
 				r.Close();
 			}
 		}
@@ -138,18 +146,24 @@ namespace Lucene.Net.Index
 			
 			TimedThread[] threads = new TimedThread[4];
 			
-			IndexWriter writer = new IndexWriter(directory, ANALYZER, true);
-			
+			IndexWriter writer = new MockIndexWriter(directory, true, ANALYZER, true);
+            writer.SetMaxBufferedDocs(7);
+            writer.SetMergeFactor(3);
+
 			// Establish a base index of 100 docs:
 			for (int i = 0; i < 100; i++)
 			{
 				Document d = new Document();
-				d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED));
-				d.Add(new Field("contents", English.IntToEnglish(i), Field.Store.NO, Field.Index.TOKENIZED));
+				d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED));
+				d.Add(new Field("contents", English.IntToEnglish(i), Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(d);
 			}
-			writer.Flush();
-			
+			writer.Commit();
+
+            IndexReader r = IndexReader.Open(directory);
+            Assert.AreEqual(100, r.NumDocs());
+            r.Close();
+
 			IndexerThread indexerThread = new IndexerThread(writer, threads);
 			threads[0] = indexerThread;
 			indexerThread.Start();

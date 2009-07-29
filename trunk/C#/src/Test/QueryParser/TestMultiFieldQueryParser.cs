@@ -19,29 +19,26 @@ using System;
 
 using NUnit.Framework;
 
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary> Tests QueryParser.</summary>
-	/// <author>  Daniel Naber
-	/// </author>
 	[TestFixture]
 	public class TestMultiFieldQueryParser : LuceneTestCase
 	{
@@ -121,6 +118,10 @@ namespace Lucene.Net.QueryParsers
 			q = mfqp.Parse("\"foo bar\"~4");
 			Assert.AreEqual("b:\"foo bar\"~4 t:\"foo bar\"~4", q.ToString());
 			
+            // LUCENE-1213: MultiFieldQueryParser was ignoring slop when phrase had a field
+            q = mfqp.Parse("b:\"foo bar\"~4");
+            Assert.AreEqual("b:\"foo bar\"~4", q.ToString());
+
 			// make sure that terms which have a field are not touched:
 			q = mfqp.Parse("one f:two");
 			Assert.AreEqual("(b:one t:one) f:two", q.ToString());
@@ -318,9 +319,9 @@ namespace Lucene.Net.QueryParsers
 		{
 			Analyzer analyzer = new StandardAnalyzer();
 			Directory ramDir = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(ramDir, analyzer, true);
+			IndexWriter iw = new IndexWriter(ramDir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("body", "blah the footest blah", Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("body", "blah the footest blah", Field.Store.NO, Field.Index.ANALYZED));
 			iw.AddDocument(doc);
 			iw.Close();
 			
@@ -328,8 +329,8 @@ namespace Lucene.Net.QueryParsers
 			mfqp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.Operator.AND);
 			Query q = mfqp.Parse("the footest");
 			IndexSearcher is_Renamed = new IndexSearcher(ramDir);
-			Hits hits = is_Renamed.Search(q);
-			Assert.AreEqual(1, hits.Length());
+			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
 			is_Renamed.Close();
 		}
 		
@@ -356,7 +357,7 @@ namespace Lucene.Net.QueryParsers
 			
 			private class EmptyTokenStream : TokenStream
 			{
-				public override Lucene.Net.Analysis.Token Next()
+				public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
 				{
 					return null;
 				}

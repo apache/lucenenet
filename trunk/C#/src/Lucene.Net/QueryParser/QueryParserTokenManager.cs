@@ -63,101 +63,66 @@ namespace Lucene.Net.QueryParsers
 			jjmatchedPos = pos;
 			return pos + 1;
 		}
-		private int JjStartNfaWithStates_3(int pos, int kind, int state)
-		{
-			jjmatchedKind = kind;
-			jjmatchedPos = pos;
-			try
-			{
-				curChar = input_stream.ReadChar();
-			}
-			catch (System.IO.IOException)
-			{
-				return pos + 1;
-			}
-			return JjMoveNfa_3(state, pos + 1);
-		}
 		private int JjMoveStringLiteralDfa0_3()
 		{
 			switch (curChar)
 			{
 				
 				case (char) (40): 
-					return JjStopAtPos(0, 12);
-				
-				case (char) (41): 
 					return JjStopAtPos(0, 13);
 				
-				case (char) (42): 
-					return JjStartNfaWithStates_3(0, 15, 36);
-				
-				case (char) (43): 
-					return JjStopAtPos(0, 10);
-				
-				case (char) (45): 
-					return JjStopAtPos(0, 11);
-				
-				case (char) (58): 
+				case (char) (41): 
 					return JjStopAtPos(0, 14);
 				
+				case (char) (42): 
+					return JjStartNfaWithStates_3(0, 16, 36);
+				
+				case (char) (43): 
+					return JjStopAtPos(0, 11);
+				
+				case (char) (45): 
+					return JjStopAtPos(0, 12);
+				
+				case (char) (58): 
+					return JjStopAtPos(0, 15);
+				
 				case (char) (91): 
-					return JjStopAtPos(0, 22);
+					return JjStopAtPos(0, 23);
 				
 				case (char) (94): 
-					return JjStopAtPos(0, 16);
+					return JjStopAtPos(0, 17);
 				
 				case (char) (123): 
-					return JjStopAtPos(0, 23);
+					return JjStopAtPos(0, 24);
 				
 				default: 
 					return JjMoveNfa_3(0, 0);
 				
 			}
 		}
-		private void  JjCheckNAdd(int state)
-		{
-			if (jjrounds[state] != jjround)
-			{
-				jjstateSet[jjnewStateCnt++] = state;
-				jjrounds[state] = jjround;
-			}
-		}
-		private void  JjAddStates(int start, int end)
-		{
-			do 
-			{
-				jjstateSet[jjnewStateCnt++] = jjnextStates[start];
-			}
-			while (start++ != end);
-		}
-		private void  JjCheckNAddTwoStates(int state1, int state2)
-		{
-			JjCheckNAdd(state1);
-			JjCheckNAdd(state2);
-		}
-		private void  JjCheckNAddStates(int start, int end)
-		{
-			do 
-			{
-				JjCheckNAdd(jjnextStates[start]);
-			}
-			while (start++ != end);
-		}
-		private void  JjCheckNAddStates(int start)
-		{
-			JjCheckNAdd(jjnextStates[start]);
-			JjCheckNAdd(jjnextStates[start + 1]);
-		}
+        private int JjStartNfaWithStates_3(int pos, int kind, int state)
+        {
+            jjmatchedKind = kind;
+            jjmatchedPos = pos;
+            try
+            {
+                curChar = input_stream.ReadChar();
+            }
+            catch (System.IO.IOException)
+            {
+                return pos + 1;
+            }
+            return JjMoveNfa_3(state, pos + 1);
+        }
 		internal static readonly ulong[] jjbitVec0 = new ulong[]{0xfffffffffffffffeL, 0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL};
 		internal static readonly ulong[] jjbitVec2 = new ulong[]{0x0L, 0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL};
 		private int JjMoveNfa_3(int startState, int curPos)
 		{
-			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 36;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -176,48 +141,48 @@ namespace Lucene.Net.QueryParsers
 							case 25: 
 								if ((0xfbfffcf8ffffd9ffL & l) == (ulong) 0L)
 									break;
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 0: 
 								if ((0xfbffd4f8ffffd9ffL & l) != (ulong) 0L)
 								{
-									if (kind > 21)
-										kind = 21;
+									if (kind > 22)
+										kind = 22;
 									JjCheckNAddTwoStates(25, 26);
 								}
 								else if ((0x100002600L & l) != (ulong) 0L)
 								{
-									if (kind > 6)
-										kind = 6;
+									if (kind > 7)
+										kind = 7;
 								}
 								else if (curChar == 34)
 									JjCheckNAddStates(0, 2);
 								else if (curChar == 33)
 								{
-									if (kind > 9)
-										kind = 9;
+									if (kind > 10)
+										kind = 10;
 								}
 								if ((0x7bffd0f8ffffd9ffL & l) != (ulong) 0L)
 								{
-									if (kind > 18)
-										kind = 18;
+									if (kind > 19)
+										kind = 19;
 									JjCheckNAddStates(3, 7);
 								}
 								else if (curChar == 42)
 								{
-									if (kind > 20)
-										kind = 20;
+									if (kind > 21)
+										kind = 21;
 								}
 								if (curChar == 38)
 									jjstateSet[jjnewStateCnt++] = 4;
 								break;
 							
 							case 4: 
-								if (curChar == 38 && kind > 7)
-									kind = 7;
+								if (curChar == 38 && kind > 8)
+									kind = 8;
 								break;
 							
 							case 5: 
@@ -226,12 +191,11 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 13: 
-								if (curChar == 33 && kind > 9)
-									kind = 9;
+								if (curChar == 33 && kind > 10)
+									kind = 10;
 								break;
 							
 							case 14: 
-							case 16: 
 								if (curChar == 34)
 									JjCheckNAddStates(0, 2);
 								break;
@@ -241,16 +205,20 @@ namespace Lucene.Net.QueryParsers
 									JjCheckNAddStates(0, 2);
 								break;
 							
+                            case 17:
+                                JjCheckNAddStates(0, 2);
+                                break;
+
 							case 18: 
-								if (curChar == 34 && kind > 17)
-									kind = 17;
+								if (curChar == 34 && kind > 18)
+									kind = 18;
 								break;
 							
 							case 20: 
 								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
-								if (kind > 19)
-									kind = 19;
+								if (kind > 20)
+									kind = 20;
 								JjAddStates(8, 9);
 								break;
 							
@@ -262,49 +230,49 @@ namespace Lucene.Net.QueryParsers
 							case 22: 
 								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
-								if (kind > 19)
-									kind = 19;
+								if (kind > 20)
+									kind = 20;
 								JjCheckNAdd(22);
 								break;
 							
 							case 23: 
-								if (curChar == 42 && kind > 20)
-									kind = 20;
+								if (curChar == 42 && kind > 21)
+									kind = 21;
 								break;
 							
 							case 24: 
 								if ((0xfbffd4f8ffffd9ffL & l) == (ulong) 0L)
 									break;
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 27: 
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 28: 
 								if ((0x7bffd0f8ffffd9ffL & l) == (ulong) 0L)
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddStates(3, 7);
 								break;
 							
 							case 29: 
 								if ((0x7bfff8f8ffffd9ffL & l) == (ulong) 0L)
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddTwoStates(29, 30);
 								break;
 							
 							case 31: 
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddTwoStates(29, 30);
 								break;
 							
@@ -336,8 +304,8 @@ namespace Lucene.Net.QueryParsers
 							case 36: 
 								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 21)
-										kind = 21;
+									if (kind > 22)
+										kind = 22;
 									JjCheckNAddTwoStates(25, 26);
 								}
 								else if (curChar == 92)
@@ -347,22 +315,22 @@ namespace Lucene.Net.QueryParsers
 							case 0: 
 								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 18)
-										kind = 18;
+									if (kind > 19)
+										kind = 19;
 									JjCheckNAddStates(3, 7);
 								}
 								else if (curChar == 92)
 									JjCheckNAddStates(13, 15);
 								else if (curChar == 126)
 								{
-									if (kind > 19)
-										kind = 19;
+									if (kind > 20)
+										kind = 20;
 									jjstateSet[jjnewStateCnt++] = 20;
 								}
 								if ((0x97ffffff87ffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 21)
-										kind = 21;
+									if (kind > 22)
+										kind = 22;
 									JjCheckNAddTwoStates(25, 26);
 								}
 								if (curChar == 78)
@@ -376,8 +344,8 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 1: 
-								if (curChar == 68 && kind > 7)
-									kind = 7;
+								if (curChar == 68 && kind > 8)
+									kind = 8;
 								break;
 							
 							case 2: 
@@ -391,8 +359,8 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 6: 
-								if (curChar == 82 && kind > 8)
-									kind = 8;
+								if (curChar == 82 && kind > 9)
+									kind = 9;
 								break;
 							
 							case 7: 
@@ -401,8 +369,8 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 8: 
-								if (curChar == 124 && kind > 8)
-									kind = 8;
+								if (curChar == 124 && kind > 9)
+									kind = 9;
 								break;
 							
 							case 9: 
@@ -411,8 +379,8 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 10: 
-								if (curChar == 84 && kind > 9)
-									kind = 9;
+								if (curChar == 84 && kind > 10)
+									kind = 10;
 								break;
 							
 							case 11: 
@@ -425,36 +393,41 @@ namespace Lucene.Net.QueryParsers
 									jjstateSet[jjnewStateCnt++] = 11;
 								break;
 							
-							case 15: 
-								JjAddStates(0, 2);
+							case 15:
+                                if ((0xffffffffefffffffL & l) != (ulong)0L)
+								JjCheckNAddStates(0, 2);
 								break;
 							
-							case 17: 
-								if (curChar == 92)
-									jjstateSet[jjnewStateCnt++] = 16;
+                            case 16:
+                                if (curChar == 92)
+                                    jjstateSet[jjnewStateCnt++] = 17;
+                                break;
+
+							case 17:
+                                JjCheckNAddStates(0, 2);
 								break;
 							
 							case 19: 
 								if (curChar != 126)
 									break;
-								if (kind > 19)
-									kind = 19;
+								if (kind > 20)
+									kind = 20;
 								jjstateSet[jjnewStateCnt++] = 20;
 								break;
 							
 							case 24: 
 								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 25: 
 								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
@@ -464,24 +437,24 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 27: 
-								if (kind > 21)
-									kind = 21;
+								if (kind > 22)
+									kind = 22;
 								JjCheckNAddTwoStates(25, 26);
 								break;
 							
 							case 28: 
 								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddStates(3, 7);
 								break;
 							
 							case 29: 
 								if ((0x97ffffff87ffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddTwoStates(29, 30);
 								break;
 							
@@ -491,8 +464,8 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 31: 
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddTwoStates(29, 30);
 								break;
 							
@@ -548,14 +521,14 @@ namespace Lucene.Net.QueryParsers
 							case 0: 
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 								{
-									if (kind > 21)
-										kind = 21;
+									if (kind > 22)
+										kind = 22;
 									JjCheckNAddTwoStates(25, 26);
 								}
 								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 								{
-									if (kind > 18)
-										kind = 18;
+									if (kind > 19)
+										kind = 19;
 									JjCheckNAddStates(3, 7);
 								}
 								break;
@@ -576,8 +549,8 @@ namespace Lucene.Net.QueryParsers
 							case 28: 
 								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddStates(3, 7);
 								break;
 							
@@ -585,8 +558,8 @@ namespace Lucene.Net.QueryParsers
 							case 31: 
 								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) 2))
 									break;
-								if (kind > 18)
-									kind = 18;
+								if (kind > 19)
+									kind = 19;
 								JjCheckNAddTwoStates(29, 30);
 								break;
 							
@@ -615,7 +588,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -627,9 +600,9 @@ namespace Lucene.Net.QueryParsers
 			{
 				
 				case 0: 
-					if ((active0 & 0x20000000L) != 0L)
+					if ((active0 & 0x40000000L) != 0L)
 					{
-						jjmatchedKind = 32;
+						jjmatchedKind = 33;
 						return 6;
 					}
 					return - 1;
@@ -643,30 +616,16 @@ namespace Lucene.Net.QueryParsers
 		{
 			return JjMoveNfa_1(JjStopStringLiteralDfa_1(pos, (ulong) active0), pos + 1);
 		}
-		private int JjStartNfaWithStates_1(int pos, int kind, int state)
-		{
-			jjmatchedKind = kind;
-			jjmatchedPos = pos;
-			try
-			{
-				curChar = input_stream.ReadChar();
-			}
-			catch (System.IO.IOException e)
-			{
-				return pos + 1;
-			}
-			return JjMoveNfa_1(state, pos + 1);
-		}
 		private int JjMoveStringLiteralDfa0_1()
 		{
 			switch (curChar)
 			{
 				
 				case (char) (84): 
-					return JjMoveStringLiteralDfa1_1((ulong) 0x20000000L);
+					return JjMoveStringLiteralDfa1_1((ulong) 0x40000000L);
 				
 				case (char) (125): 
-					return JjStopAtPos(0, 30);
+					return JjStopAtPos(0, 31);
 				
 				default: 
 					return JjMoveNfa_1(0, 0);
@@ -679,7 +638,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_1(0, (ulong) active0);
 				return 1;
@@ -688,8 +647,8 @@ namespace Lucene.Net.QueryParsers
 			{
 				
 				case (char) (79): 
-					if ((active0 & 0x20000000L) != 0L)
-						return JjStartNfaWithStates_1(1, 29, 6);
+					if ((active0 & 0x40000000L) != 0L)
+						return JjStartNfaWithStates_1(1, 30, 6);
 					break;
 				
 				default: 
@@ -698,14 +657,27 @@ namespace Lucene.Net.QueryParsers
 			}
 			return JjStartNfa_1(0, (ulong) active0);
 		}
-		private int JjMoveNfa_1(int startState, int curPos)
+        private int JjStartNfaWithStates_1(int pos, int kind, int state)
+        {
+            jjmatchedKind = kind;
+            jjmatchedPos = pos;
+            try
+            {
+                curChar = input_stream.ReadChar();
+            }
+            catch (System.IO.IOException)
+            {
+                return pos + 1;
+            }
+            return JjMoveNfa_1(state, pos + 1);
+        }
+        private int JjMoveNfa_1(int startState, int curPos)
 		{
-			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 7;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -723,14 +695,14 @@ namespace Lucene.Net.QueryParsers
 							case 0: 
 								if ((0xfffffffeffffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 32)
-										kind = 32;
+									if (kind > 33)
+										kind = 33;
 									JjCheckNAdd(6);
 								}
 								if ((0x100002600L & l) != (ulong) 0L)
 								{
-									if (kind > 6)
-										kind = 6;
+									if (kind > 7)
+										kind = 7;
 								}
 								else if (curChar == 34)
 									JjCheckNAddTwoStates(2, 4);
@@ -752,15 +724,15 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 5: 
-								if (curChar == 34 && kind > 31)
-									kind = 31;
+								if (curChar == 34 && kind > 32)
+									kind = 32;
 								break;
 							
 							case 6: 
 								if ((0xfffffffeffffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 32)
-									kind = 32;
+								if (kind > 33)
+									kind = 33;
 								JjCheckNAdd(6);
 								break;
 							
@@ -784,8 +756,8 @@ namespace Lucene.Net.QueryParsers
 							case 6: 
 								if ((0xdfffffffffffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 32)
-									kind = 32;
+								if (kind > 33)
+									kind = 33;
 								JjCheckNAdd(6);
 								break;
 							
@@ -822,8 +794,8 @@ namespace Lucene.Net.QueryParsers
 							case 6: 
 								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
-								if (kind > 32)
-									kind = 32;
+								if (kind > 33)
+									kind = 33;
 								JjCheckNAdd(6);
 								break;
 							
@@ -851,7 +823,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -863,12 +835,11 @@ namespace Lucene.Net.QueryParsers
 		}
 		private int JjMoveNfa_0(int startState, int curPos)
 		{
-			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 3;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -886,8 +857,8 @@ namespace Lucene.Net.QueryParsers
 							case 0: 
 								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
-								if (kind > 24)
-									kind = 24;
+								if (kind > 25)
+									kind = 25;
 								JjAddStates(19, 20);
 								break;
 							
@@ -899,8 +870,8 @@ namespace Lucene.Net.QueryParsers
 							case 2: 
 								if ((0x3ff000000000000L & l) == (ulong) 0L)
 									break;
-								if (kind > 24)
-									kind = 24;
+								if (kind > 25)
+									kind = 25;
 								JjCheckNAdd(2);
 								break;
 							
@@ -959,7 +930,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
@@ -971,9 +942,9 @@ namespace Lucene.Net.QueryParsers
 			{
 				
 				case 0: 
-					if ((active0 & 0x2000000L) != (ulong) 0L)
+					if ((active0 & 0x4000000L) != (ulong) 0L)
 					{
-						jjmatchedKind = 28;
+						jjmatchedKind = 29;
 						return 6;
 					}
 					return - 1;
@@ -987,30 +958,16 @@ namespace Lucene.Net.QueryParsers
 		{
 			return JjMoveNfa_2(JjStopStringLiteralDfa_2(pos, (ulong) active0), pos + 1);
 		}
-		private int JjStartNfaWithStates_2(int pos, int kind, int state)
-		{
-			jjmatchedKind = kind;
-			jjmatchedPos = pos;
-			try
-			{
-				curChar = input_stream.ReadChar();
-			}
-			catch (System.IO.IOException e)
-			{
-				return pos + 1;
-			}
-			return JjMoveNfa_2(state, pos + 1);
-		}
 		private int JjMoveStringLiteralDfa0_2()
 		{
 			switch (curChar)
 			{
 				
 				case (char) (84): 
-					return JjMoveStringLiteralDfa1_2((ulong) 0x2000000L);
+					return JjMoveStringLiteralDfa1_2((ulong) 0x4000000L);
 				
 				case (char) (93): 
-					return JjStopAtPos(0, 26);
+					return JjStopAtPos(0, 27);
 				
 				default: 
 					return JjMoveNfa_2(0, 0);
@@ -1023,7 +980,7 @@ namespace Lucene.Net.QueryParsers
 			{
 				curChar = input_stream.ReadChar();
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 				JjStopStringLiteralDfa_2(0, (ulong) active0);
 				return 1;
@@ -1032,8 +989,8 @@ namespace Lucene.Net.QueryParsers
 			{
 				
 				case (char) (79): 
-					if ((active0 & 0x2000000L) != (ulong) 0L)
-						return JjStartNfaWithStates_2(1, 25, 6);
+					if ((active0 & 0x4000000L) != (ulong) 0L)
+						return JjStartNfaWithStates_2(1, 26, 6);
 					break;
 				
 				default: 
@@ -1042,14 +999,27 @@ namespace Lucene.Net.QueryParsers
 			}
 			return JjStartNfa_2(0, (ulong) active0);
 		}
-		private int JjMoveNfa_2(int startState, int curPos)
+        private int JjStartNfaWithStates_2(int pos, int kind, int state)
+        {
+            jjmatchedKind = kind;
+            jjmatchedPos = pos;
+            try
+            {
+                curChar = input_stream.ReadChar();
+            }
+            catch (System.IO.IOException)
+            {
+                return pos + 1;
+            }
+            return JjMoveNfa_2(state, pos + 1);
+        }
+        private int JjMoveNfa_2(int startState, int curPos)
 		{
-			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 7;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -1067,14 +1037,14 @@ namespace Lucene.Net.QueryParsers
 							case 0: 
 								if ((0xfffffffeffffffffL & l) != (ulong) 0L)
 								{
-									if (kind > 28)
-										kind = 28;
+									if (kind > 29)
+										kind = 29;
 									JjCheckNAdd(6);
 								}
 								if ((0x100002600L & l) != (ulong) 0L)
 								{
-									if (kind > 6)
-										kind = 6;
+									if (kind > 7)
+										kind = 7;
 								}
 								else if (curChar == 34)
 									JjCheckNAddTwoStates(2, 4);
@@ -1096,15 +1066,15 @@ namespace Lucene.Net.QueryParsers
 								break;
 							
 							case 5: 
-								if (curChar == 34 && kind > 27)
-									kind = 27;
+								if (curChar == 34 && kind > 28)
+									kind = 28;
 								break;
 							
 							case 6: 
 								if ((0xfffffffeffffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 28)
-									kind = 28;
+								if (kind > 29)
+									kind = 29;
 								JjCheckNAdd(6);
 								break;
 							
@@ -1128,8 +1098,8 @@ namespace Lucene.Net.QueryParsers
 							case 6: 
 								if ((0xffffffffdfffffffL & l) == (ulong) 0L)
 									break;
-								if (kind > 28)
-									kind = 28;
+								if (kind > 29)
+									kind = 29;
 								JjCheckNAdd(6);
 								break;
 							
@@ -1166,8 +1136,8 @@ namespace Lucene.Net.QueryParsers
 							case 6: 
 								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
-								if (kind > 28)
-									kind = 28;
+								if (kind > 29)
+									kind = 29;
 								JjCheckNAdd(6);
 								break;
 							
@@ -1195,13 +1165,13 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.ReadChar();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					return curPos;
 				}
 			}
 		}
-		internal static readonly int[] jjnextStates = new int[]{15, 17, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27, 2, 4, 5, 0, 1};
+		internal static readonly int[] jjnextStates = new int[]{15, 16, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27, 2, 4, 5, 0, 1};
 		private static bool JjCanMove_0(int hiByte, int i1, int i2, ulong l1, ulong l2)
 		{
 			switch (hiByte)
@@ -1217,24 +1187,64 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 		}
-		public static readonly System.String[] jjstrLiteralImages = new System.String[]{"", null, null, null, null, null, null, null, null, null, "\x002B", "\x002D", "\x0028", "\x0029", "\x003A", "\x002A", "\x005E", null, null, null, null, null, "\x005B", "\x007B", null, "\x0054\x004F", "\x005D", null, null, "\x0054\x004F", "\x007D", null, null};
-		public static readonly System.String[] lexStateNames = new System.String[]{"Boost", "RangeEx", "RangeIn", "DEFAULT"};
-		public static readonly int[] jjnewLexState = new int[]{- 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, 0, - 1, - 1, - 1, - 1, - 1, 2, 1, 3, - 1, 3, - 1, - 1, - 1, 3, - 1, - 1};
-		internal static readonly ulong[] jjtoToken = new ulong[]{0x1ffffff81L};
-		internal static readonly long[] jjtoSkip = new long[]{0x40L};
+
+        /// <summary>
+        /// Token literal values.
+        /// </summary>
+		public static readonly System.String[] jjstrLiteralImages = new System.String[] {
+            "", null, null, null, null, null, null, null, null, null, null, "\x002B", "\x002D",
+            "\x0028", "\x0029", "\x003A", "\x002A", "\x005E", null, null, null, null, null, "\x005B", "\x007B",
+            null, "\x0054\x004F", "\x005D", null, null, "\x0054\x004F", "\x007D", null, null
+        };
+
+        /// <summary>
+        /// Lexer state names.
+        /// </summary>
+		public static readonly System.String[] lexStateNames = new System.String[] {
+            "Boost",
+            "RangeEx",
+            "RangeIn",
+            "DEFAULT"
+        };
+
+        /// <summary>
+        /// Lex state array.
+        /// </summary>
+		public static readonly int[] jjnewLexState = new int[] {
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 2, 1,
+            3, -1, 3, -1, -1, -1, 3, -1, -1
+        };
+
+		internal static readonly ulong[] jjtoToken = new ulong[]{0x3ffffff01L};
+		internal static readonly long[] jjtoSkip = new long[]{0x80L};
 		protected internal CharStream input_stream;
 		private uint[] jjrounds = new uint[36];
 		private int[] jjstateSet = new int[72];
 		protected internal char curChar;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="stream"></param>
 		public QueryParserTokenManager(CharStream stream)
 		{
 			InitBlock();
 			input_stream = stream;
 		}
-		public QueryParserTokenManager(CharStream stream, int lexState) : this(stream)
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="stream"></param>
+        public QueryParserTokenManager(CharStream stream, int lexState)
+            : this(stream)
 		{
 			SwitchTo(lexState);
 		}
+
+        /// <summary>
+        /// Reinitialise parser.
+        /// </summary>
+        /// <param name="stream"></param>
 		public virtual void  ReInit(CharStream stream)
 		{
 			jjmatchedPos = jjnewStateCnt = 0;
@@ -1249,11 +1259,22 @@ namespace Lucene.Net.QueryParsers
 			for (i = 36; i-- > 0; )
 				jjrounds[i] = 0x80000000;
 		}
+
+        /// <summary>
+        /// Reinitialise parser.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="lexState"></param>
 		public virtual void  ReInit(CharStream stream, int lexState)
 		{
 			ReInit(stream);
 			SwitchTo(lexState);
 		}
+
+        /// <summary>
+        /// Switch to specified lex state.
+        /// </summary>
+        /// <param name="lexState"></param>
 		public virtual void  SwitchTo(int lexState)
 		{
 			if (lexState >= 4 || lexState < 0)
@@ -1264,14 +1285,18 @@ namespace Lucene.Net.QueryParsers
 		
 		protected internal virtual Token JjFillToken()
 		{
-			Token t = Token.NewToken(jjmatchedKind);
-			t.kind = jjmatchedKind;
-			System.String im = jjstrLiteralImages[jjmatchedKind];
-			t.image = (im == null) ? input_stream.GetImage() : im;
-			t.beginLine = input_stream.GetBeginLine();
-			t.beginColumn = input_stream.GetBeginColumn();
-			t.endLine = input_stream.GetEndLine();
-			t.endColumn = input_stream.GetEndColumn();
+            string im = jjstrLiteralImages[jjmatchedKind];
+            string curTokenImage = (im == null) ? input_stream.GetImage() : im;
+            int beginLine = input_stream.GetBeginLine();
+            int beginColumn = input_stream.GetBeginColumn();
+            int endLine = input_stream.GetEndLine();
+            int endColumn = input_stream.GetEndColumn();
+            Token t = Token.NewToken(jjmatchedKind, curTokenImage);
+
+			t.beginLine = beginLine;
+			t.beginColumn = beginColumn;
+			t.endLine = endLine;
+			t.endColumn = endColumn;
 			return t;
 		}
 		
@@ -1282,10 +1307,12 @@ namespace Lucene.Net.QueryParsers
 		internal int jjmatchedPos;
 		internal int jjmatchedKind;
 		
+        /// <summary>
+        /// Get the next Token.
+        /// </summary>
+        /// <returns></returns>
 		public virtual Token GetNextToken()
 		{
-			int kind;
-			Token specialToken = null;
 			Token matchedToken;
 			int curPos = 0;
 			
@@ -1295,7 +1322,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					curChar = input_stream.BeginToken();
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();
@@ -1355,7 +1382,7 @@ namespace Lucene.Net.QueryParsers
 				{
 					input_stream.ReadChar(); input_stream.Backup(1);
 				}
-				catch (System.IO.IOException e1)
+				catch (System.IO.IOException)
 				{
 					EOFSeen = true;
 					error_after = curPos <= 1 ? "" : input_stream.GetImage();
@@ -1377,5 +1404,35 @@ namespace Lucene.Net.QueryParsers
 EOFLoop: ;
 			}
 		}
-	}
+
+        private void JjCheckNAdd(int state)
+        {
+            if (jjrounds[state] != jjround)
+            {
+                jjstateSet[jjnewStateCnt++] = state;
+                jjrounds[state] = jjround;
+            }
+        }
+        private void JjAddStates(int start, int end)
+        {
+            do
+            {
+                jjstateSet[jjnewStateCnt++] = jjnextStates[start];
+            }
+            while (start++ != end);
+        }
+        private void JjCheckNAddTwoStates(int state1, int state2)
+        {
+            JjCheckNAdd(state1);
+            JjCheckNAdd(state2);
+        }
+        private void JjCheckNAddStates(int start, int end)
+        {
+            do
+            {
+                JjCheckNAdd(jjnextStates[start]);
+            }
+            while (start++ != end);
+        }
+    }
 }

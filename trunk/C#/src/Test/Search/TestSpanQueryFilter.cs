@@ -42,11 +42,11 @@ namespace Lucene.Net.Search
 		public virtual void  TestFilterWorks()
 		{
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 500; i++)
 			{
 				Document document = new Document();
-				document.Add(new Field("field", English.IntToEnglish(i) + " equals " + English.IntToEnglish(i), Field.Store.NO, Field.Index.TOKENIZED));
+				document.Add(new Field("field", English.IntToEnglish(i) + " equals " + English.IntToEnglish(i), Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(document);
 			}
 			writer.Close();
@@ -56,27 +56,39 @@ namespace Lucene.Net.Search
 			SpanTermQuery query = new SpanTermQuery(new Term("field", English.IntToEnglish(10).Trim()));
 			SpanQueryFilter filter = new SpanQueryFilter(query);
 			SpanFilterResult result = filter.BitSpans(reader);
-			System.Collections.BitArray bits = result.GetBits();
-			Assert.IsTrue(bits != null, "bits is null and it shouldn't be");
-			Assert.IsTrue(bits.Get(10), "tenth bit is not on");
+            DocIdSet docIdSet = result.GetDocIdSet();
+			Assert.IsTrue(docIdSet != null, "docIdSet is null and it shouldn't be");
+			AssertContainsDocId("docIdSet doesn't contain docId 10", docIdSet, 10);
 			System.Collections.IList spans = result.GetPositions();
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
-			int cardinality = 0;
-			for (int i = 0; i < bits.Count; i++)
-			{
-				if (bits.Get(i)) cardinality++;
-			}
-			Assert.IsTrue(spans.Count == cardinality, "spans Size: " + spans.Count + " is not: " + cardinality);
+            int size = GetDocIdSetSize(docIdSet);
+            Assert.IsTrue(spans.Count == size, "spans Size: " + spans.Count + " is not: " + size);
 			for (System.Collections.IEnumerator iterator = spans.GetEnumerator(); iterator.MoveNext(); )
 			{
 				SpanFilterResult.PositionInfo info = (SpanFilterResult.PositionInfo) iterator.Current;
 				Assert.IsTrue(info != null, "info is null and it shouldn't be");
 				//The doc should indicate the bit is on
-				Assert.IsTrue(bits.Get(info.GetDoc()), "Bit is not on and it should be");
+                AssertContainsDocId("docIdSet doesn't contain docId " + info.GetDoc(), docIdSet, info.GetDoc());
 				//There should be two positions in each
 				Assert.IsTrue(info.GetPositions().Count == 2, "info.getPositions() Size: " + info.GetPositions().Count + " is not: " + 2);
 			}
 			reader.Close();
 		}
+
+        internal int GetDocIdSetSize(DocIdSet docIdSet)
+        {
+            int size = 0;
+            DocIdSetIterator it = docIdSet.Iterator();
+            while (it.Next())
+                size++;
+            return size;
+        }
+
+        public void AssertContainsDocId(string msg, DocIdSet docIdSet, int docId)
+        {
+            DocIdSetIterator it = docIdSet.Iterator();
+            Assert.IsTrue(it.SkipTo(docId), msg);
+            Assert.IsTrue(it.Doc() == docId, msg);
+        }
 	}
 }

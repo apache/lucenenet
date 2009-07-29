@@ -27,7 +27,14 @@ namespace Lucene.Net.Store
 	/// </seealso>
 	public abstract class IndexInput : System.ICloneable
 	{
-		private char[] chars; // used by readString()
+        // used by ReadString()
+        private byte[] bytes;
+        
+        // used by ReadModifiedUTF8String()
+        private char[] chars;
+
+        // true if using modified UTF-8 strings
+        private bool preUTF8Strings;
 		
 		/// <summary>Reads and returns a single byte.</summary>
 		/// <seealso cref="IndexOutput.WriteByte(byte)">
@@ -117,20 +124,41 @@ namespace Lucene.Net.Store
 			}
 			return i;
 		}
-		
+
+        /// <summary>
+        /// Set to read strings in the deprecated modified UTF-8 format
+        /// (length in Java chars and Java's modified UTF-8 encoding).
+        /// Used for pre-2.4.0 indexes.  See JIRA LUCENE-510 for details.
+        /// </summary>
+        public void SetModifiedUTF8StringsMode()
+        {
+            preUTF8Strings = true;
+        }
+
 		/// <summary>Reads a string.</summary>
 		/// <seealso cref="IndexOutput.WriteString(String)">
 		/// </seealso>
-		public virtual System.String ReadString()
+		public virtual string ReadString()
 		{
+            if (preUTF8Strings)
+                return ReadModifiedUTF8String();
+            int length = ReadVInt();
+            if (bytes == null || length > bytes.Length)
+                bytes = new byte[(int) (length*1.25)];
+            ReadBytes(bytes, 0, length);
+            return System.Text.Encoding.UTF8.GetString(bytes, 0, length);
+        }
+
+        public virtual string ReadModifiedUTF8String()
+        {
 			int length = ReadVInt();
 			if (chars == null || length > chars.Length)
 				chars = new char[length];
 			ReadChars(chars, 0, length);
-			return new System.String(chars, 0, length);
+			return new String(chars, 0, length);
 		}
 		
-		/// <summary>Reads UTF-8 encoded characters into an array.</summary>
+		/// <summary>Reads Lucene's old "modified UTF-8" encoded characters into an array.</summary>
 		/// <param name="buffer">the array to read characters into
 		/// </param>
 		/// <param name="start">the offset in the array to start storing characters
@@ -139,6 +167,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <seealso cref="IndexOutput.WriteChars(String,int,int)">
 		/// </seealso>
+        [Obsolete("please use ReadString() or ReadBytes() instead")] 
 		public virtual void  ReadChars(char[] buffer, int start, int length)
 		{
 			int end = start + length;
@@ -165,6 +194,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="length">The number of chars to read
 		/// </param>
+        [Obsolete("this method operates on old \"modified UTF-8\" encoded strings")]
 		public virtual void  SkipChars(int length)
 		{
 			for (int i = 0; i < length; i++)
@@ -215,7 +245,7 @@ namespace Lucene.Net.Store
 		/// different points in the input from each other and from the stream they
 		/// were cloned from.
 		/// </summary>
-		public virtual System.Object Clone()
+		public virtual object Clone()
 		{
 			IndexInput clone = null;
 			try
@@ -225,7 +255,8 @@ namespace Lucene.Net.Store
 			catch (System.Exception)
 			{
 			}
-			
+
+            clone.bytes = null;
 			clone.chars = null;
 			
 			return clone;

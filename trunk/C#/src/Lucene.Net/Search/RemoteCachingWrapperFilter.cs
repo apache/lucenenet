@@ -36,8 +36,6 @@ namespace Lucene.Net.Search
 	/// RemoteCachingWrapperFilter f = new RemoteCachingWrapperFilter(new CachingWrapperFilter(myFilter));
 	/// <p/>
 	/// </summary>
-	/// <author>  Matt Ericson
-	/// </author>
 	[Serializable]
 	public class RemoteCachingWrapperFilter : Filter
 	{
@@ -55,10 +53,24 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> the bitset
 		/// </returns>
-		public override System.Collections.BitArray Bits(IndexReader reader)
+        [System.Obsolete("Use GetDocIdSet(IndexReader) instead.")]
+        public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			Filter cachedFilter = FilterManager.GetInstance().GetFilter(filter);
 			return cachedFilter.Bits(reader);
 		}
-	}
+
+        /// <summary> Uses the {@link FilterManager} to keep the cache for a filter on the 
+        /// searcher side of a remote connection.
+        /// </summary>
+        /// <param name="reader">the index reader for the Filter
+        /// </param>
+        /// <returns> the DocIdSet
+        /// </returns>
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            Filter cachedFilter = FilterManager.GetInstance().GetFilter(filter);
+            return cachedFilter.GetDocIdSet(reader);
+        }
+    }
 }
