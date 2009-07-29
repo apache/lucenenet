@@ -48,19 +48,20 @@ namespace Lucene.Net.Analysis
             return c;
         }
 
-        public override Token Next(Token token)
+        public override Token Next(/* in */ Token reusableToken)
         {
-            token.Clear();
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+            reusableToken.Clear();
             int length = 0;
             int start = bufferIndex;
-            char[] buffer = token.TermBuffer();
+            char[] buffer = reusableToken.TermBuffer();
             while (true)
             {
 
                 if (bufferIndex >= dataLen)
                 {
                     offset += dataLen;
-                    dataLen = input is Lucene.Net.Index.DocumentsWriter.ReusableStringReader ? ((Lucene.Net.Index.DocumentsWriter.ReusableStringReader) input).Read(ioBuffer) : input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
+                    dataLen = input is Lucene.Net.Index.ReusableStringReader ? ((Lucene.Net.Index.ReusableStringReader) input).Read(ioBuffer) : input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
                     if (dataLen <= 0)
                     {
                         if (length > 0)
@@ -81,7 +82,7 @@ namespace Lucene.Net.Analysis
                         // start of token
                         start = offset + bufferIndex - 1;
                     else if (length == buffer.Length)
-                        buffer = token.ResizeTermBuffer(1 + length);
+                        buffer = reusableToken.ResizeTermBuffer(1 + length);
 
                     buffer[length++] = Normalize(c); // buffer it, normalized
 
@@ -94,10 +95,10 @@ namespace Lucene.Net.Analysis
                     break; // return 'em
             }
 
-            token.termLength = length;
-            token.startOffset = start;
-            token.endOffset = start + length;
-            return token;
+            reusableToken.SetTermLength(length);
+            reusableToken.SetStartOffset(start);
+            reusableToken.SetEndOffset(start + length);
+            return reusableToken;
         }
 
         public override void Reset(System.IO.TextReader input)

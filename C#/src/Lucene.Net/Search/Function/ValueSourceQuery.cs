@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Function
 	/// <summary> Expert: A Query that sets the scores of document to the
 	/// values obtained from a {@link Lucene.Net.Search.Function.ValueSource ValueSource}.
 	/// <p>   
-	/// The value source can be based on a (cached) value of an indexd  field, but it
+	/// The value source can be based on a (cached) value of an indexed  field, but it
 	/// can also be based on an external source, e.g. values read from an external database. 
 	/// <p>
 	/// Score is set as: Score(doc,query) = query.getBoost()<sup>2</sup> * valueSource(doc).  
@@ -38,8 +38,6 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
 	[Serializable]
 	public class ValueSourceQuery : Query
 	{
@@ -240,7 +238,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (GetType() != o.GetType())
 			{
@@ -255,7 +253,7 @@ namespace Lucene.Net.Search.Function
 		{
 			return (GetType().GetHashCode() + valSrc.GetHashCode()) ^ BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
 		}
-		override public System.Object Clone()
+		override public object Clone()
 		{
 			return this.MemberwiseClone();
 		}

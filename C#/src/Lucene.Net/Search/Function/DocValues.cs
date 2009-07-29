@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Function
 		/// these test elements to be tested, Otherwise the test would not fail, just 
 		/// print a warning.
 		/// </summary>
-		public /*internal*/ virtual System.Object GetInnerArray()
+		public /*internal*/ virtual object GetInnerArray()
 		{
 			throw new System.NotSupportedException("this optional method is for test purposes only");
 		}
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Function
 				{
 					val = FloatVal(n);
 				}
-				catch (System.IndexOutOfRangeException e)
+				catch (System.IndexOutOfRangeException)
 				{
 					break;
 				}

@@ -30,11 +30,7 @@ namespace Lucene.Net.Index
 	/// <summary> Class for accessing a compound stream.
 	/// This class implements a directory, but is limited to only read operations.
 	/// Directory methods that would normally modify data throw an exception.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: CompoundFileReader.java 564236 2007-08-09 15:21:19Z gsingers $
-	/// </version>
 	public class CompoundFileReader : Directory
 	{
 		
@@ -242,10 +238,19 @@ namespace Lucene.Net.Index
 			
 			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length, int readBufferSize) : base(readBufferSize)
 			{
-				this.base_Renamed = base_Renamed;
+                this.base_Renamed = (IndexInput) base_Renamed.Clone();
 				this.fileOffset = fileOffset;
 				this.length = length;
 			}
+
+            public override object Clone()
+            {
+                CSIndexInput clone = (CSIndexInput)base.Clone();
+                clone.base_Renamed = (IndexInput)base_Renamed.Clone();
+                clone.fileOffset = fileOffset;
+                clone.length = length;
+                return clone;
+            }
 			
 			/// <summary>Expert: implements buffer refill.  Reads bytes from the current
 			/// position in the input.
@@ -258,15 +263,12 @@ namespace Lucene.Net.Index
 			/// </param>
 			protected internal override void ReadInternal(byte[] b, int offset, int len)
 			{
-				lock (base_Renamed)
-				{
-					long start = GetFilePointer();
-					if (start + len > length)
-						throw new System.IO.IOException("read past EOF");
-					base_Renamed.Seek(fileOffset + start);
-                    base_Renamed.ReadBytes(b, offset, len, false);
-				}
-			}
+                long start = GetFilePointer();
+                if (start + len > length)
+                    throw new System.IO.IOException("read past EOF");
+                base_Renamed.Seek(fileOffset + start);
+                base_Renamed.ReadBytes(b, offset, len, false);
+            }
 			
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
 			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
@@ -280,6 +282,7 @@ namespace Lucene.Net.Index
 			/// <summary>Closes the stream to further operations. </summary>
 			public override void  Close()
 			{
+                base_Renamed.Close();
 			}
 			
 			public override long Length()

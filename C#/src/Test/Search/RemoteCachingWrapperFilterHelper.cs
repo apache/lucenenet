@@ -27,8 +27,6 @@ namespace Lucene.Net.Search
 	/// <summary> A unit test helper class to help with RemoteCachingWrapperFilter testing and
 	/// assert that it is working correctly.
 	/// </summary>
-	/// <author>  Matt Ericson
-	/// </author>
 	[Serializable]
 	public class RemoteCachingWrapperFilterHelper : RemoteCachingWrapperFilter
 	{
@@ -44,26 +42,26 @@ namespace Lucene.Net.Search
 		{
 			this.shouldHaveCache = shouldHaveCache;
 		}
-		
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			Filter cachedFilter = FilterManager.GetInstance().GetFilter(filter);
-			
-			Assert.IsNotNull(cachedFilter, "Filter should not be null");
-			if (!shouldHaveCache)
-			{
-				Assert.AreSame(filter, cachedFilter, "First time filter should be the same ");
-			}
-			else
-			{
-				Assert.AreNotSame(filter, cachedFilter, "We should have a cached version of the filter");
-			}
-			
-			if (filter is CachingWrapperFilterHelper)
-			{
-				((CachingWrapperFilterHelper) cachedFilter).SetShouldHaveCache(shouldHaveCache);
-			}
-			return cachedFilter.Bits(reader);
-		}
-	}
+
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            Filter cachedFilter = FilterManager.GetInstance().GetFilter(filter);
+
+            Assert.IsNotNull(cachedFilter, "Filter should not be null");
+            if (!shouldHaveCache)
+            {
+                Assert.AreSame(filter, cachedFilter, "First time filter should be the same ");
+            }
+            else
+            {
+                Assert.AreNotSame(filter, cachedFilter, "We should have a cached version of the filter");
+            }
+
+            if (filter is CachingWrapperFilterHelper)
+            {
+                ((CachingWrapperFilterHelper)cachedFilter).SetShouldHaveCache(shouldHaveCache);
+            }
+            return cachedFilter.GetDocIdSet(reader);
+        }
+    }
 }

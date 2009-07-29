@@ -19,14 +19,23 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using Token = Lucene.Net.Analysis.Token;
+using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Fieldable = Lucene.Net.Documents.Fieldable;
+using Index = Lucene.Net.Documents.Field.Index;
+using Store = Lucene.Net.Documents.Field.Store;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Lucene.Net.Analysis;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
@@ -98,35 +107,35 @@ namespace Lucene.Net.Index
 					return input.Next();
 				}
 				
-				public override Token Next(Token result)
+				public override Token Next(Token reusableToken)
 				{
 					if (buffered != null)
 					{
-						Token t = buffered;
+						Token nextToken = buffered;
 						buffered = null;
-						return t;
+						return nextToken;
 					}
-					Token t2 = input.Next(result);
-					if (t2 == null)
+					Token nextToken2 = input.Next(reusableToken);
+					if (nextToken2 == null)
 						return null;
-					if (System.Char.IsDigit(t2.TermBuffer()[0]))
+					if (System.Char.IsDigit(nextToken2.TermBuffer()[0]))
 					{
-						t2.SetPositionIncrement(t2.TermBuffer()[0] - '0');
+						nextToken2.SetPositionIncrement(nextToken2.TermBuffer()[0] - '0');
 					}
 					if (first)
 					{
 						// set payload on first position only
-						t2.SetPayload(new Payload(new byte[]{100}));
+						nextToken2.SetPayload(new Payload(new byte[]{100}));
 						first = false;
 					}
 					
 					// index a "synonym" for every token
-					buffered = (Token) t2.Clone();
+					buffered = (Token) nextToken2.Clone();
 					buffered.SetPayload(null);
 					buffered.SetPositionIncrement(0);
 					buffered.SetTermBuffer(new char[]{'b'}, 0, 1);
 					
-					return t2;
+					return nextToken2;
 				}
 			}
 			private void  InitBlock(TestDocumentWriter enclosingInstance)
@@ -170,15 +179,16 @@ namespace Lucene.Net.Index
 			private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 			private int index = 0;
 			
-			public override Token Next()
+			public override Token Next(Token reusableToken)
 			{
+                System.Diagnostics.Debug.Assert(reusableToken != null);
 				if (index == tokens.Length)
 				{
 					return null;
 				}
 				else
 				{
-					return new Token(tokens[index++], 0, 0);
+					return reusableToken.Reinit(tokens[index++], 0, 0);
 				}
 			}
 		}
@@ -203,7 +213,7 @@ namespace Lucene.Net.Index
 			Document testDoc = new Document();
 			DocHelper.SetupDoc(testDoc);
 			Analyzer analyzer = new WhitespaceAnalyzer();
-			IndexWriter writer = new IndexWriter(dir, analyzer, true);
+			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(testDoc);
 			writer.Flush();
 			SegmentInfo info = writer.NewestSegment();
@@ -242,7 +252,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < reader.FieldInfos().Size(); i++)
 			{
 				FieldInfo fi = reader.FieldInfos().FieldInfo(i);
-				if (fi.IsIndexed())
+                if (fi.IsIndexed_ForNUnitTest())
 				{
 					Assert.IsTrue(fi.omitNorms == !reader.HasNorms(fi.Name_ForNUnitTest));
 				}
@@ -253,12 +263,12 @@ namespace Lucene.Net.Index
 		public virtual void  TestPositionIncrementGap()
 		{
 			Analyzer analyzer = new AnonymousClassAnalyzer(this);
-			
-			IndexWriter writer = new IndexWriter(dir, analyzer, true);
+
+            IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Document doc = new Document();
-			doc.Add(new Field("repeated", "repeated one", Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("repeated", "repeated two", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("repeated", "repeated one", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("repeated", "repeated two", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(doc);
 			writer.Flush();
@@ -278,11 +288,11 @@ namespace Lucene.Net.Index
 		public virtual void  TestTokenReuse()
 		{
 			Analyzer analyzer = new AnonymousClassAnalyzer1(this);
-			
-			IndexWriter writer = new IndexWriter(dir, analyzer, true);
+
+            IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Document doc = new Document();
-			doc.Add(new Field("f1", "a 5 a a", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("f1", "a 5 a a", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(doc);
 			writer.Flush();
@@ -306,7 +316,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestPreAnalyzedField()
 		{
-			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			
 			doc.Add(new Field("preanalyzed", new AnonymousClassTokenStream(this), TermVector.NO));
@@ -342,16 +352,18 @@ namespace Lucene.Net.Index
 		{
 			Document doc = new Document();
 			// f1 first without tv then with tv
-			doc.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.UN_TOKENIZED, TermVector.NO));
-			doc.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.UN_TOKENIZED, TermVector.WITH_POSITIONS_OFFSETS));
+			doc.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
+			doc.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
 			// f2 first with tv then without tv
-			doc.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.UN_TOKENIZED, TermVector.WITH_POSITIONS_OFFSETS));
-			doc.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.UN_TOKENIZED, TermVector.NO));
+			doc.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+			doc.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
 			
 			RAMDirectory ram = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(ram, new StandardAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(ram, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
+
+            _TestUtil.CheckIndex(ram);
 			
 			IndexReader reader = IndexReader.Open(ram);
 			// f1

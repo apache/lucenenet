@@ -19,18 +19,17 @@ using System;
 
 using NUnit.Framework;
 
-using Lucene.Net.Documents;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using _TestUtil = Lucene.Net.Util._TestUtil;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Lucene.Net.Documents;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Directory = Lucene.Net.Store.Directory;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
@@ -80,7 +79,7 @@ namespace Lucene.Net.Index
 			fieldInfos = new FieldInfos();
 			DocHelper.SetupDoc(testDoc);
 			fieldInfos.Add(testDoc);
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetUseCompoundFile(false);
 			writer.AddDocument(testDoc);
 			writer.Close();
@@ -148,6 +147,7 @@ namespace Lucene.Net.Index
 			field = doc.GetFieldable(DocHelper.COMPRESSED_TEXT_FIELD_2_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
 			Assert.IsTrue(field.IsLazy(), "field is not lazy and it should be");
+            Assert.IsTrue(field.BinaryValue() == null, "binary value isn't null for lazy string field");
 			value_Renamed = field.StringValue();
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			Assert.IsTrue(value_Renamed.Equals(DocHelper.FIELD_2_COMPRESSED_TEXT) == true, value_Renamed + " is not equal to " + DocHelper.FIELD_2_COMPRESSED_TEXT);
@@ -166,6 +166,8 @@ namespace Lucene.Net.Index
 			
 			field = doc.GetFieldable(DocHelper.LAZY_FIELD_BINARY_KEY);
 			Assert.IsTrue(field != null, "field is null and it shouldn't be");
+            Assert.IsTrue(field.StringValue() == null, "stringValue isn't null for lazy binary field");
+
 			byte[] bytes = field.BinaryValue();
 			Assert.IsTrue(bytes != null, "bytes is null and it shouldn't be");
 			Assert.IsTrue(DocHelper.LAZY_FIELD_BINARY_BYTES.Length == bytes.Length, "");
@@ -201,7 +203,7 @@ namespace Lucene.Net.Index
 			reader.Close();
 			try
 			{
-				System.String value_Renamed = field.StringValue();
+				field.StringValue();
 				Assert.Fail("did not hit AlreadyClosedException as expected");
 			}
 			catch (AlreadyClosedException)
@@ -250,8 +252,8 @@ namespace Lucene.Net.Index
 			_TestUtil.RmDir(file);
 			FSDirectory tmpDir = FSDirectory.GetDirectory(file);
 			Assert.IsTrue(tmpDir != null);
-			
-			IndexWriter writer = new IndexWriter(tmpDir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(tmpDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetUseCompoundFile(false);
 			writer.AddDocument(testDoc);
 			writer.Close();
@@ -420,6 +422,10 @@ namespace Lucene.Net.Index
             {
                 indexInput.Close();
             }
+            public override object Clone()
+            {
+                return new FaultyIndexInput((IndexInput)indexInput.Clone());
+            }
         }
 
         // LUCENE-1262
@@ -433,7 +439,7 @@ namespace Lucene.Net.Index
             try
             {
                 Directory dir = new FaultyFSDirectory(indexDir);
-                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
                 for (int i = 0; i < 2; i++)
                     writer.AddDocument(testDoc);
                 writer.Optimize();

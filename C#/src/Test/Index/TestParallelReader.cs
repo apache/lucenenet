@@ -27,7 +27,7 @@ using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Hits = Lucene.Net.Search.Hits;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using Searcher = Lucene.Net.Search.Searcher;
@@ -78,12 +78,12 @@ namespace Lucene.Net.Index
 			ParallelReader pr = new ParallelReader();
 			pr.Add(IndexReader.Open(dir1));
 			pr.Add(IndexReader.Open(dir2));
-			System.Collections.ICollection fieldNames = pr.GetFieldNames(IndexReader.FieldOption.ALL);
+			System.Collections.Generic.ICollection<string> fieldNames = pr.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.AreEqual(4, fieldNames.Count);
-			Assert.IsTrue(CollectionContains(fieldNames, "f1"));
-			Assert.IsTrue(CollectionContains(fieldNames, "f2"));
-			Assert.IsTrue(CollectionContains(fieldNames, "f3"));
-			Assert.IsTrue(CollectionContains(fieldNames, "f4"));
+			Assert.IsTrue(fieldNames.Contains("f1"));
+			Assert.IsTrue(fieldNames.Contains("f2"));
+			Assert.IsTrue(fieldNames.Contains("f3"));
+			Assert.IsTrue(fieldNames.Contains("f4"));
 		}
 		
 		[Test]
@@ -117,9 +117,9 @@ namespace Lucene.Net.Index
 			
 			// one document only:
 			Directory dir2 = new MockRAMDirectory();
-			IndexWriter w2 = new IndexWriter(dir2, new StandardAnalyzer(), true);
+            IndexWriter w2 = new IndexWriter(dir2, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-			d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.ANALYZED));
 			w2.AddDocument(d3);
 			w2.Close();
 			
@@ -169,15 +169,15 @@ namespace Lucene.Net.Index
 			Directory dir2 = GetDir1();
 			
 			// add another document to ensure that the indexes are not optimized
-			IndexWriter modifier = new IndexWriter(dir1, new StandardAnalyzer());
+            IndexWriter modifier = new IndexWriter(dir1, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			Document d = new Document();
-			d.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			d.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.ANALYZED));
 			modifier.AddDocument(d);
 			modifier.Close();
-			
-			modifier = new IndexWriter(dir2, new StandardAnalyzer());
+
+            modifier = new IndexWriter(dir2, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			d = new Document();
-			d.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.TOKENIZED));
+			d.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.ANALYZED));
 			modifier.AddDocument(d);
 			modifier.Close();
 			
@@ -187,8 +187,8 @@ namespace Lucene.Net.Index
 			pr.Add(IndexReader.Open(dir2));
 			Assert.IsFalse(pr.IsOptimized());
 			pr.Close();
-			
-			modifier = new IndexWriter(dir1, new StandardAnalyzer());
+
+            modifier = new IndexWriter(dir1, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			modifier.Optimize();
 			modifier.Close();
 			
@@ -198,9 +198,9 @@ namespace Lucene.Net.Index
 			// just one of the two indexes are optimized
 			Assert.IsFalse(pr.IsOptimized());
 			pr.Close();
-			
-			
-			modifier = new IndexWriter(dir2, new StandardAnalyzer());
+
+
+            modifier = new IndexWriter(dir2, new StandardAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			modifier.Optimize();
 			modifier.Close();
 			
@@ -215,14 +215,14 @@ namespace Lucene.Net.Index
 		
 		private void  QueryTest(Query query)
 		{
-			Hits parallelHits = parallel.Search(query);
-			Hits singleHits = single.Search(query);
-			Assert.AreEqual(parallelHits.Length(), singleHits.Length());
-			for (int i = 0; i < parallelHits.Length(); i++)
+			ScoreDoc[] parallelHits = parallel.Search(query, null, 1000).scoreDocs;
+            ScoreDoc[] singleHits = single.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(parallelHits.Length, singleHits.Length);
+			for (int i = 0; i < parallelHits.Length; i++)
 			{
-				Assert.AreEqual(parallelHits.Score(i), singleHits.Score(i), 0.001f);
-				Lucene.Net.Documents.Document docParallel = parallelHits.Doc(i);
-				Lucene.Net.Documents.Document docSingle = singleHits.Doc(i);
+				Assert.AreEqual(parallelHits[i].score, singleHits[i].score, 0.001f);
+				Lucene.Net.Documents.Document docParallel = parallel.Doc(parallelHits[i].doc);
+				Lucene.Net.Documents.Document docSingle = single.Doc(singleHits[i].doc);
 				Assert.AreEqual(docParallel.Get("f1"), docSingle.Get("f1"));
 				Assert.AreEqual(docParallel.Get("f2"), docSingle.Get("f2"));
 				Assert.AreEqual(docParallel.Get("f3"), docSingle.Get("f3"));
@@ -234,18 +234,18 @@ namespace Lucene.Net.Index
 		private Searcher Single()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter w = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
-			d1.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.TOKENIZED));
-			d1.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.TOKENIZED));
-			d1.Add(new Field("f4", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.ANALYZED));
+			d1.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.ANALYZED));
+			d1.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.ANALYZED));
+			d1.Add(new Field("f4", "v1", Field.Store.YES, Field.Index.ANALYZED));
 			w.AddDocument(d1);
 			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-			d2.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.TOKENIZED));
-			d2.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.TOKENIZED));
-			d2.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.TOKENIZED));
-			d2.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.TOKENIZED));
+			d2.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.ANALYZED));
+			d2.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.ANALYZED));
+			d2.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.ANALYZED));
+			d2.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.ANALYZED));
 			w.AddDocument(d2);
 			w.Close();
 			
@@ -266,14 +266,14 @@ namespace Lucene.Net.Index
 		private Directory GetDir1()
 		{
 			Directory dir1 = new MockRAMDirectory();
-			IndexWriter w1 = new IndexWriter(dir1, new StandardAnalyzer(), true);
+            IndexWriter w1 = new IndexWriter(dir1, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.TOKENIZED));
-			d1.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			d1.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.ANALYZED));
+			d1.Add(new Field("f2", "v1", Field.Store.YES, Field.Index.ANALYZED));
 			w1.AddDocument(d1);
 			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-			d2.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.TOKENIZED));
-			d2.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.TOKENIZED));
+			d2.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.ANALYZED));
+			d2.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.ANALYZED));
 			w1.AddDocument(d2);
 			w1.Close();
 			return dir1;
@@ -282,28 +282,17 @@ namespace Lucene.Net.Index
 		private Directory GetDir2()
 		{
 			Directory dir2 = new RAMDirectory();
-			IndexWriter w2 = new IndexWriter(dir2, new StandardAnalyzer(), true);
+            IndexWriter w2 = new IndexWriter(dir2, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-			d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.TOKENIZED));
-			d3.Add(new Field("f4", "v1", Field.Store.YES, Field.Index.TOKENIZED));
+			d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.ANALYZED));
+			d3.Add(new Field("f4", "v1", Field.Store.YES, Field.Index.ANALYZED));
 			w2.AddDocument(d3);
 			Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
-			d4.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.TOKENIZED));
-			d4.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.TOKENIZED));
+			d4.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.ANALYZED));
+			d4.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.ANALYZED));
 			w2.AddDocument(d4);
 			w2.Close();
 			return dir2;
-		}
-
-		public static bool CollectionContains(System.Collections.ICollection col, System.String val)
-		{
-			for (System.Collections.IEnumerator iterator = col.GetEnumerator(); iterator.MoveNext(); )
-			{
-                System.String s = (System.String)iterator.Current;
-                if (s == val)
-					return true;
-			}
-			return false;
 		}
 	}
 }

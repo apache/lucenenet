@@ -60,7 +60,7 @@ namespace Lucene.Net.Documents
 		/// {@link #Round(Date, DateTools.Resolution)}
 		/// </param>
 		/// <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-		/// depeding on <code>resolution</code>; using UTC as timezone 
+		/// depeding on <code>resolution</code>; using GMT as timezone 
 		/// </returns>
 		public static System.String DateToString(System.DateTime date, Resolution resolution)
 		{
@@ -76,7 +76,7 @@ namespace Lucene.Net.Documents
 		/// {@link #Round(long, DateTools.Resolution)}
 		/// </param>
 		/// <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-		/// depeding on <code>resolution</code>; using UTC as timezone
+		/// depeding on <code>resolution</code>; using GMT as timezone
 		/// </returns>
 		public static System.String TimeToString(long time, Resolution resolution)
 		{

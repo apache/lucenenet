@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 
 			Directory merged = new MockRAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			
 			writer.AddIndexes(new Directory[]{indexA, indexB});
@@ -97,15 +97,15 @@ namespace Lucene.Net.Index
 		
 		private void  FillIndex(Directory dir, int start, int numDocs)
 		{
-			
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			writer.SetMaxBufferedDocs(2);
 			
 			for (int i = start; i < (start + numDocs); i++)
 			{
 				Lucene.Net.Documents.Document temp = new Lucene.Net.Documents.Document();
-				temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				
 				writer.AddDocument(temp);
 			}

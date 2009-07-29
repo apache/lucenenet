@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

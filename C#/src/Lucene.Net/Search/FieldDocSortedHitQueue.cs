@@ -24,12 +24,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Collects sorted results from Searchable's and collates them.
 	/// The elements put into this queue must be of type FieldDoc.
-	/// 
-	/// <p>Created: Feb 11, 2004 2:04:21 PM
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
     /// <version>  $Id: FieldDocSortedHitQueue.java 590530 2007-10-31 01:28:25Z gsingers $
@@ -116,7 +111,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 		/// </returns>
-		public override bool LessThan(System.Object a, System.Object b)
+		public override bool LessThan(object a, object b)
 		{
 			FieldDoc docA = (FieldDoc) a;
 			FieldDoc docB = (FieldDoc) b;
@@ -200,8 +195,27 @@ namespace Lucene.Net.Search
 								c = 1;
 							break;
 						}
-					
-					case SortField.CUSTOM:  {
+
+                    case SortField.BYTE:
+                        {
+                            int i1 = (int)docA.fields[i]; //((Byte)docA.fields[i]).byteValue();
+                            int i2 = (int)docB.fields[i]; //((Byte)docB.fields[i]).byteValue();
+                            if (i1 < i2) c = -1;
+                            if (i1 > i2) c = 1;
+                            break;
+                        }
+
+                    case SortField.SHORT:
+                        {
+                            int i1 = (int)docA.fields[i]; //((Short)docA.fields[i]).shortValue();
+                            int i2 = (int)docB.fields[i]; //((Short)docB.fields[i]).shortValue();
+                            if (i1 < i2) c = -1;
+                            if (i1 > i2) c = 1;
+                            break;
+                        }
+
+                    case SortField.CUSTOM:
+                        {
 							c = docA.fields[i].CompareTo(docB.fields[i]);
 							break;
 						}

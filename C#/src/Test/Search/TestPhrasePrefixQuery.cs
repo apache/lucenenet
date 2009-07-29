@@ -46,17 +46,17 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document doc1 = new Lucene.Net.Documents.Document();
 			Lucene.Net.Documents.Document doc2 = new Lucene.Net.Documents.Document();
 			Lucene.Net.Documents.Document doc3 = new Lucene.Net.Documents.Document();
 			Lucene.Net.Documents.Document doc4 = new Lucene.Net.Documents.Document();
 			Lucene.Net.Documents.Document doc5 = new Lucene.Net.Documents.Document();
-			doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.TOKENIZED));
-			doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.TOKENIZED));
-			doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.TOKENIZED));
-			doc4.Add(new Field("body", "blueberry chewing gum", Field.Store.YES, Field.Index.TOKENIZED));
-			doc5.Add(new Field("body", "piccadilly circus", Field.Store.YES, Field.Index.TOKENIZED));
+			doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.ANALYZED));
+			doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.ANALYZED));
+			doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.ANALYZED));
+			doc4.Add(new Field("body", "blueberry chewing gum", Field.Store.YES, Field.Index.ANALYZED));
+			doc5.Add(new Field("body", "piccadilly circus", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc1);
 			writer.AddDocument(doc2);
 			writer.AddDocument(doc3);
@@ -92,12 +92,12 @@ namespace Lucene.Net.Search
 			query1.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			
-			Hits result;
-			result = searcher.Search(query1);
-			Assert.AreEqual(2, result.Length());
-			
-			result = searcher.Search(query2);
-			Assert.AreEqual(0, result.Length());
+			ScoreDoc[] result;
+			result = searcher.Search(query1, null, 1000).scoreDocs;
+			Assert.AreEqual(2, result.Length);
+
+            result = searcher.Search(query2, null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 		}
 	}
 }

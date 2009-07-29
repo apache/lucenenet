@@ -19,17 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Index
 {
@@ -47,7 +44,7 @@ namespace Lucene.Net.Index
 			
 			Directory dir = new RAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			int i;
 			for (i = 0; i < 35; i++)
@@ -75,10 +72,10 @@ namespace Lucene.Net.Index
 			// .s0 file:
 			System.String[] files = dir.List();
 			
-			/*
-			for(int i=0;i<files.length;i++) {
-			System.out.println(i + ": " + files[i]);
+			for(int j=0;j<files.Length;j++) {
+			System.Console.Out.WriteLine(j + ": " + files[j]);
 			}
+			/*
 			*/
 			
 			// The numbering of fields can vary depending on which
@@ -146,8 +143,8 @@ namespace Lucene.Net.Index
 			CopyFile(dir, "_0.cfs", "deletable");
 			
 			// Create some old segments file:
-			CopyFile(dir, "segments_a", "segments");
-			CopyFile(dir, "segments_a", "segments_2");
+			CopyFile(dir, "segments_3", "segments");
+			CopyFile(dir, "segments_3", "segments_2");
 			
 			// Create a bogus cfs file shadowing a non-cfs segment:
 			CopyFile(dir, "_2.cfs", "_3.cfs");
@@ -156,7 +153,7 @@ namespace Lucene.Net.Index
 			
 			// Open & close a writer: it should delete the above 4
 			// files and nothing more:
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Close();
 			
 			System.String[] files2 = dir.List();
@@ -205,8 +202,8 @@ namespace Lucene.Net.Index
 		private void  AddDoc(IndexWriter writer, int id)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.TOKENIZED));
-			doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
+			doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			writer.AddDocument(doc);
 		}
 

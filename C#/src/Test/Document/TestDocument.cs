@@ -19,15 +19,15 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
@@ -128,7 +128,7 @@ namespace Lucene.Net.Documents
 		public virtual void  TestConstructorExceptions()
 		{
 			new Field("name", "value", Field.Store.YES, Field.Index.NO); // okay
-			new Field("name", "value", Field.Store.NO, Field.Index.UN_TOKENIZED); // okay
+			new Field("name", "value", Field.Store.NO, Field.Index.NOT_ANALYZED); // okay
 			try
 			{
 				new Field("name", "value", Field.Store.NO, Field.Index.NO);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Documents
 		public virtual void  TestGetValuesForIndexedDocument()
 		{
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(MakeDocumentWithFields());
 			writer.Close();
 			
@@ -180,24 +180,24 @@ namespace Lucene.Net.Documents
 			Query query = new TermQuery(new Term("keyword", "test1"));
 			
 			// ensure that queries return expected results without DateFilter first
-			Hits hits = searcher.Search(query);
-			Assert.AreEqual(1, hits.Length());
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
 			
-			DoAssert(hits.Doc(0), true);
+			DoAssert(searcher.Doc(hits[0].doc), true);
 			searcher.Close();
 		}
 		
 		private Lucene.Net.Documents.Document MakeDocumentWithFields()
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("keyword", "test1", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("keyword", "test2", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("text", "test1", Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("text", "test2", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("keyword", "test1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("keyword", "test2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("text", "test1", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("text", "test2", Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("unindexed", "test1", Field.Store.YES, Field.Index.NO));
 			doc.Add(new Field("unindexed", "test2", Field.Store.YES, Field.Index.NO));
-			doc.Add(new Field("unstored", "test1", Field.Store.NO, Field.Index.TOKENIZED));
-			doc.Add(new Field("unstored", "test2", Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("unstored", "test1", Field.Store.NO, Field.Index.ANALYZED));
+			doc.Add(new Field("unstored", "test2", Field.Store.NO, Field.Index.ANALYZED));
 			return doc;
 		}
 		
@@ -237,13 +237,13 @@ namespace Lucene.Net.Documents
 		public virtual void  TestFieldSetValue()
 		{
 			
-			Field field = new Field("id", "id1", Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Field field = new Field("id", "id1", Field.Store.YES, Field.Index.NOT_ANALYZED);
 			Document doc = new Document();
 			doc.Add(field);
-			doc.Add(new Field("keyword", "test", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("keyword", "test", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			field.SetValue("id2");
 			writer.AddDocument(doc);
@@ -256,12 +256,12 @@ namespace Lucene.Net.Documents
 			Query query = new TermQuery(new Term("keyword", "test"));
 			
 			// ensure that queries return expected results without DateFilter first
-			Hits hits = searcher.Search(query);
-			Assert.AreEqual(3, hits.Length());
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(3, hits.Length);
 			int result = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				Document doc2 = hits.Doc(i);
+				Document doc2 = searcher.Doc(hits[i].doc);
 				Field f = doc2.GetField("id");
 				if (f.StringValue().Equals("id1"))
 					result |= 1;

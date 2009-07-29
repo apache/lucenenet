@@ -70,11 +70,11 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
-		/// <param name="o">The comparison Object
+		/// <param name="o">The comparison object
 		/// </param>
 		/// <returns> true if both {@link #GetStartOffset()} and {@link #GetEndOffset()} are the same for both objects.
 		/// </returns>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

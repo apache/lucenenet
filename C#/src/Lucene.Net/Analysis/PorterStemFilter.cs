@@ -47,17 +47,17 @@ namespace Lucene.Net.Analysis
             stemmer = new PorterStemmer();
         }
 
-        public override Token Next(Token result)
+        public override Token Next(/* in */ Token reusableToken)
         {
-            result = input.Next(result);
-            if (result != null)
-            {
-                if (stemmer.Stem(result.TermBuffer(), 0, result.termLength))
-                    result.SetTermBuffer(stemmer.GetResultBuffer(), 0, stemmer.GetResultLength());
-                return result;
-            }
-            else
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+            Token nextToken = input.Next(reusableToken);
+            if (nextToken == null)
                 return null;
+
+            if (stemmer.Stem(nextToken.TermBuffer(), 0, nextToken.TermLength()))
+                nextToken.SetTermBuffer(stemmer.GetResultBuffer(), 0, stemmer.GetResultLength());
+
+            return nextToken;
         }
     }
 }

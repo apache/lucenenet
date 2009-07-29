@@ -33,8 +33,6 @@ namespace Lucene.Net.Search
 	/// <summary> Tests MatchAllDocsQuery.
 	/// 
 	/// </summary>
-	/// <author>  Daniel Naber
-	/// </author>
 	[TestFixture]
 	public class TestMatchAllDocsQuery : LuceneTestCase
 	{
@@ -42,34 +40,34 @@ namespace Lucene.Net.Search
 		public virtual void  TestQuery()
 		{
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter iw = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDoc("one", iw);
 			AddDoc("two", iw);
 			AddDoc("three four", iw);
 			iw.Close();
 			
 			IndexSearcher is_Renamed = new IndexSearcher(dir);
-			Hits hits = is_Renamed.Search(new MatchAllDocsQuery());
-			Assert.AreEqual(3, hits.Length());
+			ScoreDoc[] hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).scoreDocs;
+			Assert.AreEqual(3, hits.Length);
 			
 			// some artificial queries to trigger the use of skipTo():
 			
 			BooleanQuery bq = new BooleanQuery();
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-			hits = is_Renamed.Search(bq);
-			Assert.AreEqual(3, hits.Length());
+            hits = is_Renamed.Search(bq, null, 1000).scoreDocs;
+			Assert.AreEqual(3, hits.Length);
 			
 			bq = new BooleanQuery();
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
 			bq.Add(new TermQuery(new Term("key", "three")), BooleanClause.Occur.MUST);
-			hits = is_Renamed.Search(bq);
-			Assert.AreEqual(1, hits.Length());
+            hits = is_Renamed.Search(bq, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
 			
 			// delete a document:
 			is_Renamed.GetIndexReader().DeleteDocument(0);
-			hits = is_Renamed.Search(new MatchAllDocsQuery());
-			Assert.AreEqual(2, hits.Length());
+            hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).scoreDocs;
+			Assert.AreEqual(2, hits.Length);
 			
 			is_Renamed.Close();
 		}
@@ -87,7 +85,7 @@ namespace Lucene.Net.Search
 		private void  AddDoc(System.String text, IndexWriter iw)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("key", text, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("key", text, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(doc);
 		}
 	}

@@ -39,8 +39,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestNormalCase()
 		{
 			Directory dir = new RAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
 			writer.SetMergePolicy(new LogDocMergePolicy());
@@ -59,8 +59,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestNoOverMerge()
 		{
 			Directory dir = new RAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
 			writer.SetMergePolicy(new LogDocMergePolicy());
@@ -85,8 +85,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestForceFlush()
 		{
 			Directory dir = new RAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(10);
 			LogDocMergePolicy mp = new LogDocMergePolicy();
@@ -97,8 +97,8 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer);
 				writer.Close();
-				
-				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetMergeFactor(10);
 				mp.SetMinMergeDocs(100);
@@ -114,8 +114,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestMergeFactorChange()
 		{
 			Directory dir = new RAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(100);
 			writer.SetMergePolicy(new LogDocMergePolicy());
@@ -144,8 +144,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestMaxBufferedDocsChange()
 		{
 			Directory dir = new RAMDirectory();
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(101);
 			writer.SetMergeFactor(101);
 			writer.SetMergePolicy(new LogDocMergePolicy());
@@ -160,8 +160,8 @@ namespace Lucene.Net.Index
 					CheckInvariants(writer);
 				}
 				writer.Close();
-				
-				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				writer.SetMaxBufferedDocs(101);
 				writer.SetMergeFactor(101);
 				writer.SetMergePolicy(new LogDocMergePolicy());
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new RAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), true);
 			writer.SetMergePolicy(new LogDocMergePolicy());
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(100);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
 			reader.DeleteDocuments(new Term("content", "aaa"));
 			reader.Close();
 			
-			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+			writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), false);
 			writer.SetMergePolicy(new LogDocMergePolicy());
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(5);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 		private void  AddDoc(IndexWriter writer)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 		

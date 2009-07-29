@@ -111,18 +111,18 @@ namespace Lucene.Net.Search
 				System.Console.Out.WriteLine("Query: " + queryStr);
 			Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(FIELD_NAME, new StandardAnalyzer());
 			Lucene.Net.Search.Query query = queryParser.Parse(queryStr);
-			Hits multiSearcherHits = multiSearcher.Search(query);
-			Hits singleSearcherHits = singleSearcher.Search(query);
-			Assert.AreEqual(multiSearcherHits.Length(), singleSearcherHits.Length());
-			for (int i = 0; i < multiSearcherHits.Length(); i++)
+			ScoreDoc[] multiSearcherHits = multiSearcher.Search(query, null, 1000).scoreDocs;
+            ScoreDoc[] singleSearcherHits = singleSearcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(multiSearcherHits.Length, singleSearcherHits.Length);
+			for (int i = 0; i < multiSearcherHits.Length; i++)
 			{
-				Lucene.Net.Documents.Document docMulti = multiSearcherHits.Doc(i);
-				Lucene.Net.Documents.Document docSingle = singleSearcherHits.Doc(i);
+                Lucene.Net.Documents.Document docMulti = multiSearcher.Doc(multiSearcherHits[i].doc);
+				Lucene.Net.Documents.Document docSingle = singleSearcher.Doc(singleSearcherHits[i].doc);
 				if (verbose)
-					System.Console.Out.WriteLine("Multi:  " + docMulti.Get(FIELD_NAME) + " score=" + multiSearcherHits.Score(i));
+					System.Console.Out.WriteLine("Multi:  " + docMulti.Get(FIELD_NAME) + " score=" + multiSearcherHits[i].score);
 				if (verbose)
-					System.Console.Out.WriteLine("Single: " + docSingle.Get(FIELD_NAME) + " score=" + singleSearcherHits.Score(i));
-				Assert.AreEqual(multiSearcherHits.Score(i), singleSearcherHits.Score(i), 0.001f);
+					System.Console.Out.WriteLine("Single: " + docSingle.Get(FIELD_NAME) + " score=" + singleSearcherHits[i].score);
+				Assert.AreEqual(multiSearcherHits[i].score, singleSearcherHits[i].score, 0.001f);
 				Assert.AreEqual(docMulti.Get(FIELD_NAME), docSingle.Get(FIELD_NAME));
 			}
 			if (verbose)
@@ -136,11 +136,11 @@ namespace Lucene.Net.Search
 			base.SetUp();
 			// create MultiSearcher from two seperate searchers
 			Directory d1 = new RAMDirectory();
-			IndexWriter iw1 = new IndexWriter(d1, new StandardAnalyzer(), true);
+			IndexWriter iw1 = new IndexWriter(d1, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddCollection1(iw1);
 			iw1.Close();
 			Directory d2 = new RAMDirectory();
-			IndexWriter iw2 = new IndexWriter(d2, new StandardAnalyzer(), true);
+            IndexWriter iw2 = new IndexWriter(d2, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddCollection2(iw2);
 			iw2.Close();
 			
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
 			
 			// create IndexSearcher which contains all documents
 			Directory d = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(d, new StandardAnalyzer(), true);
+            IndexWriter iw = new IndexWriter(d, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddCollection1(iw);
 			AddCollection2(iw);
 			iw.Close();
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 		private void  Add(System.String value_Renamed, IndexWriter iw)
 		{
 			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
-			d.Add(new Field(FIELD_NAME, value_Renamed, Field.Store.YES, Field.Index.TOKENIZED));
+			d.Add(new Field(FIELD_NAME, value_Renamed, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(d);
 		}
 	}

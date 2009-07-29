@@ -51,10 +51,10 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("This is a test of the english stop analyzer");
 			TokenStream stream = stop.TokenStream("test", reader);
 			Assert.IsTrue(stream != null);
-			Token token = null;
-			while ((token = stream.Next()) != null)
+			Token reusableToken = new Token();
+			for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 			{
-				Assert.IsFalse(inValidTokens.Contains(token.TermText()));
+				Assert.IsFalse(inValidTokens.Contains(nextToken.Term()));
 			}
 		}
 		
@@ -69,12 +69,12 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
 			TokenStream stream = newStop.TokenStream("test", reader);
 			Assert.IsNotNull(stream);
-			Token token = null;
-			while ((token = stream.Next()) != null)
+			Token reusableToken = new Token();
+			for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 			{
-				System.String text = token.TermText();
+                System.String text = nextToken.Term();
 				Assert.IsFalse(stopWordsSet.Contains(text));
-				Assert.AreEqual(1, token.GetPositionIncrement()); // by default stop tokenizer does not apply increments.
+                Assert.AreEqual(1, nextToken.GetPositionIncrement()); // by default stop tokenizer does not apply increments.
 			}
 		}
 
@@ -94,13 +94,13 @@ namespace Lucene.Net.Analysis
 				int[] expectedIncr = new int[]{1, 1, 1, 3, 1, 1, 1, 2, 1};
 				TokenStream stream = newStop.TokenStream("test", reader);
 				Assert.IsNotNull(stream);
-				Token token = null;
 				int i = 0;
-				while ((token = stream.Next()) != null)
+                Token reusableToken = new Token();
+                for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 				{
-					System.String text = token.TermText();
+                    System.String text = nextToken.Term();
 					Assert.IsFalse(stopWordsSet.Contains(text));
-					Assert.AreEqual(expectedIncr[i++], token.GetPositionIncrement());
+                    Assert.AreEqual(expectedIncr[i++], nextToken.GetPositionIncrement());
 				}
 			}
 			finally

@@ -49,19 +49,19 @@ namespace Lucene.Net.Search.Function
 		/// <summary> description of field, used in explain() </summary>
 		public abstract System.String Description();
 		
-		/* (non-Javadoc) @see java.lang.Object#toString() */
+		/* (non-Javadoc) @see java.lang.object#toString() */
 		public override System.String ToString()
 		{
 			return Description();
 		}
 		
-		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(Object)}.</summary>
-		/// <seealso cref="Object.equals(Object)">
+		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(object)}.</summary>
+		/// <seealso cref="object.equals(object)">
 		/// </seealso>
-		abstract public  override bool Equals(System.Object o);
+		abstract public  override bool Equals(object o);
 		
 		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#hashCode()}.</summary>
-		/// <seealso cref="Object.hashCode()">
+		/// <seealso cref="object.hashCode()">
 		/// </seealso>
 		abstract public override int GetHashCode();
 	}

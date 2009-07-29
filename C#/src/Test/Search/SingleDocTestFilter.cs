@@ -18,8 +18,9 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
-namespace Lucene.Net.search
+namespace Lucene.Net.Search
 {
 	
 	[Serializable]
@@ -31,18 +32,31 @@ namespace Lucene.Net.search
 		{
 			this.doc = doc;
 		}
-		
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
 
-			for (int increment = 0; doc >= bits.Length; increment =+ 64)
-			{
-				bits.Length += increment;
-			}
-			bits.Set(doc, true);
-			
-			return bits;
-		}
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+
+            for (int increment = 0; doc >= bits.Length; increment = +64)
+            {
+                bits.Length += increment;
+            }
+            bits.Set(doc, true);
+
+            return new DocIdBitSet(bits);
+        }
+        [System.Obsolete()]
+        public override System.Collections.BitArray Bits(IndexReader reader)
+        {
+            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+
+            for (int increment = 0; doc >= bits.Length; increment = +64)
+            {
+                bits.Length += increment;
+            }
+            bits.Set(doc, true);
+
+            return bits;
+        }
 	}
 }

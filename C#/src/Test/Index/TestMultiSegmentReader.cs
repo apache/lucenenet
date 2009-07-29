@@ -52,8 +52,8 @@ namespace Lucene.Net.Index
 			doc2 = new Document();
 			DocHelper.SetupDoc(doc1);
 			DocHelper.SetupDoc(doc2);
-			SegmentInfo info1 = DocHelper.WriteDoc(dir, doc1);
-			SegmentInfo info2 = DocHelper.WriteDoc(dir, doc2);
+			DocHelper.WriteDoc(dir, doc1);
+			DocHelper.WriteDoc(dir, doc2);
 			sis = new SegmentInfos();
 			sis.Read(dir);
 		}
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
 			if (reader is MultiReader)
 			// MultiReader does not "own" the directory so it does
 			// not write the changes to sis on commit:
-				sis.Write(dir);
+				sis.Commit(dir);
 			
 			sis.Read(dir);
 			reader = OpenReader();
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 			if (reader is MultiReader)
 			// MultiReader does not "own" the directory so it does
 			// not write the changes to sis on commit:
-				sis.Write(dir);
+				sis.Commit(dir);
 			sis.Read(dir);
 			reader = OpenReader();
 			Assert.AreEqual(1, reader.NumDocs());
@@ -168,9 +168,9 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(RAMDirectory ramDir1, System.String s, bool create)
 		{
-			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(), create);
+			IndexWriter iw = new IndexWriter(ramDir1, new StandardAnalyzer(), create, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
-			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(doc);
 			iw.Close();
 		}

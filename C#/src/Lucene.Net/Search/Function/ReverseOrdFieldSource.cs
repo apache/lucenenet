@@ -45,9 +45,6 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
-	
 	[Serializable]
 	public class ReverseOrdFieldSource : ValueSource
 	{
@@ -96,7 +93,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + StrVal(doc);
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override System.Object GetInnerArray()
+			public /*internal*/ override object GetInnerArray()
 			{
 				return arr;
 			}
@@ -122,14 +119,14 @@ namespace Lucene.Net.Search.Function
 		{
 			Lucene.Net.Search.StringIndex sindex = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
 			
-			int[] arr = sindex.Order;
-			int end = sindex.Lookup.Length;
+			int[] arr = sindex.order;
+			int end = sindex.lookup.Length;
 			
 			return new AnonymousClassDocValues(end, arr, this);
 		}
 		
-		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
-		public  override bool Equals(System.Object o)
+		/*(non-Javadoc) @see java.lang.object#equals(java.lang.object) */
+		public  override bool Equals(object o)
 		{
 			if (o.GetType() != typeof(ReverseOrdFieldSource))
 				return false;
@@ -139,7 +136,7 @@ namespace Lucene.Net.Search.Function
 		
 		private static readonly int hcode;
 		
-		/*(non-Javadoc) @see java.lang.Object#hashCode() */
+		/*(non-Javadoc) @see java.lang.object#hashCode() */
 		public override int GetHashCode()
 		{
 			return hcode + field.GetHashCode();

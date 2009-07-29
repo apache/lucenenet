@@ -21,17 +21,11 @@ namespace Lucene.Net.Search
 {
 	
 	
-	/// <summary> Expert: Compares two ScoreDoc objects for sorting.
-	/// 
-	/// <p>Created: Feb 3, 2004 9:00:16 AM 
-	/// 
+	/// <summary>
+    /// Expert: Compares two ScoreDoc objects for sorting.
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: ScoreDocComparator.java 518518 2007-03-15 08:48:00Z buschmi $
-	/// </version>
+	/// <since>lucene 1.4</since>
+	/// <version>$Id:$</version>
 	public struct ScoreDocComparator_Fields
 	{
 		/// <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>

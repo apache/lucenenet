@@ -65,11 +65,11 @@ namespace Lucene.Net.Search
 			Query rw2 = null;
 			try
 			{
-				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				for (int i = 0; i < categories.Length; i++)
 				{
 					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-					doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.UN_TOKENIZED));
+					doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
 					writer.AddDocument(doc);
 				}
 				writer.Close();

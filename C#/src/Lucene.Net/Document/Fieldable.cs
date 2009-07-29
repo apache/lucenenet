@@ -22,10 +22,14 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> Synonymous with {@link Field}.
-	/// 
-	/// 
-	/// </summary>
+	/// <summary>
+    /// Synonymous with {@link Field}.
+    /// <p><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
+    /// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
+    /// compatibility promises remain intact. For example, Lucene can still
+    /// read and write indices created within the same major version.
+    /// </p>
+ 	/// </summary>
 	public interface Fieldable
 	{
 		/// <summary>Sets the boost factor hits on this field.  This value will be
@@ -143,7 +147,19 @@ namespace Lucene.Net.Documents
 		/// This effectively disables indexing boosts and length normalization for this field.
 		/// </summary>
 		void  SetOmitNorms(bool omitNorms);
-		
+
+        /// <summary>
+        /// Expert:
+        /// If set, omit term freq, positions, and payloads from postings for this field for this field.
+        /// </summary>
+        void SetOmitTf(bool omitTf);
+
+        /// <summary>
+        /// True if tf is omitted for this indexed field.
+        /// </summary>
+        /// <returns></returns>
+        bool GetOmitTf();
+
 		/// <summary> Indicates whether a Field is Lazy or not.  The semantics of Lazy loading are such that if a Field is lazily loaded, retrieving
 		/// it's values via {@link #StringValue()} or {@link #BinaryValue()} is only valid as long as the {@link Lucene.Net.Index.IndexReader} that
 		/// retrieved the {@link Document} is still open.
@@ -152,5 +168,35 @@ namespace Lucene.Net.Documents
 		/// <returns> true if this field can be loaded lazily
 		/// </returns>
 		bool IsLazy();
-	}
+
+        /// <summary>
+        /// Returns the offset into the byte[] segment that is used as value.  If Fields is not binary returned value is undefined.
+        /// </summary>
+        /// <returns>index of the first byte in segment that represents this Field value</returns>
+        int GetBinaryOffset();
+
+        /// <summary>
+        /// Returns the of byte][ segment that is used as value.  If Fields is not binarythe returned value is undefined.
+        /// </summary>
+        /// <returns>length of byte[] segment that represents this Field value</returns>
+        int GetBinaryLength();
+
+        /// <summary>
+        /// Return the raw byte[] for the vinary field.  Note that you must also call GetBinaryLength() and GetBinaryOffset()
+        /// to know which range of bytes in the returned array belong to this Field.
+        /// </summary>
+        /// <returns>refererence to the Field value as byte</returns>
+        byte[] GetBinaryValue();
+
+        /// <summary>
+        /// Return the raw byte[] for the vinary field.  Note that you must also call GetBinaryLength() and GetBinaryOffset()
+        /// to know which range of bytes in the returned array belong to this Field.
+        /// About reuse: if you pass in the result byte[] and it is used, it is likely the underlying implementation
+        /// will hold onto this byte[] and return it in future calls to BinaryValue() of GetBinaryValue().
+        /// So if you subsequently re-use the same byte[] elsewhere it will alter this Fieldable's value.
+        /// </summary>
+        /// <param name="result">user defined buffer that will be used if non-null and large enough to contain the Field value</param>
+        /// <returns></returns>
+        byte[] GetBinaryValue(byte[] result);
+    }
 }

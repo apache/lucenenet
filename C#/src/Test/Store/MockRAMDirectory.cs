@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> This is a subclass of RAMDirectory that adds methods
-	/// intented to be used only by unit tests.
+	/// intended to be used only by unit tests.
 	/// </summary>
 	/// <version>  $Id: RAMDirectory.java 437897 2006-08-29 01:13:10Z yonik $
 	/// </version>
@@ -36,42 +36,111 @@ namespace Lucene.Net.Store
 		internal double randomIOExceptionRate;
 		internal System.Random randomState;
 		internal bool noDeleteOpenFile = true;
-		
+        internal bool preventDoubleWrite = true;
+        private System.Collections.Generic.IDictionary<string, string> unSyncedFiles;
+        private System.Collections.Generic.IDictionary<string, string> createdFiles;
+        internal volatile bool crashed;
+
 		// NOTE: we cannot initialize the Map here due to the
 		// order in which our constructor actually does this
 		// member initialization vs when it calls super.  It seems
 		// like super is called, then our members are initialized:
 		internal System.Collections.IDictionary openFiles;
-		
+
+        private void Init()
+        {
+            if (openFiles == null)
+                openFiles = new System.Collections.Hashtable();
+            if (createdFiles == null)
+                createdFiles = new System.Collections.Generic.Dictionary<string, string>();
+            if (unSyncedFiles == null)
+                unSyncedFiles = new System.Collections.Generic.Dictionary<string, string>();
+
+        }
+
 		public MockRAMDirectory() : base()
 		{
-			if (openFiles == null)
-			{
-				openFiles = new System.Collections.Hashtable();
-			}
+            Init();
 		}
 		public MockRAMDirectory(System.String dir) : base(dir)
 		{
-			if (openFiles == null)
-			{
-				openFiles = new System.Collections.Hashtable();
-			}
-		}
+            Init();
+        }
 		public MockRAMDirectory(Directory dir) : base(dir)
 		{
-			if (openFiles == null)
-			{
-				openFiles = new System.Collections.Hashtable();
-			}
-		}
+            Init();
+        }
 		public MockRAMDirectory(System.IO.FileInfo dir) : base(dir)
 		{
-			if (openFiles == null)
-			{
-				openFiles = new System.Collections.Hashtable();
-			}
-		}
-		
+            Init();
+        }
+
+        /// <summary>
+        /// If set to true, we throw an IOException if the same file is opened by createOutput, ever.
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetPreventDoubleWrite(bool value)
+        {
+            preventDoubleWrite = value;
+        }
+
+        override public void Sync(string name)
+        {
+            lock (this)
+            {
+                MaybeThrowDeterministicException();
+                if (crashed)
+                    throw new System.IO.IOException("cannot sync after crash");
+                if (unSyncedFiles.ContainsKey(name))
+                    unSyncedFiles.Remove(name);
+            }
+        }
+
+        /// <summary>
+        /// Simulates a crash of OS or machine by overwriting unsynced files.
+        /// </summary>
+        public void Crash()
+        {
+            lock (this)
+            {
+                crashed = true;
+                openFiles = new System.Collections.Hashtable();
+            }
+            System.Collections.Generic.IEnumerator<string> it = unSyncedFiles.Keys.GetEnumerator();
+            unSyncedFiles = new System.Collections.Generic.Dictionary<string, string>();
+            int count = 0;
+            while (it.MoveNext())
+            {
+                string name = it.Current;
+                RAMFile file = (RAMFile)fileMap_ForNUnitTest[name];
+                if (count % 3 == 0)
+                {
+                    DeleteFile(name, true);
+                }
+                else if (count % 3 == 1)
+                {
+                    // Zero out file entirely
+                    int numBuffers = file.NumBuffers_ForNUnitTest();
+                    for (int i = 0; i < numBuffers; i++)
+                    {
+                        byte[] buffer = file.GetBuffer_ForNUnitTest(i);
+                        SupportClass.CollectionsSupport.ArrayFill(buffer, (byte)0);
+                    }
+                }
+                else if (count % 3 == 2)
+                {
+                    // truncate the file:
+                    file.SetLength_ForNUnitTest(file.GetLength_ForNUnitTest() / 2);
+                }
+                count++;
+            }
+        }
+
+        public void ClearCrash()
+        {
+            lock (this) { crashed = false; }
+        }
+
 		public virtual void  SetMaxSizeInBytes(long maxSize)
 		{
 			this.maxSize = maxSize;
@@ -137,32 +206,56 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				lock (openFiles.SyncRoot)
-				{
-					if (noDeleteOpenFile && openFiles.Contains(name))
-					{
-						throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot delete");
-					}
-				}
+                DeleteFile(name, false);
+            }
+        }
+
+        private void DeleteFile(string name, bool forced)
+        {
+            lock (this)
+            {
+                MaybeThrowDeterministicException();
+
+                if (crashed && !forced)
+                    throw new System.IO.IOException("cannot delete after crash");
+
+                if (unSyncedFiles.ContainsKey(name))
+                    unSyncedFiles.Remove(name);
+
+                if (!forced)
+                {
+                    lock (openFiles.SyncRoot)
+                    {
+                        if (noDeleteOpenFile && openFiles.Contains(name))
+                        {
+                            throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot delete");
+                        }
+                    }
+                }
 				base.DeleteFile(name);
 			}
 		}
 		
 		public override IndexOutput CreateOutput(System.String name)
 		{
-			if (openFiles == null)
-			{
-				openFiles = new System.Collections.Hashtable();
-			}
-			lock (openFiles.SyncRoot)
-			{
-				if (noDeleteOpenFile && openFiles.Contains(name))
-					throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot overwrite");
-			}
+            if (crashed)
+                throw new System.IO.IOException("cannot create output after crash");
+            Init();
+            lock (openFiles.SyncRoot)
+            {
+                if (preventDoubleWrite && createdFiles.ContainsKey(name) && !name.Equals("segments.gen"))
+                    throw new System.IO.IOException("file \"" + name + "\" is still open: cannot overwrite");
+                if (noDeleteOpenFile && openFiles.Contains(name))
+                    throw new System.IO.IOException("MockRAMDirectory: file \"" + name + "\" is still open: cannot overwrite");
+            }
 			RAMFile file = new RAMFile(this);
 			lock (this)
 			{
-				RAMFile existing = (RAMFile) fileMap_ForNUnitTest[name];
+                if (crashed)
+                    throw new System.IO.IOException("cannot create output after crash");
+                unSyncedFiles[name] = name;
+                createdFiles[name] = name;
+                RAMFile existing = (RAMFile)fileMap_ForNUnitTest[name];
 				// Enforce write once:
 				if (existing != null && !name.Equals("segments.gen"))
 					throw new System.IO.IOException("file " + name + " already exists");

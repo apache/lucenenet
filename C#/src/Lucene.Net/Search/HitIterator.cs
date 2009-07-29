@@ -20,13 +20,12 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> An iterator over {@link Hits} that provides lazy fetching of each document.
+	/// <summary>
+    /// An iterator over {@link Hits} that provides lazy fetching of each document.
 	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #Next()}
 	/// return a {@link Hit} instance.
-	/// 
 	/// </summary>
-	/// <author>  Jeremy Rayner
-	/// </author>
+    [System.Obsolete("Hits will be removed in Lucene 3.0.  Use TopDocCollector and TopDocs instead.")]
 	public class HitIterator : System.Collections.IEnumerator
 	{
 		/// <summary> Returns a {@link Hit} instance representing the next hit in {@link Hits}.
@@ -34,14 +33,14 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <returns> Next {@link Hit}.
 		/// </returns>
-		public virtual System.Object Current
+		public virtual object Current
 		{
 			get
 			{
 				if (hitNumber == hits.Length())
 					throw new System.ArgumentOutOfRangeException();
 				
-				System.Object next = new Hit(hits, hitNumber);
+				object next = new Hit(hits, hitNumber);
 				hitNumber++;
 				return next;
 			}

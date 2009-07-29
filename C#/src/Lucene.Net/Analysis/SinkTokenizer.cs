@@ -55,7 +55,8 @@ namespace Lucene.Net.Analysis
 		/// WARNING: Adding tokens to this list requires the {@link #Reset()} method to be called in order for them
 		/// to be made available.  Also, this Tokenizer does nothing to protect against {@link java.util.ConcurrentModificationException}s
 		/// in the case of adds happening while {@link #Next(Lucene.Net.Analysis.Token)} is being called.
-		/// 
+		/// <p/>
+        /// WARNING: Since this SinkTokenizer can be reset and the cached tokens made available again, do not modify them.  Modify clones instead.
 		/// </summary>
 		/// <returns> A List of {@link Lucene.Net.Analysis.Token}s
 		/// </returns>
@@ -68,11 +69,17 @@ namespace Lucene.Net.Analysis
 		/// <returns> The next {@link Lucene.Net.Analysis.Token} in the Sink.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public override Token Next()
+		public override Token Next(/* in */ Token reusableToken)
 		{
+            System.Diagnostics.Debug.Assert(reusableToken != null); 
 			if (iter == null)
 				iter = lst.GetEnumerator();
-			return iter.MoveNext() ? (Token) iter.Current : null;
+            if (iter.MoveNext())
+            {
+                Token nextToken = (Token) iter.Current;
+                return (Token) nextToken.Clone();
+            }
+            return null;
 		}
 		
 		

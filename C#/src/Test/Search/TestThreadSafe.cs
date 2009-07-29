@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 		
 		internal virtual void  BuildDir(Directory dir, int nDocs, int maxFields, int maxFieldLen)
 		{
-			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(10);
 			for (int j = 0; j < nDocs; j++)
 			{
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
 						sb.Append(' ').Append(words[r.Next(words.Length)]);
 					sb.Append(" $");
 					Field.Store store = Field.Store.YES; // make random later
-					Field.Index index = Field.Index.TOKENIZED; // make random later
+					Field.Index index = Field.Index.ANALYZED; // make random later
 					d.Add(new Field("f" + i, sb.ToString(), store, index));
 				}
 				iw.AddDocument(d);

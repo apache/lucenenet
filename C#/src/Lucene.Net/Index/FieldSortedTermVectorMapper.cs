@@ -27,19 +27,19 @@ namespace Lucene.Net.Index
 	public class FieldSortedTermVectorMapper : TermVectorMapper
 	{
 		private System.Collections.IDictionary fieldToTerms = new System.Collections.Hashtable();
-		private System.Collections.Generic.SortedDictionary<Object, Object> currentSet;
+		private System.Collections.Generic.SortedDictionary<object, object> currentSet;
 		private System.String currentField;
-		private System.Collections.Generic.IComparer<Object> comparator;
+		private System.Collections.Generic.IComparer<object> comparator;
 
 		/// <summary> </summary>
 		/// <param name="comparator">A Comparator for sorting {@link TermVectorEntry}s
 		/// </param>
-		public FieldSortedTermVectorMapper(System.Collections.Generic.IComparer<Object> comparator) : this(false, false, comparator)
+		public FieldSortedTermVectorMapper(System.Collections.Generic.IComparer<object> comparator) : this(false, false, comparator)
 		{
 		}
 		
 		
-		public FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, System.Collections.Generic.IComparer<Object> comparator) : base(ignoringPositions, ignoringOffsets)
+		public FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, System.Collections.Generic.IComparer<object> comparator) : base(ignoringPositions, ignoringOffsets)
 		{
 			this.comparator = comparator;
 		}
@@ -52,7 +52,8 @@ namespace Lucene.Net.Index
 		
 		public override void  SetExpectations(System.String field, int numTerms, bool storeOffsets, bool storePositions)
 		{
-			currentSet = new System.Collections.Generic.SortedDictionary<Object, Object>(comparator);
+			currentSet = new System.Collections.Generic.SortedDictionary<object, object>(comparator);
+
 			currentField = field;
 			fieldToTerms[field] = currentSet;
 		}
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		public virtual System.Collections.Generic.IComparer<Object> GetComparator()
+		public virtual System.Collections.Generic.IComparer<object> GetComparator()
 		{
 			return comparator;
 		}

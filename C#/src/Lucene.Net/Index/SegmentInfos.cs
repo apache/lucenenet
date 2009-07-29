@@ -17,6 +17,8 @@
 
 using System;
 
+using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
+using ChecksumIndexOutput = Lucene.Net.Store.ChecksumIndexOutput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -27,39 +29,12 @@ namespace Lucene.Net.Index
 	[Serializable]
 	sealed public class SegmentInfos : System.Collections.ArrayList
 	{
-		private class AnonymousClassFindSegmentsFile : FindSegmentsFile
-		{
-			private void  InitBlock(SegmentInfos enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SegmentInfos enclosingInstance;
-			public SegmentInfos Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassFindSegmentsFile(SegmentInfos enclosingInstance, Lucene.Net.Store.Directory Param1) : base(Param1)
-			{
-				InitBlock(enclosingInstance);
-			}
-			
-			protected internal override System.Object DoBody(System.String segmentFileName)
-			{
-				Enclosing_Instance.Read(directory, segmentFileName);
-				return null;
-			}
-		}
-
 		private class AnonymousClassFindSegmentsFile1 : FindSegmentsFile
 		{
 			internal AnonymousClassFindSegmentsFile1(Lucene.Net.Store.Directory Param1) : base(Param1)
 			{
 			}
-			protected internal override System.Object DoBody(System.String segmentFileName)
+			protected internal override object DoBody(System.String segmentFileName)
 			{
 				
 				IndexInput input = directory.OpenInput(segmentFileName);
@@ -118,9 +93,22 @@ namespace Lucene.Net.Index
 		/// vectors and stored fields file. 
 		/// </summary>
 		public const int FORMAT_SHARED_DOC_STORE = - 4;
-		
-		/* This must always point to the most recent file format. */
-		private static readonly int CURRENT_FORMAT = FORMAT_SHARED_DOC_STORE;
+
+        /// <summary> This format adds a checksum at the end of the file to
+        /// ensure all bytes were successfully written.</summary>
+        public const int FORMAT_CHECKSUM = -5;
+
+        /// <summary> This format adds the deletion count for each segment.
+        /// This way IndexWriter can efficiently report numDocs().</summary>
+        public const int FORMAT_DEL_COUNT = -6;
+
+        /// <summary> This format adds the boolean hasProx to record if any
+        /// fields in the segment store prox information (ie, have
+        /// omitTf==false)</summary>
+        public const int FORMAT_HAS_PROX = -7;
+
+        /* This must always point to the most recent file format. */
+        public static readonly int CURRENT_FORMAT = FORMAT_HAS_PROX;
 		
 		public int counter = 0; // used to name new segments
 		/// <summary> counts how often the index has been changed by adding or deleting docs.
@@ -269,7 +257,7 @@ namespace Lucene.Net.Index
 			// Clear any previous segments:
 			Clear();
 			
-			IndexInput input = directory.OpenInput(segmentFileName);
+			ChecksumIndexInput input = new ChecksumIndexInput(directory.OpenInput(segmentFileName));
 			
 			generation = GenerationFromSegmentsFileName(segmentFileName);
 			
@@ -308,6 +296,14 @@ namespace Lucene.Net.Index
 					else
 						version = input.ReadLong(); // read version
 				}
+
+                if (format <= FORMAT_CHECKSUM)
+                {
+                    long checksumNow = input.GetChecksum();
+                    long checksumThen = input.ReadLong();
+                    if (checksumNow != checksumThen)
+                        throw new CorruptIndexException("checksum mismatch in segments file");
+                }
 				success = true;
 			}
 			finally
@@ -334,98 +330,121 @@ namespace Lucene.Net.Index
 			
 			new AnonymousClassFindSegmentsFile(this, directory).Run();
 		}
-		
-		public void  Write(Directory directory)
-		{
-			
-			System.String segmentFileName = GetNextSegmentFileName();
-			
-			// Always advance the generation on write:
-			if (generation == - 1)
-			{
-				generation = 1;
-			}
-			else
-			{
-				generation++;
-			}
-			
-			IndexOutput output = directory.CreateOutput(segmentFileName);
-			
-			bool success = false;
-			
-			try
-			{
-				output.WriteInt(CURRENT_FORMAT); // write FORMAT
-				output.WriteLong(++version); // every write changes
-				// the index
-				output.WriteInt(counter); // write counter
-				output.WriteInt(Count); // write infos
-				for (int i = 0; i < Count; i++)
-				{
-					Info(i).Write(output);
-				}
-			}
-			finally
-			{
-				try
-				{
-					output.Close();
-					success = true;
-				}
-				finally
-				{
-					if (!success)
-					{
-						// Try not to leave a truncated segments_N file in
-						// the index:
-						directory.DeleteFile(segmentFileName);
-					}
-				}
-			}
-			
-			try
-			{
-				output = directory.CreateOutput(IndexFileNames.SEGMENTS_GEN);
-				try
-				{
-					output.WriteInt(FORMAT_LOCKLESS);
-					output.WriteLong(generation);
-					output.WriteLong(generation);
-				}
-				finally
-				{
-					output.Close();
-				}
-			}
-			catch (System.IO.IOException e)
-			{
-				// It's OK if we fail to write this file since it's
-				// used only as one of the retry fallbacks.
-			}
-			
-			lastGeneration = generation;
-		}
+
+        private class AnonymousClassFindSegmentsFile : FindSegmentsFile
+        {
+            private void InitBlock(SegmentInfos enclosingInstance)
+            {
+                this.enclosingInstance = enclosingInstance;
+            }
+            private SegmentInfos enclosingInstance;
+            public SegmentInfos Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            internal AnonymousClassFindSegmentsFile(SegmentInfos enclosingInstance, Lucene.Net.Store.Directory Param1)
+                : base(Param1)
+            {
+                InitBlock(enclosingInstance);
+            }
+
+            protected internal override object DoBody(System.String segmentFileName)
+            {
+                Enclosing_Instance.Read(directory, segmentFileName);
+                return null;
+            }
+        }
+
+        // only non-null after PrepareCommit has been called and before FinishCommit is called
+        internal ChecksumIndexOutput pendingOutput;
+
+        private void Write(Directory directory)
+        {
+
+            System.String segmentFileName = GetNextSegmentFileName();
+
+            // Always advance the generation on write:
+            if (generation == -1)
+            {
+                generation = 1;
+            }
+            else
+            {
+                generation++;
+            }
+
+            ChecksumIndexOutput output = new ChecksumIndexOutput(directory.CreateOutput(segmentFileName));
+
+            bool success = false;
+
+            try
+            {
+                output.WriteInt(CURRENT_FORMAT); // write FORMAT
+                output.WriteLong(++version); // every write changes
+                // the index
+                output.WriteInt(counter); // write counter
+                output.WriteInt(Count); // write infos
+                for (int i = 0; i < Count; i++)
+                {
+                    Info(i).Write(output);
+                }
+                output.PrepareCommit();
+                success = true;
+                pendingOutput = output;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    // we hit an exception above; try to close the file but suppress any exception:
+                    try
+                    {
+                        output.Close();
+                    }
+                    catch (System.Exception)
+                    {
+                        // suppress so we keep throwing the original exception
+                    }
+                    try
+                    {
+                        // try not to leave a truncated segments_N file int the index
+                        directory.DeleteFile(segmentFileName);
+                    }
+                    catch (System.Exception)
+                    {
+                        // suppress so we keep throwing the original exception
+                    }
+                }
+            }
+        }
+
 		
 		/// <summary> Returns a copy of this instance, also copying each
 		/// SegmentInfo.
 		/// </summary>
 		
-		public override System.Object Clone()
+		public override object Clone()
 		{
-			SegmentInfos si = new SegmentInfos();
-			for (int i = 0; i < base.Count; i++)
-			{
-				si.Add(((SegmentInfo) base[i]).Clone());
-			}
-			si.generation = this.generation;
-			si.lastGeneration = this.lastGeneration;
-			return si;
+            SegmentInfos si = new SegmentInfos();
+            for (int i = 0; i < base.Count; i++)
+            {
+                si.Add(((SegmentInfo)base[i]).Clone());
+            }
+            si.counter = this.counter;
+            si.version = this.version;
+            si.generation = this.generation;
+            si.lastGeneration = this.lastGeneration;
+            return si;
 		}
 
-        private SegmentInfos(SegmentInfos si) : base(si)
-        {
-        }
+        //private SegmentInfos(SegmentInfos si)
+        //    : base(si)
+        //{
+        //}
 
         public SegmentInfos()
         {
@@ -556,7 +575,7 @@ namespace Lucene.Net.Index
 				this.directory = directory;
 			}
 			
-			public System.Object Run()
+			public object Run()
 			{
 				System.String segmentFileName = null;
 				long lastGen = - 1;
@@ -657,7 +676,7 @@ namespace Lucene.Net.Index
 											}
 										}
 									}
-									catch (System.IO.IOException err2)
+									catch (System.IO.IOException)
 									{
 										// will retry
 									}
@@ -670,7 +689,7 @@ namespace Lucene.Net.Index
 								{
 									System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Lucene.Net.Index.SegmentInfos.defaultGenFileRetryPauseMsec));
 								}
-								catch (System.Threading.ThreadInterruptedException e)
+								catch (System.Threading.ThreadInterruptedException)
 								{
 									// will retry
 								}
@@ -739,7 +758,7 @@ namespace Lucene.Net.Index
 							retry = true;
 						}
 					}
-					else
+					else if (0 == method)
 					{
 						// Segment file has advanced since our last loop, so
 						// reset retry:
@@ -752,7 +771,7 @@ namespace Lucene.Net.Index
 					
 					try
 					{
-						System.Object v = DoBody(segmentFileName);
+						object v = DoBody(segmentFileName);
 						if (exc != null)
 						{
 							Lucene.Net.Index.SegmentInfos.Message("success on " + segmentFileName);
@@ -786,53 +805,205 @@ namespace Lucene.Net.Index
 							else
 							{
 								bool tmpBool;
-                                if (System.IO.File.Exists(new System.IO.FileInfo(fileDirectory.FullName + System.IO.Path.DirectorySeparatorChar + prevSegmentFileName).FullName))
+								if (System.IO.File.Exists(new System.IO.FileInfo(fileDirectory.FullName + "\\" + prevSegmentFileName).FullName))
 									tmpBool = true;
 								else
-                                    tmpBool = System.IO.Directory.Exists(new System.IO.FileInfo(fileDirectory.FullName + System.IO.Path.DirectorySeparatorChar + prevSegmentFileName).FullName);
+									tmpBool = System.IO.Directory.Exists(new System.IO.FileInfo(fileDirectory.FullName + "\\" + prevSegmentFileName).FullName);
 								prevExists = tmpBool;
 							}
 							
 							if (prevExists)
-							{
-								Lucene.Net.Index.SegmentInfos.Message("fallback to prior segment file '" + prevSegmentFileName + "'");
-								try
-								{
-									System.Object v = DoBody(prevSegmentFileName);
-									if (exc != null)
-									{
-										Lucene.Net.Index.SegmentInfos.Message("success on fallback " + prevSegmentFileName);
-									}
-									return v;
-								}
-								catch (System.IO.IOException err2)
-								{
-									Lucene.Net.Index.SegmentInfos.Message("secondary Exception on '" + prevSegmentFileName + "': " + err2 + "'; will retry");
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			/// <summary> Subclass must implement this.  The assumption is an
-			/// IOException will be thrown if something goes wrong
-			/// during the processing that could have been caused by
-			/// a writer committing.
-			/// </summary>
-			protected internal abstract System.Object DoBody(System.String segmentFileName);
-		}
-		
-		/// <summary> Returns a new SegmentInfos containg the SegmentInfo
-		/// instances in the specified range first (inclusive) to
-		/// last (exclusive), so total number of segments returned
-		/// is last-first.
-		/// </summary>
-		public SegmentInfos Range(int first, int last)
-		{
-			SegmentInfos infos = new SegmentInfos();
-			infos.AddRange((System.Collections.IList) ((System.Collections.ArrayList) this).GetRange(first, last - first));
-			return infos;
-		}
-	}
+                            {
+                                Lucene.Net.Index.SegmentInfos.Message("fallback to prior segment file '" + prevSegmentFileName + "'");
+                                try
+                                {
+                                    object v = DoBody(prevSegmentFileName);
+                                    if (exc != null)
+                                    {
+                                        Lucene.Net.Index.SegmentInfos.Message("success on fallback " + prevSegmentFileName);
+                                    }
+                                    return v;
+                                }
+                                catch (System.IO.IOException err2)
+                                {
+                                    Lucene.Net.Index.SegmentInfos.Message("secondary Exception on '" + prevSegmentFileName + "': " + err2 + "'; will retry");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            /// <summary> Subclass must implement this.  The assumption is an
+            /// IOException will be thrown if something goes wrong
+            /// during the processing that could have been caused by
+            /// a writer committing.
+            /// </summary>
+            protected internal abstract object DoBody(System.String segmentFileName);
+        }
+
+        /// <summary> Returns a new SegmentInfos containg the SegmentInfo
+        /// instances in the specified range first (inclusive) to
+        /// last (exclusive), so total number of segments returned
+        /// is last-first.
+        /// </summary>
+        public SegmentInfos Range(int first, int last)
+        {
+            SegmentInfos infos = new SegmentInfos();
+            infos.AddRange((System.Collections.IList)((System.Collections.ArrayList)this).GetRange(first, last - first));
+            return infos;
+        }
+
+        // carry over generation numbers from another SegmentInfos
+        internal void UpdateGeneration(SegmentInfos other)
+        {
+            lastGeneration = other.lastGeneration;
+            generation = other.generation;
+            version = other.version;
+        }
+
+        public void RollbackCommit(Directory dir)
+        {
+            if (pendingOutput != null)
+            {
+                try
+                {
+                    pendingOutput.Close();
+                }
+                catch (System.Exception)
+                {
+                    // Suppress so we keep throwing the original exception
+                    // in our caller
+                }
+
+                // Must carefully compute fileName from "generation"
+                // since lastGeneration isn't incremented:
+                try
+                {
+                    String segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
+                    dir.DeleteFile(segmentFileName);
+                }
+                catch (System.Exception)
+                {
+                    // Suppress so we keep throwing the original exception
+                    // in our caller
+                }
+                pendingOutput = null;
+            }
+        }
+
+        /** Call this to start a commit.  This writes the new
+         *  segments file, but writes an invalid checksum at the
+         *  end, so that it is not visible to readers.  Once this
+         *  is called you must call {@link #finishCommit} to complete
+         *  the commit or {@link #rollbackCommit} to abort it. */
+        public void PrepareCommit(Directory dir)
+        {
+            if (pendingOutput != null)
+                throw new System.Exception("prepareCommit was already called");
+            Write(dir);
+        }
+
+        public void FinishCommit(Directory dir)
+        {
+            if (pendingOutput == null)
+                throw new System.Exception("prepareCommit was not called");
+            bool success = false;
+            try
+            {
+                pendingOutput.FinishCommit();
+                pendingOutput.Close();
+                pendingOutput = null;
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                    RollbackCommit(dir);
+            }
+
+            // NOTE: if we crash here, we have left a segments_N
+            // file in the directory in a possibly corrupt state (if
+            // some bytes made it to stable storage and others
+            // didn't).  But, the segments_N file includes checksum
+            // at the end, which should catch this case.  So when a
+            // reader tries to read it, it will throw a
+            // CorruptIndexException, which should cause the retry
+            // logic in SegmentInfos to kick in and load the last
+            // good (previous) segments_N-1 file.
+
+            String fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
+            success = false;
+            try
+            {
+                dir.Sync(fileName);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    try
+                    {
+                        dir.DeleteFile(fileName);
+                    }
+                    catch (System.Exception)
+                    {
+                        // Suppress so we keep throwing the original exception
+                    }
+                }
+            }
+
+            lastGeneration = generation;
+
+            try
+            {
+                IndexOutput genOutput = dir.CreateOutput(IndexFileNames.SEGMENTS_GEN);
+                try
+                {
+                    genOutput.WriteInt(FORMAT_LOCKLESS);
+                    genOutput.WriteLong(generation);
+                    genOutput.WriteLong(generation);
+                }
+                finally
+                {
+                    genOutput.Close();
+                }
+            }
+            catch (System.Exception)
+            {
+                // It's OK if we fail to write this file since it's
+                // used only as one of the retry fallbacks.
+            }
+        }
+
+        /** Writes & syncs to the Directory dir, taking care to
+         *  remove the segments file on exception */
+        public void Commit(Directory dir)
+        {
+            PrepareCommit(dir);
+            FinishCommit(dir);
+        }
+
+        internal string SegString(Directory directory)
+        {
+            lock (this)
+            {
+                System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+                int count = Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (i > 0)
+                    {
+                        buffer.Append(' ');
+                    }
+                    SegmentInfo info = Info(i);
+                    buffer.Append(info.SegString(directory));
+                    if (info.dir != directory)
+                        buffer.Append("**");
+                }
+                return buffer.ToString();
+            }
+        }
+    }
 }

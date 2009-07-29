@@ -48,16 +48,20 @@ namespace Lucene.Net.Store
 			{
 				lock (dir.openFiles.SyncRoot)
 				{
-					System.Int32 v = (System.Int32) dir.openFiles[name];
-					if (v == 1)
-					{
-						dir.openFiles.Remove(name);
-					}
-					else
-					{
-						v = (System.Int32) (v - 1);
-						dir.openFiles[name] = v;
-					}
+                    // could be null when MockRAMDIrectory.Crash() was called
+                    if (dir.openFiles[name] != null)
+                    {
+                        System.Int32 v = (System.Int32)dir.openFiles[name];
+                        if (v == 1)
+                        {
+                            dir.openFiles.Remove(name);
+                        }
+                        else
+                        {
+                            v = (System.Int32)(v - 1);
+                            dir.openFiles[name] = v;
+                        }
+                    }
 				}
 			}
 		}

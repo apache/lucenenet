@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 			{
 				System.Random r = new System.Random((System.Int32) (BASE_SEED + 42));
 				Analyzer analyzer = new SimpleAnalyzer();
-				IndexWriter writer = new IndexWriter(dir, analyzer, true);
+                IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 				
 				writer.SetUseCompoundFile(false);
 				
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 					for (int f = 1; f <= NUM_FIELDS; f++)
 					{
-						doc.Add(new Field("f" + f, data[f % data.Length] + '#' + data[r.Next(data.Length)], Field.Store.YES, Field.Index.TOKENIZED));
+						doc.Add(new Field("f" + f, data[f % data.Length] + '#' + data[r.Next(data.Length)], Field.Store.YES, Field.Index.ANALYZED));
 					}
 					writer.AddDocument(doc);
 				}

@@ -15,84 +15,19 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Matches spans near the beginning of a field. </summary>
-	[Serializable]
+	[System.Serializable]
 	public class SpanFirstQuery : SpanQuery
 	{
-		private class AnonymousClassSpans : Spans
-		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-			{
-				InitBlock(reader, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-			{
-				this.reader = reader;
-				this.enclosingInstance = enclosingInstance;
-				spans = Enclosing_Instance.match.GetSpans(reader);
-			}
-			private Lucene.Net.Index.IndexReader reader;
-			private SpanFirstQuery enclosingInstance;
-			public SpanFirstQuery Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private Spans spans;
-			
-			public virtual bool Next()
-			{
-				while (spans.Next())
-				{
-					// scan to next match
-					if (End() <= Enclosing_Instance.end)
-						return true;
-				}
-				return false;
-			}
-			
-			public virtual bool SkipTo(int target)
-			{
-				if (!spans.SkipTo(target))
-					return false;
-				
-				if (spans.End() <= Enclosing_Instance.end)
-				// there is a match
-					return true;
-				
-				return Next(); // scan to next match
-			}
-			
-			public virtual int Doc()
-			{
-				return spans.Doc();
-			}
-			public virtual int Start()
-			{
-				return spans.Start();
-			}
-			public virtual int End()
-			{
-				return spans.End();
-			}
-			
-			public override System.String ToString()
-			{
-				return "spans(" + Enclosing_Instance.ToString() + ")";
-			}
-		}
 		private SpanQuery match;
 		private int end;
 		
@@ -148,13 +83,95 @@ namespace Lucene.Net.Search.Spans
 		{
 			match.ExtractTerms(terms);
 		}
-		
+
+        public override PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return (PayloadSpans)GetSpans(reader);
+        }
+
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new AnonymousClassSpans(reader, this);
+			return new AnonymousClassPayloadSpans(reader, this);
 		}
-		
-		public override Query Rewrite(IndexReader reader)
+
+        private class AnonymousClassPayloadSpans : PayloadSpans
+        {
+            private PayloadSpans spans;
+            private Lucene.Net.Index.IndexReader reader;
+            private SpanFirstQuery enclosingInstance;
+
+            private void InitBlock(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
+            {
+                this.reader = reader;
+                this.enclosingInstance = enclosingInstance;
+                spans = Enclosing_Instance.match.GetPayloadSpans(reader);
+            }
+
+            public AnonymousClassPayloadSpans(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
+            {
+                InitBlock(reader, enclosingInstance);
+            }
+
+            public SpanFirstQuery Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+            }
+
+            public virtual bool Next()
+            {
+                while (spans.Next())
+                {
+                    // scan to next match
+                    if (End() <= Enclosing_Instance.end)
+                        return true;
+                }
+                return false;
+            }
+
+            public virtual bool SkipTo(int target)
+            {
+                if (!spans.SkipTo(target))
+                    return false;
+
+                return (spans.End() <= Enclosing_Instance.end) || Next();
+            }
+
+            public virtual int Doc()
+            {
+                return spans.Doc();
+            }
+            public virtual int Start()
+            {
+                return spans.Start();
+            }
+            public virtual int End()
+            {
+                return spans.End();
+            }
+
+            public ICollection<byte[]> GetPayload()
+            {
+                List<byte[]> result = null;
+                if (spans.IsPayloadAvailable())
+                    result = new List<byte[]>(spans.GetPayload());
+                return result;
+            }
+
+            public bool IsPayloadAvailable()
+            {
+                return spans.IsPayloadAvailable();
+            }
+
+            public override System.String ToString()
+            {
+                return "spans(" + Enclosing_Instance.ToString() + ")";
+            }
+        }
+
+        public override Query Rewrite(IndexReader reader)
 		{
 			SpanFirstQuery clone = null;
 			
@@ -175,7 +192,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

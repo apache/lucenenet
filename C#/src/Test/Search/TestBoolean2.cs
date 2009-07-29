@@ -73,11 +73,11 @@ namespace Lucene.Net.Search
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < docFields.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(new Field(field, docFields[i], Field.Store.NO, Field.Index.TOKENIZED));
+				doc.Add(new Field(field, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();
@@ -100,11 +100,11 @@ namespace Lucene.Net.Search
 			{
 				Query query1 = MakeQuery(queryText);
 				BooleanQuery.SetAllowDocsOutOfOrder(true);
-				Hits hits1 = searcher.Search(query1);
+				ScoreDoc[] hits1 = searcher.Search(query1, null, 1000).scoreDocs;
 				
 				Query query2 = MakeQuery(queryText); // there should be no need to parse again...
 				BooleanQuery.SetAllowDocsOutOfOrder(false);
-				Hits hits2 = searcher.Search(query2);
+                ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).scoreDocs;
 				
 				CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
 			}
@@ -221,16 +221,12 @@ namespace Lucene.Net.Search
 					BooleanQuery.SetAllowDocsOutOfOrder(false);
 					
 					QueryUtils.Check(q1, searcher);
-					
-					Hits hits1 = searcher.Search(q1, sort);
-					if (hits1.Length() > 0)
-						hits1.Id(hits1.Length() - 1);
+
+                    ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).scoreDocs;
 					
 					BooleanQuery.SetAllowDocsOutOfOrder(true);
-					Hits hits2 = searcher.Search(q1, sort);
-					if (hits2.Length() > 0)
-						hits2.Id(hits1.Length() - 1);
-					tot += hits2.Length();
+                    ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).scoreDocs;
+					tot += hits2.Length;
 					CheckHits.CheckEqual(q1, hits1, hits2);
 				}
 			}

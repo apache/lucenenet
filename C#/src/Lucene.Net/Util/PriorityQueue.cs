@@ -28,15 +28,15 @@ namespace Lucene.Net.Util
 	{
 		private int size;
 		private int maxSize;
-		protected internal System.Object[] heap;
+		protected internal object[] heap;
 		
 		/// <summary>Determines the ordering of objects in this priority queue.  Subclasses
 		/// must define this one method. 
 		/// </summary>
-		public abstract bool LessThan(System.Object a, System.Object b);
+		public abstract bool LessThan(object a, object b);
 		
 		/// <summary>Subclass constructors must call this. </summary>
-		protected internal void  Initialize(int maxSize)
+		protected  void  Initialize(int maxSize)
 		{
 			size = 0;
 			int heapSize;
@@ -45,15 +45,15 @@ namespace Lucene.Net.Util
 				heapSize = 2;
 			else
 				heapSize = maxSize + 1;
-			heap = new System.Object[heapSize];
+			heap = new object[heapSize];
 			this.maxSize = maxSize;
 		}
 		
-		/// <summary> Adds an Object to a PriorityQueue in log(size) time.
+		/// <summary> Adds an object to a PriorityQueue in log(size) time.
 		/// If one tries to add more objects than maxSize from initialize
 		/// a RuntimeException (ArrayIndexOutOfBound) is thrown.
 		/// </summary>
-		public void  Put(System.Object element)
+		public void  Put(object element)
 		{
 			size++;
 			heap[size] = element;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
 		/// </param>
 		/// <returns> true if element is added, false otherwise.
 		/// </returns>
-		public virtual bool Insert(System.Object element)
+		public virtual bool Insert(object element)
 		{
 			return InsertWithOverflow(element) != element;
 		}
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
 		/// heap and now has been replaced by a larger one, or null
 		/// if the queue wasn't yet full with maxSize elements.
 		/// </summary>
-		public virtual System.Object InsertWithOverflow(System.Object element)
+		public virtual object InsertWithOverflow(object element)
 		{
 			if (size < maxSize)
 			{
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
 			}
 			else if (size > 0 && !LessThan(element, heap[1]))
 			{
-				System.Object ret = heap[1];
+				object ret = heap[1];
 				heap[1] = element;
 				AdjustTop();
 				return ret;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>Returns the least element of the PriorityQueue in constant time. </summary>
-		public System.Object Top()
+		public object Top()
 		{
 			// We don't need to check size here: if maxSize is 0,
 			// then heap is length 2 array with both entries null.
@@ -113,11 +113,11 @@ namespace Lucene.Net.Util
 		/// <summary>Removes and returns the least element of the PriorityQueue in log(size)
 		/// time. 
 		/// </summary>
-		public System.Object Pop()
+		public object Pop()
 		{
 			if (size > 0)
 			{
-				System.Object result = heap[1]; // save first value
+				object result = heap[1]; // save first value
 				heap[1] = heap[size]; // move last to first
 				heap[size] = null; // permit GC of objects
 				size--;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Util
 				return null;
 		}
 		
-		/// <summary>Should be called when the Object at top changes values.  Still log(n)
+		/// <summary>Should be called when the object at top changes values.  Still log(n)
 		/// worst case, but it's at least twice as fast to <pre>
 		/// { pq.top().change(); pq.adjustTop(); }
 		/// </pre> instead of <pre>
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
 		private void  UpHeap()
 		{
 			int i = size;
-			System.Object node = heap[i]; // save bottom node
+			object node = heap[i]; // save bottom node
 			int j = SupportClass.Number.URShift(i, 1);
 			while (j > 0 && LessThan(node, heap[j]))
 			{
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
 		private void  DownHeap()
 		{
 			int i = 1;
-			System.Object node = heap[i]; // save top node
+			object node = heap[i]; // save top node
 			int j = i << 1; // find smaller child
 			int k = j + 1;
 			if (k <= size && LessThan(heap[k], heap[j]))

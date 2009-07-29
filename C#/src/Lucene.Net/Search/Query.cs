@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns a clone of this query. </summary>
-		public virtual System.Object Clone()
+		public virtual object Clone()
 		{
 			try
 			{

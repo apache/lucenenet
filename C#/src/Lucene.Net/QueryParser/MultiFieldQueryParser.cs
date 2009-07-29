@@ -114,14 +114,7 @@ namespace Lucene.Net.QueryParsers
 								q.SetBoost((float) boost);
 							}
 						}
-						if (q is PhraseQuery)
-						{
-							((PhraseQuery) q).SetSlop(slop);
-						}
-						if (q is MultiPhraseQuery)
-						{
-							((MultiPhraseQuery) q).SetSlop(slop);
-						}
+                        ApplySlop(q, slop);
 						clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
 					}
 				}
@@ -130,10 +123,23 @@ namespace Lucene.Net.QueryParsers
 					return null;
 				return GetBooleanQuery(clauses, true);
 			}
-			return base.GetFieldQuery(field, queryText);
+            Query q2 = base.GetFieldQuery(field, queryText);
+            ApplySlop(q2, slop);
+            return q2;
 		}
-		
-		
+
+        private void ApplySlop(Query q, int slop)
+        {
+            if (q is PhraseQuery)
+            {
+                ((PhraseQuery)q).SetSlop(slop);
+            }
+            if (q is MultiPhraseQuery)
+            {
+                ((MultiPhraseQuery)q).SetSlop(slop);
+            }
+        }
+
 		public override Query GetFieldQuery(System.String field, System.String queryText)
 		{
 			return GetFieldQuery(field, queryText, 0);

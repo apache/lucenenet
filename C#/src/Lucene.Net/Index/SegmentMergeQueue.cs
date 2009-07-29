@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 			Initialize(size);
 		}
 		
-		public override bool LessThan(System.Object a, System.Object b)
+		public override bool LessThan(object a, object b)
 		{
 			SegmentMergeInfo stiA = (SegmentMergeInfo) a;
 			SegmentMergeInfo stiB = (SegmentMergeInfo) b;

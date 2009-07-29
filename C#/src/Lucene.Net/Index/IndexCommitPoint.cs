@@ -29,7 +29,6 @@
 /// index commit point would have a larger N.
 /// </summary>
 
-using System;
 
 namespace Lucene.Net.Index
 {
@@ -40,10 +39,10 @@ namespace Lucene.Net.Index
 		/// <summary> Get the segments file (<code>segments_N</code>) associated 
 		/// with this commit point.
 		/// </summary>
-		System.String GetSegmentsFileName();
+		string GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		System.Collections.ICollection GetFileNames();
+		System.Collections.Generic.ICollection<string> GetFileNames();
 		
 		/// <summary> Delete this commit point.
 		/// <p>
@@ -54,6 +53,6 @@ namespace Lucene.Net.Index
 		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
 		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
 		/// </summary>
-		void  Delete();
+		void Delete();
 	}
 }

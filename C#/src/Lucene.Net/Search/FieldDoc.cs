@@ -19,8 +19,6 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	
 	/// <summary> Expert: A ScoreDoc which also contains information about
 	/// how to sort the referenced document.  In addition to the
 	/// document number and score, this object contains an array
@@ -32,27 +30,18 @@ namespace Lucene.Net.Search
 	/// The class of each element in the array will be either
 	/// Integer, Float or String depending on the type of values
 	/// in the terms of each field.
-	/// 
-	/// <p>Created: Feb 11, 2004 1:23:38 PM
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: FieldDoc.java 472959 2006-11-09 16:21:50Z yonik $
-	/// </version>
-	/// <seealso cref="ScoreDoc">
-	/// </seealso>
-	/// <seealso cref="TopFieldDocs">
-	/// </seealso>
+	/// <since>lucene 1.4</since>
+	/// <version>$Id:$</version>
+	/// <seealso cref="ScoreDoc"/>
+	/// <seealso cref="TopFieldDocs"/>
     [Serializable]
     public class FieldDoc : ScoreDoc
     {
 		
         /// <summary>Expert: The values which are used to sort the referenced document.
         /// The order of these will match the original sort criteria given by a
-        /// Sort object.  Each Object will be either an Integer, Float or String,
+        /// Sort object.  Each object will be either an Integer, Float or String,
         /// depending on the type of values in the terms of the original field.
         /// </summary>
         /// <seealso cref="Sort">

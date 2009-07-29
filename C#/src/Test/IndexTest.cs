@@ -32,10 +32,11 @@ namespace Lucene.Net
 			try
 			{
 				System.DateTime start = System.DateTime.Now;
-				System.String tempFileName = System.IO.Path.GetTempFileName();
+                System.String tempFileName = System.IO.Path.GetTempFileName();
 				System.String tempDirectory = System.IO.Path.GetDirectoryName(tempFileName);
 				tempFileName = System.IO.Path.GetFileName(tempFileName);
-				IndexWriter writer = new IndexWriter(System.IO.Path.Combine(tempDirectory, "luceneTest") + tempFileName + ".idx", new SimpleAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(System.IO.Path.Combine(tempDirectory, "luceneTest") + tempFileName + ".idx",
+                    new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 
 				writer.SetMergeFactor(20);
 				

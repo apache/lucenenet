@@ -20,7 +20,6 @@ using System;
 using NUnit.Framework;
 
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
@@ -104,14 +103,14 @@ namespace Lucene.Net.Search.Function
 			Query q = new FieldScoreQuery(field, tp);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
-			Hits h = s.Search(q);
-			Assert.AreEqual(N_DOCS, h.Length(), "All docs should be matched!");
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+			Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 			System.String prevID = "ID" + (N_DOCS + 1); // greater than all ids of docs in this test
-			for (int i = 0; i < h.Length(); i++)
+			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = h.Doc(i).Get(ID_FIELD);
-				Log(i + ".   score=" + h.Score(i) + "  -  " + resID);
-				Log(s.Explain(q, h.Id(i)));
+				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].score + "  -  " + resID);
+				Log(s.Explain(q, h[i].doc));
 				Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
 				prevID = resID;
 			}
@@ -218,8 +217,8 @@ namespace Lucene.Net.Search.Function
 			for (int i = 0; i < 10; i++)
 			{
 				FieldScoreQuery q = new FieldScoreQuery(field, tp);
-				Hits h = s.Search(q);
-				Assert.AreEqual(N_DOCS, h.Length(), "All docs should be matched!");
+				ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+				Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 				try
 				{
 					if (i == 0)
@@ -247,8 +246,8 @@ namespace Lucene.Net.Search.Function
 			// verify new values are reloaded (not reused) for a new reader
 			s = new IndexSearcher(dir);
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
-			Hits h2 = s.Search(q2);
-			Assert.AreEqual(N_DOCS, h2.Length(), "All docs should be matched!");
+			ScoreDoc[] h2 = s.Search(q2, null, 1000).scoreDocs;
+			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			try
 			{
 				Log("compare: " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());

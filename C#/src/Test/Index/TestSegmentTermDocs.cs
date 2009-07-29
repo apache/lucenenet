@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestSkipTo(int indexDivisor)
 		{
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Term ta = new Term("content", "aaa");
 			for (int i = 0; i < 10; i++)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 	}

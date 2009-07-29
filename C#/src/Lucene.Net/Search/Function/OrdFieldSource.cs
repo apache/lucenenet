@@ -44,8 +44,6 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <author>  yonik
-	/// </author>
 	
 	[Serializable]
 	public class OrdFieldSource : ValueSource
@@ -88,7 +86,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + IntVal(doc);
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override System.Object GetInnerArray()
+			public /*internal*/ override object GetInnerArray()
 			{
 				return arr;
 			}
@@ -112,12 +110,12 @@ namespace Lucene.Net.Search.Function
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#getValues(Lucene.Net.Index.IndexReader) */
 		public override DocValues GetValues(IndexReader reader)
 		{
-			int[] arr = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field).Order;
+			int[] arr = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field).order;
 			return new AnonymousClassDocValues(arr, this);
 		}
 		
-		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
-		public  override bool Equals(System.Object o)
+		/*(non-Javadoc) @see java.lang.object#equals(java.lang.object) */
+		public  override bool Equals(object o)
 		{
 			if (o.GetType() != typeof(OrdFieldSource))
 				return false;
@@ -127,7 +125,7 @@ namespace Lucene.Net.Search.Function
 		
 		private static readonly int hcode;
 		
-		/*(non-Javadoc) @see java.lang.Object#hashCode() */
+		/*(non-Javadoc) @see java.lang.object#hashCode() */
 		public override int GetHashCode()
 		{
 			return hcode + field.GetHashCode();

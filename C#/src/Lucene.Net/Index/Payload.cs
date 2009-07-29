@@ -19,6 +19,8 @@ using System;
 
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
+using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+
 
 namespace Lucene.Net.Index
 {
@@ -162,10 +164,47 @@ namespace Lucene.Net.Index
 		/// <summary> Clones this payload by creating a copy of the underlying
 		/// byte array.
 		/// </summary>
-		public virtual System.Object Clone()
+		public virtual object Clone()
 		{
-			Payload clone = new Payload(this.ToByteArray());
-			return clone;
+            // start with a shallow copy of data
+            Payload clone = (Payload) base.MemberwiseClone();
+            // only copy the part of data that belongs to this payload
+            if (offset == 0 && length == data.Length)
+                // it is the whole thing so just clone it
+                clone.data = (byte[])data.Clone();
+            else
+            {
+                // just get the part
+                clone.data = this.ToByteArray();
+                clone.offset = 0;
+            }
+            return clone;
 		}
+
+        public override bool Equals(object obj)
+        {
+            if (obj == this)
+                return true;
+            if (obj is Payload)
+            {
+                Payload other = (Payload)obj;
+                if (length == other.length)
+                {
+                    for (int i = 0; i < length; i++)
+                        if (data[offset + 1] != other.data[other.offset + i])
+                            return false;
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ArrayUtil.HashCode(data, offset, offset + length);
+        }
 	}
 }

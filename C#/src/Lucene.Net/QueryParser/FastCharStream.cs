@@ -83,13 +83,13 @@ namespace Lucene.Net.QueryParsers
 
 			int charsRead = 0;
 			
-			try
-			{
-				charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
-			}
-			catch
-			{
-			}
+            //try
+            //{
+                charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
+            //}
+            //catch
+            //{
+            //}
 			
 			if (charsRead <= 0)
 				throw new System.IO.IOException("read past eof");

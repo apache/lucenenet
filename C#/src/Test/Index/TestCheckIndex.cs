@@ -36,10 +36,10 @@ namespace Lucene.Net.Index
 		public virtual void  TestDeletedDocs()
 		{
 			MockRAMDirectory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(2);
 			Document doc = new Document();
-			doc.Add(new Field("field", "aaa", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			doc.Add(new Field("field", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			for (int i = 0; i < 19; i++)
 			{
 				writer.AddDocument(doc);
@@ -48,11 +48,21 @@ namespace Lucene.Net.Index
 			IndexReader reader = IndexReader.Open(dir);
 			reader.DeleteDocument(5);
 			reader.Close();
-			
-			CheckIndex.out_Renamed = new System.IO.StringWriter();
-			bool condition = CheckIndex.Check(dir, false);
-			String message = CheckIndex.out_Renamed.ToString();
-			Assert.IsTrue(condition, message);
+
+            System.IO.StringWriter sw = new System.IO.StringWriter();
+            CheckIndex checker = new CheckIndex(dir);
+            checker.SetInfoStream(sw);
+            CheckIndex.Status indexStatus = checker.CheckIndex_Renamed();
+            if (!indexStatus.clean)
+            {
+                System.Console.WriteLine("CheckIndex failed");
+                System.Console.WriteLine(sw.ToString());
+                Assert.Fail();
+            }
+            System.Collections.Generic.List<object> onlySegments = new System.Collections.Generic.List<object>();
+            onlySegments.Add("_0");
+
+            Assert.IsTrue(checker.CheckIndex_Renamed(onlySegments).clean);
 		}
 	}
 }

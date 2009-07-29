@@ -29,8 +29,6 @@ namespace Lucene.Net.Index
 	/// <summary>An IndexReader which reads multiple indexes, appending their content.
 	/// 
 	/// </summary>
-	/// <version>  $Id: MultiReader.java 596004 2007-11-17 21:34:23Z buschmi $
-	/// </version>
 	public class MultiReader : IndexReader
 	{
 		protected internal IndexReader[] subReaders;
@@ -71,7 +69,7 @@ namespace Lucene.Net.Index
 		
 		private void  Initialize(IndexReader[] subReaders, bool closeSubReaders)
 		{
-			this.subReaders = subReaders;
+			this.subReaders = (IndexReader[]) subReaders.Clone();
 			starts = new int[subReaders.Length + 1]; // build starts array
 			decrefOnClose = new bool[subReaders.Length];
 			for (int i = 0; i < subReaders.Length; i++)
@@ -179,7 +177,7 @@ namespace Lucene.Net.Index
 									newSubReaders[i].Close();
 								}
 							}
-							catch (System.IO.IOException ignore)
+							catch (System.IO.IOException)
 							{
 								// keep going - we want to clean up as much as possible
 							}
@@ -348,7 +346,10 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
 		{
-			normsCache.Remove(field); // clear cache
+            lock (normsCache)
+            {
+                normsCache.Remove(field); // clear cache
+            }
 			int i = ReaderIndex(n); // find segment num
 			subReaders[i].SetNorm(n - starts[i], field, value_Renamed); // dispatch
 		}
@@ -410,7 +411,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+		public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return MultiSegmentReader.GetFieldNames(fieldNames, this.subReaders);

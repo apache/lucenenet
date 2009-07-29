@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 			this.shouldHaveCache = shouldHaveCache;
 		}
 		
-		public override System.Collections.BitArray Bits(IndexReader reader)
+		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			if (cache == null)
 			{
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 			lock (cache.SyncRoot)
 			{
 				// check cache
-				System.Collections.BitArray cached = (System.Collections.BitArray) cache[reader];
+				DocIdSet cached = (DocIdSet) cache[reader];
 				if (shouldHaveCache)
 				{
 					Assert.IsNotNull(cached, "Cache should have data ");
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			System.Collections.BitArray bits = filter.Bits(reader);
+			DocIdSet bits = filter.GetDocIdSet(reader);
 			
 			lock (cache.SyncRoot)
 			{

@@ -37,14 +37,15 @@ namespace Lucene.Net.Analysis
             this.done = false;
         }
 
-        public override Token Next(Token result)
+        public override Token Next(/* in */ Token reusableToken)
         {
+            System.Diagnostics.Debug.Assert(reusableToken != null);
             if (!done)
             {
                 done = true;
                 int upto = 0;
-                result.Clear();
-                char[] buffer = result.TermBuffer();
+                reusableToken.Clear();
+                char[] buffer = reusableToken.TermBuffer();
                 while (true)
                 {
                     int length = input.Read(buffer, upto, buffer.Length - upto);
@@ -52,10 +53,10 @@ namespace Lucene.Net.Analysis
                         break;
                     upto += length;
                     if (upto == buffer.Length)
-                        buffer = result.ResizeTermBuffer(1 + buffer.Length);
+                        buffer = reusableToken.ResizeTermBuffer(1 + buffer.Length);
                 }
-                result.termLength = upto;
-                return result;
+                reusableToken.SetTermLength(upto);
+                return reusableToken;
             }
             return null;
         }

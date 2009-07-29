@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is SpanTermQuery))
 				return false;
@@ -97,5 +97,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			return new TermSpans(reader.TermPositions(term), term);
 		}
+
+        public override PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return (PayloadSpans)GetSpans(reader);
+        }
 	}
 }

@@ -81,7 +81,6 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDocument()
 		{
-			int i = 1;
 			Assert.IsTrue(reader.NumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc() >= 1);
 			Lucene.Net.Documents.Document result = reader.Document(0);
@@ -124,7 +123,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestGetFieldNameVariations()
 		{
-			System.Collections.ICollection result = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			System.Collections.Generic.ICollection<string> result = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.all.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )

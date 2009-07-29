@@ -30,7 +30,10 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public class SpanFilterResult
 	{
+        [System.Obsolete()]
 		private System.Collections.BitArray bits;
+
+        private DocIdSet docIdSet;
 		private System.Collections.IList positions; //Spans spans;
 		
 		/// <summary> </summary>
@@ -38,13 +41,23 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="positions">A List of {@link Lucene.Net.Search.SpanFilterResult.PositionInfo} objects
 		/// </param>
+        [System.Obsolete("Use SpanFilterResult(DocIdSet, List) instead.")]
 		public SpanFilterResult(System.Collections.BitArray bits, System.Collections.IList positions)
 		{
 			this.bits = bits;
 			this.positions = positions;
 		}
-		
-		/// <summary> The first entry in the array corresponds to the first "on" bit.
+
+        /// <summary></summary>
+        /// <param name="docIdSet">The DocIdSet for the Filter</param>
+        /// <param name="positions">A List of {@link Lucene.Net.Search.SpanFilterResult.PositionInfo} objects</param>
+        public SpanFilterResult(DocIdSet docIdSet, System.Collections.IList positions)
+        {
+            this.docIdSet = docIdSet;
+            this.positions = positions;
+        }
+
+        /// <summary> The first entry in the array corresponds to the first "on" bit.
 		/// Entries are increasing by document order
 		/// </summary>
 		/// <returns> A List of PositionInfo objects
@@ -54,12 +67,20 @@ namespace Lucene.Net.Search
 			return positions;
 		}
 		
+        [System.Obsolete("Use GetDocIdSet() instead.")]
 		public virtual System.Collections.BitArray GetBits()
 		{
 			return bits;
 		}
-		
-		
+
+        /// <summary>
+        /// Returns the DocIdSet.
+        /// </summary>
+        /// <returns></returns>
+        public virtual DocIdSet GetDocIdSet()
+        {
+            return docIdSet;
+        }
 		
 		public class PositionInfo
 		{

@@ -20,7 +20,10 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Expert: Describes the score computation for document and query, andcan distinguish a match independent of a positive value. </summary>
+	/// <summary>
+    /// Expert: Describes the score computation for document and query, and
+    /// can distinguish a match independent of a positive value.
+    /// </summary>
 	[Serializable]
 	public class ComplexExplanation : Explanation
 	{
@@ -52,7 +55,7 @@ namespace Lucene.Net.Search
 			this.match = match;
             this.isMatchSet = true;
 		}
-		/// <summary> Indicates wether or not this Explanation models a good match.
+		/// <summary> Indicates whether or not this Explanation models a good match.
 		/// 
 		/// <p>
 		/// If the match statis is explicitly set (ie: not null) this method

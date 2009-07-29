@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 		/// Including optimize. 
 		/// </summary>
 		[Test]
-		public virtual void  _TestNorms()
+		public virtual void  TestNorms_Renamed()
 		{
 			// tmp dir
 			System.String tempDir = System.IO.Path.GetTempPath();
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 			Directory dir3 = FSDirectory.GetDirectory(indexDir3);
 			
 			CreateIndex(dir3);
-			IndexWriter iw = new IndexWriter(dir3, anlzr, false);
+            IndexWriter iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.AddIndexes(new Directory[]{dir1, dir2});
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
 			DoTestNorms(dir3);
 			
 			// now with optimize
-			iw = new IndexWriter(dir3, anlzr, false);
+            iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.Optimize();
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 		
 		private void  CreateIndex(Directory dir)
 		{
-			IndexWriter iw = new IndexWriter(dir, anlzr, true);
+            IndexWriter iw = new IndexWriter(dir, anlzr, true, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 		
 		private void  AddDocs(Directory dir, int ndocs, bool compound)
 		{
-			IndexWriter iw = new IndexWriter(dir, anlzr, false);
+            IndexWriter iw = new IndexWriter(dir, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
 			float boost = NextNorm();
 			for (int i = 0; i < 10; i++)
 			{
-				Field f = new Field("f" + i, "v" + i, Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+				Field f = new Field("f" + i, "v" + i, Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.NOT_ANALYZED);
 				f.SetBoost(boost);
 				d.Add(f);
 			}

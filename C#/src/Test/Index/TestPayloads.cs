@@ -31,6 +31,7 @@ using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
+using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
@@ -149,18 +150,18 @@ namespace Lucene.Net.Index
 		{
 			Directory ram = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer();
-			IndexWriter writer = new IndexWriter(ram, analyzer, true);
+            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			Document d = new Document();
 			// this field won't have any payloads
-			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.ANALYZED));
 			// this field will have payloads in all docs, however not for all term positions,
 			// so this field is used to check if the DocumentWriter correctly enables the payloads bit
 			// even if only some term positions have payloads
-			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.TOKENIZED));
-			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
+			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
 			// this field is used to verify if the SegmentMerger enables payloads for a field if it has payloads 
 			// enabled in only some documents
-			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.ANALYZED));
 			// only add payload data for field f2
 			analyzer.SetPayloadData("f2", 1, System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 1);
 			writer.AddDocument(d);
@@ -177,12 +178,12 @@ namespace Lucene.Net.Index
 			
 			// now we add another document which has payloads for field f3 and verify if the SegmentMerger
 			// enabled payloads for that field
-			writer = new IndexWriter(ram, analyzer, true);
+            writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			d = new Document();
-			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.TOKENIZED));
-			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.TOKENIZED));
-			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.TOKENIZED));
-			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.ANALYZED));
+			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
+			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
+			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.ANALYZED));
 			// add payload data for field f2 and f3
 			analyzer.SetPayloadData("f2", System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 1);
 			analyzer.SetPayloadData("f3", System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 3);
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
 		private void  PerformTest(Directory dir)
 		{
 			PayloadAnalyzer analyzer = new PayloadAnalyzer();
-			IndexWriter writer = new IndexWriter(dir, analyzer, true);
+            IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// should be in sync with value in TermInfosWriter
 			int skipInterval = 16;
@@ -245,7 +246,7 @@ namespace Lucene.Net.Index
 			byte[] payloadData = GenerateRandomData(payloadDataLength);
 			
 			Document d = new Document();
-			d.Add(new Field(fieldName, content, Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field(fieldName, content, Field.Store.NO, Field.Index.ANALYZED));
 			// add the same document multiple times to have the same payload lengths for all
 			// occurrences within two consecutive skip intervals
 			int offset = 0;
@@ -370,11 +371,11 @@ namespace Lucene.Net.Index
 			
 			// test long payload
 			analyzer = new PayloadAnalyzer();
-			writer = new IndexWriter(dir, analyzer, true);
+            writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			System.String singleTerm = "lucene";
 			
 			d = new Document();
-			d.Add(new Field(fieldName, singleTerm, Field.Store.NO, Field.Index.TOKENIZED));
+			d.Add(new Field(fieldName, singleTerm, Field.Store.NO, Field.Index.ANALYZED));
 			// add a payload whose length is greater than the buffer size of BufferedIndexOutput
 			payloadData = GenerateRandomData(2000);
 			analyzer.SetPayloadData(fieldName, payloadData, 100, 1500);
@@ -567,10 +568,11 @@ namespace Lucene.Net.Index
 				this.offset = offset;
 			}
 			
-			public override Token Next(Token token)
+			public override Token Next(Token reusableToken)
 			{
-				token = input.Next(token);
-				if (token != null)
+                System.Diagnostics.Debug.Assert(reusableToken != null);
+				Token nextToken = input.Next(reusableToken);
+				if (nextToken != null)
 				{
 					if (offset + length <= data.Length)
 					{
@@ -578,18 +580,18 @@ namespace Lucene.Net.Index
 						if (p == null)
 						{
 							p = new Payload();
-							token.SetPayload(p);
+							nextToken.SetPayload(p);
 						}
 						p.SetData(data, offset, length);
 						offset += length;
 					}
 					else
 					{
-						token.SetPayload(null);
+						nextToken.SetPayload(null);
 					}
 				}
 				
-				return token;
+				return nextToken;
 			}
 		}
 		
@@ -601,7 +603,7 @@ namespace Lucene.Net.Index
 			ByteArrayPool pool = new ByteArrayPool(numThreads, 5);
 			
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer());
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			System.String field = "test";
 			
 			SupportClass.ThreadClass[] ingesters = new SupportClass.ThreadClass[numThreads];
@@ -633,8 +635,9 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();
-						System.String s = System.Text.Encoding.UTF8.GetString(tp.GetPayload(new byte[5], 0));
-						Assert.AreEqual(s, terms.Term().text_ForNUnitTest);
+                        //System.String s = System.Text.Encoding.UTF8.GetString(tp.GetPayload(new byte[5], 0));
+                        //Assert.AreEqual(s, terms.Term().text_ForNUnitTest);
+                        Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().text_ForNUnitTest);
 					}
 				}
 				tp.Close();
@@ -650,22 +653,23 @@ namespace Lucene.Net.Index
 			private byte[] payload;
 			private bool first;
 			private ByteArrayPool pool;
-			
+            private string term;
 			internal PoolingPayloadTokenStream(ByteArrayPool pool)
 			{
 				this.pool = pool;
 				payload = pool.Get();
 				Lucene.Net.Index.TestPayloads.GenerateRandomData(payload);
+                term = pool.BytesToString(payload);
 				first = true;
 			}
 			
-			public override Token Next()
+			public override Token Next(Token reusableToken)
 			{
 				if (!first)
 					return null;
-				Token t = new Token(System.Text.Encoding.UTF8.GetString(payload), 0, 0);
-				t.SetPayload(new Payload(payload));
-				return t;
+				reusableToken.Reinit(term, 0, 0);
+				reusableToken.SetPayload(new Payload(payload));
+				return reusableToken;
 			}
 			
 			public override void  Close()
@@ -686,7 +690,25 @@ namespace Lucene.Net.Index
 					pool.Add(new byte[size]);
 				}
 			}
-			
+
+            private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
+
+            internal string BytesToString(byte[] bytes)
+            {
+                lock (this)
+                {
+                    string s = System.Text.Encoding.Default.GetString(bytes);
+                    UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+                    try{
+                        return System.Text.Encoding.UTF8.GetString(utf8Result.result, 0, utf8Result.length);
+                    }
+                    catch (System.Text.DecoderFallbackException)
+                    {
+                        return null;
+                    }
+                }
+            }
+
 			internal virtual byte[] Get()
 			{
 				lock (this)

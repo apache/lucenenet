@@ -15,25 +15,42 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using Weight = Lucene.Net.Search.Weight;
 using Searcher = Lucene.Net.Search.Searcher;
 
+using System.Collections.Generic;
+
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Base class for span-based queries. </summary>
-	[Serializable]
+	[System.Serializable]
 	public abstract class SpanQuery : Query
 	{
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
 		/// </summary>
 		public abstract Spans GetSpans(IndexReader reader);
-		
+
+        /// <summary>
+        /// Returns the matches for this query in an index, including access to any payloads
+        /// at thos positions.  Implementin classes that want access to the payloads will need
+        /// to implement this.
+        /// <para>
+        /// WARNING: The status of the Payloads feature is experimental.
+        /// The APIs introduced here might change in the future and will not be
+        /// supported anymore in such a cse.
+        /// </para>
+        /// </summary>
+        /// <param name="reader">the reader to use to access spans/payloads</param>
+        /// <returns>null</returns>
+        public virtual PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return null;
+        }
+
 		/// <summary>Returns the name of the field matched by this query.</summary>
 		public abstract System.String GetField();
 		

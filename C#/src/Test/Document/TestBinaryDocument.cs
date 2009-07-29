@@ -72,7 +72,7 @@ namespace Lucene.Net.Documents
 			
 			/** add the doc to a ram index */
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
 			

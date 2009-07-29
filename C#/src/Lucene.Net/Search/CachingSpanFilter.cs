@@ -44,18 +44,25 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
+        [System.Obsolete("Use GetDocIdSet(IndexReader) instead")]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			SpanFilterResult result = GetCachedResult(reader);
 			return result != null ? result.GetBits() : null;
 		}
+
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            SpanFilterResult result = GetCachedResult(reader);
+            return result != null ? result.GetDocIdSet() : null;
+        }
 		
 		private SpanFilterResult GetCachedResult(IndexReader reader)
 		{
 			SpanFilterResult result = null;
 			if (cache == null)
 			{
-				cache = new SupportClass.WeakHashTable();
+				cache = new System.Collections.Hashtable();
 			}
 			
 			lock (cache.SyncRoot)
@@ -82,7 +89,7 @@ namespace Lucene.Net.Search
 			return "CachingSpanFilter(" + filter + ")";
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is CachingSpanFilter))
 				return false;

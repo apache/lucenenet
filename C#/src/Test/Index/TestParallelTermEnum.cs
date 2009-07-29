@@ -44,22 +44,22 @@ namespace Lucene.Net.Index
 			Lucene.Net.Documents.Document doc;
 			
 			RAMDirectory rd1 = new RAMDirectory();
-			IndexWriter iw1 = new IndexWriter(rd1, new SimpleAnalyzer(), true);
+            IndexWriter iw1 = new IndexWriter(rd1, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field1", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
-			doc.Add(new Field("field2", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
-			doc.Add(new Field("field4", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.TOKENIZED));
+			doc.Add(new Field("field1", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc.Add(new Field("field2", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc.Add(new Field("field4", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED));
 			iw1.AddDocument(doc);
 			
 			iw1.Close();
 			RAMDirectory rd2 = new RAMDirectory();
-			IndexWriter iw2 = new IndexWriter(rd2, new SimpleAnalyzer(), true);
+            IndexWriter iw2 = new IndexWriter(rd2, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field0", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.TOKENIZED));
-			doc.Add(new Field("field1", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
-			doc.Add(new Field("field3", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
+			doc.Add(new Field("field0", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc.Add(new Field("field1", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc.Add(new Field("field3", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
 			iw2.AddDocument(doc);
 			
 			iw2.Close();

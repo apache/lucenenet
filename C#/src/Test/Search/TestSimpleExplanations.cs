@@ -313,7 +313,7 @@ namespace Lucene.Net.Search
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
-		/* some simple tests of boolean queries containing term queries */
+		/* some simple tests of bool queries containing term queries */
 		
 		[Test]
 		public virtual void  TestBQ1()

@@ -25,8 +25,6 @@ namespace Lucene.Net.Search
 	/// by the subquery scorers that generate that document, plus tieBreakerMultiplier times the sum of the scores
 	/// for the other subqueries that generate the document.
 	/// </summary>
-	/// <author>  Chuck Williams
-	/// </author>
 	class DisjunctionMaxScorer : Scorer
 	{
 		

@@ -25,38 +25,46 @@ namespace Lucene.Net.Analysis.Standard
 {
 	
 	/// <summary>Normalizes tokens extracted with {@link StandardTokenizer}. </summary>
-	
 	public sealed class StandardFilter:TokenFilter
 	{
+        private static readonly System.String APOSTROPHE_TYPE;
+        private static readonly System.String ACRONYM_TYPE;
+
+        static StandardFilter()
+        {
+            APOSTROPHE_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.APOSTROPHE];
+            ACRONYM_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
+        }
 		
-		
-		/// <summary>Construct filtering <i>in</i>. </summary>
-		public StandardFilter(TokenStream in_Renamed):base(in_Renamed)
-		{
-		}
-		
-		private static readonly System.String APOSTROPHE_TYPE;
-		private static readonly System.String ACRONYM_TYPE;
-		
-		/// <summary>Returns the next token in the stream, or null at EOS.
+        /// <summary>Construct filtering <i>in</i>. </summary>
+        public StandardFilter(TokenStream in_Renamed)
+            : base(in_Renamed)
+        {
+        }
+
+        /// <summary>Returns the next token in the stream, or null at EOS.
 		/// <p>Removes <tt>'s</tt> from the end of words.
 		/// <p>Removes dots from acronyms.
 		/// </summary>
-		public override Token Next(Token result)
+		public override Token Next(/* in */ Token reusableToken)
 		{
-			Token t = input.Next(result);
+            System.Diagnostics.Debug.Assert(reusableToken != null);
+			Token nextToken = input.Next(reusableToken);
 			
-			if (t == null)
+			if (nextToken == null)
 				return null;
 			
-			char[] buffer = t.TermBuffer();
-			int bufferLength = t.TermLength();
-			System.String type = t.Type();
+			char[] buffer = nextToken.TermBuffer();
+			int bufferLength = nextToken.TermLength();
+			System.String type = nextToken.Type();
 			
-			if (type == APOSTROPHE_TYPE && bufferLength >= 2 && buffer[bufferLength - 2] == '\'' && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
+			if (type == APOSTROPHE_TYPE && 
+                bufferLength >= 2 &&
+                buffer[bufferLength - 2] == '\'' &&
+                (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
 			{
 				// Strip last 2 characters off
-				t.SetTermLength(bufferLength - 2);
+				nextToken.SetTermLength(bufferLength - 2);
 			}
 			else if (type == ACRONYM_TYPE)
 			{
@@ -68,15 +76,10 @@ namespace Lucene.Net.Analysis.Standard
 					if (c != '.')
 						buffer[upto++] = c;
 				}
-				t.SetTermLength(upto);
+				nextToken.SetTermLength(upto);
 			}
 			
-			return t;
-		}
-		static StandardFilter()
-		{
-			APOSTROPHE_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.APOSTROPHE];
-			ACRONYM_TYPE = StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM];
+			return nextToken;
 		}
 	}
 }

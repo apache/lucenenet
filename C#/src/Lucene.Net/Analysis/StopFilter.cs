@@ -117,22 +117,23 @@ namespace Lucene.Net.Analysis
 			return stopSet;
 		}
 		
-		/// <summary> Returns the next input Token whose termText() is not a stop word.</summary>
-		public override Token Next(Token result)
+		/// <summary> Returns the next input Token whose term() is not a stop word.</summary>
+        public override Token Next(/* in */ Token reusableToken)
 		{
+            System.Diagnostics.Debug.Assert(reusableToken != null);
 			// return the first non-stop word found
 			int skippedPositions = 0;
-			while ((result = input.Next(result)) != null)
-			{
-				if (!stopWords.Contains(result.TermBuffer(), 0, result.termLength))
+            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
+            {
+				if (!stopWords.Contains(nextToken.TermBuffer(), 0, nextToken.TermLength()))
 				{
 					if (enablePositionIncrements)
 					{
-						result.SetPositionIncrement(result.GetPositionIncrement() + skippedPositions);
+						nextToken.SetPositionIncrement(nextToken.GetPositionIncrement() + skippedPositions);
 					}
-					return result;
+					return nextToken;
 				}
-				skippedPositions += result.GetPositionIncrement();
+				skippedPositions += nextToken.GetPositionIncrement();
 			}
 			// reached EOS -- return null
 			return null;

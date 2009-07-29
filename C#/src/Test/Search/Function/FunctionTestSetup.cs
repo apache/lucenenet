@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Function
 			// prepare a small index with just a few documents.  
 			dir = new RAMDirectory();
 			anlzr = new StandardAnalyzer();
-			IndexWriter iw = new IndexWriter(dir, anlzr);
+			IndexWriter iw = new IndexWriter(dir, anlzr, IndexWriter.MaxFieldLength.LIMITED);
 			// add docs not exactly in natural ID order, to verify we do check the order of docs by scores
 			int remaining = N_DOCS;
 			bool[] done = new bool[N_DOCS];
@@ -104,19 +104,19 @@ namespace Lucene.Net.Search.Function
 			Fieldable f;
 			int scoreAndID = i + 1;
 			
-			f = new Field(ID_FIELD, Id2String(scoreAndID), Field.Store.YES, Field.Index.UN_TOKENIZED); // for debug purposes
+			f = new Field(ID_FIELD, Id2String(scoreAndID), Field.Store.YES, Field.Index.NOT_ANALYZED); // for debug purposes
 			f.SetOmitNorms(true);
 			d.Add(f);
 			
-			f = new Field(TEXT_FIELD, "text of doc" + scoreAndID + TextLine(i), Field.Store.NO, Field.Index.TOKENIZED); // for regular search
+			f = new Field(TEXT_FIELD, "text of doc" + scoreAndID + TextLine(i), Field.Store.NO, Field.Index.ANALYZED); // for regular search
 			f.SetOmitNorms(true);
 			d.Add(f);
 			
-			f = new Field(INT_FIELD, "" + scoreAndID, Field.Store.NO, Field.Index.UN_TOKENIZED); // for function scoring
+			f = new Field(INT_FIELD, "" + scoreAndID, Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
 			f.SetOmitNorms(true);
 			d.Add(f);
 			
-			f = new Field(FLOAT_FIELD, scoreAndID + ".000", Field.Store.NO, Field.Index.UN_TOKENIZED); // for function scoring
+			f = new Field(FLOAT_FIELD, scoreAndID + ".000", Field.Store.NO, Field.Index.NOT_ANALYZED); // for function scoring
 			f.SetOmitNorms(true);
 			d.Add(f);
 			
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Function
 		}
 
 		[Test]
-		public virtual void  TestDummy()
+		override public void TestDummy()
 		{
             // So that NUnit doesn't complain
 		}

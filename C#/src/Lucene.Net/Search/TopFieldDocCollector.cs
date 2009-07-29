@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="numHits">the maximum number of hits to collect
 		/// </param>
-		public TopFieldDocCollector(IndexReader reader, Sort sort, int numHits) : base(numHits, new FieldSortedHitQueue(reader, sort.fields, numHits))
+		public TopFieldDocCollector(IndexReader reader, Sort sort, int numHits) : base(new FieldSortedHitQueue(reader, sort.fields, numHits))
 		{
 		}
 		

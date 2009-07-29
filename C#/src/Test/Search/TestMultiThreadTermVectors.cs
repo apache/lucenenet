@@ -46,13 +46,13 @@ namespace Lucene.Net.Search
 		public override void SetUp()
 		{
 			base.SetUp();
-			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			//writer.setUseCompoundFile(false);
 			//writer.infoStream = System.out;
 			for (int i = 0; i < numDocs; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.YES);
+				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
 				doc.Add(fld);
 				writer.AddDocument(doc);
 			}

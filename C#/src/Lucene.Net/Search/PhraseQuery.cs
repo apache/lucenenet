@@ -34,8 +34,9 @@ namespace Lucene.Net.Search
 	public class PhraseQuery : Query
 	{
 		private System.String field;
-		private System.Collections.ArrayList terms = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
-		private System.Collections.ArrayList positions = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		private System.Collections.ArrayList terms = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(4));
+		private System.Collections.ArrayList positions = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(4));
+        private int maxPosition = 0;
 		private int slop = 0;
 		
 		/// <summary>Constructs an empty phrase query. </summary>
@@ -97,7 +98,9 @@ namespace Lucene.Net.Search
 			}
 			
 			terms.Add(term);
-			positions.Add((System.Int32) position);
+			positions.Add(position);
+            if (position > maxPosition)
+                maxPosition = position;
 		}
 		
 		/// <summary>Returns the set of terms in this phrase. </summary>
@@ -298,34 +301,51 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String f)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			if (!field.Equals(f))
+			if (field != null && !field.Equals(f))
 			{
 				buffer.Append(field);
 				buffer.Append(":");
 			}
 			
 			buffer.Append("\"");
+            string[] pieces = new string[maxPosition + 1];
 			for (int i = 0; i < terms.Count; i++)
 			{
-				buffer.Append(((Term) terms[i]).Text());
-				if (i != terms.Count - 1)
-					buffer.Append(" ");
-			}
+                int pos = (int) positions[i];
+                string s = pieces[pos];
+                if (s == null)
+                {
+                    s = ((Term)terms[i]).Text();
+                }
+                else
+                {
+                    s = s + "|" + ((Term)terms[i]).Text();
+                }
+                pieces[pos] = s;
+            }
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                if (i > 0)
+                    buffer.Append(' ');
+
+                string s = pieces[i];
+                if (s == null)
+                    buffer.Append('?');
+                else
+                    buffer.Append(s);
+            }
 			buffer.Append("\"");
-			
-			if (slop != 0)
-			{
-				buffer.Append("~");
-				buffer.Append(slop);
-			}
-			
-			buffer.Append(ToStringUtils.Boost(GetBoost()));
-			
-			return buffer.ToString();
-		}
+
+            if (slop != 0)
+                buffer.Append("~").Append(slop);
+
+            buffer.Append(ToStringUtils.Boost(GetBoost()));
+
+            return buffer.ToString();
+        }
 		
         /// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-        public  override bool Equals(System.Object o)
+        public  override bool Equals(object o)
         {
             if (!(o is PhraseQuery))
                 return false;

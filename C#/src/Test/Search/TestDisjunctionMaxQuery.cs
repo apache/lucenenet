@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 			base.SetUp();
 			
 			index = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetSimilarity(sim);
 			
 			// hed is the most important field, dek is secondary
@@ -104,38 +104,38 @@ namespace Lucene.Net.Search
 			// d1 is an "ok" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-				d1.Add(new Field("id", "d1", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d1"));
-				d1.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
-				d1.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "elephant"));
+				d1.Add(new Field("id", "d1", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d1"));
+				d1.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
+				d1.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "elephant"));
 				writer.AddDocument(d1);
 			}
 			
 			// d2 is a "good" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-				d2.Add(new Field("id", "d2", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d2"));
-				d2.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
-				d2.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "albino"));
-				d2.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "elephant"));
+				d2.Add(new Field("id", "d2", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d2"));
+				d2.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
+				d2.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "albino"));
+				d2.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "elephant"));
 				writer.AddDocument(d2);
 			}
 			
 			// d3 is a "better" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-				d3.Add(new Field("id", "d3", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d3"));
-				d3.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "albino"));
-				d3.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
+				d3.Add(new Field("id", "d3", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d3"));
+				d3.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "albino"));
+				d3.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
 				writer.AddDocument(d3);
 			}
 			
 			// d4 is the "best" match for:  albino elephant
 			{
 				Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
-				d4.Add(new Field("id", "d4", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id", "d4"));
-				d4.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "albino"));
-				d4.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("hed", "elephant"));
-				d4.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("dek", "albino"));
+				d4.Add(new Field("id", "d4", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d4"));
+				d4.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "albino"));
+				d4.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
+				d4.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "albino"));
 				writer.AddDocument(d4);
 			}
 			
@@ -190,21 +190,21 @@ namespace Lucene.Net.Search
 			q.Add(Tq("hed", "elephant"));
 			QueryUtils.Check(q, s);
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(4, h.Length(), "all docs should match " + q.ToString());
+				Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
 				
-				float score = h.Score(0);
-				for (int i = 1; i < h.Length(); i++)
+				float score = h[0].score;
+				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h.Score(i), SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testSimpleEqualScores1", h);
+				PrintHits("testSimpleEqualScores1", h, s);
 				throw e;
 			}
 		}
@@ -219,20 +219,20 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(3, h.Length(), "3 docs should match " + q.ToString());
-				float score = h.Score(0);
-				for (int i = 1; i < h.Length(); i++)
+				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+				float score = h[0].score;
+				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h.Score(i), SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testSimpleEqualScores2", h);
+				PrintHits("testSimpleEqualScores2", h, s);
 				throw e;
 			}
 		}
@@ -249,20 +249,20 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(4, h.Length(), "all docs should match " + q.ToString());
-				float score = h.Score(0);
-				for (int i = 1; i < h.Length(); i++)
+				Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
+				float score = h[0].score;
+				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h.Score(i), SCORE_COMP_THRESH, "score #" + i + " is not the same");
+                    Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testSimpleEqualScores3", h);
+				PrintHits("testSimpleEqualScores3", h, s);
 				throw e;
 			}
 		}
@@ -277,21 +277,21 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(3, h.Length(), "3 docs should match " + q.ToString());
-				Assert.AreEqual("d2", h.Doc(0).Get("id"), "wrong first");
-				float score0 = h.Score(0);
-				float score1 = h.Score(1);
-				float score2 = h.Score(2);
+				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+				Assert.AreEqual("d2", s.Doc(h[0].doc).Get("id"), "wrong first");
+				float score0 = h[0].score;
+				float score1 = h[1].score;
+				float score2 = h[2].score;
 				Assert.IsTrue(score0 > score1, "d2 does not have better score then others: " + score0 + " >? " + score1);
 				Assert.AreEqual(score1, score2, SCORE_COMP_THRESH, "d4 and d1 don't have equal scores");
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testSimpleTiebreaker", h);
+				PrintHits("testSimpleTiebreaker", h, s);
 				throw e;
 			}
 		}
@@ -318,20 +318,20 @@ namespace Lucene.Net.Search
 			
 			QueryUtils.Check(q, s);
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(3, h.Length(), "3 docs should match " + q.ToString());
-				float score = h.Score(0);
-				for (int i = 1; i < h.Length(); i++)
+				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+				float score = h[0].score;
+				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h.Score(i), SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testBooleanRequiredEqualScores1", h);
+				PrintHits("testBooleanRequiredEqualScores1", h, s);
 				throw e;
 			}
 		}
@@ -356,24 +356,24 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
-				Assert.AreEqual(4, h.Length(), "4 docs should match " + q.ToString());
-				float score = h.Score(0);
-				for (int i = 1; i < h.Length() - 1; i++)
+				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
+				float score = h[0].score;
+				for (int i = 1; i < h.Length - 1; i++)
 				{
 					/* note: -1 */
-					Assert.AreEqual(score, h.Score(i), SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
-				Assert.AreEqual("d1", h.Doc(h.Length() - 1).Get("id"), "wrong last");
-				float score1 = h.Score(h.Length() - 1);
+				Assert.AreEqual("d1", s.Doc(h[h.Length - 1].doc).Get("id"), "wrong last");
+				float score1 = h[h.Length - 1].score;
 				Assert.IsTrue(score > score1, "d1 does not have worse score then others: " + score + " >? " + score1);
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testBooleanOptionalNoTiebreaker", h);
+				PrintHits("testBooleanOptionalNoTiebreaker", h, s);
 				throw e;
 			}
 		}
@@ -398,22 +398,22 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
 				
-				Assert.AreEqual(4, h.Length(), "4 docs should match " + q.ToString());
+				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 				
-				float score0 = h.Score(0);
-				float score1 = h.Score(1);
-				float score2 = h.Score(2);
-				float score3 = h.Score(3);
+				float score0 = h[0].score;
+				float score1 = h[1].score;
+				float score2 = h[2].score;
+				float score3 = h[3].score;
 				
-				System.String doc0 = h.Doc(0).Get("id");
-				System.String doc1 = h.Doc(1).Get("id");
-				System.String doc2 = h.Doc(2).Get("id");
-				System.String doc3 = h.Doc(3).Get("id");
+				System.String doc0 = s.Doc(h[0].doc).Get("id");
+				System.String doc1 = s.Doc(h[1].doc).Get("id");
+				System.String doc2 = s.Doc(h[2].doc).Get("id");
+				System.String doc3 = s.Doc(h[3].doc).Get("id");
 				
 				Assert.IsTrue(doc0.Equals("d2") || doc0.Equals("d4"), "doc0 should be d2 or d4: " + doc0);
 				Assert.IsTrue(doc1.Equals("d2") || doc1.Equals("d4"), "doc1 should be d2 or d4: " + doc0);
@@ -426,7 +426,7 @@ namespace Lucene.Net.Search
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testBooleanOptionalWithTiebreaker", h);
+                PrintHits("testBooleanOptionalWithTiebreaker", h, s);
 				throw e;
 			}
 		}
@@ -451,22 +451,22 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			Hits h = s.Search(q);
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
 				
-				Assert.AreEqual(4, h.Length(), "4 docs should match " + q.ToString());
+				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 				
-				float score0 = h.Score(0);
-				float score1 = h.Score(1);
-				float score2 = h.Score(2);
-				float score3 = h.Score(3);
+				float score0 = h[0].score;
+				float score1 = h[1].score;
+				float score2 = h[2].score;
+				float score3 = h[3].score;
 				
-				System.String doc0 = h.Doc(0).Get("id");
-				System.String doc1 = h.Doc(1).Get("id");
-				System.String doc2 = h.Doc(2).Get("id");
-				System.String doc3 = h.Doc(3).Get("id");
+				System.String doc0 = s.Doc(h[0].doc).Get("id");
+				System.String doc1 = s.Doc(h[1].doc).Get("id");
+				System.String doc2 = s.Doc(h[2].doc).Get("id");
+				System.String doc3 = s.Doc(h[3].doc).Get("id");
 				
 				Assert.AreEqual("d4", doc0, "doc0 should be d4: ");
 				Assert.AreEqual("d3", doc1, "doc1 should be d3: ");
@@ -479,16 +479,10 @@ namespace Lucene.Net.Search
 			}
 			catch (System.ApplicationException e)
 			{
-				PrintHits("testBooleanOptionalWithTiebreakerAndBoost", h);
+                PrintHits("testBooleanOptionalWithTiebreakerAndBoost", h, s);
 				throw e;
 			}
 		}
-		
-		
-		
-		
-		
-		
 		
 		/// <summary>macro </summary>
 		protected internal virtual Query Tq(System.String f, System.String t)
@@ -503,16 +497,15 @@ namespace Lucene.Net.Search
 			return q;
 		}
 		
-		
-		protected internal virtual void  PrintHits(System.String test, Hits h)
+		protected internal virtual void  PrintHits(System.String test, ScoreDoc[] h, Searcher s)
 		{
 			
 			System.Console.Error.WriteLine("------- " + test + " -------");
 			
-			for (int i = 0; i < h.Length(); i++)
+			for (int i = 0; i < h.Length; i++)
 			{
-				Lucene.Net.Documents.Document d = h.Doc(i);
-				float score = h.Score(i);
+				Lucene.Net.Documents.Document d = s.Doc(h[i].doc);
+				float score = h[i].score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000000}" + score + " - " + d.Get("id"));
 			}
 		}

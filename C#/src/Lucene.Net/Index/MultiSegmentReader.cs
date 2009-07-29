@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -29,13 +29,13 @@ namespace Lucene.Net.Index
 	{
 		protected internal SegmentReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
-		private System.Collections.Hashtable normsCache = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
+        private Dictionary<string, byte[]> normsCache = new Dictionary<string, byte[]>();
 		private int maxDoc = 0;
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
 		
 		/// <summary>Construct reading the named set of readers. </summary>
-		internal MultiSegmentReader(Directory directory, SegmentInfos sis, bool closeDirectory):base(directory, sis, closeDirectory)
+		internal MultiSegmentReader(Directory directory, SegmentInfos sis, bool closeDirectory, bool readOnly):base(directory, sis, closeDirectory, readOnly)
 		{
 			// To reduce the chance of hitting FileNotFound
 			// (and having to retry), we open segments in
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 			{
 				try
 				{
-					readers[i] = SegmentReader.Get(sis.Info(i));
+					readers[i] = SegmentReader.Get(readOnly, sis.Info(i));
 				}
 				catch (System.IO.IOException e)
 				{
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 						{
 							readers[i].Close();
 						}
-						catch (System.IO.IOException ignore)
+						catch (System.IO.IOException)
 						{
 							// keep going - we want to clean up as much as possible
 						}
@@ -71,19 +71,20 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>This contructor is only used for {@link #Reopen()} </summary>
-		internal MultiSegmentReader(Directory directory, SegmentInfos infos, bool closeDirectory, SegmentReader[] oldReaders, int[] oldStarts, System.Collections.IDictionary oldNormsCache):base(directory, infos, closeDirectory)
+		internal MultiSegmentReader(Directory directory, SegmentInfos infos, bool closeDirectory, SegmentReader[] oldReaders, int[] oldStarts, Dictionary<string, byte[]> oldNormsCache, bool readOnly)
+            : base(directory, infos, closeDirectory, readOnly)
 		{
 			
 			// we put the old SegmentReaders in a map, that allows us
 			// to lookup a reader using its segment name
-			System.Collections.IDictionary segmentReaders = new System.Collections.Hashtable();
+            Dictionary<string, int> segmentReaders = new Dictionary<string, int>();
 			
 			if (oldReaders != null)
 			{
 				// create a Map SegmentName->SegmentReader
 				for (int i = 0; i < oldReaders.Length; i++)
 				{
-					segmentReaders[oldReaders[i].GetSegmentName()] = (System.Int32) i;
+					segmentReaders[oldReaders[i].GetSegmentName()] = i;
 				}
 			}
 			
@@ -96,16 +97,17 @@ namespace Lucene.Net.Index
 			for (int i = infos.Count - 1; i >= 0; i--)
 			{
 				// find SegmentReader for this segment
-				Object oldReaderIndex = segmentReaders[infos.Info(i).name];
-				if (oldReaderIndex == null)
+                int oldReaderIndex;
+                if (!segmentReaders.ContainsKey(infos.Info(i).name))
 				{
 					// this is a new segment, no old SegmentReader can be reused
 					newReaders[i] = null;
 				}
 				else
 				{
-					// there is an old reader for this segment - we'll try to reopen it
-					newReaders[i] = oldReaders[(System.Int32) oldReaderIndex];
+                    oldReaderIndex = segmentReaders[infos.Info(i).name];
+                    // there is an old reader for this segment - we'll try to reopen it
+					newReaders[i] = oldReaders[oldReaderIndex];
 				}
 				
 				bool success = false;
@@ -115,7 +117,7 @@ namespace Lucene.Net.Index
 					if (newReaders[i] == null || infos.Info(i).GetUseCompoundFile() != newReaders[i].GetSegmentInfo().GetUseCompoundFile())
 					{
 						// this is a new reader; in case we hit an exception we can close it safely
-						newReader = SegmentReader.Get(infos.Info(i));
+						newReader = SegmentReader.Get(readOnly, infos.Info(i));
 					}
 					else
 					{
@@ -158,7 +160,7 @@ namespace Lucene.Net.Index
 										newReaders[i].DecRef();
 									}
 								}
-								catch (System.IO.IOException ignore)
+								catch (System.IO.IOException)
 								{
 									// keep going - we want to clean up as much as possible
 								}
@@ -174,39 +176,45 @@ namespace Lucene.Net.Index
 			// try to copy unchanged norms from the old normsCache to the new one
 			if (oldNormsCache != null)
 			{
-				System.Collections.IEnumerator it = oldNormsCache.Keys.GetEnumerator();
+				IEnumerator<KeyValuePair<string, byte[]>> it = oldNormsCache.GetEnumerator();
 				while (it.MoveNext())
 				{
-					System.String field = (System.String) it.Current;
+                    KeyValuePair<string, byte[]> entry = it.Current;
+					string field = entry.Key;
 					if (!HasNorms(field))
 					{
 						continue;
 					}
 					
-					byte[] oldBytes = (byte[]) oldNormsCache[field];
-					
+					byte[] oldBytes = entry.Value;
 					byte[] bytes = new byte[MaxDoc()];
 					
 					for (int i = 0; i < subReaders.Length; i++)
 					{
-						Object oldReaderIndex = segmentReaders[subReaders[i].GetSegmentName()];
-						
-						// this SegmentReader was not re-opened, we can copy all of its norms 
-						if (oldReaderIndex != null && (oldReaders[(System.Int32) oldReaderIndex] == subReaders[i] || oldReaders[(System.Int32) oldReaderIndex].norms[field] == subReaders[i].norms[field]))
-						{
-							// we don't have to synchronize here: either this constructor is called from a SegmentReader,
-							// in which case no old norms cache is present, or it is called from MultiReader.reopen(),
-							// which is synchronized
-							Array.Copy(oldBytes, oldStarts[(System.Int32) oldReaderIndex], bytes, starts[i], starts[i + 1] - starts[i]);
-						}
-						else
-						{
-							subReaders[i].Norms(field, bytes, starts[i]);
-						}
-					}
+                        if (segmentReaders.ContainsKey(subReaders[i].GetSegmentName()))
+                        {
+                            int oldReaderIndex = segmentReaders[subReaders[i].GetSegmentName()];
+                            // this SegmentReader was not re-opened, we can copy all of its norms 
+                            if (oldReaders[oldReaderIndex] == subReaders[i] || oldReaders[oldReaderIndex].norms[field] == subReaders[i].norms[field])
+                            {
+                                // we don't have to synchronize here: either this constructor is called from a SegmentReader,
+                                // in which case no old norms cache is present, or it is called from MultiReader.reopen(),
+                                // which is synchronized
+                                System.Array.Copy(oldBytes, oldStarts[oldReaderIndex], bytes, starts[i], starts[i + 1] - starts[i]);
+                            }
+                            else
+                            {
+                                subReaders[i].Norms(field, bytes, starts[i]);
+                            }
+                        }
+                        else
+                        {
+                            subReaders[i].Norms(field, bytes, starts[i]);
+                        }
+                    }
 					
 					normsCache[field] = bytes; // update cache
-				}
+                }
 			}
 		}
 		
@@ -232,14 +240,17 @@ namespace Lucene.Net.Index
 				if (infos.Count == 1)
 				{
 					// The index has only one segment now, so we can't refresh the MultiSegmentReader.
-					// Return a new SegmentReader instead
-					SegmentReader newReader = SegmentReader.Get(infos, infos.Info(0), false);
-					return newReader;
+					// Return a new [ReadOnly]SegmentReader instead
+					return SegmentReader.Get(readOnly, infos, infos.Info(0), false);
 				}
-				else
-				{
-					return new MultiSegmentReader(directory, infos, closeDirectory, subReaders, starts, normsCache);
-				}
+                else if (readOnly)
+                {
+                    return new ReadOnlyMultiSegmentReader(directory, infos, closeDirectory, subReaders, starts, normsCache);
+                }
+                else
+                {
+                    return new MultiSegmentReader(directory, infos, closeDirectory, subReaders, starts, normsCache, false);
+                }
 			}
 		}
 		
@@ -250,7 +261,7 @@ namespace Lucene.Net.Index
 			return subReaders[i].GetTermFreqVectors(n - starts[i]); // dispatch to segment
 		}
 		
-		public override TermFreqVector GetTermFreqVector(int n, System.String field)
+		public override TermFreqVector GetTermFreqVector(int n, string field)
 		{
 			EnsureOpen();
 			int i = ReaderIndex(n); // find segment num
@@ -258,7 +269,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
+		public override void  GetTermFreqVector(int docNumber, string field, TermVectorMapper mapper)
 		{
 			EnsureOpen();
 			int i = ReaderIndex(docNumber); // find segment num
@@ -371,7 +382,7 @@ namespace Lucene.Net.Index
 			return hi;
 		}
 		
-		public override bool HasNorms(System.String field)
+		public override bool HasNorms(string field)
 		{
 			EnsureOpen();
 			for (int i = 0; i < subReaders.Length; i++)
@@ -390,36 +401,39 @@ namespace Lucene.Net.Index
 			return ones;
 		}
 		
-		public override byte[] Norms(System.String field)
+		public override byte[] Norms(string field)
 		{
 			lock (this)
 			{
 				EnsureOpen();
-				byte[] bytes = (byte[]) normsCache[field];
-				if (bytes != null)
-					return bytes; // cache hit
-				if (!HasNorms(field))
-					return fakeNorms();
-				
+                byte[] bytes = normsCache.ContainsKey(field) ? normsCache[field] : null;
+
+                if (bytes != null)
+                    return bytes; // cache hit
+
+                if (!HasNorms(field))
+                    return fakeNorms();
+
 				bytes = new byte[MaxDoc()];
 				for (int i = 0; i < subReaders.Length; i++)
 					subReaders[i].Norms(field, bytes, starts[i]);
-				normsCache[field] = bytes; // update cache
-				return bytes;
+                normsCache[field] = bytes; // update cache
+
+                return bytes;
 			}
 		}
 		
-		public override void  Norms(System.String field, byte[] result, int offset)
+		public override void  Norms(string field, byte[] result, int offset)
 		{
 			lock (this)
 			{
 				EnsureOpen();
-				byte[] bytes = (byte[]) normsCache[field];
+				byte[] bytes = normsCache.ContainsKey(field)? normsCache[field] : null;
 				if (bytes == null && !HasNorms(field))
 					bytes = fakeNorms();
 				if (bytes != null)
 				// cache hit
-					Array.Copy(bytes, 0, result, offset, MaxDoc());
+					System.Array.Copy(bytes, 0, result, offset, MaxDoc());
 				
 				for (int i = 0; i < subReaders.Length; i++)
 				// read from segments
@@ -427,9 +441,12 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
+		protected internal override void  DoSetNorm(int n, string field, byte value_Renamed)
 		{
-			normsCache.Remove(field); // clear cache
+            lock (normsCache)
+            {
+                normsCache.Remove(field); // clear cache
+            }
 			int i = ReaderIndex(n); // find segment num
 			subReaders[i].SetNorm(n - starts[i], field, value_Renamed); // dispatch
 		}
@@ -503,24 +520,23 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+		public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return GetFieldNames(fieldNames, this.subReaders);
 		}
 		
-		internal static System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
+		internal static System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
 		{
 			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<string, string> fieldSet = new System.Collections.Generic.Dictionary<string, string>();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-                System.Collections.IEnumerator names = reader.GetFieldNames(fieldNames).GetEnumerator();
+                System.Collections.Generic.IEnumerator<string> names = reader.GetFieldNames(fieldNames).GetEnumerator();
                 while (names.MoveNext())
 				{
-					if (!fieldSet.ContainsKey(names.Current))
-						fieldSet.Add(names.Current, names.Current);
+                    fieldSet[names.Current] = names.Current;
 				}
 			}
 			return fieldSet.Keys;

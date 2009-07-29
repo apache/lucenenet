@@ -38,13 +38,14 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		public override Token Next()
+		public override Token Next(/* in */ Token reusableToken)
 		{
+            System.Diagnostics.Debug.Assert(reusableToken != null);
 			if (cache == null)
 			{
 				// fill cache lazily
 				cache = new System.Collections.ArrayList();
-				FillCache();
+                FillCache(reusableToken);
 				iterator = cache.GetEnumerator();
 			}
 			
@@ -54,7 +55,8 @@ namespace Lucene.Net.Analysis
 				return null;
 			}
 			
-			return (Token) iterator.Current;
+            Token nextToken = (Token) iterator.Current;
+            return (Token) nextToken.Clone();
 		}
 		
 		public override void  Reset()
@@ -65,13 +67,10 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		private void  FillCache()
+		private void  FillCache(/* in */ Token reusableToken)
 		{
-			Token token;
-			while ((token = input.Next()) != null)
-			{
-				cache.Add(token);
-			}
+            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
+				cache.Add(nextToken.Clone());
 		}
 	}
 }

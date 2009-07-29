@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-using System;
-
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
+
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Spans
 	/// <summary> Expert:
 	/// Public for extension only
 	/// </summary>
-	public class TermSpans : Spans
+	public class TermSpans : PayloadSpans
 	{
 		protected internal TermPositions positions;
 		protected internal Term term;
@@ -100,7 +100,21 @@ namespace Lucene.Net.Search.Spans
 		{
 			return position + 1;
 		}
-		
+
+        public ICollection<byte[]> GetPayload()
+        {
+            byte[] bytes = new byte[positions.GetPayloadLength()];
+            bytes = positions.GetPayload(bytes, 0);
+            List<byte[]> result = new List<byte[]>(1);
+            result.Add(bytes);
+            return result;
+        }
+
+        public bool IsPayloadAvailable()
+        {
+            return positions.IsPayloadAvailable();
+        }
+
 		public override System.String ToString()
 		{
 			return "spans(" + term.ToString() + ")@" + (doc == - 1 ? "START" : ((doc == System.Int32.MaxValue) ? "END" : doc + "-" + position));

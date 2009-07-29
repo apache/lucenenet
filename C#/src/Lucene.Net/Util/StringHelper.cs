@@ -15,19 +15,31 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Util
 {
-	
-	
-	/// <summary> Methods for manipulating strings.
-	/// 
-	/// $Id: StringHelper.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <summary>
+    /// Methods for manipulating strings.
 	/// </summary>
 	public abstract class StringHelper
 	{
-		
+        /// <summary>
+        /// Compares two byte arrays, starting at their 0th elements, and returns the 
+        /// number of common elements before encountering a difference.
+        /// </summary>
+        /// <param name="bytes1"></param>
+        /// <param name="len1"></param>
+        /// <param name="bytes2"></param>
+        /// <param name="len2"></param>
+        /// <returns>the number of common elements</returns>
+        public static int bytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
+        {
+            int len = len1 < len2 ? len1 : len2;
+            for (int i = 0; i < len; i++)
+                if (bytes1[i] != bytes2[i])
+                    return i;
+            return len;
+        }
+
 		/// <summary> Compares two strings, character by character, and returns the
 		/// first position where the two strings differ from one another.
 		/// 
@@ -38,7 +50,7 @@ namespace Lucene.Net.Util
 		/// </param>
 		/// <returns> The first position where the two strings differ.
 		/// </returns>
-		public static int StringDifference(System.String s1, System.String s2)
+		public static int StringDifference(string s1, string s2)
 		{
 			int len1 = s1.Length;
 			int len2 = s2.Length;
@@ -52,7 +64,6 @@ namespace Lucene.Net.Util
 			}
 			return len;
 		}
-		
 		
 		private StringHelper()
 		{

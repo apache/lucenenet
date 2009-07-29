@@ -35,8 +35,6 @@ namespace Lucene.Net.Search
 	/// include this term in only the best of those multiple fields, without confusing this with the better case of two different terms
 	/// in the multiple fields.
 	/// </summary>
-	/// <author>  Chuck Williams
-	/// </author>
 	[Serializable]
 	public class DisjunctionMaxQuery : Query, System.ICloneable
 	{
@@ -48,7 +46,7 @@ namespace Lucene.Net.Search
 		private float tieBreakerMultiplier = 0.0f;
 		
 		/// <summary>Creates a new empty DisjunctionMaxQuery.  Use add() to add the subqueries.</summary>
-		/// <param name="tieBreakerMultiplier">this score of each non-maximum disjunct for a document is multiplied by this weight
+		/// <param name="tieBreakerMultiplier">the score of each non-maximum disjunct for a document is multiplied by this weight
 		/// and added into the final score.  If non-zero, the value should be small, on the order of 0.1, which says that
 		/// 10 occurrences of word in a lower-scored field that is also in a higher scored field is just as good as a unique
 		/// word in the lower scored field (i.e., one that is not in any higher scored field.
@@ -240,7 +238,7 @@ namespace Lucene.Net.Search
 		/// <summary>Create a shallow copy of us -- used in rewriting if necessary</summary>
 		/// <returns> a copy of us (but reuse, don't copy, our subqueries) 
 		/// </returns>
-		public override System.Object Clone()
+		public override object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
 			return clone;
@@ -300,7 +298,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true iff o is a DisjunctionMaxQuery with the same boost and the same subqueries, in the same order, as us
 		/// </returns>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is DisjunctionMaxQuery))
 				return false;

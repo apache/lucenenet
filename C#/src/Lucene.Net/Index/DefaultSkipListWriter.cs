@@ -61,16 +61,18 @@ namespace Lucene.Net.Index
 			this.curStorePayloads = storePayloads;
 			this.curPayloadLength = payloadLength;
 			this.curFreqPointer = freqOutput.GetFilePointer();
-			this.curProxPointer = proxOutput.GetFilePointer();
+            if (proxOutput != null)
+			    this.curProxPointer = proxOutput.GetFilePointer();
 		}
 		
 		protected internal override void  ResetSkip()
 		{
 			base.ResetSkip();
-			for (int i = 0; i < lastSkipDoc.Length; i++) lastSkipDoc[i] = 0;
-			for (int i = 0; i < lastSkipPayloadLength.Length; i++) lastSkipPayloadLength[i] = -1; // we don't have to write the first length in the skip list
-			for (int i = 0; i < lastSkipFreqPointer.Length; i++) lastSkipFreqPointer[i] = freqOutput.GetFilePointer();
-			for (int i = 0; i < lastSkipProxPointer.Length; i++) lastSkipProxPointer[i] = proxOutput.GetFilePointer();
+			SupportClass.CollectionsSupport.ArrayFill(lastSkipDoc, 0);
+			SupportClass.CollectionsSupport.ArrayFill(lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
+			SupportClass.CollectionsSupport.ArrayFill(lastSkipFreqPointer, freqOutput.GetFilePointer());
+            if (proxOutput != null)
+			    SupportClass.CollectionsSupport.ArrayFill(lastSkipProxPointer, proxOutput.GetFilePointer());
 		}
 		
 		protected internal override void  WriteSkipData(int level, IndexOutput skipBuffer)

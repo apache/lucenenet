@@ -19,15 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-//using TestRunner = junit.textui.TestRunner;
-using Document = Lucene.Net.Documents.Document;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using FileDocument = Lucene.Net.Demo.FileDocument;
-using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Directory = Lucene.Net.Store.Directory;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using FileDocument = Lucene.Net.Demo.FileDocument;
 
 namespace Lucene.Net.Index
 {
@@ -139,7 +138,7 @@ namespace Lucene.Net.Index
 			System.IO.StreamWriter out_Renamed = new System.IO.StreamWriter(sw);
 			
 			Directory directory = FSDirectory.GetDirectory(indexDir);
-			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			SegmentInfo si1 = IndexDoc(writer, "test.txt");
 			PrintSegment(out_Renamed, si1);
@@ -147,7 +146,6 @@ namespace Lucene.Net.Index
 			SegmentInfo si2 = IndexDoc(writer, "test2.txt");
 			PrintSegment(out_Renamed, si2);
 			writer.Close();
-			directory.Close();
 			
 			SegmentInfo siMerge = Merge(si1, si2, "merge", false);
 			PrintSegment(out_Renamed, siMerge);
@@ -157,7 +155,8 @@ namespace Lucene.Net.Index
 			
 			SegmentInfo siMerge3 = Merge(siMerge, siMerge2, "merge3", false);
 			PrintSegment(out_Renamed, siMerge3);
-			
+
+            directory.Close();
 			out_Renamed.Close();
 			sw.Close();
 			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
@@ -167,7 +166,7 @@ namespace Lucene.Net.Index
 			out_Renamed = new System.IO.StreamWriter(sw);
 			
 			directory = FSDirectory.GetDirectory(indexDir);
-			writer = new IndexWriter(directory, new SimpleAnalyzer(), true);
+			writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			si1 = IndexDoc(writer, "test.txt");
 			PrintSegment(out_Renamed, si1);
@@ -175,7 +174,6 @@ namespace Lucene.Net.Index
 			si2 = IndexDoc(writer, "test2.txt");
 			PrintSegment(out_Renamed, si2);
 			writer.Close();
-			directory.Close();
 			
 			siMerge = Merge(si1, si2, "merge", true);
 			PrintSegment(out_Renamed, siMerge);
@@ -185,18 +183,18 @@ namespace Lucene.Net.Index
 			
 			siMerge3 = Merge(siMerge, siMerge2, "merge3", true);
 			PrintSegment(out_Renamed, siMerge3);
-			
-			out_Renamed.Close();
+
+            directory.Close();
+            out_Renamed.Close();
 			sw.Close();
 			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
 			Assert.AreEqual(multiFileOutput, singleFileOutput);
 		}
-		
-		
+				
 		private SegmentInfo IndexDoc(IndexWriter writer, System.String fileName)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(workDir.FullName + "\\" + fileName);
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, fileName));
 			Document doc = FileDocument.Document(file);
 			writer.AddDocument(doc);
 			writer.Flush();

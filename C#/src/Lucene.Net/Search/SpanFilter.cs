@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a SpanFilterResult with true for documents which should be permitted in
 		/// search results, and false for those that should not and Spans for where the true docs match.
 		/// </summary>
-		/// <param name="reader">The {@link Lucene.Net.Index.IndexReader} to load position and bitset information from
+		/// <param name="reader">The {@link Lucene.Net.Index.IndexReader} to load position and DocIdSet information from
 		/// </param>
 		/// <returns> A {@link SpanFilterResult}
 		/// </returns>
