@@ -44,10 +44,10 @@ namespace Lucene.Net.Search
 		public virtual void  TestNot_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.TOKENIZED));
+			d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(d1);
 			writer.Optimize();
@@ -57,8 +57,8 @@ namespace Lucene.Net.Search
 			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
 			Lucene.Net.Search.Query query = parser.Parse("a NOT b");
 			//System.out.println(query);
-			Hits hits = searcher.Search(query);
-			Assert.AreEqual(0, hits.Length());
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(0, hits.Length);
 		}
 	}
 }

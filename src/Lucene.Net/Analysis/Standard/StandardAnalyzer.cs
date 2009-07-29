@@ -30,6 +30,50 @@ namespace Lucene.Net.Analysis.Standard
     /// </version>
     public class StandardAnalyzer : Analyzer
     {
+        /// <summary>An array containing some common English words that are usually not
+        /// useful for searching. 
+        /// </summary>
+        public static readonly System.String[] STOP_WORDS;
+
+        private static bool defaultReplaceInvalidAcronym;
+
+        static StandardAnalyzer()
+        {
+            STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
+
+            // Default to true (fixed the bug), unless the system property is set
+            string v = SupportClass.AppSettings.Get("Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym", "true");
+            if (v.Equals("true"))
+                defaultReplaceInvalidAcronym = true;
+            else
+                defaultReplaceInvalidAcronym = false;
+        }
+
+        /// <summary>
+        /// see https://issues.apache.org/jira/browse/LUCENE-1068
+        /// </summary>
+        /// <returns>true if new instances of StandardTokenizer will replace mischaracterized acronyms</returns>
+        /// <deprecated>this will be removed (hardwired to true) in 3.0</deprecated>
+        public static bool GetDefaultReplaceInvalidAcronym()
+        {
+            return defaultReplaceInvalidAcronym;
+        }
+
+        /// <summary>
+        /// set to true to have new instances of StandardTokenizer
+        /// replace mischaracerized acronyms by default.  Set to 
+        /// false to preserve the previous (before 2.4) buggy behavior.
+        /// Alternatively, set the system property 
+        /// Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym
+        /// to false.
+        /// </summary>
+        /// <param name="replaceInvalidAcronym"/>
+        /// <deprecated>this will be removed (hardwired to true) in 3.0</deprecated>
+        public static void SetDefaultReplaceInvalidAcronym(bool replaceInvalidAcronym)
+        {
+            defaultReplaceInvalidAcronym = replaceInvalidAcronym;
+        }
+
         private System.Collections.Hashtable stopSet;
 		
 		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
@@ -40,13 +84,8 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </deprecated>
-		private bool replaceInvalidAcronym = false;
-		
-        /// <summary>An array containing some common English words that are usually not
-        /// useful for searching. 
-        /// </summary>
-        public static readonly System.String[] STOP_WORDS;
-		
+		private bool replaceInvalidAcronym = defaultReplaceInvalidAcronym;
+        
         /// <summary>Builds an analyzer with the default stop words ({@link #STOP_WORDS}). </summary>
         public StandardAnalyzer() : this(STOP_WORDS)
         {
@@ -219,7 +258,8 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </returns>
-		public virtual bool IsReplaceInvalidAcronym()
+        /// <deprecated>this will be removed (hardwired to true) in 3.0</deprecated>
+        public virtual bool IsReplaceInvalidAcronym()
 		{
 			return replaceInvalidAcronym;
 		}
@@ -229,13 +269,10 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </param>
-		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
+        /// <deprecated>this will be removed (hardwired to true) in 3.0</deprecated>
+        public virtual void SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
-		}
-		static StandardAnalyzer()
-		{
-			STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
 		}
 	}
 }

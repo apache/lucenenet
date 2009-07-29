@@ -28,9 +28,10 @@ namespace Lucene.Net.Store
 	[TestFixture]
 	public class TestHugeRamFile : LuceneTestCase
 	{
+
+        //private static readonly long MAX_VALUE = (long)2 * (long)System.Int32.MaxValue; // around 4 GB of memory
+        private static readonly long MAX_VALUE = (long)System.Int32.MaxValue >> 1; // around 1 GB of mem
 		
-		//private static readonly long MAX_VALUE = (long) 2 * (long) System.Int32.MaxValue;
-		private static readonly long MAX_VALUE = (long) 2 * (long) System.Int32.MaxValue/4; //{DIGY}Since everyone uses this setting to pass the test.
 		/// <summary>Fake a huge ram file by using the same byte buffer for all 
 		/// buffers under maxint. 
 		/// </summary>

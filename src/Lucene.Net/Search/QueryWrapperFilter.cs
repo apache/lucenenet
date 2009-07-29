@@ -17,6 +17,7 @@
 
 using System;
 
+using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -63,7 +64,35 @@ namespace Lucene.Net.Search
 				bits.Set(doc, true);
 			}
 		}
-		private Query query;
+
+        private class AnonymousClassHitCollector2 : HitCollector
+        {
+            public AnonymousClassHitCollector2(OpenBitSet bits, QueryWrapperFilter enclosingInstance)
+            {
+                InitBlock(bits, enclosingInstance);
+            }
+            private void InitBlock(OpenBitSet bits, QueryWrapperFilter enclosingInstance)
+            {
+                this.bits = bits;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private OpenBitSet bits;
+            private QueryWrapperFilter enclosingInstance;
+            public QueryWrapperFilter Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+
+            }
+            public override void Collect(int doc, float score)
+            {
+                bits.Set(doc);
+            }
+        }
+
+        private Query query;
 		
 		/// <summary>Constructs a filter which only matches documents matching
 		/// <code>query</code>.
@@ -73,20 +102,27 @@ namespace Lucene.Net.Search
 			this.query = query;
 		}
 		
+        [System.Obsolete("Use getDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-			
 			new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector(bits, this));
 			return bits;
 		}
-		
-		public override System.String ToString()
+
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            OpenBitSet bits = new OpenBitSet((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+            new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector2(bits, this));
+            return bits;
+        }
+
+        public override System.String ToString()
 		{
 			return "QueryWrapperFilter(" + query + ")";
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is QueryWrapperFilter))
 				return false;

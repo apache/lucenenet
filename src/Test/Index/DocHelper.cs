@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public static SegmentInfo WriteDoc(Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
 		{
-			IndexWriter writer = new IndexWriter(dir, analyzer);
+			IndexWriter writer = new IndexWriter(dir, analyzer, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetSimilarity(similarity);
 			//writer.setUseCompoundFile(false);
 			writer.AddDocument(doc);
@@ -187,21 +187,21 @@ namespace Lucene.Net.Index
 		}
 		static DocHelper()
 		{
-			textField1 = new Field(TEXT_FIELD_1_KEY, FIELD_1_TEXT, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
-			textField2 = new Field(TEXT_FIELD_2_KEY, FIELD_2_TEXT, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-			compressedTextField2 = new Field(COMPRESSED_TEXT_FIELD_2_KEY, FIELD_2_COMPRESSED_TEXT, Field.Store.COMPRESS, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-			textField3 = new Field(TEXT_FIELD_3_KEY, FIELD_3_TEXT, Field.Store.YES, Field.Index.TOKENIZED);
+			textField1 = new Field(TEXT_FIELD_1_KEY, FIELD_1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+			textField2 = new Field(TEXT_FIELD_2_KEY, FIELD_2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
+			compressedTextField2 = new Field(COMPRESSED_TEXT_FIELD_2_KEY, FIELD_2_COMPRESSED_TEXT, Field.Store.COMPRESS, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
+			textField3 = new Field(TEXT_FIELD_3_KEY, FIELD_3_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			{
 				textField3.SetOmitNorms(true);
 			}
-			keyField = new Field(KEYWORD_FIELD_KEY, KEYWORD_TEXT, Field.Store.YES, Field.Index.UN_TOKENIZED);
+			keyField = new Field(KEYWORD_FIELD_KEY, KEYWORD_TEXT, Field.Store.YES, Field.Index.NOT_ANALYZED);
 			noNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, Field.Store.YES, Field.Index.NO_NORMS);
 			unIndField = new Field(UNINDEXED_FIELD_KEY, UNINDEXED_FIELD_TEXT, Field.Store.YES, Field.Index.NO);
-			unStoredField1 = new Field(UNSTORED_FIELD_1_KEY, UNSTORED_1_FIELD_TEXT, Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.NO);
-			unStoredField2 = new Field(UNSTORED_FIELD_2_KEY, UNSTORED_2_FIELD_TEXT, Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.YES);
-			lazyField = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.TOKENIZED);
-			textUtfField1 = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
-			textUtfField2 = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
+			unStoredField1 = new Field(UNSTORED_FIELD_1_KEY, UNSTORED_1_FIELD_TEXT, Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.NO);
+			unStoredField2 = new Field(UNSTORED_FIELD_2_KEY, UNSTORED_2_FIELD_TEXT, Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES);
+			lazyField = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
+			textUtfField1 = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
+			textUtfField2 = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
 			{
 				//Initialize the large Lazy Field
 				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
 				}
 				lazyFieldBinary = new Field(LAZY_FIELD_BINARY_KEY, LAZY_FIELD_BINARY_BYTES, Field.Store.YES);
 				LARGE_LAZY_FIELD_TEXT = buffer.ToString();
-				largeLazyField = new Field(LARGE_LAZY_FIELD_KEY, LARGE_LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.TOKENIZED);
+				largeLazyField = new Field(LARGE_LAZY_FIELD_KEY, LARGE_LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 				fields = new Field[] { textField1, textField2, textField3, compressedTextField2, keyField, noNormsField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
 				for (int i = 0; i < fields.Length; i++)
 				{

@@ -42,8 +42,9 @@ namespace Lucene.Net.Index
 		
 		private long skipPointer;
 		private bool haveSkipped;
-		
-		protected internal bool currentFieldStoresPayloads;
+
+        protected internal bool currentFieldStoresPayloads;
+        protected internal bool currentFieldOmitTf;
 
         // for testing
         public IndexInput FreqStream_ForNUnitTest
@@ -94,7 +95,8 @@ namespace Lucene.Net.Index
 		{
 			count = 0;
 			FieldInfo fi = parent.fieldInfos.FieldInfo(term.field);
-			currentFieldStoresPayloads = (fi != null) ? fi.storePayloads : false;
+            currentFieldOmitTf = (fi != null) ? fi.omitTf : false;
+            currentFieldStoresPayloads = (fi != null) ? fi.storePayloads : false;
 			if (ti == null)
 			{
 				df = 0;
@@ -139,13 +141,20 @@ namespace Lucene.Net.Index
 					return false;
 				
 				int docCode = freqStream.ReadVInt();
-				doc += (int) (((uint) docCode) >> 1); // shift off low bit
-				if ((docCode & 1) != 0)
-				// if low bit is set
-					freq = 1;
-				// freq is one
-				else
-					freq = freqStream.ReadVInt(); // else read freq
+
+                if (currentFieldOmitTf)
+                {
+                    doc += docCode;
+                    freq = 1;
+                }
+                else
+                {
+                    doc += (int)(((uint)docCode) >> 1); // shift off low bit
+                    if ((docCode & 1) != 0) // if low bit is set
+                        freq = 1; // freq is one
+                    else
+                        freq = freqStream.ReadVInt(); // else read freq
+                }
 				
 				count++;
 				
@@ -157,34 +166,62 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Optimized implementation. </summary>
-		public virtual int Read(int[] docs, int[] freqs)
-		{
-			int length = docs.Length;
-			int i = 0;
-			while (i < length && count < df)
-			{
-				
-				// manually inlined call to next() for speed
-				int docCode = freqStream.ReadVInt();
-				doc += (int) (((uint) docCode) >> 1); // shift off low bit
-				if ((docCode & 1) != 0)
-				// if low bit is set
-					freq = 1;
-				// freq is one
-				else
-					freq = freqStream.ReadVInt(); // else read freq
-				count++;
-				
-				if (deletedDocs == null || !deletedDocs.Get(doc))
-				{
-					docs[i] = doc;
-					freqs[i] = freq;
-					++i;
-				}
-			}
-			return i;
-		}
-		
+        public virtual int Read(int[] docs, int[] freqs)
+        {
+            int length = docs.Length;
+            if (currentFieldOmitTf)
+            {
+                return ReadNoTf(docs, freqs, length);
+            }
+            else
+            {
+                int i = 0;
+                while (i < length && count < df)
+                {
+
+                    // manually inlined call to next() for speed
+                    int docCode = freqStream.ReadVInt();
+                    doc += (int)(((uint)docCode) >> 1); // shift off low bit
+                    if ((docCode & 1) != 0)
+                        // if low bit is set
+                        freq = 1;
+                    // freq is one
+                    else
+                        freq = freqStream.ReadVInt(); // else read freq
+                    count++;
+
+                    if (deletedDocs == null || !deletedDocs.Get(doc))
+                    {
+                        docs[i] = doc;
+                        freqs[i] = freq;
+                        ++i;
+                    }
+                }
+                return i;
+            }
+        }
+
+        private int ReadNoTf(int[] docs, int[] freqs, int length)
+        {
+            int i = 0;
+            while (i < length && count < df)
+            {
+                // manually inlined call to next() for speed
+                doc += freqStream.ReadVInt();
+                count++;
+
+                if (deletedDocs == null || !deletedDocs.Get(doc))
+                {
+                    docs[i] = doc;
+                    // hardware freq to 1 when term freqs were not
+                    // stored in the index
+                    freqs[i] = 1;
+                    ++i;
+                }
+            }
+            return i;
+        }
+
 		/// <summary>Overridden by SegmentTermPositions to skip in prox stream. </summary>
 		protected internal virtual void  SkipProx(long proxPointer)
 		{

@@ -28,6 +28,7 @@ using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search
 			// Create a dummy index with nothing in it.
 			// This could possibly fail if Lucene starts checking for docid ranges...
 			RAMDirectory rd = new RAMDirectory();
-			IndexWriter iw = new IndexWriter(rd, new WhitespaceAnalyzer(), true);
+			IndexWriter iw = new IndexWriter(rd, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			iw.Close();
 			s = new IndexSearcher(rd);
 		}
@@ -64,8 +65,8 @@ namespace Lucene.Net.Search
 				freq[i] = (int) System.Math.Ceiling(System.Math.Pow(f, power));
 				terms[i] = new Term("f", System.Convert.ToString((char) ('A' + i)));
 			}
-			
-			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+
+            IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < nDocs; i++)
 			{
 				Document d = new Document();
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
 				{
 					if (r.Next(freq[j]) == 0)
 					{
-						d.Add(new Field("f", terms[j].Text(), Field.Store.NO, Field.Index.UN_TOKENIZED));
+						d.Add(new Field("f", terms[j].Text(), Field.Store.NO, Field.Index.NOT_ANALYZED));
 						//System.out.println(d);
 					}
 				}
@@ -102,20 +103,6 @@ namespace Lucene.Net.Search
 				sets[i] = RandBitSet(setSize, r.Next(setSize));
 			}
 			return sets;
-		}
-		
-		[Serializable]
-		public class BitSetFilter : Filter
-		{
-			public System.Collections.BitArray set_Renamed;
-			public BitSetFilter(System.Collections.BitArray set_Renamed)
-			{
-				this.set_Renamed = set_Renamed;
-			}
-			public override System.Collections.BitArray Bits(IndexReader reader)
-			{
-				return set_Renamed;
-			}
 		}
 		
 		public class CountingHitCollector : HitCollector
@@ -160,11 +147,28 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		
+		public class AnonymousClassFilter : Filter
+        {
+            private System.Collections.BitArray rnd;
+            public AnonymousClassFilter(System.Collections.BitArray rnd)
+            {
+                this.rnd = rnd;
+            }
+            override public DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                return new DocIdBitSet(rnd);
+            }
+            [System.Obsolete()]
+            override public System.Collections.BitArray Bits(IndexReader reader)
+            {
+                return null;
+            }
+        }
+
 		internal virtual System.Collections.BitArray AddClause(BooleanQuery bq, System.Collections.BitArray result)
 		{
 			System.Collections.BitArray rnd = sets[r.Next(sets.Length)];
-			Query q = new ConstantScoreQuery(new BitSetFilter(rnd));
+			Query q = new ConstantScoreQuery(new AnonymousClassFilter(rnd));
 			bq.Add(q, BooleanClause.Occur.MUST);
 			if (validate)
 			{

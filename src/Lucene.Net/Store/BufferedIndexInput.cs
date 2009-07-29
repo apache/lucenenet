@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 		
 		private int bufferSize = BUFFER_SIZE;
 		
-		private byte[] buffer;
+		protected internal byte[] buffer;
 		
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferLength = 0; // end of valid bytes
@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		/// <summary>Change the buffer size used by this IndexInput </summary>
 		public virtual void  SetBufferSize(int newSize)
 		{
-			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length);
+			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length, "buffer=" + buffer + " bufferSize=" + bufferSize + " buffer.length=" + (buffer != null ? buffer.Length : 0));
 			if (newSize != bufferSize)
 			{
 				CheckBufferSize(newSize);
@@ -77,11 +77,16 @@ namespace Lucene.Net.Store
 					bufferStart += bufferPosition;
 					bufferPosition = 0;
 					bufferLength = numToCopy;
-					buffer = newBuffer;
+					NewBuffer(newBuffer);
 				}
 			}
 		}
-		
+
+        protected internal virtual void NewBuffer(byte[] newBuffer)
+        {
+            buffer = newBuffer;
+        }
+
 		/// <seealso cref="setBufferSize">
 		/// </seealso>
 		public virtual int GetBufferSize()
@@ -173,7 +178,7 @@ namespace Lucene.Net.Store
 			
 			if (buffer == null)
 			{
-				buffer = new byte[bufferSize]; // allocate buffer lazily
+				NewBuffer(new byte[bufferSize]); // allocate buffer lazily
 				SeekInternal(bufferStart);
 			}
 
@@ -220,7 +225,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		protected internal abstract void  SeekInternal(long pos);
 		
-		public override System.Object Clone()
+		public override object Clone()
 		{
 			BufferedIndexInput clone = (BufferedIndexInput) base.Clone();
 			

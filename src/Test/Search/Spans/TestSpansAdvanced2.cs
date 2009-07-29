@@ -47,10 +47,10 @@ namespace Lucene.Net.Search.Spans
 			base.SetUp();
 			
 			// create test index
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), false);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			AddDocument(writer, "A", "Should we, could we, would we?");
-			AddDocument(writer, "B", "it should.  Should it?");
-			AddDocument(writer, "C", "it shouldn't.");
+			AddDocument(writer, "B", "It should.  Should it?");
+			AddDocument(writer, "C", "It shouldn't.");
 			AddDocument(writer, "D", "Should we, should we, should we.");
 			writer.Close();
 			

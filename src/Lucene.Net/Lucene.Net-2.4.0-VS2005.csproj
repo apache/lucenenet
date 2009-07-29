@@ -3,7 +3,7 @@
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F04CA2F4-E182-46A8-B914-F46AF5319E83}</ProjectGuid>
+    <ProjectGuid>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -73,9 +73,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\References\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\..\..\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -212,6 +212,11 @@
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\BufferedDeletes.cs" />
+    <Compile Include="Index\ByteBlockPool.cs" />
+    <Compile Include="Index\ByteSliceReader.cs" />
+    <Compile Include="Index\ByteSliceWriter.cs" />
+    <Compile Include="Index\CharBlockPool.cs" />
     <Compile Include="Index\CheckIndex.cs" />
     <Compile Include="Index\CompoundFileReader.cs">
       <SubType>Code</SubType>
@@ -224,7 +229,22 @@
     <Compile Include="Index\DefaultSkipListReader.cs" />
     <Compile Include="Index\DefaultSkipListWriter.cs" />
     <Compile Include="Index\DirectoryIndexReader.cs" />
+    <Compile Include="Index\DocConsumer.cs" />
+    <Compile Include="Index\DocConsumerPerThread.cs" />
+    <Compile Include="Index\DocFieldConsumer.cs" />
+    <Compile Include="Index\DocFieldConsumerPerField.cs" />
+    <Compile Include="Index\DocFieldConsumerPerThread.cs" />
+    <Compile Include="Index\DocFieldConsumers.cs" />
+    <Compile Include="Index\DocFieldConsumersPerField.cs" />
+    <Compile Include="Index\DocFieldConsumersPerThread.cs" />
+    <Compile Include="Index\DocFieldProcessor.cs" />
+    <Compile Include="Index\DocFieldProcessorPerField.cs" />
+    <Compile Include="Index\DocFieldProcessorPerThread.cs" />
+    <Compile Include="Index\DocInverter.cs" />
+    <Compile Include="Index\DocInverterPerField.cs" />
+    <Compile Include="Index\DocInverterPerThread.cs" />
     <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\DocumentsWriterThreadState.cs" />
     <Compile Include="Index\FieldInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -244,6 +264,11 @@
     <Compile Include="Index\FilterIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\FreqProxFieldMergeState.cs" />
+    <Compile Include="Index\FreqProxTermsWriter.cs" />
+    <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
+    <Compile Include="Index\FreqProxTermsWriterPerThread.cs" />
+    <Compile Include="Index\IndexCommit.cs" />
     <Compile Include="Index\IndexCommitPoint.cs" />
     <Compile Include="Index\IndexDeletionPolicy.cs" />
     <Compile Include="Index\IndexFileDeleter.cs">
@@ -264,10 +289,18 @@
     <Compile Include="Index\IndexWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\IntBlockPool.cs" />
+    <Compile Include="Index\InvertedDocConsumer.cs" />
+    <Compile Include="Index\InvertedDocConsumerPerField.cs" />
+    <Compile Include="Index\InvertedDocConsumerPerThread.cs" />
+    <Compile Include="Index\InvertedDocEndConsumer.cs" />
+    <Compile Include="Index\InvertedDocEndConsumerPerField.cs" />
+    <Compile Include="Index\InvertedDocEndConsumerPerThread.cs" />
     <Compile Include="Index\KeepOnlyLastCommitDeletionPolicy.cs" />
     <Compile Include="Index\LogByteSizeMergePolicy.cs" />
     <Compile Include="Index\LogDocMergePolicy.cs" />
     <Compile Include="Index\LogMergePolicy.cs" />
+    <Compile Include="Index\MergeDocIDRemapper.cs" />
     <Compile Include="Index\MergePolicy.cs" />
     <Compile Include="Index\MergeScheduler.cs" />
     <Compile Include="Index\MultiLevelSkipListReader.cs" />
@@ -279,11 +312,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\MultiSegmentReader.cs" />
+    <Compile Include="Index\NormsWriter.cs" />
+    <Compile Include="Index\NormsWriterPerField.cs" />
+    <Compile Include="Index\NormsWriterPerThread.cs" />
     <Compile Include="Index\ParallelReader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\Payload.cs" />
     <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
+    <Compile Include="Index\RawPostingList.cs" />
+    <Compile Include="Index\ReadOnlyMultiSegmentReader.cs" />
+    <Compile Include="Index\ReadOnlySegmentReader.cs" />
+    <Compile Include="Index\ReusableStringReader.cs" />
     <Compile Include="Index\SegmentInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -321,6 +361,9 @@
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedTermVectorMapper.cs" />
     <Compile Include="Index\StaleReaderException.cs" />
+    <Compile Include="Index\StoredFieldsWriter.cs" />
+    <Compile Include="Index\StoredFieldsWriterPerField.cs" />
+    <Compile Include="Index\StoredFieldWriterPerThread.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -351,6 +394,12 @@
     <Compile Include="Index\TermPositionVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TermsHash.cs" />
+    <Compile Include="Index\TermsHashConsumer.cs" />
+    <Compile Include="Index\TermsHashConsumerPerField.cs" />
+    <Compile Include="Index\TermsHashConsumerPerThread.cs" />
+    <Compile Include="Index\TermsHashPerField.cs" />
+    <Compile Include="Index\TermsHashPerThread.cs" />
     <Compile Include="Index\TermVectorEntry.cs" />
     <Compile Include="Index\TermVectorEntryFreqSortedComparator.cs" />
     <Compile Include="Index\TermVectorMapper.cs" />
@@ -360,6 +409,9 @@
     <Compile Include="Index\TermVectorsReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TermVectorsTermsWriter.cs" />
+    <Compile Include="Index\TermVectorsTermsWriterPerField.cs" />
+    <Compile Include="Index\TermVectorsTermsWriterPerThread.cs" />
     <Compile Include="Index\TermVectorsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -433,6 +485,8 @@
     <Compile Include="Search\DisjunctionSumScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\DocIdSet.cs" />
+    <Compile Include="Search\DocIdSetIterator.cs" />
     <Compile Include="Search\ExactPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -521,6 +575,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Payload\BoostingTermQuery.cs" />
+    <Compile Include="Search\Payload\PayloadSpanUtil.cs" />
     <Compile Include="Search\PhrasePositions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -604,12 +659,14 @@
     <Compile Include="Search\SpanFilter.cs" />
     <Compile Include="Search\SpanFilterResult.cs" />
     <Compile Include="Search\SpanQueryFilter.cs" />
+    <Compile Include="Search\Spans\NearSpans.cs" />
     <Compile Include="Search\Spans\NearSpansOrdered.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Spans\NearSpansUnordered.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Spans\PayloadSpans.cs" />
     <Compile Include="Search\Spans\SpanFirstQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -675,6 +732,8 @@
     <Compile Include="Store\BufferedIndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\CheckSumIndexInput.cs" />
+    <Compile Include="Store\CheckSumIndexOutput.cs" />
     <Compile Include="Store\Directory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -728,31 +787,42 @@
     <Compile Include="SupportClass.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\BitUtil.cs" />
     <Compile Include="Util\BitVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\CloseableThreadLocal.cs" />
     <Compile Include="Util\Constants.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\DocIdBitSet.cs" />
+    <Compile Include="Util\OpenBitSet.cs" />
+    <Compile Include="Util\OpenBitSetDISI.cs" />
+    <Compile Include="Util\OpenBitSetIterator.cs" />
     <Compile Include="Util\Parameter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\Cache\Cache.cs" />
+    <Compile Include="Util\Cache\SimpleLRUCache.cs" />
+    <Compile Include="Util\Cache\SimpleMapCache.cs" />
     <Compile Include="Util\ScorerDocQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\SortedVIntList.cs" />
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Analysis\Standard\StandardTokenizer.jj" />
+    <Compile Include="Util\UnicodeUtil.cs" />
     <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />

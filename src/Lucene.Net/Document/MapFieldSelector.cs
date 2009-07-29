@@ -23,8 +23,6 @@ namespace Lucene.Net.Documents
 	/// <summary> A FieldSelector based on a Map of field names to FieldSelectorResults
 	/// 
 	/// </summary>
-	/// <author>  Chuck Williams
-	/// </author>
 	[Serializable]
 	public class MapFieldSelector : FieldSelector
 	{

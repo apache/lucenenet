@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
 
 using NUnit.Framework;
@@ -26,11 +25,13 @@ using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Hit = Lucene.Net.Search.Hit;
-using HitIterator = Lucene.Net.Search.HitIterator;
 using Hits = Lucene.Net.Search.Hits;
+using HitIterator = Lucene.Net.Search.HitIterator;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net
 {
@@ -38,7 +39,8 @@ namespace Lucene.Net
 	/// <summary> This test intentionally not put in the search package in order
 	/// to test HitIterator and Hit package protection.
 	/// </summary>
-	[TestFixture]
+    [System.Obsolete("Hits will be removed in Lucene 3.0.")]
+    [TestFixture]
 	public class TestHitIterator : LuceneTestCase
 	{
 		[Test]
@@ -46,17 +48,19 @@ namespace Lucene.Net
 		{
 			RAMDirectory directory = new RAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field", "iterator test doc 1", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("field", "iterator test doc 1", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
 			doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field", "iterator test doc 2", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("field", "iterator test doc 2", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
 			writer.Close();
-			
+
+            _TestUtil.CheckIndex(directory);
+
 			IndexSearcher searcher = new IndexSearcher(directory);
 			Hits hits = searcher.Search(new TermQuery(new Term("field", "iterator")));
 			

@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		{
 			// Create an index writer.
 			directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 
 			// oldest doc:
 			// Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
@@ -94,10 +94,10 @@ namespace Lucene.Net.Search
 			
 			// Execute the search and process the search results.
 			System.String[] actualOrder = new System.String[5];
-			Hits hits = searcher.Search(query, sort);
-			for (int i = 0; i < hits.Length(); i++)
+			ScoreDoc[] hits = searcher.Search(query, null, 1000, sort).scoreDocs;
+			for (int i = 0; i < hits.Length; i++)
 			{
-				Document document = hits.Doc(i);
+				Document document = searcher.Doc(hits[i].doc);
 				System.String text = document.Get(TEXT_FIELD);
 				actualOrder[i] = text;
 			}
@@ -122,12 +122,12 @@ namespace Lucene.Net.Search
 			Document document = new Document();
 			
 			// Add the text field.
-			Field textField = new Field(TEXT_FIELD, text, Field.Store.YES, Field.Index.TOKENIZED);
+			Field textField = new Field(TEXT_FIELD, text, Field.Store.YES, Field.Index.ANALYZED);
 			document.Add(textField);
 			
 			// Add the date/time field.
 			System.String dateTimeString = DateTools.TimeToString(time, DateTools.Resolution.SECOND);
-			Field dateTimeField = new Field(DATE_TIME_FIELD, dateTimeString, Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Field dateTimeField = new Field(DATE_TIME_FIELD, dateTimeString, Field.Store.YES, Field.Index.NOT_ANALYZED);
 			document.Add(dateTimeField);
 			
 			return document;

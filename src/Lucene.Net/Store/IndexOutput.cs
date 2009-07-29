@@ -16,6 +16,7 @@
  */
 
 using System;
+using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Store
 {
@@ -29,6 +30,7 @@ namespace Lucene.Net.Store
 	/// </seealso>
 	public abstract class IndexOutput
 	{
+        private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
 		
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
@@ -113,23 +115,19 @@ namespace Lucene.Net.Store
 		/// <summary>Writes a string.</summary>
 		/// <seealso cref="IndexInput.ReadString()">
 		/// </seealso>
-		public virtual void  WriteString(System.String s)
+		public virtual void  WriteString(string s)
 		{
-			int length = s.Length;
-			WriteVInt(length);
-			WriteChars(s, 0, length);
+            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+			WriteVInt(utf8Result.length);
+			WriteBytes(utf8Result.result, 0, utf8Result.length);
 		}
 		
-		/// <summary>Writes a sequence of UTF-8 encoded characters from a string.</summary>
-		/// <param name="s">the source of the characters
-		/// </param>
-		/// <param name="start">the first character in the sequence
-		/// </param>
-		/// <param name="length">the number of characters in the sequence
-		/// </param>
-		/// <seealso cref="IndexInput.ReadChars(char[],int,int)">
-		/// </seealso>
-		public virtual void  WriteChars(System.String s, int start, int length)
+		/// <summary>Writes a sub sequence of chars from s as "modified UTF-8" encoded bytes.</summary>
+		/// <param name="s">the source of the characters</param>
+		/// <param name="start">the first character in the sequence</param>
+		/// <param name="length">the number of characters in the sequence</param>
+        [Obsolete("please pre-convert to UTF-8 bytes or use WriteString()")]
+		public virtual void  WriteChars(string s, int start, int length)
 		{
 			int end = start + length;
 			for (int i = start; i < end; i++)
@@ -151,16 +149,12 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary>Writes a sequence of UTF-8 encoded characters from a char[].</summary>
-		/// <param name="s">the source of the characters
-		/// </param>
-		/// <param name="start">the first character in the sequence
-		/// </param>
-		/// <param name="length">the number of characters in the sequence
-		/// </param>
-		/// <seealso cref="IndexInput.ReadChars(char[],int,int)">
-		/// </seealso>
-		public virtual void  WriteChars(char[] s, int start, int length)
+		/// <summary>Writes a sub sequence of chars from s as "modified UTF-8" encoded bytes.</summary>
+		/// <param name="s">the source of the characters</param>
+		/// <param name="start">the first character in the sequence</param>
+		/// <param name="length">the number of characters in the sequence</param>
+        [Obsolete("please pre-convert to UTF-8 bytes or use WriteString()")]
+        public virtual void  WriteChars(char[] s, int start, int length)
 		{
 			int end = start + length;
 			for (int i = start; i < end; i++)
@@ -224,5 +218,20 @@ namespace Lucene.Net.Store
 		
 		/// <summary>The number of bytes in the file. </summary>
 		public abstract long Length();
+
+        /// <summary>
+        /// Set the file length. By default, this method does
+        /// nothing (it's optional for a Directory to implement
+        /// it).  But, certain Directory implementations (for
+        /// example @see FSDirectory) can use this to inform the
+        /// underlying IO system to pre-allocate the file to the
+        /// specified size.  If the length is longer than the
+        /// current file length, the bytes added to the file are
+        /// undefined.  Otherwise the file is truncated.
+        /// <param name="length">file length</param>
+        /// </summary>
+        public virtual void SetLength(long length)
+        {
+        }
 	}
 }

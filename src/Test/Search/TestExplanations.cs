@@ -30,6 +30,7 @@ using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Lucene.Net.Search.Spans;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
@@ -70,11 +71,11 @@ namespace Lucene.Net.Search
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < docFields.Length; i++)
 			{
 				Document doc = new Document();
-				doc.Add(new Field(FIELD, docFields[i], Field.Store.NO, Field.Index.TOKENIZED));
+				doc.Add(new Field(FIELD, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();
@@ -133,15 +134,25 @@ namespace Lucene.Net.Search
 			{
 				this.docs = docs;
 			}
-			public override System.Collections.BitArray Bits(IndexReader r)
-			{
-				System.Collections.BitArray b = new System.Collections.BitArray((r.MaxDoc() % 64 == 0?r.MaxDoc() / 64:r.MaxDoc() / 64 + 1) * 64);
-				for (int i = 0; i < docs.Length; i++)
-				{
-					b.Set(docs[i], true);
-				}
-				return b;
-			}
+            public override DocIdSet GetDocIdSet(IndexReader r)
+            {
+                System.Collections.BitArray b = new System.Collections.BitArray((r.MaxDoc() % 64 == 0 ? r.MaxDoc() / 64 : r.MaxDoc() / 64 + 1) * 64);
+                for (int i = 0; i < docs.Length; i++)
+                {
+                    b.Set(docs[i], true);
+                }
+                return new DocIdBitSet(b);
+            }
+            [System.Obsolete()]
+            public override System.Collections.BitArray Bits(IndexReader r)
+            {
+                System.Collections.BitArray b = new System.Collections.BitArray((r.MaxDoc() % 64 == 0 ? r.MaxDoc() / 64 : r.MaxDoc() / 64 + 1) * 64);
+                for (int i = 0; i < docs.Length; i++)
+                {
+                    b.Set(docs[i], true);
+                }
+                return b;
+            }
 		}
 		
 		/// <summary>helper for generating MultiPhraseQueries </summary>

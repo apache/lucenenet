@@ -89,16 +89,16 @@ namespace Lucene.Net.Search
 			System.String[] data = new System.String[]{"A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6"};
 			
 			index = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			for (int i = 0; i < data.Length; i++)
 			{
 				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-				doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("id",String.valueOf(i)));
-				doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.UN_TOKENIZED)); //Field.Keyword("all","all"));
+				doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id",String.valueOf(i)));
+				doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("all","all"));
 				if (null != data[i])
 				{
-					doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.TOKENIZED)); //Field.Text("data",data[i]));
+					doc.Add(new Field("data", data[i], Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("data",data[i]));
 				}
 				writer.AddDocument(doc);
 			}
@@ -114,12 +114,12 @@ namespace Lucene.Net.Search
 		
 		public virtual void  VerifyNrHits(Query q, int expected)
 		{
-			Hits h = s.Search(q);
-			if (expected != h.Length())
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+			if (expected != h.Length)
 			{
-				PrintHits("TestBooleanMinShouldMatch", h);  // PrintHits(TestCase.GetName(), h);    // {{Aroush-1.9}} 'GetName()' gives us the name of the test in JUnit, how is it done in NUnit?
+				PrintHits("TestBooleanMinShouldMatch", h, s);  // PrintHits(TestCase.GetName(), h);    // {{Aroush-1.9}} 'GetName()' gives us the name of the test in JUnit, how is it done in NUnit?
 			}
-			Assert.AreEqual(expected, h.Length(), "result count");
+			Assert.AreEqual(expected, h.Length, "result count");
 			QueryUtils.Check(q, s);
 		}
 		
@@ -342,8 +342,21 @@ namespace Lucene.Net.Search
 			
 			VerifyNrHits(q, 0);
 		}
-		
-		[Test]
+
+        [Test]
+        public virtual void TestNoOptionalButMin2()
+        {
+
+            /* one required, no optional */
+            BooleanQuery q = new BooleanQuery();
+            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+
+            q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
+
+            VerifyNrHits(q, 0);
+        }
+
+        [Test]
 		public virtual void  TestRandomQueries()
 		{
 			System.Random rnd = new System.Random((System.Int32) 0);
@@ -416,15 +429,15 @@ namespace Lucene.Net.Search
 		
 		
 		
-		protected internal virtual void  PrintHits(System.String test, Hits h)
+		protected internal virtual void  PrintHits(System.String test, ScoreDoc[] h, Searcher searcher)
 		{
 			
 			System.Console.Error.WriteLine("------- " + test + " -------");
 			
-			for (int i = 0; i < h.Length(); i++)
+			for (int i = 0; i < h.Length; i++)
 			{
-				Lucene.Net.Documents.Document d = h.Doc(i);
-				float score = h.Score(i);
+				Lucene.Net.Documents.Document d = searcher.Doc(h[i].doc);
+                float score = h[i].score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000}" + score + " - " + d.Get("id") + " - " + d.Get("data"));
 			}
 		}

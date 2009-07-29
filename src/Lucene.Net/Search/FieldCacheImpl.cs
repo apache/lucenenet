@@ -25,20 +25,18 @@ using TermEnum = Lucene.Net.Index.TermEnum;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Expert: The default cache implementation, storing all values in memory.
+	/// <summary>
+    /// Expert: The default cache implementation, storing all values in memory.
 	/// A WeakHashMap is used for storage.
-	/// 
-	/// <p>Created: May 19, 2004 4:40:36 PM
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: FieldCacheImpl.java 605225 2007-12-18 15:13:05Z gsingers $
-	/// </version>
+	/// <since>lucene 1.4</since>
+	/// <version>$Id:$</version>
 	public class FieldCacheImpl : FieldCache
 	{
+        public virtual void Close(IndexReader reader)
+        {
+        }
+
 		public FieldCacheImpl()
 		{
 			InitBlock();
@@ -92,20 +90,20 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object entryKey)
+			protected internal override object CreateValue(IndexReader reader, object entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				ByteParser parser = (ByteParser) entry.custom;
 				byte[] retArray = new byte[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						byte termval = parser.ParseByte(term.Text());
 						termDocs.Seek(termEnum);
@@ -145,20 +143,20 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object entryKey)
+			protected internal override object CreateValue(IndexReader reader, object entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				ShortParser parser = (ShortParser) entry.custom;
 				short[] retArray = new short[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						short termval = parser.ParseShort(term.Text());
 						termDocs.Seek(termEnum);
@@ -198,20 +196,20 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object entryKey)
+			protected internal override object CreateValue(IndexReader reader, object entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				IntParser parser = (IntParser) entry.custom;
 				int[] retArray = new int[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						int termval = parser.ParseInt(term.Text());
 						termDocs.Seek(termEnum);
@@ -251,20 +249,20 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object entryKey)
+			protected internal override object CreateValue(IndexReader reader, object entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				FloatParser parser = (FloatParser) entry.custom;
 				float[] retArray = new float[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						float termval = parser.ParseFloat(term.Text());
 						termDocs.Seek(termEnum);
@@ -304,18 +302,18 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object fieldKey)
+			protected internal override object CreateValue(IndexReader reader, object fieldKey)
 			{
 				System.String field = String.Intern(((System.String) fieldKey));
 				System.String[] retArray = new System.String[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						System.String termval = term.Text();
 						termDocs.Seek(termEnum);
@@ -355,13 +353,13 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object fieldKey)
+			protected internal override object CreateValue(IndexReader reader, object fieldKey)
 			{
 				System.String field = String.Intern(((System.String) fieldKey));
 				int[] retArray = new int[reader.MaxDoc()];
 				System.String[] mterms = new System.String[reader.MaxDoc() + 1];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				int t = 0; // current term number
 				
 				// an entry for documents that have no terms in this field
@@ -375,7 +373,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						
 						// store term text
@@ -440,10 +438,10 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object fieldKey)
+			protected internal override object CreateValue(IndexReader reader, object fieldKey)
 			{
 				System.String field = String.Intern(((System.String) fieldKey));
-				TermEnum enumerator = reader.Terms(new Term(field, ""));
+				TermEnum enumerator = reader.Terms(new Term(field));
 				try
 				{
 					Term term = enumerator.Term();
@@ -451,8 +449,8 @@ namespace Lucene.Net.Search
 					{
 						throw new System.SystemException("no terms in field " + field + " - cannot determine sort type");
 					}
-					System.Object ret = null;
-					if ((System.Object) term.Field() == (System.Object) field)
+					object ret = null;
+					if ((object) term.Field() == (object) field)
 					{
 						System.String termtext = term.Text().Trim();
 						
@@ -472,14 +470,14 @@ namespace Lucene.Net.Search
 							System.Int32.Parse(termtext);
 							ret = Enclosing_Instance.GetInts(reader, field);
 						}
-						catch (System.FormatException nfe1)
+						catch (System.FormatException)
 						{
 							try
 							{
 								SupportClass.Single.Parse(termtext);
 								ret = Enclosing_Instance.GetFloats(reader, field);
 							}
-							catch (System.FormatException nfe3)
+							catch (System.FormatException)
 							{
 								ret = Enclosing_Instance.GetStringIndex(reader, field);
 							}
@@ -518,20 +516,20 @@ namespace Lucene.Net.Search
 				
 			}
 			
-			protected internal override System.Object CreateValue(IndexReader reader, System.Object entryKey)
+			protected internal override object CreateValue(IndexReader reader, object entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				SortComparator comparator = (SortComparator) entry.custom;
 				System.IComparable[] retArray = new System.IComparable[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
-				TermEnum termEnum = reader.Terms(new Term(field, ""));
+				TermEnum termEnum = reader.Terms(new Term(field));
 				try
 				{
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
+						if (term == null || (object) term.Field() != (object) field)
 							break;
 						System.IComparable termval = comparator.GetComparable(term.Text());
 						termDocs.Seek(termEnum);
@@ -565,14 +563,14 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Internal cache. </summary>
 		internal abstract class Cache
 		{
-			private System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
+			private System.Collections.IDictionary readerCache = new System.Collections.Hashtable();
 			
-			protected internal abstract System.Object CreateValue(IndexReader reader, System.Object key);
+			protected internal abstract object CreateValue(IndexReader reader, object key);
 			
-			public virtual System.Object Get(IndexReader reader, System.Object key)
+			public virtual object Get(IndexReader reader, object key)
 			{
 				System.Collections.IDictionary innerCache;
-				System.Object value_Renamed;
+				object value_Renamed;
 				lock (readerCache.SyncRoot)
 				{
 					innerCache = (System.Collections.IDictionary) readerCache[reader];
@@ -614,7 +612,7 @@ namespace Lucene.Net.Search
 		
 		internal sealed class CreationPlaceholder
 		{
-			internal System.Object value_Renamed;
+			internal object value_Renamed;
 		}
 		
 		/// <summary>Expert: Every composite-key in the internal cache is of this type. </summary>
@@ -622,7 +620,7 @@ namespace Lucene.Net.Search
 		{
 			internal System.String field; // which Fieldable
 			internal int type; // which SortField type
-			internal System.Object custom; // which custom comparator
+			internal object custom; // which custom comparator
 			internal System.Globalization.CultureInfo locale; // the locale we're sorting (if string)
 			
 			/// <summary>Creates one of these objects. </summary>
@@ -635,7 +633,7 @@ namespace Lucene.Net.Search
 			}
 			
 			/// <summary>Creates one of these objects for a custom comparator. </summary>
-			internal Entry(System.String field, System.Object custom)
+			internal Entry(System.String field, object custom)
 			{
 				this.field = String.Intern(field);
 				this.type = SortField.CUSTOM;
@@ -644,12 +642,12 @@ namespace Lucene.Net.Search
 			}
 			
 			/// <summary>Two of these are equal iff they reference the same field and type. </summary>
-			public  override bool Equals(System.Object o)
+			public  override bool Equals(object o)
 			{
 				if (o is Entry)
 				{
 					Entry other = (Entry) o;
-					if ((System.Object) other.field == (System.Object) field && other.type == type)
+					if ((object) other.field == (object) field && other.type == type)
 					{
 						if (other.locale == null ? locale == null : other.locale.Equals(locale))
 						{
@@ -765,11 +763,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>The pattern used to detect float values in a field </summary>
 		/// <summary> removed for java 1.3 compatibility
-		/// protected static final Object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
+		/// protected static final object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
 		/// </summary>
 		
 		// inherit javadocs
-		public virtual System.Object GetAuto(IndexReader reader, System.String field)
+		public virtual object GetAuto(IndexReader reader, System.String field)
 		{
 			return autoCache.Get(reader, field);
 		}

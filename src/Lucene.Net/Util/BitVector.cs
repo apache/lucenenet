@@ -70,7 +70,33 @@ namespace Lucene.Net.Util
 			bits[bit >> 3] &= (byte) (~ (1 << (bit & 7)));
 			count = - 1;
 		}
-		
+
+        /// <summary>
+        /// Sets the value of bit to true and returns true if bit was already set.
+        /// </summary>
+        /// <param name="bit"></param>
+        /// <returns>true if bit was already set</returns>
+        public bool GetAndSet(int bit)
+        {
+            if (bit >= size)
+                throw new IndexOutOfRangeException("bit (" + bit + ") is out of this bit vector's range (" + size + ")");
+
+            int pos = bit >> 3;
+            int v = bits[pos];
+            int flag = 1 << (bit & 7);
+            if ((flag & v) != 0)
+            {
+                return true;
+            }
+            else
+            {
+                bits[pos] = (byte)(v | flag);
+                if (count != -1)
+                    count++;
+                return false;
+            }
+        }
+
 		/// <summary>Returns <code>true</code> if <code>bit</code> is one and
 		/// <code>false</code> if it is zero. 
 		/// </summary>
@@ -110,7 +136,6 @@ namespace Lucene.Net.Util
 		}
 		
 		private static readonly byte[] BYTE_COUNTS = new byte[]{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
-		
 		
 		/// <summary>Writes this vector to the file <code>name</code> in Directory
 		/// <code>d</code>, in a format that can be read by the constructor {@link

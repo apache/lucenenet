@@ -17,6 +17,7 @@
 
 using System;
 
+using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using Term = Lucene.Net.Index.Term;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using TermEnum = Lucene.Net.Index.TermEnum;
@@ -57,8 +58,35 @@ namespace Lucene.Net.Search
 				bitSet.Set(doc, true);
 			}
 		}
-		
-		protected internal Term prefix;
+
+        private class AnonymousClassPrefixGenerator2 : PrefixGenerator
+        {
+            private void InitBlock(OpenBitSet bitSet, PrefixFilter enclosingInstance)
+            {
+                this.bitSet = bitSet;
+                this.enclosingInstance = enclosingInstance;
+            }
+            private OpenBitSet bitSet;
+            private PrefixFilter enclosingInstance;
+            public PrefixFilter Enclosing_Instance
+            {
+                get
+                {
+                    return enclosingInstance;
+                }
+            }
+            internal AnonymousClassPrefixGenerator2(OpenBitSet bitSet, PrefixFilter enclosingInstance, Lucene.Net.Index.Term Param1)
+                : base(Param1)
+            {
+                InitBlock(bitSet, enclosingInstance);
+            }
+            public override void HandleDoc(int doc)
+            {
+                bitSet.Set(doc);
+            }
+        }
+
+        protected internal Term prefix;
 		
 		public PrefixFilter(Term prefix)
 		{
@@ -70,14 +98,22 @@ namespace Lucene.Net.Search
 			return prefix;
 		}
 		
+        [System.Obsolete()]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
 			new AnonymousClassPrefixGenerator(bitSet, this, prefix).Generate(reader);
 			return bitSet;
 		}
-		
-		/// <summary>Prints a user-readable version of this query. </summary>
+
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            OpenBitSet bitSet = new OpenBitSet((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+            new AnonymousClassPrefixGenerator2(bitSet, this, prefix).Generate(reader);
+            return bitSet;
+        }
+
+        /// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -120,7 +156,7 @@ namespace Lucene.Net.Search
 				do 
 				{
 					Term term = enumerator.Term();
-					if (term != null && term.Text().StartsWith(prefixText) && (System.Object) term.Field() == (System.Object) prefixField)
+					if (term != null && term.Text().StartsWith(prefixText) && (object) term.Field() == (object) prefixField)
 					// interned comparison
 					{
 						termDocs.Seek(term);

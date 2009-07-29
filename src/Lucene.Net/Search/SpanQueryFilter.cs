@@ -17,8 +17,10 @@
 
 using System;
 
+using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+using _Spans = Lucene.Net.Search.Spans.Spans;
 
 namespace Lucene.Net.Search
 {
@@ -54,26 +56,31 @@ namespace Lucene.Net.Search
 		{
 			this.query = query;
 		}
-		
-		public override System.Collections.BitArray Bits(IndexReader reader)
+
+        [System.Obsolete()]
+        public override System.Collections.BitArray Bits(IndexReader reader)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }	
+	
+		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			SpanFilterResult result = BitSpans(reader);
-			return result.GetBits();
+			return result.GetDocIdSet();
 		}
-		
 		
 		public override SpanFilterResult BitSpans(IndexReader reader)
 		{
 			
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
+			OpenBitSet bits = new OpenBitSet((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+            _Spans spans = query.GetSpans(reader);
 			System.Collections.IList tmp = new System.Collections.ArrayList(20);
 			int currentDoc = - 1;
 			SpanFilterResult.PositionInfo currentInfo = null;
 			while (spans.Next())
 			{
 				int doc = spans.Doc();
-				bits.Set(doc, true);
+				bits.Set(doc);
 				if (currentDoc != doc)
 				{
 					currentInfo = new SpanFilterResult.PositionInfo(doc);
@@ -85,7 +92,6 @@ namespace Lucene.Net.Search
 			return new SpanFilterResult(bits, tmp);
 		}
 		
-		
 		public virtual SpanQuery GetQuery()
 		{
 			return query;
@@ -96,7 +102,7 @@ namespace Lucene.Net.Search
 			return "QueryWrapperFilter(" + query + ")";
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			return o is SpanQueryFilter && this.query.Equals(((SpanQueryFilter) o).query);
 		}

@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary>An interprocess mutex lock.
 	/// <p>Typical use might look like:<pre>
 	/// new Lock.With(directory.makeLock("my.lock")) {
-	/// public Object doBody() {
+	/// public object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
 	/// }.run();
@@ -143,7 +143,7 @@ namespace Lucene.Net.Store
 			}
 			
 			/// <summary>Code to execute with exclusive access. </summary>
-			protected internal abstract System.Object DoBody();
+			protected internal abstract object DoBody();
 			
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second
@@ -154,7 +154,7 @@ namespace Lucene.Net.Store
 			/// <summary> be obtained
 			/// </summary>
 			/// <throws>  IOException if {@link Lock#obtain} throws IOException </throws>
-			public virtual System.Object Run()
+			public virtual object Run()
 			{
 				bool locked = false;
 				try

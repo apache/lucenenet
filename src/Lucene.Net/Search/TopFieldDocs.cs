@@ -19,15 +19,8 @@ using System;
 
 namespace Lucene.Net.Search
 {
-	
-	
 	/// <summary> Expert: Returned by low-level sorted search implementations.
-	/// 
-	/// <p>Created: Feb 12, 2004 8:58:46 AM 
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
 	/// <version>  $Id: TopFieldDocs.java 472959 2006-11-09 16:21:50Z yonik $

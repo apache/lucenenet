@@ -71,10 +71,10 @@ namespace Lucene.Net.Search
 		public virtual void  TestSetNorm_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// add the same document four times
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
 			d1.Add(f1);
 			writer.AddDocument(d1);

@@ -47,12 +47,12 @@ namespace Lucene.Net.Index
 		public virtual void  TestSimpleSkip()
 		{
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Term term = new Term("test", "a");
 			for (int i = 0; i < 5000; i++)
 			{
 				Document d1 = new Document();
-				d1.Add(new Field(term.Field(), term.Text(), Field.Store.NO, Field.Index.TOKENIZED));
+				d1.Add(new Field(term.Field(), term.Text(), Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(d1);
 			}
 			writer.Flush();
@@ -110,14 +110,15 @@ namespace Lucene.Net.Index
 			{
 			}
 			
-			public override Token Next()
+			public override Token Next(Token reusableToken)
 			{
-				Token t = input.Next();
-				if (t != null)
+                System.Diagnostics.Debug.Assert(reusableToken != null);
+				Token nextToken = input.Next(reusableToken);
+				if (nextToken != null)
 				{
-					t.SetPayload(new Payload(new byte[]{(byte) count++}));
+					nextToken.SetPayload(new Payload(new byte[]{(byte) count++}));
 				}
-				return t;
+				return nextToken;
 			}
 		}
 		

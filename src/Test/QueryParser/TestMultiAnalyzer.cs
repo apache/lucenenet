@@ -34,10 +34,7 @@ namespace Lucene.Net.QueryParsers
 	/// <summary> Test QueryParser's ability to deal with Analyzers that return more
 	/// than one token per position or that return tokens with a position
 	/// increment &gt; 1.
-	/// 
 	/// </summary>
-	/// <author>  Daniel Naber
-	/// </author>
 	[TestFixture]
 	public class TestMultiAnalyzer : LuceneTestCase
 	{
@@ -178,35 +175,38 @@ namespace Lucene.Net.QueryParsers
 				InitBlock(enclosingInstance);
 			}
 			
-			public override Lucene.Net.Analysis.Token Next()
+			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
 			{
-				if (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken > 0)
+				if (TestMultiAnalyzer.multiToken > 0)
 				{
-					Lucene.Net.Analysis.Token token = new Lucene.Net.Analysis.Token("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1), prevToken.StartOffset(), prevToken.EndOffset(), prevToken.Type());
-					token.SetPositionIncrement(0);
-					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
-					return token;
+                    reusableToken.Reinit("multi" + (TestMultiAnalyzer.multiToken + 1), prevToken.StartOffset(), prevToken.EndOffset(), prevToken.Type());
+					reusableToken.SetPositionIncrement(0);
+					TestMultiAnalyzer.multiToken--;
+					return reusableToken;
 				}
 				else
 				{
-					Lucene.Net.Analysis.Token t = input.Next();
-					prevToken = t;
-					if (t == null)
-						return null;
-					System.String text = t.TermText();
+					Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken);
+                    if (nextToken == null)
+                    {
+                        prevToken = null;
+                        return null;
+                    }
+                    prevToken = (Lucene.Net.Analysis.Token)(nextToken.Clone());
+					string text = nextToken.Term();
 					if (text.Equals("triplemulti"))
 					{
-						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 2;
-						return t;
+						TestMultiAnalyzer.multiToken = 2;
+						return nextToken;
 					}
 					else if (text.Equals("multi"))
 					{
-						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 1;
-						return t;
+						TestMultiAnalyzer.multiToken = 1;
+						return nextToken;
 					}
 					else
 					{
-						return t;
+						return nextToken;
 					}
 				}
 			}
@@ -266,25 +266,23 @@ namespace Lucene.Net.QueryParsers
 				InitBlock(enclosingInstance);
 			}
 			
-			public override Lucene.Net.Analysis.Token Next()
+			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
 			{
-				for (Lucene.Net.Analysis.Token t = input.Next(); t != null; t = input.Next())
+                for (Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
 				{
-					if (t.TermText().Equals("the"))
+					if (nextToken.Term().Equals("the"))
 					{
 						// stopword, do nothing
 					}
-					else if (t.TermText().Equals("quick"))
+					else if (nextToken.Term().Equals("quick"))
 					{
-						Lucene.Net.Analysis.Token token = new Lucene.Net.Analysis.Token(t.TermText(), t.StartOffset(), t.EndOffset(), t.Type());
-						token.SetPositionIncrement(2);
-						return token;
+						nextToken.SetPositionIncrement(2);
+						return nextToken;
 					}
 					else
 					{
-						Lucene.Net.Analysis.Token token = new Lucene.Net.Analysis.Token(t.TermText(), t.StartOffset(), t.EndOffset(), t.Type());
-						token.SetPositionIncrement(1);
-						return token;
+						nextToken.SetPositionIncrement(1);
+                        return nextToken;
 					}
 				}
 				return null;

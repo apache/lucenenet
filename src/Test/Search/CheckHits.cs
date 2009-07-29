@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 				QueryUtils.Check(query, (IndexSearcher) searcher);
 			}
 			
-			Hits hits = searcher.Search(query);
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
 			
 			System.Collections.ArrayList correct = new System.Collections.ArrayList(results.Length);
 			for (int i = 0; i < results.Length; i++)
@@ -153,10 +153,10 @@ namespace Lucene.Net.Search
 				correct.Add(results[i]);
 			}
 
-			System.Collections.ArrayList actual = new System.Collections.ArrayList(hits.Length());
-			for (int i = 0; i < hits.Length(); i++)
+			System.Collections.ArrayList actual = new System.Collections.ArrayList(hits.Length);
+			for (int i = 0; i < hits.Length; i++)
 			{
-				actual.Add(hits.Id(i));
+				actual.Add(hits[i].doc);
 			}
 			
 			Assert.AreEqual(correct.Count, actual.Count);
@@ -171,52 +171,52 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Tests that a Hits has an expected order of documents </summary>
-		public static void  CheckDocIds(System.String mes, int[] results, Hits hits)
+		public static void  CheckDocIds(System.String mes, int[] results, ScoreDoc[] hits)
 		{
-			Assert.AreEqual(results.Length, hits.Length(), mes + " nr of hits");
+			Assert.AreEqual(results.Length, hits.Length, mes + " nr of hits");
 			for (int i = 0; i < results.Length; i++)
 			{
-				Assert.AreEqual(results[i], hits.Id(i), mes + " doc nrs for hit " + i);
+				Assert.AreEqual(results[i], hits[i].doc, mes + " doc nrs for hit " + i);
 			}
 		}
 		
 		/// <summary>Tests that two queries have an expected order of documents,
 		/// and that the two queries have the same score values.
 		/// </summary>
-		public static void  CheckHitsQuery(Query query, Hits hits1, Hits hits2, int[] results)
+        public static void CheckHitsQuery(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2, int[] results)
 		{
 			
 			CheckDocIds("hits1", results, hits1);
 			CheckDocIds("hits2", results, hits2);
 			CheckEqual(query, hits1, hits2);
 		}
-		
-		public static void  CheckEqual(Query query, Hits hits1, Hits hits2)
+
+        public static void CheckEqual(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2)
 		{
 			float scoreTolerance = 1.0e-6f;
-			if (hits1.Length() != hits2.Length())
+			if (hits1.Length != hits2.Length)
 			{
-				Assert.Fail("Unequal lengths: hits1=" + hits1.Length() + ",hits2=" + hits2.Length());
+				Assert.Fail("Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
 			}
-			for (int i = 0; i < hits1.Length(); i++)
+			for (int i = 0; i < hits1.Length; i++)
 			{
-				if (hits1.Id(i) != hits2.Id(i))
+                if (hits1[i].doc != hits2[i].doc)
 				{
 					Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" + query.ToString());
 				}
-				
-				if ((hits1.Id(i) != hits2.Id(i)) || System.Math.Abs(hits1.Score(i) - hits2.Score(i)) > scoreTolerance)
+
+                if ((hits1[i].doc != hits2[i].doc) || System.Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
 				{
-					Assert.Fail("Hit " + i + ", doc nrs " + hits1.Id(i) + " and " + hits2.Id(i) + "\nunequal       : " + hits1.Score(i) + "\n           and: " + hits2.Score(i) + "\nfor query:" + query.ToString());
+					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].doc + " and " + hits2[i].doc + "\nunequal       : " + hits1[i].score + "\n           and: " + hits2[i].score + "\nfor query:" + query.ToString());
 				}
 			}
 		}
-		
-		public static System.String Hits2str(Hits hits1, Hits hits2, int start, int end)
+
+        public static System.String Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			int len1 = hits1 == null?0:hits1.Length();
-			int len2 = hits2 == null?0:hits2.Length();
+			int len1 = hits1 == null?0:hits1.Length;
+			int len2 = hits2 == null?0:hits2.Length;
 			if (end <= 0)
 			{
 				end = System.Math.Max(len1, len2);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
 				sb.Append("hit=").Append(i).Append(':');
 				if (i < len1)
 				{
-					sb.Append(" doc").Append(hits1.Id(i)).Append('=').Append(hits1.Score(i));
+					sb.Append(" doc").Append(hits1[i].doc).Append('=').Append(hits1[i].score);
 				}
 				else
 				{
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
 				sb.Append(",\t");
 				if (i < len2)
 				{
-					sb.Append(" doc").Append(hits2.Id(i)).Append('=').Append(hits2.Score(i));
+					sb.Append(" doc").Append(hits2[i].doc).Append('=').Append(hits2[i].score);
 				}
 				sb.Append('\n');
 			}
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="ExplanationAsserter">
 		/// </seealso>
-		/// <seealso cref="CheckExplanations(Query, String, Searcher, boolean) for a">
+		/// <seealso cref="CheckExplanations(Query, String, Searcher, bool) for a">
 		/// "deep" testing of the explanation details.
 		/// 
 		/// </seealso>
@@ -428,21 +428,6 @@ namespace Lucene.Net.Search
 			protected internal virtual void  CheckExplanations(Query q)
 			{
 				base.Search(q, null, new ExplanationAsserter(q, null, this));
-			}
-			public override Hits Search(Query query, Filter filter)
-			{
-				CheckExplanations(query);
-				return base.Search(query, filter);
-			}
-			public override Hits Search(Query query, Sort sort)
-			{
-				CheckExplanations(query);
-				return base.Search(query, sort);
-			}
-			public override Hits Search(Query query, Filter filter, Sort sort)
-			{
-				CheckExplanations(query);
-				return base.Search(query, filter, sort);
 			}
 			public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
 			{

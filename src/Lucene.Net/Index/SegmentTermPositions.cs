@@ -65,6 +65,9 @@ namespace Lucene.Net.Index
 		
 		public int NextPosition()
 		{
+            if (currentFieldOmitTf)
+                return 0; // this field does not store term freq, positions, payloads
+
 			// perform lazy skips if neccessary
 			LazySkip();
 			proxCount--;
@@ -131,6 +134,7 @@ namespace Lucene.Net.Index
 		
 		private void  SkipPositions(int n)
 		{
+            System.Diagnostics.Debug.Assert(!currentFieldOmitTf);
 			for (int f = n; f > 0; f--)
 			{
 				// skip unread positions

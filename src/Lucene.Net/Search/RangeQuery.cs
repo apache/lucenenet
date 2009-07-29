@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using CompareInfo = System.Globalization.CompareInfo;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -24,7 +24,6 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
 {
-	
 	/// <summary> A Query that matches documents within an exclusive range. A RangeQuery
 	/// is built by QueryParser for input like <code>[010 TO 120]</code> but only if the QueryParser has 
 	/// the useOldRangeQuery property set to true. The QueryParser default behaviour is to use
@@ -37,18 +36,14 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <seealso cref="ConstantScoreRangeQuery">
-	/// 
-	/// 
-	/// </seealso>
-	/// <version>  $Id: RangeQuery.java 520891 2007-03-21 13:58:47Z yonik $
-	/// </version>
+	/// <seealso cref="ConstantScoreRangeQuery"/>
 	[Serializable]
 	public class RangeQuery : Query
 	{
 		private Term lowerTerm;
 		private Term upperTerm;
 		private bool inclusive;
+        private CompareInfo collator;
 		
 		/// <summary>Constructs a query selecting all terms greater than
 		/// <code>lowerTerm</code> but less than <code>upperTerm</code>.
@@ -56,6 +51,9 @@ namespace Lucene.Net.Search
 		/// in which case there is no bound on that side, but if there are
 		/// two terms, both terms <b>must</b> be for the same field.
 		/// </summary>
+        /// <param name="lowerTerm">term at the lower end of the range</param>
+        /// <param name="upperTerm">term at the upper end of the range</param>
+        /// <param name="inclusive">if true, both lowerTerm and upperTerm will be included in the range</param>
 		public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive)
 		{
 			if (lowerTerm == null && upperTerm == null)
@@ -74,66 +72,110 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-				this.lowerTerm = new Term(upperTerm.Field(), "");
+				this.lowerTerm = new Term(upperTerm.Field());
 			}
 			
 			this.upperTerm = upperTerm;
 			this.inclusive = inclusive;
 		}
-		
+
+        public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive, CompareInfo collator)
+            : this(lowerTerm, upperTerm, inclusive)
+        {
+            this.collator = collator;
+        }
+
 		public override Query Rewrite(IndexReader reader)
 		{
 			
 			BooleanQuery query = new BooleanQuery(true);
-			TermEnum enumerator = reader.Terms(lowerTerm);
-			
-			try
-			{
-				
-				bool checkLower = false;
-				if (!inclusive)
-				// make adjustments to set to exclusive
-					checkLower = true;
-				
-				System.String testField = GetField();
-				
-				do 
-				{
-					Term term = enumerator.Term();
-					if (term != null && term.Field() == testField)
-					{
-						// interned comparison
-						if (!checkLower || String.CompareOrdinal(term.Text(), lowerTerm.Text()) > 0)
-						{
-							checkLower = false;
-							if (upperTerm != null)
-							{
-								int compare = String.CompareOrdinal(upperTerm.Text(), term.Text());
-								/* if beyond the upper term, or is exclusive and
-								* this is equal to the upper term, break out */
-								if ((compare < 0) || (!inclusive && compare == 0))
-									break;
-							}
-							TermQuery tq = new TermQuery(term); // found a match
-							tq.SetBoost(GetBoost()); // set the boost
-							query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
-						}
-					}
-					else
-					{
-						break;
-					}
-				}
-				while (enumerator.Next());
-			}
-			finally
-			{
-				enumerator.Close();
-			}
+            string testField = GetField();
+            if (collator != null)
+            {
+                TermEnum enumerator = reader.Terms(new Term(testField, ""));
+                string lowerTermText = lowerTerm != null ? lowerTerm.Text() : null;
+                string upperTermText = upperTerm != null ? upperTerm.Text() : null;
+
+                try
+                {
+                    do
+                    {
+                        Term term = enumerator.Term();
+                        if (term != null && term.Field() == testField) // interned comparison
+                        {
+                            if ((lowerTermText == null ||
+                                (inclusive ? collator.Compare(term.Text(), lowerTermText) >= 0 : collator.Compare(term.Text(), lowerTermText) > 0))
+                                &&
+                                (upperTermText == null ||
+                                (inclusive ? collator.Compare(term.Text(), upperTermText) <= 0 : collator.Compare(term.Text(), upperTermText) < 0))
+                                )
+                            {
+                                AddTermToQuery(term, query);
+                            }
+                        }
+                    }
+                    while (enumerator.Next());
+                }
+                finally
+                {
+                    enumerator.Close();
+                }
+            }
+            else
+            {
+                TermEnum enumerator = reader.Terms(lowerTerm);
+
+                try
+                {
+
+                    bool checkLower = false;
+                    if (!inclusive)
+                        // make adjustments to set to exclusive
+                        checkLower = true;
+
+                    do
+                    {
+                        Term term = enumerator.Term();
+                        if (term != null && term.Field() == testField)
+                        {
+                            // interned comparison
+                            if (!checkLower || String.CompareOrdinal(term.Text(), lowerTerm.Text()) > 0)
+                            {
+                                checkLower = false;
+                                if (upperTerm != null)
+                                {
+                                    int compare = String.CompareOrdinal(upperTerm.Text(), term.Text());
+                                    /* if beyond the upper term, or is exclusive and
+                                    * this is equal to the upper term, break out */
+                                    if ((compare < 0) || (!inclusive && compare == 0))
+                                        break;
+                                }
+                                AddTermToQuery(term, query); // Found a match
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    while (enumerator.Next());
+                }
+                finally
+                {
+                    enumerator.Close();
+                }
+            }
 			return query;
 		}
-		
-		/// <summary>Returns the field name for this query </summary>
+
+        private void AddTermToQuery(Term term, BooleanQuery query)
+        {
+            TermQuery tq = new TermQuery(term); // found a match
+            tq.SetBoost(GetBoost()); // set the boost
+            query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
+        }
+
+        /// <summary>Returns the field name for this query </summary>
 		public virtual System.String GetField()
 		{
 			return (lowerTerm != null ? lowerTerm.Field() : upperTerm.Field());
@@ -156,7 +198,15 @@ namespace Lucene.Net.Search
 		{
 			return inclusive;
 		}
-		
+
+        /// <summary>
+        /// Returns the collator used to determine range inclusion, if any.
+        /// </summary>
+        /// <returns></returns>
+        public CompareInfo GetCollator()
+        {
+            return collator;
+        }
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
@@ -177,7 +227,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
@@ -189,6 +239,8 @@ namespace Lucene.Net.Search
 				return false;
 			if (this.inclusive != other.inclusive)
 				return false;
+            if (this.collator != null && !this.collator.Equals(other.collator))
+                return false;
 			// one of lowerTerm and upperTerm can be null
 			if (this.lowerTerm != null ? !this.lowerTerm.Equals(other.lowerTerm) : other.lowerTerm != null)
 				return false;
@@ -207,6 +259,7 @@ namespace Lucene.Net.Search
 			h ^= ((h << 25) | (h >> 8));
 			h ^= (upperTerm != null ? upperTerm.GetHashCode() : 0);
 			h ^= (this.inclusive ? 0x2742E74A : 0);
+            h ^= collator != null ? collator.GetHashCode() : 0;
 			return h;
 		}
 	}

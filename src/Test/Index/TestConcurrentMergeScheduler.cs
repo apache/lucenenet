@@ -73,12 +73,12 @@ namespace Lucene.Net.Index
 			FailOnlyOnFlush failure = new FailOnlyOnFlush();
 			directory.FailOn(failure);
 			
-			IndexWriter writer = new IndexWriter(directory, ANALYZER, true);
+			IndexWriter writer = new IndexWriter(directory, true, ANALYZER, true);
 			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
 			writer.SetMergeScheduler(cms);
 			writer.SetMaxBufferedDocs(2);
 			Document doc = new Document();
-			Field idField = new Field("id", "", Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
 			doc.Add(idField);
 			for (int i = 0; i < 10; i++)
 			{
@@ -114,10 +114,9 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDeleteMerging()
 		{
-			
 			RAMDirectory directory = new MockRAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(directory, ANALYZER, true);
+			IndexWriter writer = new IndexWriter(directory, true, ANALYZER, true);
 			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
 			writer.SetMergeScheduler(cms);
 			
@@ -130,7 +129,7 @@ namespace Lucene.Net.Index
 			mp.SetMinMergeDocs(1000);
 			
 			Document doc = new Document();
-			Field idField = new Field("id", "", Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
 			doc.Add(idField);
 			for (int i = 0; i < 10; i++)
 			{
@@ -179,7 +178,7 @@ namespace Lucene.Net.Index
 					for (int j = 0; j < 21; j++)
 					{
 						Document doc = new Document();
-						doc.Add(new Field("content", "a b c", Field.Store.NO, Field.Index.TOKENIZED));
+						doc.Add(new Field("content", "a b c", Field.Store.NO, Field.Index.ANALYZED));
 						writer.AddDocument(doc);
 					}
 					
@@ -202,7 +201,7 @@ namespace Lucene.Net.Index
 			RAMDirectory directory = new MockRAMDirectory();
 			
 			Document doc = new Document();
-			Field idField = new Field("id", "", Field.Store.YES, Field.Index.UN_TOKENIZED);
+			Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
 			doc.Add(idField);
 			
 			for (int pass = 0; pass < 2; pass++)

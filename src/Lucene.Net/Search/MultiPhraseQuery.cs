@@ -32,12 +32,7 @@ namespace Lucene.Net.Search
 	/// add(Term) on the term "Microsoft", then find all terms that have "app" as
 	/// prefix using IndexReader.terms(Term), and use MultiPhraseQuery.add(Term[]
 	/// terms) to add them to the query.
-	/// 
 	/// </summary>
-	/// <author>  Anders Nielsen
-	/// </author>
-	/// <version>  1.0
-	/// </version>
 	[Serializable]
 	public class MultiPhraseQuery : Query
 	{
@@ -102,7 +97,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < terms.Length; i++)
 			{
-				if ((System.Object) terms[i].Field() != (System.Object) field)
+				if ((object) terms[i].Field() != (object) field)
 				{
 					throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
 				}
@@ -368,7 +363,7 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is MultiPhraseQuery))
 				return false;

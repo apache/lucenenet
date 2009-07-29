@@ -19,15 +19,14 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -50,7 +49,7 @@ namespace Lucene.Net.Store
 			// Lock prefix should have been set:
 			Assert.IsTrue(lf.lockPrefixSet, "lock prefix was not set by the RAMDirectory");
 			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// add 100 documents (so that commit lock is used)
 			for (int i = 0; i < 100; i++)
@@ -83,14 +82,14 @@ namespace Lucene.Net.Store
 			
 			Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.GetLockFactory()), "RAMDirectory.setLockFactory did not take");
 			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Create a 2nd IndexWriter.  This is normally not allowed but it should run through since we're not
 			// using any locks:
 			IndexWriter writer2 = null;
 			try
 			{
-				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			}
 			catch (System.Exception e)
 			{
@@ -114,13 +113,13 @@ namespace Lucene.Net.Store
 			
 			Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(dir.GetLockFactory()), "RAMDirectory did not use correct LockFactory: got " + dir.GetLockFactory());
 			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Create a 2nd IndexWriter.  This should fail:
 			IndexWriter writer2 = null;
 			try
 			{
-				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false);
+				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.Fail("Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
 			}
 			catch (System.IO.IOException)
@@ -141,7 +140,7 @@ namespace Lucene.Net.Store
 		{
 			System.String indexDirName = "index.TestLockFactory1";
 			
-			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Assert.IsTrue(typeof(SimpleFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()) || typeof(NativeFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 			
@@ -150,7 +149,7 @@ namespace Lucene.Net.Store
 			// Create a 2nd IndexWriter.  This should fail:
 			try
 			{
-				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), false);
+				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.Fail("Should have hit an IOException with two IndexWriters on default SimpleFSLockFactory");
 			}
 			catch (System.IO.IOException)
@@ -173,7 +172,7 @@ namespace Lucene.Net.Store
 		{
 			System.String indexDirName = "index.TestLockFactory2";
 			
-			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Assert.IsTrue(typeof(SimpleFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()) || typeof(NativeFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 			
@@ -195,7 +194,7 @@ namespace Lucene.Net.Store
 			IndexWriter writer2 = null;
 			try
 			{
-				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			}
 			catch (System.IO.IOException e)
 			{
@@ -237,25 +236,25 @@ namespace Lucene.Net.Store
 				
 				// NoLockFactory:
 				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.NoLockFactory");
-				IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// SingleInstanceLockFactory:
 				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.SingleInstanceLockFactory");
-				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// NativeFSLockFactory:
 				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.NativeFSLockFactory");
-				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(NativeFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// SimpleFSLockFactory:
 				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.SimpleFSLockFactory");
-				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(SimpleFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 			}
@@ -278,7 +277,7 @@ namespace Lucene.Net.Store
 			Assert.IsTrue(!FSDirectory.GetDisableLocks(), "Locks are already disabled");
 			FSDirectory.SetDisableLocks(true);
 			
-			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct default LockFactory: got " + writer.GetDirectory().GetLockFactory());
 			
@@ -286,7 +285,7 @@ namespace Lucene.Net.Store
 			IndexWriter writer2 = null;
 			try
 			{
-				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), false);
+				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			}
 			catch (System.IO.IOException e)
 			{
@@ -487,7 +486,7 @@ namespace Lucene.Net.Store
 				{
 					try
 					{
-						writer = new IndexWriter(dir, analyzer, false);
+						writer = new IndexWriter(dir, analyzer, false, IndexWriter.MaxFieldLength.LIMITED);
 					}
 					catch (System.IO.IOException e)
 					{
@@ -586,10 +585,10 @@ namespace Lucene.Net.Store
 					}
 					if (searcher != null)
 					{
-						Hits hits = null;
+						ScoreDoc[] hits = null;
 						try
 						{
-							hits = searcher.Search(query);
+							hits = searcher.Search(query, null, 1000).scoreDocs;
 						}
 						catch (System.IO.IOException e)
 						{
@@ -701,7 +700,7 @@ namespace Lucene.Net.Store
 		private void  AddDoc(IndexWriter writer)
 		{
 			Document doc = new Document();
-			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.TOKENIZED));
+			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 		

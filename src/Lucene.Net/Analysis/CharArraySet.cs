@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis
 			return count == 0;
 		}
 		
-		public override bool Contains(System.Object o)
+		public override bool Contains(object o)
 		{
 			if (o is char[])
 			{
@@ -209,7 +209,7 @@ namespace Lucene.Net.Analysis
 			return false;
 		}
 		
-		public virtual bool Add(System.Object o)
+		public virtual bool Add(object o)
 		{
 			if (o is char[])
 			{
@@ -238,7 +238,7 @@ namespace Lucene.Net.Analysis
 			/// <summary>Returns the next String, as a Set<String> would...
 			/// use nextCharArray() for better efficiency. 
 			/// </summary>
-			public virtual System.Object Current
+			public virtual object Current
 			{
 				get
 				{

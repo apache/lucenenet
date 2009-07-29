@@ -42,16 +42,16 @@ namespace Lucene.Net.Search
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			long theLong = System.Int64.MaxValue;
 			double theDouble = System.Double.MaxValue;
 			for (int i = 0; i < NUM_DOCS; i++)
 			{
 				Document doc = new Document();
-				doc.Add(new Field("theLong", System.Convert.ToString(theLong--), Field.Store.NO, Field.Index.UN_TOKENIZED));
-				//doc.Add(new Field("theDouble", System.Convert.ToString(theDouble--), Field.Store.NO, Field.Index.UN_TOKENIZED));
-				doc.Add(new Field("theDouble", (theDouble--).ToString("R"), Field.Store.NO, Field.Index.UN_TOKENIZED));
-				doc.Add(new Field("text", English.IntToEnglish(i), Field.Store.NO, Field.Index.TOKENIZED));
+				doc.Add(new Field("theLong", System.Convert.ToString(theLong--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				//doc.Add(new Field("theDouble", System.Convert.ToString(theDouble--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("theDouble", (theDouble--).ToString("R"), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("text", English.IntToEnglish(i), Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();

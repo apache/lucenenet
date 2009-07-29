@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException ie)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException ie)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -177,8 +177,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every non-zero
-		/// scoring document.
+		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link

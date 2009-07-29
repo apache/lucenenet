@@ -44,11 +44,12 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
+        [System.Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			if (cache == null)
 			{
-				cache = new SupportClass.WeakHashTable();
+				cache = new System.Collections.Hashtable();
 			}
 			
 			lock (cache.SyncRoot)
@@ -72,12 +73,40 @@ namespace Lucene.Net.Search
 			return bits;
 		}
 		
+		public override DocIdSet GetDocIdSet(IndexReader reader)
+		{
+			if (cache == null)
+			{
+				cache = new System.Collections.Hashtable();
+			}
+			
+			lock (cache.SyncRoot)
+			{
+				// check cache
+				DocIdSet cached = (DocIdSet) cache[reader];
+				if (cached != null)
+				{
+					return cached;
+				}
+			}
+			
+			DocIdSet docIdSet = filter.GetDocIdSet(reader);
+			
+			lock (cache.SyncRoot)
+			{
+				// update cache
+				cache[reader] = docIdSet;
+			}
+			
+			return docIdSet;
+		}
+
 		public override System.String ToString()
 		{
 			return "CachingWrapperFilter(" + filter + ")";
 		}
 		
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is CachingWrapperFilter))
 				return false;

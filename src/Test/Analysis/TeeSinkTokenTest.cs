@@ -22,13 +22,14 @@ using NUnit.Framework;
 using StandardFilter = Lucene.Net.Analysis.Standard.StandardFilter;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
 using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> tests for the TeeTokenFilter and SinkTokenizer</summary>
 	[TestFixture]
-	public class TeeSinkTokenTest
+	public class TeeSinkTokenTest : LuceneTestCase
 	{
 		private class AnonymousClassSinkTokenizer : SinkTokenizer
 		{
@@ -51,7 +52,7 @@ namespace Lucene.Net.Analysis
 			}
 			public override void  Add(Token t)
 			{
-				if (t != null && t.TermText().ToUpper().Equals("The".ToUpper()))
+				if (t != null && t.Term().ToUpper().Equals("The".ToUpper()))
 				{
 					base.Add(t);
 				}
@@ -79,7 +80,7 @@ namespace Lucene.Net.Analysis
 			}
 			public override void  Add(Token t)
 			{
-				if (t != null && t.TermText().ToUpper().Equals("The".ToUpper()))
+				if (t != null && t.Term().ToUpper().Equals("The".ToUpper()))
 				{
 					base.Add(t);
 				}
@@ -107,7 +108,7 @@ namespace Lucene.Net.Analysis
 			}
 			public override void  Add(Token t)
 			{
-				if (t != null && t.TermText().ToUpper().Equals("Dogs".ToUpper()))
+				if (t != null && t.Term().ToUpper().Equals("Dogs".ToUpper()))
 				{
 					base.Add(t);
 				}
@@ -119,7 +120,7 @@ namespace Lucene.Net.Analysis
 		protected internal System.String[] tokens2;
 		
 		[SetUp]
-		public virtual void  SetUp()
+		override public void  SetUp()
 		{
 			tokens1 = new System.String[]{"The", "quick", "Burgundy", "Fox", "jumped", "over", "the", "lazy", "Red", "Dogs"};
 			tokens2 = new System.String[]{"The", "Lazy", "Dogs", "should", "stay", "on", "the", "porch"};
@@ -137,9 +138,8 @@ namespace Lucene.Net.Analysis
 		}
 		
 		[TearDown]
-		public virtual void  TearDown()
+		override public void  TearDown()
 		{
-			
 		}
 		
 		[Test]
@@ -148,20 +148,20 @@ namespace Lucene.Net.Analysis
 			
 			SinkTokenizer sink1 = new AnonymousClassSinkTokenizer(this, null);
 			TokenStream source = new TeeTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer1.ToString())), sink1);
-			Token token = null;
 			int i = 0;
-			while ((token = source.Next()) != null)
+            Token reusableToken = new Token();
+            for (Token nextToken = source.Next(reusableToken); nextToken != null; nextToken = source.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().Equals(tokens1[i]) == true, token.TermText() + " is not equal to " + tokens1[i]);
+				Assert.IsTrue(nextToken.Term().Equals(tokens1[i]) == true, nextToken.Term() + " is not equal to " + tokens1[i]);
 				i++;
 			}
 			Assert.IsTrue(i == tokens1.Length, i + " does not equal: " + tokens1.Length);
 			Assert.IsTrue(sink1.GetTokens().Count == 2, "sink1 Size: " + sink1.GetTokens().Count + " is not: " + 2);
 			i = 0;
-			while ((token = sink1.Next()) != null)
-			{
-				Assert.IsTrue(token.TermText().ToUpper().Equals("The".ToUpper()) == true, token.TermText() + " is not equal to " + "The");
-				i++;
+            for (Token token = sink1.Next(reusableToken); token != null; token = sink1.Next(reusableToken))
+            {
+                Assert.IsTrue(token.Term().ToUpper().Equals("The".ToUpper()) == true, token.Term() + " is not equal to " + "The");
+                i++;
 			}
 			Assert.IsTrue(i == sink1.GetTokens().Count, i + " does not equal: " + sink1.GetTokens().Count);
 		}
@@ -173,45 +173,45 @@ namespace Lucene.Net.Analysis
 			SinkTokenizer dogDetector = new AnonymousClassSinkTokenizer2(this, null);
 			TokenStream source1 = new CachingTokenFilter(new TeeTokenFilter(new TeeTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer1.ToString())), theDetector), dogDetector));
 			TokenStream source2 = new TeeTokenFilter(new TeeTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer2.ToString())), theDetector), dogDetector);
-			Token token = null;
 			int i = 0;
-			while ((token = source1.Next()) != null)
+            Token reusableToken = new Token();
+            for (Token nextToken = source1.Next(reusableToken); nextToken != null; nextToken = source1.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().Equals(tokens1[i]) == true, token.TermText() + " is not equal to " + tokens1[i]);
+                Assert.IsTrue(nextToken.Term().Equals(tokens1[i]) == true, nextToken.Term() + " is not equal to " + tokens1[i]);
 				i++;
 			}
 			Assert.IsTrue(i == tokens1.Length, i + " does not equal: " + tokens1.Length);
 			Assert.IsTrue(theDetector.GetTokens().Count == 2, "theDetector Size: " + theDetector.GetTokens().Count + " is not: " + 2);
 			Assert.IsTrue(dogDetector.GetTokens().Count == 1, "dogDetector Size: " + dogDetector.GetTokens().Count + " is not: " + 1);
 			i = 0;
-			while ((token = source2.Next()) != null)
+            for (Token nextToken = source2.Next(reusableToken); nextToken != null; nextToken = source2.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().Equals(tokens2[i]) == true, token.TermText() + " is not equal to " + tokens2[i]);
+				Assert.IsTrue(nextToken.Term().Equals(tokens2[i]) == true, nextToken.Term() + " is not equal to " + tokens2[i]);
 				i++;
 			}
 			Assert.IsTrue(i == tokens2.Length, i + " does not equal: " + tokens2.Length);
 			Assert.IsTrue(theDetector.GetTokens().Count == 4, "theDetector Size: " + theDetector.GetTokens().Count + " is not: " + 4);
 			Assert.IsTrue(dogDetector.GetTokens().Count == 2, "dogDetector Size: " + dogDetector.GetTokens().Count + " is not: " + 2);
 			i = 0;
-			while ((token = theDetector.Next()) != null)
+            for (Token nextToken = theDetector.Next(reusableToken); nextToken != null; nextToken = theDetector.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().ToUpper().Equals("The".ToUpper()) == true, token.TermText() + " is not equal to " + "The");
+				Assert.IsTrue(nextToken.Term().ToUpper().Equals("The".ToUpper()) == true, nextToken.Term() + " is not equal to " + "The");
 				i++;
 			}
 			Assert.IsTrue(i == theDetector.GetTokens().Count, i + " does not equal: " + theDetector.GetTokens().Count);
 			i = 0;
-			while ((token = dogDetector.Next()) != null)
+            for (Token nextToken = dogDetector.Next(reusableToken); nextToken != null; nextToken = dogDetector.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().ToUpper().Equals("Dogs".ToUpper()) == true, token.TermText() + " is not equal to " + "Dogs");
+				Assert.IsTrue(nextToken.Term().ToUpper().Equals("Dogs".ToUpper()) == true, nextToken.Term() + " is not equal to " + "Dogs");
 				i++;
 			}
 			Assert.IsTrue(i == dogDetector.GetTokens().Count, i + " does not equal: " + dogDetector.GetTokens().Count);
 			source1.Reset();
 			TokenStream lowerCasing = new LowerCaseFilter(source1);
 			i = 0;
-			while ((token = lowerCasing.Next()) != null)
+            for (Token nextToken = lowerCasing.Next(reusableToken); nextToken != null; nextToken = lowerCasing.Next(reusableToken))
 			{
-				Assert.IsTrue(token.TermText().Equals(tokens1[i].ToLower()) == true, token.TermText() + " is not equal to " + tokens1[i].ToLower());
+				Assert.IsTrue(nextToken.Term().Equals(tokens1[i].ToLower()) == true, nextToken.Term() + " is not equal to " + tokens1[i].ToLower());
 				i++;
 			}
 			Assert.IsTrue(i == tokens1.Length, i + " does not equal: " + tokens1.Length);
@@ -236,17 +236,16 @@ namespace Lucene.Net.Analysis
 				}
 				//make sure we produce the same tokens
 				ModuloSinkTokenizer sink = new ModuloSinkTokenizer(this, tokCount[k], 100);
-				Token next = new Token();
-				TokenStream result = new TeeTokenFilter(new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), sink);
-				while ((next = result.Next(next)) != null)
+                Token reusableToken = new Token();
+				TokenStream stream = new TeeTokenFilter(new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), sink);
+				while ((stream.Next(reusableToken)) != null)
 				{
 				}
-				result = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), 100);
-				next = new Token();
+				stream = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), 100);
 				System.Collections.IList tmp = new System.Collections.ArrayList();
-				while ((next = result.Next(next)) != null)
+                for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 				{
-					tmp.Add(next.Clone());
+					tmp.Add(nextToken.Clone());
 				}
 				System.Collections.IList sinkList = sink.GetTokens();
 				Assert.IsTrue(tmp.Count == sinkList.Count, "tmp Size: " + tmp.Count + " is not: " + sinkList.Count);
@@ -254,7 +253,7 @@ namespace Lucene.Net.Analysis
 				{
 					Token tfTok = (Token) tmp[i];
 					Token sinkTok = (Token) sinkList[i];
-					Assert.IsTrue(tfTok.TermText().Equals(sinkTok.TermText()) == true, tfTok.TermText() + " is not equal to " + sinkTok.TermText() + " at token: " + i);
+					Assert.IsTrue(tfTok.Term().Equals(sinkTok.Term()) == true, tfTok.Term() + " is not equal to " + sinkTok.Term() + " at token: " + i);
 				}
 				//simulate two fields, each being analyzed once, for 20 documents
 				
@@ -264,17 +263,15 @@ namespace Lucene.Net.Analysis
 					long start = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
 					for (int i = 0; i < 20; i++)
 					{
-						next = new Token();
-						result = new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString())));
-						while ((next = result.Next(next)) != null)
+						stream = new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString())));
+                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 						{
-							tfPos += next.GetPositionIncrement();
+							tfPos += nextToken.GetPositionIncrement();
 						}
-						next = new Token();
-						result = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), modCounts[j]);
-						while ((next = result.Next(next)) != null)
+						stream = new ModuloTokenFilter(this, new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), modCounts[j]);
+                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 						{
-							tfPos += next.GetPositionIncrement();
+							tfPos += nextToken.GetPositionIncrement();
 						}
 					}
 					long finish = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
@@ -285,17 +282,16 @@ namespace Lucene.Net.Analysis
 					for (int i = 0; i < 20; i++)
 					{
 						sink = new ModuloSinkTokenizer(this, tokCount[k], modCounts[j]);
-						next = new Token();
-						result = new TeeTokenFilter(new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), sink);
-						while ((next = result.Next(next)) != null)
+						stream = new TeeTokenFilter(new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString()))), sink);
+                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 						{
-							sinkPos += next.GetPositionIncrement();
+							sinkPos += nextToken.GetPositionIncrement();
 						}
 						//System.out.println("Modulo--------");
-						result = sink;
-						while ((next = result.Next(next)) != null)
+						stream = sink;
+                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 						{
-							sinkPos += next.GetPositionIncrement();
+							sinkPos += nextToken.GetPositionIncrement();
 						}
 					}
 					finish = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
@@ -334,15 +330,17 @@ namespace Lucene.Net.Analysis
 			internal int count = 0;
 			
 			//return every 100 tokens
-			public override Token Next(Token result)
+			public override Token Next(Token reusableToken)
 			{
-				
-				while ((result = input.Next(result)) != null && count % modCount != 0)
-				{
+                Token nextToken = null;
+                for (nextToken = input.Next(reusableToken);
+                    nextToken != null && count % modCount != 0;
+                    nextToken = input.Next(reusableToken))
+                    {
 					count++;
 				}
 				count++;
-				return result;
+				return nextToken;
 			}
 		}
 		
@@ -376,7 +374,7 @@ namespace Lucene.Net.Analysis
 			{
 				if (t != null && count % modCount == 0)
 				{
-					lst.Add(t.Clone());
+					base.Add(t);
 				}
 				count++;
 			}

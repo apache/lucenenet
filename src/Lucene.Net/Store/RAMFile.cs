@@ -60,8 +60,24 @@ namespace Lucene.Net.Store
 				this.length = length;
 			}
 		}
-		
-		// For non-stream access from thread that might be concurrent with writing
+
+        public virtual long GetLength_ForNUnitTest()
+        {
+            lock (this)
+            {
+                return length;
+            }
+        }
+
+        public virtual void SetLength_ForNUnitTest(long length)
+        {
+            lock (this)
+            {
+                this.length = length;
+            }
+        }
+
+        // For non-stream access from thread that might be concurrent with writing
 		internal virtual long GetLastModified()
 		{
 			lock (this)
@@ -112,8 +128,24 @@ namespace Lucene.Net.Store
 				return buffers.Count;
 			}
 		}
-		
-		/// <summary> Expert: allocate a new buffer. 
+
+        public byte[] GetBuffer_ForNUnitTest(int index)
+        {
+            lock (this)
+            {
+                return (byte[])buffers[index];
+            }
+        }
+
+        public int NumBuffers_ForNUnitTest()
+        {
+            lock (this)
+            {
+                return buffers.Count;
+            }
+        }
+        
+        /// <summary> Expert: allocate a new buffer. 
 		/// Subclasses can allocate differently. 
 		/// </summary>
 		/// <param name="size">size of allocated buffer.

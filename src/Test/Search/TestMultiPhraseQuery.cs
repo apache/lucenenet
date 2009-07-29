@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("blueberry pie", writer);
 			Add("blueberry strudel", writer);
 			Add("blueberry pizza", writer);
@@ -87,11 +87,11 @@ namespace Lucene.Net.Search
 			query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			Assert.AreEqual("body:\"strawberry (piccadilly pie pizza)\"", query2.ToString());
 			
-			Hits result;
-			result = searcher.Search(query1);
-			Assert.AreEqual(2, result.Length());
-			result = searcher.Search(query2);
-			Assert.AreEqual(0, result.Length());
+			ScoreDoc[] result;
+			result = searcher.Search(query1, null, 1000).scoreDocs;
+			Assert.AreEqual(2, result.Length);
+            result = searcher.Search(query2, null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
 			// search for "blue* pizza":
 			MultiPhraseQuery query3 = new MultiPhraseQuery();
@@ -109,14 +109,14 @@ namespace Lucene.Net.Search
 			query3.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			query3.Add(new Term("body", "pizza"));
 			
-			result = searcher.Search(query3);
-			Assert.AreEqual(2, result.Length()); // blueberry pizza, bluebird pizza
+			result = searcher.Search(query3, null, 1000).scoreDocs;
+			Assert.AreEqual(2, result.Length); // blueberry pizza, bluebird pizza
 			Assert.AreEqual("body:\"(blueberry bluebird) pizza\"", query3.ToString());
 			
 			// test slop:
 			query3.SetSlop(1);
-			result = searcher.Search(query3);
-			Assert.AreEqual(3, result.Length()); // blueberry pizza, bluebird pizza, bluebird foobar pizza
+			result = searcher.Search(query3, null, 1000).scoreDocs;
+			Assert.AreEqual(3, result.Length); // blueberry pizza, bluebird pizza, bluebird foobar pizza
 			
 			MultiPhraseQuery query4 = new MultiPhraseQuery();
 			try
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 		private void  Add(System.String s, IndexWriter writer)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
 		
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 			// The contained PhraseMultiQuery must contain exactly one term array.
 			
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("blueberry pie", writer);
 			Add("blueberry chewing gum", writer);
 			Add("blue raspberry pie", writer);
@@ -167,9 +167,9 @@ namespace Lucene.Net.Search
 			q.Add(trouble, BooleanClause.Occur.MUST);
 			
 			// exception will be thrown here without fix
-			Hits hits = searcher.Search(q);
+			ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
 			
-			Assert.AreEqual(2, hits.Length(), "Wrong number of hits");
+			Assert.AreEqual(2, hits.Length, "Wrong number of hits");
 			searcher.Close();
 		}
 		
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.String[]{}), true);
+            IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.String[] { }), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("This is a test", "object", writer);
 			Add("a note", "note", writer);
 			writer.Close();
@@ -194,16 +194,16 @@ namespace Lucene.Net.Search
 			q.Add(trouble, BooleanClause.Occur.MUST);
 			
 			// exception will be thrown here without fix for #35626:
-			Hits hits = searcher.Search(q);
-			Assert.AreEqual(0, hits.Length(), "Wrong number of hits");
+			ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+			Assert.AreEqual(0, hits.Length, "Wrong number of hits");
 			searcher.Close();
 		}
 		
 		private void  Add(System.String s, System.String type, IndexWriter writer)
 		{
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.TOKENIZED));
-			doc.Add(new Field("type", type, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("type", type, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			writer.AddDocument(doc);
 		}
 	}

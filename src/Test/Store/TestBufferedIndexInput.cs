@@ -19,14 +19,14 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
@@ -190,13 +190,13 @@ namespace Lucene.Net.Store
 			MockFSDirectory dir = new MockFSDirectory(indexDir);
 			try
 			{
-				IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				writer.SetUseCompoundFile(false);
 				for (int i = 0; i < 37; i++)
 				{
 					Document doc = new Document();
-					doc.Add(new Field("content", "aaa bbb ccc ddd" + i, Field.Store.YES, Field.Index.TOKENIZED));
-					doc.Add(new Field("id", "" + i, Field.Store.YES, Field.Index.TOKENIZED));
+					doc.Add(new Field("content", "aaa bbb ccc ddd" + i, Field.Store.YES, Field.Index.ANALYZED));
+					doc.Add(new Field("id", "" + i, Field.Store.YES, Field.Index.ANALYZED));
 					writer.AddDocument(doc);
 				}
 				writer.Close();
@@ -207,25 +207,25 @@ namespace Lucene.Net.Store
 				Term aaa = new Term("content", "aaa");
 				Term bbb = new Term("content", "bbb");
 				Term ccc = new Term("content", "ccc");
-				Assert.AreEqual(reader.DocFreq(ccc), 37);
+				Assert.AreEqual(37, reader.DocFreq(ccc));
 				reader.DeleteDocument(0);
-				Assert.AreEqual(reader.DocFreq(aaa), 37);
+				Assert.AreEqual(37, reader.DocFreq(aaa));
 				dir.TweakBufferSizes();
 				reader.DeleteDocument(4);
 				Assert.AreEqual(reader.DocFreq(bbb), 37);
 				dir.TweakBufferSizes();
 				
 				IndexSearcher searcher = new IndexSearcher(reader);
-				Hits hits = searcher.Search(new TermQuery(bbb));
+				ScoreDoc[] hits = searcher.Search(new TermQuery(bbb), null, 1000).scoreDocs;
 				dir.TweakBufferSizes();
-				Assert.AreEqual(35, hits.Length());
+				Assert.AreEqual(35, hits.Length);
 				dir.TweakBufferSizes();
-				hits = searcher.Search(new TermQuery(new Term("id", "33")));
+				hits = searcher.Search(new TermQuery(new Term("id", "33")), null, 1000).scoreDocs;
 				dir.TweakBufferSizes();
-				Assert.AreEqual(1, hits.Length());
-				hits = searcher.Search(new TermQuery(aaa));
+				Assert.AreEqual(1, hits.Length);
+				hits = searcher.Search(new TermQuery(aaa), null, 1000).scoreDocs;
 				dir.TweakBufferSizes();
-				Assert.AreEqual(35, hits.Length());
+				Assert.AreEqual(35, hits.Length);
 				searcher.Close();
 				reader.Close();
 			}
@@ -239,8 +239,8 @@ namespace Lucene.Net.Store
 		{
 			
 			internal System.Collections.IList allIndexInputs = new System.Collections.ArrayList();
-			
-			internal System.Random rand = new System.Random();
+
+            internal System.Random rand = new System.Random(788);
 			
 			private Directory dir;
 			
@@ -258,13 +258,13 @@ namespace Lucene.Net.Store
 			public virtual void  TweakBufferSizes()
 			{
 				System.Collections.IEnumerator it = allIndexInputs.GetEnumerator();
-				int count = 0;
+				//int count = 0;
 				while (it.MoveNext())
 				{
 					BufferedIndexInput bii = (BufferedIndexInput) it.Current;
 					int bufferSize = 1024 + (int) System.Math.Abs(rand.Next() % 32768);
 					bii.SetBufferSize(bufferSize);
-					count++;
+					//count++;
 				}
 				//System.out.println("tweak'd " + count + " buffer sizes");
 			}

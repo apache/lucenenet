@@ -16,11 +16,13 @@
  */
 
 using System;
+using CompareInfo = System.Globalization.CompareInfo;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search
 {
@@ -42,6 +44,7 @@ namespace Lucene.Net.Search
 		private System.String upperTerm;
 		private bool includeLower;
 		private bool includeUpper;
+        private CompareInfo collator;
 		
 		/// <param name="fieldName">The field this range applies to
 		/// </param>
@@ -78,7 +81,26 @@ namespace Lucene.Net.Search
 				throw new System.ArgumentException("The upper bound must be non-null to be inclusive");
 			}
 		}
-		
+
+        /// <summary>
+        /// WARNING: Using this constructor and supplying a non-null
+        /// value in the collator paramter will cause every single
+        /// index Term in the Field referenced by lowerTerm and/or upperTerm
+        /// to be examined.  Depending on the number of index Terms in this 
+        /// Field, the operation could be very slow.
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="lowerTerm">lower bound</param>
+        /// <param name="upperTerm">upper bound</param>
+        /// <param name="includeLower">is lower bound inclusive</param>
+        /// <param name="includeUpper">is upper bound inclusive</param>
+        /// <param name="collator">the collator that determines range inclusion; when set to null Unicode code point ordering is used</param>
+        public RangeFilter(string fieldName, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper, CompareInfo collator)
+            : this(fieldName, lowerTerm, upperTerm, includeLower, includeUpper)
+        {
+            this.collator = collator;
+        }
+
 		/// <summary> Constructs a filter for field <code>fieldName</code> matching
 		/// less than or equal to <code>upperTerm</code>.
 		/// </summary>
@@ -99,10 +121,15 @@ namespace Lucene.Net.Search
 		/// permitted in search results, and false for those that should
 		/// not.
 		/// </summary>
+        [Obsolete("use GetDocIdSet(IndexReader) instead")]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-			TermEnum enumerator = (null != lowerTerm ? reader.Terms(new Term(fieldName, lowerTerm)) : reader.Terms(new Term(fieldName, "")));
+			System.Collections.BitArray bits = new System.Collections.BitArray(
+                (reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+
+			TermEnum enumerator = (null != lowerTerm && collator == null ?
+                reader.Terms(new Term(fieldName, lowerTerm)) : 
+                reader.Terms(new Term(fieldName)));
 			
 			try
 			{
@@ -111,49 +138,72 @@ namespace Lucene.Net.Search
 				{
 					return bits;
 				}
-				
-				bool checkLower = false;
-				if (!includeLower)
-					// make adjustments to set to exclusive
-					checkLower = true;
-				
-				TermDocs termDocs = reader.TermDocs();
-				try
-				{
-					
-					do 
-					{
-						Term term = enumerator.Term();
-						if (term != null && term.Field().Equals(fieldName))
-						{
-							if (!checkLower || null == lowerTerm || String.CompareOrdinal(term.Text(), lowerTerm) > 0)
-							{
-								checkLower = false;
-								if (upperTerm != null)
-								{
-									int compare = String.CompareOrdinal(upperTerm, term.Text());
-									/* if beyond the upper term, or is exclusive and
-									* this is equal to the upper term, break out */
-									if ((compare < 0) || (!includeUpper && compare == 0))
-									{
-										break;
-									}
-								}
-								/* we have a good term, find the docs */
-								
-								termDocs.Seek(enumerator.Term());
-								while (termDocs.Next())
-								{
-									bits.Set(termDocs.Doc(), true);
-								}
-							}
-						}
-						else
-						{
-							break;
-						}
-					}
-					while (enumerator.Next());
+
+                TermDocs termDocs = reader.TermDocs();
+                try
+                {
+                    if (collator != null)
+                    {
+                        do
+                        {
+                            Term term = enumerator.Term();
+                            if (term != null && term.Field().Equals(fieldName))
+                            {
+                                if ((lowerTerm == null ||
+                                    (includeLower ? collator.Compare(term.Text(), lowerTerm) >= 0 : collator.Compare(term.Text(), lowerTerm) > 0)) &&
+                                    (upperTerm == null ||
+                                    (includeUpper ? collator.Compare(term.Text(), upperTerm) <= 0 : collator.Compare(term.Text(), upperTerm) < 0)))
+                                {
+                                    // term in range, lookup docs
+                                    termDocs.Seek(enumerator.Term());
+                                    while (termDocs.Next())
+                                    {
+                                        bits.Set(termDocs.Doc(), true);
+                                    }
+                                }
+                            }
+                        }
+                        while (enumerator.Next());
+                    }
+                    else // null collator; using Unicode code point ordering
+                    {
+                        bool checkLower = false;
+                        if (!includeLower) // make adjustments to set to exclusive
+                            checkLower = true;
+                        do
+                        {
+                            Term term = enumerator.Term();
+                            if (term != null && term.Field().Equals(fieldName))
+                            {
+                                if (!checkLower || null == lowerTerm || String.CompareOrdinal(term.Text(), lowerTerm) > 0)
+                                {
+                                    checkLower = false;
+                                    if (upperTerm != null)
+                                    {
+                                        int compare = String.CompareOrdinal(upperTerm, term.Text());
+                                        /* if beyond the upper term, or is exclusive and
+                                        * this is equal to the upper term, break out */
+                                        if ((compare < 0) || (!includeUpper && compare == 0))
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    /* we have a good term, find the docs */
+
+                                    termDocs.Seek(enumerator.Term());
+                                    while (termDocs.Next())
+                                    {
+                                        bits.Set(termDocs.Doc(), true);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        while (enumerator.Next());
+                    }
 				}
 				finally
 				{
@@ -167,8 +217,106 @@ namespace Lucene.Net.Search
 			
 			return bits;
 		}
-		
-		public override System.String ToString()
+
+        /// <summary> Returns a DocIdSet with documents that should be
+        /// permitted in search results.
+        /// </summary>
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
+
+            TermEnum enumerator = (null != lowerTerm && collator == null ?
+                reader.Terms(new Term(fieldName, lowerTerm)) :
+                reader.Terms(new Term(fieldName)));
+
+            try
+            {
+
+                if (enumerator.Term() == null)
+                {
+                    return bits;
+                }
+
+                TermDocs termDocs = reader.TermDocs();
+                try
+                {
+                    if (collator != null)
+                    {
+                        do
+                        {
+                            Term term = enumerator.Term();
+                            if (term != null && term.Field().Equals(fieldName))
+                            {
+                                if ((lowerTerm == null ||
+                                    (includeLower ? collator.Compare(term.Text(), lowerTerm) >= 0 : collator.Compare(term.Text(), lowerTerm) > 0)) &&
+                                    (upperTerm == null ||
+                                    (includeUpper ? collator.Compare(term.Text(), upperTerm) <= 0 : collator.Compare(term.Text(), upperTerm) < 0)))
+                                {
+                                    // term in range, lookup docs
+                                    termDocs.Seek(enumerator.Term());
+                                    while (termDocs.Next())
+                                    {
+                                        bits.Set(termDocs.Doc());
+                                    }
+                                }
+                            }
+                        }
+                        while (enumerator.Next());
+                    }
+                    else // null collator; using Unicode code point ordering
+                    {
+                        bool checkLower = false;
+                        if (!includeLower) // make adjustments to set to exclusive
+                            checkLower = true;
+                        do
+                        {
+                            Term term = enumerator.Term();
+                            if (term != null && term.Field().Equals(fieldName))
+                            {
+                                if (!checkLower || null == lowerTerm || String.CompareOrdinal(term.Text(), lowerTerm) > 0)
+                                {
+                                    checkLower = false;
+                                    if (upperTerm != null)
+                                    {
+                                        int compare = String.CompareOrdinal(upperTerm, term.Text());
+                                        /* if beyond the upper term, or is exclusive and
+                                        * this is equal to the upper term, break out */
+                                        if ((compare < 0) || (!includeUpper && compare == 0))
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    /* we have a good term, find the docs */
+
+                                    termDocs.Seek(enumerator.Term());
+                                    while (termDocs.Next())
+                                    {
+                                        bits.Set(termDocs.Doc());
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        while (enumerator.Next());
+                    }
+                }
+                finally
+                {
+                    termDocs.Close();
+                }
+            }
+            finally
+            {
+                enumerator.Close();
+            }
+
+            return bits;
+        }
+
+        public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append(fieldName);
@@ -188,7 +336,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;
@@ -196,7 +344,10 @@ namespace Lucene.Net.Search
 				return false;
 			RangeFilter other = (RangeFilter) o;
 			
-			if (!this.fieldName.Equals(other.fieldName) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+			if (!this.fieldName.Equals(other.fieldName) ||
+                this.includeLower != other.includeLower ||
+                this.includeUpper != other.includeUpper ||
+                (this.collator != null && !this.collator.Equals(other.collator)))
 			{
 				return false;
 			}
@@ -215,6 +366,7 @@ namespace Lucene.Net.Search
 			h = (h << 1) | (SupportClass.Number.URShift(h, 31)); // rotate to distinguish lower from upper
 			h ^= (upperTerm != null ? (upperTerm.GetHashCode()) : unchecked((int) 0x91BEC2C2));         // {{Aroush-1.9}} is this OK?!
 			h ^= (includeLower ? unchecked((int) 0xD484B933) : 0) ^ (includeUpper ? 0x6AE423AC : 0);    // {{Aroush-1.9}} is this OK?!
+            h ^= collator != null ? collator.GetHashCode() : 0;
 			return h;
 		}
 	}

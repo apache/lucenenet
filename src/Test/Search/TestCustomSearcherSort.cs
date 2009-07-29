@@ -35,9 +35,6 @@ namespace Lucene.Net.Search
 	/// <summary> Unit test for sorting code.
 	/// 
 	/// </summary>
-	/// <author>   Martin Seitz (T-Systems)
-	/// </author>
-	
 	[Serializable]
 	[TestFixture]
 	public class TestCustomSearcherSort
@@ -49,7 +46,7 @@ namespace Lucene.Net.Search
 			get
 			{
 				RAMDirectory indexStore = new RAMDirectory();
-				IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				RandomGen random = new RandomGen(this);
 				for (int i = 0; i < INDEX_SIZE; ++i)
 				{
@@ -58,15 +55,15 @@ namespace Lucene.Net.Search
 					if ((i % 5) != 0)
 					{
 						// some documents must not have an entry in the first sort field
-						doc.Add(new Field("publicationDate_", random.GetLuceneDate(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("publicationDate_", random.GetLuceneDate(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 					}
 					if ((i % 7) == 0)
 					{
 						// some documents to match the query (see below) 
-						doc.Add(new Field("content", "test", Field.Store.YES, Field.Index.TOKENIZED));
+						doc.Add(new Field("content", "test", Field.Store.YES, Field.Index.ANALYZED));
 					}
 					// every document has a defined 'mandant' field
-					doc.Add(new Field("mandant", System.Convert.ToString(i % 3), Field.Store.YES, Field.Index.UN_TOKENIZED));
+					doc.Add(new Field("mandant", System.Convert.ToString(i % 3), Field.Store.YES, Field.Index.NOT_ANALYZED));
 					writer.AddDocument(doc);
 				}
 				writer.Optimize();
@@ -135,24 +132,24 @@ namespace Lucene.Net.Search
 		private void  MatchHits(Searcher searcher, Sort sort)
 		{
 			// make a query without sorting first
-			Hits hitsByRank = searcher.Search(query);
+			ScoreDoc[] hitsByRank = searcher.Search(query, null, 1000).scoreDocs;
 			CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
 			System.Collections.IDictionary resultMap = new System.Collections.SortedList();
 			// store hits in TreeMap - TreeMap does not allow duplicates; existing entries are silently overwritten
-			for (int hitid = 0; hitid < hitsByRank.Length(); ++hitid)
+			for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
 			{
-				resultMap[(System.Int32) hitsByRank.Id(hitid)] = (System.Int32) hitid; // Value: Hits-Objekt Index
+				resultMap[(System.Int32) hitsByRank[hitid].doc] = (System.Int32) hitid; // Value: Hits-Objekt Index
 			}
 			
 			// now make a query using the sort criteria
-			Hits resultSort = searcher.Search(query, sort);
+			ScoreDoc[] resultSort = searcher.Search(query, null, 1000, sort).scoreDocs;
 			CheckHits(resultSort, "Sort by custom criteria: "); // check for duplicates
 			
 			System.String lf = SupportClass.AppSettings.Get("line.separator", "\n");
 			// besides the sorting both sets of hits must be identical
-			for (int hitid = 0; hitid < resultSort.Length(); ++hitid)
+			for (int hitid = 0; hitid < resultSort.Length; ++hitid)
 			{
-				System.Int32 idHitDate = (System.Int32) resultSort.Id(hitid); // document ID from sorted search
+				System.Int32 idHitDate = (System.Int32) resultSort[hitid].doc; // document ID from sorted search
 				if (!resultMap.Contains(idHitDate))
 				{
 					Log("ID " + idHitDate + " not found. Possibliy a duplicate.");
@@ -176,44 +173,31 @@ namespace Lucene.Net.Search
 		/// <summary> Check the hits for duplicates.</summary>
 		/// <param name="hits">
 		/// </param>
-		private void  CheckHits(Hits hits, System.String prefix)
+		private void  CheckHits(ScoreDoc[] hits, System.String prefix)
 		{
 			if (hits != null)
 			{
 				System.Collections.IDictionary idMap = new System.Collections.SortedList();
-				for (int docnum = 0; docnum < hits.Length(); ++docnum)
+				for (int docnum = 0; docnum < hits.Length; ++docnum)
 				{
 					System.Int32 luceneId;
-					try
-					{
-						luceneId = (System.Int32) hits.Id(docnum);
-						if (idMap.Contains(luceneId))
-						{
-							System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
-							message.Append("Duplicate key for hit index = ");
-							message.Append(docnum);
-							message.Append(", previous index = ");
-							message.Append(((System.Int32) idMap[luceneId]).ToString());
-							message.Append(", Lucene ID = ");
-							message.Append(luceneId);
-							Log(message.ToString());
-						}
-						else
-						{
-							idMap[luceneId] = (System.Int32) docnum;
-						}
-					}
-					catch (System.IO.IOException ioe)
-					{
-						System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
-						message.Append("Error occurred for hit index = ");
-						message.Append(docnum);
-						message.Append(" (");
-						message.Append(ioe.Message);
-						message.Append(")");
-						Log(message.ToString());
-					}
-				}
+                    luceneId = (System.Int32)hits[docnum].doc;
+                    if (idMap.Contains(luceneId))
+                    {
+                        System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
+                        message.Append("Duplicate key for hit index = ");
+                        message.Append(docnum);
+                        message.Append(", previous index = ");
+                        message.Append(((System.Int32)idMap[luceneId]).ToString());
+                        message.Append(", Lucene ID = ");
+                        message.Append(luceneId);
+                        Log(message.ToString());
+                    }
+                    else
+                    {
+                        idMap[luceneId] = (System.Int32)docnum;
+                    }
+                }
 			}
 		}
 		

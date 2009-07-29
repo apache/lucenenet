@@ -169,17 +169,41 @@ namespace Lucene.Net.Search
 		// inherit javadoc
 		public override void  Search(Weight weight, Filter filter, HitCollector results)
 		{
-			HitCollector collector = results;
-			if (filter != null)
-			{
-				System.Collections.BitArray bits = filter.Bits(reader);
-				collector = new AnonymousClassHitCollector(bits, results, this);
-			}
-			
-			Scorer scorer = weight.Scorer(reader);
-			if (scorer == null)
-				return ;
-			scorer.Score(collector);
+            Scorer scorer = weight.Scorer(reader);
+            if (scorer == null)
+                return;
+
+            if (filter == null)
+            {
+                scorer.Score(results);
+                return;
+            }
+
+            DocIdSetIterator filterDocIdIterator = filter.GetDocIdSet(reader).Iterator(); // CHECKME: use ConjunctionScorer here?
+
+            bool more = filterDocIdIterator.Next() && scorer.SkipTo(filterDocIdIterator.Doc());
+
+            while (more)
+            {
+                int filterDocId = filterDocIdIterator.Doc();
+                if (filterDocId > scorer.Doc() && !scorer.SkipTo(filterDocId))
+                {
+                    more = false;
+                }
+                else
+                {
+                    int scorerDocId = scorer.Doc();
+                    if (scorerDocId == filterDocId) // permitted by filter
+                    {
+                        results.Collect(scorerDocId, scorer.Score());
+                        more = filterDocIdIterator.Next();
+                    }
+                    else
+                    {
+                        more = filterDocIdIterator.SkipTo(scorerDocId);
+                    }
+                }
+            }
 		}
 		
 		public override Query Rewrite(Query original)

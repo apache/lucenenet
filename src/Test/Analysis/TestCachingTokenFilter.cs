@@ -32,7 +32,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
-	
+	[TestFixture]
 	public class TestCachingTokenFilter : LuceneTestCase
 	{
 		private class AnonymousClassTokenStream : TokenStream
@@ -56,25 +56,26 @@ namespace Lucene.Net.Analysis
 			}
 			private int index = 0;
 			
-			public override Token Next()
+			public override Token Next(Token reusableToken)
 			{
+                System.Diagnostics.Debug.Assert(reusableToken != null);
 				if (index == Enclosing_Instance.tokens.Length)
 				{
 					return null;
 				}
 				else
 				{
-					return new Token(Enclosing_Instance.tokens[index++], 0, 0);
+					return reusableToken.Reinit(Enclosing_Instance.tokens[index++], 0, 0);
 				}
 			}
 		}
 		private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 		
-		[Test]
+		[NUnit.Framework.Test]
 		public virtual void  TestCaching()
 		{
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer());
+			IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			TokenStream stream = new AnonymousClassTokenStream(this);
 			
@@ -118,11 +119,11 @@ namespace Lucene.Net.Analysis
 		private void  CheckTokens(TokenStream stream)
 		{
 			int count = 0;
-			Token token;
-			while ((token = stream.Next()) != null)
+			Token reusableToken = new Token();
+            for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
 			{
 				Assert.IsTrue(count < tokens.Length);
-				Assert.AreEqual(tokens[count], token.TermText());
+				Assert.AreEqual(tokens[count], nextToken.Term());
 				count++;
 			}
 			

@@ -16,18 +16,18 @@
  */
 
 using System;
+using Pattern = System.Text.RegularExpressions.Regex;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-
-using Pattern = System.Text.RegularExpressions.Regex;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
@@ -37,8 +37,6 @@ namespace Lucene.Net.Search
 	/// <p>Created: Feb 17, 2004 4:55:10 PM
 	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
 	/// <version>  $Id: TestSort.java 590530 2007-10-31 01:28:25Z gsingers $
@@ -73,7 +71,14 @@ namespace Lucene.Net.Search
 				
 			}
 
-			public override System.Collections.BitArray Bits(IndexReader reader)
+            public override DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                System.Collections.BitArray bs = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
+                bs.Set(docs1.scoreDocs[0].doc, true);
+                return new DocIdBitSet(bs);
+            }
+            [System.Obsolete()]
+            public override System.Collections.BitArray Bits(IndexReader reader)
 			{
 				System.Collections.BitArray bs = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
 				bs.Set(docs1.scoreDocs[0].doc, true);
@@ -135,52 +140,70 @@ namespace Lucene.Net.Search
 		// the float field to sort by float
 		// the string field to sort by string
 		// the i18n field includes accented characters for testing locale-specific sorting
-		private System.String[][] data = new System.String[][]{
-							   // tracer  contents         int            float                     string   custom   i18n                  long             double
-			new System.String[]{   "A",   "x a",           "5",           "4f",                     "c",     "A-3",   "p\u00EAche",         "10",            "-4" + NDS + "0"}, 
-			new System.String[]{   "B",   "y a",           "5",           "3" + NDS + "4028235E38", "i",     "B-10",  "HAT",                "1000000000",    "40" + NDS + "0"}, 
-			new System.String[]{   "C",   "x a b c",       "2147483647",  "1" + NDS + "0",          "j",     "A-2",   "p\u00E9ch\u00E9",    "99999999",      "40" + NDS + "00002343"}, 
-			//new System.String[]{   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT",                System.Convert.ToString(System.Int64.MaxValue), System.Convert.ToString(System.Double.MinValue)}, 
-			//new System.String[]{   "E",   "x a b c d",     "5",           "2f",                     "h",     "B-8",   "peach",              System.Convert.ToString(System.Int64.MinValue), System.Convert.ToString(System.Double.MaxValue)}, 
-			new System.String[]{   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT",                System.Convert.ToString(System.Int64.MaxValue), System.Double.MinValue.ToString("R")}, 
-			new System.String[]{   "E",   "x a b c d",     "5",           "2f",                     "h",     "B-8",   "peach",              System.Convert.ToString(System.Int64.MinValue), System.Double.MaxValue.ToString("R")}, 
-			new System.String[]{   "F",   "y a b c d",     "2",           "3" + NDS + "14159f",     "g",     "B-1",   "H\u00C5T",           "-44",           "343" + NDS + "034435444"}, 
-			new System.String[]{   "G",   "x a b c d",     "3",           "-1" + NDS + "0",         "f",     "C-100", "sin",                "323254543543",  "4" + NDS + "043544"}, 
-			new System.String[]{   "H",   "y a b c d",     "0",           "1" + NDS + "4E-45",      "e",     "C-88",  "H\u00D8T",           "1023423423005", "4" + NDS + "043545"}, 
-			new System.String[]{   "I",   "x a b c d e f", "-2147483648", "1" + NDS + "0e+0",       "d",     "A-10",  "s\u00EDn",           "332422459999",  "4" + NDS + "043546"}, 
-			new System.String[]{   "J",   "y a b c d e f", "4",           "" + NDS + "5",           "b",     "C-7",   "HOT",                "34334543543",   "4" + NDS + "0000220343"}, 
-			new System.String[]{   "W",   "g",             "1",           null,                     null,    null,    null,                 null,            null}, 
-			new System.String[]{   "X",   "g",             "1",           "0" + NDS + "1",          null,    null,    null,                 null,            null}, 
-			new System.String[]{   "Y",   "g",             "1",           "0" + NDS + "2",          null,    null,    null,                 null,            null}, 
-			new System.String[]{   "Z",   "f g",           null,          null,                     null,    null,    null,                 null,            null}};
+		private string[][] data = new string[][] {
+
+            // {dougsale-2.4.0}
+            // As C# doesn't support a signed byte datatype, the byte values of the data array have been adjusted
+            // to work as expected (maintained relative sort-ordering of documents).
+            // All the byte values had 51 added to them except MinValue and MaxValue, as -50 was the lowest value inside of MinValue).
+            // Note: The inconsistent behavior of fields interpreted as byte for sorting purposes could pose a problem for someone
+            // using an index across Lucene and Lucene.NET.
+
+            // tracer  contents         int            float           string   custom   i18n               long            double, 'short', byte
+            new string[] {   "A",   "x a",           "5",           "4f",           "c",     "A-3",   "p\u00EAche",      "10",           "-4" + NDS + "0", "3", "177"/*"126"*/},//A,x
+            new string[] {   "B",   "y a",           "5",           "3" + NDS + "4028235E38", "i",     "B-10",  "HAT",             "1000000000", "40" + NDS + "0", "24", "52"/*"1"*/},//B,y
+            new string[] {   "C",   "x a b c",       "2147483647",  "1" + NDS + "0",          "j",     "A-2",   "p\u00E9ch\u00E9", "99999999",   "40" + NDS + "00002343", "125", "66"/*"15"*/},//C,x
+
+            // {dougsale-2.4.0}
+            // Can't convert from System.Double.MinValue or System.Double.MaxValue to a string and then back to a double
+            // without a System.OverflowException occurring on the way back from string to double - so reduced the
+            // magnitude of the values while maintaining the relative sort orders.  Perhaps we should be using decimal instead
+            // of double...
+
+            new string[] {   "D",   "y a b c",       "-1",          "0" + NDS + "0f",         "a",     "C-0",   "HUT",             System.Int64.MaxValue.ToString(), "-1.77971620351369E+308" /*System.Double.MinValue.ToString()*/, System.Int16.MinValue.ToString(), System.Byte.MinValue.ToString() },//D,y
+            new string[] {   "E",   "x a b c d",     "5",           "2f",           "h",     "B-8",   "peach",           System.Int64.MinValue.ToString(), "1.77971620351369E+308" /*System.Double.MaxValue.ToString()*/, System.Int16.MaxValue.ToString(), System.Byte.MaxValue.ToString() },//E,x
+            new string[] {   "F",   "y a b c d",     "2",           "3" + NDS + "14159f",     "g",     "B-1",   "H\u00C5T",        "-44",           "343" + NDS + "034435444", "-3", "51"/*"0"*/},//F,y
+            new string[] {   "G",   "x a b c d",     "3",           "-1" + NDS + "0",         "f",     "C-100", "sin",             "323254543543", "4" + NDS + "043544", "5", "151"/*"100"*/},//G,x
+            new string[] {   "H",   "y a b c d",     "0",           "1" + NDS + "4E-45",      "e",     "C-88",  "H\u00D8T",        "1023423423005","4" + NDS + "043545", "10", "1"/*"-50"*/},//H,y
+            new string[] {   "I",   "x a b c d e f", "-2147483648", "1" + NDS + "0e+0",       "d",     "A-10",  "s\u00EDn",        "332422459999", "4" + NDS + "043546", "-340", "102"/*"51"*/},//I,x
+            new string[] {   "J",   "y a b c d e f", "4",           "" + NDS + "5",           "b",     "C-7",   "HOT",             "34334543543",  "4" + NDS + "0000220343", "300", "53"/*"2"*/},//J,y
+            new string[] {   "W",   "g",             "1",           null,           null,    null,    null,              null,           null, null, null},
+            new string[] {   "X",   "g",             "1",           "0" + NDS + "1",          null,    null,    null,              null,           null, null, null},
+            new string[] {   "Y",   "g",             "1",           "0" + NDS + "2",          null,    null,    null,              null,           null, null, null},
+            new string[] {   "Z",   "f g",           null,          null,           null,    null,    null,              null,           null, null, null}
+        };
 		
 		// create an index of all the documents, or just the x, or just the y documents
 		private Searcher GetIndex(bool even, bool odd)
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < data.Length; ++i)
 			{
 				if (((i % 2) == 0 && even) || ((i % 2) == 1 && odd))
 				{
 					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 					doc.Add(new Field("tracer", data[i][0], Field.Store.YES, Field.Index.NO));
-					doc.Add(new Field("contents", data[i][1], Field.Store.NO, Field.Index.TOKENIZED));
+					doc.Add(new Field("contents", data[i][1], Field.Store.NO, Field.Index.ANALYZED));
 					if (data[i][2] != null)
-						doc.Add(new Field("int", data[i][2], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("int", data[i][2], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][3] != null)
-						doc.Add(new Field("float", data[i][3], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("float", data[i][3], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][4] != null)
-						doc.Add(new Field("string", data[i][4], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("string", data[i][4], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][5] != null)
-						doc.Add(new Field("custom", data[i][5], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("custom", data[i][5], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][6] != null)
-						doc.Add(new Field("i18n", data[i][6], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("i18n", data[i][6], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][7] != null)
-						doc.Add(new Field("long", data[i][7], Field.Store.NO, Field.Index.UN_TOKENIZED));
+						doc.Add(new Field("long", data[i][7], Field.Store.NO, Field.Index.NOT_ANALYZED));
 					if (data[i][8] != null)
-						doc.Add(new Field("double", data[i][8], Field.Store.NO, Field.Index.UN_TOKENIZED));
-					doc.SetBoost(2); // produce some scores above 1.0
+						doc.Add(new Field("double", data[i][8], Field.Store.NO, Field.Index.NOT_ANALYZED));
+                    if (data[i][8] != null)
+                        doc.Add(new Field("short", data[i][9], Field.Store.NO, Field.Index.NOT_ANALYZED));
+                    if (data[i][8] != null)
+                        doc.Add(new Field("byte", data[i][10], Field.Store.NO, Field.Index.NOT_ANALYZED));
+                    doc.SetBoost(2); // produce some scores above 1.0
 					writer.AddDocument(doc);
 				}
 			}
@@ -244,26 +267,34 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestTypedSort()
 		{
-			sort.SetSort(new SortField[]{new SortField("int", SortField.INT), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "IGAEC");
-			AssertMatches(full, queryY, sort, "DHFJB");
-			
-			sort.SetSort(new SortField[]{new SortField("float", SortField.FLOAT), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "GCIEA");
-			AssertMatches(full, queryY, sort, "DHJFB");
-			
-			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "AIGEC");
-			AssertMatches(full, queryY, sort, "DJHFB");
-			
-			sort.SetSort(new SortField[]{new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "AGICE");
-			AssertMatches(full, queryY, sort, "DJHBF");
-			
-			sort.SetSort(new SortField[]{new SortField("string", SortField.STRING), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "AIGEC");
-			AssertMatches(full, queryY, sort, "DJHFB");
-			}
+            sort.SetSort(new SortField[] { new SortField("int", SortField.INT), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "IGAEC");
+            AssertMatches(full, queryY, sort, "DHFJB");
+
+            sort.SetSort(new SortField[] { new SortField("float", SortField.FLOAT), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "GCIEA");
+            AssertMatches(full, queryY, sort, "DHJFB");
+
+            sort.SetSort(new SortField[] { new SortField("string", SortField.STRING), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "AIGEC");
+            AssertMatches(full, queryY, sort, "DJHFB");
+
+            sort.SetSort(new SortField[] { new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "AGICE");
+            AssertMatches(full, queryY, sort, "DJHBF");
+
+            sort.SetSort(new SortField[] { new SortField("byte", SortField.BYTE), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "CIGAE");
+            AssertMatches(full, queryY, sort, "DHFBJ");
+
+            sort.SetSort(new SortField[] { new SortField("short", SortField.SHORT), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "IAGCE");
+            AssertMatches(full, queryY, sort, "DFHBJ");
+
+            sort.SetSort(new SortField[] { new SortField("string", SortField.STRING), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "AIGEC");
+            AssertMatches(full, queryY, sort, "DJHFB");
+        }
 		
 		// test sorts when there's nothing in the index
 		[Test]
@@ -520,9 +551,9 @@ namespace Lucene.Net.Search
 		{
 			
 			// capture relevancy scores
-			System.Collections.Hashtable scoresX = GetScores(full.Search(queryX));
-			System.Collections.Hashtable scoresY = GetScores(full.Search(queryY));
-			System.Collections.Hashtable scoresA = GetScores(full.Search(queryA));
+            System.Collections.Hashtable scoresX = GetScores(full.Search(queryX, null, 1000).scoreDocs, full);
+            System.Collections.Hashtable scoresY = GetScores(full.Search(queryY, null, 1000).scoreDocs, full);
+            System.Collections.Hashtable scoresA = GetScores(full.Search(queryA, null, 1000).scoreDocs, full);
 			
 			// we'll test searching locally, remote and multi
 			MultiSearcher remote = new MultiSearcher(new Lucene.Net.Search.Searchable[]{GetRemote()});
@@ -531,92 +562,92 @@ namespace Lucene.Net.Search
 			// change sorting and make sure relevancy stays the same
 			
 			sort = new Sort();
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort(SortField.FIELD_DOC);
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort("int");
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort("float");
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort("string");
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort(new System.String[]{"int", "float"});
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort(new SortField[]{new SortField("int", true), new SortField(null, SortField.DOC, true)});
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 			
 			sort.SetSort(new System.String[]{"float", "string"});
-			AssertSameValues(scoresX, GetScores(full.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(remote.Search(queryX, sort)));
-			AssertSameValues(scoresX, GetScores(multi.Search(queryX, sort)));
-			AssertSameValues(scoresY, GetScores(full.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(remote.Search(queryY, sort)));
-			AssertSameValues(scoresY, GetScores(multi.Search(queryY, sort)));
-			AssertSameValues(scoresA, GetScores(full.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(remote.Search(queryA, sort)));
-			AssertSameValues(scoresA, GetScores(multi.Search(queryA, sort)));
+			AssertSameValues(scoresX, GetScores(full.Search(queryX, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresX, GetScores(remote.Search(queryX, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresX, GetScores(multi.Search(queryX, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresY, GetScores(full.Search(queryY, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresY, GetScores(remote.Search(queryY, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresY, GetScores(multi.Search(queryY, null, 1000, sort).scoreDocs, multi));
+			AssertSameValues(scoresA, GetScores(full.Search(queryA, null, 1000, sort).scoreDocs, full));
+			AssertSameValues(scoresA, GetScores(remote.Search(queryA, null, 1000, sort).scoreDocs, remote));
+			AssertSameValues(scoresA, GetScores(multi.Search(queryA, null, 1000, sort).scoreDocs, multi));
 		}
 		
 		[Test]
@@ -705,12 +736,12 @@ namespace Lucene.Net.Search
 		// make sure the documents returned by the search match the expected list
 		private void  AssertMatches(Searcher searcher, Query query, Sort sort, System.String expectedResult)
 		{
-			Hits result = searcher.Search(query, sort);
+			ScoreDoc[] result = searcher.Search(query, null, 1000, sort).scoreDocs;
 			System.Text.StringBuilder buff = new System.Text.StringBuilder(10);
-			int n = result.Length();
+			int n = result.Length;
 			for (int i = 0; i < n; ++i)
 			{
-				Lucene.Net.Documents.Document doc = result.Doc(i);
+				Lucene.Net.Documents.Document doc = searcher.Doc(result[i].doc);
 				System.String[] v = doc.GetValues("tracer");
 				for (int j = 0; j < v.Length; ++j)
 				{
@@ -723,12 +754,12 @@ namespace Lucene.Net.Search
 		// make sure the documents returned by the search match the expected list pattern
 		private void  AssertMatchesPattern(Searcher searcher, Query query, Sort sort, System.String pattern)
 		{
-			Hits result = searcher.Search(query, sort);
+			ScoreDoc[] result = searcher.Search(query, null, 1000, sort).scoreDocs;
 			System.Text.StringBuilder buff = new System.Text.StringBuilder(10);
-			int n = result.Length();
+			int n = result.Length;
 			for (int i = 0; i < n; ++i)
 			{
-				Lucene.Net.Documents.Document doc = result.Doc(i);
+				Lucene.Net.Documents.Document doc = searcher.Doc(result[i].doc);
 				System.String[] v = doc.GetValues("tracer");
 				for (int j = 0; j < v.Length; ++j)
 				{
@@ -740,16 +771,16 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(p.Match(buff.ToString()).Success);
 		}
 		
-		private System.Collections.Hashtable GetScores(Hits hits)
+		private System.Collections.Hashtable GetScores(ScoreDoc[] hits, Searcher searcher)
 		{
 			System.Collections.Hashtable scoreMap = new System.Collections.Hashtable();
-			int n = hits.Length();
+			int n = hits.Length;
 			for (int i = 0; i < n; ++i)
 			{
-				Lucene.Net.Documents.Document doc = hits.Doc(i);
+				Lucene.Net.Documents.Document doc = searcher.Doc(hits[i].doc);
 				System.String[] v = doc.GetValues("tracer");
 				Assert.AreEqual(v.Length, 1);
-				scoreMap[v[0]] = (float) hits.Score(i);
+                scoreMap[v[0]] = (float)hits[i].score;
 			}
 			return scoreMap;
 		}

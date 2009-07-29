@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + IntVal(doc);
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override System.Object GetInnerArray()
+			public /*internal*/ override object GetInnerArray()
 			{
 				return arr;
 			}

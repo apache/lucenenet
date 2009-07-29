@@ -69,10 +69,10 @@ namespace Lucene.Net.Search
 		public virtual void  TestDocBoost_Renamed_Method()
 		{
 			RAMDirectory store = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
-			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.TOKENIZED);
+			Fieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
+			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
 			f2.SetBoost(2.0f);
 			
 			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();

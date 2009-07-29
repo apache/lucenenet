@@ -33,8 +33,8 @@ namespace Lucene.Net.Search.Function
 	/// <summary> Query that sets document score as a programmatic function of several (sub) scores.
 	/// <ol>
 	/// <li>the score of its subQuery (any query)</li>
-	/// <li>(optional) the score of its ValueSourtceQuery (or queries),
-	/// for most simple/convineient use case this query would be a 
+	/// <li>(optional) the score of its ValueSourtceQuery (or queries).
+	/// For most simple/convineient use case this query is likely to be a 
 	/// {@link Lucene.Net.Search.Function.FieldScoreQuery FieldScoreQuery}</li>
 	/// </ol>
 	/// Subclasses can modify the computation by overriding {@link #CustomScore(int, float, float)}.
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/*(non-Javadoc) @see Lucene.Net.Search.Query#clone() */
-		public override System.Object Clone()
+		public override object Clone()
 		{
 			CustomScoreQuery clone = (CustomScoreQuery) base.Clone();
 			clone.subQuery = (Query) subQuery.Clone();
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (GetType() != o.GetType())
 			{
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Checks if this is strict custom scoring.
-		/// In strict custom scoring, the ValueSource part of does not participate in weight normalization.
+		/// In strict custom scoring, the ValueSource part does not participate in weight normalization.
 		/// This may be useful when one wants full control over how scores are modified, and does 
 		/// not care about normalizing by the ValueSource part.
 		/// One particular case where this is useful if for testing this query.   

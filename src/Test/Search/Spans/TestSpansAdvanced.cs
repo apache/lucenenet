@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
 			
 			// create test index
 			mDirectory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDocument(writer, "1", "I think it should work.");
 			AddDocument(writer, "2", "I think it should work.");
 			AddDocument(writer, "3", "I think it should work.");
@@ -94,8 +94,8 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			Lucene.Net.Documents.Document document = new Lucene.Net.Documents.Document();
-			document.Add(new Field(FIELD_ID, id, Field.Store.YES, Field.Index.UN_TOKENIZED));
-			document.Add(new Field(FIELD_TEXT, text, Field.Store.YES, Field.Index.TOKENIZED));
+			document.Add(new Field(FIELD_ID, id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			document.Add(new Field(FIELD_TEXT, text, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(document);
 		}
 		

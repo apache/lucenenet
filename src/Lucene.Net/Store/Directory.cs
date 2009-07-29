@@ -41,7 +41,8 @@ namespace Lucene.Net.Store
 	[Serializable]
 	public abstract class Directory
 	{
-		
+        protected internal volatile bool isOpen = true;
+
 		/// <summary>Holds the LockFactory instance (implements locking for
 		/// this Directory instance). 
 		/// </summary>
@@ -84,8 +85,18 @@ namespace Lucene.Net.Store
 		/// Returns a stream writing this file. 
 		/// </summary>
 		public abstract IndexOutput CreateOutput(System.String name);
-		
-		
+
+        /// <summary>
+        /// Ensure that any writes to the file are moved to
+        /// stable storage.  Lucene uses this to properly commit
+        /// chages to the index, to prevent a machine/OS crash
+        /// from corrupting the index.
+        /// </summary>
+        /// <param name="name"></param>
+        public virtual void Sync(String name)
+        {
+        }
+
 		/// <summary>Returns a stream reading an existing file. </summary>
 		public abstract IndexInput OpenInput(System.String name);
 		
@@ -223,5 +234,14 @@ namespace Lucene.Net.Store
 			if (closeDirSrc)
 				src.Close();
 		}
+
+        /// <summary>
+        /// Throws AlreadyClosedException if this Directory is closed.
+        /// </summary>
+        protected internal virtual void EnsureOpen()
+        {
+            if (!isOpen)
+                throw new AlreadyClosedException("this Directory is closed");
+        }
 	}
 }

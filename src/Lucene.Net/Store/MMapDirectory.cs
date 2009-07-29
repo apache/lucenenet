@@ -69,7 +69,7 @@ namespace Lucene.Net.Store
 				return length;
 			}
 			
-			public override System.Object Clone()
+			public override object Clone()
 			{
 				MMapIndexInput clone = (MMapIndexInput) base.Clone();
 				// clone.buffer = buffer.duplicate();   // {{Aroush-1.9}}
@@ -181,7 +181,7 @@ namespace Lucene.Net.Store
 				return length;
 			}
 			
-			public override System.Object Clone()
+			public override object Clone()
 			{
 				MultiMMapIndexInput clone = (MultiMMapIndexInput) base.Clone();
 				clone.buffers = new System.IO.MemoryStream[buffers.Length];

@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(termDocs != null);
 			Assert.IsTrue(termDocs.Next() == true);
 			
-			System.Collections.ICollection stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
+			System.Collections.Generic.ICollection<string> stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(stored != null);
 			//System.out.println("stored size: " + stored.size());
 			Assert.IsTrue(stored.Count == 4, "We do not have 4 fields that were indexed with term vector");

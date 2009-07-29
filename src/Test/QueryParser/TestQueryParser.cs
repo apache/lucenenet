@@ -19,17 +19,35 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using KeywordAnalyzer = Lucene.Net.Analysis.KeywordAnalyzer;
+using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using StopAnalyzer = Lucene.Net.Analysis.StopAnalyzer;
+using StopFilter = Lucene.Net.Analysis.StopFilter;
+using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using DateField = Lucene.Net.Documents.DateField;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+using ConstantScoreRangeQuery = Lucene.Net.Search.ConstantScoreRangeQuery;
+using FuzzyQuery = Lucene.Net.Search.FuzzyQuery;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using PrefixQuery = Lucene.Net.Search.PrefixQuery;
+using Query = Lucene.Net.Search.Query;
+using RangeQuery = Lucene.Net.Search.RangeQuery;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+using TermQuery = Lucene.Net.Search.TermQuery;
+using WildcardQuery = Lucene.Net.Search.WildcardQuery;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Lucene.Net.Analysis;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.QueryParsers
@@ -94,25 +112,26 @@ namespace Lucene.Net.QueryParsers
 			internal bool inPhrase = false;
 			internal int savedStart = 0, savedEnd = 0;
 			
-			public override Lucene.Net.Analysis.Token Next()
+			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
 			{
+                System.Diagnostics.Debug.Assert(reusableToken != null);
 				if (inPhrase)
 				{
 					inPhrase = false;
-					return new Lucene.Net.Analysis.Token("phrase2", savedStart, savedEnd);
+					return reusableToken.Reinit("phrase2", savedStart, savedEnd);
 				}
 				else
-					for (Lucene.Net.Analysis.Token token = input.Next(); token != null; token = input.Next())
+					for (Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
 					{
-						if (token.TermText().Equals("phrase"))
+						if (nextToken.Term().Equals("phrase"))
 						{
 							inPhrase = true;
-							savedStart = token.StartOffset();
-							savedEnd = token.EndOffset();
-							return new Lucene.Net.Analysis.Token("phrase1", savedStart, savedEnd);
+							savedStart = nextToken.StartOffset();
+							savedEnd = nextToken.EndOffset();
+							return nextToken.Reinit("phrase1", savedStart, savedEnd);
 						}
-						else if (!token.TermText().Equals("stop"))
-							return token;
+						else if (!nextToken.Term().Equals("stop"))
+							return nextToken;
 					}
 				return null;
 			}
@@ -477,7 +496,53 @@ namespace Lucene.Net.QueryParsers
 			AssertQueryEquals("( bar blar { a TO z}) ", null, "bar blar {a TO z}");
 			AssertQueryEquals("gack ( bar blar { a TO z}) ", null, "gack (bar blar {a TO z})");
 		}
-		
+
+        public void testFarsiRangeCollating()
+        {
+
+            RAMDirectory ramDir = new RAMDirectory();
+            IndexWriter iw = new IndexWriter(ramDir, new WhitespaceAnalyzer(), true,
+                                             IndexWriter.MaxFieldLength.LIMITED);
+            Document doc = new Document();
+            doc.Add(new Field("content", "\u0633\u0627\u0628",
+                              Field.Store.YES, Field.Index.UN_TOKENIZED));
+            iw.AddDocument(doc);
+            iw.Close();
+            IndexSearcher is_Renamed = new IndexSearcher(ramDir);
+
+            QueryParser qp = new QueryParser("content", new WhitespaceAnalyzer());
+
+            // Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
+            // RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
+            // characters properly.
+            System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("ar").CompareInfo;
+            qp.SetRangeCollator(c);
+
+            // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
+            // orders the U+0698 character before the U+0633 character, so the single
+            // index Term below should NOT be returned by a ConstantScoreRangeQuery
+            // with a Farsi Collator (or an Arabic one for the case when Farsi is_Renamed not
+            // supported).
+
+            // Test ConstantScoreRangeQuery
+            qp.SetUseOldRangeQuery(false);
+            ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
+            Assert.AreEqual(0, result.Length, "The index Term should not be included.");
+
+            result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
+            Assert.AreEqual(1, result.Length, "The index Term should be included.");
+
+            // Test RangeQuery
+            qp.SetUseOldRangeQuery(true);
+            result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
+            Assert.AreEqual(0, result.Length, "The index Term should not be included.");
+
+            result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
+            Assert.AreEqual(1, result.Length, "The index Term should be included.");
+
+            is_Renamed.Close();
+        }
+  
 		/// <summary>for testing legacy DateField support </summary>
 		private System.String GetLegacyDate(System.String s)
 		{
@@ -674,6 +739,9 @@ namespace Lucene.Net.QueryParsers
 			AssertQueryEquals("\\\\", a, "\\"); // escaped backslash
 			
 			AssertParseException("\\"); // a backslash must always be escaped
+
+            // LUCENE-1189
+            AssertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
 		}
 		
 		[Test]
@@ -790,12 +858,12 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestException()
 		{
-			AssertParseException("\"some phrase");
-			AssertParseException("(foo bar");
-			AssertParseException("foo bar))");
-			AssertParseException("field:term:with:colon some more terms");
-			AssertParseException("(sub query)^5.0^2.0 plus more");
-			AssertParseException("secret AND illegal) AND access:confidential");
+            AssertParseException("\"some phrase");
+            AssertParseException("(foo bar");
+            AssertParseException("foo bar))");
+            AssertParseException("field:term:with:colon some more terms");
+            AssertParseException("(sub query)^5.0^2.0 plus more");
+            AssertParseException("secret AND illegal) AND access:confidential");
 		}
 		
 		[Test]
@@ -834,11 +902,11 @@ namespace Lucene.Net.QueryParsers
 			{
 				Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
 				qp.Parse("one two three");
-				Assert.Fail("ParseException expected due to too many boolean clauses");
+				Assert.Fail("ParseException expected due to too many bool clauses");
 			}
 			catch (ParseException)
 			{
-				// too many boolean clauses, so ParseException is expected
+				// too many bool clauses, so ParseException is expected
 			}
 		}
 		
@@ -856,7 +924,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestLocalDateFormat()
 		{
 			Lucene.Net.Store.RAMDirectory ramDir = new Lucene.Net.Store.RAMDirectory();
-			Lucene.Net.Index.IndexWriter iw = new Lucene.Net.Index.IndexWriter(ramDir, new WhitespaceAnalyzer(), true);
+			Lucene.Net.Index.IndexWriter iw = new Lucene.Net.Index.IndexWriter(ramDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDateDoc("a", 2005, 12, 2, 10, 15, 33, iw);
 			AddDateDoc("b", 2005, 12, 4, 22, 15, 0, iw);
 			iw.Close();
@@ -975,16 +1043,16 @@ namespace Lucene.Net.QueryParsers
 			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("date", new WhitespaceAnalyzer());
 			qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
 			Query q = qp.Parse(query);
-			Lucene.Net.Search.Hits hits = is_Renamed.Search(q);
-			Assert.AreEqual(expected, hits.Length());
+			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
+			Assert.AreEqual(expected, hits.Length);
 		}
 		
 		private static void  AddDateDoc(System.String content, int year, int month, int day, int hour, int minute, int second, Lucene.Net.Index.IndexWriter iw)
 		{
 			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
-			d.Add(new Lucene.Net.Documents.Field("f", content, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
+			d.Add(new Lucene.Net.Documents.Field("f", content, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
 			System.DateTime tempAux = new System.DateTime(year, month, day, hour, minute, second);
-			d.Add(new Lucene.Net.Documents.Field("date", DateField.DateToString(tempAux), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED));
+			d.Add(new Lucene.Net.Documents.Field("date", DateField.DateToString(tempAux), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 			iw.AddDocument(d);
 		}
 		

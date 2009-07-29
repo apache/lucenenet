@@ -55,13 +55,13 @@ namespace Lucene.Net.Search
 				TokenStream stream = analyzer.TokenStream("", new System.IO.StringReader(queryString));
 				if (stream != null)
 				{
-					Token next = null;
 					System.Collections.ArrayList terms = new System.Collections.ArrayList();
 					try
 					{
-						while ((next = stream.Next()) != null)
-						{
-							terms.Add(next.TermText());
+                        Token reusableToken = new Token();
+                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
+                        {
+							terms.Add(nextToken.Term());
 						}
 						ProcessTerms((System.String[]) terms.ToArray(typeof(System.String)));
 					}
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
 					System.String term = queryTerms[i];
-					System.Object tmpPosition = tmpSet[term];
+					object tmpPosition = tmpSet[term];
 					if (tmpPosition == null)
 					{
 						tmpSet[term] = (System.Int32) j++;

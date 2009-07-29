@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 	
 	/// <summary> A serializable Enum class.</summary>
 	[Serializable]
-    public abstract class Parameter : System.Runtime.Serialization.IObjectReference
+	public abstract class Parameter
 	{
 		internal static System.Collections.IDictionary allParameters = new System.Collections.Hashtable();
 		
@@ -61,22 +61,15 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> a reference to Parameter as resolved in the local VM
 		/// </returns>
-		/// <throws>  ObjectStreamException </throws>
-		protected internal virtual System.Object ReadResolve()
+		/// <throws>  objectStreamException </throws>
+		protected internal virtual object ReadResolve()
 		{
-			System.Object par = allParameters[MakeKey(name)];
+			object par = allParameters[MakeKey(name)];
 			
 			if (par == null)
 				throw new System.IO.IOException("Unknown parameter value: " + name);
 			
 			return par;
 		}
-        
-        // "ReadResolve"s equivalent for .NET
-        // https://issues.apache.org/jira/browse/LUCENENET-170
-        public Object GetRealObject(System.Runtime.Serialization.StreamingContext context)
-        {
-            return ReadResolve();
-        }
 	}
 }

@@ -21,9 +21,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <author>  yonik
-	/// </author>
 	public class QueryUtils
 	{
 		[Serializable]

@@ -19,16 +19,18 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using Directory = Lucene.Net.Store.Directory;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -39,9 +41,6 @@ namespace Lucene.Net.Index.Store
 	/// but not one of them uses an different constructor other than the default constructor.
 	/// 
 	/// </summary>
-	/// <author>  Bernhard Messer
-	/// 
-	/// </author>
 	/// <version>  $Id: RAMDirectory.java 150537 2004-09-28 22:45:26 +0200 (Di, 28 Sep 2004) cutting $
 	/// </version>
 	[TestFixture]
@@ -77,7 +76,7 @@ namespace Lucene.Net.Index.Store
 				for (int j = 1; j < Enclosing_Instance.docsPerThread; j++)
 				{
 					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-					doc.Add(new Field("sizeContent", English.IntToEnglish(num * Enclosing_Instance.docsPerThread + j).Trim(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+					doc.Add(new Field("sizeContent", English.IntToEnglish(num * Enclosing_Instance.docsPerThread + j).Trim(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 					try
 					{
 						writer.AddDocument(doc);
@@ -109,13 +108,13 @@ namespace Lucene.Net.Index.Store
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
 			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "RAMDirIndex"));
 			
-			IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			// add some documents
 			Lucene.Net.Documents.Document doc = null;
 			for (int i = 0; i < docsToAdd; i++)
 			{
 				doc = new Lucene.Net.Documents.Document();
-				doc.Add(new Field("content", English.IntToEnglish(i).Trim(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("content", English.IntToEnglish(i).Trim(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			Assert.AreEqual(docsToAdd, writer.DocCount());
@@ -216,9 +215,8 @@ namespace Lucene.Net.Index.Store
 		[Test]
 		public virtual void  TestRAMDirectorySize()
 		{
-			
 			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.FullName);
-			IndexWriter writer = new IndexWriter(ramDir, new WhitespaceAnalyzer(), false);
+			IndexWriter writer = new IndexWriter(ramDir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Optimize();
 			
 			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
@@ -229,12 +227,12 @@ namespace Lucene.Net.Index.Store
 				int num = i;
 				threads[i] = new AnonymousClassThread(num, writer, ramDir, this);
 			}
-			for (int i = 0; i < numThreads; i++)
-				threads[i].Start();
-			for (int i = 0; i < numThreads; i++)
-				threads[i].Join();
-			
-			writer.Optimize();
+            for (int i = 0; i < numThreads; i++)
+                threads[i].Start();
+            for (int i = 0; i < numThreads; i++)
+                threads[i].Join();
+
+            writer.Optimize();
 			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 			
 			writer.Close();
@@ -253,22 +251,35 @@ namespace Lucene.Net.Index.Store
 			// out_Renamed.Close();
 			Assert.IsTrue(headerSize < bos.Length, "contains more then just header");
 		}
+
+        [TearDown]
+        public override void TearDown()
+        {
+            base.TearDown();
+            // cleanup 
+            bool tmpBool;
+            if (System.IO.File.Exists(indexDir.FullName))
+                tmpBool = true;
+            else
+                tmpBool = System.IO.Directory.Exists(indexDir.FullName);
+            if (indexDir != null && tmpBool)
+                RmDir(indexDir);
+        }
 		
-		[TearDown]
-		public override void TearDown()
-		{
-			base.TearDown();
-			// cleanup 
-			bool tmpBool;
-			if (System.IO.File.Exists(indexDir.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(indexDir.FullName);
-			if (indexDir != null && tmpBool)
-			{
-				RmDir(indexDir);
-			}
-		}
+        // LUCENE-1196
+        [Test]
+        public void TestIllegalEOF()
+        {
+            RAMDirectory dir = new RAMDirectory();
+            IndexOutput o = dir.CreateOutput("out");
+            byte[] b = new byte[1024];
+            o.WriteBytes(b, 0, 1024);
+            o.Close();
+            IndexInput i = dir.OpenInput("out");
+            i.Seek(1024);
+            i.Close();
+            dir.Close();
+        }
 
 		private void  RmDir(System.IO.FileInfo dir)
 		{
@@ -305,5 +316,5 @@ namespace Lucene.Net.Index.Store
 				tmpBool2 = false;
 			bool generatedAux2 = tmpBool2;
 		}
-	}
+    }
 }

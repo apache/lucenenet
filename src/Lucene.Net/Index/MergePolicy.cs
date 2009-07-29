@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-using System;
-
 using Directory = Lucene.Net.Store.Directory;
+
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-	
 	/// <summary> <p>Expert: a MergePolicy determines the sequence of
 	/// primitive merge operations to be used for overall merge
 	/// and optimize operations.</p>
@@ -145,14 +144,14 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			internal virtual System.String SegString(Directory dir)
+			internal virtual string SegString(Directory dir)
 			{
 				System.Text.StringBuilder b = new System.Text.StringBuilder();
 				int numSegments = segments.Count;
 				for (int i = 0; i < numSegments; i++)
 				{
 					if (i > 0)
-						b.Append(" ");
+						b.Append(' ');
 					b.Append(segments.Info(i).SegString(dir));
 				}
 				if (info != null)
@@ -173,20 +172,20 @@ namespace Lucene.Net.Index
 			
 			/// <summary> The subset of segments to be included in the primitive merge.</summary>
 			
-			public System.Collections.IList merges = new System.Collections.ArrayList();
+			public List<OneMerge> merges = new List<OneMerge>();
 			
-			public virtual void  Add(OneMerge merge)
+			public virtual void Add(OneMerge merge)
 			{
 				merges.Add(merge);
 			}
 			
-			public virtual System.String SegString(Directory dir)
+			public virtual string SegString(Directory dir)
 			{
 				System.Text.StringBuilder b = new System.Text.StringBuilder();
 				b.Append("MergeSpec:\n");
 				int count = merges.Count;
 				for (int i = 0; i < count; i++)
-					b.Append("  ").Append(1 + i).Append(": ").Append(((OneMerge) merges[i]).SegString(dir));
+					b.Append("  ").Append(1 + i).Append(": ").Append(merges[i].SegString(dir));
 				return b.ToString();
 			}
 		}
@@ -194,24 +193,47 @@ namespace Lucene.Net.Index
 		/// <summary>Exception thrown if there are any problems while
 		/// executing a merge. 
 		/// </summary>
-		[Serializable]
+		[System.Serializable]
 		public class MergeException:System.SystemException
 		{
-			public MergeException(System.String message) : base(message)
+            private Directory dir;
+            [System.Obsolete("use MergePolicy.MergeException(string, Directory) instead")]
+            public MergeException(string message)
+                : base(message)
+            {
+            }
+            public MergeException(string message, Directory dir)
+                : base(message)
+            {
+                this.dir = dir;
+            }
+            [System.Obsolete("use MergePolicy.MergeException(System.Exception, Directory) instead")]
+            public MergeException(System.Exception exc)
+                : base(null, exc)
 			{
 			}
-			public MergeException(System.Exception exc) : base(null, exc)
-			{
-			}
-		}
+            public MergeException(System.Exception exc, Directory dir)
+                : base(null, exc)
+            {
+                this.dir = dir;
+            }
+            /// <summary>
+            /// Returns the Directory of the index that hit the exception.
+            /// </summary>
+            /// <returns></returns>
+            public Directory GetDirectory()
+            {
+                return dir;
+            }
+        }
 		
-		[Serializable]
+		[System.Serializable]
 		public class MergeAbortedException:System.IO.IOException
 		{
 			public MergeAbortedException():base("merge is aborted")
 			{
 			}
-			public MergeAbortedException(System.String message):base(message)
+			public MergeAbortedException(string message):base(message)
 			{
 			}
 		}
@@ -247,8 +269,20 @@ namespace Lucene.Net.Index
 		/// SegmentInfo instances that must be merged away.  This
 		/// may be a subset of all SegmentInfos.
 		/// </param>
-		public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, IndexWriter writer, int maxSegmentCount, System.Collections.Hashtable segmentsToOptimize);
-		
+		public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, IndexWriter writer, int maxSegmentCount, Dictionary<SegmentInfo,SegmentInfo> segmentsToOptimize);
+
+        /// <summary>
+        /// Determine what set of merge operations is necessary in
+        /// order to expunge all deletes from the index.
+        /// </summary>
+        /// <param name="segmentInfos"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        public virtual MergeSpecification FindMergesToExpungeDeletes(SegmentInfos segmentInfos, IndexWriter writer)
+        {
+            throw new System.SystemException("not implemented");
+        }
+
 		/// <summary> Release all resources for the policy.</summary>
 		public abstract void  Close();
 		

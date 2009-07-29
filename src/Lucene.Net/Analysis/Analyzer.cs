@@ -26,17 +26,11 @@ namespace Lucene.Net.Analysis
 	/// Typical implementations first build a Tokenizer, which breaks the stream of
 	/// characters from the Reader into raw Tokens.  One or more TokenFilters may
 	/// then be applied to the output of the Tokenizer.
-	/// <p>
-	/// WARNING: You must override one of the methods defined by this class in your
-	/// subclass or the Analyzer will enter an infinite loop.
 	/// </summary>
 	public abstract class Analyzer
 	{
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
-		/// Reader.  Default implementation forwards to tokenStream(Reader) for 
-		/// compatibility with older version.  Override to allow Analyzer to choose 
-		/// strategy based on document and/or field.  Must be able to handle null
-		/// field name for backward compatibility. 
+		/// Reader.  Must be able to handle null field name for backward compatibility. 
 		/// </summary>
 		public abstract TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader);
 
@@ -58,7 +52,7 @@ namespace Lucene.Net.Analysis
         /// to retrieve previously saved TokenStreams for re-use
         /// by the same thread. 
         /// </summary>
-        protected internal virtual System.Object GetPreviousTokenStream()
+        protected internal virtual object GetPreviousTokenStream()
         {
             return System.Threading.Thread.GetData(tokenStreams);
         }
@@ -67,7 +61,7 @@ namespace Lucene.Net.Analysis
         /// to save a TokenStream for later re-use by the same
         /// thread. 
         /// </summary>
-        protected internal virtual void SetPreviousTokenStream(System.Object obj)
+        protected internal virtual void SetPreviousTokenStream(object obj)
         {
             System.Threading.Thread.SetData(tokenStreams, obj);
         }

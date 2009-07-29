@@ -22,8 +22,6 @@ using NUnit.Framework;
 namespace Lucene.Net.Util
 {
 	
-	/// <author>  yonik
-	/// </author>
 	/// <version>  $Id$
 	/// </version>
 	[TestFixture]

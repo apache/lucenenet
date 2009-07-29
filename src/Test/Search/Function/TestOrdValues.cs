@@ -20,7 +20,6 @@ using System;
 using NUnit.Framework;
 
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
@@ -95,15 +94,15 @@ namespace Lucene.Net.Search.Function
 			Query q = new ValueSourceQuery(vs);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
-			Hits h = s.Search(q);
-			Assert.AreEqual(N_DOCS, h.Length(), "All docs should be matched!");
+			ScoreDoc[] h = s.Search(q,null, 1000).scoreDocs;
+			Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 			System.String prevID = inOrder?"IE":"IC"; // smaller than all ids of docs in this test ("ID0001", etc.)
 			
-			for (int i = 0; i < h.Length(); i++)
+			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = h.Doc(i).Get(ID_FIELD);
-				Log(i + ".   score=" + h.Score(i) + "  -  " + resID);
-				Log(s.Explain(q, h.Id(i)));
+				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].score + "  -  " + resID);
+				Log(s.Explain(q, h[i].doc));
 				if (inOrder)
 				{
 					Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
@@ -195,10 +194,10 @@ namespace Lucene.Net.Search.Function
 					vs = new ReverseOrdFieldSource(field);
 				}
 				ValueSourceQuery q = new ValueSourceQuery(vs);
-				Hits h = s.Search(q);
-				try
+                ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+                try
 				{
-					Assert.AreEqual(N_DOCS, h.Length(), "All docs should be matched!");
+					Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 					if (i == 0)
 					{
 						innerArray = q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray();
@@ -221,7 +220,7 @@ namespace Lucene.Net.Search.Function
 			
 			ValueSource vs2;
 			ValueSourceQuery q2;
-			Hits h2;
+			ScoreDoc[] h2;
 			
 			// verify that different values are loaded for a different field
 			System.String field2 = INT_FIELD;
@@ -235,8 +234,8 @@ namespace Lucene.Net.Search.Function
 				vs2 = new ReverseOrdFieldSource(field2);
 			}
 			q2 = new ValueSourceQuery(vs2);
-			h2 = s.Search(q2);
-			Assert.AreEqual(N_DOCS, h2.Length(), "All docs should be matched!");
+			h2 = s.Search(q2, null, 1000).scoreDocs;
+			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			try
 			{
 				Log("compare (should differ): " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
@@ -262,8 +261,8 @@ namespace Lucene.Net.Search.Function
 				vs2 = new ReverseOrdFieldSource(field);
 			}
 			q2 = new ValueSourceQuery(vs2);
-			h2 = s.Search(q2);
-			Assert.AreEqual(N_DOCS, h2.Length(), "All docs should be matched!");
+			h2 = s.Search(q2, null, 1000).scoreDocs;
+			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			try
 			{
 				Log("compare (should differ): " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());

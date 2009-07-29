@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
+
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
-	
 	/// <summary>A Spans that is formed from the ordered subspans of a SpanNearQuery
 	/// where the subspans do not overlap and have a maximum slop between them.
 	/// <p>
@@ -40,7 +39,7 @@ namespace Lucene.Net.Search.Spans
 	/// <pre>t1 t2 .. t3      </pre>
 	/// <pre>      t1 .. t2 t3</pre>
 	/// </summary>
-	class NearSpansOrdered : Spans
+	class NearSpansOrdered : PayloadSpans
 	{
 		internal class AnonymousClassComparator : System.Collections.IComparer
 		{
@@ -61,7 +60,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			public virtual int Compare(System.Object o1, System.Object o2)
+			public virtual int Compare(object o1, object o2)
 			{
 				return ((Spans) o1).Doc() - ((Spans) o2).Doc();
 			}
@@ -70,12 +69,13 @@ namespace Lucene.Net.Search.Spans
 		{
 			spanDocComparator = new AnonymousClassComparator(this);
 		}
+
 		private int allowedSlop;
 		private bool firstTime = true;
 		private bool more = false;
 		
 		/// <summary>The spans in the same order as the SpanNearQuery </summary>
-		private Spans[] subSpans;
+		private PayloadSpans[] subSpans;
 		
 		/// <summary>Indicates that all subSpans have same doc() </summary>
 		private bool inSameDoc = false;
@@ -83,8 +83,10 @@ namespace Lucene.Net.Search.Spans
 		private int matchDoc = - 1;
 		private int matchStart = - 1;
 		private int matchEnd = - 1;
-		
-		private Spans[] subSpansByDoc;
+        private List<byte[]> matchPayload;
+
+		private PayloadSpans[] subSpansByDoc;
+
 		private System.Collections.IComparer spanDocComparator;
 		
 		private SpanNearQuery query;
@@ -98,11 +100,12 @@ namespace Lucene.Net.Search.Spans
 			}
 			allowedSlop = spanNearQuery.GetSlop();
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
-			subSpans = new Spans[clauses.Length];
-			subSpansByDoc = new Spans[clauses.Length];
+			subSpans = new PayloadSpans[clauses.Length];
+            matchPayload = new List<byte[]>();
+			subSpansByDoc = new PayloadSpans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
-				subSpans[i] = clauses[i].GetSpans(reader);
+				subSpans[i] = clauses[i].GetPayloadSpans(reader);
 				subSpansByDoc[i] = subSpans[i]; // used in toSameDoc()
 			}
 			query = spanNearQuery; // kept for toString() only.
@@ -125,7 +128,17 @@ namespace Lucene.Net.Search.Spans
 		{
 			return matchEnd;
 		}
-		
+
+        public ICollection<byte[]> GetPayload()
+        {
+            return matchPayload;
+        }
+
+        public bool IsPayloadAvailable()
+        {
+            return matchPayload.Count > 0;
+        }
+
 		// inherit javadocs
 		public virtual bool Next()
 		{
@@ -142,6 +155,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				more = true;
 			}
+            matchPayload.Clear();
 			return AdvanceAfterOrdered();
 		}
 		
@@ -173,6 +187,7 @@ namespace Lucene.Net.Search.Spans
 					return false;
 				}
 			}
+            matchPayload.Clear();
 			return AdvanceAfterOrdered();
 		}
 		
@@ -286,12 +301,18 @@ namespace Lucene.Net.Search.Spans
 		{
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
+            if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
+                SupportClass.CollectionsSupport.AddAll(subSpans[subSpans.Length - 1].GetPayload(), matchPayload);
 			int matchSlop = 0;
 			int lastStart = matchStart;
 			int lastEnd = matchEnd;
 			for (int i = subSpans.Length - 2; i >= 0; i--)
 			{
-				Spans prevSpans = subSpans[i];
+				PayloadSpans prevSpans = subSpans[i];
+
+                if (subSpans[i].IsPayloadAvailable())
+                    matchPayload.InsertRange(0, subSpans[i].GetPayload());
+
 				int prevStart = prevSpans.Start();
 				int prevEnd = prevSpans.End();
 				while (true)

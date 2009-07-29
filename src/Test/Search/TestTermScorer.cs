@@ -81,11 +81,11 @@ namespace Lucene.Net.Search
 			directory = new RAMDirectory();
 			
 			
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < values.Length; i++)
 			{
 				Document doc = new Document();
-				doc.Add(new Field(FIELD, values[i], Field.Store.YES, Field.Index.TOKENIZED));
+				doc.Add(new Field(FIELD, values[i], Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();

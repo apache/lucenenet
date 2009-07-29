@@ -57,7 +57,6 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		
 		private static int maxClauseCount = 1024;
 		
 		/// <summary>Thrown when an attempt is made to add more than {@link
@@ -456,7 +455,7 @@ namespace Lucene.Net.Search
 		
 		public override Query Rewrite(IndexReader reader)
 		{
-			if (clauses.Count == 1)
+			if (minNrShouldMatch == 0 && clauses.Count == 1)
 			{
 				// optimize 1-clause queries
 				BooleanClause c = (BooleanClause) clauses[0];
@@ -510,7 +509,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public override System.Object Clone()
+		public override object Clone()
 		{
 			BooleanQuery clone = (BooleanQuery) base.Clone();
 			clone.clauses = (System.Collections.ArrayList) this.clauses.Clone();
@@ -570,7 +569,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (!(o is BooleanQuery))
 				return false;

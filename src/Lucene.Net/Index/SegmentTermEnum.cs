@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 		
 		private TermBuffer termBuffer = new TermBuffer();
 		private TermBuffer prevBuffer = new TermBuffer();
-		private TermBuffer scratch; // used for scanning
+        private TermBuffer scanBuffer = new TermBuffer();
 		
 		private TermInfo termInfo = new TermInfo();
 		
@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
 				format = firstInt;
 				
 				// check that it is a format we can understand
-				if (format < TermInfosWriter.FORMAT)
-					throw new CorruptIndexException("Unknown format version:" + format);
+				if (format < TermInfosWriter.FORMAT_CURRENT)
+					throw new CorruptIndexException("Unknown format version:" + format + " expected " + TermInfosWriter.FORMAT_CURRENT + " or higher");
 				
 				size = input.ReadLong(); // read the size
 				
@@ -87,16 +87,22 @@ namespace Lucene.Net.Index
 				{
 					indexInterval = input.ReadInt();
 					skipInterval = input.ReadInt();
-					if (format == - 3)
+					if (format <= TermInfosWriter.FORMAT)
 					{
 						// this new format introduces multi-level skipping
 						maxSkipLevels = input.ReadInt();
 					}
 				}
 			}
+            if (format > TermInfosWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+            {
+                termBuffer.SetPreUTF8Strings();
+                scanBuffer.SetPreUTF8Strings();
+                prevBuffer.SetPreUTF8Strings();
+            }
 		}
 		
-		public System.Object Clone()
+		public object Clone()
 		{
 			SegmentTermEnum clone = null;
 			try
@@ -111,8 +117,8 @@ namespace Lucene.Net.Index
 			clone.termInfo = new TermInfo(termInfo);
 			
 			clone.termBuffer = (TermBuffer) termBuffer.Clone();
-			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
-			clone.scratch = null;
+            clone.prevBuffer = (TermBuffer)prevBuffer.Clone();
+            clone.scanBuffer = new TermBuffer();
 			
 			return clone;
 		}
@@ -167,16 +173,17 @@ namespace Lucene.Net.Index
 			return true;
 		}
 		
-		/// <summary>Optimized scan, without allocating new terms. </summary>
-		internal void  ScanTo(Term term)
+		/// <summary>Optimized scan, without allocating new terms.  Return numver of invocations to Next(). </summary>
+		internal int ScanTo(Term term)
 		{
-			if (scratch == null)
-				scratch = new TermBuffer();
-			scratch.Set(term);
-			while (scratch.CompareTo(termBuffer) > 0 && Next())
-			{
-			}
-		}
+            scanBuffer.Set(term);
+            int count = 0;
+            while (scanBuffer.CompareTo(termBuffer) > 0 && Next())
+            {
+                count++;
+            }
+            return count;
+        }
 		
 		/// <summary>Returns the current Term in the enumeration.
 		/// Initially invalid, valid after next() called for the first time.

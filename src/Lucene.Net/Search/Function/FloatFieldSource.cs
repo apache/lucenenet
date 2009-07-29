@@ -38,8 +38,6 @@ namespace Lucene.Net.Search.Function
 	/// on the field.
 	/// 
 	/// </seealso>
-	/// <author>  yonik
-	/// </author>
 	[Serializable]
 	public class FloatFieldSource : FieldCacheSource
 	{
@@ -75,7 +73,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + arr[doc];
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override System.Object GetInnerArray()
+			public /*internal*/ override object GetInnerArray()
 			{
 				return arr;
 			}

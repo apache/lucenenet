@@ -70,8 +70,8 @@ namespace Lucene.Net
 					{
 						Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
 						int n = Lucene.Net.ThreadSafetyTest.RANDOM.Next();
-						d.Add(new Field("id", System.Convert.ToString(n), Field.Store.YES, Field.Index.UN_TOKENIZED));
-						d.Add(new Field("contents", Lucene.Net.Util.English.IntToEnglish(n), Field.Store.NO, Field.Index.TOKENIZED));
+						d.Add(new Field("id", System.Convert.ToString(n), Field.Store.YES, Field.Index.NOT_ANALYZED));
+						d.Add(new Field("contents", Lucene.Net.Util.English.IntToEnglish(n), Field.Store.NO, Field.Index.ANALYZED));
 						System.Console.Out.WriteLine("Adding " + n);
 						
 						// Switch between single and multiple file segments
@@ -83,7 +83,7 @@ namespace Lucene.Net
 						if (i % reopenInterval == 0)
 						{
 							writer.Close();
-							writer = new IndexWriter("index", Lucene.Net.ThreadSafetyTest.ANALYZER, false);
+							writer = new IndexWriter("index", Lucene.Net.ThreadSafetyTest.ANALYZER, false, IndexWriter.MaxFieldLength.LIMITED);
 						}
 					}
 					
@@ -146,11 +146,11 @@ namespace Lucene.Net
 			{
 				System.Console.Out.WriteLine("Searching for " + n);
 				Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", Lucene.Net.ThreadSafetyTest.ANALYZER);
-				Lucene.Net.Search.Hits hits = searcher.Search(parser.Parse(Lucene.Net.Util.English.IntToEnglish(n)));
-				System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length());
-				for (int j = 0; j < System.Math.Min(3, hits.Length()); j++)
+				Lucene.Net.Search.ScoreDoc[] hits = searcher.Search(parser.Parse(Lucene.Net.Util.English.IntToEnglish(n)), null, 1000).scoreDocs;
+				System.Console.Out.WriteLine("Search for " + n + ": total=" + hits.Length);
+				for (int j = 0; j < System.Math.Min(3, hits.Length); j++)
 				{
-					System.Console.Out.WriteLine("Hit for " + n + ": " + hits.Doc(j).Get("id"));
+					System.Console.Out.WriteLine("Hit for " + n + ": " + searcher.Doc(hits[j].doc).Get("id"));
 				}
 			}
 		}
@@ -185,7 +185,7 @@ namespace Lucene.Net
 			
 			if (!readOnly)
 			{
-				IndexWriter writer = new IndexWriter(indexDir, ANALYZER, !add);
+				IndexWriter writer = new IndexWriter(indexDir, ANALYZER, !add, IndexWriter.MaxFieldLength.LIMITED);
 				
 				SupportClass.ThreadClass indexerThread = new IndexerThread(writer);
 				indexerThread.Start();

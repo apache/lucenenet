@@ -23,31 +23,23 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> Expert: Maintains caches of term values.
-	/// 
-	/// <p>Created: May 19, 2004 11:13:14 AM
-	/// 
 	/// </summary>
-	/// <author>   Tim Jones (Nacimiento Software)
-	/// </author>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: FieldCache.java 544546 2007-06-05 16:29:35Z doronc $
-	/// </version>
+	/// <since>lucene 1.4</since>
+	/// <version>$Id:$</version>
 	/// <summary>Expert: Stores term text values and document ordering data. </summary>
 	public class StringIndex
 	{
-		
 		/// <summary>All the term values, in natural order. </summary>
-		public System.String[] Lookup;
+		public System.String[] lookup;
 		
 		/// <summary>For each document, an index into the lookup array. </summary>
-		public int[] Order;
+		public int[] order;
 		
 		/// <summary>Creates one of these objects </summary>
 		public StringIndex(int[] values, System.String[] lookup)
 		{
-			this.Order = values;
-			this.Lookup = lookup;
+			this.order = values;
+			this.lookup = lookup;
 		}
 	}
 	public struct FieldCache_Fields{
@@ -227,7 +219,7 @@ namespace Lucene.Net.Search
 		/// <returns> int[], float[] or StringIndex.
 		/// </returns>
 		/// <throws>  IOException  If any error occurs. </throws>
-		System.Object GetAuto(IndexReader reader, System.String field);
+		object GetAuto(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
 		/// is found reads the terms out of <code>field</code> and calls the given SortComparator

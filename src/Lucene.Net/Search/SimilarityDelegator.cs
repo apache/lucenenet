@@ -69,5 +69,10 @@ namespace Lucene.Net.Search
 		{
 			return delegee.Coord(overlap, maxOverlap);
 		}
+
+        public override float ScorePayload(string fieldName, byte[] payload, int offset, int length)
+        {
+            return delegee.ScorePayload(fieldName, payload, offset, length);
+        }
 	}
 }

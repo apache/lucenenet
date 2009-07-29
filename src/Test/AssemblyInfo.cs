@@ -11,12 +11,12 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net.Test")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2008 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2008 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2009 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2009 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("2.3.2")]
+[assembly: AssemblyInformationalVersionAttribute("2.4.0")]
 
 //
 // Version information for an assembly consists of the following four values:
@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.3.2.001")]
+[assembly: AssemblyVersion("2.4.0.001")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

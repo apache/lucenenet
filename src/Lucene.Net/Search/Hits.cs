@@ -37,7 +37,20 @@ namespace Lucene.Net.Search
 	/// is thrown when accessing hit <code>n</code> &ge; current_{@link #Length()} 
 	/// (but <code>n</code> &lt; {@link #Length()}_at_start). 
 	/// </summary>
-	public sealed class Hits
+    ///
+	///  <pre>
+	///    TopDocCollector collector = new TopDocCollector(hitsPerPage);
+	///    searcher.search(query, collector);
+	///    ScoreDoc[] hits = collector.topDocs().scoreDocs;
+	///    for (int i = 0; i < hits.length; i++) {
+	///      int docId = hits[i].doc;
+	///      Document d = searcher.doc(docId);
+	///      // do something with current hit
+	///      ...
+	///  </pre>
+    /// 
+	[System.Obsolete("Hits will be removed in Lucene 3.0.  Insead used TopDocCollector and TopDocs.")]
+    public sealed class Hits
 	{
 		private Weight weight;
 		private Searcher searcher;

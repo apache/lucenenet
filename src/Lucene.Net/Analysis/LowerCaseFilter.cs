@@ -31,18 +31,18 @@ namespace Lucene.Net.Analysis
         {
         }
 		
-        public override Token Next(Token result)
+        public override Token Next(Token reusableToken)
         {
-            result = input.Next(result);
-            if (result != null)
+            Token nextToken = input.Next(reusableToken);
+            if (nextToken != null)
             {
 
-                char[] buffer = result.TermBuffer();
-                int length = result.termLength;
+                char[] buffer = nextToken.TermBuffer();
+                int length = nextToken.TermLength();
                 for (int i = 0; i < length; i++)
                     buffer[i] = System.Char.ToLower(buffer[i]);
 
-                return result;
+                return nextToken;
             }
             else
                 return null;

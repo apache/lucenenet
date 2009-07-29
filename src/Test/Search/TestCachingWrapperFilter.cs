@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestCachingWorks()
 		{
 			Directory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Close();
 			
 			IndexReader reader = IndexReader.Open(dir);
@@ -44,12 +44,12 @@ namespace Lucene.Net.Search
 			CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 			
 			// first time, nested filter is called
-			cacher.Bits(reader);
+			cacher.GetDocIdSet(reader);
 			Assert.IsTrue(filter.WasCalled(), "first time");
 			
 			// second time, nested filter should not be called
 			filter.Clear();
-			cacher.Bits(reader);
+            cacher.GetDocIdSet(reader);
 			Assert.IsFalse(filter.WasCalled(), "second time");
 			
 			reader.Close();

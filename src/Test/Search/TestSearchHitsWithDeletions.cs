@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// See {@link http://issues.apache.org/jira/browse/LUCENE-1096}.
 	/// </summary>
+    [System.Obsolete("Hits will be removed in Lucene 3.0")]
 	[TestFixture]
 	public class TestSearchHitsWithDeletions
 	{
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search
 		{
 			// Create an index writer.
 			directory = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < N; i++)
 			{
 				writer.AddDocument(CreateDocument(i));
@@ -184,7 +185,7 @@ namespace Lucene.Net.Search
 		private static Document CreateDocument(int id)
 		{
 			Document doc = new Document();
-			doc.Add(new Field(TEXT_FIELD, "text of document" + id, Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field(TEXT_FIELD, "text of document" + id, Field.Store.YES, Field.Index.ANALYZED));
 			return doc;
 		}
 		

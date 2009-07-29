@@ -18,19 +18,25 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
-	
 	[Serializable]
 	public class MockFilter : Filter
 	{
 		private bool wasCalled;
-		
-		public override System.Collections.BitArray Bits(IndexReader reader)
+
+        [System.Obsolete()]
+        public override System.Collections.BitArray Bits(IndexReader reader)
+        {
+            return null;
+        }
+
+		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			wasCalled = true;
-			return new System.Collections.BitArray(64);
+			return new DocIdBitSet(new System.Collections.BitArray(64));
 		}
 		
 		public virtual void  Clear()

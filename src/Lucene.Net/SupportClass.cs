@@ -16,7 +16,6 @@
  */
 
 using System;
-using System.Collections;
 
 /// <summary>
 /// This interface should be implemented by any class whose instances are intended 
@@ -36,6 +35,204 @@ public interface IThreadRunnable
 /// </summary>
 public class SupportClass
 {
+    public class TextSupport
+    {
+        /// <summary>
+        /// Copies an array of chars obtained from a String into a specified array of chars
+        /// </summary>
+        /// <param name="sourceString">The String to get the chars from</param>
+        /// <param name="sourceStart">Position of the String to start getting the chars</param>
+        /// <param name="sourceEnd">Position of the String to end getting the chars</param>
+        /// <param name="destinationArray">Array to return the chars</param>
+        /// <param name="destinationStart">Position of the destination array of chars to start storing the chars</param>
+        /// <returns>An array of chars</returns>
+        public static void GetCharsFromString(string sourceString, int sourceStart, int sourceEnd, char[] destinationArray, int destinationStart)
+        {
+            int sourceCounter;
+            int destinationCounter;
+            sourceCounter = sourceStart;
+            destinationCounter = destinationStart;
+            while (sourceCounter < sourceEnd)
+            {
+                destinationArray[destinationCounter] = (char)sourceString[sourceCounter];
+                sourceCounter++;
+                destinationCounter++;
+            }
+        }
+    }
+
+    public class CollectionsSupport
+    {
+        public class BitSet
+        {
+            private System.Collections.BitArray bitArray = null;
+
+            public BitSet(int size)
+            {
+                bitArray = new System.Collections.BitArray(size, false);
+            }
+
+            public void Set(int index)
+            {
+                if (index >= bitArray.Count)
+                    GrowBitArray(index + 1);
+                bitArray.Set(index, true);
+            }
+
+            /// <summary>
+            /// Returns the next set bit at or index, or -1 if no such bit exists.
+            /// </summary>
+            /// <param name="index">the index of the bit at which to start checking</param>
+            /// <returns>the next set bit or -1</returns>
+            public int NextSetBit(int index)
+            {
+                while (index < bitArray.Count)
+                {
+                    // if index bit is set, return it; otherwise check next index bit
+                    if (bitArray.Get(index))
+                        return index;
+                    else
+                        index++;
+                }
+                // if no bits are set at or after index, return -1
+                return -1;
+            }
+
+            private void GrowBitArray(int size)
+            {
+                //TODO:
+                // might be able to change this to:
+                bitArray.Length = size;
+
+                //System.Collections.BitArray tmp = new System.Collections.BitArray(size, false);
+                //for (int i = 0; i < bitArray.Count; i++)
+                //    tmp.Set(i, bitArray.Get(i));
+                //bitArray = tmp;
+            }
+        }
+
+        public static void ArrayFill(object[] array, object fillValue)
+        {
+            ArrayFill(array, 0, array.Length, fillValue);
+        }
+        public static void ArrayFill(object[] array, int from, int to, object fillValue)
+        {
+            for (int i = from; i < to; i++)
+                array[i] = fillValue;
+        }
+
+        public static void ArrayFill(byte[] array, byte fillValue)
+        {
+            ArrayFill(array, 0, array.Length, fillValue);
+        }
+        public static void ArrayFill(byte[] array, int from, int to, byte fillValue)
+        {
+            for (int i = from; i < to; i++)
+                array[i] = fillValue;
+        }
+
+        public static void ArrayFill(char[] array, char fillValue)
+        {
+            ArrayFill(array, 0, array.Length, fillValue);
+        }
+        public static void ArrayFill(char[] array, int from, int to, char fillValue)
+        {
+            for (int i = from; i < to; i++)
+                array[i] = fillValue;
+        }
+
+        public static void ArrayFill(int[] array, int fillValue)
+        {
+            ArrayFill(array, 0, array.Length, fillValue);
+        }
+        public static void ArrayFill(int[] array, int from, int to, int fillValue)
+        {
+            for (int i = from; i < to; i++)
+                array[i] = fillValue;
+        }
+
+        public static void ArrayFill(long[] array, long fillValue)
+        {
+            ArrayFill(array, 0, array.Length, fillValue);
+        }
+        public static void ArrayFill(long[] array, int from, int to, long fillValue)
+        {
+            for (int i = from; i < to; i++)
+                array[i] = fillValue;
+        }
+
+        public static void AddAll(System.Collections.Generic.ICollection<byte[]> source, System.Collections.Generic.ICollection<byte[]> destination)
+        {
+            System.Collections.Generic.IEnumerator<byte[]> enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+                destination.Add(enumerator.Current);
+        }
+
+        public static void AddAll(System.Collections.Generic.ICollection<string> source, System.Collections.Generic.ICollection<string> destination)
+        {
+            System.Collections.Generic.IEnumerator<string> enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+                destination.Add(enumerator.Current);
+        }
+
+        public static void AddAll(System.Collections.Generic.IList<object> source, System.Collections.Generic.IList<object> destination)
+        {
+            System.Collections.Generic.IEnumerator<object> enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+                destination.Add(enumerator.Current);
+        }
+
+        public static System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> TailMap(System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> map, string fromKey)
+        {
+            System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> tailMap;
+
+            if (map.Comparer != null)
+                tailMap = new System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader>(map.Comparer);
+            else
+                tailMap = new System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader>();
+
+            if (map != null && map.Count > 0)
+            {
+                System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, Lucene.Net.Index.IndexReader>> e = map.GetEnumerator();
+
+                if (map.Comparer != null)
+                    while (e.MoveNext())
+                    {
+                        if (map.Comparer.Compare(fromKey, e.Current.Key) <= 0)
+                            tailMap[e.Current.Key] = e.Current.Value;
+                    }
+                else
+                    while (e.MoveNext())
+                    {
+                        if (string.CompareOrdinal(fromKey, e.Current.Key) <= 0)
+                            tailMap[e.Current.Key] = e.Current.Value;
+                    }
+            }
+
+            return tailMap;
+        }
+
+        public static void PutAll(System.Collections.IDictionary source, System.Collections.IDictionary destination)
+        {
+            // using destination[key] = source[key] avoids exceptions on duplicate, and
+            // preserves the most recent duplicate key, which is semantically equivalent
+            // to the java.util.Map functionality
+            System.Collections.IEnumerator enumerator = source.Keys.GetEnumerator();
+            while (enumerator.MoveNext())
+                destination[enumerator.Current] = source[enumerator.Current];
+        }
+
+        public static void PutAll(System.Collections.Generic.IDictionary<object, object> source, System.Collections.Generic.IDictionary<object, object> destination)
+        {
+            // using destination[key] = source[key] avoids exceptions on duplicate, and
+            // preserves the most recent duplicate key, which is semantically equivalent
+            // to the java.util.Map functionality
+            System.Collections.Generic.IEnumerator<object> enumerator = source.Keys.GetEnumerator();
+            while (enumerator.MoveNext())
+                destination[enumerator.Current] = source[enumerator.Current];
+        }
+    }
+
     /// <summary>
     /// Support class used to handle threads
     /// </summary>
@@ -259,7 +456,7 @@ public class SupportClass
         /// Calling this method usually terminates the thread.
         /// </summary>
         /// <param name="stateInfo">An object that contains application-specific information, such as state, which can be used by the thread being aborted</param>
-        public void Abort(System.Object stateInfo)
+        public void Abort(object stateInfo)
         {
             lock (this)
             {
@@ -276,9 +473,9 @@ public class SupportClass
         }
 
         /// <summary>
-        /// Obtain a String that represents the current Object
+        /// Obtain a String that represents the current object
         /// </summary>
-        /// <returns>A String that represents the current Object</returns>
+        /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
             return "Thread[" + Name + "," + Priority.ToString() + "," + "" + "]";
@@ -544,7 +741,6 @@ public class SupportClass
             return -1;
         }
 
-
         /// <summary>
         /// Returns the number of bits set to true in this BitSet.
         /// </summary>
@@ -555,7 +751,7 @@ public class SupportClass
             int count = 0;
             for (int i = 0; i < bits.Count; i++)
             {
-                if (bits[i] == true)
+                if (bits[i])
                     count++;
             }
             return count;
@@ -765,18 +961,6 @@ public class SupportClass
             }
         }
 
-        public static bool TryParse(System.String s, out float f)
-        {
-            bool ok = false;
-            
-            if (s.EndsWith("f") || s.EndsWith("F"))
-                ok=System.Single.TryParse(s.Substring(0, s.Length - 1).Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator),out f);
-            else
-                ok=System.Single.TryParse(s.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator),out f);
-
-            return ok;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -903,25 +1087,34 @@ public class SupportClass
         }
     }
 
-    public static System.Collections.SortedList TailMap(System.Collections.SortedList list, System.Object limit)
+    /// <summary>
+    /// This class provides supporting methods of java.util.BitSet
+    /// that are not present in System.Collections.BitArray.
+    /// </summary>
+    public class BitSetSupport
     {
-        System.Collections.Comparer comparer = System.Collections.Comparer.Default;
-        System.Collections.SortedList newList = new System.Collections.SortedList();
-
-        if (list != null)
+        /// <summary>
+        /// Returns the next set bit at or after docId, or -1 if no such bit exists.
+        /// </summary>
+        /// <param name="bitArray"></param>
+        /// <param name="docId">the index of bit array at which to start checking</param>
+        /// <returns>the next set bit or -1</returns>
+        public static int NextSetBit(System.Collections.BitArray bitArray, int docId)
         {
-            if (list.Count > 0)
+            while (docId < bitArray.Length)
             {
-                int index = 0;
-                while (comparer.Compare(list.GetKey(index), limit) < 0)
-                    index++;
-
-                for (; index < list.Count; index++)
-                    newList.Add(list.GetKey(index), list[list.GetKey(index)]);
+                // if docId bit is set, return it
+                // otherwise check next docId bit
+                if (bitArray.Get(docId))
+                    return docId;
+                else
+                    docId++;
             }
+            // if no bits are set at or after docId, return -1
+            return -1;
         }
 
-        return newList;
+        private BitSetSupport() { }
     }
 
     /// <summary>
@@ -975,7 +1168,7 @@ public class SupportClass
     {
         public interface ICompressionAdapter
         {
-            byte[] Compress(byte[] input);
+            byte[] Compress(byte[] input, int offset, int length);
             byte[] Uncompress(byte[] input);
         }
 
@@ -991,10 +1184,10 @@ public class SupportClass
             return compressionAdapter.Uncompress(input);
         }
 
-        public static byte[] Compress(byte[] input)
+        public static byte[] Compress(byte[] input, int offset, int length)
         {
             CheckCompressionSupport();
-            return compressionAdapter.Compress(input);
+            return compressionAdapter.Compress(input, offset, length);
         }
 
         private static void CheckCompressionSupport()
@@ -1006,273 +1199,11 @@ public class SupportClass
                     throw new System.SystemException("Compression support not configured"); 
 
                 Type compressionLibClass = Type.GetType(compressionLibClassName, true);
-                System.Object compressionAdapterObj = Activator.CreateInstance(compressionLibClass);
+                object compressionAdapterObj = Activator.CreateInstance(compressionLibClass);
                 compressionAdapter = compressionAdapterObj as ICompressionAdapter;
                 if (compressionAdapter == null)
                     throw new System.SystemException("Compression adapter does not support the ICompressionAdapter interface");
             }
         }
     }
-
-    #region WEAKHASHTABLE
-    /// <summary>
-    /// A Hashtable which holds weak references to its keys so they
-    /// can be collected during GC. 
-    /// </summary>
-    [System.Diagnostics.DebuggerDisplay("Count = {Values.Count}")]
-    public class WeakHashTable : Hashtable, IEnumerable
-    {
-        /// <summary>
-        /// A weak referene wrapper for the hashtable keys. Whenever a key\value pair 
-        /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
-        /// value of the original object hashcode for fast comparison.
-        /// </summary>
-        class WeakKey : WeakReference
-        {
-            int hashCode;
-
-            public WeakKey(object key)
-                : base(key)
-            {
-                if (key == null)
-                    throw new ArgumentNullException("key");
-
-                hashCode = key.GetHashCode();
-            }
-
-            public override int GetHashCode()
-            {
-                return hashCode;
-            }
-        }
-
-        /// <summary>
-        /// A Dictionary enumerator which wraps the original hashtable enumerator 
-        /// and performs 2 tasks: Extract the real key from a WeakKey and skip keys
-        /// that were already collected.
-        /// </summary>
-        class WeakDictionaryEnumerator : IDictionaryEnumerator
-        {
-            IDictionaryEnumerator baseEnumerator;
-            object currentKey;
-            object currentValue;
-
-            public WeakDictionaryEnumerator(IDictionaryEnumerator baseEnumerator)
-            {
-                this.baseEnumerator = baseEnumerator;
-            }
-
-            public DictionaryEntry Entry
-            {
-                get
-                {
-                    return new DictionaryEntry(this.currentKey, this.currentValue);
-                }
-            }
-
-            public object Key
-            {
-                get
-                {
-                    return this.currentKey;
-                }
-            }
-
-            public object Value
-            {
-                get
-                {
-                    return this.currentValue;
-                }
-            }
-
-            public object Current
-            {
-                get
-                {
-                    return Entry;
-                }
-            }
-
-            public bool MoveNext()
-            {
-                while (baseEnumerator.MoveNext())
-                {
-                    object key = ((WeakKey)baseEnumerator.Key).Target;
-                    if (key != null)
-                    {
-                        this.currentKey = key;
-                        this.currentValue = baseEnumerator.Value;
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            public void Reset()
-            {
-                baseEnumerator.Reset();
-                this.currentKey = null;
-                this.currentValue = null;
-            }
-        }
-
-
-        /// <summary>
-        /// Serves as a simple "GC Monitor" that indicates whether cleanup is needed. 
-        /// If collectableObject.IsAlive is false, GC has occurred and we should perform cleanup
-        /// </summary>
-        WeakReference collectableObject = new WeakReference(new Object());
-
-        /// <summary>
-        /// Customize the hashtable lookup process by overriding KeyEquals. KeyEquals
-        /// will compare both WeakKey to WeakKey and WeakKey to real keys
-        /// </summary>
-        protected override bool KeyEquals(object x, object y)
-        {
-            if (x == y)
-                return true;
-
-            if (x is WeakKey)
-            {
-                x = ((WeakKey)x).Target;
-                if (x == null)
-                    return false;
-            }
-
-            if (y is WeakKey)
-            {
-                y = ((WeakKey)y).Target;
-                if (y == null)
-                    return false;
-            }
-
-            return x.Equals(y);
-        }
-
-        protected override int GetHash(object key)
-        {
-            return key.GetHashCode();
-        }
-
-        /// <summary>
-        /// Perform cleanup if GC occurred
-        /// </summary>
-        private void CleanIfNeeded()
-        {
-            if (collectableObject.Target == null)
-            {
-                Clean();
-                collectableObject = new WeakReference(new Object());
-            }
-        }
-
-        /// <summary>
-        /// Iterate over all keys and remove keys that were collected
-        /// </summary>
-        private void Clean()
-        {
-            ArrayList keysToDelete = new ArrayList();
-            foreach (WeakKey wtk in base.Keys)
-            {
-                if (!wtk.IsAlive)
-                {
-                    keysToDelete.Add(wtk);
-                }
-            }
-
-            foreach (WeakKey wtk in keysToDelete)
-                Remove(wtk);
-        }
-
-
-        /// <summary>
-        /// Wrap each key with a WeakKey and add it to the hashtable
-        /// </summary>
-        public override void Add(object key, object value)
-        {
-            CleanIfNeeded();
-            base.Add(new WeakKey(key), value);
-        }
-
-        public override IDictionaryEnumerator GetEnumerator()
-        {
-            return new WeakDictionaryEnumerator(base.GetEnumerator());
-        }
-
-        /// <summary>
-        /// Create a temporary copy of the real keys and return that
-        /// </summary>
-        public override ICollection Keys
-        {
-            get
-            {
-                ArrayList keys = new ArrayList(Count);
-                foreach (WeakKey key in base.Keys)
-                {
-                    object realKey = key.Target;
-                    if (realKey != null)
-                        keys.Add(realKey);
-                }
-                return keys;
-            }
-        }
-
-        public override object this[object key]
-        {
-            get
-            {
-                return base[key];
-            }
-            set
-            {
-                CleanIfNeeded();
-                base[new WeakKey(key)] = value;
-            }
-        }
-
-        public override void CopyTo(Array array, int index)
-        {
-            int arrayIndex = index;
-            foreach (DictionaryEntry de in this)
-            {
-                array.SetValue(de, arrayIndex++);
-            }
-        }
-
-        public override int Count
-        {
-            get
-            {
-                CleanIfNeeded();
-                return base.Count;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
-
-    #endregion
-
-    public class Cryptography
-    {
-        static public bool FIPSCompliant = false;
-
-        static public System.Security.Cryptography.HashAlgorithm GetHashAlgorithm()
-        {
-            if (FIPSCompliant)
-            {
-                //LUCENENET-175
-                //No Assumptions should be made on the HashAlgorithm. It may change in time.
-                //SHA256 SHA384 SHA512 etc.
-                return System.Security.Cryptography.SHA1.Create();
-            }
-            return System.Security.Cryptography.MD5.Create();
-        }
-    }
-
-
 }

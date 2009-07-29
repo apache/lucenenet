@@ -25,8 +25,6 @@ namespace Lucene.Net.Store
 	/// but can be changed with {@link #setLockFactory}.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 581625 2007-10-03 15:24:12Z mikemccand $
-	/// </version>
     [Serializable]
     public class RAMDirectory : Directory
     {
@@ -45,16 +43,6 @@ namespace Lucene.Net.Store
         {
             get { return sizeInBytes; }
             set { sizeInBytes = value; }
-        }
-
-        //https://issues.apache.org/jira/browse/LUCENENET-174
-        [System.Runtime.Serialization.OnDeserialized]
-        void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
-        {
-            if (lockFactory == null)
-            {
-                SetLockFactory(new SingleInstanceLockFactory());
-            }
         }
 
 		// *****
@@ -296,11 +284,12 @@ namespace Lucene.Net.Store
 		/// <summary>Closes the store to future operations, releasing associated memory. </summary>
 		public override void  Close()
 		{
+            isOpen = false;
 			fileMap = null;
 		}
 		
 		/// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
-		protected internal void  EnsureOpen()
+		protected internal override void  EnsureOpen()
 		{
 			if (fileMap == null)
 			{

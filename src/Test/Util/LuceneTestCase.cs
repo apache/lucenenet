@@ -57,6 +57,8 @@ namespace Lucene.Net.Util
 		{
 			if (ConcurrentMergeScheduler.AnyUnhandledExceptions())
 			{
+                // clear the failure so that we don't just keep failing subsequent test cases
+                ConcurrentMergeScheduler.ClearUnhandledExceptions();
 				Assert.Fail("ConcurrentMergeScheduler hit unhandled exceptions");
 			}
 		}

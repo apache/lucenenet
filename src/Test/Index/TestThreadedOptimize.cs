@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
 						for (int k = 0; k < 17 * (1 + iFinal); k++)
 						{
 							Document d = new Document();
-							d.Add(new Field("id", iterFinal + "_" + iFinal + "_" + j + "_" + k, Field.Store.YES, Field.Index.UN_TOKENIZED));
-							d.Add(new Field("contents", English.IntToEnglish(iFinal + k), Field.Store.NO, Field.Index.TOKENIZED));
+							d.Add(new Field("id", iterFinal + "_" + iFinal + "_" + j + "_" + k, Field.Store.YES, Field.Index.NOT_ANALYZED));
+							d.Add(new Field("contents", English.IntToEnglish(iFinal + k), Field.Store.NO, Field.Index.ANALYZED));
 							writerFinal.AddDocument(d);
 						}
 						for (int k = 0; k < 9 * (1 + iFinal); k++)
@@ -93,10 +93,10 @@ namespace Lucene.Net.Index
 		private const int NUM_THREADS = 3;
 		//private final static int NUM_THREADS = 5;
 		
-		private const int NUM_ITER = 2;
+		private const int NUM_ITER = 1;
 		//private final static int NUM_ITER = 10;
 		
-		private const int NUM_ITER2 = 2;
+		private const int NUM_ITER2 = 1;
 		//private final static int NUM_ITER2 = 5;
 		
 		private bool failed;
@@ -123,8 +123,8 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < 200; i++)
 				{
 					Document d = new Document();
-					d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.UN_TOKENIZED));
-					d.Add(new Field("contents", English.IntToEnglish(i), Field.Store.NO, Field.Index.TOKENIZED));
+					d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED));
+					d.Add(new Field("contents", English.IntToEnglish(i), Field.Store.NO, Field.Index.ANALYZED));
 					writer.AddDocument(d);
 				}
 				
@@ -179,8 +179,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestThreadedOptimize_Renamed_Method()
 		{
 			Directory directory = new MockRAMDirectory();
-			RunTest(directory, false, null);
-			RunTest(directory, true, null);
+            RunTest(directory, false, new SerialMergeScheduler());
+            RunTest(directory, true, new SerialMergeScheduler());
 			RunTest(directory, false, new ConcurrentMergeScheduler());
 			RunTest(directory, true, new ConcurrentMergeScheduler());
 			directory.Close();
@@ -191,8 +191,8 @@ namespace Lucene.Net.Index
 			
 			System.String dirName = tempDir + "/luceneTestThreadedOptimize";
 			directory = FSDirectory.GetDirectory(dirName);
-			RunTest(directory, false, null);
-			RunTest(directory, true, null);
+            RunTest(directory, false, new SerialMergeScheduler());
+            RunTest(directory, true, new SerialMergeScheduler());
 			RunTest(directory, false, new ConcurrentMergeScheduler());
 			RunTest(directory, true, new ConcurrentMergeScheduler());
 			directory.Close();

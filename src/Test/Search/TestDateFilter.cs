@@ -47,14 +47,14 @@ namespace Lucene.Net.Search
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the past
-			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 1000 * 100000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 1000 * 100000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
@@ -74,28 +74,28 @@ namespace Lucene.Net.Search
 			// search for something that does exists
 			Query query2 = new TermQuery(new Term("body", "sunny"));
 			
-			Hits result;
+			ScoreDoc[] result;
 			
 			// ensure that queries return expected results without DateFilter first
-			result = searcher.Search(query1);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2);
-			Assert.AreEqual(1, result.Length());
+			result = searcher.Search(query2, null, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length);
 			
 			
 			// run queries with DateFilter
-			result = searcher.Search(query1, df1);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, df1, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query1, df2);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, df2, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, df1);
-			Assert.AreEqual(1, result.Length());
+			result = searcher.Search(query2, df1, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length);
 			
-			result = searcher.Search(query2, df2);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query2, df2, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 		}
 		
 		/// <summary> </summary>
@@ -104,14 +104,14 @@ namespace Lucene.Net.Search
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
 			
 			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
 			// add time that is in the future
-			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 888888, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 888888, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
@@ -131,28 +131,28 @@ namespace Lucene.Net.Search
 			// search for something that does exists
 			Query query2 = new TermQuery(new Term("body", "sunny"));
 			
-			Hits result;
+			ScoreDoc[] result;
 			
 			// ensure that queries return expected results without DateFilter first
-			result = searcher.Search(query1);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2);
-			Assert.AreEqual(1, result.Length());
+			result = searcher.Search(query2, null, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length);
 			
 			
 			// run queries with DateFilter
-			result = searcher.Search(query1, df1);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, df1, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query1, df2);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query1, df2, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, df1);
-			Assert.AreEqual(1, result.Length());
+			result = searcher.Search(query2, df1, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length);
 			
-			result = searcher.Search(query2, df2);
-			Assert.AreEqual(0, result.Length());
+			result = searcher.Search(query2, df2, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length);
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 			Initialize(size);
 		}
 		
-		public override bool LessThan(System.Object o1, System.Object o2)
+		public override bool LessThan(object o1, object o2)
 		{
 			PhrasePositions pp1 = (PhrasePositions) o1;
 			PhrasePositions pp2 = (PhrasePositions) o2;

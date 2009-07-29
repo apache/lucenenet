@@ -135,8 +135,9 @@ namespace Lucene.Net.Analysis.Standard
 		*
 		* @see Lucene.Net.Analysis.TokenStream#next()
 		*/
-		public override Token Next(Token result)
+		public override Token Next(/* in */ Token reusableToken)
 		{
+            System.Diagnostics.Debug.Assert(reusableToken != null);
 			int posIncr = 1;
 			
 			while (true)
@@ -150,12 +151,12 @@ namespace Lucene.Net.Analysis.Standard
 				
 				if (scanner.Yylength() <= maxTokenLength)
 				{
-					result.Clear();
-					result.SetPositionIncrement(posIncr);
-					scanner.GetText(result);
+					reusableToken.Clear();
+					reusableToken.SetPositionIncrement(posIncr);
+					scanner.GetText(reusableToken);
 					int start = scanner.Yychar();
-					result.SetStartOffset(start);
-					result.SetEndOffset(start + result.TermLength());
+					reusableToken.SetStartOffset(start);
+					reusableToken.SetEndOffset(start + reusableToken.TermLength());
 					// This 'if' should be removed in the next release. For now, it converts
 					// invalid acronyms to HOST. When removed, only the 'else' part should
 					// remain.
@@ -163,19 +164,19 @@ namespace Lucene.Net.Analysis.Standard
 					{
 						if (replaceInvalidAcronym)
 						{
-							result.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.HOST]);
-							result.SetTermLength(result.TermLength() - 1); // remove extra '.'
+							reusableToken.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.HOST]);
+							reusableToken.SetTermLength(reusableToken.TermLength() - 1); // remove extra '.'
 						}
 						else
 						{
-							result.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM]);
+							reusableToken.SetType(StandardTokenizerImpl.TOKEN_TYPES[StandardTokenizerImpl.ACRONYM]);
 						}
 					}
 					else
 					{
-						result.SetType(StandardTokenizerImpl.TOKEN_TYPES[tokenType]);
+						reusableToken.SetType(StandardTokenizerImpl.TOKEN_TYPES[tokenType]);
 					}
-					return result;
+					return reusableToken;
 				}
 				// When we skip a too-long term, we still increment the
 				// position increment

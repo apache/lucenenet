@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-using System;
-
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Removes matches which overlap with another SpanQuery. </summary>
-	[Serializable]
+	[System.Serializable]
 	public class SpanNotQuery : SpanQuery
 	{
-		private class AnonymousClassSpans : Spans
+		private class AnonymousClassPayloadSpans : PayloadSpans
 		{
-			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
+			public AnonymousClassPayloadSpans(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
 			{
 				InitBlock(reader, enclosingInstance);
 			}
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				this.reader = reader;
 				this.enclosingInstance = enclosingInstance;
-				includeSpans = Enclosing_Instance.include.GetSpans(reader);
+				includeSpans = Enclosing_Instance.include.GetPayloadSpans(reader);
 				excludeSpans = Enclosing_Instance.exclude.GetSpans(reader);
 				moreExclude = excludeSpans.Next();
 			}
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			private Spans includeSpans;
+			private PayloadSpans includeSpans;
 			private bool moreInclude = true;
 			
 			private Spans excludeSpans;
@@ -119,7 +119,20 @@ namespace Lucene.Net.Search.Spans
 			{
 				return includeSpans.End();
 			}
-			
+
+            public ICollection<byte[]> GetPayload()
+            {
+                List<byte[]> result = null;
+                if (includeSpans.IsPayloadAvailable())
+                    result = new List<byte[]>(includeSpans.GetPayload());
+                return result;
+            }
+
+            public bool IsPayloadAvailable()
+            {
+                return includeSpans.IsPayloadAvailable();
+            }
+
 			public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance.ToString() + ")";
@@ -187,9 +200,14 @@ namespace Lucene.Net.Search.Spans
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new AnonymousClassSpans(reader, this);
+			return new AnonymousClassPayloadSpans(reader, this);
 		}
-		
+
+        public override PayloadSpans GetPayloadSpans(IndexReader reader)
+        {
+            return (PayloadSpans)GetSpans(reader);
+        }
+
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanNotQuery clone = null;
@@ -219,7 +237,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(System.Object o)
+		public  override bool Equals(object o)
 		{
 			if (this == o)
 				return true;

@@ -22,13 +22,7 @@ using Pattern = System.Text.RegularExpressions.Regex;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Filename filter that accept filenames and extensions only created by Lucene.
-	/// 
-	/// </summary>
-	/// <author>  Daniel Naber / Bernhard Messer
-	/// </author>
-	/// <version>  $rcs = ' $Id: Exp $ ' ;
-	/// </version>
+	/// <summary> Filename filter that accept filenames and extensions only created by Lucene.</summary>
 	public class IndexFileNameFilter // : FilenameFilter {{Aroush-1.9}}
 	{
 		
