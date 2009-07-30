@@ -432,6 +432,7 @@
     <Compile Include="Util\TestStringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestSupportClass.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
