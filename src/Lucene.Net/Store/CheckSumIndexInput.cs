@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+using Checksum = SupportClass.Checksum;
+using CRC32 = SupportClass.CRC32;
+
 namespace Lucene.Net.Store
 {
 
@@ -23,31 +26,30 @@ namespace Lucene.Net.Store
     public class ChecksumIndexInput : IndexInput
     {
         IndexInput main;
-        //Checksum digest;
+        Checksum digest;
 
         public ChecksumIndexInput(IndexInput main)
         {
             this.main = main;
-            //digest = new CRC32();
+            digest = new CRC32();
         }
 
         public override byte ReadByte()
         {
             byte b = main.ReadByte();
-            //digest.update(b);
+            digest.update(b);
             return b;
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             main.ReadBytes(b, offset, len);
-            //digest.update(b, offset, len);
+            digest.update(b, offset, len);
         }
 
         public long GetChecksum()
         {
-            return 0;
-            //return digest.getValue();
+            return digest.getValue();
         }
 
         public override void Close()
