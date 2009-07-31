@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net-2.3.1-VS2005", "Lucene.Net-2.3.1-VS2005.csproj", "{F04CA2F4-E182-46A8-B914-F46AF5319E83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net-2.3.2-VS2005", "Lucene.Net-2.3.2-VS2005.csproj", "{F04CA2F4-E182-46A8-B914-F46AF5319E83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
