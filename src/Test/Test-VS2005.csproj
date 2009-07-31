@@ -155,8 +155,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\MockInputStream.cs" />
-    <Compile Include="Index\Store\FSDirectoryTestCase.cs" />
-    <Compile Include="Index\Store\TestFSDirectory.cs" />
     <Compile Include="Index\Store\TestRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
