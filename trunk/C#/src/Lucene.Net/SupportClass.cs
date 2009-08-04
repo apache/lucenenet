@@ -131,6 +131,11 @@ public class SupportClass
         {
             private System.Collections.BitArray bitArray = null;
 
+            public BitSet()
+                : this(0)
+            {
+            }
+
             public BitSet(int size)
             {
                 bitArray = new System.Collections.BitArray(size, false);
@@ -141,6 +146,15 @@ public class SupportClass
                 if (index >= bitArray.Count)
                     GrowBitArray(index + 1);
                 bitArray.Set(index, true);
+            }
+
+            public int Cardinality()
+            {
+                int cardinality = 0;
+                for (int i = 0; i < bitArray.Length; i++)
+                    if (bitArray.Get(i))
+                        cardinality++;
+                return cardinality;
             }
 
             /// <summary>
@@ -409,6 +423,11 @@ public class SupportClass
             }
         }
 
+        public void SetDaemon(bool isDaemon)
+        {
+            threadField.IsBackground = isDaemon;
+        }
+
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
@@ -547,6 +566,20 @@ public class SupportClass
 
         [ThreadStatic]
         static ThreadClass This = null;
+
+        // named as the Java version
+        public static ThreadClass CurrentThread()
+        {
+            return Current();
+        }
+
+        public static void Sleep(long ms)
+        {
+            // casting long ms to int ms could lose resolution, however unlikely
+            // that someone would want to sleep for that long...
+            // TimeSpan takes a 'ticks' argument, where 1 tick = 100 nanoseconds
+            System.Threading.Thread.Sleep(new TimeSpan(10 * ms));
+        }
 
         /// <summary>
         /// Gets the currently running thread
