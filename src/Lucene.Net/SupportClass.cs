@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections;
 
 /// <summary>
 /// This interface should be implemented by any class whose instances are intended 
@@ -1303,4 +1304,247 @@ public class SupportClass
             }
         }
     }
+	
+	#region WEAKHASHTABLE
+    /// <summary>
+    /// A Hashtable which holds weak references to its keys so they
+    /// can be collected during GC. 
+    /// </summary>
+    [System.Diagnostics.DebuggerDisplay("Count = {Values.Count}")]
+    public class WeakHashTable : Hashtable, IEnumerable
+    {
+        /// <summary>
+        /// A weak referene wrapper for the hashtable keys. Whenever a key\value pair 
+        /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
+        /// value of the original object hashcode for fast comparison.
+        /// </summary>
+        class WeakKey : WeakReference
+        {
+            int hashCode;
+
+            public WeakKey(object key)
+                : base(key)
+            {
+                if (key == null)
+                    throw new ArgumentNullException("key");
+
+                hashCode = key.GetHashCode();
+            }
+
+            public override int GetHashCode()
+            {
+                return hashCode;
+            }
+        }
+
+        /// <summary>
+        /// A Dictionary enumerator which wraps the original hashtable enumerator 
+        /// and performs 2 tasks: Extract the real key from a WeakKey and skip keys
+        /// that were already collected.
+        /// </summary>
+        class WeakDictionaryEnumerator : IDictionaryEnumerator
+        {
+            IDictionaryEnumerator baseEnumerator;
+            object currentKey;
+            object currentValue;
+
+            public WeakDictionaryEnumerator(IDictionaryEnumerator baseEnumerator)
+            {
+                this.baseEnumerator = baseEnumerator;
+            }
+
+            public DictionaryEntry Entry
+            {
+                get
+                {
+                    return new DictionaryEntry(this.currentKey, this.currentValue);
+                }
+            }
+
+            public object Key
+            {
+                get
+                {
+                    return this.currentKey;
+                }
+            }
+
+            public object Value
+            {
+                get
+                {
+                    return this.currentValue;
+                }
+            }
+
+            public object Current
+            {
+                get
+                {
+                    return Entry;
+                }
+            }
+
+            public bool MoveNext()
+            {
+                while (baseEnumerator.MoveNext())
+                {
+                    object key = ((WeakKey)baseEnumerator.Key).Target;
+                    if (key != null)
+                    {
+                        this.currentKey = key;
+                        this.currentValue = baseEnumerator.Value;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public void Reset()
+            {
+                baseEnumerator.Reset();
+                this.currentKey = null;
+                this.currentValue = null;
+            }
+        }
+
+
+        /// <summary>
+        /// Serves as a simple "GC Monitor" that indicates whether cleanup is needed. 
+        /// If collectableObject.IsAlive is false, GC has occurred and we should perform cleanup
+        /// </summary>
+        WeakReference collectableObject = new WeakReference(new Object());
+
+        /// <summary>
+        /// Customize the hashtable lookup process by overriding KeyEquals. KeyEquals
+        /// will compare both WeakKey to WeakKey and WeakKey to real keys
+        /// </summary>
+        protected override bool KeyEquals(object x, object y)
+        {
+            if (x == y)
+                return true;
+
+            if (x is WeakKey)
+            {
+                x = ((WeakKey)x).Target;
+                if (x == null)
+                    return false;
+            }
+
+            if (y is WeakKey)
+            {
+                y = ((WeakKey)y).Target;
+                if (y == null)
+                    return false;
+            }
+
+            return x.Equals(y);
+        }
+
+        protected override int GetHash(object key)
+        {
+            return key.GetHashCode();
+        }
+
+        /// <summary>
+        /// Perform cleanup if GC occurred
+        /// </summary>
+        private void CleanIfNeeded()
+        {
+            if (collectableObject.Target == null)
+            {
+                Clean();
+                collectableObject = new WeakReference(new Object());
+            }
+        }
+
+        /// <summary>
+        /// Iterate over all keys and remove keys that were collected
+        /// </summary>
+        private void Clean()
+        {
+            ArrayList keysToDelete = new ArrayList();
+            foreach (WeakKey wtk in base.Keys)
+            {
+                if (!wtk.IsAlive)
+                {
+                    keysToDelete.Add(wtk);
+                }
+            }
+
+            foreach (WeakKey wtk in keysToDelete)
+                Remove(wtk);
+        }
+
+
+        /// <summary>
+        /// Wrap each key with a WeakKey and add it to the hashtable
+        /// </summary>
+        public override void Add(object key, object value)
+        {
+            CleanIfNeeded();
+            base.Add(new WeakKey(key), value);
+        }
+
+        public override IDictionaryEnumerator GetEnumerator()
+        {
+            return new WeakDictionaryEnumerator(base.GetEnumerator());
+        }
+
+        /// <summary>
+        /// Create a temporary copy of the real keys and return that
+        /// </summary>
+        public override ICollection Keys
+        {
+            get
+            {
+                ArrayList keys = new ArrayList(Count);
+                foreach (WeakKey key in base.Keys)
+                {
+                    object realKey = key.Target;
+                    if (realKey != null)
+                        keys.Add(realKey);
+                }
+                return keys;
+            }
+        }
+
+        public override object this[object key]
+        {
+            get
+            {
+                return base[key];
+            }
+            set
+            {
+                CleanIfNeeded();
+                base[new WeakKey(key)] = value;
+            }
+        }
+
+        public override void CopyTo(Array array, int index)
+        {
+            int arrayIndex = index;
+            foreach (DictionaryEntry de in this)
+            {
+                array.SetValue(de, arrayIndex++);
+            }
+        }
+
+        public override int Count
+        {
+            get
+            {
+                CleanIfNeeded();
+                return base.Count;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+    #endregion
+
 }
