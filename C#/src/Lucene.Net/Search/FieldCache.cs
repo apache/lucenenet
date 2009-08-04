@@ -30,16 +30,16 @@ namespace Lucene.Net.Search
 	public class StringIndex
 	{
 		/// <summary>All the term values, in natural order. </summary>
-		public System.String[] lookup;
+		public System.String[] Lookup;
 		
 		/// <summary>For each document, an index into the lookup array. </summary>
-		public int[] order;
+		public int[] Order;
 		
 		/// <summary>Creates one of these objects </summary>
 		public StringIndex(int[] values, System.String[] lookup)
 		{
-			this.order = values;
-			this.lookup = lookup;
+			this.Order = values;
+			this.Lookup = lookup;
 		}
 	}
 	public struct FieldCache_Fields{
