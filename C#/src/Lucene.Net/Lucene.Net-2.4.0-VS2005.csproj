@@ -701,6 +701,7 @@
     <Compile Include="Search\TermScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TimeLimitedCollector.cs" />
     <Compile Include="Search\TopDocCollector.cs">
       <SubType>Code</SubType>
     </Compile>

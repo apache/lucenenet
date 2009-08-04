@@ -366,6 +366,7 @@
     <Compile Include="Search\TestTermScorer.cs" />
     <Compile Include="Search\TestTermVectors.cs" />
     <Compile Include="Search\TestThreadSafe.cs" />
+    <Compile Include="Search\TestTimeLimitedCollector.cs" />
     <Compile Include="Search\TestWildcard.cs" />
     <Compile Include="StoreTest.cs">
       <SubType>Code</SubType>
@@ -432,6 +433,7 @@
     <Compile Include="Util\TestStringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestSupportClass.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
