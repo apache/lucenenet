@@ -693,7 +693,7 @@ public class SupportClass
 
             return s.ToString();
         }
-
+           
 
         /// <summary>
         /// Converts a number to System.String.
@@ -1057,6 +1057,18 @@ public class SupportClass
             {
                 throw fex;					
             }
+        }
+
+        public static bool TryParse(System.String s, out float f)
+        {
+            bool ok = false;
+
+            if (s.EndsWith("f") || s.EndsWith("F"))
+                ok = System.Single.TryParse(s.Substring(0, s.Length - 1).Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), out f);
+            else
+                ok = System.Single.TryParse(s.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), out f);
+
+            return ok;
         }
 
         /// <summary>
