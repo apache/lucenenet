@@ -378,13 +378,7 @@ namespace Lucene.Net.Store
 		public override System.String[] List()
 		{
             EnsureOpen();
-            System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
-            for (int i = 0; i < files.Length; i++)
-            {
-                System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
-                files[i] = fi.Name;
-            }
-			return files;
+            return SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
