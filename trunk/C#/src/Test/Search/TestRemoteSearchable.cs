@@ -34,34 +34,32 @@ namespace Lucene.Net.Search
 	[TestFixture]
 	public class TestRemoteSearchable : LuceneTestCase
 	{
+		private static readonly string RemoteTypeName = typeof(RemoteSearchable).Name;
 		private static System.Runtime.Remoting.Channels.Http.HttpChannel httpChannel;
-		private static int port;
 		private static bool serverStarted;
 
-		[SetUp]
-		public override void SetUp()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.SetUp();
-			Random rnd = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
-			port = rnd.Next(System.Net.IPEndPoint.MinPort, System.Net.IPEndPoint.MaxPort);
-			httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(port);
-			if (!serverStarted)
+			if (!serverStarted) //should always evaluate to true
+			{
+				httpChannel = new System.Runtime.Remoting.Channels.Http.HttpChannel(0);
 				StartServer();
+			}
 		}
 
-		[TearDown]
-		public override void TearDown()
+		[TestFixtureTearDown]
+		public void FixtureTeardown()
 		{
-            try
-            {
-                System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
-            }
-            catch
-            {
-            }
+			try
+			{
+				System.Runtime.Remoting.Channels.ChannelServices.UnregisterChannel(httpChannel);
+			}
+			catch
+			{
+			}
 
-            httpChannel = null;
-			base.TearDown();
+			httpChannel = null;
 		}
 
 		private static Lucene.Net.Search.Searchable GetRemote()
@@ -71,7 +69,7 @@ namespace Lucene.Net.Search
 
 		private static Lucene.Net.Search.Searchable LookupRemote()
 		{
-			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), string.Format("http://localhost:{0}/RemoteSearchable", port));
+			return (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), httpChannel.GetUrlsForUri(RemoteTypeName)[0]);
 		}
 
 		public static void StartServer()
@@ -107,7 +105,7 @@ namespace Lucene.Net.Search
 			// publish it
 			Lucene.Net.Search.Searchable local = new IndexSearcher(indexStore);
 			RemoteSearchable impl = new RemoteSearchable(local);
-			System.Runtime.Remoting.RemotingServices.Marshal(impl, "RemoteSearchable");
+			System.Runtime.Remoting.RemotingServices.Marshal(impl, RemoteTypeName);
 			serverStarted = true;
 		}
 		
