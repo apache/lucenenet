@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
         {
             public virtual double ParseDouble(System.String value_Renamed)
             {
-                return System.Double.Parse(value_Renamed);
+                return System.Double.Parse(value_Renamed.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
             }
         }
 
