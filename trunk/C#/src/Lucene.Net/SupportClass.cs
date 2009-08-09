@@ -487,7 +487,10 @@ public class SupportClass
         /// </summary>
         public void Join()
         {
-            threadField.Join();
+            lock (this)
+            {
+                threadField.Join();
+            }
         }
 
         /// <summary>
@@ -578,8 +581,7 @@ public class SupportClass
         {
             // casting long ms to int ms could lose resolution, however unlikely
             // that someone would want to sleep for that long...
-            // TimeSpan takes a 'ticks' argument, where 1 tick = 100 nanoseconds
-            System.Threading.Thread.Sleep(new TimeSpan(10 * ms));
+            System.Threading.Thread.Sleep((int)ms);
         }
 
         /// <summary>
