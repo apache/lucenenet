@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
+using System;
 using System.Threading;
+using System.Collections;
 
 namespace Lucene.Net.Util
 {
@@ -46,15 +48,48 @@ namespace Lucene.Net.Util
     // i'm not sure if C#'s Thread.SetData(System.LocalDataStoreSlot, object) has the same issue.
     // For now, i'll just implement this using Thread.SetData(System.LocalDataStoreSlot, object)
     // and Thread.GetData(System.LocalDataStoreSlot) so that we're API compliant.
-    
+
+
+
+    //public class CloseableThreadLocal
+    //{
+    //    private System.LocalDataStoreSlot dataSlot;
+
+    //    public CloseableThreadLocal()
+    //    {
+    //        dataSlot = Thread.AllocateDataSlot();
+    //    }
+
+    //    virtual protected object InitialValue()
+    //    {
+    //        return null;
+    //    }
+
+    //    public object Get()
+    //    {
+    //        object v = Thread.GetData(dataSlot);
+    //        if (v == null)
+    //        {
+    //            v = InitialValue();
+    //            Set(v);
+    //        }
+    //        return v;
+    //    }
+                
+    //    public void Set(object v)
+    //    {
+    //        Thread.SetData(dataSlot, v);
+    //    }
+
+    //    public void Close()
+    //    {
+    //    }
+    //}
+
     public class CloseableThreadLocal
     {
-        private System.LocalDataStoreSlot dataSlot;
-
-        public CloseableThreadLocal()
-        {
-            dataSlot = Thread.AllocateDataSlot();
-        }
+        private System.LocalDataStoreSlot t = Thread.AllocateDataSlot();
+        private Hashtable hardRefs = new Hashtable();
 
         virtual protected object InitialValue()
         {
@@ -63,22 +98,57 @@ namespace Lucene.Net.Util
 
         public object Get()
         {
-            object v = Thread.GetData(dataSlot);
-            if (v == null)
+            WeakReference weakRef = (WeakReference)Thread.GetData(t);
+            if (weakRef == null || weakRef.Target==null)
             {
-                v = InitialValue();
-                Set(v);
+                Object iv = InitialValue();
+                if (iv != null)
+                {
+                    Set(iv);
+                    return iv;
+                }
+                else
+                    return null;
             }
-            return v;
+            else
+            {
+                Object v = weakRef.Target;
+                // This can never be null, because we hold a hard
+                // reference to the underlying object:
+                //assert v != null;
+                return v;
+            }
         }
-                
-        public void Set(object v)
+
+        public void Set(object obj)
         {
-            Thread.SetData(dataSlot, v);
+            Thread.SetData(t, new WeakReference(obj));
+        
+            lock (hardRefs)
+            {
+                ArrayList tmp = new ArrayList();
+                hardRefs[Thread.CurrentThread] = obj;
+
+                foreach (Thread th in hardRefs.Keys)
+                {
+                    //collect items to remove but don't remove them in the middle of enumeration. 
+                    if (!th.IsAlive) tmp.Add(th);
+                }
+                foreach (Thread th in tmp)
+                {
+                    hardRefs.Remove(th);
+                }
+            }
         }
+  
 
         public void Close()
         {
+            // Clear the hard refs; then, the only remaining refs to
+            // all values we were storing are weak (unless somewhere
+            // else is still using them) and so GC may reclaim them:
+            hardRefs = null;
+            t = null;
         }
     }
 }
