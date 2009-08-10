@@ -699,10 +699,12 @@ namespace Lucene.Net.Index
 					Assert.Fail(e.ToString());
 				}
 				
-				lock (this)
-				{
-					int generatedAux = docs.Count;
-				}
+                //{DIGY - this unnecessary lines block the threads.
+                //  lock(docs) could be a solution also.
+                //lock (this)
+                //{
+                //    int generatedAux = docs.Count;
+                //}
 			}
 		}
 		static TestStressIndexing2()
