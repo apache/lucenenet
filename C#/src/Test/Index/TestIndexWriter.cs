@@ -4695,7 +4695,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Handle(System.Exception t)
             {
-                if (!(t is AlreadyClosedException) && !(t is System.ArgumentNullException))
+                if (!(t is AlreadyClosedException) && !(t is System.NullReferenceException))
                 {
                     System.Console.WriteLine(t.StackTrace); ;
                     lock (failures)
@@ -4762,7 +4762,7 @@ namespace Lucene.Net.Index
             {
                 bool report = true;
 
-                if (t is AlreadyClosedException || t is MergePolicy.MergeAbortedException || t is System.ArgumentNullException)
+                if (t is AlreadyClosedException || t is MergePolicy.MergeAbortedException || t is System.NullReferenceException)
                 {
                     report = !didClose;
                 }
