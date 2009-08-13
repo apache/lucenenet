@@ -64,5 +64,35 @@ namespace Lucene.Net.Index
         }
 
         public override void Close() { }
+
+        public override int Read()
+        {
+            throw new System.NotImplementedException("ReusableStringReader.Read() is not implemented");
+        }
+
+        public override int ReadBlock(char[] buffer, int index, int count)
+        {
+            throw new System.NotImplementedException("ReusableStringReader.ReadBlock is not implemented");
+        }
+
+        public override string ReadLine()
+        {
+            throw new System.NotImplementedException("ReusableStringReader.ReadLine is not implemented");
+        }
+
+        public override int Peek()
+        {
+            throw new System.NotImplementedException("ReusableStringReader.Peek is not implemented");
+        }
+
+        public override string ReadToEnd()
+        {
+            if (left == 0) return null;
+            string retStr =  s.Substring(s.Length-left);
+            left = 0;
+            return retStr;
+        }
     }
+
+    
 }
