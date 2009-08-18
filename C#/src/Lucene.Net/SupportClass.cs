@@ -1138,6 +1138,17 @@ public class SupportClass
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="Key"></param>
+        /// <param name="Value"></param>
+        public static void Set(System.String key, bool defValue)
+        {
+            settings[key] = defValue;
+            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue); // {{Aroush-2.3.1}} try this instead
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
         /// <returns></returns>
@@ -1153,7 +1164,9 @@ public class SupportClass
             {
                 return defValue;
             }
-            return System.Convert.ToInt16(theValue.Trim());
+            int retValue = System.Convert.ToInt32(theValue.Trim());
+            settings[key] = retValue;
+            return retValue;
         }
 
         /// <summary>
@@ -1174,7 +1187,9 @@ public class SupportClass
             {
                 return defValue;
             }
-            return System.Convert.ToInt32(theValue.Trim());
+            long retValue = System.Convert.ToInt64(theValue.Trim());
+            settings[key] = retValue;
+            return retValue;
         }
 
         /// <summary>
@@ -1195,8 +1210,27 @@ public class SupportClass
             {
                 return defValue;
             }
+            settings[key] = theValue;
             return theValue;
         }
+
+        public static bool Get(System.String key, bool defValue)
+        {
+            if (settings[key] != null)
+            {
+                return (bool)settings[key];
+            }
+
+            System.String theValue = System.Configuration.ConfigurationManager.AppSettings.Get(key);
+            if (theValue == null)
+            {
+                return defValue;
+            }
+            bool retValue = System.Convert.ToBoolean(theValue.Trim());
+            settings[key] = retValue;
+            return retValue;
+        }
+
     }
 
     /// <summary>
@@ -1577,7 +1611,6 @@ public class SupportClass
             return System.Security.Cryptography.MD5.Create();
         }
     }
-
 
 
 }
