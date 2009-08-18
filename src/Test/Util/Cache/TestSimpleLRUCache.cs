@@ -67,5 +67,25 @@ namespace Lucene.Net.Util.Cache
                 Assert.IsNotNull(cache.Get(i));
             }
         }
+
+        [Test]
+        public void TestLRUCache2()
+        {
+            SimpleLRUCache cache = new SimpleLRUCache(3);
+                                                        //Item=>LastAccessTime
+            cache.Put("a", "a");                        //a=>1
+            cache.Put("b", "b");                        //b=>2
+            cache.Put("c", "c");                        //c=>3
+            Assert.IsNotNull(cache.Get("a"), "DBG1");   //a=>4
+            Assert.IsNotNull(cache.Get("b"), "DBG2");   //b=>5
+            Assert.IsNotNull(cache.Get("c"), "DBG3");   //c=>6
+            cache.Put("d", "d");                        //d=>7 ,remove a
+            Assert.IsNull(cache.Get("a"), "DBG4");      //a is removed already
+            Assert.IsNotNull(cache.Get("c"), "DBG5");   //c=>8
+            cache.Put("e", "e");                        //e=>9 ,remove b
+            cache.Put("f", "f");                        //f=>10 ,remove d
+            Assert.IsNotNull(cache.Get("c"), "DBG6");   //c=>11
+                                                        //final cache: e=>9,f=>10,c=>11
+        }
     }
 }
