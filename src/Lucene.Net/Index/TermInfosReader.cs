@@ -238,7 +238,9 @@ namespace Lucene.Net.Index
         /// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
         internal TermInfo Get(Term term)
         {
-            return Get(term, true);
+            //return Get(term, true);
+            //Lucene.Net specific. Default:true
+            return Get(term, SupportClass.AppSettings.Get("EnableTermInfosReaderCache", true));
         }
 
 		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
