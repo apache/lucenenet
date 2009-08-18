@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+//{{DIGY}}
+//This class isn't needed by the new implementation of SimpleLRUCache(LUCENENET-190) 
+//
+
 using Hashtable = System.Collections.Hashtable;
 using ICollection = System.Collections.ICollection;
 
