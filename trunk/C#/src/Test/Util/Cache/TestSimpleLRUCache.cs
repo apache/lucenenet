@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Cache
         }
 
         [Test]
-        public void TestLRUCache2()
+        public void TestLRUCache_LUCENENET_190()
         {
             SimpleLRUCache cache = new SimpleLRUCache(3);
                                                         //Item=>LastAccessTime
