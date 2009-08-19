@@ -1613,20 +1613,25 @@ public class SupportClass
     }
 
 
-    //public class FileStream
-    //{
-    //    [System.Runtime.InteropServices.DllImport("kernel32")]
-    //    public static extern int FlushFileBuffers(Microsoft.Win32.SafeHandles.SafeFileHandle SafeFileHandle);
+    public class FileStream
+    {
+        //[System.Runtime.InteropServices.DllImport("kernel32")]
+        //public static extern int FlushFileBuffers(Microsoft.Win32.SafeHandles.SafeFileHandle SafeFileHandle);
 
-    //    public static void Sync(System.IO.FileStream fs)
-    //    {
-    //        if (FlushFileBuffers(fs.SafeFileHandle) == 0) { throw new SyncFailedException(); }
-    //    }
+        //public static void Sync(System.IO.FileStream fs)
+        //{
+        //    if (FlushFileBuffers(fs.SafeFileHandle) == 0) { throw new SyncFailedException(); }
+        //}
 
-    //    public class SyncFailedException : Exception
-    //    {
-    //    }
-    //}
+        //public class SyncFailedException : Exception
+        //{
+        //}
+
+        public static void Sync(System.IO.FileStream fs)
+        {
+            fs.Flush();
+        }
+    }
 
 
 }
