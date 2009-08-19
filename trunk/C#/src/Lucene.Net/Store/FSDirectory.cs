@@ -658,6 +658,7 @@ namespace Lucene.Net.Store
                         // where is FSDirectory.Sync(string name) called from - if this isn't a new feature but rather a refactor, maybe
                         // i can snip the old code from where it was re-factored...
 
+                        //SupportClass.FileStream.Sync(file);
                         success = true;
                     }
                     finally
