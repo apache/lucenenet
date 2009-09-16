@@ -320,7 +320,7 @@ namespace Lucene.Net.Documents
 			if (result.Count == 0)
 				return null;
 			
-			return (Fieldable[]) result.ToArray(typeof(Field));
+			return (Fieldable[]) result.ToArray(typeof(Fieldable));
 		}
 		
 		
