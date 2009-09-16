@@ -321,7 +321,7 @@ namespace Lucene.Net.Documents
 			if (result.Count == 0)
 				return NO_FIELDABLES;
 			
-			return (Fieldable[]) result.ToArray(typeof(Field));
+			return (Fieldable[]) result.ToArray(typeof(Fieldable));
 		}
 
         private static readonly string[] NO_STRINGS = new string[0];
