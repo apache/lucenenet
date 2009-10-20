@@ -1,0 +1,34 @@
+Microsoft HTML Help Compiler 4.74.8702
+
+Compiling c:\temp\doc\ndoc_msdn_temp\Apache Lucene.Net API Documentation.chm
+
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.IsBinary.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.IsCompressed.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.IsIndexed.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.IsStored.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.IsTokenized.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Documents.AbstractField.Name.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Index.DirectoryIndexReader.Directory.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Index.Payload.Length.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Search.FilterManager.FilterCleaner.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Search.Spans.SpanScorer.Doc.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Search.Spans.TermSpans.Doc.html" is already listed in the [FILES] section of the project file.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+HHC3000: Warning: Invalid syntax: A <PARAM> tag appears outside of an <OBJECT> tag.
+
+Compile time: 0 minutes, 34 seconds
+4,488	Topics
+31,266	Local links
+14	Internet links
+9	Graphics
+
+
+Created c:\temp\doc\ndoc_msdn_temp\Apache Lucene.Net API Documentation.chm, 1,955,357 bytes
+Compression decreased file by 12,758,103 bytes.
