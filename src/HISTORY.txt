@@ -1,39 +1,44 @@
 Apache Lucene.Net History
 -------------------------
 
- 19Mar09:
 
-   	-Release: Apache Lucene.Net.2.3.1 build 003 "final"
-	-Fix: LUCENENET-106 (Lucene.NET is leaking memory)
-	-Fix: LUCENENET-116: Ambiguous name "text" in term class when in VB.NET
-	-Fix: LUCENENET-117: Bug in Lucene.Net.Index.DocumentsWriter.AppendPostings when compiled in release-mode
-	-Fix: LUCENENET-121: StopFilter  tries to access the i'th item of a hashtable as item[i] where i is not a key.
-	-Fix: LUCENENET-122: Bug in function "SupportClass.Number.ToString(long number)"
-	-Fix: LUCENENET-128: 2 bugs in BooleanScorer2
-	-Fix: LUCENENET-129 "Test case TestDateSort.TestReverseDateSort fails"
-	-Fix: LUCENENET-130 "bug in unit test helper class Lucene.Net.Search.CheckHits"
-	-Fix: LUCENENET-131 "bugs in TestIndexWriter test cases"
-	-Fix: LUCENENET-132 "bug in DocumentsWriter.BalanceRAM()"
-	-Fix: LUCENENET-133 "bug in IndexWriter.RegisterMerge()"
-	-Fix: LUCENENET-134 "broken test cases in unit test class TestIndexWriterDelete.cs"
-	-Fix: LUCENENET-138 "IndexReader.IndexExists() always returns false"
-	-Fix: LUCENENET-139 "Bugs in test codes (remote searching) stemming from opening the same port twice or registering an already registered http channel"
-	-Fix: LUCENENET-140 "System.Single.Parse --> SupportClass.Single.Parse"
-	-Fix: TestStressIndexing2.patch of LUCENENET-143 (NUnit test for Index/TestStressIndexing2)
-	-Fix: LUCENENET-146 (BUG in segmenttermpositionvector.cs (similar to LUCENENET-145))
-	-Fix: LUCENENET-150 (DocumentsWriter.ReusableStringReader does not implement some methods of StringReader)
-	-Fix: LUCENENET-151 (Bug in Lucene.Net.Search.MultiPhraseQuery.ExtractTerms(System.Collections.Hashtable terms))
-	-Fix: LUCENENET-152 (Nunit test for TestStressIndexAndSearching & TestStressLocks)
-	-Fix: LUCENENET-154 (Lucene.Net.Index.TestIndexWriterLockRelease: Unit test fails in tear down if directory does not exist)
-	-Fix: LUCENENET-155 (SetUp bug in 3 unit tests)
-	-Fix: LUCENENET-157 (SegmentMerger.AddIndexed expects *Reader.GetFieldNames to return a 1-dimensional ICollection)
-	-Fix: LUCENENET-158 (TestSpanNearOrdered02 - TestSpanNearOrdered05 fail)
-	-Fix: LUCENENET-159 (Lucene.Net.Search.Spans.SpanOrQuery)
-	-Fix: LUCENENET-160 (A small performance improvement in ExtendedFieldCacheImpl)
-	-Fix: LUCENENET-163 (Platform dependent path handling)
-	-Fix: LUCENENET-168 Sporadic failures in TestRemoteSearchable.cs
-	-Fix: LUCENENET-170 (BooleanClause serialization fails owing to issues with serializing Occur object)
-	-Fix: LUCENENET-174 RAMDirectory Not Correctly Serializing
+19Aug09:
+	- Release: Apache Lucene.Net 2.4.1 build 002 "final"
+
+
+19Mar09:
+   	- Release: Apache Lucene.Net.2.3.1 build 003 "final"
+	- Fix: LUCENENET-106 (Lucene.NET is leaking memory)
+	- Fix: LUCENENET-116: Ambiguous name "text" in term class when in VB.NET
+	- Fix: LUCENENET-117: Bug in Lucene.Net.Index.DocumentsWriter.AppendPostings when compiled in release-mode
+	- Fix: LUCENENET-121: StopFilter  tries to access the i'th item of a hashtable as item[i] where i is not a key.
+	- Fix: LUCENENET-122: Bug in function "SupportClass.Number.ToString(long number)"
+	- Fix: LUCENENET-128: 2 bugs in BooleanScorer2
+	- Fix: LUCENENET-129 "Test case TestDateSort.TestReverseDateSort fails"
+	- Fix: LUCENENET-130 "bug in unit test helper class Lucene.Net.Search.CheckHits"
+	- Fix: LUCENENET-131 "bugs in TestIndexWriter test cases"
+	- Fix: LUCENENET-132 "bug in DocumentsWriter.BalanceRAM()"
+	- Fix: LUCENENET-133 "bug in IndexWriter.RegisterMerge()"
+	- Fix: LUCENENET-134 "broken test cases in unit test class TestIndexWriterDelete.cs"
+	- Fix: LUCENENET-138 "IndexReader.IndexExists() always returns false"
+	- Fix: LUCENENET-139 "Bugs in test codes (remote searching) stemming from opening the same port twice or registering an already registered http channel"
+	- Fix: LUCENENET-140 "System.Single.Parse --> SupportClass.Single.Parse"
+	- Fix: TestStressIndexing2.patch of LUCENENET-143 (NUnit test for Index/TestStressIndexing2)
+	- Fix: LUCENENET-146 (BUG in segmenttermpositionvector.cs (similar to LUCENENET-145))
+	- Fix: LUCENENET-150 (DocumentsWriter.ReusableStringReader does not implement some methods of StringReader)
+	- Fix: LUCENENET-151 (Bug in Lucene.Net.Search.MultiPhraseQuery.ExtractTerms(System.Collections.Hashtable terms))
+	- Fix: LUCENENET-152 (Nunit test for TestStressIndexAndSearching & TestStressLocks)
+	- Fix: LUCENENET-154 (Lucene.Net.Index.TestIndexWriterLockRelease: Unit test fails in tear down if directory does not exist)
+	- Fix: LUCENENET-155 (SetUp bug in 3 unit tests)
+	- Fix: LUCENENET-157 (SegmentMerger.AddIndexed expects *Reader.GetFieldNames to return a 1-dimensional ICollection)
+	- Fix: LUCENENET-158 (TestSpanNearOrdered02 - TestSpanNearOrdered05 fail)
+	- Fix: LUCENENET-159 (Lucene.Net.Search.Spans.SpanOrQuery)
+	- Fix: LUCENENET-160 (A small performance improvement in ExtendedFieldCacheImpl)
+	- Fix: LUCENENET-163 (Platform dependent path handling)
+	- Fix: LUCENENET-168 Sporadic failures in TestRemoteSearchable.cs
+	- Fix: LUCENENET-170 (BooleanClause serialization fails owing to issues with serializing Occur object)
+	- Fix: LUCENENET-174 RAMDirectory Not Correctly Serializing
+
 
 15Jul08:
 	- Release:  Apache Lucene.Net.2.3.1 build 002 "Beta"
