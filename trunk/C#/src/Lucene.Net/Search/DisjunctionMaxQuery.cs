@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	/// in the multiple fields.
 	/// </summary>
 	[Serializable]
-	public class DisjunctionMaxQuery : Query, System.ICloneable
+	public class DisjunctionMaxQuery:Query, System.ICloneable
 	{
 		
 		/* The subqueries */
@@ -89,9 +89,14 @@ namespace Lucene.Net.Search
 			return disjuncts.GetEnumerator();
 		}
 		
-		/* The Weight for DisjunctionMaxQuery's, used to normalize, score and explain these queries */
+		/// <summary> Expert: the Weight for DisjunctionMaxQuery, used to
+		/// normalize, score and explain these queries.
+		/// 
+		/// <p>NOTE: this API and implementation is subject to
+		/// change suddenly in the next release.</p>
+		/// </summary>
 		[Serializable]
-		private class DisjunctionMaxWeight : Weight
+		protected internal class DisjunctionMaxWeight:Weight
 		{
 			private void  InitBlock(DisjunctionMaxQuery enclosingInstance)
 			{
@@ -106,78 +111,90 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-
-			private Similarity similarity;
-			private System.Collections.ArrayList weights = new System.Collections.ArrayList(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
+			/// <summary>The Similarity implementation. </summary>
+			protected internal Similarity similarity;
+			
+			/// <summary>The Weights for our subqueries, in 1-1 correspondence with disjuncts </summary>
+			protected internal System.Collections.ArrayList weights = new System.Collections.ArrayList(); // The Weight's for our subqueries, in 1-1 correspondence with disjuncts
 			
 			/* Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights. */
 			public DisjunctionMaxWeight(DisjunctionMaxQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
 				this.similarity = searcher.GetSimilarity();
-				for (int i = 0; i < Enclosing_Instance.disjuncts.Count; i++)
-					weights.Add(((Query) Enclosing_Instance.disjuncts[i]).CreateWeight(searcher));
+				for (System.Collections.IEnumerator iter = Enclosing_Instance.disjuncts.GetEnumerator(); iter.MoveNext(); )
+				{
+					weights.Add(((Query) iter.Current).CreateWeight(searcher));
+				}
 			}
 			
 			/* Return our associated DisjunctionMaxQuery */
-			public virtual Query GetQuery()
+			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
 			
 			/* Return our boost */
-			public virtual float GetValue()
+			public override float GetValue()
 			{
 				return Enclosing_Instance.GetBoost();
 			}
 			
 			/* Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. */
-			public virtual float SumOfSquaredWeights()
+			public override float SumOfSquaredWeights()
 			{
 				float max = 0.0f, sum = 0.0f;
-				for (int i = 0; i < weights.Count; i++)
+				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
 				{
-					float sub = ((Weight) weights[i]).SumOfSquaredWeights();
+					float sub = ((Weight) iter.Current).SumOfSquaredWeights();
 					sum += sub;
 					max = System.Math.Max(max, sub);
 				}
-				return (((sum - max) * Enclosing_Instance.tieBreakerMultiplier * Enclosing_Instance.tieBreakerMultiplier) + max) * Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost();
+				float boost = Enclosing_Instance.GetBoost();
+				return (((sum - max) * Enclosing_Instance.tieBreakerMultiplier * Enclosing_Instance.tieBreakerMultiplier) + max) * boost * boost;
 			}
 			
 			/* Apply the computed normalization factor to our subqueries */
-			public virtual void  Normalize(float norm)
+			public override void  Normalize(float norm)
 			{
 				norm *= Enclosing_Instance.GetBoost(); // Incorporate our boost
-				for (int i = 0; i < weights.Count; i++)
-					((Weight) weights[i]).Normalize(norm);
+				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
+				{
+					((Weight) iter.Current).Normalize(norm);
+				}
 			}
 			
 			/* Create the scorer used to score our associated DisjunctionMaxQuery */
-			public virtual Scorer Scorer(IndexReader reader)
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				DisjunctionMaxScorer result = new DisjunctionMaxScorer(Enclosing_Instance.tieBreakerMultiplier, similarity);
-				for (int i = 0; i < weights.Count; i++)
+				Scorer[] scorers = new Scorer[weights.Count];
+				int idx = 0;
+				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
 				{
-					Weight w = (Weight) weights[i];
-					Scorer subScorer = w.Scorer(reader);
-					if (subScorer == null)
-						return null;
-					result.Add(subScorer);
+					Weight w = (Weight) iter.Current;
+					Scorer subScorer = w.Scorer(reader, true, false);
+					if (subScorer != null && subScorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+					{
+						scorers[idx++] = subScorer;
+					}
 				}
+				if (idx == 0)
+					return null; // all scorers did not have documents
+				DisjunctionMaxScorer result = new DisjunctionMaxScorer(Enclosing_Instance.tieBreakerMultiplier, similarity, scorers, idx);
 				return result;
 			}
 			
 			/* Explain the score we computed for doc */
-			public virtual Explanation Explain(IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				if (Enclosing_Instance.disjuncts.Count == 1)
 					return ((Weight) weights[0]).Explain(reader, doc);
 				ComplexExplanation result = new ComplexExplanation();
 				float max = 0.0f, sum = 0.0f;
-				result.SetDescription(Enclosing_Instance.tieBreakerMultiplier == 0.0f ? "max of:" : "max plus " + Enclosing_Instance.tieBreakerMultiplier + " times others of:");
-				for (int i = 0; i < weights.Count; i++)
+				result.SetDescription(Enclosing_Instance.tieBreakerMultiplier == 0.0f?"max of:":"max plus " + Enclosing_Instance.tieBreakerMultiplier + " times others of:");
+				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
 				{
-					Explanation e = ((Weight) weights[i]).Explain(reader, doc);
+					Explanation e = ((Weight) iter.Current).Explain(reader, doc);
 					if (e.IsMatch())
 					{
 						System.Boolean tempAux = true;
@@ -193,7 +210,7 @@ namespace Lucene.Net.Search
 		} // end of DisjunctionMaxWeight inner class
 		
 		/* Create the Weight used to score us */
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new DisjunctionMaxWeight(this, searcher);
 		}
@@ -205,7 +222,8 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public override Query Rewrite(IndexReader reader)
 		{
-			if (disjuncts.Count == 1)
+			int numDisjunctions = disjuncts.Count;
+			if (numDisjunctions == 1)
 			{
 				Query singleton = (Query) disjuncts[0];
 				Query result = singleton.Rewrite(reader);
@@ -218,7 +236,7 @@ namespace Lucene.Net.Search
 				return result;
 			}
 			DisjunctionMaxQuery clone = null;
-			for (int i = 0; i < disjuncts.Count; i++)
+			for (int i = 0; i < numDisjunctions; i++)
 			{
 				Query clause = (Query) disjuncts[i];
 				Query rewrite = clause.Rewrite(reader);
@@ -238,22 +256,21 @@ namespace Lucene.Net.Search
 		/// <summary>Create a shallow copy of us -- used in rewriting if necessary</summary>
 		/// <returns> a copy of us (but reuse, don't copy, our subqueries) 
 		/// </returns>
-		public override object Clone()
+		public override System.Object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
+			clone.disjuncts = (System.Collections.ArrayList) this.disjuncts.Clone();
 			return clone;
 		}
-		
 		
 		// inherit javadoc
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-			for (int i = 0; i < disjuncts.Count; i++)
+			for (System.Collections.IEnumerator iter = disjuncts.GetEnumerator(); iter.MoveNext(); )
 			{
-				((Query) disjuncts[i]).ExtractTerms(terms);
+				((Query) iter.Current).ExtractTerms(terms);
 			}
 		}
-		
 		
 		/// <summary>Prettyprint us.</summary>
 		/// <param name="field">the field to which we are applied
@@ -264,7 +281,8 @@ namespace Lucene.Net.Search
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("(");
-			for (int i = 0; i < disjuncts.Count; i++)
+			int numDisjunctions = disjuncts.Count;
+			for (int i = 0; i < numDisjunctions; i++)
 			{
 				Query subquery = (Query) disjuncts[i];
 				if (subquery is BooleanQuery)
@@ -276,7 +294,7 @@ namespace Lucene.Net.Search
 				}
 				else
 					buffer.Append(subquery.ToString(field));
-				if (i != disjuncts.Count - 1)
+				if (i != numDisjunctions - 1)
 					buffer.Append(" | ");
 			}
 			buffer.Append(")");
@@ -298,14 +316,12 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true iff o is a DisjunctionMaxQuery with the same boost and the same subqueries, in the same order, as us
 		/// </returns>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is DisjunctionMaxQuery))
 				return false;
 			DisjunctionMaxQuery other = (DisjunctionMaxQuery) o;
-			return this.GetBoost() == other.GetBoost() && 
-                this.tieBreakerMultiplier == other.tieBreakerMultiplier && 
-                this.disjuncts.Equals(other.disjuncts);
+			return this.GetBoost() == other.GetBoost() && this.tieBreakerMultiplier == other.tieBreakerMultiplier && this.disjuncts.Equals(other.disjuncts);
 		}
 		
 		/// <summary>Compute a hash code for hashing us</summary>

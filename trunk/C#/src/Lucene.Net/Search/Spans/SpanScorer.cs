@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,58 +26,80 @@ namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary> Public for extension only.</summary>
-	public class SpanScorer : Scorer
+	public class SpanScorer:Scorer
 	{
 		protected internal Spans spans;
 		protected internal Weight weight;
 		protected internal byte[] norms;
 		protected internal float value_Renamed;
 		
+		/// <deprecated> not needed anymore 
+		/// </deprecated>
 		protected internal bool firstTime = true;
 		protected internal bool more = true;
 		
 		protected internal int doc;
 		protected internal float freq;
 		
-		protected internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms) : base(similarity)
+		protected internal SpanScorer(Spans spans, Weight weight, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.spans = spans;
 			this.norms = norms;
 			this.weight = weight;
 			this.value_Renamed = weight.GetValue();
-			doc = - 1;
+			if (this.spans.Next())
+			{
+				doc = - 1;
+			}
+			else
+			{
+				doc = NO_MORE_DOCS;
+				more = false;
+			}
 		}
 		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
 		public override bool Next()
 		{
-			if (firstTime)
-			{
-				more = spans.Next();
-				firstTime = false;
-			}
-			return SetFreqCurrentDoc();
+			return NextDoc() != NO_MORE_DOCS;
 		}
 		
+		public override int NextDoc()
+		{
+			if (!SetFreqCurrentDoc())
+			{
+				doc = NO_MORE_DOCS;
+			}
+			return doc;
+		}
+		
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
 		public override bool SkipTo(int target)
 		{
-			if (firstTime)
-			{
-				more = spans.SkipTo(target);
-				firstTime = false;
-			}
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		public override int Advance(int target)
+		{
 			if (!more)
 			{
-				return false;
+				return doc = NO_MORE_DOCS;
 			}
 			if (spans.Doc() < target)
 			{
 				// setFreqCurrentDoc() leaves spans.doc() ahead
 				more = spans.SkipTo(target);
 			}
-			return SetFreqCurrentDoc();
+			if (!SetFreqCurrentDoc())
+			{
+				doc = NO_MORE_DOCS;
+			}
+			return doc;
 		}
 		
-		protected internal virtual bool SetFreqCurrentDoc()
+		public /*protected internal*/ virtual bool SetFreqCurrentDoc()
 		{
 			if (!more)
 			{
@@ -85,16 +107,24 @@ namespace Lucene.Net.Search.Spans
 			}
 			doc = spans.Doc();
 			freq = 0.0f;
-            do
-            {
-                int matchLength = spans.End() - spans.Start();
-                freq += GetSimilarity().SloppyFreq(matchLength);
-                more = spans.Next();
-            } while (more && doc == spans.Doc());
+			do 
+			{
+				int matchLength = spans.End() - spans.Start();
+				freq += GetSimilarity().SloppyFreq(matchLength);
+				more = spans.Next();
+			}
+			while (more && (doc == spans.Doc()));
 			return true;
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
+		{
+			return doc;
+		}
+		
+		public override int DocID()
 		{
 			return doc;
 		}
@@ -102,16 +132,16 @@ namespace Lucene.Net.Search.Spans
 		public override float Score()
 		{
 			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
-			return raw * Similarity.DecodeNorm(norms[doc]); // normalize
+			return norms == null?raw:raw * Similarity.DecodeNorm(norms[doc]); // normalize
 		}
 		
 		public override Explanation Explain(int doc)
 		{
 			Explanation tfExplanation = new Explanation();
 			
-			SkipTo(doc);
+			int expDoc = Advance(doc);
 			
-			float phraseFreq = (Doc() == doc) ? freq : 0.0f;
+			float phraseFreq = (expDoc == doc)?freq:0.0f;
 			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
 			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
 			

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,9 @@
 
 using System;
 
-using System.Runtime.InteropServices;
-using IndexReader = Lucene.Net.Index.IndexReader;
-
 namespace Lucene.Net.Search
 {
+	
 	
 	/// <summary>Constrains search results to only match those which also match a provided
 	/// query.  Results are cached, so that searches after the first on the same
@@ -43,7 +41,7 @@ namespace Lucene.Net.Search
 		{
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			return base.Equals((QueryFilter) o);
 		}

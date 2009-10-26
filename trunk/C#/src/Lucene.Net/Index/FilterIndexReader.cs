@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	/// further override some of these methods and may also provide additional
 	/// methods and fields.
 	/// </summary>
-	public class FilterIndexReader : IndexReader
+	public class FilterIndexReader:IndexReader
 	{
 		
 		/// <summary>Base class for filtering {@link TermDocs} implementations. </summary>
@@ -81,10 +81,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Base class for filtering {@link TermPositions} implementations. </summary>
-		public class FilterTermPositions : FilterTermDocs, TermPositions
+		public class FilterTermPositions:FilterTermDocs, TermPositions
 		{
 			
-			public FilterTermPositions(TermPositions in_Renamed) : base(in_Renamed)
+			public FilterTermPositions(TermPositions in_Renamed):base(in_Renamed)
 			{
 			}
 			
@@ -104,6 +104,7 @@ namespace Lucene.Net.Index
 			}
 			
 			
+			// TODO: Remove warning after API has been finalized
 			public virtual bool IsPayloadAvailable()
 			{
 				return ((TermPositions) this.in_Renamed).IsPayloadAvailable();
@@ -111,7 +112,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Base class for filtering {@link TermEnum} implementations. </summary>
-		public class FilterTermEnum : TermEnum
+		public class FilterTermEnum:TermEnum
 		{
 			protected internal TermEnum in_Renamed;
 			
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="in">specified base reader.
 		/// </param>
-		public FilterIndexReader(IndexReader in_Renamed) : base()
+		public FilterIndexReader(IndexReader in_Renamed):base()
 		{
 			this.in_Renamed = in_Renamed;
 		}
@@ -187,7 +188,7 @@ namespace Lucene.Net.Index
 			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.NumDocs();
 		}
-
+		
 		public override int MaxDoc()
 		{
 			// Don't call ensureOpen() here (it could affect performance)
@@ -205,13 +206,13 @@ namespace Lucene.Net.Index
 			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.IsDeleted(n);
 		}
-
+		
 		public override bool HasDeletions()
 		{
 			// Don't call ensureOpen() here (it could affect performance)
 			return in_Renamed.HasDeletions();
 		}
-
+		
 		protected internal override void  DoUndeleteAll()
 		{
 			in_Renamed.UndeleteAll();
@@ -228,13 +229,13 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return in_Renamed.Norms(f);
 		}
-
+		
 		public override void  Norms(System.String f, byte[] bytes, int offset)
 		{
 			EnsureOpen();
 			in_Renamed.Norms(f, bytes, offset);
 		}
-
+		
 		protected internal override void  DoSetNorm(int d, System.String f, byte b)
 		{
 			in_Renamed.SetNorm(d, f, b);
@@ -245,7 +246,7 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return in_Renamed.Terms();
 		}
-
+		
 		public override TermEnum Terms(Term t)
 		{
 			EnsureOpen();
@@ -264,6 +265,12 @@ namespace Lucene.Net.Index
 			return in_Renamed.TermDocs();
 		}
 		
+		public override TermDocs TermDocs(Term term)
+		{
+			EnsureOpen();
+			return in_Renamed.TermDocs(term);
+		}
+		
 		public override TermPositions TermPositions()
 		{
 			EnsureOpen();
@@ -274,17 +281,26 @@ namespace Lucene.Net.Index
 		{
 			in_Renamed.DeleteDocument(n);
 		}
+		
+		/// <deprecated> 
+		/// </deprecated>
 		protected internal override void  DoCommit()
 		{
-			in_Renamed.Commit();
+			DoCommit(null);
 		}
+		
+		protected internal override void  DoCommit(System.Collections.IDictionary commitUserData)
+		{
+			in_Renamed.Commit(commitUserData);
+		}
+		
 		protected internal override void  DoClose()
 		{
 			in_Renamed.Close();
 		}
 		
 		
-		public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return in_Renamed.GetFieldNames(fieldNames);
@@ -295,7 +311,7 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return in_Renamed.GetVersion();
 		}
-
+		
 		public override bool IsCurrent()
 		{
 			EnsureOpen();
@@ -306,6 +322,17 @@ namespace Lucene.Net.Index
 		{
 			EnsureOpen();
 			return in_Renamed.IsOptimized();
+		}
+		
+		public override IndexReader[] GetSequentialSubReaders()
+		{
+			return in_Renamed.GetSequentialSubReaders();
+		}
+		
+		override public System.Object Clone()
+		{
+            System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this FilterIndexReader.Clone()"); // {{Aroush-2.9}}
+			return null;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,17 +15,23 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
-using BitVector = Lucene.Net.Util.BitVector;
 using Directory = Lucene.Net.Store.Directory;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
 using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
+using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index
 {
 	
-	sealed public class SegmentInfo : System.ICloneable
+	/// <summary> Information about a segment such as it's name, directory, and files related
+	/// to the segment.
+	/// 
+	/// * <p><b>NOTE:</b> This API is new and still experimental
+	/// (subject to change suddenly in the next release)</p>
+	/// </summary>
+	public sealed class SegmentInfo : System.ICloneable
 	{
 		
 		internal const int NO = - 1; // e.g. no norms; no deletes;
@@ -33,7 +39,7 @@ namespace Lucene.Net.Index
 		internal const int CHECK_DIR = 0; // e.g. must check dir to see if there are norms/deletions
 		internal const int WITHOUT_GEN = 0; // a file name that has no GEN in it. 
 		
-		public string name; // unique name in dir
+		public System.String name; // unique name in dir
 		public int docCount; // number of docs in seg
 		public Directory dir; // where segment resides
 		
@@ -64,23 +70,30 @@ namespace Lucene.Net.Index
 		// and true for newly created merged segments (both
 		// compound and non compound).
 		
-		private List<string> files; // cached list of files that this segment uses
+		private System.Collections.IList files; // cached list of files that this segment uses
 		// in the Directory
 		
 		internal long sizeInBytes = - 1; // total byte size of all of our files (computed on demand)
 		
 		private int docStoreOffset; // if this segment shares stored fields & vectors, this
 		// offset is where in that file this segment's docs begin
-		private string docStoreSegment; // name used to derive fields/vectors file we share with
+		private System.String docStoreSegment; // name used to derive fields/vectors file we share with
 		// other segments
 		private bool docStoreIsCompoundFile; // whether doc store files are stored in compound file (*.cfx)
-
-        private int delCount;                           // How many deleted docs in this segment, or -1 if not yet known
-                                                        // (if it's an older index)
-
-        private bool hasProx;                        // True if this segment has any fields with omitTf==false
 		
-		public SegmentInfo(string name, int docCount, Directory dir)
+		private int delCount; // How many deleted docs in this segment, or -1 if not yet known
+		// (if it's an older index)
+		
+		private bool hasProx; // True if this segment has any fields with omitTermFreqAndPositions==false
+		
+		private System.Collections.IDictionary diagnostics;
+		
+		public override System.String ToString()
+		{
+			return "si: " + dir.ToString() + " " + name + " docCount: " + docCount + " delCount: " + delCount + " delFileName: " + GetDelFileName();
+		}
+		
+		public SegmentInfo(System.String name, int docCount, Directory dir)
 		{
 			this.name = name;
 			this.docCount = docCount;
@@ -92,27 +105,25 @@ namespace Lucene.Net.Index
 			docStoreOffset = - 1;
 			docStoreSegment = name;
 			docStoreIsCompoundFile = false;
-            delCount = 0;
-            hasProx = true;
+			delCount = 0;
+			hasProx = true;
 		}
 		
-		public SegmentInfo(string name, int docCount, Directory dir, bool isCompoundFile, bool hasSingleNormFile)
-            : this(name, docCount, dir, isCompoundFile, hasSingleNormFile, - 1, null, false, true)
+		public SegmentInfo(System.String name, int docCount, Directory dir, bool isCompoundFile, bool hasSingleNormFile):this(name, docCount, dir, isCompoundFile, hasSingleNormFile, - 1, null, false, true)
 		{
 		}
 		
-		public SegmentInfo(string name, int docCount, Directory dir, bool isCompoundFile, bool hasSingleNormFile, int docStoreOffset, string docStoreSegment, bool docStoreIsCompoundFile, bool hasProx)
-            : this(name, docCount, dir)
+		public SegmentInfo(System.String name, int docCount, Directory dir, bool isCompoundFile, bool hasSingleNormFile, int docStoreOffset, System.String docStoreSegment, bool docStoreIsCompoundFile, bool hasProx):this(name, docCount, dir)
 		{
-			this.isCompoundFile = (sbyte) (isCompoundFile ? YES : NO);
+			this.isCompoundFile = (sbyte) (isCompoundFile?YES:NO);
 			this.hasSingleNormFile = hasSingleNormFile;
 			preLockless = false;
 			this.docStoreOffset = docStoreOffset;
 			this.docStoreSegment = docStoreSegment;
 			this.docStoreIsCompoundFile = docStoreIsCompoundFile;
-            this.hasProx = hasProx;
-            delCount = 0;
-            System.Diagnostics.Debug.Assert(docStoreOffset == - 1 || docStoreSegment != null);
+			this.hasProx = hasProx;
+			delCount = 0;
+			System.Diagnostics.Debug.Assert(docStoreOffset == - 1 || docStoreSegment != null, "dso=" + docStoreOffset + " dss=" + docStoreSegment + " docCount=" + docCount);
 		}
 		
 		/// <summary> Copy everything from src SegmentInfo into our instance.</summary>
@@ -133,11 +144,23 @@ namespace Lucene.Net.Index
 			else
 			{
 				normGen = new long[src.normGen.Length];
-				System.Array.Copy(src.normGen, 0, normGen, 0, src.normGen.Length);
+				Array.Copy(src.normGen, 0, normGen, 0, src.normGen.Length);
 			}
 			isCompoundFile = src.isCompoundFile;
 			hasSingleNormFile = src.hasSingleNormFile;
-            delCount = src.delCount;
+			delCount = src.delCount;
+		}
+		
+		// must be Map<String, String>
+		internal void  SetDiagnostics(System.Collections.IDictionary diagnostics)
+		{
+			this.diagnostics = diagnostics;
+		}
+		
+		// returns Map<String, String>
+		public System.Collections.IDictionary GetDiagnostics()
+		{
+			return diagnostics;
 		}
 		
 		/// <summary> Construct a new SegmentInfo instance by reading a
@@ -201,19 +224,26 @@ namespace Lucene.Net.Index
 				}
 				isCompoundFile = (sbyte) input.ReadByte();
 				preLockless = (isCompoundFile == CHECK_DIR);
-                if (format <= SegmentInfos.FORMAT_DEL_COUNT)
-                {
-                    delCount = input.ReadInt();
-                    System.Diagnostics.Debug.Assert(delCount <= docCount);
-                }
-                else
-                {
-                    delCount = -1;
-                }
-                if (format <= SegmentInfos.FORMAT_HAS_PROX)
-                    hasProx = input.ReadByte() == 1;
-                else
-                    hasProx = true;
+				if (format <= SegmentInfos.FORMAT_DEL_COUNT)
+				{
+					delCount = input.ReadInt();
+					System.Diagnostics.Debug.Assert(delCount <= docCount);
+				}
+				else
+					delCount = - 1;
+				if (format <= SegmentInfos.FORMAT_HAS_PROX)
+					hasProx = input.ReadByte() == 1;
+				else
+					hasProx = true;
+				
+				if (format <= SegmentInfos.FORMAT_DIAGNOSTICS)
+				{
+					diagnostics = input.readStringStringMap();
+				}
+				else
+				{
+					diagnostics = (System.Collections.IDictionary) new System.Collections.Hashtable();
+				}
 			}
 			else
 			{
@@ -225,8 +255,9 @@ namespace Lucene.Net.Index
 				docStoreOffset = - 1;
 				docStoreIsCompoundFile = false;
 				docStoreSegment = null;
-                delCount = -1;
-                hasProx = true;
+				delCount = - 1;
+				hasProx = true;
+				diagnostics = (System.Collections.IDictionary) new System.Collections.Hashtable();
 			}
 		}
 		
@@ -259,16 +290,16 @@ namespace Lucene.Net.Index
 		/// <summary>Returns total size in bytes of all of files used by
 		/// this segment. 
 		/// </summary>
-        public /* changed for zoie 1.3.0: internal */ long SizeInBytes()
+		public long SizeInBytes()
 		{
 			if (sizeInBytes == - 1)
 			{
-				List<string> files = Files();
+				System.Collections.IList files = Files();
 				int size = files.Count;
 				sizeInBytes = 0;
 				for (int i = 0; i < size; i++)
 				{
-					string fileName = files[i];
+					System.String fileName = (System.String) files[i];
 					// We don't count bytes used by a shared doc store
 					// against this segment:
 					if (docStoreOffset == - 1 || !IndexFileNames.IsDocStoreFile(fileName))
@@ -277,8 +308,8 @@ namespace Lucene.Net.Index
 			}
 			return sizeInBytes;
 		}
-
-        public /* changed for zoie 1.3.0: internal */ bool HasDeletions()
+		
+		public bool HasDeletions()
 		{
 			// Cases:
 			//
@@ -328,14 +359,16 @@ namespace Lucene.Net.Index
 			ClearFiles();
 		}
 		
-		public object Clone()
+		public System.Object Clone()
 		{
 			SegmentInfo si = new SegmentInfo(name, docCount, dir);
 			si.isCompoundFile = isCompoundFile;
-            si.delGen = delGen;
-            si.delCount = delCount;
+			si.delGen = delGen;
+			si.delCount = delCount;
+			si.hasProx = hasProx;
 			si.preLockless = preLockless;
 			si.hasSingleNormFile = hasSingleNormFile;
+			si.diagnostics = new System.Collections.Hashtable(diagnostics);
 			if (normGen != null)
 			{
 				si.normGen = new long[normGen.Length];
@@ -344,15 +377,10 @@ namespace Lucene.Net.Index
 			si.docStoreOffset = docStoreOffset;
 			si.docStoreSegment = docStoreSegment;
 			si.docStoreIsCompoundFile = docStoreIsCompoundFile;
-			si.docCount = docCount;
-			si.dir = dir;
-			si.files = files;
-			si.name = name;
-			si.sizeInBytes = sizeInBytes;
 			return si;
 		}
 		
-		internal string GetDelFileName()
+		public System.String GetDelFileName()
 		{
 			if (delGen == NO)
 			{
@@ -362,28 +390,9 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-                string retVal = null;
-                string current = IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.DELETES_EXTENSION, delGen);
-                if (this.dir.FileExists(current))
-                {
-                    retVal = current;
-                }
-                else
-                {
-                    string backwards = (name + "_" + System.Convert.ToString(delGen, 16) + "." + IndexFileNames.DELETES_EXTENSION);
-                    if (this.dir.FileExists(backwards))
-                    {
-                        // we are dealing with the old name
-                        retVal = backwards;
-                    }
-                    else
-                    {
-                        // no file, creating one, so use the new name
-                        retVal = current;
-                    }
-                }
-                return retVal;
-            }
+				// If delGen is CHECK_DIR, it's the pre-lockless-commit file format
+				return IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.DELETES_EXTENSION, delGen);
+			}
 		}
 		
 		/// <summary> Returns true if this field for this segment has saved a separate norms file (_<segment>_N.sX).
@@ -391,12 +400,12 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="fieldNumber">the field index to check
 		/// </param>
-		internal bool HasSeparateNorms(int fieldNumber)
+		public bool HasSeparateNorms(int fieldNumber)
 		{
 			if ((normGen == null && preLockless) || (normGen != null && normGen[fieldNumber] == CHECK_DIR))
 			{
 				// Must fallback to directory file exists check:
-				string fileName = name + ".s" + fieldNumber;
+				System.String fileName = name + ".s" + fieldNumber;
 				return dir.FileExists(fileName);
 			}
 			else if (normGen == null || normGen[fieldNumber] == NO)
@@ -410,7 +419,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns true if any fields in this segment have separate norms.</summary>
-        public /* changed for zoie 1.3.0: internal */ bool HasSeparateNorms()
+		public bool HasSeparateNorms()
 		{
 			if (normGen == null)
 			{
@@ -425,13 +434,13 @@ namespace Lucene.Net.Index
 					// This means this segment was saved with pre-LOCKLESS
 					// code.  So we must fallback to the original
 					// directory list check:
-					string[] result = dir.List();
+					System.String[] result = dir.List();
 					if (result == null)
 					{
 						throw new System.IO.IOException("cannot read directory " + dir + ": list() returned null");
 					}
 					
-					string pattern;
+					System.String pattern;
 					pattern = name + ".s";
 					int patternLength = pattern.Length;
 					for (int i = 0; i < result.Length; i++)
@@ -495,9 +504,9 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="number">field index
 		/// </param>
-		internal string GetNormFileName(int number)
+		public System.String GetNormFileName(int number)
 		{
-			string prefix;
+			System.String prefix;
 			
 			long gen;
 			if (normGen == null)
@@ -550,7 +559,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns true if this segment is stored as a compound
 		/// file; else, false.
 		/// </summary>
-        public /* changed for zoie 1.3.0: internal */ bool GetUseCompoundFile()
+		public bool GetUseCompoundFile()
 		{
 			if (isCompoundFile == NO)
 			{
@@ -565,35 +574,35 @@ namespace Lucene.Net.Index
 				return dir.FileExists(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
 			}
 		}
-
-        public /* changed for zoie 1.3.0: internal */  int GetDelCount()
-        {
-            if (delCount == -1)
-            {
-                if (HasDeletions())
-                {
-                    string delFileName = GetDelFileName();
-                    delCount = new BitVector(dir, delFileName).Count();
-                }
-                else
-                    delCount = 0;
-            }
-            System.Diagnostics.Debug.Assert(delCount <= docCount);
-            return delCount;
-        }
-
-        internal void SetDelCount(int delCount)
-        {
-            this.delCount = delCount;
-            System.Diagnostics.Debug.Assert(delCount <= docCount);
-        }
-
-		internal int GetDocStoreOffset()
+		
+		public int GetDelCount()
+		{
+			if (delCount == - 1)
+			{
+				if (HasDeletions())
+				{
+					System.String delFileName = GetDelFileName();
+					delCount = new BitVector(dir, delFileName).Count();
+				}
+				else
+					delCount = 0;
+			}
+			System.Diagnostics.Debug.Assert(delCount <= docCount);
+			return delCount;
+		}
+		
+		internal void  SetDelCount(int delCount)
+		{
+			this.delCount = delCount;
+			System.Diagnostics.Debug.Assert(delCount <= docCount);
+		}
+		
+		public int GetDocStoreOffset()
 		{
 			return docStoreOffset;
 		}
 		
-		internal bool GetDocStoreIsCompoundFile()
+		public bool GetDocStoreIsCompoundFile()
 		{
 			return docStoreIsCompoundFile;
 		}
@@ -604,7 +613,7 @@ namespace Lucene.Net.Index
 			ClearFiles();
 		}
 		
-		internal string GetDocStoreSegment()
+		public System.String GetDocStoreSegment()
 		{
 			return docStoreSegment;
 		}
@@ -613,6 +622,13 @@ namespace Lucene.Net.Index
 		{
 			docStoreOffset = offset;
 			ClearFiles();
+		}
+		
+		internal void  SetDocStore(int offset, System.String segment, bool isCompoundFile)
+		{
+			docStoreOffset = offset;
+			docStoreSegment = segment;
+			docStoreIsCompoundFile = isCompoundFile;
 		}
 		
 		/// <summary> Save this segment's info.</summary>
@@ -625,10 +641,10 @@ namespace Lucene.Net.Index
 			if (docStoreOffset != - 1)
 			{
 				output.WriteString(docStoreSegment);
-				output.WriteByte((byte) (docStoreIsCompoundFile ? 1 : 0));
+				output.WriteByte((byte) (docStoreIsCompoundFile?1:0));
 			}
 			
-			output.WriteByte((byte) (hasSingleNormFile ? 1 : 0));
+			output.WriteByte((byte) (hasSingleNormFile?1:0));
 			if (normGen == null)
 			{
 				output.WriteInt(NO);
@@ -641,24 +657,24 @@ namespace Lucene.Net.Index
 					output.WriteLong(normGen[j]);
 				}
 			}
-            output.WriteByte((byte)isCompoundFile);
-            output.WriteInt(delCount);
-            output.WriteByte((byte)(hasProx ? 1 : 0));
+			output.WriteByte((byte) isCompoundFile);
+			output.WriteInt(delCount);
+			output.WriteByte((byte) (hasProx?1:0));
+			output.WriteStringStringMap(diagnostics);
 		}
-
-        internal void SetHasProx(bool hasProx)
-        {
-            this.hasProx = hasProx;
-            ClearFiles();
-        }
-
-        internal bool GetHasProx()
-        {
-            return hasProx;
-        }
-
 		
-		private void  AddIfExists(System.Collections.Generic.List<string> files, string fileName)
+		internal void  SetHasProx(bool hasProx)
+		{
+			this.hasProx = hasProx;
+			ClearFiles();
+		}
+		
+		public bool GetHasProx()
+		{
+			return hasProx;
+		}
+		
+		private void  AddIfExists(System.Collections.IList files, System.String fileName)
 		{
 			if (dir.FileExists(fileName))
 				files.Add(fileName);
@@ -670,7 +686,7 @@ namespace Lucene.Net.Index
 		* modify it.
 		*/
 		
-		public List<string> Files()
+		public System.Collections.IList Files()
 		{
 			
 			if (files != null)
@@ -679,7 +695,7 @@ namespace Lucene.Net.Index
 				return files;
 			}
 			
-			files = new List<string>();
+			files = new System.Collections.ArrayList();
 			
 			bool useCompoundFile = GetUseCompoundFile();
 			
@@ -689,7 +705,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				string[] exts = IndexFileNames.NON_STORE_INDEX_EXTENSIONS;
+				System.String[] exts = IndexFileNames.NON_STORE_INDEX_EXTENSIONS;
 				for (int i = 0; i < exts.Length; i++)
 					AddIfExists(files, name + "." + exts[i]);
 			}
@@ -705,7 +721,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					string[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
+					System.String[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
 					for (int i = 0; i < exts.Length; i++)
 						AddIfExists(files, docStoreSegment + "." + exts[i]);
 				}
@@ -714,12 +730,12 @@ namespace Lucene.Net.Index
 			{
 				// We are not sharing, and, these files were not
 				// included in the compound file
-				string[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
+				System.String[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
 				for (int i = 0; i < exts.Length; i++)
 					AddIfExists(files, name + "." + exts[i]);
 			}
-            string delFileName = this.GetDelFileName();
-
+			
+			System.String delFileName = IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.DELETES_EXTENSION, delGen);
 			if (delFileName != null && (delGen >= YES || dir.FileExists(delFileName)))
 			{
 				files.Add(delFileName);
@@ -742,7 +758,7 @@ namespace Lucene.Net.Index
 						// in the non compound file case:
 						if (!hasSingleNormFile && !useCompoundFile)
 						{
-							string fileName = name + "." + IndexFileNames.PLAIN_NORMS_EXTENSION + i;
+							System.String fileName = name + "." + IndexFileNames.PLAIN_NORMS_EXTENSION + i;
 							if (dir.FileExists(fileName))
 							{
 								files.Add(fileName);
@@ -752,7 +768,7 @@ namespace Lucene.Net.Index
 					else if (CHECK_DIR == gen)
 					{
 						// Pre-2.1: we have to check file existence
-						string fileName = null;
+						System.String fileName = null;
 						if (useCompoundFile)
 						{
 							fileName = name + "." + IndexFileNames.SEPARATE_NORMS_EXTENSION + i;
@@ -772,21 +788,18 @@ namespace Lucene.Net.Index
 			{
 				// Pre-2.1: we have to scan the dir to find all
 				// matching _X.sN/_X.fN files for our segment:
-				string prefix;
+				System.String prefix;
 				if (useCompoundFile)
 					prefix = name + "." + IndexFileNames.SEPARATE_NORMS_EXTENSION;
 				else
 					prefix = name + "." + IndexFileNames.PLAIN_NORMS_EXTENSION;
 				int prefixLength = prefix.Length;
-				string[] allFiles = dir.List();
-				if (allFiles == null)
-				{
-					throw new System.IO.IOException("cannot read directory " + dir + ": list() returned null");
-				}
+				System.String[] allFiles = dir.ListAll();
+				IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
 				for (int i = 0; i < allFiles.Length; i++)
 				{
-					string fileName = allFiles[i];
-					if (fileName.Length > prefixLength && System.Char.IsDigit(fileName[prefixLength]) && fileName.StartsWith(prefix))
+					System.String fileName = allFiles[i];
+					if (filter.Accept(null, fileName) && fileName.Length > prefixLength && System.Char.IsDigit(fileName[prefixLength]) && fileName.StartsWith(prefix))
 					{
 						files.Add(fileName);
 					}
@@ -804,9 +817,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Used for debugging </summary>
-		public string SegString(Directory dir)
+		public System.String SegString(Directory dir)
 		{
-			string cfs;
+			System.String cfs;
 			try
 			{
 				if (GetUseCompoundFile())
@@ -814,32 +827,32 @@ namespace Lucene.Net.Index
 				else
 					cfs = "C";
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException ioe)
 			{
 				cfs = "?";
 			}
 			
-			string docStore;
+			System.String docStore;
 			
 			if (docStoreOffset != - 1)
 				docStore = "->" + docStoreSegment;
 			else
 				docStore = "";
 			
-			return name + ":" + cfs + (this.dir == dir ? "" : "x") + docCount + docStore;
+			return name + ":" + cfs + (this.dir == dir?"":"x") + docCount + docStore;
 		}
 		
 		/// <summary>We consider another SegmentInfo instance equal if it
 		/// has the same dir and same name. 
 		/// </summary>
-		public  override bool Equals(object obj)
+		public  override bool Equals(System.Object obj)
 		{
 			SegmentInfo other;
 			try
 			{
 				other = (SegmentInfo) obj;
 			}
-			catch (System.InvalidCastException)
+			catch (System.InvalidCastException cce)
 			{
 				return false;
 			}

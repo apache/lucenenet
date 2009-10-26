@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
-	class ConjunctionScorer : Scorer
+	class ConjunctionScorer:Scorer
 	{
 		private class AnonymousClassComparator : System.Collections.IComparer
 		{
@@ -43,76 +43,34 @@ namespace Lucene.Net.Search
 				
 			}
 			// sort the array
-			public virtual int Compare(object o1, object o2)
+			public virtual int Compare(System.Object o1, System.Object o2)
 			{
-				return ((Scorer) o1).Doc() - ((Scorer) o2).Doc();
+				return ((Scorer) o1).DocID() - ((Scorer) o2).DocID();
 			}
 		}
-		private Scorer[] scorers;
 		
-		private bool firstTime = true;
-		private bool more;
+		private Scorer[] scorers;
 		private float coord;
 		private int lastDoc = - 1;
 		
-		public ConjunctionScorer(Similarity similarity, System.Collections.ICollection scorers) : this(similarity, (Scorer[]) new System.Collections.ArrayList(scorers).ToArray(typeof(Scorer)))
+		public ConjunctionScorer(Similarity similarity, System.Collections.ICollection scorers):this(similarity, (Scorer[]) new System.Collections.ArrayList(scorers).ToArray(typeof(Scorer)))
 		{
 		}
 		
 		public ConjunctionScorer(Similarity similarity, Scorer[] scorers):base(similarity)
 		{
 			this.scorers = scorers;
-			coord = GetSimilarity().Coord(this.scorers.Length, this.scorers.Length);
-		}
-		
-		public override int Doc()
-		{
-			return lastDoc;
-		}
-		
-		public override bool Next()
-		{
-			if (firstTime)
-				return Init(0);
-			else if (more)
-				more = scorers[(scorers.Length - 1)].Next();
-			return DoNext();
-		}
-		
-		private bool DoNext()
-		{
-			int first = 0;
-			Scorer lastScorer = scorers[scorers.Length - 1];
-			Scorer firstScorer;
-			while (more && (firstScorer = scorers[first]).Doc() < (lastDoc = lastScorer.Doc()))
-			{
-				more = firstScorer.SkipTo(lastDoc);
-				lastScorer = firstScorer;
-				first = (first == (scorers.Length - 1)) ? 0 : first + 1;
-			}
-			return more;
-		}
-		
-		public override bool SkipTo(int target)
-		{
-			if (firstTime)
-				return Init(target);
-			else if (more)
-				more = scorers[(scorers.Length - 1)].SkipTo(target);
-			return DoNext();
-		}
-		
-		// Note... most of this could be done in the constructor
-		// thus skipping a check for firstTime per call to next() and skipTo()
-		private bool Init(int target)
-		{
-			firstTime = false;
-			more = scorers.Length > 1;
+			coord = similarity.Coord(scorers.Length, scorers.Length);
+			
 			for (int i = 0; i < scorers.Length; i++)
 			{
-				more = target == 0 ? scorers[i].Next() : scorers[i].SkipTo(target);
-				if (!more)
-					return false;
+				if (scorers[i].NextDoc() == NO_MORE_DOCS)
+				{
+					// If even one of the sub-scorers does not have any documents, this
+					// scorer should not attempt to do any more work.
+					lastDoc = NO_MORE_DOCS;
+					return ;
+				}
 			}
 			
 			// Sort the array the first time...
@@ -122,7 +80,21 @@ namespace Lucene.Net.Search
 			// note that this comparator is not consistent with equals!
 			System.Array.Sort(scorers, new AnonymousClassComparator(this));
 			
-			DoNext();
+			// NOTE: doNext() must be called before the re-sorting of the array later on.
+			// The reason is this: assume there are 5 scorers, whose first docs are 1,
+			// 2, 3, 5, 5 respectively. Sorting (above) leaves the array as is. Calling
+			// doNext() here advances all the first scorers to 5 (or a larger doc ID
+			// they all agree on). 
+			// However, if we re-sort before doNext() is called, the order will be 5, 3,
+			// 2, 1, 5 and then doNext() will stop immediately, since the first scorer's
+			// docs equals the last one. So the invariant that after calling doNext() 
+			// all scorers are on the same doc ID is broken.
+			if (DoNext() == NO_MORE_DOCS)
+			{
+				// The scorers did not agree on any document.
+				lastDoc = NO_MORE_DOCS;
+				return ;
+			}
 			
 			// If first-time skip distance is any predictor of
 			// scorer sparseness, then we should always try to skip first on
@@ -130,15 +102,79 @@ namespace Lucene.Net.Search
 			// Keep last scorer in it's last place (it will be the first
 			// to be skipped on), but reverse all of the others so that
 			// they will be skipped on in order of original high skip.
-			int end = (scorers.Length - 1);
-			for (int i = 0; i < (end >> 1); i++)
+			int end = scorers.Length - 1;
+			int max = end >> 1;
+			for (int i = 0; i < max; i++)
 			{
 				Scorer tmp = scorers[i];
-				scorers[i] = scorers[end - i - 1];
-                scorers[end - i - 1] = tmp;
+				int idx = end - i - 1;
+				scorers[i] = scorers[idx];
+				scorers[idx] = tmp;
 			}
-			
-			return more;
+		}
+		
+		private int DoNext()
+		{
+			int first = 0;
+			int doc = scorers[scorers.Length - 1].DocID();
+			Scorer firstScorer;
+			while ((firstScorer = scorers[first]).DocID() < doc)
+			{
+				doc = firstScorer.Advance(doc);
+				first = first == scorers.Length - 1?0:first + 1;
+			}
+			return doc;
+		}
+		
+		public override int Advance(int target)
+		{
+			if (lastDoc == NO_MORE_DOCS)
+			{
+				return lastDoc;
+			}
+			else if (scorers[(scorers.Length - 1)].DocID() < target)
+			{
+				scorers[(scorers.Length - 1)].Advance(target);
+			}
+			return lastDoc = DoNext();
+		}
+		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
+		public override int Doc()
+		{
+			return lastDoc;
+		}
+		
+		public override int DocID()
+		{
+			return lastDoc;
+		}
+		
+		public override Explanation Explain(int doc)
+		{
+			throw new System.NotSupportedException();
+		}
+		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
+		public override bool Next()
+		{
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		public override int NextDoc()
+		{
+			if (lastDoc == NO_MORE_DOCS)
+			{
+				return lastDoc;
+			}
+			else if (lastDoc == - 1)
+			{
+				return lastDoc = scorers[scorers.Length - 1].DocID();
+			}
+			scorers[(scorers.Length - 1)].NextDoc();
+			return lastDoc = DoNext();
 		}
 		
 		public override float Score()
@@ -151,9 +187,11 @@ namespace Lucene.Net.Search
 			return sum * coord;
 		}
 		
-		public override Explanation Explain(int doc)
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
+		public override bool SkipTo(int target)
 		{
-			throw new System.NotSupportedException();
+			return Advance(target) != NO_MORE_DOCS;
 		}
 	}
 }

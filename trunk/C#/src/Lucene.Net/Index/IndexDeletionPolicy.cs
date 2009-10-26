@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 		/// {@link IndexCommit point-in-time commits},
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
-		void  OnInit(List<IndexCommitPoint> commits);
+		void  OnInit(System.Collections.IList commits);
 		
 		/// <summary> <p>This is called each time the writer completed a commit.
 		/// This gives the policy a chance to remove old commit points
@@ -97,6 +97,6 @@ namespace Lucene.Net.Index
 		/// <param name="commits">List of {@link IndexCommit},
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
-		void  OnCommit(List<IndexCommitPoint> commits);
+		void  OnCommit(System.Collections.IList commits);
 	}
 }

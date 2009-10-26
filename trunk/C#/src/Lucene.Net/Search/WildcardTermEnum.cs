@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,20 +30,18 @@ namespace Lucene.Net.Search
 	/// the enumeration is greater than all that precede it.
 	/// 
 	/// </summary>
-	/// <version>  $Id: WildcardTermEnum.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: WildcardTermEnum.java 783371 2009-06-10 14:39:56Z mikemccand $
 	/// </version>
-	public class WildcardTermEnum : FilteredTermEnum
+	public class WildcardTermEnum:FilteredTermEnum
 	{
 		internal Term searchTerm;
-		internal System.String field = "";
-		internal System.String text = "";
-		internal System.String pre = "";
-		internal int preLen = 0;
+		internal System.String field;
+		internal System.String text;
+		internal System.String pre;
+		internal int preLen;
 		internal bool endEnum = false;
 		
-		/// <summary> Creates a new <code>WildcardTermEnum</code>.  Passing in a
-		/// {@link Lucene.Net.Index.Term Term} that does not contain a
-		/// <code>WILDCARD_CHAR</code> will cause an exception to be thrown.
+		/// <summary> Creates a new <code>WildcardTermEnum</code>.
 		/// <p>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists.
@@ -52,10 +50,10 @@ namespace Lucene.Net.Search
 		{
 			searchTerm = term;
 			field = searchTerm.Field();
-			text = searchTerm.Text();
+			System.String searchTermText = searchTerm.Text();
 			
-			int sidx = text.IndexOf((System.Char) WILDCARD_STRING);
-			int cidx = text.IndexOf((System.Char) WILDCARD_CHAR);
+			int sidx = searchTermText.IndexOf((System.Char) WILDCARD_STRING);
+			int cidx = searchTermText.IndexOf((System.Char) WILDCARD_CHAR);
 			int idx = sidx;
 			if (idx == - 1)
 			{
@@ -65,16 +63,16 @@ namespace Lucene.Net.Search
 			{
 				idx = System.Math.Min(idx, cidx);
 			}
+			pre = idx != - 1?searchTerm.Text().Substring(0, (idx) - (0)):"";
 			
-			pre = searchTerm.Text().Substring(0, (idx) - (0));
 			preLen = pre.Length;
-			text = text.Substring(preLen);
+			text = searchTermText.Substring(preLen);
 			SetEnum(reader.Terms(new Term(searchTerm.Field(), pre)));
 		}
 		
-		protected internal override bool TermCompare(Term term)
+		public /*protected internal*/ override bool TermCompare(Term term)
 		{
-			if (field == term.Field())
+			if ((System.Object) field == (System.Object) term.Field())
 			{
 				System.String searchText = term.Text();
 				if (searchText.StartsWith(pre))
@@ -195,14 +193,6 @@ namespace Lucene.Net.Search
 				}
 			}
 			return false;
-		}
-		
-		public override void  Close()
-		{
-			base.Close();
-			searchTerm = null;
-			field = null;
-			text = null;
 		}
 	}
 }

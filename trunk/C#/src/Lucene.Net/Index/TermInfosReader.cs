@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,9 @@
 
 using System;
 
-using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
-using Cache = Lucene.Net.Util.Cache.Cache;
-using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using Directory = Lucene.Net.Store.Directory;
+using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
+using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache;
 
 namespace Lucene.Net.Index
 {
@@ -31,45 +29,41 @@ namespace Lucene.Net.Index
 	/// set.  
 	/// </summary>
 	
-	public sealed class TermInfosReader
+	sealed class TermInfosReader
 	{
 		private Directory directory;
 		private System.String segment;
 		private FieldInfos fieldInfos;
-
-        private CloseableThreadLocal threadResources = new CloseableThreadLocal();
+		
+		private CloseableThreadLocal threadResources = new CloseableThreadLocal();
 		private SegmentTermEnum origEnum;
 		private long size;
 		
-		private Term[] indexTerms = null;
+		private Term[] indexTerms;
 		private TermInfo[] indexInfos;
 		private long[] indexPointers;
 		
-		private SegmentTermEnum indexEnum;
-		
-		private int indexDivisor = 1;
 		private int totalIndexInterval;
-	
-        private const int DEFAULT_CACHE_SIZE = 1024;
-
-        /// <summary>
-        /// Per-thread resources managed by ThreadLocal.
-        /// </summary>
-        internal sealed class ThreadResources
-        {
-            internal SegmentTermEnum termEnum;
-            // used for caching the least recently looked-up Terms
-            internal Cache termInfoCache;
-        }
-
-        internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
-            : this(dir, seg, fis, BufferedIndexInput.BUFFER_SIZE)
-        {
+		
+		private const int DEFAULT_CACHE_SIZE = 1024;
+		
+		/// <summary> Per-thread resources managed by ThreadLocal</summary>
+		private sealed class ThreadResources
+		{
+			internal SegmentTermEnum termEnum;
+			
+			// Used for caching the least recently looked-up Terms
+			internal Lucene.Net.Util.Cache.Cache termInfoCache;
 		}
 		
-		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis, int readBufferSize)
+		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis, int readBufferSize, int indexDivisor)
 		{
 			bool success = false;
+			
+			if (indexDivisor < 1 && indexDivisor != - 1)
+			{
+				throw new System.ArgumentException("indexDivisor must be -1 (don't load terms index) or greater than 0: got " + indexDivisor);
+			}
 			
 			try
 			{
@@ -79,10 +73,46 @@ namespace Lucene.Net.Index
 				
 				origEnum = new SegmentTermEnum(directory.OpenInput(segment + "." + IndexFileNames.TERMS_EXTENSION, readBufferSize), fieldInfos, false);
 				size = origEnum.size;
-				totalIndexInterval = origEnum.indexInterval;
 				
-				indexEnum = new SegmentTermEnum(directory.OpenInput(segment + "." + IndexFileNames.TERMS_INDEX_EXTENSION, readBufferSize), fieldInfos, true);
 				
+				if (indexDivisor != - 1)
+				{
+					// Load terms index
+					totalIndexInterval = origEnum.indexInterval * indexDivisor;
+					SegmentTermEnum indexEnum = new SegmentTermEnum(directory.OpenInput(segment + "." + IndexFileNames.TERMS_INDEX_EXTENSION, readBufferSize), fieldInfos, true);
+					
+					try
+					{
+						int indexSize = 1 + ((int) indexEnum.size - 1) / indexDivisor; // otherwise read index
+						
+						indexTerms = new Term[indexSize];
+						indexInfos = new TermInfo[indexSize];
+						indexPointers = new long[indexSize];
+						
+						for (int i = 0; indexEnum.Next(); i++)
+						{
+							indexTerms[i] = indexEnum.Term();
+							indexInfos[i] = indexEnum.TermInfo();
+							indexPointers[i] = indexEnum.indexPointer;
+							
+							for (int j = 1; j < indexDivisor; j++)
+								if (!indexEnum.Next())
+									break;
+						}
+					}
+					finally
+					{
+						indexEnum.Close();
+					}
+				}
+				else
+				{
+					// Do not load terms index:
+					totalIndexInterval = - 1;
+					indexTerms = null;
+					indexInfos = null;
+					indexPointers = null;
+				}
 				success = true;
 			}
 			finally
@@ -109,51 +139,11 @@ namespace Lucene.Net.Index
 			return origEnum.maxSkipLevels;
 		}
 		
-		/// <summary> <p>Sets the indexDivisor, which subsamples the number
-		/// of indexed terms loaded into memory.  This has a
-		/// similar effect as {@link
-		/// IndexWriter#setTermIndexInterval} except that setting
-		/// must be done at indexing time while this setting can be
-		/// set per reader.  When set to N, then one in every
-		/// N*termIndexInterval terms in the index is loaded into
-		/// memory.  By setting this to a value > 1 you can reduce
-		/// memory usage, at the expense of higher latency when
-		/// loading a TermInfo.  The default value is 1.</p>
-		/// 
-		/// <b>NOTE:</b> you must call this before the term
-		/// index is loaded.  If the index is already loaded,
-		/// an IllegalStateException is thrown.
-		/// 
-		/// + @throws IllegalStateException if the term index has
-		/// already been loaded into memory.
-		/// </summary>
-		public void  SetIndexDivisor(int indexDivisor)
-		{
-			if (indexDivisor < 1)
-				throw new System.ArgumentException("indexDivisor must be > 0: got " + indexDivisor);
-			
-			if (indexTerms != null)
-				throw new System.SystemException("index terms are already loaded");
-			
-			this.indexDivisor = indexDivisor;
-			totalIndexInterval = origEnum.indexInterval * indexDivisor;
-		}
-		
-		/// <summary>Returns the indexDivisor.</summary>
-		/// <seealso cref="setIndexDivisor">
-		/// </seealso>
-		public int GetIndexDivisor()
-		{
-			return indexDivisor;
-		}
-		
-		public void  Close()
+		internal void  Close()
 		{
 			if (origEnum != null)
 				origEnum.Close();
-			if (indexEnum != null)
-				indexEnum.Close();
-            threadResources.Close();
+			threadResources.Close();
 		}
 		
 		/// <summary>Returns the number of term/value pairs in the set. </summary>
@@ -161,54 +151,21 @@ namespace Lucene.Net.Index
 		{
 			return size;
 		}
-
-        internal ThreadResources GetThreadResources()
-        {
-            ThreadResources resources = (ThreadResources)threadResources.Get();
-            if (resources == null)
-            {
-                resources = new ThreadResources();
-                resources.termEnum = Terms();
-                // cache does not have to be thread-safe, it is only used by one thread at the same time
-                resources.termInfoCache = new SimpleLRUCache(DEFAULT_CACHE_SIZE);
-                threadResources.Set(resources);
-            }
-            return resources;
-        }
-
-		private void  EnsureIndexIsRead()
+		
+		private ThreadResources GetThreadResources()
 		{
-			lock (this)
+			ThreadResources resources = (ThreadResources) threadResources.Get();
+			if (resources == null)
 			{
-				if (indexTerms != null)
-				// index already read
-					return ; // do nothing
-				try
-				{
-					int indexSize = 1 + ((int) indexEnum.size - 1) / indexDivisor; // otherwise read index
-					
-					indexTerms = new Term[indexSize];
-					indexInfos = new TermInfo[indexSize];
-					indexPointers = new long[indexSize];
-					
-					for (int i = 0; indexEnum.Next(); i++)
-					{
-						indexTerms[i] = indexEnum.Term();
-						indexInfos[i] = indexEnum.TermInfo();
-						indexPointers[i] = indexEnum.indexPointer;
-						
-						for (int j = 1; j < indexDivisor; j++)
-							if (!indexEnum.Next())
-								break;
-					}
-				}
-				finally
-				{
-					indexEnum.Close();
-					indexEnum = null;
-				}
+				resources = new ThreadResources();
+				resources.termEnum = Terms();
+				// Cache does not have to be thread-safe, it is only used by one thread at the same time
+				resources.termInfoCache = new SimpleLRUCache(DEFAULT_CACHE_SIZE);
+				threadResources.Set(resources);
 			}
+			return resources;
 		}
+		
 		
 		/// <summary>Returns the offset of the greatest index entry which is less than or equal to term.</summary>
 		private int GetIndexOffset(Term term)
@@ -218,7 +175,7 @@ namespace Lucene.Net.Index
 			
 			while (hi >= lo)
 			{
-				int mid = (lo + hi) >> 1;
+				int mid = SupportClass.Number.URShift((lo + hi), 1);
 				int delta = term.CompareTo(indexTerms[mid]);
 				if (delta < 0)
 					hi = mid - 1;
@@ -234,86 +191,86 @@ namespace Lucene.Net.Index
 		{
 			enumerator.Seek(indexPointers[indexOffset], (indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
 		}
-
-        /// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
-        internal TermInfo Get(Term term)
-        {
-            //return Get(term, true);
-            //Lucene.Net specific. Default:true
-            return Get(term, SupportClass.AppSettings.Get("EnableTermInfosReaderCache", true));
-        }
-
+		
 		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
-		public TermInfo Get(Term term, bool useCache)
+		internal TermInfo Get(Term term)
+		{
+			return Get(term, true);
+		}
+		
+		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
+		private TermInfo Get(Term term, bool useCache)
 		{
 			if (size == 0)
 				return null;
 			
 			EnsureIndexIsRead();
-
-            TermInfo ti;
-            ThreadResources resources = GetThreadResources();
-            Cache cache = null;
-
-            if (useCache)
-            {
-                cache = resources.termInfoCache;
-                // check the cache first if the term was recently looked up
-                ti = (TermInfo)cache.Get(term);
-                if (ti != null)
-                {
-                    return ti;
-                }
-            }
-
-            // optimize sequential access: first try scanning cached enum w/o seeking
+			
+			TermInfo ti;
+			ThreadResources resources = GetThreadResources();
+			Lucene.Net.Util.Cache.Cache cache = null;
+			
+			if (useCache)
+			{
+				cache = resources.termInfoCache;
+				// check the cache first if the term was recently looked up
+				ti = (TermInfo) cache.Get(term);
+				if (ti != null)
+				{
+					return ti;
+				}
+			}
+			
+			// optimize sequential access: first try scanning cached enum w/o seeking
 			SegmentTermEnum enumerator = resources.termEnum;
 			if (enumerator.Term() != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
 			{
 				int enumOffset = (int) (enumerator.position / totalIndexInterval) + 1;
-                if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
-                {
-                    int numScans = enumerator.ScanTo(term);
-                    if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
-                    {
-                        ti = enumerator.TermInfo();
-                        if (cache != null && numScans > 1)
-                        {
-                            // we only want to put this TermInfo into the cache if
-                            // scanEnum skipped more than one dictionary entry.
-                            // this prevents RangeQueries or WildcardQueries from
-                            // wiping out the cache when they iterate over a large number
-                            // of terms in order
-                            cache.Put(term, ti);
-                        }
-                    }
-                    else
-                    {
-                        ti = null;
-                    }
-                    return ti;
-                }
+				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
+				{
+					// no need to seek
+					
+					int numScans = enumerator.ScanTo(term);
+					if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+					{
+						ti = enumerator.TermInfo();
+						if (cache != null && numScans > 1)
+						{
+							// we only  want to put this TermInfo into the cache if
+							// scanEnum skipped more than one dictionary entry.
+							// This prevents RangeQueries or WildcardQueries to 
+							// wipe out the cache when they iterate over a large numbers
+							// of terms in order
+							cache.Put(term, ti);
+						}
+					}
+					else
+					{
+						ti = null;
+					}
+					
+					return ti;
+				}
 			}
 			
 			// random-access: must seek
 			SeekEnum(enumerator, GetIndexOffset(term));
-            enumerator.ScanTo(term);
-            if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
-            {
-                ti = enumerator.TermInfo();
-                if (cache != null)
-                {
-                    cache.Put(term, ti);
-                }
-            }
-            else
-            {
-                ti = null;
-            }
-
-            return ti;
+			enumerator.ScanTo(term);
+			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+			{
+				ti = enumerator.TermInfo();
+				if (cache != null)
+				{
+					cache.Put(term, ti);
+				}
+			}
+			else
+			{
+				ti = null;
+			}
+			return ti;
 		}
-				
+		
 		/// <summary>Returns the nth term in the set. </summary>
 		internal Term Get(int position)
 		{
@@ -321,7 +278,7 @@ namespace Lucene.Net.Index
 				return null;
 			
 			SegmentTermEnum enumerator = GetThreadResources().termEnum;
-			if (enumerator != null && enumerator.Term() != null && position >= enumerator.position && position < (enumerator.position + totalIndexInterval))
+			if (enumerator.Term() != null && position >= enumerator.position && position < (enumerator.position + totalIndexInterval))
 				return ScanEnum(enumerator, position); // can avoid seek
 			
 			SeekEnum(enumerator, position / totalIndexInterval); // must seek
@@ -337,6 +294,14 @@ namespace Lucene.Net.Index
 			return enumerator.Term();
 		}
 		
+		private void  EnsureIndexIsRead()
+		{
+			if (indexTerms == null)
+			{
+				throw new System.SystemException("terms index was not loaded when this reader was created");
+			}
+		}
+		
 		/// <summary>Returns the position of a Term in the set or -1. </summary>
 		internal long GetPosition(Term term)
 		{
@@ -345,8 +310,8 @@ namespace Lucene.Net.Index
 			
 			EnsureIndexIsRead();
 			int indexOffset = GetIndexOffset(term);
-
-            SegmentTermEnum enumerator = GetThreadResources().termEnum;
+			
+			SegmentTermEnum enumerator = GetThreadResources().termEnum;
 			SeekEnum(enumerator, indexOffset);
 			
 			while (term.CompareTo(enumerator.Term()) > 0 && enumerator.Next())
@@ -368,7 +333,8 @@ namespace Lucene.Net.Index
 		/// <summary>Returns an enumeration of terms starting at or after the named term. </summary>
 		public SegmentTermEnum Terms(Term term)
 		{
-            // don't use the cache in this call because we want to reposition the enumeration
+			// don't use the cache in this call because we want to reposition the
+			// enumeration
 			Get(term, false);
 			return (SegmentTermEnum) GetThreadResources().termEnum.Clone();
 		}

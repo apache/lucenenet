@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 
 using System;
 
-using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -26,21 +25,21 @@ namespace Lucene.Net.Search
 	/// <summary> Constrains search results to only match those which also match a provided
 	/// query.  
 	/// 
-	/// <p> This could be used, for example, with a {@link RangeQuery} on a suitably
+	/// <p> This could be used, for example, with a {@link TermRangeQuery} on a suitably
 	/// formatted date field to implement date filtering.  One could re-use a single
 	/// QueryFilter that matches, e.g., only documents modified within the last
-	/// week.  The QueryFilter and RangeQuery would only need to be reconstructed
+	/// week.  The QueryFilter and TermRangeQuery would only need to be reconstructed
 	/// once per day.
 	/// 
 	/// </summary>
 	/// <version>  $Id:$
 	/// </version>
 	[Serializable]
-	public class QueryWrapperFilter : Filter
+	public class QueryWrapperFilter:Filter
 	{
-		private class AnonymousClassHitCollector:HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(System.Collections.BitArray bits, QueryWrapperFilter enclosingInstance)
+			public AnonymousClassCollector(System.Collections.BitArray bits, QueryWrapperFilter enclosingInstance)
 			{
 				InitBlock(bits, enclosingInstance);
 			}
@@ -59,40 +58,61 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private int base_Renamed = 0;
+			public override void  SetScorer(Scorer scorer)
 			{
-				bits.Set(doc, true);
+				// score is not needed by this collector 
+			}
+			public override void  Collect(int doc)
+			{
+                for (int i = 0; doc + base_Renamed >= bits.Length; i =+ 64)
+                {
+                    bits.Length += i;
+                }
+                bits.Set(doc + base_Renamed, true); // set bit for hit
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
-
-        private class AnonymousClassHitCollector2 : HitCollector
-        {
-            public AnonymousClassHitCollector2(OpenBitSet bits, QueryWrapperFilter enclosingInstance)
-            {
-                InitBlock(bits, enclosingInstance);
-            }
-            private void InitBlock(OpenBitSet bits, QueryWrapperFilter enclosingInstance)
-            {
-                this.bits = bits;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private OpenBitSet bits;
-            private QueryWrapperFilter enclosingInstance;
-            public QueryWrapperFilter Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-
-            }
-            public override void Collect(int doc, float score)
-            {
-                bits.Set(doc);
-            }
-        }
-
-        private Query query;
+		private class AnonymousClassDocIdSet:DocIdSet
+		{
+			public AnonymousClassDocIdSet(Lucene.Net.Search.Weight weight, Lucene.Net.Index.IndexReader reader, QueryWrapperFilter enclosingInstance)
+			{
+				InitBlock(weight, reader, enclosingInstance);
+			}
+			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Index.IndexReader reader, QueryWrapperFilter enclosingInstance)
+			{
+				this.weight = weight;
+				this.reader = reader;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private Lucene.Net.Search.Weight weight;
+			private Lucene.Net.Index.IndexReader reader;
+			private QueryWrapperFilter enclosingInstance;
+			public QueryWrapperFilter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public override DocIdSetIterator Iterator()
+			{
+				return weight.Scorer(reader, true, false);
+			}
+			public override bool IsCacheable()
+			{
+				return false;
+			}
+		}
+		private Query query;
 		
 		/// <summary>Constructs a filter which only matches documents matching
 		/// <code>query</code>.
@@ -102,27 +122,28 @@ namespace Lucene.Net.Search
 			this.query = query;
 		}
 		
-        [System.Obsolete("Use getDocIdSet(IndexReader) instead.")]
+		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// </deprecated>
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-			new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector(bits, this));
+			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
+			
+			new IndexSearcher(reader).Search(query, new AnonymousClassCollector(bits, this));
 			return bits;
 		}
-
-        public override DocIdSet GetDocIdSet(IndexReader reader)
-        {
-            OpenBitSet bits = new OpenBitSet((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-            new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector2(bits, this));
-            return bits;
-        }
-
-        public override System.String ToString()
+		
+		public override DocIdSet GetDocIdSet(IndexReader reader)
+		{
+			Weight weight = query.Weight(new IndexSearcher(reader));
+			return new AnonymousClassDocIdSet(weight, reader, this);
+		}
+		
+		public override System.String ToString()
 		{
 			return "QueryWrapperFilter(" + query + ")";
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is QueryWrapperFilter))
 				return false;

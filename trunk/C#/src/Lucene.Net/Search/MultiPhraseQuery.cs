@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,18 +32,21 @@ namespace Lucene.Net.Search
 	/// add(Term) on the term "Microsoft", then find all terms that have "app" as
 	/// prefix using IndexReader.terms(Term), and use MultiPhraseQuery.add(Term[]
 	/// terms) to add them to the query.
+	/// 
 	/// </summary>
+	/// <version>  1.0
+	/// </version>
 	[Serializable]
-	public class MultiPhraseQuery : Query
+	public class MultiPhraseQuery:Query
 	{
 		private System.String field;
 		private System.Collections.ArrayList termArrays = new System.Collections.ArrayList();
-		private System.Collections.ArrayList positions = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		private System.Collections.ArrayList positions = new System.Collections.ArrayList();
 		
 		private int slop = 0;
 		
 		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery#SetSlop(int)">
+		/// <seealso cref="PhraseQuery.SetSlop(int)">
 		/// </seealso>
 		public virtual void  SetSlop(int s)
 		{
@@ -51,7 +54,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Sets the phrase slop for this query.</summary>
-		/// <seealso cref="PhraseQuery#GetSlop()">
+		/// <seealso cref="PhraseQuery.GetSlop()">
 		/// </seealso>
 		public virtual int GetSlop()
 		{
@@ -59,7 +62,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Add a single term at the next position in the phrase.</summary>
-		/// <seealso cref="PhraseQuery#Add(Term)">
+		/// <seealso cref="PhraseQuery.add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term term)
 		{
@@ -70,7 +73,7 @@ namespace Lucene.Net.Search
 		/// may match.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery#Add(Term)">
+		/// <seealso cref="PhraseQuery.add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term[] terms)
 		{
@@ -84,11 +87,11 @@ namespace Lucene.Net.Search
 		/// <summary> Allows to specify the relative position of terms within the phrase.
 		/// 
 		/// </summary>
-		/// <seealso cref="int)">
+		/// <seealso cref="PhraseQuery.Add(Term, int)">
 		/// </seealso>
-		/// <param name="">terms
+		/// <param name="terms">
 		/// </param>
-		/// <param name="">position
+		/// <param name="position">
 		/// </param>
 		public virtual void  Add(Term[] terms, int position)
 		{
@@ -97,7 +100,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < terms.Length; i++)
 			{
-				if ((object) terms[i].Field() != (object) field)
+				if ((System.Object) terms[i].Field() != (System.Object) field)
 				{
 					throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
 				}
@@ -132,15 +135,14 @@ namespace Lucene.Net.Search
 				Term[] arr = (Term[]) iter.Current;
 				for (int i = 0; i < arr.Length; i++)
 				{
-                    if (!terms.Contains(arr[i]))
-					    terms.Add(arr[i], arr[i]);
+					SupportClass.HashtableHelper.AddIfNotContains(terms, arr[i]);
 				}
 			}
 		}
 		
 		
 		[Serializable]
-		private class MultiPhraseWeight : Weight
+		private class MultiPhraseWeight:Weight
 		{
 			private void  InitBlock(MultiPhraseQuery enclosingInstance)
 			{
@@ -178,32 +180,32 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			public virtual Query GetQuery()
+			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
-			public virtual float GetValue()
+			public override float GetValue()
 			{
 				return value_Renamed;
 			}
 			
-			public virtual float SumOfSquaredWeights()
+			public override float SumOfSquaredWeights()
 			{
 				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
 				return queryWeight * queryWeight; // square it
 			}
 			
-			public virtual void  Normalize(float queryNorm)
+			public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
 				value_Renamed = queryWeight * idf; // idf for document 
 			}
 			
-			public virtual Scorer Scorer(IndexReader reader)
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
 				if (Enclosing_Instance.termArrays.Count == 0)
-					// optimize zero-term case
+				// optimize zero-term case
 					return null;
 				
 				TermPositions[] tps = new TermPositions[Enclosing_Instance.termArrays.Count];
@@ -229,7 +231,7 @@ namespace Lucene.Net.Search
 					return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
 			}
 			
-			public virtual Explanation Explain(IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				ComplexExplanation result = new ComplexExplanation();
 				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
@@ -257,13 +259,18 @@ namespace Lucene.Net.Search
 				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.SetDescription("fieldWeight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation tfExpl = Scorer(reader).Explain(doc);
+				Scorer scorer = Scorer(reader, true, false);
+				if (scorer == null)
+				{
+					return new Explanation(0.0f, "no matching docs");
+				}
+				Explanation tfExpl = scorer.Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
 				fieldExpl.AddDetail(idfExpl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(Enclosing_Instance.field);
-				float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
+				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
 				fieldNormExpl.SetValue(fieldNorm);
 				fieldNormExpl.SetDescription("fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
@@ -305,7 +312,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new MultiPhraseWeight(this, searcher);
 		}
@@ -320,17 +327,10 @@ namespace Lucene.Net.Search
 				buffer.Append(":");
 			}
 			
-            bool appendSpace = false;
-
 			buffer.Append("\"");
 			System.Collections.IEnumerator i = termArrays.GetEnumerator();
 			while (i.MoveNext())
 			{
-                if (appendSpace == true)
-                    buffer.Append(" ");
-                else
-                    appendSpace = true;
-
 				Term[] terms = (Term[]) i.Current;
 				if (terms.Length > 1)
 				{
@@ -347,6 +347,8 @@ namespace Lucene.Net.Search
 				{
 					buffer.Append(terms[0].Text());
 				}
+				if (i.MoveNext())
+					buffer.Append(" ");
 			}
 			buffer.Append("\"");
 			
@@ -363,7 +365,7 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is MultiPhraseQuery))
 				return false;
@@ -374,15 +376,15 @@ namespace Lucene.Net.Search
                 System.Collections.IEnumerator iter2 = other.termArrays.GetEnumerator();
                 while (iter1.MoveNext() && iter2.MoveNext())
                 {
-                    if (SupportClass.Compare.CompareTermArrays((Term[]) iter1.Current, (Term[]) iter2.Current) == false)
+                    if (SupportClass.Compare.CompareTermArrays((Term[])iter1.Current, (Term[])iter2.Current) == false)
                         return false;
                 }
                 iter1 = this.positions.GetEnumerator();
                 iter2 = other.positions.GetEnumerator();
                 while (iter1.MoveNext() && iter2.MoveNext())
                 {
-                    System.Int32 item1 = (System.Int32) iter1.Current;
-                    System.Int32 item2 = (System.Int32) iter2.Current;
+                    System.Int32 item1 = (System.Int32)iter1.Current;
+                    System.Int32 item2 = (System.Int32)iter2.Current;
                     if (!item1.Equals(item2))
                         return false;
                 }
@@ -393,7 +395,87 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ termArrays.GetHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ TermArraysHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
 		}
+		
+		// Breakout calculation of the termArrays hashcode
+		private int TermArraysHashCode()
+		{
+			int hashCode = 1;
+			System.Collections.IEnumerator iterator = termArrays.GetEnumerator();
+			while (iterator.MoveNext())
+			{
+				Term[] termArray = (Term[]) iterator.Current;
+				hashCode = 31 * hashCode + (termArray == null?0:ArraysHashCode(termArray));
+			}
+			return hashCode;
+		}
+		
+		private int ArraysHashCode(Term[] termArray)
+		{
+			if (termArray == null)
+				return 0;
+			
+			int result = 1;
+			
+			for (int i = 0; i < termArray.Length; i++)
+			{
+				Term term = termArray[i];
+				result = 31 * result + (term == null?0:term.GetHashCode());
+			}
+			
+			return result;
+		}
+		
+		// Breakout calculation of the termArrays equals
+		private bool TermArraysEquals(System.Collections.IList termArrays1, System.Collections.IList termArrays2)
+		{
+			if (termArrays1.Count != termArrays2.Count)
+			{
+				return false;
+			}
+			System.Collections.IEnumerator iterator1 = termArrays1.GetEnumerator();
+			System.Collections.IEnumerator iterator2 = termArrays2.GetEnumerator();
+			while (iterator1.MoveNext())
+			{
+				Term[] termArray1 = (Term[]) iterator1.Current;
+				Term[] termArray2 = (Term[]) iterator2.Current;
+				if (!(termArray1 == null ? termArray2 == null : TermEquals(termArray1, termArray2)))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		override public System.Object Clone()
+		{
+            System.Diagnostics.Debug.Fail("Port issue:", "do we need to implement 'Clone'?");   // {{Aroush-2.9}}
+			return null;
+		}
+
+        public static bool TermEquals(System.Array array1, System.Array array2)
+        {
+            bool result = false;
+            if ((array1 == null) && (array2 == null))
+                result = true;
+            else if ((array1 != null) && (array2 != null))
+            {
+                if (array1.Length == array2.Length)
+                {
+                    int length = array1.Length;
+                    result = true;
+                    for (int index = 0; index < length; index++)
+                    {
+                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
 	}
 }

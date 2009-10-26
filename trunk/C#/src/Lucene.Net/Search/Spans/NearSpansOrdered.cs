@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-using IndexReader = Lucene.Net.Index.IndexReader;
+using System;
 
-using System.Collections.Generic;
+using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search.Spans
 {
+	
 	/// <summary>A Spans that is formed from the ordered subspans of a SpanNearQuery
 	/// where the subspans do not overlap and have a maximum slop between them.
 	/// <p>
@@ -38,8 +39,12 @@ namespace Lucene.Net.Search.Spans
 	/// matches twice:
 	/// <pre>t1 t2 .. t3      </pre>
 	/// <pre>      t1 .. t2 t3</pre>
+	/// 
+	/// 
+	/// Expert:
+	/// Only public for subclassing.  Most implementations should not need this class
 	/// </summary>
-	class NearSpansOrdered : PayloadSpans
+	public class NearSpansOrdered:Spans
 	{
 		internal class AnonymousClassComparator : System.Collections.IComparer
 		{
@@ -60,7 +65,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			public virtual int Compare(object o1, object o2)
+			public virtual int Compare(System.Object o1, System.Object o2)
 			{
 				return ((Spans) o1).Doc() - ((Spans) o2).Doc();
 			}
@@ -69,13 +74,12 @@ namespace Lucene.Net.Search.Spans
 		{
 			spanDocComparator = new AnonymousClassComparator(this);
 		}
-
 		private int allowedSlop;
 		private bool firstTime = true;
 		private bool more = false;
 		
 		/// <summary>The spans in the same order as the SpanNearQuery </summary>
-		private PayloadSpans[] subSpans;
+		private Spans[] subSpans;
 		
 		/// <summary>Indicates that all subSpans have same doc() </summary>
 		private bool inSameDoc = false;
@@ -83,64 +87,77 @@ namespace Lucene.Net.Search.Spans
 		private int matchDoc = - 1;
 		private int matchStart = - 1;
 		private int matchEnd = - 1;
-        private List<byte[]> matchPayload;
-
-		private PayloadSpans[] subSpansByDoc;
-
+		private System.Collections.ArrayList matchPayload;
+		
+		private Spans[] subSpansByDoc;
 		private System.Collections.IComparer spanDocComparator;
 		
 		private SpanNearQuery query;
+		private bool collectPayloads = true;
 		
-		public NearSpansOrdered(SpanNearQuery spanNearQuery, IndexReader reader)
+		public NearSpansOrdered(SpanNearQuery spanNearQuery, IndexReader reader):this(spanNearQuery, reader, true)
+		{
+		}
+		
+		public NearSpansOrdered(SpanNearQuery spanNearQuery, IndexReader reader, bool collectPayloads)
 		{
 			InitBlock();
 			if (spanNearQuery.GetClauses().Length < 2)
 			{
 				throw new System.ArgumentException("Less than 2 clauses: " + spanNearQuery);
 			}
+			this.collectPayloads = collectPayloads;
 			allowedSlop = spanNearQuery.GetSlop();
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
-			subSpans = new PayloadSpans[clauses.Length];
-            matchPayload = new List<byte[]>();
-			subSpansByDoc = new PayloadSpans[clauses.Length];
+			subSpans = new Spans[clauses.Length];
+			matchPayload = new System.Collections.ArrayList();
+			subSpansByDoc = new Spans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
-				subSpans[i] = clauses[i].GetPayloadSpans(reader);
+				subSpans[i] = clauses[i].GetSpans(reader);
 				subSpansByDoc[i] = subSpans[i]; // used in toSameDoc()
 			}
 			query = spanNearQuery; // kept for toString() only.
 		}
 		
 		// inherit javadocs
-		public virtual int Doc()
+		public override int Doc()
 		{
 			return matchDoc;
 		}
 		
 		// inherit javadocs
-		public virtual int Start()
+		public override int Start()
 		{
 			return matchStart;
 		}
 		
 		// inherit javadocs
-		public virtual int End()
+		public override int End()
 		{
 			return matchEnd;
 		}
-
-        public ICollection<byte[]> GetPayload()
-        {
-            return matchPayload;
-        }
-
-        public bool IsPayloadAvailable()
-        {
-            return matchPayload.Count > 0;
-        }
-
+		
+		public virtual Spans[] GetSubSpans()
+		{
+			return subSpans;
+		}
+		
+		// TODO: Remove warning after API has been finalized
+		// TODO: Would be nice to be able to lazy load payloads
+		public override System.Collections.ICollection GetPayload()
+		{
+			return matchPayload;
+		}
+		
+		// TODO: Remove warning after API has been finalized
+		public override bool IsPayloadAvailable()
+		{
+			return (matchPayload.Count == 0) == false;
+		}
+		
 		// inherit javadocs
-		public virtual bool Next()
+		public override bool Next()
 		{
 			if (firstTime)
 			{
@@ -155,12 +172,15 @@ namespace Lucene.Net.Search.Spans
 				}
 				more = true;
 			}
-            matchPayload.Clear();
+			if (collectPayloads)
+			{
+				matchPayload.Clear();
+			}
 			return AdvanceAfterOrdered();
 		}
 		
 		// inherit javadocs
-		public virtual bool SkipTo(int target)
+		public override bool SkipTo(int target)
 		{
 			if (firstTime)
 			{
@@ -187,7 +207,10 @@ namespace Lucene.Net.Search.Spans
 					return false;
 				}
 			}
-            matchPayload.Clear();
+			if (collectPayloads)
+			{
+				matchPayload.Clear();
+			}
 			return AdvanceAfterOrdered();
 		}
 		
@@ -231,11 +254,10 @@ namespace Lucene.Net.Search.Spans
 			}
 			for (int i = 0; i < subSpansByDoc.Length; i++)
 			{
-				
-				System.Diagnostics.Debug.Assert(subSpansByDoc [i].Doc() == maxDoc,
-					" NearSpansOrdered.toSameDoc() spans " + subSpansByDoc[0]
-								+ "\n at doc " + subSpansByDoc[i].Doc()
-								+ ", but should be at " + maxDoc);
+				System.Diagnostics.Debug.Assert((subSpansByDoc [i].Doc() == maxDoc)
+					, "NearSpansOrdered.toSameDoc() spans " + subSpansByDoc [0] 
+					+ "\n at doc " + subSpansByDoc [i].Doc() 
+					+ ", but should be at " + maxDoc);
 			}
 			inSameDoc = true;
 			return true;
@@ -255,8 +277,8 @@ namespace Lucene.Net.Search.Spans
 			System.Diagnostics.Debug.Assert(spans1.Doc() == spans2.Doc(), "doc1 " + spans1.Doc() + " != doc2 " + spans2.Doc());
 			int start1 = spans1.Start();
 			int start2 = spans2.Start();
-			/* Do not call DocSpansOrdered(int,int,int,int) to avoid invoking .end() : */
-			return (start1 == start2) ? (spans1.End() < spans2.End()) : (start1 < start2);
+			/* Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end() : */
+			return (start1 == start2)?(spans1.End() < spans2.End()):(start1 < start2);
 		}
 		
 		/// <summary>Like {@link #DocSpansOrdered(Spans,Spans)}, but use the spans
@@ -264,7 +286,7 @@ namespace Lucene.Net.Search.Spans
 		/// </summary>
 		private static bool DocSpansOrdered(int start1, int end1, int start2, int end2)
 		{
-			return (start1 == start2) ? (end1 < end2) : (start1 < start2);
+			return (start1 == start2)?(end1 < end2):(start1 < start2);
 		}
 		
 		/// <summary>Order the subSpans within the same document by advancing all later spans
@@ -301,18 +323,27 @@ namespace Lucene.Net.Search.Spans
 		{
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
-            if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
-                SupportClass.CollectionsSupport.AddAll(subSpans[subSpans.Length - 1].GetPayload(), matchPayload);
+            System.Collections.Hashtable possibleMatchPayloads = new System.Collections.Hashtable();
+			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
+			{
+				SupportClass.HashtableHelper.AddAllIfNotContains(possibleMatchPayloads, subSpans[subSpans.Length - 1].GetPayload());
+			}
+			
+			System.Collections.ArrayList possiblePayload = null;
+			
 			int matchSlop = 0;
 			int lastStart = matchStart;
 			int lastEnd = matchEnd;
 			for (int i = subSpans.Length - 2; i >= 0; i--)
 			{
-				PayloadSpans prevSpans = subSpans[i];
-
-                if (subSpans[i].IsPayloadAvailable())
-                    matchPayload.InsertRange(0, subSpans[i].GetPayload());
-
+				Spans prevSpans = subSpans[i];
+				if (collectPayloads && prevSpans.IsPayloadAvailable())
+				{
+					System.Collections.ICollection payload = prevSpans.GetPayload();
+					possiblePayload = new System.Collections.ArrayList(payload.Count);
+					possiblePayload.AddRange(payload);
+				}
+				
 				int prevStart = prevSpans.Start();
 				int prevEnd = prevSpans.End();
 				while (true)
@@ -342,15 +373,28 @@ namespace Lucene.Net.Search.Spans
 							// prevSpans still before (lastStart, lastEnd)
 							prevStart = ppStart;
 							prevEnd = ppEnd;
+							if (collectPayloads && prevSpans.IsPayloadAvailable())
+							{
+								System.Collections.ICollection payload = prevSpans.GetPayload();
+								possiblePayload = new System.Collections.ArrayList(payload.Count);
+								possiblePayload.AddRange(payload);
+							}
 						}
 					}
 				}
+				
+				if (collectPayloads && possiblePayload != null)
+				{
+					SupportClass.HashtableHelper.AddAllIfNotContains(possibleMatchPayloads, possiblePayload);
+				}
+				
 				System.Diagnostics.Debug.Assert(prevStart <= matchStart);
 				if (matchStart > prevEnd)
 				{
 					// Only non overlapping spans add to slop.
 					matchSlop += (matchStart - prevEnd);
 				}
+				
 				/* Do not break on (matchSlop > allowedSlop) here to make sure
 				* that subSpans[0] is advanced after the match, if any.
 				*/
@@ -358,12 +402,20 @@ namespace Lucene.Net.Search.Spans
 				lastStart = prevStart;
 				lastEnd = prevEnd;
 			}
-			return matchSlop <= allowedSlop; // ordered and allowed slop
+			
+			bool match = matchSlop <= allowedSlop;
+			
+			if (collectPayloads && match && possibleMatchPayloads.Count > 0)
+			{
+				matchPayload.AddRange(possibleMatchPayloads);
+			}
+			
+			return match; // ordered and allowed slop
 		}
 		
 		public override System.String ToString()
 		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc() + ":" + Start() + "-" + End()) : "END"));
+			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,15 +21,18 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> Useful constants representing filenames and extensions used by lucene
+	/// 
 	/// </summary>
-	public sealed class IndexFileNames
+	/// <version>  $rcs = ' $Id: Exp $ ' ;
+	/// </version>
+	sealed class IndexFileNames
 	{
 		
 		/// <summary>Name of the index segment file </summary>
-		public /*internal*/ const System.String SEGMENTS = "segments";
+		internal const System.String SEGMENTS = "segments";
 		
 		/// <summary>Name of the generation reference file name </summary>
-		public /*internal*/ const System.String SEGMENTS_GEN = "segments.gen";
+		internal const System.String SEGMENTS_GEN = "segments.gen";
 		
 		/// <summary>Name of the index deletable file (only used in
 		/// pre-lockless indices) 
@@ -61,10 +64,10 @@ namespace Lucene.Net.Index
 		internal const System.String VECTORS_FIELDS_EXTENSION = "tvf";
 		
 		/// <summary>Extension of vectors documents file </summary>
-		public /*internal*/ const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
+		internal const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
 		
 		/// <summary>Extension of vectors index file </summary>
-		public /*internal*/ const System.String VECTORS_INDEX_EXTENSION = "tvx";
+		internal const System.String VECTORS_INDEX_EXTENSION = "tvx";
 		
 		/// <summary>Extension of compound file </summary>
 		internal const System.String COMPOUND_FILE_EXTENSION = "cfs";
@@ -76,7 +79,7 @@ namespace Lucene.Net.Index
 		internal const System.String DELETES_EXTENSION = "del";
 		
 		/// <summary>Extension of field infos </summary>
-		public /*internal*/ const System.String FIELD_INFOS_EXTENSION = "fnm";
+		internal const System.String FIELD_INFOS_EXTENSION = "fnm";
 		
 		/// <summary>Extension of plain norms </summary>
 		internal const System.String PLAIN_NORMS_EXTENSION = "f";
@@ -155,6 +158,11 @@ namespace Lucene.Net.Index
 				if (fileName.EndsWith(STORE_INDEX_EXTENSIONS[i]))
 					return true;
 			return false;
+		}
+		
+		internal static System.String SegmentFileName(System.String segmentName, System.String ext)
+		{
+			return segmentName + "." + ext;
 		}
 	}
 }

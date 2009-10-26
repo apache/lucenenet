@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary>Base implementation class for buffered {@link IndexInput}. </summary>
-	public abstract class BufferedIndexInput : IndexInput, System.ICloneable
+	public abstract class BufferedIndexInput:IndexInput, System.ICloneable
 	{
 		
 		/// <summary>Default buffer size </summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		/// <summary>Change the buffer size used by this IndexInput </summary>
 		public virtual void  SetBufferSize(int newSize)
 		{
-			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length, "buffer=" + buffer + " bufferSize=" + bufferSize + " buffer.length=" + (buffer != null ? buffer.Length : 0));
+			System.Diagnostics.Debug.Assert(buffer == null || bufferSize == buffer.Length, "buffer=" + buffer + " bufferSize=" + bufferSize + " buffer.length=" +(buffer != null ? buffer.Length: 0));
 			if (newSize != bufferSize)
 			{
 				CheckBufferSize(newSize);
@@ -81,12 +81,13 @@ namespace Lucene.Net.Store
 				}
 			}
 		}
-
-        protected internal virtual void NewBuffer(byte[] newBuffer)
-        {
-            buffer = newBuffer;
-        }
-
+		
+		protected internal virtual void  NewBuffer(byte[] newBuffer)
+		{
+			// Subclasses can do something here
+			buffer = newBuffer;
+		}
+		
 		/// <seealso cref="setBufferSize">
 		/// </seealso>
 		public virtual int GetBufferSize()
@@ -170,9 +171,10 @@ namespace Lucene.Net.Store
 		{
 			long start = bufferStart + bufferPosition;
 			long end = start + bufferSize;
-			if (end > Length()) // don't read past EOF
+			if (end > Length())
+			// don't read past EOF
 				end = Length();
-            int newLength = (int)(end - start);
+			int newLength = (int) (end - start);
 			if (newLength <= 0)
 				throw new System.IO.IOException("read past EOF");
 			
@@ -181,9 +183,8 @@ namespace Lucene.Net.Store
 				NewBuffer(new byte[bufferSize]); // allocate buffer lazily
 				SeekInternal(bufferStart);
 			}
-
 			ReadInternal(buffer, 0, newLength);
-            bufferLength = newLength;			
+			bufferLength = newLength;
 			bufferStart = start;
 			bufferPosition = 0;
 		}
@@ -197,7 +198,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="length">the number of bytes to read
 		/// </param>
-		protected internal abstract void  ReadInternal(byte[] b, int offset, int length);
+		public abstract void  ReadInternal(byte[] b, int offset, int length);
 		
 		public override long GetFilePointer()
 		{
@@ -223,9 +224,9 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <seealso cref="ReadInternal(byte[],int,int)">
 		/// </seealso>
-		protected internal abstract void  SeekInternal(long pos);
+		public abstract void  SeekInternal(long pos);
 		
-		public override object Clone()
+		public override System.Object Clone()
 		{
 			BufferedIndexInput clone = (BufferedIndexInput) base.Clone();
 			

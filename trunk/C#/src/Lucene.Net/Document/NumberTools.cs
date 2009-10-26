@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,13 @@
 
 using System;
 
+using NumericUtils = Lucene.Net.Util.NumericUtils;
+using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
+
 namespace Lucene.Net.Documents
 {
+	
+	// do not remove this class in 3.0, it may be needed to decode old indexes!
 	
 	/// <summary> Provides support for converting longs to Strings, and back again. The strings
 	/// are structured so that lexicographic sorting order is preserved.
@@ -32,8 +37,15 @@ namespace Lucene.Net.Documents
 	/// This class handles <b>all</b> long values (unlike
 	/// {@link Lucene.Net.Documents.DateField}).
 	/// 
-	/// 
 	/// </summary>
+	/// <deprecated> For new indexes use {@link NumericUtils} instead, which
+	/// provides a sortable binary representation (prefix encoded) of numeric
+	/// values.
+	/// To index and efficiently query numeric values use {@link NumericField}
+	/// and {@link NumericRangeQuery}.
+	/// This class is included for use with existing
+	/// indices and will be removed in a future release.
+	/// </deprecated>
 	public class NumberTools
 	{
 		
@@ -44,10 +56,10 @@ namespace Lucene.Net.Documents
 		// NB: NEGATIVE_PREFIX must be < POSITIVE_PREFIX
 		private const char POSITIVE_PREFIX = '0';
 		
-		// NB: this must be less than
+		//NB: this must be less than
 		/// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-        public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
+		public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
 #else
         public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
 #endif
@@ -68,7 +80,7 @@ namespace Lucene.Net.Documents
 			
 			if (l == System.Int64.MinValue)
 			{
-				// special case, because long is not symetric around zero
+				// special case, because long is not symmetric around zero
 				return MIN_STRING_VALUE;
 			}
 			
@@ -84,7 +96,7 @@ namespace Lucene.Net.Documents
 				buf.Append(POSITIVE_PREFIX);
 			}
 #if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-			System.String num = ToString(l);
+            System.String num = ToString(l);
 #else
             System.String num = System.Convert.ToString(l, RADIX);
 #endif
@@ -205,5 +217,5 @@ namespace Lucene.Net.Documents
         }
         #endregion
 #endif
-    }
+	}
 }

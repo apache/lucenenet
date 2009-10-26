@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,9 +16,6 @@
  */
 
 using System;
-
-// using FileChannel = java.nio.channels.FileChannel;
-// using FileLock = java.nio.channels.FileLock;
 
 namespace Lucene.Net.Store
 {
@@ -53,47 +50,69 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class NativeFSLockFactory : LockFactory
+	public class NativeFSLockFactory:FSLockFactory
 	{
 		
-		/// <summary> Directory specified by <code>Lucene.Net.lockDir</code>
-		/// system property.  If that is not set, then <code>java.io.tmpdir</code>
-		/// system property is used.
-		/// </summary>
-		
-		private System.IO.FileInfo lockDir;
+		private volatile bool tested = false;
 		
 		// Simple test to verify locking system is "working".  On
 		// NFS, if it's misconfigured, you can hit long (35
 		// second) timeouts which cause Lock.obtain to take far
 		// too long (it assumes the obtain() call takes zero
-		// time).  Since it's a configuration problem, we test up
-		// front once on creating the LockFactory:
+		// time). 
 		private void  AcquireTestLock()
 		{
-			System.String randomLockName = "lucene-" + System.Convert.ToString(new System.Random().Next(), 16) + "-test.lock";
-			
-			Lock l = MakeLock(randomLockName);
-			try
+			lock (this)
 			{
-				l.Obtain();
+				if (tested)
+					return ;
+				tested = true;
+				
+				// Ensure that lockDir exists and is a directory.
+				bool tmpBool;
+				if (System.IO.File.Exists(lockDir.FullName))
+					tmpBool = true;
+				else
+					tmpBool = System.IO.Directory.Exists(lockDir.FullName);
+				if (!tmpBool)
+				{
+					try
+                    {
+                        System.IO.Directory.CreateDirectory(lockDir.FullName);
+                    }
+                    catch
+                    {
+						throw new System.SystemException("Cannot create directory: " + lockDir.FullName);
+                    }
+				}
+				else if (!System.IO.Directory.Exists(lockDir.FullName))
+				{
+					throw new System.SystemException("Found regular file where directory expected: " + lockDir.FullName);
+				}
+				
+				System.String randomLockName = "lucene-" + System.Convert.ToString(new System.Random().Next(), 16) + "-test.lock";
+				
+				Lock l = MakeLock(randomLockName);
+				try
+				{
+					l.Obtain();
+					l.Release();
+				}
+				catch (System.IO.IOException e)
+				{
+					System.SystemException e2 = new System.SystemException("Failed to acquire random test lock; please verify filesystem for lock directory '" + lockDir + "' supports locking", e);
+					throw e2;
+				}
 			}
-			catch (System.IO.IOException e)
-			{
-				System.IO.IOException e2 = new System.IO.IOException("Failed to acquire random test lock; please verify filesystem for lock directory '" + lockDir + "' supports locking", e);
-				throw e2;
-			}
-			
-			l.Release();
 		}
 		
 		/// <summary> Create a NativeFSLockFactory instance, with null (unset)
-		/// lock directory.  This is package-private and is only
-		/// used by FSDirectory when creating this LockFactory via
-		/// the System property
-		/// Lucene.Net.Store.FSDirectoryLockFactoryClass.
+		/// lock directory. When you pass this factory to a {@link FSDirectory}
+		/// subclass, the lock directory is automatically set to the
+		/// directory itsself. Be sure to create one instance for each directory
+		/// your create!
 		/// </summary>
-		internal NativeFSLockFactory() : this((System.IO.FileInfo) null)
+		public NativeFSLockFactory():this((System.IO.FileInfo) null)
 		{
 		}
 		
@@ -103,7 +122,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="lockDirName">where lock files are created.
 		/// </param>
-		public NativeFSLockFactory(System.String lockDirName) : this(new System.IO.FileInfo(lockDirName))
+		public NativeFSLockFactory(System.String lockDirName):this(new System.IO.FileInfo(lockDirName))
 		{
 		}
 		
@@ -118,48 +137,13 @@ namespace Lucene.Net.Store
 			SetLockDir(lockDir);
 		}
 		
-		/// <summary> Set the lock directory.  This is package-private and is
-		/// only used externally by FSDirectory when creating this
-		/// LockFactory via the System property
-		/// Lucene.Net.Store.FSDirectoryLockFactoryClass.
-		/// </summary>
-		internal virtual void  SetLockDir(System.IO.FileInfo lockDir)
-		{
-			this.lockDir = lockDir;
-			if (lockDir != null)
-			{
-				// Ensure that lockDir exists and is a directory.
-				bool tmpBool;
-				if (System.IO.File.Exists(lockDir.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(lockDir.FullName);
-				if (!tmpBool)
-				{
-	                try
-	                {
-	                    System.IO.Directory.CreateDirectory(lockDir.FullName);
-	                }
-	                catch
-	                {
-	                    throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
-	                }
-				}
-				else if (!System.IO.Directory.Exists(lockDir.FullName))
-				{
-					throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
-				}
-				
-				AcquireTestLock();
-			}
-		}
-		
 		public override Lock MakeLock(System.String lockName)
 		{
 			lock (this)
 			{
+				AcquireTestLock();
 				if (lockPrefix != null)
-					lockName = lockPrefix + "-n-" + lockName;
+					lockName = lockPrefix + "-" + lockName;
 				return new NativeFSLock(lockDir, lockName);
 			}
 		}
@@ -179,7 +163,7 @@ namespace Lucene.Net.Store
 			{
 				if (lockPrefix != null)
 				{
-					lockName = lockPrefix + "-n-" + lockName;
+					lockName = lockPrefix + "-" + lockName;
 				}
 				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
 				bool tmpBool2;
@@ -209,12 +193,12 @@ namespace Lucene.Net.Store
 	}
 	
 	
-	class NativeFSLock : Lock
+	class NativeFSLock:Lock
 	{
 		
 		private System.IO.FileStream f;
-		private System.IO.FileStream channel;   // private FileChannel B; // {{Aroush-2.1}}
-		private bool lock_Renamed;              // FileLock lock_Renamed;   // {{Aroush-2.1}}
+		private System.IO.FileStream channel;
+		private bool lock_Renamed;
 		private System.IO.FileInfo path;
 		private System.IO.FileInfo lockDir;
 		
@@ -236,12 +220,20 @@ namespace Lucene.Net.Store
 			path = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
 		}
 		
+		private bool LockExists()
+		{
+			lock (this)
+			{
+				return lock_Renamed != false;
+			}
+		}
+		
 		public override bool Obtain()
 		{
 			lock (this)
 			{
 				
-				if (IsLocked())
+				if (LockExists())
 				{
 					// Our instance is already locked:
 					return false;
@@ -255,25 +247,18 @@ namespace Lucene.Net.Store
 					tmpBool = System.IO.Directory.Exists(lockDir.FullName);
 				if (!tmpBool)
 				{
-                    try
+					try
                     {
                         System.IO.Directory.CreateDirectory(lockDir.FullName);
                     }
                     catch
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
+						throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
                     }
 				}
-				else
+				else if (!System.IO.Directory.Exists(lockDir.FullName))
 				{
-                    try
-                    {
-                         System.IO.Directory.Exists(lockDir.FullName);
-                    }
-                    catch
-                    {
-                        throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
-                    }
+					throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
 				}
 				
 				System.String canonicalPath = path.FullName;
@@ -299,7 +284,7 @@ namespace Lucene.Net.Store
 							// thread trying to obtain this lock, so we own
 							// the only instance of a channel against this
 							// file:
-							LOCK_HELD.Add(canonicalPath, canonicalPath);
+                            LOCK_HELD.Add(canonicalPath, canonicalPath);
 							markedHeld = true;
 						}
 					}
@@ -310,7 +295,7 @@ namespace Lucene.Net.Store
 					}
 					catch (System.IO.IOException e)
 					{
-						// On Windows, we can get intermittant "Access
+						// On Windows, we can get intermittent "Access
 						// Denied" here.  So, we treat this as failure to
 						// acquire the lock, but, store the reason in case
 						// there is in fact a real error case.
@@ -322,7 +307,7 @@ namespace Lucene.Net.Store
 					{
 						try
 						{
-							channel = f; // f.getChannel();     // {{Aroush-2.1}}
+							channel = f;
                             lock_Renamed = false;
 							try
 							{
@@ -332,7 +317,7 @@ namespace Lucene.Net.Store
 							catch (System.IO.IOException e)
 							{
 								// At least on OS X, we will sometimes get an
-								// intermittant "Permission Denied" IOException,
+								// intermittent "Permission Denied" IOException,
 								// which seems to simply mean "you failed to get
 								// the lock".  But other IOExceptions could be
 								// "permanent" (eg, locking is not supported via
@@ -375,7 +360,7 @@ namespace Lucene.Net.Store
 				}
 				finally
 				{
-					if (markedHeld && !IsLocked())
+					if (markedHeld && !LockExists())
 					{
 						lock (LOCK_HELD)
 						{
@@ -386,7 +371,7 @@ namespace Lucene.Net.Store
 						}
 					}
 				}
-				return IsLocked();
+				return LockExists();
 			}
 		}
 		
@@ -394,7 +379,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				if (IsLocked())
+				if (LockExists())
 				{
 					try
 					{
@@ -447,27 +432,39 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				return lock_Renamed;
+				// The test for is isLocked is not directly possible with native file locks:
+				
+				// First a shortcut, if a lock reference in this instance is available
+				if (LockExists())
+					return true;
+				
+				// Look if lock file is present; if not, there can definitely be no lock!
+				bool tmpBool;
+				if (System.IO.File.Exists(path.FullName))
+					tmpBool = true;
+				else
+					tmpBool = System.IO.Directory.Exists(path.FullName);
+				if (!tmpBool)
+					return false;
+				
+				// Try to obtain and release (if was locked) the lock
+				try
+				{
+					bool obtained = Obtain();
+					if (obtained)
+						Release();
+					return !obtained;
+				}
+				catch (System.IO.IOException ioe)
+				{
+					return false;
+				}
 			}
 		}
 		
 		public override System.String ToString()
 		{
 			return "NativeFSLock@" + path;
-		}
-		
-		~NativeFSLock()
-		{
-			try
-			{
-				if (IsLocked())
-				{
-					Release();
-				}
-			}
-			finally
-			{
-			}
 		}
 	}
 }

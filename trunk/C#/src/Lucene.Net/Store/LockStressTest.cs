@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
 			{
 				c = System.Type.GetType(lockFactoryClassName);
 			}
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 				throw new System.IO.IOException("unable to find LockClass " + lockFactoryClassName);
 			}
@@ -72,15 +72,15 @@ namespace Lucene.Net.Store
 			{
 				lockFactory = (LockFactory) System.Activator.CreateInstance(c);
 			}
-			catch (System.UnauthorizedAccessException)
+			catch (System.UnauthorizedAccessException e)
 			{
 				throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockFactoryClassName);
 			}
-			catch (System.InvalidCastException)
+			catch (System.InvalidCastException e)
 			{
 				throw new System.IO.IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
 			}
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 				throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
 			}
@@ -98,7 +98,7 @@ namespace Lucene.Net.Store
 			
 			lockFactory.SetLockPrefix("test");
 			
-			LockFactory verifyLF = new VerifyingLockFactory((byte) myID, lockFactory, verifierHost, verifierPort);
+			LockFactory verifyLF = new VerifyingLockFactory((sbyte) myID, lockFactory, verifierHost, verifierPort);
 			
 			Lock l = verifyLF.MakeLock("test.lock");
 			
@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
 				{
 					obtained = l.Obtain(10);
 				}
-				catch (LockObtainFailedException)
+				catch (LockObtainFailedException e)
 				{
 					System.Console.Out.Write("x");
 				}

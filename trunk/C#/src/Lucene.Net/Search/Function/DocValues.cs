@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Function
 	/// for a particular field and reader.
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
@@ -112,15 +112,15 @@ namespace Lucene.Net.Search.Function
 		/// these test elements to be tested, Otherwise the test would not fail, just 
 		/// print a warning.
 		/// </summary>
-		public /*internal*/ virtual object GetInnerArray()
+		internal virtual System.Object GetInnerArray()
 		{
 			throw new System.NotSupportedException("this optional method is for test purposes only");
 		}
 		
 		// --- some simple statistics on values
-		private float minVal;
-		private float maxVal;
-		private float avgVal;
+		private float minVal = System.Single.NaN;
+		private float maxVal = System.Single.NaN;
+		private float avgVal = System.Single.NaN;
 		private bool computed = false;
 		// compute optional values
 		private void  Compute()
@@ -129,8 +129,6 @@ namespace Lucene.Net.Search.Function
 			{
 				return ;
 			}
-			minVal = System.Single.MaxValue;
-			maxVal = 0;
 			float sum = 0;
 			int n = 0;
 			while (true)
@@ -140,36 +138,62 @@ namespace Lucene.Net.Search.Function
 				{
 					val = FloatVal(n);
 				}
-				catch (System.IndexOutOfRangeException)
+				catch (System.IndexOutOfRangeException e)
 				{
 					break;
 				}
 				sum += val;
-				minVal = System.Math.Min(minVal, val);
-				maxVal = System.Math.Max(maxVal, val);
+				minVal = System.Single.IsNaN(minVal)?val:System.Math.Min(minVal, val);
+				maxVal = System.Single.IsNaN(maxVal)?val:System.Math.Max(maxVal, val);
+				++n;
 			}
-			avgVal = sum / n;
+			
+			avgVal = n == 0?System.Single.NaN:sum / n;
 			computed = true;
 		}
-		/// <summary> Optional op.
-		/// Returns the minimum of all values.
+		
+		/// <summary> Returns the minimum of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value.
+		/// <p>
+		/// This operation is optional
+		/// </p>
+		/// 
 		/// </summary>
+		/// <returns> the minimum of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value.
+		/// </returns>
 		public virtual float GetMinValue()
 		{
 			Compute();
 			return minVal;
 		}
 		
-		/// <summary> Optional op.
-		/// Returns the maximum of all values. 
+		/// <summary> Returns the maximum of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value.
+		/// <p>
+		/// This operation is optional
+		/// </p>
+		/// 
 		/// </summary>
+		/// <returns> the maximum of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value.
+		/// </returns>
 		public virtual float GetMaxValue()
 		{
 			Compute();
 			return maxVal;
 		}
 		
-		/// <summary> Returns the average of all values. </summary>
+		/// <summary> Returns the average of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value. *
+		/// <p>
+		/// This operation is optional
+		/// </p>
+		/// 
+		/// </summary>
+		/// <returns> the average of all values or <code>Float.NaN</code> if this
+		/// DocValues instance does not contain any value
+		/// </returns>
 		public virtual float GetAverageValue()
 		{
 			Compute();

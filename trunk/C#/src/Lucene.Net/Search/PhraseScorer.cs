@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@
 
 using System;
 
-using Lucene.Net.Index;
+using TermPositions = Lucene.Net.Index.TermPositions;
 
 namespace Lucene.Net.Search
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	/// compute the frequency of the phrase query in that document. A non zero frequency
 	/// means a match. 
 	/// </summary>
-	abstract class PhraseScorer : Scorer
+	abstract class PhraseScorer:Scorer
 	{
 		private Weight weight;
 		protected internal byte[] norms;
@@ -45,8 +45,7 @@ namespace Lucene.Net.Search
 		
 		private float freq; //prhase frequency in current doc as computed by phraseFreq().
 		
-		
-        internal PhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(similarity)
+		internal PhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.norms = norms;
 			this.weight = weight;
@@ -66,19 +65,36 @@ namespace Lucene.Net.Search
 					last.next = pp;
 				}
 				else
+				{
 					first = pp;
+				}
 				last = pp;
 			}
 			
 			pq = new PhraseQueue(tps.Length); // construct empty pq
+			first.doc = - 1;
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
 		{
 			return first.doc;
 		}
 		
+		public override int DocID()
+		{
+			return first.doc;
+		}
+		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
 		public override bool Next()
+		{
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		public override int NextDoc()
 		{
 			if (firstTime)
 			{
@@ -89,7 +105,11 @@ namespace Lucene.Net.Search
 			{
 				more = last.Next(); // trigger further scanning
 			}
-			return DoNext();
+			if (!DoNext())
+			{
+				first.doc = NO_MORE_DOCS;
+			}
+			return first.doc;
 		}
 		
 		// next without initial increment
@@ -123,10 +143,17 @@ namespace Lucene.Net.Search
 		{
 			//System.out.println("scoring " + first.doc);
 			float raw = GetSimilarity().Tf(freq) * value_Renamed; // raw score
-			return raw * Similarity.DecodeNorm(norms[first.doc]); // normalize
+			return norms == null?raw:raw * Similarity.DecodeNorm(norms[first.doc]); // normalize
 		}
 		
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
 		public override bool SkipTo(int target)
+		{
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		public override int Advance(int target)
 		{
 			firstTime = false;
 			for (PhrasePositions pp = first; more && pp != null; pp = pp.next)
@@ -134,8 +161,14 @@ namespace Lucene.Net.Search
 				more = pp.SkipTo(target);
 			}
 			if (more)
+			{
 				Sort(); // re-sort
-			return DoNext();
+			}
+			if (!DoNext())
+			{
+				first.doc = NO_MORE_DOCS;
+			}
+			return first.doc;
 		}
 		
 		/// <summary> For a document containing all the phrase query terms, compute the
@@ -150,16 +183,22 @@ namespace Lucene.Net.Search
 		private void  Init()
 		{
 			for (PhrasePositions pp = first; more && pp != null; pp = pp.next)
+			{
 				more = pp.Next();
+			}
 			if (more)
+			{
 				Sort();
+			}
 		}
 		
 		private void  Sort()
 		{
 			pq.Clear();
 			for (PhrasePositions pp = first; pp != null; pp = pp.next)
-				pq.Put(pp);
+			{
+				pq.Add(pp);
+			}
 			PqToList();
 		}
 		
@@ -193,11 +232,8 @@ namespace Lucene.Net.Search
 		{
 			Explanation tfExplanation = new Explanation();
 			
-			while (Next() && Doc() < doc)
-			{
-			}
-			
-			float phraseFreq = (Doc() == doc) ? freq : 0.0f;
+			int d = Advance(doc);
+			float phraseFreq = (d == doc)?freq:0.0f;
 			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
 			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
 			

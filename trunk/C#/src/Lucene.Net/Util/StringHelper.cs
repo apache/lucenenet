@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,31 +15,49 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace Lucene.Net.Util
 {
-	/// <summary>
-    /// Methods for manipulating strings.
+	
+	
+	/// <summary> Methods for manipulating strings.
+	/// 
+	/// $Id: StringHelper.java 801344 2009-08-05 18:05:06Z yonik $
 	/// </summary>
 	public abstract class StringHelper
 	{
-        /// <summary>
-        /// Compares two byte arrays, starting at their 0th elements, and returns the 
-        /// number of common elements before encountering a difference.
-        /// </summary>
-        /// <param name="bytes1"></param>
-        /// <param name="len1"></param>
-        /// <param name="bytes2"></param>
-        /// <param name="len2"></param>
-        /// <returns>the number of common elements</returns>
-        public static int bytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
-        {
-            int len = len1 < len2 ? len1 : len2;
-            for (int i = 0; i < len; i++)
-                if (bytes1[i] != bytes2[i])
-                    return i;
-            return len;
-        }
-
+		/// <summary> Expert:
+		/// The StringInterner implementation used by Lucene.
+		/// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
+		/// </summary>
+		public static StringInterner interner = new SimpleStringInterner(1024, 8);
+		
+		/// <summary>Return the same string object for all equal strings </summary>
+		public static System.String Intern(System.String s)
+		{
+			return interner.Intern(s);
+		}
+		
+		/// <summary> Compares two byte[] arrays, element by element, and returns the
+		/// number of elements common to both arrays.
+		/// 
+		/// </summary>
+		/// <param name="bytes1">The first byte[] to compare
+		/// </param>
+		/// <param name="bytes2">The second byte[] to compare
+		/// </param>
+		/// <returns> The number of common elements.
+		/// </returns>
+		public static int BytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
+		{
+			int len = len1 < len2?len1:len2;
+			for (int i = 0; i < len; i++)
+				if (bytes1[i] != bytes2[i])
+					return i;
+			return len;
+		}
+		
 		/// <summary> Compares two strings, character by character, and returns the
 		/// first position where the two strings differ from one another.
 		/// 
@@ -50,11 +68,11 @@ namespace Lucene.Net.Util
 		/// </param>
 		/// <returns> The first position where the two strings differ.
 		/// </returns>
-		public static int StringDifference(string s1, string s2)
+		public static int StringDifference(System.String s1, System.String s2)
 		{
 			int len1 = s1.Length;
 			int len2 = s2.Length;
-			int len = len1 < len2 ? len1:len2;
+			int len = len1 < len2?len1:len2;
 			for (int i = 0; i < len; i++)
 			{
 				if (s1[i] != s2[i])

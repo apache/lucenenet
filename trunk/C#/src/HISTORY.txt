@@ -2,12 +2,16 @@ Apache Lucene.Net History
 -------------------------
 
 
+25Oct09:
+	- Release: Apache Lucene.Net 2.9.0 build 001 "Alpha"
+
+
 19Aug09:
-	- Release: Apache Lucene.Net 2.4.0 build 002 "final"
+	- Release: Apache Lucene.Net 2.4.0 build 002 "Final"
 
 
 19Mar09:
-   	- Release: Apache Lucene.Net.2.3.1 build 003 "final"
+   	- Release: Apache Lucene.Net.2.3.1 build 003 "Final"
 	- Fix: LUCENENET-106 (Lucene.NET is leaking memory)
 	- Fix: LUCENENET-116: Ambiguous name "text" in term class when in VB.NET
 	- Fix: LUCENENET-117: Bug in Lucene.Net.Index.DocumentsWriter.AppendPostings when compiled in release-mode
@@ -117,12 +121,12 @@ Apache Lucene.Net History
 
 
 30Apr07:
-	- Patch:  Apache Lucene.Net.2.0 build 005 "final"
+	- Patch:  Apache Lucene.Net.2.0 build 005 "Final"
 	- Fix: LUCENENET-37 "Exception while search in Lucene.Net and Index prepared by Lucene Java"
 
 
 11Mar07:
-	- Release:  Apache Lucene.Net.2.0 build 004 "final"
+	- Release:  Apache Lucene.Net.2.0 build 004 "Final"
 	- Fix: LUCENENET-36 "Countries using "," as decimal separator gets an exception in QueryParser.cs with a query like color~0.5"
 	- Fix: LUCENENET-35 "Tokenizer.Close should check if input is null"
 	- Fix: LUCENENET-33 "Frequent exceptions at Single Parse(String s)" 
@@ -132,7 +136,7 @@ Apache Lucene.Net History
 
 
 27Dec06:
-	- Release:  Apache Lucene.Net.2.0 build 003 "final"
+	- Release:  Apache Lucene.Net.2.0 build 003 "Final"
 	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
 	- Fix: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test now passes
 
@@ -170,7 +174,7 @@ Apache Lucene.Net History
 
 
 09Jul06:
-	- Release:  Apache Lucene.Net.1.9 RC1 build 005 "final"
+	- Release:  Apache Lucene.Net.1.9 RC1 build 005 "Final"
 	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
 	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
 	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value

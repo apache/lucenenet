@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,27 +25,41 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
 	/// Uses <code>FieldCache.DEFAULT</code> for maintaining internal term lookup tables.
+	/// 
+	/// <p>Created: Dec 8, 2003 12:56:03 PM
+	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldSortedHitQueue.java 605225 2007-12-18 15:13:05Z gsingers $
+	/// <version>  $Id: FieldSortedHitQueue.java 803676 2009-08-12 19:31:38Z hossman $
 	/// </version>
 	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 	/// </seealso>
 	/// <seealso cref="FieldCache">
 	/// </seealso>
-	public class FieldSortedHitQueue : PriorityQueue
+	/// <deprecated> see {@link FieldValueHitQueue}
+	/// </deprecated>
+	public class FieldSortedHitQueue:PriorityQueue
 	{
-		internal class AnonymousClassCache : FieldCacheImpl.Cache
+		internal class AnonymousClassCache:FieldCacheImpl.Cache
 		{
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			protected internal override System.Object CreateValue(IndexReader reader, FieldCacheImpl.Entry entryKey)
 			{
 				FieldCacheImpl.Entry entry = (FieldCacheImpl.Entry) entryKey;
 				System.String fieldname = entry.field;
 				int type = entry.type;
 				System.Globalization.CultureInfo locale = entry.locale;
-				SortComparatorSource factory = (SortComparatorSource) entry.custom;
+				Lucene.Net.Search.Parser parser = null;
+				SortComparatorSource factory = null;
+				if (entry.custom is SortComparatorSource)
+				{
+					factory = (SortComparatorSource) entry.custom;
+				}
+				else
+				{
+					parser = (Lucene.Net.Search.Parser) entry.custom;
+				}
 				ScoreDocComparator comparator;
 				switch (type)
 				{
@@ -55,34 +69,34 @@ namespace Lucene.Net.Search
 						break;
 					
 					case SortField.INT: 
-						comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorInt(reader, fieldname);
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorInt(reader, fieldname, (Lucene.Net.Search.IntParser) parser);
 						break;
 					
 					case SortField.FLOAT: 
-						comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorFloat(reader, fieldname);
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorFloat(reader, fieldname, (Lucene.Net.Search.FloatParser) parser);
 						break;
 					
 					case SortField.LONG: 
-						comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorLong(reader, fieldname);
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorLong(reader, fieldname, (Lucene.Net.Search.LongParser) parser);
 						break;
 					
 					case SortField.DOUBLE: 
-						comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorDouble(reader, fieldname);
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorDouble(reader, fieldname, (Lucene.Net.Search.DoubleParser) parser);
 						break;
-
-                    case SortField.SHORT:
-                        comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorShort(reader, fieldname);
-                        break;
-
-                    case SortField.BYTE:
-                        comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorByte(reader, fieldname);
-                        break;
-
-                    case SortField.STRING: 
+					
+					case SortField.SHORT: 
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorShort(reader, fieldname, (Lucene.Net.Search.ShortParser) parser);
+						break;
+					
+					case SortField.BYTE: 
+						comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorByte(reader, fieldname, (Lucene.Net.Search.ByteParser) parser);
+						break;
+					
+					case SortField.STRING: 
 						if (locale != null)
-							comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorStringLocale(reader, fieldname, locale);
+							comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorStringLocale(reader, fieldname, locale);
 						else
-							comparator = Lucene.Net.Search.FieldSortedHitQueue.ComparatorString(reader, fieldname);
+							comparator = Lucene.Net.Search.FieldSortedHitQueue.comparatorString(reader, fieldname);
 						break;
 					
 					case SortField.CUSTOM: 
@@ -98,7 +112,73 @@ namespace Lucene.Net.Search
 		}
 		private class AnonymousClassScoreDocComparator : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator(int[] fieldOrder)
+			public AnonymousClassScoreDocComparator(byte[] fieldOrder)
+			{
+				InitBlock(fieldOrder);
+			}
+			private void  InitBlock(byte[] fieldOrder)
+			{
+				this.fieldOrder = fieldOrder;
+			}
+			private byte[] fieldOrder;
+			
+			public int Compare(ScoreDoc i, ScoreDoc j)
+			{
+				int fi = fieldOrder[i.doc];
+				int fj = fieldOrder[j.doc];
+				if (fi < fj)
+					return - 1;
+				if (fi > fj)
+					return 1;
+				return 0;
+			}
+			
+			public virtual System.IComparable SortValue(ScoreDoc i)
+			{
+				return (byte) fieldOrder[i.doc];
+			}
+			
+			public virtual int SortType()
+			{
+				return SortField.BYTE;
+			}
+		}
+		private class AnonymousClassScoreDocComparator1 : ScoreDocComparator
+		{
+			public AnonymousClassScoreDocComparator1(short[] fieldOrder)
+			{
+				InitBlock(fieldOrder);
+			}
+			private void  InitBlock(short[] fieldOrder)
+			{
+				this.fieldOrder = fieldOrder;
+			}
+			private short[] fieldOrder;
+			
+			public int Compare(ScoreDoc i, ScoreDoc j)
+			{
+				int fi = fieldOrder[i.doc];
+				int fj = fieldOrder[j.doc];
+				if (fi < fj)
+					return - 1;
+				if (fi > fj)
+					return 1;
+				return 0;
+			}
+			
+			public virtual System.IComparable SortValue(ScoreDoc i)
+			{
+				return (short) fieldOrder[i.doc];
+			}
+			
+			public virtual int SortType()
+			{
+				return SortField.SHORT;
+			}
+		}
+		private class AnonymousClassScoreDocComparator2 : ScoreDocComparator
+		{
+			public AnonymousClassScoreDocComparator2(int[] fieldOrder)
 			{
 				InitBlock(fieldOrder);
 			}
@@ -129,9 +209,9 @@ namespace Lucene.Net.Search
 				return SortField.INT;
 			}
 		}
-		private class AnonymousClassScoreDocComparator1 : ScoreDocComparator
+		private class AnonymousClassScoreDocComparator3 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator1(long[] fieldOrder)
+			public AnonymousClassScoreDocComparator3(long[] fieldOrder)
 			{
 				InitBlock(fieldOrder);
 			}
@@ -162,9 +242,9 @@ namespace Lucene.Net.Search
 				return SortField.LONG;
 			}
 		}
-		private class AnonymousClassScoreDocComparator2 : ScoreDocComparator
+		private class AnonymousClassScoreDocComparator4 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator2(float[] fieldOrder)
+			public AnonymousClassScoreDocComparator4(float[] fieldOrder)
 			{
 				InitBlock(fieldOrder);
 			}
@@ -195,9 +275,9 @@ namespace Lucene.Net.Search
 				return SortField.FLOAT;
 			}
 		}
-		private class AnonymousClassScoreDocComparator3 : ScoreDocComparator
+		private class AnonymousClassScoreDocComparator5 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator3(double[] fieldOrder)
+			public AnonymousClassScoreDocComparator5(double[] fieldOrder)
 			{
 				InitBlock(fieldOrder);
 			}
@@ -228,9 +308,9 @@ namespace Lucene.Net.Search
 				return SortField.DOUBLE;
 			}
 		}
-		private class AnonymousClassScoreDocComparator4 : ScoreDocComparator
+		private class AnonymousClassScoreDocComparator6 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator4(Lucene.Net.Search.StringIndex index)
+			public AnonymousClassScoreDocComparator6(Lucene.Net.Search.StringIndex index)
 			{
 				InitBlock(index);
 			}
@@ -242,8 +322,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = index.Order[i.doc];
-				int fj = index.Order[j.doc];
+				int fi = index.order[i.doc];
+				int fj = index.order[j.doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -253,7 +333,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return index.Lookup[index.Order[i.doc]];
+				return index.lookup[index.order[i.doc]];
 			}
 			
 			public virtual int SortType()
@@ -261,9 +341,9 @@ namespace Lucene.Net.Search
 				return SortField.STRING;
 			}
 		}
-		private class AnonymousClassScoreDocComparator5 : ScoreDocComparator
+		private class AnonymousClassScoreDocComparator7 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator5(System.String[] index, System.Globalization.CompareInfo collator)
+			public AnonymousClassScoreDocComparator7(System.String[] index, System.Globalization.CompareInfo collator)
 			{
 				InitBlock(index, collator);
 			}
@@ -279,7 +359,7 @@ namespace Lucene.Net.Search
 			{
 				System.String is_Renamed = index[i.doc];
 				System.String js = index[j.doc];
-				if ((object) is_Renamed == (object) js)
+				if ((System.Object) is_Renamed == (System.Object) js)
 				{
 					return 0;
 				}
@@ -307,68 +387,8 @@ namespace Lucene.Net.Search
 				return SortField.STRING;
 			}
 		}
-
-        private class ByteScoreDocComparator : ScoreDocComparator
-        {
-            public ByteScoreDocComparator(byte[] fieldOrder)
-            {
-                this.fieldOrder = fieldOrder;
-            }
-            private byte[] fieldOrder;
-
-            public int Compare(ScoreDoc i, ScoreDoc j)
-            {
-                byte bi = fieldOrder[i.doc];
-                byte bj = fieldOrder[j.doc];
-                if (bi < bj)
-                    return -1;
-                if (bi > bj)
-                    return 1;
-                return 0;
-            }
-
-            public virtual System.IComparable SortValue(ScoreDoc i)
-            {
-                return fieldOrder[i.doc];
-            }
-
-            public virtual int SortType()
-            {
-                return SortField.BYTE;
-            }
-        }
-
-        private class ShortScoreDocComparator : ScoreDocComparator
-        {
-            public ShortScoreDocComparator(short[] fieldOrder)
-            {
-                this.fieldOrder = fieldOrder;
-            }
-            private short[] fieldOrder;
-
-            public int Compare(ScoreDoc i, ScoreDoc j)
-            {
-                short si = fieldOrder[i.doc];
-                short sj = fieldOrder[j.doc];
-                if (si < sj)
-                    return -1;
-                if (si > sj)
-                    return 1;
-                return 0;
-            }
-
-            public virtual System.IComparable SortValue(ScoreDoc i)
-            {
-                return fieldOrder[i.doc];
-            }
-
-            public virtual int SortType()
-            {
-                return SortField.SHORT;
-            }
-        }
-
-        /// <summary> Creates a hit queue sorted by the given list of fields.</summary>
+		
+		/// <summary> Creates a hit queue sorted by the given list of fields.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
 		/// <param name="fields">Fieldable names, in priority order (highest priority first).  Cannot be <code>null</code> or empty.
@@ -384,15 +404,23 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < n; ++i)
 			{
 				System.String fieldname = fields[i].GetField();
-				comparators[i] = GetCachedComparator(reader, fieldname, fields[i].GetType(), fields[i].GetLocale(), fields[i].GetFactory());
-				
-				if (comparators[i].SortType() == SortField.STRING)
+				comparators[i] = GetCachedComparator(reader, fieldname, fields[i].GetType(), fields[i].GetParser(), fields[i].GetLocale(), fields[i].GetFactory());
+				// new SortField instances must only be created when auto-detection is in use
+				if (fields[i].GetType() == SortField.AUTO)
 				{
-					this.fields[i] = new SortField(fieldname, fields[i].GetLocale(), fields[i].GetReverse());
+					if (comparators[i].SortType() == SortField.STRING)
+					{
+						this.fields[i] = new SortField(fieldname, fields[i].GetLocale(), fields[i].GetReverse());
+					}
+					else
+					{
+						this.fields[i] = new SortField(fieldname, comparators[i].SortType(), fields[i].GetReverse());
+					}
 				}
 				else
 				{
-					this.fields[i] = new SortField(fieldname, comparators[i].SortType(), fields[i].GetReverse());
+					System.Diagnostics.Debug.Assert(comparators [i].SortType() == fields [i].GetType());
+					this.fields[i] = fields[i];
 				}
 			}
 			Initialize(size);
@@ -432,7 +460,7 @@ namespace Lucene.Net.Search
 		// This overrides PriorityQueue.insert() so that insert(FieldDoc) that
 		// keeps track of the score isn't accidentally bypassed.  
 		// inherit javadoc
-		public override bool Insert(object fdoc)
+		public override bool Insert(System.Object fdoc)
 		{
 			return Insert((FieldDoc) fdoc);
 		}
@@ -440,7 +468,7 @@ namespace Lucene.Net.Search
 		// This overrides PriorityQueue.insertWithOverflow() so that
 		// updateMaxScore(FieldDoc) that keeps track of the score isn't accidentally
 		// bypassed.
-		public override object InsertWithOverflow(object element)
+		public override System.Object InsertWithOverflow(System.Object element)
 		{
 			UpdateMaxScore((FieldDoc) element);
 			return base.InsertWithOverflow(element);
@@ -453,7 +481,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 		/// </returns>
-		public override bool LessThan(object a, object b)
+		public override bool LessThan(System.Object a, System.Object b)
 		{
 			ScoreDoc docA = (ScoreDoc) a;
 			ScoreDoc docB = (ScoreDoc) b;
@@ -463,7 +491,7 @@ namespace Lucene.Net.Search
 			int c = 0;
 			for (int i = 0; i < n && c == 0; ++i)
 			{
-				c = (fields[i].reverse) ? comparators[i].Compare(docB, docA) : comparators[i].Compare(docA, docB);
+				c = (fields[i].reverse)?comparators[i].Compare(docB, docA):comparators[i].Compare(docA, docB);
 			}
 			// avoid random sort order that could lead to duplicates (bug #31241):
 			if (c == 0)
@@ -502,13 +530,13 @@ namespace Lucene.Net.Search
 			return fields;
 		}
 		
-		internal static ScoreDocComparator GetCachedComparator(IndexReader reader, System.String field, int type, System.Globalization.CultureInfo locale, SortComparatorSource factory)
+		internal static ScoreDocComparator GetCachedComparator(IndexReader reader, System.String field, int type, Lucene.Net.Search.Parser parser, System.Globalization.CultureInfo locale, SortComparatorSource factory)
 		{
 			if (type == SortField.DOC)
 				return Lucene.Net.Search.ScoreDocComparator_Fields.INDEXORDER;
 			if (type == SortField.SCORE)
 				return Lucene.Net.Search.ScoreDocComparator_Fields.RELEVANCE;
-			FieldCacheImpl.Entry entry = (factory != null) ? new FieldCacheImpl.Entry(field, factory) : new FieldCacheImpl.Entry(field, type, locale);
+			FieldCacheImpl.Entry entry = (factory != null)?new FieldCacheImpl.Entry(field, factory):((parser != null)?new FieldCacheImpl.Entry(field, type, parser):new FieldCacheImpl.Entry(field, type, locale));
 			return (ScoreDocComparator) Comparators.Get(reader, entry);
 		}
 		
@@ -517,120 +545,126 @@ namespace Lucene.Net.Search
 		/// </summary>
 		internal static readonly FieldCacheImpl.Cache Comparators;
 		
-		/// <summary> Returns a comparator for sorting hits according to a field containing integers.</summary>
+		/// <summary> Returns a comparator for sorting hits according to a field containing bytes.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg integer values.
+		/// <param name="fieldname"> Fieldable containing integer values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
 		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorInt(IndexReader reader, System.String fieldname)
+		internal static ScoreDocComparator comparatorByte(IndexReader reader, System.String fieldname, Lucene.Net.Search.ByteParser parser)
 		{
 			System.String field = String.Intern(fieldname);
-			int[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetInts(reader, field);
+			byte[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, parser);
 			return new AnonymousClassScoreDocComparator(fieldOrder);
+		}
+		
+		/// <summary> Returns a comparator for sorting hits according to a field containing shorts.</summary>
+		/// <param name="reader"> Index to use.
+		/// </param>
+		/// <param name="fieldname"> Fieldable containing integer values.
+		/// </param>
+		/// <returns>  Comparator for sorting hits.
+		/// </returns>
+		/// <throws>  IOException If an error occurs reading the index. </throws>
+		internal static ScoreDocComparator comparatorShort(IndexReader reader, System.String fieldname, Lucene.Net.Search.ShortParser parser)
+		{
+			System.String field = String.Intern(fieldname);
+			short[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetShorts(reader, field, parser);
+			return new AnonymousClassScoreDocComparator1(fieldOrder);
 		}
 		
 		/// <summary> Returns a comparator for sorting hits according to a field containing integers.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg integer values.
+		/// <param name="fieldname"> Fieldable containing integer values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
 		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorLong(IndexReader reader, System.String fieldname)
+		internal static ScoreDocComparator comparatorInt(IndexReader reader, System.String fieldname, Lucene.Net.Search.IntParser parser)
 		{
 			System.String field = String.Intern(fieldname);
-			long[] fieldOrder = Lucene.Net.Search.ExtendedFieldCache_Fields.EXT_DEFAULT.GetLongs(reader, field);
-			return new AnonymousClassScoreDocComparator1(fieldOrder);
+			int[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetInts(reader, field, parser);
+			return new AnonymousClassScoreDocComparator2(fieldOrder);
+		}
+		
+		/// <summary> Returns a comparator for sorting hits according to a field containing integers.</summary>
+		/// <param name="reader"> Index to use.
+		/// </param>
+		/// <param name="fieldname"> Fieldable containing integer values.
+		/// </param>
+		/// <returns>  Comparator for sorting hits.
+		/// </returns>
+		/// <throws>  IOException If an error occurs reading the index. </throws>
+		internal static ScoreDocComparator comparatorLong(IndexReader reader, System.String fieldname, Lucene.Net.Search.LongParser parser)
+		{
+			System.String field = String.Intern(fieldname);
+			long[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetLongs(reader, field, parser);
+			return new AnonymousClassScoreDocComparator3(fieldOrder);
 		}
 		
 		
 		/// <summary> Returns a comparator for sorting hits according to a field containing floats.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg float values.
+		/// <param name="fieldname"> Fieldable containing float values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
 		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorFloat(IndexReader reader, System.String fieldname)
+		internal static ScoreDocComparator comparatorFloat(IndexReader reader, System.String fieldname, Lucene.Net.Search.FloatParser parser)
 		{
 			System.String field = String.Intern(fieldname);
-			float[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetFloats(reader, field);
-			return new AnonymousClassScoreDocComparator2(fieldOrder);
+			float[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetFloats(reader, field, parser);
+			return new AnonymousClassScoreDocComparator4(fieldOrder);
 		}
 		
 		/// <summary> Returns a comparator for sorting hits according to a field containing doubles.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg float values.
+		/// <param name="fieldname"> Fieldable containing float values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
 		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorDouble(IndexReader reader, System.String fieldname)
+		internal static ScoreDocComparator comparatorDouble(IndexReader reader, System.String fieldname, Lucene.Net.Search.DoubleParser parser)
 		{
 			System.String field = String.Intern(fieldname);
-			double[] fieldOrder = Lucene.Net.Search.ExtendedFieldCache_Fields.EXT_DEFAULT.GetDoubles(reader, field);
-			return new AnonymousClassScoreDocComparator3(fieldOrder);
-		}
-
-        /// <summary> Returns a comparator for sorting hits according to a field containing shorts.</summary>
-        /// <param name="reader"> Index to use.</param>
-        /// <param name="fieldname"> Fieldable containg short values.</param>
-        /// <returns>  Comparator for sorting hits.</returns>
-        /// <throws>  IOException If an error occurs reading the index. </throws>
-        internal static ScoreDocComparator ComparatorShort(IndexReader reader, System.String fieldname)
-        {
-            System.String field = String.Intern(fieldname);
-            short[] fieldOrder = Lucene.Net.Search.ExtendedFieldCache_Fields.EXT_DEFAULT.GetShorts(reader, field);
-            return new ShortScoreDocComparator(fieldOrder);
-        }
-
-        /// <summary> Returns a comparator for sorting hits according to a field containing bytes.</summary>
-        /// <param name="reader"> Index to use.</param>
-        /// <param name="fieldname"> Fieldable containg byte values.</param>
-        /// <returns>  Comparator for sorting hits.</returns>
-        /// <throws>  IOException If an error occurs reading the index. </throws>
-        internal static ScoreDocComparator ComparatorByte(IndexReader reader, System.String fieldname)
-        {
-            System.String field = String.Intern(fieldname);
-            byte[] fieldOrder = Lucene.Net.Search.ExtendedFieldCache_Fields.EXT_DEFAULT.GetBytes(reader, field);
-            return new ByteScoreDocComparator(fieldOrder);
-        }
-
-        /// <summary> Returns a comparator for sorting hits according to a field containing strings.</summary>
-		/// <param name="reader"> Index to use.
-		/// </param>
-		/// <param name="fieldname"> Fieldable containg string values.
-		/// </param>
-		/// <returns>  Comparator for sorting hits.
-		/// </returns>
-		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorString(IndexReader reader, System.String fieldname)
-		{
-			System.String field = String.Intern(fieldname);
-			Lucene.Net.Search.StringIndex index = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
-			return new AnonymousClassScoreDocComparator4(index);
+			double[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetDoubles(reader, field, parser);
+			return new AnonymousClassScoreDocComparator5(fieldOrder);
 		}
 		
 		/// <summary> Returns a comparator for sorting hits according to a field containing strings.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg string values.
+		/// <param name="fieldname"> Fieldable containing string values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
 		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator ComparatorStringLocale(IndexReader reader, System.String fieldname, System.Globalization.CultureInfo locale)
+		internal static ScoreDocComparator comparatorString(IndexReader reader, System.String fieldname)
+		{
+			System.String field = String.Intern(fieldname);
+			Lucene.Net.Search.StringIndex index = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
+			return new AnonymousClassScoreDocComparator6(index);
+		}
+		
+		/// <summary> Returns a comparator for sorting hits according to a field containing strings.</summary>
+		/// <param name="reader"> Index to use.
+		/// </param>
+		/// <param name="fieldname"> Fieldable containing string values.
+		/// </param>
+		/// <returns>  Comparator for sorting hits.
+		/// </returns>
+		/// <throws>  IOException If an error occurs reading the index. </throws>
+		internal static ScoreDocComparator comparatorStringLocale(IndexReader reader, System.String fieldname, System.Globalization.CultureInfo locale)
 		{
 			System.Globalization.CompareInfo collator = locale.CompareInfo;
 			System.String field = String.Intern(fieldname);
 			System.String[] index = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStrings(reader, field);
-			return new AnonymousClassScoreDocComparator5(index, collator);
+			return new AnonymousClassScoreDocComparator7(index, collator);
 		}
 		
 		/// <summary> Returns a comparator for sorting hits according to values in the given field.
@@ -640,7 +674,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fieldname"> Fieldable containg values.
+		/// <param name="fieldname"> Fieldable containing values.
 		/// </param>
 		/// <returns>  Comparator for sorting hits.
 		/// </returns>
@@ -648,26 +682,26 @@ namespace Lucene.Net.Search
 		internal static ScoreDocComparator ComparatorAuto(IndexReader reader, System.String fieldname)
 		{
 			System.String field = String.Intern(fieldname);
-			object lookupArray = Lucene.Net.Search.ExtendedFieldCache_Fields.EXT_DEFAULT.GetAuto(reader, field);
+			System.Object lookupArray = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetAuto(reader, field);
 			if (lookupArray is Lucene.Net.Search.StringIndex)
 			{
-				return ComparatorString(reader, field);
+				return comparatorString(reader, field);
 			}
 			else if (lookupArray is int[])
 			{
-				return ComparatorInt(reader, field);
+				return comparatorInt(reader, field, null);
 			}
 			else if (lookupArray is long[])
 			{
-				return ComparatorLong(reader, field);
+				return comparatorLong(reader, field, null);
 			}
 			else if (lookupArray is float[])
 			{
-				return ComparatorFloat(reader, field);
+				return comparatorFloat(reader, field, null);
 			}
 			else if (lookupArray is System.String[])
 			{
-				return ComparatorString(reader, field);
+				return comparatorString(reader, field);
 			}
 			else
 			{

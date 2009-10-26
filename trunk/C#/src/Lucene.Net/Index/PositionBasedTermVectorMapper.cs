@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	/// <p/>
 	/// This is not thread-safe.
 	/// </summary>
-	public class PositionBasedTermVectorMapper : TermVectorMapper
+	public class PositionBasedTermVectorMapper:TermVectorMapper
 	{
 		private System.Collections.IDictionary fieldToTerms;
 		
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 					pos = new TVPositionInfo(positions[i], storeOffsets);
 					currentPositions[posVal] = pos;
 				}
-				pos.AddTerm(term, offsets != null?offsets[i]:null);
+				pos.addTerm(term, offsets != null?offsets[i]:null);
 			}
 		}
 		
@@ -118,6 +118,39 @@ namespace Lucene.Net.Index
 		/// <summary> Container for a term at a position</summary>
 		public class TVPositionInfo
 		{
+			/// <summary> </summary>
+			/// <returns> The position of the term
+			/// </returns>
+			virtual public int Position
+			{
+				get
+				{
+					return position;
+				}
+				
+			}
+			/// <summary> Note, there may be multiple terms at the same position</summary>
+			/// <returns> A List of Strings
+			/// </returns>
+			virtual public System.Collections.IList Terms
+			{
+				get
+				{
+					return terms;
+				}
+				
+			}
+			/// <summary> Parallel list (to {@link #getTerms()}) of TermVectorOffsetInfo objects.  There may be multiple entries since there may be multiple terms at a position</summary>
+			/// <returns> A List of TermVectorOffsetInfo objects, if offsets are store.
+			/// </returns>
+			virtual public System.Collections.IList Offsets
+			{
+				get
+				{
+					return offsets;
+				}
+				
+			}
 			private int position;
 			//a list of Strings
 			private System.Collections.IList terms;
@@ -135,37 +168,13 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			internal virtual void  AddTerm(System.String term, TermVectorOffsetInfo info)
+			internal virtual void  addTerm(System.String term, TermVectorOffsetInfo info)
 			{
 				terms.Add(term);
 				if (offsets != null)
 				{
 					offsets.Add(info);
 				}
-			}
-			
-			/// <summary> </summary>
-			/// <returns> The position of the term
-			/// </returns>
-			public virtual int GetPosition()
-			{
-				return position;
-			}
-			
-			/// <summary> Note, there may be multiple terms at the same position</summary>
-			/// <returns> A List of Strings
-			/// </returns>
-			public virtual System.Collections.IList GetTerms()
-			{
-				return terms;
-			}
-			
-			/// <summary> Parallel list (to {@link #GetTerms()}) of TermVectorOffsetInfo objects.  There may be multiple entries since there may be multiple terms at a position</summary>
-			/// <returns> A List of TermVectorOffsetInfo objects, if offsets are store.
-			/// </returns>
-			public virtual System.Collections.IList GetOffsets()
-			{
-				return offsets;
 			}
 		}
 	}

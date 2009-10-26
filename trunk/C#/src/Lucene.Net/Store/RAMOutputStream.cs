@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,10 +23,12 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexOutput} implementation.
 	/// 
 	/// </summary>
+	/// <version>  $Id: RAMOutputStream.java 691694 2008-09-03 17:34:29Z mikemccand $
+	/// </version>
+	
 	public class RAMOutputStream:IndexOutput
 	{
 		internal const int BUFFER_SIZE = 1024;
-        public const int BUFFER_SIZE_ForNUnitTest = BUFFER_SIZE;
 		
 		private RAMFile file;
 		
@@ -42,7 +44,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		public /*internal*/ RAMOutputStream(RAMFile f)
+		internal RAMOutputStream(RAMFile f)
 		{
 			file = f;
 			
@@ -125,8 +127,7 @@ namespace Lucene.Net.Store
 		
 		public override void  WriteBytes(byte[] b, int offset, int len)
 		{
-            System.Diagnostics.Debug.Assert(b != null);
-
+			System.Diagnostics.Debug.Assert(b != null);
 			while (len > 0)
 			{
 				if (bufferPosition == bufferLength)
@@ -136,7 +137,7 @@ namespace Lucene.Net.Store
 				}
 				
 				int remainInBuffer = currentBuffer.Length - bufferPosition;
-				int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
+				int bytesToCopy = len < remainInBuffer?len:remainInBuffer;
 				Array.Copy(b, offset, currentBuffer, bufferPosition, bytesToCopy);
 				offset += bytesToCopy;
 				len -= bytesToCopy;
@@ -170,7 +171,7 @@ namespace Lucene.Net.Store
 		
 		public override void  Flush()
 		{
-			file.SetLastModified((System.DateTime.Now.Ticks - 621355968000000000) / 10000);
+			file.SetLastModified(System.DateTime.Now.Millisecond);
 			SetFileLength();
 		}
 		
@@ -178,14 +179,11 @@ namespace Lucene.Net.Store
 		{
 			return currentBufferIndex < 0?0:bufferStart + bufferPosition;
 		}
-
-        /// <summary>
-        /// Returns the byte usage of all buffers.
-        /// </summary>
-        /// <returns></returns>
-        public long SizeInBytes()
-        {
-            return file.NumBuffers() * BUFFER_SIZE;
-        }
+		
+		/// <summary>Returns byte usage of all buffers. </summary>
+		public virtual long SizeInBytes()
+		{
+			return file.NumBuffers() * BUFFER_SIZE;
+		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 		/// By default, an Explanation represents a "match" if the value is positive.
 		/// </p>
 		/// </summary>
-		/// <seealso cref="GetValue">
+		/// <seealso cref="getValue">
 		/// </seealso>
 		public virtual bool IsMatch()
 		{
@@ -150,6 +150,27 @@ namespace Lucene.Net.Search
 			buffer.Append("</ul>\n");
 			
 			return buffer.ToString();
+		}
+		
+		/// <summary> Small Util class used to pass both an idf factor as well as an
+		/// explanation for that factor.
+		/// 
+		/// This class will likely be held on a {@link Weight}, so be aware 
+		/// before storing any large or un-serializable fields.
+		/// 
+		/// </summary>
+		[Serializable]
+		public abstract class IDFExplanation
+		{
+			/// <returns> the idf factor
+			/// </returns>
+			public abstract float GetIdf();
+			/// <summary> This should be calculated lazily if possible.
+			/// 
+			/// </summary>
+			/// <returns> the explanation for the idf factor.
+			/// </returns>
+			public abstract System.String Explain();
 		}
 	}
 }

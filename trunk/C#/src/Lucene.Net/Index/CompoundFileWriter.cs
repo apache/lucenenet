@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,7 +46,9 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	public sealed class CompoundFileWriter
+	/// <version>  $Id: CompoundFileWriter.java 690539 2008-08-30 17:33:06Z mikemccand $
+	/// </version>
+	sealed class CompoundFileWriter
 	{
 		
 		private sealed class FileEntry
@@ -64,7 +66,7 @@ namespace Lucene.Net.Index
 		
 		private Directory directory;
 		private System.String fileName;
-		private System.Collections.Hashtable ids;
+        private System.Collections.Hashtable ids;
 		private System.Collections.ArrayList entries;
 		private bool merged = false;
 		private SegmentMerger.CheckAbort checkAbort;
@@ -73,7 +75,7 @@ namespace Lucene.Net.Index
 		/// entire name (no extensions are added).
 		/// </summary>
 		/// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
-		public CompoundFileWriter(Directory dir, System.String name) : this(dir, name, null)
+		public CompoundFileWriter(Directory dir, System.String name):this(dir, name, null)
 		{
 		}
 		
@@ -86,7 +88,7 @@ namespace Lucene.Net.Index
 			this.checkAbort = checkAbort;
 			directory = dir;
 			fileName = name;
-			ids = new System.Collections.Hashtable();
+            ids = new System.Collections.Hashtable();
 			entries = new System.Collections.ArrayList();
 		}
 		
@@ -119,14 +121,14 @@ namespace Lucene.Net.Index
 			if (file == null)
 				throw new System.NullReferenceException("file cannot be null");
 			
-			try
-			{
-				ids.Add(file, file);
-			}
-			catch (Exception)
-			{
+            try
+            {
+                ids.Add(file, file);
+            }
+            catch (Exception)
+            {
 				throw new System.ArgumentException("File " + file + " already added");
-			}
+            }
 			
 			FileEntry entry = new FileEntry();
 			entry.file = file;
@@ -164,25 +166,25 @@ namespace Lucene.Net.Index
 				// Remember the positions of directory entries so that we can
 				// adjust the offsets later
 				System.Collections.IEnumerator it = entries.GetEnumerator();
-                long totalSize = 0;
+				long totalSize = 0;
 				while (it.MoveNext())
 				{
 					FileEntry fe = (FileEntry) it.Current;
 					fe.directoryOffset = os.GetFilePointer();
 					os.WriteLong(0); // for now
 					os.WriteString(fe.file);
-                    totalSize += directory.FileLength(fe.file);
+					totalSize += directory.FileLength(fe.file);
 				}
 				
-                // Pre-allocate size of file as optimization --
-                // this can potentially help IO performances as
-                // we write the file and also later during
-                // searchin.  It also uncovers a disk-full
-                // situation earlier and hopefully without
-                // actually filling disk to 100%:
-                long finalLength = totalSize + os.GetFilePointer();
-                os.SetLength(finalLength);
-
+				// Pre-allocate size of file as optimization --
+				// this can potentially help IO performance as
+				// we write the file and also later during
+				// searching.  It also uncovers a disk-full
+				// situation earlier and hopefully without
+				// actually filling disk to 100%:
+				long finalLength = totalSize + os.GetFilePointer();
+				os.SetLength(finalLength);
+				
 				// Open the files and copy their data into the stream.
 				// Remember the locations of each file's data section.
 				byte[] buffer = new byte[16384];
@@ -202,9 +204,9 @@ namespace Lucene.Net.Index
 					os.Seek(fe.directoryOffset);
 					os.WriteLong(fe.dataOffset);
 				}
-
-                System.Diagnostics.Debug.Assert(finalLength == os.Length());
-
+				
+				System.Diagnostics.Debug.Assert(finalLength == os.Length());
+				
 				// Close the output stream. Set the os to null before trying to
 				// close so that if an exception occurs during the close, the
 				// finally clause below will not attempt to close the stream
@@ -220,7 +222,7 @@ namespace Lucene.Net.Index
 					{
 						os.Close();
 					}
-					catch (System.IO.IOException)
+					catch (System.IO.IOException e)
 					{
 					}
 			}

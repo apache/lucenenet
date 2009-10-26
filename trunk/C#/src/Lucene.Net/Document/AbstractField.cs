@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,15 @@
 
 using System;
 
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using StringHelper = Lucene.Net.Util.StringHelper;
+using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+
 namespace Lucene.Net.Documents
 {
+	
+	
 	/// <summary> 
 	/// 
 	/// 
@@ -38,13 +45,15 @@ namespace Lucene.Net.Documents
 		protected internal bool isBinary = false;
 		protected internal bool isCompressed = false;
 		protected internal bool lazy = false;
-        protected internal bool omitTf = false;
-        protected internal float boost = 1.0f;
-		// the one and only data object for all different kind of field values
-		protected internal object fieldsData = null;
-        // length/offset for all primitive types
-        protected int binaryLength;
-        protected int binaryOffset;
+		protected internal bool omitTermFreqAndPositions = false;
+		protected internal float boost = 1.0f;
+		// the data object for all different kind of field values
+		protected internal System.Object fieldsData = null;
+		// pre-analyzed tokenStream for indexed fields
+		protected internal TokenStream tokenStream;
+		// length/offset for all primitive types
+		protected internal int binaryLength;
+		protected internal int binaryOffset;
 		
 		protected internal AbstractField()
 		{
@@ -54,7 +63,7 @@ namespace Lucene.Net.Documents
 		{
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");
-			this.name = String.Intern(name); // field names are interned
+			this.name = StringHelper.Intern(name); // field names are interned
 			
 			if (store == Field.Store.YES)
 			{
@@ -86,24 +95,24 @@ namespace Lucene.Net.Documents
 				this.isIndexed = true;
 				this.isTokenized = true;
 			}
-            else if (index == Field.Index.NOT_ANALYZED)
+			else if (index == Field.Index.NOT_ANALYZED)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 			}
-            else if (index == Field.Index.NOT_ANALYZED_NO_NORMS)
+			else if (index == Field.Index.NOT_ANALYZED_NO_NORMS)
 			{
 				this.isIndexed = true;
 				this.isTokenized = false;
 				this.omitNorms = true;
 			}
-            else if (index == Field.Index.ANALYZED_NO_NORMS)
-            {
-                this.isIndexed = true;
-                this.isTokenized = false;
-                this.omitNorms = true;
-            }
-            else
+			else if (index == Field.Index.ANALYZED_NO_NORMS)
+			{
+				this.isIndexed = true;
+				this.isTokenized = true;
+				this.omitNorms = true;
+			}
+			else
 			{
 				throw new System.ArgumentException("unknown index parameter " + index);
 			}
@@ -120,17 +129,23 @@ namespace Lucene.Net.Documents
 		/// <p>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
-		/// multipled by the value {@link Lucene.Net.Search.Similarity#LengthNorm(String,int)}, and
+		/// used to compute the norm factor for the field.  By
+		/// default, in the {@link
+		/// Lucene.Net.Search.Similarity#ComputeNorm(String,
+		/// FieldInvertState)} method, the boost value is multipled
+		/// by the {@link
+		/// Lucene.Net.Search.Similarity#LengthNorm(String,
+		/// int)} and then
 		/// rounded by {@link Lucene.Net.Search.Similarity#EncodeNorm(float)} before it is stored in the
 		/// index.  One should attempt to ensure that this product does not overflow
 		/// the range of that encoding.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Document#SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Document.SetBoost(float)">
 		/// </seealso>
-		/// <seealso cref="int)">
+		/// <seealso cref="Lucene.Net.Search.Similarity.ComputeNorm(String, Lucene.Net.Index.FieldInvertState)">
 		/// </seealso>
-		/// <seealso cref="Lucene.Net.Search.Similarity#EncodeNorm(float)">
+		/// <seealso cref="Lucene.Net.Search.Similarity.EncodeNorm(float)">
 		/// </seealso>
 		public virtual void  SetBoost(float boost)
 		{
@@ -147,7 +162,7 @@ namespace Lucene.Net.Documents
 		/// this field was indexed.
 		/// 
 		/// </summary>
-		/// <seealso cref="#SetBoost(float)">
+		/// <seealso cref="SetBoost(float)">
 		/// </seealso>
 		public virtual float GetBoost()
 		{
@@ -239,7 +254,7 @@ namespace Lucene.Net.Documents
 		/// preserved, use the <code>stored</code> attribute instead.
 		/// 
 		/// </summary>
-		/// <seealso cref="String)">
+		/// <seealso cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int, String)">
 		/// </seealso>
 		public bool IsTermVectorStored()
 		{
@@ -247,7 +262,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> True iff terms are stored as term vector together with their offsets 
-		/// (start and end positon in source text).
+		/// (start and end position in source text).
 		/// </summary>
 		public virtual bool IsStoreOffsetWithTermVector()
 		{
@@ -265,71 +280,79 @@ namespace Lucene.Net.Documents
 		{
 			return isBinary;
 		}
-
-        /// <summary>
-        /// Return the raw byte[] for the binary field.  Note that
-        /// you must also call {@link #GetBinaryLength} and
-        /// {@link #GetBinaryOffset} to know which range of bytes in 
-        /// this returned array belong to the field.
-        /// </summary>
-        /// <returns>reference to the field value as byte[]</returns>
-        public byte[] GetBinaryValue()
-        {
-            return GetBinaryValue(null);
-        }
-
-        public virtual byte[] GetBinaryValue(byte[] result)
-        {
-            if (isBinary || fieldsData is byte[])
-                return (byte[])fieldsData;
-            else
-                return null;
-        }
-
-        /// <summary>
-        /// Returns the length of byte[] segment that is used as value.
-        /// If Field is not binary returned value is undefined.
-        /// </summary>
-        /// <returns>length of byte[] segment that represents this Field value</returns>
-        public int GetBinaryLength()
-        {
-            if (isBinary)
-                if (!isCompressed)
-                    return binaryLength;
-                else
-                    return ((byte[])fieldsData).Length;
-            else if (fieldsData is byte[])
-                return ((byte[])fieldsData).Length;
-            else
-                return 0;
-        }
-
-        /// <summary>
-        /// Returns offset into byte[] segment that is used as value.
-        /// If Field is not binary returned value is undefined.
-        /// </summary>
-        /// <returns>index of the byte[] segment that represents this Field value</returns>
-        public int GetBinaryOffset()
-        {
-            return binaryOffset;
-        }
-
-        /// <summary>True if norms are omitted for this indexed field </summary>
-        public virtual bool GetOmitNorms()
+		
+		
+		/// <summary> Return the raw byte[] for the binary field.  Note that
+		/// you must also call {@link #getBinaryLength} and {@link
+		/// #getBinaryOffset} to know which range of bytes in this
+		/// returned array belong to the field.
+		/// </summary>
+		/// <returns> reference to the Field value as byte[].
+		/// </returns>
+		public virtual byte[] GetBinaryValue()
+		{
+			return GetBinaryValue(null);
+		}
+		
+		public virtual byte[] GetBinaryValue(byte[] result)
+		{
+			if (isBinary || fieldsData is byte[])
+				return (byte[]) fieldsData;
+			else
+				return null;
+		}
+		
+		/// <summary> Returns length of byte[] segment that is used as value, if Field is not binary
+		/// returned value is undefined
+		/// </summary>
+		/// <returns> length of byte[] segment that represents this Field value
+		/// </returns>
+		public virtual int GetBinaryLength()
+		{
+			if (isBinary)
+			{
+				if (!isCompressed)
+					return binaryLength;
+				else
+					return ((byte[]) fieldsData).Length;
+			}
+			else if (fieldsData is byte[])
+				return ((byte[]) fieldsData).Length;
+			else
+				return 0;
+		}
+		
+		/// <summary> Returns offset into byte[] segment that is used as value, if Field is not binary
+		/// returned value is undefined
+		/// </summary>
+		/// <returns> index of the first character in byte[] segment that represents this Field value
+		/// </returns>
+		public virtual int GetBinaryOffset()
+		{
+			return binaryOffset;
+		}
+		
+		/// <summary>True if norms are omitted for this indexed field </summary>
+		public virtual bool GetOmitNorms()
 		{
 			return omitNorms;
 		}
-
-        /// <summary>
-        /// Returns true if tf is omitted for this indexed field.
-        /// </summary>
-        /// <returns>true if tf is omitted for this indexed field</returns>
-        public virtual bool GetOmitTf()
-        {
-            return omitTf;
-        }
-
-        /// <summary>Expert:
+		
+		/// <deprecated> Renamed to {@link #getOmitTermFreqAndPositions} 
+		/// </deprecated>
+		public virtual bool GetOmitTf()
+		{
+			return omitTermFreqAndPositions;
+		}
+		
+		/// <seealso cref="setOmitTermFreqAndPositions">
+		/// </seealso>
+		public virtual bool GetOmitTermFreqAndPositions()
+		{
+			return omitTermFreqAndPositions;
+		}
+		
+		/// <summary>Expert:
 		/// 
 		/// If set, omit normalization factors associated with this indexed field.
 		/// This effectively disables indexing boosts and length normalization for this field.
@@ -338,17 +361,31 @@ namespace Lucene.Net.Documents
 		{
 			this.omitNorms = omitNorms;
 		}
-
-        /// <summary>
-        /// Expert: If set, omit tf from postings of this indexed field.
-        /// </summary>
-        /// <param name="omitTf"></param>
-        public void SetOmitTf(bool omitTf)
-        {
-            this.omitTf = omitTf;
-        }
-
-        public virtual bool IsLazy()
+		
+		/// <deprecated> Renamed to {@link #setOmitTermFreqAndPositions} 
+		/// </deprecated>
+		public virtual void  SetOmitTf(bool omitTermFreqAndPositions)
+		{
+			this.omitTermFreqAndPositions = omitTermFreqAndPositions;
+		}
+		
+		/// <summary>Expert:
+		/// 
+		/// If set, omit term freq, positions and payloads from
+		/// postings for this field.
+		/// 
+		/// <p><b>NOTE</b>: While this option reduces storage space
+		/// required in the index, it also means any query
+		/// requiring positional information, such as {@link
+		/// PhraseQuery} or {@link SpanQuery} subclasses will
+		/// silently fail to find results.
+		/// </summary>
+		public virtual void  SetOmitTermFreqAndPositions(bool omitTermFreqAndPositions)
+		{
+			this.omitTermFreqAndPositions = omitTermFreqAndPositions;
+		}
+		
+		public virtual bool IsLazy()
 		{
 			return lazy;
 		}
@@ -405,11 +442,11 @@ namespace Lucene.Net.Documents
 			{
 				result.Append(",omitNorms");
 			}
-            if (omitTf)
-            {
-                result.Append(",omitTf");
-            }
-            if (lazy)
+			if (omitTermFreqAndPositions)
+			{
+				result.Append(",omitTermFreqAndPositions");
+			}
+			if (lazy)
 			{
 				result.Append(",lazy");
 			}
@@ -425,9 +462,9 @@ namespace Lucene.Net.Documents
 			result.Append('>');
 			return result.ToString();
 		}
-		public abstract byte[] BinaryValue();
-		public abstract System.IO.TextReader ReaderValue();
-		public abstract System.String StringValue();
 		public abstract Lucene.Net.Analysis.TokenStream TokenStreamValue();
+		public abstract System.IO.StreamReader ReaderValue();
+		public abstract System.String StringValue();
+		public abstract byte[] BinaryValue();
 	}
 }

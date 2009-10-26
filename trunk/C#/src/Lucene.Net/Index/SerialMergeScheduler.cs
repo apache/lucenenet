@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	/// <summary>A {@link MergeScheduler} that simply does each merge
 	/// sequentially, using the current thread. 
 	/// </summary>
-	public class SerialMergeScheduler : MergeScheduler
+	public class SerialMergeScheduler:MergeScheduler
 	{
 		
 		/// <summary>Just do the merges in sequence. We do this

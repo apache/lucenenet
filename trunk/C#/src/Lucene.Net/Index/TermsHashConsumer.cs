@@ -1,13 +1,13 @@
-/**
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,24 +15,25 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
 namespace Lucene.Net.Index
 {
-    internal abstract class TermsHashConsumer
-    {
-        internal abstract int bytesPerPosting();
-        internal abstract void createPostings(RawPostingList[] postings, int start, int count);
-        internal abstract TermsHashConsumerPerThread addThread(TermsHashPerThread perThread);
-        internal abstract void flush(IDictionary<object, object> threadsAndFields, DocumentsWriter.FlushState state);
-        internal abstract void Abort();
-        internal abstract void closeDocStore(DocumentsWriter.FlushState state);
-
-        internal FieldInfos fieldInfos;
-
-        internal void setFieldInfos(FieldInfos fieldInfos)
-        {
-            this.fieldInfos = fieldInfos;
-        }
-    }
+	
+	abstract class TermsHashConsumer
+	{
+		internal abstract int BytesPerPosting();
+		internal abstract void  CreatePostings(RawPostingList[] postings, int start, int count);
+		public abstract TermsHashConsumerPerThread AddThread(TermsHashPerThread perThread);
+		public abstract void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state);
+		public abstract void  Abort();
+		internal abstract void  CloseDocStore(SegmentWriteState state);
+		
+		internal FieldInfos fieldInfos;
+		
+		internal virtual void  SetFieldInfos(FieldInfos fieldInfos)
+		{
+			this.fieldInfos = fieldInfos;
+		}
+	}
 }

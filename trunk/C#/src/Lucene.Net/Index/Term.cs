@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using StringHelper = Lucene.Net.Util.StringHelper;
+
 namespace Lucene.Net.Index
 {
 	
@@ -32,35 +34,31 @@ namespace Lucene.Net.Index
 	{
 		internal System.String field;
 		internal System.String text;
-
-        // For testing only
-        public System.String text_ForNUnitTest
-        {
-            get { return text; }
-        }
-
+		
 		/// <summary>Constructs a Term with the given field and text.
 		/// <p>Note that a null field or null text value results in undefined
 		/// behavior for most Lucene APIs that accept a Term parameter. 
 		/// </summary>
-		public Term(System.String fld, System.String txt) : this(fld, txt, true)
+		public Term(System.String fld, System.String txt)
+		{
+			field = StringHelper.Intern(fld);
+			text = txt;
+		}
+		
+		/// <summary>Constructs a Term with the given field and empty text.
+		/// This serves two purposes: 1) reuse of a Term with the same field.
+		/// 2) pattern for a query.
+		/// 
+		/// </summary>
+		/// <param name="fld">
+		/// </param>
+		public Term(System.String fld):this(fld, "", true)
 		{
 		}
-
-        /// <summary>Constructs a Term with the given field and empty text.
-        /// This serves 2 purposes:
-        /// 1) reuse of a Term with the same field
-        /// 2) pattern for a query
-        /// </summary>
-        /// <param name="fld"/>
-        public Term(System.String fld)
-            : this(fld, "", true)
-        {
-        }
-
+		
 		internal Term(System.String fld, System.String txt, bool intern)
 		{
-			field = intern ? String.Intern(fld) : fld; // field names are interned
+			field = intern?StringHelper.Intern(fld):fld; // field names are interned
 			text = txt; // unless already known to be
 		}
 		
@@ -93,28 +91,44 @@ namespace Lucene.Net.Index
 			return new Term(field, text, false);
 		}
 		
-		/// <summary>Compares two terms, returning true iff they have the same
-		/// field and text. 
-		/// </summary>
-		public  override bool Equals(object o)
+		//@Override
+		public  override bool Equals(System.Object obj)
 		{
-			if (o == this)
+			if (this == obj)
 				return true;
-			if (o == null)
+			if (obj == null)
 				return false;
-			if (!(o is Term))
+			if (GetType() != obj.GetType())
 				return false;
-			Term other = (Term) o;
-			return field == other.field && text.Equals(other.text);
+			Term other = (Term) obj;
+			if (field == null)
+			{
+				if (other.field != null)
+					return false;
+			}
+			else if (!field.Equals(other.field))
+				return false;
+			if (text == null)
+			{
+				if (other.text != null)
+					return false;
+			}
+			else if (!text.Equals(other.text))
+				return false;
+			return true;
 		}
 		
-		/// <summary>Combines the hashCode() of the field and the text. </summary>
+		//@Override
 		public override int GetHashCode()
 		{
-			return field.GetHashCode() + text.GetHashCode();
+			int prime = 31;
+			int result = 1;
+			result = prime * result + ((field == null)?0:field.GetHashCode());
+			result = prime * result + ((text == null)?0:text.GetHashCode());
+			return result;
 		}
 		
-		public int CompareTo(object other)
+		public int CompareTo(System.Object other)
 		{
 			return CompareTo((Term) other);
 		}
@@ -126,7 +140,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public int CompareTo(Term other)
 		{
-			if (field == other.field)
+			if ((System.Object) field == (System.Object) other.field)
 			// fields are interned
 				return String.CompareOrdinal(text, other.text);
 			else
@@ -145,6 +159,12 @@ namespace Lucene.Net.Index
 			return field + ":" + text;
 		}
 		
+//		private void  ReadObject(System.IO.BinaryReader in_Renamed)
+//		{
+//			in_Renamed.defaultReadObject();
+//			field = StringHelper.Intern(field);
+//		}
+
 		public void  GetobjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			System.Type thisType = this.GetType();
@@ -153,6 +173,10 @@ namespace Lucene.Net.Index
 			{
 				info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
 			}
+
+            field = StringHelper.Intern(field);
+
+            System.Diagnostics.Debug.Fail("Port issue", "This needs checking; see ReadObject() for the non-ported Java version."); // {{Aroush-2.9}}
 		}
 	}
 }

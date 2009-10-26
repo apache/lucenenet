@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,25 +17,28 @@
 
 using System;
 
-using Term = Lucene.Net.Index.Term;
-using TermEnum = Lucene.Net.Index.TermEnum;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents containing terms with a specified prefix. A PrefixQuery
-	/// is built by QueryParser for input like <code>app*</code>. 
+	/// is built by QueryParser for input like <code>app*</code>.
+	/// 
+	/// <p>This query uses the {@link
+	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+	/// rewrite method. 
 	/// </summary>
 	[Serializable]
-	public class PrefixQuery : Query
+	public class PrefixQuery:MultiTermQuery
 	{
 		private Term prefix;
 		
 		/// <summary>Constructs a query for terms starting with <code>prefix</code>. </summary>
-		public PrefixQuery(Term prefix)
-		{
+		public PrefixQuery(Term prefix):base(prefix)
+		{ //will be removed in 3.0
 			this.prefix = prefix;
 		}
 		
@@ -45,41 +48,9 @@ namespace Lucene.Net.Search
 			return prefix;
 		}
 		
-		public override Query Rewrite(IndexReader reader)
+		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-			BooleanQuery query = new BooleanQuery(true);
-			TermEnum enumerator = reader.Terms(prefix);
-			try
-			{
-				System.String prefixText = prefix.Text();
-				System.String prefixField = prefix.Field();
-				do 
-				{
-					Term term = enumerator.Term();
-#if !FRAMEWORK_1_1
-                    if (term != null && term.Text().StartsWith(prefixText, StringComparison.Ordinal) && term.Field() == prefixField)
-#else
-                    if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
-#endif
-					// interned comparison 
-                    {
-						TermQuery tq = new TermQuery(term); // found a match
-						tq.SetBoost(GetBoost()); // set the boost
-						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
-						//System.out.println("added " + term);
-					}
-					else
-					{
-						break;
-					}
-				}
-				while (enumerator.Next());
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-			return query;
+			return new PrefixTermEnum(reader, prefix);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
@@ -97,19 +68,33 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
-		{
-			if (!(o is PrefixQuery))
-				return false;
-			PrefixQuery other = (PrefixQuery) o;
-			return (this.GetBoost() == other.GetBoost()) && this.prefix.Equals(other.prefix);
-		}
-		
-		/// <summary>Returns a hash code value for this object.</summary>
+		//@Override
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode() ^ 0x6634D93C;
+			int prime = 31;
+			int result = base.GetHashCode();
+			result = prime * result + ((prefix == null)?0:prefix.GetHashCode());
+			return result;
+		}
+		
+		//@Override
+		public  override bool Equals(System.Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!base.Equals(obj))
+				return false;
+			if (GetType() != obj.GetType())
+				return false;
+			PrefixQuery other = (PrefixQuery) obj;
+			if (prefix == null)
+			{
+				if (other.prefix != null)
+					return false;
+			}
+			else if (!prefix.Equals(other.prefix))
+				return false;
+			return true;
 		}
 	}
 }

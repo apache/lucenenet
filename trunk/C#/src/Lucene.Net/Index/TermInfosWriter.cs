@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,17 +28,18 @@ namespace Lucene.Net.Index
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
-	public sealed class TermInfosWriter
+	sealed class TermInfosWriter
 	{
 		/// <summary>The file format version, a negative number. </summary>
 		public const int FORMAT = - 3;
 		
-        // changed strings to true utf8 with length in bytes not length in chars
-        public const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = -4;
-
-        // NOTE: always chage this if you switch to a new format!
-        public static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
-
+		// Changed strings to true utf8 with length-in-bytes not
+		// length-in-chars
+		public const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = - 4;
+		
+		// NOTE: always change this if you switch to a new format!
+		public static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
+		
 		private FieldInfos fieldInfos;
 		private IndexOutput output;
 		private TermInfo lastTi = new TermInfo();
@@ -76,12 +77,12 @@ namespace Lucene.Net.Index
 		private bool isIndex;
 		private byte[] lastTermBytes = new byte[10];
 		private int lastTermBytesLength = 0;
-		private int lastFieldNumber = -1;
+		private int lastFieldNumber = - 1;
 		
 		private TermInfosWriter other;
-        private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
-
-		public TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
+		private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
+		
+		internal TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
 			Initialize(directory, segment, fis, interval, false);
 			other = new TermInfosWriter(directory, segment, fis, interval, true);
@@ -92,43 +93,43 @@ namespace Lucene.Net.Index
 		{
 			Initialize(directory, segment, fis, interval, isIndex);
 		}
-
-        private void Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
-        {
-            indexInterval = interval;
-            fieldInfos = fis;
-            isIndex = isi;
-            output = directory.CreateOutput(segment + (isIndex ? ".tii" : ".tis"));
-            output.WriteInt(FORMAT_CURRENT); // write format
-            output.WriteLong(0); // leave space for size
-            output.WriteInt(indexInterval); // write indexInterval
-            output.WriteInt(skipInterval); // write skipInterval
-            output.WriteInt(maxSkipLevels); // write maxSkipLevels
-            System.Diagnostics.Debug.Assert(InitUTF16Results());
-        }
 		
+		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
+		{
+			indexInterval = interval;
+			fieldInfos = fis;
+			isIndex = isi;
+			output = directory.CreateOutput(segment + (isIndex?".tii":".tis"));
+			output.WriteInt(FORMAT_CURRENT); // write format
+			output.WriteLong(0); // leave space for size
+			output.WriteInt(indexInterval); // write indexInterval
+			output.WriteInt(skipInterval); // write skipInterval
+			output.WriteInt(maxSkipLevels); // write maxSkipLevels
+			System.Diagnostics.Debug.Assert(InitUTF16Results());
+		}
 		
 		internal void  Add(Term term, TermInfo ti)
 		{
-            UnicodeUtil.UTF16toUTF8(term.text, 0, term.text.Length, utf8Result);
-            Add(fieldInfos.FieldNumber(term.field), utf8Result.result, utf8Result.length, ti);
-        }
-
-        // currently used only by assert statements
-        UnicodeUtil.UTF16Result utf16Result1;
-        UnicodeUtil.UTF16Result utf16Result2;
-
-        // currently used only by assert statements
-        private bool InitUTF16Results()
-        {
-            utf16Result1 = new UnicodeUtil.UTF16Result();
-            utf16Result2 = new UnicodeUtil.UTF16Result();
+			UnicodeUtil.UTF16toUTF8(term.text, 0, term.text.Length, utf8Result);
+			Add(fieldInfos.FieldNumber(term.field), utf8Result.result, utf8Result.length, ti);
+		}
+		
+		// Currently used only by assert statements
+		internal UnicodeUtil.UTF16Result utf16Result1;
+		internal UnicodeUtil.UTF16Result utf16Result2;
+		
+		// Currently used only by assert statements
+		private bool InitUTF16Results()
+		{
+			utf16Result1 = new UnicodeUtil.UTF16Result();
+			utf16Result2 = new UnicodeUtil.UTF16Result();
 			return true;
-        }
-
+		}
+		
 		// Currently used only by assert statement
 		private int CompareToLastTerm(int fieldNumber, byte[] termBytes, int termBytesLength)
 		{
+			
 			if (lastFieldNumber != fieldNumber)
 			{
 				int cmp = String.CompareOrdinal(fieldInfos.FieldName(lastFieldNumber), fieldInfos.FieldName(fieldNumber));
@@ -140,23 +141,22 @@ namespace Lucene.Net.Index
 					return cmp;
 			}
 			
-            UnicodeUtil.UTF8toUTF16(lastTermBytes, 0, lastTermBytesLength, utf16Result1);
-            UnicodeUtil.UTF8toUTF16(termBytes, 0, termBytesLength, utf16Result2);
-
-            int len;
-            if (utf16Result1.length < utf16Result2.length)
-                len = utf16Result1.length;
-            else
-                len = utf16Result2.length;
-
-            for (int i = 0; i < len; i++)
-            {
-                char ch1 = utf16Result1.result[i];
-                char ch2 = utf16Result2.result[i];
-                if (ch1 != ch2)
-                    return ch1 - ch2;
-            }
-            return utf16Result1.length - utf16Result2.length;
+			UnicodeUtil.UTF8toUTF16(lastTermBytes, 0, lastTermBytesLength, utf16Result1);
+			UnicodeUtil.UTF8toUTF16(termBytes, 0, termBytesLength, utf16Result2);
+			int len;
+			if (utf16Result1.length < utf16Result2.length)
+				len = utf16Result1.length;
+			else
+				len = utf16Result2.length;
+			
+			for (int i = 0; i < len; i++)
+			{
+				char ch1 = utf16Result1.result[i];
+				char ch2 = utf16Result2.result[i];
+				if (ch1 != ch2)
+					return ch1 - ch2;
+			}
+			return utf16Result1.length - utf16Result2.length;
 		}
 		
 		/// <summary>Adds a new <<fieldNumber, termBytes>, TermInfo> pair to the set.
@@ -165,11 +165,12 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal void  Add(int fieldNumber, byte[] termBytes, int termBytesLength, TermInfo ti)
 		{
+			
 			System.Diagnostics.Debug.Assert(CompareToLastTerm(fieldNumber, termBytes, termBytesLength) < 0 ||
-				(isIndex && termBytesLength == 0 && lastTermBytesLength == 0),
-				"Terms are out of order: field=" + fieldInfos.FieldName(fieldNumber) +  "(number " + fieldNumber + ")" + 
-				" lastField=" + fieldInfos.FieldName(lastFieldNumber) + " (number " + lastFieldNumber + ")" + 
-				" text=" + System.Text.Encoding.UTF8.GetString(termBytes, 0, termBytesLength) + " lastText=" + System.Text.Encoding.UTF8.GetString(lastTermBytes, 0, lastTermBytesLength));
+					(isIndex && termBytesLength == 0 && lastTermBytesLength == 0), 
+				"Terms are out of order: field=" + fieldInfos.FieldName(fieldNumber) + " (number " + fieldNumber + ")" + 
+			 	" lastField=" + fieldInfos.FieldName(lastFieldNumber) + " (number " + lastFieldNumber + ")" + 
+			 	" text=" + System.Text.Encoding.UTF8.GetString(termBytes, 0, termBytesLength) + " lastText=" + System.Text.Encoding.UTF8.GetString(lastTermBytes, 0, lastTermBytesLength));
 			
 			System.Diagnostics.Debug.Assert(ti.freqPointer >= lastTi.freqPointer, "freqPointer out of order (" + ti.freqPointer + " < " + lastTi.freqPointer + ")");
 			System.Diagnostics.Debug.Assert(ti.proxPointer >= lastTi.proxPointer, "proxPointer out of order (" + ti.proxPointer + " < " + lastTi.proxPointer + ")");
@@ -201,10 +202,11 @@ namespace Lucene.Net.Index
 		
 		private void  WriteTerm(int fieldNumber, byte[] termBytes, int termBytesLength)
 		{
-            // TODO: UTF16toUTF8 could tell us this prefix
+			
+			// TODO: UTF16toUTF8 could tell us this prefix
 			// Compute prefix in common with last term:
 			int start = 0;
-			int limit = termBytesLength < lastTermBytesLength ? termBytesLength : lastTermBytesLength;
+			int limit = termBytesLength < lastTermBytesLength?termBytesLength:lastTermBytesLength;
 			while (start < limit)
 			{
 				if (termBytes[start] != lastTermBytes[start])
@@ -213,19 +215,18 @@ namespace Lucene.Net.Index
 			}
 			
 			int length = termBytesLength - start;
-			
 			output.WriteVInt(start); // write shared prefix length
 			output.WriteVInt(length); // write delta length
-			output.WriteBytes(termBytes, start, length); // write delta chars
+			output.WriteBytes(termBytes, start, length); // write delta bytes
 			output.WriteVInt(fieldNumber); // write field num
-            if (lastTermBytes.Length < termBytesLength)
-            {
-                byte[] newArray = new byte[(int)(termBytesLength*1.5)];
-                Array.Copy(lastTermBytes, 0, newArray, 0, start);
-                lastTermBytes = newArray;
-            }
-            Array.Copy(termBytes, start, lastTermBytes, start, length);
-            lastTermBytesLength = termBytesLength;
+			if (lastTermBytes.Length < termBytesLength)
+			{
+				byte[] newArray = new byte[(int) (termBytesLength * 1.5)];
+				Array.Copy(lastTermBytes, 0, newArray, 0, start);
+				lastTermBytes = newArray;
+			}
+			Array.Copy(termBytes, start, lastTermBytes, start, length);
+			lastTermBytesLength = termBytesLength;
 		}
 		
 		/// <summary>Called to complete TermInfos creation. </summary>

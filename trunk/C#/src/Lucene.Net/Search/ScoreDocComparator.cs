@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,19 +20,23 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	
-	/// <summary>
-    /// Expert: Compares two ScoreDoc objects for sorting.
+	/// <summary> Expert: Compares two ScoreDoc objects for sorting.
+	/// 
+	/// <p>Created: Feb 3, 2004 9:00:16 AM 
+	/// 
 	/// </summary>
-	/// <since>lucene 1.4</since>
-	/// <version>$Id:$</version>
-	public struct ScoreDocComparator_Fields
-	{
+	/// <since>   lucene 1.4
+	/// </since>
+	/// <version>  $Id: ScoreDocComparator.java 738219 2009-01-27 20:15:21Z mikemccand $
+	/// </version>
+	/// <deprecated> use {@link FieldComparator}
+	/// </deprecated>
+	public struct ScoreDocComparator_Fields{
 		/// <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>
 		public readonly static ScoreDocComparator RELEVANCE;
 		/// <summary>Special comparator for sorting hits according to index order (document number). </summary>
 		public readonly static ScoreDocComparator INDEXORDER;
-		static ScoreDocComparator_Fields()
+        static ScoreDocComparator_Fields()
 		{
 			RELEVANCE = new AnonymousClassScoreDocComparator();
 			INDEXORDER = new AnonymousClassScoreDocComparator1();

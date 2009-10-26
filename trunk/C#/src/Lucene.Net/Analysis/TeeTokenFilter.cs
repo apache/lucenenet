@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,8 +29,8 @@ namespace Lucene.Net.Analysis
 	/// part of the analysis workflow and saving off those tokens for use in another field.
 	/// 
 	/// <pre>
-	/// SinkTokenizer sink1 = new SinkTokenizer(null);
-	/// SinkTokenizer sink2 = new SinkTokenizer(null);
+	/// SinkTokenizer sink1 = new SinkTokenizer();
+	/// SinkTokenizer sink2 = new SinkTokenizer();
 	/// TokenStream source1 = new TeeTokenFilter(new TeeTokenFilter(new WhitespaceTokenizer(reader1), sink1), sink2);
 	/// TokenStream source2 = new TeeTokenFilter(new TeeTokenFilter(new WhitespaceTokenizer(reader2), sink1), sink2);
 	/// TokenStream final1 = new LowerCaseFilter(source1);
@@ -42,29 +42,37 @@ namespace Lucene.Net.Analysis
 	/// d.add(new Field("f3", final3));
 	/// d.add(new Field("f4", final4));
 	/// </pre>
-	/// In this example, sink1 and sink2 will both get tokens from both reader1 and reader2 after whitespace tokenizer
+	/// In this example, <code>sink1</code> and <code>sink2<code> will both get tokens from both
+	/// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
 	/// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
+	/// It is important, that tees are consumed before sinks (in the above example, the field names must be
+	/// less the sink's field names).
 	/// Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene
 	/// <p/>
 	/// 
-	/// See http://issues.apache.org/jira/browse/LUCENE-1058
+	/// See <a href="http://issues.apache.org/jira/browse/LUCENE-1058">LUCENE-1058</a>.
+	/// <p/>
+	/// WARNING: {@link TeeTokenFilter} and {@link SinkTokenizer} only work with the old TokenStream API.
+	/// If you switch to the new API, you need to use {@link TeeSinkTokenFilter} instead, which offers 
+	/// the same functionality.
 	/// </summary>
 	/// <seealso cref="SinkTokenizer">
-	/// 
-	/// 
 	/// </seealso>
-	public class TeeTokenFilter : TokenFilter
+	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
+	/// 
+	/// </deprecated>
+	public class TeeTokenFilter:TokenFilter
 	{
 		internal SinkTokenizer sink;
 		
-		public TeeTokenFilter(TokenStream input, SinkTokenizer sink) : base(input)
+		public TeeTokenFilter(TokenStream input, SinkTokenizer sink):base(input)
 		{
 			this.sink = sink;
 		}
 		
-		public override Token Next(/* in */ Token reusableToken)
+		public override Token Next(Token reusableToken)
 		{
-            System.Diagnostics.Debug.Assert(reusableToken != null);
+			System.Diagnostics.Debug.Assert(reusableToken != null);
 			Token nextToken = input.Next(reusableToken);
 			sink.Add(nextToken);
 			return nextToken;

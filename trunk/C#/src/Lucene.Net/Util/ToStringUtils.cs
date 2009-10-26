@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,20 +20,18 @@ using System;
 namespace Lucene.Net.Util
 {
 	
-    public class ToStringUtils
-    {
+	/// <summary> Helper methods to ease implementing {@link Object#toString()}.</summary>
+	public class ToStringUtils
+	{
 		/// <summary>for printing boost only if not 1.0 </summary>
-        public static System.String Boost(float boost)
-        {
-            if (boost != 1.0f)
-            {
-                float boostAsLong = (long) boost;
-                if (boostAsLong == boost)
-                    return "^" + boost.ToString(".0").Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
-                return "^" + boost.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
-            }
-            else
-                return "";
-        }
-    }
+		public static System.String Boost(float boost)
+		{
+			if (boost != 1.0f)
+			{
+				return "^" + boost.ToString();
+			}
+			else
+				return "";
+		}
+	}
 }

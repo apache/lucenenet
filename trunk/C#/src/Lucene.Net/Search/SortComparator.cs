@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,23 +24,33 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Abstract base class for sorting hits returned by a Query.
 	/// 
-	/// <p>This class should only be used if the other SortField
-	/// types (SCORE, DOC, STRING, INT, FLOAT) do not provide an
-	/// adequate sorting.  It maintains an internal cache of values which
-	/// could be quite large.  The cache is an array of Comparable,
-	/// one for each document in the index.  There is a distinct
-	/// Comparable for each unique term in the field - if
-	/// some documents have the same term in the field, the cache
-	/// array will have entries which reference the same Comparable.
+	/// <p>
+	/// This class should only be used if the other SortField types (SCORE, DOC,
+	/// STRING, INT, FLOAT) do not provide an adequate sorting. It maintains an
+	/// internal cache of values which could be quite large. The cache is an array of
+	/// Comparable, one for each document in the index. There is a distinct
+	/// Comparable for each unique term in the field - if some documents have the
+	/// same term in the field, the cache array will have entries which reference the
+	/// same Comparable.
 	/// 
-	/// <p>Created: Apr 21, 2004 5:08:38 PM
+	/// This class will be used as part of a key to a FieldCache value. You must
+	/// implement hashCode and equals to avoid an explosion in RAM usage if you use
+	/// instances that are not the same instance. If you are searching using the
+	/// Remote contrib, the same instance of this class on the client will be a new
+	/// instance on every call to the server, so hashCode/equals is very important in
+	/// that situation.
+	/// 
+	/// <p>
+	/// Created: Apr 21, 2004 5:08:38 PM
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: SortComparator.java 564236 2007-08-09 15:21:19Z gsingers $
+	/// <version>  $Id: SortComparator.java 800119 2009-08-02 17:59:21Z markrmiller $
 	/// </version>
-	/// <since>   1.4
+	/// <since> 1.4
 	/// </since>
+	/// <deprecated> Please use {@link FieldComparatorSource} instead.
+	/// </deprecated>
 	[Serializable]
 	public abstract class SortComparator : SortComparatorSource
 	{
@@ -107,6 +117,6 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		/// <seealso cref="ScoreDocComparator">
 		/// </seealso>
-		public abstract System.IComparable GetComparable(System.String termtext);
+		public /*protected internal*/ abstract System.IComparable GetComparable(System.String termtext);
 	}
 }

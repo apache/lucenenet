@@ -51,7 +51,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -75,7 +75,7 @@
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\..\SharpZipLib\netcf-20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -96,8 +96,14 @@
     <Compile Include="Analysis\Analyzer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\ASCIIFoldingFilter.cs" />
+    <Compile Include="Analysis\BaseCharFilter.cs" />
     <Compile Include="Analysis\CachingTokenFilter.cs" />
+    <Compile Include="Analysis\CharacterCache.cs" />
     <Compile Include="Analysis\CharArraySet.cs" />
+    <Compile Include="Analysis\CharFilter.cs" />
+    <Compile Include="Analysis\CharReader.cs" />
+    <Compile Include="Analysis\CharStream.cs" />
     <Compile Include="Analysis\CharTokenizer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -122,6 +128,9 @@
     <Compile Include="Analysis\LowerCaseTokenizer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\MappingCharFilter.cs" />
+    <Compile Include="Analysis\NormalizeCharMap.cs" />
+    <Compile Include="Analysis\NumericTokenStream.cs" />
     <Compile Include="Analysis\PerFieldAnalyzerWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -151,10 +160,23 @@
     <Compile Include="Analysis\StopFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TeeSinkTokenFilter.cs" />
     <Compile Include="Analysis\TeeTokenFilter.cs" />
     <Compile Include="Analysis\Token.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Tokenattributes\FlagsAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\FlagsAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\OffsetAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\OffsetAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\PayloadAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\PayloadAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\PositionIncrementAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\TermAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\TermAttributeImpl.cs" />
+    <Compile Include="Analysis\Tokenattributes\TypeAttribute.cs" />
+    <Compile Include="Analysis\Tokenattributes\TypeAttributeImpl.cs" />
     <Compile Include="Analysis\TokenFilter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -164,6 +186,7 @@
     <Compile Include="Analysis\TokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TokenWrapper.cs" />
     <Compile Include="Analysis\WhitespaceAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -179,6 +202,7 @@
     <Compile Include="Document\AbstractField.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\CompressionTools.cs" />
     <Compile Include="Document\DateField.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -209,9 +233,11 @@
     <Compile Include="Document\NumberTools.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Document\NumericField.cs" />
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\AllTermDocs.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
     <Compile Include="Index\ByteSliceReader.cs" />
@@ -228,7 +254,8 @@
     <Compile Include="Index\CorruptIndexException.cs" />
     <Compile Include="Index\DefaultSkipListReader.cs" />
     <Compile Include="Index\DefaultSkipListWriter.cs" />
-    <Compile Include="Index\DirectoryIndexReader.cs" />
+    <Compile Include="Index\DirectoryOwningReader.cs" />
+    <Compile Include="Index\DirectoryReader.cs" />
     <Compile Include="Index\DocConsumer.cs" />
     <Compile Include="Index\DocConsumerPerThread.cs" />
     <Compile Include="Index\DocFieldConsumer.cs" />
@@ -251,6 +278,7 @@
     <Compile Include="Index\FieldInfos.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\FieldInvertState.cs" />
     <Compile Include="Index\FieldReaderException.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -264,6 +292,14 @@
     <Compile Include="Index\FilterIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\FormatPostingsDocsConsumer.cs" />
+    <Compile Include="Index\FormatPostingsDocsWriter.cs" />
+    <Compile Include="Index\FormatPostingsFieldsConsumer.cs" />
+    <Compile Include="Index\FormatPostingsFieldsWriter.cs" />
+    <Compile Include="Index\FormatPostingsPositionsConsumer.cs" />
+    <Compile Include="Index\FormatPostingsPositionsWriter.cs" />
+    <Compile Include="Index\FormatPostingsTermsConsumer.cs" />
+    <Compile Include="Index\FormatPostingsTermsWriter.cs" />
     <Compile Include="Index\FreqProxFieldMergeState.cs" />
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
@@ -311,7 +347,6 @@
     <Compile Include="Index\MultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\MultiSegmentReader.cs" />
     <Compile Include="Index\NormsWriter.cs" />
     <Compile Include="Index\NormsWriterPerField.cs" />
     <Compile Include="Index\NormsWriterPerThread.cs" />
@@ -321,7 +356,7 @@
     <Compile Include="Index\Payload.cs" />
     <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
     <Compile Include="Index\RawPostingList.cs" />
-    <Compile Include="Index\ReadOnlyMultiSegmentReader.cs" />
+    <Compile Include="Index\ReadOnlyDirectoryReader.cs" />
     <Compile Include="Index\ReadOnlySegmentReader.cs" />
     <Compile Include="Index\ReusableStringReader.cs" />
     <Compile Include="Index\SegmentInfo.cs">
@@ -357,13 +392,13 @@
     <Compile Include="Index\SegmentTermVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\SegmentWriteState.cs" />
     <Compile Include="Index\SerialMergeScheduler.cs" />
     <Compile Include="Index\SnapshotDeletionPolicy.cs" />
     <Compile Include="Index\SortedTermVectorMapper.cs" />
     <Compile Include="Index\StaleReaderException.cs" />
     <Compile Include="Index\StoredFieldsWriter.cs" />
-    <Compile Include="Index\StoredFieldsWriterPerField.cs" />
-    <Compile Include="Index\StoredFieldWriterPerThread.cs" />
+    <Compile Include="Index\StoredFieldsWriterPerThread.cs" />
     <Compile Include="Index\Term.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -461,6 +496,7 @@
     <Compile Include="Search\CachingWrapperFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Collector.cs" />
     <Compile Include="Search\ComplexExplanation.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -494,13 +530,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\ExtendedFieldCache.cs" />
-    <Compile Include="Search\ExtendedFieldCacheImpl.cs" />
     <Compile Include="Search\FieldCache.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldCacheImpl.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FieldCacheRangeFilter.cs" />
+    <Compile Include="Search\FieldCacheTermsFilter.cs" />
+    <Compile Include="Search\FieldComparator.cs" />
+    <Compile Include="Search\FieldComparatorSource.cs" />
     <Compile Include="Search\FieldDoc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -510,9 +549,12 @@
     <Compile Include="Search\FieldSortedHitQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FieldValueHitQueue.cs" />
     <Compile Include="Search\Filter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\FilteredDocIdSet.cs" />
+    <Compile Include="Search\FilteredDocIdSetIterator.cs" />
     <Compile Include="Search\FilteredQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -527,6 +569,7 @@
     <Compile Include="Search\Function\FieldScoreQuery.cs" />
     <Compile Include="Search\Function\FloatFieldSource.cs" />
     <Compile Include="Search\Function\IntFieldSource.cs" />
+    <Compile Include="Search\Function\MultiValueSource.cs" />
     <Compile Include="Search\Function\OrdFieldSource.cs" />
     <Compile Include="Search\Function\ReverseOrdFieldSource.cs" />
     <Compile Include="Search\Function\ShortFieldSource.cs" />
@@ -544,6 +587,7 @@
     <Compile Include="Search\HitCollector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\HitCollectorWrapper.cs" />
     <Compile Include="Search\HitIterator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -568,14 +612,20 @@
     <Compile Include="Search\MultiTermQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\NonMatchingScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Search\MultiTermQueryWrapperFilter.cs" />
+    <Compile Include="Search\NumericRangeFilter.cs" />
+    <Compile Include="Search\NumericRangeQuery.cs" />
     <Compile Include="Search\ParallelMultiSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\Payload\BoostingTermQuery.cs" />
-    <Compile Include="Search\Payload\PayloadSpanUtil.cs" />
+    <Compile Include="Search\Payloads\AveragePayloadFunction.cs" />
+    <Compile Include="Search\Payloads\BoostingTermQuery.cs" />
+    <Compile Include="Search\Payloads\MaxPayloadFunction.cs" />
+    <Compile Include="Search\Payloads\MinPayloadFunction.cs" />
+    <Compile Include="Search\Payloads\PayloadFunction.cs" />
+    <Compile Include="Search\Payloads\PayloadNearQuery.cs" />
+    <Compile Include="Search\Payloads\PayloadSpanUtil.cs" />
+    <Compile Include="Search\Payloads\PayloadTermQuery.cs" />
     <Compile Include="Search\PhrasePositions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -588,12 +638,14 @@
     <Compile Include="Search\PhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\PositiveScoresOnlyCollector.cs" />
     <Compile Include="Search\PrefixFilter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\PrefixQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\PrefixTermEnum.cs" />
     <Compile Include="Search\Query.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -610,16 +662,13 @@
     <Compile Include="Search\RangeQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\RemoteCachingWrapperFilter.cs" />
-    <Compile Include="Search\RemoteSearchable.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\ReqOptSumScorer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\ScoreCachingWrappingScorer.cs" />
     <Compile Include="Search\ScoreDoc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -659,14 +708,13 @@
     <Compile Include="Search\SpanFilter.cs" />
     <Compile Include="Search\SpanFilterResult.cs" />
     <Compile Include="Search\SpanQueryFilter.cs" />
-    <Compile Include="Search\Spans\NearSpans.cs" />
+    <Compile Include="Search\Spans\FieldMaskingSpanQuery.cs" />
     <Compile Include="Search\Spans\NearSpansOrdered.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Spans\NearSpansUnordered.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\Spans\PayloadSpans.cs" />
     <Compile Include="Search\Spans\SpanFirstQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -698,22 +746,29 @@
     <Compile Include="Search\TermQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TermRangeFilter.cs" />
+    <Compile Include="Search\TermRangeQuery.cs" />
+    <Compile Include="Search\TermRangeTermEnum.cs" />
     <Compile Include="Search\TermScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\TimeLimitedCollector.cs" />
+    <Compile Include="Search\TimeLimitingCollector.cs" />
     <Compile Include="Search\TopDocCollector.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\TopDocs.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TopDocsCollector.cs" />
+    <Compile Include="Search\TopFieldCollector.cs" />
     <Compile Include="Search\TopFieldDocCollector.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\TopFieldDocs.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\TopScoreDocCollector.cs" />
     <Compile Include="Search\Weight.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -738,9 +793,11 @@
     <Compile Include="Store\Directory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\FileSwitchDirectory.cs" />
     <Compile Include="Store\FSDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\FSLockFactory.cs" />
     <Compile Include="Store\IndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -767,6 +824,7 @@
     <Compile Include="Store\NoLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\NoSuchDirectoryException.cs" />
     <Compile Include="Store\RAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -779,6 +837,7 @@
     <Compile Include="Store\RAMOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Store\SimpleFSDirectory.cs" />
     <Compile Include="Store\SimpleFSLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -790,6 +849,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\ArrayUtil.cs" />
+    <Compile Include="Util\Attribute.cs" />
+    <Compile Include="Util\AttributeImpl.cs" />
+    <Compile Include="Util\AttributeSource.cs" />
+    <Compile Include="Util\AverageGuessMemoryModel.cs" />
     <Compile Include="Util\BitUtil.cs" />
     <Compile Include="Util\BitVector.cs">
       <SubType>Code</SubType>
@@ -799,6 +862,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\DocIdBitSet.cs" />
+    <Compile Include="Util\FieldCacheSanityChecker.cs" />
+    <Compile Include="Util\IndexableBinaryStringTools.cs" />
+    <Compile Include="Util\MapOfSets.cs" />
+    <Compile Include="Util\MemoryModel.cs" />
+    <Compile Include="Util\NumericUtils.cs" />
     <Compile Include="Util\OpenBitSet.cs" />
     <Compile Include="Util\OpenBitSetDISI.cs" />
     <Compile Include="Util\OpenBitSetIterator.cs" />
@@ -811,21 +879,30 @@
     <Compile Include="Util\Cache\Cache.cs" />
     <Compile Include="Util\Cache\SimpleLRUCache.cs" />
     <Compile Include="Util\Cache\SimpleMapCache.cs" />
+    <Compile Include="Util\RamUsageEstimator.cs" />
+    <Compile Include="Util\ReaderUtil.cs" />
     <Compile Include="Util\ScorerDocQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\SimpleStringInterner.cs" />
     <Compile Include="Util\SmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\SortedVIntList.cs" />
+    <Compile Include="Util\SorterTemplate.cs" />
     <Compile Include="Util\StringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\StringInterner.cs" />
     <Compile Include="Util\ToStringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\UnicodeUtil.cs" />
+    <Compile Include="Util\Version.cs" />
     <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="QueryParser\QueryParser.jj" />
@@ -839,7 +916,7 @@
     <Content Include="QueryParser\Package.html" />
     <Content Include="Search\Function\Package.html" />
     <Content Include="Search\Package.html" />
-    <Content Include="Search\Payload\Package.html" />
+    <Content Include="Search\Payloads\Package.html" />
     <Content Include="Search\Spans\Package.html" />
     <Content Include="Store\Package.html" />
     <Content Include="Util\Package.html" />

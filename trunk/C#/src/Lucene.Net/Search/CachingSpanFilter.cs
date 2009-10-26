@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,13 +27,11 @@ namespace Lucene.Net.Search
 	/// filters to simply filter, and then wrap with this class to add caching.
 	/// </summary>
 	[Serializable]
-	public class CachingSpanFilter : SpanFilter
+	public class CachingSpanFilter:SpanFilter
 	{
 		protected internal SpanFilter filter;
 		
-		/// <summary> A transient Filter cache.  To cache Filters even when using {@link Lucene.Net.Search.RemoteSearchable} use
-		/// {@link Lucene.Net.Search.RemoteCachingWrapperFilter} instead.
-		/// </summary>
+		/// <summary> A transient Filter cache.</summary>
 		[NonSerialized]
 		protected internal System.Collections.IDictionary cache;
 		
@@ -44,25 +42,26 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
-        [System.Obsolete("Use GetDocIdSet(IndexReader) instead")]
+		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// </deprecated>
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			SpanFilterResult result = GetCachedResult(reader);
-			return result != null ? result.GetBits() : null;
+			return result != null?result.GetBits():null;
 		}
-
-        public override DocIdSet GetDocIdSet(IndexReader reader)
-        {
-            SpanFilterResult result = GetCachedResult(reader);
-            return result != null ? result.GetDocIdSet() : null;
-        }
+		
+		public override DocIdSet GetDocIdSet(IndexReader reader)
+		{
+			SpanFilterResult result = GetCachedResult(reader);
+			return result != null?result.GetDocIdSet():null;
+		}
 		
 		private SpanFilterResult GetCachedResult(IndexReader reader)
 		{
 			SpanFilterResult result = null;
 			if (cache == null)
 			{
-                cache = new SupportClass.WeakHashTable();
+				cache = new System.Collections.Hashtable();
 			}
 			
 			lock (cache.SyncRoot)
@@ -89,7 +88,7 @@ namespace Lucene.Net.Search
 			return "CachingSpanFilter(" + filter + ")";
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is CachingSpanFilter))
 				return false;

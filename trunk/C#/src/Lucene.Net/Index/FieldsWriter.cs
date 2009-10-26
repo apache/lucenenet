@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 
 using System;
 
+using CompressionTools = Lucene.Net.Documents.CompressionTools;
 using Document = Lucene.Net.Documents.Document;
 using Fieldable = Lucene.Net.Documents.Fieldable;
 using Directory = Lucene.Net.Store.Directory;
@@ -33,17 +34,17 @@ namespace Lucene.Net.Index
 		internal const byte FIELD_IS_BINARY = (byte) (0x2);
 		internal const byte FIELD_IS_COMPRESSED = (byte) (0x4);
 		
-        // Original format
-        internal const int FORMAT = 0;
-
-        // Changed strings to UTF8
-        internal const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1;
-
-        // NOTE: if you introduce a new format, make it 1 higher
-        // than the current one, and always change this if you
-        // switch to a new format!
-        internal const int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
-
+		// Original format
+		internal const int FORMAT = 0;
+		
+		// Changed strings to UTF8
+		internal const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1;
+		
+		// NOTE: if you introduce a new format, make it 1 higher
+		// than the current one, and always change this if you
+		// switch to a new format!
+		internal static readonly int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
+		
 		private FieldInfos fieldInfos;
 		
 		private IndexOutput fieldsStream;
@@ -55,77 +56,77 @@ namespace Lucene.Net.Index
 		internal FieldsWriter(Directory d, System.String segment, FieldInfos fn)
 		{
 			fieldInfos = fn;
-
-            bool success = false;
-            string fieldsName = segment + "." + IndexFileNames.FIELDS_EXTENSION;
-            try
-            {
-                fieldsStream = d.CreateOutput(fieldsName);
-                fieldsStream.WriteInt(FORMAT_CURRENT);
-                success = true;
-            }
-            finally
-            {
-                if (!success)
-                {
-                    try
-                    {
-                        Close();
-                    }
-                    catch (System.Exception)
-                    {
-                        // Suppress so we keep throwing the original exception
-                    }
-                    try
-                    {
-                        d.DeleteFile(fieldsName);
-                    }
-                    catch (System.Exception)
-                    {
-                        // Suppress so we keep throwing the original exception
-                    }
-                }
-            }
-
-            success = false;
-            string indexName = segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION;
-            try
-            {
-                indexStream = d.CreateOutput(indexName);
-                indexStream.WriteInt(FORMAT_CURRENT);
-                success = true;
-            }
-            finally
-            {
-                if (!success)
-                {
-                    try
-                    {
-                        Close();
-                    }
-                    catch (System.IO.IOException)
-                    {
-                    }
-                    try
-                    {
-                        d.DeleteFile(fieldsName);
-                    }
-                    catch (System.Exception)
-                    {
-                        // Suppress so we keep throwing the original exception
-                    }
-                    try
-                    {
-                        d.DeleteFile(indexName);
-                    }
-                    catch (System.Exception)
-                    {
-                        // Suppress so we keep throwing the original exception
-                    }
-                }
-            }
-
-            doClose = true;
+			
+			bool success = false;
+			System.String fieldsName = segment + "." + IndexFileNames.FIELDS_EXTENSION;
+			try
+			{
+				fieldsStream = d.CreateOutput(fieldsName);
+				fieldsStream.WriteInt(FORMAT_CURRENT);
+				success = true;
+			}
+			finally
+			{
+				if (!success)
+				{
+					try
+					{
+						Close();
+					}
+					catch (System.Exception t)
+					{
+						// Suppress so we keep throwing the original exception
+					}
+					try
+					{
+						d.DeleteFile(fieldsName);
+					}
+					catch (System.Exception t)
+					{
+						// Suppress so we keep throwing the original exception
+					}
+				}
+			}
+			
+			success = false;
+			System.String indexName = segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION;
+			try
+			{
+				indexStream = d.CreateOutput(indexName);
+				indexStream.WriteInt(FORMAT_CURRENT);
+				success = true;
+			}
+			finally
+			{
+				if (!success)
+				{
+					try
+					{
+						Close();
+					}
+					catch (System.IO.IOException ioe)
+					{
+					}
+					try
+					{
+						d.DeleteFile(fieldsName);
+					}
+					catch (System.Exception t)
+					{
+						// Suppress so we keep throwing the original exception
+					}
+					try
+					{
+						d.DeleteFile(indexName);
+					}
+					catch (System.Exception t)
+					{
+						// Suppress so we keep throwing the original exception
+					}
+				}
+			}
+			
+			doClose = true;
 		}
 		
 		internal FieldsWriter(IndexOutput fdx, IndexOutput fdt, FieldInfos fn)
@@ -135,11 +136,11 @@ namespace Lucene.Net.Index
 			indexStream = fdx;
 			doClose = false;
 		}
-
-        internal void SetFieldsStream(IndexOutput stream)
-        {
-            this.fieldsStream = stream;
-        }
+		
+		internal void  SetFieldsStream(IndexOutput stream)
+		{
+			this.fieldsStream = stream;
+		}
 		
 		// Writes the contents of buffer into the fields stream
 		// and adds a new entry for this document into the index
@@ -151,13 +152,13 @@ namespace Lucene.Net.Index
 			fieldsStream.WriteVInt(numStoredFields);
 			buffer.WriteTo(fieldsStream);
 		}
-
-        internal void SkipDocument()
-        {
-            indexStream.WriteLong(fieldsStream.GetFilePointer());
-            fieldsStream.WriteVInt(0);
-        }
-
+		
+		internal void  SkipDocument()
+		{
+			indexStream.WriteLong(fieldsStream.GetFilePointer());
+			fieldsStream.WriteVInt(0);
+		}
+		
 		internal void  Flush()
 		{
 			indexStream.Flush();
@@ -166,60 +167,61 @@ namespace Lucene.Net.Index
 		
 		internal void  Close()
 		{
-            if (doClose)
-            {
-                try
-                {
-                    if (fieldsStream != null)
-                    {
-                        try
-                        {
-                            fieldsStream.Close();
-                        }
-                        finally
-                        {
-                            fieldsStream = null;
-                        }
-                    }
-                }
-                catch (System.IO.IOException ioe)
-                {
-                    try
-                    {
-                        if (indexStream != null)
-                        {
-                            try
-                            {
-                                indexStream.Close();
-                            }
-                            finally
-                            {
-                                indexStream = null;
-                            }
-                        }
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        // Ignore so we throw only first IOException hit
-                    }
-                    throw ioe;
-                }
-                finally
-                {
-                    if (indexStream != null)
-                    {
-                        try
-                        {
-                            indexStream.Close();
-                        }
-                        finally
-                        {
-                            indexStream = null;
-                        }
-                    }
-                }
-            }
-        }
+			if (doClose)
+			{
+				
+				try
+				{
+					if (fieldsStream != null)
+					{
+						try
+						{
+							fieldsStream.Close();
+						}
+						finally
+						{
+							fieldsStream = null;
+						}
+					}
+				}
+				catch (System.IO.IOException ioe)
+				{
+					try
+					{
+						if (indexStream != null)
+						{
+							try
+							{
+								indexStream.Close();
+							}
+							finally
+							{
+								indexStream = null;
+							}
+						}
+					}
+					catch (System.IO.IOException ioe2)
+					{
+						// Ignore so we throw only first IOException hit
+					}
+					throw ioe;
+				}
+				finally
+				{
+					if (indexStream != null)
+					{
+						try
+						{
+							indexStream.Close();
+						}
+						finally
+						{
+							indexStream = null;
+						}
+					}
+				}
+			}
+		}
 		
 		internal void  WriteField(FieldInfo fi, Fieldable field)
 		{
@@ -242,34 +244,33 @@ namespace Lucene.Net.Index
 			{
 				// compression is enabled for the current field
 				byte[] data;
-                int len;
-                int offset;
-				
+				int len;
+				int offset;
 				if (disableCompression)
 				{
 					// optimized case for merging, the data
 					// is already compressed
 					data = field.GetBinaryValue();
-                    System.Diagnostics.Debug.Assert(data != null);
-                    len = field.GetBinaryLength();
-                    offset = field.GetBinaryOffset();
+					System.Diagnostics.Debug.Assert(data != null);
+					len = field.GetBinaryLength();
+					offset = field.GetBinaryOffset();
 				}
 				else
 				{
 					// check if it is a binary field
 					if (field.IsBinary())
 					{
-						data = Compress(field.GetBinaryValue(), field.GetBinaryOffset(), field.GetBinaryLength());
+						data = CompressionTools.Compress(field.GetBinaryValue(), field.GetBinaryOffset(), field.GetBinaryLength());
 					}
 					else
 					{
-                        byte[] x = System.Text.Encoding.UTF8.GetBytes(field.StringValue());
-						data = Compress(x, 0, x.Length);
+						byte[] x = System.Text.Encoding.GetEncoding("UTF-8").GetBytes(field.StringValue());
+						data = CompressionTools.Compress(x, 0, x.Length);
 					}
-                    len = data.Length;
-                    offset = 0;
+					len = data.Length;
+					offset = 0;
 				}
-
+				
 				fieldsStream.WriteVInt(len);
 				fieldsStream.WriteBytes(data, offset, len);
 			}
@@ -278,9 +279,15 @@ namespace Lucene.Net.Index
 				// compression is disabled for the current field
 				if (field.IsBinary())
 				{
-                    int length = field.GetBinaryLength();
-					fieldsStream.WriteVInt(length);
-					fieldsStream.WriteBytes(field.BinaryValue(), field.GetBinaryOffset(), length);
+					byte[] data;
+					int len;
+					int offset;
+					data = field.GetBinaryValue();
+					len = field.GetBinaryLength();
+					offset = field.GetBinaryOffset();
+					
+					fieldsStream.WriteVInt(len);
+					fieldsStream.WriteBytes(data, offset, len);
 				}
 				else
 				{
@@ -330,10 +337,5 @@ namespace Lucene.Net.Index
 					WriteField(fieldInfos.FieldInfo(field.Name()), field);
 			}
 		}
-		
-		private byte[] Compress(byte[] input, int offset, int length)
-		{
-			return SupportClass.CompressionSupport.Compress(input, offset, length);
-        }
 	}
 }

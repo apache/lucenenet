@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,45 +29,47 @@ namespace Lucene.Net.Search
 	/// <p>This may be extended, overriding the collect method to, e.g.,
 	/// conditionally invoke <code>super()</code> in order to filter which
 	/// documents are collected.
+	/// 
 	/// </summary>
-	public class TopDocCollector : HitCollector
+	/// <deprecated> Please use {@link TopScoreDocCollector}
+	/// instead, which has better performance.
+	/// 
+	/// </deprecated>
+	public class TopDocCollector:HitCollector
 	{
 		
 		private ScoreDoc reusableSD;
 		
-        /// <summary>
-        /// The total number of hits the collector encountered.
-        /// </summary>
+		/// <summary>The total number of hits the collector encountered. </summary>
 		protected internal int totalHits;
-
-        /// <summary>
-        /// The priority queue which holds the top-scoring document.
-        /// </summary>
+		
+		/// <summary>The priority queue which holds the top-scoring documents. </summary>
 		protected internal PriorityQueue hq;
 		
 		/// <summary>Construct to collect a given number of hits.</summary>
 		/// <param name="numHits">the maximum number of hits to collect
 		/// </param>
-		public TopDocCollector(int numHits) : this(new HitQueue(numHits))
+		public TopDocCollector(int numHits):this(new HitQueue(numHits, false))
 		{
 		}
 		
-        [System.Obsolete("Use TopDocCollector(PriorityQueue) instead.  numHits is not used by this constructor.")]
+		/// <deprecated> use TopDocCollector(hq) instead. numHits is not used by this
+		/// constructor. It will be removed in a future release.
+		/// </deprecated>
 		internal TopDocCollector(int numHits, PriorityQueue hq)
 		{
 			this.hq = hq;
 		}
-
-        /// <summary>
-        /// Constructor to collect the top-scoring documents by using the given PriorityQueue.
-        /// </summary>
-        /// <param name="hq"></param>
-        internal TopDocCollector(PriorityQueue hq)
-        {
-            this.hq = hq;
-        }
-
-        // javadoc inherited
+		
+		/// <summary>Constructor to collect the top-scoring documents by using the given PQ.</summary>
+		/// <param name="hq">the PQ to use by this instance.
+		/// </param>
+		protected internal TopDocCollector(PriorityQueue hq)
+		{
+			this.hq = hq;
+		}
+		
+		// javadoc inherited
 		public override void  Collect(int doc, float score)
 		{
 			if (score > 0.0f)
@@ -104,10 +106,10 @@ namespace Lucene.Net.Search
 		{
 			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-				// put docs in array
+			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].score;
 			
 			return new TopDocs(totalHits, scoreDocs, maxScore);
 		}

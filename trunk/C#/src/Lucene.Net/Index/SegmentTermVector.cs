@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,9 @@ using System;
 
 namespace Lucene.Net.Index
 {
-	public class SegmentTermVector : TermFreqVector
+	
+	
+	class SegmentTermVector : TermFreqVector
 	{
 		private System.String field;
 		private System.String[] terms;
@@ -61,7 +63,7 @@ namespace Lucene.Net.Index
 		
 		public virtual int Size()
 		{
-			return terms == null ? 0 : terms.Length;
+			return terms == null?0:terms.Length;
 		}
 		
 		public virtual System.String[] GetTerms()
@@ -78,8 +80,8 @@ namespace Lucene.Net.Index
 		{
 			if (terms == null)
 				return - 1;
-            int res = System.Array.BinarySearch(terms, termText, StringComparer.Ordinal);
-			return res >= 0 ? res : - 1;
+			int res = System.Array.BinarySearch(terms, termText);
+			return res >= 0?res:- 1;
 		}
 		
 		public virtual int[] IndexesOf(System.String[] termNumbers, int start, int len)

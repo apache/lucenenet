@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,9 +19,13 @@ using System;
 
 namespace Lucene.Net.Util
 {
-	/// <summary>
-    /// Floating point numbers smaller than 32 bits.
+	
+	
+	/// <summary>Floating point numbers smaller than 32 bits.
+	/// 
 	/// </summary>
+	/// <version>  $Id$
+	/// </version>
 	public class SmallFloat
 	{
 		
@@ -49,7 +53,7 @@ namespace Lucene.Net.Util
 			int smallfloat = bits >> (24 - numMantissaBits);
 			if (smallfloat < fzero)
 			{
-				return (bits <= 0) ? (sbyte) 0 : (sbyte) 1; // underflow is mapped to smallest non-zero number.
+				return (bits <= 0)?(sbyte) 0:(sbyte) 1; // underflow is mapped to smallest non-zero number.
 			}
 			else if (smallfloat >= fzero + 0x100)
 			{
@@ -91,7 +95,7 @@ namespace Lucene.Net.Util
 			int smallfloat = bits >> (24 - 3);
 			if (smallfloat < (63 - 15) << 3)
 			{
-				return (bits <= 0) ? (sbyte) 0 : (sbyte) 1;
+				return (bits <= 0)?(sbyte) 0:(sbyte) 1;
 			}
 			if (smallfloat >= ((63 - 15) << 3) + 0x100)
 			{
@@ -124,7 +128,7 @@ namespace Lucene.Net.Util
 			int smallfloat = bits >> (24 - 5);
 			if (smallfloat < (63 - 2) << 5)
 			{
-				return (bits <= 0) ? (sbyte) 0 : (sbyte) 1;
+				return (bits <= 0)?(sbyte) 0:(sbyte) 1;
 			}
 			if (smallfloat >= ((63 - 2) << 5) + 0x100)
 			{

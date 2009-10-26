@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,98 +19,45 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 
-namespace Lucene.Net.Search
+namespace Lucene.Net.Search.ExtendedFieldCache_old
 {
 	
-	
-	/// <summary> 
-	/// 
+	/// <summary> This interface is obsolete, use {@link FieldCache} instead.
 	/// 
 	/// </summary>
+	/// <deprecated> Use {@link FieldCache}, this will be removed in Lucene 3.0
+	/// 
+	/// </deprecated>
 	public struct ExtendedFieldCache_Fields{
+		/// <deprecated> Use {@link FieldCache#DEFAULT}; this will be removed in Lucene 3.0 
+		/// </deprecated>
 		public readonly static ExtendedFieldCache EXT_DEFAULT;
 		static ExtendedFieldCache_Fields()
 		{
-			EXT_DEFAULT = new ExtendedFieldCacheImpl();
+			EXT_DEFAULT = (ExtendedFieldCache) Lucene.Net.Search.FieldCache_Fields.DEFAULT;
 		}
 	}
-	public interface ExtendedFieldCache : FieldCache
+	public interface ExtendedFieldCache:FieldCache
 	{
-		/// <summary> Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as longs and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
-		/// has in the given field.
-		/// 
-		/// </summary>
-		/// <param name="reader">Used to get field values.
-		/// </param>
-		/// <param name="field"> Which field contains the longs.
-		/// </param>
-		/// <returns> The values in the given field for each document.
-		/// </returns>
-		/// <throws>  java.io.IOException If any error occurs. </throws>
-		long[] GetLongs(IndexReader reader, System.String field);
 		
-		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as longs and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
-		/// given field.
-		/// 
-		/// </summary>
-		/// <param name="reader">Used to get field values.
-		/// </param>
-		/// <param name="field"> Which field contains the longs.
-		/// </param>
-		/// <param name="parser">Computes integer for string values.
-		/// </param>
-		/// <returns> The values in the given field for each document.
-		/// </returns>
-		/// <throws>  IOException If any error occurs. </throws>
-		long[] GetLongs(IndexReader reader, System.String field, LongParser parser);
+		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
+		/// </deprecated>
+		new long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.LongParser parser);
 		
-		
-		/// <summary> Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as integers and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
-		/// has in the given field.
-		/// 
-		/// </summary>
-		/// <param name="reader">Used to get field values.
-		/// </param>
-		/// <param name="field"> Which field contains the doubles.
-		/// </param>
-		/// <returns> The values in the given field for each document.
-		/// </returns>
-		/// <throws>  IOException If any error occurs. </throws>
-		double[] GetDoubles(IndexReader reader, System.String field);
-		
-		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as doubles and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
-		/// given field.
-		/// 
-		/// </summary>
-		/// <param name="reader">Used to get field values.
-		/// </param>
-		/// <param name="field"> Which field contains the doubles.
-		/// </param>
-		/// <param name="parser">Computes integer for string values.
-		/// </param>
-		/// <returns> The values in the given field for each document.
-		/// </returns>
-		/// <throws>  IOException If any error occurs. </throws>
-		double[] GetDoubles(IndexReader reader, System.String field, DoubleParser parser);
+		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
+		/// </deprecated>
+		new double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.DoubleParser parser);
 	}
-	
-	public interface LongParser
+
+	/// <deprecated> Use {@link FieldCache.LongParser}, this will be removed in Lucene 3.0 
+	/// </deprecated>
+	public interface LongParser:Lucene.Net.Search.LongParser
 	{
-		/// <summary> Return an long representation of this field's value.</summary>
-		long ParseLong(System.String string_Renamed);
 	}
-	
-	public interface DoubleParser
+
+	/// <deprecated> Use {@link FieldCache.DoubleParser}, this will be removed in Lucene 3.0 
+	/// </deprecated>
+	public interface DoubleParser:Lucene.Net.Search.DoubleParser
 	{
-		/// <summary> Return an long representation of this field's value.</summary>
-		double ParseDouble(System.String string_Renamed);
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ using BitVector = Lucene.Net.Util.BitVector;
 namespace Lucene.Net.Index
 {
 	
-	public class SegmentTermDocs : TermDocs
+	class SegmentTermDocs : TermDocs
 	{
 		protected internal SegmentReader parent;
 		protected internal IndexInput freqStream;
@@ -42,29 +42,25 @@ namespace Lucene.Net.Index
 		
 		private long skipPointer;
 		private bool haveSkipped;
-
-        protected internal bool currentFieldStoresPayloads;
-        protected internal bool currentFieldOmitTf;
-
-        // for testing
-        public IndexInput FreqStream_ForNUnitTest
-        {
-            get { return freqStream; }
-            set { freqStream = value; }
-        }
 		
-		public SegmentTermDocs(SegmentReader parent)
+		protected internal bool currentFieldStoresPayloads;
+		protected internal bool currentFieldOmitTermFreqAndPositions;
+		
+		protected internal SegmentTermDocs(SegmentReader parent)
 		{
 			this.parent = parent;
-			this.freqStream = (IndexInput) parent.freqStream.Clone();
-			this.deletedDocs = parent.deletedDocs;
-			this.skipInterval = parent.tis.GetSkipInterval();
-			this.maxSkipLevels = parent.tis.GetMaxSkipLevels();
+			this.freqStream = (IndexInput) parent.core.freqStream.Clone();
+			lock (parent)
+			{
+				this.deletedDocs = parent.deletedDocs;
+			}
+			this.skipInterval = parent.core.GetTermsReader().GetSkipInterval();
+			this.maxSkipLevels = parent.core.GetTermsReader().GetMaxSkipLevels();
 		}
 		
 		public virtual void  Seek(Term term)
 		{
-			TermInfo ti = parent.tis.Get(term);
+			TermInfo ti = parent.core.GetTermsReader().Get(term);
 			Seek(ti, term);
 		}
 		
@@ -74,7 +70,7 @@ namespace Lucene.Net.Index
 			Term term;
 			
 			// use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.fieldInfos)
+			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.core.fieldInfos)
 			{
 				// optimized case
 				SegmentTermEnum segmentTermEnum = ((SegmentTermEnum) termEnum);
@@ -85,7 +81,7 @@ namespace Lucene.Net.Index
 			{
 				// punt case
 				term = termEnum.Term();
-				ti = parent.tis.Get(term);
+				ti = parent.core.GetTermsReader().Get(term);
 			}
 			
 			Seek(ti, term);
@@ -94,9 +90,9 @@ namespace Lucene.Net.Index
 		internal virtual void  Seek(TermInfo ti, Term term)
 		{
 			count = 0;
-			FieldInfo fi = parent.fieldInfos.FieldInfo(term.field);
-            currentFieldOmitTf = (fi != null) ? fi.omitTf : false;
-            currentFieldStoresPayloads = (fi != null) ? fi.storePayloads : false;
+			FieldInfo fi = parent.core.fieldInfos.FieldInfo(term.field);
+			currentFieldOmitTermFreqAndPositions = (fi != null)?fi.omitTermFreqAndPositions:false;
+			currentFieldStoresPayloads = (fi != null)?fi.storePayloads:false;
 			if (ti == null)
 			{
 				df = 0;
@@ -139,22 +135,23 @@ namespace Lucene.Net.Index
 			{
 				if (count == df)
 					return false;
-				
 				int docCode = freqStream.ReadVInt();
-
-                if (currentFieldOmitTf)
-                {
-                    doc += docCode;
-                    freq = 1;
-                }
-                else
-                {
-                    doc += (int)(((uint)docCode) >> 1); // shift off low bit
-                    if ((docCode & 1) != 0) // if low bit is set
-                        freq = 1; // freq is one
-                    else
-                        freq = freqStream.ReadVInt(); // else read freq
-                }
+				
+				if (currentFieldOmitTermFreqAndPositions)
+				{
+					doc += docCode;
+					freq = 1;
+				}
+				else
+				{
+					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					if ((docCode & 1) != 0)
+					// if low bit is set
+						freq = 1;
+					// freq is one
+					else
+						freq = freqStream.ReadVInt(); // else read freq
+				}
 				
 				count++;
 				
@@ -166,70 +163,66 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Optimized implementation. </summary>
-        public virtual int Read(int[] docs, int[] freqs)
-        {
-            int length = docs.Length;
-            if (currentFieldOmitTf)
-            {
-                return ReadNoTf(docs, freqs, length);
-            }
-            else
-            {
-                int i = 0;
-                while (i < length && count < df)
-                {
-
-                    // manually inlined call to next() for speed
-                    int docCode = freqStream.ReadVInt();
-                    doc += (int)(((uint)docCode) >> 1); // shift off low bit
-                    if ((docCode & 1) != 0)
-                        // if low bit is set
-                        freq = 1;
-                    // freq is one
-                    else
-                        freq = freqStream.ReadVInt(); // else read freq
-                    count++;
-
-                    if (deletedDocs == null || !deletedDocs.Get(doc))
-                    {
-                        docs[i] = doc;
-                        freqs[i] = freq;
-                        ++i;
-                    }
-                }
-                return i;
-            }
-        }
-
-        private int ReadNoTf(int[] docs, int[] freqs, int length)
-        {
-            int i = 0;
-            while (i < length && count < df)
-            {
-                // manually inlined call to next() for speed
-                doc += freqStream.ReadVInt();
-                count++;
-
-                if (deletedDocs == null || !deletedDocs.Get(doc))
-                {
-                    docs[i] = doc;
-                    // hardware freq to 1 when term freqs were not
-                    // stored in the index
-                    freqs[i] = 1;
-                    ++i;
-                }
-            }
-            return i;
-        }
-
-		/// <summary>Overridden by SegmentTermPositions to skip in prox stream. </summary>
-		protected internal virtual void  SkipProx(long proxPointer)
+		public virtual int Read(int[] docs, int[] freqs)
 		{
+			int length = docs.Length;
+			if (currentFieldOmitTermFreqAndPositions)
+			{
+				return ReadNoTf(docs, freqs, length);
+			}
+			else
+			{
+				int i = 0;
+				while (i < length && count < df)
+				{
+					// manually inlined call to next() for speed
+					int docCode = freqStream.ReadVInt();
+					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					if ((docCode & 1) != 0)
+					// if low bit is set
+						freq = 1;
+					// freq is one
+					else
+						freq = freqStream.ReadVInt(); // else read freq
+					count++;
+					
+					if (deletedDocs == null || !deletedDocs.Get(doc))
+					{
+						docs[i] = doc;
+						freqs[i] = freq;
+						++i;
+					}
+				}
+				return i;
+			}
 		}
 		
-        protected internal virtual void SkipProx(long proxPointer, int payloadLength)
-        {
-        }
+		private int ReadNoTf(int[] docs, int[] freqs, int length)
+		{
+			int i = 0;
+			while (i < length && count < df)
+			{
+				// manually inlined call to next() for speed
+				doc += freqStream.ReadVInt();
+				count++;
+				
+				if (deletedDocs == null || !deletedDocs.Get(doc))
+				{
+					docs[i] = doc;
+					// Hardware freq to 1 when term freqs were not
+					// stored in the index
+					freqs[i] = 1;
+					++i;
+				}
+			}
+			return i;
+		}
+		
+		
+		/// <summary>Overridden by SegmentTermPositions to skip in prox stream. </summary>
+		protected internal virtual void  SkipProx(long proxPointer, int payloadLength)
+		{
+		}
 		
 		/// <summary>Optimized implementation. </summary>
 		public virtual bool SkipTo(int target)

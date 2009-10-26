@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,35 +23,37 @@ using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// Abstract base class providing a mechanism to limit index search results
-    /// to a subset of an index.
-	/// <para>
-    /// Note: In Lucene 3.0, Bits(IndexReader) will be removed and GetDocIdSet(IndexReader)
-    /// will be made abstract.  All implementin classes must therefore implement
-    /// GetDocIdSet(IndexReader) in order to work with Lucene 3.0.
-    /// </para>
+	/// <summary>Abstract base class providing a mechanism to use a subset of an index
+	/// for restriction or permission of index search results.
+	/// <p>
+	/// <b>Note:</b> In Lucene 3.0 {@link #Bits(IndexReader)} will be removed
+	/// and {@link #GetDocIdSet(IndexReader)} will be defined as abstract.
+	/// All implementing classes must therefore implement {@link #GetDocIdSet(IndexReader)}
+	/// in order to work with Lucene 3.0.
 	/// </summary>
 	[Serializable]
 	public abstract class Filter
 	{
-		/// <summary>
-        /// Returns a BitSet with true for documents which should be permitted in
-		/// search results, and false for those that should not. 
-		/// </summary>
-		[System.Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-        public abstract System.Collections.BitArray Bits(IndexReader reader);
-
-        /// <summary>
-        /// Return a DocIdSet that provides the documents which are permitted
-        /// or prohibited in search results.
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        /// <see cref="DocIdBitSet"/>
-        public virtual DocIdSet GetDocIdSet(IndexReader reader)
-        {
-            return new DocIdBitSet(Bits(reader));
-        }
+		/// <returns> A BitSet with true for documents which should be permitted in
+		/// search results, and false for those that should not.
+		/// </returns>
+		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// </deprecated>
+		public virtual System.Collections.BitArray Bits(IndexReader reader)
+		{
+			throw new System.NotSupportedException();
+		}
+		
+		/// <returns> a DocIdSet that provides the documents which should be permitted or
+		/// prohibited in search results. <b>NOTE:</b> null can be returned if
+		/// no documents will be accepted by this Filter.
+		/// 
+		/// </returns>
+		/// <seealso cref="DocIdBitSet">
+		/// </seealso>
+		public virtual DocIdSet GetDocIdSet(IndexReader reader)
+		{
+			return new DocIdBitSet(Bits(reader));
+		}
 	}
 }

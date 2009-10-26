@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	public sealed class SegmentTermEnum : TermEnum, System.ICloneable
+	sealed class SegmentTermEnum:TermEnum, System.ICloneable
 	{
 		private IndexInput input;
 		internal FieldInfos fieldInfos;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 		
 		private TermBuffer termBuffer = new TermBuffer();
 		private TermBuffer prevBuffer = new TermBuffer();
-        private TermBuffer scanBuffer = new TermBuffer();
+		private TermBuffer scanBuffer = new TermBuffer(); // used for scanning
 		
 		private TermInfo termInfo = new TermInfo();
 		
@@ -93,23 +93,25 @@ namespace Lucene.Net.Index
 						maxSkipLevels = input.ReadInt();
 					}
 				}
+				System.Diagnostics.Debug.Assert(indexInterval > 0, "indexInterval=" + indexInterval + " is negative; must be > 0");
+				System.Diagnostics.Debug.Assert(skipInterval > 0, "skipInterval=" + skipInterval + " is negative; must be > 0");
 			}
-            if (format > TermInfosWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
-            {
-                termBuffer.SetPreUTF8Strings();
-                scanBuffer.SetPreUTF8Strings();
-                prevBuffer.SetPreUTF8Strings();
-            }
+			if (format > TermInfosWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
+			{
+				termBuffer.SetPreUTF8Strings();
+				scanBuffer.SetPreUTF8Strings();
+				prevBuffer.SetPreUTF8Strings();
+			}
 		}
 		
-		public object Clone()
+		public System.Object Clone()
 		{
 			SegmentTermEnum clone = null;
 			try
 			{
 				clone = (SegmentTermEnum) base.MemberwiseClone();
 			}
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 			}
 			
@@ -117,8 +119,8 @@ namespace Lucene.Net.Index
 			clone.termInfo = new TermInfo(termInfo);
 			
 			clone.termBuffer = (TermBuffer) termBuffer.Clone();
-            clone.prevBuffer = (TermBuffer)prevBuffer.Clone();
-            clone.scanBuffer = new TermBuffer();
+			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
+			clone.scanBuffer = new TermBuffer();
 			
 			return clone;
 		}
@@ -173,17 +175,19 @@ namespace Lucene.Net.Index
 			return true;
 		}
 		
-		/// <summary>Optimized scan, without allocating new terms.  Return numver of invocations to Next(). </summary>
+		/// <summary>Optimized scan, without allocating new terms. 
+		/// Return number of invocations to next(). 
+		/// </summary>
 		internal int ScanTo(Term term)
 		{
-            scanBuffer.Set(term);
-            int count = 0;
-            while (scanBuffer.CompareTo(termBuffer) > 0 && Next())
-            {
-                count++;
-            }
-            return count;
-        }
+			scanBuffer.Set(term);
+			int count = 0;
+			while (scanBuffer.CompareTo(termBuffer) > 0 && Next())
+			{
+				count++;
+			}
+			return count;
+		}
 		
 		/// <summary>Returns the current Term in the enumeration.
 		/// Initially invalid, valid after next() called for the first time.
@@ -194,7 +198,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the previous Term enumerated. Initially null.</summary>
-		public /*internal*/ Term Prev()
+		internal Term Prev()
 		{
 			return prevBuffer.ToTerm();
 		}

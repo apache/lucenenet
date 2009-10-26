@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -28,18 +29,28 @@ namespace Lucene.Net.Search.Function
 	/// available as other numeric types, casting as needed.
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
 	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource for requirements">
 	/// on the field.
+	/// 
+	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// searching, if {@link #getValues} is invoked with a
+	/// composite (multi-segment) reader, this can easily cause
+	/// double RAM usage for the values in the FieldCache.  It's
+	/// best to switch your application to pass only atomic
+	/// (single segment) readers to this API.  Alternatively, for
+	/// a short-term fix, you could wrap your ValueSource using
+	/// {@link MultiValueSource}, which costs more CPU per lookup
+	/// but will not consume double the FieldCache RAM.</p>
 	/// </seealso>
 	[Serializable]
-	public class ShortFieldSource : FieldCacheSource
+	public class ShortFieldSource:FieldCacheSource
 	{
-		private class AnonymousClassDocValues : DocValues
+		private class AnonymousClassDocValues:DocValues
 		{
 			public AnonymousClassDocValues(short[] arr, ShortFieldSource enclosingInstance)
 			{
@@ -76,7 +87,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + IntVal(doc);
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override object GetInnerArray()
+			internal override System.Object GetInnerArray()
 			{
 				return arr;
 			}
@@ -84,12 +95,12 @@ namespace Lucene.Net.Search.Function
 		private Lucene.Net.Search.ShortParser parser;
 		
 		/// <summary> Create a cached short field source with default string-to-short parser. </summary>
-		public ShortFieldSource(System.String field) : this(field, null)
+		public ShortFieldSource(System.String field):this(field, null)
 		{
 		}
 		
 		/// <summary> Create a cached short field source with a specific string-to-short parser. </summary>
-		public ShortFieldSource(System.String field, Lucene.Net.Search.ShortParser parser) : base(field)
+		public ShortFieldSource(System.String field, Lucene.Net.Search.ShortParser parser):base(field)
 		{
 			this.parser = parser;
 		}
@@ -103,7 +114,7 @@ namespace Lucene.Net.Search.Function
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.FieldCacheSource#getCachedValues(Lucene.Net.Search.FieldCache, java.lang.String, Lucene.Net.Index.IndexReader) */
 		public override DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader)
 		{
-			short[] arr = (parser == null) ? cache.GetShorts(reader, field) : cache.GetShorts(reader, field, parser);
+			short[] arr = cache.GetShorts(reader, field, parser);
 			return new AnonymousClassDocValues(arr, this);
 		}
 		
@@ -115,13 +126,13 @@ namespace Lucene.Net.Search.Function
 				return false;
 			}
 			ShortFieldSource other = (ShortFieldSource) o;
-			return this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType();
+			return this.parser == null?other.parser == null:this.parser.GetType() == other.parser.GetType();
 		}
 		
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.FieldCacheSource#cachedFieldSourceHashCode() */
 		public override int CachedFieldSourceHashCode()
 		{
-			return parser == null ? typeof(System.Int16).GetHashCode() : parser.GetType().GetHashCode();
+			return parser == null?typeof(System.Int16).GetHashCode():parser.GetType().GetHashCode();
 		}
 	}
 }

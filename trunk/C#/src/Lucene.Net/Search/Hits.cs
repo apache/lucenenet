@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,21 +36,22 @@ namespace Lucene.Net.Search
 	/// {@link java.util.ConcurrentModificationException ConcurrentModificationException}
 	/// is thrown when accessing hit <code>n</code> &ge; current_{@link #Length()} 
 	/// (but <code>n</code> &lt; {@link #Length()}_at_start). 
+	/// 
 	/// </summary>
-    ///
-	///  <pre>
-	///    TopDocCollector collector = new TopDocCollector(hitsPerPage);
-	///    searcher.search(query, collector);
-	///    ScoreDoc[] hits = collector.topDocs().scoreDocs;
-	///    for (int i = 0; i < hits.length; i++) {
-	///      int docId = hits[i].doc;
-	///      Document d = searcher.doc(docId);
-	///      // do something with current hit
-	///      ...
-	///  </pre>
-    /// 
-	[System.Obsolete("Hits will be removed in Lucene 3.0.  Insead used TopDocCollector and TopDocs.")]
-    public sealed class Hits
+	/// <deprecated>
+	/// see {@link TopScoreDocCollector} and {@link TopDocs} :<br>
+	/// <pre>
+	/// TopScoreDocCollector collector = new TopScoreDocCollector(hitsPerPage);
+	/// searcher.search(query, collector);
+	/// ScoreDoc[] hits = collector.topDocs().scoreDocs;
+	/// for (int i = 0; i < hits.length; i++) {
+	/// int docId = hits[i].doc;
+	/// Document d = searcher.doc(docId);
+	/// // do something with current hit
+	/// ...
+	/// </pre>
+	/// </deprecated>
+	public sealed class Hits
 	{
 		private Weight weight;
 		private Searcher searcher;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Search
 		private int lengthAtStart; // this is the number apps usually count on (although deletions can bring it down). 
 		private int nDeletedHits = 0; // # of already collected hits that were meanwhile deleted.
 		
-		public /*internal*/ bool debugCheckedForDeletions = false; // for test purposes.
+		internal bool debugCheckedForDeletions = false; // for test purposes.
 		
 		internal Hits(Searcher s, Query q, Filter f)
 		{
@@ -114,8 +115,8 @@ namespace Lucene.Net.Search
 			}
 			
 			int n = min * 2; // double # retrieved
-			TopDocs topDocs = (sort == null) ? searcher.Search(weight, filter, n) : searcher.Search(weight, filter, n, sort);
-
+			TopDocs topDocs = (sort == null)?searcher.Search(weight, filter, n):searcher.Search(weight, filter, n, sort);
+			
 			length = topDocs.totalHits;
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 			
@@ -153,7 +154,7 @@ namespace Lucene.Net.Search
 				start = i2;
 			}
 			
-			int end = scoreDocs.Length < length ? scoreDocs.Length : length;
+			int end = scoreDocs.Length < length?scoreDocs.Length:length;
 			length += nDeletedHits;
 			for (int i = start; i < end; i++)
 			{
@@ -229,7 +230,7 @@ namespace Lucene.Net.Search
 		
 		private HitDoc HitDoc(int n)
 		{
-			if (n >= length)
+			if (n >= lengthAtStart)
 			{
 				throw new System.IndexOutOfRangeException("Not a valid hit number: " + n);
 			}

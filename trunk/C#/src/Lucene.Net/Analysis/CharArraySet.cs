@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 
 using System;
-
 namespace Lucene.Net.Analysis
 {
 	
@@ -29,17 +28,17 @@ namespace Lucene.Net.Analysis
 	/// is in the set without the necessity of converting it
 	/// to a String first.
 	/// </summary>
-
-    public class CharArraySet : System.Collections.Hashtable
+	
+	public class CharArraySet:System.Collections.Hashtable
 	{
-        public override int Count
-        {
-            get
-            {
-                return count;
-            }
-        }
-
+		public override int Count
+		{
+			get
+			{
+				return count;
+			}
+			
+		}
 		private const int INIT_SIZE = 8;
 		private char[][] entries;
 		private int count;
@@ -58,13 +57,20 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Create set from a Collection of char[] or String </summary>
-		public CharArraySet(System.Collections.ICollection c, bool ignoreCase) : this(c.Count, ignoreCase)
+		public CharArraySet(System.Collections.ICollection c, bool ignoreCase):this(c.Count, ignoreCase)
 		{
 			System.Collections.IEnumerator e = c.GetEnumerator();
 			while (e.MoveNext())
 			{
 				Add(e.Current);
 			}
+		}
+		/// <summary>Create set from entries </summary>
+		private CharArraySet(char[][] entries, bool ignoreCase, int count)
+		{
+			this.entries = entries;
+			this.ignoreCase = ignoreCase;
+			this.count = count;
 		}
 		
 		/// <summary>true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
@@ -75,6 +81,7 @@ namespace Lucene.Net.Analysis
 			return entries[GetSlot(text, off, len)] != null;
 		}
 		
+		/// <summary>Returns true if the String is in the set </summary>
 		private int GetSlot(char[] text, int off, int len)
 		{
 			int code = GetHashCode(text, off, len);
@@ -194,35 +201,45 @@ namespace Lucene.Net.Analysis
 			return count == 0;
 		}
 		
-		public override bool Contains(object o)
+		public override bool Contains(System.Object o)
 		{
 			if (o is char[])
 			{
 				char[] text = (char[]) o;
 				return Contains(text, 0, text.Length);
 			}
-            else if (o is String)
-            {
-                String s = (String)o;
-				return Contains(s.ToCharArray(), 0, s.Length);
-			}
-			return false;
+			return Contains(o.ToString());
 		}
 		
-		public virtual bool Add(object o)
+		public virtual bool Add(System.Object o)
 		{
 			if (o is char[])
 			{
 				return Add((char[]) o);
 			}
-			else if (o is System.String)
-			{
-				return Add((System.String) o);
-			}
-			else
-			{
-				return Add(o.ToString());
-			}
+			return Add(o.ToString());
+		}
+		
+		/// <summary> Returns an unmodifiable {@link CharArraySet}. This allows to provide
+		/// unmodifiable views of internal sets for "read-only" use.
+		/// 
+		/// </summary>
+		/// <param name="set">a set for which the unmodifiable set is returned.
+		/// </param>
+		/// <returns> an new unmodifiable {@link CharArraySet}.
+		/// </returns>
+		/// <throws>  NullPointerException </throws>
+		/// <summary>           if the given set is <code>null</code>.
+		/// </summary>
+		public static CharArraySet unmodifiableSet(CharArraySet set_Renamed)
+		{
+			if (set_Renamed == null)
+				throw new System.NullReferenceException("Given set is null");
+			/*
+			* Instead of delegating calls to the given set copy the low-level values to
+			* the unmodifiable Subclass
+			*/
+			return new UnmodifiableCharArraySet(set_Renamed.entries, set_Renamed.ignoreCase, set_Renamed.count);
 		}
 		
 		/// <summary>The Iterator<String> for this set.  Strings are constructed on the fly, so
@@ -238,7 +255,7 @@ namespace Lucene.Net.Analysis
 			/// <summary>Returns the next String, as a Set<String> would...
 			/// use nextCharArray() for better efficiency. 
 			/// </summary>
-			public virtual object Current
+			public virtual System.Object Current
 			{
 				get
 				{
@@ -287,9 +304,10 @@ namespace Lucene.Net.Analysis
 			{
 				throw new System.NotSupportedException();
 			}
-
+			
 			virtual public void  Reset()
 			{
+                System.Diagnostics.Debug.Fail("Port issue:", "Need to implement this call, CharArraySetIterator.Reset()");  // {{Aroush-2.9
 			}
 		}
 		
@@ -297,6 +315,40 @@ namespace Lucene.Net.Analysis
 		public new System.Collections.IEnumerator GetEnumerator()
 		{
 			return new CharArraySetIterator(this);
+		}
+		
+		/// <summary> Efficient unmodifiable {@link CharArraySet}. This implementation does not
+		/// delegate calls to a give {@link CharArraySet} like
+		/// {@link Collections#unmodifiableSet(java.util.Set)} does. Instead is passes
+		/// the internal representation of a {@link CharArraySet} to a super
+		/// constructor and overrides all mutators. 
+		/// </summary>
+		private sealed class UnmodifiableCharArraySet:CharArraySet
+		{
+			
+			internal UnmodifiableCharArraySet(char[][] entries, bool ignoreCase, int count):base(entries, ignoreCase, count)
+			{
+			}
+			
+			public override bool Add(System.Object o)
+			{
+				throw new System.NotSupportedException();
+			}
+			
+			public bool AddAll(System.Collections.ICollection coll)
+			{
+				throw new System.NotSupportedException();
+			}
+			
+			public override bool Add(char[] text)
+			{
+				throw new System.NotSupportedException();
+			}
+			
+			public override bool Add(System.String text)
+			{
+				throw new System.NotSupportedException();
+			}
 		}
 	}
 }

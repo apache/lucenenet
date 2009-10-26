@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,8 @@ namespace Lucene.Net.Search
 	/// <li> {@link PrefixQuery}
 	/// <li> {@link MultiPhraseQuery}
 	/// <li> {@link FuzzyQuery}
-	/// <li> {@link RangeQuery}
+	/// <li> {@link TermRangeQuery}
+	/// <li> {@link NumericRangeQuery}
 	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
 	/// </ul>
 	/// <p>A parser for queries is contained in:
@@ -86,16 +87,17 @@ namespace Lucene.Net.Search
 			return ToString("");
 		}
 		
-		/// <summary>Expert: Constructs an appropriate Weight implementation for this query.
+		/// <summary> Expert: Constructs an appropriate Weight implementation for this query.
 		/// 
-		/// <p>Only implemented by primitive queries, which re-write to themselves.
+		/// <p>
+		/// Only implemented by primitive queries, which re-write to themselves.
 		/// </summary>
-		protected internal virtual Weight CreateWeight(Searcher searcher)
+		public virtual Weight CreateWeight(Searcher searcher)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		/// <summary>Expert: Constructs and initializes a Weight for a top-level query. </summary>
+		/// <summary> Expert: Constructs and initializes a Weight for a top-level query.</summary>
 		public virtual Weight Weight(Searcher searcher)
 		{
 			Query query = searcher.Rewrite(this);
@@ -106,6 +108,7 @@ namespace Lucene.Net.Search
 			return weight;
 		}
 		
+		
 		/// <summary>Expert: called to re-write queries into primitive queries. For example,
 		/// a PrefixQuery will be rewritten into a BooleanQuery that consists
 		/// of TermQuerys.
@@ -115,20 +118,21 @@ namespace Lucene.Net.Search
 			return this;
 		}
 		
+		
 		/// <summary>Expert: called when re-writing queries under MultiSearcher.
 		/// 
 		/// Create a single query suitable for use by all subsearchers (in 1-1
 		/// correspondence with queries). This is an optimization of the OR of
 		/// all queries. We handle the common optimization cases of equal
 		/// queries and overlapping clauses of boolean OR queries (as generated
-		/// by MultiTermQuery.rewrite() and RangeQuery.rewrite()).
+		/// by MultiTermQuery.rewrite()).
 		/// Be careful overriding this method as queries[0] determines which
 		/// method will be called and is not necessarily of the same type as
 		/// the other queries.
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
-			System.Collections.Hashtable uniques = new System.Collections.Hashtable();
+            System.Collections.Hashtable uniques = new System.Collections.Hashtable();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				Query query = queries[i];
@@ -149,36 +153,28 @@ namespace Lucene.Net.Search
 				{
 					for (int j = 0; j < clauses.Length; j++)
 					{
-                        Query tmp = clauses[j].GetQuery();
-                        if (uniques.Contains(tmp) == false)
-                        {
-                            uniques.Add(tmp, tmp);
-                        }
+						SupportClass.HashtableHelper.AddIfNotContains(uniques, clauses[j].GetQuery());
 					}
 				}
 				else
 				{
-                    if (uniques.Contains(query) == false)
-                    {
-                        uniques.Add(query, query);
-                    }
+					SupportClass.HashtableHelper.AddIfNotContains(uniques, query);
 				}
 			}
 			// optimization: if we have just one query, just return it
 			if (uniques.Count == 1)
 			{
-                System.Collections.IDictionaryEnumerator iter = uniques.GetEnumerator();
-                iter.MoveNext();
-                return iter.Value as Query;
+				return (Query) uniques.GetEnumerator().Current;
 			}
-			System.Collections.IDictionaryEnumerator it = uniques.GetEnumerator();
+			System.Collections.IEnumerator it = uniques.GetEnumerator();
 			BooleanQuery result = new BooleanQuery(true);
 			while (it.MoveNext())
 			{
-				result.Add((Query) it.Value, BooleanClause.Occur.SHOULD);
+				result.Add((Query) it.Current, BooleanClause.Occur.SHOULD);
 			}
 			return result;
 		}
+		
 		
 		/// <summary> Expert: adds all terms occuring in this query to the terms set. Only
 		/// works if this query is in its {@link #rewrite rewritten} form.
@@ -192,31 +188,34 @@ namespace Lucene.Net.Search
 		}
 		
 		
+		
 		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
 		/// BooleanQuery.
 		/// 
 		/// <p>A utility for use by {@link #Combine(Query[])} implementations.
 		/// </summary>
-		public static Query MergeBooleanQueries(Query[] queries)
+		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{
-			System.Collections.Hashtable allClauses = new System.Collections.Hashtable();
+            System.Collections.Hashtable allClauses = new System.Collections.Hashtable();
 			for (int i = 0; i < queries.Length; i++)
 			{
-				BooleanClause[] clauses = ((BooleanQuery) queries[i]).GetClauses();
+				BooleanClause[] clauses = queries[i].GetClauses();
 				for (int j = 0; j < clauses.Length; j++)
 				{
-					allClauses.Add(clauses[j], clauses[j]);
+					SupportClass.HashtableHelper.AddIfNotContains(allClauses, clauses[j]);
 				}
 			}
 			
-			bool coordDisabled = queries.Length == 0 ? false : ((BooleanQuery) queries[0]).IsCoordDisabled();
+			bool coordDisabled = queries.Length == 0?false:queries[0].IsCoordDisabled();
 			BooleanQuery result = new BooleanQuery(coordDisabled);
-            foreach (BooleanClause booleanClause in allClauses.Keys)
-            {
-                result.Add(booleanClause);
-            }
+			System.Collections.IEnumerator i2 = allClauses.GetEnumerator();
+			while (i2.MoveNext())
+			{
+				result.Add((BooleanClause) i2.Current);
+			}
 			return result;
 		}
+		
 		
 		/// <summary>Expert: Returns the Similarity implementation to be used for this query.
 		/// Subclasses may override this method to specify their own Similarity
@@ -229,16 +228,38 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns a clone of this query. </summary>
-		public virtual object Clone()
+		public virtual System.Object Clone()
 		{
 			try
 			{
-				return (Query) base.MemberwiseClone();
+				return base.MemberwiseClone();
 			}
 			catch (System.Exception e)
 			{
 				throw new System.SystemException("Clone not supported: " + e.Message);
 			}
+		}
+		
+		public override int GetHashCode()
+		{
+			int prime = 31;
+			int result = 1;
+			result = prime * result + BitConverter.ToInt32(BitConverter.GetBytes(boost), 0);
+			return result;
+		}
+		
+		public  override bool Equals(System.Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (GetType() != obj.GetType())
+				return false;
+			Query other = (Query) obj;
+			if (BitConverter.ToInt32(BitConverter.GetBytes(boost), 0) != BitConverter.ToInt32(BitConverter.GetBytes(other.boost), 0))
+				return false;
+			return true;
 		}
 	}
 }

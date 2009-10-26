@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,36 @@
 
 using System;
 
+using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: Default scoring implementation. </summary>
 	[Serializable]
-	public class DefaultSimilarity : Similarity
+	public class DefaultSimilarity:Similarity
 	{
+		
+		/// <summary>Implemented as
+		/// <code>state.getBoost()*lengthNorm(numTerms)</code>, where
+		/// <code>numTerms</code> is {@link FieldInvertState#GetLength()} if {@link
+		/// #setDiscountOverlaps} is false, else it's {@link
+		/// FieldInvertState#GetLength()} - {@link
+		/// FieldInvertState#GetNumOverlap()}.
+		/// 
+		/// <p><b>WARNING</b>: This API is new and experimental, and may suddenly
+		/// change.</p> 
+		/// </summary>
+		public override float ComputeNorm(System.String field, FieldInvertState state)
+		{
+			int numTerms;
+			if (discountOverlaps)
+				numTerms = state.GetLength() - state.GetNumOverlap();
+			else
+				numTerms = state.GetLength();
+			return (float) (state.GetBoost() * LengthNorm(field, numTerms));
+		}
+		
 		/// <summary>Implemented as <code>1/sqrt(numTerms)</code>. </summary>
 		public override float LengthNorm(System.String fieldName, int numTerms)
 		{
@@ -58,6 +81,32 @@ namespace Lucene.Net.Search
 		public override float Coord(int overlap, int maxOverlap)
 		{
 			return overlap / (float) maxOverlap;
+		}
+		
+		// Default false
+		protected internal bool discountOverlaps;
+		
+		/// <summary>Determines whether overlap tokens (Tokens with
+		/// 0 position increment) are ignored when computing
+		/// norm.  By default this is false, meaning overlap
+		/// tokens are counted just like non-overlap tokens.
+		/// 
+		/// <p><b>WARNING</b>: This API is new and experimental, and may suddenly
+		/// change.</p>
+		/// 
+		/// </summary>
+		/// <seealso cref="computeNorm">
+		/// </seealso>
+		public virtual void  SetDiscountOverlaps(bool v)
+		{
+			discountOverlaps = v;
+		}
+		
+		/// <seealso cref="setDiscountOverlaps">
+		/// </seealso>
+		public virtual bool GetDiscountOverlaps()
+		{
+			return discountOverlaps;
 		}
 	}
 }

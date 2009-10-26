@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,8 +17,10 @@
 
 using System;
 
+using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 using Term = Lucene.Net.Index.Term;
 using SmallFloat = Lucene.Net.Util.SmallFloat;
+using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
 
 namespace Lucene.Net.Search
 {
@@ -206,7 +208,7 @@ namespace Lucene.Net.Search
 	/// <b>t.getBoost()</b>
 	/// is a search time boost of term <i>t</i> in the query <i>q</i> as
 	/// specified in the query text
-	/// (see <A HREF="../../../../../queryparsersyntax.html#Boosting a Term">query syntax</A>),
+	/// (see <A HREF="../../../../../../queryparsersyntax.html#Boosting a Term">query syntax</A>),
 	/// or as set by application calls to
 	/// {@link Lucene.Net.Search.Query#SetBoost(float) setBoost()}.
 	/// Notice that there is really no direct API for accessing a boost of one term in a multi term query,
@@ -280,25 +282,171 @@ namespace Lucene.Net.Search
 	/// </ol>
 	/// 
 	/// </summary>
-	/// <seealso cref="#SetDefault(Similarity)">
+	/// <seealso cref="SetDefault(Similarity)">
 	/// </seealso>
-	/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+	/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
 	/// </seealso>
-	/// <seealso cref="Searcher#SetSimilarity(Similarity)">
+	/// <seealso cref="Searcher.SetSimilarity(Similarity)">
 	/// </seealso>
 	[Serializable]
 	public abstract class Similarity
 	{
-		/// <summary>The Similarity implementation used by default. </summary>
-		private static Similarity defaultImpl = new DefaultSimilarity();
+		public Similarity()
+		{
+			InitBlock();
+		}
+		[Serializable]
+		private class AnonymousClassIDFExplanation:IDFExplanation
+		{
+			public AnonymousClassIDFExplanation(float idf, Similarity enclosingInstance)
+			{
+				InitBlock(idf, enclosingInstance);
+			}
+			private void  InitBlock(float idf, Similarity enclosingInstance)
+			{
+				this.idf = idf;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private float idf;
+			private Similarity enclosingInstance;
+			public Similarity Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			//@Override
+			public override float GetIdf()
+			{
+				return idf;
+			}
+			//@Override
+			public override System.String Explain()
+			{
+				return "Inexplicable";
+			}
+		}
+		[Serializable]
+		private class AnonymousClassIDFExplanation1:IDFExplanation
+		{
+			public AnonymousClassIDFExplanation1(int df, int max, float idf, Similarity enclosingInstance)
+			{
+				InitBlock(df, max, idf, enclosingInstance);
+			}
+			private void  InitBlock(int df, int max, float idf, Similarity enclosingInstance)
+			{
+				this.df = df;
+				this.max = max;
+				this.idf = idf;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private int df;
+			private int max;
+			private float idf;
+			private Similarity enclosingInstance;
+			public Similarity Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			//@Override
+			public override System.String Explain()
+			{
+				return "idf(docFreq=" + df + ", maxDocs=" + max + ")";
+			}
+			//@Override
+			public override float GetIdf()
+			{
+				return idf;
+			}
+		}
+		[Serializable]
+		private class AnonymousClassIDFExplanation2:IDFExplanation
+		{
+			public AnonymousClassIDFExplanation2(float idf, Similarity enclosingInstance)
+			{
+				InitBlock(idf, enclosingInstance);
+			}
+			private void  InitBlock(float idf, Similarity enclosingInstance)
+			{
+				this.idf = idf;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private float idf;
+			private Similarity enclosingInstance;
+			public Similarity Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			//@Override
+			public override float GetIdf()
+			{
+				return idf;
+			}
+			//@Override
+			public override System.String Explain()
+			{
+				return "Inexplicable";
+			}
+		}
+		[Serializable]
+		private class AnonymousClassIDFExplanation3:IDFExplanation
+		{
+			public AnonymousClassIDFExplanation3(float fIdf, System.Text.StringBuilder exp, Similarity enclosingInstance)
+			{
+				InitBlock(fIdf, exp, enclosingInstance);
+			}
+			private void  InitBlock(float fIdf, System.Text.StringBuilder exp, Similarity enclosingInstance)
+			{
+				this.fIdf = fIdf;
+				this.exp = exp;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private float fIdf;
+			private System.Text.StringBuilder exp;
+			private Similarity enclosingInstance;
+			public Similarity Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			//@Override
+			public override float GetIdf()
+			{
+				return fIdf;
+			}
+			//@Override
+			public override System.String Explain()
+			{
+				return exp.ToString();
+			}
+		}
+		private void  InitBlock()
+		{
+			SupportedMethods = GetSupportedMethods(this.GetType());
+		}
+		
+		public const int NO_DOC_ID_PROVIDED = - 1;
 		
 		/// <summary>Set the default Similarity implementation used by indexing and search
 		/// code.
 		/// 
 		/// </summary>
-		/// <seealso cref="Searcher#SetSimilarity(Similarity)">
+		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
 		/// </seealso>
-		/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+		/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
 		/// </seealso>
 		public static void  SetDefault(Similarity similarity)
 		{
@@ -311,9 +459,9 @@ namespace Lucene.Net.Search
 		/// <p>This is initially an instance of {@link DefaultSimilarity}.
 		/// 
 		/// </summary>
-		/// <seealso cref="Searcher#SetSimilarity(Similarity)">
+		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
 		/// </seealso>
-		/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+		/// <seealso cref="Lucene.Net.Index.IndexWriter.SetSimilarity(Similarity)">
 		/// </seealso>
 		public static Similarity GetDefault()
 		{
@@ -324,7 +472,7 @@ namespace Lucene.Net.Search
 		private static readonly float[] NORM_TABLE = new float[256];
 		
 		/// <summary>Decodes a normalization factor stored in an index.</summary>
-		/// <seealso cref="#EncodeNorm(float)">
+		/// <seealso cref="EncodeNorm(float)">
 		/// </seealso>
 		public static float DecodeNorm(byte b)
 		{
@@ -332,11 +480,37 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns a table for decoding normalization bytes.</summary>
-		/// <seealso cref="#EncodeNorm(float)">
+		/// <seealso cref="EncodeNorm(float)">
 		/// </seealso>
 		public static float[] GetNormDecoder()
 		{
 			return NORM_TABLE;
+		}
+		
+		/// <summary> Compute the normalization value for a field, given the accumulated
+		/// state of term processing for this field (see {@link FieldInvertState}).
+		/// 
+		/// <p>Implementations should calculate a float value based on the field
+		/// state and then return that value.
+		/// 
+		/// <p>For backward compatibility this method by default calls
+		/// {@link #LengthNorm(String, int)} passing
+		/// {@link FieldInvertState#GetLength()} as the second argument, and
+		/// then multiplies this value by {@link FieldInvertState#GetBoost()}.</p>
+		/// 
+		/// <p><b>WARNING</b>: This API is new and experimental and may
+		/// suddenly change.</p>
+		/// 
+		/// </summary>
+		/// <param name="field">field name
+		/// </param>
+		/// <param name="state">current processing state for this field
+		/// </param>
+		/// <returns> the calculated float norm
+		/// </returns>
+		public virtual float ComputeNorm(System.String field, FieldInvertState state)
+		{
+			return (float) (state.GetBoost() * LengthNorm(field, state.GetLength()));
 		}
 		
 		/// <summary>Computes the normalization value for a field given the total number of
@@ -348,9 +522,9 @@ namespace Lucene.Net.Search
 		/// method usually return smaller values when <code>numTokens</code> is large,
 		/// and larger values when <code>numTokens</code> is small.
 		/// 
-		/// <p>That these values are computed under 
+		/// <p>Note that the return values are computed under 
 		/// {@link Lucene.Net.Index.IndexWriter#AddDocument(Lucene.Net.Documents.Document)} 
-		/// and stored then using
+		/// and then stored using
 		/// {@link #EncodeNorm(float)}.  
 		/// Thus they have limited precision, and documents
 		/// must be re-indexed if this method is altered.
@@ -394,9 +568,9 @@ namespace Lucene.Net.Search
 		/// value.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Field#SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
 		/// </seealso>
-		/// <seealso cref="SmallFloat">
+		/// <seealso cref="Lucene.Net.Util.SmallFloat">
 		/// </seealso>
 		public static byte EncodeNorm(float f)
 		{
@@ -468,7 +642,7 @@ namespace Lucene.Net.Search
 		/// </pre>
 		/// 
 		/// Note that {@link Searcher#MaxDoc()} is used instead of
-		/// {@link IndexReader#NumDocs()} because it is proportional to
+		/// {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is proportional to
 		/// {@link Searcher#DocFreq(Term)} , i.e., when one is inaccurate,
 		/// so is the other, and in the same direction.
 		/// 
@@ -479,9 +653,48 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> a score factor for the term
 		/// </returns>
+		/// <deprecated> see {@link #IdfExplain(Term, Searcher)}
+		/// </deprecated>
 		public virtual float Idf(Term term, Searcher searcher)
 		{
 			return Idf(searcher.DocFreq(term), searcher.MaxDoc());
+		}
+		
+		/// <summary> Computes a score factor for a simple term and returns an explanation
+		/// for that score factor.
+		/// 
+		/// <p>
+		/// The default implementation uses:
+		/// 
+		/// <pre>
+		/// idf(searcher.docFreq(term), searcher.maxDoc());
+		/// </pre>
+		/// 
+		/// Note that {@link Searcher#MaxDoc()} is used instead of
+		/// {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is
+		/// proportional to {@link Searcher#DocFreq(Term)} , i.e., when one is
+		/// inaccurate, so is the other, and in the same direction.
+		/// 
+		/// </summary>
+		/// <param name="term">the term in question
+		/// </param>
+		/// <param name="searcher">the document collection being searched
+		/// </param>
+		/// <returns> an IDFExplain object that includes both an idf score factor 
+		/// and an explanation for the term.
+		/// </returns>
+		/// <throws>  IOException </throws>
+		public virtual IDFExplanation IdfExplain(Term term, Searcher searcher)
+		{
+			if (SupportedMethods.overridesTermIDF)
+			{
+				float idf = Idf(term, searcher);
+				return new AnonymousClassIDFExplanation(idf, this);
+			}
+			int df = searcher.DocFreq(term);
+			int max = searcher.MaxDoc();
+			float idf2 = Idf(df, max);
+			return new AnonymousClassIDFExplanation1(df, max, idf2, this);
 		}
 		
 		/// <summary>Computes a score factor for a phrase.
@@ -494,8 +707,10 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="searcher">the document collection being searched
 		/// </param>
-		/// <returns> a score factor for the phrase
+		/// <returns> idf score factor
 		/// </returns>
+		/// <deprecated> see {@link #idfExplain(Collection, Searcher)}
+		/// </deprecated>
 		public virtual float Idf(System.Collections.ICollection terms, Searcher searcher)
 		{
 			float idf = 0.0f;
@@ -505,6 +720,47 @@ namespace Lucene.Net.Search
 				idf += Idf((Term) i.Current, searcher);
 			}
 			return idf;
+		}
+		
+		/// <summary> Computes a score factor for a phrase.
+		/// 
+		/// <p>
+		/// The default implementation sums the idf factor for
+		/// each term in the phrase.
+		/// 
+		/// </summary>
+		/// <param name="terms">the terms in the phrase
+		/// </param>
+		/// <param name="searcher">the document collection being searched
+		/// </param>
+		/// <returns> an IDFExplain object that includes both an idf 
+		/// score factor for the phrase and an explanation 
+		/// for each term.
+		/// </returns>
+		/// <throws>  IOException </throws>
+		public virtual IDFExplanation idfExplain(System.Collections.ICollection terms, Searcher searcher)
+		{
+			if (SupportedMethods.overridesCollectionIDF)
+			{
+				float idf = Idf(terms, searcher);
+				return new AnonymousClassIDFExplanation2(idf, this);
+			}
+			int max = searcher.MaxDoc();
+			float idf2 = 0.0f;
+			System.Text.StringBuilder exp = new System.Text.StringBuilder();
+			System.Collections.IEnumerator i = terms.GetEnumerator();
+			while (i.MoveNext())
+			{
+				Term term = (Term) i.Current;
+				int df = searcher.DocFreq(term);
+				idf2 += Idf(df, max);
+				exp.Append(" ");
+				exp.Append(term.Text());
+				exp.Append("=");
+				exp.Append(df);
+			}
+			float fIdf = idf2;
+			return new AnonymousClassIDFExplanation3(fIdf, exp, this);
 		}
 		
 		/// <summary>Computes a score factor based on a term's document frequency (the number
@@ -543,6 +799,8 @@ namespace Lucene.Net.Search
 		public abstract float Coord(int overlap, int maxOverlap);
 		
 		
+		
+		
 		/// <summary> Calculate a scoring factor based on the data in the payload.  Overriding implementations
 		/// are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
 		/// what is in the byte array.
@@ -558,13 +816,124 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="length">The length in the array
 		/// </param>
-		/// <returns> An implementation dependent float to be used as a scoring factor 
+		/// <returns> An implementation dependent float to be used as a scoring factor
+		/// 
 		/// </returns>
+		/// <deprecated> See {@link #ScorePayload(int, String, int, int, byte[], int, int)}
+		/// </deprecated>
+		//TODO: When removing this, set the default value below to return 1.
 		public virtual float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
 		{
 			//Do nothing
 			return 1;
 		}
+		
+		/// <summary> Calculate a scoring factor based on the data in the payload.  Overriding implementations
+		/// are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
+		/// what is in the byte array.
+		/// <p>
+		/// The default implementation returns 1.
+		/// 
+		/// </summary>
+		/// <param name="docId">The docId currently being scored.  If this value is {@link #NO_DOC_ID_PROVIDED}, then it should be assumed that the PayloadQuery implementation does not provide document information
+		/// </param>
+		/// <param name="fieldName">The fieldName of the term this payload belongs to
+		/// </param>
+		/// <param name="start">The start position of the payload
+		/// </param>
+		/// <param name="end">The end position of the payload
+		/// </param>
+		/// <param name="payload">The payload byte array to be scored
+		/// </param>
+		/// <param name="offset">The offset into the payload array
+		/// </param>
+		/// <param name="length">The length in the array
+		/// </param>
+		/// <returns> An implementation dependent float to be used as a scoring factor
+		/// 
+		/// </returns>
+		public virtual float ScorePayload(int docId, System.String fieldName, int start, int end, byte[] payload, int offset, int length)
+		{
+			//TODO: When removing the deprecated scorePayload above, set this to return 1
+			return ScorePayload(fieldName, payload, offset, length);
+		}
+		
+		/// <deprecated> Remove this when old API is removed! 
+		/// </deprecated>
+		private MethodSupport SupportedMethods;
+		
+		/// <deprecated> Remove this when old API is removed! 
+		/// </deprecated>
+		[Serializable]
+		private sealed class MethodSupport
+		{
+			internal bool overridesCollectionIDF;
+			internal bool overridesTermIDF;
+			
+			internal MethodSupport(System.Type clazz)
+			{
+				overridesCollectionIDF = IsMethodOverridden(clazz, "Idf", C_IDF_METHOD_PARAMS);
+				overridesTermIDF = IsMethodOverridden(clazz, "Idf", T_IDF_METHOD_PARAMS);
+			}
+			
+			private static bool IsMethodOverridden(System.Type clazz, System.String name, System.Type[] params_Renamed)
+			{
+				try
+				{
+					return clazz.GetMethod(name, (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed).DeclaringType != typeof(Similarity);
+				}
+				catch (System.MethodAccessException e)
+				{
+					// should not happen
+					throw new System.SystemException(e.Message, e);
+				}
+			}
+			/// <deprecated> Remove this when old API is removed! 
+			/// </deprecated>
+			private static readonly System.Type[] T_IDF_METHOD_PARAMS = new System.Type[]{typeof(Term), typeof(Searcher)};
+			
+			/// <deprecated> Remove this when old API is removed! 
+			/// </deprecated>
+			private static readonly System.Type[] C_IDF_METHOD_PARAMS = new System.Type[]{typeof(System.Collections.ICollection), typeof(Searcher)};
+		}
+		
+		/// <deprecated> Remove this when old API is removed! 
+		/// </deprecated>
+		private static readonly System.Collections.Hashtable knownMethodSupport = new System.Collections.Hashtable();
+
+        // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
+        /*
+         * From Java docs:
+         * This class implements the Map interface with a hash table, using 
+         * reference-equality in place of object-equality when comparing keys 
+         * (and values). In other words, in an IdentityHashMap, two keys k1 and k2 
+         * are considered equal if and only if (k1==k2). (In normal Map 
+         * implementations (like HashMap) two keys k1 and k2 are considered 
+         * equal if and only if (k1==null ? k2==null : k1.equals(k2)).) 
+         */
+        // Aroush-2.9}}
+		
+		/// <deprecated> Remove this when old API is removed! 
+		/// </deprecated>
+		private static MethodSupport GetSupportedMethods(System.Type clazz)
+		{
+			MethodSupport supportedMethods;
+			lock (knownMethodSupport)
+			{
+				supportedMethods = (MethodSupport) knownMethodSupport[clazz];
+				if (supportedMethods == null)
+				{
+					knownMethodSupport.Add(clazz, supportedMethods = new MethodSupport(clazz));
+				}
+			}
+			return supportedMethods;
+		}
+		
+		/// <summary>The Similarity implementation used by default. 
+		/// TODO: move back to top when old API is removed! 
+		/// 
+		/// </summary>
+		private static Similarity defaultImpl = new DefaultSimilarity();
 		static Similarity()
 		{
 			{

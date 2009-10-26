@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -34,13 +35,22 @@ namespace Lucene.Net.Search.Function
 	/// Document with no tokens in this field are assigned the <code>Zero</code> value.    
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
+	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// searching, if {@link #getValues} is invoked with a
+	/// composite (multi-segment) reader, this can easily cause
+	/// double RAM usage for the values in the FieldCache.  It's
+	/// best to switch your application to pass only atomic
+	/// (single segment) readers to this API.  Alternatively, for
+	/// a short-term fix, you could wrap your ValueSource using
+	/// {@link MultiValueSource}, which costs more CPU per lookup
+	/// but will not consume double the FieldCache RAM.</p>
 	/// </summary>
 	[Serializable]
-	public abstract class FieldCacheSource : ValueSource
+	public abstract class FieldCacheSource:ValueSource
 	{
 		private System.String field;
 		
@@ -71,8 +81,8 @@ namespace Lucene.Net.Search.Function
 		/// </seealso>
 		public abstract DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader);
 		
-		/*(non-Javadoc) @see java.lang.object#equals(java.lang.object) */
-		public  override bool Equals(object o)
+		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is FieldCacheSource))
 			{
@@ -82,21 +92,21 @@ namespace Lucene.Net.Search.Function
 			return this.field.Equals(other.field) && CachedFieldSourceEquals(other);
 		}
 		
-		/*(non-Javadoc) @see java.lang.object#hashCode() */
+		/*(non-Javadoc) @see java.lang.Object#hashCode() */
 		public override int GetHashCode()
 		{
 			return field.GetHashCode() + CachedFieldSourceHashCode();
 		}
 		
 		/// <summary> Check if equals to another {@link FieldCacheSource}, already knowing that cache and field are equal.  </summary>
-		/// <seealso cref="object.equals(java.lang.object)">
+		/// <seealso cref="Object.equals(java.lang.Object)">
 		/// </seealso>
 		public abstract bool CachedFieldSourceEquals(FieldCacheSource other);
 		
 		/// <summary> Return a hash code of a {@link FieldCacheSource}, without the hash-codes of the field 
 		/// and the cache (those are taken care of elsewhere).  
 		/// </summary>
-		/// <seealso cref="object.hashCode()">
+		/// <seealso cref="Object.hashCode()">
 		/// </seealso>
 		public abstract int CachedFieldSourceHashCode();
 	}

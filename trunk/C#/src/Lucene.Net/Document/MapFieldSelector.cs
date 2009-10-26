@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> A FieldSelector based on a Map of field names to FieldSelectorResults
+	/// <summary> A {@link FieldSelector} based on a Map of field names to {@link FieldSelectorResult}s
 	/// 
 	/// </summary>
 	[Serializable]
@@ -30,7 +30,7 @@ namespace Lucene.Net.Documents
 		internal System.Collections.IDictionary fieldSelections;
 		
 		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fieldSelections">maps from field names (String) to FieldSelectorResults
+		/// <param name="fieldSelections">maps from field names (String) to {@link FieldSelectorResult}s
 		/// </param>
 		public MapFieldSelector(System.Collections.IDictionary fieldSelections)
 		{
@@ -65,7 +65,7 @@ namespace Lucene.Net.Documents
 		public virtual FieldSelectorResult Accept(System.String field)
 		{
 			FieldSelectorResult selection = (FieldSelectorResult) fieldSelections[field];
-			return selection != null ? selection : FieldSelectorResult.NO_LOAD;
+			return selection != null?selection:FieldSelectorResult.NO_LOAD;
 		}
 	}
 }

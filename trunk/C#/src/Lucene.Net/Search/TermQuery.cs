@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,6 +21,7 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
 
 namespace Lucene.Net.Search
 {
@@ -29,12 +30,12 @@ namespace Lucene.Net.Search
 	/// This may be combined with other terms with a {@link BooleanQuery}.
 	/// </summary>
 	[Serializable]
-	public class TermQuery : Query
+	public class TermQuery:Query
 	{
 		private Term term;
 		
 		[Serializable]
-		private class TermWeight : Weight
+		private class TermWeight:Weight
 		{
 			private void  InitBlock(TermQuery enclosingInstance)
 			{
@@ -54,12 +55,14 @@ namespace Lucene.Net.Search
 			private float idf;
 			private float queryNorm;
 			private float queryWeight;
+			private IDFExplanation idfExp;
 			
 			public TermWeight(TermQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
-				idf = similarity.Idf(Enclosing_Instance.term, searcher); // compute idf
+				idfExp = similarity.IdfExplain(Enclosing_Instance.term, searcher);
+				idf = idfExp.GetIdf();
 			}
 			
 			public override System.String ToString()
@@ -67,29 +70,29 @@ namespace Lucene.Net.Search
 				return "weight(" + Enclosing_Instance + ")";
 			}
 			
-			public virtual Query GetQuery()
+			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
-			public virtual float GetValue()
+			public override float GetValue()
 			{
 				return value_Renamed;
 			}
 			
-			public virtual float SumOfSquaredWeights()
+			public override float SumOfSquaredWeights()
 			{
 				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
 				return queryWeight * queryWeight; // square it
 			}
 			
-			public virtual void  Normalize(float queryNorm)
+			public override void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
 				queryWeight *= queryNorm; // normalize query weight
 				value_Renamed = queryWeight * idf; // idf for document
 			}
 			
-			public virtual Scorer Scorer(IndexReader reader)
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
 				TermDocs termDocs = reader.TermDocs(Enclosing_Instance.term);
 				
@@ -99,13 +102,13 @@ namespace Lucene.Net.Search
 				return new TermScorer(this, termDocs, similarity, reader.Norms(Enclosing_Instance.term.Field()));
 			}
 			
-			public virtual Explanation Explain(IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				
 				ComplexExplanation result = new ComplexExplanation();
 				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + reader.DocFreq(Enclosing_Instance.term) + ", numDocs=" + reader.NumDocs() + ")");
+				Explanation expl = new Explanation(idf, idfExp.Explain());
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
@@ -114,12 +117,12 @@ namespace Lucene.Net.Search
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
 					queryExpl.AddDetail(boostExpl);
-				queryExpl.AddDetail(idfExpl);
+				queryExpl.AddDetail(expl);
 				
 				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
 				
-				queryExpl.SetValue(boostExpl.GetValue() * idfExpl.GetValue() * queryNormExpl.GetValue());
+				queryExpl.SetValue(boostExpl.GetValue() * expl.GetValue() * queryNormExpl.GetValue());
 				
 				result.AddDetail(queryExpl);
 				
@@ -128,19 +131,19 @@ namespace Lucene.Net.Search
 				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
 				
-				Explanation tfExpl = Scorer(reader).Explain(doc);
+				Explanation tfExpl = Scorer(reader, true, false).Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
-				fieldExpl.AddDetail(idfExpl);
+				fieldExpl.AddDetail(expl);
 				
 				Explanation fieldNormExpl = new Explanation();
 				byte[] fieldNorms = reader.Norms(field);
-				float fieldNorm = fieldNorms != null ? Similarity.DecodeNorm(fieldNorms[doc]) : 0.0f;
+				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
 				fieldNormExpl.SetValue(fieldNorm);
 				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
 				fieldExpl.SetMatch(tfExpl.IsMatch());
-				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
+				fieldExpl.SetValue(tfExpl.GetValue() * expl.GetValue() * fieldNormExpl.GetValue());
 				
 				result.AddDetail(fieldExpl);
 				System.Boolean tempAux = fieldExpl.GetMatch();
@@ -168,19 +171,15 @@ namespace Lucene.Net.Search
 			return term;
 		}
 		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new TermWeight(this, searcher);
 		}
 		
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-            Term term = GetTerm();
-            if (terms.Contains(term) == false)
-            {
-                terms.Add(term, term);
-            }
-        }
+			SupportClass.HashtableHelper.AddIfNotContains(terms, GetTerm());
+		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
@@ -197,7 +196,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is TermQuery))
 				return false;
@@ -209,6 +208,12 @@ namespace Lucene.Net.Search
 		public override int GetHashCode()
 		{
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+        }
+		
+		override public System.Object Clone()
+		{
+            System.Diagnostics.Debug.Fail("Port issue:", "Do we need this?");   // {{Aroush-2.9}}
+			return null;
 		}
 	}
 }

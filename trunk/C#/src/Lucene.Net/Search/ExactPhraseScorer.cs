@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,10 @@ using Lucene.Net.Index;
 namespace Lucene.Net.Search
 {
 	
-	sealed class ExactPhraseScorer : PhraseScorer
+	sealed class ExactPhraseScorer:PhraseScorer
 	{
 		
-		internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms) : base(weight, tps, offsets, similarity, norms)
+		internal ExactPhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms):base(weight, tps, offsets, similarity, norms)
 		{
 		}
 		
@@ -52,9 +52,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						if (!first.NextPosition())
-						{
-							return (float) freq;
-						}
+							return freq;
 					}
 					while (first.position < last.position);
 					FirstToLast();
@@ -63,7 +61,7 @@ namespace Lucene.Net.Search
 			}
 			while (last.NextPosition());
 			
-			return (float) freq;
+			return freq;
 		}
 	}
 }

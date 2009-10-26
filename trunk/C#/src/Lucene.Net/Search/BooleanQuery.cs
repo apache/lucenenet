@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,9 @@ namespace Lucene.Net.Search
 	/// BooleanQuerys.
 	/// </summary>
 	[Serializable]
-	public class BooleanQuery : Query, System.ICloneable
+	public class BooleanQuery:Query, System.ICloneable
 	{
-        [Serializable]
-		private class AnonymousClassSimilarityDelegator : SimilarityDelegator
+		private class AnonymousClassSimilarityDelegator:SimilarityDelegator
 		{
 			private void  InitBlock(BooleanQuery enclosingInstance)
 			{
@@ -61,11 +60,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Thrown when an attempt is made to add more than {@link
 		/// #GetMaxClauseCount()} clauses. This typically happens if
-		/// a PrefixQuery, FuzzyQuery, WildcardQuery, or RangeQuery 
+		/// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery 
 		/// is expanded to many terms during search. 
 		/// </summary>
 		[Serializable]
-		public class TooManyClauses : System.SystemException
+		public class TooManyClauses:System.SystemException
 		{
 			public override System.String Message
 			{
@@ -84,25 +83,15 @@ namespace Lucene.Net.Search
 		/// Attempts to add more than the permitted number of clauses cause {@link
 		/// TooManyClauses} to be thrown.
 		/// </summary>
-		/// <seealso cref="#SetMaxClauseCount(int)">
+		/// <seealso cref="SetMaxClauseCount(int)">
 		/// </seealso>
 		public static int GetMaxClauseCount()
 		{
 			return maxClauseCount;
 		}
 		
-		/// <summary>Set the maximum number of clauses permitted per BooleanQuery.
+		/// <summary> Set the maximum number of clauses permitted per BooleanQuery.
 		/// Default value is 1024.
-		/// <p>TermQuery clauses are generated from for example prefix queries and
-		/// fuzzy queries. Each TermQuery needs some buffer space during search,
-		/// so this parameter indirectly controls the maximum buffer requirements for
-		/// query search.
-		/// <p>When this parameter becomes a bottleneck for a Query one can use a
-		/// Filter. For example instead of a {@link RangeQuery} one can use a
-		/// {@link RangeFilter}.
-		/// <p>Normally the buffers are allocated by the JVM. When using for example
-		/// {@link Lucene.Net.Store.MMapDirectory} the buffering is left to
-		/// the operating system.
 		/// </summary>
 		public static void  SetMaxClauseCount(int maxClauseCount)
 		{
@@ -137,7 +126,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns true iff {@link Similarity#Coord(int,int)} is disabled in
 		/// scoring for this query instance.
 		/// </summary>
-		/// <seealso cref="#BooleanQuery(boolean)">
+		/// <seealso cref="BooleanQuery(boolean)">
 		/// </seealso>
 		public virtual bool IsCoordDisabled()
 		{
@@ -198,7 +187,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="#GetMaxClauseCount()">
+		/// <seealso cref="GetMaxClauseCount()">
 		/// </seealso>
 		public virtual void  Add(Query query, BooleanClause.Occur occur)
 		{
@@ -207,7 +196,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Adds a clause to a boolean query.</summary>
 		/// <throws>  TooManyClauses if the new number of clauses exceeds the maximum clause number </throws>
-		/// <seealso cref="#GetMaxClauseCount()">
+		/// <seealso cref="GetMaxClauseCount()">
 		/// </seealso>
 		public virtual void  Add(BooleanClause clause)
 		{
@@ -229,8 +218,14 @@ namespace Lucene.Net.Search
 			return clauses;
 		}
 		
+		/// <summary> Expert: the Weight for BooleanQuery, used to
+		/// normalize, score and explain these queries.
+		/// 
+		/// <p>NOTE: this API and implementation is subject to
+		/// change suddenly in the next release.</p>
+		/// </summary>
 		[Serializable]
-		private class BooleanWeight : Weight
+		protected internal class BooleanWeight:Weight
 		{
 			private void  InitBlock(BooleanQuery enclosingInstance)
 			{
@@ -245,13 +240,15 @@ namespace Lucene.Net.Search
 				}
 				
 			}
+			/// <summary>The Similarity implementation. </summary>
 			protected internal Similarity similarity;
-			protected internal System.Collections.ArrayList weights = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+			protected internal System.Collections.ArrayList weights;
 			
 			public BooleanWeight(BooleanQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				weights = new System.Collections.ArrayList(Enclosing_Instance.clauses.Count);
 				for (int i = 0; i < Enclosing_Instance.clauses.Count; i++)
 				{
 					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
@@ -259,16 +256,16 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			public virtual Query GetQuery()
+			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
-			public virtual float GetValue()
+			public override float GetValue()
 			{
 				return Enclosing_Instance.GetBoost();
 			}
 			
-			public virtual float SumOfSquaredWeights()
+			public override float SumOfSquaredWeights()
 			{
 				float sum = 0.0f;
 				for (int i = 0; i < weights.Count; i++)
@@ -276,7 +273,7 @@ namespace Lucene.Net.Search
 					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
 					Weight w = (Weight) weights[i];
 					// call sumOfSquaredWeights for all clauses in case of side effects
-					float s = w.SumOfSquaredWeights(); // sum sub k
+					float s = w.SumOfSquaredWeights(); // sum sub weights
 					if (!c.IsProhibited())
 					// only add to sum for non-prohibited clauses
 						sum += s;
@@ -288,39 +285,18 @@ namespace Lucene.Net.Search
 			}
 			
 			
-			public virtual void  Normalize(float norm)
+			public override void  Normalize(float norm)
 			{
 				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
-				for (int i = 0; i < weights.Count; i++)
+				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
 				{
-					Weight w = (Weight) weights[i];
+					Weight w = (Weight) iter.Current;
 					// normalize all clauses, (even if prohibited in case of side affects)
 					w.Normalize(norm);
 				}
 			}
 			
-			/// <returns> Returns BooleanScorer2 that uses and provides skipTo(),
-			/// and scores documents in document number order.
-			/// </returns>
-			public virtual Scorer Scorer(IndexReader reader)
-			{
-				BooleanScorer2 result = new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch, Lucene.Net.Search.BooleanQuery.allowDocsOutOfOrder);
-				
-				for (int i = 0; i < weights.Count; i++)
-				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
-					Weight w = (Weight) weights[i];
-					Scorer subScorer = w.Scorer(reader);
-					if (subScorer != null)
-						result.Add(subScorer, c.IsRequired(), c.IsProhibited());
-					else if (c.IsRequired())
-						return null;
-				}
-				
-				return result;
-			}
-			
-			public virtual Explanation Explain(IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				int minShouldMatch = Enclosing_Instance.GetMinimumNumberShouldMatch();
 				ComplexExplanation sumExpl = new ComplexExplanation();
@@ -330,10 +306,14 @@ namespace Lucene.Net.Search
 				float sum = 0.0f;
 				bool fail = false;
 				int shouldMatchCount = 0;
-				for (int i = 0; i < weights.Count; i++)
+				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
 				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
-					Weight w = (Weight) weights[i];
+					Weight w = (Weight) wIter.Current;
+					BooleanClause c = (BooleanClause) cIter.Current;
+					if (w.Scorer(reader, true, true) == null)
+					{
+						continue;
+					}
 					Explanation e = w.Explain(reader, doc);
 					if (!c.IsProhibited())
 						maxCoord++;
@@ -352,7 +332,7 @@ namespace Lucene.Net.Search
 							sumExpl.AddDetail(r);
 							fail = true;
 						}
-						if (c.GetOccur().Equals(Occur.SHOULD))
+						if (c.GetOccur() == Occur.SHOULD)
 							shouldMatchCount++;
 					}
 					else if (c.IsRequired())
@@ -380,7 +360,7 @@ namespace Lucene.Net.Search
 					return sumExpl;
 				}
 				
-				sumExpl.SetMatch(0 < coord ? true : false);
+				sumExpl.SetMatch(0 < coord?true:false);
 				sumExpl.SetValue(sum);
 				
 				float coordFactor = similarity.Coord(coord, maxCoord);
@@ -396,39 +376,137 @@ namespace Lucene.Net.Search
 					return result;
 				}
 			}
+			
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
+			{
+				System.Collections.IList required = new System.Collections.ArrayList();
+				System.Collections.IList prohibited = new System.Collections.ArrayList();
+				System.Collections.IList optional = new System.Collections.ArrayList();
+				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
+				{
+                    cIter.MoveNext();
+
+					Weight w = (Weight) wIter.Current;
+					BooleanClause c = (BooleanClause) cIter.Current;
+					Scorer subScorer = w.Scorer(reader, true, false);
+					if (subScorer == null)
+					{
+						if (c.IsRequired())
+						{
+							return null;
+						}
+					}
+					else if (c.IsRequired())
+					{
+						required.Add(subScorer);
+					}
+					else if (c.IsProhibited())
+					{
+						prohibited.Add(subScorer);
+					}
+					else
+					{
+						optional.Add(subScorer);
+					}
+				}
+				
+				// Check if we can return a BooleanScorer
+				scoreDocsInOrder |= !Lucene.Net.Search.BooleanQuery.allowDocsOutOfOrder; // until it is removed, factor in the static setting.
+				if (!scoreDocsInOrder && topScorer && required.Count == 0 && prohibited.Count < 32)
+				{
+					return new BooleanScorer(similarity, Enclosing_Instance.minNrShouldMatch, optional, prohibited);
+				}
+				
+				if (required.Count == 0 && optional.Count == 0)
+				{
+					// no required and optional clauses.
+					return null;
+				}
+				else if (optional.Count < Enclosing_Instance.minNrShouldMatch)
+				{
+					// either >1 req scorer, or there are 0 req scorers and at least 1
+					// optional scorer. Therefore if there are not enough optional scorers
+					// no documents will be matched by the query
+					return null;
+				}
+				
+				// Return a BooleanScorer2
+				return new BooleanScorer2(similarity, Enclosing_Instance.minNrShouldMatch, required, prohibited, optional);
+			}
+			
+			public override bool ScoresDocsOutOfOrder()
+			{
+				int numProhibited = 0;
+				for (System.Collections.IEnumerator cIter = Enclosing_Instance.clauses.GetEnumerator(); cIter.MoveNext(); )
+				{
+					BooleanClause c = (BooleanClause) cIter.Current;
+					if (c.IsRequired())
+					{
+						return false; // BS2 (in-order) will be used by scorer()
+					}
+					else if (c.IsProhibited())
+					{
+						++numProhibited;
+					}
+				}
+				
+				if (numProhibited > 32)
+				{
+					// cannot use BS
+					return false;
+				}
+				
+				// scorer() will return an out-of-order scorer if requested.
+				return true;
+			}
 		}
 		
-		/// <summary>Whether hit docs may be collected out of docid order. </summary>
-		private static bool allowDocsOutOfOrder = false;
+		/// <summary> Whether hit docs may be collected out of docid order.
+		/// 
+		/// </summary>
+		/// <deprecated> this will not be needed anymore, as
+		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// </deprecated>
+		private static bool allowDocsOutOfOrder = true;
 		
-		/// <summary> Expert: Indicates whether hit docs may be collected out of docid
-		/// order.
+		/// <summary> Expert: Indicates whether hit docs may be collected out of docid order.
 		/// 
 		/// <p>
 		/// Background: although the contract of the Scorer class requires that
 		/// documents be iterated in order of doc id, this was not true in early
-		/// versions of Lucene.  Many pieces of functionality in the current
-		/// Lucene code base have undefined behavior if this contract is not
-		/// upheld, but in some specific simple cases may be faster.  (For
-		/// example: disjunction queries with less than 32 prohibited clauses;
-		/// This setting has no effect for other queries.)
+		/// versions of Lucene. Many pieces of functionality in the current Lucene code
+		/// base have undefined behavior if this contract is not upheld, but in some
+		/// specific simple cases may be faster. (For example: disjunction queries with
+		/// less than 32 prohibited clauses; This setting has no effect for other
+		/// queries.)
 		/// </p>
 		/// 
 		/// <p>
-		/// Specifics: By setting this option to true, calls to 
-		/// {@link HitCollector#Collect(int,float)} might be
-		/// invoked first for docid N and only later for docid N-1.
+		/// Specifics: By setting this option to true, docid N might be scored for a
+		/// single segment before docid N-1. Across multiple segments, docs may be
+		/// scored out of order regardless of this setting - it only applies to scoring
+		/// a single segment.
+		/// 
 		/// Being static, this setting is system wide.
 		/// </p>
+		/// 
 		/// </summary>
+		/// <deprecated> this is not needed anymore, as
+		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// </deprecated>
 		public static void  SetAllowDocsOutOfOrder(bool allow)
 		{
 			allowDocsOutOfOrder = allow;
 		}
 		
-		/// <summary> Whether hit docs may be collected out of docid order.</summary>
+		/// <summary> Whether hit docs may be collected out of docid order.
+		/// 
+		/// </summary>
 		/// <seealso cref="SetAllowDocsOutOfOrder(boolean)">
 		/// </seealso>
+		/// <deprecated> this is not needed anymore, as
+		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// </deprecated>
 		public static bool GetAllowDocsOutOfOrder()
 		{
 			return allowDocsOutOfOrder;
@@ -448,7 +526,7 @@ namespace Lucene.Net.Search
 			return GetAllowDocsOutOfOrder();
 		}
 		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new BooleanWeight(this, searcher);
 		}
@@ -509,7 +587,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public override object Clone()
+		public override System.Object Clone()
 		{
 			BooleanQuery clone = (BooleanQuery) base.Clone();
 			clone.clauses = (System.Collections.ArrayList) this.clauses.Clone();
@@ -535,15 +613,24 @@ namespace Lucene.Net.Search
 					buffer.Append("+");
 				
 				Query subQuery = c.GetQuery();
-				if (subQuery is BooleanQuery)
+				if (subQuery != null)
 				{
-					// wrap sub-bools in parens
-					buffer.Append("(");
-					buffer.Append(c.GetQuery().ToString(field));
-					buffer.Append(")");
+					if (subQuery is BooleanQuery)
+					{
+						// wrap sub-bools in parens
+						buffer.Append("(");
+						buffer.Append(subQuery.ToString(field));
+						buffer.Append(")");
+					}
+					else
+					{
+						buffer.Append(subQuery.ToString(field));
+					}
 				}
 				else
-					buffer.Append(c.GetQuery().ToString(field));
+				{
+					buffer.Append("null");
+				}
 				
 				if (i != clauses.Count - 1)
 					buffer.Append(" ");
@@ -565,11 +652,11 @@ namespace Lucene.Net.Search
 				buffer.Append(ToStringUtils.Boost(GetBoost()));
 			}
 			
-            return buffer.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+			return buffer.ToString();
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is BooleanQuery))
 				return false;
@@ -590,13 +677,11 @@ namespace Lucene.Net.Search
 		public override int GetHashCode()
 		{
 			int hashCode = 0;
-
 			for (int i = 0; i < clauses.Count; i++)
 			{
 				hashCode += clauses[i].GetHashCode();
 			}
-
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ hashCode + GetMinimumNumberShouldMatch();
-        }
+		}
 	}
 }

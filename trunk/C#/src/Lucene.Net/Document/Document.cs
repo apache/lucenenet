@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,13 @@
 
 using System;
 
+// for javadoc
 using IndexReader = Lucene.Net.Index.IndexReader;
-using Hits = Lucene.Net.Search.Hits;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 
 namespace Lucene.Net.Documents
 {
-	// for javadoc
 	
 	/// <summary>Documents are the unit of indexing and search.
 	/// 
@@ -35,9 +35,10 @@ namespace Lucene.Net.Documents
 	/// 
 	/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
 	/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
-	/// ScoreDoc#Doc(int)}, {@link Searcher#Doc(int)} or {@link
+	/// ScoreDoc#doc}, {@link Searcher#Doc(int)} or {@link
 	/// IndexReader#Document(int)}.
 	/// </summary>
+	
 	[Serializable]
 	public sealed class Document
 	{
@@ -52,10 +53,10 @@ namespace Lucene.Net.Documents
 				this.enclosingInstance = enclosingInstance;
 				iter = Enclosing_Instance.fields.GetEnumerator();
 			}
-			private object tempAuxObj;
+			private System.Object tempAuxObj;
 			public bool MoveNext()
 			{
-                bool result = HasMoreElements();
+				bool result = HasMoreElements();
 				if (result)
 				{
 					tempAuxObj = NextElement();
@@ -66,7 +67,7 @@ namespace Lucene.Net.Documents
 			{
 				tempAuxObj = null;
 			}
-			public object Current
+			public System.Object Current
 			{
 				get
 				{
@@ -88,26 +89,18 @@ namespace Lucene.Net.Documents
 			{
 				return iter.MoveNext();
 			}
-            public object NextElement()
+			public System.Object NextElement()
 			{
 				return iter.Current;
 			}
 		}
-
-        internal System.Collections.IList fields = new System.Collections.ArrayList();
+		internal System.Collections.IList fields = new System.Collections.ArrayList();
 		private float boost = 1.0f;
 		
 		/// <summary>Constructs a new document with no fields. </summary>
 		public Document()
 		{
 		}
-		
-        /// <summary>Returns the number of fields in this document</summary>
-        /// Added as a helper for Lucene.Net
-        public int GetFieldsCount()
-        {
-            return fields.Count;
-        }
 		
 		
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
@@ -176,7 +169,7 @@ namespace Lucene.Net.Documents
 				Fieldable field = (Fieldable) it.Current;
 				if (field.Name().Equals(name))
 				{
-					fields.Remove(field);
+                    fields.Remove(field);
 					return ;
 				}
 			}
@@ -194,13 +187,13 @@ namespace Lucene.Net.Documents
 		{
             for (int i = fields.Count - 1; i >= 0; i--)
             {
-                Field field = (Field) fields[i];
+                Fieldable field = (Fieldable) fields[i];
                 if (field.Name().Equals(name))
                 {
                     fields.RemoveAt(i);
                 }
             }
-        }
+		}
 		
 		/// <summary>Returns a field with the given name if any exist in this document, or
 		/// null.  If multiple fields exists with this name, this method returns the
@@ -255,29 +248,32 @@ namespace Lucene.Net.Documents
 		/// </deprecated>
 		public System.Collections.IEnumerator Fields()
 		{
-            return new AnonymousClassEnumeration(this); // {{Aroush-2.3.1}} will "return fields;" do it?
+			return new AnonymousClassEnumeration(this);
 		}
 		
 		/// <summary>Returns a List of all the fields in a document.
 		/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
-		/// <i>not</i> available in documents retrieved from the index, e.g. 
-		/// {@link Searcher#Doc(int)} or {@link IndexReader#Document(int)}.
+		/// <i>not</i> available in documents retrieved from the
+		/// index, e.g. {@link Searcher#Doc(int)} or {@link
+		/// IndexReader#Document(int)}.
 		/// </summary>
 		public System.Collections.IList GetFields()
 		{
 			return fields;
 		}
-
-        private static readonly Field[] NO_FIELDS = new Field[0];
-
+		
+		private static readonly Field[] NO_FIELDS = new Field[0];
+		
 		/// <summary> Returns an array of {@link Field}s with the given name.
 		/// Do not use with lazy loaded fields.
 		/// This method returns an empty array when there are no
-        /// matching fields.  It never returns null.
+		/// matching fields.  It never returns null.
+		/// 
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>Field[]</code> array</returns>
+		/// <returns> a <code>Field[]</code> array
+		/// </returns>
 		public Field[] GetFields(System.String name)
 		{
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
@@ -295,17 +291,19 @@ namespace Lucene.Net.Documents
 			
 			return (Field[]) result.ToArray(typeof(Field));
 		}
-
-        private static readonly Fieldable[] NO_FIELDABLES = new Fieldable[0];
 		
+		
+		private static readonly Fieldable[] NO_FIELDABLES = new Fieldable[0];
 		
 		/// <summary> Returns an array of {@link Fieldable}s with the given name.
 		/// This method returns an empty array when there are no
-        /// matching fields.  It never returns null.
+		/// matching fields.  It never returns null.
+		/// 
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>Fieldable[]</code> array</returns>
+		/// <returns> a <code>Fieldable[]</code> array
+		/// </returns>
 		public Fieldable[] GetFieldables(System.String name)
 		{
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
@@ -323,16 +321,18 @@ namespace Lucene.Net.Documents
 			
 			return (Fieldable[]) result.ToArray(typeof(Fieldable));
 		}
-
-        private static readonly string[] NO_STRINGS = new string[0];
+		
+		
+		private static readonly System.String[] NO_STRINGS = new System.String[0];
 		
 		/// <summary> Returns an array of values of the field specified as the method parameter.
-        /// This method returns an empty array when there are no
-        /// matching fields.  It never returns null.
-        /// </summary>
+		/// This method returns an empty array when there are no
+		/// matching fields.  It never returns null.
+		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>String[]</code> of field values</returns>
+		/// <returns> a <code>String[]</code> of field values
+		/// </returns>
 		public System.String[] GetValues(System.String name)
 		{
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
@@ -342,26 +342,25 @@ namespace Lucene.Net.Documents
 				if (field.Name().Equals(name) && (!field.IsBinary()))
 					result.Add(field.StringValue());
 			}
-            /// This method returns an empty array when there are no
-            /// matching fields.  It never returns null.
-
+			
 			if (result.Count == 0)
 				return NO_STRINGS;
 			
-			return (System.String[]) (result.ToArray(typeof(System.String)));
+			return (System.String[]) result.ToArray(typeof(System.String));
 		}
-
-        private static readonly byte[][] NO_BYTES = new byte[0][];
-
-        /// <summary>
-        /// Returns an array of byte arrays for the fields that have the name
-        /// specified as the method parameter.
-        /// This method returns an empty array when there are no
-        /// matching fields.  It never returns null.
-        /// </summary>
+		
+		private static readonly byte[][] NO_BYTES = new byte[0][];
+		
+		/// <summary> Returns an array of byte arrays for of the fields that have the name specified
+		/// as the method parameter.  This method returns an empty
+		/// array when there are no matching fields.  It never
+		/// returns null.
+		/// 
+		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a  <code>byte[][]</code> of binary field values</returns>
+		/// <returns> a <code>byte[][]</code> of binary field values
+		/// </returns>
 		public byte[][] GetBinaryValues(System.String name)
 		{
 			System.Collections.IList result = new System.Collections.ArrayList();
@@ -369,14 +368,7 @@ namespace Lucene.Net.Documents
 			{
 				Fieldable field = (Fieldable) fields[i];
 				if (field.Name().Equals(name) && (field.IsBinary()))
-				{
-					byte[] byteArray = field.BinaryValue();
-					byte[] resultByteArray = new byte[byteArray.Length];
-					for (int index = 0; index < byteArray.Length; index++)
-						resultByteArray[index] = (byte) byteArray[index];
-
-					result.Add(resultByteArray);
-				}
+					result.Add(field.BinaryValue());
 			}
 			
 			if (result.Count == 0)
@@ -386,7 +378,7 @@ namespace Lucene.Net.Documents
             object[] objects = new byte[result.Count][];
 
             System.Type type = objects.GetType().GetElementType();
-            object[] objs = (object[]) Array.CreateInstance(type, c.Count );
+            object[] objs = (object[])Array.CreateInstance(type, c.Count);
 
             System.Collections.IEnumerator e = c.GetEnumerator();
             int ii = 0;
@@ -398,9 +390,9 @@ namespace Lucene.Net.Documents
             if (objects.Length >= c.Count)
                 objs.CopyTo(objects, 0);
 
-            return (byte[][]) objs;
+            return (byte[][])objs;
         }
-
+		
 		/// <summary> Returns an array of bytes for the first (or only) field that has the name
 		/// specified as the method parameter. This method will return <code>null</code>
 		/// if no binary fields with the specified name are available.

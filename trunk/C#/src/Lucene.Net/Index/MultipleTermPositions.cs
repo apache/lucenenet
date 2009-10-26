@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,10 +22,10 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Describe class <code>MultipleTermPositions</code> here.
+	/// <summary> Allows you to iterate over the {@link TermPositions} for multiple {@link Term}s as
+	/// a single {@link TermPositions}.
+	/// 
 	/// </summary>
-	/// <version>  1.0
-	/// </version>
 	public class MultipleTermPositions : TermPositions
 	{
 		
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 				return (TermPositions) Top();
 			}
 			
-			public override bool LessThan(object a, object b)
+			public override bool LessThan(System.Object a, System.Object b)
 			{
 				return ((TermPositions) a).Doc() < ((TermPositions) b).Doc();
 			}
@@ -70,36 +70,36 @@ namespace Lucene.Net.Index
 			private int _lastIndex = 0;
 			private int[] _array;
 			
-			internal void  Add(int i)
+			internal void  add(int i)
 			{
 				if (_lastIndex == _arraySize)
-					GrowArray();
+					growArray();
 				
 				_array[_lastIndex++] = i;
 			}
 			
-			internal int Next()
+			internal int next()
 			{
 				return _array[_index++];
 			}
 			
-			internal void  Sort()
+			internal void  sort()
 			{
 				System.Array.Sort(_array, _index, _lastIndex - _index);
 			}
 			
-			internal void  Clear()
+			internal void  clear()
 			{
 				_index = 0;
 				_lastIndex = 0;
 			}
 			
-			internal int Size()
+			internal int size()
 			{
 				return (_lastIndex - _index);
 			}
 			
-			private void  GrowArray()
+			private void  growArray()
 			{
 				int[] newArray = new int[_arraySize * 2];
 				Array.Copy(_array, 0, newArray, 0, _arraySize);
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 		/// <summary> Creates a new <code>MultipleTermPositions</code> instance.
 		/// 
 		/// </summary>
-		/// <exception cref=""> IOException
+		/// <exception cref="IOException">
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 			if (_termPositionsQueue.Size() == 0)
 				return false;
 			
-			_posList.Clear();
+			_posList.clear();
 			_doc = _termPositionsQueue.Peek().Doc();
 			
 			TermPositions tp;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 				tp = _termPositionsQueue.Peek();
 				
 				for (int i = 0; i < tp.Freq(); i++)
-					_posList.Add(tp.NextPosition());
+					_posList.add(tp.NextPosition());
 				
 				if (tp.Next())
 					_termPositionsQueue.AdjustTop();
@@ -155,15 +155,15 @@ namespace Lucene.Net.Index
 			}
 			while (_termPositionsQueue.Size() > 0 && _termPositionsQueue.Peek().Doc() == _doc);
 			
-			_posList.Sort();
-			_freq = _posList.Size();
+			_posList.sort();
+			_freq = _posList.size();
 			
 			return true;
 		}
 		
 		public int NextPosition()
 		{
-			return _posList.Next();
+			return _posList.next();
 		}
 		
 		public bool SkipTo(int target)

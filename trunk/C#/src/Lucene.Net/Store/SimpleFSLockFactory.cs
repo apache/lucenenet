@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,8 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> <p>Implements {@link LockFactory} using {@link
-	/// File#createNewFile()}.  This is the default LockFactory
-	/// for {@link FSDirectory}.</p>
+	/// File#createNewFile()}.</p>
 	/// 
 	/// <p><b>NOTE:</b> the <a target="_top"
 	/// href="http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html#createNewFile()">javadocs
@@ -37,7 +36,7 @@ namespace Lucene.Net.Store
 	/// is hit when trying to create a writer, in which case you
 	/// need to explicitly clear the lock file first.  You can
 	/// either manually remove the file, or use the {@link
-	/// Lucene.Net.Index.IndexReader#Unlock(Directory)}
+	/// org.apache.lucene.index.IndexReader#unlock(Directory)}
 	/// API.  But, first be certain that no writer is in fact
 	/// writing to the index otherwise you can easily corrupt
 	/// your index.</p>
@@ -51,23 +50,16 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class SimpleFSLockFactory : LockFactory
+	public class SimpleFSLockFactory:FSLockFactory
 	{
 		
-		/// <summary> Directory specified by <code>Lucene.Net.lockDir</code>
-		/// system property.  If that is not set, then <code>java.io.tmpdir</code>
-		/// system property is used.
-		/// </summary>
-		
-		private System.IO.FileInfo lockDir;
-		
 		/// <summary> Create a SimpleFSLockFactory instance, with null (unset)
-		/// lock directory.  This is package-private and is only
-		/// used by FSDirectory when creating this LockFactory via
-		/// the System property
-		/// Lucene.Net.Store.FSDirectoryLockFactoryClass.
+		/// lock directory. When you pass this factory to a {@link FSDirectory}
+		/// subclass, the lock directory is automatically set to the
+		/// directory itsself. Be sure to create one instance for each directory
+		/// your create!
 		/// </summary>
-		internal SimpleFSLockFactory() : this((System.IO.FileInfo) null)
+		public SimpleFSLockFactory():this((System.IO.FileInfo) null)
 		{
 		}
 		
@@ -86,16 +78,6 @@ namespace Lucene.Net.Store
 		{
 			lockDir = new System.IO.FileInfo(lockDirName);
 			SetLockDir(lockDir);
-		}
-		
-		/// <summary> Set the lock directory.  This is package-private and is
-		/// only used externally by FSDirectory when creating this
-		/// LockFactory via the System property
-		/// Lucene.Net.Store.FSDirectoryLockFactoryClass.
-		/// </summary>
-		internal virtual void  SetLockDir(System.IO.FileInfo lockDir)
-		{
-			this.lockDir = lockDir;
 		}
 		
 		public override Lock MakeLock(System.String lockName)
@@ -148,7 +130,7 @@ namespace Lucene.Net.Store
 	}
 	
 	
-	class SimpleFSLock : Lock
+	class SimpleFSLock:Lock
 	{
 		
 		internal System.IO.FileInfo lockFile;
@@ -171,36 +153,37 @@ namespace Lucene.Net.Store
 				tmpBool = System.IO.Directory.Exists(lockDir.FullName);
 			if (!tmpBool)
 			{
-                try
+				try
                 {
                     System.IO.Directory.CreateDirectory(lockDir.FullName);
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
+					throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
                 }
 			}
 			else
 			{
                 try
                 {
-                    System.IO.Directory.Exists(lockDir.FullName);
+                     System.IO.Directory.Exists(lockDir.FullName);
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
+    				throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
                 }
 			}
-            try
-            {
-                System.IO.FileStream createdFile = new System.IO.FileStream(lockFile.FullName, System.IO.FileMode.CreateNew);
-                createdFile.Close();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+
+			if (lockFile.Exists)
+			{
+				return false;
+			}
+			else
+			{
+				System.IO.FileStream createdFile = lockFile.Create();
+				createdFile.Close();
+				return true;
+			}
 		}
 		
 		public override void  Release()

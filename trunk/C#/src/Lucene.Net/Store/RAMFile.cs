@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -32,14 +32,14 @@ namespace Lucene.Net.Store
 		internal long sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
 		
 		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
-		private long lastModified = System.DateTime.Now.Ticks;
+		private long lastModified = System.DateTime.Now.Millisecond;
 		
 		// File used as buffer, in no RAMDirectory
-		protected internal RAMFile()
+		internal RAMFile()
 		{
 		}
 		
-		public /*internal*/ RAMFile(RAMDirectory directory)
+		internal RAMFile(RAMDirectory directory)
 		{
 			this.directory = directory;
 		}
@@ -60,24 +60,8 @@ namespace Lucene.Net.Store
 				this.length = length;
 			}
 		}
-
-        public virtual long GetLength_ForNUnitTest()
-        {
-            lock (this)
-            {
-                return length;
-            }
-        }
-
-        public virtual void SetLength_ForNUnitTest(long length)
-        {
-            lock (this)
-            {
-                this.length = length;
-            }
-        }
-
-        // For non-stream access from thread that might be concurrent with writing
+		
+		// For non-stream access from thread that might be concurrent with writing
 		internal virtual long GetLastModified()
 		{
 			lock (this)
@@ -98,7 +82,7 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				byte[] buffer = new byte[size];
+				byte[] buffer = NewBuffer(size);
 				if (directory != null)
 					lock (directory)
 					{
@@ -128,31 +112,15 @@ namespace Lucene.Net.Store
 				return buffers.Count;
 			}
 		}
-
-        public byte[] GetBuffer_ForNUnitTest(int index)
-        {
-            lock (this)
-            {
-                return (byte[])buffers[index];
-            }
-        }
-
-        public int NumBuffers_ForNUnitTest()
-        {
-            lock (this)
-            {
-                return buffers.Count;
-            }
-        }
-        
-        /// <summary> Expert: allocate a new buffer. 
+		
+		/// <summary> Expert: allocate a new buffer. 
 		/// Subclasses can allocate differently. 
 		/// </summary>
 		/// <param name="size">size of allocated buffer.
 		/// </param>
 		/// <returns> allocated buffer.
 		/// </returns>
-		protected internal virtual byte[] NewBuffer(int size)
+		public /*internal*/ virtual byte[] NewBuffer(int size)
 		{
 			return new byte[size];
 		}
@@ -165,25 +133,5 @@ namespace Lucene.Net.Store
 				return sizeInBytes;
 			}
 		}
-
-        public long sizeInBytes_ForNUnitTest
-        {
-            get { return sizeInBytes; }
-        }
-
-        public RAMDirectory directory_ForNUnitTest
-        {
-            set { directory = value; }
-        }
-
-        public long length_ForNUnitTest
-        {
-            get { return length; }
-        }
-
-        public long GetSizeInBytes_ForNUnitTest()
-        {
-            return GetSizeInBytes();
-        }
-    }
+	}
 }

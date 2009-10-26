@@ -31,7 +31,7 @@ namespace Lucene.Net.Demo.Html
 	/// mechanisms so long as you retain the public fields.
 	/// </summary>
 	[Serializable]
-	public class ParseException : System.Exception
+	public class ParseException:System.Exception
 	{
 		/// <summary> This method has the standard behavior when this object has been
 		/// created using the standard constructors.  Otherwise, it uses
@@ -50,7 +50,7 @@ namespace Lucene.Net.Demo.Html
 				{
 					return base.Message;
 				}
-				System.String expected = "";
+				System.Text.StringBuilder expected = new System.Text.StringBuilder();
 				int maxSize = 0;
 				for (int i = 0; i < expectedTokenSequences.Length; i++)
 				{
@@ -60,13 +60,13 @@ namespace Lucene.Net.Demo.Html
 					}
 					for (int j = 0; j < expectedTokenSequences[i].Length; j++)
 					{
-						expected += (tokenImage[expectedTokenSequences[i][j]] + " ");
+						expected.Append(tokenImage[expectedTokenSequences[i][j]]).Append(" ");
 					}
 					if (expectedTokenSequences[i][expectedTokenSequences[i].Length - 1] != 0)
 					{
-						expected += "...";
+						expected.Append("...");
 					}
-					expected += (eol + "    ");
+					expected.Append(eol).Append("    ");
 				}
 				System.String retval = "Encountered \"";
 				Token tok = currentToken.next;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Demo.Html
 				{
 					retval += ("Was expecting one of:" + eol + "    ");
 				}
-				retval += expected;
+				retval += expected.ToString();
 				return retval;
 			}
 			
@@ -109,7 +109,7 @@ namespace Lucene.Net.Demo.Html
 		/// print the error message in the form:
 		/// ParseException: <result of getMessage>
 		/// </summary>
-		public ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, System.String[] tokenImageVal) : base("")
+		public ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, System.String[] tokenImageVal):base("")
 		{
 			specialConstructor = true;
 			currentToken = currentTokenVal;
@@ -126,12 +126,12 @@ namespace Lucene.Net.Demo.Html
 		/// these constructors.
 		/// </summary>
 		
-		public ParseException() : base()
+		public ParseException():base()
 		{
 			specialConstructor = false;
 		}
 		
-		public ParseException(System.String message) : base(message)
+		public ParseException(System.String message):base(message)
 		{
 			specialConstructor = false;
 		}

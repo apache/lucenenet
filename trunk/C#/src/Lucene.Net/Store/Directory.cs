@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,8 @@
  */
 
 using System;
+
+using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
 
 namespace Lucene.Net.Store
 {
@@ -36,26 +38,41 @@ namespace Lucene.Net.Store
 	/// instance using {@link #setLockFactory}.
 	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
 	[Serializable]
 	public abstract class Directory
 	{
-        protected internal volatile bool isOpen = true;
-
+		
+		[NonSerialized]
+		protected internal volatile bool isOpen = true;
+		
 		/// <summary>Holds the LockFactory instance (implements locking for
 		/// this Directory instance). 
 		/// </summary>
 		[NonSerialized]
 		protected internal LockFactory lockFactory;
 		
-		/// <summary>Returns an array of strings, one for each file in the
-		/// directory.  This method may return null (for example for
-		/// {@link FSDirectory} if the underlying directory doesn't
-		/// exist in the filesystem or there are permissions
-		/// problems).
-		/// </summary>
+		/// <deprecated> For some Directory implementations ({@link
+		/// FSDirectory}, and its subclasses), this method
+		/// silently filters its results to include only index
+		/// files.  Please use {@link #listAll} instead, which
+		/// does no filtering. 
+		/// </deprecated>
 		public abstract System.String[] List();
+		
+		/// <summary>Returns an array of strings, one for each file in the
+		/// directory.  Unlike {@link #list} this method does no
+		/// filtering of the contents in a directory, and it will
+		/// never return null (throws IOException instead).
+		/// 
+		/// Currently this method simply fallsback to {@link
+		/// #list} for Directory impls outside of Lucene's core &
+		/// contrib, but in 3.0 that method will be removed and
+		/// this method will become abstract. 
+		/// </summary>
+		public virtual System.String[] ListAll()
+		{
+			return List();
+		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public abstract bool FileExists(System.String name);
@@ -85,18 +102,16 @@ namespace Lucene.Net.Store
 		/// Returns a stream writing this file. 
 		/// </summary>
 		public abstract IndexOutput CreateOutput(System.String name);
-
-        /// <summary>
-        /// Ensure that any writes to the file are moved to
-        /// stable storage.  Lucene uses this to properly commit
-        /// chages to the index, to prevent a machine/OS crash
-        /// from corrupting the index.
-        /// </summary>
-        /// <param name="name"></param>
-        public virtual void Sync(String name)
-        {
-        }
-
+		
+		/// <summary>Ensure that any writes to this file are moved to
+		/// stable storage.  Lucene uses this to properly commit
+		/// changes to the index, to prevent a machine/OS crash
+		/// from corrupting the index. 
+		/// </summary>
+		public virtual void  Sync(System.String name)
+		{
+		}
+		
 		/// <summary>Returns a stream reading an existing file. </summary>
 		public abstract IndexInput OpenInput(System.String name);
 		
@@ -177,26 +192,36 @@ namespace Lucene.Net.Store
 		/// If a file in src already exists in dest then the
 		/// one in dest will be blindly overwritten.
 		/// 
+		/// <p><b>NOTE:</b> the source directory cannot change
+		/// while this method is running.  Otherwise the results
+		/// are undefined and you could easily hit a
+		/// FileNotFoundException.
+		/// 
+		/// <p><b>NOTE:</b> this method only copies files that look
+		/// like index files (ie, have extensions matching the
+		/// known extensions of index files).
+		/// 
 		/// </summary>
 		/// <param name="src">source directory
 		/// </param>
 		/// <param name="dest">destination directory
 		/// </param>
-		/// <param name="closeDirSrc">if <code>true</code>, call {@link #close()} method on source directory
+		/// <param name="closeDirSrc">if <code>true</code>, call {@link #Close()} method on source directory
 		/// </param>
 		/// <throws>  IOException </throws>
 		public static void  Copy(Directory src, Directory dest, bool closeDirSrc)
 		{
-			System.String[] files = src.List();
-
-			if (files == null)
-			{
-				throw new System.IO.IOException("cannot read directory " + src + ": list() returned null");
-			}
-
+			System.String[] files = src.ListAll();
+			
+			IndexFileNameFilter filter = IndexFileNameFilter.GetFilter();
+			
 			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)
 			{
+				
+				if (!filter.Accept(null, files[i]))
+					continue;
+				
 				IndexOutput os = null;
 				IndexInput is_Renamed = null;
 				try
@@ -210,7 +235,7 @@ namespace Lucene.Net.Store
 					long readCount = 0;
 					while (readCount < len)
 					{
-						int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int) (len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
+						int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?(int) (len - readCount):BufferedIndexOutput.BUFFER_SIZE;
 						is_Renamed.ReadBytes(buf, 0, toRead);
 						os.WriteBytes(buf, toRead);
 						readCount += toRead;
@@ -234,14 +259,12 @@ namespace Lucene.Net.Store
 			if (closeDirSrc)
 				src.Close();
 		}
-
-        /// <summary>
-        /// Throws AlreadyClosedException if this Directory is closed.
-        /// </summary>
-        protected internal virtual void EnsureOpen()
-        {
-            if (!isOpen)
-                throw new AlreadyClosedException("this Directory is closed");
-        }
+		
+		/// <throws>  AlreadyClosedException if this Directory is closed </throws>
+		protected internal void  EnsureOpen()
+		{
+			if (!isOpen)
+				throw new AlreadyClosedException("this Directory is closed");
+		}
 	}
 }

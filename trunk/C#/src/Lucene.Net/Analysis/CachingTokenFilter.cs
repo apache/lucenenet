@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,46 +17,71 @@
 
 using System;
 
+using AttributeSource = Lucene.Net.Util.AttributeSource;
+
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> This class can be used if the Tokens of a TokenStream
+	/// <summary> This class can be used if the token attributes of a TokenStream
 	/// are intended to be consumed more than once. It caches
-	/// all Tokens locally in a List.
+	/// all token attribute states locally in a List.
 	/// 
-	/// CachingTokenFilter implements the optional method
+	/// <P>CachingTokenFilter implements the optional method
 	/// {@link TokenStream#Reset()}, which repositions the
 	/// stream to the first Token. 
-	/// 
 	/// </summary>
-	public class CachingTokenFilter : TokenFilter
+	public class CachingTokenFilter:TokenFilter
 	{
-		private System.Collections.IList cache;
-		private System.Collections.IEnumerator iterator;
+		private System.Collections.IList cache = null;
+		private System.Collections.IEnumerator iterator = null;
+		private AttributeSource.State finalState;
 		
-		public CachingTokenFilter(TokenStream input) : base(input)
+		public CachingTokenFilter(TokenStream input):base(input)
 		{
 		}
 		
-		public override Token Next(/* in */ Token reusableToken)
+		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
+		/// not be overridden. Delegates to the backwards compatibility layer. 
+		/// </deprecated>
+		public override Token Next(Token reusableToken)
 		{
-            System.Diagnostics.Debug.Assert(reusableToken != null);
+			return base.Next(reusableToken);
+		}
+		
+		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
+		/// not be overridden. Delegates to the backwards compatibility layer. 
+		/// </deprecated>
+		public override Token Next()
+		{
+			return base.Next();
+		}
+		
+		public override bool IncrementToken()
+		{
 			if (cache == null)
 			{
 				// fill cache lazily
 				cache = new System.Collections.ArrayList();
-                FillCache(reusableToken);
+				FillCache();
 				iterator = cache.GetEnumerator();
 			}
 			
 			if (!iterator.MoveNext())
 			{
-				// the cache is exhausted, return null
-				return null;
+				// the cache is exhausted, return false
+				return false;
 			}
-			
-            Token nextToken = (Token) iterator.Current;
-            return (Token) nextToken.Clone();
+			// Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
+			RestoreState((AttributeSource.State) iterator.Current);
+			return true;
+		}
+		
+		public override void  End()
+		{
+			if (finalState != null)
+			{
+				RestoreState(finalState);
+			}
 		}
 		
 		public override void  Reset()
@@ -67,10 +92,15 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		private void  FillCache(/* in */ Token reusableToken)
+		private void  FillCache()
 		{
-            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
-				cache.Add(nextToken.Clone());
+			while (input.IncrementToken())
+			{
+				cache.Add(CaptureState());
+			}
+			// capture final state
+			input.End();
+			finalState = CaptureState();
 		}
 	}
 }

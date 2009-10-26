@@ -27,8 +27,8 @@ package org.apache.lucene.queryParser;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DateFormat;
 import java.text.Collator;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,20 +39,23 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CachingTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.document.DateField;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.FuzzyQuery;
+import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.util.Parameter;
@@ -87,12 +90,12 @@ import org.apache.lucene.util.Parameter;
  *
  * <p>
  * Examples of appropriately formatted queries can be found in the <a
- * href="http://lucene.apache.org/java/docs/queryparsersyntax.html">query syntax
+ * href="../../../../../../queryparsersyntax.html">query syntax
  * documentation</a>.
  * </p>
  *
  * <p>
- * In {@link RangeQuery}s, QueryParser tries to detect date values, e.g.
+ * In {@link TermRangeQuery}s, QueryParser tries to detect date values, e.g.
  * <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches
  * for "date" fields between 2005-06-01 and 2005-06-04. Note that the format
  * of the accepted input depends on {@link #setLocale(Locale) the locale}.
@@ -117,11 +120,11 @@ import org.apache.lucene.util.Parameter;
  * use a different method for date conversion.
  * </p>
  *
- * <p>Note that QueryParser is <em>not</em> thread-safe.</p>
- *
- * @author Brian Goetz
- * @author Peter Halacsy
- * @author Tatu Saloranta
+ * <p>Note that QueryParser is <em>not</em> thread-safe.</p> 
+ * 
+ * <p><b>NOTE</b>: there is a new QueryParser in contrib, which matches
+ * the same syntax as this class, but is more modular,
+ * enabling substantial customization to how a query is created.
  */
 public class QueryParser {
 
@@ -144,7 +147,7 @@ public class QueryParser {
   private Operator operator = OR_OPERATOR;
 
   boolean lowercaseExpandedTerms = true;
-  boolean useOldRangeQuery= false;
+  MultiTermQuery.RewriteMethod multiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
   boolean allowLeadingWildcard = false;
   boolean enablePositionIncrements = false;
 
@@ -161,7 +164,7 @@ public class QueryParser {
   Map fieldToDateResolution = null;
 
   // The collator to use when determining range inclusion,
-  // for use when constructing RangeQuerys and ConstantScoreRangeQuerys.
+  // for use when constructing RangeQuerys.
   Collator rangeCollator = null;
 
   /** The default operator for parsing queries. 
@@ -199,13 +202,19 @@ public class QueryParser {
     }
     catch (ParseException tme) {
       // rethrow to include the original query:
-      throw new ParseException("Cannot parse '" +query+ "': " + tme.getMessage());
+      ParseException e = new ParseException("Cannot parse '" +query+ "': " + tme.getMessage());
+      e.initCause(tme);
+      throw e;
     }
     catch (TokenMgrError tme) {
-      throw new ParseException("Cannot parse '" +query+ "': " + tme.getMessage());
+      ParseException e = new ParseException("Cannot parse '" +query+ "': " + tme.getMessage());
+      e.initCause(tme);
+      throw e;
     }
     catch (BooleanQuery.TooManyClauses tmc) {
-      throw new ParseException("Cannot parse '" +query+ "': too many boolean clauses");
+      ParseException e = new ParseException("Cannot parse '" +query+ "': too many boolean clauses");
+      e.initCause(tmc);
+      throw e;
     }
   }
 
@@ -351,24 +360,48 @@ public class QueryParser {
   }
 
   /**
-   * By default QueryParser uses new ConstantScoreRangeQuery in preference to RangeQuery
-   * for range queries. This implementation is generally preferable because it 
-   * a) Runs faster b) Does not have the scarcity of range terms unduly influence score 
-   * c) avoids any "TooManyBooleanClauses" exception.
-   * However, if your application really needs to use the old-fashioned RangeQuery and the above
-   * points are not required then set this option to <code>true</code>
-   * Default is <code>false</code>.
+   * @deprecated Please use {@link #setMultiTermRewriteMethod} instead.
    */
   public void setUseOldRangeQuery(boolean useOldRangeQuery) {
-    this.useOldRangeQuery = useOldRangeQuery;
+    if (useOldRangeQuery) {
+      setMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+    } else {
+      setMultiTermRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+    }
   }
 
 
   /**
-   * @see #setUseOldRangeQuery(boolean)
+   * @deprecated Please use {@link #getMultiTermRewriteMethod} instead.
    */
   public boolean getUseOldRangeQuery() {
-    return useOldRangeQuery;
+    if (getMultiTermRewriteMethod() == MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * By default QueryParser uses {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+   * when creating a PrefixQuery, WildcardQuery or RangeQuery. This implementation is generally preferable because it 
+   * a) Runs faster b) Does not have the scarcity of terms unduly influence score 
+   * c) avoids any "TooManyBooleanClauses" exception.
+   * However, if your application really needs to use the
+   * old-fashioned BooleanQuery expansion rewriting and the above
+   * points are not relevant then use this to change
+   * the rewrite method.
+   */
+  public void setMultiTermRewriteMethod(MultiTermQuery.RewriteMethod method) {
+    multiTermRewriteMethod = method;
+  }
+
+
+  /**
+   * @see #setMultiTermRewriteMethod
+   */
+  public MultiTermQuery.RewriteMethod getMultiTermRewriteMethod() {
+    return multiTermRewriteMethod;
   }
 
   /**
@@ -442,9 +475,7 @@ public class QueryParser {
   
   /** 
    * Sets the collator used to determine index term inclusion in ranges
-   * specified either for ConstantScoreRangeQuerys or RangeQuerys (if
-   * {@link #setUseOldRangeQuery(boolean)} is called with a <code>true</code>
-   * value.)
+   * for RangeQuerys.
    * <p/>
    * <strong>WARNING:</strong> Setting the rangeCollator to a non-null
    * collator using this method will cause every single index Term in the
@@ -453,7 +484,6 @@ public class QueryParser {
    * be very slow.
    *
    *  @param rc  the collator to use when constructing RangeQuerys
-   *             and ConstantScoreRangeQuerys
    */
   public void setRangeCollator(Collator rc) {
     rangeCollator = rc;
@@ -461,9 +491,7 @@ public class QueryParser {
   
   /**
    * @return the collator used to determine index term inclusion in ranges
-   *  specified either for ConstantScoreRangeQuerys or RangeQuerys (if
-   *  {@link #setUseOldRangeQuery(boolean)} is called with a <code>true</code>
-   *  value.)
+   * for RangeQuerys.
    */
   public Collator getRangeCollator() {
     return rangeCollator;
@@ -534,49 +562,95 @@ public class QueryParser {
     // Use the analyzer to get all the tokens, and then build a TermQuery,
     // PhraseQuery, or nothing based on the term count
 
-    TokenStream source = analyzer.tokenStream(field, new StringReader(queryText));
-    List list = new ArrayList();
-    final org.apache.lucene.analysis.Token reusableToken = new org.apache.lucene.analysis.Token();
-    org.apache.lucene.analysis.Token nextToken;
+    TokenStream source;
+    try {
+      source = analyzer.reusableTokenStream(field, new StringReader(queryText));
+      source.reset();
+    } catch (IOException e) {
+      source = analyzer.tokenStream(field, new StringReader(queryText));
+    }
+    CachingTokenFilter buffer = new CachingTokenFilter(source);
+    TermAttribute termAtt = null;
+    PositionIncrementAttribute posIncrAtt = null;
+    int numTokens = 0;
+
+    boolean success = false;
+    try {
+      buffer.reset();
+      success = true;
+    } catch (IOException e) {
+      // success==false if we hit an exception
+    }
+    if (success) {
+      if (buffer.hasAttribute(TermAttribute.class)) {
+        termAtt = (TermAttribute) buffer.getAttribute(TermAttribute.class);
+      }
+      if (buffer.hasAttribute(PositionIncrementAttribute.class)) {
+        posIncrAtt = (PositionIncrementAttribute) buffer.getAttribute(PositionIncrementAttribute.class);
+      }
+    }
+
     int positionCount = 0;
     boolean severalTokensAtSamePosition = false;
 
-    while (true) {
+    boolean hasMoreTokens = false;
+    if (termAtt != null) {
       try {
-        nextToken = source.next(reusableToken);
+        hasMoreTokens = buffer.incrementToken();
+        while (hasMoreTokens) {
+          numTokens++;
+          int positionIncrement = (posIncrAtt != null) ? posIncrAtt.getPositionIncrement() : 1;
+          if (positionIncrement != 0) {
+            positionCount += positionIncrement;
+          } else {
+            severalTokensAtSamePosition = true;
+          }
+          hasMoreTokens = buffer.incrementToken();
+        }
+      } catch (IOException e) {
+        // ignore
       }
-      catch (IOException e) {
-        nextToken = null;
-      }
-      if (nextToken == null)
-        break;
-      list.add(nextToken.clone());
-      if (nextToken.getPositionIncrement() != 0)
-        positionCount += nextToken.getPositionIncrement();
-      else
-        severalTokensAtSamePosition = true;
     }
     try {
+      // rewind the buffer stream
+      buffer.reset();
+
+      // close original stream - all tokens buffered
       source.close();
     }
     catch (IOException e) {
       // ignore
     }
 
-    if (list.size() == 0)
+    if (numTokens == 0)
       return null;
-    else if (list.size() == 1) {
-      nextToken = (org.apache.lucene.analysis.Token) list.get(0);
-      return newTermQuery(new Term(field, nextToken.term()));
+    else if (numTokens == 1) {
+      String term = null;
+      try {
+        boolean hasNext = buffer.incrementToken();
+        assert hasNext == true;
+        term = termAtt.term();
+      } catch (IOException e) {
+        // safe to ignore, because we know the number of tokens
+      }
+      return newTermQuery(new Term(field, term));
     } else {
       if (severalTokensAtSamePosition) {
         if (positionCount == 1) {
           // no phrase query:
           BooleanQuery q = newBooleanQuery(true);
-          for (int i = 0; i < list.size(); i++) {
-            nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+          for (int i = 0; i < numTokens; i++) {
+            String term = null;
+            try {
+              boolean hasNext = buffer.incrementToken();
+              assert hasNext == true;
+              term = termAtt.term();
+            } catch (IOException e) {
+              // safe to ignore, because we know the number of tokens
+            }
+
             Query currentQuery = newTermQuery(
-                new Term(field, nextToken.term()));
+                new Term(field, term));
             q.add(currentQuery, BooleanClause.Occur.SHOULD);
           }
           return q;
@@ -587,9 +661,21 @@ public class QueryParser {
           mpq.setSlop(phraseSlop);
           List multiTerms = new ArrayList();
           int position = -1;
-          for (int i = 0; i < list.size(); i++) {
-            nextToken = (org.apache.lucene.analysis.Token) list.get(i);
-            if (nextToken.getPositionIncrement() > 0 && multiTerms.size() > 0) {
+          for (int i = 0; i < numTokens; i++) {
+            String term = null;
+            int positionIncrement = 1;
+            try {
+              boolean hasNext = buffer.incrementToken();
+              assert hasNext == true;
+              term = termAtt.term();
+              if (posIncrAtt != null) {
+                positionIncrement = posIncrAtt.getPositionIncrement();
+              }
+            } catch (IOException e) {
+              // safe to ignore, because we know the number of tokens
+            }
+
+            if (positionIncrement > 0 && multiTerms.size() > 0) {
               if (enablePositionIncrements) {
                 mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
               } else {
@@ -597,8 +683,8 @@ public class QueryParser {
               }
               multiTerms.clear();
             }
-            position += nextToken.getPositionIncrement();
-            multiTerms.add(new Term(field, nextToken.term()));
+            position += positionIncrement;
+            multiTerms.add(new Term(field, term));
           }
           if (enablePositionIncrements) {
             mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
@@ -612,19 +698,35 @@ public class QueryParser {
         PhraseQuery pq = newPhraseQuery();
         pq.setSlop(phraseSlop);
         int position = -1;
-        for (int i = 0; i < list.size(); i++) {
-          nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+
+
+        for (int i = 0; i < numTokens; i++) {
+          String term = null;
+          int positionIncrement = 1;
+
+          try {
+            boolean hasNext = buffer.incrementToken();
+            assert hasNext == true;
+            term = termAtt.term();
+            if (posIncrAtt != null) {
+              positionIncrement = posIncrAtt.getPositionIncrement();
+            }
+          } catch (IOException e) {
+            // safe to ignore, because we know the number of tokens
+          }
+
           if (enablePositionIncrements) {
-            position += nextToken.getPositionIncrement();
-            pq.add(new Term(field, nextToken.term()),position);
+            position += positionIncrement;
+            pq.add(new Term(field, term),position);
           } else {
-            pq.add(new Term(field, nextToken.term()));
+            pq.add(new Term(field, term));
           }
         }
         return pq;
       }
     }
   }
+
 
 
   /**
@@ -681,7 +783,7 @@ public class QueryParser {
       DateTools.Resolution resolution = getDateResolution(field);
       if (resolution == null) {
         // no default or field specific date resolution has been set,
-        // use deprecated DateField to maintain compatibilty with
+        // use deprecated DateField to maintain compatibility with
         // pre-1.9 Lucene versions.
         part1 = DateField.dateToString(d1);
         part2 = DateField.dateToString(d2);
@@ -745,7 +847,9 @@ public class QueryParser {
    * @return new PrefixQuery instance
    */
   protected Query newPrefixQuery(Term prefix){
-    return new PrefixQuery(prefix);
+    PrefixQuery query = new PrefixQuery(prefix);
+    query.setRewriteMethod(multiTermRewriteMethod);
+    return query;
   }
  
   /**
@@ -756,31 +860,24 @@ public class QueryParser {
    * @return new FuzzyQuery Instance
    */
   protected Query newFuzzyQuery(Term term, float minimumSimilarity, int prefixLength) {
+    // FuzzyQuery doesn't yet allow constant score rewrite
     return new FuzzyQuery(term,minimumSimilarity,prefixLength);
   }
 
   /**
-   * Builds a new RangeQuery instance
+   * Builds a new TermRangeQuery instance
    * @param field Field
    * @param part1 min
    * @param part2 max
    * @param inclusive true if range is inclusive
-   * @return new RangeQuery instance
+   * @return new TermRangeQuery instance
    */
   protected Query newRangeQuery(String field, String part1, String part2, boolean inclusive) {
-    if(useOldRangeQuery)
-    {
-      return new RangeQuery(new Term(field, part1),
-                            new Term(field, part2),
-                            inclusive, rangeCollator);
-    }
-    else
-    {
-      return new ConstantScoreRangeQuery
-        (field, part1, part2, inclusive, inclusive, rangeCollator);
-    }
+    final TermRangeQuery query = new TermRangeQuery(field, part1, part2, inclusive, inclusive, rangeCollator);
+    query.setRewriteMethod(multiTermRewriteMethod);
+    return query;
   }
-
+  
   /**
    * Builds a new MatchAllDocsQuery instance
    * @return new MatchAllDocsQuery instance
@@ -795,7 +892,9 @@ public class QueryParser {
    * @return new WildcardQuery instance
    */
   protected Query newWildcardQuery(Term t) {
-    return new WildcardQuery(t); 
+    WildcardQuery query = new WildcardQuery(t);
+    query.setRewriteMethod(multiTermRewriteMethod);
+    return query;
   }
 
   /**
@@ -1097,11 +1196,11 @@ PARSER_END(QueryParser)
   <#_NUM_CHAR:   ["0"-"9"] >
 // every character that follows a backslash is considered as an escaped character
 | <#_ESCAPED_CHAR: "\\" ~[] >
-| <#_TERM_START_CHAR: ( ~[ " ", "\t", "\n", "\r", "+", "-", "!", "(", ")", ":", "^",
+| <#_TERM_START_CHAR: ( ~[ " ", "\t", "\n", "\r", "\u3000", "+", "-", "!", "(", ")", ":", "^",
                            "[", "]", "\"", "{", "}", "~", "*", "?", "\\" ]
                        | <_ESCAPED_CHAR> ) >
 | <#_TERM_CHAR: ( <_TERM_START_CHAR> | <_ESCAPED_CHAR> | "-" | "+" ) >
-| <#_WHITESPACE: ( " " | "\t" | "\n" | "\r") >
+| <#_WHITESPACE: ( " " | "\t" | "\n" | "\r" | "\u3000") >
 | <#_QUOTED_CHAR: ( ~[ "\"", "\\" ] | <_ESCAPED_CHAR> ) >
 }
 
@@ -1247,7 +1346,6 @@ Query Term(String field) : {
   boolean prefix = false;
   boolean wildcard = false;
   boolean fuzzy = false;
-  boolean rangein = false;
   Query q;
 }
 {

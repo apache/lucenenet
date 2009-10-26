@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Query = Lucene.Net.Search.Query;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using System;
 
-using System.Collections.Generic;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Removes matches which overlap with another SpanQuery. </summary>
-	[System.Serializable]
-	public class SpanNotQuery : SpanQuery
+	[Serializable]
+	public class SpanNotQuery:SpanQuery, System.ICloneable
 	{
-		private class AnonymousClassPayloadSpans : PayloadSpans
+		private class AnonymousClassSpans : Spans
 		{
-			public AnonymousClassPayloadSpans(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
+			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanNotQuery enclosingInstance)
 			{
 				InitBlock(reader, enclosingInstance);
 			}
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				this.reader = reader;
 				this.enclosingInstance = enclosingInstance;
-				includeSpans = Enclosing_Instance.include.GetPayloadSpans(reader);
+				includeSpans = Enclosing_Instance.include.GetSpans(reader);
 				excludeSpans = Enclosing_Instance.exclude.GetSpans(reader);
 				moreExclude = excludeSpans.Next();
 			}
@@ -52,13 +52,13 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			private PayloadSpans includeSpans;
+			private Spans includeSpans;
 			private bool moreInclude = true;
 			
 			private Spans excludeSpans;
 			private bool moreExclude;
 			
-			public virtual bool Next()
+			public override bool Next()
 			{
 				if (moreInclude)
 				// move to next include
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Spans
 				return moreInclude;
 			}
 			
-			public virtual bool SkipTo(int target)
+			public override bool SkipTo(int target)
 			{
 				if (moreInclude)
 				// skip include
@@ -107,32 +107,36 @@ namespace Lucene.Net.Search.Spans
 				return Next(); // scan to next match
 			}
 			
-			public virtual int Doc()
+			public override int Doc()
 			{
 				return includeSpans.Doc();
 			}
-			public virtual int Start()
+			public override int Start()
 			{
 				return includeSpans.Start();
 			}
-			public virtual int End()
+			public override int End()
 			{
 				return includeSpans.End();
 			}
-
-            public ICollection<byte[]> GetPayload()
-            {
-                List<byte[]> result = null;
-                if (includeSpans.IsPayloadAvailable())
-                    result = new List<byte[]>(includeSpans.GetPayload());
-                return result;
-            }
-
-            public bool IsPayloadAvailable()
-            {
-                return includeSpans.IsPayloadAvailable();
-            }
-
+			
+			// TODO: Remove warning after API has been finalizedb
+			public override System.Collections.ICollection GetPayload()
+			{
+				System.Collections.ArrayList result = null;
+				if (includeSpans.IsPayloadAvailable())
+				{
+					result = new System.Collections.ArrayList(includeSpans.GetPayload());
+				}
+				return result;
+			}
+			
+			// TODO: Remove warning after API has been finalized
+			public override bool IsPayloadAvailable()
+			{
+				return includeSpans.IsPayloadAvailable();
+			}
+			
 			public override System.String ToString()
 			{
 				return "spans(" + Enclosing_Instance.ToString() + ")";
@@ -173,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="#ExtractTerms(Set)">
+		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
 		public override System.Collections.ICollection GetTerms()
 		{
@@ -197,17 +201,18 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
+		public override System.Object Clone()
+		{
+			SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery) include.Clone(), (SpanQuery) exclude.Clone());
+			spanNotQuery.SetBoost(GetBoost());
+			return spanNotQuery;
+		}
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new AnonymousClassPayloadSpans(reader, this);
+			return new AnonymousClassSpans(reader, this);
 		}
-
-        public override PayloadSpans GetPayloadSpans(IndexReader reader)
-        {
-            return (PayloadSpans)GetSpans(reader);
-        }
-
+		
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanNotQuery clone = null;
@@ -237,7 +242,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -251,9 +256,9 @@ namespace Lucene.Net.Search.Spans
 		public override int GetHashCode()
 		{
 			int h = include.GetHashCode();
-			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h = (h << 1) | (SupportClass.Number.URShift(h, 31)); // rotate left
 			h ^= exclude.GetHashCode();
-			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h = (h << 1) | (SupportClass.Number.URShift(h, 31)); // rotate left
 			h ^= System.Convert.ToInt32(GetBoost());
 			return h;
 		}

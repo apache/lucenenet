@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,13 +24,14 @@ using Term = Lucene.Net.Index.Term;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>An abstract base class for search implementations.
-	/// Implements the main search methods.
+	/// <summary> An abstract base class for search implementations. Implements the main search
+	/// methods.
 	/// 
-	/// <p>Note that you can only access Hits from a Searcher as long as it is
-	/// not yet closed, otherwise an IOException will be thrown. 
+	/// <p>
+	/// Note that you can only access hits from a Searcher as long as it is not yet
+	/// closed, otherwise an IOException will be thrown.
 	/// </summary>
-	public abstract class Searcher : Lucene.Net.Search.Searchable
+	public abstract class Searcher : Searchable
 	{
 		public Searcher()
 		{
@@ -43,8 +44,9 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Returns the documents matching <code>query</code>. </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-        /// 
-        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int) instead.")]
+		/// <deprecated> Hits will be removed in Lucene 3.0. Use
+		/// {@link #Search(Query, Filter, int)} instead.
+		/// </deprecated>
 		public Hits Search(Query query)
 		{
 			return Search(query, (Filter) null);
@@ -54,8 +56,10 @@ namespace Lucene.Net.Search
 		/// <code>filter</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int) instead.")]
-        public virtual Hits Search(Query query, Filter filter)
+		/// <deprecated> Hits will be removed in Lucene 3.0. Use
+		/// {@link #Search(Query, Filter, int)} instead.
+		/// </deprecated>
+		public virtual Hits Search(Query query, Filter filter)
 		{
 			return new Hits(this, query, filter);
 		}
@@ -64,8 +68,10 @@ namespace Lucene.Net.Search
 		/// <code>sort</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int, Sort) instead.")]
-        public virtual Hits Search(Query query, Sort sort)
+		/// <deprecated> Hits will be removed in Lucene 3.0. Use 
+		/// {@link #Search(Query, Filter, int, Sort)} instead.
+		/// </deprecated>
+		public virtual Hits Search(Query query, Sort sort)
 		{
 			return new Hits(this, query, null, sort);
 		}
@@ -74,8 +80,10 @@ namespace Lucene.Net.Search
 		/// sorted by <code>sort</code>.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-        [System.Obsolete("Hits will be removed in Lucene 3.0.  Use Search(Query, Filter, int, Sort) instead.")]
-        public virtual Hits Search(Query query, Filter filter, Sort sort)
+		/// <deprecated> Hits will be removed in Lucene 3.0. Use 
+		/// {@link #Search(Query, Filter, int, Sort)} instead.
+		/// </deprecated>
+		public virtual Hits Search(Query query, Filter filter, Sort sort)
 		{
 			return new Hits(this, query, filter, sort);
 		}
@@ -85,8 +93,12 @@ namespace Lucene.Net.Search
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
 		/// 
-		/// <p>Applications should usually call {@link
-		/// Searcher#Search(Query,Filter,Sort)} instead.
+		/// <b>NOTE:</b> currently, this method tracks document scores and sets them in
+		/// the returned {@link FieldDoc}, however in 3.0 it will move to not track
+		/// document scores. If document scores tracking is still needed, you can use
+		/// {@link #Search(Weight, Filter, Collector)} and pass in a
+		/// {@link TopFieldCollector} instance.
+		/// 
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
@@ -96,7 +108,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
+		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching
+		/// document.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
@@ -107,14 +120,35 @@ namespace Lucene.Net.Search
 		/// between 0 and 1.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
+		/// <deprecated> use {@link #Search(Query, Collector)} instead.
+		/// </deprecated>
 		public virtual void  Search(Query query, HitCollector results)
 		{
-			Search(query, (Filter) null, results);
+			Search(CreateWeight(query), null, new HitCollectorWrapper(results));
 		}
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
+		/// <p>{@link Collector#Collect(int)} is called for every matching document.
+		/// 
+		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// matching documents.  The high-level search API ({@link
+		/// Searcher#Search(Query)}) is usually more efficient, as it skips
+		/// non-high-scoring hits.
+		/// <p>Note: The <code>score</code> passed to this method is a raw score.
+		/// In other words, the score will not necessarily be a float whose value is
+		/// between 0 and 1.
+		/// </summary>
+		/// <throws>  BooleanQuery.TooManyClauses </throws>
+		public virtual void  Search(Query query, Collector results)
+		{
+			Search(CreateWeight(query), null, results);
+		}
+		
+		/// <summary>Lower-level search API.
+		/// 
+		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching
+		/// document.
 		/// <br>HitCollector-based access to remote indexes is discouraged.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
@@ -125,35 +159,63 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="query">to match documents
 		/// </param>
-		/// <param name="filter">if non-null, used to permit documents to be collected
+		/// <param name="filter">if non-null, used to permit documents to be collected.
 		/// </param>
 		/// <param name="results">to receive hits
 		/// </param>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
+		/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead.
+		/// </deprecated>
 		public virtual void  Search(Query query, Filter filter, HitCollector results)
+		{
+			Search(CreateWeight(query), filter, new HitCollectorWrapper(results));
+		}
+		
+		/// <summary>Lower-level search API.
+		/// 
+		/// <p>{@link Collector#Collect(int)} is called for every matching
+		/// document.
+		/// <br>Collector-based access to remote indexes is discouraged.
+		/// 
+		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// matching documents.  The high-level search API ({@link
+		/// Searcher#Search(Query, Filter, int)}) is usually more efficient, as it skips
+		/// non-high-scoring hits.
+		/// 
+		/// </summary>
+		/// <param name="query">to match documents
+		/// </param>
+		/// <param name="filter">if non-null, used to permit documents to be collected.
+		/// </param>
+		/// <param name="results">to receive hits
+		/// </param>
+		/// <throws>  BooleanQuery.TooManyClauses </throws>
+		public virtual void  Search(Query query, Filter filter, Collector results)
 		{
 			Search(CreateWeight(query), filter, results);
 		}
 		
 		/// <summary>Finds the top <code>n</code>
 		/// hits for <code>query</code>, applying <code>filter</code> if non-null.
+		/// 
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		public virtual TopDocs Search(Query query, Filter filter, int n)
 		{
 			return Search(CreateWeight(query), filter, n);
 		}
-
-        /// <summary>Finds the top <code>n</code>
-        /// hits for <code>query</code>, applying <code>filter</code> if non-null.
-        /// </summary>
-        /// <throws>  BooleanQuery.TooManyClauses </throws>
-        public virtual TopDocs Search(Query query, int n)
-        {
-            return Search(CreateWeight(query), null, n);
-        }
-
-        /// <summary>Returns an Explanation that describes how <code>doc</code> scored against
+		
+		/// <summary>Finds the top <code>n</code>
+		/// hits for <code>query</code>.
+		/// 
+		/// </summary>
+		/// <throws>  BooleanQuery.TooManyClauses </throws>
+		public virtual TopDocs Search(Query query, int n)
+		{
+			return Search(query, null, n);
+		}
+		
+		/// <summary>Returns an Explanation that describes how <code>doc</code> scored against
 		/// <code>query</code>.
 		/// 
 		/// <p>This is intended to be used in developing Similarity implementations,
@@ -172,7 +234,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Set the Similarity implementation used by this Searcher.
 		/// 
 		/// </summary>
-		/// <seealso cref="Similarity#SetDefault(Similarity)">
+		/// <seealso cref="Similarity.SetDefault(Similarity)">
 		/// </seealso>
 		public virtual void  SetSimilarity(Similarity similarity)
 		{
@@ -191,7 +253,7 @@ namespace Lucene.Net.Search
 		/// <summary> creates a weight for <code>query</code></summary>
 		/// <returns> new weight
 		/// </returns>
-		protected internal virtual Weight CreateWeight(Query query)
+		public /*protected internal*/ virtual Weight CreateWeight(Query query)
 		{
 			return query.Weight(this);
 		}
@@ -210,7 +272,13 @@ namespace Lucene.Net.Search
 		/* The following abstract methods were added as a workaround for GCJ bug #15411.
 		* http://gcc.gnu.org/bugzilla/show_bug.cgi?id=15411
 		*/
-		abstract public void  Search(Weight weight, Filter filter, HitCollector results);
+		/// <deprecated> use {@link #Search(Weight, Filter, Collector)} instead.
+		/// </deprecated>
+		public virtual void  Search(Weight weight, Filter filter, HitCollector results)
+		{
+			Search(weight, filter, new HitCollectorWrapper(results));
+		}
+		abstract public void  Search(Weight weight, Filter filter, Collector results);
 		abstract public void  Close();
 		abstract public int DocFreq(Term term);
 		abstract public int MaxDoc();

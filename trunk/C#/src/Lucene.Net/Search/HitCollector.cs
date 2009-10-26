@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,14 +20,18 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Lower-level search API.
-	/// <br>HitCollectors are primarily meant to be used to implement queries,
-	/// sorting and filtering.
+	/// <summary> Lower-level search API. <br>
+	/// HitCollectors are primarily meant to be used to implement queries, sorting
+	/// and filtering. See {@link Collector} for a lower level and higher performance
+	/// (on a multi-segment index) API.
+	/// 
 	/// </summary>
 	/// <seealso cref="Searcher.Search(Query,HitCollector)">
 	/// </seealso>
-	/// <version>  $Id: HitCollector.java 596462 2007-11-19 22:03:22Z hossman $
+	/// <version>  $Id: HitCollector.java 764551 2009-04-13 18:33:56Z mikemccand $
 	/// </version>
+	/// <deprecated> Please use {@link Collector} instead.
+	/// </deprecated>
 	public abstract class HitCollector
 	{
 		/// <summary>Called once for every document matching a query, with the document

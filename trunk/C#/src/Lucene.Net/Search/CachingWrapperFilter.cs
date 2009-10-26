@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ using System;
 
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
+using OpenBitSetDISI = Lucene.Net.Util.OpenBitSetDISI;
 
 namespace Lucene.Net.Search
 {
@@ -27,13 +29,11 @@ namespace Lucene.Net.Search
 	/// filters to simply filter, and then wrap with this class to add caching.
 	/// </summary>
 	[Serializable]
-	public class CachingWrapperFilter : Filter
+	public class CachingWrapperFilter:Filter
 	{
 		protected internal Filter filter;
 		
-		/// <summary> A transient Filter cache.  To cache Filters even when using {@link RemoteSearchable} use
-		/// {@link RemoteCachingWrapperFilter} instead.
-		/// </summary>
+		/// <summary> A transient Filter cache.</summary>
 		[NonSerialized]
 		protected internal System.Collections.IDictionary cache;
 		
@@ -44,22 +44,31 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
-        [System.Obsolete("Use GetDocIdSet(IndexReader) instead.")]
+		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// </deprecated>
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			if (cache == null)
 			{
-                cache = new SupportClass.WeakHashTable();
+				cache = new System.Collections.Hashtable();
 			}
 			
+			System.Object cached = null;
 			lock (cache.SyncRoot)
 			{
 				// check cache
-				System.Collections.BitArray cached = (System.Collections.BitArray) cache[reader];
-				if (cached != null)
+				cached = cache[reader];
+			}
+			
+			if (cached != null)
+			{
+				if (cached is System.Collections.BitArray)
 				{
-					return cached;
+					return (System.Collections.BitArray) cached;
 				}
+				else if (cached is DocIdBitSet)
+					return ((DocIdBitSet) cached).GetBitSet();
+				// It would be nice to handle the DocIdSet case, but that's not really possible
 			}
 			
 			System.Collections.BitArray bits = filter.Bits(reader);
@@ -73,6 +82,26 @@ namespace Lucene.Net.Search
 			return bits;
 		}
 		
+		/// <summary>Provide the DocIdSet to be cached, using the DocIdSet provided
+		/// by the wrapped Filter.
+		/// This implementation returns the given DocIdSet.
+		/// </summary>
+		protected internal virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, IndexReader reader)
+		{
+			if (docIdSet.IsCacheable())
+			{
+				return docIdSet;
+			}
+			else
+			{
+				DocIdSetIterator it = docIdSet.Iterator();
+				// null is allowed to be returned by iterator(),
+				// in this case we wrap with the empty set,
+				// which is cacheable.
+				return (it == null) ? DocIdSet.EMPTY_DOCIDSET : new OpenBitSetDISI(it, reader.MaxDoc());
+			}
+		}
+		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			if (cache == null)
@@ -80,33 +109,41 @@ namespace Lucene.Net.Search
 				cache = new System.Collections.Hashtable();
 			}
 			
+			System.Object cached = null;
 			lock (cache.SyncRoot)
 			{
 				// check cache
-				DocIdSet cached = (DocIdSet) cache[reader];
-				if (cached != null)
-				{
-					return cached;
-				}
+				cached = cache[reader];
 			}
 			
-			DocIdSet docIdSet = filter.GetDocIdSet(reader);
-			
-			lock (cache.SyncRoot)
+			if (cached != null)
 			{
-				// update cache
-				cache[reader] = docIdSet;
+				if (cached is DocIdSet)
+					return (DocIdSet) cached;
+				else
+					return new DocIdBitSet((System.Collections.BitArray) cached);
+			}
+			
+			DocIdSet docIdSet = DocIdSetToCache(filter.GetDocIdSet(reader), reader);
+			
+			if (docIdSet != null)
+			{
+				lock (cache.SyncRoot)
+				{
+					// update cache
+					cache[reader] = docIdSet;
+				}
 			}
 			
 			return docIdSet;
 		}
-
+		
 		public override System.String ToString()
 		{
 			return "CachingWrapperFilter(" + filter + ")";
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is CachingWrapperFilter))
 				return false;

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@
 /* Derived from Lucene.Net.Util.PriorityQueue of March 2005 */
 using System;
 
+using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 using Scorer = Lucene.Net.Search.Scorer;
 
 namespace Lucene.Net.Util
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
 			internal Scorer scorer;
 			internal int doc;
 			
-			internal HeapedScorerDoc(ScorerDocQueue enclosingInstance, Scorer s):this(enclosingInstance, s, s.Doc())
+			internal HeapedScorerDoc(ScorerDocQueue enclosingInstance, Scorer s):this(enclosingInstance, s, s.DocID())
 			{
 			}
 			
@@ -66,7 +67,7 @@ namespace Lucene.Net.Util
 			
 			internal virtual void  Adjust()
 			{
-				doc = scorer.Doc();
+				doc = scorer.DocID();
 			}
 		}
 		
@@ -85,7 +86,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Adds a Scorer to a ScorerDocQueue in log(size) time.
 		/// If one tries to add more Scorers than maxSize
-		/// a SystemException (ArrayIndexOutOfBound) is thrown.
+		/// a RuntimeException (ArrayIndexOutOfBound) is thrown.
 		/// </summary>
 		public void  Put(Scorer scorer)
 		{
@@ -97,7 +98,7 @@ namespace Lucene.Net.Util
 		/// <summary> Adds a Scorer to the ScorerDocQueue in log(size) time if either
 		/// the ScorerDocQueue is not full, or not lessThan(scorer, top()).
 		/// </summary>
-		/// <param name="">scorer
+		/// <param name="scorer">
 		/// </param>
 		/// <returns> true if scorer is added, false otherwise.
 		/// </returns>
@@ -110,7 +111,7 @@ namespace Lucene.Net.Util
 			}
 			else
 			{
-				int docNr = scorer.Doc();
+				int docNr = scorer.DocID();
 				if ((size > 0) && (!(docNr < topHSD.doc)))
 				{
 					// heap[1] is top()
@@ -152,12 +153,12 @@ namespace Lucene.Net.Util
 		
 		public bool TopNextAndAdjustElsePop()
 		{
-			return CheckAdjustElsePop(topHSD.scorer.Next());
+			return CheckAdjustElsePop(topHSD.scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 		}
 		
 		public bool TopSkipToAndAdjustElsePop(int target)
 		{
-			return CheckAdjustElsePop(topHSD.scorer.SkipTo(target));
+			return CheckAdjustElsePop(topHSD.scorer.Advance(target) != DocIdSetIterator.NO_MORE_DOCS);
 		}
 		
 		private bool CheckAdjustElsePop(bool cond)
@@ -165,7 +166,7 @@ namespace Lucene.Net.Util
 			if (cond)
 			{
 				// see also adjustTop
-				topHSD.doc = topHSD.scorer.Doc();
+				topHSD.doc = topHSD.scorer.DocID();
 			}
 			else
 			{

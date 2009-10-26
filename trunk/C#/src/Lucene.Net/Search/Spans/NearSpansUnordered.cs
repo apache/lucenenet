@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,18 +15,25 @@
  * limitations under the License.
  */
 
+using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
-using System.Collections.Generic;
-
 namespace Lucene.Net.Search.Spans
 {
-	internal class NearSpansUnordered : PayloadSpans
+	
+	/// <summary> Similar to {@link NearSpansOrdered}, but for the unordered case.
+	/// 
+	/// Expert:
+	/// Only public for subclassing.  Most implementations should not need this class
+	/// </summary>
+	public class NearSpansUnordered:Spans
 	{
 		private SpanNearQuery query;
 		
 		private System.Collections.IList ordered = new System.Collections.ArrayList(); // spans in query order
+		private Spans[] subSpans;
 		private int slop; // from query
 		
 		private SpansCell first; // linked list of spans
@@ -40,7 +47,7 @@ namespace Lucene.Net.Search.Spans
 		private bool more = true; // true iff not done
 		private bool firstTime = true; // true before first next()
 		
-		private class CellQueue : PriorityQueue
+		private class CellQueue:PriorityQueue
 		{
 			private void  InitBlock(NearSpansUnordered enclosingInstance)
 			{
@@ -61,7 +68,7 @@ namespace Lucene.Net.Search.Spans
 				Initialize(size);
 			}
 			
-			public override bool LessThan(object o1, object o2)
+			public override bool LessThan(System.Object o1, System.Object o2)
 			{
 				SpansCell spans1 = (SpansCell) o1;
 				SpansCell spans2 = (SpansCell) o2;
@@ -78,7 +85,7 @@ namespace Lucene.Net.Search.Spans
 		
 		
 		/// <summary>Wraps a Spans, and can be used to form a linked list. </summary>
-		private class SpansCell : PayloadSpans
+		private class SpansCell:Spans
 		{
 			private void  InitBlock(NearSpansUnordered enclosingInstance)
 			{
@@ -93,24 +100,24 @@ namespace Lucene.Net.Search.Spans
 				}
 				
 			}
-			private PayloadSpans spans;
-			internal SpansCell next;
+			internal /*private*/ Spans spans;
+			internal /*private*/ SpansCell next;
 			private int length = - 1;
 			private int index;
 			
-			public SpansCell(NearSpansUnordered enclosingInstance, PayloadSpans spans, int index)
+			public SpansCell(NearSpansUnordered enclosingInstance, Spans spans, int index)
 			{
 				InitBlock(enclosingInstance);
 				this.spans = spans;
 				this.index = index;
 			}
 			
-			public virtual bool Next()
+			public override bool Next()
 			{
 				return Adjust(spans.Next());
 			}
 			
-			public virtual bool SkipTo(int target)
+			public override bool SkipTo(int target)
 			{
 				return Adjust(spans.SkipTo(target));
 			}
@@ -135,29 +142,30 @@ namespace Lucene.Net.Search.Spans
 				return condition;
 			}
 			
-			public virtual int Doc()
+			public override int Doc()
 			{
 				return spans.Doc();
 			}
-			public virtual int Start()
+			public override int Start()
 			{
 				return spans.Start();
 			}
-			public virtual int End()
+			public override int End()
 			{
 				return spans.End();
 			}
-
-            public ICollection<byte[]> GetPayload()
-            {
-                return new List<byte[]>(spans.GetPayload());
-            }
-
-            public bool IsPayloadAvailable()
-            {
-                return spans.IsPayloadAvailable();
-            }
-
+			// TODO: Remove warning after API has been finalized
+			public override System.Collections.ICollection GetPayload()
+			{
+				return new System.Collections.ArrayList(spans.GetPayload());
+			}
+			
+			// TODO: Remove warning after API has been finalized
+			public override bool IsPayloadAvailable()
+			{
+				return spans.IsPayloadAvailable();
+			}
+			
 			public override System.String ToString()
 			{
 				return spans.ToString() + "#" + index;
@@ -172,14 +180,19 @@ namespace Lucene.Net.Search.Spans
 			
 			SpanQuery[] clauses = query.GetClauses();
 			queue = new CellQueue(this, clauses.Length);
+			subSpans = new Spans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
-				SpansCell cell = new SpansCell(this, clauses[i].GetPayloadSpans(reader), i);
+				SpansCell cell = new SpansCell(this, clauses[i].GetSpans(reader), i);
 				ordered.Add(cell);
+				subSpans[i] = cell.spans;
 			}
 		}
-		
-		public virtual bool Next()
+		public virtual Spans[] GetSubSpans()
+		{
+			return subSpans;
+		}
+		public override bool Next()
 		{
 			if (firstTime)
 			{
@@ -247,7 +260,7 @@ namespace Lucene.Net.Search.Spans
 			return false; // no more matches
 		}
 		
-		public virtual bool SkipTo(int target)
+		public override bool SkipTo(int target)
 		{
 			if (firstTime)
 			{
@@ -287,44 +300,56 @@ namespace Lucene.Net.Search.Spans
 			return (SpansCell) queue.Top();
 		}
 		
-		public virtual int Doc()
+		public override int Doc()
 		{
 			return Min().Doc();
 		}
-		public virtual int Start()
+		public override int Start()
 		{
 			return Min().Start();
 		}
-		public virtual int End()
+		public override int End()
 		{
 			return max.End();
 		}
-
-        public ICollection<byte[]> GetPayload()
-        {
-            Dictionary<byte[], byte[]> matchPayload = new Dictionary<byte[], byte[]>();
-            for (SpansCell cell = first; cell != null; cell = cell.next)
-                if (cell.IsPayloadAvailable())
-                    for (IEnumerator<byte[]> e = cell.GetPayload().GetEnumerator(); e.MoveNext(); )
-                        matchPayload[e.Current] = e.Current;
-            return matchPayload.Keys;
-        }
-
-        public bool IsPayloadAvailable()
-        {
-            SpansCell pointer = Min();
-            while (pointer != null)
-            {
-                if (pointer.IsPayloadAvailable())
-                    return true;
-                pointer = pointer.next;
-            }
-            return false;
-        }
+		
+		// TODO: Remove warning after API has been finalized
+		/// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
+		/// <returns> Collection of <code>byte[]</code> payloads
+		/// </returns>
+		/// <throws>  IOException </throws>
+		public override System.Collections.ICollection GetPayload()
+		{
+            System.Collections.Hashtable matchPayload = new System.Collections.Hashtable();
+			for (SpansCell cell = first; cell != null; cell = cell.next)
+			{
+				if (cell.IsPayloadAvailable())
+				{
+					SupportClass.HashtableHelper.AddAllIfNotContains(matchPayload, cell.GetPayload());
+				}
+			}
+			return matchPayload;
+		}
+		
+		// TODO: Remove warning after API has been finalized
+		public override bool IsPayloadAvailable()
+		{
+			SpansCell pointer = Min();
+			while (pointer != null)
+			{
+				if (pointer.IsPayloadAvailable())
+				{
+					return true;
+				}
+				pointer = pointer.next;
+			}
+			
+			return false;
+		}
 		
 		public override System.String ToString()
 		{
-			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime ? "START" : (more ? (Doc() + ":" + Start() + "-" + End()) : "END"));
+			return GetType().FullName + "(" + query.ToString() + ")@" + (firstTime?"START":(more?(Doc() + ":" + Start() + "-" + End()):"END"));
 		}
 		
 		private void  InitList(bool next)

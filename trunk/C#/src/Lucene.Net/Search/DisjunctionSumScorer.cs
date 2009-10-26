@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,9 @@ namespace Lucene.Net.Search
 	
 	/// <summary>A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
 	/// This Scorer implements {@link Scorer#SkipTo(int)} and uses skipTo() on the given Scorers. 
+	/// TODO: Implement score(HitCollector, int).
 	/// </summary>
-	/// <todo>  Implement score(HitCollector, int). </todo>
-	class DisjunctionSumScorer : Scorer
+	class DisjunctionSumScorer:Scorer
 	{
 		/// <summary>The number of subscorers. </summary>
 		private int nrScorers;
@@ -49,8 +49,7 @@ namespace Lucene.Net.Search
 		/// <code>nrMatchers</code> is the number of matching scorers,
 		/// and all scorers are after the matching doc, or are exhausted.
 		/// </summary>
-		private ScorerDocQueue scorerDocQueue = null;
-		private int queueSize = - 1; // used to avoid size() method calls on scorerDocQueue
+		private ScorerDocQueue scorerDocQueue;
 		
 		/// <summary>The document number of the current match. </summary>
 		private int currentDoc = - 1;
@@ -71,7 +70,7 @@ namespace Lucene.Net.Search
 		/// <br>When minimumNrMatchers equals the number of subScorers,
 		/// it more efficient to use <code>ConjunctionScorer</code>.
 		/// </param>
-		public DisjunctionSumScorer(System.Collections.IList subScorers, int minimumNrMatchers) : base(null)
+		public DisjunctionSumScorer(System.Collections.IList subScorers, int minimumNrMatchers):base(null)
 		{
 			
 			nrScorers = subScorers.Count;
@@ -87,12 +86,14 @@ namespace Lucene.Net.Search
 			
 			this.minimumNrMatchers = minimumNrMatchers;
 			this.subScorers = subScorers;
+			
+			InitScorerDocQueue();
 		}
 		
 		/// <summary>Construct a <code>DisjunctionScorer</code>, using one as the minimum number
 		/// of matching subscorers.
 		/// </summary>
-		public DisjunctionSumScorer(System.Collections.IList subScorers) : this(subScorers, 1)
+		public DisjunctionSumScorer(System.Collections.IList subScorers):this(subScorers, 1)
 		{
 		}
 		
@@ -103,17 +104,13 @@ namespace Lucene.Net.Search
 		{
 			System.Collections.IEnumerator si = subScorers.GetEnumerator();
 			scorerDocQueue = new ScorerDocQueue(nrScorers);
-			queueSize = 0;
 			while (si.MoveNext())
 			{
 				Scorer se = (Scorer) si.Current;
-				if (se.Next())
+				if (se.NextDoc() != NO_MORE_DOCS)
 				{
 					// doc() method will be used in scorerDocQueue.
-					if (scorerDocQueue.Insert(se))
-					{
-						queueSize++;
-					}
+					scorerDocQueue.Insert(se);
 				}
 			}
 		}
@@ -123,11 +120,23 @@ namespace Lucene.Net.Search
 		/// {@link HitCollector#Collect(int, float)}.
 		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
+		/// <deprecated> use {@link #Score(Collector)} instead.
+		/// </deprecated>
 		public override void  Score(HitCollector hc)
 		{
-			while (Next())
+			Score(new HitCollectorWrapper(hc));
+		}
+		
+		/// <summary>Scores and collects all matching documents.</summary>
+		/// <param name="collector">The collector to which all matching documents are passed through.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </param>
+		public override void  Score(Collector collector)
+		{
+			collector.SetScorer(this);
+			while (NextDoc() != NO_MORE_DOCS)
 			{
-				hc.Collect(currentDoc, currentScore);
+				collector.Collect(currentDoc);
 			}
 		}
 		
@@ -142,12 +151,31 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true if more matching documents may remain.
 		/// </returns>
+		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
+		/// </deprecated>
 		protected internal override bool Score(HitCollector hc, int max)
 		{
+			return Score(new HitCollectorWrapper(hc), max, DocID());
+		}
+		
+		/// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
+		/// Note that {@link #Next()} must be called once before this method is called
+		/// for the first time.
+		/// </summary>
+		/// <param name="collector">The collector to which all matching documents are passed through.
+		/// </param>
+		/// <param name="max">Do not score documents past this.
+		/// </param>
+		/// <returns> true if more matching documents may remain.
+		/// </returns>
+		public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
+		{
+			// firstDocID is ignored since nextDoc() sets 'currentDoc'
+			collector.SetScorer(this);
 			while (currentDoc < max)
 			{
-				hc.Collect(currentDoc, currentScore);
-				if (!Next())
+				collector.Collect(currentDoc);
+				if (NextDoc() == NO_MORE_DOCS)
 				{
 					return false;
 				}
@@ -155,15 +183,21 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
 		public override bool Next()
 		{
-			if (scorerDocQueue == null)
-			{
-				InitScorerDocQueue();
-			}
-			return (scorerDocQueue.Size() >= minimumNrMatchers) && AdvanceAfterCurrent();
+			return NextDoc() != NO_MORE_DOCS;
 		}
 		
+		public override int NextDoc()
+		{
+			if (scorerDocQueue.Size() < minimumNrMatchers || !AdvanceAfterCurrent())
+			{
+				currentDoc = NO_MORE_DOCS;
+			}
+			return currentDoc;
+		}
 		
 		/// <summary>Advance all subscorers after the current document determined by the
 		/// top of the <code>scorerDocQueue</code>.
@@ -176,15 +210,14 @@ namespace Lucene.Net.Search
 		/// <br>In case there is a match, </code>currentDoc</code>, </code>currentSumScore</code>,
 		/// and </code>nrMatchers</code> describe the match.
 		/// 
-		/// </returns>
-		/// <todo>  Investigate whether it is possible to use skipTo() when </todo>
-		/// <summary> the minimum number of matchers is bigger than one, ie. try and use the
+		/// TODO: Investigate whether it is possible to use skipTo() when
+		/// the minimum number of matchers is bigger than one, ie. try and use the
 		/// character of ConjunctionScorer for the minimum number of matchers.
 		/// Also delay calling score() on the sub scorers until the minimum number of
 		/// matchers is reached.
 		/// <br>For this, a Scorer array with minimumNrMatchers elements might
 		/// hold Scorers at currentDoc that are temporarily popped from scorerQueue.
-		/// </summary>
+		/// </returns>
 		protected internal virtual bool AdvanceAfterCurrent()
 		{
 			do 
@@ -198,7 +231,7 @@ namespace Lucene.Net.Search
 					// Until all subscorers are after currentDoc
 					if (!scorerDocQueue.TopNextAndAdjustElsePop())
 					{
-						if (--queueSize == 0)
+						if (scorerDocQueue.Size() == 0)
 						{
 							break; // nothing more to advance, check for last match.
 						}
@@ -216,7 +249,7 @@ namespace Lucene.Net.Search
 				{
 					return true;
 				}
-				else if (queueSize < minimumNrMatchers)
+				else if (scorerDocQueue.Size() < minimumNrMatchers)
 				{
 					return false;
 				}
@@ -232,7 +265,14 @@ namespace Lucene.Net.Search
 			return currentScore;
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
+		{
+			return currentDoc;
+		}
+		
+		public override int DocID()
 		{
 			return currentDoc;
 		}
@@ -245,40 +285,57 @@ namespace Lucene.Net.Search
 			return nrMatchers;
 		}
 		
-		/// <summary>Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
-		/// <br>The implementation uses the skipTo() method on the subscorers.
+		/// <summary> Skips to the first match beyond the current whose document number is
+		/// greater than or equal to a given target. <br>
+		/// When this method is used the {@link #Explain(int)} method should not be
+		/// used. <br>
+		/// The implementation uses the skipTo() method on the subscorers.
+		/// 
 		/// </summary>
 		/// <param name="target">The target document number.
 		/// </param>
 		/// <returns> true iff there is such a match.
 		/// </returns>
+		/// <deprecated> use {@link #Advance(int)} instead.
+		/// </deprecated>
 		public override bool SkipTo(int target)
 		{
-			if (scorerDocQueue == null)
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		/// <summary> Advances to the first match beyond the current whose document number is
+		/// greater than or equal to a given target. <br>
+		/// When this method is used the {@link #Explain(int)} method should not be
+		/// used. <br>
+		/// The implementation uses the skipTo() method on the subscorers.
+		/// 
+		/// </summary>
+		/// <param name="target">The target document number.
+		/// </param>
+		/// <returns> the document whose number is greater than or equal to the given
+		/// target, or -1 if none exist.
+		/// </returns>
+		public override int Advance(int target)
+		{
+			if (scorerDocQueue.Size() < minimumNrMatchers)
 			{
-				InitScorerDocQueue();
-			}
-			if (queueSize < minimumNrMatchers)
-			{
-				return false;
+				return currentDoc = NO_MORE_DOCS;
 			}
 			if (target <= currentDoc)
 			{
-				return true;
+				return currentDoc;
 			}
 			do 
 			{
 				if (scorerDocQueue.TopDoc() >= target)
 				{
-					return AdvanceAfterCurrent();
+					return AdvanceAfterCurrent()?currentDoc:(currentDoc = NO_MORE_DOCS);
 				}
 				else if (!scorerDocQueue.TopSkipToAndAdjustElsePop(target))
 				{
-					if (--queueSize < minimumNrMatchers)
+					if (scorerDocQueue.Size() < minimumNrMatchers)
 					{
-						return false;
+						return currentDoc = NO_MORE_DOCS;
 					}
 				}
 			}

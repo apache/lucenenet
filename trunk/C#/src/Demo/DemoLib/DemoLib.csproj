@@ -26,6 +26,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -73,8 +74,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lucene.Net">
-      <Name>Lucene.Net</Name>
+    <Reference Include="Lucene.Net, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lucene.Net\bin\Debug\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="System">

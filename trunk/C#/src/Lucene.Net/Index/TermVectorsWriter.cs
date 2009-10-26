@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,14 +25,14 @@ using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 namespace Lucene.Net.Index
 {
 	
-	public sealed class TermVectorsWriter
+	sealed class TermVectorsWriter
 	{
 		
 		private IndexOutput tvx = null, tvd = null, tvf = null;
 		private FieldInfos fieldInfos;
-        internal UnicodeUtil.UTF8Result[] utf8Results = new UnicodeUtil.UTF8Result[] { new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result() };
-
-		public TermVectorsWriter(Directory directory, string segment, FieldInfos fieldInfos)
+		internal UnicodeUtil.UTF8Result[] utf8Results = new UnicodeUtil.UTF8Result[]{new UnicodeUtil.UTF8Result(), new UnicodeUtil.UTF8Result()};
+		
+		public TermVectorsWriter(Directory directory, System.String segment, FieldInfos fieldInfos)
 		{
 			// Open files for TermVector storage
 			tvx = directory.CreateOutput(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
@@ -54,9 +54,9 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public void  AddAllDocVectors(TermFreqVector[] vectors)
 		{
-
-            tvx.WriteLong(tvd.GetFilePointer());
-            tvx.WriteLong(tvf.GetFilePointer());
+			
+			tvx.WriteLong(tvd.GetFilePointer());
+			tvx.WriteLong(tvf.GetFilePointer());
 			
 			if (vectors != null)
 			{
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 						tpVector = (TermPositionVector) vectors[i];
 						storePositions = tpVector.Size() > 0 && tpVector.GetTermPositions(0) != null;
 						storeOffsets = tpVector.Size() > 0 && tpVector.GetOffsets(0) != null;
-						bits = (byte) ((storePositions ? TermVectorsReader.STORE_POSITIONS_WITH_TERMVECTOR : (byte) 0) + (storeOffsets ? TermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR : (byte) 0));
+						bits = (byte) ((storePositions?TermVectorsReader.STORE_POSITIONS_WITH_TERMVECTOR: (byte) 0) + (storeOffsets?TermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR: (byte) 0));
 					}
 					else
 					{
@@ -101,24 +101,23 @@ namespace Lucene.Net.Index
 					
 					tvf.WriteVInt(bits);
 					
-					string[] terms = vectors[i].GetTerms();
+					System.String[] terms = vectors[i].GetTerms();
 					int[] freqs = vectors[i].GetTermFrequencies();
 					
 					int utf8Upto = 0;
-                    utf8Results[1].length = 0;
-
+					utf8Results[1].length = 0;
+					
 					for (int j = 0; j < numTerms; j++)
 					{
-                        UnicodeUtil.UTF16toUTF8(terms[j], 0, terms[j].Length, utf8Results[utf8Upto]);
-
-                        int start = StringHelper.bytesDifference(
-                            utf8Results[1 - utf8Upto].result, utf8Results[1 - utf8Upto].length, utf8Results[utf8Upto].result, utf8Results[utf8Upto].length);
-
-                        int length = utf8Results[utf8Upto].length - start;
+						
+						UnicodeUtil.UTF16toUTF8(terms[j], 0, terms[j].Length, utf8Results[utf8Upto]);
+						
+						int start = StringHelper.BytesDifference(utf8Results[1 - utf8Upto].result, utf8Results[1 - utf8Upto].length, utf8Results[utf8Upto].result, utf8Results[utf8Upto].length);
+						int length = utf8Results[utf8Upto].length - start;
 						tvf.WriteVInt(start); // write shared prefix length
 						tvf.WriteVInt(length); // write delta length
 						tvf.WriteBytes(utf8Results[utf8Upto].result, start, length); // write delta bytes
-                        utf8Upto = 1 - utf8Upto;
+						utf8Upto = 1 - utf8Upto;
 						
 						int termFreq = freqs[j];
 						
@@ -163,42 +162,44 @@ namespace Lucene.Net.Index
 				}
 				
 				// 2nd pass: write field pointers to tvd
-				long lastFieldPointer = fieldPointers[0];
-				for (int i = 1; i < numFields; i++)
+				if (numFields > 1)
 				{
-					long fieldPointer = fieldPointers[i];
-					tvd.WriteVLong(fieldPointer - lastFieldPointer);
-					lastFieldPointer = fieldPointer;
+					long lastFieldPointer = fieldPointers[0];
+					for (int i = 1; i < numFields; i++)
+					{
+						long fieldPointer = fieldPointers[i];
+						tvd.WriteVLong(fieldPointer - lastFieldPointer);
+						lastFieldPointer = fieldPointer;
+					}
 				}
 			}
 			else
 				tvd.WriteVInt(0);
 		}
-
-        /**
-         * Do a bulk copy of numDocs documents from reader to our
-         * streams.  This is used to expedite merging, if the
-         * field numbers are congruent.
-         */
-        internal void AddRawDocuments(TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
-        {
-            long tvdPosition = tvd.GetFilePointer();
-            long tvfPosition = tvf.GetFilePointer();
-            long tvdStart = tvdPosition;
-            long tvfStart = tvfPosition;
-            for (int i = 0; i < numDocs; i++)
-            {
-                tvx.WriteLong(tvdPosition);
-                tvdPosition += tvdLengths[i];
-                tvx.WriteLong(tvfPosition);
-                tvfPosition += tvfLengths[i];
-            }
-            tvd.CopyBytes(reader.GetTvdStream(), tvdPosition - tvdStart);
-            tvf.CopyBytes(reader.GetTvfStream(), tvfPosition - tvfStart);
-            System.Diagnostics.Debug.Assert(tvd.GetFilePointer() == tvdPosition);
-            System.Diagnostics.Debug.Assert(tvf.GetFilePointer() == tvfPosition);
-        }
-  
+		
+		/// <summary> Do a bulk copy of numDocs documents from reader to our
+		/// streams.  This is used to expedite merging, if the
+		/// field numbers are congruent.
+		/// </summary>
+		internal void  AddRawDocuments(TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
+		{
+			long tvdPosition = tvd.GetFilePointer();
+			long tvfPosition = tvf.GetFilePointer();
+			long tvdStart = tvdPosition;
+			long tvfStart = tvfPosition;
+			for (int i = 0; i < numDocs; i++)
+			{
+				tvx.WriteLong(tvdPosition);
+				tvdPosition += tvdLengths[i];
+				tvx.WriteLong(tvfPosition);
+				tvfPosition += tvfLengths[i];
+			}
+			tvd.CopyBytes(reader.GetTvdStream(), tvdPosition - tvdStart);
+			tvf.CopyBytes(reader.GetTvfStream(), tvfPosition - tvfStart);
+			System.Diagnostics.Debug.Assert(tvd.GetFilePointer() == tvdPosition);
+			System.Diagnostics.Debug.Assert(tvf.GetFilePointer() == tvfPosition);
+		}
+		
 		/// <summary>Close all streams. </summary>
 		internal void  Close()
 		{

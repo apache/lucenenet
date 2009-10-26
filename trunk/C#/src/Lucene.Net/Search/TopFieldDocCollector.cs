@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,9 @@ namespace Lucene.Net.Search
 	/// documents are collected.
 	/// 
 	/// </summary>
-	public class TopFieldDocCollector : TopDocCollector
+	/// <deprecated> Please use {@link TopFieldCollector} instead.
+	/// </deprecated>
+	public class TopFieldDocCollector:TopDocCollector
 	{
 		
 		private FieldDoc reusableFD;
@@ -43,7 +45,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="numHits">the maximum number of hits to collect
 		/// </param>
-		public TopFieldDocCollector(IndexReader reader, Sort sort, int numHits) : base(new FieldSortedHitQueue(reader, sort.fields, numHits))
+		public TopFieldDocCollector(IndexReader reader, Sort sort, int numHits):base(new FieldSortedHitQueue(reader, sort.fields, numHits))
 		{
 		}
 		
@@ -57,7 +59,7 @@ namespace Lucene.Net.Search
 					reusableFD = new FieldDoc(doc, score);
 				else
 				{
-					// Whereas TopDocCollector can skip this if the
+					// Whereas TopScoreDocCollector can skip this if the
 					// score is not competitive, we cannot because the
 					// comparators in the FieldSortedHitQueue.lessThan
 					// aren't in general congruent with "higher score
@@ -75,7 +77,7 @@ namespace Lucene.Net.Search
 			FieldSortedHitQueue fshq = (FieldSortedHitQueue) hq;
 			ScoreDoc[] scoreDocs = new ScoreDoc[fshq.Size()];
 			for (int i = fshq.Size() - 1; i >= 0; i--)
-				// put docs in array
+			// put docs in array
 				scoreDocs[i] = fshq.FillFields((FieldDoc) fshq.Pop());
 			
 			return new TopFieldDocs(totalHits, scoreDocs, fshq.GetFields(), fshq.GetMaxScore());

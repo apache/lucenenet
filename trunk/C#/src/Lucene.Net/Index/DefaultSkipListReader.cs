@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	/// that stores positions and payloads.
 	/// 
 	/// </summary>
-	class DefaultSkipListReader : MultiLevelSkipListReader
+	class DefaultSkipListReader:MultiLevelSkipListReader
 	{
 		private bool currentFieldStoresPayloads;
 		private long[] freqPointer;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 		private int lastPayloadLength;
 		
 		
-		internal DefaultSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval) : base(skipStream, maxSkipLevels, skipInterval)
+		internal DefaultSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval):base(skipStream, maxSkipLevels, skipInterval)
 		{
 			freqPointer = new long[maxSkipLevels];
 			proxPointer = new long[maxSkipLevels];
@@ -52,10 +52,10 @@ namespace Lucene.Net.Index
 			lastFreqPointer = freqBasePointer;
 			lastProxPointer = proxBasePointer;
 
-            for (int i = 0; i < freqPointer.Length; i++) freqPointer[i] = freqBasePointer;
-            for (int i = 0; i < proxPointer.Length; i++) proxPointer[i] = proxBasePointer;
-            for (int i = 0; i < payloadLength.Length; i++) payloadLength[i] = 0;
-		}
+			for (int i = 0; i < freqPointer.Length; i++) freqPointer[i] = freqBasePointer;
+			for (int i = 0; i < proxPointer.Length; i++) proxPointer[i] = proxBasePointer;
+			for (int i = 0; i < payloadLength.Length; i++) payloadLength[i] = 0;
+        }
 		
 		/// <summary>Returns the freq pointer of the doc to which the last call of 
 		/// {@link MultiLevelSkipListReader#SkipTo(int)} has skipped.  

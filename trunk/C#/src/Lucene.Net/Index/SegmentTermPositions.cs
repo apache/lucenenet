@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	public sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
+	sealed class SegmentTermPositions:SegmentTermDocs, TermPositions
 	{
 		private IndexInput proxStream;
 		private int proxCount;
@@ -65,9 +65,9 @@ namespace Lucene.Net.Index
 		
 		public int NextPosition()
 		{
-            if (currentFieldOmitTf)
-                return 0; // this field does not store term freq, positions, payloads
-
+			if (currentFieldOmitTermFreqAndPositions)
+			// This field does not store term freq, positions, payloads
+				return 0;
 			// perform lazy skips if neccessary
 			LazySkip();
 			proxCount--;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 				{
 					payloadLength = proxStream.ReadVInt();
 				}
-				delta = (int) (((uint) delta) >> 1);
+				delta = SupportClass.Number.URShift(delta, 1);
 				needToLoadPayload = true;
 			}
 			return delta;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 		
 		private void  SkipPositions(int n)
 		{
-            System.Diagnostics.Debug.Assert(!currentFieldOmitTf);
+			System.Diagnostics.Debug.Assert(!currentFieldOmitTermFreqAndPositions);
 			for (int f = n; f > 0; f--)
 			{
 				// skip unread positions
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
 			if (proxStream == null)
 			{
 				// clone lazily
-				proxStream = (IndexInput) parent.proxStream.Clone();
+				proxStream = (IndexInput) parent.core.proxStream.Clone();
 			}
 			
 			// we might have to skip the current payload
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
 		{
 			if (!needToLoadPayload)
 			{
-				throw new System.IO.IOException("Payload cannot be loaded more than once for the same term position.");
+				throw new System.IO.IOException("Either no payload exists at this term position or an attempt was made to load it more than once.");
 			}
 			
 			// read payloads lazily

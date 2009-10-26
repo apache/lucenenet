@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,31 +17,43 @@
 
 using System;
 
+using AttributeSource = Lucene.Net.Util.AttributeSource;
+
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> LowerCaseTokenizer performs the function of LetterTokenizer
-    /// and LowerCaseFilter together.  It divides text at non-letters and converts
-    /// them to lower case.  While it is functionally equivalent to the combination
-    /// of LetterTokenizer and LowerCaseFilter, there is a performance advantage
-    /// to doing the two tasks at once, hence this (redundant) implementation.
-    /// <P>
-    /// Note: this does a decent job for most European languages, but does a terrible
-    /// job for some Asian languages, where words are not separated by spaces.
-    /// </summary>
-    public sealed class LowerCaseTokenizer : LetterTokenizer
-    {
-        /// <summary>Construct a new LowerCaseTokenizer. </summary>
-        public LowerCaseTokenizer(System.IO.TextReader in_Renamed) : base(in_Renamed)
-        {
-        }
+	/// <summary> LowerCaseTokenizer performs the function of LetterTokenizer
+	/// and LowerCaseFilter together.  It divides text at non-letters and converts
+	/// them to lower case.  While it is functionally equivalent to the combination
+	/// of LetterTokenizer and LowerCaseFilter, there is a performance advantage
+	/// to doing the two tasks at once, hence this (redundant) implementation.
+	/// <P>
+	/// Note: this does a decent job for most European languages, but does a terrible
+	/// job for some Asian languages, where words are not separated by spaces.
+	/// </summary>
+	public sealed class LowerCaseTokenizer:LetterTokenizer
+	{
+		/// <summary>Construct a new LowerCaseTokenizer. </summary>
+		public LowerCaseTokenizer(System.IO.TextReader in_Renamed):base(in_Renamed)
+		{
+		}
 		
-        /// <summary>Collects only characters which satisfy
-        /// {@link Character#isLetter(char)}.
-        /// </summary>
-        protected internal override char Normalize(char c)
-        {
-            return System.Char.ToLower(c);
-        }
-    }
+		/// <summary>Construct a new LowerCaseTokenizer using a given {@link AttributeSource}. </summary>
+		public LowerCaseTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
+		{
+		}
+		
+		/// <summary>Construct a new LowerCaseTokenizer using a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory}. </summary>
+		public LowerCaseTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
+		{
+		}
+		
+		/// <summary>Converts char to lower case
+		/// {@link Character#toLowerCase(char)}.
+		/// </summary>
+		protected internal override char Normalize(char c)
+		{
+			return System.Char.ToLower(c);
+		}
+	}
 }

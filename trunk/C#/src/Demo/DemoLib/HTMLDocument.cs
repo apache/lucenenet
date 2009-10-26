@@ -17,8 +17,8 @@
 
 using System;
 
-using Lucene.Net.Documents;
 using HTMLParser = Lucene.Net.Demo.Html.HTMLParser;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Demo
 {
@@ -51,17 +51,17 @@ namespace Lucene.Net.Demo
 			
 			// Add the url as a field named "path".  Use a field that is 
 			// indexed (i.e. searchable), but don't tokenize the field into words.
-			doc.Add(new Field("path", f.FullName.Replace(dirSep, '/'), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("path", f.FullName.Replace(dirSep, '/'), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			// Add the last modified date of the file a field named "modified".  
 			// Use a field that is indexed (i.e. searchable), but don't tokenize
 			// the field into words.
-			doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("modified", DateTools.TimeToString(f.LastWriteTime.Millisecond, DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			// Add the uid as a field, so that index can be incrementally maintained.
 			// This field is not stored with document, it is indexed, but it is not
 			// tokenized prior to indexing.
-			doc.Add(new Field("uid", Uid(f), Field.Store.NO, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("uid", Uid(f), Field.Store.NO, Field.Index.NOT_ANALYZED));
 			
 			System.IO.FileStream fis = new System.IO.FileStream(f.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
 			HTMLParser parser = new HTMLParser(fis);
@@ -75,7 +75,7 @@ namespace Lucene.Net.Demo
 			doc.Add(new Field("summary", parser.GetSummary(), Field.Store.YES, Field.Index.NO));
 			
 			// Add the title as a field that it can be searched and that is stored.
-			doc.Add(new Field("title", parser.GetTitle(), Field.Store.YES, Field.Index.TOKENIZED));
+			doc.Add(new Field("title", parser.GetTitle(), Field.Store.YES, Field.Index.ANALYZED));
 			
 			// return the document
 			return doc;

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,84 +17,371 @@
 
 using System;
 
+using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using FieldCacheSanityChecker = Lucene.Net.Util.FieldCacheSanityChecker;
+using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// Expert: The default cache implementation, storing all values in memory.
+	/// <summary> Expert: The default cache implementation, storing all values in memory.
 	/// A WeakHashMap is used for storage.
+	/// 
+	/// <p>Created: May 19, 2004 4:40:36 PM
+	/// 
 	/// </summary>
-	/// <since>lucene 1.4</since>
-	/// <version>$Id:$</version>
-	public class FieldCacheImpl : FieldCache
+	/// <since>   lucene 1.4
+	/// </since>
+	/// <version>  $Id: FieldCacheImpl.java 807572 2009-08-25 11:44:45Z mikemccand $
+	/// </version>
+	// TODO: change interface to FieldCache in 3.0 when removed
+	class FieldCacheImpl : ExtendedFieldCache_old.ExtendedFieldCache
 	{
-        public virtual void Close(IndexReader reader)
-        {
-        }
-
-		public FieldCacheImpl()
+		
+		private System.Collections.IDictionary caches;
+		internal FieldCacheImpl()
 		{
-			InitBlock();
+			Init();
 		}
-		public class AnonymousClassByteParser : ByteParser
+		private void  Init()
 		{
-			public virtual byte ParseByte(System.String value_Renamed)
+			lock (this)
 			{
-				return (byte) System.Byte.Parse(value_Renamed);
-			}
-		}
-		public class AnonymousClassShortParser : ShortParser
-		{
-			public virtual short ParseShort(System.String value_Renamed)
-			{
-				return System.Int16.Parse(value_Renamed);
-			}
-		}
-		public class AnonymousClassIntParser : IntParser
-		{
-			public virtual int ParseInt(System.String value_Renamed)
-			{
-				return System.Int32.Parse(value_Renamed);
-			}
-		}
-		public class AnonymousClassFloatParser : FloatParser
-		{
-			public virtual float ParseFloat(System.String value_Renamed)
-			{
-				return SupportClass.Single.Parse(value_Renamed);
+				caches = new System.Collections.Hashtable(7);
+				caches[System.Type.GetType("System.Byte")] = new ByteCache(this);
+				caches[System.Type.GetType("System.Int16")] = new ShortCache(this);
+				caches[System.Type.GetType("System.Int32")] = new IntCache(this);
+				caches[System.Type.GetType("System.Single")] = new FloatCache(this);
+				caches[System.Type.GetType("System.Int64")] = new LongCache(this);
+				caches[System.Type.GetType("System.Double")] = new DoubleCache(this);
+				caches[typeof(System.String)] = new StringCache(this);
+				caches[typeof(StringIndex)] = new StringIndexCache(this);
+				caches[typeof(System.IComparable)] = new CustomCache(this);
+				caches[typeof(System.Object)] = new AutoCache(this);
 			}
 		}
 		
-		internal class AnonymousClassCache : Cache
+		public virtual void  PurgeAllCaches()
 		{
-			public AnonymousClassCache(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			Init();
+		}
+		
+		public virtual CacheEntry[] GetCacheEntries()
+		{
+			System.Collections.IList result = new System.Collections.ArrayList(17);
+			System.Collections.IEnumerator outerKeys = caches.Keys.GetEnumerator();
+			while (outerKeys.MoveNext())
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
+				System.Type cacheType = (System.Type) outerKeys.Current;
+				Cache cache = (Cache) caches[cacheType];
+				System.Collections.IEnumerator innerKeys = cache.readerCache.Keys.GetEnumerator();
+				while (innerKeys.MoveNext())
 				{
-					return enclosingInstance;
+					// we've now materialized a hard ref
+					System.Object readerKey = innerKeys.Current;
+					// innerKeys was backed by WeakHashMap, sanity check
+					// that it wasn't GCed before we made hard ref
+					if (null != readerKey && cache.readerCache.Contains(readerKey))
+					{
+						System.Collections.IDictionary innerCache = ((System.Collections.IDictionary) cache.readerCache[readerKey]);
+						System.Collections.IEnumerator entrySetIterator = new System.Collections.Hashtable(innerCache).GetEnumerator();
+						while (entrySetIterator.MoveNext())
+						{
+							System.Collections.DictionaryEntry mapEntry = (System.Collections.DictionaryEntry) entrySetIterator.Current;
+							Entry entry = (Entry) mapEntry.Key;
+							result.Add(new CacheEntryImpl(readerKey, entry.field, cacheType, entry.type, entry.custom, entry.locale, mapEntry.Value));
+						}
+					}
 				}
+			}
+			return (CacheEntry[]) new System.Collections.ArrayList(result).ToArray(typeof(CacheEntry));
+		}
+		
+		private sealed class CacheEntryImpl:CacheEntry
+		{
+			/// <deprecated> Only needed because of Entry (ab)use by 
+			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
+			/// is removed
+			/// </deprecated>
+			private int sortFieldType;
+			/// <deprecated> Only needed because of Entry (ab)use by 
+			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
+			/// is removed
+			/// </deprecated>
+			private System.Globalization.CultureInfo locale;
+			
+			private System.Object readerKey;
+			private System.String fieldName;
+			private System.Type cacheType;
+			private System.Object custom;
+			private System.Object value_Renamed;
+			internal CacheEntryImpl(System.Object readerKey, System.String fieldName, System.Type cacheType, int sortFieldType, System.Object custom, System.Globalization.CultureInfo locale, System.Object value_Renamed)
+			{
+				this.readerKey = readerKey;
+				this.fieldName = fieldName;
+				this.cacheType = cacheType;
+				this.sortFieldType = sortFieldType;
+				this.custom = custom;
+				this.locale = locale;
+				this.value_Renamed = value_Renamed;
 				
+				// :HACK: for testing.
+				//         if (null != locale || SortField.CUSTOM != sortFieldType) {
+				//           throw new RuntimeException("Locale/sortFieldType: " + this);
+				//         }
+			}
+			public override System.Object GetReaderKey()
+			{
+				return readerKey;
+			}
+			public override System.String GetFieldName()
+			{
+				return fieldName;
+			}
+			public override System.Type GetCacheType()
+			{
+				return cacheType;
+			}
+			public override System.Object GetCustom()
+			{
+				return custom;
+			}
+			public override System.Object GetValue()
+			{
+				return value_Renamed;
+			}
+			/// <summary> Adds warning to super.toString if Local or sortFieldType were specified</summary>
+			/// <deprecated> Only needed because of Entry (ab)use by 
+			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
+			/// is removed
+			/// </deprecated>
+			public override System.String ToString()
+			{
+				System.String r = base.ToString();
+				if (null != locale)
+				{
+					r = r + "...!!!Locale:" + locale + "???";
+				}
+				if (SortField.CUSTOM != sortFieldType)
+				{
+					r = r + "...!!!SortType:" + sortFieldType + "???";
+				}
+				return r;
+			}
+		}
+		
+		/// <summary> Hack: When thrown from a Parser (NUMERIC_UTILS_* ones), this stops
+		/// processing terms and returns the current FieldCache
+		/// array.
+		/// </summary>
+		[Serializable]
+		internal sealed class StopFillCacheException:System.SystemException
+		{
+		}
+		
+		/// <summary>Expert: Internal cache. </summary>
+		internal abstract class Cache
+		{
+			internal Cache()
+			{
+				this.wrapper = null;
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			internal Cache(FieldCache wrapper)
+			{
+				this.wrapper = wrapper;
+			}
+			
+			internal FieldCache wrapper;
+			
+			internal System.Collections.IDictionary readerCache = new System.Collections.Hashtable();
+			
+			protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
+			
+			public virtual System.Object Get(IndexReader reader, Entry key)
+			{
+				System.Collections.IDictionary innerCache;
+				System.Object value_Renamed;
+				System.Object readerKey = reader.GetFieldCacheKey();
+				lock (readerCache.SyncRoot)
+				{
+					innerCache = (System.Collections.IDictionary) readerCache[readerKey];
+					if (innerCache == null)
+					{
+						innerCache = new System.Collections.Hashtable();
+						readerCache[readerKey] = innerCache;
+						value_Renamed = null;
+					}
+					else
+					{
+						value_Renamed = innerCache[key];
+					}
+					if (value_Renamed == null)
+					{
+						value_Renamed = new CreationPlaceholder();
+						innerCache[key] = value_Renamed;
+					}
+				}
+				if (value_Renamed is CreationPlaceholder)
+				{
+					lock (value_Renamed)
+					{
+						CreationPlaceholder progress = (CreationPlaceholder) value_Renamed;
+						if (progress.value_Renamed == null)
+						{
+							progress.value_Renamed = CreateValue(reader, key);
+							lock (readerCache.SyncRoot)
+							{
+								innerCache[key] = progress.value_Renamed;
+							}
+							
+							// Only check if key.custom (the parser) is
+							// non-null; else, we check twice for a single
+							// call to FieldCache.getXXX
+							if (key.custom != null && wrapper != null)
+							{
+								System.IO.StreamWriter infoStream = wrapper.GetInfoStream();
+								if (infoStream != null)
+								{
+									PrintNewInsanity(infoStream, progress.value_Renamed);
+								}
+							}
+						}
+						return progress.value_Renamed;
+					}
+				}
+				return value_Renamed;
+			}
+			
+			private void  PrintNewInsanity(System.IO.StreamWriter infoStream, System.Object value_Renamed)
+			{
+				FieldCacheSanityChecker.Insanity[] insanities = FieldCacheSanityChecker.CheckSanity(wrapper);
+				for (int i = 0; i < insanities.Length; i++)
+				{
+					FieldCacheSanityChecker.Insanity insanity = insanities[i];
+					CacheEntry[] entries = insanity.GetCacheEntries();
+					for (int j = 0; j < entries.Length; j++)
+					{
+						if (entries[j].GetValue() == value_Renamed)
+						{
+							// OK this insanity involves our entry
+							infoStream.WriteLine("WARNING: new FieldCache insanity created\nDetails: " + insanity.ToString());
+							infoStream.WriteLine("\nStack:\n");
+                            infoStream.WriteLine(new System.Exception());
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		/// <summary>Expert: Every composite-key in the internal cache is of this type. </summary>
+		protected internal class Entry
+		{
+			internal System.String field; // which Fieldable
+			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
+			/// remove when FieldSortedHitQueue is removed
+			/// </deprecated>
+			internal int type; // which SortField type
+			internal System.Object custom; // which custom comparator or parser
+			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
+			/// remove when FieldSortedHitQueue is removed
+			/// </deprecated>
+			internal System.Globalization.CultureInfo locale; // the locale we're sorting (if string)
+			
+			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
+			/// remove when FieldSortedHitQueue is removed
+			/// </deprecated>
+			internal Entry(System.String field, int type, System.Globalization.CultureInfo locale)
+			{
+				this.field = StringHelper.Intern(field);
+				this.type = type;
+				this.custom = null;
+				this.locale = locale;
+			}
+			
+			/// <summary>Creates one of these objects for a custom comparator/parser. </summary>
+			internal Entry(System.String field, System.Object custom)
+			{
+				this.field = StringHelper.Intern(field);
+				this.type = SortField.CUSTOM;
+				this.custom = custom;
+				this.locale = null;
+			}
+			
+			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
+			/// remove when FieldSortedHitQueue is removed
+			/// </deprecated>
+			internal Entry(System.String field, int type, Parser parser)
+			{
+				this.field = StringHelper.Intern(field);
+				this.type = type;
+				this.custom = parser;
+				this.locale = null;
+			}
+			
+			/// <summary>Two of these are equal iff they reference the same field and type. </summary>
+			public  override bool Equals(System.Object o)
+			{
+				if (o is Entry)
+				{
+					Entry other = (Entry) o;
+					if ((System.Object) other.field == (System.Object) field && other.type == type)
+					{
+						if (other.locale == null?locale == null:other.locale.Equals(locale))
+						{
+							if (other.custom == null)
+							{
+								if (custom == null)
+									return true;
+							}
+							else if (other.custom.Equals(custom))
+							{
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			}
+			
+			/// <summary>Composes a hashcode based on the field and type. </summary>
+			public override int GetHashCode()
+			{
+				return field.GetHashCode() ^ type ^ (custom == null?0:custom.GetHashCode()) ^ (locale == null?0:locale.GetHashCode());
+			}
+		}
+		
+		// inherit javadocs
+		public virtual byte[] GetBytes(IndexReader reader, System.String field)
+		{
+			return GetBytes(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual byte[] GetBytes(IndexReader reader, System.String field, ByteParser parser)
+		{
+			return (byte[]) ((Cache) caches[System.Type.GetType("System.Byte")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class ByteCache:Cache
+		{
+			internal ByteCache(FieldCache wrapper):base(wrapper)
+			{
+			}
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				ByteParser parser = (ByteParser) entry.custom;
+				if (parser == null)
+				{
+					return wrapper.GetBytes(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_BYTE_PARSER);
+				}
 				byte[] retArray = new byte[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
@@ -103,7 +390,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						byte termval = parser.ParseByte(term.Text());
 						termDocs.Seek(termEnum);
@@ -114,6 +401,9 @@ namespace Lucene.Net.Search
 					}
 					while (termEnum.Next());
 				}
+				catch (StopFillCacheException stop)
+				{
+				}
 				finally
 				{
 					termDocs.Close();
@@ -123,31 +413,34 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal class AnonymousClassCache1 : Cache
+		
+		// inherit javadocs
+		public virtual short[] GetShorts(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache1(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return GetShorts(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual short[] GetShorts(IndexReader reader, System.String field, ShortParser parser)
+		{
+			return (short[]) ((Cache) caches[System.Type.GetType("System.Int16")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class ShortCache:Cache
+		{
+			internal ShortCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				ShortParser parser = (ShortParser) entry.custom;
+				if (parser == null)
+				{
+					return wrapper.GetShorts(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_SHORT_PARSER);
+				}
 				short[] retArray = new short[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
@@ -156,7 +449,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						short termval = parser.ParseShort(term.Text());
 						termDocs.Seek(termEnum);
@@ -167,6 +460,9 @@ namespace Lucene.Net.Search
 					}
 					while (termEnum.Next());
 				}
+				catch (StopFillCacheException stop)
+				{
+				}
 				finally
 				{
 					termDocs.Close();
@@ -176,32 +472,42 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal class AnonymousClassCache2 : Cache
+		
+		// inherit javadocs
+		public virtual int[] GetInts(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache2(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return GetInts(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual int[] GetInts(IndexReader reader, System.String field, IntParser parser)
+		{
+			return (int[]) ((Cache) caches[System.Type.GetType("System.Int32")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class IntCache:Cache
+		{
+			internal IntCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				IntParser parser = (IntParser) entry.custom;
-				int[] retArray = new int[reader.MaxDoc()];
+				if (parser == null)
+				{
+					try
+					{
+						return wrapper.GetInts(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_INT_PARSER);
+					}
+					catch (System.FormatException ne)
+					{
+						return wrapper.GetInts(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_INT_PARSER);
+					}
+				}
+				int[] retArray = null;
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -209,9 +515,12 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						int termval = parser.ParseInt(term.Text());
+						if (retArray == null)
+						// late init
+							retArray = new int[reader.MaxDoc()];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -220,41 +529,59 @@ namespace Lucene.Net.Search
 					}
 					while (termEnum.Next());
 				}
+				catch (StopFillCacheException stop)
+				{
+				}
 				finally
 				{
 					termDocs.Close();
 					termEnum.Close();
 				}
+				if (retArray == null)
+				// no values
+					retArray = new int[reader.MaxDoc()];
 				return retArray;
 			}
 		}
 		
-		internal class AnonymousClassCache3 : Cache
+		
+		
+		// inherit javadocs
+		public virtual float[] GetFloats(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache3(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return GetFloats(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual float[] GetFloats(IndexReader reader, System.String field, FloatParser parser)
+		{
+			
+			return (float[]) ((Cache) caches[System.Type.GetType("System.Single")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class FloatCache:Cache
+		{
+			internal FloatCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
 				FloatParser parser = (FloatParser) entry.custom;
-				float[] retArray = new float[reader.MaxDoc()];
+				if (parser == null)
+				{
+					try
+					{
+						return wrapper.GetFloats(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_FLOAT_PARSER);
+					}
+					catch (System.FormatException ne)
+					{
+						return wrapper.GetFloats(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_FLOAT_PARSER);
+					}
+				}
+				float[] retArray = null;
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -262,9 +589,12 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						float termval = parser.ParseFloat(term.Text());
+						if (retArray == null)
+						// late init
+							retArray = new float[reader.MaxDoc()];
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{
@@ -273,38 +603,195 @@ namespace Lucene.Net.Search
 					}
 					while (termEnum.Next());
 				}
+				catch (StopFillCacheException stop)
+				{
+				}
 				finally
 				{
 					termDocs.Close();
 					termEnum.Close();
 				}
+				if (retArray == null)
+				// no values
+					retArray = new float[reader.MaxDoc()];
 				return retArray;
 			}
 		}
 		
-		internal class AnonymousClassCache4 : Cache
+		
+		
+		public virtual long[] GetLongs(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache4(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return GetLongs(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.LongParser parser)
+		{
+			return (long[]) ((Cache) caches[System.Type.GetType("System.Int64")]).Get(reader, new Entry(field, parser));
+		}
+		
+		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
+		/// </deprecated>
+		public virtual long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.LongParser parser)
+		{
+			return (long[]) ((Cache) caches[System.Type.GetType("System.Int64")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class LongCache:Cache
+		{
+			internal LongCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object fieldKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
-				System.String field = String.Intern(((System.String) fieldKey));
+				Entry entry = (Entry) entryKey;
+				System.String field = entry.field;
+				Lucene.Net.Search.LongParser parser = (Lucene.Net.Search.LongParser) entry.custom;
+				if (parser == null)
+				{
+					try
+					{
+						return wrapper.GetLongs(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_LONG_PARSER);
+					}
+					catch (System.FormatException ne)
+					{
+						return wrapper.GetLongs(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_LONG_PARSER);
+					}
+				}
+				long[] retArray = null;
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field));
+				try
+				{
+					do 
+					{
+						Term term = termEnum.Term();
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
+							break;
+						long termval = parser.ParseLong(term.Text());
+						if (retArray == null)
+						// late init
+							retArray = new long[reader.MaxDoc()];
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
+						{
+							retArray[termDocs.Doc()] = termval;
+						}
+					}
+					while (termEnum.Next());
+				}
+				catch (StopFillCacheException stop)
+				{
+				}
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
+				}
+				if (retArray == null)
+				// no values
+					retArray = new long[reader.MaxDoc()];
+				return retArray;
+			}
+		}
+		
+		
+		// inherit javadocs
+		public virtual double[] GetDoubles(IndexReader reader, System.String field)
+		{
+			return GetDoubles(reader, field, null);
+		}
+		
+		// inherit javadocs
+		public virtual double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.DoubleParser parser)
+		{
+			return (double[]) ((Cache) caches[System.Type.GetType("System.Double")]).Get(reader, new Entry(field, parser));
+		}
+		
+		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
+		/// </deprecated>
+		public virtual double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.DoubleParser parser)
+		{
+			return (double[]) ((Cache) caches[System.Type.GetType("System.Double")]).Get(reader, new Entry(field, parser));
+		}
+		
+		internal sealed class DoubleCache:Cache
+		{
+			internal DoubleCache(FieldCache wrapper):base(wrapper)
+			{
+			}
+			
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
+			{
+				Entry entry = (Entry) entryKey;
+				System.String field = entry.field;
+				Lucene.Net.Search.DoubleParser parser = (Lucene.Net.Search.DoubleParser) entry.custom;
+				if (parser == null)
+				{
+					try
+					{
+						return wrapper.GetDoubles(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_DOUBLE_PARSER);
+					}
+					catch (System.FormatException ne)
+					{
+						return wrapper.GetDoubles(reader, field, Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_DOUBLE_PARSER);
+					}
+				}
+				double[] retArray = null;
+				TermDocs termDocs = reader.TermDocs();
+				TermEnum termEnum = reader.Terms(new Term(field));
+				try
+				{
+					do 
+					{
+						Term term = termEnum.Term();
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
+							break;
+						double termval = parser.ParseDouble(term.Text());
+						if (retArray == null)
+						// late init
+							retArray = new double[reader.MaxDoc()];
+						termDocs.Seek(termEnum);
+						while (termDocs.Next())
+						{
+							retArray[termDocs.Doc()] = termval;
+						}
+					}
+					while (termEnum.Next());
+				}
+				catch (StopFillCacheException stop)
+				{
+				}
+				finally
+				{
+					termDocs.Close();
+					termEnum.Close();
+				}
+				if (retArray == null)
+				// no values
+					retArray = new double[reader.MaxDoc()];
+				return retArray;
+			}
+		}
+		
+		
+		// inherit javadocs
+		public virtual System.String[] GetStrings(IndexReader reader, System.String field)
+		{
+			return (System.String[]) ((Cache) caches[typeof(System.String)]).Get(reader, new Entry(field, (Parser) null));
+		}
+		
+		internal sealed class StringCache:Cache
+		{
+			internal StringCache(FieldCache wrapper):base(wrapper)
+			{
+			}
+			
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
+			{
+				System.String field = StringHelper.Intern((System.String) entryKey.field);
 				System.String[] retArray = new System.String[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
@@ -313,7 +800,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						System.String termval = term.Text();
 						termDocs.Seek(termEnum);
@@ -333,29 +820,22 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal class AnonymousClassCache5 : Cache
+		
+		// inherit javadocs
+		public virtual StringIndex GetStringIndex(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache5(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return (StringIndex) ((Cache) caches[typeof(StringIndex)]).Get(reader, new Entry(field, (Parser) null));
+		}
+		
+		internal sealed class StringIndexCache:Cache
+		{
+			internal StringIndexCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object fieldKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
-				System.String field = String.Intern(((System.String) fieldKey));
+				System.String field = StringHelper.Intern((System.String) entryKey.field);
 				int[] retArray = new int[reader.MaxDoc()];
 				System.String[] mterms = new System.String[reader.MaxDoc() + 1];
 				TermDocs termDocs = reader.TermDocs();
@@ -373,7 +853,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						
 						// store term text
@@ -418,68 +898,73 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal class AnonymousClassCache6 : Cache
+		
+		/// <summary>The pattern used to detect integer values in a field </summary>
+		/// <summary>removed for java 1.3 compatibility
+		/// protected static final Pattern pIntegers = Pattern.compile ("[0-9\\-]+");
+		/// 
+		/// </summary>
+		
+		/// <summary>The pattern used to detect float values in a field </summary>
+		/// <summary> removed for java 1.3 compatibility
+		/// protected static final Object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
+		/// </summary>
+		
+		// inherit javadocs
+		public virtual System.Object GetAuto(IndexReader reader, System.String field)
 		{
-			public AnonymousClassCache6(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return ((Cache) caches[typeof(System.Object)]).Get(reader, new Entry(field, (Parser) null));
+		}
+		
+		/// <deprecated> Please specify the exact type, instead.
+		/// Especially, guessing does <b>not</b> work with the new
+		/// {@link NumericField} type.
+		/// </deprecated>
+		internal sealed class AutoCache:Cache
+		{
+			internal AutoCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object fieldKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
-				System.String field = String.Intern(((System.String) fieldKey));
+				System.String field = StringHelper.Intern((System.String) entryKey.field);
 				TermEnum enumerator = reader.Terms(new Term(field));
 				try
 				{
 					Term term = enumerator.Term();
 					if (term == null)
 					{
-						throw new System.SystemException("no terms in field " + field + " - cannot determine sort type");
+						throw new System.SystemException("no terms in field " + field + " - cannot determine type");
 					}
-					object ret = null;
-					if ((object) term.Field() == (object) field)
+					System.Object ret = null;
+					if ((System.Object) term.Field() == (System.Object) field)
 					{
 						System.String termtext = term.Text().Trim();
 						
-						/**
-						* Java 1.4 level code:
-						
-						if (pIntegers.matcher(termtext).matches())
-						return IntegerSortedHitQueue.comparator (reader, enumerator, field);
-						
-						else if (pFloats.matcher(termtext).matches())
-						return FloatSortedHitQueue.comparator (reader, enumerator, field);
-						*/
-						
-						// Java 1.3 level code:
 						try
 						{
 							System.Int32.Parse(termtext);
-							ret = Enclosing_Instance.GetInts(reader, field);
+							ret = wrapper.GetInts(reader, field);
 						}
-						catch (System.FormatException)
+						catch (System.FormatException nfe1)
 						{
 							try
 							{
-								SupportClass.Single.Parse(termtext);
-								ret = Enclosing_Instance.GetFloats(reader, field);
+								System.Int64.Parse(termtext);
+								ret = wrapper.GetLongs(reader, field);
 							}
-							catch (System.FormatException)
+							catch (System.FormatException nfe2)
 							{
-								ret = Enclosing_Instance.GetStringIndex(reader, field);
+								try
+								{
+									System.Single.Parse(termtext);
+									ret = wrapper.GetFloats(reader, field);
+								}
+								catch (System.FormatException nfe3)
+								{
+									ret = wrapper.GetStringIndex(reader, field);
+								}
 							}
 						}
 					}
@@ -496,27 +981,23 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal class AnonymousClassCache7 : Cache
+		
+		/// <deprecated> 
+		/// </deprecated>
+		public virtual System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator)
 		{
-			public AnonymousClassCache7(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
+			return (System.IComparable[]) ((Cache) caches[typeof(System.IComparable)]).Get(reader, new Entry(field, comparator));
+		}
+		
+		/// <deprecated> 
+		/// </deprecated>
+		internal sealed class CustomCache:Cache
+		{
+			internal CustomCache(FieldCache wrapper):base(wrapper)
 			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Search.FieldCacheImpl enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Lucene.Net.Search.FieldCacheImpl enclosingInstance;
-			public Lucene.Net.Search.FieldCacheImpl Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
 			}
 			
-			protected internal override object CreateValue(IndexReader reader, object entryKey)
+			protected internal override System.Object CreateValue(IndexReader reader, Entry entryKey)
 			{
 				Entry entry = (Entry) entryKey;
 				System.String field = entry.field;
@@ -529,7 +1010,7 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (object) term.Field() != (object) field)
+						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
 						System.IComparable termval = comparator.GetComparable(term.Text());
 						termDocs.Seek(termEnum);
@@ -548,245 +1029,18 @@ namespace Lucene.Net.Search
 				return retArray;
 			}
 		}
-		private void  InitBlock()
+		
+		
+		private volatile System.IO.StreamWriter infoStream;
+		
+		public virtual void  SetInfoStream(System.IO.StreamWriter stream)
 		{
-			bytesCache = new AnonymousClassCache(this);
-			shortsCache = new AnonymousClassCache1(this);
-			intsCache = new AnonymousClassCache2(this);
-			floatsCache = new AnonymousClassCache3(this);
-			stringsCache = new AnonymousClassCache4(this);
-			stringsIndexCache = new AnonymousClassCache5(this);
-			autoCache = new AnonymousClassCache6(this);
-			customCache = new AnonymousClassCache7(this);
+			infoStream = stream;
 		}
 		
-		/// <summary>Expert: Internal cache. </summary>
-		internal abstract class Cache
+		public virtual System.IO.StreamWriter GetInfoStream()
 		{
-            private System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
-			
-			protected internal abstract object CreateValue(IndexReader reader, object key);
-			
-			public virtual object Get(IndexReader reader, object key)
-			{
-				System.Collections.IDictionary innerCache;
-				object value_Renamed;
-				lock (readerCache.SyncRoot)
-				{
-					innerCache = (System.Collections.IDictionary) readerCache[reader];
-					if (innerCache == null)
-					{
-						innerCache = new System.Collections.Hashtable();
-						readerCache[reader] = innerCache;
-						value_Renamed = null;
-					}
-					else
-					{
-						value_Renamed = innerCache[key];
-					}
-					if (value_Renamed == null)
-					{
-						value_Renamed = new CreationPlaceholder();
-						innerCache[key] = value_Renamed;
-					}
-				}
-				if (value_Renamed is CreationPlaceholder)
-				{
-					lock (value_Renamed)
-					{
-						CreationPlaceholder progress = (CreationPlaceholder) value_Renamed;
-						if (progress.value_Renamed == null)
-						{
-							progress.value_Renamed = CreateValue(reader, key);
-							lock (readerCache.SyncRoot)
-							{
-								innerCache[key] = progress.value_Renamed;
-							}
-						}
-						return progress.value_Renamed;
-					}
-				}
-				return value_Renamed;
-			}
-		}
-		
-		internal sealed class CreationPlaceholder
-		{
-			internal object value_Renamed;
-		}
-		
-		/// <summary>Expert: Every composite-key in the internal cache is of this type. </summary>
-		internal class Entry
-		{
-			internal System.String field; // which Fieldable
-			internal int type; // which SortField type
-			internal object custom; // which custom comparator
-			internal System.Globalization.CultureInfo locale; // the locale we're sorting (if string)
-			
-			/// <summary>Creates one of these objects. </summary>
-			internal Entry(System.String field, int type, System.Globalization.CultureInfo locale)
-			{
-				this.field = String.Intern(field);
-				this.type = type;
-				this.custom = null;
-				this.locale = locale;
-			}
-			
-			/// <summary>Creates one of these objects for a custom comparator. </summary>
-			internal Entry(System.String field, object custom)
-			{
-				this.field = String.Intern(field);
-				this.type = SortField.CUSTOM;
-				this.custom = custom;
-				this.locale = null;
-			}
-			
-			/// <summary>Two of these are equal iff they reference the same field and type. </summary>
-			public  override bool Equals(object o)
-			{
-				if (o is Entry)
-				{
-					Entry other = (Entry) o;
-					if ((object) other.field == (object) field && other.type == type)
-					{
-						if (other.locale == null ? locale == null : other.locale.Equals(locale))
-						{
-							if (other.custom == null)
-							{
-								if (custom == null)
-									return true;
-							}
-							else if (other.custom.Equals(custom))
-							{
-								return true;
-							}
-						}
-					}
-				}
-				return false;
-			}
-			
-			/// <summary>Composes a hashcode based on the field and type. </summary>
-			public override int GetHashCode()
-			{
-				return field.GetHashCode() ^ type ^ (custom == null ? 0 : custom.GetHashCode()) ^ (locale == null ? 0 : locale.GetHashCode());
-			}
-		}
-		
-		private static readonly ByteParser BYTE_PARSER;
-		
-		private static readonly ShortParser SHORT_PARSER;
-		
-		private static readonly IntParser INT_PARSER;
-		
-		
-		private static readonly FloatParser FLOAT_PARSER;
-		
-		// inherit javadocs
-		public virtual byte[] GetBytes(IndexReader reader, System.String field)
-		{
-			return GetBytes(reader, field, BYTE_PARSER);
-		}
-		
-		// inherit javadocs
-		public virtual byte[] GetBytes(IndexReader reader, System.String field, ByteParser parser)
-		{
-			return (byte[]) bytesCache.Get(reader, new Entry(field, parser));
-		}
-		
-		internal Cache bytesCache;
-		
-		// inherit javadocs
-		public virtual short[] GetShorts(IndexReader reader, System.String field)
-		{
-			return GetShorts(reader, field, SHORT_PARSER);
-		}
-		
-		// inherit javadocs
-		public virtual short[] GetShorts(IndexReader reader, System.String field, ShortParser parser)
-		{
-			return (short[]) shortsCache.Get(reader, new Entry(field, parser));
-		}
-		
-		internal Cache shortsCache;
-		
-		// inherit javadocs
-		public virtual int[] GetInts(IndexReader reader, System.String field)
-		{
-			return GetInts(reader, field, INT_PARSER);
-		}
-		
-		// inherit javadocs
-		public virtual int[] GetInts(IndexReader reader, System.String field, IntParser parser)
-		{
-			return (int[]) intsCache.Get(reader, new Entry(field, parser));
-		}
-		
-		internal Cache intsCache;
-		
-		
-		// inherit javadocs
-		public virtual float[] GetFloats(IndexReader reader, System.String field)
-		{
-			return GetFloats(reader, field, FLOAT_PARSER);
-		}
-		
-		// inherit javadocs
-		public virtual float[] GetFloats(IndexReader reader, System.String field, FloatParser parser)
-		{
-			return (float[]) floatsCache.Get(reader, new Entry(field, parser));
-		}
-		
-		internal Cache floatsCache;
-		
-		// inherit javadocs
-		public virtual System.String[] GetStrings(IndexReader reader, System.String field)
-		{
-			return (System.String[]) stringsCache.Get(reader, field);
-		}
-		
-		internal Cache stringsCache;
-		
-		// inherit javadocs
-		public virtual StringIndex GetStringIndex(IndexReader reader, System.String field)
-		{
-			return (StringIndex) stringsIndexCache.Get(reader, field);
-		}
-		
-		internal Cache stringsIndexCache;
-		
-		/// <summary>The pattern used to detect integer values in a field </summary>
-		/// <summary>removed for java 1.3 compatibility
-		/// protected static final Pattern pIntegers = Pattern.compile ("[0-9\\-]+");
-		/// 
-		/// </summary>
-		
-		/// <summary>The pattern used to detect float values in a field </summary>
-		/// <summary> removed for java 1.3 compatibility
-		/// protected static final object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
-		/// </summary>
-		
-		// inherit javadocs
-		public virtual object GetAuto(IndexReader reader, System.String field)
-		{
-			return autoCache.Get(reader, field);
-		}
-		
-		internal Cache autoCache;
-		
-		// inherit javadocs
-		public virtual System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator)
-		{
-			return (System.IComparable[]) customCache.Get(reader, new Entry(field, comparator));
-		}
-		
-		internal Cache customCache;
-		static FieldCacheImpl()
-		{
-			BYTE_PARSER = new AnonymousClassByteParser();
-			SHORT_PARSER = new AnonymousClassShortParser();
-			INT_PARSER = new AnonymousClassIntParser();
-			FLOAT_PARSER = new AnonymousClassFloatParser();
+			return infoStream;
 		}
 	}
 }

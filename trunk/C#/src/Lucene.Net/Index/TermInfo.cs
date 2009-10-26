@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,20 +22,20 @@ namespace Lucene.Net.Index
 	
 	/// <summary>A TermInfo is the record of information stored for a term.</summary>
 	
-	public sealed class TermInfo
+	sealed class TermInfo
 	{
 		/// <summary>The number of documents which contain the term. </summary>
-		public int docFreq = 0;
+		internal int docFreq = 0;
 		
-		public long freqPointer = 0;
-		public long proxPointer = 0;
+		internal long freqPointer = 0;
+		internal long proxPointer = 0;
 		internal int skipOffset;
 		
 		internal TermInfo()
 		{
 		}
 		
-		public TermInfo(int df, long fp, long pp)
+		internal TermInfo(int df, long fp, long pp)
 		{
 			docFreq = df;
 			freqPointer = fp;

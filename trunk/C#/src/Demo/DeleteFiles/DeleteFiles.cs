@@ -25,6 +25,7 @@ using FSDirectory = Lucene.Net.Store.FSDirectory;
 namespace Lucene.Net.Demo
 {
 	
+	
 	/// <summary>Deletes documents from an index that do not contain a term. </summary>
 	public class DeleteFiles
 	{
@@ -45,8 +46,8 @@ namespace Lucene.Net.Demo
 			}
 			try
 			{
-				Directory directory = FSDirectory.GetDirectory("index", false);
-				IndexReader reader = IndexReader.Open(directory);
+				Directory directory = FSDirectory.Open(new System.IO.FileInfo("index"));
+				IndexReader reader = IndexReader.Open(directory, false); // we don't want read-only because we are about to delete
 				
 				Term term = new Term("path", args[0]);
 				int deleted = reader.DeleteDocuments(term);

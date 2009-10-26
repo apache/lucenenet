@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -29,7 +30,7 @@ namespace Lucene.Net.Search.Function
 	/// of the number of documents, but for each document the number of bytes can be 1, 2, 4, or 8. 
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
@@ -49,19 +50,19 @@ namespace Lucene.Net.Search.Function
 		/// <summary> description of field, used in explain() </summary>
 		public abstract System.String Description();
 		
-		/* (non-Javadoc) @see java.lang.object#toString() */
+		/* (non-Javadoc) @see java.lang.Object#toString() */
 		public override System.String ToString()
 		{
 			return Description();
 		}
 		
-		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(object)}.</summary>
-		/// <seealso cref="object.equals(object)">
+		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(Object)}.</summary>
+		/// <seealso cref="Object.equals(Object)">
 		/// </seealso>
-		abstract public  override bool Equals(object o);
+		abstract public  override bool Equals(System.Object o);
 		
 		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#hashCode()}.</summary>
-		/// <seealso cref="object.hashCode()">
+		/// <seealso cref="Object.hashCode()">
 		/// </seealso>
 		abstract public override int GetHashCode();
 	}

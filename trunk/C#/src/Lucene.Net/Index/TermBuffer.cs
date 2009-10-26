@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,18 +25,19 @@ namespace Lucene.Net.Index
 	
 	sealed class TermBuffer : System.ICloneable
 	{
+		
 		private System.String field;
 		private Term term; // cached
-        private bool preUTF8Strings; // true if strings are stored in "modified UTF-8" encoding
-        private bool dirty; // true if text was set externally (i.e., not read via UTF-8 bytes)
-
-        private UnicodeUtil.UTF16Result text = new UnicodeUtil.UTF16Result();
-        private UnicodeUtil.UTF8Result bytes = new UnicodeUtil.UTF8Result();
+		private bool preUTF8Strings; // true if strings are stored in modified UTF8 encoding (LUCENE-510)
+		private bool dirty; // true if text was set externally (ie not read via UTF8 bytes)
+		
+		private UnicodeUtil.UTF16Result text = new UnicodeUtil.UTF16Result();
+		private UnicodeUtil.UTF8Result bytes = new UnicodeUtil.UTF8Result();
 		
 		public int CompareTo(TermBuffer other)
 		{
-			if (field == other.field)
-				// fields are interned
+			if ((System.Object) field == (System.Object) other.field)
+			// fields are interned
 				return CompareChars(text.result, text.length, other.text.result, other.text.length);
 			else
 				return String.CompareOrdinal(field, other.field);
@@ -44,7 +45,7 @@ namespace Lucene.Net.Index
 		
 		private static int CompareChars(char[] chars1, int len1, char[] chars2, int len2)
 		{
-			int end = len1 < len2 ? len1 : len2;
+			int end = len1 < len2?len1:len2;
 			for (int k = 0; k < end; k++)
 			{
 				char c1 = chars1[k];
@@ -56,15 +57,15 @@ namespace Lucene.Net.Index
 			}
 			return len1 - len2;
 		}
-
-        /// <summary>
-        /// Call this if the IndexInput passed to Read() stores terms
-        /// in the modified UTF-8 (pre-LUCENE-510) format.
-        /// </summary>
-        internal void SetPreUTF8Strings()
-        {
-            preUTF8Strings = true;
-        }
+		
+		/// <summary>Call this if the IndexInput passed to {@link #read}
+		/// stores terms in the "modified UTF8" (pre LUCENE-510)
+		/// format. 
+		/// </summary>
+		internal void  SetPreUTF8Strings()
+		{
+			preUTF8Strings = true;
+		}
 		
 		public void  Read(IndexInput input, FieldInfos fieldInfos)
 		{
@@ -72,31 +73,32 @@ namespace Lucene.Net.Index
 			int start = input.ReadVInt();
 			int length = input.ReadVInt();
 			int totalLength = start + length;
-            if (preUTF8Strings)
-            {
-                text.setLength(totalLength);
-                input.ReadChars(text.result, start, length);
-            }
-            else
-            {
-                if (dirty)
-                {
-                    // fully convert all bytes since bytes is dirty
-                    UnicodeUtil.UTF16toUTF8(text.result, 0, text.length, bytes);
-                    bytes.setLength(totalLength);
-                    input.ReadBytes(bytes.result, start, length);
-                    UnicodeUtil.UTF8toUTF16(bytes.result, 0, totalLength, text);
-                    dirty = false;
-                }
-                else
-                {
-                    // incrementally convert only the UTF-8 bytes that are new
-                    bytes.setLength(totalLength);
-                    input.ReadBytes(bytes.result, start, length);
-                    UnicodeUtil.UTF8toUTF16(bytes.result, start, length, text);
-                }
-            }
-            this.field = fieldInfos.FieldName(input.ReadVInt());
+			if (preUTF8Strings)
+			{
+				text.SetLength(totalLength);
+				input.ReadChars(text.result, start, length);
+			}
+			else
+			{
+				
+				if (dirty)
+				{
+					// Fully convert all bytes since bytes is dirty
+					UnicodeUtil.UTF16toUTF8(text.result, 0, text.length, bytes);
+					bytes.SetLength(totalLength);
+					input.ReadBytes(bytes.result, start, length);
+					UnicodeUtil.UTF8toUTF16(bytes.result, 0, totalLength, text);
+					dirty = false;
+				}
+				else
+				{
+					// Incrementally convert only the UTF8 bytes that are new:
+					bytes.SetLength(totalLength);
+					input.ReadBytes(bytes.result, start, length);
+					UnicodeUtil.UTF8toUTF16(bytes.result, start, length, text);
+				}
+			}
+			this.field = fieldInfos.FieldName(input.ReadVInt());
 		}
 		
 		public void  Set(Term term)
@@ -106,13 +108,10 @@ namespace Lucene.Net.Index
 				Reset();
 				return ;
 			}
-            string termText = term.Text();
-            int termLen = termText.Length;
-            text.setLength(termLen);
-			for (int i = 0; i < termLen; i++)
-			{
-				text.result[i] = (char) termText[i];
-			}
+			System.String termText = term.Text();
+			int termLen = termText.Length;
+			text.SetLength(termLen);
+			SupportClass.TextSupport.GetCharsFromString(termText, 0, termLen, text.result, 0);
 			dirty = true;
 			field = term.Field();
 			this.term = term;
@@ -120,8 +119,8 @@ namespace Lucene.Net.Index
 		
 		public void  Set(TermBuffer other)
 		{
-            text.copyText(other.text);
-            dirty = true;
+			text.CopyText(other.text);
+			dirty = true;
 			field = other.field;
 			term = other.term;
 		}
@@ -129,15 +128,15 @@ namespace Lucene.Net.Index
 		public void  Reset()
 		{
 			field = null;
-			text.setLength(0);
+			text.SetLength(0);
 			term = null;
-            dirty = true;
+			dirty = true;
 		}
 		
 		public Term ToTerm()
 		{
 			if (field == null)
-				// unset
+			// unset
 				return null;
 			
 			if (term == null)
@@ -146,22 +145,21 @@ namespace Lucene.Net.Index
 			return term;
 		}
 		
-		public object Clone()
+		public System.Object Clone()
 		{
 			TermBuffer clone = null;
 			try
 			{
 				clone = (TermBuffer) base.MemberwiseClone();
 			}
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 			}
-
-            clone.dirty = true;
-            clone.bytes = new UnicodeUtil.UTF8Result();
-            clone.text = new UnicodeUtil.UTF16Result();
-            clone.text.copyText(text);
 			
+			clone.dirty = true;
+			clone.bytes = new UnicodeUtil.UTF8Result();
+			clone.text = new UnicodeUtil.UTF16Result();
+			clone.text.CopyText(text);
 			return clone;
 		}
 	}

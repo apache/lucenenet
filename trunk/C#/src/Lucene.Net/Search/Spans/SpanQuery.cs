@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,60 +15,38 @@
  * limitations under the License.
  */
 
+using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
-using Weight = Lucene.Net.Search.Weight;
 using Searcher = Lucene.Net.Search.Searcher;
-
-using System.Collections.Generic;
+using Weight = Lucene.Net.Search.Weight;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Base class for span-based queries. </summary>
-	[System.Serializable]
-	public abstract class SpanQuery : Query
+	[Serializable]
+	public abstract class SpanQuery:Query
 	{
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
 		/// </summary>
 		public abstract Spans GetSpans(IndexReader reader);
-
-        /// <summary>
-        /// Returns the matches for this query in an index, including access to any payloads
-        /// at thos positions.  Implementin classes that want access to the payloads will need
-        /// to implement this.
-        /// <para>
-        /// WARNING: The status of the Payloads feature is experimental.
-        /// The APIs introduced here might change in the future and will not be
-        /// supported anymore in such a cse.
-        /// </para>
-        /// </summary>
-        /// <param name="reader">the reader to use to access spans/payloads</param>
-        /// <returns>null</returns>
-        public virtual PayloadSpans GetPayloadSpans(IndexReader reader)
-        {
-            return null;
-        }
-
+		
 		/// <summary>Returns the name of the field matched by this query.</summary>
 		public abstract System.String GetField();
 		
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="Query#ExtractTerms(Set)">
+		/// <seealso cref="Query.ExtractTerms(Set)">
 		/// </seealso>
 		public abstract System.Collections.ICollection GetTerms();
 		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new SpanWeight(this, searcher);
 		}
-
-        public Weight CreateWeight_ForNUnitTest(Searcher searcher)
-        {
-            return new SpanWeight(this, searcher);
-        }
-    }
+	}
 }
