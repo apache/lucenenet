@@ -3,7 +3,7 @@ Apache Lucene.Net History
 
 
 19Aug09:
-	- Release: Apache Lucene.Net 2.4.1 build 002 "final"
+	- Release: Apache Lucene.Net 2.4.0 build 002 "final"
 
 
 19Mar09:
