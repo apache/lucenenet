@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,16 +20,16 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary>An Analyzer that uses WhitespaceTokenizer. </summary>
+	/// <summary>An Analyzer that uses {@link WhitespaceTokenizer}. </summary>
 	
-    public sealed class WhitespaceAnalyzer : Analyzer
-    {
-        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-        {
-            return new WhitespaceTokenizer(reader);
-        }
-
-        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+	public sealed class WhitespaceAnalyzer:Analyzer
+	{
+		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+		{
+			return new WhitespaceTokenizer(reader);
+		}
+		
+		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
 			if (tokenizer == null)
@@ -41,5 +41,5 @@ namespace Lucene.Net.Analysis
 				tokenizer.Reset(reader);
 			return tokenizer;
 		}
-    }
+	}
 }

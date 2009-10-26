@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
 	/// </summary>
-	public sealed class FuzzyTermEnum : FilteredTermEnum
+	public sealed class FuzzyTermEnum:FilteredTermEnum
 	{
 		
 		/* This should be somewhere around the average long word.
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException </throws>
 		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
 		/// </seealso>
-		public FuzzyTermEnum(IndexReader reader, Term term) : this(reader, term, FuzzyQuery.defaultMinSimilarity, FuzzyQuery.defaultPrefixLength)
+		public FuzzyTermEnum(IndexReader reader, Term term):this(reader, term, FuzzyQuery.defaultMinSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
 		}
 		
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException </throws>
 		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
 		/// </seealso>
-		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity) : this(reader, term, minSimilarity, FuzzyQuery.defaultPrefixLength)
+		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity):this(reader, term, minSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
 		}
 		
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
 		/// <param name="prefixLength">Length of required common prefix. Default value is 0.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity, int prefixLength) : base()
+		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity, int prefixLength):base()
 		{
 			
 			if (minSimilarity >= 1.0f)
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 			//The prefix could be longer than the word.
 			//It's kind of silly though.  It means we must match the entire word.
 			int fullSearchTermLength = searchTerm.Text().Length;
-			int realPrefixLength = prefixLength > fullSearchTermLength ? fullSearchTermLength : prefixLength;
+			int realPrefixLength = prefixLength > fullSearchTermLength?fullSearchTermLength:prefixLength;
 			
 			this.text = searchTerm.Text().Substring(realPrefixLength);
 			this.prefix = searchTerm.Text().Substring(0, (realPrefixLength) - (0));
@@ -140,9 +140,9 @@ namespace Lucene.Net.Search
 		/// <summary> The termCompare method in FuzzyTermEnum uses Levenshtein distance to 
 		/// calculate the distance between the given term and the comparing term. 
 		/// </summary>
-		protected internal override bool TermCompare(Term term)
+		public /*protected internal*/ override bool TermCompare(Term term)
 		{
-			if (field == term.Field() && term.Text().StartsWith(prefix))
+			if ((System.Object) field == (System.Object) term.Field() && term.Text().StartsWith(prefix))
 			{
 				System.String target = term.Text().Substring(prefix.Length);
 				this.similarity = Similarity(target);
@@ -168,10 +168,10 @@ namespace Lucene.Net.Search
 		/// </summary>
 		
 		/// <summary> Finds and returns the smallest of three integers </summary>
-		private static int min(int a, int b, int c)
+		private static int Min(int a, int b, int c)
 		{
-			int t = (a < b) ? a : b;
-			return (t < c) ? t : c;
+			int t = (a < b)?a:b;
+			return (t < c)?t:c;
 		}
 		
 		private int[][] InitDistanceArray()
@@ -232,11 +232,11 @@ namespace Lucene.Net.Search
 				{
 					//we don't have anything to compare.  That means if we just add
 					//the letters for m we get the new word
-					return prefix.Length == 0 ? 0.0f : 1.0f - ((float) m / prefix.Length);
+					return prefix.Length == 0?0.0f:1.0f - ((float) m / prefix.Length);
 				}
 				if (m == 0)
 				{
-					return prefix.Length == 0 ? 0.0f : 1.0f - ((float) n / prefix.Length);
+					return prefix.Length == 0?0.0f:1.0f - ((float) n / prefix.Length);
 				}
 				
 				int maxDistance = GetMaxDistance(m);
@@ -274,11 +274,11 @@ namespace Lucene.Net.Search
 					{
 						if (s_i != target[j - 1])
 						{
-							d[i][j] = min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1;
+							d[i][j] = Min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1;
 						}
 						else
 						{
-							d[i][j] = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1]);
+							d[i][j] = Min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1]);
 						}
 						bestPossibleEditDistance = System.Math.Min(bestPossibleEditDistance, d[i][j]);
 					}
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		private int GetMaxDistance(int m)
 		{
-			return (m < maxDistances.Length) ? maxDistances[m] : CalculateMaxDistance(m);
+			return (m < maxDistances.Length)?maxDistances[m]:CalculateMaxDistance(m);
 		}
 		
 		private void  InitializeMaxDistances()

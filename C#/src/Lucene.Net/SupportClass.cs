@@ -38,11 +38,11 @@ public class SupportClass
 {
     public interface Checksum
     {
-        void reset();
-        void update(int b);
-        void update(byte[] b);
-        void update(byte[] b, int offset, int length);
-        Int64 getValue();
+        void Reset();
+        void Update(int b);
+        void Update(byte[] b);
+        void Update(byte[] b, int offset, int length);
+        Int64 GetValue();
     }
 
     public class CRC32 : Checksum
@@ -69,24 +69,24 @@ public class SupportClass
 
         private UInt32 crc = 0;
 
-        public Int64 getValue()
+        public Int64 GetValue()
         {
             return (Int64)crc & 0xffffffffL;
         }
 
-        public void reset()
+        public void Reset()
         {
             crc = 0;
         }
 
-        public void update(int bval)
+        public void Update(int bval)
         {
             UInt32 c = ~crc;
             c = crcTable[(c ^ bval) & 0xff] ^ (c >> 8);
             crc = ~c;
         }
 
-        public void update(byte[] buf, int off, int len)
+        public void Update(byte[] buf, int off, int len)
         {
             UInt32 c = ~crc;
             while (--len >= 0)
@@ -94,9 +94,9 @@ public class SupportClass
             crc = ~c;
         }
 
-        public void update(byte[] buf)
+        public void Update(byte[] buf)
         {
-            update(buf, 0, buf.Length);
+            Update(buf, 0, buf.Length);
         }
     }
 
@@ -1110,7 +1110,6 @@ public class SupportClass
         public static void Set(System.String key, int defValue)
         {
             settings[key] = defValue;
-            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue.ToString()); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -1121,7 +1120,6 @@ public class SupportClass
         public static void Set(System.String key, long defValue)
         {
             settings[key] = defValue;
-            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue.ToString()); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -1132,7 +1130,6 @@ public class SupportClass
         public static void Set(System.String key, System.String defValue)
         {
             settings[key] = defValue;
-            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -1143,7 +1140,6 @@ public class SupportClass
         public static void Set(System.String key, bool defValue)
         {
             settings[key] = defValue;
-            //System.Configuration.ConfigurationManager.AppSettings.Set(key, defValue); // {{Aroush-2.3.1}} try this instead
         }
 
         /// <summary>
@@ -1633,5 +1629,121 @@ public class SupportClass
         }
     }
 
+    /// <summary>
+    /// Support class used to handle Hashtable addition, which does a check 
+    /// first to make sure the added item is unique in the hash.
+    /// </summary>
+    public class HashtableHelper
+    {
+        public static void Add(System.Collections.Hashtable hashtable, System.Object item)
+        {
+            hashtable.Add(item, item);
+        }
 
+        public static void AddIfNotContains(System.Collections.Hashtable hashtable, System.Object item)
+        {
+            if (hashtable.Contains(item) == false)
+            {
+                hashtable.Add(item, item);
+            }
+        }
+
+        public static void AddAll(System.Collections.Hashtable hashtable, System.Collections.ICollection items)
+        {
+            System.Collections.IEnumerator iter = items.GetEnumerator();
+            System.Object item;
+            while (iter.MoveNext())
+            {
+                item = iter.Current;
+                hashtable.Add(item, item);
+            }
+        }
+
+        public static void AddAllIfNotContains(System.Collections.Hashtable hashtable, System.Collections.IList items)
+        {
+            System.Object item;
+            for (int i = 0; i < items.Count; i++)
+            {
+                item = items[i];
+                if (hashtable.Contains(item) == false)
+                {
+                    hashtable.Add(item, item);
+                }
+            }
+        }
+
+        public static void AddAllIfNotContains(System.Collections.Hashtable hashtable, System.Collections.ICollection items)
+        {
+            System.Collections.IEnumerator iter = items.GetEnumerator();
+            System.Object item;
+            while (iter.MoveNext())
+            {
+                item = iter.Current;
+                if (hashtable.Contains(item) == false)
+                {
+                    hashtable.Add(item, item);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Converts the specified collection to its string representation.
+    /// </summary>
+    /// <param name="c">The collection to convert to string.</param>
+    /// <returns>A string representation of the specified collection.</returns>
+    public static System.String CollectionToString(System.Collections.ICollection c)
+    {
+        System.Text.StringBuilder s = new System.Text.StringBuilder();
+
+        if (c != null)
+        {
+
+            System.Collections.ArrayList l = new System.Collections.ArrayList(c);
+
+            bool isDictionary = (c is System.Collections.BitArray || c is System.Collections.Hashtable || c is System.Collections.IDictionary || c is System.Collections.Specialized.NameValueCollection || (l.Count > 0 && l[0] is System.Collections.DictionaryEntry));
+            for (int index = 0; index < l.Count; index++)
+            {
+                if (l[index] == null)
+                    s.Append("null");
+                else if (!isDictionary)
+                    s.Append(l[index]);
+                else
+                {
+                    isDictionary = true;
+                    if (c is System.Collections.Specialized.NameValueCollection)
+                        s.Append(((System.Collections.Specialized.NameValueCollection)c).GetKey(index));
+                    else
+                        s.Append(((System.Collections.DictionaryEntry)l[index]).Key);
+                    s.Append("=");
+                    if (c is System.Collections.Specialized.NameValueCollection)
+                        s.Append(((System.Collections.Specialized.NameValueCollection)c).GetValues(index)[0]);
+                    else
+                        s.Append(((System.Collections.DictionaryEntry)l[index]).Value);
+
+                }
+                if (index < l.Count - 1)
+                    s.Append(", ");
+            }
+
+            if (isDictionary)
+            {
+                if (c is System.Collections.ArrayList)
+                    isDictionary = false;
+            }
+            if (isDictionary)
+            {
+                s.Insert(0, "{");
+                s.Append("}");
+            }
+            else
+            {
+                s.Insert(0, "[");
+                s.Append("]");
+            }
+        }
+        else
+            s.Insert(0, "null");
+        return s.ToString();
+    }
 }

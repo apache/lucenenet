@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// <br>
 	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)}.
 	/// </summary>
-	public class ReqOptSumScorer : Scorer
+	class ReqOptSumScorer:Scorer
 	{
 		/// <summary>The scorers passed from the constructor.
 		/// These are set to null as soon as their next() or skipTo() returns false.
@@ -38,64 +38,76 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="optScorer">The optional scorer. This is used for scoring only.
 		/// </param>
-		public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer) : base(null)
+		public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer):base(null)
 		{ // No similarity used.
 			this.reqScorer = reqScorer;
 			this.optScorer = optScorer;
 		}
 		
-		private bool firstTimeOptScorer = true;
-		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
 		public override bool Next()
 		{
 			return reqScorer.Next();
 		}
 		
+		public override int NextDoc()
+		{
+			return reqScorer.NextDoc();
+		}
+		
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
 		public override bool SkipTo(int target)
 		{
 			return reqScorer.SkipTo(target);
 		}
 		
+		public override int Advance(int target)
+		{
+			return reqScorer.Advance(target);
+		}
+		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
 		{
 			return reqScorer.Doc();
 		}
 		
+		public override int DocID()
+		{
+			return reqScorer.DocID();
+		}
+		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until {@link #next()} is called the first time.
+		/// Initially invalid, until {@link #Next()} is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer, eventually increased by the score
 		/// of the optional scorer when it also matches the current document.
 		/// </returns>
 		public override float Score()
 		{
-			int curDoc = reqScorer.Doc();
+			int curDoc = reqScorer.DocID();
 			float reqScore = reqScorer.Score();
-			if (firstTimeOptScorer)
-			{
-				firstTimeOptScorer = false;
-				if (!optScorer.SkipTo(curDoc))
-				{
-					optScorer = null;
-					return reqScore;
-				}
-			}
-			else if (optScorer == null)
+			if (optScorer == null)
 			{
 				return reqScore;
 			}
-			else if ((optScorer.Doc() < curDoc) && (!optScorer.SkipTo(curDoc)))
+			
+			int optScorerDoc = optScorer.DocID();
+			if (optScorerDoc < curDoc && (optScorerDoc = optScorer.Advance(curDoc)) == NO_MORE_DOCS)
 			{
 				optScorer = null;
 				return reqScore;
 			}
-			// assert (optScorer != null) && (optScorer.doc() >= curDoc);
-			return (optScorer.Doc() == curDoc) ? reqScore + optScorer.Score() : reqScore;
+			
+			return optScorerDoc == curDoc?reqScore + optScorer.Score():reqScore;
 		}
 		
-		/// <summary>Explain the score of a document.</summary>
-		/// <todo>  Also show the total score. </todo>
-		/// <summary> See BooleanScorer.explain() on how to do this.
+		/// <summary>Explain the score of a document.
+		/// TODO: Also show the total score.
+		/// See BooleanScorer.explain() on how to do this.
 		/// </summary>
 		public override Explanation Explain(int doc)
 		{

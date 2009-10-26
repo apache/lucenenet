@@ -22,7 +22,7 @@ using System;
 namespace Lucene.Net.Demo.Html
 {
 	
-	public class HTMLParser : HTMLParserConstants
+	public class HTMLParser : HTMLParserConstants_Fields
 	{
 		private void  InitBlock()
 		{
@@ -50,7 +50,7 @@ namespace Lucene.Net.Demo.Html
 		private MyPipedInputStream pipeInStream = null;
 		private System.IO.StreamWriter pipeOutStream = null;
 		
-		private class MyPipedInputStream : System.IO.StreamReader
+		private class MyPipedInputStream:System.IO.StreamReader
 		{
 			private void  InitBlock(HTMLParser enclosingInstance)
 			{
@@ -66,12 +66,12 @@ namespace Lucene.Net.Demo.Html
 				
 			}
 			
-			//public MyPipedInputStream(HTMLParser enclosingInstance) : base()
+			//public MyPipedInputStream(HTMLParser enclosingInstance):base(null)
 			//{
 			//	InitBlock(enclosingInstance);
 			//}
 			
-			public MyPipedInputStream(HTMLParser enclosingInstance, System.IO.StreamReader src) : base(src.BaseStream)
+			public MyPipedInputStream(HTMLParser enclosingInstance, System.IO.StreamReader src):base(src.BaseStream)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -84,7 +84,7 @@ namespace Lucene.Net.Demo.Html
 		
 		/// <deprecated> Use HTMLParser(FileInputStream) instead
 		/// </deprecated>
-		public HTMLParser(System.IO.FileInfo file) : this(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+		public HTMLParser(System.IO.FileInfo file):this(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
 		{
 		}
 		
@@ -151,8 +151,8 @@ namespace Lucene.Net.Demo.Html
 			{
 				pipeInStream = new MyPipedInputStream(this, new System.IO.StreamReader(new System.IO.MemoryStream(1024)));
 				pipeOutStream = new System.IO.StreamWriter(pipeInStream.BaseStream);
-				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
-				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.Default); // GetEncoding("UTF-16BE"));
+				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
+				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
 				
 				SupportClass.ThreadClass thread = new ParserThread(this);
 				thread.Start(); // start parsing
@@ -186,7 +186,7 @@ namespace Lucene.Net.Demo.Html
 			else
 			{
 				AddToSummary(text);
-				if (!titleComplete && !title.Equals(""))
+				if (!titleComplete && !(title.Length == 0))
 				{
 					// finished title
 					lock (this)
@@ -220,7 +220,7 @@ namespace Lucene.Net.Demo.Html
 				else
 					AddToSummary(" ");
 				
-				System.String space = afterTag ? eol : " ";
+				System.String space = afterTag?eol:" ";
 				length += space.Length;
 				pipeOut.Write(space);
 				afterSpace = true;
@@ -232,18 +232,18 @@ namespace Lucene.Net.Demo.Html
 			Token t;
 			while (true)
 			{
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ScriptStart: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.TagName: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.DeclName: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Comment1: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Comment2: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Word: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Entity: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Space: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Punct: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptStart: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.TagName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.DeclName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment1: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment2: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Word: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Entity: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Space: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Punct: 
 						;
 						break;
 					
@@ -252,47 +252,47 @@ namespace Lucene.Net.Demo.Html
 						goto label_1_brk;
 					
 				}
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.TagName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.TagName: 
 						Tag();
 						afterTag = true;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.DeclName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.DeclName: 
 						t = Decl();
 						afterTag = true;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Comment1: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Comment2: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment1: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment2: 
 						CommentTag();
 						afterTag = true;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ScriptStart: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptStart: 
 						ScriptTag();
 						afterTag = true;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Word: 
-						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Word);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Word: 
+						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Word);
 						AddText(t.image); afterTag = false;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Entity: 
-						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Entity);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Entity: 
+						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Entity);
 						AddText(Entities.Decode(t.image)); afterTag = false;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Punct: 
-						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Punct);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Punct: 
+						t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Punct);
 						AddText(t.image); afterTag = false;
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.Space: 
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Space);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Space: 
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Space);
 						AddSpace(); afterTag = false;
 						break;
 					
@@ -313,7 +313,7 @@ label_1_brk: ;
 		{
 			Token t1, t2;
 			bool inImg = false;
-			t1 = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.TagName);
+			t1 = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.TagName);
 			System.String tagName = t1.image.ToLower();
 			if (Tags.WS_ELEMS.Contains(tagName))
 			{
@@ -326,10 +326,10 @@ label_1_brk: ;
 			
 			while (true)
 			{
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgName: 
 						;
 						break;
 					
@@ -338,18 +338,18 @@ label_1_brk: ;
 						goto label_2_brk;
 					
 				}
-				t1 = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgName);
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				t1 = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgName);
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgEquals: 
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgEquals);
-						switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgEquals: 
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgEquals);
+						switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 						{
 							
-							case Lucene.Net.Demo.Html.HTMLParserConstants.ArgValue: 
-							case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1: 
-							case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2: 
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgValue: 
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1: 
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2: 
 								t2 = ArgValue();
 								if (inImg && t1.image.ToUpper().Equals("alt".ToUpper()) && t2 != null)
 									AddText("[" + t2.image + "]");
@@ -390,17 +390,17 @@ label_1_brk: ;
 
 label_2_brk: ;
 			
-			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.TagEnd);
+			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.TagEnd);
 		}
 		
 		public Token ArgValue()
 		{
 			Token t = null;
-			switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+			switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 			{
 				
-				case Lucene.Net.Demo.Html.HTMLParserConstants.ArgValue: 
-					t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgValue);
+				case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgValue: 
+					t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgValue);
 					{
 						if (true)
 							return t;
@@ -411,8 +411,8 @@ label_2_brk: ;
 					jj_la1[5] = jj_gen;
 					if (Jj_2_1(2))
 					{
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1);
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote1);
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1);
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote1);
 						{
 							if (true)
 								return t;
@@ -420,13 +420,13 @@ label_2_brk: ;
 					}
 					else
 					{
-						switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+						switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 						{
 							
-							case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1: 
-								Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1);
-								t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Quote1Text);
-								Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote1);
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1: 
+								Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1);
+								t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Quote1Text);
+								Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote1);
 								{
 									if (true)
 										return t;
@@ -437,8 +437,8 @@ label_2_brk: ;
 								jj_la1[6] = jj_gen;
 								if (Jj_2_2(2))
 								{
-									Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2);
-									Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote2);
+									Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2);
+									Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote2);
 									{
 										if (true)
 											return t;
@@ -446,13 +446,13 @@ label_2_brk: ;
 								}
 								else
 								{
-									switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+									switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 									{
 										
-										case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2: 
-											Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2);
-											t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Quote2Text);
-											Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote2);
+										case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2: 
+											Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2);
+											t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Quote2Text);
+											Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote2);
 											{
 												if (true)
 													return t;
@@ -479,17 +479,17 @@ label_2_brk: ;
 		public Token Decl()
 		{
 			Token t;
-			t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.DeclName);
+			t = Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.DeclName);
 			while (true)
 			{
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgName: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgEquals: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgValue: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgName: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgEquals: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgValue: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2: 
 						;
 						break;
 					
@@ -498,21 +498,21 @@ label_2_brk: ;
 						goto label_3_brk;
 					
 				}
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgName: 
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgName);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgName: 
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgName);
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgValue: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1: 
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgValue: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2: 
 						ArgValue();
 						break;
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ArgEquals: 
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgEquals);
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgEquals: 
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgEquals);
 						break;
 					
 					default: 
@@ -525,7 +525,7 @@ label_2_brk: ;
 
 label_3_brk: ;
 			
-			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.TagEnd);
+			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.TagEnd);
 			{
 				if (true)
 					return t;
@@ -535,17 +535,17 @@ label_3_brk: ;
 		
 		public void  CommentTag()
 		{
-			switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+			switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 			{
 				
-				case Lucene.Net.Demo.Html.HTMLParserConstants.Comment1: 
-					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Comment1);
+				case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment1: 
+					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment1);
 					while (true)
 					{
-						switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+						switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 						{
 							
-							case Lucene.Net.Demo.Html.HTMLParserConstants.CommentText1: 
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentText1: 
 								;
 								break;
 							
@@ -554,22 +554,22 @@ label_3_brk: ;
 								goto label_4_brk;
 							
 						}
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CommentText1);
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentText1);
 					}
 
 label_4_brk: ;
 					
-					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CommentEnd1);
+					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentEnd1);
 					break;
 				
-				case Lucene.Net.Demo.Html.HTMLParserConstants.Comment2: 
-					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.Comment2);
+				case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment2: 
+					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.Comment2);
 					while (true)
 					{
-						switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+						switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 						{
 							
-							case Lucene.Net.Demo.Html.HTMLParserConstants.CommentText2: 
+							case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentText2: 
 								;
 								break;
 							
@@ -578,12 +578,12 @@ label_4_brk: ;
 								goto label_5_brk;
 							
 						}
-						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CommentText2);
+						Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentText2);
 					}
 
 label_5_brk: ;
 					
-					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.CommentEnd2);
+					Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CommentEnd2);
 					break;
 				
 				default: 
@@ -596,13 +596,13 @@ label_5_brk: ;
 		
 		public void  ScriptTag()
 		{
-			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ScriptStart);
+			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptStart);
 			while (true)
 			{
-				switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
+				switch ((jj_ntk == - 1)?Jj_ntk():jj_ntk)
 				{
 					
-					case Lucene.Net.Demo.Html.HTMLParserConstants.ScriptText: 
+					case Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptText: 
 						;
 						break;
 					
@@ -611,12 +611,12 @@ label_5_brk: ;
 						goto label_6_brk;
 					
 				}
-				Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ScriptText);
+				Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptText);
 			}
 
 label_6_brk: ;
 			
-			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants.ScriptEnd);
+			Jj_consume_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ScriptEnd);
 		}
 		
 		private bool Jj_2_1(int xla)
@@ -655,18 +655,18 @@ label_6_brk: ;
 		
 		private bool Jj_3_1()
 		{
-			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote1))
+			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote1))
 				return true;
-			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote1))
+			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote1))
 				return true;
 			return false;
 		}
 		
 		private bool Jj_3_2()
 		{
-			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants.ArgQuote2))
+			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.ArgQuote2))
 				return true;
-			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants.CloseQuote2))
+			if (Jj_scan_token(Lucene.Net.Demo.Html.HTMLParserConstants_Fields.CloseQuote2))
 				return true;
 			return false;
 		}
@@ -690,10 +690,20 @@ label_6_brk: ;
 		private bool jj_rescan = false;
 		private int jj_gc = 0;
 		
-		public HTMLParser(System.IO.Stream stream)
+		public HTMLParser(System.IO.Stream stream):this(stream, null)
+		{
+		}
+		public HTMLParser(System.IO.Stream stream, System.String encoding)
 		{
 			InitBlock();
-			jj_input_stream = new SimpleCharStream(stream, 1, 1);
+			try
+			{
+				jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1);
+			}
+			catch (System.IO.IOException e)
+			{
+				throw new System.Exception(e.Message, e);
+			}
 			token_source = new HTMLParserTokenManager(jj_input_stream);
 			token = new Token();
 			jj_ntk = - 1;
@@ -706,7 +716,18 @@ label_6_brk: ;
 		
 		public virtual void  ReInit(System.IO.Stream stream)
 		{
-			jj_input_stream.ReInit(stream, 1, 1);
+			ReInit(stream, null);
+		}
+		public virtual void  ReInit(System.IO.Stream stream, System.String encoding)
+		{
+			try
+			{
+				jj_input_stream.ReInit(stream, encoding, 1, 1);
+			}
+			catch (System.IO.IOException e)
+			{
+				throw new System.Exception(e.Message, e);
+			}
 			token_source.ReInit(jj_input_stream);
 			token = new Token();
 			jj_ntk = - 1;
@@ -802,7 +823,7 @@ label_6_brk: ;
 		}
 		
 		[Serializable]
-		private sealed class LookaheadSuccess : System.ApplicationException
+		private sealed class LookaheadSuccess:System.ApplicationException
 		{
 		}
 		
@@ -964,7 +985,7 @@ label_6_brk: ;
 			{
 				exptokseq[i] = (int[]) jj_expentries[i];
 			}
-			return new ParseException(token, exptokseq, Lucene.Net.Demo.Html.HTMLParserConstants.tokenImage);
+			return new ParseException(token, exptokseq, Lucene.Net.Demo.Html.HTMLParserConstants_Fields.tokenImage);
 		}
 		
 		public void  Enable_tracing()
@@ -980,23 +1001,29 @@ label_6_brk: ;
 			jj_rescan = true;
 			for (int i = 0; i < 2; i++)
 			{
-				JJCalls p = jj_2_rtns[i];
-				do 
+				try
 				{
-					if (p.gen > jj_gen)
+					JJCalls p = jj_2_rtns[i];
+					do 
 					{
-						jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
-						switch (i)
+						if (p.gen > jj_gen)
 						{
-							
-							case 0:  Jj_3_1(); break;
-							
-							case 1:  Jj_3_2(); break;
-							}
+							jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
+							switch (i)
+							{
+								
+								case 0:  Jj_3_1(); break;
+								
+								case 1:  Jj_3_2(); break;
+								}
+						}
+						p = p.next;
 					}
-					p = p.next;
+					while (p != null);
 				}
-				while (p != null);
+				catch (LookaheadSuccess ls)
+				{
+				}
 			}
 			jj_rescan = false;
 		}

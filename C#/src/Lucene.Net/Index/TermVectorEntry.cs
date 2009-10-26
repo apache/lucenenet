@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 			
 			TermVectorEntry that = (TermVectorEntry) o;
 			
-			if (term != null ? !term.Equals(that.term) : that.term != null)
+			if (term != null?!term.Equals(that.term):that.term != null)
 				return false;
 			
 			return true;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 		
 		public override int GetHashCode()
 		{
-			return (term != null ? term.GetHashCode() : 0);
+			return (term != null?term.GetHashCode():0);
 		}
 		
 		public override System.String ToString()

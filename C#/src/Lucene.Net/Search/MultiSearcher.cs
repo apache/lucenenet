@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,9 @@ using System;
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using ReaderUtil = Lucene.Net.Util.ReaderUtil;
 
 namespace Lucene.Net.Search
 {
@@ -28,23 +30,23 @@ namespace Lucene.Net.Search
 	/// <summary>Implements search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #search(Query,Filter)} methods.
+	/// or {@link #Search(Query,Filter)} methods.
 	/// </summary>
-	public class MultiSearcher : Searcher
+	public class MultiSearcher:Searcher
 	{
-		private class AnonymousClassHitCollector : HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(Lucene.Net.Search.HitCollector results, int start, MultiSearcher enclosingInstance)
+			public AnonymousClassCollector(Lucene.Net.Search.Collector collector, int start, MultiSearcher enclosingInstance)
 			{
-				InitBlock(results, start, enclosingInstance);
+				InitBlock(collector, start, enclosingInstance);
 			}
-			private void  InitBlock(Lucene.Net.Search.HitCollector results, int start, MultiSearcher enclosingInstance)
+			private void  InitBlock(Lucene.Net.Search.Collector collector, int start, MultiSearcher enclosingInstance)
 			{
-				this.results = results;
+				this.collector = collector;
 				this.start = start;
 				this.enclosingInstance = enclosingInstance;
 			}
-			private Lucene.Net.Search.HitCollector results;
+			private Lucene.Net.Search.Collector collector;
 			private int start;
 			private MultiSearcher enclosingInstance;
 			public MultiSearcher Enclosing_Instance
@@ -55,14 +57,27 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			public override void  SetScorer(Scorer scorer)
 			{
-				results.Collect(doc + start, score);
+				collector.SetScorer(scorer);
+			}
+			public override void  Collect(int doc)
+			{
+				collector.Collect(doc);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				collector.SetNextReader(reader, start + docBase);
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return collector.AcceptsDocsOutOfOrder();
 			}
 		}
-		/// <summary> Document Frequency cache acting as a Dummy-Searcher.
-		/// This class is no full-fledged Searcher, but only supports
-		/// the methods necessary to initialize Weights.
+		
+		/// <summary> Document Frequency cache acting as a Dummy-Searcher. This class is no
+		/// full-fledged Searcher, but only supports the methods necessary to
+		/// initialize Weights.
 		/// </summary>
 		private class CachedDfSource:Searcher
 		{
@@ -83,7 +98,7 @@ namespace Lucene.Net.Search
 				{
 					df = ((System.Int32) dfMap[term]);
 				}
-				catch (System.NullReferenceException)
+				catch (System.NullReferenceException e)
 				{
 					throw new System.ArgumentException("df for term " + term.Text() + " not available");
 				}
@@ -134,7 +149,7 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
-			public override void  Search(Weight weight, Filter filter, HitCollector results)
+			public override void  Search(Weight weight, Filter filter, Collector results)
 			{
 				throw new System.NotSupportedException();
 			}
@@ -150,13 +165,12 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		
-		private Lucene.Net.Search.Searchable[] searchables;
+		private Searchable[] searchables;
 		private int[] starts;
 		private int maxDoc = 0;
 		
-		/// <summary>Creates a searcher which searches <i>searchables</i>. </summary>
-		public MultiSearcher(Lucene.Net.Search.Searchable[] searchables)
+		/// <summary>Creates a searcher which searches <i>searchers</i>. </summary>
+		public MultiSearcher(Searchable[] searchables)
 		{
 			this.searchables = searchables;
 			
@@ -170,7 +184,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Return the array of {@link Searchable}s this searches. </summary>
-		public virtual Lucene.Net.Search.Searchable[] GetSearchables()
+		public virtual Searchable[] GetSearchables()
 		{
 			return searchables;
 		}
@@ -215,29 +229,7 @@ namespace Lucene.Net.Search
 		public virtual int SubSearcher(int n)
 		{
 			// find searcher for doc n:
-			// replace w/ call to Arrays.binarySearch in Java 1.2
-			int lo = 0; // search starts array
-			int hi = searchables.Length - 1; // for first element less
-			// than n, return its index
-			while (hi >= lo)
-			{
-				int mid = (lo + hi) >> 1;
-				int midValue = starts[mid];
-				if (n < midValue)
-					hi = mid - 1;
-				else if (n > midValue)
-					lo = mid + 1;
-				else
-				{
-					// found a match
-					while (mid + 1 < searchables.Length && starts[mid + 1] == midValue)
-					{
-						mid++; // scan to last match
-					}
-					return mid;
-				}
-			}
-			return hi;
+			return ReaderUtil.SubIndex(n, starts);
 		}
 		
 		/// <summary>Returns the document number of document <code>n</code> within its
@@ -256,7 +248,7 @@ namespace Lucene.Net.Search
 		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
 			
-			HitQueue hq = new HitQueue(nDocs);
+			HitQueue hq = new HitQueue(nDocs, false);
 			int totalHits = 0;
 			
 			for (int i = 0; i < searchables.Length; i++)
@@ -277,10 +269,10 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-				// put docs in array
+			// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs2[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].score;
 			
 			return new TopDocs(totalHits, scoreDocs2, maxScore);
 		}
@@ -296,7 +288,22 @@ namespace Lucene.Net.Search
 			{
 				// search each searcher
 				TopFieldDocs docs = searchables[i].Search(weight, filter, n, sort);
-				
+				// If one of the Sort fields is FIELD_DOC, need to fix its values, so that
+				// it will break ties by doc Id properly. Otherwise, it will compare to
+				// 'relative' doc Ids, that belong to two different searchers.
+				for (int j = 0; j < docs.fields.Length; j++)
+				{
+					if (docs.fields[j].GetType() == SortField.DOC)
+					{
+						// iterate over the score docs and change their fields value
+						for (int j2 = 0; j2 < docs.scoreDocs.Length; j2++)
+						{
+							FieldDoc fd = (FieldDoc) docs.scoreDocs[j2];
+							fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
+						}
+						break;
+					}
+				}
 				if (hq == null)
 					hq = new FieldDocSortedHitQueue(docs.fields, n);
 				totalHits += docs.totalHits; // update totalHits
@@ -314,22 +321,23 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-				// put docs in array
+			// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
 			return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields(), maxScore);
 		}
 		
-		
 		// inherit javadoc
-		public override void  Search(Weight weight, Filter filter, HitCollector results)
+		public override void  Search(Weight weight, Filter filter, Collector collector)
 		{
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				
 				int start = starts[i];
 				
-				searchables[i].Search(weight, filter, new AnonymousClassHitCollector(results, start, this));
+				Collector hc = new AnonymousClassCollector(collector, start, this);
+				
+				searchables[i].Search(weight, filter, hc);
 			}
 		}
 		
@@ -364,7 +372,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <returns> rewritten queries
 		/// </returns>
-		protected internal override Weight CreateWeight(Query original)
+		public /*protected internal*/ override Weight CreateWeight(Query original)
 		{
 			// step 1
 			Query rewrittenQuery = Rewrite(original);

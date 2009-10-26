@@ -1,13 +1,13 @@
-/**
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +15,11 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
-using Hashtable = System.Collections.Hashtable;
-using LinkedList = System.Collections.Generic.LinkedList<object>;
-using Math = System.Math;
 
-namespace Lucene.Net.Util.Cache  
+namespace Lucene.Net.Util.Cache
 {
-    //{{DIGY}}
-    //Use SimpleLRUCache_LUCENENET_190_1 for capacity<1536 and
-    //SimpleLRUCache_LUCENENET_190_2 for capacity > 1536
     public class SimpleLRUCache : SimpleLRUCache_LUCENENET_190_1
     {
         public SimpleLRUCache(int Capacity)
@@ -34,78 +29,14 @@ namespace Lucene.Net.Util.Cache
     }
 
 
-
-
-    /// <summary>
-    /// This class is the original port for 2.4.0
-    /// </summary>
-    [System.ComponentModel.EditorBrowsable( System.ComponentModel.EditorBrowsableState.Never)]
-    public class SimpleLRUCache_OrgPort : SimpleMapCache
-    {
-        private const float LOADFACTOR = 0.75f;
-
-        private int cacheSize;
-        private LinkedList lru;
-
-        public SimpleLRUCache_OrgPort(int cacheSize)
-            : base(null)
-        {
-            this.cacheSize = cacheSize;
-            int capacity = (int)Math.Ceiling(cacheSize / LOADFACTOR) + 1;
-            base.map = new System.Collections.Hashtable(capacity, LOADFACTOR);
-
-            lru = new LinkedList();
-        }
-
-        public override void Put(object key, object value)
-        {
-            //if (lru.Contains(key))
-            if (base.map.ContainsKey(key))
-            {
-                // move key to most recently used position
-                lru.Remove(key);
-                lru.AddFirst(key);
-            }
-            else
-            {
-                if (lru.Count == cacheSize)
-                {
-                    object last = lru.Last;
-                    lru.Remove(last);
-                    // remove least recently used item from cache
-                    base.map.Remove(last);
-                }
-                // place key in most recently used position
-                lru.AddFirst(key);
-            }
-
-            base.Put(key, value);
-        }
-
-        public override object Get(object key)
-        {
-            //if (lru.Contains(key))
-            if (base.map.ContainsKey(key))
-            {
-                // if LRU data structure contains key, move the key
-                // to the "most recently used" position
-                lru.Remove(key);
-                lru.AddFirst(key);
-            }
-
-            return base.Get(key);
-        }
-    }
-
-
-
-
-
-    /// <summary>
+    /// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
+    /// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
+    /// if needed.
+    /// 
     /// Implemented for LUCENENET-190. Good for capacity < 1536
     /// </summary>
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public class SimpleLRUCache_LUCENENET_190_1: Cache
+    public class SimpleLRUCache_LUCENENET_190_1 : Cache
     {
         System.Collections.Generic.Dictionary<object, LRUCacheValueEntry> Data = new Dictionary<object, LRUCacheValueEntry>();
         SortedList<long, object> TimeStamps = new SortedList<long, object>();
@@ -113,6 +44,7 @@ namespace Lucene.Net.Util.Cache
         long TimeStamp = 0;
         int Capacity = 1024;
 
+        /// <summary> Creates a last-recently-used cache with the specified size. </summary>
         public SimpleLRUCache_LUCENENET_190_1(int Capacity)
         {
             this.Capacity = Capacity;
@@ -171,8 +103,10 @@ namespace Lucene.Net.Util.Cache
     }
 
 
-
-    /// <summary>
+    /// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
+    /// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
+    /// if needed.
+    /// 
     /// Implemented for LUCENENET-190. Good for capacity > 1536
     /// </summary>
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -180,11 +114,11 @@ namespace Lucene.Net.Util.Cache
     {
         System.Collections.Generic.Dictionary<object, LRUCacheValueEntry> Data = new Dictionary<object, LRUCacheValueEntry>();
         System.Collections.Generic.SortedDictionary<long, object> TimeStamps = new SortedDictionary<long, object>();
-        
 
         long TimeStamp = 0;
         int Capacity = 1024;
 
+        /// <summary> Creates a last-recently-used cache with the specified size. </summary>
         public SimpleLRUCache_LUCENENET_190_2(int Capacity)
         {
             this.Capacity = Capacity;
@@ -243,4 +177,62 @@ namespace Lucene.Net.Util.Cache
         {
         }
     }
+
+
+#region NOT_USED_FROM_JLCA_PORT
+/*
+  
+ //
+ // This is the oringal port as it was generated via JLCA.
+ // This code is not used.  It's here for referance only.
+ //
+  
+
+	/// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
+	/// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
+	/// if needed.
+	/// 
+	/// </summary>
+	public class SimpleLRUCache:SimpleMapCache
+	{
+		private class AnonymousClassLinkedHashMap : LinkedHashMap
+		{
+			public AnonymousClassLinkedHashMap(SimpleLRUCache enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(SimpleLRUCache enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SimpleLRUCache enclosingInstance;
+			public SimpleLRUCache Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			protected internal virtual bool RemoveEldestEntry(System.Collections.DictionaryEntry eldest)
+			{
+				return size() > Enclosing_Instance.cacheSize;
+			}
+		}
+		private const float LOADFACTOR = 0.75f;
+		
+		private int cacheSize;
+		
+		/// <summary> Creates a last-recently-used cache with the specified size. </summary>
+		public SimpleLRUCache(int cacheSize):base(null)
+		{
+			this.cacheSize = cacheSize;
+			int capacity = (int) System.Math.Ceiling(cacheSize / LOADFACTOR) + 1;
+			
+			base.map = new AnonymousClassLinkedHashMap(this, capacity, LOADFACTOR, true);
+		}
+	}
+*/
+#endregion
+
 }

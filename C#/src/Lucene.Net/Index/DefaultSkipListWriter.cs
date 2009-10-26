@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	/// that stores positions and payloads.
 	/// 
 	/// </summary>
-	class DefaultSkipListWriter : MultiLevelSkipListWriter
+	class DefaultSkipListWriter:MultiLevelSkipListWriter
 	{
 		private int[] lastSkipDoc;
 		private int[] lastSkipPayloadLength;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		private long curFreqPointer;
 		private long curProxPointer;
 		
-		internal DefaultSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, IndexOutput freqOutput, IndexOutput proxOutput) : base(skipInterval, numberOfSkipLevels, docCount)
+		internal DefaultSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, IndexOutput freqOutput, IndexOutput proxOutput):base(skipInterval, numberOfSkipLevels, docCount)
 		{
 			this.freqOutput = freqOutput;
 			this.proxOutput = proxOutput;
@@ -54,6 +54,16 @@ namespace Lucene.Net.Index
 			lastSkipProxPointer = new long[numberOfSkipLevels];
 		}
 		
+		internal virtual void  SetFreqOutput(IndexOutput freqOutput)
+		{
+			this.freqOutput = freqOutput;
+		}
+		
+		internal virtual void  SetProxOutput(IndexOutput proxOutput)
+		{
+			this.proxOutput = proxOutput;
+		}
+		
 		/// <summary> Sets the values for the current skip data. </summary>
 		internal virtual void  SetSkipData(int doc, bool storePayloads, int payloadLength)
 		{
@@ -61,18 +71,18 @@ namespace Lucene.Net.Index
 			this.curStorePayloads = storePayloads;
 			this.curPayloadLength = payloadLength;
 			this.curFreqPointer = freqOutput.GetFilePointer();
-            if (proxOutput != null)
-			    this.curProxPointer = proxOutput.GetFilePointer();
+			if (proxOutput != null)
+				this.curProxPointer = proxOutput.GetFilePointer();
 		}
 		
 		protected internal override void  ResetSkip()
 		{
 			base.ResetSkip();
-			SupportClass.CollectionsSupport.ArrayFill(lastSkipDoc, 0);
-			SupportClass.CollectionsSupport.ArrayFill(lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
-			SupportClass.CollectionsSupport.ArrayFill(lastSkipFreqPointer, freqOutput.GetFilePointer());
-            if (proxOutput != null)
-			    SupportClass.CollectionsSupport.ArrayFill(lastSkipProxPointer, proxOutput.GetFilePointer());
+			for (int i = 0; i < lastSkipDoc.Length; i++) lastSkipDoc[i] = 0;
+			for (int i = 0; i < lastSkipPayloadLength.Length; i++) lastSkipPayloadLength[i] = -1; // we don't have to write the first length in the skip list
+			for (int i = 0; i < lastSkipFreqPointer.Length; i++) lastSkipFreqPointer[i] = freqOutput.GetFilePointer();
+			if (proxOutput != null)
+				for (int i = 0; i < lastSkipProxPointer.Length; i++) lastSkipProxPointer[i] = proxOutput.GetFilePointer();
 		}
 		
 		protected internal override void  WriteSkipData(int level, IndexOutput skipBuffer)

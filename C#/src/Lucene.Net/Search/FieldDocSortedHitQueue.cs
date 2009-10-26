@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,12 +24,15 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Collects sorted results from Searchable's and collates them.
 	/// The elements put into this queue must be of type FieldDoc.
+	/// 
+	/// <p>Created: Feb 11, 2004 2:04:21 PM
+	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
 	/// </since>
-    /// <version>  $Id: FieldDocSortedHitQueue.java 590530 2007-10-31 01:28:25Z gsingers $
-    /// </version>
-	class FieldDocSortedHitQueue : PriorityQueue
+	/// <version>  $Id: FieldDocSortedHitQueue.java 695514 2008-09-15 15:42:11Z otis $
+	/// </version>
+	class FieldDocSortedHitQueue:PriorityQueue
 	{
 		
 		// this cannot contain AUTO fields - any AUTO fields should
@@ -60,7 +63,7 @@ namespace Lucene.Net.Search
 		/// type until the values come back.  The fields can only be set once.
 		/// This method is thread safe.
 		/// </summary>
-		/// <param name="">fields
+		/// <param name="fields">
 		/// </param>
 		internal virtual void  SetFields(SortField[] fields)
 		{
@@ -111,7 +114,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 		/// </returns>
-		public override bool LessThan(object a, object b)
+		public override bool LessThan(System.Object a, System.Object b)
 		{
 			FieldDoc docA = (FieldDoc) a;
 			FieldDoc docB = (FieldDoc) b;
@@ -161,7 +164,7 @@ namespace Lucene.Net.Search
 							// works - in that routine, any documents without a value in the given field are
 							// put first.  If both are null, the next SortField is used
 							if (s1 == null)
-								c = (s2 == null) ? 0 : - 1;
+								c = (s2 == null)?0:- 1;
 							else if (s2 == null)
 								c = 1;
 							// 
@@ -195,27 +198,28 @@ namespace Lucene.Net.Search
 								c = 1;
 							break;
 						}
-
-                    case SortField.BYTE:
-                        {
-                            int i1 = (int)docA.fields[i]; //((Byte)docA.fields[i]).byteValue();
-                            int i2 = (int)docB.fields[i]; //((Byte)docB.fields[i]).byteValue();
-                            if (i1 < i2) c = -1;
-                            if (i1 > i2) c = 1;
-                            break;
-                        }
-
-                    case SortField.SHORT:
-                        {
-                            int i1 = (int)docA.fields[i]; //((Short)docA.fields[i]).shortValue();
-                            int i2 = (int)docB.fields[i]; //((Short)docB.fields[i]).shortValue();
-                            if (i1 < i2) c = -1;
-                            if (i1 > i2) c = 1;
-                            break;
-                        }
-
-                    case SortField.CUSTOM:
-                        {
+					
+					case SortField.BYTE:  {
+							int i1 = (sbyte) ((System.SByte) docA.fields[i]);
+							int i2 = (sbyte) ((System.SByte) docB.fields[i]);
+							if (i1 < i2)
+								c = - 1;
+							if (i1 > i2)
+								c = 1;
+							break;
+						}
+					
+					case SortField.SHORT:  {
+							int i1 = (short) ((System.Int16) docA.fields[i]);
+							int i2 = (short) ((System.Int16) docB.fields[i]);
+							if (i1 < i2)
+								c = - 1;
+							if (i1 > i2)
+								c = 1;
+							break;
+						}
+					
+					case SortField.CUSTOM:  {
 							c = docA.fields[i].CompareTo(docB.fields[i]);
 							break;
 						}

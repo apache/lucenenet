@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Function
 	/// available as other numeric types, casting as needed.
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
@@ -37,12 +37,20 @@ namespace Lucene.Net.Search.Function
 	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource for requirements">
 	/// on the field.
 	/// 
-	/// 
+	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// searching, if {@link #getValues} is invoked with a
+	/// composite (multi-segment) reader, this can easily cause
+	/// double RAM usage for the values in the FieldCache.  It's
+	/// best to switch your application to pass only atomic
+	/// (single segment) readers to this API.  Alternatively, for
+	/// a short-term fix, you could wrap your ValueSource using
+	/// {@link MultiValueSource}, which costs more CPU per lookup
+	/// but will not consume double the FieldCache RAM.</p>
 	/// </seealso>
 	[Serializable]
-	public class IntFieldSource : FieldCacheSource
+	public class IntFieldSource:FieldCacheSource
 	{
-		private class AnonymousClassDocValues : DocValues
+		private class AnonymousClassDocValues:DocValues
 		{
 			public AnonymousClassDocValues(int[] arr, IntFieldSource enclosingInstance)
 			{
@@ -79,7 +87,7 @@ namespace Lucene.Net.Search.Function
 				return Enclosing_Instance.Description() + '=' + IntVal(doc);
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
-			public /*internal*/ override object GetInnerArray()
+			internal override System.Object GetInnerArray()
 			{
 				return arr;
 			}
@@ -87,12 +95,12 @@ namespace Lucene.Net.Search.Function
 		private Lucene.Net.Search.IntParser parser;
 		
 		/// <summary> Create a cached int field source with default string-to-int parser. </summary>
-		public IntFieldSource(System.String field) : this(field, null)
+		public IntFieldSource(System.String field):this(field, null)
 		{
 		}
 		
 		/// <summary> Create a cached int field source with a specific string-to-int parser. </summary>
-		public IntFieldSource(System.String field, Lucene.Net.Search.IntParser parser) : base(field)
+		public IntFieldSource(System.String field, Lucene.Net.Search.IntParser parser):base(field)
 		{
 			this.parser = parser;
 		}
@@ -106,7 +114,7 @@ namespace Lucene.Net.Search.Function
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.FieldCacheSource#getCachedValues(Lucene.Net.Search.FieldCache, java.lang.String, Lucene.Net.Index.IndexReader) */
 		public override DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader)
 		{
-			int[] arr = (parser == null) ? cache.GetInts(reader, field) : cache.GetInts(reader, field, parser);
+			int[] arr = cache.GetInts(reader, field, parser);
 			return new AnonymousClassDocValues(arr, this);
 		}
 		
@@ -118,13 +126,13 @@ namespace Lucene.Net.Search.Function
 				return false;
 			}
 			IntFieldSource other = (IntFieldSource) o;
-			return this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType();
+			return this.parser == null?other.parser == null:this.parser.GetType() == other.parser.GetType();
 		}
 		
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.FieldCacheSource#cachedFieldSourceHashCode() */
 		public override int CachedFieldSourceHashCode()
 		{
-			return parser == null ? typeof(System.Int32).GetHashCode() : parser.GetType().GetHashCode();
+			return parser == null?typeof(System.Int32).GetHashCode():parser.GetType().GetHashCode();
 		}
 	}
 }

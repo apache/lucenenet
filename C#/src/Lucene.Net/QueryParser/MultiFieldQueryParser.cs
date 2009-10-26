@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,11 +29,10 @@ namespace Lucene.Net.QueryParsers
 	
 	/// <summary> A QueryParser which constructs queries to search multiple fields.
 	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Revision: 564236 $
+	/// <version>  $Revision: 804016 $
 	/// </version>
-	public class MultiFieldQueryParser : QueryParser
+	public class MultiFieldQueryParser:QueryParser
 	{
 		protected internal System.String[] fields;
 		protected internal System.Collections.IDictionary boosts;
@@ -88,33 +87,32 @@ namespace Lucene.Net.QueryParsers
 		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
 		/// what fields they appear.</p>
 		/// </summary>
-		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer) : base(null, analyzer)
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):base(null, analyzer)
 		{
 			this.fields = fields;
 		}
 		
-		public override Query GetFieldQuery(System.String field, System.String queryText, int slop)
+		protected internal override Query GetFieldQuery(System.String field, System.String queryText, int slop)
 		{
 			if (field == null)
 			{
-				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				System.Collections.IList clauses = new System.Collections.ArrayList();
 				for (int i = 0; i < fields.Length; i++)
 				{
-					Query q = GetFieldQuery(fields[i], queryText);
+					Query q = base.GetFieldQuery(fields[i], queryText);
 					if (q != null)
 					{
 						//If the user passes a map of boosts
 						if (boosts != null)
 						{
 							//Get the boost from the map and apply them
-							System.Single boost = (System.Single) boosts[fields[i]];
-							//if (boost != null)      // {{Aroush-2.1 there is no null for 'boost'
-                            if (boosts[fields[i]] != null)      // {{Aroush-2.1 will this line do?
+                            if (boosts.Contains(fields[i]))
 							{
+								System.Single boost = (System.Single) boosts[fields[i]];
 								q.SetBoost((float) boost);
 							}
 						}
-                        ApplySlop(q, slop);
+						ApplySlop(q, slop);
 						clauses.Add(new BooleanClause(q, BooleanClause.Occur.SHOULD));
 					}
 				}
@@ -123,34 +121,35 @@ namespace Lucene.Net.QueryParsers
 					return null;
 				return GetBooleanQuery(clauses, true);
 			}
-            Query q2 = base.GetFieldQuery(field, queryText);
-            ApplySlop(q2, slop);
-            return q2;
+			Query q2 = base.GetFieldQuery(field, queryText);
+			ApplySlop(q2, slop);
+			return q2;
 		}
-
-        private void ApplySlop(Query q, int slop)
-        {
-            if (q is PhraseQuery)
-            {
-                ((PhraseQuery)q).SetSlop(slop);
-            }
-            if (q is MultiPhraseQuery)
-            {
-                ((MultiPhraseQuery)q).SetSlop(slop);
-            }
-        }
-
-		public override Query GetFieldQuery(System.String field, System.String queryText)
+		
+		private void  ApplySlop(Query q, int slop)
+		{
+			if (q is PhraseQuery)
+			{
+				((PhraseQuery) q).SetSlop(slop);
+			}
+			else if (q is MultiPhraseQuery)
+			{
+				((MultiPhraseQuery) q).SetSlop(slop);
+			}
+		}
+		
+		
+		public /*protected internal*/ override Query GetFieldQuery(System.String field, System.String queryText)
 		{
 			return GetFieldQuery(field, queryText, 0);
 		}
 		
 		
-		public override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
+		public /*protected internal*/ override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 		{
 			if (field == null)
 			{
-				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				System.Collections.IList clauses = new System.Collections.ArrayList();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
@@ -160,11 +159,11 @@ namespace Lucene.Net.QueryParsers
 			return base.GetFuzzyQuery(field, termStr, minSimilarity);
 		}
 		
-		public override Query GetPrefixQuery(System.String field, System.String termStr)
+		public /*protected internal*/ override Query GetPrefixQuery(System.String field, System.String termStr)
 		{
 			if (field == null)
 			{
-				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				System.Collections.IList clauses = new System.Collections.ArrayList();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
@@ -174,11 +173,11 @@ namespace Lucene.Net.QueryParsers
 			return base.GetPrefixQuery(field, termStr);
 		}
 		
-		public override Query GetWildcardQuery(System.String field, System.String termStr)
+		public /*protected internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
 		{
 			if (field == null)
 			{
-				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				System.Collections.IList clauses = new System.Collections.ArrayList();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
@@ -189,11 +188,11 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		
-		public override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
+		protected internal override Query GetRangeQuery(System.String field, System.String part1, System.String part2, bool inclusive)
 		{
 			if (field == null)
 			{
-				System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+				System.Collections.IList clauses = new System.Collections.ArrayList();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));

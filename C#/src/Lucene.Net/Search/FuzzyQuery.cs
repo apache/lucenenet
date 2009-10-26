@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,11 +25,16 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Implements the fuzzy search query. The similiarity measurement
+	/// <summary>Implements the fuzzy search query. The similarity measurement
 	/// is based on the Levenshtein (edit distance) algorithm.
+	/// 
+	/// Warning: this query is not very scalable with its default prefix
+	/// length of 0 - in this case, *every* term will be enumerated and
+	/// cause an edit score calculation.
+	/// 
 	/// </summary>
 	[Serializable]
-	public class FuzzyQuery : MultiTermQuery
+	public class FuzzyQuery:MultiTermQuery
 	{
 		
 		public const float defaultMinSimilarity = 0.5f;
@@ -37,6 +42,9 @@ namespace Lucene.Net.Search
 		
 		private float minimumSimilarity;
 		private int prefixLength;
+		private bool termLongEnough = false;
+		
+		new protected internal Term term;
 		
 		/// <summary> Create a new FuzzyQuery that will match terms with a similarity 
 		/// of at least <code>minimumSimilarity</code> to <code>term</code>.
@@ -58,7 +66,8 @@ namespace Lucene.Net.Search
 		/// <summary> or if prefixLength &lt; 0
 		/// </summary>
 		public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength):base(term)
-		{
+		{ // will be removed in 3.0
+			this.term = term;
 			
 			if (minimumSimilarity >= 1.0f)
 				throw new System.ArgumentException("minimumSimilarity >= 1");
@@ -67,8 +76,14 @@ namespace Lucene.Net.Search
 			if (prefixLength < 0)
 				throw new System.ArgumentException("prefixLength < 0");
 			
+			if (term.Text().Length > 1.0f / (1.0f - minimumSimilarity))
+			{
+				this.termLongEnough = true;
+			}
+			
 			this.minimumSimilarity = minimumSimilarity;
 			this.prefixLength = prefixLength;
+			rewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
 		}
 		
 		/// <summary> Calls {@link #FuzzyQuery(Term, float) FuzzyQuery(term, minimumSimilarity, 0)}.</summary>
@@ -98,13 +113,30 @@ namespace Lucene.Net.Search
 			return prefixLength;
 		}
 		
-		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
+		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new FuzzyTermEnum(reader, GetTerm(), minimumSimilarity, prefixLength);
 		}
 		
+		/// <summary> Returns the pattern term.</summary>
+		public override Term GetTerm()
+		{
+			return term;
+		}
+		
+		public override void  SetRewriteMethod(RewriteMethod method)
+		{
+			throw new System.NotSupportedException("FuzzyQuery cannot change rewrite method");
+		}
+		
 		public override Query Rewrite(IndexReader reader)
 		{
+			if (!termLongEnough)
+			{
+				// can't match
+				return new BooleanQuery();
+			}
+			
 			FilteredTermEnum enumerator = GetEnum(reader);
 			int maxClauseCount = BooleanQuery.GetMaxClauseCount();
 			ScoreTermQueue stQueue = new ScoreTermQueue(maxClauseCount);
@@ -162,7 +194,6 @@ namespace Lucene.Net.Search
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			Term term = GetTerm();
 			if (!term.Field().Equals(field))
 			{
 				buffer.Append(term.Field());
@@ -170,7 +201,7 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(term.Text());
 			buffer.Append('~');
-			buffer.Append(SupportClass.Single.ToString(minimumSimilarity));
+			buffer.Append(minimumSimilarity.ToString());
 			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
@@ -196,9 +227,9 @@ namespace Lucene.Net.Search
 			}
 			
 			/* (non-Javadoc)
-			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.object, java.lang.object)
+			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
 			*/
-			public override bool LessThan(object a, object b)
+			public override bool LessThan(System.Object a, System.Object b)
 			{
 				ScoreTerm termA = (ScoreTerm) a;
 				ScoreTerm termB = (ScoreTerm) b;
@@ -209,31 +240,37 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public  override bool Equals(object o)
-		{
-			if (this == o)
-				return true;
-			if (!(o is FuzzyQuery))
-				return false;
-			if (!base.Equals(o))
-				return false;
-			
-			FuzzyQuery fuzzyQuery = (FuzzyQuery) o;
-			
-			if (minimumSimilarity != fuzzyQuery.minimumSimilarity)
-				return false;
-			if (prefixLength != fuzzyQuery.prefixLength)
-				return false;
-			
-			return true;
-		}
-		
 		public override int GetHashCode()
 		{
+			int prime = 31;
 			int result = base.GetHashCode();
-			result = 29 * result + minimumSimilarity != + 0.0f ? BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0) : 0;
-			result = 29 * result + prefixLength;
+			result = prime * result + BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0);
+			result = prime * result + prefixLength;
+			result = prime * result + ((term == null)?0:term.GetHashCode());
 			return result;
+		}
+		
+		public  override bool Equals(System.Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!base.Equals(obj))
+				return false;
+			if (GetType() != obj.GetType())
+				return false;
+			FuzzyQuery other = (FuzzyQuery) obj;
+			if (BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0) != BitConverter.ToInt32(BitConverter.GetBytes(other.minimumSimilarity), 0))
+				return false;
+			if (prefixLength != other.prefixLength)
+				return false;
+			if (term == null)
+			{
+				if (other.term != null)
+					return false;
+			}
+			else if (!term.Equals(other.term))
+				return false;
+			return true;
 		}
 	}
 }

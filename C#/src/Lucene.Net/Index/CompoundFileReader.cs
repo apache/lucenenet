@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,12 @@ namespace Lucene.Net.Index
 	/// <summary> Class for accessing a compound stream.
 	/// This class implements a directory, but is limited to only read operations.
 	/// Directory methods that would normally modify data throw an exception.
+	/// 
+	/// 
 	/// </summary>
-	public class CompoundFileReader : Directory
+	/// <version>  $Id: CompoundFileReader.java 673371 2008-07-02 11:57:27Z mikemccand $
+	/// </version>
+	class CompoundFileReader:Directory
 	{
 		
 		private int readBufferSize;
@@ -65,7 +69,7 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-                stream = dir.OpenInput(name, readBufferSize);
+				stream = dir.OpenInput(name, readBufferSize);
 				
 				// read the directory and init files
 				int count = stream.ReadVInt();
@@ -102,7 +106,7 @@ namespace Lucene.Net.Index
 					{
 						stream.Close();
 					}
-					catch (System.IO.IOException)
+					catch (System.IO.IOException e)
 					{
 					}
 				}
@@ -140,8 +144,8 @@ namespace Lucene.Net.Index
 				return OpenInput(id, readBufferSize);
 			}
 		}
-
-        public override IndexInput OpenInput(System.String id, int readBufferSize)
+		
+		public override IndexInput OpenInput(System.String id, int readBufferSize)
 		{
 			lock (this)
 			{
@@ -151,8 +155,8 @@ namespace Lucene.Net.Index
 				FileEntry entry = (FileEntry) entries[id];
 				if (entry == null)
 					throw new System.IO.IOException("No sub-file with id " + id + " found");
-
-                return new CSIndexInput(stream, entry.offset, entry.length, readBufferSize);
+				
+				return new CSIndexInput(stream, entry.offset, entry.length, readBufferSize);
 			}
 		}
 		
@@ -162,7 +166,7 @@ namespace Lucene.Net.Index
 			System.String[] res = new System.String[entries.Count];
 			entries.Keys.CopyTo(res, 0);
 			return res;
-        }
+		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
@@ -225,32 +229,32 @@ namespace Lucene.Net.Index
 		/// this helps with testing since JUnit test cases in a different class
 		/// can then access package fields of this class.
 		/// </summary>
-		public /*internal*/ sealed class CSIndexInput : BufferedIndexInput
+		internal sealed class CSIndexInput:BufferedIndexInput, System.ICloneable
 		{
 			
-			public /*internal*/ IndexInput base_Renamed;
+			internal IndexInput base_Renamed;
 			internal long fileOffset;
 			internal long length;
 			
-			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length) : this(base_Renamed, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
+			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length):this(base_Renamed, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
 			{
 			}
 			
-			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length, int readBufferSize) : base(readBufferSize)
+			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length, int readBufferSize):base(readBufferSize)
 			{
-                this.base_Renamed = (IndexInput) base_Renamed.Clone();
+				this.base_Renamed = (IndexInput) base_Renamed.Clone();
 				this.fileOffset = fileOffset;
 				this.length = length;
 			}
-
-            public override object Clone()
-            {
-                CSIndexInput clone = (CSIndexInput)base.Clone();
-                clone.base_Renamed = (IndexInput)base_Renamed.Clone();
-                clone.fileOffset = fileOffset;
-                clone.length = length;
-                return clone;
-            }
+			
+			public override System.Object Clone()
+			{
+				CSIndexInput clone = (CSIndexInput) base.Clone();
+				clone.base_Renamed = (IndexInput) base_Renamed.Clone();
+				clone.fileOffset = fileOffset;
+				clone.length = length;
+				return clone;
+			}
 			
 			/// <summary>Expert: implements buffer refill.  Reads bytes from the current
 			/// position in the input.
@@ -261,28 +265,28 @@ namespace Lucene.Net.Index
 			/// </param>
 			/// <param name="len">the number of bytes to read
 			/// </param>
-			protected internal override void ReadInternal(byte[] b, int offset, int len)
+			public override void  ReadInternal(byte[] b, int offset, int len)
 			{
-                long start = GetFilePointer();
-                if (start + len > length)
-                    throw new System.IO.IOException("read past EOF");
-                base_Renamed.Seek(fileOffset + start);
-                base_Renamed.ReadBytes(b, offset, len, false);
-            }
+				long start = GetFilePointer();
+				if (start + len > length)
+					throw new System.IO.IOException("read past EOF");
+				base_Renamed.Seek(fileOffset + start);
+				base_Renamed.ReadBytes(b, offset, len, false);
+			}
 			
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
 			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
 			/// </summary>
 			/// <seealso cref="ReadInternal(byte[],int,int)">
 			/// </seealso>
-			protected internal override void  SeekInternal(long pos)
+			public override void  SeekInternal(long pos)
 			{
 			}
 			
 			/// <summary>Closes the stream to further operations. </summary>
 			public override void  Close()
 			{
-                base_Renamed.Close();
+				base_Renamed.Close();
 			}
 			
 			public override long Length()

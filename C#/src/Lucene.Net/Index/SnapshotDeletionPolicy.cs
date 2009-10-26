@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -31,14 +31,14 @@ namespace Lucene.Net.Index
 	/// we wrap another arbitrary {@link IndexDeletionPolicy}, this
 	/// gives you the freedom to continue using whatever {@link
 	/// IndexDeletionPolicy} you would normally want to use with your
-    /// index.  Note that you can re-use a single instance of
-    /// SnapshotDeletionPolicy across multiple writers as long
-    /// as they are against the same index Directory.  Any 
-    /// snapshot held when a writer is closed will "survive"
-    /// when the next writer is opened.
-    /// <para>
-    /// WARNING: This API is new and experimental and may suddnely changendex. 
-    /// </para>
+	/// index.  Note that you can re-use a single instance of
+	/// SnapshotDeletionPolicy across multiple writers as long
+	/// as they are against the same index Directory.  Any
+	/// snapshot held when a writer is closed will "survive"
+	/// when the next writer is opened.
+	/// 
+	/// <p><b>WARNING</b>: This API is a new and experimental and
+	/// may suddenly change.</p> 
 	/// </summary>
 	
 	public class SnapshotDeletionPolicy : IndexDeletionPolicy
@@ -46,28 +46,28 @@ namespace Lucene.Net.Index
 		
 		private IndexCommit lastCommit;
 		private IndexDeletionPolicy primary;
-		private string snapshot;
+		private System.String snapshot;
 		
 		public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
 		{
 			this.primary = primary;
 		}
-
-        public virtual void OnInit(List<IndexCommitPoint> commits)
+		
+		public virtual void  OnInit(System.Collections.IList commits)
 		{
 			lock (this)
 			{
 				primary.OnInit(WrapCommits(commits));
-				lastCommit = (IndexCommit)(commits[commits.Count - 1]);
+				lastCommit = (IndexCommit) commits[commits.Count - 1];
 			}
 		}
-
-        public virtual void OnCommit(List<IndexCommitPoint> commits)
+		
+		public virtual void  OnCommit(System.Collections.IList commits)
 		{
 			lock (this)
 			{
 				primary.OnCommit(WrapCommits(commits));
-                lastCommit = (IndexCommit)(commits[commits.Count - 1]);
+				lastCommit = (IndexCommit) commits[commits.Count - 1];
 			}
 		}
 		
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 		/// consume an extra 1X of your total index size, until
 		/// you release the snapshot. 
 		/// </summary>
-        /// // TODO: 3.9: change this to return IndexCommit instead
+		// TODO 3.0: change this to return IndexCommit instead
 		public virtual IndexCommitPoint Snapshot()
 		{
 			lock (this)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class MyCommitPoint : IndexCommitPoint
+		private class MyCommitPoint:IndexCommit
 		{
 			private void  InitBlock(SnapshotDeletionPolicy enclosingInstance)
 			{
@@ -127,19 +127,19 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.cp = cp;
 			}
-			public virtual System.String GetSegmentsFileName()
+			public override System.String GetSegmentsFileName()
 			{
 				return cp.GetSegmentsFileName();
 			}
-			public virtual System.Collections.Generic.ICollection<string> GetFileNames()
+			public override System.Collections.ICollection GetFileNames()
 			{
 				return cp.GetFileNames();
 			}
-            public Directory GetDirectory()
-            {
-                return cp.GetDirectory();
-            }
-			public virtual void  Delete()
+			public override Directory GetDirectory()
+			{
+				return cp.GetDirectory();
+			}
+			public override void  Delete()
 			{
 				lock (Enclosing_Instance)
 				{
@@ -149,16 +149,28 @@ namespace Lucene.Net.Index
 						cp.Delete();
 				}
 			}
-            public bool IsDeleted() { return cp.IsDeleted(); }
-            public int GetVersion() { return (int) cp.GetVersion(); }
-            public int GetGeneration() { return (int) cp.GetGeneration(); }
-
+			public override bool IsDeleted()
+			{
+				return cp.IsDeleted();
+			}
+			public override long GetVersion()
+			{
+				return cp.GetVersion();
+			}
+			public override long GetGeneration()
+			{
+				return cp.GetGeneration();
+			}
+			public override System.Collections.IDictionary GetUserData()
+			{
+				return cp.GetUserData();
+			}
 		}
-
-        private List<IndexCommitPoint> WrapCommits(List<IndexCommitPoint> commits)
+		
+		private System.Collections.IList WrapCommits(System.Collections.IList commits)
 		{
 			int count = commits.Count;
-            List<IndexCommitPoint> myCommits = new List<IndexCommitPoint>(count);
+			System.Collections.IList myCommits = new System.Collections.ArrayList(count);
 			for (int i = 0; i < count; i++)
 				myCommits.Add(new MyCommitPoint(this, (IndexCommit) commits[i]));
 			return myCommits;

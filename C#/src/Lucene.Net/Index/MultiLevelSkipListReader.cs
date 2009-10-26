@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
@@ -191,9 +192,9 @@ namespace Lucene.Net.Index
 		{
 			this.skipPointer[0] = skipPointer;
 			this.docCount = df;
-			Array.Clear(skipDoc, 0, skipDoc.Length);
-			Array.Clear(numSkipped, 0, numSkipped.Length);
-			Array.Clear(childPointer, 0, childPointer.Length);
+            System.Array.Clear(skipDoc, 0, skipDoc.Length);
+			System.Array.Clear(numSkipped, 0, numSkipped.Length);
+            System.Array.Clear(childPointer, 0, childPointer.Length);
 			
 			haveSkipped = false;
 			for (int i = 1; i < numberOfSkipLevels; i++)
@@ -205,7 +206,7 @@ namespace Lucene.Net.Index
 		/// <summary>Loads the skip levels  </summary>
 		private void  LoadSkipLevels()
 		{
-			numberOfSkipLevels = docCount == 0 ? 0 :(int) System.Math.Floor(System.Math.Log(docCount) / System.Math.Log(skipInterval[0]));
+			numberOfSkipLevels = docCount == 0?0:(int) System.Math.Floor(System.Math.Log(docCount) / System.Math.Log(skipInterval[0]));
 			if (numberOfSkipLevels > maxNumberOfSkipLevels)
 			{
 				numberOfSkipLevels = maxNumberOfSkipLevels;
@@ -264,7 +265,7 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>used to buffer the top skip levels </summary>
-		private sealed class SkipBuffer : IndexInput
+		private sealed class SkipBuffer:IndexInput
 		{
 			private byte[] data;
 			private long pointer;
@@ -308,10 +309,11 @@ namespace Lucene.Net.Index
 				this.pos = (int) (pos - pointer);
 			}
 			
-			//override public object Clone()  // {{Aroush-2.3.1}} Do we need this?
-			//{
-			//	return null;
-			//}
+			override public System.Object Clone()
+			{
+                System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this FilterIndexReader.Clone()"); // {{Aroush-2.9}}
+				return null;
+			}
 		}
 	}
 }

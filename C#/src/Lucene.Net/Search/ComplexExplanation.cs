@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,21 +20,20 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// Expert: Describes the score computation for document and query, and
-    /// can distinguish a match independent of a positive value.
-    /// </summary>
+	/// <summary>Expert: Describes the score computation for document and query, and
+	/// can distinguish a match independent of a positive value. 
+	/// </summary>
 	[Serializable]
-	public class ComplexExplanation : Explanation
+	public class ComplexExplanation:Explanation
 	{
 		private System.Boolean match;
-        private bool isMatchSet;
+        private bool isMatchSet = false;
 		
-		public ComplexExplanation() : base()
+		public ComplexExplanation():base()
 		{
 		}
 		
-		public ComplexExplanation(bool match, float value_Renamed, System.String description) : base(value_Renamed, description)
+		public ComplexExplanation(bool match, float value_Renamed, System.String description):base(value_Renamed, description)
 		{
 			this.match = match;
             this.isMatchSet = true;
@@ -58,16 +57,16 @@ namespace Lucene.Net.Search
 		/// <summary> Indicates whether or not this Explanation models a good match.
 		/// 
 		/// <p>
-		/// If the match statis is explicitly set (ie: not null) this method
+		/// If the match status is explicitly set (i.e.: not null) this method
 		/// uses it; otherwise it defers to the superclass.
 		/// </p>
 		/// </summary>
-		/// <seealso cref="GetMatch">
+		/// <seealso cref="getMatch">
 		/// </seealso>
 		public override bool IsMatch()
 		{
 			System.Boolean m = GetMatch();
-			return (isMatchSet ? m : base.IsMatch());
+			return (null != m?m:base.IsMatch());
 		}
 		
 		protected internal override System.String GetSummary()
@@ -75,7 +74,7 @@ namespace Lucene.Net.Search
             if (isMatchSet == false)
 				return base.GetSummary();
 			
-			return GetValue() + " = " + (IsMatch() ? "(MATCH) " : "(NON-MATCH) ") + GetDescription();
+			return GetValue() + " = " + (IsMatch()?"(MATCH) ":"(NON-MATCH) ") + GetDescription();
 		}
 	}
 }

@@ -17,8 +17,10 @@
 
 using System;
 
-using IndexWriter = Lucene.Net.Index.IndexWriter;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Demo
 {
@@ -70,7 +72,7 @@ namespace Lucene.Net.Demo
 			System.DateTime start = System.DateTime.Now;
 			try
 			{
-				IndexWriter writer = new IndexWriter(INDEX_DIR, new StandardAnalyzer(), true);
+				IndexWriter writer = new IndexWriter(FSDirectory.Open(INDEX_DIR), new StandardAnalyzer(Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 				System.Console.Out.WriteLine("Indexing to directory '" + INDEX_DIR + "'...");
 				IndexDocs(writer, docDir);
 				System.Console.Out.WriteLine("Optimizing...");

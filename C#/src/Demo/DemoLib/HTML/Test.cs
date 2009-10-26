@@ -32,7 +32,7 @@ namespace Lucene.Net.Demo.Html
 				for (int i = 0; i < files.Length; i++)
 				{
 					System.Console.Error.WriteLine(files[i]);
-					System.IO.FileInfo file = new System.IO.FileInfo(argv[1] + "\\" + files[i]);
+					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(argv[1], files[i]));
 					Parse(file);
 				}
 			}

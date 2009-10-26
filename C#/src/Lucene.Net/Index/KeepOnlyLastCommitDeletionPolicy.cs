@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -30,21 +30,21 @@ namespace Lucene.Net.Index
 	{
 		
 		/// <summary> Deletes all commits except the most recent one.</summary>
-        public void OnInit(List<IndexCommitPoint> commits)
+		public void  OnInit(System.Collections.IList commits)
 		{
 			// Note that commits.size() should normally be 1:
 			OnCommit(commits);
 		}
 		
 		/// <summary> Deletes all commits except the most recent one.</summary>
-        public void OnCommit(List<IndexCommitPoint> commits)
+		public void  OnCommit(System.Collections.IList commits)
 		{
 			// Note that commits.size() should normally be 2 (if not
 			// called by onInit above):
 			int size = commits.Count;
 			for (int i = 0; i < size - 1; i++)
 			{
-				commits[i].Delete();
+				((IndexCommit) commits[i]).Delete();
 			}
 		}
 	}

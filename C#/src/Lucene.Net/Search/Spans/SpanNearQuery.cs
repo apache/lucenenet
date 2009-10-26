@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
-using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -29,20 +29,25 @@ namespace Lucene.Net.Search.Spans
 	/// matches are required to be in-order. 
 	/// </summary>
 	[Serializable]
-	public class SpanNearQuery : SpanQuery
+	public class SpanNearQuery:SpanQuery, System.ICloneable
 	{
-		private System.Collections.ArrayList clauses;
-		private int slop;
-		private bool inOrder;
+		protected internal System.Collections.ArrayList clauses;
+		protected internal int slop;
+		protected internal bool inOrder;
 		
-		private System.String field;
+		protected internal System.String field;
+		private bool collectPayloads;
 		
 		/// <summary>Construct a SpanNearQuery.  Matches spans matching a span from each
 		/// clause, with up to <code>slop</code> total unmatched positions between
 		/// them.  * When <code>inOrder</code> is true, the spans from each clause
 		/// must be * ordered as in <code>clauses</code>. 
 		/// </summary>
-		public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder)
+		public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder):this(clauses, slop, inOrder, true)
+		{
+		}
+		
+		public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder, bool collectPayloads)
 		{
 			
 			// copy clauses array into an ArrayList
@@ -61,7 +66,7 @@ namespace Lucene.Net.Search.Spans
 				}
 				this.clauses.Add(clause);
 			}
-			
+			this.collectPayloads = collectPayloads;
 			this.slop = slop;
 			this.inOrder = inOrder;
 		}
@@ -92,7 +97,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="#ExtractTerms(Set)">
+		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
 		public override System.Collections.ICollection GetTerms()
 		{
@@ -142,20 +147,15 @@ namespace Lucene.Net.Search.Spans
 		{
 			if (clauses.Count == 0)
 			// optimize 0-clause case
-				return new SpanOrQuery(GetClauses()).GetPayloadSpans(reader);
+				return new SpanOrQuery(GetClauses()).GetSpans(reader);
 			
 			if (clauses.Count == 1)
 			// optimize 1-clause case
-				return ((SpanQuery) clauses[0]).GetPayloadSpans(reader);
+				return ((SpanQuery) clauses[0]).GetSpans(reader);
 			
-			return inOrder ? (PayloadSpans) new NearSpansOrdered(this, reader) : (PayloadSpans) new NearSpansUnordered(this, reader);
+			return inOrder?(Spans) new NearSpansOrdered(this, reader, collectPayloads):(Spans) new NearSpansUnordered(this, reader);
 		}
 		
-        public override PayloadSpans GetPayloadSpans(IndexReader reader)
-        {
-            return (PayloadSpans) GetSpans(reader);
-        }
-
 		public override Query Rewrite(IndexReader reader)
 		{
 			SpanNearQuery clone = null;
@@ -181,8 +181,23 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
+		public override System.Object Clone()
+		{
+			int sz = clauses.Count;
+			SpanQuery[] newClauses = new SpanQuery[sz];
+			
+			for (int i = 0; i < sz; i++)
+			{
+				SpanQuery clause = (SpanQuery) clauses[i];
+				newClauses[i] = (SpanQuery) clause.Clone();
+			}
+			SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
+			spanNearQuery.SetBoost(GetBoost());
+			return spanNearQuery;
+		}
+		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -197,15 +212,15 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			if (clauses.Count != spanNearQuery.clauses.Count)
 				return false;
-			System.Collections.IEnumerator iter1 = clauses.GetEnumerator();
-			System.Collections.IEnumerator iter2 = spanNearQuery.clauses.GetEnumerator();
-			while (iter1.MoveNext() && iter2.MoveNext())
-			{
-				SpanQuery item1 = (SpanQuery) iter1.Current;
-				SpanQuery item2 = (SpanQuery) iter2.Current;
-				if (!item1.Equals(item2))
-					return false;
-			}
+            System.Collections.IEnumerator iter1 = clauses.GetEnumerator();
+            System.Collections.IEnumerator iter2 = spanNearQuery.clauses.GetEnumerator();
+            while (iter1.MoveNext() && iter2.MoveNext())
+            {
+                SpanQuery item1 = (SpanQuery)iter1.Current;
+                SpanQuery item2 = (SpanQuery)iter2.Current;
+                if (!item1.Equals(item2))
+                    return false;
+            }
 			
 			return GetBoost() == spanNearQuery.GetBoost();
 		}
@@ -217,7 +232,7 @@ namespace Lucene.Net.Search.Spans
 			// Mix bits before folding in things like boost, since it could cancel the
 			// last element of clauses.  This particular mix also serves to
 			// differentiate SpanNearQuery hashcodes from others.
-			result ^= ((result << 14) | (result >> 19)); // reversible
+			result ^= ((result << 14) | (SupportClass.Number.URShift(result, 19))); // reversible
 			result += System.Convert.ToInt32(GetBoost());
 			result += slop;
 			result ^= (inOrder ? (long) 0x99AFD3BD : 0);

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,14 +24,24 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: returns a comparator for sorting ScoreDocs.
 	/// 
-	/// <p>Created: Apr 21, 2004 3:49:28 PM
+	/// <p>
+	/// Created: Apr 21, 2004 3:49:28 PM
 	/// 
+	/// This class will be used as part of a key to a FieldCache value. You must
+	/// implement hashCode and equals to avoid an explosion in RAM usage if you use
+	/// instances that are not the same instance. If you are searching using the
+	/// Remote contrib, the same instance of this class on the client will be a new
+	/// instance on every call to the server, so hashCode/equals is very important in
+	/// that situation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: SortComparatorSource.java 564236 2007-08-09 15:21:19Z gsingers $
+	/// <version>  $Id: SortComparatorSource.java 747019 2009-02-23 13:59:50Z
+	/// mikemccand $
 	/// </version>
-	/// <since>   1.4
+	/// <since> 1.4
 	/// </since>
+	/// <deprecated> Please use {@link FieldComparatorSource} instead.
+	/// </deprecated>
 	public interface SortComparatorSource
 	{
 		

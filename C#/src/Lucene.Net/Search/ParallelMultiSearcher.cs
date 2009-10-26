@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 
 using System;
 
+using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
@@ -26,23 +27,23 @@ namespace Lucene.Net.Search
 	/// <summary>Implements parallel search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #search(Query,Filter)} methods.
+	/// or {@link #Search(Query,Filter)} methods.
 	/// </summary>
-	public class ParallelMultiSearcher : MultiSearcher
+	public class ParallelMultiSearcher:MultiSearcher
 	{
-		private class AnonymousClassHitCollector1 : HitCollector
+		private class AnonymousClassCollector1:Collector
 		{
-			public AnonymousClassHitCollector1(Lucene.Net.Search.HitCollector results, int start, ParallelMultiSearcher enclosingInstance)
+			public AnonymousClassCollector1(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
 			{
-				InitBlock(results, start, enclosingInstance);
+				InitBlock(collector, start, enclosingInstance);
 			}
-			private void  InitBlock(Lucene.Net.Search.HitCollector results, int start, ParallelMultiSearcher enclosingInstance)
+			private void  InitBlock(Lucene.Net.Search.Collector collector, int start, ParallelMultiSearcher enclosingInstance)
 			{
-				this.results = results;
+				this.collector = collector;
 				this.start = start;
 				this.enclosingInstance = enclosingInstance;
 			}
-			private Lucene.Net.Search.HitCollector results;
+			private Lucene.Net.Search.Collector collector;
 			private int start;
 			private ParallelMultiSearcher enclosingInstance;
 			public ParallelMultiSearcher Enclosing_Instance
@@ -53,17 +54,29 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			public override void  SetScorer(Scorer scorer)
 			{
-				results.Collect(doc + start, score);
+				collector.SetScorer(scorer);
+			}
+			public override void  Collect(int doc)
+			{
+				collector.Collect(doc);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				collector.SetNextReader(reader, start + docBase);
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return collector.AcceptsDocsOutOfOrder();
 			}
 		}
 		
-		private Lucene.Net.Search.Searchable[] searchables;
+		private Searchable[] searchables;
 		private int[] starts;
 		
-		/// <summary>Creates a searcher which searches <i>searchables</i>. </summary>
-		public ParallelMultiSearcher(Lucene.Net.Search.Searchable[] searchables) : base(searchables)
+		/// <summary>Creates a searchable which searches <i>searchables</i>. </summary>
+		public ParallelMultiSearcher(Searchable[] searchables):base(searchables)
 		{
 			this.searchables = searchables;
 			this.starts = GetStarts();
@@ -81,12 +94,12 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
-			HitQueue hq = new HitQueue(nDocs);
+			HitQueue hq = new HitQueue(nDocs, false);
 			int totalHits = 0;
 			MultiSearcherThread[] msta = new MultiSearcherThread[searchables.Length];
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				// search each searcher
+				// search each searchable
 				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
 				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, i, starts, "MultiSearcher thread #" + (i + 1));
 				msta[i].Start();
@@ -98,9 +111,12 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
-					; // TODO: what should we do with this???
+					// In 3.0 we will change this to throw
+					// InterruptedException instead
+					SupportClass.ThreadClass.Current().Interrupt();
+					throw new System.SystemException(ie.Message, ie);
 				}
 				System.IO.IOException ioe = msta[i].GetIOException();
 				if (ioe == null)
@@ -119,7 +135,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].score;
 			
 			return new TopDocs(totalHits, scoreDocs, maxScore);
 		}
@@ -136,7 +152,7 @@ namespace Lucene.Net.Search
 			MultiSearcherThread[] msta = new MultiSearcherThread[searchables.Length];
 			for (int i = 0; i < searchables.Length; i++)
 			{
-				// search each searcher
+				// search each searchable
 				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
 				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, sort, i, starts, "MultiSearcher thread #" + (i + 1));
 				msta[i].Start();
@@ -150,9 +166,12 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
-					; // TODO: what should we do with this???
+					// In 3.0 we will change this to throw
+					// InterruptedException instead
+					SupportClass.ThreadClass.Current().Interrupt();
+					throw new System.SystemException(ie.Message, ie);
 				}
 				System.IO.IOException ioe = msta[i].GetIOException();
 				if (ioe == null)
@@ -177,7 +196,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching document.
+		/// <p>{@link Collector#Collect(int)} is called for every matching document.
 		/// 
 		/// <p>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
@@ -189,18 +208,20 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="filter">if non-null, a bitset used to eliminate some documents
 		/// </param>
-		/// <param name="results">to receive hits
+		/// <param name="collector">to receive hits
 		/// 
+		/// TODO: parallelize this one too
 		/// </param>
-		/// <todo>  parallelize this one too </todo>
-		public override void  Search(Weight weight, Filter filter, HitCollector results)
+		public override void  Search(Weight weight, Filter filter, Collector collector)
 		{
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				
 				int start = starts[i];
 				
-				searchables[i].Search(weight, filter, new AnonymousClassHitCollector1(results, start, this));
+				Collector hc = new AnonymousClassCollector1(collector, start, this);
+				
+				searchables[i].Search(weight, filter, hc);
 			}
 		}
 		
@@ -215,10 +236,10 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary> A thread subclass for searching a single searchable </summary>
-	class MultiSearcherThread : SupportClass.ThreadClass
+	class MultiSearcherThread:SupportClass.ThreadClass
 	{
 		
-		private Lucene.Net.Search.Searchable searchable;
+		private Searchable searchable;
 		private Weight weight;
 		private Filter filter;
 		private int nDocs;
@@ -229,7 +250,7 @@ namespace Lucene.Net.Search
 		private System.IO.IOException ioe;
 		private Sort sort;
 		
-		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
+		public MultiSearcherThread(Searchable searchable, Weight weight, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
 		{
 			this.searchable = searchable;
 			this.weight = weight;
@@ -240,7 +261,7 @@ namespace Lucene.Net.Search
 			this.starts = starts;
 		}
 		
-		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name):base(name)
+		public MultiSearcherThread(Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name):base(name)
 		{
 			this.searchable = searchable;
 			this.weight = weight;
@@ -256,7 +277,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				docs = (sort == null) ? searchable.Search(weight, filter, nDocs) : searchable.Search(weight, filter, nDocs, sort);
+				docs = (sort == null)?searchable.Search(weight, filter, nDocs):searchable.Search(weight, filter, nDocs, sort);
 			}
 			// Store the IOException for later use by the caller of this thread
 			catch (System.IO.IOException ioe)
@@ -270,7 +291,25 @@ namespace Lucene.Net.Search
 				// if the searchable returns null for fields, we'll have problems.
 				if (sort != null)
 				{
-					((FieldDocSortedHitQueue) hq).SetFields(((TopFieldDocs) docs).fields);
+					TopFieldDocs docsFields = (TopFieldDocs) docs;
+					// If one of the Sort fields is FIELD_DOC, need to fix its values, so that
+					// it will break ties by doc Id properly. Otherwise, it will compare to
+					// 'relative' doc Ids, that belong to two different searchables.
+					for (int j = 0; j < docsFields.fields.Length; j++)
+					{
+						if (docsFields.fields[j].GetType() == SortField.DOC)
+						{
+							// iterate over the score docs and change their fields value
+							for (int j2 = 0; j2 < docs.scoreDocs.Length; j2++)
+							{
+								FieldDoc fd = (FieldDoc) docs.scoreDocs[j2];
+								fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
+							}
+							break;
+						}
+					}
+					
+					((FieldDocSortedHitQueue) hq).SetFields(docsFields.fields);
 				}
 				ScoreDoc[] scoreDocs = docs.scoreDocs;
 				for (int j = 0; j < scoreDocs.Length; j++)

@@ -22,7 +22,7 @@ namespace Lucene.Net.Demo.Html
 	
 	public class Entities
 	{
-		internal static readonly System.Collections.Hashtable decoder = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable(300));
+		internal static readonly System.Collections.Hashtable decoder = new System.Collections.Hashtable(300);
 		internal static readonly System.String[] encoder = new System.String[0x100];
 		
 		internal static System.String Decode(System.String entity)

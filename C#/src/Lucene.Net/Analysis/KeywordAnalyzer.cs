@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,27 +20,37 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> "Tokenizes" the entire stream as a single token. This is useful
-    /// for data like zip codes, ids, and some product names.
-    /// </summary>
-    public class KeywordAnalyzer : Analyzer
-    {
-        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-        {
-            return new KeywordTokenizer(reader);
-        }
-
-        public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
-        {
-            Tokenizer tokenizer = (Tokenizer)GetPreviousTokenStream();
-            if (tokenizer == null)
-            {
-                tokenizer = new KeywordTokenizer(reader);
-                SetPreviousTokenStream(tokenizer);
-            }
-            else
-                tokenizer.Reset(reader);
-            return tokenizer;
-        }
-    }
+	/// <summary> "Tokenizes" the entire stream as a single token. This is useful
+	/// for data like zip codes, ids, and some product names.
+	/// </summary>
+	public class KeywordAnalyzer:Analyzer
+	{
+		public KeywordAnalyzer()
+		{
+			SetOverridesTokenStreamMethod(typeof(KeywordAnalyzer));
+		}
+		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
+		{
+			return new KeywordTokenizer(reader);
+		}
+		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+		{
+			if (overridesTokenStreamMethod)
+			{
+				// LUCENE-1678: force fallback to tokenStream() if we
+				// have been subclassed and that subclass overrides
+				// tokenStream but not reusableTokenStream
+				return TokenStream(fieldName, reader);
+			}
+			Tokenizer tokenizer = (Tokenizer) GetPreviousTokenStream();
+			if (tokenizer == null)
+			{
+				tokenizer = new KeywordTokenizer(reader);
+				SetPreviousTokenStream(tokenizer);
+			}
+			else
+				tokenizer.Reset(reader);
+			return tokenizer;
+		}
+	}
 }

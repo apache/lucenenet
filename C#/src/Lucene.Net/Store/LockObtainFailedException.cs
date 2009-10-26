@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,14 +28,14 @@ namespace Lucene.Net.Store
 	/// <seealso cref="Lock.obtain(long).">
 	/// </seealso>
 	[Serializable]
-	public class LockObtainFailedException : System.IO.IOException
+	public class LockObtainFailedException:System.IO.IOException
 	{
-		public LockObtainFailedException(System.String message) : base(message)
+		public LockObtainFailedException(System.String message):base(message)
 		{
 		}
-		
-		public LockObtainFailedException(System.String message, Exception cause) : base(message, cause)
-		{
-		}
-	}
+
+        public LockObtainFailedException(System.String message, System.Exception ex) : base(message, ex)
+        {
+        }
+    }
 }

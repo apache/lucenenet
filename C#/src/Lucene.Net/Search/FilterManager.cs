@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,8 +20,8 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Filter caching singleton.  It can be used by {@link Lucene.Net.Search.RemoteCachingWrapperFilter}
-	/// or just to save filters locally for reuse.
+	/// <summary> Filter caching singleton.  It can be used 
+	/// to save filters locally for reuse.
 	/// This class makes it possble to cache Filters even when using RMI, as it
 	/// keeps the cache on the seaercher side of the RMI connection.
 	/// 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 				fi = (FilterItem) cache[(System.Int32) filter.GetHashCode()];
 				if (fi != null)
 				{
-					fi.timestamp = System.DateTime.Now.Millisecond; // {{Aroush-2.3.1}} do we want Millisecond or Ticks here?
+					fi.timestamp = System.DateTime.Now.Ticks;
 					return fi.filter;
 				}
 				cache[(System.Int32) filter.GetHashCode()] = new FilterItem(this, filter);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 				this.filter = filter;
-				this.timestamp = System.DateTime.Now.Millisecond; // {{Aroush-2.3.1}} do we want Millisecond or Ticks here?
+				this.timestamp = System.DateTime.Now.Ticks;
 			}
 		}
 		
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				public virtual int Compare(object a, object b)
+				public virtual int Compare(System.Object a, System.Object b)
 				{
 					if (a is System.Collections.DictionaryEntry && b is System.Collections.DictionaryEntry)
 					{
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
 					}
 					else
 					{
-						throw new System.InvalidCastException("objects are not Map.Entry");
+						throw new System.InvalidCastException("Objects are not Map.Entry");
 					}
 				}
 			}
@@ -221,12 +221,12 @@ namespace Lucene.Net.Search
 			}
 			
 			private bool running = true;
-			System.Collections.Generic.SortedDictionary<object, object> sortedFilterItems;
+            private System.Collections.Generic.SortedDictionary<object, object> sortedFilterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
-				sortedFilterItems = new System.Collections.Generic.SortedDictionary<object, object>(new AnonymousClassComparator(this));
+                sortedFilterItems = new System.Collections.Generic.SortedDictionary<object, object>(new AnonymousClassComparator(this));
 			}
 			
 			public virtual void  Run()
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
                             {
                                 sortedFilterItems.Add(entries.Entry.Key, entries.Entry.Value);
                             }
-							System.Collections.IEnumerator it = sortedFilterItems.GetEnumerator();
+                            System.Collections.IEnumerator it = sortedFilterItems.GetEnumerator();
 							int numToDelete = (int) ((Enclosing_Instance.cache.Count - Enclosing_Instance.cacheCleanSize) * 1.5);
 							int counter = 0;
 							// loop over the set and delete all of the cache entries not used in a while
@@ -265,9 +265,10 @@ namespace Lucene.Net.Search
 					{
 						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Enclosing_Instance.cleanSleepTime));
 					}
-					catch (System.Threading.ThreadInterruptedException)
+					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						// just keep going
+						SupportClass.ThreadClass.Current().Interrupt();
+						throw new System.SystemException(ie.Message, ie);
 					}
 				}
 			}

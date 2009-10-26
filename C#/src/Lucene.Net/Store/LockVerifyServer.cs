@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 		
 		private static System.String GetTime(long startTime)
 		{
-			return "[" + (((System.DateTime.Now.Ticks - 621355968000000000) / 10000 - startTime) / 1000) + "s] ";   // {{Aroush-2.3.1}} Is this OK?!
+			return "[" + ((System.DateTime.Now.Millisecond - startTime) / 1000) + "s] ";
 		}
 		
 		[STAThread]
@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
 			System.Console.Out.WriteLine("\nReady on port " + port + "...");
 			
 			int lockedID = 0;
-			long startTime = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+			long startTime = System.DateTime.Now.Millisecond;
 			
 			while (true)
 			{

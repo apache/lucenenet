@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 		public float score;
 		
 		/// <summary>Expert: A hit document's number.</summary>
-		/// <seealso cref="Searcher#Doc(int)">
+		/// <seealso cref="Searcher.Doc(int)">
 		/// </seealso>
 		public int doc;
 		
@@ -39,6 +39,12 @@ namespace Lucene.Net.Search
 		{
 			this.doc = doc;
 			this.score = score;
+		}
+		
+		// A convenience method for debugging.
+		public override System.String ToString()
+		{
+			return "doc=" + doc + " score=" + score;
 		}
 	}
 }

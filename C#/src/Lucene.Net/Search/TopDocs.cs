@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,9 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Stores the maximum score value encountered, needed for normalizing. </summary>
 		private float maxScore;
 		
-		/// <summary>Expert: Returns the maximum score value encountered. </summary>
+		/// <summary> Expert: Returns the maximum score value encountered. Note that in case
+		/// scores are not tracked, this returns {@link Float#NaN}.
+		/// </summary>
 		public virtual float GetMaxScore()
 		{
 			return maxScore;
@@ -45,6 +47,11 @@ namespace Lucene.Net.Search
 		public virtual void  SetMaxScore(float maxScore)
 		{
 			this.maxScore = maxScore;
+		}
+		
+		/// <summary>Expert: Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
+		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, System.Single.NaN)
+		{
 		}
 		
 		/// <summary>Expert: Constructs a TopDocs.</summary>

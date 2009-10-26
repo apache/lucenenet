@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,20 @@ using System;
 
 namespace Lucene.Net.Search
 {
+	
 	/// <summary> Expert: Returned by low-level sorted search implementations.
+	/// 
+	/// <p>Created: Feb 12, 2004 8:58:46 AM 
+	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: TopFieldDocs.java 472959 2006-11-09 16:21:50Z yonik $
+	/// <version>  $Id: TopFieldDocs.java 747745 2009-02-25 11:02:57Z mikemccand $
 	/// </version>
-	/// <seealso cref="Searcher#Search(Query,Filter,int,Sort)">
+	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 	/// </seealso>
 	[Serializable]
-	public class TopFieldDocs : TopDocs
+	public class TopFieldDocs:TopDocs
 	{
 		
 		/// <summary>The fields which were used to sort results by. </summary>
@@ -43,7 +47,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="maxScore">  The maximum score encountered.
 		/// </param>
-		internal TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore) : base(totalHits, scoreDocs, maxScore)
+		public TopFieldDocs(int totalHits, ScoreDoc[] scoreDocs, SortField[] fields, float maxScore):base(totalHits, scoreDocs, maxScore)
 		{
 			this.fields = fields;
 		}

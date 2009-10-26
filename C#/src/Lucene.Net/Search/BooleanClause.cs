@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,10 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Specifies how clauses are to occur in matching documents. </summary>
 		[Serializable]
-		public sealed class Occur : Parameter
+		public sealed class Occur:Parameter
 		{
 			
-			internal Occur(System.String name) : base(name)
+			internal Occur(System.String name):base(name)
 			{
 			}
 			
@@ -107,10 +107,10 @@ namespace Lucene.Net.Search
 		
 		
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
 		{
-			if (!(o is BooleanClause))
+			if (o == null || !(o is BooleanClause))
 				return false;
 			BooleanClause other = (BooleanClause) o;
 			return this.query.Equals(other.query) && this.occur.Equals(other.occur);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ (Occur.MUST.Equals(occur) ? 1 : 0) ^ (Occur.MUST_NOT.Equals(occur) ? 2 : 0);
+			return query.GetHashCode() ^ (Occur.MUST.Equals(occur)?1:0) ^ (Occur.MUST_NOT.Equals(occur)?2:0);
 		}
 		
 		

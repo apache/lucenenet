@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Documents
@@ -29,7 +30,7 @@ namespace Lucene.Net.Documents
 	public sealed class FieldSelectorResult
 	{
 		
-		/// <summary> Load this {@link Field} every time the {@link Document} is loaded, reading in the data as it is encounterd.
+		/// <summary> Load this {@link Field} every time the {@link Document} is loaded, reading in the data as it is encountered.
 		/// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
 		/// <p/>
 		/// {@link Document#Add(Fieldable)} should be called by the Reader.
@@ -62,8 +63,13 @@ namespace Lucene.Net.Documents
 		/// <summary> Behaves much like {@link #LOAD} but does not uncompress any compressed data.  This is used for internal purposes.
 		/// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
 		/// <p/>
-		/// {@link Document#Add(Fieldable)} should be called by the Reader.
+		/// {@link Document#Add(Fieldable)} should be called by
+		/// the Reader.
 		/// </summary>
+		/// <deprecated> This is an internal option only, and is
+		/// no longer needed now that {@link CompressionTools}
+		/// is used for field compression.
+		/// </deprecated>
 		[NonSerialized]
 		public static readonly FieldSelectorResult LOAD_FOR_MERGE = new FieldSelectorResult(4);
 		
@@ -87,7 +93,7 @@ namespace Lucene.Net.Documents
 			this.id = id;
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;

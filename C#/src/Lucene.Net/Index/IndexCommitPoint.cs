@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,23 +15,13 @@
  * limitations under the License.
  */
 
-/// <summary> <p>Expert: represents a single commit into an index as seen by the
-/// {@link IndexDeletionPolicy}. 
-/// <p>
-/// Changes to the content of an index are made visible only
-/// after the writer who made that change had written to the
-/// directory a new segments file (<code>segments_N</code>). This point in 
-/// time, when the action of writing of a new segments file to the
-/// directory is completed, is therefore an index commit point.
-/// <p>
-/// Each index commit point has a unique segments file associated
-/// with it. The segments file associated with a later 
-/// index commit point would have a larger N.
-/// </summary>
-
+using System;
 
 namespace Lucene.Net.Index
 {
+	
+	/// <deprecated> Please subclass IndexCommit class instead
+	/// </deprecated>
 	
 	public interface IndexCommitPoint
 	{
@@ -39,10 +29,10 @@ namespace Lucene.Net.Index
 		/// <summary> Get the segments file (<code>segments_N</code>) associated 
 		/// with this commit point.
 		/// </summary>
-		string GetSegmentsFileName();
+		System.String GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		System.Collections.Generic.ICollection<string> GetFileNames();
+		System.Collections.ICollection GetFileNames();
 		
 		/// <summary> Delete this commit point.
 		/// <p>
@@ -53,6 +43,6 @@ namespace Lucene.Net.Index
 		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
 		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
 		/// </summary>
-		void Delete();
+		void  Delete();
 	}
 }

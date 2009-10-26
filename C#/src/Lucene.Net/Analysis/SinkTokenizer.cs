@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,13 +22,18 @@ namespace Lucene.Net.Analysis
 	
 	
 	/// <summary> A SinkTokenizer can be used to cache Tokens for use in an Analyzer
-	/// 
+	/// <p/>
+	/// WARNING: {@link TeeTokenFilter} and {@link SinkTokenizer} only work with the old TokenStream API.
+	/// If you switch to the new API, you need to use {@link TeeSinkTokenFilter} instead, which offers 
+	/// the same functionality.
 	/// </summary>
 	/// <seealso cref="TeeTokenFilter">
-	/// 
-	/// 
 	/// </seealso>
-	public class SinkTokenizer : Tokenizer
+	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
+	/// 
+	/// 
+	/// </deprecated>
+	public class SinkTokenizer:Tokenizer
 	{
 		protected internal System.Collections.IList lst = new System.Collections.ArrayList();
 		protected internal System.Collections.IEnumerator iter;
@@ -56,7 +61,8 @@ namespace Lucene.Net.Analysis
 		/// to be made available.  Also, this Tokenizer does nothing to protect against {@link java.util.ConcurrentModificationException}s
 		/// in the case of adds happening while {@link #Next(Lucene.Net.Analysis.Token)} is being called.
 		/// <p/>
-        /// WARNING: Since this SinkTokenizer can be reset and the cached tokens made available again, do not modify them.  Modify clones instead.
+		/// WARNING: Since this SinkTokenizer can be reset and the cached tokens made available again, do not modify them. Modify clones instead.
+		/// 
 		/// </summary>
 		/// <returns> A List of {@link Lucene.Net.Analysis.Token}s
 		/// </returns>
@@ -69,20 +75,19 @@ namespace Lucene.Net.Analysis
 		/// <returns> The next {@link Lucene.Net.Analysis.Token} in the Sink.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public override Token Next(/* in */ Token reusableToken)
+		public override Token Next(Token reusableToken)
 		{
-            System.Diagnostics.Debug.Assert(reusableToken != null); 
+			System.Diagnostics.Debug.Assert(reusableToken != null);
 			if (iter == null)
 				iter = lst.GetEnumerator();
-            if (iter.MoveNext())
-            {
-                Token nextToken = (Token) iter.Current;
-                return (Token) nextToken.Clone();
-            }
-            return null;
+			// Since this TokenStream can be reset we have to maintain the tokens as immutable
+			if (iter.MoveNext())
+			{
+				Token nextToken = (Token) iter.Current;
+				return (Token) nextToken.Clone();
+			}
+			return null;
 		}
-		
-		
 		
 		/// <summary> Override this method to cache only certain tokens, or new tokens based
 		/// on the old tokens.

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,13 +23,16 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
-	sealed public class TermScorer : Scorer
+	sealed class TermScorer:Scorer
 	{
+		
+		private static readonly float[] SIM_NORM_DECODER;
+		
 		private Weight weight;
 		private TermDocs termDocs;
 		private byte[] norms;
 		private float weightValue;
-		private int doc;
+		private int doc = - 1;
 		
 		private int[] docs = new int[32]; // buffered doc numbers
 		private int[] freqs = new int[32]; // buffered term freqs
@@ -39,16 +42,19 @@ namespace Lucene.Net.Search
 		private const int SCORE_CACHE_SIZE = 32;
 		private float[] scoreCache = new float[SCORE_CACHE_SIZE];
 		
-		/// <summary>Construct a <code>TermScorer</code>.</summary>
+		/// <summary> Construct a <code>TermScorer</code>.
+		/// 
+		/// </summary>
 		/// <param name="weight">The weight of the <code>Term</code> in the query.
 		/// </param>
 		/// <param name="td">An iterator over the documents matching the <code>Term</code>.
 		/// </param>
-		/// <param name="similarity">The </code>Similarity</code> implementation to be used for score computations.
+		/// <param name="similarity">The </code>Similarity</code> implementation to be used for score
+		/// computations.
 		/// </param>
 		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
 		/// </param>
-		public TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms) : base(similarity)
+		internal TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.weight = weight;
 			this.termDocs = td;
@@ -59,25 +65,33 @@ namespace Lucene.Net.Search
 				scoreCache[i] = GetSimilarity().Tf(i) * weightValue;
 		}
 		
+		/// <deprecated> use {@link #Score(Collector)} instead. 
+		/// </deprecated>
 		public override void  Score(HitCollector hc)
 		{
-			Next();
-			Score(hc, System.Int32.MaxValue);
+			Score(new HitCollectorWrapper(hc));
 		}
 		
+		public override void  Score(Collector c)
+		{
+			Score(c, System.Int32.MaxValue, NextDoc());
+		}
+		
+		/// <deprecated> use {@link #Score(Collector, int, int)} instead. 
+		/// </deprecated>
 		protected internal override bool Score(HitCollector c, int end)
 		{
-			Similarity similarity = GetSimilarity(); // cache sim in local
-			float[] normDecoder = Similarity.GetNormDecoder();
+			return Score(new HitCollectorWrapper(c), end, doc);
+		}
+		
+		// firstDocID is ignored since nextDoc() sets 'doc'
+		public /*protected internal*/ override bool Score(Collector c, int end, int firstDocID)
+		{
+			c.SetScorer(this);
 			while (doc < end)
 			{
 				// for docs in window
-				int f = freqs[pointer];
-				float score = f < SCORE_CACHE_SIZE ? scoreCache[f] : similarity.Tf(f) * weightValue; // cache miss
-				
-				score *= normDecoder[norms[doc] & 0xFF]; // normalize for field
-				
-				c.Collect(doc, score); // collect score
+				c.Collect(doc); // collect score
 				
 				if (++pointer >= pointerMax)
 				{
@@ -98,21 +112,40 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
-		/// <summary>Returns the current document number matching the query.
-		/// Initially invalid, until {@link #next()} is called the first time.
-		/// </summary>
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
 		{
 			return doc;
 		}
 		
-		/// <summary>Advances to the next document matching the query.
-		/// <br>The iterator over the matching documents is buffered using
+		public override int DocID()
+		{
+			return doc;
+		}
+		
+		/// <summary> Advances to the next document matching the query. <br>
+		/// The iterator over the matching documents is buffered using
 		/// {@link TermDocs#Read(int[],int[])}.
+		/// 
 		/// </summary>
 		/// <returns> true iff there is another document matching the query.
 		/// </returns>
+		/// <deprecated> use {@link #NextDoc()} instead.
+		/// </deprecated>
 		public override bool Next()
+		{
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		/// <summary> Advances to the next document matching the query. <br>
+		/// The iterator over the matching documents is buffered using
+		/// {@link TermDocs#Read(int[],int[])}.
+		/// 
+		/// </summary>
+		/// <returns> the document matching the query or -1 if there are no more documents.
+		/// </returns>
+		public override int NextDoc()
 		{
 			pointer++;
 			if (pointer >= pointerMax)
@@ -125,39 +158,55 @@ namespace Lucene.Net.Search
 				else
 				{
 					termDocs.Close(); // close stream
-					doc = System.Int32.MaxValue; // set to sentinel value
-					return false;
+					return doc = NO_MORE_DOCS;
 				}
 			}
 			doc = docs[pointer];
-			return true;
+			return doc;
 		}
 		
 		public override float Score()
 		{
+			System.Diagnostics.Debug.Assert(doc != - 1);
 			int f = freqs[pointer];
-			float raw = f < SCORE_CACHE_SIZE ? scoreCache[f] : GetSimilarity().Tf(f) * weightValue; // cache miss
+			float raw = f < SCORE_CACHE_SIZE?scoreCache[f]:GetSimilarity().Tf(f) * weightValue; // cache miss
 			
-			return raw * Similarity.DecodeNorm(norms[doc]); // normalize for field
+			return norms == null?raw:raw * SIM_NORM_DECODER[norms[doc] & 0xFF]; // normalize for field
 		}
 		
-		/// <summary>Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. 
-		/// <br>The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// <summary> Skips to the first match beyond the current whose document number is
+		/// greater than or equal to a given target. <br>
+		/// The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// 
 		/// </summary>
 		/// <param name="target">The target document number.
 		/// </param>
 		/// <returns> true iff there is such a match.
 		/// </returns>
+		/// <deprecated> use {@link #Advance(int)} instead.
+		/// </deprecated>
 		public override bool SkipTo(int target)
+		{
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		/// <summary> Advances to the first match beyond the current whose document number is
+		/// greater than or equal to a given target. <br>
+		/// The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// 
+		/// </summary>
+		/// <param name="target">The target document number.
+		/// </param>
+		/// <returns> the matching document or -1 if none exist.
+		/// </returns>
+		public override int Advance(int target)
 		{
 			// first scan in cache
 			for (pointer++; pointer < pointerMax; pointer++)
 			{
 				if (docs[pointer] >= target)
 				{
-					doc = docs[pointer];
-					return true;
+					return doc = docs[pointer];
 				}
 			}
 			
@@ -172,13 +221,13 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-				doc = System.Int32.MaxValue;
+				doc = NO_MORE_DOCS;
 			}
-			return result;
+			return doc;
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #next()} method
+		/// <br>When this method is used, the {@link #Next()} method
 		/// and the {@link #Score(HitCollector)} method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.
@@ -215,6 +264,10 @@ namespace Lucene.Net.Search
 		public override System.String ToString()
 		{
 			return "scorer(" + weight + ")";
+		}
+		static TermScorer()
+		{
+			SIM_NORM_DECODER = Similarity.GetNormDecoder();
 		}
 	}
 }

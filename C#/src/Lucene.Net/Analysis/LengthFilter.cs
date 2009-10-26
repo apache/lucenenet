@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,46 +17,50 @@
 
 using System;
 
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> Removes words that are too long and too short from the stream.
-    /// 
-    /// 
-    /// </summary>
-    /// <version>  $Id: LengthFilter.java 564715 2007-08-10 18:34:33Z mikemccand $
-    /// </version>
-    public sealed class LengthFilter : TokenFilter
-    {
+	/// <summary> Removes words that are too long or too short from the stream.
+	/// 
+	/// 
+	/// </summary>
+	/// <version>  $Id: LengthFilter.java 807201 2009-08-24 13:22:34Z markrmiller $
+	/// </version>
+	public sealed class LengthFilter:TokenFilter
+	{
 		
-        internal int min;
-        internal int max;
+		internal int min;
+		internal int max;
 		
-        /// <summary> Build a filter that removes words that are too long or too
-        /// short from the text.
-        /// </summary>
-        public LengthFilter(TokenStream in_Renamed, int min, int max) : base(in_Renamed)
-        {
-            this.min = min;
-            this.max = max;
-        }
+		private TermAttribute termAtt;
 		
-        /// <summary> Returns the next input Token whose term() is the right len</summary>
-        public override Token Next(/* in */ Token reusableToken)
-        {
-            System.Diagnostics.Debug.Assert(reusableToken != null);
-            // return the first non-stop word found
-            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
-            {
-                int len = nextToken.TermLength();
-                if (len >= min && len <= max)
-                {
-                    return nextToken;
-                }
-                // note: else we ignore it but should we index each part of it?
-            }
-            // reached EOS -- return null
-            return null;
-        }
-    }
+		/// <summary> Build a filter that removes words that are too long or too
+		/// short from the text.
+		/// </summary>
+		public LengthFilter(TokenStream in_Renamed, int min, int max):base(in_Renamed)
+		{
+			this.min = min;
+			this.max = max;
+			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+		}
+		
+		/// <summary> Returns the next input Token whose term() is the right len</summary>
+		public override bool IncrementToken()
+		{
+			// return the first non-stop word found
+			while (input.IncrementToken())
+			{
+				int len = termAtt.TermLength();
+				if (len >= min && len <= max)
+				{
+					return true;
+				}
+				// note: else we ignore it but should we index each part of it?
+			}
+			// reached EOS -- return null
+			return false;
+		}
+	}
 }

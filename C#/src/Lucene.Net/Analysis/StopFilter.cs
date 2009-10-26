@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,30 +17,74 @@
 
 using System;
 
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> Removes stop words from a token stream.</summary>
+	/// <summary> Removes stop words from a token stream.</summary>
 	
-    public sealed class StopFilter : TokenFilter
-    {
+	public sealed class StopFilter:TokenFilter
+	{
 		
+		// deprecated
 		private static bool ENABLE_POSITION_INCREMENTS_DEFAULT = false;
 		
 		private CharArraySet stopWords;
 		private bool enablePositionIncrements = ENABLE_POSITION_INCREMENTS_DEFAULT;
 		
-        /// <summary> Construct a token stream filtering the given input.</summary>
-        public StopFilter(TokenStream input, System.String[] stopWords) : this(input, stopWords, false)
-        {
-        }
-
-        /// <summary> Constructs a filter which removes words from the input
-        /// TokenStream that are named in the array of words.
-        /// </summary>
-		public StopFilter(TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase) : base(in_Renamed)
+		private TermAttribute termAtt;
+		private PositionIncrementAttribute posIncrAtt;
+		
+		/// <summary> Construct a token stream filtering the given input.</summary>
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, String[])} instead
+		/// </deprecated>
+		public StopFilter(TokenStream input, System.String[] stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, false)
+		{
+		}
+		
+		/// <summary> Construct a token stream filtering the given input.</summary>
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
+		/// </param>
+		/// <param name="input">input TokenStream
+		/// </param>
+		/// <param name="stopWords">array of stop words
+		/// </param>
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead.
+		/// </deprecated>
+		public StopFilter(bool enablePositionIncrements, TokenStream input, System.String[] stopWords):this(enablePositionIncrements, input, stopWords, false)
+		{
+		}
+		
+		/// <summary> Constructs a filter which removes words from the input
+		/// TokenStream that are named in the array of words.
+		/// </summary>
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, String[], boolean)} instead
+		/// </deprecated>
+		public StopFilter(TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, ignoreCase)
+		{
+		}
+		
+		/// <summary> Constructs a filter which removes words from the input
+		/// TokenStream that are named in the array of words.
+		/// </summary>
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
+		/// </param>
+		/// <param name="in">input TokenStream
+		/// </param>
+		/// <param name="stopWords">array of stop words
+		/// </param>
+		/// <param name="ignoreCase">true if case is ignored
+		/// </param>
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead.
+		/// </deprecated>
+		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):base(in_Renamed)
 		{
 			this.stopWords = (CharArraySet) MakeStopSet(stopWords, ignoreCase);
+			this.enablePositionIncrements = enablePositionIncrements;
+			Init();
 		}
 		
 		
@@ -61,7 +105,32 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <param name="ignoreCase">-Ignore case when stopping.
 		/// </param>
-		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase) : base(input)
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead
+		/// </deprecated>
+		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
+		{
+		}
+		
+		/// <summary> Construct a token stream filtering the given input.
+		/// If <code>stopWords</code> is an instance of {@link CharArraySet} (true if
+		/// <code>makeStopSet()</code> was used to construct the set) it will be directly used
+		/// and <code>ignoreCase</code> will be ignored since <code>CharArraySet</code>
+		/// directly controls case sensitivity.
+		/// <p/>
+		/// If <code>stopWords</code> is not an instance of {@link CharArraySet},
+		/// a new CharArraySet will be constructed and <code>ignoreCase</code> will be
+		/// used to specify the case sensitivity of that set.
+		/// 
+		/// </summary>
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
+		/// </param>
+		/// <param name="input">Input TokenStream
+		/// </param>
+		/// <param name="stopWords">The set of Stop Words.
+		/// </param>
+		/// <param name="ignoreCase">-Ignore case when stopping.
+		/// </param>
+		public StopFilter(bool enablePositionIncrements, TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):base(input)
 		{
 			if (stopWords is CharArraySet)
 			{
@@ -70,11 +139,10 @@ namespace Lucene.Net.Analysis
 			else
 			{
 				this.stopWords = new CharArraySet(stopWords.Count, ignoreCase);
-				foreach (System.String sw in stopWords.Values)
-				{
-					this.stopWords.Add(sw);
-				}
+				this.stopWords.Add(stopWords);
 			}
+			this.enablePositionIncrements = enablePositionIncrements;
+			Init();
 		}
 		
 		/// <summary> Constructs a filter which removes words from the input
@@ -83,8 +151,32 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(java.lang.String[])">
 		/// </seealso>
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords) : this(in_Renamed, stopWords, false)
+		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead
+		/// </deprecated>
+		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
 		{
+		}
+		
+		/// <summary> Constructs a filter which removes words from the input
+		/// TokenStream that are named in the Set.
+		/// 
+		/// </summary>
+		/// <param name="enablePositionIncrements">true if token positions should record the removed stop words
+		/// </param>
+		/// <param name="in">Input stream
+		/// </param>
+		/// <param name="stopWords">The set of Stop Words.
+		/// </param>
+		/// <seealso cref="MakeStopSet(java.lang.String[])">
+		/// </seealso>
+		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(enablePositionIncrements, in_Renamed, stopWords, false)
+		{
+		}
+		
+		public void  Init()
+		{
+			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+			posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
 		}
 		
 		/// <summary> Builds a Set from an array of stop words,
@@ -100,8 +192,21 @@ namespace Lucene.Net.Analysis
 			return MakeStopSet(stopWords, false);
 		}
 		
+		/// <summary> Builds a Set from an array of stop words,
+		/// appropriate for passing into the StopFilter constructor.
+		/// This permits this stopWords construction to be cached once when
+		/// an Analyzer is constructed.
+		/// 
+		/// </summary>
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// </seealso>
+		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords)
+		{
+			return MakeStopSet(stopWords, false);
+		}
+		
 		/// <summary> </summary>
-		/// <param name="stopWords">
+		/// <param name="stopWords">An array of stopwords
 		/// </param>
 		/// <param name="ignoreCase">If true, all words are lower cased first.  
 		/// </param>
@@ -110,37 +215,49 @@ namespace Lucene.Net.Analysis
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
-			for (int i = 0; i < stopWords.Length; i++)
-			{
-				stopSet.Add(stopWords[i]);
-			}
+			stopSet.Add(new System.Collections.ArrayList(stopWords));
+			return stopSet;
+		}
+		
+		/// <summary> </summary>
+		/// <param name="stopWords">A List of Strings representing the stopwords
+		/// </param>
+		/// <param name="ignoreCase">if true, all words are lower cased first
+		/// </param>
+		/// <returns> A Set containing the words
+		/// </returns>
+		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords, bool ignoreCase)
+		{
+			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
+			stopSet.Add(stopWords);
 			return stopSet;
 		}
 		
 		/// <summary> Returns the next input Token whose term() is not a stop word.</summary>
-        public override Token Next(/* in */ Token reusableToken)
+		public override bool IncrementToken()
 		{
-            System.Diagnostics.Debug.Assert(reusableToken != null);
 			// return the first non-stop word found
 			int skippedPositions = 0;
-            for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
-            {
-				if (!stopWords.Contains(nextToken.TermBuffer(), 0, nextToken.TermLength()))
+			while (input.IncrementToken())
+			{
+				if (!stopWords.Contains(termAtt.TermBuffer(), 0, termAtt.TermLength()))
 				{
 					if (enablePositionIncrements)
 					{
-						nextToken.SetPositionIncrement(nextToken.GetPositionIncrement() + skippedPositions);
+						posIncrAtt.SetPositionIncrement(posIncrAtt.GetPositionIncrement() + skippedPositions);
 					}
-					return nextToken;
+					return true;
 				}
-				skippedPositions += nextToken.GetPositionIncrement();
+				skippedPositions += posIncrAtt.GetPositionIncrement();
 			}
 			// reached EOS -- return null
-			return null;
+			return false;
 		}
 		
 		/// <seealso cref="setEnablePositionIncrementsDefault(boolean).">
 		/// </seealso>
+		/// <deprecated> Please specify this when you create the StopFilter
+		/// </deprecated>
 		public static bool GetEnablePositionIncrementsDefault()
 		{
 			return ENABLE_POSITION_INCREMENTS_DEFAULT;
@@ -157,6 +274,8 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="setEnablePositionIncrements(boolean).">
 		/// </seealso>
+		/// <deprecated> Please specify this when you create the StopFilter
+		/// </deprecated>
 		public static void  SetEnablePositionIncrementsDefault(bool defaultValue)
 		{
 			ENABLE_POSITION_INCREMENTS_DEFAULT = defaultValue;
@@ -169,12 +288,20 @@ namespace Lucene.Net.Analysis
 			return enablePositionIncrements;
 		}
 		
-		/// <summary> Set to <code>true</code> to make <b>this</b> StopFilter enable position increments to result tokens.
-		/// <p>
-		/// When set, when a token is stopped (omitted), the position increment of 
-		/// the following token is incremented.  
-		/// <p>
-		/// Default: see {@link #SetEnablePositionIncrementsDefault(boolean)}.
+		/// <summary> If <code>true</code>, this StopFilter will preserve
+		/// positions of the incoming tokens (ie, accumulate and
+		/// set position increments of the removed stop tokens).
+		/// Generally, <code>true</code> is best as it does not
+		/// lose information (positions of the original tokens)
+		/// during indexing.
+		/// 
+		/// <p> When set, when a token is stopped
+		/// (omitted), the position increment of the following
+		/// token is incremented.
+		/// 
+		/// <p> <b>NOTE</b>: be sure to also
+		/// set {@link QueryParser#setEnablePositionIncrements} if
+		/// you use QueryParser to create queries.
 		/// </summary>
 		public void  SetEnablePositionIncrements(bool enable)
 		{

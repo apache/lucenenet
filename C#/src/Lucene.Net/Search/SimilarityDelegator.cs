@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+
 namespace Lucene.Net.Search
 {
 	
@@ -25,7 +27,7 @@ namespace Lucene.Net.Search
 	/// methods of a Searcher's Similiarty implementation.. 
 	/// </summary>
 	[Serializable]
-	public class SimilarityDelegator : Similarity
+	public class SimilarityDelegator:Similarity
 	{
 		
 		private Similarity delegee;
@@ -38,6 +40,11 @@ namespace Lucene.Net.Search
 		public SimilarityDelegator(Similarity delegee)
 		{
 			this.delegee = delegee;
+		}
+		
+		public override float ComputeNorm(System.String fieldName, FieldInvertState state)
+		{
+			return delegee.ComputeNorm(fieldName, state);
 		}
 		
 		public override float LengthNorm(System.String fieldName, int numTerms)
@@ -69,10 +76,10 @@ namespace Lucene.Net.Search
 		{
 			return delegee.Coord(overlap, maxOverlap);
 		}
-
-        public override float ScorePayload(string fieldName, byte[] payload, int offset, int length)
-        {
-            return delegee.ScorePayload(fieldName, payload, offset, length);
-        }
+		
+		public override float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
+		{
+			return delegee.ScorePayload(fieldName, payload, offset, length);
+		}
 	}
 }

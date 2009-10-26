@@ -1,9 +1,23 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="Author" content="Doug Cutting">
-   <meta content="Grant Ingersoll"  name="Author">
 </head>
 <body>
 Code to search indices.
@@ -22,8 +36,8 @@ Code to search indices.
 Search over indices.
 
 Applications usually call {@link
-org.apache.lucene.search.Searcher#search(Query)} or {@link
-org.apache.lucene.search.Searcher#search(Query,Filter)}.
+Lucene.Net.Search.Searcher#search(Query)} or {@link
+Lucene.Net.Search.Searcher#search(Query,Filter)}.
 
     <!-- FILL IN MORE HERE -->   
 </p>
@@ -122,23 +136,40 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
         </li>
     </ol>
 </p>
+
 <h4>
-    <a href = "RangeQuery.html">RangeQuery</a>
+    <a href = "TermRangeQuery.html">TermRangeQuery</a>
 </h4>
 
 <p>The
-    <a href = "RangeQuery.html">RangeQuery</a>
+    <a href = "TermRangeQuery.html">TermRangeQuery</a>
     matches all documents that occur in the
     exclusive range of a lower
     <a href = "index/Term.html">Term</a>
     and an upper
     <a href = "index/Term.html">Term</a>.
+    according to {@link java.lang.String#compareTo(String)}. It is not intended
+    for numerical ranges, use <a href = "NumericRangeQuery.html">NumericRangeQuery</a> instead.
+
     For example, one could find all documents
     that have terms beginning with the letters <tt>a</tt> through <tt>c</tt>. This type of <a
         href="Query.html">Query</a> is frequently used to
     find
     documents that occur in a specific date range.
 </p>
+
+<h4>
+    <a href = "NumericRangeQuery.html">NumericRangeQuery</a>
+</h4>
+
+<p>The
+    <a href = "NumericRangeQuery.html">NumericRangeQuery</a>
+    matches all documents that occur in a numeric range.
+    For NumericRangeQuery to work, you must index the values
+    using a special <a href = "document/NumericField.html">
+    NumericField</a>.
+</p>
+
 <h4>
     <a href = "PrefixQuery.html">PrefixQuery</a>,
     <a href = "WildcardQuery.html">WildcardQuery</a>
@@ -192,9 +223,9 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
     you'll want to simply subclass
     <a href = "DefaultSimilarity.html">DefaultSimilarity</a>) and then use the new
     class by calling
-    <a href = "index/IndexWriter.html#setSimilarity(org.apache.lucene.search.Similarity)">IndexWriter.setSimilarity</a>
+    <a href = "index/IndexWriter.html#setSimilarity(Lucene.Net.Search.Similarity)">IndexWriter.setSimilarity</a>
     before indexing and
-    <a href = "Searcher.html#setSimilarity(org.apache.lucene.search.Similarity)">Searcher.setSimilarity</a>
+    <a href = "Searcher.html#setSimilarity(Lucene.Net.Search.Similarity)">Searcher.setSimilarity</a>
     before searching.
 </p>
 
@@ -268,7 +299,7 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
             <li>rewrite(IndexReader reader) &mdash; Rewrites queries into primitive queries. Primitive queries are:
                 <a href = "TermQuery.html">TermQuery</a>,
                 <a href = "BooleanQuery.html">BooleanQuery</a>, <span
-                    >OTHERS????</span></li>
+                    >and other queries that implement Query.html#createWeight(Searcher searcher)</span></li>
         </ol>
     </p>
 <h4>The Weight Interface</h4>
@@ -295,8 +326,8 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
                     Weight#normalize(float)</a> &mdash; Determine the query normalization factor. The query normalization may
                 allow for comparing scores between queries.</li>
             <li>
-                <a href = "Weight.html#scorer(IndexReader)">
-                    Weight#scorer(IndexReader)</a> &mdash; Construct a new
+                <a href = "Weight.html#scorer(Lucene.Net.Index.IndexReader, boolean, boolean)">
+                    Weight#scorer(IndexReader, boolean, boolean)</a> &mdash; Construct a new
                 <a href = "Scorer.html">Scorer</a>
                 for this Weight. See
                 <a href = "#The Scorer Class">The Scorer Class</a>
@@ -304,8 +335,8 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
                 Scorer is responsible for doing the actual scoring of documents given the Query.
             </li>
             <li>
-                <a href = "Weight.html#explain(IndexReader, int)">
-                    Weight#explain(IndexReader, int)</a> &mdash; Provide a means for explaining why a given document was
+                <a href = "Weight.html#explain(Lucene.Net.Search.Searcher, Lucene.Net.Index.IndexReader, int)">
+                    Weight#explain(Searcher, IndexReader, int)</a> &mdash; Provide a means for explaining why a given document was
                 scored
                 the way it was.</li>
         </ol>
@@ -314,17 +345,22 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
     <p>The
         <a href = "Scorer.html">Scorer</a>
         abstract class provides common scoring functionality for all Scorer implementations and
-        is the heart of the Lucene scoring process. The Scorer defines the following abstract methods which
-        must be implemented:
+        is the heart of the Lucene scoring process. The Scorer defines the following abstract (they are not
+        yet abstract, but will be in Lucene 3.0 and should be considered as such now) methods which
+        must be implemented (some of them inherited from <a href = "DocIdSetIterator.html">DocIdSetIterator</a> ):
         <ol>
             <li>
-                <a href = "Scorer.html#next()">Scorer#next()</a> &mdash; Advances to the next
+                <a href = "DocIdSetIterator.html#nextDoc()">DocIdSetIterator#nextDoc()</a> &mdash; Advances to the next
                 document that matches this Query, returning true if and only
                 if there is another document that matches.</li>
             <li>
-                <a href = "Scorer.html#doc()">Scorer#doc()</a> &mdash; Returns the id of the
+                <a href = "DocIdSetIterator.html#docID()">DocIdSetIterator#docID()</a> &mdash; Returns the id of the
                 <a href = "document/Document.html">Document</a>
                 that contains the match. It is not valid until next() has been called at least once.
+            </li>
+            <li>
+                <a href = "Scorer.html#score(Lucene.Net.Search.Collector)">Scorer#score(Collector)</a> &mdash;
+                Scores and collects all matching documents using the given Collector.
             </li>
             <li>
                 <a href = "Scorer.html#score()">Scorer#score()</a> &mdash; Return the score of the
@@ -334,14 +370,11 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
                 returns the tf * Weight.getValue() * fieldNorm.
             </li>
             <li>
-                <a href = "Scorer.html#skipTo(int)">Scorer#skipTo(int)</a> &mdash; Skip ahead in
+                <a href = "DocIdSetIterator.html#advance(int)">DocIdSetIterator#advance(int)</a> &mdash; Skip ahead in
                 the document matches to the document whose id is greater than
-                or equal to the passed in value. In many instances, skipTo can be
+                or equal to the passed in value. In many instances, advance can be
                 implemented more efficiently than simply looping through all the matching documents until
                 the target document is identified.</li>
-            <li>
-                <a href = "Scorer.html#explain(int)">Scorer#explain(int)</a> &mdash; Provides
-                details on why the score came about.</li>
         </ol>
     </p>
 <h4>Why would I want to add my own Query?</h4>
@@ -351,8 +384,6 @@ org.apache.lucene.search.Searcher#search(Query,Filter)}.
         task that you want to do. You might be doing some cutting edge research or you need more information
         back
         out of Lucene (similar to Doug adding SpanQuery functionality).</p>
-<h4>Examples</h4>
-    <p >FILL IN HERE</p>
 
 </body>
 </html>

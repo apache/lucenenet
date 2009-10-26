@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,37 +20,46 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary>A TokenFilter is a TokenStream whose input is another token stream.
-    /// <p>
-    /// This is an abstract class.
-    /// NOTE: subclasses must override {@link #Next(Token)}.
-    /// It's also OK to instead override {@link #Next()}, but
-    /// that method is now deprecated in favor of {@link #Next(Token)}.
+	/// <summary>A TokenFilter is a TokenStream whose input is another token stream.
+	/// <p>
+	/// This is an abstract class.
+	/// NOTE: subclasses must override 
+	/// {@link #IncrementToken()} if the new TokenStream API is used
+	/// and {@link #Next(Token)} or {@link #Next()} if the old
+	/// TokenStream API is used.
+	/// <p>
+	/// See {@link TokenStream}
 	/// </summary>
-    public abstract class TokenFilter : TokenStream
-    {
-        /// <summary>The source of tokens for this filter. </summary>
-        protected internal TokenStream input;
+	public abstract class TokenFilter:TokenStream
+	{
+		/// <summary>The source of tokens for this filter. </summary>
+		protected internal TokenStream input;
 		
-        /// <summary>Construct a token stream filtering the given input. </summary>
-        protected internal TokenFilter(TokenStream input)
-        {
-            this.input = input;
-        }
+		/// <summary>Construct a token stream filtering the given input. </summary>
+		protected internal TokenFilter(TokenStream input):base(input)
+		{
+			this.input = input;
+		}
 		
-        /// <summary>Close the input TokenStream. </summary>
-        public override void  Close()
-        {
-            input.Close();
-        }
-
-        /// <summary>
-        /// Reset the filter as well as the input TokenStream.
-        /// </summary>
-        public override void Reset()
-        {
-            base.Reset();
-            input.Reset();
-        }
-    }
+		/// <summary>Performs end-of-stream operations, if any, and calls then <code>end()</code> on the
+		/// input TokenStream.<p/> 
+		/// <b>NOTE:</b> Be sure to call <code>super.end()</code> first when overriding this method.
+		/// </summary>
+		public override void  End()
+		{
+			input.End();
+		}
+		
+		/// <summary>Close the input TokenStream. </summary>
+		public override void  Close()
+		{
+			input.Close();
+		}
+		
+		/// <summary>Reset the filter as well as the input TokenStream. </summary>
+		public override void  Reset()
+		{
+			input.Reset();
+		}
+	}
 }

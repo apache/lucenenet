@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using System.Runtime.InteropServices;
+
 namespace Lucene.Net.Index
 {
 	
@@ -24,9 +26,11 @@ namespace Lucene.Net.Index
 	/// offset information.  This offset information is the character offset as set during the Analysis phase (and thus may not be the actual offset in the
 	/// original content).
 	/// </summary>
+	[Serializable]
 	public class TermVectorOffsetInfo
 	{
 		/// <summary> Convenience declaration when creating a {@link Lucene.Net.Index.TermPositionVector} that stores only position information.</summary>
+		[NonSerialized]
 		public static readonly TermVectorOffsetInfo[] EMPTY_OFFSET_INFO = new TermVectorOffsetInfo[0];
 		private int startOffset;
 		private int endOffset;
@@ -70,11 +74,11 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Two TermVectorOffsetInfos are equals if both the start and end offsets are the same</summary>
-		/// <param name="o">The comparison object
+		/// <param name="o">The comparison Object
 		/// </param>
 		/// <returns> true if both {@link #GetStartOffset()} and {@link #GetEndOffset()} are the same for both objects.
 		/// </returns>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;

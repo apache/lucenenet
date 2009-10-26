@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,12 +23,14 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// Wrapper used by {@link HitIterator} to provide a lazily loaded hit from {@link Hits}.
+	/// <summary> Wrapper used by {@link HitIterator} to provide a lazily loaded hit
+	/// from {@link Hits}.
+	/// 
 	/// </summary>
+	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
+	/// </deprecated>
 	[Serializable]
-    [System.Obsolete("Hits will be removed indexer Lucene 3.0.  Use TopDocCollector and TopDocs instead.")]
-    public class Hit
+	public class Hit
 	{
 		
 		private Document doc = null;
@@ -76,7 +78,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns id for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits#Id(int)">
+		/// <seealso cref="Hits.Id(int)">
 		/// </seealso>
 		public virtual int GetId()
 		{

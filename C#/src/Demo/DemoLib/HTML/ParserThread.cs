@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Demo.Html
 {
 	
-	class ParserThread : SupportClass.ThreadClass
+	class ParserThread:SupportClass.ThreadClass
 	{
 		internal HTMLParser parser;
 		
@@ -49,7 +49,7 @@ namespace Lucene.Net.Demo.Html
 				}
 				finally
 				{
-					//parser.pipeOut.Close();
+					parser.pipeOut.Close();
 					lock (parser)
 					{
 						parser.summary.Length = HTMLParser.SUMMARY_LENGTH;

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,10 +31,10 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class SingleInstanceLockFactory : LockFactory
+	public class SingleInstanceLockFactory:LockFactory
 	{
-		
-		private System.Collections.Hashtable locks = new System.Collections.Hashtable();
+
+        private System.Collections.Hashtable locks = new System.Collections.Hashtable();
 		
 		public override Lock MakeLock(System.String lockName)
 		{
@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
 	}
 	
 	
-	class SingleInstanceLock : Lock
+	class SingleInstanceLock:Lock
 	{
 		
 		internal System.String lockName;
@@ -78,6 +78,7 @@ namespace Lucene.Net.Store
                     locks.Add(lockName, lockName);
                     return true;
                 }
+
                 return false;
 			}
 		}
@@ -100,7 +101,7 @@ namespace Lucene.Net.Store
 		
 		public override System.String ToString()
 		{
-			return "SingleInstanceLock: " + lockName;
+			return base.ToString() + ": " + lockName;
 		}
 	}
 }

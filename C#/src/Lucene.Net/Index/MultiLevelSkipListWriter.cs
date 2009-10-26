@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 			this.skipInterval = skipInterval;
 			
 			// calculate the maximum number of skip levels for this document frequency
-			numberOfSkipLevels = df == 0 ? 0 : (int) System.Math.Floor(System.Math.Log(df) / System.Math.Log(skipInterval));
+			numberOfSkipLevels = df == 0?0:(int) System.Math.Floor(System.Math.Log(df) / System.Math.Log(skipInterval));
 			
 			// make sure it does not exceed maxSkipLevels
 			if (numberOfSkipLevels > maxSkipLevels)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		protected internal virtual void  init()
+		protected internal virtual void  Init()
 		{
 			skipBuffer = new RAMOutputStream[numberOfSkipLevels];
 			for (int i = 0; i < numberOfSkipLevels; i++)
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 			// creates new buffers or empties the existing ones
 			if (skipBuffer == null)
 			{
-				init();
+				Init();
 			}
 			else
 			{

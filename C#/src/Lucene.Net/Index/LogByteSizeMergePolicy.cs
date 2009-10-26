@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	/// <summary>This is a {@link LogMergePolicy} that measures size of a
 	/// segment as the total byte size of the segment's files. 
 	/// </summary>
-	public class LogByteSizeMergePolicy : LogMergePolicy
+	public class LogByteSizeMergePolicy:LogMergePolicy
 	{
 		
 		/// <seealso cref="setMinMergeMB">
@@ -31,18 +31,18 @@ namespace Lucene.Net.Index
 		public const double DEFAULT_MIN_MERGE_MB = 1.6;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="SetMaxMergeMB">
+		/// <seealso cref="setMaxMergeMB">
 		/// </seealso>
-		public static readonly double DEFAULT_MAX_MERGE_MB = (double) (System.Int64.MaxValue / (1024 * 1024));
+		public static readonly double DEFAULT_MAX_MERGE_MB = System.Int64.MaxValue;
 		
-		public LogByteSizeMergePolicy() : base()
+		public LogByteSizeMergePolicy(IndexWriter writer):base(writer)
 		{
 			minMergeSize = (long) (DEFAULT_MIN_MERGE_MB * 1024 * 1024);
 			maxMergeSize = (long) (DEFAULT_MAX_MERGE_MB * 1024 * 1024);
 		}
 		protected internal override long Size(SegmentInfo info)
 		{
-			return info.SizeInBytes();
+			return SizeBytes(info);
 		}
 		
 		/// <summary><p>Determines the largest segment (measured by total

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,12 @@ namespace Lucene.Net.Index
 	/// an inconsistency in the index.
 	/// </summary>
 	[Serializable]
-	public class CorruptIndexException : System.IO.IOException
+	public class CorruptIndexException:System.IO.IOException
 	{
-		public CorruptIndexException(System.String message) : base(message)
+		public CorruptIndexException(System.String message):base(message)
+		{
+		}
+		public CorruptIndexException(System.String message, Exception exp):base(message, exp)
 		{
 		}
 	}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -55,12 +55,12 @@ namespace Lucene.Net.Search.Function
 	/// paid for loading the field values into memory over and over again!
 	/// 
 	/// <p><font color="#FF0000">
-	/// WARNING: The status of the <b>search.function</b> package is experimental. 
+	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// </summary>
 	[Serializable]
-	public class FieldScoreQuery : ValueSourceQuery
+	public class FieldScoreQuery:ValueSourceQuery
 	{
 		
 		/// <summary> Type of score field, indicating how field values are interpreted/parsed.  
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Function
 			{
 				this.typeName = name;
 			}
-			/*(non-Javadoc) @see java.lang.object#toString() */
+			/*(non-Javadoc) @see java.lang.Object#toString() */
 			public override System.String ToString()
 			{
 				return GetType().FullName + "::" + typeName;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Function
 		/// <param name="type">the type of the field: either
 		/// {@link Type#BYTE}, {@link Type#SHORT}, {@link Type#INT}, or {@link Type#FLOAT}. 
 		/// </param>
-		public FieldScoreQuery(System.String field, Type type) : base(GetValueSource(field, type))
+		public FieldScoreQuery(System.String field, Type type):base(GetValueSource(field, type))
 		{
 		}
 		

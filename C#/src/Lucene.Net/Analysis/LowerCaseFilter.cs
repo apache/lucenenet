@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,35 +17,39 @@
 
 using System;
 
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+
 namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> Normalizes token text to lower case.
-    /// 
-    /// </summary>
-    /// <version>  $Id: LowerCaseFilter.java 564715 2007-08-10 18:34:33Z mikemccand $
-    /// </version>
-    public sealed class LowerCaseFilter : TokenFilter
-    {
-        public LowerCaseFilter(TokenStream in_Renamed) : base(in_Renamed)
-        {
-        }
+	/// <summary> Normalizes token text to lower case.
+	/// 
+	/// </summary>
+	/// <version>  $Id: LowerCaseFilter.java 797665 2009-07-24 21:45:48Z buschmi $
+	/// </version>
+	public sealed class LowerCaseFilter:TokenFilter
+	{
+		public LowerCaseFilter(TokenStream in_Renamed):base(in_Renamed)
+		{
+			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+		}
 		
-        public override Token Next(Token reusableToken)
-        {
-            Token nextToken = input.Next(reusableToken);
-            if (nextToken != null)
-            {
-
-                char[] buffer = nextToken.TermBuffer();
-                int length = nextToken.TermLength();
-                for (int i = 0; i < length; i++)
-                    buffer[i] = System.Char.ToLower(buffer[i]);
-
-                return nextToken;
-            }
-            else
-                return null;
-        }
-    }
+		private TermAttribute termAtt;
+		
+		public override bool IncrementToken()
+		{
+			if (input.IncrementToken())
+			{
+				
+				char[] buffer = termAtt.TermBuffer();
+				int length = termAtt.TermLength();
+				for (int i = 0; i < length; i++)
+					buffer[i] = System.Char.ToLower(buffer[i]);
+				
+				return true;
+			}
+			else
+				return false;
+		}
+	}
 }

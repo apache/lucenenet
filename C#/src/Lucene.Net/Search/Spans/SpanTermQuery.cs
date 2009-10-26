@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary>Matches spans containing a term. </summary>
 	[Serializable]
-	public class SpanTermQuery : SpanQuery
+	public class SpanTermQuery:SpanQuery
 	{
 		protected internal Term term;
 		
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="#ExtractTerms(Set)">
+		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
 		public override System.Collections.ICollection GetTerms()
 		{
@@ -58,11 +58,9 @@ namespace Lucene.Net.Search.Spans
 			terms.Add(term);
 			return terms;
 		}
-
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-			if (terms.Contains(term) == false)
-				terms.Add(term, term);
+			SupportClass.HashtableHelper.AddIfNotContains(terms, term);
 		}
 		
 		public override System.String ToString(System.String field)
@@ -78,29 +76,36 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
-		{
-			if (!(o is SpanTermQuery))
-				return false;
-			SpanTermQuery other = (SpanTermQuery) o;
-			return (this.GetBoost() == other.GetBoost()) && this.term.Equals(other.term);
-		}
-		
-		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return GetBoost().ToString().GetHashCode() ^ term.GetHashCode() ^ unchecked((int) 0xD23FE494);    // {{Aroush-1.9}} Is this OK?
+			int prime = 31;
+			int result = base.GetHashCode();
+			result = prime * result + ((term == null)?0:term.GetHashCode());
+			return result;
+		}
+		
+		public  override bool Equals(System.Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!base.Equals(obj))
+				return false;
+			if (GetType() != obj.GetType())
+				return false;
+			SpanTermQuery other = (SpanTermQuery) obj;
+			if (term == null)
+			{
+				if (other.term != null)
+					return false;
+			}
+			else if (!term.Equals(other.term))
+				return false;
+			return true;
 		}
 		
 		public override Spans GetSpans(IndexReader reader)
 		{
 			return new TermSpans(reader.TermPositions(term), term);
 		}
-
-        public override PayloadSpans GetPayloadSpans(IndexReader reader)
-        {
-            return (PayloadSpans)GetSpans(reader);
-        }
 	}
 }

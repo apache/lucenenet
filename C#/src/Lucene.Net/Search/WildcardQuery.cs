@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
 {
@@ -30,45 +31,85 @@ namespace Lucene.Net.Search
 	/// a Wildcard term should not start with one of the wildcards <code>*</code> or
 	/// <code>?</code>.
 	/// 
+	/// <p>This query uses the {@link
+	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+	/// rewrite method.
+	/// 
 	/// </summary>
 	/// <seealso cref="WildcardTermEnum">
 	/// </seealso>
 	[Serializable]
-	public class WildcardQuery : MultiTermQuery
+	public class WildcardQuery:MultiTermQuery
 	{
 		private bool termContainsWildcard;
+		new protected internal Term term;
 		
-		public WildcardQuery(Term term) : base(term)
-		{
+		public WildcardQuery(Term term):base(term)
+		{ //will be removed in 3.0
+			this.term = term;
 			this.termContainsWildcard = (term.Text().IndexOf('*') != - 1) || (term.Text().IndexOf('?') != - 1);
 		}
 		
-		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
+		public /*protected internal*/ override FilteredTermEnum GetEnum(IndexReader reader)
 		{
 			return new WildcardTermEnum(reader, GetTerm());
 		}
 		
-		public  override bool Equals(object o)
+		/// <summary> Returns the pattern term.</summary>
+		public override Term GetTerm()
 		{
-			if (o is WildcardQuery)
-				return base.Equals(o);
-			
-			return false;
+			return term;
 		}
 		
 		public override Query Rewrite(IndexReader reader)
 		{
-			if (this.termContainsWildcard)
-			{
+			if (!termContainsWildcard)
+				return new TermQuery(GetTerm());
+			else
 				return base.Rewrite(reader);
-			}
-			
-			return new TermQuery(GetTerm());
 		}
 		
+		/// <summary>Prints a user-readable version of this query. </summary>
+		public override System.String ToString(System.String field)
+		{
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			if (!term.Field().Equals(field))
+			{
+				buffer.Append(term.Field());
+				buffer.Append(":");
+			}
+			buffer.Append(term.Text());
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			return buffer.ToString();
+		}
+		
+		//@Override
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			int prime = 31;
+			int result = base.GetHashCode();
+			result = prime * result + ((term == null)?0:term.GetHashCode());
+			return result;
+		}
+		
+		//@Override
+		public  override bool Equals(System.Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (!base.Equals(obj))
+				return false;
+			if (GetType() != obj.GetType())
+				return false;
+			WildcardQuery other = (WildcardQuery) obj;
+			if (term == null)
+			{
+				if (other.term != null)
+					return false;
+			}
+			else if (!term.Equals(other.term))
+				return false;
+			return true;
 		}
 	}
 }

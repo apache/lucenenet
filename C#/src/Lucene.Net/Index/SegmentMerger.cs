@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
+using System;
 
 using Document = Lucene.Net.Documents.Document;
-using Directory = Lucene.Net.Store.Directory;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using FieldSelectorResult = Lucene.Net.Documents.FieldSelectorResult;
+using FieldOption = Lucene.Net.Index.IndexReader.FieldOption;
+using MergeAbortedException = Lucene.Net.Index.MergePolicy.MergeAbortedException;
+using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 
@@ -39,21 +41,94 @@ namespace Lucene.Net.Index
 	/// </seealso>
 	/// <seealso cref="add">
 	/// </seealso>
-	public sealed class SegmentMerger
+	sealed class SegmentMerger
 	{
+		private class AnonymousClassCheckAbort:CheckAbort
+		{
+			private void  InitBlock(SegmentMerger enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SegmentMerger enclosingInstance;
+			public SegmentMerger Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassCheckAbort(SegmentMerger enclosingInstance, Lucene.Net.Index.MergePolicy.OneMerge Param1, Lucene.Net.Store.Directory Param2):base(Param1, Param2)
+			{
+				InitBlock(enclosingInstance);
+			}
+			public override void  Work(double units)
+			{
+				// do nothing
+			}
+		}
+		private class AnonymousClassCheckAbort1:CheckAbort
+		{
+			private void  InitBlock(SegmentMerger enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SegmentMerger enclosingInstance;
+			public SegmentMerger Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassCheckAbort1(SegmentMerger enclosingInstance, Lucene.Net.Index.MergePolicy.OneMerge Param1, Lucene.Net.Store.Directory Param2):base(Param1, Param2)
+			{
+				InitBlock(enclosingInstance);
+			}
+			public override void  Work(double units)
+			{
+				// do nothing
+			}
+		}
+		[Serializable]
+		private class AnonymousClassFieldSelector : FieldSelector
+		{
+			public AnonymousClassFieldSelector(SegmentMerger enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(SegmentMerger enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SegmentMerger enclosingInstance;
+			public SegmentMerger Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public FieldSelectorResult Accept(System.String fieldName)
+			{
+				return FieldSelectorResult.LOAD_FOR_MERGE;
+			}
+		}
 		private void  InitBlock()
 		{
 			termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
 		}
 		
 		/// <summary>norms header placeholder </summary>
-		internal static readonly byte[] NORMS_HEADER = new byte[]{(byte) 'N', (byte) 'R', (byte) 'M', unchecked((byte) -1)};
+		internal static readonly byte[] NORMS_HEADER = new byte[]{(byte) 'N', (byte) 'R', (byte) 'M', unchecked((byte) - 1)};
 		
 		private Directory directory;
 		private System.String segment;
 		private int termIndexInterval;
 		
-		private System.Collections.ArrayList readers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		private System.Collections.IList readers = new System.Collections.ArrayList();
 		private FieldInfos fieldInfos;
 		
 		private int mergedDocs;
@@ -78,11 +153,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="name">The name of the new segment
 		/// </param>
-		public /*internal*/ SegmentMerger(Directory dir, System.String name)
+		internal SegmentMerger(Directory dir, System.String name)
 		{
 			InitBlock();
 			directory = dir;
 			segment = name;
+			checkAbort = new AnonymousClassCheckAbort(this, null, null);
 		}
 		
 		internal SegmentMerger(IndexWriter writer, System.String name, MergePolicy.OneMerge merge)
@@ -91,19 +167,25 @@ namespace Lucene.Net.Index
 			directory = writer.GetDirectory();
 			segment = name;
 			if (merge != null)
+			{
 				checkAbort = new CheckAbort(merge, directory);
+			}
+			else
+			{
+				checkAbort = new AnonymousClassCheckAbort1(this, null, null);
+			}
 			termIndexInterval = writer.GetTermIndexInterval();
 		}
-
-        internal bool HasProx()
-        {
-            return fieldInfos.HasProx();
-        }
+		
+		internal bool HasProx()
+		{
+			return fieldInfos.HasProx();
+		}
 		
 		/// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
 		/// <param name="reader">
 		/// </param>
-		public /*internal*/ void  Add(IndexReader reader)
+		internal void  Add(IndexReader reader)
 		{
 			readers.Add(reader);
 		}
@@ -123,7 +205,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public /*internal*/ int Merge()
+		internal int Merge()
 		{
 			return Merge(true);
 		}
@@ -164,30 +246,28 @@ namespace Lucene.Net.Index
 		/// Should not be called before merge().
 		/// </summary>
 		/// <throws>  IOException </throws>
-		public /*internal*/ void  CloseReaders()
+		internal void  CloseReaders()
 		{
-			for (int i = 0; i < readers.Count; i++)
+			for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
 			{
-				// close readers
-				IndexReader reader = (IndexReader) readers[i];
-				reader.Close();
+				((IndexReader) iter.Current).Close();
 			}
 		}
 		
-		public /*internal*/ System.Collections.ArrayList CreateCompoundFile(System.String fileName)
+		internal System.Collections.IList CreateCompoundFile(System.String fileName)
 		{
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
 			
-			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + 1));
+			System.Collections.IList files = new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + 1);
 			
 			// Basic files
 			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)
 			{
 				System.String ext = IndexFileNames.COMPOUND_EXTENSIONS[i];
-
-                if (ext.Equals(IndexFileNames.PROX_EXTENSION) && !HasProx())
-                    continue;
-
+				
+				if (ext.Equals(IndexFileNames.PROX_EXTENSION) && !HasProx())
+					continue;
+				
 				if (mergeDocStores || (!ext.Equals(IndexFileNames.FIELDS_EXTENSION) && !ext.Equals(IndexFileNames.FIELDS_INDEX_EXTENSION)))
 					files.Add(segment + "." + ext);
 			}
@@ -225,52 +305,58 @@ namespace Lucene.Net.Index
 			return files;
 		}
 		
-		private void  AddIndexed(IndexReader reader, FieldInfos fieldInfos, ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTf)
+		private void  AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
 		{
-			IEnumerator<string> i = names.GetEnumerator();
+			System.Collections.IEnumerator i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
-				string field = i.Current;
-				fieldInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field), storePayloads, omitTf);
+				System.String field = (System.String) i.Current;
+				fInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field), storePayloads, omitTFAndPositions);
 			}
 		}
-
-        private SegmentReader[] matchingSegmentReaders;
-        private int[] rawDocLengths;
-        private int[] rawDocLengths2;
-
-        private void SetMatchingSegmentReaders()
-        {
-            // if the i'th reader is a SegmentReader and has
-            // identical fieldName->number mapping the this
-            // array will be non-null at position i:
-            matchingSegmentReaders = new SegmentReader[readers.Count];
-
-            // if this reader is a SegmentReader, and all of its
-            // fieldName->number mappings match the "merged"
-            // FieldInfos, then we can do a bulk copy of the
-            // stored fields
-            for (int i = 0; i < readers.Count; i++)
-            {
-                IndexReader reader = (IndexReader)readers[i];
-                if (reader is SegmentReader)
-                {
-                    SegmentReader segmentReader = (SegmentReader)reader;
-                    bool same = true;
-                    FieldInfos segmentFieldInfos = segmentReader.GetFieldInfos();
-                    for (int j = 0; same && j < segmentFieldInfos.Size(); j++)
-                        same = fieldInfos.FieldName(j).Equals(segmentFieldInfos.FieldName(j));
-                    if (same)
-                        matchingSegmentReaders[i] = segmentReader;
-                }
-            }
-
-            // used for bulk-reading raw bytes for stored fields
-            rawDocLengths = new int[MAX_RAW_MERGE_DOCS];
-            rawDocLengths2 = new int[MAX_RAW_MERGE_DOCS];
-        }
-
-        /// <summary> </summary>
+		
+		private SegmentReader[] matchingSegmentReaders;
+		private int[] rawDocLengths;
+		private int[] rawDocLengths2;
+		
+		private void  SetMatchingSegmentReaders()
+		{
+			// If the i'th reader is a SegmentReader and has
+			// identical fieldName -> number mapping, then this
+			// array will be non-null at position i:
+			int numReaders = readers.Count;
+			matchingSegmentReaders = new SegmentReader[numReaders];
+			
+			// If this reader is a SegmentReader, and all of its
+			// field name -> number mappings match the "merged"
+			// FieldInfos, then we can do a bulk copy of the
+			// stored fields:
+			for (int i = 0; i < numReaders; i++)
+			{
+				IndexReader reader = (IndexReader) readers[i];
+				if (reader is SegmentReader)
+				{
+					SegmentReader segmentReader = (SegmentReader) reader;
+					bool same = true;
+					FieldInfos segmentFieldInfos = segmentReader.FieldInfos();
+					int numFieldInfos = segmentFieldInfos.Size();
+					for (int j = 0; same && j < numFieldInfos; j++)
+					{
+						same = fieldInfos.FieldName(j).Equals(segmentFieldInfos.FieldName(j));
+					}
+					if (same)
+					{
+						matchingSegmentReaders[i] = segmentReader;
+					}
+				}
+			}
+			
+			// Used for bulk-reading raw bytes for stored fields
+			rawDocLengths = new int[MAX_RAW_MERGE_DOCS];
+			rawDocLengths2 = new int[MAX_RAW_MERGE_DOCS];
+		}
+		
+		/// <summary> </summary>
 		/// <returns> The number of documents in all of the readers
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -287,355 +373,395 @@ namespace Lucene.Net.Index
 				// with the fieldInfos of the last segment in this
 				// case, to keep that numbering.
 				SegmentReader sr = (SegmentReader) readers[readers.Count - 1];
-				fieldInfos = (FieldInfos) sr.fieldInfos.Clone();
+				fieldInfos = (FieldInfos) sr.core.fieldInfos.Clone();
 			}
 			else
 			{
 				fieldInfos = new FieldInfos(); // merge field names
 			}
 			
-			for (int i = 0; i < readers.Count; i++)
+			for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
 			{
-				IndexReader reader = (IndexReader) readers[i];
+				IndexReader reader = (IndexReader) iter.Current;
 				if (reader is SegmentReader)
 				{
 					SegmentReader segmentReader = (SegmentReader) reader;
-					for (int j = 0; j < segmentReader.GetFieldInfos().Size(); j++)
+					FieldInfos readerFieldInfos = segmentReader.FieldInfos();
+					int numReaderFieldInfos = readerFieldInfos.Size();
+					for (int j = 0; j < numReaderFieldInfos; j++)
 					{
-						FieldInfo fi = segmentReader.GetFieldInfos().FieldInfo(j);
-						fieldInfos.Add(fi.name, fi.isIndexed, fi.storeTermVector, fi.storePositionWithTermVector, fi.storeOffsetWithTermVector, !reader.HasNorms(fi.name), fi.storePayloads, fi.omitTf);
+						FieldInfo fi = readerFieldInfos.FieldInfo(j);
+						fieldInfos.Add(fi.name, fi.isIndexed, fi.storeTermVector, fi.storePositionWithTermVector, fi.storeOffsetWithTermVector, !reader.HasNorms(fi.name), fi.storePayloads, fi.omitTermFreqAndPositions);
 					}
 				}
 				else
 				{
-					AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET), true, true, true, false, false);
-					AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION), true, true, false, false, false);
-					AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET), true, false, true, false, false);
-                    AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR), true, false, false, false, false);
-                    AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.OMIT_TF), false, false, false, false, true);
-					AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.STORES_PAYLOADS), false, false, false, true, false);
-					AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.INDEXED), false, false, false, false, false);
-					fieldInfos.Add(reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED), false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.TERMVECTOR_WITH_POSITION_OFFSET), true, true, true, false, false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.TERMVECTOR_WITH_POSITION), true, true, false, false, false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.TERMVECTOR_WITH_OFFSET), true, false, true, false, false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.TERMVECTOR), true, false, false, false, false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.OMIT_TERM_FREQ_AND_POSITIONS), false, false, false, false, true);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.STORES_PAYLOADS), false, false, false, true, false);
+					AddIndexed(reader, fieldInfos, reader.GetFieldNames(FieldOption.INDEXED), false, false, false, false, false);
+					fieldInfos.Add(reader.GetFieldNames(FieldOption.UNINDEXED), false);
 				}
 			}
 			fieldInfos.Write(directory, segment + ".fnm");
 			
 			int docCount = 0;
-
-            SetMatchingSegmentReaders();
-
+			
+			SetMatchingSegmentReaders();
+			
 			if (mergeDocStores)
 			{
+				
 				// for merging we don't want to compress/uncompress the data, so to tell the FieldsReader that we're
 				// in  merge mode, we use this FieldSelector
 				FieldSelector fieldSelectorMerge = new AnonymousClassFieldSelector(this);
 				
 				// merge field values
 				FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
-
-                try
-                {
-                    for (int i = 0; i < readers.Count; i++)
-                    {
-                        IndexReader reader = (IndexReader)readers[i];
-                        SegmentReader matchingSegmentReader = matchingSegmentReaders[i];
-                        FieldsReader matchingFieldsReader;
-                        bool hasMatchingReader;
-                        if (matchingSegmentReader != null)
-                        {
-                            FieldsReader fieldsReader = matchingSegmentReader.GetFieldsReader();
-                            if (fieldsReader != null && !fieldsReader.CanReadRawDocs())
-                            {
-                                matchingFieldsReader = null;
-                                hasMatchingReader = false;
-                            }
-                            else
-                            {
-                                matchingFieldsReader = fieldsReader;
-                                hasMatchingReader = true;
-                            }
-                        }
-                        else
-                        {
-                            hasMatchingReader = false;
-                            matchingFieldsReader = null;
-                        }
-                        int maxDoc = reader.MaxDoc();
-                        bool hasDeletions = reader.HasDeletions();
-                        for (int j = 0; j < maxDoc; )
-                        {
-                            if (!hasDeletions || !reader.IsDeleted(j))
-                            { // skip deleted docs
-                                if (hasMatchingReader)
-                                {
-                                    // We can optimize this case (doing a bulk
-                                    // byte copy) since the field numbers are
-                                    // identical
-                                    int start = j;
-                                    int numDocs = 0;
-                                    do
-                                    {
-                                        j++;
-                                        numDocs++;
-                                        if (j >= maxDoc)
-                                            break;
-                                        if (hasDeletions && matchingSegmentReader.IsDeleted(j))
-                                        {
-                                            j++;
-                                            break;
-                                        }
-                                    } while (numDocs < MAX_RAW_MERGE_DOCS);
-
-                                    IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, start, numDocs);
-                                    fieldsWriter.AddRawDocuments(stream, rawDocLengths, numDocs);
-                                    docCount += numDocs;
-                                    if (checkAbort != null)
-                                        checkAbort.Work(300 * numDocs);
-                                }
-                                else
-                                {
-                                    // NOTE: it's very important to first assign
-                                    // to doc then pass it to
-                                    // termVectorsWriter.addAllDocVectors; see
-                                    // LUCENE-1282
-                                    Document doc = reader.Document(j, fieldSelectorMerge);
-                                    fieldsWriter.AddDocument(doc);
-                                    j++;
-                                    docCount++;
-                                    if (checkAbort != null)
-                                        checkAbort.Work(300);
-                                }
-                            }
-                            else
-                                j++;
-                        }
-                    }
-                }
-                finally
-                {
-                    fieldsWriter.Close();
-                }
-
-                long fdxFileLength = directory.FileLength(segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
-
-                // {{dougsale-2.4.0}
-                // this shouldn't be a problem for us - if it is,
-                // then it's not a JRE bug...
-                //if (4+docCount*8 != fdxFileLength)
-                //  // This is most likely a bug in Sun JRE 1.6.0_04/_05;
-                //  // we detect that the bug has struck, here, and
-                //  // throw an exception to prevent the corruption from
-                //  // entering the index.  See LUCENE-1282 for
-                //  // details.
-                //  throw new RuntimeException("mergeFields produced an invalid result: docCount is " + docCount + " but fdx file size is " + fdxFileLength + "; now aborting this merge to prevent index corruption");
-
-            }
-            else
-                // If we are skipping the doc stores, that means there
-                // are no deletions in any of these segments, so we
-                // just sum numDocs() of each segment to get total docCount
-                for (int i = 0; i < readers.Count; i++)
-                    docCount += ((IndexReader)readers[i]).NumDocs();
-
-            return docCount;
-        }
-
-        [System.Serializable]
-        private class AnonymousClassFieldSelector : FieldSelector
-        {
-            public AnonymousClassFieldSelector(SegmentMerger enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void InitBlock(SegmentMerger enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private SegmentMerger enclosingInstance;
-            public SegmentMerger Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-
-            }
-            public FieldSelectorResult Accept(System.String fieldName)
-            {
-                return FieldSelectorResult.LOAD_FOR_MERGE;
-            }
-        }
-
-        /// <summary> Merge the TermVectors from each of the segments into the new one.</summary>
-        /// <throws>  IOException </throws>
-        private void MergeVectors()
-        {
-            TermVectorsWriter termVectorsWriter =
-              new TermVectorsWriter(directory, segment, fieldInfos);
-
-            try
-            {
-                for (int r = 0; r < readers.Count; r++)
-                {
-                    SegmentReader matchingSegmentReader = matchingSegmentReaders[r];
-                    TermVectorsReader matchingVectorsReader;
-                    bool hasMatchingReader;
-                    if (matchingSegmentReader != null)
-                    {
-                        matchingVectorsReader = matchingSegmentReader.termVectorsReaderOrig;
-
-                        // If the TV* files are an older format then they
-                        // cannot read raw docs:
-                        if (matchingVectorsReader != null && !matchingVectorsReader.CanReadRawDocs())
-                        {
-                            matchingVectorsReader = null;
-                            hasMatchingReader = false;
-                        }
-                        else
-                            hasMatchingReader = matchingVectorsReader != null;
-
-                    }
-                    else
-                    {
-                        hasMatchingReader = false;
-                        matchingVectorsReader = null;
-                    }
-                    IndexReader reader = (IndexReader)readers[r];
-                    bool hasDeletions = reader.HasDeletions();
-                    int maxDoc = reader.MaxDoc();
-                    for (int docNum = 0; docNum < maxDoc; )
-                    {
-                        // skip deleted docs
-                        if (!hasDeletions || !reader.IsDeleted(docNum))
-                        {
-                            if (hasMatchingReader)
-                            {
-                                // We can optimize this case (doing a bulk
-                                // byte copy) since the field numbers are
-                                // identical
-                                int start = docNum;
-                                int numDocs = 0;
-                                do
-                                {
-                                    docNum++;
-                                    numDocs++;
-                                    if (docNum >= maxDoc)
-                                        break;
-                                    if (hasDeletions && matchingSegmentReader.IsDeleted(docNum))
-                                    {
-                                        docNum++;
-                                        break;
-                                    }
-                                } while (numDocs < MAX_RAW_MERGE_DOCS);
-
-                                matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, start, numDocs);
-                                termVectorsWriter.AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, numDocs);
-                                if (checkAbort != null)
-                                    checkAbort.Work(300 * numDocs);
-                            }
-                            else
-                            {
-                                // NOTE: it's very important to first assign
-                                // to vectors then pass it to
-                                // termVectorsWriter.addAllDocVectors; see
-                                // LUCENE-1282
-                                TermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
-                                termVectorsWriter.AddAllDocVectors(vectors);
-                                docNum++;
-                                if (checkAbort != null)
-                                    checkAbort.Work(300);
-                            }
-                        }
-                        else
-                            docNum++;
-                    }
-                }
-            }
-            finally
-            {
-                termVectorsWriter.Close();
-            }
-
-            long tvxSize = directory.FileLength(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION);
-
-            // {{dougsale-2.4.0}
-            // this shouldn't be a problem for us - if it is,
-            // then it's not a JRE bug
-            //if (4 + mergedDocs * 16 != tvxSize)
-            //  // This is most likely a bug in Sun JRE 1.6.0_04/_05;
-            //  // we detect that the bug has struck, here, and
-            //  // throw an exception to prevent the corruption from
-            //  // entering the index.  See LUCENE-1282 for
-            //  // details.
-            //  throw new RuntimeException("mergeVectors produced an invalid result: mergedDocs is " + mergedDocs + " but tvx size is " + tvxSize + "; now aborting this merge to prevent index corruption");
-        }
+				
+				try
+				{
+					int idx = 0;
+					for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
+					{
+						IndexReader reader = (IndexReader) iter.Current;
+						SegmentReader matchingSegmentReader = matchingSegmentReaders[idx++];
+						FieldsReader matchingFieldsReader = null;
+						if (matchingSegmentReader != null)
+						{
+							FieldsReader fieldsReader = matchingSegmentReader.GetFieldsReader();
+							if (fieldsReader != null && fieldsReader.CanReadRawDocs())
+							{
+								matchingFieldsReader = fieldsReader;
+							}
+						}
+						if (reader.HasDeletions())
+						{
+							docCount += CopyFieldsWithDeletions(fieldSelectorMerge, fieldsWriter, reader, matchingFieldsReader);
+						}
+						else
+						{
+							docCount += CopyFieldsNoDeletions(fieldSelectorMerge, fieldsWriter, reader, matchingFieldsReader);
+						}
+					}
+				}
+				finally
+				{
+					fieldsWriter.Close();
+				}
+				
+				System.String fileName = segment + "." + IndexFileNames.FIELDS_INDEX_EXTENSION;
+				long fdxFileLength = directory.FileLength(fileName);
+				
+				if (4 + ((long) docCount) * 8 != fdxFileLength)
+				// This is most likely a bug in Sun JRE 1.6.0_04/_05;
+				// we detect that the bug has struck, here, and
+				// throw an exception to prevent the corruption from
+				// entering the index.  See LUCENE-1282 for
+				// details.
+					throw new System.SystemException("mergeFields produced an invalid result: docCount is " + docCount + " but fdx file size is " + fdxFileLength + " file=" + fileName + " file exists?=" + directory.FileExists(fileName) + "; now aborting this merge to prevent index corruption");
+			}
+			// If we are skipping the doc stores, that means there
+			// are no deletions in any of these segments, so we
+			// just sum numDocs() of each segment to get total docCount
+			else
+			{
+				for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
+				{
+					docCount += ((IndexReader) iter.Current).NumDocs();
+				}
+			}
+			
+			return docCount;
+		}
 		
-		private IndexOutput freqOutput = null;
-		private IndexOutput proxOutput = null;
-		private TermInfosWriter termInfosWriter = null;
-		private int skipInterval;
-		private int maxSkipLevels;
-		private SegmentMergeQueue queue = null;
-		private DefaultSkipListWriter skipListWriter = null;
-		
-		private void  MergeTerms()
+		private int CopyFieldsWithDeletions(FieldSelector fieldSelectorMerge, FieldsWriter fieldsWriter, IndexReader reader, FieldsReader matchingFieldsReader)
 		{
+			int docCount = 0;
+			int maxDoc = reader.MaxDoc();
+			if (matchingFieldsReader != null)
+			{
+				// We can bulk-copy because the fieldInfos are "congruent"
+				for (int j = 0; j < maxDoc; )
+				{
+					if (reader.IsDeleted(j))
+					{
+						// skip deleted docs
+						++j;
+						continue;
+					}
+					// We can optimize this case (doing a bulk byte copy) since the field 
+					// numbers are identical
+					int start = j, numDocs = 0;
+					do 
+					{
+						j++;
+						numDocs++;
+						if (j >= maxDoc)
+							break;
+						if (reader.IsDeleted(j))
+						{
+							j++;
+							break;
+						}
+					}
+					while (numDocs < MAX_RAW_MERGE_DOCS);
+					
+					IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, start, numDocs);
+					fieldsWriter.AddRawDocuments(stream, rawDocLengths, numDocs);
+					docCount += numDocs;
+					checkAbort.Work(300 * numDocs);
+				}
+			}
+			else
+			{
+				for (int j = 0; j < maxDoc; j++)
+				{
+					if (reader.IsDeleted(j))
+					{
+						// skip deleted docs
+						continue;
+					}
+					// NOTE: it's very important to first assign to doc then pass it to
+					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
+					Document doc = reader.Document(j, fieldSelectorMerge);
+					fieldsWriter.AddDocument(doc);
+					docCount++;
+					checkAbort.Work(300);
+				}
+			}
+			return docCount;
+		}
+		
+		private int CopyFieldsNoDeletions(FieldSelector fieldSelectorMerge, FieldsWriter fieldsWriter, IndexReader reader, FieldsReader matchingFieldsReader)
+		{
+			int maxDoc = reader.MaxDoc();
+			int docCount = 0;
+			if (matchingFieldsReader != null)
+			{
+				// We can bulk-copy because the fieldInfos are "congruent"
+				while (docCount < maxDoc)
+				{
+					int len = System.Math.Min(MAX_RAW_MERGE_DOCS, maxDoc - docCount);
+					IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, docCount, len);
+					fieldsWriter.AddRawDocuments(stream, rawDocLengths, len);
+					docCount += len;
+					checkAbort.Work(300 * len);
+				}
+			}
+			else
+			{
+				for (; docCount < maxDoc; docCount++)
+				{
+					// NOTE: it's very important to first assign to doc then pass it to
+					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
+					Document doc = reader.Document(docCount, fieldSelectorMerge);
+					fieldsWriter.AddDocument(doc);
+					checkAbort.Work(300);
+				}
+			}
+			return docCount;
+		}
+		
+		/// <summary> Merge the TermVectors from each of the segments into the new one.</summary>
+		/// <throws>  IOException </throws>
+		private void  MergeVectors()
+		{
+			TermVectorsWriter termVectorsWriter = new TermVectorsWriter(directory, segment, fieldInfos);
+			
 			try
 			{
-				freqOutput = directory.CreateOutput(segment + ".frq");
-                if (HasProx())
-                    proxOutput = directory.CreateOutput(segment + ".prx");
-                termInfosWriter = new TermInfosWriter(directory, segment, fieldInfos, termIndexInterval);
-				skipInterval = termInfosWriter.skipInterval;
-				maxSkipLevels = termInfosWriter.maxSkipLevels;
-				skipListWriter = new DefaultSkipListWriter(skipInterval, maxSkipLevels, mergedDocs, freqOutput, proxOutput);
-				queue = new SegmentMergeQueue(readers.Count);
-				
-				MergeTermInfos();
+				int idx = 0;
+				for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
+				{
+					SegmentReader matchingSegmentReader = matchingSegmentReaders[idx++];
+					TermVectorsReader matchingVectorsReader = null;
+					if (matchingSegmentReader != null)
+					{
+						TermVectorsReader vectorsReader = matchingSegmentReader.GetTermVectorsReaderOrig();
+						
+						// If the TV* files are an older format then they cannot read raw docs:
+						if (vectorsReader != null && vectorsReader.CanReadRawDocs())
+						{
+							matchingVectorsReader = vectorsReader;
+						}
+					}
+					IndexReader reader = (IndexReader) iter.Current;
+					if (reader.HasDeletions())
+					{
+						CopyVectorsWithDeletions(termVectorsWriter, matchingVectorsReader, reader);
+					}
+					else
+					{
+						CopyVectorsNoDeletions(termVectorsWriter, matchingVectorsReader, reader);
+					}
+				}
 			}
 			finally
 			{
-				if (freqOutput != null)
-					freqOutput.Close();
-				if (proxOutput != null)
-					proxOutput.Close();
-				if (termInfosWriter != null)
-					termInfosWriter.Close();
+				termVectorsWriter.Close();
+			}
+			
+			System.String fileName = segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION;
+			long tvxSize = directory.FileLength(fileName);
+			
+			if (4 + ((long) mergedDocs) * 16 != tvxSize)
+			// This is most likely a bug in Sun JRE 1.6.0_04/_05;
+			// we detect that the bug has struck, here, and
+			// throw an exception to prevent the corruption from
+			// entering the index.  See LUCENE-1282 for
+			// details.
+				throw new System.SystemException("mergeVectors produced an invalid result: mergedDocs is " + mergedDocs + " but tvx size is " + tvxSize + " file=" + fileName + " file exists?=" + directory.FileExists(fileName) + "; now aborting this merge to prevent index corruption");
+		}
+		
+		private void  CopyVectorsWithDeletions(TermVectorsWriter termVectorsWriter, TermVectorsReader matchingVectorsReader, IndexReader reader)
+		{
+			int maxDoc = reader.MaxDoc();
+			if (matchingVectorsReader != null)
+			{
+				// We can bulk-copy because the fieldInfos are "congruent"
+				for (int docNum = 0; docNum < maxDoc; )
+				{
+					if (reader.IsDeleted(docNum))
+					{
+						// skip deleted docs
+						++docNum;
+						continue;
+					}
+					// We can optimize this case (doing a bulk byte copy) since the field 
+					// numbers are identical
+					int start = docNum, numDocs = 0;
+					do 
+					{
+						docNum++;
+						numDocs++;
+						if (docNum >= maxDoc)
+							break;
+						if (reader.IsDeleted(docNum))
+						{
+							docNum++;
+							break;
+						}
+					}
+					while (numDocs < MAX_RAW_MERGE_DOCS);
+					
+					matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, start, numDocs);
+					termVectorsWriter.AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, numDocs);
+					checkAbort.Work(300 * numDocs);
+				}
+			}
+			else
+			{
+				for (int docNum = 0; docNum < maxDoc; docNum++)
+				{
+					if (reader.IsDeleted(docNum))
+					{
+						// skip deleted docs
+						continue;
+					}
+					
+					// NOTE: it's very important to first assign to vectors then pass it to
+					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
+					TermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
+					termVectorsWriter.AddAllDocVectors(vectors);
+					checkAbort.Work(300);
+				}
+			}
+		}
+		
+		private void  CopyVectorsNoDeletions(TermVectorsWriter termVectorsWriter, TermVectorsReader matchingVectorsReader, IndexReader reader)
+		{
+			int maxDoc = reader.MaxDoc();
+			if (matchingVectorsReader != null)
+			{
+				// We can bulk-copy because the fieldInfos are "congruent"
+				int docCount = 0;
+				while (docCount < maxDoc)
+				{
+					int len = System.Math.Min(MAX_RAW_MERGE_DOCS, maxDoc - docCount);
+					matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, docCount, len);
+					termVectorsWriter.AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, len);
+					docCount += len;
+					checkAbort.Work(300 * len);
+				}
+			}
+			else
+			{
+				for (int docNum = 0; docNum < maxDoc; docNum++)
+				{
+					// NOTE: it's very important to first assign to vectors then pass it to
+					// termVectorsWriter.addAllDocVectors; see LUCENE-1282
+					TermFreqVector[] vectors = reader.GetTermFreqVectors(docNum);
+					termVectorsWriter.AddAllDocVectors(vectors);
+					checkAbort.Work(300);
+				}
+			}
+		}
+		
+		private SegmentMergeQueue queue = null;
+		
+		private void  MergeTerms()
+		{
+			
+			SegmentWriteState state = new SegmentWriteState(null, directory, segment, null, mergedDocs, 0, termIndexInterval);
+			
+			FormatPostingsFieldsConsumer consumer = new FormatPostingsFieldsWriter(state, fieldInfos);
+			
+			try
+			{
+				queue = new SegmentMergeQueue(readers.Count);
+				
+				MergeTermInfos(consumer);
+			}
+			finally
+			{
+				consumer.Finish();
 				if (queue != null)
 					queue.Close();
 			}
 		}
 		
-		private void  MergeTermInfos()
+		internal bool omitTermFreqAndPositions;
+		
+		private void  MergeTermInfos(FormatPostingsFieldsConsumer consumer)
 		{
 			int base_Renamed = 0;
-            int readerCount = readers.Count;
+			int readerCount = readers.Count;
 			for (int i = 0; i < readerCount; i++)
 			{
 				IndexReader reader = (IndexReader) readers[i];
 				TermEnum termEnum = reader.Terms();
 				SegmentMergeInfo smi = new SegmentMergeInfo(base_Renamed, termEnum, reader);
-
-                int[] docMap = smi.GetDocMap();
-                if (docMap != null)
-                {
-                    if (docMaps == null)
-                    {
-                        docMaps = new int[readerCount][];
-                        delCounts = new int[readerCount];
-                    }
-                    docMaps[i] = docMap;
-                    delCounts[i] = smi.reader.MaxDoc() - smi.reader.NumDocs();
-                }
-
-                base_Renamed += reader.NumDocs();
+				int[] docMap = smi.GetDocMap();
+				if (docMap != null)
+				{
+					if (docMaps == null)
+					{
+						docMaps = new int[readerCount][];
+						delCounts = new int[readerCount];
+					}
+					docMaps[i] = docMap;
+					delCounts[i] = smi.reader.MaxDoc() - smi.reader.NumDocs();
+				}
+				
+				base_Renamed += reader.NumDocs();
+				
+				System.Diagnostics.Debug.Assert(reader.NumDocs() == reader.MaxDoc() - smi.delCount);
+				
 				if (smi.Next())
-					queue.Put(smi);// initialize queue
+					queue.Add(smi);
+				// initialize queue
 				else
 					smi.Close();
 			}
 			
 			SegmentMergeInfo[] match = new SegmentMergeInfo[readers.Count];
+			
+			System.String currentField = null;
+			FormatPostingsTermsConsumer termsConsumer = null;
 			
 			while (queue.Size() > 0)
 			{
@@ -650,16 +776,25 @@ namespace Lucene.Net.Index
 					top = (SegmentMergeInfo) queue.Top();
 				}
 				
-				int df = MergeTermInfo(match, matchSize); // add new TermInfo
+				if ((System.Object) currentField != (System.Object) term.field)
+				{
+					currentField = term.field;
+					if (termsConsumer != null)
+						termsConsumer.Finish();
+					FieldInfo fieldInfo = fieldInfos.FieldInfo(currentField);
+					termsConsumer = consumer.AddField(fieldInfo);
+					omitTermFreqAndPositions = fieldInfo.omitTermFreqAndPositions;
+				}
 				
-				if (checkAbort != null)
-					checkAbort.Work(df / 3.0);
+				int df = AppendPostings(termsConsumer, match, matchSize); // add new TermInfo
+				
+				checkAbort.Work(df / 3.0);
 				
 				while (matchSize > 0)
 				{
 					SegmentMergeInfo smi = match[--matchSize];
 					if (smi.Next())
-						queue.Put(smi);
+						queue.Add(smi);
 					// restore queue
 					else
 						smi.Close(); // done with a segment
@@ -667,62 +802,17 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private TermInfo termInfo = new TermInfo(); // minimize consing
-		
-		/// <summary>Merge one term found in one or more segments. The array <code>smis</code>
-		/// contains segments that are positioned at the same term. <code>N</code>
-		/// is the number of cells in the array actually occupied.
-		/// 
-		/// </summary>
-		/// <param name="smis">array of segments
-		/// </param>
-		/// <param name="n">number of cells in the array actually occupied
-		/// </param>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException if there is a low-level IO error </throws>
-		private int MergeTermInfo(SegmentMergeInfo[] smis, int n)
-		{
-			long freqPointer = freqOutput.GetFilePointer();
-			long proxPointer;
-            if (proxOutput != null)
-                proxPointer = proxOutput.GetFilePointer();
-            else
-                proxPointer = 0;
-			
-			int df;
-            if (fieldInfos.FieldInfo(smis[0].term.field).omitTf)
-            {
-                // append posting data
-                df = AppendPostingsNoTf(smis, n);
-            }
-            else
-            {
-                df = AppendPostings(smis, n);
-            }
-			
-			long skipPointer = skipListWriter.WriteSkip(freqOutput);
-			
-			if (df > 0)
-			{
-				// add an entry to the dictionary with pointers to prox and freq files
-				termInfo.Set(df, freqPointer, proxPointer, (int) (skipPointer - freqPointer));
-				termInfosWriter.Add(smis[0].term, termInfo);
-			}
-			
-			return df;
-		}
-		
 		private byte[] payloadBuffer;
-        private int[][] docMaps;
-        internal int[][] GetDocMaps()
-        {
-            return docMaps;
-        }
-        private int[] delCounts;
-        internal int[] GetDelCounts()
-        {
-            return delCounts;
-        }
+		private int[][] docMaps;
+		internal int[][] GetDocMaps()
+		{
+			return docMaps;
+		}
+		private int[] delCounts;
+		internal int[] GetDelCounts()
+		{
+			return delCounts;
+		}
 		
 		/// <summary>Process postings from multiple segments all positioned on the
 		/// same term. Writes out merged entries into freqOutput and
@@ -737,13 +827,11 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		private int AppendPostings(SegmentMergeInfo[] smis, int n)
+		private int AppendPostings(FormatPostingsTermsConsumer termsConsumer, SegmentMergeInfo[] smis, int n)
 		{
-			int lastDoc = 0;
-			int df = 0; // number of docs w/ term
-			skipListWriter.ResetSkip();
-			bool storePayloads = fieldInfos.FieldInfo(smis[0].term.field).storePayloads;
-			int lastPayloadLength = - 1; // ensures that we write the first length
+			
+			FormatPostingsDocsConsumer docConsumer = termsConsumer.AddTerm(smis[0].term.text);
+			int df = 0;
 			for (int i = 0; i < n; i++)
 			{
 				SegmentMergeInfo smi = smis[i];
@@ -752,135 +840,49 @@ namespace Lucene.Net.Index
 				int base_Renamed = smi.base_Renamed;
 				int[] docMap = smi.GetDocMap();
 				postings.Seek(smi.termEnum);
+				
 				while (postings.Next())
 				{
+					df++;
 					int doc = postings.Doc();
 					if (docMap != null)
 						doc = docMap[doc]; // map around deletions
 					doc += base_Renamed; // convert to merged space
 					
-					if (doc < 0 || (df > 0 && doc <= lastDoc))
-						throw new CorruptIndexException("docs out of order (" + doc + " <= " + lastDoc + " )");
-					
-					df++;
-					
-					if ((df % skipInterval) == 0)
-					{
-						skipListWriter.SetSkipData(lastDoc, storePayloads, lastPayloadLength);
-						skipListWriter.BufferSkip(df);
-					}
-					
-					int docCode = (doc - lastDoc) << 1; // use low bit to flag freq=1
-					lastDoc = doc;
-					
 					int freq = postings.Freq();
-					if (freq == 1)
-					{
-						freqOutput.WriteVInt(docCode | 1); // write doc & freq=1
-					}
-					else
-					{
-						freqOutput.WriteVInt(docCode); // write doc
-						freqOutput.WriteVInt(freq); // write frequency in doc
-					}
+					FormatPostingsPositionsConsumer posConsumer = docConsumer.AddDoc(doc, freq);
 					
-					/** See {@link DocumentWriter#writePostings(Posting[], String)} for 
-					*  documentation about the encoding of positions and payloads
-					*/
-					int lastPosition = 0; // write position deltas
-					for (int j = 0; j < freq; j++)
+					if (!omitTermFreqAndPositions)
 					{
-						int position = postings.NextPosition();
-						int delta = position - lastPosition;
-						if (storePayloads)
+						for (int j = 0; j < freq; j++)
 						{
+							int position = postings.NextPosition();
 							int payloadLength = postings.GetPayloadLength();
-							if (payloadLength == lastPayloadLength)
-							{
-								proxOutput.WriteVInt(delta * 2);
-							}
-							else
-							{
-								proxOutput.WriteVInt(delta * 2 + 1);
-								proxOutput.WriteVInt(payloadLength);
-								lastPayloadLength = payloadLength;
-							}
 							if (payloadLength > 0)
 							{
 								if (payloadBuffer == null || payloadBuffer.Length < payloadLength)
-								{
 									payloadBuffer = new byte[payloadLength];
-								}
 								postings.GetPayload(payloadBuffer, 0);
-								proxOutput.WriteBytes(payloadBuffer, 0, payloadLength);
 							}
+							posConsumer.AddPosition(position, payloadBuffer, 0, payloadLength);
 						}
-						else
-						{
-							proxOutput.WriteVInt(delta);
-						}
-						lastPosition = position;
+						posConsumer.Finish();
 					}
 				}
 			}
+			docConsumer.Finish();
+			
 			return df;
 		}
-
-        /// <summary>
-        /// Process postings from multiple segments without tf, all positioned on the same term.
-        /// Writes out merged entries only into freqOutput, proxOut is not written.
-        /// </summary>
-        /// <param name="smis">smis array of segments</param>
-        /// <param name="n">number of cells in the array actually occupied</param>
-        /// <returns></returns>
-        private int AppendPostingsNoTf(SegmentMergeInfo[] smis, int n)
-        {
-            int lastDoc = 0;
-            int df = 0;           // number of docs w/ term
-            skipListWriter.ResetSkip();
-            int lastPayloadLength = -1;   // ensures that we write the first length
-            for (int i = 0; i < n; i++)
-            {
-                SegmentMergeInfo smi = smis[i];
-                TermPositions postings = smi.GetPositions();
-                System.Diagnostics.Debug.Assert(postings != null);
-                int base_Renamed = smi.base_Renamed;
-                int[] docMap = smi.GetDocMap();
-                postings.Seek(smi.termEnum);
-                while (postings.Next())
-                {
-                    int doc = postings.Doc();
-                    if (docMap != null)
-                        doc = docMap[doc];                      // map around deletions
-                    doc += base_Renamed;                              // convert to merged space
-
-                    if (doc < 0 || (df > 0 && doc <= lastDoc))
-                        throw new CorruptIndexException("docs out of order (" + doc +
-                            " <= " + lastDoc + " )");
-
-                    df++;
-
-                    if ((df % skipInterval) == 0)
-                    {
-                        skipListWriter.SetSkipData(lastDoc, false, lastPayloadLength);
-                        skipListWriter.BufferSkip(df);
-                    }
-
-                    int docCode = (doc - lastDoc);
-                    lastDoc = doc;
-                    freqOutput.WriteVInt(docCode);    // write doc & freq=1
-                }
-            }
-            return df;
-        }
-
-        private void MergeNorms()
+		
+		private void  MergeNorms()
 		{
 			byte[] normBuffer = null;
 			IndexOutput output = null;
 			try
 			{
-				for (int i = 0; i < fieldInfos.Size(); i++)
+				int numFieldInfos = fieldInfos.Size();
+				for (int i = 0; i < numFieldInfos; i++)
 				{
 					FieldInfo fi = fieldInfos.FieldInfo(i);
 					if (fi.isIndexed && !fi.omitNorms)
@@ -890,9 +892,9 @@ namespace Lucene.Net.Index
 							output = directory.CreateOutput(segment + "." + IndexFileNames.NORMS_EXTENSION);
 							output.WriteBytes(NORMS_HEADER, NORMS_HEADER.Length);
 						}
-						for (int j = 0; j < readers.Count; j++)
+						for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
 						{
-							IndexReader reader = (IndexReader) readers[j];
+							IndexReader reader = (IndexReader) iter.Current;
 							int maxDoc = reader.MaxDoc();
 							if (normBuffer == null || normBuffer.Length < maxDoc)
 							{
@@ -917,8 +919,7 @@ namespace Lucene.Net.Index
 									}
 								}
 							}
-							if (checkAbort != null)
-								checkAbort.Work(maxDoc);
+							checkAbort.Work(maxDoc);
 						}
 					}
 				}
@@ -932,7 +933,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal sealed class CheckAbort
+		internal class CheckAbort
 		{
 			private double workCount;
 			private MergePolicy.OneMerge merge;
@@ -950,7 +951,7 @@ namespace Lucene.Net.Index
 			/// that the time in between calls to merge.checkAborted
 			/// is up to ~ 1 second.
 			/// </summary>
-			public void  Work(double units)
+			public virtual void  Work(double units)
 			{
 				workCount += units;
 				if (workCount >= 10000.0)

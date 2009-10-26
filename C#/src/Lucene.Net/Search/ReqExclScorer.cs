@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,52 +21,53 @@ namespace Lucene.Net.Search
 {
 	
 	
-	/// <summary>A Scorer for queries with a required subscorer and an excluding (prohibited) subscorer.
+	/// <summary>A Scorer for queries with a required subscorer
+	/// and an excluding (prohibited) sub DocIdSetIterator.
 	/// <br>
 	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)},
 	/// and it uses the skipTo() on the given scorers.
 	/// </summary>
-	public class ReqExclScorer : Scorer
+	class ReqExclScorer:Scorer
 	{
-		private Scorer reqScorer, exclScorer;
+		private Scorer reqScorer;
+		private DocIdSetIterator exclDisi;
+		private int doc = - 1;
 		
 		/// <summary>Construct a <code>ReqExclScorer</code>.</summary>
 		/// <param name="reqScorer">The scorer that must match, except where
 		/// </param>
-		/// <param name="exclScorer">indicates exclusion.
+		/// <param name="exclDisi">indicates exclusion.
 		/// </param>
-		public ReqExclScorer(Scorer reqScorer, Scorer exclScorer) : base(null)
+		public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi):base(null)
 		{ // No similarity used.
 			this.reqScorer = reqScorer;
-			this.exclScorer = exclScorer;
+			this.exclDisi = exclDisi;
 		}
 		
-		private bool firstTime = true;
-		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
 		public override bool Next()
 		{
-			if (firstTime)
-			{
-				if (!exclScorer.Next())
-				{
-					exclScorer = null; // exhausted at start
-				}
-				firstTime = false;
-			}
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		public override int NextDoc()
+		{
 			if (reqScorer == null)
 			{
-				return false;
+				return doc;
 			}
-			if (!reqScorer.Next())
+			doc = reqScorer.NextDoc();
+			if (doc == NO_MORE_DOCS)
 			{
 				reqScorer = null; // exhausted, nothing left
-				return false;
+				return doc;
 			}
-			if (exclScorer == null)
+			if (exclDisi == null)
 			{
-				return true; // reqScorer.next() already returned true
+				return doc;
 			}
-			return ToNonExcluded();
+			return doc = ToNonExcluded();
 		}
 		
 		/// <summary>Advance to non excluded doc.
@@ -81,42 +82,49 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <returns> true iff there is a non excluded required doc.
 		/// </returns>
-		private bool ToNonExcluded()
+		private int ToNonExcluded()
 		{
-			int exclDoc = exclScorer.Doc();
+			int exclDoc = exclDisi.DocID();
+			int reqDoc = reqScorer.DocID(); // may be excluded
 			do 
 			{
-				int reqDoc = reqScorer.Doc(); // may be excluded
 				if (reqDoc < exclDoc)
 				{
-					return true; // reqScorer advanced to before exclScorer, ie. not excluded
+					return reqDoc; // reqScorer advanced to before exclScorer, ie. not excluded
 				}
 				else if (reqDoc > exclDoc)
 				{
-					if (!exclScorer.SkipTo(reqDoc))
+					exclDoc = exclDisi.Advance(reqDoc);
+					if (exclDoc == NO_MORE_DOCS)
 					{
-						exclScorer = null; // exhausted, no more exclusions
-						return true;
+						exclDisi = null; // exhausted, no more exclusions
+						return reqDoc;
 					}
-					exclDoc = exclScorer.Doc();
 					if (exclDoc > reqDoc)
 					{
-						return true; // not excluded
+						return reqDoc; // not excluded
 					}
 				}
 			}
-			while (reqScorer.Next());
+			while ((reqDoc = reqScorer.NextDoc()) != NO_MORE_DOCS);
 			reqScorer = null; // exhausted, nothing left
-			return false;
+			return NO_MORE_DOCS;
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
 		public override int Doc()
 		{
 			return reqScorer.Doc(); // reqScorer may be null when next() or skipTo() already return false
 		}
 		
+		public override int DocID()
+		{
+			return doc;
+		}
+		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until {@link #next()} is called the first time.
+		/// Initially invalid, until {@link #Next()} is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer.
 		/// </returns>
@@ -125,44 +133,35 @@ namespace Lucene.Net.Search
 			return reqScorer.Score(); // reqScorer may be null when next() or skipTo() already return false
 		}
 		
-		/// <summary>Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
-		/// </summary>
-		/// <param name="target">The target document number.
-		/// </param>
-		/// <returns> true iff there is such a match.
-		/// </returns>
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
 		public override bool SkipTo(int target)
 		{
-			if (firstTime)
-			{
-				firstTime = false;
-				if (!exclScorer.SkipTo(target))
-				{
-					exclScorer = null; // exhausted
-				}
-			}
+			return Advance(target) != NO_MORE_DOCS;
+		}
+		
+		public override int Advance(int target)
+		{
 			if (reqScorer == null)
 			{
-				return false;
+				return doc = NO_MORE_DOCS;
 			}
-			if (exclScorer == null)
+			if (exclDisi == null)
 			{
-				return reqScorer.SkipTo(target);
+				return doc = reqScorer.Advance(target);
 			}
-			if (!reqScorer.SkipTo(target))
+			if (reqScorer.Advance(target) == NO_MORE_DOCS)
 			{
 				reqScorer = null;
-				return false;
+				return doc = NO_MORE_DOCS;
 			}
-			return ToNonExcluded();
+			return doc = ToNonExcluded();
 		}
 		
 		public override Explanation Explain(int doc)
 		{
 			Explanation res = new Explanation();
-			if (exclScorer.SkipTo(doc) && (exclScorer.Doc() == doc))
+			if (exclDisi.Advance(doc) == doc)
 			{
 				res.SetDescription("excluded");
 			}

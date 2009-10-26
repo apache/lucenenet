@@ -22,8 +22,8 @@ using System;
 namespace Lucene.Net.Demo.Html
 {
 	
-	public class HTMLParserConstants
-    {
+	public class HTMLParserConstants_Fields
+	{
 		public const int EOF = 0;
 		public const int ScriptStart = 1;
 		public const int TagName = 2;

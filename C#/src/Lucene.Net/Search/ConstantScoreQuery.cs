@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,13 +22,15 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// A query that wraps a filter and simply returns a constant score equal to the
+	/// <summary> A query that wraps a filter and simply returns a constant score equal to the
 	/// query boost for every document in the filter.
+	/// 
+	/// 
 	/// </summary>
-	/// <version>$Id:$</version>
+	/// <version>  $Id: ConstantScoreQuery.java 807180 2009-08-24 12:26:43Z markrmiller $
+	/// </version>
 	[Serializable]
-	public class ConstantScoreQuery : Query
+	public class ConstantScoreQuery:Query
 	{
 		protected internal Filter filter;
 		
@@ -55,7 +57,7 @@ namespace Lucene.Net.Search
 		}
 		
 		[Serializable]
-		protected internal class ConstantWeight : Weight
+		protected internal class ConstantWeight:Weight
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
 			{
@@ -80,38 +82,38 @@ namespace Lucene.Net.Search
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 			}
 			
-			public virtual Query GetQuery()
+			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
 			
-			public virtual float GetValue()
+			public override float GetValue()
 			{
 				return queryWeight;
 			}
 			
-			public virtual float SumOfSquaredWeights()
+			public override float SumOfSquaredWeights()
 			{
 				queryWeight = Enclosing_Instance.GetBoost();
 				return queryWeight * queryWeight;
 			}
 			
-			public virtual void  Normalize(float norm)
+			public override void  Normalize(float norm)
 			{
 				this.queryNorm = norm;
 				queryWeight *= this.queryNorm;
 			}
 			
-			public virtual Scorer Scorer(IndexReader reader)
+			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
 				return new ConstantScorer(enclosingInstance, similarity, reader, this);
 			}
 			
-			public virtual Explanation Explain(IndexReader reader, int doc)
+			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				
-				ConstantScorer cs = (ConstantScorer) Scorer(reader);
-                bool exists = cs.docIdSetIterator.SkipTo(doc) && cs.docIdSetIterator.Doc() == doc;
+				ConstantScorer cs = new ConstantScorer(enclosingInstance, similarity, reader, this);
+				bool exists = cs.docIdSetIterator.Advance(doc) == doc;
 				
 				ComplexExplanation result = new ComplexExplanation();
 				
@@ -135,7 +137,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		protected internal class ConstantScorer : Scorer
+		protected internal class ConstantScorer:Scorer
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
 			{
@@ -150,7 +152,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-            internal DocIdSetIterator docIdSetIterator;
+			internal DocIdSetIterator docIdSetIterator;
 			internal float theScore;
 			internal int doc = - 1;
 			
@@ -158,17 +160,47 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 				theScore = w.GetValue();
-                docIdSetIterator = Enclosing_Instance.filter.GetDocIdSet(reader).Iterator();
+				DocIdSet docIdSet = Enclosing_Instance.filter.GetDocIdSet(reader);
+				if (docIdSet == null)
+				{
+					docIdSetIterator = DocIdSet.EMPTY_DOCIDSET.Iterator();
+				}
+				else
+				{
+					DocIdSetIterator iter = docIdSet.Iterator();
+					if (iter == null)
+					{
+						docIdSetIterator = DocIdSet.EMPTY_DOCIDSET.Iterator();
+					}
+					else
+					{
+						docIdSetIterator = iter;
+					}
+				}
 			}
 			
+			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// </deprecated>
 			public override bool Next()
 			{
-				return docIdSetIterator.Next();
+				return docIdSetIterator.NextDoc() != NO_MORE_DOCS;
 			}
 			
+			public override int NextDoc()
+			{
+				return docIdSetIterator.NextDoc();
+			}
+			
+			/// <deprecated> use {@link #DocID()} instead. 
+			/// </deprecated>
 			public override int Doc()
 			{
-                return docIdSetIterator.Doc(); ;
+				return docIdSetIterator.Doc();
+			}
+			
+			public override int DocID()
+			{
+				return docIdSetIterator.DocID();
 			}
 			
 			public override float Score()
@@ -176,9 +208,16 @@ namespace Lucene.Net.Search
 				return theScore;
 			}
 			
+			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// </deprecated>
 			public override bool SkipTo(int target)
 			{
-				return docIdSetIterator.SkipTo(target);
+				return docIdSetIterator.Advance(target) != NO_MORE_DOCS;
+			}
+			
+			public override int Advance(int target)
+			{
+				return docIdSetIterator.Advance(target);
 			}
 			
 			public override Explanation Explain(int doc)
@@ -187,21 +226,19 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		
-		protected internal override Weight CreateWeight(Searcher searcher)
+		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new ConstantScoreQuery.ConstantWeight(this, searcher);
 		}
 		
-		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
-			return "ConstantScore(" + filter.ToString() + (GetBoost() == 1.0 ? ")" : "^" + GetBoost());
+			return "ConstantScore(" + filter.ToString() + (GetBoost() == 1.0?")":"^" + GetBoost());
 		}
 		
 		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -216,13 +253,13 @@ namespace Lucene.Net.Search
 		{
 			// Simple add is OK since no existing filter hashcode has a float component.
 			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
-		}
+        }
 
-		override public object Clone()
+		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
-            ConstantScoreQuery clone = (ConstantScoreQuery) base.Clone();
-            clone.filter = (Filter) this.filter;
+            ConstantScoreQuery clone = (ConstantScoreQuery)base.Clone();
+            clone.filter = (Filter)this.filter;
             return clone;
         }
 	}

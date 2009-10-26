@@ -6014,14 +6014,14 @@
         <member name="M:Lucene.Net.Index.FieldReaderException.#ctor">
             <summary> Constructs a new runtime exception with <code>null</code> as its
             detail message.  The cause is not initialized, and may subsequently be
-            initialized by a call to {@link #initCause}.
+            initialized by a call to {@link #innerException}.
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Index.FieldReaderException.#ctor(System.Exception)" -->
         <member name="M:Lucene.Net.Index.FieldReaderException.#ctor(System.String)">
             <summary> Constructs a new runtime exception with the specified detail message.
             The cause is not initialized, and may subsequently be initialized by a
-            call to {@link #initCause}.
+            call to {@link #innerException}.
             
             </summary>
             <param name="message">the detail message. The detail message is saved for
@@ -6058,7 +6058,7 @@
         </member>
         <member name="M:Lucene.Net.Documents.DateTools.StringToTime(System.String)">
             <summary> Converts a string produced by <code>timeToString</code> or
-            <code>dateToString</code> back to a time, represented as the
+            <code>DateToString</code> back to a time, represented as the
             number of milliseconds since January 1, 1970, 00:00:00 GMT.
             
             </summary>
@@ -6072,7 +6072,7 @@
         </member>
         <member name="M:Lucene.Net.Documents.DateTools.StringToDate(System.String)">
             <summary> Converts a string produced by <code>timeToString</code> or
-            <code>dateToString</code> back to a time, represented as a
+            <code>DateToString</code> back to a time, represented as a
             Date object.
             
             </summary>
@@ -8988,17 +8988,17 @@
             </returns>
             <throws>  IOException If an error occurs reading the index. </throws>
         </member>
-        <member name="T:Lucene.Net.Search.ScoreDocComparator_Fields">
+        <member name="T:Lucene.Net.Search.ScoreDocComparator">
             <summary>
             Expert: Compares two ScoreDoc objects for sorting.
             </summary>
             <since>lucene 1.4</since>
             <version>$Id:$</version>
         </member>
-        <member name="F:Lucene.Net.Search.ScoreDocComparator_Fields.RELEVANCE">
+        <member name="F:Lucene.Net.Search.ScoreDocComparator.RELEVANCE">
             <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>
         </member>
-        <member name="F:Lucene.Net.Search.ScoreDocComparator_Fields.INDEXORDER">
+        <member name="F:Lucene.Net.Search.ScoreDocComparator.INDEXORDER">
             <summary>Special comparator for sorting hits according to index order (document number). </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Lucene.Net.Search.ScoreDocComparator.Compare(Lucene.Net.Search.ScoreDoc,Lucene.Net.Search.ScoreDoc)" -->
@@ -9295,10 +9295,10 @@
         <member name="M:Lucene.Net.Search.StringIndex.#ctor(System.Int32[],System.String[])">
             <summary>Creates one of these objects </summary>
         </member>
-        <member name="F:Lucene.Net.Search.FieldCache_Fields.STRING_INDEX">
+        <member name="F:Lucene.Net.Search.FieldCache.STRING_INDEX">
             <summary>Indicator for StringIndex values in the cache. </summary>
         </member>
-        <member name="F:Lucene.Net.Search.FieldCache_Fields.DEFAULT">
+        <member name="F:Lucene.Net.Search.FieldCache.DEFAULT">
             <summary>Expert: The cache used internally by sorting and range query classes. </summary>
         </member>
         <member name="T:Lucene.Net.Index.TermVectorEntryFreqSortedComparator">
@@ -11358,7 +11358,7 @@
         <member name="M:Lucene.Net.Search.RangeFilter.GetHashCode">
             <summary>Returns a hash code value for this object.</summary>
         </member>
-        <member name="T:Lucene.Net.Search.ExtendedFieldCache_Fields">
+        <member name="T:Lucene.Net.Search.ExtendedFieldCache">
             <summary> 
             
             

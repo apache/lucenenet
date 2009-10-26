@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,14 +25,14 @@ namespace Lucene.Net.Index
 	/// into account). 
 	/// </summary>
 	
-	public class LogDocMergePolicy : LogMergePolicy
+	public class LogDocMergePolicy:LogMergePolicy
 	{
 		
 		/// <seealso cref="setMinMergeDocs">
 		/// </seealso>
 		public const int DEFAULT_MIN_MERGE_DOCS = 1000;
 		
-		public LogDocMergePolicy():base()
+		public LogDocMergePolicy(IndexWriter writer):base(writer)
 		{
 			minMergeSize = DEFAULT_MIN_MERGE_DOCS;
 			
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 		}
 		protected internal override long Size(SegmentInfo info)
 		{
-			return info.docCount;
+			return SizeDocs(info);
 		}
 		
 		/// <summary>Sets the minimum size for the lowest level segments.

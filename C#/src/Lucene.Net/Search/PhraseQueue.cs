@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,21 +22,21 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search
 {
 	
-	sealed class PhraseQueue : PriorityQueue
+	sealed class PhraseQueue:PriorityQueue
 	{
 		internal PhraseQueue(int size)
 		{
 			Initialize(size);
 		}
 		
-		public override bool LessThan(object o1, object o2)
+		public override bool LessThan(System.Object o1, System.Object o2)
 		{
 			PhrasePositions pp1 = (PhrasePositions) o1;
 			PhrasePositions pp2 = (PhrasePositions) o2;
 			if (pp1.doc == pp2.doc)
 				if (pp1.position == pp2.position)
-					// same doc and pp.position, so decide by actual term positions. 
-					// rely on: pp.position == tp.position - offset. 
+				// same doc and pp.position, so decide by actual term positions. 
+				// rely on: pp.position == tp.position - offset. 
 					return pp1.offset < pp2.offset;
 				else
 					return pp1.position < pp2.position;

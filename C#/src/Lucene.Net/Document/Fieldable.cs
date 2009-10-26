@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,18 +18,21 @@
 using System;
 
 using TokenStream = Lucene.Net.Analysis.TokenStream;
+using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary>
-    /// Synonymous with {@link Field}.
-    /// <p><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
-    /// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
-    /// compatibility promises remain intact. For example, Lucene can still
-    /// read and write indices created within the same major version.
-    /// </p>
- 	/// </summary>
+	/// <summary> Synonymous with {@link Field}.
+	/// 
+	/// <p><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
+	/// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
+	/// compatibility promises remain intact. For example, Lucene can still
+	/// read and write indices created within the same major version.
+	/// </p>
+	/// 
+	/// 
+	/// </summary>
 	public interface Fieldable
 	{
 		/// <summary>Sets the boost factor hits on this field.  This value will be
@@ -39,15 +42,20 @@ namespace Lucene.Net.Documents
 		/// <p>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
-		/// multipled by the value {@link Lucene.Net.Search.Similarity#LengthNorm(String,int)}, and
-		/// rounded by {@link Lucene.Net.Search.Similarity#EncodeNorm(float)} before it is stored in the
+		/// used to compute the norm factor for the field.  By
+		/// default, in the {@link
+		/// Lucene.Net.Search.Similarity#ComputeNorm(String,
+		/// FieldInvertState)} method, the boost value is multiplied
+		/// by the {@link
+		/// Lucene.Net.Search.Similarity#LengthNorm(String,
+		/// int)} and then rounded by {@link Lucene.Net.Search.Similarity#EncodeNorm(float)} before it is stored in the
 		/// index.  One should attempt to ensure that this product does not overflow
 		/// the range of that encoding.
 		/// 
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Documents.Document.SetBoost(float)">
 		/// </seealso>
-		/// <seealso cref="Lucene.Net.Search.Similarity.LengthNorm(String, int)">
+		/// <seealso cref="Lucene.Net.Search.Similarity.ComputeNorm(String, FieldInvertState)">
 		/// </seealso>
 		/// <seealso cref="Lucene.Net.Search.Similarity.EncodeNorm(float)">
 		/// </seealso>
@@ -63,7 +71,7 @@ namespace Lucene.Net.Documents
 		/// this field was indexed.
 		/// 
 		/// </summary>
-		/// <seealso cref="#SetBoost(float)">
+		/// <seealso cref="SetBoost(float)">
 		/// </seealso>
 		float GetBoost();
 		
@@ -72,42 +80,43 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		System.String Name();
 		
-		/// <summary>The value of the field as a String, or null.  If null, the Reader value,
-		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
+		/// <summary>The value of the field as a String, or null.
+		/// <p>
+		/// For indexing, if isStored()==true, the stringValue() will be used as the stored field value
+		/// unless isBinary()==true, in which case binaryValue() will be used.
+		/// 
+		/// If isIndexed()==true and isTokenized()==false, this String value will be indexed as a single token.
+		/// If isIndexed()==true and isTokenized()==true, then tokenStreamValue() will be used to generate indexed tokens if not null,
+		/// else readerValue() will be used to generate indexed tokens if not null, else stringValue() will be used to generate tokens.
 		/// </summary>
 		System.String StringValue();
 		
-		/// <summary>The value of the field as a Reader, or null.  If null, the String value,
-		/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-		/// </summary>
-		System.IO.TextReader ReaderValue();
+		/// <summary>The value of the field as a Reader, which can be used at index time to generate indexed tokens.</summary>
+		/// <seealso cref="StringValue()">
+		/// </seealso>
+		System.IO.StreamReader ReaderValue();
 		
-		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
-		/// String value, or TokenStream value is used. Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-		/// </summary>
+		/// <summary>The value of the field in Binary, or null.</summary>
+		/// <seealso cref="StringValue()">
+		/// </seealso>
 		byte[] BinaryValue();
 		
-		/// <summary>The value of the field as a TokenStream, or null.  If null, the Reader value,
-		/// String value, or binary value is used. Exactly one of stringValue(), 
-		/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
-		/// </summary>
+		/// <summary>The TokenStream for this field to be used when indexing, or null.</summary>
+		/// <seealso cref="StringValue()">
+		/// </seealso>
 		TokenStream TokenStreamValue();
 		
-		/// <summary>True iff the value of the field is to be stored in the index for return
-		/// with search hits.  It is an error for this to be true if a field is
-		/// Reader-valued. 
+		/// <summary>True if the value of the field is to be stored in the index for return
+		/// with search hits. 
 		/// </summary>
 		bool IsStored();
 		
-		/// <summary>True iff the value of the field is to be indexed, so that it may be
+		/// <summary>True if the value of the field is to be indexed, so that it may be
 		/// searched on. 
 		/// </summary>
 		bool IsIndexed();
 		
-		/// <summary>True iff the value of the field should be tokenized as text prior to
+		/// <summary>True if the value of the field should be tokenized as text prior to
 		/// indexing.  Un-tokenized fields are indexed as a single word and may not be
 		/// Reader-valued. 
 		/// </summary>
@@ -116,7 +125,7 @@ namespace Lucene.Net.Documents
 		/// <summary>True if the value of the field is stored and compressed within the index </summary>
 		bool IsCompressed();
 		
-		/// <summary>True iff the term or terms used to index this field are stored as a term
+		/// <summary>True if the term or terms used to index this field are stored as a term
 		/// vector, available from {@link Lucene.Net.Index.IndexReader#GetTermFreqVector(int,String)}.
 		/// These methods do not provide access to the original content of the field,
 		/// only to terms used to index it. If the original content must be
@@ -127,15 +136,15 @@ namespace Lucene.Net.Documents
 		/// </seealso>
 		bool IsTermVectorStored();
 		
-		/// <summary> True iff terms are stored as term vector together with their offsets 
+		/// <summary> True if terms are stored as term vector together with their offsets 
 		/// (start and end positon in source text).
 		/// </summary>
 		bool IsStoreOffsetWithTermVector();
 		
-		/// <summary> True iff terms are stored as term vector together with their token positions.</summary>
+		/// <summary> True if terms are stored as term vector together with their token positions.</summary>
 		bool IsStorePositionWithTermVector();
 		
-		/// <summary>True iff the value of the filed is stored as binary </summary>
+		/// <summary>True if the value of the field is stored as binary </summary>
 		bool IsBinary();
 		
 		/// <summary>True if norms are omitted for this indexed field </summary>
@@ -147,19 +156,15 @@ namespace Lucene.Net.Documents
 		/// This effectively disables indexing boosts and length normalization for this field.
 		/// </summary>
 		void  SetOmitNorms(bool omitNorms);
-
-        /// <summary>
-        /// Expert:
-        /// If set, omit term freq, positions, and payloads from postings for this field for this field.
-        /// </summary>
-        void SetOmitTf(bool omitTf);
-
-        /// <summary>
-        /// True if tf is omitted for this indexed field.
-        /// </summary>
-        /// <returns></returns>
-        bool GetOmitTf();
-
+		
+		/// <deprecated> Renamed to {@link AbstractField#setOmitTermFreqAndPositions} 
+		/// </deprecated>
+		void  SetOmitTf(bool omitTf);
+		
+		/// <deprecated> Renamed to {@link AbstractField#getOmitTermFreqAndPositions} 
+		/// </deprecated>
+		bool GetOmitTf();
+		
 		/// <summary> Indicates whether a Field is Lazy or not.  The semantics of Lazy loading are such that if a Field is lazily loaded, retrieving
 		/// it's values via {@link #StringValue()} or {@link #BinaryValue()} is only valid as long as the {@link Lucene.Net.Index.IndexReader} that
 		/// retrieved the {@link Document} is still open.
@@ -168,35 +173,47 @@ namespace Lucene.Net.Documents
 		/// <returns> true if this field can be loaded lazily
 		/// </returns>
 		bool IsLazy();
-
-        /// <summary>
-        /// Returns the offset into the byte[] segment that is used as value.  If Fields is not binary returned value is undefined.
-        /// </summary>
-        /// <returns>index of the first byte in segment that represents this Field value</returns>
-        int GetBinaryOffset();
-
-        /// <summary>
-        /// Returns the of byte][ segment that is used as value.  If Fields is not binarythe returned value is undefined.
-        /// </summary>
-        /// <returns>length of byte[] segment that represents this Field value</returns>
-        int GetBinaryLength();
-
-        /// <summary>
-        /// Return the raw byte[] for the vinary field.  Note that you must also call GetBinaryLength() and GetBinaryOffset()
-        /// to know which range of bytes in the returned array belong to this Field.
-        /// </summary>
-        /// <returns>refererence to the Field value as byte</returns>
-        byte[] GetBinaryValue();
-
-        /// <summary>
-        /// Return the raw byte[] for the vinary field.  Note that you must also call GetBinaryLength() and GetBinaryOffset()
-        /// to know which range of bytes in the returned array belong to this Field.
-        /// About reuse: if you pass in the result byte[] and it is used, it is likely the underlying implementation
-        /// will hold onto this byte[] and return it in future calls to BinaryValue() of GetBinaryValue().
-        /// So if you subsequently re-use the same byte[] elsewhere it will alter this Fieldable's value.
-        /// </summary>
-        /// <param name="result">user defined buffer that will be used if non-null and large enough to contain the Field value</param>
-        /// <returns></returns>
-        byte[] GetBinaryValue(byte[] result);
-    }
+		
+		/// <summary> Returns offset into byte[] segment that is used as value, if Field is not binary
+		/// returned value is undefined
+		/// </summary>
+		/// <returns> index of the first character in byte[] segment that represents this Field value
+		/// </returns>
+		int GetBinaryOffset();
+		
+		/// <summary> Returns length of byte[] segment that is used as value, if Field is not binary
+		/// returned value is undefined
+		/// </summary>
+		/// <returns> length of byte[] segment that represents this Field value
+		/// </returns>
+		int GetBinaryLength();
+		
+		/// <summary> Return the raw byte[] for the binary field.  Note that
+		/// you must also call {@link #getBinaryLength} and {@link
+		/// #getBinaryOffset} to know which range of bytes in this
+		/// returned array belong to the field.
+		/// </summary>
+		/// <returns> reference to the Field value as byte[].
+		/// </returns>
+		byte[] GetBinaryValue();
+		
+		/// <summary> Return the raw byte[] for the binary field.  Note that
+		/// you must also call {@link #getBinaryLength} and {@link
+		/// #getBinaryOffset} to know which range of bytes in this
+		/// returned array belong to the field.<p>
+		/// About reuse: if you pass in the result byte[] and it is
+		/// used, likely the underlying implementation will hold
+		/// onto this byte[] and return it in future calls to
+		/// {@link #BinaryValue()} or {@link #GetBinaryValue()}.
+		/// So if you subsequently re-use the same byte[] elsewhere
+		/// it will alter this Fieldable's value.
+		/// </summary>
+		/// <param name="result"> User defined buffer that will be used if
+		/// possible.  If this is null or not large enough, a new
+		/// buffer is allocated
+		/// </param>
+		/// <returns> reference to the Field value as byte[].
+		/// </returns>
+		byte[] GetBinaryValue(byte[] result);
+	}
 }

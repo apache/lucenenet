@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,14 +22,14 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Index
 {
 	
-	sealed class SegmentMergeQueue : PriorityQueue
+	sealed class SegmentMergeQueue:PriorityQueue
 	{
 		internal SegmentMergeQueue(int size)
 		{
 			Initialize(size);
 		}
 		
-		public override bool LessThan(object a, object b)
+		public override bool LessThan(System.Object a, System.Object b)
 		{
 			SegmentMergeInfo stiA = (SegmentMergeInfo) a;
 			SegmentMergeInfo stiB = (SegmentMergeInfo) b;

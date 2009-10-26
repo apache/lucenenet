@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
+using ReaderUtil = Lucene.Net.Util.ReaderUtil;
 
 namespace Lucene.Net.Search
 {
@@ -30,70 +31,83 @@ namespace Lucene.Net.Search
 	/// <summary>Implements search over a single IndexReader.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #search(Query,Filter)} methods. For performance reasons it is 
+	/// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
 	/// <p>Note that you can only access Hits from an IndexSearcher as long as it is
 	/// not yet closed, otherwise an IOException will be thrown. 
+	/// 
+	/// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	/// <code>IndexSearcher</code>} instances are completely
+	/// thread safe, meaning multiple threads can call any of its
+	/// methods, concurrently.  If your application requires
+	/// external synchronization, you should <b>not</b>
+	/// synchronize on the <code>IndexSearcher</code> instance;
+	/// use your own (non-Lucene) objects instead.</p>
 	/// </summary>
-	public class IndexSearcher : Searcher
+	public class IndexSearcher:Searcher
 	{
-		private class AnonymousClassHitCollector : HitCollector
-		{
-			public AnonymousClassHitCollector(System.Collections.BitArray bits, Lucene.Net.Search.HitCollector results, IndexSearcher enclosingInstance)
-			{
-				InitBlock(bits, results, enclosingInstance);
-			}
-			private void  InitBlock(System.Collections.BitArray bits, Lucene.Net.Search.HitCollector results, IndexSearcher enclosingInstance)
-			{
-				this.bits = bits;
-				this.results = results;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private System.Collections.BitArray bits;
-			private Lucene.Net.Search.HitCollector results;
-			private IndexSearcher enclosingInstance;
-			public IndexSearcher Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public override void  Collect(int doc, float score)
-			{
-				if (bits.Get(doc))
-				{
-					// skip docs not in bits
-					results.Collect(doc, score);
-				}
-			}
-		}
 		internal IndexReader reader;
 		private bool closeReader;
+		private IndexReader[] subReaders;
+		private int[] docStarts;
 		
-        public IndexReader Reader
-        {
-            get {   return reader;  }
-        }
-
 		/// <summary>Creates a searcher searching the index in the named directory.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public IndexSearcher(System.String path) : this(IndexReader.Open(path), true)
+		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// </deprecated>
+		public IndexSearcher(System.String path):this(IndexReader.Open(path), true)
+		{
+		}
+		
+		/// <summary>Creates a searcher searching the index in the named
+		/// directory.  You should pass readOnly=true, since it
+		/// gives much better concurrent performance, unless you
+		/// intend to do write operations (delete documents or
+		/// change norms) with the underlying IndexReader.
+		/// </summary>
+		/// <param name="path">directory where IndexReader will be opened
+		/// </param>
+		/// <param name="readOnly">if true, the underlying IndexReader
+		/// will be opened readOnly
+		/// </param>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
+		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// </deprecated>
+		public IndexSearcher(System.String path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
 		{
 		}
 		
 		/// <summary>Creates a searcher searching the index in the provided directory.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public IndexSearcher(Directory directory) : this(IndexReader.Open(directory), true)
+		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// </deprecated>
+		public IndexSearcher(Directory directory):this(IndexReader.Open(directory), true)
+		{
+		}
+		
+		/// <summary>Creates a searcher searching the index in the named
+		/// directory.  You should pass readOnly=true, since it
+		/// gives much better concurrent performance, unless you
+		/// intend to do write operations (delete documents or
+		/// change norms) with the underlying IndexReader.
+		/// </summary>
+		/// <throws>  CorruptIndexException if the index is corrupt </throws>
+		/// <throws>  IOException if there is a low-level IO error </throws>
+		/// <param name="path">directory where IndexReader will be opened
+		/// </param>
+		/// <param name="readOnly">if true, the underlying IndexReader
+		/// will be opened readOnly
+		/// </param>
+		public IndexSearcher(Directory path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
 		{
 		}
 		
 		/// <summary>Creates a searcher searching the provided index. </summary>
-		public IndexSearcher(IndexReader r) : this(r, false)
+		public IndexSearcher(IndexReader r):this(r, false)
 		{
 		}
 		
@@ -101,6 +115,22 @@ namespace Lucene.Net.Search
 		{
 			reader = r;
 			this.closeReader = closeReader;
+			
+			System.Collections.IList subReadersList = new System.Collections.ArrayList();
+			GatherSubReaders(subReadersList, reader);
+            subReaders = (IndexReader[])new System.Collections.ArrayList(subReadersList).ToArray(typeof(IndexReader));
+			docStarts = new int[subReaders.Length];
+			int maxDoc = 0;
+			for (int i = 0; i < subReaders.Length; i++)
+			{
+				docStarts[i] = maxDoc;
+				maxDoc += subReaders[i].MaxDoc();
+			}
+		}
+		
+		protected internal virtual void  GatherSubReaders(System.Collections.IList allSubReaders, IndexReader r)
+		{
+			ReaderUtil.GatherSubReaders(allSubReaders, r);
 		}
 		
 		/// <summary>Return the {@link IndexReader} this searches. </summary>
@@ -149,61 +179,166 @@ namespace Lucene.Net.Search
 		{
 			
 			if (nDocs <= 0)
-				// null might be returned from hq.top() below.
+			{
 				throw new System.ArgumentException("nDocs must be > 0");
+			}
 			
-			TopDocCollector collector = new TopDocCollector(nDocs);
+			TopScoreDocCollector collector = TopScoreDocCollector.create(nDocs, !weight.ScoresDocsOutOfOrder());
 			Search(weight, filter, collector);
 			return collector.TopDocs();
 		}
 		
-		// inherit javadoc
 		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
 		{
-			
-			TopFieldDocCollector collector = new TopFieldDocCollector(reader, sort, nDocs);
-			Search(weight, filter, collector);
-			return (TopFieldDocs) collector.TopDocs();
+			return Search(weight, filter, nDocs, sort, true);
 		}
 		
-		// inherit javadoc
-		public override void  Search(Weight weight, Filter filter, HitCollector results)
+		/// <summary> Just like {@link #Search(Weight, Filter, int, Sort)}, but you choose
+		/// whether or not the fields in the returned {@link FieldDoc} instances should
+		/// be set by specifying fillFields.<br>
+		/// <b>NOTE:</b> currently, this method tracks document scores and sets them in
+		/// the returned {@link FieldDoc}, however in 3.0 it will move to not track
+		/// document scores. If document scores tracking is still needed, you can use
+		/// {@link #Search(Weight, Filter, Collector)} and pass in a
+		/// {@link TopFieldCollector} instance.
+		/// </summary>
+		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
 		{
-            Scorer scorer = weight.Scorer(reader);
-            if (scorer == null)
-                return;
-
-            if (filter == null)
-            {
-                scorer.Score(results);
-                return;
-            }
-
-            DocIdSetIterator filterDocIdIterator = filter.GetDocIdSet(reader).Iterator(); // CHECKME: use ConjunctionScorer here?
-
-            bool more = filterDocIdIterator.Next() && scorer.SkipTo(filterDocIdIterator.Doc());
-
-            while (more)
-            {
-                int filterDocId = filterDocIdIterator.Doc();
-                if (filterDocId > scorer.Doc() && !scorer.SkipTo(filterDocId))
-                {
-                    more = false;
-                }
-                else
-                {
-                    int scorerDocId = scorer.Doc();
-                    if (scorerDocId == filterDocId) // permitted by filter
-                    {
-                        results.Collect(scorerDocId, scorer.Score());
-                        more = filterDocIdIterator.Next();
-                    }
-                    else
-                    {
-                        more = filterDocIdIterator.SkipTo(scorerDocId);
-                    }
-                }
-            }
+			
+			SortField[] fields = sort.fields;
+			bool legacy = false;
+			for (int i = 0; i < fields.Length; i++)
+			{
+				SortField field = fields[i];
+				System.String fieldname = field.GetField();
+				int type = field.GetType();
+				// Resolve AUTO into its true type
+				if (type == SortField.AUTO)
+				{
+					int autotype = SortField.DetectFieldType(reader, fieldname);
+					if (autotype == SortField.STRING)
+					{
+						fields[i] = new SortField(fieldname, field.GetLocale(), field.GetReverse());
+					}
+					else
+					{
+						fields[i] = new SortField(fieldname, autotype, field.GetReverse());
+					}
+				}
+				
+				if (field.GetUseLegacySearch())
+				{
+					legacy = true;
+				}
+			}
+			
+			if (legacy)
+			{
+				// Search the single top-level reader
+				TopDocCollector collector = new TopFieldDocCollector(reader, sort, nDocs);
+				HitCollectorWrapper hcw = new HitCollectorWrapper(collector);
+				hcw.SetNextReader(reader, 0);
+				if (filter == null)
+				{
+					Scorer scorer = weight.Scorer(reader, true, true);
+					if (scorer != null)
+					{
+						scorer.Score(hcw);
+					}
+				}
+				else
+				{
+					SearchWithFilter(reader, weight, filter, hcw);
+				}
+				return (TopFieldDocs) collector.TopDocs();
+			}
+			
+			TopFieldCollector collector2 = TopFieldCollector.create(sort, nDocs, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight.ScoresDocsOutOfOrder());
+			Search(weight, filter, collector2);
+			return (TopFieldDocs) collector2.TopDocs();
+		}
+		
+		public override void  Search(Weight weight, Filter filter, Collector collector)
+		{
+			
+			if (filter == null)
+			{
+				for (int i = 0; i < subReaders.Length; i++)
+				{
+					// search each subreader
+					collector.SetNextReader(subReaders[i], docStarts[i]);
+					Scorer scorer = weight.Scorer(subReaders[i], !collector.AcceptsDocsOutOfOrder(), true);
+					if (scorer != null)
+					{
+						scorer.Score(collector);
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < subReaders.Length; i++)
+				{
+					// search each subreader
+					collector.SetNextReader(subReaders[i], docStarts[i]);
+					SearchWithFilter(subReaders[i], weight, filter, collector);
+				}
+			}
+		}
+		
+		private void  SearchWithFilter(IndexReader reader, Weight weight, Filter filter, Collector collector)
+		{
+			
+			System.Diagnostics.Debug.Assert(filter != null);
+			
+			Scorer scorer = weight.Scorer(reader, true, false);
+			if (scorer == null)
+			{
+				return ;
+			}
+			
+			int docID = scorer.DocID();
+			System.Diagnostics.Debug.Assert(docID == - 1 || docID == DocIdSetIterator.NO_MORE_DOCS);
+			
+			// CHECKME: use ConjunctionScorer here?
+			DocIdSet filterDocIdSet = filter.GetDocIdSet(reader);
+			if (filterDocIdSet == null)
+			{
+				// this means the filter does not accept any documents.
+				return ;
+			}
+			
+			DocIdSetIterator filterIter = filterDocIdSet.Iterator();
+			if (filterIter == null)
+			{
+				// this means the filter does not accept any documents.
+				return ;
+			}
+			int filterDoc = filterIter.NextDoc();
+			int scorerDoc = scorer.Advance(filterDoc);
+			
+			collector.SetScorer(scorer);
+			while (true)
+			{
+				if (scorerDoc == filterDoc)
+				{
+					// Check if scorer has exhausted, only before collecting.
+					if (scorerDoc == DocIdSetIterator.NO_MORE_DOCS)
+					{
+						break;
+					}
+					collector.Collect(scorerDoc);
+					filterDoc = filterIter.NextDoc();
+					scorerDoc = scorer.Advance(filterDoc);
+				}
+				else if (scorerDoc > filterDoc)
+				{
+					filterDoc = filterIter.Advance(scorerDoc);
+				}
+				else
+				{
+					scorerDoc = scorer.Advance(filterDoc);
+				}
+			}
 		}
 		
 		public override Query Rewrite(Query original)
@@ -218,7 +353,21 @@ namespace Lucene.Net.Search
 		
 		public override Explanation Explain(Weight weight, int doc)
 		{
-			return weight.Explain(reader, doc);
+			int n = ReaderUtil.SubIndex(doc, docStarts);
+			int deBasedDoc = doc - docStarts[n];
+			
+			return weight.Explain(subReaders[n], deBasedDoc);
+		}
+		
+		private bool fieldSortDoTrackScores;
+		private bool fieldSortDoMaxScore;
+		
+		/// <deprecated> 
+		/// </deprecated>
+		public virtual void  SetDefaultFieldSortScoring(bool doTrackScores, bool doMaxScore)
+		{
+			fieldSortDoTrackScores = doTrackScores;
+			fieldSortDoMaxScore = doMaxScore;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,8 +18,8 @@
 using System;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 
 namespace Lucene.Net.Search
@@ -58,14 +58,20 @@ namespace Lucene.Net.Search
 					System.Collections.ArrayList terms = new System.Collections.ArrayList();
 					try
 					{
-                        Token reusableToken = new Token();
-                        for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
-                        {
-							terms.Add(nextToken.Term());
+						bool hasMoreTokens = false;
+						
+						stream.Reset();
+						TermAttribute termAtt = (TermAttribute) stream.AddAttribute(typeof(TermAttribute));
+						
+						hasMoreTokens = stream.IncrementToken();
+						while (hasMoreTokens)
+						{
+							terms.Add(termAtt.Term());
+							hasMoreTokens = stream.IncrementToken();
 						}
 						ProcessTerms((System.String[]) terms.ToArray(typeof(System.String)));
 					}
-					catch (System.IO.IOException)
+					catch (System.IO.IOException e)
 					{
 					}
 				}
@@ -85,8 +91,8 @@ namespace Lucene.Net.Search
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
 					System.String term = queryTerms[i];
-					object tmpPosition = tmpSet[term];
-					if (tmpPosition == null)
+					System.Object temp_position = tmpSet[term];
+					if (temp_position == null)
 					{
 						tmpSet[term] = (System.Int32) j++;
 						tmpList.Add(term);
@@ -99,7 +105,7 @@ namespace Lucene.Net.Search
 						tmpFreqs[position] = (System.Int32) (integer + 1);
 					}
 				}
-				terms = (System.String[]) tmpList.ToArray(typeof(System.String));
+                terms = (System.String[]) tmpList.ToArray(typeof(System.String));
 				//termFreqs = (int[])tmpFreqs.toArray(termFreqs);
 				termFreqs = new int[tmpFreqs.Count];
 				int i2 = 0;
@@ -144,7 +150,7 @@ namespace Lucene.Net.Search
 		public virtual int IndexOf(System.String term)
 		{
 			int res = System.Array.BinarySearch(terms, term);
-			return res >= 0 ? res : - 1;
+			return res >= 0?res:- 1;
 		}
 		
 		public virtual int[] IndexesOf(System.String[] terms, int start, int len)

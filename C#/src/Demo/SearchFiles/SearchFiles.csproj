@@ -72,8 +72,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lucene.Net">
-      <Name>Lucene.Net</Name>
+    <Reference Include="Lucene.Net, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lucene.Net\bin\Debug\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="System">
@@ -85,11 +85,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\DemoLib\DemoLib.csproj">
-      <Name>DemoLib</Name>
-      <Project>{72AE650A-73E9-4F01-918B-5B166C2129FA}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
@@ -99,6 +94,12 @@
     <Compile Include="SearchFiles.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DemoLib\DemoLib.csproj">
+      <Project>{F04CA2F4-E182-46A8-B914-F46AF5319E83}</Project>
+      <Name>DemoLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

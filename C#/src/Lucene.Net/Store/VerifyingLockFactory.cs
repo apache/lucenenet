@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,15 +35,15 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockStressTest">
 	/// </seealso>
 	
-	public class VerifyingLockFactory : LockFactory
+	public class VerifyingLockFactory:LockFactory
 	{
 		
 		internal LockFactory lf;
-		internal byte id;
+		internal sbyte id;
 		internal System.String host;
 		internal int port;
 		
-		private class CheckedLock : Lock
+		private class CheckedLock:Lock
 		{
 			private void  InitBlock(VerifyingLockFactory enclosingInstance)
 			{
@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
 				this.lock_Renamed = lock_Renamed;
 			}
 			
-			private void  Verify(byte message)
+			private void  Verify(sbyte message)
 			{
 				try
 				{
@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
 				}
 				catch (System.Exception e)
 				{
-					throw new System.Exception(e.Message);
+					throw new System.SystemException(e.Message, e);
 				}
 			}
 			
@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
 				{
 					bool obtained = lock_Renamed.Obtain(lockWaitTimeout);
 					if (obtained)
-						Verify((byte) 1);
+						Verify((sbyte) 1);
 					return obtained;
 				}
 			}
@@ -121,7 +121,7 @@ namespace Lucene.Net.Store
 				{
 					if (IsLocked())
 					{
-						Verify((byte) 0);
+						Verify((sbyte) 0);
 						lock_Renamed.Release();
 					}
 				}
@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
 		/// <param name="port">the port {@link LockVerifyServer} is
 		/// listening on
 		/// </param>
-		public VerifyingLockFactory(byte id, LockFactory lf, System.String host, int port)
+		public VerifyingLockFactory(sbyte id, LockFactory lf, System.String host, int port)
 		{
 			this.id = id;
 			this.lf = lf;

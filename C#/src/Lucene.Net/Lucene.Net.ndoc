@@ -19,8 +19,8 @@
         </documenter>
         <documenter name="MSDN">
             <property name="OutputDirectory" value=".\Docs\" />
-            <property name="HtmlHelpName" value="Apache Lucene.Net 2.4.0 API Documentation" />
-            <property name="Title" value="Apache Lucene.Net 2.4.0 Class Library API" />
+            <property name="HtmlHelpName" value="Apache Lucene.Net 2.9.0 API Documentation" />
+            <property name="Title" value="Apache Lucene.Net 2.9.0 Class Library API" />
             <property name="AssemblyVersionInfo" value="AssemblyVersion" />
         </documenter>
         <documenter name="MSDN 2003">

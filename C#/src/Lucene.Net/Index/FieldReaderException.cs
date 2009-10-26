@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,17 @@ using System;
 
 namespace Lucene.Net.Index
 {
+	
 	/// <summary> 
 	/// 
 	/// 
 	/// </summary>
 	[Serializable]
-	public class FieldReaderException : System.SystemException
+	public class FieldReaderException:System.SystemException
 	{
 		/// <summary> Constructs a new runtime exception with <code>null</code> as its
 		/// detail message.  The cause is not initialized, and may subsequently be
-		/// initialized by a call to {@link #initCause}.
+        /// initialized by a call to {@link #innerException}.
 		/// </summary>
 		public FieldReaderException()
 		{
@@ -44,25 +45,25 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <param name="cause">the cause (which is saved for later retrieval by the
-		/// {@link #getCause()} method).  (A <tt>null</tt> value is
+		/// {@link #InnerException()} method).  (A <tt>null</tt> value is
 		/// permitted, and indicates that the cause is nonexistent or
 		/// unknown.)
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.Exception cause) : base((cause == null)? null : cause.ToString(), cause)
+		public FieldReaderException(System.Exception cause):base((cause == null)?null:cause.Message, cause)
 		{
 		}
 		
 		/// <summary> Constructs a new runtime exception with the specified detail message.
 		/// The cause is not initialized, and may subsequently be initialized by a
-		/// call to {@link #initCause}.
+        /// call to {@link #innerException}.
 		/// 
 		/// </summary>
 		/// <param name="message">the detail message. The detail message is saved for
 		/// later retrieval by the {@link #getMessage()} method.
 		/// </param>
-		public FieldReaderException(System.String message) : base(message)
+		public FieldReaderException(System.String message):base(message)
 		{
 		}
 		
@@ -76,13 +77,13 @@ namespace Lucene.Net.Index
 		/// by the {@link #getMessage()} method).
 		/// </param>
 		/// <param name="cause">  the cause (which is saved for later retrieval by the
-		/// {@link #getCause()} method).  (A <tt>null</tt> value is
+		/// {@link #InnerException()} method).  (A <tt>null</tt> value is
 		/// permitted, and indicates that the cause is nonexistent or
 		/// unknown.)
 		/// </param>
 		/// <since> 1.4
 		/// </since>
-		public FieldReaderException(System.String message, System.Exception cause) : base(message, cause)
+		public FieldReaderException(System.String message, System.Exception cause):base(message, cause)
 		{
 		}
 	}

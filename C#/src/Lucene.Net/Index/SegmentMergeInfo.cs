@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,10 @@ namespace Lucene.Net.Index
 	{
 		internal Term term;
 		internal int base_Renamed;
+		internal int ord; // the position of the segment in a MultiReader
 		internal TermEnum termEnum;
 		internal IndexReader reader;
+		internal int delCount;
 		private TermPositions postings; // use getPositions()
 		private int[] docMap; // use getDocMap()
 		
@@ -42,6 +44,7 @@ namespace Lucene.Net.Index
 		{
 			if (docMap == null)
 			{
+				delCount = 0;
 				// build array which maps document numbers around deletions 
 				if (reader.HasDeletions())
 				{
@@ -51,7 +54,10 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < maxDoc; i++)
 					{
 						if (reader.IsDeleted(i))
+						{
+							delCount++;
 							docMap[i] = - 1;
+						}
 						else
 							docMap[i] = j++;
 					}

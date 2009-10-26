@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,212 +17,165 @@
 
 using System;
 
+using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
-	sealed class BooleanScorer : Scorer
+	/* Description from Doug Cutting (excerpted from
+	* LUCENE-1483):
+	*
+	* BooleanScorer uses a ~16k array to score windows of
+	* docs. So it scores docs 0-16k first, then docs 16-32k,
+	* etc. For each window it iterates through all query terms
+	* and accumulates a score in table[doc%16k]. It also stores
+	* in the table a bitmask representing which terms
+	* contributed to the score. Non-zero scores are chained in
+	* a linked list. At the end of scoring each window it then
+	* iterates through the linked list and, if the bitmask
+	* matches the boolean constraints, collects a hit. For
+	* boolean queries with lots of frequent terms this can be
+	* much faster, since it does not need to update a priority
+	* queue for each posting, instead performing constant-time
+	* operations per posting. The only downside is that it
+	* results in hits being delivered out-of-order within the
+	* window, which means it cannot be nested within other
+	* scorers. But it works well as a top-level scorer.
+	*
+	* The new BooleanScorer2 implementation instead works by
+	* merging priority queues of postings, albeit with some
+	* clever tricks. For example, a pure conjunction (all terms
+	* required) does not require a priority queue. Instead it
+	* sorts the posting streams at the start, then repeatedly
+	* skips the first to to the last. If the first ever equals
+	* the last, then there's a hit. When some terms are
+	* required and some terms are optional, the conjunction can
+	* be evaluated first, then the optional terms can all skip
+	* to the match and be added to the score. Thus the
+	* conjunction can reduce the number of priority queue
+	* updates for the optional terms. */
+	
+	sealed class BooleanScorer:Scorer
 	{
 		private void  InitBlock()
 		{
 			bucketTable = new BucketTable();
 		}
-		private SubScorer scorers = null;
-		private BucketTable bucketTable;
 		
-		private int maxCoord = 1;
-		private float[] coordFactors = null;
-		
-		private int requiredMask = 0;
-		private int prohibitedMask = 0;
-		private int nextMask = 1;
-		
-		private int minNrShouldMatch;
-		
-		internal BooleanScorer(Similarity similarity) : this(similarity, 1)
+		private sealed class BooleanScorerCollector:Collector
 		{
-		}
-		
-		internal BooleanScorer(Similarity similarity, int minNrShouldMatch) : base(similarity)
-		{
-			InitBlock();
-			this.minNrShouldMatch = minNrShouldMatch;
-		}
-		
-		internal sealed class SubScorer
-		{
-			public Scorer scorer;
-			public bool done;
-			public bool required = false;
-			public bool prohibited = false;
-			public HitCollector collector;
-			public SubScorer next;
+			private BucketTable bucketTable;
+			private int mask;
+			private Scorer scorer;
 			
-			public SubScorer(Scorer scorer, bool required, bool prohibited, HitCollector collector, SubScorer next)
+			public BooleanScorerCollector(int mask, BucketTable bucketTable)
+			{
+				this.mask = mask;
+				this.bucketTable = bucketTable;
+			}
+			public override void  Collect(int doc)
+			{
+				BucketTable table = bucketTable;
+				int i = doc & Lucene.Net.Search.BooleanScorer.BucketTable.MASK;
+				Bucket bucket = table.buckets[i];
+				if (bucket == null)
+					table.buckets[i] = bucket = new Bucket();
+				
+				if (bucket.doc != doc)
+				{
+					// invalid bucket
+					bucket.doc = doc; // set doc
+					bucket.score = scorer.Score(); // initialize score
+					bucket.bits = mask; // initialize mask
+					bucket.coord = 1; // initialize coord
+					
+					bucket.next = table.first; // push onto valid list
+					table.first = bucket;
+				}
+				else
+				{
+					// valid bucket
+					bucket.score += scorer.Score(); // increment score
+					bucket.bits |= mask; // add bits in mask
+					bucket.coord++; // increment coord
+				}
+			}
+			
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				// not needed by this implementation
+			}
+			
+			public override void  SetScorer(Scorer scorer)
 			{
 				this.scorer = scorer;
-				this.done = !scorer.Next();
-				this.required = required;
-				this.prohibited = prohibited;
-				this.collector = collector;
-				this.next = next;
 			}
-		}
-		
-		internal void  Add(Scorer scorer, bool required, bool prohibited)
-		{
-			int mask = 0;
-			if (required || prohibited)
+			
+			public override bool AcceptsDocsOutOfOrder()
 			{
-				if (nextMask == 0)
-					throw new System.IndexOutOfRangeException("More than 32 required/prohibited clauses in query.");
-				mask = nextMask;
-				nextMask = nextMask << 1;
+				return true;
 			}
-			else
-				mask = 0;
-			
-			if (!prohibited)
-				maxCoord++;
-			
-			if (prohibited)
-				prohibitedMask |= mask;
-			// update prohibited mask
-			else if (required)
-				requiredMask |= mask; // update required mask
-			
-			scorers = new SubScorer(scorer, required, prohibited, bucketTable.NewCollector(mask), scorers);
 		}
 		
-		private void  ComputeCoordFactors()
+		// An internal class which is used in score(Collector, int) for setting the
+		// current score. This is required since Collector exposes a setScorer method
+		// and implementations that need the score will call scorer.score().
+		// Therefore the only methods that are implemented are score() and doc().
+		private sealed class BucketScorer:Scorer
 		{
-			coordFactors = new float[maxCoord];
-			for (int i = 0; i < maxCoord; i++)
-				coordFactors[i] = GetSimilarity().Coord(i, maxCoord - 1);
-		}
-		
-		private int end;
-		private Bucket current;
-		
-		public override void  Score(HitCollector hc)
-		{
-			Next();
-			Score(hc, System.Int32.MaxValue);
-		}
-		
-		protected internal override bool Score(HitCollector hc, int max)
-		{
-			if (coordFactors == null)
-				ComputeCoordFactors();
 			
-			bool more;
-			Bucket tmp;
+			internal float score;
+			internal int doc = NO_MORE_DOCS;
 			
-			do 
+			public BucketScorer():base(null)
 			{
-				bucketTable.first = null;
-				
-				while (current != null)
-				{
-					// more queued 
-					
-					// check prohibited & required
-					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask)
-					{
-						
-						if (current.doc >= max)
-						{
-							tmp = current;
-							current = current.next;
-							tmp.next = bucketTable.first;
-							bucketTable.first = tmp;
-							continue;
-						}
-						
-						if (current.coord >= minNrShouldMatch)
-						{
-							hc.Collect(current.doc, current.score * coordFactors[current.coord]);
-						}
-					}
-					
-					current = current.next; // pop the queue
-				}
-				
-				if (bucketTable.first != null)
-				{
-					current = bucketTable.first;
-					bucketTable.first = current.next;
-					return true;
-				}
-				
-				// refill the queue
-				more = false;
-				end += BucketTable.SIZE;
-				for (SubScorer sub = scorers; sub != null; sub = sub.next)
-				{
-					if (!sub.done)
-					{
-						sub.done = !sub.scorer.Score(sub.collector, end);
-						if (!sub.done)
-							more = true;
-					}
-				}
-				current = bucketTable.first;
 			}
-			while (current != null || more);
 			
-			return false;
-		}
-		
-		public override int Doc()
-		{
-			return current.doc;
-		}
-		
-		public override bool Next()
-		{
-			bool more;
-			do 
+			public override int Advance(int target)
 			{
-				while (bucketTable.first != null)
-				{
-					// more queued
-					current = bucketTable.first;
-					bucketTable.first = current.next; // pop the queue
-					
-					// check prohibited & required, and minNrShouldMatch
-					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask && current.coord >= minNrShouldMatch)
-					{
-						return true;
-					}
-				}
-				
-				// refill the queue
-				more = false;
-				end += BucketTable.SIZE;
-				for (SubScorer sub = scorers; sub != null; sub = sub.next)
-				{
-					Scorer scorer = sub.scorer;
-					while (!sub.done && scorer.Doc() < end)
-					{
-						sub.collector.Collect(scorer.Doc(), scorer.Score());
-						sub.done = !scorer.Next();
-					}
-					if (!sub.done)
-					{
-						more = true;
-					}
-				}
+				return NO_MORE_DOCS;
 			}
-			while (bucketTable.first != null || more);
 			
-			return false;
-		}
-		
-		public override float Score()
-		{
-			if (coordFactors == null)
-				ComputeCoordFactors();
-			return current.score * coordFactors[current.coord];
+			/// <deprecated> use {@link #DocID()} instead. 
+			/// </deprecated>
+			public override int Doc()
+			{
+				return doc;
+			}
+			
+			public override int DocID()
+			{
+				return doc;
+			}
+			
+			public override Explanation Explain(int doc)
+			{
+				return null;
+			}
+			
+			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// </deprecated>
+			public override bool Next()
+			{
+				return false;
+			}
+			
+			public override int NextDoc()
+			{
+				return NO_MORE_DOCS;
+			}
+			
+			public override float Score()
+			{
+				return score;
+			}
+			
+			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// </deprecated>
+			public override bool SkipTo(int target)
+			{
+				return false;
+			}
 		}
 		
 		internal sealed class Bucket
@@ -252,14 +205,14 @@ namespace Lucene.Net.Search
                 InitBlock();
 			}
 			
+			public Collector NewCollector(int mask)
+			{
+				return new BooleanScorerCollector(mask, this);
+			}
+			
 			public int Size()
 			{
 				return SIZE;
-			}
-			
-			public HitCollector NewCollector(int mask)
-			{
-				return new Collector(mask, this);
 			}
 			static BucketTable()
 			{
@@ -267,50 +220,237 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal sealed class Collector : HitCollector
+		internal sealed class SubScorer
 		{
-			private BucketTable bucketTable;
-			private int mask;
-			public Collector(int mask, BucketTable bucketTable)
+			public Scorer scorer;
+			public bool required = false;
+			public bool prohibited = false;
+			public Collector collector;
+			public SubScorer next;
+			
+			public SubScorer(Scorer scorer, bool required, bool prohibited, Collector collector, SubScorer next)
 			{
-				this.mask = mask;
-				this.bucketTable = bucketTable;
-			}
-			public override void  Collect(int doc, float score)
-			{
-				BucketTable table = bucketTable;
-				int i = doc & Lucene.Net.Search.BooleanScorer.BucketTable.MASK;
-				Bucket bucket = table.buckets[i];
-				if (bucket == null)
-					table.buckets[i] = bucket = new Bucket();
-				
-				if (bucket.doc != doc)
-				{
-					// invalid bucket
-					bucket.doc = doc; // set doc
-					bucket.score = score; // initialize score
-					bucket.bits = mask; // initialize mask
-					bucket.coord = 1; // initialize coord
-					
-					bucket.next = table.first; // push onto valid list
-					table.first = bucket;
-				}
-				else
-				{
-					// valid bucket
-					bucket.score += score; // increment score
-					bucket.bits |= mask; // add bits in mask
-					bucket.coord++; // increment coord
-				}
+				this.scorer = scorer;
+				this.required = required;
+				this.prohibited = prohibited;
+				this.collector = collector;
+				this.next = next;
 			}
 		}
 		
-		public override bool SkipTo(int target)
+		private SubScorer scorers = null;
+		private BucketTable bucketTable;
+		private int maxCoord = 1;
+		private float[] coordFactors;
+		private int requiredMask = 0;
+		private int prohibitedMask = 0;
+		private int nextMask = 1;
+		private int minNrShouldMatch;
+		private int end;
+		private Bucket current;
+		private int doc = - 1;
+		
+		internal BooleanScorer(Similarity similarity, int minNrShouldMatch, System.Collections.IList optionalScorers, System.Collections.IList prohibitedScorers):base(similarity)
+		{
+			InitBlock();
+			this.minNrShouldMatch = minNrShouldMatch;
+			
+			if (optionalScorers != null && optionalScorers.Count > 0)
+			{
+				for (System.Collections.IEnumerator si = optionalScorers.GetEnumerator(); si.MoveNext(); )
+				{
+					Scorer scorer = (Scorer) si.Current;
+					maxCoord++;
+					if (scorer.NextDoc() != NO_MORE_DOCS)
+					{
+						scorers = new SubScorer(scorer, false, false, bucketTable.NewCollector(0), scorers);
+					}
+				}
+			}
+			
+			if (prohibitedScorers != null && prohibitedScorers.Count > 0)
+			{
+				for (System.Collections.IEnumerator si = prohibitedScorers.GetEnumerator(); si.MoveNext(); )
+				{
+					Scorer scorer = (Scorer) si.Current;
+					int mask = nextMask;
+					nextMask = nextMask << 1;
+					prohibitedMask |= mask; // update prohibited mask
+					if (scorer.NextDoc() != NO_MORE_DOCS)
+					{
+						scorers = new SubScorer(scorer, false, true, bucketTable.NewCollector(mask), scorers);
+					}
+				}
+			}
+			
+			coordFactors = new float[maxCoord];
+			Similarity sim = GetSimilarity();
+			for (int i = 0; i < maxCoord; i++)
+			{
+				coordFactors[i] = sim.Coord(i, maxCoord - 1);
+			}
+		}
+		
+		// firstDocID is ignored since nextDoc() initializes 'current'
+		public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
+		{
+			bool more;
+			Bucket tmp;
+			BucketScorer bs = new BucketScorer();
+			// The internal loop will set the score and doc before calling collect.
+			collector.SetScorer(bs);
+			do 
+			{
+				bucketTable.first = null;
+				
+				while (current != null)
+				{
+					// more queued 
+					
+					// check prohibited & required
+					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask)
+					{
+						
+						if (current.doc >= max)
+						{
+							tmp = current;
+							current = current.next;
+							tmp.next = bucketTable.first;
+							bucketTable.first = tmp;
+							continue;
+						}
+						
+						if (current.coord >= minNrShouldMatch)
+						{
+							bs.score = current.score * coordFactors[current.coord];
+							bs.doc = current.doc;
+							collector.Collect(current.doc);
+						}
+					}
+					
+					current = current.next; // pop the queue
+				}
+				
+				if (bucketTable.first != null)
+				{
+					current = bucketTable.first;
+					bucketTable.first = current.next;
+					return true;
+				}
+				
+				// refill the queue
+				more = false;
+				end += BucketTable.SIZE;
+				for (SubScorer sub = scorers; sub != null; sub = sub.next)
+				{
+					int subScorerDocID = sub.scorer.DocID();
+					if (subScorerDocID != NO_MORE_DOCS)
+					{
+						more |= sub.scorer.Score(sub.collector, end, subScorerDocID);
+					}
+				}
+				current = bucketTable.first;
+			}
+			while (current != null || more);
+			
+			return false;
+		}
+		
+		/// <deprecated> use {@link #Score(Collector, int, int)} instead. 
+		/// </deprecated>
+		protected internal override bool Score(HitCollector hc, int max)
+		{
+			return Score(new HitCollectorWrapper(hc), max, DocID());
+		}
+		
+		public override int Advance(int target)
 		{
 			throw new System.NotSupportedException();
 		}
 		
+		/// <deprecated> use {@link #DocID()} instead. 
+		/// </deprecated>
+		public override int Doc()
+		{
+			return current.doc;
+		}
+		
+		public override int DocID()
+		{
+			return doc;
+		}
+		
 		public override Explanation Explain(int doc)
+		{
+			throw new System.NotSupportedException();
+		}
+		
+		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// </deprecated>
+		public override bool Next()
+		{
+			return NextDoc() != NO_MORE_DOCS;
+		}
+		
+		public override int NextDoc()
+		{
+			bool more;
+			do 
+			{
+				while (bucketTable.first != null)
+				{
+					// more queued
+					current = bucketTable.first;
+					bucketTable.first = current.next; // pop the queue
+					
+					// check prohibited & required, and minNrShouldMatch
+					if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask && current.coord >= minNrShouldMatch)
+					{
+						return doc = current.doc;
+					}
+				}
+				
+				// refill the queue
+				more = false;
+				end += BucketTable.SIZE;
+				for (SubScorer sub = scorers; sub != null; sub = sub.next)
+				{
+					Scorer scorer = sub.scorer;
+					sub.collector.SetScorer(scorer);
+					int doc = scorer.DocID();
+					while (doc < end)
+					{
+						sub.collector.Collect(doc);
+						doc = scorer.NextDoc();
+					}
+					more |= (doc != NO_MORE_DOCS);
+				}
+			}
+			while (bucketTable.first != null || more);
+			
+			return this.doc = NO_MORE_DOCS;
+		}
+		
+		public override float Score()
+		{
+			return current.score * coordFactors[current.coord];
+		}
+		
+		public override void  Score(Collector collector)
+		{
+			Score(collector, System.Int32.MaxValue, NextDoc());
+		}
+		
+		/// <deprecated> use {@link #Score(Collector)} instead. 
+		/// </deprecated>
+		public override void  Score(HitCollector hc)
+		{
+			Score(new HitCollectorWrapper(hc));
+		}
+		
+		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// </deprecated>
+		public override bool SkipTo(int target)
 		{
 			throw new System.NotSupportedException();
 		}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NO_ANALYZED));</code></p>
+	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</code></p>
 	/// 
 	/// 
 	/// <p><h3>Valid Types of Values</h3>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 	/// of term value has higher memory requirements than the other
 	/// two types.
 	/// 
-	/// <p><h3>object Reuse</h3>
+	/// <p><h3>Object Reuse</h3>
 	/// 
 	/// <p>One of these objects can be
 	/// used multiple times and the sort order changed between usages.
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: Sort.java 598376 2007-11-26 18:45:39Z dnaber $
+	/// <version>  $Id: Sort.java 795179 2009-07-17 18:23:30Z mikemccand $
 	/// </version>
 	[Serializable]
 	public class Sort
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
 		/// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
 		/// only with slightly more overhead.
 		/// </summary>
-		public Sort() : this(new SortField[] {SortField.FIELD_SCORE, SortField.FIELD_DOC})
+		public Sort():this(SortField.FIELD_SCORE)
 		{
 		}
 		
@@ -129,8 +129,12 @@ namespace Lucene.Net.Search
 		/// automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating a {@link SortField} and then use {@link
+		/// #Sort(SortField)}
+		/// </deprecated>
 		public Sort(System.String field)
 		{
 			SetSort(field, false);
@@ -141,8 +145,12 @@ namespace Lucene.Net.Search
 		/// determined automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating a {@link SortField} and then use {@link
+		/// #Sort(SortField)}
+		/// </deprecated>
 		public Sort(System.String field, bool reverse)
 		{
 			SetSort(field, reverse);
@@ -152,8 +160,12 @@ namespace Lucene.Net.Search
 		/// <code>field</code> is determined automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField#AUTO">
+		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating {@link SortField}s and then use {@link
+		/// #Sort(SortField[])}
+		/// </deprecated>
 		public Sort(System.String[] fields)
 		{
 			SetSort(fields);
@@ -174,6 +186,10 @@ namespace Lucene.Net.Search
 		/// <summary> Sets the sort to the terms in <code>field</code> then by index order
 		/// (document number).
 		/// </summary>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating a {@link SortField} and then use {@link
+		/// #SetSort(SortField)}
+		/// </deprecated>
 		public void  SetSort(System.String field)
 		{
 			SetSort(field, false);
@@ -182,13 +198,20 @@ namespace Lucene.Net.Search
 		/// <summary> Sets the sort to the terms in <code>field</code> possibly in reverse,
 		/// then by index order (document number).
 		/// </summary>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating a {@link SortField} and then use {@link
+		/// #SetSort(SortField)}
+		/// </deprecated>
 		public virtual void  SetSort(System.String field, bool reverse)
 		{
-			SortField[] nfields = new SortField[]{new SortField(field, SortField.AUTO, reverse), SortField.FIELD_DOC};
-			fields = nfields;
+			fields = new SortField[]{new SortField(field, SortField.AUTO, reverse)};
 		}
 		
-		/// <summary>Sets the sort to the terms in each field in succession. </summary>
+		/// <summary>Sets the sort to the terms in each field in succession.</summary>
+		/// <deprecated> Please specify the type explicitly by
+		/// first creating {@link SortField}s and then use {@link
+		/// #SetSort(SortField[])} 
+		/// </deprecated>
 		public virtual void  SetSort(System.String[] fieldnames)
 		{
 			int n = fieldnames.Length;
@@ -232,6 +255,46 @@ namespace Lucene.Net.Search
 			}
 			
 			return buffer.ToString();
+		}
+		
+		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is Sort))
+				return false;
+			Sort other = (Sort) o;
+
+            bool result = false;
+            if ((this.fields == null) && (other.fields == null))
+                result = true;
+            else if ((this.fields != null) && (other.fields != null))
+            {
+                if (this.fields.Length == other.fields.Length)
+                {
+                    int length = this.fields.Length;
+                    result = true;
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (!(this.fields[i].Equals(other.fields[i])))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+		}
+		
+		/// <summary>Returns a hash code value for this object. </summary>
+		public override int GetHashCode()
+		{
+			// TODO in Java 1.5: switch to Arrays.hashCode().  The 
+			// Java 1.4 workaround below calculates the same hashCode
+			// as Java 1.5's new Arrays.hashCode()
+			return 0x45aaf665 + new System.Collections.ArrayList(fields).GetHashCode();
 		}
 		static Sort()
 		{

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,12 +20,13 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>
-    /// An iterator over {@link Hits} that provides lazy fetching of each document.
-	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #Next()}
+	/// <summary> An iterator over {@link Hits} that provides lazy fetching of each document.
+	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #next()}
 	/// return a {@link Hit} instance.
+	/// 
 	/// </summary>
-    [System.Obsolete("Hits will be removed in Lucene 3.0.  Use TopDocCollector and TopDocs instead.")]
+	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
+	/// </deprecated>
 	public class HitIterator : System.Collections.IEnumerator
 	{
 		/// <summary> Returns a {@link Hit} instance representing the next hit in {@link Hits}.
@@ -33,14 +34,14 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <returns> Next {@link Hit}.
 		/// </returns>
-		public virtual object Current
+		public virtual System.Object Current
 		{
 			get
 			{
 				if (hitNumber == hits.Length())
 					throw new System.ArgumentOutOfRangeException();
 				
-				object next = new Hit(hits, hitNumber);
+				System.Object next = new Hit(hits, hitNumber);
 				hitNumber++;
 				return next;
 			}
@@ -79,8 +80,7 @@ namespace Lucene.Net.Search
 		
 		virtual public void  Reset()
 		{
-            // {{Aroush-2.0}} what do we do here?!
-            throw new System.Exception("{{Aroush}} Reset() needs to be implemented");
+            System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this HitIterator.Reset()"); // {{Aroush-2.9}}
 		}
 	}
 }

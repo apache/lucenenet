@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,19 +15,97 @@
  * limitations under the License.
  */
 
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Query = Lucene.Net.Search.Query;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using System;
 
-using System.Collections.Generic;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Matches spans near the beginning of a field. </summary>
-	[System.Serializable]
-	public class SpanFirstQuery : SpanQuery
+	[Serializable]
+	public class SpanFirstQuery:SpanQuery, System.ICloneable
 	{
+		private class AnonymousClassSpans : Spans
+		{
+			public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
+			{
+				InitBlock(reader, enclosingInstance);
+			}
+			private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
+			{
+				this.reader = reader;
+				this.enclosingInstance = enclosingInstance;
+				spans = Enclosing_Instance.match.GetSpans(reader);
+			}
+			private Lucene.Net.Index.IndexReader reader;
+			private SpanFirstQuery enclosingInstance;
+			public SpanFirstQuery Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			private Spans spans;
+			
+			public override bool Next()
+			{
+				while (spans.Next())
+				{
+					// scan to next match
+					if (End() <= Enclosing_Instance.end)
+						return true;
+				}
+				return false;
+			}
+			
+			public override bool SkipTo(int target)
+			{
+				if (!spans.SkipTo(target))
+					return false;
+				
+				return spans.End() <= Enclosing_Instance.end || Next();
+			}
+			
+			public override int Doc()
+			{
+				return spans.Doc();
+			}
+			public override int Start()
+			{
+				return spans.Start();
+			}
+			public override int End()
+			{
+				return spans.End();
+			}
+			
+			// TODO: Remove warning after API has been finalized
+			public override System.Collections.ICollection GetPayload()
+			{
+				System.Collections.ArrayList result = null;
+				if (spans.IsPayloadAvailable())
+				{
+					result = new System.Collections.ArrayList(spans.GetPayload());
+				}
+				return result; //TODO: any way to avoid the new construction?
+			}
+			
+			// TODO: Remove warning after API has been finalized
+			public override bool IsPayloadAvailable()
+			{
+				return spans.IsPayloadAvailable();
+			}
+			
+			public override System.String ToString()
+			{
+				return "spans(" + Enclosing_Instance.ToString() + ")";
+			}
+		}
 		private SpanQuery match;
 		private int end;
 		
@@ -60,7 +138,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="#ExtractTerms(Set)">
+		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
 		public override System.Collections.ICollection GetTerms()
 		{
@@ -79,99 +157,24 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
+		public override System.Object Clone()
+		{
+			SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
+			spanFirstQuery.SetBoost(GetBoost());
+			return spanFirstQuery;
+		}
+		
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
 			match.ExtractTerms(terms);
 		}
-
-        public override PayloadSpans GetPayloadSpans(IndexReader reader)
-        {
-            return (PayloadSpans)GetSpans(reader);
-        }
-
+		
 		public override Spans GetSpans(IndexReader reader)
 		{
-			return new AnonymousClassPayloadSpans(reader, this);
+			return new AnonymousClassSpans(reader, this);
 		}
-
-        private class AnonymousClassPayloadSpans : PayloadSpans
-        {
-            private PayloadSpans spans;
-            private Lucene.Net.Index.IndexReader reader;
-            private SpanFirstQuery enclosingInstance;
-
-            private void InitBlock(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-            {
-                this.reader = reader;
-                this.enclosingInstance = enclosingInstance;
-                spans = Enclosing_Instance.match.GetPayloadSpans(reader);
-            }
-
-            public AnonymousClassPayloadSpans(Lucene.Net.Index.IndexReader reader, SpanFirstQuery enclosingInstance)
-            {
-                InitBlock(reader, enclosingInstance);
-            }
-
-            public SpanFirstQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-            }
-
-            public virtual bool Next()
-            {
-                while (spans.Next())
-                {
-                    // scan to next match
-                    if (End() <= Enclosing_Instance.end)
-                        return true;
-                }
-                return false;
-            }
-
-            public virtual bool SkipTo(int target)
-            {
-                if (!spans.SkipTo(target))
-                    return false;
-
-                return (spans.End() <= Enclosing_Instance.end) || Next();
-            }
-
-            public virtual int Doc()
-            {
-                return spans.Doc();
-            }
-            public virtual int Start()
-            {
-                return spans.Start();
-            }
-            public virtual int End()
-            {
-                return spans.End();
-            }
-
-            public ICollection<byte[]> GetPayload()
-            {
-                List<byte[]> result = null;
-                if (spans.IsPayloadAvailable())
-                    result = new List<byte[]>(spans.GetPayload());
-                return result;
-            }
-
-            public bool IsPayloadAvailable()
-            {
-                return spans.IsPayloadAvailable();
-            }
-
-            public override System.String ToString()
-            {
-                return "spans(" + Enclosing_Instance.ToString() + ")";
-            }
-        }
-
-        public override Query Rewrite(IndexReader reader)
+		
+		public override Query Rewrite(IndexReader reader)
 		{
 			SpanFirstQuery clone = null;
 			
@@ -192,7 +195,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			if (this == o)
 				return true;
@@ -206,7 +209,7 @@ namespace Lucene.Net.Search.Spans
 		public override int GetHashCode()
 		{
 			int h = match.GetHashCode();
-			h ^= ((h << 8) | ((int) (((uint) h) >> 25))); // reversible
+			h ^= ((h << 8) | (SupportClass.Number.URShift(h, 25))); // reversible
 			h ^= System.Convert.ToInt32(GetBoost()) ^ end;
 			return h;
 		}

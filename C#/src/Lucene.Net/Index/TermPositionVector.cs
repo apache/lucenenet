@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	/// positions in which each of the terms is found. A TermPositionVector not necessarily
 	/// contains both positions and offsets, but at least one of these arrays exists.
 	/// </summary>
-	public interface TermPositionVector : TermFreqVector
+	public interface TermPositionVector:TermFreqVector
 	{
 		
 		/// <summary>Returns an array of positions in which the term is found.

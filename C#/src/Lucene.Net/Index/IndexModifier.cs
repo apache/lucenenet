@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,11 +17,11 @@
 
 using System;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
 
 namespace Lucene.Net.Index
 {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 		
 		protected internal Directory directory = null;
 		protected internal Analyzer analyzer = null;
-		protected internal bool open = false;
+		protected internal bool open = false, closeDir = false;
 		
 		// Lucene defaults:
 		protected internal System.IO.StreamWriter infoStream = null;
@@ -153,6 +153,7 @@ namespace Lucene.Net.Index
 		{
 			InitBlock();
 			Directory dir = FSDirectory.GetDirectory(dirName);
+			this.closeDir = true;
 			Init(dir, analyzer, create);
 		}
 		
@@ -176,6 +177,7 @@ namespace Lucene.Net.Index
 		{
 			InitBlock();
 			Directory dir = FSDirectory.GetDirectory(file);
+			this.closeDir = true;
 			Init(dir, analyzer, create);
 		}
 		
@@ -377,15 +379,13 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>
-        /// Returns the number of documents currently in this index.  If the writer is currently open,
-        /// this returns IndexWriter.DocCount(), else IndexReader.NumDocs().  But, note that
-        /// IndexWriter.DocCount() does not take deltions into account, unlike IndexReader.NumDocs().
-        /// </summary>
-		/// <seealso cref="IndexWriter.DocCount()">
-		/// </seealso>
-		/// <seealso cref="IndexReader.NumDocs()">
-		/// </seealso>
+		/// <summary> Returns the number of documents currently in this
+		/// index.  If the writer is currently open, this returns
+		/// {@link IndexWriter#DocCount()}, else {@link
+		/// IndexReader#NumDocs()}.  But, note that {@link
+		/// IndexWriter#DocCount()} does not take deletions into
+		/// account, unlike {@link IndexReader#numDocs}.
+		/// </summary>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual int DocCount()
 		{
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual System.IO.TextWriter GetInfoStream()
+		public virtual System.IO.StreamWriter GetInfoStream()
 		{
 			lock (directory)
 			{
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
 		/// running out of memory.<p/>
 		/// Note that this effectively truncates large documents, excluding from the
 		/// index terms that occur further in the document.  If you know your source
-		/// documents are large, be sure to set this value high enough to accomodate
+		/// documents are large, be sure to set this value high enough to accommodate
 		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
 		/// By default, no more than 10,000 terms will be indexed for a field.
@@ -657,6 +657,11 @@ namespace Lucene.Net.Index
 					indexReader = null;
 				}
 				open = false;
+				if (closeDir)
+				{
+					directory.Close();
+				}
+				closeDir = false;
 			}
 		}
 		

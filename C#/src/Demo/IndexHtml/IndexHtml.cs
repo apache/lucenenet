@@ -17,12 +17,14 @@
 
 using System;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Demo
 {
@@ -45,7 +47,7 @@ namespace Lucene.Net.Demo
 		{
 			try
 			{
-				System.String index = "index";
+				System.IO.FileInfo index = new System.IO.FileInfo("index");
 				bool create = false;
 				System.IO.FileInfo root = null;
 				
@@ -62,7 +64,7 @@ namespace Lucene.Net.Demo
 					if (argv[i].Equals("-index"))
 					{
 						// parse -index option
-						index = argv[++i];
+						index = new System.IO.FileInfo(argv[++i]);
 					}
 					else if (argv[i].Equals("-create"))
 					{
@@ -78,6 +80,13 @@ namespace Lucene.Net.Demo
 						root = new System.IO.FileInfo(argv[i]);
 				}
 				
+				if (root == null)
+				{
+					System.Console.Error.WriteLine("Specify directory to index");
+					System.Console.Error.WriteLine("Usage: " + usage);
+					return ;
+				}
+				
 				System.DateTime start = System.DateTime.Now;
 				
 				if (!create)
@@ -86,8 +95,7 @@ namespace Lucene.Net.Demo
 					deleting = true;
 					IndexDocs(root, index, create);
 				}
-				writer = new IndexWriter(index, new StandardAnalyzer(), create);
-				writer.SetMaxFieldLength(1000000);
+				writer = new IndexWriter(FSDirectory.Open(index), new StandardAnalyzer(Version.LUCENE_CURRENT), create, new IndexWriter.MaxFieldLength(1000000));
 				IndexDocs(root, index, create); // add new docs
 				
 				System.Console.Out.WriteLine("Optimizing index...");
@@ -101,7 +109,7 @@ namespace Lucene.Net.Demo
 			}
 			catch (System.Exception e)
 			{
-				System.Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
+				System.Console.Error.WriteLine(e.StackTrace);
 			}
 		}
 		
@@ -111,13 +119,13 @@ namespace Lucene.Net.Demo
 		/* documents, to be indexed.
 		*/
 		
-		private static void  IndexDocs(System.IO.FileInfo file, System.String index, bool create)
+		private static void  IndexDocs(System.IO.FileInfo file, System.IO.FileInfo index, bool create)
 		{
 			if (!create)
 			{
 				// incrementally update
 				
-				reader = IndexReader.Open(index); // open existing index
+				reader = IndexReader.Open(FSDirectory.Open(index), false); // open existing index
 				uidIter = reader.Terms(new Term("uid", "")); // init uid iterator
 				
 				IndexDocs(file);
@@ -150,8 +158,8 @@ namespace Lucene.Net.Demo
 				System.String[] files = System.IO.Directory.GetFileSystemEntries(file.FullName); // list its files
 				System.Array.Sort(files); // sort the files
 				for (int i = 0; i < files.Length; i++)
-                    // recursively index them
-					IndexDocs(new System.IO.FileInfo(files[i]));
+				// recursively index them
+					IndexDocs(new System.IO.FileInfo(System.IO.Path.Combine(file.FullName, files[i])));
 			}
 			else if (file.FullName.EndsWith(".html") || file.FullName.EndsWith(".htm") || file.FullName.EndsWith(".txt"))
 			{

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,10 +17,9 @@
 
 using System;
 
-using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
-using _Spans = Lucene.Net.Search.Spans.Spans;
 
 namespace Lucene.Net.Search
 {
@@ -39,7 +38,7 @@ namespace Lucene.Net.Search
 	/// <version>  $Id:$
 	/// </version>
 	[Serializable]
-	public class SpanQueryFilter : SpanFilter
+	public class SpanQueryFilter:SpanFilter
 	{
 		protected internal SpanQuery query;
 		
@@ -56,13 +55,7 @@ namespace Lucene.Net.Search
 		{
 			this.query = query;
 		}
-
-        [System.Obsolete()]
-        public override System.Collections.BitArray Bits(IndexReader reader)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }	
-	
+		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			SpanFilterResult result = BitSpans(reader);
@@ -72,8 +65,8 @@ namespace Lucene.Net.Search
 		public override SpanFilterResult BitSpans(IndexReader reader)
 		{
 			
-			OpenBitSet bits = new OpenBitSet((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-            _Spans spans = query.GetSpans(reader);
+			OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
+			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
 			System.Collections.IList tmp = new System.Collections.ArrayList(20);
 			int currentDoc = - 1;
 			SpanFilterResult.PositionInfo currentInfo = null;
@@ -92,6 +85,7 @@ namespace Lucene.Net.Search
 			return new SpanFilterResult(bits, tmp);
 		}
 		
+		
 		public virtual SpanQuery GetQuery()
 		{
 			return query;
@@ -99,10 +93,10 @@ namespace Lucene.Net.Search
 		
 		public override System.String ToString()
 		{
-			return "QueryWrapperFilter(" + query + ")";
+			return "SpanQueryFilter(" + query + ")";
 		}
 		
-		public  override bool Equals(object o)
+		public  override bool Equals(System.Object o)
 		{
 			return o is SpanQueryFilter && this.query.Equals(((SpanQueryFilter) o).query);
 		}

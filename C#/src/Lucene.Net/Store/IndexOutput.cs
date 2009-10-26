@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 
 using System;
+
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Store
@@ -30,7 +31,8 @@ namespace Lucene.Net.Store
 	/// </seealso>
 	public abstract class IndexOutput
 	{
-        private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
+		
+		private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
 		
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
@@ -115,19 +117,26 @@ namespace Lucene.Net.Store
 		/// <summary>Writes a string.</summary>
 		/// <seealso cref="IndexInput.ReadString()">
 		/// </seealso>
-		public virtual void  WriteString(string s)
+		public virtual void  WriteString(System.String s)
 		{
-            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+			UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
 			WriteVInt(utf8Result.length);
 			WriteBytes(utf8Result.result, 0, utf8Result.length);
 		}
 		
-		/// <summary>Writes a sub sequence of chars from s as "modified UTF-8" encoded bytes.</summary>
-		/// <param name="s">the source of the characters</param>
-		/// <param name="start">the first character in the sequence</param>
-		/// <param name="length">the number of characters in the sequence</param>
-        [Obsolete("please pre-convert to UTF-8 bytes or use WriteString()")]
-		public virtual void  WriteChars(string s, int start, int length)
+		/// <summary>Writes a sub sequence of characters from s as the old
+		/// format (modified UTF-8 encoded bytes).
+		/// </summary>
+		/// <param name="s">the source of the characters
+		/// </param>
+		/// <param name="start">the first character in the sequence
+		/// </param>
+		/// <param name="length">the number of characters in the sequence
+		/// </param>
+		/// <deprecated> -- please pre-convert to utf8 bytes
+		/// instead or use {@link #writeString}
+		/// </deprecated>
+		public virtual void  WriteChars(System.String s, int start, int length)
 		{
 			int end = start + length;
 			for (int i = start; i < end; i++)
@@ -149,12 +158,18 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary>Writes a sub sequence of chars from s as "modified UTF-8" encoded bytes.</summary>
-		/// <param name="s">the source of the characters</param>
-		/// <param name="start">the first character in the sequence</param>
-		/// <param name="length">the number of characters in the sequence</param>
-        [Obsolete("please pre-convert to UTF-8 bytes or use WriteString()")]
-        public virtual void  WriteChars(char[] s, int start, int length)
+		/// <summary>Writes a sub sequence of characters from char[] as
+		/// the old format (modified UTF-8 encoded bytes).
+		/// </summary>
+		/// <param name="s">the source of the characters
+		/// </param>
+		/// <param name="start">the first character in the sequence
+		/// </param>
+		/// <param name="length">the number of characters in the sequence
+		/// </param>
+		/// <deprecated> -- please pre-convert to utf8 bytes instead or use {@link #writeString}
+		/// </deprecated>
+		public virtual void  WriteChars(char[] s, int start, int length)
 		{
 			int end = start + length;
 			for (int i = start; i < end; i++)
@@ -182,6 +197,7 @@ namespace Lucene.Net.Store
 		/// <summary>Copy numBytes bytes from input to ourself. </summary>
 		public virtual void  CopyBytes(IndexInput input, long numBytes)
 		{
+			System.Diagnostics.Debug.Assert(numBytes >= 0, "numBytes=" + numBytes);
 			long left = numBytes;
 			if (copyBuffer == null)
 				copyBuffer = new byte[COPY_BUFFER_SIZE];
@@ -218,20 +234,42 @@ namespace Lucene.Net.Store
 		
 		/// <summary>The number of bytes in the file. </summary>
 		public abstract long Length();
-
-        /// <summary>
-        /// Set the file length. By default, this method does
-        /// nothing (it's optional for a Directory to implement
-        /// it).  But, certain Directory implementations (for
-        /// example @see FSDirectory) can use this to inform the
-        /// underlying IO system to pre-allocate the file to the
-        /// specified size.  If the length is longer than the
-        /// current file length, the bytes added to the file are
-        /// undefined.  Otherwise the file is truncated.
-        /// <param name="length">file length</param>
-        /// </summary>
-        public virtual void SetLength(long length)
-        {
-        }
+		
+		/// <summary>Set the file length. By default, this method does
+		/// nothing (it's optional for a Directory to implement
+		/// it).  But, certain Directory implementations (for
+		/// </summary>
+		/// <seealso cref="FSDirectory) can use this to inform the">
+		/// underlying IO system to pre-allocate the file to the
+		/// specified size.  If the length is longer than the
+		/// current file length, the bytes added to the file are
+		/// undefined.  Otherwise the file is truncated.
+		/// </seealso>
+		/// <param name="length">file length
+		/// </param>
+		public virtual void  SetLength(long length)
+		{
+		}
+		
+		
+		// map must be Map<String, String>
+		public virtual void  WriteStringStringMap(System.Collections.IDictionary map)
+		{
+			if (map == null)
+			{
+				WriteInt(0);
+			}
+			else
+			{
+				WriteInt(map.Count);
+				System.Collections.IEnumerator it = new System.Collections.Hashtable(map).GetEnumerator();
+				while (it.MoveNext())
+				{
+					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
+					WriteString((System.String) entry.Key);
+					WriteString((System.String) entry.Value);
+				}
+			}
+		}
 	}
 }

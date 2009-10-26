@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary>An interprocess mutex lock.
 	/// <p>Typical use might look like:<pre>
 	/// new Lock.With(directory.makeLock("my.lock")) {
-	/// public object doBody() {
+	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
 	/// }.run();
@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: Lock.java 595448 2007-11-15 20:42:54Z mikemccand $
+	/// <version>  $Id: Lock.java 769409 2009-04-28 14:05:43Z mikemccand $
 	/// </version>
 	/// <seealso cref="Directory.MakeLock(String)">
 	/// </seealso>
@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
 		/// in between attempts to acquire the lock. 
 		/// </summary>
 		public static long LOCK_POLL_INTERVAL = 1000;
-
+		
 		/// <summary>Pass this value to {@link #Obtain(long)} to try
 		/// forever to obtain the lock. 
 		/// </summary>
@@ -95,16 +95,16 @@ namespace Lucene.Net.Store
 					{
 						reason += (": " + failureReason);
 					}
-					LockObtainFailedException e;
-					if (failureReason != null)
-					{
-						e = new LockObtainFailedException(reason, failureReason);
-					}
-					else
-					{
-						e = new LockObtainFailedException(reason);
-					}
-					throw e;
+                    LockObtainFailedException e;
+                    if (failureReason != null)
+                    {
+                        e = new LockObtainFailedException(reason, failureReason);
+                    }
+                    else
+                    {
+                        e = new LockObtainFailedException(reason);
+                    }
+                    throw e;
 				}
 				try
 				{
@@ -112,6 +112,9 @@ namespace Lucene.Net.Store
 				}
 				catch (System.Threading.ThreadInterruptedException e)
 				{
+					// In 3.0 we will change this to throw
+					// InterruptedException instead
+					SupportClass.ThreadClass.Current().Interrupt();
 					throw new System.IO.IOException(e.ToString());
 				}
 				locked = Obtain();
@@ -143,7 +146,7 @@ namespace Lucene.Net.Store
 			}
 			
 			/// <summary>Code to execute with exclusive access. </summary>
-			protected internal abstract object DoBody();
+			protected internal abstract System.Object DoBody();
 			
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second
@@ -154,7 +157,7 @@ namespace Lucene.Net.Store
 			/// <summary> be obtained
 			/// </summary>
 			/// <throws>  IOException if {@link Lock#obtain} throws IOException </throws>
-			public virtual object Run()
+			public virtual System.Object run()
 			{
 				bool locked = false;
 				try

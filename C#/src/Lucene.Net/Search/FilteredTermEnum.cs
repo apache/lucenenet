@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,17 +27,20 @@ namespace Lucene.Net.Search
 	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
-	public abstract class FilteredTermEnum : TermEnum
+	public abstract class FilteredTermEnum:TermEnum
 	{
-		private Term currentTerm = null;
-		private TermEnum actualEnum = null;
+		/// <summary>the current term </summary>
+		protected internal Term currentTerm = null;
+		
+		/// <summary>the delegate enum - to set this member use {@link #setEnum} </summary>
+		protected internal TermEnum actualEnum = null;
 		
 		public FilteredTermEnum()
 		{
 		}
 		
 		/// <summary>Equality compare on the term </summary>
-		protected internal abstract bool TermCompare(Term term);
+		public /*protected internal*/ abstract bool TermCompare(Term term);
 		
 		/// <summary>Equality measure on the term </summary>
 		public abstract float Difference();
@@ -45,6 +48,9 @@ namespace Lucene.Net.Search
 		/// <summary>Indicates the end of the enumeration has been reached </summary>
 		public abstract bool EndEnum();
 		
+		/// <summary> use this method to set the actual TermEnum (e.g. in ctor),
+		/// it will be automatically positioned on the first matching term.
+		/// </summary>
 		protected internal virtual void  SetEnum(TermEnum actualEnum)
 		{
 			this.actualEnum = actualEnum;
@@ -61,8 +67,9 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override int DocFreq()
 		{
-			if (actualEnum == null)
+			if (currentTerm == null)
 				return - 1;
+			System.Diagnostics.Debug.Assert(actualEnum != null);
 			return actualEnum.DocFreq();
 		}
 		
@@ -103,7 +110,8 @@ namespace Lucene.Net.Search
 		/// <summary>Closes the enumeration to further activity, freeing resources.  </summary>
 		public override void  Close()
 		{
-			actualEnum.Close();
+			if (actualEnum != null)
+				actualEnum.Close();
 			currentTerm = null;
 			actualEnum = null;
 		}

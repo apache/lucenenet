@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using AttributeSource = Lucene.Net.Util.AttributeSource;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -24,38 +26,75 @@ namespace Lucene.Net.Analysis
 	/// <p>
 	/// This is an abstract class.
 	/// <p>
-    /// NOTE: subclasses must override {@link #Next(Token)}.
-    /// It's also OK to instead override {@link #Next()}, but
-    /// that method is now deprecated in favor of {@link #Next(Token)}.
-    /// <p>
-	/// NOTE: subclasses overriding {@link #Next(Token)} must  
-	/// call {@link Token#Clear()}.
+	/// NOTE: subclasses must override 
+	/// {@link #IncrementToken()} if the new TokenStream API is used
+	/// and {@link #Next(Token)} or {@link #Next()} if the old
+	/// TokenStream API is used.
+	/// <p>
+	/// NOTE: Subclasses overriding {@link #IncrementToken()} must
+	/// call {@link AttributeSource#ClearAttributes()} before
+	/// setting attributes.
+	/// Subclasses overriding {@link #Next(Token)} must call
+	/// {@link Token#Clear()} before setting Token attributes. 
 	/// </summary>
 	
-    public abstract class Tokenizer : TokenStream
-    {
-        /// <summary>The text source for this Tokenizer. </summary>
-        protected internal System.IO.TextReader input;
+	public abstract class Tokenizer:TokenStream
+	{
+		/// <summary>The text source for this Tokenizer. </summary>
+		protected internal System.IO.TextReader input;
 		
-        /// <summary>Construct a tokenizer with null input. </summary>
-        protected internal Tokenizer()
-        {
-        }
+		/// <summary>Construct a tokenizer with null input. </summary>
+		protected internal Tokenizer()
+		{
+		}
 		
-        /// <summary>Construct a token stream processing the given input. </summary>
-        protected internal Tokenizer(System.IO.TextReader input)
-        {
-            this.input = input;
-        }
+		/// <summary>Construct a token stream processing the given input. </summary>
+		protected internal Tokenizer(System.IO.TextReader input)
+		{
+			this.input = CharReader.Get(input);
+		}
 		
-        /// <summary>By default, closes the input Reader. </summary>
-        public override void  Close()
-        {
-            if (input != null)
-            {
-                input.Close();
-            }
-        }
+		/// <summary>Construct a tokenizer with null input using the given AttributeFactory. </summary>
+		protected internal Tokenizer(AttributeFactory factory):base(factory)
+		{
+		}
+		
+		/// <summary>Construct a token stream processing the given input using the given AttributeFactory. </summary>
+		protected internal Tokenizer(AttributeFactory factory, System.IO.TextReader input):base(factory)
+		{
+			this.input = CharReader.Get(input);
+		}
+		
+		/// <summary>Construct a token stream processing the given input using the given AttributeSource. </summary>
+		protected internal Tokenizer(AttributeSource source):base(source)
+		{
+		}
+		
+		/// <summary>Construct a token stream processing the given input using the given AttributeSource. </summary>
+		protected internal Tokenizer(AttributeSource source, System.IO.TextReader input):base(source)
+		{
+			this.input = CharReader.Get(input);
+		}
+		
+		/// <summary>By default, closes the input Reader. </summary>
+		public override void  Close()
+		{
+			input.Close();
+		}
+  
+		/// <summary>Return the corrected offset. If {@link #input} is a {@link CharStream} subclass
+		/// this method calls {@link CharStream#CorrectOffset}, else returns <code>currentOff</code>.
+		/// </summary>
+		/// <param name="currentOff">offset as seen in the output
+		/// </param>
+		/// <returns> corrected offset based on the input
+		/// </returns>
+		/// <seealso cref="CharStream.CorrectOffset">
+		/// </seealso>
+		protected internal int CorrectOffset(int currentOff)
+		{
+			return (input is CharStream)?((CharStream) input).CorrectOffset(currentOff):currentOff;
+		}
 		
 		/// <summary>Expert: Reset the tokenizer to a new reader.  Typically, an
 		/// analyzer (in its reusableTokenStream method) will use
@@ -65,5 +104,5 @@ namespace Lucene.Net.Analysis
 		{
 			this.input = input;
 		}
-    }
+	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,13 +20,13 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	class SegmentTermPositionVector : SegmentTermVector, TermPositionVector
+	class SegmentTermPositionVector:SegmentTermVector, TermPositionVector
 	{
 		protected internal int[][] positions;
 		protected internal TermVectorOffsetInfo[][] offsets;
 		public static readonly int[] EMPTY_TERM_POS = new int[0];
 		
-		public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets) : base(field, terms, termFreqs)
+		public SegmentTermPositionVector(System.String field, System.String[] terms, int[] termFreqs, int[][] positions, TermVectorOffsetInfo[][] offsets):base(field, terms, termFreqs)
 		{
 			this.offsets = offsets;
 			this.positions = positions;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 			TermVectorOffsetInfo[] result = TermVectorOffsetInfo.EMPTY_OFFSET_INFO;
 			if (offsets == null)
 				return null;
-			if (index >= 0 && index < offsets.GetLength(0))
+			if (index >= 0 && index < offsets.Length)
 			{
 				result = offsets[index];
 			}
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 			int[] result = EMPTY_TERM_POS;
 			if (positions == null)
 				return null;
-			if (index >= 0 && index < positions.GetLength(0))
+			if (index >= 0 && index < positions.Length)
 			{
 				result = positions[index];
 			}

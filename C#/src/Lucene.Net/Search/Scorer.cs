@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,22 +18,29 @@
 using System;
 
 namespace Lucene.Net.Search
-{	
+{
+	
 	/// <summary> Expert: Common scoring functionality for different types of queries.
 	/// 
 	/// <p>
-	/// A <code>Scorer</code> either iterates over documents matching a
-	/// query in increasing order of doc Id, or provides an explanation of
-	/// the score for a query for a given document.
+	/// A <code>Scorer</code> iterates over documents matching a
+	/// query in increasing order of doc Id.
 	/// </p>
 	/// <p>
 	/// Document scores are computed using a given <code>Similarity</code>
 	/// implementation.
 	/// </p>
+	/// 
+	/// <p><b>NOTE</b>: The values Float.Nan,
+	/// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
+	/// not valid scores.  Certain collectors (eg {@link
+	/// TopScoreDocCollector}) will not properly collect hits
+	/// with these scores.
+	/// 
 	/// </summary>
 	/// <seealso cref="BooleanQuery.setAllowDocsOutOfOrder">
 	/// </seealso>
-	public abstract class Scorer : DocIdSetIterator
+	public abstract class Scorer:DocIdSetIterator
 	{
 		private Similarity similarity;
 		
@@ -56,11 +63,24 @@ namespace Lucene.Net.Search
 		/// {@link HitCollector#Collect(int, float)}.
 		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
+		/// <deprecated> use {@link #Score(Collector)} instead.
+		/// </deprecated>
 		public virtual void  Score(HitCollector hc)
 		{
-			while (Next())
+			Score(new HitCollectorWrapper(hc));
+		}
+		
+		/// <summary>Scores and collects all matching documents.</summary>
+		/// <param name="collector">The collector to which all matching documents are passed.
+		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// </param>
+		public virtual void  Score(Collector collector)
+		{
+			collector.SetScorer(this);
+			int doc;
+			while ((doc = NextDoc()) != NO_MORE_DOCS)
 			{
-				hc.Collect(Doc(), Score());
+				collector.Collect(doc);
 			}
 		}
 		
@@ -75,29 +95,60 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true if more matching documents may remain.
 		/// </returns>
+		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
+		/// </deprecated>
 		protected internal virtual bool Score(HitCollector hc, int max)
 		{
-			while (Doc() < max)
+			return Score(new HitCollectorWrapper(hc), max, DocID());
+		}
+		
+		/// <summary> Expert: Collects matching documents in a range. Hook for optimization.
+		/// Note, <code>firstDocID</code> is added to ensure that {@link #NextDoc()}
+		/// was called before this method.
+		/// 
+		/// </summary>
+		/// <param name="collector">The collector to which all matching documents are passed.
+		/// </param>
+		/// <param name="max">Do not score documents past this.
+		/// </param>
+		/// <param name="firstDocID">
+		/// The first document ID (ensures {@link #NextDoc()} is called before
+		/// this method.
+		/// </param>
+		/// <returns> true if more matching documents may remain.
+		/// </returns>
+		public /*protected internal*/ virtual bool Score(Collector collector, int max, int firstDocID)
+		{
+			collector.SetScorer(this);
+			int doc = firstDocID;
+			while (doc < max)
 			{
-				hc.Collect(Doc(), Score());
-				if (!Next())
-					return false;
+				collector.Collect(doc);
+				doc = NextDoc();
 			}
-			return true;
+			return doc == NO_MORE_DOCS;
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
 		/// Initially invalid, until {@link #Next()} or {@link #SkipTo(int)}
-		/// is called the first time.
+		/// is called the first time, or when called from within
+		/// {@link Collector#collect}.
 		/// </summary>
 		public abstract float Score();
-
+		
 		/// <summary>Returns an explanation of the score for a document.
 		/// <br>When this method is used, the {@link #Next()}, {@link #SkipTo(int)} and
 		/// {@link #Score(HitCollector)} methods should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.
+		/// 
 		/// </param>
-		public abstract Explanation Explain(int doc);
+		/// <deprecated> Please use {@link IndexSearcher#explain}
+		/// or {@link Weight#explain} instead.
+		/// </deprecated>
+		public virtual Explanation Explain(int doc)
+		{
+			throw new System.NotSupportedException();
+		}
 	}
 }

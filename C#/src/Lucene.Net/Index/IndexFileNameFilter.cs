@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,30 +17,33 @@
 
 using System;
 
-using Pattern = System.Text.RegularExpressions.Regex;
-
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Filename filter that accept filenames and extensions only created by Lucene.</summary>
-	public class IndexFileNameFilter // : FilenameFilter {{Aroush-1.9}}
+	/// <summary> Filename filter that accept filenames and extensions only created by Lucene.
+	/// 
+	/// </summary>
+	/// <version>  $rcs = ' $Id: Exp $ ' ;
+	/// </version>
+	public class IndexFileNameFilter
 	{
 		
-		internal static IndexFileNameFilter singleton = new IndexFileNameFilter();
-		private System.Collections.Hashtable extensions;
-		private System.Collections.Hashtable extensionsInCFS;
+		private static IndexFileNameFilter singleton = new IndexFileNameFilter();
+        private System.Collections.Hashtable extensions;
+        private System.Collections.Hashtable extensionsInCFS;
 		
-		public IndexFileNameFilter()
+		// Prevent instantiation.
+		private IndexFileNameFilter()
 		{
-			extensions = new System.Collections.Hashtable();
+            extensions = new System.Collections.Hashtable();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
 				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i], IndexFileNames.INDEX_EXTENSIONS[i]);
 			}
-			extensionsInCFS = new System.Collections.Hashtable();
+            extensionsInCFS = new System.Collections.Hashtable();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE.Length; i++)
 			{
-                extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i], IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
+				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i], IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
 			}
 		}
 		
@@ -87,7 +90,7 @@ namespace Lucene.Net.Index
 			if (i != - 1)
 			{
 				System.String extension = name.Substring(1 + i);
-				if (extensions.Contains(extension))
+				if (extensionsInCFS.Contains(extension))
 				{
 					return true;
 				}

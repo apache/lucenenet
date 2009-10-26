@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,9 @@ namespace Lucene.Net.Store
 	/// access something that has already been closed.
 	/// </summary>
 	[Serializable]
-	public class AlreadyClosedException : System.SystemException
+	public class AlreadyClosedException:System.SystemException
 	{
-		public AlreadyClosedException(System.String message) : base(message)
+		public AlreadyClosedException(System.String message):base(message)
 		{
 		}
 	}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,36 +25,17 @@ namespace Lucene.Net.Store
 	/// but can be changed with {@link #setLockFactory}.
 	/// 
 	/// </summary>
-    [Serializable]
-    public class RAMDirectory : Directory
-    {
+	/// <version>  $Id: RAMDirectory.java 781333 2009-06-03 10:38:57Z mikemccand $
+	/// </version>
+	[Serializable]
+	public class RAMDirectory:Directory
+	{
 		
-        private const long serialVersionUID = 1L;
+		private const long serialVersionUID = 1L;
 		
-        internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
-        internal long sizeInBytes = 0;
+		internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
+		internal long sizeInBytes = 0;
 		
-        public System.Collections.Hashtable fileMap_ForNUnitTest
-        {
-            get { return fileMap; }
-        }
-
-        public long sizeInBytes_ForNUnitTest
-        {
-            get { return sizeInBytes; }
-            set { sizeInBytes = value; }
-        }
-
-        //https://issues.apache.org/jira/browse/LUCENENET-174
-        [System.Runtime.Serialization.OnDeserialized]
-        void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
-        {
-            if (lockFactory == null)
-            {
-                SetLockFactory(new SingleInstanceLockFactory());
-            }
-        }
-
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
 		// *****
@@ -80,7 +61,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="dir">a <code>Directory</code> value
 		/// </param>
-		/// <exception cref=""> IOException if an error occurs
+		/// <exception cref="IOException">if an error occurs
 		/// </exception>
 		public RAMDirectory(Directory dir):this(dir, false)
 		{
@@ -99,6 +80,8 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
+		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
+		/// </deprecated>
 		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
@@ -111,19 +94,29 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
-		public RAMDirectory(System.String dir) : this(FSDirectory.GetDirectory(dir), true)
+		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
+		/// </deprecated>
+		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
 		
-		/// <summary>Returns an array of strings, one for each file in the directory. </summary>
 		public override System.String[] List()
 		{
 			lock (this)
 			{
+				return ListAll();
+			}
+		}
+		
+		public override System.String[] ListAll()
+		{
+			lock (this)
+			{
 				EnsureOpen();
-				System.String[] result = new System.String[fileMap.Count];
+				System.Collections.ICollection fileNames = fileMap.Keys;
+				System.String[] result = new System.String[fileNames.Count];
 				int i = 0;
-				System.Collections.IEnumerator it = fileMap.Keys.GetEnumerator();
+				System.Collections.IEnumerator it = fileNames.GetEnumerator();
 				while (it.MoveNext())
 				{
 					result[i++] = ((System.String) it.Current);
@@ -179,8 +172,12 @@ namespace Lucene.Net.Store
 				{
 					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 0 + 100 * 1));
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
+					// In 3.0 we will change this to throw
+					// InterruptedException instead
+					SupportClass.ThreadClass.Current().Interrupt();
+					throw new System.SystemException(ie.Message, ie);
 				}
 				ts2 = System.DateTime.Now.Ticks;
 			}
@@ -294,17 +291,8 @@ namespace Lucene.Net.Store
 		/// <summary>Closes the store to future operations, releasing associated memory. </summary>
 		public override void  Close()
 		{
-            isOpen = false;
+			isOpen = false;
 			fileMap = null;
-		}
-		
-		/// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
-		protected internal override void  EnsureOpen()
-		{
-			if (fileMap == null)
-			{
-				throw new AlreadyClosedException("this RAMDirectory is closed");
-			}
 		}
 	}
 }
