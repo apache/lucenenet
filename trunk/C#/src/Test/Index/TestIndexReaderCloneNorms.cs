@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// test with a single index: index1
-			System.IO.FileInfo indexDir1 = new System.IO.FileInfo(tempDir + "\\" + "lucenetestindex1");
+			System.IO.FileInfo indexDir1 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex1"));
 			Directory dir1 = FSDirectory.Open(indexDir1);
 			IndexWriter.Unlock(dir1);
 			
@@ -129,14 +129,14 @@ namespace Lucene.Net.Index
 			modifiedNorms = new System.Collections.ArrayList();
 			numDocNorms = 0;
 			
-			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(tempDir + "\\" + "lucenetestindex2");
+			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex2"));
 			Directory dir2 = FSDirectory.Open(indexDir2);
 			
 			CreateIndex(dir2);
 			DoTestNorms(dir2);
 			
 			// add index1 and index2 to a third index: index3
-			System.IO.FileInfo indexDir3 = new System.IO.FileInfo(tempDir + "\\" + "lucenetestindex3");
+			System.IO.FileInfo indexDir3 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex3"));
 			Directory dir3 = FSDirectory.Open(indexDir3);
 			
 			CreateIndex(dir3);
