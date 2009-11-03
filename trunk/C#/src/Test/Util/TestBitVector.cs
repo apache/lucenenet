@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,11 +29,14 @@ namespace Lucene.Net.Util
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestBitVector.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestBitVector.java 765649 2009-04-16 14:29:26Z mikemccand $
 	/// </version>
 	[TestFixture]
-	public class TestBitVector : LuceneTestCase
+	public class TestBitVector:LuceneTestCase
 	{
+		public TestBitVector(System.String s):base(s)
+		{
+		}
 		
 		/// <summary> Test the default constructor on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
@@ -215,7 +218,6 @@ namespace Lucene.Net.Util
 				bv.Write(d, "TESTBV");
 			}
 		}
-
 		/// <summary> Compare two BitVectors.
 		/// This should really be an equals method on the BitVector itself.
 		/// </summary>
@@ -236,6 +238,77 @@ namespace Lucene.Net.Util
 				}
 			}
 			return equal;
+		}
+		
+		private static int[] subsetPattern = new int[]{1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1};
+		
+		/// <summary> Tests BitVector.subset() against the above pattern</summary>
+		[Test]
+		public virtual void  TestSubset()
+		{
+			DoTestSubset(0, 0);
+			DoTestSubset(0, 20);
+			DoTestSubset(0, 7);
+			DoTestSubset(0, 8);
+			DoTestSubset(0, 9);
+			DoTestSubset(0, 15);
+			DoTestSubset(0, 16);
+			DoTestSubset(0, 17);
+			DoTestSubset(1, 7);
+			DoTestSubset(1, 8);
+			DoTestSubset(1, 9);
+			DoTestSubset(1, 15);
+			DoTestSubset(1, 16);
+			DoTestSubset(1, 17);
+			DoTestSubset(2, 20);
+			DoTestSubset(3, 20);
+			DoTestSubset(4, 20);
+			DoTestSubset(5, 20);
+			DoTestSubset(6, 20);
+			DoTestSubset(7, 14);
+			DoTestSubset(7, 15);
+			DoTestSubset(7, 16);
+			DoTestSubset(8, 15);
+			DoTestSubset(9, 20);
+			DoTestSubset(10, 20);
+			DoTestSubset(11, 20);
+			DoTestSubset(12, 20);
+			DoTestSubset(13, 20);
+		}
+		
+		/// <summary> Compare a subset against the corresponding portion of the test pattern</summary>
+		private void  DoTestSubset(int start, int end)
+		{
+			BitVector full = CreateSubsetTestVector();
+			BitVector subset = full.Subset(start, end);
+			Assert.AreEqual(end - start, subset.Size());
+			int count = 0;
+			for (int i = start, j = 0; i < end; i++, j++)
+			{
+				if (subsetPattern[i] == 1)
+				{
+					count++;
+					Assert.IsTrue(subset.Get(j));
+				}
+				else
+				{
+					Assert.IsFalse(subset.Get(j));
+				}
+			}
+			Assert.AreEqual(count, subset.Count());
+		}
+		
+		private BitVector CreateSubsetTestVector()
+		{
+			BitVector bv = new BitVector(subsetPattern.Length);
+			for (int i = 0; i < subsetPattern.Length; i++)
+			{
+				if (subsetPattern[i] == 1)
+				{
+					bv.Set(i);
+				}
+			}
+			return bv;
 		}
 	}
 }

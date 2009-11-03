@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
 	/// <version>  $Id$
 	/// </version>
 	[TestFixture]
-	public class TestSmallFloat : LuceneTestCase
+	public class TestSmallFloat:LuceneTestCase
 	{
 		
 		// original lucene byteToFloat
@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
 			int mantissa = b & 7;
 			int exponent = (b >> 3) & 31;
 			int bits = ((exponent + (63 - 15)) << 24) | (mantissa << 21);
-			return (BitConverter.ToSingle(BitConverter.GetBytes(bits), 0));
+			return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
 		}
 		
 		// original lucene floatToByte
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 			// zero is a special case
 				return 0;
 			
-			int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0); // parse float into parts
+			int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
 			int mantissa = (bits & 0xffffff) >> 21;
 			int exponent = (((bits >> 24) & 0x7f) - 63) + 15;
 			
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
 		[Test]
 		public virtual void  TestFloatToByte()
 		{
-			System.Random rand = new System.Random((System.Int32) 0);
+			System.Random rand = NewRandom();
 			// up iterations for more exhaustive test after changing something
 			for (int i = 0; i < 100000; i++)
 			{
@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
 		/// byte b1 = orig_floatToByte(f);
 		/// byte b2 = SmallFloat.floatToByte315(f);
 		/// if (b1!=b2) {
-		/// TestCase.Fail("Failed floatToByte315 for float " + f);
+		/// TestCase.fail("Failed floatToByte315 for float " + f);
 		/// }
 		/// }
 		/// if (i==Integer.MAX_VALUE) break;

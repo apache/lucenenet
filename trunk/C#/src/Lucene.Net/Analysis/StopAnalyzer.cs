@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis
 				System.String[] stopWords = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
 				CharArraySet stopSet = new CharArraySet(stopWords.Length, false);
 				stopSet.Add(new System.Collections.ArrayList(stopWords));
-				ENGLISH_STOP_WORDS_SET = CharArraySet.unmodifiableSet(stopSet);
+				ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
 			}
 		}
 	}

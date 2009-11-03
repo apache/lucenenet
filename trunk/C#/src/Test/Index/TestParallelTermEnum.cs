@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,47 +19,46 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
 using Store = Lucene.Net.Documents.Field.Store;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestParallelTermEnum : LuceneTestCase
+    [TestFixture]
+	public class TestParallelTermEnum:LuceneTestCase
 	{
 		private IndexReader ir1;
 		private IndexReader ir2;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
-			base.SetUp();
-			Lucene.Net.Documents.Document doc;
+			Document doc;
 			
 			RAMDirectory rd1 = new RAMDirectory();
-            IndexWriter iw1 = new IndexWriter(rd1, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw1 = new IndexWriter(rd1, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field1", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-			doc.Add(new Field("field2", "the quick brown fox jumps", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-			doc.Add(new Field("field4", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc = new Document();
+			doc.Add(new Field("field1", "the quick brown fox jumps", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("field2", "the quick brown fox jumps", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("field4", "", Field.Store.NO, Field.Index.ANALYZED));
 			iw1.AddDocument(doc);
 			
 			iw1.Close();
 			RAMDirectory rd2 = new RAMDirectory();
-            IndexWriter iw2 = new IndexWriter(rd2, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw2 = new IndexWriter(rd2, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			doc = new Lucene.Net.Documents.Document();
-			doc.Add(new Field("field0", "", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED));
-			doc.Add(new Field("field1", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-			doc.Add(new Field("field3", "the fox jumps over the lazy dog", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+			doc = new Document();
+			doc.Add(new Field("field0", "", Field.Store.NO, Field.Index.ANALYZED));
+			doc.Add(new Field("field1", "the fox jumps over the lazy dog", Field.Store.YES, Field.Index.ANALYZED));
+			doc.Add(new Field("field3", "the fox jumps over the lazy dog", Field.Store.YES, Field.Index.ANALYZED));
 			iw2.AddDocument(doc);
 			
 			iw2.Close();
@@ -69,9 +68,8 @@ namespace Lucene.Net.Index
 		}
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
-			base.TearDown();
 			base.TearDown();
 			
 			ir1.Close();

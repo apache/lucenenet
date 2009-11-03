@@ -253,5 +253,10 @@ namespace Lucene.Net.Search.Function
 		{
 			return this.MemberwiseClone();
 		}
+
+        public ValueSource valSrc_ForNUnit
+        {
+            get { return valSrc; }
+        }
 	}
 }

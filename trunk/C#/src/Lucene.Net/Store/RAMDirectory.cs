@@ -294,5 +294,16 @@ namespace Lucene.Net.Store
 			isOpen = false;
 			fileMap = null;
 		}
+
+        public System.Collections.Hashtable fileMap_ForNUnit
+        {
+            get { return fileMap; }
+        }
+
+        public long sizeInBytes_ForNUnitTest
+        {
+            get { return sizeInBytes; }
+            set { sizeInBytes = value; }
+        }
 	}
 }

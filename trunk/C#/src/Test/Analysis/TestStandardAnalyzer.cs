@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,50 +20,21 @@ using System;
 using NUnit.Framework;
 
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestStandardAnalyzer : LuceneTestCase
+    [TestFixture]
+	public class TestStandardAnalyzer:BaseTokenStreamTestCase
 	{
 		
 		private Analyzer a = new StandardAnalyzer();
 		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] expected)
-		{
-			AssertAnalyzesTo(a, input, expected, null);
-		}
-		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] expectedImages, System.String[] expectedTypes)
-		{
-			AssertAnalyzesTo(a, input, expectedImages, expectedTypes, null);
-		}
-		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] expectedImages, System.String[] expectedTypes, int[] expectedPosIncrs)
-		{
-			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
-            Token reusableToken = new Token();
-			for (int i = 0; i < expectedImages.Length; i++)
-			{
-				Token nextToken = ts.Next(reusableToken);
-				Assert.IsNotNull(nextToken);
-				Assert.AreEqual(expectedImages[i], nextToken.Term());
-				if (expectedTypes != null)
-				{
-					Assert.AreEqual(expectedTypes[i], nextToken.Type());
-				}
-				if (expectedPosIncrs != null)
-				{
-					Assert.AreEqual(expectedPosIncrs[i], nextToken.GetPositionIncrement());
-				}
-			}
-			Assert.IsNull(ts.Next(reusableToken));
-			ts.Close();
-		}
-		
-		[Test]
+        [Test]
 		public virtual void  TestMaxTermLength()
 		{
 			StandardAnalyzer sa = new StandardAnalyzer();
@@ -71,17 +42,17 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestMaxTermLength2()
 		{
 			StandardAnalyzer sa = new StandardAnalyzer();
 			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "toolong", "xy", "z"});
 			sa.SetMaxTokenLength(5);
 			
-			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"}, null, new int[]{1, 1, 2, 1});
+			AssertAnalyzesTo(sa, "ab cd toolong xy z", new System.String[]{"ab", "cd", "xy", "z"}, new int[]{1, 1, 2, 1});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestMaxTermLength3()
 		{
 			char[] chars = new char[255];
@@ -93,7 +64,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "ab cd " + longTerm + "a xy z", new System.String[]{"ab", "cd", "xy", "z"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestAlphanumeric()
 		{
 			// alphanumeric tokens
@@ -101,7 +72,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "2B", new System.String[]{"2b"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestUnderscores()
 		{
 			// underscores are delimiters, but not in email addresses (below)
@@ -109,7 +80,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "word_with_underscore_and_stopwords", new System.String[]{"word", "underscore", "stopwords"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestDelimiters()
 		{
 			// other delimiters: "-", "/", ","
@@ -118,7 +89,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "ac/dc", new System.String[]{"ac", "dc"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestApostrophes()
 		{
 			// internal apostrophes: O'Reilly, you're, O'Reilly's
@@ -131,7 +102,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "O'Reilly's", new System.String[]{"o'reilly"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestTSADash()
 		{
 			// t and s had been stopwords in Lucene <= 2.0, which made it impossible
@@ -142,7 +113,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "a-class", new System.String[]{"class"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestCompanyNames()
 		{
 			// company names
@@ -150,7 +121,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "Excite@Home", new System.String[]{"excite@home"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestLucene1140()
 		{
 			try
@@ -158,28 +129,27 @@ namespace Lucene.Net.Analysis
 				StandardAnalyzer analyzer = new StandardAnalyzer(true);
 				AssertAnalyzesTo(analyzer, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
 			}
-			catch (System.NullReferenceException)
+			catch (System.NullReferenceException e)
 			{
 				Assert.IsTrue(false, "Should not throw an NPE and it did");
 			}
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestDomainNames()
 		{
-            // don't reuse because we alter its state (SetReplaceInvalidAcronym)
-            StandardAnalyzer a2 = new StandardAnalyzer();
+			// Don't reuse a because we alter its state (setReplaceInvalidAcronym)
+			StandardAnalyzer a2 = new StandardAnalyzer();
 			// domain names
 			AssertAnalyzesTo(a2, "www.nutch.org", new System.String[]{"www.nutch.org"});
 			//Notice the trailing .  See https://issues.apache.org/jira/browse/LUCENE-1068.
-			// the following should be recognized as HOST
+			// the following should be recognized as HOST:
 			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
-			// the following should be recognized as HOST. The code that sets replaceDepAcronym should be removed in the next release.
 			a2.SetReplaceInvalidAcronym(false);
 			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"wwwnutchorg"}, new System.String[]{"<ACRONYM>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestEMailAddresses()
 		{
 			// email addresses, possibly with underscores, periods, etc
@@ -188,7 +158,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "first_lastname@example.com", new System.String[]{"first_lastname@example.com"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestNumeric()
 		{
 			// floating point, serial, model numbers, ip addresses, etc.
@@ -201,14 +171,14 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "a1-b-c3", new System.String[]{"a1-b-c3"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestTextWithNumbers()
 		{
 			// numbers
 			AssertAnalyzesTo(a, "David has 5000 bones", new System.String[]{"david", "has", "5000", "bones"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestVariousText()
 		{
 			// various
@@ -218,14 +188,14 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "\"QUOTED\" word", new System.String[]{"quoted", "word"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestAcronyms()
 		{
 			// acronyms have their dots stripped
 			AssertAnalyzesTo(a, "U.S.A.", new System.String[]{"usa"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestCPlusPlusHash()
 		{
 			// It would be nice to change the grammar in StandardTokenizer.jj to make "C#" and "C++" end up as tokens.
@@ -233,7 +203,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "C#", new System.String[]{"c"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestKorean()
 		{
 			// Korean words
@@ -243,43 +213,43 @@ namespace Lucene.Net.Analysis
 		// Compliance with the "old" JavaCC-based analyzer, see:
 		// https://issues.apache.org/jira/browse/LUCENE-966#action_12516752
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceFileName()
 		{
 			AssertAnalyzesTo(a, "2004.jpg", new System.String[]{"2004.jpg"}, new System.String[]{"<HOST>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceNumericIncorrect()
 		{
 			AssertAnalyzesTo(a, "62.46", new System.String[]{"62.46"}, new System.String[]{"<HOST>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceNumericLong()
 		{
 			AssertAnalyzesTo(a, "978-0-94045043-1", new System.String[]{"978-0-94045043-1"}, new System.String[]{"<NUM>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceNumericFile()
 		{
 			AssertAnalyzesTo(a, "78academyawards/rules/rule02.html", new System.String[]{"78academyawards/rules/rule02.html"}, new System.String[]{"<NUM>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceNumericWithUnderscores()
 		{
 			AssertAnalyzesTo(a, "2006-03-11t082958z_01_ban130523_rtridst_0_ozabs", new System.String[]{"2006-03-11t082958z_01_ban130523_rtridst_0_ozabs"}, new System.String[]{"<NUM>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceNumericWithDash()
 		{
 			AssertAnalyzesTo(a, "mid-20th", new System.String[]{"mid-20th"}, new System.String[]{"<NUM>"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestComplianceManyTokens()
 		{
 			AssertAnalyzesTo(a, "/money.cnn.com/magazines/fortune/fortune_archive/2007/03/19/8402357/index.htm " + "safari-0-sheikh-zayed-grand-mosque.jpg", new System.String[]{"money.cnn.com", "magazines", "fortune", "fortune", "archive/2007/03/19/8402357", "index.htm", "safari-0-sheikh", "zayed", "grand", "mosque.jpg"}, new System.String[]{"<HOST>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<NUM>", "<HOST>", "<NUM>", "<ALPHANUM>", "<ALPHANUM>", "<HOST>"});
@@ -287,7 +257,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> this should be removed in the 3.0. 
 		/// </deprecated>
-		[Test]
+        [Test]
 		public virtual void  TestDeprecatedAcronyms()
 		{
 			// test backward compatibility for applications that require the old behavior.

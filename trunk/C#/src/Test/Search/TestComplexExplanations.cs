@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,11 +29,11 @@ namespace Lucene.Net.Search
 	/// on the assumption that if the explanations work out right for them,
 	/// they should work for anything.
 	/// </summary>
-	[TestFixture]
-	public class TestComplexExplanations : TestExplanations
+    [TestFixture]
+	public class TestComplexExplanations:TestExplanations
 	{
 		[Serializable]
-		private class AnonymousClassDefaultSimilarity : DefaultSimilarity
+		private class AnonymousClassDefaultSimilarity:DefaultSimilarity
 		{
 			public override float QueryNorm(float sumOfSquaredWeights)
 			{
@@ -48,11 +48,11 @@ namespace Lucene.Net.Search
 		public override void  SetUp()
 		{
 			base.SetUp();
-			searcher.SetSimilarity(new AnonymousClassDefaultSimilarity());
+			searcher.SetSimilarity(createQnorm1Similarity());
 		}
 		
 		// must be static for weight serialization tests 
-		private static DefaultSimilarity CreateQnorm1Similarity()
+		private static DefaultSimilarity createQnorm1Similarity()
 		{
 			return new AnonymousClassDefaultSimilarity();
 		}
@@ -209,27 +209,23 @@ namespace Lucene.Net.Search
 			// NOTE: using qtest not bqtest
 			Qtest("w1 w2^0.0", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ13()
 		{
 			// NOTE: using qtest not bqtest
 			Qtest("w1 -w5^0.0", new int[]{1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ18()
 		{
 			// NOTE: using qtest not bqtest
 			Qtest("+w1^0.0 w2", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ21()
 		{
 			Bqtest("(+w1 w2)^0.0", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ22()
 		{
@@ -243,7 +239,6 @@ namespace Lucene.Net.Search
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestST6()
 		{
@@ -259,7 +254,6 @@ namespace Lucene.Net.Search
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestSF7()
 		{
@@ -275,7 +269,6 @@ namespace Lucene.Net.Search
 			q.SetBoost(0);
 			Bqtest(q, new int[]{0, 1, 2, 3});
 		}
-		
 		[Test]
 		public virtual void  TestSNot6()
 		{
@@ -293,7 +286,6 @@ namespace Lucene.Net.Search
 			SpanQuery q = Snot(f, St("xx"));
 			Qtest(q, new int[]{0, 1, 3});
 		}
-
 		[Test]
 		public virtual void  TestSNot9()
 		{

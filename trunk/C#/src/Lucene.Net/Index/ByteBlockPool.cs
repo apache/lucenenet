@@ -160,5 +160,10 @@ namespace Lucene.Net.Index
 			
 			return newUpto + 3;
 		}
+
+        public static int FIRST_LEVEL_SIZE_ForNUnit
+        {
+            get { return FIRST_LEVEL_SIZE; }
+        }
 	}
 }

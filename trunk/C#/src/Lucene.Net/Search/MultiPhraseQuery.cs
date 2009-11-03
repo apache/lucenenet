@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 				Term[] arr = (Term[]) iter.Current;
 				for (int i = 0; i < arr.Length; i++)
 				{
-					SupportClass.HashtableHelper.AddIfNotContains(terms, arr[i]);
+					SupportClass.CollectionsHelper.AddIfNotContains(terms, arr[i]);
 				}
 			}
 		}

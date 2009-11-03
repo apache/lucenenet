@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		private int lengthAtStart; // this is the number apps usually count on (although deletions can bring it down). 
 		private int nDeletedHits = 0; // # of already collected hits that were meanwhile deleted.
 		
-		internal bool debugCheckedForDeletions = false; // for test purposes.
+		public /*internal*/ bool debugCheckedForDeletions = false; // for test purposes.
 		
 		internal Hits(Searcher s, Query q, Filter f)
 		{

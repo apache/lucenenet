@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
 		private long bufferStart;
 		private int bufferLength;
 		
-		internal RAMInputStream(RAMFile f)
+		public /*internal*/ RAMInputStream(RAMFile f)
 		{
 			file = f;
 			length = file.length;

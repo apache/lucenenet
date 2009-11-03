@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ using System;
 using NUnit.Framework;
 
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
@@ -39,28 +40,13 @@ namespace Lucene.Net.Search.Function
 	/// <p>
 	/// The exact score tests use TopDocs top to verify the exact score.  
 	/// </summary>
-	[TestFixture]
-	public class TestFieldScoreQuery : FunctionTestSetup
+    [TestFixture]
+	public class TestFieldScoreQuery:FunctionTestSetup
 	{
 		
 		/* @override constructor */
-		//public TestFieldScoreQuery(System.String name):base(name)
-		//{
-		//}
-		
-		/* @override */
-		[TearDown]
-		public override void  TearDown()
+		public TestFieldScoreQuery(System.String name):base(name)
 		{
-			base.TearDown();
-		}
-		
-		/* @override */
-		[SetUp]
-		public override void  SetUp()
-		{
-			// prepare a small index with just a few documents.  
-			base.SetUp();
 		}
 		
 		/// <summary>Test that FieldScoreQuery of Type.BYTE returns docs in expected order. </summary>
@@ -205,7 +191,7 @@ namespace Lucene.Net.Search.Function
 		{
 			// prepare expected array types for comparison
 			System.Collections.Hashtable expectedArrayTypes = new System.Collections.Hashtable();
-			expectedArrayTypes[FieldScoreQuery.Type.BYTE] = new byte[0];
+			expectedArrayTypes[FieldScoreQuery.Type.BYTE] = new sbyte[0];
 			expectedArrayTypes[FieldScoreQuery.Type.SHORT] = new short[0];
 			expectedArrayTypes[FieldScoreQuery.Type.INT] = new int[0];
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];
@@ -219,26 +205,31 @@ namespace Lucene.Net.Search.Function
 				FieldScoreQuery q = new FieldScoreQuery(field, tp);
 				ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 				Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-				try
+				IndexReader[] readers = s.GetIndexReader().GetSequentialSubReaders();
+				for (int j = 0; j < readers.Length; j++)
 				{
-					if (i == 0)
+					IndexReader reader = readers[j];
+					try
 					{
-						innerArray = q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray();
-						Log(i + ".  compare: " + innerArray.GetType() + " to " + expectedArrayTypes[tp].GetType());
-						Assert.AreEqual(innerArray.GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
+						if (i == 0)
+						{
+							innerArray = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
+							Log(i + ".  compare: " + innerArray.GetType() + " to " + expectedArrayTypes[tp].GetType());
+							Assert.AreEqual(innerArray.GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
+						}
+						else
+						{
+							Log(i + ".  compare: " + innerArray + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+							Assert.AreSame(innerArray, q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
+						}
 					}
-					else
+					catch (System.NotSupportedException e)
 					{
-						Log(i + ".  compare: " + innerArray + " to " + q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
-						Assert.AreSame(innerArray, q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray(), "field values should be cached and reused!");
-					}
-				}
-				catch (System.NotSupportedException)
-				{
-					if (!warned)
-					{
-						System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q);
-						warned = true;
+						if (!warned)
+						{
+							System.Console.Error.WriteLine("WARNING: " +  TestName() + " cannot fully test values of " + q);
+							warned = true;
+						}
 					}
 				}
 			}
@@ -248,24 +239,29 @@ namespace Lucene.Net.Search.Function
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
 			ScoreDoc[] h2 = s.Search(q2, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			try
+			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			for (int j = 0; j < readers2.Length; j++)
 			{
-				Log("compare: " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
-				Assert.AreNotSame(innerArray, q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray(), "cached field values should not be reused if reader as changed!");
-			}
-			catch (System.NotSupportedException)
-			{
-				if (!warned)
+				IndexReader reader = readers2[j];
+				try
 				{
-					System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
-					warned = true;
+					Log("compare: " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
+				}
+				catch (System.NotSupportedException e)
+				{
+					if (!warned)
+					{
+						System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
+						warned = true;
+					}
 				}
 			}
 		}
 		
 		private System.String TestName()
 		{
-			return GetType().FullName;
+			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
 		}
 	}
 }

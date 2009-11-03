@@ -1,4 +1,4 @@
-/*
+﻿/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,35 +29,46 @@ using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using DateField = Lucene.Net.Documents.DateField;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using ConstantScoreRangeQuery = Lucene.Net.Search.ConstantScoreRangeQuery;
 using FuzzyQuery = Lucene.Net.Search.FuzzyQuery;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+using MultiTermQuery = Lucene.Net.Search.MultiTermQuery;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using PrefixQuery = Lucene.Net.Search.PrefixQuery;
 using Query = Lucene.Net.Search.Query;
-using RangeQuery = Lucene.Net.Search.RangeQuery;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
+using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
 using WildcardQuery = Lucene.Net.Search.WildcardQuery;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using LocalizedTestCase = Lucene.Net.Util.LocalizedTestCase;
 
 namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary> Tests QueryParser.</summary>
-	[TestFixture]
-	public class TestQueryParser : LuceneTestCase
+	public class TestQueryParser:LocalizedTestCase
 	{
-		public class AnonymousClassQueryParser : Lucene.Net.QueryParsers.QueryParser
+        static System.Collections.Hashtable dataTestWithDifferentLocals = new System.Collections.Hashtable();
+        static TestQueryParser()
+        {
+    		System.String[] data = new System.String[] {"TestLegacyDateRange", "TestDateRange", "TestCJK", "TestNumber", "TestFarsiRangeCollating", "TestLocalDateFormat"};
+            for (int i = 0; i < data.Length; i++)
+            {
+                dataTestWithDifferentLocals.Add(data[i], data[i]);
+            }
+        }
+
+		private class AnonymousClassQueryParser : QueryParser
 		{
 			private void  InitBlock(int[] type, TestQueryParser enclosingInstance)
 			{
@@ -78,66 +89,79 @@ namespace Lucene.Net.QueryParsers
 			{
 				InitBlock(type, enclosingInstance);
 			}
-			public override Lucene.Net.Search.Query GetWildcardQuery(System.String field, System.String termStr)
+			public /*protected internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
 			{
 				// override error checking of superclass
 				type[0] = 1;
 				return new TermQuery(new Term(field, termStr));
 			}
-			public override Lucene.Net.Search.Query GetPrefixQuery(System.String field, System.String termStr)
+			public /*protected internal*/ override Query GetPrefixQuery(System.String field, System.String termStr)
 			{
 				// override error checking of superclass
 				type[0] = 2;
 				return new TermQuery(new Term(field, termStr));
 			}
 			
-			public override Lucene.Net.Search.Query GetFieldQuery(System.String field, System.String queryText)
+			public /*protected internal*/ override Query GetFieldQuery(System.String field, System.String queryText)
 			{
 				type[0] = 3;
 				return base.GetFieldQuery(field, queryText);
 			}
 		}
 		
+		public TestQueryParser(System.String name):base(name, dataTestWithDifferentLocals)
+		{
+		}
+		
 		public static Analyzer qpAnalyzer = new QPTestAnalyzer();
 		
-		public class QPTestFilter : TokenFilter
+		public class QPTestFilter:TokenFilter
 		{
+			internal TermAttribute termAtt;
+			internal OffsetAttribute offsetAtt;
+			
 			/// <summary> Filter which discards the token 'stop' and which expands the
 			/// token 'phrase' into 'phrase1 phrase2'
 			/// </summary>
-			public QPTestFilter(TokenStream in_Renamed) : base(in_Renamed)
+			public QPTestFilter(TokenStream in_Renamed):base(in_Renamed)
 			{
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
 			}
 			
 			internal bool inPhrase = false;
 			internal int savedStart = 0, savedEnd = 0;
 			
-			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
+			public override bool IncrementToken()
 			{
-                System.Diagnostics.Debug.Assert(reusableToken != null);
 				if (inPhrase)
 				{
 					inPhrase = false;
-					return reusableToken.Reinit("phrase2", savedStart, savedEnd);
+					termAtt.SetTermBuffer("phrase2");
+					offsetAtt.SetOffset(savedStart, savedEnd);
+					return true;
 				}
 				else
-					for (Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
+					while (input.IncrementToken())
 					{
-						if (nextToken.Term().Equals("phrase"))
+						if (termAtt.Term().Equals("phrase"))
 						{
 							inPhrase = true;
-							savedStart = nextToken.StartOffset();
-							savedEnd = nextToken.EndOffset();
-							return nextToken.Reinit("phrase1", savedStart, savedEnd);
+							savedStart = offsetAtt.StartOffset();
+							savedEnd = offsetAtt.EndOffset();
+							termAtt.SetTermBuffer("phrase1");
+							offsetAtt.SetOffset(savedStart, savedEnd);
+							return true;
 						}
-						else if (!nextToken.Term().Equals("stop"))
-							return nextToken;
+						else if (!termAtt.Term().Equals("stop"))
+							return true;
 					}
-				return null;
+				return false;
 			}
 		}
 		
-		public class QPTestAnalyzer : Analyzer
+		
+		public class QPTestAnalyzer:Analyzer
 		{
 			
 			/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
@@ -147,18 +171,18 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		public class QPTestParser : Lucene.Net.QueryParsers.QueryParser
+		public class QPTestParser:QueryParser
 		{
 			public QPTestParser(System.String f, Analyzer a):base(f, a)
 			{
 			}
 			
-			public override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
+			public /*protected internal*/ override Query GetFuzzyQuery(System.String field, System.String termStr, float minSimilarity)
 			{
 				throw new ParseException("Fuzzy queries not allowed");
 			}
 			
-			public override Query GetWildcardQuery(System.String field, System.String termStr)
+			public /*protected internal*/ override Query GetWildcardQuery(System.String field, System.String termStr)
 			{
 				throw new ParseException("Wildcard queries not allowed");
 			}
@@ -167,18 +191,18 @@ namespace Lucene.Net.QueryParsers
 		private int originalMaxClauses;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			originalMaxClauses = BooleanQuery.GetMaxClauseCount();
 		}
 		
-		public virtual Lucene.Net.QueryParsers.QueryParser GetParser(Analyzer a)
+		public virtual QueryParser GetParser(Analyzer a)
 		{
 			if (a == null)
 				a = new SimpleAnalyzer();
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", a);
-			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR);
+			QueryParser qp = new QueryParser("field", a);
+			qp.SetDefaultOperator(QueryParser.OR_OPERATOR);
 			return qp;
 		}
 		
@@ -197,7 +221,7 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		public virtual void  AssertQueryEquals(Lucene.Net.QueryParsers.QueryParser qp, System.String field, System.String query, System.String result)
+		public virtual void  AssertQueryEquals(QueryParser qp, System.String field, System.String query, System.String result)
 		{
 			Query q = qp.Parse(query);
 			System.String s = q.ToString(field);
@@ -209,7 +233,7 @@ namespace Lucene.Net.QueryParsers
 		
 		public virtual void  AssertEscapedQueryEquals(System.String query, Analyzer a, System.String result)
 		{
-			System.String escapedQuery = Lucene.Net.QueryParsers.QueryParser.Escape(query);
+			System.String escapedQuery = QueryParser.Escape(query);
 			if (!escapedQuery.Equals(result))
 			{
 				Assert.Fail("Query /" + query + "/ yielded /" + escapedQuery + "/, expecting /" + result + "/");
@@ -218,7 +242,7 @@ namespace Lucene.Net.QueryParsers
 		
 		public virtual void  AssertWildcardQueryEquals(System.String query, bool lowercase, System.String result, bool allowLeadingWildcard)
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
+			QueryParser qp = GetParser(null);
 			qp.SetLowercaseExpandedTerms(lowercase);
 			qp.SetAllowLeadingWildcard(allowLeadingWildcard);
 			Query q = qp.Parse(query);
@@ -236,7 +260,7 @@ namespace Lucene.Net.QueryParsers
 		
 		public virtual void  AssertWildcardQueryEquals(System.String query, System.String result)
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
+			QueryParser qp = GetParser(null);
 			Query q = qp.Parse(query);
 			System.String s = q.ToString("field");
 			if (!s.Equals(result))
@@ -249,8 +273,8 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (a == null)
 				a = new SimpleAnalyzer();
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", a);
-			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
+			QueryParser qp = new QueryParser("field", a);
+			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
 			return qp.Parse(query);
 		}
 		
@@ -265,11 +289,20 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		[Test]
+		public virtual void  TestCJK()
+		{
+			// Test Ideographic Space - As wide as a CJK character cell (fullwidth)
+			// used google to translate the word "term" to japanese -> ç”¨èªž
+			AssertQueryEquals("term\u3000term\u3000term", null, "term\u0020term\u0020term");
+			AssertQueryEquals("ç”¨èªž\u3000ç”¨èªž\u3000ç”¨èªž", null, "ç”¨èªž\u0020ç”¨èªž\u0020ç”¨èªž");
+		}
+		
+		[Test]
 		public virtual void  TestSimple()
 		{
 			AssertQueryEquals("term term term", null, "term term term");
-			AssertQueryEquals("türm term term", new WhitespaceAnalyzer(), "türm term term");
-			AssertQueryEquals("ümlaut", new WhitespaceAnalyzer(), "ümlaut");
+			AssertQueryEquals("tÃ¼rm term term", new WhitespaceAnalyzer(), "tÃ¼rm term term");
+			AssertQueryEquals("Ã¼mlaut", new WhitespaceAnalyzer(), "Ã¼mlaut");
 			
 			AssertQueryEquals("\"\"", new KeywordAnalyzer(), "");
 			AssertQueryEquals("foo:\"\"", new KeywordAnalyzer(), "foo:");
@@ -310,13 +343,13 @@ namespace Lucene.Net.QueryParsers
 			AssertQueryEquals("+(apple \"steve jobs\") -(foo bar baz)", null, "+(apple \"steve jobs\") -(foo bar baz)");
 			AssertQueryEquals("+title:(dog OR cat) -author:\"bob dole\"", null, "+(title:dog title:cat) -author:\"bob dole\"");
 			
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new StandardAnalyzer());
+			QueryParser qp = new QueryParser("field", new StandardAnalyzer());
 			// make sure OR is the default:
-			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
-			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
-			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR, qp.GetDefaultOperator());
-			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR);
-			Assert.AreEqual(Lucene.Net.QueryParsers.QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
+			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
+			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
+			Assert.AreEqual(QueryParser.AND_OPERATOR, qp.GetDefaultOperator());
+			qp.SetDefaultOperator(QueryParser.OR_OPERATOR);
+			Assert.AreEqual(QueryParser.OR_OPERATOR, qp.GetDefaultOperator());
 		}
 		
 		[Test]
@@ -420,7 +453,7 @@ namespace Lucene.Net.QueryParsers
 				AssertWildcardQueryEquals("*Term", true, "*term");
 				Assert.Fail();
 			}
-			catch (ParseException)
+			catch (ParseException pe)
 			{
 				// expected exception
 			}
@@ -429,7 +462,7 @@ namespace Lucene.Net.QueryParsers
 				AssertWildcardQueryEquals("?Term", true, "?term");
 				Assert.Fail();
 			}
-			catch (ParseException)
+			catch (ParseException pe)
 			{
 				// expected exception
 			}
@@ -441,7 +474,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestLeadingWildcardType()
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = GetParser(null);
+			QueryParser qp = GetParser(null);
 			qp.SetAllowLeadingWildcard(true);
 			Assert.AreEqual(typeof(WildcardQuery), qp.Parse("t*erm*").GetType());
 			Assert.AreEqual(typeof(WildcardQuery), qp.Parse("?term*").GetType());
@@ -481,11 +514,11 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestRange()
 		{
 			AssertQueryEquals("[ a TO z]", null, "[a TO z]");
-			Assert.IsTrue(GetQuery("[ a TO z]", null) is ConstantScoreRangeQuery);
+			Assert.AreEqual(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery) GetQuery("[ a TO z]", null)).GetRewriteMethod());
 			
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
-			qp.SetUseOldRangeQuery(true);
-			Assert.IsTrue(qp.Parse("[ a TO z]") is RangeQuery);
+			QueryParser qp = new QueryParser("field", new SimpleAnalyzer());
+			qp.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+			Assert.AreEqual(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery) qp.Parse("[ a TO z]")).GetRewriteMethod());
 			
 			AssertQueryEquals("[ a TO z ]", null, "[a TO z]");
 			AssertQueryEquals("{ a TO z}", null, "{a TO z}");
@@ -496,53 +529,64 @@ namespace Lucene.Net.QueryParsers
 			AssertQueryEquals("( bar blar { a TO z}) ", null, "bar blar {a TO z}");
 			AssertQueryEquals("gack ( bar blar { a TO z}) ", null, "gack (bar blar {a TO z})");
 		}
-
-        public void testFarsiRangeCollating()
-        {
-
-            RAMDirectory ramDir = new RAMDirectory();
-            IndexWriter iw = new IndexWriter(ramDir, new WhitespaceAnalyzer(), true,
-                                             IndexWriter.MaxFieldLength.LIMITED);
-            Document doc = new Document();
-            doc.Add(new Field("content", "\u0633\u0627\u0628",
-                              Field.Store.YES, Field.Index.UN_TOKENIZED));
-            iw.AddDocument(doc);
-            iw.Close();
-            IndexSearcher is_Renamed = new IndexSearcher(ramDir);
-
-            QueryParser qp = new QueryParser("content", new WhitespaceAnalyzer());
-
-            // Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
-            // RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
-            // characters properly.
-            System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("ar").CompareInfo;
-            qp.SetRangeCollator(c);
-
-            // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
-            // orders the U+0698 character before the U+0633 character, so the single
-            // index Term below should NOT be returned by a ConstantScoreRangeQuery
-            // with a Farsi Collator (or an Arabic one for the case when Farsi is_Renamed not
-            // supported).
-
-            // Test ConstantScoreRangeQuery
-            qp.SetUseOldRangeQuery(false);
-            ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
-            Assert.AreEqual(0, result.Length, "The index Term should not be included.");
-
-            result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
-            Assert.AreEqual(1, result.Length, "The index Term should be included.");
-
-            // Test RangeQuery
-            qp.SetUseOldRangeQuery(true);
-            result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
-            Assert.AreEqual(0, result.Length, "The index Term should not be included.");
-
-            result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
-            Assert.AreEqual(1, result.Length, "The index Term should be included.");
-
-            is_Renamed.Close();
-        }
-  
+		
+		[Test]
+		public virtual void  TestFarsiRangeCollating()
+		{
+			
+			RAMDirectory ramDir = new RAMDirectory();
+			IndexWriter iw = new IndexWriter(ramDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			Document doc = new Document();
+			doc.Add(new Field("content", "\u0633\u0627\u0628", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			iw.AddDocument(doc);
+			iw.Close();
+			IndexSearcher is_Renamed = new IndexSearcher(ramDir);
+			
+			QueryParser qp = new QueryParser("content", new WhitespaceAnalyzer());
+			
+			// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
+			// RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
+			// characters properly.
+			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("ar").CompareInfo;
+			qp.SetRangeCollator(c);
+			
+			// Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
+			// orders the U+0698 character before the U+0633 character, so the single
+			// index Term below should NOT be returned by a ConstantScoreRangeQuery
+			// with a Farsi Collator (or an Arabic one for the case when Farsi is not
+			// supported).
+			
+			// Test ConstantScoreRangeQuery
+			qp.SetMultiTermRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+			ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
+			
+			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length, "The index Term should be included.");
+			
+			// Test TermRangeQuery
+			qp.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+			result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
+			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
+			
+			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
+			Assert.AreEqual(1, result.Length, "The index Term should be included.");
+			
+			is_Renamed.Close();
+		}
+		
+		private System.String EscapeDateString(System.String s)
+		{
+			if (s.IndexOf(" ") > - 1)
+			{
+				return "\"" + s + "\"";
+			}
+			else
+			{
+				return s;
+			}
+		}
+		
 		/// <summary>for testing legacy DateField support </summary>
 		private System.String GetLegacyDate(System.String s)
 		{
@@ -555,7 +599,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			System.DateTime tempAux = System.DateTime.Parse(s, System.Globalization.CultureInfo.CurrentCulture);
 			return GetDate(tempAux, resolution);
-		}                                               
+		}
 		
 		/// <summary>for testing DateTools support </summary>
 		private System.String GetDate(System.DateTime d, DateTools.Resolution resolution)
@@ -570,48 +614,43 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		public virtual System.String GetDate(System.String s)
-		{
-			System.DateTime tempAux = System.DateTime.Parse(s);
-			return DateField.DateToString(tempAux);
-		}
-		
 		private System.String GetLocalizedDate(int year, int month, int day, bool extendLastDate)
 		{
-			System.DateTime temp = new System.DateTime(year, month, day);
+			System.Globalization.Calendar calendar = new System.Globalization.GregorianCalendar();
+            System.DateTime temp = new System.DateTime(year, month, day, calendar);
 			if (extendLastDate)
 			{
-				temp = temp.AddHours(23);
-				temp = temp.AddMinutes(59);
-				temp = temp.AddSeconds(59);
-				temp = temp.AddMilliseconds(999);
-			}
-			return temp.ToShortDateString();    // ToString("MM/d/yyy");
-		}
+                temp = temp.AddHours(23);
+                temp = temp.AddMinutes(59);
+                temp = temp.AddSeconds(59);
+                temp = temp.AddMilliseconds(999);
+            }
+            return temp.ToShortDateString();
+        }
 		
 		/// <summary>for testing legacy DateField support </summary>
 		[Test]
 		public virtual void  TestLegacyDateRange()
 		{
-			System.String startDate = GetLocalizedDate(2002, 2, 1, false);
-			System.String endDate = GetLocalizedDate(2002, 2, 4, false);
+			System.String startDate = GetLocalizedDate(2002, 1, 1, false);
+			System.String endDate = GetLocalizedDate(2002, 1, 4, false);
 			System.Globalization.Calendar endDateExpected = new System.Globalization.GregorianCalendar();
-			// endDateExpected should be set to: "2002, 1, 4, 23, 59, 59, 999" otherwise what's the point of useing GregorianCalendar()   // {{Aroush-2.1}}
-			System.DateTime tempAux = new System.DateTime(2002, 2, 4, 23, 59, 59, 999);
-			AssertQueryEquals("[ " + startDate + " TO " + endDate + "]", null, "[" + GetLegacyDate(startDate) + " TO " + DateField.DateToString(tempAux) + "]");
-			AssertQueryEquals("{  " + startDate + "    " + endDate + "   }", null, "{" + GetLegacyDate(startDate) + " TO " + GetLegacyDate(endDate) + "}");
+			System.DateTime tempAux = new System.DateTime(2002, 2, 4, 23, 59, 59, 999, endDateExpected);
+			AssertQueryEquals("[ " + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate) + "]", null, "[" + GetLegacyDate(startDate) + " TO " + DateField.DateToString(tempAux) + "]");
+			AssertQueryEquals("{  " + EscapeDateString(startDate) + "    " + EscapeDateString(endDate) + "   }", null, "{" + GetLegacyDate(startDate) + " TO " + GetLegacyDate(endDate) + "}");
 		}
 		
 		[Test]
 		public virtual void  TestDateRange()
 		{
-			System.String startDate = GetLocalizedDate(2002, 2, 1, false);
-			System.String endDate = GetLocalizedDate(2002, 2, 4, false);
-			System.DateTime endDateExpected = new System.DateTime(2002, 2, 4, 23, 59, 59, 999);
+			System.String startDate = GetLocalizedDate(2002, 1, 1, false);
+			System.String endDate = GetLocalizedDate(2002, 1, 4, false);
+			System.Globalization.Calendar calendar = new System.Globalization.GregorianCalendar();
+            System.DateTime endDateExpected = new System.DateTime(2002, 2, 4, 23, 59, 59, 999, calendar);
 			System.String defaultField = "default";
 			System.String monthField = "month";
 			System.String hourField = "hour";
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
+			QueryParser qp = new QueryParser("field", new SimpleAnalyzer());
 			
 			// Don't set any date resolution and verify if DateField is used
 			System.DateTime tempAux = endDateExpected;
@@ -643,10 +682,10 @@ namespace Lucene.Net.QueryParsers
 			AssertDateRangeQueryEquals(qp, hourField, startDate, endDate, tempAux5, DateTools.Resolution.HOUR);
 		}
 		
-		public virtual void  AssertDateRangeQueryEquals(Lucene.Net.QueryParsers.QueryParser qp, System.String field, System.String startDate, System.String endDate, System.DateTime endDateInclusive, DateTools.Resolution resolution)
+		public virtual void  AssertDateRangeQueryEquals(QueryParser qp, System.String field, System.String startDate, System.String endDate, System.DateTime endDateInclusive, DateTools.Resolution resolution)
 		{
-			AssertQueryEquals(qp, field, field + ":[" + startDate + " TO " + endDate + "]", "[" + GetDate(startDate, resolution) + " TO " + GetDate(endDateInclusive, resolution) + "]");
-			AssertQueryEquals(qp, field, field + ":{" + startDate + " TO " + endDate + "}", "{" + GetDate(startDate, resolution) + " TO " + GetDate(endDate, resolution) + "}");
+			AssertQueryEquals(qp, field, field + ":[" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate) + "]", "[" + GetDate(startDate, resolution) + " TO " + GetDate(endDateInclusive, resolution) + "]");
+			AssertQueryEquals(qp, field, field + ":{" + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate) + "}", "{" + GetDate(startDate, resolution) + " TO " + GetDate(endDate, resolution) + "}");
 		}
 		
 		[Test]
@@ -739,9 +778,9 @@ namespace Lucene.Net.QueryParsers
 			AssertQueryEquals("\\\\", a, "\\"); // escaped backslash
 			
 			AssertParseException("\\"); // a backslash must always be escaped
-
-            // LUCENE-1189
-            AssertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
+			
+			// LUCENE-1189
+			AssertQueryEquals("(\"a\\\\\") or (\"b\")", a, "a\\ or b");
 		}
 		
 		[Test]
@@ -821,8 +860,10 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestBoost()
 		{
-			StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(new System.String[]{"on"});
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", oneStopAnalyzer);
+			System.Collections.Hashtable stopWords = new System.Collections.Hashtable(1);
+			SupportClass.CollectionsHelper.AddIfNotContains(stopWords, "on");
+			StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(stopWords);
+			QueryParser qp = new QueryParser("field", oneStopAnalyzer);
 			Query q = qp.Parse("on^1.0");
 			Assert.IsNotNull(q);
 			q = qp.Parse("\"hello\"^2.0");
@@ -834,7 +875,7 @@ namespace Lucene.Net.QueryParsers
 			q = qp.Parse("\"on\"^1.0");
 			Assert.IsNotNull(q);
 			
-			Lucene.Net.QueryParsers.QueryParser qp2 = new Lucene.Net.QueryParsers.QueryParser("field", new StandardAnalyzer());
+			QueryParser qp2 = new QueryParser("field", new StandardAnalyzer());
 			q = qp2.Parse("the^3");
 			// "the" is a stop word so the result is an empty query:
 			Assert.IsNotNull(q);
@@ -846,9 +887,9 @@ namespace Lucene.Net.QueryParsers
 		{
 			try
 			{
-				Query q = GetQuery(queryString, null);
+				GetQuery(queryString, null);
 			}
-			catch (ParseException)
+			catch (ParseException expected)
 			{
 				return ;
 			}
@@ -858,13 +899,14 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestException()
 		{
-            AssertParseException("\"some phrase");
-            AssertParseException("(foo bar");
-            AssertParseException("foo bar))");
-            AssertParseException("field:term:with:colon some more terms");
-            AssertParseException("(sub query)^5.0^2.0 plus more");
-            AssertParseException("secret AND illegal) AND access:confidential");
+			AssertParseException("\"some phrase");
+			AssertParseException("(foo bar");
+			AssertParseException("foo bar))");
+			AssertParseException("field:term:with:colon some more terms");
+			AssertParseException("(sub query)^5.0^2.0 plus more");
+			AssertParseException("secret AND illegal) AND access:confidential");
 		}
+		
 		
 		[Test]
 		public virtual void  TestCustomQueryParserWildcard()
@@ -874,7 +916,7 @@ namespace Lucene.Net.QueryParsers
 				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("a?t");
 				Assert.Fail("Wildcard queries should not be allowed");
 			}
-			catch (ParseException)
+			catch (ParseException expected)
 			{
 				// expected exception
 			}
@@ -888,7 +930,7 @@ namespace Lucene.Net.QueryParsers
 				new QPTestParser("contents", new WhitespaceAnalyzer()).Parse("xunit~");
 				Assert.Fail("Fuzzy queries should not be allowed");
 			}
-			catch (ParseException)
+			catch (ParseException expected)
 			{
 				// expected exception
 			}
@@ -900,13 +942,13 @@ namespace Lucene.Net.QueryParsers
 			BooleanQuery.SetMaxClauseCount(2);
 			try
 			{
-				Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
+				QueryParser qp = new QueryParser("field", new WhitespaceAnalyzer());
 				qp.Parse("one two three");
-				Assert.Fail("ParseException expected due to too many bool clauses");
+				Assert.Fail("ParseException expected due to too many boolean clauses");
 			}
-			catch (ParseException)
+			catch (ParseException expected)
 			{
-				// too many bool clauses, so ParseException is expected
+				// too many boolean clauses, so ParseException is expected
 			}
 		}
 		
@@ -914,7 +956,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestPrecedence()
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
+			QueryParser qp = new QueryParser("field", new WhitespaceAnalyzer());
 			Query query1 = qp.Parse("A AND B OR C AND D");
 			Query query2 = qp.Parse("+A +B +C +D");
 			Assert.AreEqual(query1, query2);
@@ -923,12 +965,12 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestLocalDateFormat()
 		{
-			Lucene.Net.Store.RAMDirectory ramDir = new Lucene.Net.Store.RAMDirectory();
-			Lucene.Net.Index.IndexWriter iw = new Lucene.Net.Index.IndexWriter(ramDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			RAMDirectory ramDir = new RAMDirectory();
+			IndexWriter iw = new IndexWriter(ramDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDateDoc("a", 2005, 12, 2, 10, 15, 33, iw);
 			AddDateDoc("b", 2005, 12, 4, 22, 15, 0, iw);
 			iw.Close();
-			Lucene.Net.Search.IndexSearcher is_Renamed = new Lucene.Net.Search.IndexSearcher(ramDir);
+			IndexSearcher is_Renamed = new IndexSearcher(ramDir);
 			AssertHits(1, "[12/1/2005 TO 12/3/2005]", is_Renamed);
 			AssertHits(2, "[12/1/2005 TO 12/4/2005]", is_Renamed);
 			AssertHits(1, "[12/3/2005 TO 12/4/2005]", is_Renamed);
@@ -942,7 +984,7 @@ namespace Lucene.Net.QueryParsers
 		public virtual void  TestStarParsing()
 		{
 			int[] type = new int[1];
-			Lucene.Net.QueryParsers.QueryParser qp = new AnonymousClassQueryParser(type, this, "field", new WhitespaceAnalyzer());
+			QueryParser qp = new AnonymousClassQueryParser(type, this, "field", new WhitespaceAnalyzer());
 			
 			TermQuery tq;
 			
@@ -983,7 +1025,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestStopwords()
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("a", new StopAnalyzer(new System.String[] { "the", "foo" }));
+			QueryParser qp = new QueryParser("a", new StopAnalyzer(new System.String[]{"the", "foo"}));
 			Query result = qp.Parse("a:the OR a:foo");
 			Assert.IsNotNull(result, "result is null and it shouldn't be");
 			Assert.IsTrue(result is BooleanQuery, "result is not a BooleanQuery");
@@ -1005,7 +1047,7 @@ namespace Lucene.Net.QueryParsers
 			StopFilter.SetEnablePositionIncrementsDefault(true);
 			try
 			{
-				Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("a", new StopAnalyzer(new System.String[] { "the", "in", "are", "this" }));
+				QueryParser qp = new QueryParser("a", new StopAnalyzer(new System.String[]{"the", "in", "are", "this"}));
 				qp.SetEnablePositionIncrements(true);
 				System.String qtxt = "\"the words in poisitions pos02578 are stopped in this phrasequery\"";
 				//               0         2                      5           7  8
@@ -1030,7 +1072,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestMatchAllDocs()
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field", new WhitespaceAnalyzer());
+			QueryParser qp = new QueryParser("field", new WhitespaceAnalyzer());
 			Assert.AreEqual(new MatchAllDocsQuery(), qp.Parse("*:*"));
 			Assert.AreEqual(new MatchAllDocsQuery(), qp.Parse("(*:*)"));
 			BooleanQuery bq = (BooleanQuery) qp.Parse("+*:* -*:*");
@@ -1038,26 +1080,27 @@ namespace Lucene.Net.QueryParsers
 			Assert.IsTrue(bq.GetClauses()[1].GetQuery() is MatchAllDocsQuery);
 		}
 		
-		private void  AssertHits(int expected, System.String query, Lucene.Net.Search.IndexSearcher is_Renamed)
+		private void  AssertHits(int expected, System.String query, IndexSearcher is_Renamed)
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("date", new WhitespaceAnalyzer());
-			qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
+			QueryParser qp = new QueryParser("date", new WhitespaceAnalyzer());
+			qp.SetLocale(new System.Globalization.CultureInfo("en"));
 			Query q = qp.Parse(query);
 			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(expected, hits.Length);
 		}
 		
-		private static void  AddDateDoc(System.String content, int year, int month, int day, int hour, int minute, int second, Lucene.Net.Index.IndexWriter iw)
+		private static void  AddDateDoc(System.String content, int year, int month, int day, int hour, int minute, int second, IndexWriter iw)
 		{
-			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
-			d.Add(new Lucene.Net.Documents.Field("f", content, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-			System.DateTime tempAux = new System.DateTime(year, month, day, hour, minute, second);
-			d.Add(new Lucene.Net.Documents.Field("date", DateField.DateToString(tempAux), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+			Document d = new Document();
+			d.Add(new Field("f", content, Field.Store.YES, Field.Index.ANALYZED));
+			System.Globalization.Calendar cal = new System.Globalization.GregorianCalendar();
+			System.DateTime tempAux = new System.DateTime(year, month, day, hour, minute, second, cal);
+			d.Add(new Field("date", DateField.DateToString(tempAux), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			iw.AddDocument(d);
 		}
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
 			base.TearDown();
 			BooleanQuery.SetMaxClauseCount(originalMaxClauses);

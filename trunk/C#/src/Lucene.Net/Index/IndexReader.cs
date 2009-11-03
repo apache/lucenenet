@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		protected internal void  Commit()
+		public /*protected internal*/ void  Commit()
 		{
 			lock (this)
 			{
@@ -1749,5 +1749,10 @@ namespace Lucene.Net.Index
 		{
 			this.disableFakeNorms = disableFakeNorms;
 		}
+
+        public bool hasChanges_ForNUnit
+        {
+            get { return hasChanges; }
+        }
 	}
 }

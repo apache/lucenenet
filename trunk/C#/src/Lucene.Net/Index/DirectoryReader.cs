@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> An IndexReader which reads indexes with multiple segments.</summary>
-	class DirectoryReader:IndexReader, System.ICloneable
+	public class DirectoryReader:IndexReader, System.ICloneable
 	{
 		/*new*/ private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
 		{
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.HashtableHelper.AddAllIfNotContains(synced, sis.Files(directory, true));
+				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, sis.Files(directory, true));
 			}
 			
 			// To reduce the chance of hitting FileNotFound
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.HashtableHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
+				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
 			}
 			
 			// IndexWriter synchronizes externally before calling
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.HashtableHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
+				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
 			}
 			
 			// we put the old SegmentReaders in a map, that allows us
@@ -919,7 +919,7 @@ namespace Lucene.Net.Index
 						{
 							System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
 							directory.Sync(fileName);
-							SupportClass.HashtableHelper.AddIfNotContains(synced, fileName);
+							SupportClass.CollectionsHelper.AddIfNotContains(synced, fileName);
 						}
 					}
 					
@@ -1048,7 +1048,7 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = subReaders[i];
 				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-				SupportClass.HashtableHelper.AddAllIfNotContains(fieldSet, names);
+				SupportClass.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
 			}
 			return fieldSet;
 		}

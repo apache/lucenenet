@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -36,8 +37,8 @@ namespace Lucene.Net.Index
 	/// <summary> Tests lazy skipping on the proximity file.
 	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestLazyProxSkipping : LuceneTestCase
+    [TestFixture]
+	public class TestLazyProxSkipping:LuceneTestCase
 	{
 		private Searcher searcher;
 		private int seeksCounter = 0;
@@ -47,16 +48,49 @@ namespace Lucene.Net.Index
 		private System.String term2 = "yy";
 		private System.String term3 = "zz";
 		
+		[Serializable]
+		private class SeekCountingDirectory:RAMDirectory
+		{
+			public SeekCountingDirectory(TestLazyProxSkipping enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+			}
+			private void  InitBlock(TestLazyProxSkipping enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestLazyProxSkipping enclosingInstance;
+			public TestLazyProxSkipping Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public override IndexInput OpenInput(System.String name)
+			{
+				IndexInput ii = base.OpenInput(name);
+				if (name.EndsWith(".prx"))
+				{
+					// we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
+					ii = new SeeksCountingStream(enclosingInstance, ii);
+				}
+				return ii;
+			}
+		}
+		
 		private void  CreateIndex(int numHits)
 		{
 			int numDocs = 500;
 			
-			Directory directory = new RAMDirectory();
+			Directory directory = new SeekCountingDirectory(this);
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			writer.SetUseCompoundFile(false);
 			writer.SetMaxBufferedDocs(10);
 			for (int i = 0; i < numDocs; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				System.String content;
 				if (i % (numDocs / numHits) == 0)
 				{
@@ -82,11 +116,7 @@ namespace Lucene.Net.Index
 			writer.Optimize();
 			writer.Close();
 			
-			// the index is a single segment, thus IndexReader.open() returns an instance of SegmentReader
-			SegmentReader reader = (SegmentReader) IndexReader.Open(directory);
-			
-			// we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
-			reader.ProxStream_ForNUnitTest = new SeeksCountingStream(this, reader.ProxStream_ForNUnitTest);
+			SegmentReader reader = SegmentReader.GetOnlySegmentReader(directory);
 			
 			this.searcher = new IndexSearcher(reader);
 		}
@@ -95,8 +125,8 @@ namespace Lucene.Net.Index
 		{
 			// create PhraseQuery "term1 term2" and search
 			PhraseQuery pq = new PhraseQuery();
-			pq.Add(new Term(this.field, this.term1));
-			pq.Add(new Term(this.field, this.term2));
+			pq.add(new Term(this.field, this.term1));
+			pq.add(new Term(this.field, this.term2));
 			return this.searcher.Search(pq, null, 1000).scoreDocs;
 		}
 		
@@ -109,6 +139,7 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(numHits, hits.Length);
 			
 			// check if the number of calls of seek() does not exceed the number of hits
+			Assert.IsTrue(this.seeksCounter > 0);
 			Assert.IsTrue(this.seeksCounter <= numHits + 1);
 		}
 		
@@ -124,7 +155,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestSeek()
 		{
 			Directory directory = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < 10; i++)
 			{
 				Document doc = new Document();
@@ -154,7 +185,7 @@ namespace Lucene.Net.Index
 		
 		// Simply extends IndexInput in a way that we are able to count the number
 		// of invocations of seek()
-		internal class SeeksCountingStream : IndexInput, System.ICloneable
+		internal class SeeksCountingStream:IndexInput, System.ICloneable
 		{
 			private void  InitBlock(TestLazyProxSkipping enclosingInstance)
 			{

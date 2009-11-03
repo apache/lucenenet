@@ -508,13 +508,13 @@ namespace Lucene.Net.Index
 		private bool suppressExceptions;
 		
 		/// <summary>Used for testing </summary>
-		internal virtual void  SetSuppressExceptions()
+		public /*internal*/ virtual void  SetSuppressExceptions()
 		{
 			suppressExceptions = true;
 		}
 		
 		/// <summary>Used for testing </summary>
-		internal virtual void  ClearSuppressExceptions()
+		public /*internal*/ virtual void  ClearSuppressExceptions()
 		{
 			suppressExceptions = false;
 		}

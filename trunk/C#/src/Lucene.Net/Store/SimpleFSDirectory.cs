@@ -208,10 +208,15 @@ namespace Lucene.Net.Store
 			/// <summary>Method used for testing. Returns true if the underlying
 			/// file descriptor is valid.
 			/// </summary>
-			internal virtual bool IsFDValid()
+			public /*internal*/ virtual bool IsFDValid()
 			{
 				return file.BaseStream != null;
 			}
+
+            public bool isClone_ForNUnit
+            {
+                get { return isClone; }
+            }
 		}
 		
 		/*protected internal*/ public class SimpleFSIndexOutput:BufferedIndexOutput

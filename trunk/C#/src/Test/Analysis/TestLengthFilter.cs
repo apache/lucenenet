@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,24 +19,29 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestLengthFilter : LuceneTestCase
+    [TestFixture]
+	public class TestLengthFilter:BaseTokenStreamTestCase
 	{
-		[Test]
+		
+        [Test]
 		public virtual void  TestFilter()
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("short toolong evenmuchlongertext a ab toolong foo"));
 			LengthFilter filter = new LengthFilter(stream, 2, 6);
-            Token reusableToken = new Token();
-            Assert.AreEqual("short", filter.Next(reusableToken).Term());
-            Assert.AreEqual("ab", filter.Next(reusableToken).Term());
-            Assert.AreEqual("foo", filter.Next(reusableToken).Term());
-			Assert.IsNull(filter.Next(reusableToken));
+			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+			
+			Assert.IsTrue(filter.IncrementToken());
+			Assert.AreEqual("short", termAtt.Term());
+			Assert.IsTrue(filter.IncrementToken());
+			Assert.AreEqual("ab", termAtt.Term());
+			Assert.IsTrue(filter.IncrementToken());
+			Assert.AreEqual("foo", termAtt.Term());
+			Assert.IsFalse(filter.IncrementToken());
 		}
 	}
 }

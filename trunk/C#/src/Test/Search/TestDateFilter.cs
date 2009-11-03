@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,13 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -35,25 +35,28 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 583534 $
+	/// <version>  $Revision: 791175 $
 	/// </version>
-	[TestFixture]
-	public class TestDateFilter : LuceneTestCase
+    [TestFixture]
+	public class TestDateFilter:LuceneTestCase
 	{
+		public TestDateFilter(System.String name):base(name)
+		{
+		}
 		
 		/// <summary> </summary>
 		[Test]
-		public virtual void  TestBefore()
+		public static void  TestBefore()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+			long now = System.DateTime.Now.Millisecond;
 			
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			// add time that is in the past
-			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 1000 * 100000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("datefield", DateTools.TimeToString(now - 1000, DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
@@ -63,10 +66,10 @@ namespace Lucene.Net.Search
 			
 			// filter that should preserve matches
 			//DateFilter df1 = DateFilter.Before("datefield", now);
-			RangeFilter df1 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now - 2000 * 100000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), false, true);
+			TermRangeFilter df1 = new TermRangeFilter("datefield", DateTools.TimeToString(now - 2000, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now, DateTools.Resolution.MILLISECOND), false, true);
 			// filter that should discard matches
 			//DateFilter df2 = DateFilter.Before("datefield", now - 999999);
-			RangeFilter df2 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(0, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now - 2000 * 100000, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), true, false);
+			TermRangeFilter df2 = new TermRangeFilter("datefield", DateTools.TimeToString(0, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now - 2000, DateTools.Resolution.MILLISECOND), true, false);
 			
 			// search something that doesn't exist with DateFilter
 			Query query1 = new TermQuery(new Term("body", "NoMatchForThis"));
@@ -100,17 +103,17 @@ namespace Lucene.Net.Search
 		
 		/// <summary> </summary>
 		[Test]
-		public virtual void  TestAfter()
+		public static void  TestAfter()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			long now = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+			long now = System.DateTime.Now.Millisecond;
 			
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			// add time that is in the future
-			doc.Add(new Field("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 888888, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field("datefield", DateTools.TimeToString(now + 888888, DateTools.Resolution.MILLISECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("body", "Today is a very sunny day in New York City", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			writer.Optimize();
@@ -120,10 +123,10 @@ namespace Lucene.Net.Search
 			
 			// filter that should preserve matches
 			//DateFilter df1 = DateFilter.After("datefield", now);
-			RangeFilter df1 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now + 999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), true, false);
+			TermRangeFilter df1 = new TermRangeFilter("datefield", DateTools.TimeToString(now, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now + 999999, DateTools.Resolution.MILLISECOND), true, false);
 			// filter that should discard matches
 			//DateFilter df2 = DateFilter.After("datefield", now + 999999);
-			RangeFilter df2 = new RangeFilter("datefield", Lucene.Net.Documents.DateTools.TimeToString(now + 999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), Lucene.Net.Documents.DateTools.TimeToString(now + 999999999, Lucene.Net.Documents.DateTools.Resolution.MILLISECOND), false, true);
+			TermRangeFilter df2 = new TermRangeFilter("datefield", DateTools.TimeToString(now + 999999, DateTools.Resolution.MILLISECOND), DateTools.TimeToString(now + 999999999, DateTools.Resolution.MILLISECOND), false, true);
 			
 			// search something that doesn't exist with DateFilter
 			Query query1 = new TermQuery(new Term("body", "NoMatchForThis"));

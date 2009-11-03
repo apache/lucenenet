@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis
 	/// <summary> Replacement for Java 1.5 Character.valueOf()</summary>
 	/// <deprecated> Move to Character.valueOf() in 3.0
 	/// </deprecated>
-	class CharacterCache
+	public class CharacterCache
 	{
 		
 		private static readonly System.Char[] cache = new System.Char[128];

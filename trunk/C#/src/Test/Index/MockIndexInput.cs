@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,14 +17,16 @@
 
 using System;
 
+using NUnit.Framework;
+
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 
 namespace Lucene.Net.Index
 {
 	
-	public class MockIndexInput : BufferedIndexInput
+	[TestFixture]
+	public class MockIndexInput:BufferedIndexInput
 	{
-        // i consider this weird
 		new private byte[] buffer;
 		private int pointer = 0;
 		private long length;
@@ -35,7 +37,7 @@ namespace Lucene.Net.Index
 			length = bytes.Length;
 		}
 		
-		protected override void  ReadInternal(byte[] dest, int destOffset, int len)
+		public override void  ReadInternal(byte[] dest, int destOffset, int len)
 		{
 			int remainder = len;
 			int start = pointer;
@@ -58,7 +60,7 @@ namespace Lucene.Net.Index
 			// ignore
 		}
 		
-		protected override void  SeekInternal(long pos)
+		public override void  SeekInternal(long pos)
 		{
 			pointer = (int) pos;
 		}

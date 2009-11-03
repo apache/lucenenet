@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,12 +26,14 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A unit test helper class to test when the filter is getting cached and when it is not.</summary>
 	[Serializable]
-	public class CachingWrapperFilterHelper : CachingWrapperFilter
+	public class CachingWrapperFilterHelper:CachingWrapperFilter
 	{
 		
 		private bool shouldHaveCache = false;
 		
-		public CachingWrapperFilterHelper(Filter filter) : base(filter)
+		/// <param name="filter">Filter to cache results of
+		/// </param>
+		public CachingWrapperFilterHelper(Filter filter):base(filter)
 		{
 		}
 		
@@ -57,8 +59,7 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-					Assert.IsNull(cached, cached == null ? "Cache should be null " : "Cache should be null " + cached.ToString());
-					// argument evaluated prior to method call ->//Assert.IsNull(cached, "Cache should be null " + cached.ToString());
+					Assert.IsNotNull( cached, "Cache should be null " + cached);
 				}
 				if (cached != null)
 				{
@@ -88,9 +89,10 @@ namespace Lucene.Net.Search
 				return false;
 			return this.filter.Equals((CachingWrapperFilterHelper) o);
 		}
+		
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.filter.GetHashCode() ^ 0x5525aacb;
 		}
 	}
 }

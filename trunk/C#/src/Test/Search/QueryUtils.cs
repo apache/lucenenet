@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,24 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using MultiReader = Lucene.Net.Index.MultiReader;
+using MaxFieldLength = Lucene.Net.Index.IndexWriter.MaxFieldLength;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using ReaderUtil = Lucene.Net.Util.ReaderUtil;
+
 namespace Lucene.Net.Search
 {
+	
+	
+	
 	public class QueryUtils
 	{
 		[Serializable]
-		private class AnonymousClassQuery : Query
+		private class AnonymousClassQuery:Query
 		{
 			public override System.String ToString(System.String field)
 			{
@@ -32,13 +44,13 @@ namespace Lucene.Net.Search
 			}
 			override public System.Object Clone()
 			{
+                System.Diagnostics.Debug.Fail("Port issue:", "Do we need QueryUtils.AnonymousClassQuery.Clone()?");
 				return null;
 			}
 		}
-
-		private class AnonymousClassHitCollector : HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(int[] order, int[] opidx, int skip_op, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
+			public AnonymousClassCollector(int[] order, int[] opidx, int skip_op, Lucene.Net.Search.Scorer scorer, int[] sdoc, float maxDiff, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s)
 			{
 				InitBlock(order, opidx, skip_op, scorer, sdoc, maxDiff, q, s);
 			}
@@ -61,14 +73,25 @@ namespace Lucene.Net.Search
 			private float maxDiff;
 			private Lucene.Net.Search.Query q;
 			private Lucene.Net.Search.IndexSearcher s;
-			public override void  Collect(int doc, float score)
+			private int base_Renamed = 0;
+			private Scorer sc;
+			
+			public override void  SetScorer(Scorer scorer)
 			{
+				this.sc = scorer;
+			}
+			
+			public override void  Collect(int doc)
+			{
+				doc = doc + base_Renamed;
+				float score = sc.Score();
 				try
 				{
 					int op = order[(opidx[0]++) % order.Length];
-					//System.out.println(op==skip_op ? "skip("+(sdoc[0]+1)+")":"next()");
-					bool more = op == skip_op?scorer.SkipTo(sdoc[0] + 1):scorer.Next();
-					sdoc[0] = scorer.Doc();
+					// System.out.println(op==skip_op ?
+					// "skip("+(sdoc[0]+1)+")":"next()");
+					bool more = op == skip_op?scorer.Advance(sdoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS:scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS;
+					sdoc[0] = scorer.DocID();
 					float scorerScore = scorer.Score();
 					float scorerScore2 = scorer.Score();
 					float scoreDiff = System.Math.Abs(score - scorerScore);
@@ -83,14 +106,23 @@ namespace Lucene.Net.Search
 				}
 				catch (System.IO.IOException e)
 				{
-					throw new System.Exception("", e);
+					throw new System.SystemException("", e);
 				}
 			}
+			
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
+			}
 		}
-		
-		private class AnonymousClassHitCollector1 : HitCollector
+		private class AnonymousClassCollector1:Collector
 		{
-			public AnonymousClassHitCollector1(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
+			public AnonymousClassCollector1(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
 			{
 				InitBlock(lastDoc, q, s, maxDiff);
 			}
@@ -105,17 +137,25 @@ namespace Lucene.Net.Search
 			private Lucene.Net.Search.Query q;
 			private Lucene.Net.Search.IndexSearcher s;
 			private float maxDiff;
-			public override void  Collect(int doc, float score)
+			private Scorer scorer;
+			private IndexReader reader;
+			public override void  SetScorer(Scorer scorer)
+			{
+				this.scorer = scorer;
+			}
+			public override void  Collect(int doc)
 			{
 				//System.out.println("doc="+doc);
+				float score = this.scorer.Score();
 				try
 				{
+					
 					for (int i = lastDoc[0] + 1; i <= doc; i++)
 					{
 						Weight w = q.Weight(s);
-						Scorer scorer = w.Scorer(s.GetIndexReader());
-						Assert.IsTrue(scorer.SkipTo(i), "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
-						Assert.AreEqual(doc, scorer.Doc(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer.Doc());
+						Scorer scorer = w.Scorer(reader, true, false);
+						Assert.IsTrue(scorer.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
+						Assert.AreEqual(doc, scorer.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer.DocID());
 						float skipToScore = scorer.Score();
 						Assert.AreEqual(skipToScore, scorer.Score(), maxDiff, "unstable skipTo(" + i + ") score!");
 						Assert.AreEqual(score, skipToScore, maxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
@@ -124,8 +164,17 @@ namespace Lucene.Net.Search
 				}
 				catch (System.IO.IOException e)
 				{
-					throw new System.Exception("", e);
+					throw new System.SystemException("", e);
 				}
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				this.reader = reader;
+				lastDoc[0] = - 1;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return false;
 			}
 		}
 		
@@ -154,14 +203,14 @@ namespace Lucene.Net.Search
 		
 		public static void  CheckEqual(Query q1, Query q2)
 		{
-			Assert.AreEqual(q1.ToString(), q2.ToString());
+			Assert.AreEqual(q1, q2);
 			Assert.AreEqual(q1.GetHashCode(), q2.GetHashCode());
 		}
 		
 		public static void  CheckUnequal(Query q1, Query q2)
 		{
-			Assert.IsTrue(q1.ToString() != q2.ToString());
-			Assert.IsTrue(q2.ToString() != q1.ToString());
+			Assert.IsTrue(!q1.Equals(q2));
+			Assert.IsTrue(!q2.Equals(q1));
 			
 			// possible this test can fail on a hash collision... if that
 			// happens, please change test to use a different example.
@@ -174,14 +223,27 @@ namespace Lucene.Net.Search
 			CheckHits.CheckExplanations(q, null, s, true);
 		}
 		
-		/// <summary> various query sanity checks on a searcher, including explanation checks.</summary>
-		/// <seealso cref="checkExplanations">
+		/// <summary> Various query sanity checks on a searcher, some checks are only done for
+		/// instanceof IndexSearcher.
+		/// 
+		/// </summary>
+		/// <seealso cref="Check(Query)">
+		/// </seealso>
+		/// <seealso cref="checkFirstSkipTo">
 		/// </seealso>
 		/// <seealso cref="checkSkipTo">
 		/// </seealso>
-		/// <seealso cref="Check(Query)">
+		/// <seealso cref="checkExplanations">
+		/// </seealso>
+		/// <seealso cref="checkSerialization">
+		/// </seealso>
+		/// <seealso cref="checkEqual">
 		/// </seealso>
 		public static void  Check(Query q1, Searcher s)
+		{
+			Check(q1, s, true);
+		}
+		private static void  Check(Query q1, Searcher s, bool wrap)
 		{
 			try
 			{
@@ -193,16 +255,99 @@ namespace Lucene.Net.Search
 						IndexSearcher is_Renamed = (IndexSearcher) s;
 						CheckFirstSkipTo(q1, is_Renamed);
 						CheckSkipTo(q1, is_Renamed);
+						if (wrap)
+						{
+							Check(q1, WrapUnderlyingReader(is_Renamed, - 1), false);
+							Check(q1, WrapUnderlyingReader(is_Renamed, 0), false);
+							Check(q1, WrapUnderlyingReader(is_Renamed, + 1), false);
+						}
+					}
+					if (wrap)
+					{
+						Check(q1, WrapSearcher(s, - 1), false);
+						Check(q1, WrapSearcher(s, 0), false);
+						Check(q1, WrapSearcher(s, + 1), false);
 					}
 					CheckExplanations(q1, s);
 					CheckSerialization(q1, s);
+					
+					Query q2 = (Query) q1.Clone();
+					CheckEqual(s.Rewrite(q1), s.Rewrite(q2));
 				}
 			}
 			catch (System.IO.IOException e)
 			{
-				throw new System.Exception("", e);
+				throw new System.SystemException("", e);
 			}
 		}
+		
+		/// <summary> Given an IndexSearcher, returns a new IndexSearcher whose IndexReader 
+		/// is a MultiReader containing the Reader of the original IndexSearcher, 
+		/// as well as several "empty" IndexReaders -- some of which will have 
+		/// deleted documents in them.  This new IndexSearcher should 
+		/// behave exactly the same as the original IndexSearcher.
+		/// </summary>
+		/// <param name="s">the searcher to wrap
+		/// </param>
+		/// <param name="edge">if negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub
+		/// </param>
+		public static IndexSearcher WrapUnderlyingReader(IndexSearcher s, int edge)
+		{
+			
+			IndexReader r = s.GetIndexReader();
+			
+			// we can't put deleted docs before the nested reader, because
+			// it will throw off the docIds
+			IndexReader[] readers = new IndexReader[]{edge < 0?r:IndexReader.Open(MakeEmptyIndex(0)), IndexReader.Open(MakeEmptyIndex(0)), new MultiReader(new IndexReader[]{IndexReader.Open(MakeEmptyIndex(edge < 0?4:0)), IndexReader.Open(MakeEmptyIndex(0)), 0 == edge?r:IndexReader.Open(MakeEmptyIndex(0))}), IndexReader.Open(MakeEmptyIndex(0 < edge?0:7)), IndexReader.Open(MakeEmptyIndex(0)), new MultiReader(new IndexReader[]{IndexReader.Open(MakeEmptyIndex(0 < edge?0:5)), IndexReader.Open(MakeEmptyIndex(0)), 0 < edge?r:IndexReader.Open(MakeEmptyIndex(0))})};
+			IndexSearcher out_Renamed = new IndexSearcher(new MultiReader(readers));
+			out_Renamed.SetSimilarity(s.GetSimilarity());
+			return out_Renamed;
+		}
+		/// <summary> Given a Searcher, returns a new MultiSearcher wrapping the  
+		/// the original Searcher, 
+		/// as well as several "empty" IndexSearchers -- some of which will have
+		/// deleted documents in them.  This new MultiSearcher 
+		/// should behave exactly the same as the original Searcher.
+		/// </summary>
+		/// <param name="s">the Searcher to wrap
+		/// </param>
+		/// <param name="edge">if negative, s will be the first sub; if 0, s will be in hte middle, if positive s will be the last sub
+		/// </param>
+		public static MultiSearcher WrapSearcher(Searcher s, int edge)
+		{
+			
+			// we can't put deleted docs before the nested reader, because
+			// it will through off the docIds
+			Searcher[] searchers = new Searcher[]{edge < 0?s:new IndexSearcher(MakeEmptyIndex(0)), new MultiSearcher(new Searcher[]{new IndexSearcher(MakeEmptyIndex(edge < 0?65:0)), new IndexSearcher(MakeEmptyIndex(0)), 0 == edge?s:new IndexSearcher(MakeEmptyIndex(0))}), new IndexSearcher(MakeEmptyIndex(0 < edge?0:3)), new IndexSearcher(MakeEmptyIndex(0)), new MultiSearcher(new Searcher[]{new IndexSearcher(MakeEmptyIndex(0 < edge?0:5)), new IndexSearcher(MakeEmptyIndex(0)), 0 < edge?s:new IndexSearcher(MakeEmptyIndex(0))})};
+			MultiSearcher out_Renamed = new MultiSearcher(searchers);
+			out_Renamed.SetSimilarity(s.GetSimilarity());
+			return out_Renamed;
+		}
+		
+		private static RAMDirectory MakeEmptyIndex(int numDeletedDocs)
+		{
+			RAMDirectory d = new RAMDirectory();
+			IndexWriter w = new IndexWriter(d, new WhitespaceAnalyzer(), true, MaxFieldLength.LIMITED);
+			for (int i = 0; i < numDeletedDocs; i++)
+			{
+				w.AddDocument(new Document());
+			}
+			w.Commit();
+			w.DeleteDocuments(new MatchAllDocsQuery());
+			w.Commit();
+			
+			if (0 < numDeletedDocs)
+				Assert.IsTrue(w.HasDeletions(), "writer has no deletions");
+			
+			Assert.AreEqual(numDeletedDocs, w.MaxDoc(), "writer is missing some deleted docs");
+			Assert.AreEqual(0, w.NumDocs(), "writer has non-deleted docs");
+			w.Close();
+			IndexReader r = IndexReader.Open(d);
+			Assert.AreEqual(numDeletedDocs, r.NumDeletedDocs(), "reader has wrong number of deleted docs");
+			r.Close();
+			return d;
+		}
+		
 		
 		/// <summary>check that the query weight is serializable. </summary>
 		/// <throws>  IOException if serialization check fail.  </throws>
@@ -213,15 +358,16 @@ namespace Lucene.Net.Search
 			{
 				System.IO.MemoryStream bos = new System.IO.MemoryStream();
 				System.IO.BinaryWriter oos = new System.IO.BinaryWriter(bos);
-				System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-				formatter.Serialize(oos.BaseStream, w);
+		        System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+		        formatter.Serialize(oos.BaseStream, w);
 				oos.Close();
 				System.IO.BinaryReader ois = new System.IO.BinaryReader(new System.IO.MemoryStream(bos.ToArray()));
-				formatter.Deserialize(ois.BaseStream);
+		        formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+		        formatter.Deserialize(ois.BaseStream);
 				ois.Close();
 				
-				//skip rquals() test for now - most weights don't overide equals() and we won't add this just for the tests.
-				//TestCase.assertEquals("writeObject(w) != w.  ("+w+")",w2,w);   
+				//skip equals() test for now - most weights don't override equals() and we won't add this just for the tests.
+                //TestCase.Assert.AreEqual(w2,w,"writeObject(w) != w.  ("+w+")");   
 			}
 			catch (System.Exception e)
 			{
@@ -246,23 +392,30 @@ namespace Lucene.Net.Search
 			int[][] orders = new int[][]{new int[]{next_op}, new int[]{skip_op}, new int[]{skip_op, next_op}, new int[]{next_op, skip_op}, new int[]{skip_op, skip_op, next_op, next_op}, new int[]{next_op, next_op, skip_op, skip_op}, new int[]{skip_op, skip_op, skip_op, next_op, next_op}};
 			for (int k = 0; k < orders.Length; k++)
 			{
+				
 				int[] order = orders[k];
-				//System.out.print("Order:");for (int i = 0; i < order.length; i++) System.out.print(order[i]==skip_op ? " skip()":" next()"); System.out.println();
+				// System.out.print("Order:");for (int i = 0; i < order.length; i++)
+				// System.out.print(order[i]==skip_op ? " skip()":" next()");
+				// System.out.println();
 				int[] opidx = new int[]{0};
 				
 				Weight w = q.Weight(s);
-				Scorer scorer = w.Scorer(s.GetIndexReader());
+				Scorer scorer = w.Scorer(s.GetIndexReader(), true, false);
+				if (scorer == null)
+				{
+					continue;
+				}
 				
 				// FUTURE: ensure scorer.doc()==-1
 				
 				int[] sdoc = new int[]{- 1};
 				float maxDiff = 1e-5f;
-				s.Search(q, new AnonymousClassHitCollector(order, opidx, skip_op, scorer, sdoc, maxDiff, q, s));
+				s.Search(q, new AnonymousClassCollector(order, opidx, skip_op, scorer, sdoc, maxDiff, q, s));
 				
 				// make sure next call to scorer is false.
 				int op = order[(opidx[0]++) % order.Length];
-				//System.out.println(op==skip_op ? "last: skip()":"last: next()");
-				bool more = op == skip_op?scorer.SkipTo(sdoc[0] + 1):scorer.Next();
+				// System.out.println(op==skip_op ? "last: skip()":"last: next()");
+				bool more = (op == skip_op?scorer.Advance(sdoc[0] + 1):scorer.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS;
 				Assert.IsFalse(more);
 			}
 		}
@@ -273,12 +426,25 @@ namespace Lucene.Net.Search
 			//System.out.println("checkFirstSkipTo: "+q);
 			float maxDiff = 1e-5f;
 			int[] lastDoc = new int[]{- 1};
-			s.Search(q, new AnonymousClassHitCollector1(lastDoc, q, s, maxDiff));
-			Weight w = q.Weight(s);
-			Scorer scorer = w.Scorer(s.GetIndexReader());
-			bool more = scorer.SkipTo(lastDoc[0] + 1);
-			if (more)
-				Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.Doc());
+			s.Search(q, new AnonymousClassCollector1(lastDoc, q, s, maxDiff));
+			
+			System.Collections.IList readerList = new System.Collections.ArrayList();
+			ReaderUtil.GatherSubReaders(readerList, s.GetIndexReader());
+			IndexReader[] readers = (IndexReader[])(new System.Collections.ArrayList(readerList).ToArray(typeof(IndexReader)));
+			for (int i = 0; i < readers.Length; i++)
+			{
+				IndexReader reader = readers[i];
+				Weight w = q.Weight(s);
+				Scorer scorer = w.Scorer(reader, true, false);
+				
+				if (scorer != null)
+				{
+					bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
+					
+					if (more && lastDoc[0] != - 1)
+						Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
+				}
+			}
 		}
 	}
 }

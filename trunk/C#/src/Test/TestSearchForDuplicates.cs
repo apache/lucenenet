@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
-using Lucene.Net.Analysis;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
@@ -35,17 +34,17 @@ namespace Lucene.Net
 	/// <summary>JUnit adaptation of an older test case DocTest.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestSearchForDuplicates.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestSearchForDuplicates.java 694004 2008-09-10 21:38:52Z mikemccand $
 	/// </version>
-	[TestFixture]
-	public class TestSearchForDuplicates : LuceneTestCase
+    [TestFixture]
+    public class TestSearchForDuplicates : LuceneTestCase
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearchForDuplicates)));    // {{Aroush-1.9}} where is 'TestRunner' in NUnit
+			// TestRunner.run(new TestSuite(typeof(TestSearchForDuplicates))); {{Aroush-2.9}} how is this done in NUnit?
 		}
 		
 		
@@ -65,7 +64,7 @@ namespace Lucene.Net
 		/// without really knowing if the output is correct. Someone needs to
 		/// validate this output and make any changes to the checkHits method.
 		/// </summary>
-		[Test]
+        [Test]
 		public virtual void  TestRun()
 		{
 			System.IO.MemoryStream sw = new System.IO.MemoryStream();
@@ -99,7 +98,7 @@ namespace Lucene.Net
 			
 			for (int j = 0; j < MAX_DOCS; j++)
 			{
-				Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+				Document d = new Document();
 				d.Add(new Field(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES, Field.Index.ANALYZED));
 				d.Add(new Field(ID_FIELD, System.Convert.ToString(j), Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(d);
@@ -109,7 +108,7 @@ namespace Lucene.Net
 			// try a search without OR
 			Searcher searcher = new IndexSearcher(directory);
 			
-			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+			QueryParser parser = new QueryParser(PRIORITY_FIELD, analyzer);
 			
 			Query query = parser.Parse(HIGH_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -124,7 +123,7 @@ namespace Lucene.Net
 			searcher = new IndexSearcher(directory);
 			hits = null;
 			
-			parser = new Lucene.Net.QueryParsers.QueryParser(PRIORITY_FIELD, analyzer);
+			parser = new QueryParser(PRIORITY_FIELD, analyzer);
 			
 			query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
@@ -144,7 +143,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Lucene.Net.Documents.Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].doc);
 					out_Renamed.WriteLine(i + " " + d.Get(ID_FIELD));
 				}
 			}
@@ -157,7 +156,7 @@ namespace Lucene.Net
 			{
 				if (i < 10 || (i > 94 && i < 105))
 				{
-					Lucene.Net.Documents.Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].doc);
 					Assert.AreEqual(System.Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
 				}
 			}

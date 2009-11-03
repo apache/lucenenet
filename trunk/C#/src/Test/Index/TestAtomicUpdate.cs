@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,40 +19,56 @@ using System;
 
 using NUnit.Framework;
 
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Lucene.Net.Analysis;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
+using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestAtomicUpdate : LuceneTestCase
+	public class TestAtomicUpdate:LuceneTestCase
 	{
 		private static readonly Analyzer ANALYZER = new SimpleAnalyzer();
-		private static readonly System.Random RANDOM = new System.Random();
-
-        public class MockIndexWriter : IndexWriter
-        {
-            public MockIndexWriter(Directory d, bool autoCommit, Analyzer a, bool create)
-                : base(d, autoCommit, a, create)
-            {
-            }
-
-            override protected bool TestPoint(string name)
-            {
-                if (RANDOM.Next(4) == 2)
-                    System.Threading.Thread.Sleep(1);
-                return true;
-            }
-        }
-
-		abstract public class TimedThread : SupportClass.ThreadClass
+		private System.Random RANDOM;
+		
+		public class MockIndexWriter:IndexWriter
+		{
+			private void  InitBlock(TestAtomicUpdate enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestAtomicUpdate enclosingInstance;
+			public TestAtomicUpdate Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			
+			public MockIndexWriter(TestAtomicUpdate enclosingInstance, Directory dir, bool autoCommit, Analyzer a, bool create):base(dir, autoCommit, a, create)
+			{
+				InitBlock(enclosingInstance);
+			}
+			
+			public /*internal*/ override bool TestPoint(System.String name)
+			{
+				//      if (name.equals("startCommit")) {
+				if (Enclosing_Instance.RANDOM.Next(4) == 2)
+					System.Threading.Thread.Sleep(0);
+				return true;
+			}
+		}
+		
+		abstract public class TimedThread:SupportClass.ThreadClass
 		{
 			internal bool failed;
 			internal int count;
@@ -68,13 +84,13 @@ namespace Lucene.Net.Index
 			
 			override public void  Run()
 			{
-				long stopTime = (System.DateTime.Now.Ticks - 621355968000000000) / 10000 + 1000 * RUN_TIME_SEC;
+				long stopTime = System.DateTime.Now.Millisecond + 1000 * RUN_TIME_SEC;
 				
 				count = 0;
 				
 				try
 				{
-					while ((System.DateTime.Now.Ticks - 621355968000000000) / 10000 < stopTime && !AnyErrors())
+					while (System.DateTime.Now.Millisecond < stopTime && !AnyErrors())
 					{
 						DoWork();
 						count++;
@@ -82,8 +98,8 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-                    System.Console.Out.WriteLine(System.Threading.Thread.CurrentThread.Name + ": exc");
-                    System.Console.Out.WriteLine(e.StackTrace);
+					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": exc");
+					System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}
 			}
@@ -97,10 +113,10 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class IndexerThread : TimedThread
+		private class IndexerThread:TimedThread
 		{
 			internal IndexWriter writer;
-			//new public int count;
+			new public int count;
 			
 			public IndexerThread(IndexWriter writer, TimedThread[] threads):base(threads)
 			{
@@ -120,7 +136,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class SearcherThread : TimedThread
+		private class SearcherThread:TimedThread
 		{
 			private Directory directory;
 			
@@ -146,10 +162,10 @@ namespace Lucene.Net.Index
 			
 			TimedThread[] threads = new TimedThread[4];
 			
-			IndexWriter writer = new MockIndexWriter(directory, true, ANALYZER, true);
-            writer.SetMaxBufferedDocs(7);
-            writer.SetMergeFactor(3);
-
+			IndexWriter writer = new MockIndexWriter(this, directory, true, ANALYZER, true);
+			writer.SetMaxBufferedDocs(7);
+			writer.SetMergeFactor(3);
+			
 			// Establish a base index of 100 docs:
 			for (int i = 0; i < 100; i++)
 			{
@@ -159,11 +175,11 @@ namespace Lucene.Net.Index
 				writer.AddDocument(d);
 			}
 			writer.Commit();
-
-            IndexReader r = IndexReader.Open(directory);
-            Assert.AreEqual(100, r.NumDocs());
-            r.Close();
-
+			
+			IndexReader r = IndexReader.Open(directory);
+			Assert.AreEqual(100, r.NumDocs());
+			r.Close();
+			
 			IndexerThread indexerThread = new IndexerThread(writer, threads);
 			threads[0] = indexerThread;
 			indexerThread.Start();
@@ -203,7 +219,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestAtomicUpdates()
 		{
-			
+			RANDOM = NewRandom();
 			Directory directory;
 			
 			// First in a RAM directory:
@@ -213,8 +229,8 @@ namespace Lucene.Net.Index
 			
 			// Second in an FSDirectory:
 			System.String tempDir = System.IO.Path.GetTempPath();
-			System.IO.FileInfo dirPath = new System.IO.FileInfo(tempDir + "\\" + "lucene.test.atomic");
-			directory = FSDirectory.GetDirectory(dirPath);
+			System.IO.FileInfo dirPath = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucene.test.atomic"));
+			directory = FSDirectory.Open(dirPath);
 			RunTest(directory);
 			directory.Close();
 			_TestUtil.RmDir(dirPath);

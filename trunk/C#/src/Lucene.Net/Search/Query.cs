@@ -153,12 +153,12 @@ namespace Lucene.Net.Search
 				{
 					for (int j = 0; j < clauses.Length; j++)
 					{
-						SupportClass.HashtableHelper.AddIfNotContains(uniques, clauses[j].GetQuery());
+						SupportClass.CollectionsHelper.AddIfNotContains(uniques, clauses[j].GetQuery());
 					}
 				}
 				else
 				{
-					SupportClass.HashtableHelper.AddIfNotContains(uniques, query);
+					SupportClass.CollectionsHelper.AddIfNotContains(uniques, query);
 				}
 			}
 			// optimization: if we have just one query, just return it
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
 				BooleanClause[] clauses = queries[i].GetClauses();
 				for (int j = 0; j < clauses.Length; j++)
 				{
-					SupportClass.HashtableHelper.AddIfNotContains(allClauses, clauses[j]);
+					SupportClass.CollectionsHelper.AddIfNotContains(allClauses, clauses[j]);
 				}
 			}
 			

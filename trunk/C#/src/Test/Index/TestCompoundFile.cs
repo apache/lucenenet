@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,10 @@ using System;
 
 using NUnit.Framework;
 
-//using TestRunner = junit.textui.TestRunner;
 using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
 using _TestHelper = Lucene.Net.Store._TestHelper;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
@@ -33,16 +32,16 @@ namespace Lucene.Net.Index
 	
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestCompoundFile.java 602165 2007-12-07 17:42:33Z mikemccand $
+	/// <version>  $Id: TestCompoundFile.java 780770 2009-06-01 18:34:10Z uschindler $
 	/// </version>
 	[TestFixture]
-	public class TestCompoundFile : LuceneTestCase
+	public class TestCompoundFile:LuceneTestCase
 	{
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Util.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestCompoundFile)));   // {{Aroush}} where is 'TestRunner' in NUnit?
+			// TestRunner.run(new TestSuite(typeof(TestCompoundFile))); // {{Aroush-2.9}} how is this done in NUnit?
 			//        TestRunner.run (new TestCompoundFile("testSingleFile"));
 			//        TestRunner.run (new TestCompoundFile("testTwoFiles"));
 			//        TestRunner.run (new TestCompoundFile("testRandomFiles"));
@@ -59,15 +58,23 @@ namespace Lucene.Net.Index
 		
 		private Directory dir;
 		
+		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
-            base.SetUp();
+			base.SetUp();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
-			Lucene.Net.Util._TestUtil.RmDir(file);
-			dir = FSDirectory.GetDirectory(file);
+			_TestUtil.RmDir(file);
+			// use a simple FSDir here, to be sure to have SimpleFSInputs
+			dir = new SimpleFSDirectory(file, null);
 		}
 		
+		[TearDown]
+		public override void  TearDown()
+		{
+			dir.Close();
+			base.TearDown();
+		}
 		
 		/// <summary>Creates a file of the specified size with random data. </summary>
 		private void  CreateRandomFile(Directory dir, System.String name, int size)
@@ -101,8 +108,8 @@ namespace Lucene.Net.Index
 		{
 			Assert.IsNotNull(expected, msg + " null expected");
 			Assert.IsNotNull(test, msg + " null test");
-			Assert.AreEqual(test.Length(), expected.Length(), msg + " length");
-			Assert.AreEqual(test.GetFilePointer(), expected.GetFilePointer(), msg + " position");
+			Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
+			Assert.AreEqual(expected.GetFilePointer(), test.GetFilePointer(), msg + " position");
 			
 			byte[] expectedBuffer = new byte[512];
 			byte[] testBuffer = new byte[expectedBuffer.Length];
@@ -302,13 +309,14 @@ namespace Lucene.Net.Index
 			cw.Close();
 		}
 		
+		
 		[Test]
 		public virtual void  TestReadAfterClose()
 		{
-			Demo_FSIndexInputBug((FSDirectory) dir, "test");
+			Demo_FSIndexInputBug(dir, "test");
 		}
 		
-		private void  Demo_FSIndexInputBug(FSDirectory fsdir, System.String file)
+		private void  Demo_FSIndexInputBug(Directory fsdir, System.String file)
 		{
 			// Setup the test file - we need more than 1024 bytes
 			IndexOutput os = fsdir.CreateOutput(file);
@@ -340,7 +348,7 @@ namespace Lucene.Net.Index
 				b = in_Renamed.ReadByte();
 				Assert.Fail("expected readByte() to throw exception");
 			}
-			catch (System.Exception)
+			catch (System.IO.IOException e)
 			{
 				// expected exception
 			}
@@ -358,13 +366,14 @@ namespace Lucene.Net.Index
 			{
 				CompoundFileReader.CSIndexInput cis = (CompoundFileReader.CSIndexInput) is_Renamed;
 				
-				return _TestHelper.IsFSIndexInputOpen(cis.base_Renamed);
+				return _TestHelper.IsSimpleFSIndexInputOpen(cis.base_Renamed_ForNUnit);
 			}
 			else
 			{
 				return false;
 			}
 		}
+		
 		
 		[Test]
 		public virtual void  TestClonedStreamsClosing()
@@ -376,50 +385,47 @@ namespace Lucene.Net.Index
 			IndexInput expected = dir.OpenInput("f11");
 			
 			// this test only works for FSIndexInput
-			if (_TestHelper.IsFSIndexInput(expected))
-			{
-				
-				Assert.IsTrue(_TestHelper.IsFSIndexInputOpen(expected));
-				
-				IndexInput one = cr.OpenInput("f11");
-				Assert.IsTrue(IsCSIndexInputOpen(one));
-				
-				IndexInput two = (IndexInput) one.Clone();
-				Assert.IsTrue(IsCSIndexInputOpen(two));
-				
-				AssertSameStreams("basic clone one", expected, one);
-				expected.Seek(0);
-				AssertSameStreams("basic clone two", expected, two);
-				
-				// Now close the first stream
-				one.Close();
-				Assert.IsTrue(IsCSIndexInputOpen(one), "Only close when cr is closed");
-				
-				// The following should really fail since we couldn't expect to
-				// access a file once close has been called on it (regardless of
-				// buffering and/or clone magic)
-				expected.Seek(0);
-				two.Seek(0);
-				AssertSameStreams("basic clone two/2", expected, two);
-				
-				
-				// Now close the compound reader
-				cr.Close();
-				Assert.IsFalse(IsCSIndexInputOpen(one), "Now closed one");
-				Assert.IsFalse(IsCSIndexInputOpen(two), "Now closed two");
-				
-				// The following may also fail since the compound stream is closed
-				expected.Seek(0);
-				two.Seek(0);
-				//assertSameStreams("basic clone two/3", expected, two);
-				
-				
-				// Now close the second clone
-				two.Close();
-				expected.Seek(0);
-				two.Seek(0);
-				//assertSameStreams("basic clone two/4", expected, two);
-			}
+			Assert.IsTrue(_TestHelper.IsSimpleFSIndexInput(expected));
+			Assert.IsTrue(_TestHelper.IsSimpleFSIndexInputOpen(expected));
+			
+			IndexInput one = cr.OpenInput("f11");
+			Assert.IsTrue(IsCSIndexInputOpen(one));
+			
+			IndexInput two = (IndexInput) one.Clone();
+			Assert.IsTrue(IsCSIndexInputOpen(two));
+			
+			AssertSameStreams("basic clone one", expected, one);
+			expected.Seek(0);
+			AssertSameStreams("basic clone two", expected, two);
+			
+			// Now close the first stream
+			one.Close();
+			Assert.IsTrue(IsCSIndexInputOpen(one), "Only close when cr is closed");
+			
+			// The following should really fail since we couldn't expect to
+			// access a file once close has been called on it (regardless of
+			// buffering and/or clone magic)
+			expected.Seek(0);
+			two.Seek(0);
+			AssertSameStreams("basic clone two/2", expected, two);
+			
+			
+			// Now close the compound reader
+			cr.Close();
+			Assert.IsFalse(IsCSIndexInputOpen(one), "Now closed one");
+			Assert.IsFalse(IsCSIndexInputOpen(two), "Now closed two");
+			
+			// The following may also fail since the compound stream is closed
+			expected.Seek(0);
+			two.Seek(0);
+			//assertSameStreams("basic clone two/3", expected, two);
+			
+			
+			// Now close the second clone
+			two.Close();
+			expected.Seek(0);
+			two.Seek(0);
+			//assertSameStreams("basic clone two/4", expected, two);
 			
 			expected.Close();
 		}
@@ -587,6 +593,7 @@ namespace Lucene.Net.Index
 			cr.Close();
 		}
 		
+		
 		[Test]
 		public virtual void  TestFileNotFound()
 		{
@@ -599,7 +606,7 @@ namespace Lucene.Net.Index
 				IndexInput e1 = cr.OpenInput("bogus");
 				Assert.Fail("File not found");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				/* success */
 				//System.out.println("SUCCESS: File Not Found: " + e);
@@ -607,6 +614,7 @@ namespace Lucene.Net.Index
 			
 			cr.Close();
 		}
+		
 		
 		[Test]
 		public virtual void  TestReadPastEOF()
@@ -623,7 +631,7 @@ namespace Lucene.Net.Index
 				byte test = is_Renamed.ReadByte();
 				Assert.Fail("Single byte read past end of file");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				/* success */
 				//System.out.println("SUCCESS: single byte read past end of file: " + e);
@@ -635,7 +643,7 @@ namespace Lucene.Net.Index
 				is_Renamed.ReadBytes(b, 0, 50);
 				Assert.Fail("Block read past end of file");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				/* success */
 				//System.out.println("SUCCESS: block read past end of file: " + e);
@@ -644,24 +652,24 @@ namespace Lucene.Net.Index
 			is_Renamed.Close();
 			cr.Close();
 		}
-
+		
 		/// <summary>This test that writes larger than the size of the buffer output
 		/// will correctly increment the file pointer.
 		/// </summary>
 		[Test]
 		public virtual void  TestLargeWrites()
-											   {
+		{
 			IndexOutput os = dir.CreateOutput("testBufferStart.txt");
-
+			
 			byte[] largeBuf = new byte[2048];
-			for (int i=0; i<largeBuf.Length; i++)
+			for (int i = 0; i < largeBuf.Length; i++)
 			{
 				largeBuf[i] = (byte) ((new System.Random().NextDouble()) * 256);
 			}
-
+			
 			long currentPos = os.GetFilePointer();
 			os.WriteBytes(largeBuf, largeBuf.Length);
-
+			
 			try
 			{
 				Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());

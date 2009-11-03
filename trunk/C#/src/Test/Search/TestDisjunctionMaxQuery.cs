@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,7 +27,6 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -35,8 +35,8 @@ namespace Lucene.Net.Search
 	/// <summary> Test of the DisjunctionMaxQuery.
 	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestDisjunctionMaxQuery : LuceneTestCase
+    [TestFixture]
+	public class TestDisjunctionMaxQuery:LuceneTestCase
 	{
 		public TestDisjunctionMaxQuery()
 		{
@@ -58,10 +58,8 @@ namespace Lucene.Net.Search
 		/// http://issues.apache.org/jira/browse/LUCENE-323
 		/// </p>
 		/// </summary>
-		/// <author>  Williams
-		/// </author>
 		[Serializable]
-		private class TestSimilarity : DefaultSimilarity
+		private class TestSimilarity:DefaultSimilarity
 		{
 			
 			public TestSimilarity()
@@ -90,20 +88,19 @@ namespace Lucene.Net.Search
 		public IndexSearcher s;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
-			
 			base.SetUp();
 			
 			index = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(index, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetSimilarity(sim);
 			
 			// hed is the most important field, dek is secondary
 			
 			// d1 is an "ok" match for:  albino elephant
 			{
-				Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+				Document d1 = new Document();
 				d1.Add(new Field("id", "d1", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d1"));
 				d1.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
 				d1.Add(new Field("dek", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "elephant"));
@@ -112,7 +109,7 @@ namespace Lucene.Net.Search
 			
 			// d2 is a "good" match for:  albino elephant
 			{
-				Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+				Document d2 = new Document();
 				d2.Add(new Field("id", "d2", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d2"));
 				d2.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
 				d2.Add(new Field("dek", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("dek", "albino"));
@@ -122,7 +119,7 @@ namespace Lucene.Net.Search
 			
 			// d3 is a "better" match for:  albino elephant
 			{
-				Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
+				Document d3 = new Document();
 				d3.Add(new Field("id", "d3", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d3"));
 				d3.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "albino"));
 				d3.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
@@ -131,7 +128,7 @@ namespace Lucene.Net.Search
 			
 			// d4 is the "best" match for:  albino elephant
 			{
-				Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
+				Document d4 = new Document();
 				d4.Add(new Field("id", "d4", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id", "d4"));
 				d4.Add(new Field("hed", "albino", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "albino"));
 				d4.Add(new Field("hed", "elephant", Field.Store.YES, Field.Index.ANALYZED)); //Field.Text("hed", "elephant"));
@@ -156,11 +153,11 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(dq, s);
 			
 			Weight dw = dq.Weight(s);
-			Scorer ds = dw.Scorer(r);
-			bool skipOk = ds.SkipTo(3);
+			Scorer ds = dw.Scorer(r, true, false);
+			bool skipOk = ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS;
 			if (skipOk)
 			{
-				Assert.Fail("firsttime skipTo found a match? ... " + r.Document(ds.Doc()).Get("id"));
+				Assert.Fail("firsttime skipTo found a match? ... " + r.Document(ds.DocID()).Get("id"));
 			}
 		}
 		
@@ -174,12 +171,10 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(dq, s);
 			
 			Weight dw = dq.Weight(s);
-			Scorer ds = dw.Scorer(r);
-			Assert.IsTrue(ds.SkipTo(3), "firsttime skipTo found no match");
-			Assert.AreEqual("d4", r.Document(ds.Doc()).Get("id"), "found wrong docid");
+			Scorer ds = dw.Scorer(r, true, false);
+			Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
+			Assert.AreEqual("d4", r.Document(ds.DocID()).Get("id"), "found wrong docid");
 		}
-		
-		
 		
 		[Test]
 		public virtual void  TestSimpleEqualScores1()
@@ -217,7 +212,7 @@ namespace Lucene.Net.Search
 			q.Add(Tq("dek", "albino"));
 			q.Add(Tq("dek", "elephant"));
 			QueryUtils.Check(q, s);
-
+			
 			
 			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
@@ -247,7 +242,7 @@ namespace Lucene.Net.Search
 			q.Add(Tq("dek", "albino"));
 			q.Add(Tq("dek", "elephant"));
 			QueryUtils.Check(q, s);
-
+			
 			
 			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
@@ -257,7 +252,7 @@ namespace Lucene.Net.Search
 				float score = h[0].score;
 				for (int i = 1; i < h.Length; i++)
 				{
-                    Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
@@ -282,7 +277,7 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
-				Assert.AreEqual("d2", s.Doc(h[0].doc).Get("id"), "wrong first");
+				Assert.AreEqual(s.Doc(h[0].doc).Get("id"), "wrong first", "d2");
 				float score0 = h[0].score;
 				float score1 = h[1].score;
 				float score2 = h[2].score;
@@ -305,14 +300,14 @@ namespace Lucene.Net.Search
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 				q1.Add(Tq("hed", "albino"));
 				q1.Add(Tq("dek", "albino"));
-				q.Add(q1, BooleanClause.Occur.MUST); //false,false);
+				q.Add(q1, BooleanClause.Occur.MUST); //true,false);
 				QueryUtils.Check(q1, s);
 			}
 			{
 				DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 				q2.Add(Tq("hed", "elephant"));
 				q2.Add(Tq("dek", "elephant"));
-				q.Add(q2, BooleanClause.Occur.MUST); //false,false);
+				q.Add(q2, BooleanClause.Occur.MUST); //true,false);
 				QueryUtils.Check(q2, s);
 			}
 			
@@ -335,6 +330,7 @@ namespace Lucene.Net.Search
 				throw e;
 			}
 		}
+		
 		
 		[Test]
 		public virtual void  TestBooleanOptionalNoTiebreaker()
@@ -377,6 +373,7 @@ namespace Lucene.Net.Search
 				throw e;
 			}
 		}
+		
 		
 		[Test]
 		public virtual void  TestBooleanOptionalWithTiebreaker()
@@ -426,10 +423,11 @@ namespace Lucene.Net.Search
 			}
 			catch (System.ApplicationException e)
 			{
-                PrintHits("testBooleanOptionalWithTiebreaker", h, s);
+				PrintHits("testBooleanOptionalWithTiebreaker", h, s);
 				throw e;
 			}
 		}
+		
 		
 		[Test]
 		public virtual void  TestBooleanOptionalWithTiebreakerAndBoost()
@@ -479,10 +477,16 @@ namespace Lucene.Net.Search
 			}
 			catch (System.ApplicationException e)
 			{
-                PrintHits("testBooleanOptionalWithTiebreakerAndBoost", h, s);
+				PrintHits("testBooleanOptionalWithTiebreakerAndBoost", h, s);
 				throw e;
 			}
 		}
+		
+		
+		
+		
+		
+		
 		
 		/// <summary>macro </summary>
 		protected internal virtual Query Tq(System.String f, System.String t)
@@ -497,14 +501,15 @@ namespace Lucene.Net.Search
 			return q;
 		}
 		
-		protected internal virtual void  PrintHits(System.String test, ScoreDoc[] h, Searcher s)
+		
+		protected internal virtual void  PrintHits(System.String test, ScoreDoc[] h, Searcher searcher)
 		{
 			
 			System.Console.Error.WriteLine("------- " + test + " -------");
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				Lucene.Net.Documents.Document d = s.Doc(h[i].doc);
+				Document d = searcher.Doc(h[i].doc);
 				float score = h[i].score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000000}" + score + " - " + d.Get("id"));
 			}

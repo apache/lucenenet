@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
 		private int format;
 		
-		internal FieldInfos()
+		public /*internal*/ FieldInfos()
 		{
 		}
 		
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 		/// <param name="name">The name of the file to open the IndexInput from in the Directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		internal FieldInfos(Directory d, System.String name)
+		public /*internal*/ FieldInfos(Directory d, System.String name)
 		{
 			IndexInput input = d.OpenInput(name);
 			try

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,15 @@ using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
-using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
+using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using _Payload = Lucene.Net.Index.Payload;
+using Payload = Lucene.Net.Index.Payload;
 using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using CheckHits = Lucene.Net.Search.CheckHits;
@@ -36,22 +37,16 @@ using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TopDocs = Lucene.Net.Search.TopDocs;
-using _Spans = Lucene.Net.Search.Spans.Spans;
 using TermSpans = Lucene.Net.Search.Spans.TermSpans;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search.Payloads
 {
-	[TestFixture]
-	public class TestBoostingTermQuery : LuceneTestCase
+	
+    [TestFixture]
+	public class TestBoostingTermQuery:LuceneTestCase
 	{
-		public TestBoostingTermQuery() : base()
-		{
-			InitBlock();
-		}
-
 		private void  InitBlock()
 		{
 			similarity = new BoostingSimilarity();
@@ -67,7 +62,7 @@ namespace Lucene.Net.Search.Payloads
 			InitBlock();
 		}
 		
-		private class PayloadAnalyzer : Analyzer
+		private class PayloadAnalyzer:Analyzer
 		{
 			public PayloadAnalyzer(TestBoostingTermQuery enclosingInstance)
 			{
@@ -96,7 +91,7 @@ namespace Lucene.Net.Search.Payloads
 			}
 		}
 		
-		private class PayloadFilter : TokenFilter
+		private class PayloadFilter:TokenFilter
 		{
 			private void  InitBlock(TestBoostingTermQuery enclosingInstance)
 			{
@@ -114,36 +109,42 @@ namespace Lucene.Net.Search.Payloads
 			internal System.String fieldName;
 			internal int numSeen = 0;
 			
+			internal PayloadAttribute payloadAtt;
+			
 			public PayloadFilter(TestBoostingTermQuery enclosingInstance, TokenStream input, System.String fieldName):base(input)
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
+				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
 			}
 			
-			public override Token Next(Token reusableToken)
+			public override bool IncrementToken()
 			{
-                System.Diagnostics.Debug.Assert(reusableToken != null);
-				Token nextToken = input.Next(reusableToken);
-				if (nextToken != null)
+				bool hasNext = input.IncrementToken();
+				if (hasNext)
 				{
 					if (fieldName.Equals("field"))
 					{
-						nextToken.SetPayload(new _Payload(Enclosing_Instance.payloadField));
+						payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadField));
 					}
 					else if (fieldName.Equals("multiField"))
 					{
 						if (numSeen % 2 == 0)
 						{
-                            nextToken.SetPayload(new _Payload(Enclosing_Instance.payloadMultiField1));
+							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField1));
 						}
 						else
 						{
-                            nextToken.SetPayload(new _Payload(Enclosing_Instance.payloadMultiField2));
+							payloadAtt.SetPayload(new Payload(Enclosing_Instance.payloadMultiField2));
 						}
 						numSeen++;
 					}
+					return true;
 				}
-				return nextToken;
+				else
+				{
+					return false;
+				}
 			}
 		}
 		
@@ -160,7 +161,7 @@ namespace Lucene.Net.Search.Payloads
 			{
 				Document doc = new Document();
 				Field noPayloadField = new Field(PayloadHelper.NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED);
-				//noPayloadField.SetBoost(0);
+				//noPayloadField.setBoost(0);
 				doc.Add(noPayloadField);
 				doc.Add(new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED));
 				doc.Add(new Field("multiField", English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED));
@@ -194,12 +195,12 @@ namespace Lucene.Net.Search.Payloads
 			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.GetIndexReader());
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 			Assert.IsTrue(spans is TermSpans, "spans is not an instanceof " + typeof(TermSpans));
-			/*float score = hits.score(0);
-			for (int i =1; i < hits.length(); i++)
-			{
-			Assert.IsTrue(score == hits.score(i), "scores are not equal and they should be");
-			}*/
-		}
+            /*float score = hits.score(0);
+            for (int i =1; i < hits.length(); i++)
+            {
+            Assert.IsTrue(score == hits.score(i), "scores are not equal and they should be");
+            }*/
+        }
 		
 		[Test]
 		public virtual void  TestMultipleMatchesPerDoc()
@@ -257,8 +258,8 @@ namespace Lucene.Net.Search.Payloads
 		[Test]
 		public virtual void  TestNoPayload()
 		{
-            BoostingTermQuery q1 = new BoostingTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "zero"));
-            BoostingTermQuery q2 = new BoostingTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "foo"));
+			BoostingTermQuery q1 = new BoostingTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "zero"));
+			BoostingTermQuery q2 = new BoostingTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "foo"));
 			BooleanClause c1 = new BooleanClause(q1, BooleanClause.Occur.MUST);
 			BooleanClause c2 = new BooleanClause(q2, BooleanClause.Occur.MUST_NOT);
 			BooleanQuery query = new BooleanQuery();
@@ -269,20 +270,20 @@ namespace Lucene.Net.Search.Payloads
 			Assert.IsTrue(hits.totalHits == 1, "hits Size: " + hits.totalHits + " is not: " + 1);
 			int[] results = new int[1];
 			results[0] = 0; //hits.scoreDocs[0].doc;
-            CheckHits.CheckHitCollector(query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);
+			CheckHits.CheckHitCollector(query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);
 		}
 		
-		// must be static for weight serialization tests 
+		// must be static for weight serialization tests
 		[Serializable]
-		internal class BoostingSimilarity : DefaultSimilarity
+		internal class BoostingSimilarity:DefaultSimilarity
 		{
-			
 			// TODO: Remove warning after API has been finalized
-			public override float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
+			public override float ScorePayload(int docId, System.String fieldName, int start, int end, byte[] payload, int offset, int length)
 			{
 				//we know it is size 4 here, so ignore the offset/length
 				return payload[0];
 			}
+			
 			
 			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			//Make everything else 1 so we see the effect of the payload

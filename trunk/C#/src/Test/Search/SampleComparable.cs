@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,10 +17,13 @@
 
 using System;
 
+using NUnit.Framework;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using StringHelper = Lucene.Net.Util.StringHelper;
 
 namespace Lucene.Net.Search
 {
@@ -43,7 +46,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: SampleComparable.java 564236 2007-08-09 15:21:19Z gsingers $
+	/// <version>  $Id: SampleComparable.java 801344 2009-08-05 18:05:06Z yonik $
 	/// </version>
 	/// <since> 1.4
 	/// </since>
@@ -55,20 +58,20 @@ namespace Lucene.Net.Search
 		{
 			private class AnonymousClassScoreDocComparator : ScoreDocComparator
 			{
-				public AnonymousClassScoreDocComparator(IndexReader reader, TermEnum enumerator, System.String field, AnonymousClassSortComparatorSource enclosingInstance)
+				public AnonymousClassScoreDocComparator(Lucene.Net.Index.IndexReader reader, Lucene.Net.Index.TermEnum enumerator, System.String field, AnonymousClassSortComparatorSource enclosingInstance)
 				{
 					InitBlock(reader, enumerator, field, enclosingInstance);
 				}
-				private void  InitBlock(IndexReader reader, TermEnum enumerator, System.String field, AnonymousClassSortComparatorSource enclosingInstance)
+				private void  InitBlock(Lucene.Net.Index.IndexReader reader, Lucene.Net.Index.TermEnum enumerator, System.String field, AnonymousClassSortComparatorSource enclosingInstance)
 				{
 					this.reader = reader;
 					this.enumerator = enumerator;
 					this.field = field;
 					this.enclosingInstance = enclosingInstance;
-					cachedValues = FillCache(reader, enumerator, field);
+					cachedValues = Enclosing_Instance.fillCache(reader, enumerator, field);
 				}
-				private IndexReader reader;
-				private TermEnum enumerator;
+				private Lucene.Net.Index.IndexReader reader;
+				private Lucene.Net.Index.TermEnum enumerator;
 				private System.String field;
 				private AnonymousClassSortComparatorSource enclosingInstance;
 				public AnonymousClassSortComparatorSource Enclosing_Instance
@@ -79,7 +82,6 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-
 				protected internal System.IComparable[] cachedValues;
 				
 				public virtual int Compare(ScoreDoc i, ScoreDoc j)
@@ -99,7 +101,7 @@ namespace Lucene.Net.Search
 			}
 			public virtual ScoreDocComparator NewComparator(IndexReader reader, System.String fieldname)
 			{
-				System.String field = String.Intern(fieldname);
+				System.String field = StringHelper.Intern(fieldname);
 				TermEnum enumerator = reader.Terms(new Term(fieldname, ""));
 				try
 				{
@@ -124,9 +126,9 @@ namespace Lucene.Net.Search
 			/// <returns> Array of objects representing natural order of terms in field.
 			/// </returns>
 			/// <throws>  IOException If an error occurs reading the index. </throws>
-			public static System.IComparable[] FillCache(IndexReader reader, TermEnum enumerator, System.String fieldname)
+			protected internal virtual System.IComparable[] fillCache(IndexReader reader, TermEnum enumerator, System.String fieldname)
 			{
-				System.String field = String.Intern(fieldname);
+				System.String field = StringHelper.Intern(fieldname);
 				System.IComparable[] retArray = new System.IComparable[reader.MaxDoc()];
 				if (retArray.Length > 0)
 				{
@@ -140,7 +142,7 @@ namespace Lucene.Net.Search
 						do 
 						{
 							Term term = enumerator.Term();
-							if (term.Field() != field)
+							if ((System.Object) term.Field() != (System.Object) field)
 								break;
 							System.IComparable termval = GetComparable(term.Text());
 							termDocs.Seek(enumerator);
@@ -159,28 +161,10 @@ namespace Lucene.Net.Search
 				return retArray;
 			}
 			
-			internal static System.IComparable GetComparable(System.String termtext)
+			internal virtual System.IComparable GetComparable(System.String termtext)
 			{
 				return new SampleComparable(termtext);
 			}
-		}
-		[Serializable]
-		private class AnonymousClassSortComparator : SortComparator
-		{
-			public override System.IComparable GetComparable(System.String termtext)
-			{
-				return new SampleComparable(termtext);
-			}
-		}
-
-		public static SortComparatorSource GetComparatorSource()
-		{
-			return new AnonymousClassSortComparatorSource();
-		}
-
-		public static SortComparator GetComparator()
-		{
-			return new AnonymousClassSortComparator();
 		}
 		
 		internal System.String string_part;
@@ -202,6 +186,34 @@ namespace Lucene.Net.Search
 				return int_part.CompareTo(otherid.int_part);
 			}
 			return i;
+		}
+		
+		public static SortComparatorSource GetComparatorSource()
+		{
+			return new AnonymousClassSortComparatorSource();
+		}
+		
+		[Serializable]
+		private sealed class InnerSortComparator:SortComparator
+		{
+			public /*protected internal*/ override System.IComparable GetComparable(System.String termtext)
+			{
+				return new SampleComparable(termtext);
+			}
+			public override int GetHashCode()
+			{
+				return this.GetType().FullName.GetHashCode();
+			}
+			public  override bool Equals(System.Object that)
+			{
+				return this.GetType().Equals(that.GetType());
+			}
+		}
+		
+		
+		public static SortComparator GetComparator()
+		{
+			return new InnerSortComparator();
 		}
 	}
 }

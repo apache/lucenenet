@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	* each slice until we hit the end of that slice at which
 	* point we read the forwarding address of the next slice
 	* and then jump to it.*/
-	sealed class ByteSliceReader:IndexInput
+	public sealed class ByteSliceReader:IndexInput
 	{
 		internal ByteBlockPool pool;
 		internal int bufferUpto;

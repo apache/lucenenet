@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public override void  ExtractTerms(System.Collections.Hashtable queryTerms)
 		{
-			SupportClass.HashtableHelper.AddAllIfNotContains(queryTerms, terms);
+			SupportClass.CollectionsHelper.AddAllIfNotContains(queryTerms, terms);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

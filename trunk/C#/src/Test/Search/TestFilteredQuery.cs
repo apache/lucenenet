@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,16 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
@@ -39,53 +39,32 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestFilteredQuery.java 587050 2007-10-22 09:58:48Z doronc $
+	/// <version>  $Id: TestFilteredQuery.java 807821 2009-08-25 21:55:49Z mikemccand $
 	/// </version>
 	/// <since>   1.4
 	/// </since>
-	[TestFixture]
-	public class TestFilteredQuery : LuceneTestCase
+    [TestFixture]
+	public class TestFilteredQuery:LuceneTestCase
 	{
 		[Serializable]
-		private class AnonymousClassFilter : Filter
+		private class AnonymousClassFilter:Filter
 		{
-            public override DocIdSet GetDocIdSet(IndexReader reader)
-            {
-                System.Collections.BitArray bitset = new System.Collections.BitArray(64/*(5 % 64 == 0 ? 5 / 64 : 5 / 64 + 1) * 64*/);
-                bitset.Set(1, true);
-                bitset.Set(3, true);
-                return new DocIdBitSet(bitset);
-            }
-            [System.Obsolete()]
-            public override System.Collections.BitArray Bits(IndexReader reader)
+			public override DocIdSet GetDocIdSet(IndexReader reader)
 			{
-                System.Collections.BitArray bitset = new System.Collections.BitArray(64/*(5 % 64 == 0 ? 5 / 64 : 5 / 64 + 1) * 64*/);
+				System.Collections.BitArray bitset = new System.Collections.BitArray((5 % 64 == 0?5 / 64:5 / 64 + 1) * 64);
 				bitset.Set(1, true);
 				bitset.Set(3, true);
-				return bitset;
+				return new DocIdBitSet(bitset);
 			}
 		}
 		[Serializable]
-		private class AnonymousClassFilter1 : Filter
+		private class AnonymousClassFilter1:Filter
 		{
-            public override DocIdSet GetDocIdSet(IndexReader reader)
-            {
-                System.Collections.BitArray bitset = new System.Collections.BitArray(64/*(5 % 64 == 0 ? 5 / 64 : 5 / 64 + 1) * 64*/);
-                for (int i = 0; i < 5; i++)
-                {
-                    bitset.Set(i, true);
-                }
-                return new DocIdBitSet(bitset);
-            }
-            [System.Obsolete()]
-            public override System.Collections.BitArray Bits(IndexReader reader)
+			public override DocIdSet GetDocIdSet(IndexReader reader)
 			{
-                System.Collections.BitArray bitset = new System.Collections.BitArray(64/*(5 % 64 == 0 ? 5 / 64 : 5 / 64 + 1) * 64*/);
-				for (int i = 0; i < 5; i++)
-				{
-					bitset.Set(i, true);
-				} 
-				return bitset;
+				System.Collections.BitArray bitset = new System.Collections.BitArray((5 % 64 == 0?5 / 64:5 / 64 + 1) * 64);
+				for (int i = 0; i < 5; i++) bitset.Set(i, true);
+				return new DocIdBitSet(bitset);
 			}
 		}
 		
@@ -94,28 +73,29 @@ namespace Lucene.Net.Search
 		private Query query;
 		private Filter filter;
 		
-		[SetUp]
-		public override void SetUp()
+		[Test]
+		public override void  SetUp()
 		{
+			base.SetUp();
 			directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("field", "one two three four five", Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("sorter", "b", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
-			doc = new Lucene.Net.Documents.Document();
+			doc = new Document();
 			doc.Add(new Field("field", "one two three four", Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("sorter", "d", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
-			doc = new Lucene.Net.Documents.Document();
+			doc = new Document();
 			doc.Add(new Field("field", "one two three y", Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("sorter", "a", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
-			doc = new Lucene.Net.Documents.Document();
+			doc = new Document();
 			doc.Add(new Field("field", "one two x", Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("sorter", "c", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
@@ -125,7 +105,7 @@ namespace Lucene.Net.Search
 			
 			searcher = new IndexSearcher(directory);
 			query = new TermQuery(new Term("field", "three"));
-			filter = new AnonymousClassFilter();
+			filter = NewStaticFilterB();
 		}
 		
 		// must be static for serialization tests
@@ -135,14 +115,15 @@ namespace Lucene.Net.Search
 		}
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
 			searcher.Close();
 			directory.Close();
+			base.TearDown();
 		}
 		
 		[Test]
-		public virtual void  TestFilteredQuery_Renamed_Method()
+		public virtual void  TestFilteredQuery_Renamed()
 		{
 			Query filteredquery = new FilteredQuery(query, filter);
 			ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).scoreDocs;
@@ -216,24 +197,38 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestRangeQuery()
 		{
-			RangeQuery rq = new RangeQuery(new Term("sorter", "b"), new Term("sorter", "d"), true);
+			TermRangeQuery rq = new TermRangeQuery("sorter", "b", "d", true, true);
 			
 			Query filteredquery = new FilteredQuery(rq, filter);
 			ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).scoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			QueryUtils.Check(filteredquery, searcher);
 		}
-
-		[Test]		
+		
+		[Test]
 		public virtual void  TestBoolean()
 		{
 			BooleanQuery bq = new BooleanQuery();
-			Query query = new FilteredQuery(new MatchAllDocsQuery(), new Lucene.Net.Search.SingleDocTestFilter(0));
+			Query query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(0));
 			bq.Add(query, BooleanClause.Occur.MUST);
-			query = new FilteredQuery(new MatchAllDocsQuery(), new Lucene.Net.Search.SingleDocTestFilter(1));
+			query = new FilteredQuery(new MatchAllDocsQuery(), new SingleDocTestFilter(1));
 			bq.Add(query, BooleanClause.Occur.MUST);
 			ScoreDoc[] hits = searcher.Search(bq, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);
+			QueryUtils.Check(query, searcher);
+		}
+		
+		// Make sure BooleanQuery, which does out-of-order
+		// scoring, inside FilteredQuery, works
+		[Test]
+		public virtual void  TestBoolean2()
+		{
+			BooleanQuery bq = new BooleanQuery();
+			Query query = new FilteredQuery(bq, new SingleDocTestFilter(0));
+			bq.Add(new TermQuery(new Term("field", "one")), BooleanClause.Occur.SHOULD);
+			bq.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur.SHOULD);
+			ScoreDoc[] hits = searcher.Search(query, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
 			QueryUtils.Check(query, searcher);
 		}
 	}

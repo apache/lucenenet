@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using NUnit.Framework;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
@@ -24,7 +26,7 @@ namespace Lucene.Net.Search
 {
 	
 	[Serializable]
-	public class SingleDocTestFilter : Lucene.Net.Search.Filter
+	public class SingleDocTestFilter:Filter
 	{
 		private int doc;
 		
@@ -32,31 +34,12 @@ namespace Lucene.Net.Search
 		{
 			this.doc = doc;
 		}
-
-        public override DocIdSet GetDocIdSet(IndexReader reader)
-        {
-            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-
-            for (int increment = 0; doc >= bits.Length; increment = +64)
-            {
-                bits.Length += increment;
-            }
-            bits.Set(doc, true);
-
-            return new DocIdBitSet(bits);
-        }
-        [System.Obsolete()]
-        public override System.Collections.BitArray Bits(IndexReader reader)
-        {
-            System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0 ? reader.MaxDoc() / 64 : reader.MaxDoc() / 64 + 1) * 64);
-
-            for (int increment = 0; doc >= bits.Length; increment = +64)
-            {
-                bits.Length += increment;
-            }
-            bits.Set(doc, true);
-
-            return bits;
-        }
+		
+		public override DocIdSet GetDocIdSet(IndexReader reader)
+		{
+			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
+			bits.Set(doc, true);
+			return new DocIdBitSet(bits);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +23,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
+	
 	/// <summary> This tests the patch for issue #LUCENE-715 (IndexWriter does not
 	/// release its write lock when trying to open an index which does not yet
 	/// exist).
@@ -31,18 +32,18 @@ namespace Lucene.Net.Index
 	/// <version>  $Id$
 	/// </version>
 	
-	[TestFixture]
-	public class TestIndexWriterLockRelease : LuceneTestCase
+    [TestFixture]
+	public class TestIndexWriterLockRelease:LuceneTestCase
 	{
 		private System.IO.FileInfo __test_dir;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			if (this.__test_dir == null)
 			{
-                System.String tmp_dir = SupportClass.AppSettings.Get("tempDir", "");
+				System.String tmp_dir = SupportClass.AppSettings.Get("java.io.tmpdir", "tmp");
 				this.__test_dir = new System.IO.FileInfo(System.IO.Path.Combine(tmp_dir, "testIndexWriter"));
 				
 				bool tmpBool;
@@ -73,10 +74,10 @@ namespace Lucene.Net.Index
 		}
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
 			base.TearDown();
-            if (this.__test_dir != null && System.IO.Directory.Exists(this.__test_dir.FullName))
+			if (this.__test_dir != null)
 			{
 				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(this.__test_dir);
 				
@@ -122,7 +123,7 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-		public virtual void  _TestIndexWriterLockRelease()
+		public virtual void  TestIndexWriterLockRelease_Renamed()
 		{
 			IndexWriter im;
 			
@@ -130,13 +131,13 @@ namespace Lucene.Net.Index
 			{
 				im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			}
-			catch (System.IO.FileNotFoundException)
+			catch (System.IO.FileNotFoundException e)
 			{
 				try
 				{
-                    im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
+					im = new IndexWriter(this.__test_dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				}
-				catch (System.IO.FileNotFoundException)
+				catch (System.IO.FileNotFoundException e1)
 				{
 				}
 			}

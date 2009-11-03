@@ -102,5 +102,35 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-	}
+
+        public bool storePayloads_ForNUnit
+        {
+            get { return storePayloads; }
+        }
+
+        public System.String name_ForNUnit
+        {
+            get { return name; }
+        }
+
+        public bool isIndexed_ForNUnit
+        {
+            get { return isIndexed; }
+        }
+
+        public bool omitNorms_ForNUnit
+        {
+            get { return omitNorms; }
+        }
+
+        public bool omitTermFreqAndPositions_ForNUnit
+        {
+            get { return omitTermFreqAndPositions; }
+        }
+
+        public bool storeTermVector_ForNUnit
+        {
+            get { return storeTermVector; }
+        }
+    }
 }

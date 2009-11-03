@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
-	sealed class TermScorer:Scorer
+	public sealed class TermScorer:Scorer
 	{
 		
 		private static readonly float[] SIM_NORM_DECODER;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
 		/// </param>
-		internal TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms):base(similarity)
+		public /*internal*/ TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms):base(similarity)
 		{
 			this.weight = weight;
 			this.termDocs = td;

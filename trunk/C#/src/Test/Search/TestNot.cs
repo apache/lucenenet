@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -34,19 +34,22 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 583534 $
+	/// <version>  $Revision: 694004 $
 	/// </version>
-	[TestFixture]
-	public class TestNot : LuceneTestCase
+    [TestFixture]
+	public class TestNot:LuceneTestCase
 	{
+		public TestNot(System.String name):base(name)
+		{
+		}
 		
 		[Test]
-		public virtual void  TestNot_Renamed_Method()
+		public virtual void  TestNot_Renamed()
 		{
 			RAMDirectory store = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			Document d1 = new Document();
 			d1.Add(new Field("field", "a b", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(d1);
@@ -54,8 +57,8 @@ namespace Lucene.Net.Search
 			writer.Close();
 			
 			Searcher searcher = new IndexSearcher(store);
-			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("field", new SimpleAnalyzer());
-			Lucene.Net.Search.Query query = parser.Parse("a NOT b");
+			QueryParser parser = new QueryParser("field", new SimpleAnalyzer());
+			Query query = parser.Parse("a NOT b");
 			//System.out.println(query);
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);

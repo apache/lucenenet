@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		{
 			return ToString(0);
 		}
-		protected internal virtual System.String ToString(int depth)
+		public /*protected internal*/ virtual System.String ToString(int depth)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			for (int i = 0; i < depth; i++)

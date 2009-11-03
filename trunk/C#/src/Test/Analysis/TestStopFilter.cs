@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,64 +19,69 @@ using System;
 
 using NUnit.Framework;
 
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using English = Lucene.Net.Util.English;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
 	
-	/// <author>  yonik
-	/// </author>
-	[TestFixture]
-	public class TestStopFilter : LuceneTestCase
+	
+    [TestFixture]
+	public class TestStopFilter:BaseTokenStreamTestCase
 	{
 		
 		private const bool VERBOSE = false;
 		
 		// other StopFilter functionality is already tested by TestStopAnalyzer
 		
-		[Test]
+        [Test]
 		public virtual void  TestExactCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
-			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopWords);
-            Token reusableToken = new Token();
-			Assert.AreEqual("Now", stream.Next(reusableToken).Term());
-			Assert.AreEqual("The", stream.Next(reusableToken).Term());
-			Assert.AreEqual(null, stream.Next(reusableToken));
+			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords);
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual("Now", termAtt.Term());
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual("The", termAtt.Term());
+			Assert.IsFalse(stream.IncrementToken());
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestIgnoreCase()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
-			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopWords, true);
-            Token reusableToken = new Token();
-            Assert.AreEqual("Now", stream.Next(reusableToken).Term());
-			Assert.AreEqual(null, stream.Next(reusableToken));
+			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopWords, true);
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual("Now", termAtt.Term());
+			Assert.IsFalse(stream.IncrementToken());
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestStopFilt()
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
 			System.Collections.Hashtable stopSet = StopFilter.MakeStopSet(stopWords);
-			TokenStream stream = new StopFilter(new WhitespaceTokenizer(reader), stopSet);
-            Token reusableToken = new Token();
-            Assert.AreEqual("Now", stream.Next(reusableToken).Term());
-			Assert.AreEqual("The", stream.Next(reusableToken).Term());
-			Assert.AreEqual(null, stream.Next(reusableToken));
+			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual("Now", termAtt.Term());
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual("The", termAtt.Term());
+			Assert.IsFalse(stream.IncrementToken());
 		}
 		
 		/// <summary> Test Position increments applied by StopFilter with and without enabling this option.</summary>
-		[Test]
+        [Test]
 		public virtual void  TestStopPositons()
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.Collections.Generic.List<string> a = new System.Collections.Generic.List<string>();
+			System.Collections.ArrayList a = new System.Collections.ArrayList();
 			for (int i = 0; i < 20; i++)
 			{
 				System.String w = English.IntToEnglish(i).Trim();
@@ -91,15 +96,15 @@ namespace Lucene.Net.Analysis
 			System.Collections.Hashtable stopSet = StopFilter.MakeStopSet(stopWords);
 			// with increments
 			System.IO.StringReader reader = new System.IO.StringReader(sb.ToString());
-			StopFilter stpf = new StopFilter(new WhitespaceTokenizer(reader), stopSet);
+			StopFilter stpf = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
 			DoTestStopPositons(stpf, true);
 			// without increments
 			reader = new System.IO.StringReader(sb.ToString());
-			stpf = new StopFilter(new WhitespaceTokenizer(reader), stopSet);
+			stpf = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
 			DoTestStopPositons(stpf, false);
 			// with increments, concatenating two stop filters
-			System.Collections.Generic.List<string> a0 = new System.Collections.Generic.List<string>();
-			System.Collections.Generic.List<string> a1 = new System.Collections.Generic.List<string>();
+			System.Collections.ArrayList a0 = new System.Collections.ArrayList();
+			System.Collections.ArrayList a1 = new System.Collections.ArrayList();
 			for (int i = 0; i < a.Count; i++)
 			{
 				if (i % 2 == 0)
@@ -120,9 +125,9 @@ namespace Lucene.Net.Analysis
 			System.Collections.Hashtable stopSet0 = StopFilter.MakeStopSet(stopWords0);
 			System.Collections.Hashtable stopSet1 = StopFilter.MakeStopSet(stopWords1);
 			reader = new System.IO.StringReader(sb.ToString());
-			StopFilter stpf0 = new StopFilter(new WhitespaceTokenizer(reader), stopSet0); // first part of the set
+			StopFilter stpf0 = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet0); // first part of the set
 			stpf0.SetEnablePositionIncrements(true);
-			StopFilter stpf01 = new StopFilter(stpf0, stopSet1); // two stop filters concatenated!
+			StopFilter stpf01 = new StopFilter(false, stpf0, stopSet1); // two stop filters concatenated!
 			DoTestStopPositons(stpf01, true);
 		}
 		
@@ -130,16 +135,17 @@ namespace Lucene.Net.Analysis
 		{
 			Log("---> test with enable-increments-" + (enableIcrements?"enabled":"disabled"));
 			stpf.SetEnablePositionIncrements(enableIcrements);
-            Token reusableToken = new Token();
-            for (int i = 0; i < 20; i += 3)
+			TermAttribute termAtt = (TermAttribute) stpf.GetAttribute(typeof(TermAttribute));
+			PositionIncrementAttribute posIncrAtt = (PositionIncrementAttribute) stpf.GetAttribute(typeof(PositionIncrementAttribute));
+			for (int i = 0; i < 20; i += 3)
 			{
-				Token nextToken = stpf.Next(reusableToken);
-				Log("Token " + i + ": " + nextToken);
+				Assert.IsTrue(stpf.IncrementToken());
+				Log("Token " + i + ": " + stpf);
 				System.String w = English.IntToEnglish(i).Trim();
-				Assert.AreEqual(w, nextToken.Term(), "expecting token " + i + " to be " + w);
-				Assert.AreEqual(enableIcrements ? (i == 0 ? 1 : 3) : 1, nextToken.GetPositionIncrement(), "all but first token must have position increment of 3");
+				Assert.AreEqual(w, termAtt.Term(), "expecting token " + i + " to be " + w);
+				Assert.AreEqual(enableIcrements?(i == 0?1:3):1, posIncrAtt.GetPositionIncrement(), "all but first token must have position increment of 3");
 			}
-			Assert.IsNull(stpf.Next(reusableToken));
+			Assert.IsFalse(stpf.IncrementToken());
 		}
 		
 		// print debug info depending on VERBOSE

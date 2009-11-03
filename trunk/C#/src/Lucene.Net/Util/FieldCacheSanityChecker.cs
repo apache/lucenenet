@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
 				valIdToItems.Put((System.Object) valId, item);
 				if (1 < readerFieldToValIds.Put(rf, (System.Object) valId))
 				{
-					SupportClass.HashtableHelper.AddIfNotContains(valMismatchKeys, rf);
+					SupportClass.CollectionsHelper.AddIfNotContains(valMismatchKeys, rf);
 				}
 			}
 			
@@ -241,9 +241,9 @@ namespace Lucene.Net.Util
 						// we have cache entries for the kid
 						badKids.Put(rf, kid);
 					}
-					SupportClass.HashtableHelper.AddIfNotContains(seen, kid);
+					SupportClass.CollectionsHelper.AddIfNotContains(seen, kid);
 				}
-				SupportClass.HashtableHelper.AddIfNotContains(seen, rf);
+				SupportClass.CollectionsHelper.AddIfNotContains(seen, rf);
 			}
 			
 			// every mapping in badKids represents an Insanity

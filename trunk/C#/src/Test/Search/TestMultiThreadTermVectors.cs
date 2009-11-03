@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -26,32 +27,34 @@ using TermFreqVector = Lucene.Net.Index.TermFreqVector;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> </summary>
-	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 583534 2007-10-10 16:46:35Z mikemccand $ ' ;
+	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 759556 2009-03-28 19:10:55Z mikemccand $ ' ;
 	/// </version>
-	[TestFixture]
-	public class TestMultiThreadTermVectors : LuceneTestCase
+    [TestFixture]
+	public class TestMultiThreadTermVectors:LuceneTestCase
 	{
 		private RAMDirectory directory = new RAMDirectory();
 		public int numDocs = 100;
 		public int numThreads = 3;
 		
+		public TestMultiThreadTermVectors(System.String s):base(s)
+		{
+		}
 		
-		[SetUp]
-		public override void SetUp()
+		[Test]
+		public override void  SetUp()
 		{
 			base.SetUp();
-            IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			//writer.setUseCompoundFile(false);
 			//writer.infoStream = System.out;
 			for (int i = 0; i < numDocs; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				Fieldable fld = new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.YES);
 				doc.Add(fld);
 				writer.AddDocument(doc);
@@ -69,7 +72,7 @@ namespace Lucene.Net.Search
 			{
 				reader = IndexReader.Open(directory);
 				for (int i = 1; i <= numThreads; i++)
-					_TestTermPositionVectors(reader, i);
+					TestTermPositionVectors(reader, i);
 			}
 			catch (System.IO.IOException ioe)
 			{
@@ -92,7 +95,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public virtual void  _TestTermPositionVectors(IndexReader reader, int threadCount)
+		[Test]
+		public virtual void  TestTermPositionVectors(IndexReader reader, int threadCount)
 		{
 			MultiThreadTermVectorsReader[] mtr = new MultiThreadTermVectorsReader[threadCount];
 			for (int i = 0; i < threadCount; i++)
@@ -106,23 +110,17 @@ namespace Lucene.Net.Search
 			int threadsAlive = mtr.Length;
 			while (threadsAlive > 0)
 			{
-				try
+				//System.out.println("Threads alive");
+				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 10));
+				threadsAlive = mtr.Length;
+				for (int i = 0; i < mtr.Length; i++)
 				{
-					//System.out.println("Threads alive");
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 10));
-					threadsAlive = mtr.Length;
-					for (int i = 0; i < mtr.Length; i++)
+					if (mtr[i].IsAlive() == true)
 					{
-						if (mtr[i].IsAlive() == true)
-						{
-							break;
-						}
-						
-						threadsAlive--;
+						break;
 					}
-				}
-				catch (System.Threading.ThreadInterruptedException)
-				{
+					
+					threadsAlive--;
 				}
 			}
 			
@@ -218,7 +216,7 @@ namespace Lucene.Net.Search
 			}
 			
 			if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim()))
-				System.Console.Out.WriteLine("worng term result");
+				System.Console.Out.WriteLine("wrong term result");
 		}
 	}
 }

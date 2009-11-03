@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,22 +19,19 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Created on 2005. 2. 9.
-	/// <br>Adapted to Lucene testcase by Paul Elschot.
-	/// </summary>
-	[TestFixture]
-	public class TestBooleanOr : LuceneTestCase
+    [TestFixture]
+	public class TestBooleanOr:LuceneTestCase
 	{
 		
 		private static System.String FIELD_T = "T";
@@ -50,8 +47,8 @@ namespace Lucene.Net.Search
 		private int Search(Query q)
 		{
 			QueryUtils.Check(q, searcher);
-            return searcher.Search(q, null, 1000).totalHits;
-        }
+			return searcher.Search(q, null, 1000).totalHits;
+		}
 		
 		[Test]
 		public virtual void  TestElements()
@@ -139,11 +136,11 @@ namespace Lucene.Net.Search
 		}
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
-			//base.SetUp();
 			base.SetUp();
-
+			base.SetUp();
+			
 			//
 			RAMDirectory rd = new RAMDirectory();
 			
@@ -151,7 +148,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(rd, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			//
-			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+			Document d = new Document();
 			d.Add(new Field(FIELD_T, "Optimize not deleting all files", Field.Store.YES, Field.Index.ANALYZED));
 			d.Add(new Field(FIELD_C, "Deleted When I run an optimize in our production environment.", Field.Store.YES, Field.Index.ANALYZED));
 			

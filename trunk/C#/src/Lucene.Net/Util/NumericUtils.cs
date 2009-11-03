@@ -117,7 +117,7 @@ namespace Lucene.Net.Util
 				throw new System.ArgumentException("Illegal shift value, must be 0..63");
 			int nChars = (63 - shift) / 7 + 1, len = nChars + 1;
 			buffer[0] = (char) (SHIFT_START_LONG + shift);
-			long sortableBits = val ^ unchecked((uint) 0x8000000000000000L);   // {{Aroush-2.9}} using 'unchecked' here!
+			long sortableBits = val ^ unchecked((long) 0x8000000000000000L);   // {{Aroush-2.9}} using 'unchecked' here!
 			sortableBits = SupportClass.Number.URShift(sortableBits, shift);
 			while (nChars >= 1)
 			{
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util
 				}
 				sortableBits |= (long) ch;
 			}
-			return (sortableBits << shift) ^ unchecked((uint) 0x8000000000000000L); // {{Aroush-2.9}} using 'unchecked' here!
+			return (sortableBits << shift) ^ unchecked((long) 0x8000000000000000L); // {{Aroush-2.9}} using 'unchecked' here!
 		}
 		
 		/// <summary> Returns an int from prefixCoded characters.

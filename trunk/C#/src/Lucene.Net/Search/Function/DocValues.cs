@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Function
 		/// these test elements to be tested, Otherwise the test would not fail, just 
 		/// print a warning.
 		/// </summary>
-		internal virtual System.Object GetInnerArray()
+		public /*internal*/ virtual System.Object GetInnerArray()
 		{
 			throw new System.NotSupportedException("this optional method is for test purposes only");
 		}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,15 +19,13 @@ using System;
 
 using NUnit.Framework;
 
-using Directory = Lucene.Net.Store.Directory;
-
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestMultiReader : TestMultiSegmentReader
+    [TestFixture]
+	public class TestMultiReader:TestDirectoryReader
 	{
-		public TestMultiReader():base()
+		public TestMultiReader(System.String s):base(s)
 		{
 		}
 		

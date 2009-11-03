@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <version>  $Id: CompoundFileWriter.java 690539 2008-08-30 17:33:06Z mikemccand $
 	/// </version>
-	sealed class CompoundFileWriter
+	public sealed class CompoundFileWriter
 	{
 		
 		private sealed class FileEntry

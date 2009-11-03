@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 	* conjunction can reduce the number of priority queue
 	* updates for the optional terms. */
 	
-	sealed class BooleanScorer:Scorer
+	public sealed class BooleanScorer:Scorer
 	{
 		private void  InitBlock()
 		{
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
 		private Bucket current;
 		private int doc = - 1;
 		
-		internal BooleanScorer(Similarity similarity, int minNrShouldMatch, System.Collections.IList optionalScorers, System.Collections.IList prohibitedScorers):base(similarity)
+		public /*internal*/ BooleanScorer(Similarity similarity, int minNrShouldMatch, System.Collections.IList optionalScorers, System.Collections.IList prohibitedScorers):base(similarity)
 		{
 			InitBlock();
 			this.minNrShouldMatch = minNrShouldMatch;

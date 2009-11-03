@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,15 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	[TestFixture]
-	public class TestQueryTermVector : LuceneTestCase
+	
+    [TestFixture]
+	public class TestQueryTermVector:LuceneTestCase
 	{
+		
+		
+		public TestQueryTermVector(System.String s):base(s)
+		{
+		}
 		
 		[Test]
 		public virtual void  TestConstructor()

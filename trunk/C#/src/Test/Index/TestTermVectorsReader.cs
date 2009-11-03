@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +19,21 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Token = Lucene.Net.Analysis.Token;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestTermVectorsReader : LuceneTestCase
+    [TestFixture]
+	public class TestTermVectorsReader:LuceneTestCase
 	{
 		private void  InitBlock()
 		{
@@ -51,7 +53,7 @@ namespace Lucene.Net.Index
 		private FieldInfos fieldInfos = new FieldInfos();
 		private static int TERM_FREQ = 3;
 		
-		public TestTermVectorsReader():base()
+		public TestTermVectorsReader(System.String s):base(s)
 		{
 			InitBlock();
 		}
@@ -96,7 +98,7 @@ namespace Lucene.Net.Index
 			fieldInfos.add(testFields[i], true, true, testFieldsStorePos[i], testFieldsStoreOff[i]);
 			}
 			*/
-			System.Random random = new System.Random();
+			
 			System.Array.Sort(testTerms);
 			int tokenUpto = 0;
 			for (int i = 0; i < testTerms.Length; i++)
@@ -107,7 +109,7 @@ namespace Lucene.Net.Index
 				for (int j = 0; j < TERM_FREQ; j++)
 				{
 					// positions are always sorted in increasing order
-					positions[i][j] = (int) (j * 10 + random.NextDouble() * 10);
+					positions[i][j] = (int) (j * 10 + (new System.Random().NextDouble()) * 10);
 					// offsets are always sorted in increasing order
 					offsets[i][j] = new TermVectorOffsetInfo(j * 10, j * 10 + testTerms[i].Length);
 					TestToken token = tokens[tokenUpto++] = new TestToken(this);
@@ -147,12 +149,8 @@ namespace Lucene.Net.Index
 			fieldInfos = new FieldInfos(dir, seg + "." + IndexFileNames.FIELD_INFOS_EXTENSION);
 		}
 		
-		private class MyTokenStream : TokenStream
+		private class MyTokenStream:TokenStream
 		{
-			public MyTokenStream(TestTermVectorsReader enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
 			private void  InitBlock(TestTermVectorsReader enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
@@ -167,24 +165,42 @@ namespace Lucene.Net.Index
 				
 			}
 			internal int tokenUpto;
-			public override Token Next(Token reusableToken)
+			
+			internal TermAttribute termAtt;
+			internal PositionIncrementAttribute posIncrAtt;
+			internal OffsetAttribute offsetAtt;
+			
+			public MyTokenStream(TestTermVectorsReader enclosingInstance)
+			{
+				InitBlock(enclosingInstance);
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+			}
+			
+			public override bool IncrementToken()
 			{
 				if (tokenUpto >= Enclosing_Instance.tokens.Length)
-					return null;
+					return false;
 				else
 				{
 					TestToken testToken = Enclosing_Instance.tokens[tokenUpto++];
-                    reusableToken.Reinit(testToken.text, testToken.startOffset, testToken.endOffset);
+					termAtt.SetTermBuffer(testToken.text);
+					offsetAtt.SetOffset(testToken.startOffset, testToken.endOffset);
 					if (tokenUpto > 1)
-						reusableToken.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
+					{
+						posIncrAtt.SetPositionIncrement(testToken.pos - Enclosing_Instance.tokens[tokenUpto - 2].pos);
+					}
 					else
-                        reusableToken.SetPositionIncrement(testToken.pos + 1);
-                    return reusableToken;
+					{
+						posIncrAtt.SetPositionIncrement(testToken.pos + 1);
+					}
+					return true;
 				}
 			}
 		}
 		
-		private class MyAnalyzer : Analyzer
+		private class MyAnalyzer:Analyzer
 		{
 			public MyAnalyzer(TestTermVectorsReader enclosingInstance)
 			{
@@ -333,7 +349,7 @@ namespace Lucene.Net.Index
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
 			//Check offsets and positions
-			for (System.Collections.IEnumerator iterator = set_Renamed.Keys.GetEnumerator(); iterator.MoveNext(); )
+			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -348,7 +364,7 @@ namespace Lucene.Net.Index
 			//three fields, 4 terms, all terms are the same
 			Assert.IsTrue(set_Renamed.Count == 4, "set Size: " + set_Renamed.Count + " is not: " + 4);
 			//Should have offsets and positions b/c we are munging all the fields together
-			for (System.Collections.IEnumerator iterator = set_Renamed.Keys.GetEnumerator(); iterator.MoveNext(); )
+			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
 			{
 				TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 				Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -364,9 +380,9 @@ namespace Lucene.Net.Index
 			for (System.Collections.IEnumerator iterator = new System.Collections.Hashtable(map).GetEnumerator(); iterator.MoveNext(); )
 			{
 				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
-				System.Collections.Generic.SortedDictionary<Object, Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object, Object>)entry.Value;
+				System.Collections.Generic.SortedDictionary<Object,Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object,Object>)entry.Value;
 				Assert.IsTrue(sortedSet.Count == 4, "sortedSet Size: " + sortedSet.Count + " is not: " + 4);
-				for (System.Collections.IEnumerator inner = sortedSet.Keys.GetEnumerator(); inner.MoveNext(); )
+				for (System.Collections.IEnumerator inner = sortedSet.GetEnumerator(); inner.MoveNext(); )
 				{
 					TermVectorEntry tve = (TermVectorEntry) inner.Current;
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -397,9 +413,9 @@ namespace Lucene.Net.Index
 			for (System.Collections.IEnumerator iterator = new System.Collections.Hashtable(map).GetEnumerator(); iterator.MoveNext(); )
 			{
 				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
-				System.Collections.Generic.SortedDictionary<Object, Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object, Object>)entry.Value;
+				System.Collections.Generic.SortedDictionary<Object,Object> sortedSet = (System.Collections.Generic.SortedDictionary<Object,Object>)entry.Value;
 				Assert.IsTrue(sortedSet.Count == 4, "sortedSet Size: " + sortedSet.Count + " is not: " + 4);
-				for (System.Collections.IEnumerator inner = sortedSet.Keys.GetEnumerator(); inner.MoveNext(); )
+				for (System.Collections.IEnumerator inner = sortedSet.GetEnumerator(); inner.MoveNext(); )
 				{
 					TermVectorEntry tve = (TermVectorEntry) inner.Current;
 					Assert.IsTrue(tve != null, "tve is null and it shouldn't be");
@@ -463,7 +479,7 @@ namespace Lucene.Net.Index
 				reader.Get(50, testFields[0]);
 				Assert.Fail();
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				// expected exception
 			}
@@ -475,7 +491,7 @@ namespace Lucene.Net.Index
 				reader.Get(50);
 				Assert.Fail();
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				// expected exception
 			}
@@ -487,14 +503,14 @@ namespace Lucene.Net.Index
 				TermFreqVector vector = reader.Get(0, "f50");
 				Assert.IsTrue(vector == null);
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 				Assert.Fail();
 			}
 		}
 		
 		
-		public class DocNumAwareMapper : TermVectorMapper
+		public class DocNumAwareMapper:TermVectorMapper
 		{
 			
 			public DocNumAwareMapper()

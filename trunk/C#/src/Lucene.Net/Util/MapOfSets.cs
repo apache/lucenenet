@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
 				theSet = new System.Collections.Hashtable(23);
 				theMap[key] = theSet;
 			}
-			SupportClass.HashtableHelper.AddIfNotContains(theSet, val);
+			SupportClass.CollectionsHelper.AddIfNotContains(theSet, val);
 			return theSet.Count;
 		}
 		/// <summary> Adds multiple vals to the Set associated with key in the Map.  
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
 				theSet = new System.Collections.Hashtable(23);
 				theMap[key] = theSet;
 			}
-			SupportClass.HashtableHelper.AddAllIfNotContains(theSet, vals);
+			SupportClass.CollectionsHelper.AddAllIfNotContains(theSet, vals);
 			return theSet.Count;
 		}
 	}

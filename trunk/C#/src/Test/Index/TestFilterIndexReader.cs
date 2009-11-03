@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,26 +19,25 @@ using System;
 
 using NUnit.Framework;
 
-//using TestRunner = junit.textui.TestRunner;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestFilterIndexReader : LuceneTestCase
+    [TestFixture]
+	public class TestFilterIndexReader:LuceneTestCase
 	{
 		
-		private class TestReader : FilterIndexReader
+		private class TestReader:FilterIndexReader
 		{
 			
 			/// <summary>Filter that only permits terms containing 'e'.</summary>
-			private class TestTermEnum : FilterTermEnum
+			private class TestTermEnum:FilterTermEnum
 			{
 				public TestTermEnum(TermEnum termEnum):base(termEnum)
 				{
@@ -57,9 +56,9 @@ namespace Lucene.Net.Index
 			}
 			
 			/// <summary>Filter that only returns odd numbered documents. </summary>
-			private class TestTermPositions : FilterTermPositions
+			private class TestTermPositions:FilterTermPositions
 			{
-				public TestTermPositions(TermPositions in_Renamed) : base(in_Renamed)
+				public TestTermPositions(TermPositions in_Renamed):base(in_Renamed)
 				{
 				}
 				
@@ -75,7 +74,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			public TestReader(IndexReader reader) : base(reader)
+			public TestReader(IndexReader reader):base(reader)
 			{
 			}
 			
@@ -97,26 +96,26 @@ namespace Lucene.Net.Index
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestIndexReader)));   // {{Aroush}} where is 'Run' in NUnit?
+			// TestRunner.run(new TestSuite(typeof(TestIndexReader))); // {{Aroush-2.9}} How do you do this in NUnit?
 		}
 		
 		/// <summary> Tests the IndexReader.getFieldNames implementation</summary>
 		/// <throws>  Exception on error </throws>
 		[Test]
-		public virtual void  TestFilterIndexReader_Renamed_Method()
+		public virtual void  TestFilterIndexReader_Renamed()
 		{
 			RAMDirectory directory = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			Document d1 = new Document();
 			d1.Add(new Field("default", "one two", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d1);
 			
-			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+			Document d2 = new Document();
 			d2.Add(new Field("default", "one three", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d2);
 			
-			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
+			Document d3 = new Document();
 			d3.Add(new Field("default", "two four", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(d3);
 			
@@ -139,6 +138,16 @@ namespace Lucene.Net.Index
 				Assert.IsTrue((positions.Doc() % 2) == 1);
 			}
 			
+			int NUM_DOCS = 3;
+			
+			TermDocs td = reader.TermDocs(null);
+			for (int i = 0; i < NUM_DOCS; i++)
+			{
+				Assert.IsTrue(td.Next());
+				Assert.AreEqual(i, td.Doc());
+				Assert.AreEqual(1, td.Freq());
+			}
+			td.Close();
 			reader.Close();
 			directory.Close();
 		}

@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
-		public static NumericRangeQuery NewLongRange(System.String field, int precisionStep, System.Int64 min, System.Int64 max, bool minInclusive, bool maxInclusive)
+		public static NumericRangeQuery NewLongRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
 		{
 			return new NumericRangeQuery(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
 		}
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
-		public static NumericRangeQuery NewLongRange(System.String field, System.Int64 min, System.Int64 max, bool minInclusive, bool maxInclusive)
+		public static NumericRangeQuery NewLongRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
 		{
 			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
 		}
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
-		public static NumericRangeQuery NewIntRange(System.String field, int precisionStep, System.Int32 min, System.Int32 max, bool minInclusive, bool maxInclusive)
+		public static NumericRangeQuery NewIntRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
 		{
 			return new NumericRangeQuery(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
 		}
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
-		public static NumericRangeQuery NewIntRange(System.String field, System.Int32 min, System.Int32 max, bool minInclusive, bool maxInclusive)
+		public static NumericRangeQuery NewIntRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
 		{
 			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
 		}

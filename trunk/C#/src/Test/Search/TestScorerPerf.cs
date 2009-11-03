@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,9 +27,8 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -36,10 +36,38 @@ namespace Lucene.Net.Search
 	/// <summary> </summary>
 	/// <version>  $Id$
 	/// </version>
-	[TestFixture]
-	public class TestScorerPerf : LuceneTestCase
+    [TestFixture]
+	public class TestScorerPerf:LuceneTestCase
 	{
-		internal System.Random r = new System.Random((System.Int32) 0);
+		[Serializable]
+		private class AnonymousClassFilter:Filter
+		{
+			public AnonymousClassFilter(System.Collections.BitArray rnd, TestScorerPerf enclosingInstance)
+			{
+				InitBlock(rnd, enclosingInstance);
+			}
+			private void  InitBlock(System.Collections.BitArray rnd, TestScorerPerf enclosingInstance)
+			{
+				this.rnd = rnd;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private System.Collections.BitArray rnd;
+			private TestScorerPerf enclosingInstance;
+			public TestScorerPerf Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public override DocIdSet GetDocIdSet(IndexReader reader)
+			{
+				return new DocIdBitSet(rnd);
+			}
+			
+		}
+		internal System.Random r;
 		internal bool validate = true; // set to false when doing performance testing
 		
 		internal System.Collections.BitArray[] sets;
@@ -52,6 +80,7 @@ namespace Lucene.Net.Search
 			// This could possibly fail if Lucene starts checking for docid ranges...
 			RAMDirectory rd = new RAMDirectory();
 			IndexWriter iw = new IndexWriter(rd, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			iw.AddDocument(new Document());
 			iw.Close();
 			s = new IndexSearcher(rd);
 		}
@@ -59,14 +88,15 @@ namespace Lucene.Net.Search
 		public virtual void  CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
 		{
 			int[] freq = new int[nTerms];
+			terms = new Term[nTerms];
 			for (int i = 0; i < nTerms; i++)
 			{
 				int f = (nTerms + 1) - i; // make first terms less frequent
 				freq[i] = (int) System.Math.Ceiling(System.Math.Pow(f, power));
 				terms[i] = new Term("f", System.Convert.ToString((char) ('A' + i)));
 			}
-
-            IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			
+			IndexWriter iw = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < nDocs; i++)
 			{
 				Document d = new Document();
@@ -87,7 +117,7 @@ namespace Lucene.Net.Search
 		
 		public virtual System.Collections.BitArray RandBitSet(int sz, int numBitsToSet)
 		{
-			System.Collections.BitArray set_Renamed = new System.Collections.BitArray((sz % 64 == 0 ? sz / 64 : sz / 64 + 1) * 64);
+			System.Collections.BitArray set_Renamed = new System.Collections.BitArray((sz % 64 == 0?sz / 64:sz / 64 + 1) * 64);
 			for (int i = 0; i < numBitsToSet; i++)
 			{
 				set_Renamed.Set(r.Next(sz), true);
@@ -105,15 +135,20 @@ namespace Lucene.Net.Search
 			return sets;
 		}
 		
-		public class CountingHitCollector : HitCollector
+		public class CountingHitCollector:Collector
 		{
 			internal int count = 0;
 			internal int sum = 0;
+			protected internal int docBase = 0;
 			
-			public override void  Collect(int doc, float score)
+			public override void  SetScorer(Scorer scorer)
+			{
+			}
+			
+			public override void  Collect(int doc)
 			{
 				count++;
-				sum += doc; // use it to avoid any possibility of being optimized away
+				sum += docBase + doc; // use it to avoid any possibility of being optimized away
 			}
 			
 			public virtual int GetCount()
@@ -124,10 +159,19 @@ namespace Lucene.Net.Search
 			{
 				return sum;
 			}
+			
+			public override void  SetNextReader(IndexReader reader, int base_Renamed)
+			{
+				docBase = base_Renamed;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
+			}
 		}
 		
 		
-		public class MatchingHitCollector : CountingHitCollector
+		public class MatchingHitCollector:CountingHitCollector
 		{
 			internal System.Collections.BitArray answer;
 			internal int pos = - 1;
@@ -136,39 +180,23 @@ namespace Lucene.Net.Search
 				this.answer = answer;
 			}
 			
-			public override void  Collect(int doc, float score)
+			public virtual void  Collect(int doc, float score)
 			{
-				pos = SupportClass.Number.NextSetBit(answer, pos + 1);
-				if (pos != doc)
+				
+				pos = SupportClass.BitSetSupport.NextSetBit(answer, pos + 1);
+				if (pos != doc + docBase)
 				{
-					throw new System.SystemException("Expected doc " + pos + " but got " + doc);
+					throw new System.SystemException("Expected doc " + pos + " but got " + doc + docBase);
 				}
-				base.Collect(doc, score);
+				base.Collect(doc);
 			}
 		}
 		
-		public class AnonymousClassFilter : Filter
-        {
-            private System.Collections.BitArray rnd;
-            public AnonymousClassFilter(System.Collections.BitArray rnd)
-            {
-                this.rnd = rnd;
-            }
-            override public DocIdSet GetDocIdSet(IndexReader reader)
-            {
-                return new DocIdBitSet(rnd);
-            }
-            [System.Obsolete()]
-            override public System.Collections.BitArray Bits(IndexReader reader)
-            {
-                return null;
-            }
-        }
-
+		
 		internal virtual System.Collections.BitArray AddClause(BooleanQuery bq, System.Collections.BitArray result)
 		{
 			System.Collections.BitArray rnd = sets[r.Next(sets.Length)];
-			Query q = new ConstantScoreQuery(new AnonymousClassFilter(rnd));
+			Query q = new ConstantScoreQuery(new AnonymousClassFilter(rnd, this));
 			bq.Add(q, BooleanClause.Occur.MUST);
 			if (validate)
 			{
@@ -200,8 +228,9 @@ namespace Lucene.Net.Search
 				CountingHitCollector hc = validate?new MatchingHitCollector(result):new CountingHitCollector();
 				s.Search(bq, hc);
 				ret += hc.GetSum();
+				
 				if (validate)
-					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			
@@ -237,7 +266,7 @@ namespace Lucene.Net.Search
 				nMatches += hc.GetCount();
 				ret += hc.GetSum();
 				if (validate)
-					Assert.AreEqual(SupportClass.Number.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
@@ -254,38 +283,16 @@ namespace Lucene.Net.Search
 			{
 				int nClauses = r.Next(maxClauses - 1) + 2; // min 2 clauses
 				BooleanQuery bq = new BooleanQuery();
-				System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
+				System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0?termsInIndex / 64:termsInIndex / 64 + 1) * 64);
 				for (int j = 0; j < nClauses; j++)
 				{
 					int tnum;
 					// don't pick same clause twice
 					tnum = r.Next(termsInIndex);
 					if (termflag.Get(tnum))
-					{
-						int nextClearBit = -1;
-						for (int k = tnum + 1; k < termflag.Count; k++)
-						{
-							if (!termflag.Get(k))
-							{
-								nextClearBit = k;
-								break;
-							}
-						}
-						tnum = nextClearBit;
-					}
+						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
 					if (tnum < 0 || tnum >= termsInIndex)
-					{
-						int nextClearBit = -1;
-						for (int k = 0; k < termflag.Count; k++)
-						{
-							if (!termflag.Get(k))
-							{
-								nextClearBit = k;
-								break;
-							}
-						}
-						tnum = nextClearBit;
-					}
+						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
 					termflag.Set(tnum, true);
 					Query tq = new TermQuery(terms[tnum]);
 					bq.Add(tq, BooleanClause.Occur.MUST);
@@ -315,38 +322,16 @@ namespace Lucene.Net.Search
 					
 					int nClauses = r.Next(maxClauses - 1) + 2; // min 2 clauses
 					BooleanQuery bq = new BooleanQuery();
-					System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0 ? termsInIndex / 64 : termsInIndex / 64 + 1) * 64);
+					System.Collections.BitArray termflag = new System.Collections.BitArray((termsInIndex % 64 == 0?termsInIndex / 64:termsInIndex / 64 + 1) * 64);
 					for (int j = 0; j < nClauses; j++)
 					{
 						int tnum;
 						// don't pick same clause twice
 						tnum = r.Next(termsInIndex);
 						if (termflag.Get(tnum))
-						{
-							int nextClearBit = -1;
-							for (int k = tnum + 1; k < termflag.Count; k++)
-							{
-								if (!termflag.Get(k))
-								{
-									nextClearBit = k;
-									break;
-								}
-							}
-							tnum = nextClearBit;
-						}
+							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
 						if (tnum < 0 || tnum >= 25)
-						{
-							int nextClearBit = -1;
-							for (int k = 0; k < termflag.Count; k++)
-							{
-								if (!termflag.Get(k))
-								{
-									nextClearBit = k;
-									break;
-								}
-							}
-							tnum = nextClearBit;
-						}
+							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
 						termflag.Set(tnum, true);
 						Query tq = new TermQuery(terms[tnum]);
 						bq.Add(tq, BooleanClause.Occur.MUST);
@@ -377,7 +362,7 @@ namespace Lucene.Net.Search
 				for (int j = 0; j < nClauses; j++)
 				{
 					int tnum = r.Next(termsInIndex);
-					q.Add(new Term("f", System.Convert.ToString((char)(tnum + 'A'))), j);
+					q.Add(new Term("f", System.Convert.ToString((char) (tnum + 'A'))), j);
 				}
 				q.SetSlop(termsInIndex); // this could be random too
 				
@@ -389,10 +374,12 @@ namespace Lucene.Net.Search
 			return ret;
 		}
 		
+		
 		[Test]
 		public virtual void  TestConjunctions()
 		{
 			// test many small sets... the bugs will be found on boundary conditions
+			r = NewRandom();
 			CreateDummySearcher();
 			validate = true;
 			sets = RandBitSets(1000, 10);
@@ -404,30 +391,33 @@ namespace Lucene.Net.Search
 		/// <summary> 
 		/// int bigIter=10;
 		/// public void testConjunctionPerf() throws Exception {
-		/// CreateDummySearcher();
+		/// r = newRandom();
+		/// createDummySearcher();
 		/// validate=false;
-		/// sets=RandBitSets(32,1000000);
+		/// sets=randBitSets(32,1000000);
 		/// for (int i=0; i<bigIter; i++) {
 		/// long start = System.currentTimeMillis();
-		/// DoConjunctions(500,6);
+		/// doConjunctions(500,6);
 		/// long end = System.currentTimeMillis();
 		/// System.out.println("milliseconds="+(end-start));
 		/// }
 		/// s.close();
 		/// }
 		/// public void testNestedConjunctionPerf() throws Exception {
-		/// CreateDummySearcher();
+		/// r = newRandom();
+		/// createDummySearcher();
 		/// validate=false;
-		/// sets=RandBitSets(32,1000000);
+		/// sets=randBitSets(32,1000000);
 		/// for (int i=0; i<bigIter; i++) {
 		/// long start = System.currentTimeMillis();
-		/// DoNestedConjunctions(500,3,3);
+		/// doNestedConjunctions(500,3,3);
 		/// long end = System.currentTimeMillis();
 		/// System.out.println("milliseconds="+(end-start));
 		/// }
 		/// s.close();
 		/// }
 		/// public void testConjunctionTerms() throws Exception {
+		/// r = newRandom();
 		/// validate=false;
 		/// RAMDirectory dir = new RAMDirectory();
 		/// System.out.println("Creating index");
@@ -436,13 +426,14 @@ namespace Lucene.Net.Search
 		/// System.out.println("Starting performance test");
 		/// for (int i=0; i<bigIter; i++) {
 		/// long start = System.currentTimeMillis();
-		/// DoTermConjunctions(s,25,5,10000);
+		/// doTermConjunctions(s,25,5,1000);
 		/// long end = System.currentTimeMillis();
 		/// System.out.println("milliseconds="+(end-start));
 		/// }
 		/// s.close();
 		/// }
 		/// public void testNestedConjunctionTerms() throws Exception {
+		/// r = newRandom();
 		/// validate=false;    
 		/// RAMDirectory dir = new RAMDirectory();
 		/// System.out.println("Creating index");
@@ -458,15 +449,16 @@ namespace Lucene.Net.Search
 		/// s.close();
 		/// }
 		/// public void testSloppyPhrasePerf() throws Exception {
+		/// r = newRandom();
 		/// validate=false;    
 		/// RAMDirectory dir = new RAMDirectory();
 		/// System.out.println("Creating index");
-		/// CreateRandomTerms(100000,25,2,dir);
+		/// createRandomTerms(100000,25,2,dir);
 		/// s = new IndexSearcher(dir);
 		/// System.out.println("Starting performance test");
 		/// for (int i=0; i<bigIter; i++) {
 		/// long start = System.currentTimeMillis();
-		/// DoSloppyPhrase(s,25,2,1000);
+		/// doSloppyPhrase(s,25,2,1000);
 		/// long end = System.currentTimeMillis();
 		/// System.out.println("milliseconds="+(end-start));
 		/// }

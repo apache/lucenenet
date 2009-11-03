@@ -35,17 +35,17 @@ namespace Lucene.Net.Store
 		private long lastModified = System.DateTime.Now.Millisecond;
 		
 		// File used as buffer, in no RAMDirectory
-		internal RAMFile()
+		public /*internal*/ RAMFile()
 		{
 		}
 		
-		internal RAMFile(RAMDirectory directory)
+		public /*internal*/ RAMFile(RAMDirectory directory)
 		{
 			this.directory = directory;
 		}
 		
 		// For non-stream access from thread that might be concurrent with writing
-		internal virtual long GetLength()
+		public /*internal*/ virtual long GetLength()
 		{
 			lock (this)
 			{
@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		internal virtual void  SetLength(long length)
+		public /*internal*/ virtual void  SetLength(long length)
 		{
 			lock (this)
 			{
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		internal byte[] GetBuffer(int index)
+		public /*internal*/ byte[] GetBuffer(int index)
 		{
 			lock (this)
 			{
@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		internal int NumBuffers()
+		public /*internal*/ int NumBuffers()
 		{
 			lock (this)
 			{
@@ -126,12 +126,28 @@ namespace Lucene.Net.Store
 		}
 		
 		// Only valid if in a directory
-		internal virtual long GetSizeInBytes()
+		public /*internal*/ virtual long GetSizeInBytes()
 		{
 			lock (directory)
 			{
 				return sizeInBytes;
 			}
 		}
+
+        public long length_ForNUnit
+        {
+            get { return length; }
+        }
+
+        public RAMDirectory directory_ForNUnit
+        {
+            get { return directory; }
+            set { directory = value; }
+        }
+
+        public long sizeInBytes_ForNUnit
+        {
+            get { return sizeInBytes; }
+        }
 	}
 }

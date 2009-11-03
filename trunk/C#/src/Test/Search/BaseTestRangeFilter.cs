@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,44 +19,66 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Search
 {
-	[TestFixture]
-	public class BaseTestRangeFilter : LuceneTestCase
+	
+    [TestFixture]
+	public class BaseTestRangeFilter:LuceneTestCase
 	{
+		private void  InitBlock()
+		{
+			signedIndex = new TestIndex(this, System.Int32.MaxValue, System.Int32.MinValue, true);
+			unsignedIndex = new TestIndex(this, System.Int32.MaxValue, 0, false);
+		}
+		
 		public const bool F = false;
 		public const bool T = true;
 		
-		internal System.Random rand = new System.Random((System.Int32) 101); // use a set seed to test is deterministic
+		protected internal System.Random rand;
 		
-        /// <summary>
-        /// Collation interacts badly with hyphens -- collation produces different ordering than Unicode code-point
-        /// ordering -- so two indexes are created: one which can't have negative random integers, for testing collated
-        /// ranges, and the other which can have negative random integers, for all other tests
-        /// </summary>
-        internal class TestIndex
-        {
-            internal int maxR = System.Int32.MinValue;
-            internal int minR = System.Int32.MaxValue;
-            internal bool allowNegativeRandomInts;
-            internal RAMDirectory index = new RAMDirectory();
-
-            internal TestIndex(int minR, int maxR, bool allowNegativeRandomInts)
-            {
-                this.minR = minR;
-                this.maxR = maxR;
-                this.allowNegativeRandomInts = allowNegativeRandomInts;
-            }
-        }
-        internal TestIndex signedIndex = new TestIndex(int.MaxValue, int.MinValue, true);
-        internal TestIndex unsignedIndex = new TestIndex(int.MaxValue, 0, false);
+		/// <summary> Collation interacts badly with hyphens -- collation produces different
+		/// ordering than Unicode code-point ordering -- so two indexes are created:
+		/// one which can't have negative random integers, for testing collated 
+		/// ranges, and the other which can have negative random integers, for all
+		/// other tests. 
+		/// </summary>
+		internal class TestIndex
+		{
+			private void  InitBlock(BaseTestRangeFilter enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private BaseTestRangeFilter enclosingInstance;
+			public BaseTestRangeFilter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal int maxR;
+			internal int minR;
+			internal bool allowNegativeRandomInts;
+			internal RAMDirectory index = new RAMDirectory();
+			
+			internal TestIndex(BaseTestRangeFilter enclosingInstance, int minR, int maxR, bool allowNegativeRandomInts)
+			{
+				InitBlock(enclosingInstance);
+				this.minR = minR;
+				this.maxR = maxR;
+				this.allowNegativeRandomInts = allowNegativeRandomInts;
+			}
+		}
+		internal TestIndex signedIndex;
+		internal TestIndex unsignedIndex;
 		
 		internal int minId = 0;
 		internal int maxId = 10000;
@@ -84,16 +106,20 @@ namespace Lucene.Net.Search
 			return b.ToString();
 		}
 		
-		public BaseTestRangeFilter(System.String name)
+		public BaseTestRangeFilter(System.String name):base(name)
 		{
-            Build(signedIndex);
-            Build(unsignedIndex);
+			InitBlock();
+			rand = NewRandom();
+			Build(signedIndex);
+			Build(unsignedIndex);
 		}
 		public BaseTestRangeFilter()
 		{
-            Build(signedIndex);
-            Build(unsignedIndex);
-        }
+			InitBlock();
+			rand = NewRandom();
+			Build(signedIndex);
+			Build(unsignedIndex);
+		}
 		
 		private void  Build(TestIndex index)
 		{
@@ -105,9 +131,9 @@ namespace Lucene.Net.Search
 				
 				for (int d = minId; d <= maxId; d++)
 				{
-					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+					Document doc = new Document();
 					doc.Add(new Field("id", Pad(d), Field.Store.YES, Field.Index.NOT_ANALYZED));
-					int r = index.allowNegativeRandomInts? rand.Next() : rand.Next(int.MaxValue);
+					int r = index.allowNegativeRandomInts ? rand.Next() : rand.Next(System.Int32.MaxValue);
 					if (index.maxR < r)
 					{
 						index.maxR = r;
@@ -126,10 +152,10 @@ namespace Lucene.Net.Search
 			}
 			catch (System.Exception e)
 			{
-				throw new System.Exception("can't build index", e);
+				throw new System.SystemException("can't build index", e);
 			}
 		}
-
+		
 		[Test]
 		public virtual void  TestPad()
 		{

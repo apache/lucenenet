@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,9 +21,11 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
+	
 	[TestFixture]
-	public class TestStringHelper : LuceneTestCase
+	public class TestStringHelper:LuceneTestCase
 	{
+		
 		
 		[Test]
 		public virtual void  TestStringDifference()

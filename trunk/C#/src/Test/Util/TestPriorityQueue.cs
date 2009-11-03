@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,14 +21,15 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
+	
 	[TestFixture]
-	public class TestPriorityQueue : LuceneTestCase
+	public class TestPriorityQueue:LuceneTestCase
 	{
-		//public TestPriorityQueue(System.String name) : base(name)
-		//{
-		//}
+		public TestPriorityQueue(System.String name):base(name)
+		{
+		}
 		
-		private class IntegerQueue : PriorityQueue
+		private class IntegerQueue:PriorityQueue
 		{
 			public IntegerQueue(int count):base()
 			{
@@ -44,13 +45,12 @@ namespace Lucene.Net.Util
 		[Test]
 		public virtual void  TestPQ()
 		{
-			TestPQ(10000);
+			TestPQ(10000, NewRandom());
 		}
 		
-		public static void  TestPQ(int count)
+		public static void  TestPQ(int count, System.Random gen)
 		{
 			PriorityQueue pq = new IntegerQueue(count);
-			System.Random gen = new System.Random();
 			int sum = 0, sum2 = 0;
 			
 			for (int i = 0; i < count; i++)
@@ -125,8 +125,8 @@ namespace Lucene.Net.Util
 			Assert.IsNull(pq.InsertWithOverflow((System.Object) i2));
 			Assert.IsNull(pq.InsertWithOverflow((System.Object) i3));
 			Assert.IsNull(pq.InsertWithOverflow((System.Object) i4));
-			Assert.IsTrue((int)pq.InsertWithOverflow((System.Object)i5) == i3); // i3 should have been dropped
-			Assert.IsTrue((int)pq.InsertWithOverflow((System.Object)i6) == i6); // i6 should not have been inserted
+			Assert.IsTrue(pq.InsertWithOverflow((System.Object) i5) == (System.Object) i3); // i3 should have been dropped
+			Assert.IsTrue(pq.InsertWithOverflow((System.Object) i6) == (System.Object) i6); // i6 should not have been inserted
 			Assert.AreEqual(size, pq.Size());
 			Assert.AreEqual(2, ((System.Int32) pq.Top()));
 		}

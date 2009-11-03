@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -33,14 +34,14 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 583534 $
+	/// <version>  $Revision: 787772 $
 	/// </version>
-	[TestFixture]
-	public class TestDocBoost : LuceneTestCase
+    [TestFixture]
+	public class TestDocBoost:LuceneTestCase
 	{
-		private class AnonymousClassHitCollector : HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(float[] scores, TestDocBoost enclosingInstance)
+			public AnonymousClassCollector(float[] scores, TestDocBoost enclosingInstance)
 			{
 				InitBlock(scores, enclosingInstance);
 			}
@@ -59,14 +60,31 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private int base_Renamed = 0;
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
 			{
-				scores[doc] = score;
+				this.scorer = scorer;
 			}
+			public override void  Collect(int doc)
+			{
+				scores[doc + base_Renamed] = scorer.Score();
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
+			}
+		}
+		public TestDocBoost(System.String name):base(name)
+		{
 		}
 		
 		[Test]
-		public virtual void  TestDocBoost_Renamed_Method()
+		public virtual void  TestDocBoost_Renamed()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
@@ -75,10 +93,10 @@ namespace Lucene.Net.Search
 			Fieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
 			f2.SetBoost(2.0f);
 			
-			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document d3 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document d4 = new Lucene.Net.Documents.Document();
+			Document d1 = new Document();
+			Document d2 = new Document();
+			Document d3 = new Document();
+			Document d4 = new Document();
 			d3.SetBoost(3.0f);
 			d4.SetBoost(2.0f);
 			
@@ -96,7 +114,7 @@ namespace Lucene.Net.Search
 			
 			float[] scores = new float[4];
 			
-			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassHitCollector(scores, this));
+			new IndexSearcher(store).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
 			
 			float lastScore = 0.0f;
 			

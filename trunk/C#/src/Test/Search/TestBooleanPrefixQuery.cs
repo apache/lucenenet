@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,40 +19,63 @@ using System;
 
 using NUnit.Framework;
 
-//using TestRunner = junit.textui.TestRunner;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestBooleanPrefixQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestBooleanPrefixQuery.java 808519 2009-08-27 16:57:27Z mikemccand $
 	/// 
 	/// </version>
 	
-	[TestFixture]
-	public class TestBooleanPrefixQuery : LuceneTestCase
+    [TestFixture]
+	public class TestBooleanPrefixQuery:LuceneTestCase
 	{
 		
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(Suite());  // {{Aroush}} where is 'TestRunner' in NUnit?
+			// TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
 		}
 		
-		/*  // {{Aroush}} Do we need this method?
-		public static TestCase Suite()
+		/*public static Test suite()
 		{
-			return new NUnit.Core.TestSuite(typeof(TestBooleanPrefixQuery));
+			return new TestSuite(typeof(TestBooleanPrefixQuery));
+		}*/
+		
+		public TestBooleanPrefixQuery(System.String name):base(name)
+		{
 		}
-		*/
+		
+		private int GetCount(IndexReader r, Query q)
+		{
+			if (q is BooleanQuery)
+			{
+				return ((BooleanQuery) q).GetClauses().Length;
+			}
+			else if (q is ConstantScoreQuery)
+			{
+				DocIdSetIterator iter = ((ConstantScoreQuery) q).GetFilter().GetDocIdSet(r).Iterator();
+				int count = 0;
+				while (iter.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+				{
+					count++;
+				}
+				return count;
+			}
+			else
+			{
+				throw new System.SystemException("unepxected query " + q);
+			}
+		}
 		
 		[Test]
 		public virtual void  TestMethod()
@@ -63,20 +86,20 @@ namespace Lucene.Net.Search
 			
 			Query rw1 = null;
 			Query rw2 = null;
+			IndexReader reader = null;
 			try
 			{
 				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				for (int i = 0; i < categories.Length; i++)
 				{
-					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+					Document doc = new Document();
 					doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
 					writer.AddDocument(doc);
 				}
 				writer.Close();
 				
-				IndexReader reader = IndexReader.Open(directory);
+				reader = IndexReader.Open(directory);
 				PrefixQuery query = new PrefixQuery(new Term("category", "foo"));
-				
 				rw1 = query.Rewrite(reader);
 				
 				BooleanQuery bq = new BooleanQuery();
@@ -89,23 +112,7 @@ namespace Lucene.Net.Search
 				Assert.Fail(e.Message);
 			}
 			
-			BooleanQuery bq1 = null;
-			if (rw1 is BooleanQuery)
-			{
-				bq1 = (BooleanQuery) rw1;
-			}
-			
-			BooleanQuery bq2 = null;
-			if (rw2 is BooleanQuery)
-			{
-				bq2 = (BooleanQuery) rw2;
-			}
-			else
-			{
-				Assert.Fail("Rewrite");
-			}
-			
-			Assert.AreEqual(bq1.GetClauses().Length, bq2.GetClauses().Length, "Number of Clauses Mismatch");
+			Assert.AreEqual(GetCount(reader, rw1), GetCount(reader, rw2), "Number of Clauses Mismatch");
 		}
 	}
 }

@@ -499,7 +499,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing
-		internal virtual IndexReader[] GetSubReaders()
+		public /*internal*/ virtual IndexReader[] GetSubReaders()
 		{
 			return (IndexReader[]) readers.ToArray(typeof(IndexReader));
 		}
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = ((IndexReader) readers[i]);
 				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-				SupportClass.HashtableHelper.AddAll(fieldSet, names);
+				SupportClass.CollectionsHelper.AddAll(fieldSet, names);
 			}
 			return fieldSet;
 		}

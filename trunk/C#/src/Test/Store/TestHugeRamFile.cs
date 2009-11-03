@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,21 +26,20 @@ namespace Lucene.Net.Store
 	
 	/// <summary>Test huge RAMFile with more than Integer.MAX_VALUE bytes. </summary>
 	[TestFixture]
-	public class TestHugeRamFile : LuceneTestCase
+	public class TestHugeRamFile:LuceneTestCase
 	{
-
-        //private static readonly long MAX_VALUE = (long)2 * (long)System.Int32.MaxValue; // around 4 GB of memory
-        private static readonly long MAX_VALUE = (long)System.Int32.MaxValue >> 1; // around 1 GB of mem
+		
+		private static readonly long MAX_VALUE = (long) 2 * (long) System.Int32.MaxValue;
 		
 		/// <summary>Fake a huge ram file by using the same byte buffer for all 
 		/// buffers under maxint. 
 		/// </summary>
 		[Serializable]
-		private class DenseRAMFile : RAMFile
+		private class DenseRAMFile:RAMFile
 		{
 			private long capacity = 0;
 			private System.Collections.Hashtable singleBuffers = new System.Collections.Hashtable();
-			protected override byte[] NewBuffer(int size)
+			public /*internal*/ override byte[] NewBuffer(int size)
 			{
 				capacity += size;
 				if (capacity <= Lucene.Net.Store.TestHugeRamFile.MAX_VALUE)
@@ -67,8 +66,8 @@ namespace Lucene.Net.Store
 			DenseRAMFile f = new DenseRAMFile();
 			// output part
 			RAMOutputStream out_Renamed = new RAMOutputStream(f);
-			byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnitTest];
-			byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnitTest / 3];
+			byte[] b1 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit];
+			byte[] b2 = new byte[RAMOutputStream.BUFFER_SIZE_ForNUnit / 3];
 			for (int i = 0; i < b1.Length; i++)
 			{
 				b1[i] = (byte) (i & 0x0007F);
@@ -102,7 +101,7 @@ namespace Lucene.Net.Store
 			}
 			out_Renamed.Close();
 			// input part
-			RAMInputStream in_Renamed = RAMInputStream.RAMInputStream_ForNUnitTest(f);
+			RAMInputStream in_Renamed = new RAMInputStream(f);
 			Assert.AreEqual(n, in_Renamed.Length(), "input length must match");
 			//System.out.println("input length = "+in.length()+" % 1024 = "+in.length()%1024);
 			for (int j = 0; j < L; j++)

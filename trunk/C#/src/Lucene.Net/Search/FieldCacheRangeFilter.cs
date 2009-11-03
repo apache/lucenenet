@@ -636,7 +636,7 @@ namespace Lucene.Net.Search
 		/// short fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewShortRange(System.String field, System.Int16 lowerVal, System.Int16 upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewShortRange(System.String field, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return NewShortRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -645,7 +645,7 @@ namespace Lucene.Net.Search
 		/// short fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewShortRange(System.String field, Lucene.Net.Search.ShortParser parser, System.Int16 lowerVal, System.Int16 upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewShortRange(System.String field, Lucene.Net.Search.ShortParser parser, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return new AnonymousClassFieldCacheRangeFilter2(field, parser, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -654,7 +654,7 @@ namespace Lucene.Net.Search
 		/// int fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewIntRange(System.String field, System.Int32 lowerVal, System.Int32 upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter NewIntRange(System.String field, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return NewIntRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -663,7 +663,7 @@ namespace Lucene.Net.Search
 		/// int fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewIntRange(System.String field, Lucene.Net.Search.IntParser parser, System.Int32 lowerVal, System.Int32 upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewIntRange(System.String field, Lucene.Net.Search.IntParser parser, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return new AnonymousClassFieldCacheRangeFilter3(field, parser, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -672,7 +672,7 @@ namespace Lucene.Net.Search
 		/// long fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewLongRange(System.String field, System.Int64 lowerVal, System.Int64 upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewLongRange(System.String field, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return NewLongRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -681,7 +681,7 @@ namespace Lucene.Net.Search
 		/// long fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewLongRange(System.String field, Lucene.Net.Search.LongParser parser, System.Int64 lowerVal, System.Int64 upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewLongRange(System.String field, Lucene.Net.Search.LongParser parser, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return new AnonymousClassFieldCacheRangeFilter4(field, parser, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -690,7 +690,7 @@ namespace Lucene.Net.Search
 		/// float fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewFloatRange(System.String field, System.Single lowerVal, System.Single upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewFloatRange(System.String field, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return NewFloatRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -699,7 +699,7 @@ namespace Lucene.Net.Search
 		/// float fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewFloatRange(System.String field, Lucene.Net.Search.FloatParser parser, System.Single lowerVal, System.Single upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewFloatRange(System.String field, Lucene.Net.Search.FloatParser parser, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return new AnonymousClassFieldCacheRangeFilter5(field, parser, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -708,7 +708,7 @@ namespace Lucene.Net.Search
 		/// double fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewDoubleRange(System.String field, System.Double lowerVal, System.Double upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewDoubleRange(System.String field, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return NewDoubleRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
 		}
@@ -717,7 +717,7 @@ namespace Lucene.Net.Search
 		/// double fields containing exactly one numeric term in the field. The range can be half-open by setting one
 		/// of the values to <code>null</code>.
 		/// </summary>
-		public static FieldCacheRangeFilter NewDoubleRange(System.String field, Lucene.Net.Search.DoubleParser parser, System.Double lowerVal, System.Double upperVal, bool includeLower, bool includeUpper)
+		public static FieldCacheRangeFilter NewDoubleRange(System.String field, Lucene.Net.Search.DoubleParser parser, System.ValueType lowerVal, System.ValueType upperVal, bool includeLower, bool includeUpper)
 		{
 			return new AnonymousClassFieldCacheRangeFilter6(field, parser, lowerVal, upperVal, includeLower, includeUpper);
 		}

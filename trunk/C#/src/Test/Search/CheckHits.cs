@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,25 +27,9 @@ namespace Lucene.Net.Search
 	
 	public class CheckHits
 	{
-		private class AnonymousClassHitCollector : HitCollector
-		{
-			public AnonymousClassHitCollector(System.Collections.Hashtable actual)
-			{
-				InitBlock(actual);
-			}
-			private void  InitBlock(System.Collections.Hashtable actual)
-			{
-				this.actual = actual;
-			}
-			private System.Collections.Hashtable actual;
-			public override void  Collect(int doc, float score)
-			{
-				actual.Add((System.Int32) doc, (System.Int32) doc);
-			}
-		}
 		
-		/// <summary> Some explains methods calculate their vlaues though a slightly
-		/// differnet  order of operations from the acctaul scoring method ...
+		/// <summary> Some explains methods calculate their values though a slightly
+		/// different  order of operations from the actual scoring method ...
 		/// this allows for a small amount of variation
 		/// </summary>
 		public static float EXPLAIN_SCORE_TOLERANCE_DELTA = 0.00005f;
@@ -61,7 +45,7 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable ignore = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				ignore.Add((System.Int32) results[i], (System.Int32) results[i]);
+				SupportClass.CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
 			}
 			
 			int maxDoc = searcher.MaxDoc();
@@ -72,9 +56,7 @@ namespace Lucene.Net.Search
 				
 				Explanation exp = searcher.Explain(q, doc);
 				Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-				//Assert.AreEqual(0.0f, exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
-				// also check for NaN
-				Assert.AreEqual(0.0f, float.IsNaN(exp.GetValue()) ? 0.0f : exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
+				Assert.AreEqual(0.0f, exp.GetValue(), 0.0f, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
 			}
 		}
 		
@@ -90,7 +72,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="searcher">the searcher to test the query against
 		/// </param>
-		/// <param name="defaultFieldName">used for displaing the query in assertion messages
+		/// <param name="defaultFieldName">used for displaying the query in assertion messages
 		/// </param>
 		/// <param name="results">a list of documentIds that must match the query
 		/// </param>
@@ -101,22 +83,60 @@ namespace Lucene.Net.Search
 		public static void  CheckHitCollector(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
 		{
 			
-			System.Collections.ArrayList correct = new System.Collections.ArrayList(results.Length);
+			QueryUtils.Check(query, searcher);
+			
+			System.Collections.Hashtable correct = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				correct.Add(results[i]);
+				SupportClass.CollectionsHelper.AddIfNotContains(correct, (System.Int32) results[i]);
 			}
-			
 			System.Collections.Hashtable actual = new System.Collections.Hashtable();
-			searcher.Search(query, new AnonymousClassHitCollector(actual));
-
-			System.Collections.IDictionaryEnumerator e = actual.GetEnumerator();
-			while (e.MoveNext())
+			Collector c = new SetCollector(actual);
+			
+			searcher.Search(query, c);
+			Assert.AreEqual(correct, actual, "Simple: " + query.ToString(defaultFieldName));
+			
+			for (int i = - 1; i < 2; i++)
 			{
-				Assert.Contains(e.Key, correct, query.ToString(defaultFieldName));
+				actual.Clear();
+				QueryUtils.WrapSearcher(searcher, i).Search(query, c);
+				Assert.AreEqual(correct, actual, "Wrap Searcher " + i + ": " + query.ToString(defaultFieldName));
 			}
 			
-			QueryUtils.Check(query, searcher);
+			if (!(searcher is IndexSearcher))
+				return ;
+			
+			for (int i = - 1; i < 2; i++)
+			{
+				actual.Clear();
+				QueryUtils.WrapUnderlyingReader((IndexSearcher) searcher, i).Search(query, c);
+				Assert.AreEqual(correct, actual, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
+			}
+		}
+		
+		public class SetCollector:Collector
+		{
+			internal System.Collections.Hashtable bag;
+			public SetCollector(System.Collections.Hashtable bag)
+			{
+				this.bag = bag;
+			}
+			private int base_Renamed = 0;
+			public override void  SetScorer(Scorer scorer)
+			{
+			}
+			public override void  Collect(int doc)
+			{
+				SupportClass.CollectionsHelper.AddIfNotContains(bag, (System.Int32)(doc + base_Renamed));
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
+			}
 		}
 		
 		/// <summary> Tests that a query matches the an expected set of documents using Hits.
@@ -136,36 +156,32 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <seealso cref="Searcher.Search(Query)">
 		/// </seealso>
-		/// <seealso cref="CheckHitCollector">
+		/// <seealso cref="checkHitCollector">
 		/// </seealso>
-		public static void  CheckHits_Renamed(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
+		public static void  CheckHits_Renamed_Method(Query query, System.String defaultFieldName, Searcher searcher, int[] results)
 		{
 			if (searcher is IndexSearcher)
 			{
-				QueryUtils.Check(query, (IndexSearcher) searcher);
+				QueryUtils.Check(query, searcher);
 			}
 			
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
 			
-			System.Collections.ArrayList correct = new System.Collections.ArrayList(results.Length);
+			System.Collections.ArrayList correct = new System.Collections.ArrayList();
 			for (int i = 0; i < results.Length; i++)
 			{
-				correct.Add(results[i]);
+                SupportClass.CollectionsHelper.AddIfNotContains(correct, results[i]);
 			}
-
-			System.Collections.ArrayList actual = new System.Collections.ArrayList(hits.Length);
+            correct.Sort();
+			
+			System.Collections.ArrayList actual = new System.Collections.ArrayList();
 			for (int i = 0; i < hits.Length; i++)
 			{
-				actual.Add(hits[i].doc);
+				SupportClass.CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
 			}
+            actual.Sort();
 			
-			Assert.AreEqual(correct.Count, actual.Count);
-			correct.Sort();
-			actual.Sort();
-			for (int i = 0; i < correct.Count; i++)
-			{
-				Assert.AreEqual(correct[i], actual[i]);
-			}
+			Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 			
 			QueryUtils.Check(query, searcher);
 		}
@@ -173,7 +189,7 @@ namespace Lucene.Net.Search
 		/// <summary>Tests that a Hits has an expected order of documents </summary>
 		public static void  CheckDocIds(System.String mes, int[] results, ScoreDoc[] hits)
 		{
-			Assert.AreEqual(results.Length, hits.Length, mes + " nr of hits");
+			Assert.AreEqual(hits.Length, results.Length, mes + " nr of hits");
 			for (int i = 0; i < results.Length; i++)
 			{
 				Assert.AreEqual(results[i], hits[i].doc, mes + " doc nrs for hit " + i);
@@ -183,15 +199,15 @@ namespace Lucene.Net.Search
 		/// <summary>Tests that two queries have an expected order of documents,
 		/// and that the two queries have the same score values.
 		/// </summary>
-        public static void CheckHitsQuery(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2, int[] results)
+		public static void  CheckHitsQuery(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2, int[] results)
 		{
 			
 			CheckDocIds("hits1", results, hits1);
 			CheckDocIds("hits2", results, hits2);
 			CheckEqual(query, hits1, hits2);
 		}
-
-        public static void CheckEqual(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2)
+		
+		public static void  CheckEqual(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2)
 		{
 			float scoreTolerance = 1.0e-6f;
 			if (hits1.Length != hits2.Length)
@@ -200,19 +216,19 @@ namespace Lucene.Net.Search
 			}
 			for (int i = 0; i < hits1.Length; i++)
 			{
-                if (hits1[i].doc != hits2[i].doc)
+				if (hits1[i].doc != hits2[i].doc)
 				{
 					Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2, 0, 0) + "for query:" + query.ToString());
 				}
-
-                if ((hits1[i].doc != hits2[i].doc) || System.Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
+				
+				if ((hits1[i].doc != hits2[i].doc) || System.Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
 				{
 					Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].doc + " and " + hits2[i].doc + "\nunequal       : " + hits1[i].score + "\n           and: " + hits2[i].score + "\nfor query:" + query.ToString());
 				}
 			}
 		}
-
-        public static System.String Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
+		
+		public static System.String Hits2str(ScoreDoc[] hits1, ScoreDoc[] hits2, int start, int end)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			int len1 = hits1 == null?0:hits1.Length;
@@ -274,7 +290,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="ExplanationAsserter">
 		/// </seealso>
-		/// <seealso cref="CheckExplanations(Query, String, Searcher, bool) for a">
+		/// <seealso cref="CheckExplanations(Query, String, Searcher, boolean) for a">
 		/// "deep" testing of the explanation details.
 		/// 
 		/// </seealso>
@@ -362,13 +378,13 @@ namespace Lucene.Net.Search
 							int k2 = descr.IndexOf(" ", k1);
 							try
 							{
-								x = SupportClass.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
+								x = System.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
 								if (descr.Substring(k2).Trim().Equals("times others of:"))
 								{
 									maxTimesOthers = true;
 								}
 							}
-							catch (System.FormatException)
+							catch (System.FormatException e)
 							{
 							}
 						}
@@ -417,12 +433,12 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="ExplanationAsserter">
 		/// </seealso>
-		public class ExplanationAssertingSearcher : IndexSearcher
+		public class ExplanationAssertingSearcher:IndexSearcher
 		{
-			public ExplanationAssertingSearcher(Directory d) : base(d)
+			public ExplanationAssertingSearcher(Directory d):base(d)
 			{
 			}
-			public ExplanationAssertingSearcher(IndexReader r) : base(r)
+			public ExplanationAssertingSearcher(IndexReader r):base(r)
 			{
 			}
 			protected internal virtual void  CheckExplanations(Query q)
@@ -435,12 +451,24 @@ namespace Lucene.Net.Search
 				CheckExplanations(query);
 				return base.Search(query, filter, n, sort);
 			}
+			/// <deprecated> use {@link #Search(Query, Collector)} instead. 
+			/// </deprecated>
 			public override void  Search(Query query, HitCollector results)
+			{
+				Search(query, new HitCollectorWrapper(results));
+			}
+			public override void  Search(Query query, Collector results)
 			{
 				CheckExplanations(query);
 				base.Search(query, results);
 			}
+			/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead. 
+			/// </deprecated>
 			public override void  Search(Query query, Filter filter, HitCollector results)
+			{
+				Search(query, filter, new HitCollectorWrapper(results));
+			}
+			public override void  Search(Query query, Filter filter, Collector results)
 			{
 				CheckExplanations(query);
 				base.Search(query, filter, results);
@@ -462,7 +490,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="CheckHits.verifyExplanation">
 		/// </seealso>
-		public class ExplanationAsserter : HitCollector
+		public class ExplanationAsserter:Collector
 		{
 			
 			/// <deprecated>
@@ -476,6 +504,9 @@ namespace Lucene.Net.Search
 			internal System.String d;
 			internal bool deep;
 			
+			internal Scorer scorer;
+			private int base_Renamed = 0;
+			
 			/// <summary>Constructs an instance which does shallow tests on the Explanation </summary>
 			public ExplanationAsserter(Query q, System.String defaultFieldName, Searcher s):this(q, defaultFieldName, s, false)
 			{
@@ -487,11 +518,16 @@ namespace Lucene.Net.Search
 				this.d = q.ToString(defaultFieldName);
 				this.deep = deep;
 			}
-
-			public override void  Collect(int doc, float score)
+			
+			public override void  SetScorer(Scorer scorer)
+			{
+				this.scorer = scorer;
+			}
+			
+			public override void  Collect(int doc)
 			{
 				Explanation exp = null;
-				
+				doc = doc + base_Renamed;
 				try
 				{
 					exp = s.Explain(q, doc);
@@ -502,7 +538,15 @@ namespace Lucene.Net.Search
 				}
 				
 				Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-				Assert.AreEqual(score, exp.GetValue(), SCORE_TOLERANCE_DELTA, "Score of [[" + d + "]] for #" + doc + " does not match explanation: " + exp.ToString());
+				Lucene.Net.Search.CheckHits.VerifyExplanation(d, doc, scorer.Score(), deep, exp);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
 	}

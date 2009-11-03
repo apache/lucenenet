@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,22 +28,23 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-
+	
 	/// <summary> This class tests the MultiPhraseQuery class.
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestMultiPhraseQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestMultiPhraseQuery.java 794078 2009-07-14 21:39:22Z markrmiller $
 	/// </version>
-	[TestFixture]
-	public class TestMultiPhraseQuery : LuceneTestCase
+    [TestFixture]
+	public class TestMultiPhraseQuery:LuceneTestCase
 	{
+		public TestMultiPhraseQuery(System.String name):base(name)
+		{
+		}
 		
 		[Test]
 		public virtual void  TestPhrasePrefix()
@@ -81,7 +84,7 @@ namespace Lucene.Net.Search
 				}
 			}
 			while (te.Next());
-
+			
 			query1.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			Assert.AreEqual("body:\"blueberry (piccadilly pie pizza)\"", query1.ToString());
 			query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
@@ -90,7 +93,7 @@ namespace Lucene.Net.Search
 			ScoreDoc[] result;
 			result = searcher.Search(query1, null, 1000).scoreDocs;
 			Assert.AreEqual(2, result.Length);
-            result = searcher.Search(query2, null, 1000).scoreDocs;
+			result = searcher.Search(query2, null, 1000).scoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
 			// search for "blue* pizza":
@@ -125,7 +128,7 @@ namespace Lucene.Net.Search
 				query4.Add(new Term("field2", "foobar"));
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// okay, all terms must belong to the same field
 			}
@@ -136,7 +139,7 @@ namespace Lucene.Net.Search
 		
 		private void  Add(System.String s, IndexWriter writer)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}
@@ -150,7 +153,7 @@ namespace Lucene.Net.Search
 			// The contained PhraseMultiQuery must contain exactly one term array.
 			
 			RAMDirectory indexStore = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("blueberry pie", writer);
 			Add("blueberry chewing gum", writer);
 			Add("blue raspberry pie", writer);
@@ -177,7 +180,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.String[] { }), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.Collections.Hashtable(0)), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("This is a test", "object", writer);
 			Add("a note", "note", writer);
 			writer.Close();
@@ -199,9 +202,40 @@ namespace Lucene.Net.Search
 			searcher.Close();
 		}
 		
+		[Test]
+		public virtual void  TestHashCodeAndEquals()
+		{
+			MultiPhraseQuery query1 = new MultiPhraseQuery();
+			MultiPhraseQuery query2 = new MultiPhraseQuery();
+			
+			Assert.AreEqual(query1.GetHashCode(), query2.GetHashCode());
+			Assert.AreEqual(query1, query2);
+			
+			Term term1 = new Term("someField", "someText");
+			
+			query1.Add(term1);
+			query2.Add(term1);
+			
+			Assert.AreEqual(query1.GetHashCode(), query2.GetHashCode());
+			Assert.AreEqual(query1, query2);
+			
+			Term term2 = new Term("someField", "someMoreText");
+			
+			query1.Add(term2);
+			
+			Assert.IsFalse(query1.GetHashCode() == query2.GetHashCode());
+			Assert.IsFalse(query1.Equals(query2));
+			
+			query2.Add(term2);
+			
+			Assert.AreEqual(query1.GetHashCode(), query2.GetHashCode());
+			Assert.AreEqual(query1, query2);
+		}
+		
+		
 		private void  Add(System.String s, System.String type, IndexWriter writer)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("body", s, Field.Store.YES, Field.Index.ANALYZED));
 			doc.Add(new Field("type", type, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			writer.AddDocument(doc);

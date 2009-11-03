@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,32 +19,24 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
+using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Payload = Lucene.Net.Index.Payload;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestAnalyzers : LuceneTestCase
+    [TestFixture]
+	public class TestAnalyzers:BaseTokenStreamTestCase
 	{
 		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
+		public TestAnalyzers(System.String name):base(name)
 		{
-			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
-            Token reusableToken = new Token();
-			for (int i = 0; i < output.Length; i++)
-			{
-				Token nextToken = ts.Next(reusableToken);
-				Assert.IsNotNull(nextToken);
-				Assert.AreEqual(nextToken.Term(), output[i]);
-			}
-			Assert.IsNull(ts.Next(reusableToken));
-			ts.Close();
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestSimple()
 		{
 			Analyzer a = new SimpleAnalyzer();
@@ -58,7 +50,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "\"QUOTED\" word", new System.String[]{"quoted", "word"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestNull()
 		{
 			Analyzer a = new WhitespaceAnalyzer();
@@ -72,7 +64,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "\"QUOTED\" word", new System.String[]{"\"QUOTED\"", "word"});
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestStop()
 		{
 			Analyzer a = new StopAnalyzer();
@@ -82,98 +74,92 @@ namespace Lucene.Net.Analysis
 		
 		internal virtual void  VerifyPayload(TokenStream ts)
 		{
-            Token reusableToken = new Token();
+			PayloadAttribute payloadAtt = (PayloadAttribute) ts.GetAttribute(typeof(PayloadAttribute));
 			for (byte b = 1; ; b++)
 			{
-                reusableToken.Clear();
-                Token nextToken = ts.Next(reusableToken);
-				if (nextToken == null)
+				bool hasNext = ts.IncrementToken();
+				if (!hasNext)
 					break;
-				// System.out.println("id="+System.identityHashCode(nextToken) + " " + nextToken);
+				// System.out.println("id="+System.identityHashCode(nextToken) + " " + t);
 				// System.out.println("payload=" + (int)nextToken.getPayload().toByteArray()[0]);
-				Assert.AreEqual(b, nextToken.GetPayload().ToByteArray()[0]);
+				Assert.AreEqual(b, payloadAtt.GetPayload().ToByteArray()[0]);
 			}
 		}
 		
 		// Make sure old style next() calls result in a new copy of payloads
-		[Test]
+        [Test]
 		public virtual void  TestPayloadCopy()
 		{
 			System.String s = "how now brown cow";
 			TokenStream ts;
 			ts = new WhitespaceTokenizer(new System.IO.StringReader(s));
-			ts = new BuffTokenFilter(ts);
 			ts = new PayloadSetter(ts);
 			VerifyPayload(ts);
 			
 			ts = new WhitespaceTokenizer(new System.IO.StringReader(s));
 			ts = new PayloadSetter(ts);
-			ts = new BuffTokenFilter(ts);
 			VerifyPayload(ts);
 		}
-
-        // LUCENE-1150: Just a compile time test to ensure the
-        // StandardAnalyzer constants remain publicly accessible
-        public virtual void _TestStandardConstants()
-        {
-            int x = StandardTokenizer.ALPHANUM;
-            x = StandardTokenizer.APOSTROPHE;
-            x = StandardTokenizer.ACRONYM;
-            x = StandardTokenizer.COMPANY;
-            x = StandardTokenizer.EMAIL;
-            x = StandardTokenizer.HOST;
-            x = StandardTokenizer.NUM;
-            x = StandardTokenizer.CJ;
-            string[] y = StandardTokenizer.TOKEN_TYPES;
-        }
-	}
-	
-	class BuffTokenFilter : TokenFilter
-	{
-		internal System.Collections.IList lst;
 		
-		public BuffTokenFilter(TokenStream input) : base(input)
+		// LUCENE-1150: Just a compile time test, to ensure the
+		// StandardAnalyzer constants remain publicly accessible
+		public virtual void  _testStandardConstants()
 		{
+			int x = StandardTokenizer.ALPHANUM;
+			x = StandardTokenizer.APOSTROPHE;
+			x = StandardTokenizer.ACRONYM;
+			x = StandardTokenizer.COMPANY;
+			x = StandardTokenizer.EMAIL;
+			x = StandardTokenizer.HOST;
+			x = StandardTokenizer.NUM;
+			x = StandardTokenizer.CJ;
+			System.String[] y = StandardTokenizer.TOKEN_TYPES;
 		}
 		
-		public override Token Next(Token reusableToken)
+		private class MyStandardAnalyzer:StandardAnalyzer
 		{
-			if (lst == null)
+			public override TokenStream TokenStream(System.String field, System.IO.TextReader reader)
 			{
-				lst = new System.Collections.ArrayList();
-                for (Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
-				{
-					lst.Add(nextToken.Clone());
-				}
+				return new WhitespaceAnalyzer().TokenStream(field, reader);
 			}
-			object tempObject = lst[0];
-			lst.RemoveAt(0);
-			return lst.Count == 0 ? null : (Token) tempObject;
+		}
+		
+        [Test]
+		public virtual void  TestSubclassOverridingOnlyTokenStream()
+		{
+			Analyzer a = new MyStandardAnalyzer();
+			TokenStream ts = a.ReusableTokenStream("field", new System.IO.StringReader("the"));
+			// StandardAnalyzer will discard "the" (it's a
+			// stopword), by my subclass will not:
+			Assert.IsTrue(ts.IncrementToken());
+			Assert.IsFalse(ts.IncrementToken());
 		}
 	}
 	
-	class PayloadSetter : TokenFilter
+	class PayloadSetter:TokenFilter
 	{
 		private void  InitBlock()
 		{
 			p = new Payload(data, 0, 1);
 		}
-		public PayloadSetter(TokenStream input) : base(input)
+		internal PayloadAttribute payloadAtt;
+		public PayloadSetter(TokenStream input):base(input)
 		{
 			InitBlock();
+			payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
 		}
 		
 		internal byte[] data = new byte[1];
 		internal Payload p;
 		
-		public override Token Next(Token reusableToken)
+		public override bool IncrementToken()
 		{
-            System.Diagnostics.Debug.Assert(reusableToken != null);
-            Token nextToken = input.Next(reusableToken);
-			if (nextToken == null) return null;
-			nextToken.SetPayload(p); // reuse the payload / byte[]
+			bool hasNext = input.IncrementToken();
+			if (!hasNext)
+				return false;
+			payloadAtt.SetPayload(p); // reuse the payload / byte[]
 			data[0]++;
-			return nextToken;
+			return true;
 		}
 	}
 }

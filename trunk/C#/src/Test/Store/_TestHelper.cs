@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,9 @@
 
 using System;
 
-using FSIndexInput = Lucene.Net.Store.FSDirectory.FSIndexInput;
+using NUnit.Framework;
+
+using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
 
 namespace Lucene.Net.Store
 {
@@ -29,21 +31,21 @@ namespace Lucene.Net.Store
 	{
 		
 		/// <summary>Returns true if the instance of the provided input stream is actually
-		/// an FSIndexInput.
+		/// an SimpleFSIndexInput.
 		/// </summary>
-		public static bool IsFSIndexInput(IndexInput is_Renamed)
+		public static bool IsSimpleFSIndexInput(IndexInput is_Renamed)
 		{
-			return is_Renamed is FSIndexInput;
+			return is_Renamed is SimpleFSIndexInput;
 		}
 		
-		/// <summary>Returns true if the provided input stream is an FSIndexInput and
+		/// <summary>Returns true if the provided input stream is an SimpleFSIndexInput and
 		/// is a clone, that is it does not own its underlying file descriptor.
 		/// </summary>
-		public static bool IsFSIndexInputClone(IndexInput is_Renamed)
+		public static bool IsSimpleFSIndexInputClone(IndexInput is_Renamed)
 		{
-			if (IsFSIndexInput(is_Renamed))
+			if (IsSimpleFSIndexInput(is_Renamed))
 			{
-				return ((FSIndexInput) is_Renamed).isClone_ForNUnitTest;
+				return ((SimpleFSIndexInput) is_Renamed).isClone_ForNUnit;
 			}
 			else
 			{
@@ -51,18 +53,18 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary>Given an instance of FSDirectory.FSIndexInput, this method returns
+		/// <summary>Given an instance of SimpleFSDirectory.SimpleFSIndexInput, this method returns
 		/// true if the underlying file descriptor is valid, and false otherwise.
 		/// This can be used to determine if the OS file has been closed.
 		/// The descriptor becomes invalid when the non-clone instance of the
-		/// FSIndexInput that owns this descriptor is closed. However, the
+		/// SimpleFSIndexInput that owns this descriptor is closed. However, the
 		/// descriptor may possibly become invalid in other ways as well.
 		/// </summary>
-		public static bool IsFSIndexInputOpen(IndexInput is_Renamed)
+		public static bool IsSimpleFSIndexInputOpen(IndexInput is_Renamed)
 		{
-			if (IsFSIndexInput(is_Renamed))
+			if (IsSimpleFSIndexInput(is_Renamed))
 			{
-				FSIndexInput fis = (FSIndexInput) is_Renamed;
+				SimpleFSIndexInput fis = (SimpleFSIndexInput) is_Renamed;
 				return fis.IsFDValid();
 			}
 			else

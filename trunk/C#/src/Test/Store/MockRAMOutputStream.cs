@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using NUnit.Framework;
+
 namespace Lucene.Net.Store
 {
 	
@@ -26,17 +28,19 @@ namespace Lucene.Net.Store
 	/// IOExceptions.
 	/// </summary>
 	
-	public class MockRAMOutputStream : RAMOutputStream
+	public class MockRAMOutputStream:RAMOutputStream
 	{
 		private MockRAMDirectory dir;
 		private bool first = true;
+		private System.String name;
 		
 		internal byte[] singleByte = new byte[1];
 		
 		/// <summary>Construct an empty output buffer. </summary>
-		public MockRAMOutputStream(MockRAMDirectory dir, RAMFile f) : base(f)
+		public MockRAMOutputStream(MockRAMDirectory dir, RAMFile f, System.String name):base(f)
 		{
 			this.dir = dir;
+			this.name = name;
 		}
 		
 		public override void  Close()
@@ -69,11 +73,11 @@ namespace Lucene.Net.Store
 			long freeSpace = dir.maxSize - dir.SizeInBytes();
 			long realUsage = 0;
 			
-
-            // If MockRAMDirectory crashed since we were opened, then don't write anything
-            if (dir.crashed)
-                throw new System.IO.IOException("MockRAMDirectory was crashed");
-
+			// If MockRAMDir crashed since we were opened, then
+			// don't write anything:
+			if (dir.crashed)
+				throw new System.IO.IOException("MockRAMDirectory was crashed; cannot write to " + name);
+			
 			// Enforce disk full:
 			if (dir.maxSize != 0 && freeSpace <= len)
 			{
@@ -94,7 +98,7 @@ namespace Lucene.Net.Store
 				{
 					dir.maxUsedSize = realUsage;
 				}
-				throw new System.IO.IOException("fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes");
+				throw new System.IO.IOException("fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes when writing " + name);
 			}
 			else
 			{

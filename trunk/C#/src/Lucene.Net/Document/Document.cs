@@ -429,5 +429,10 @@ namespace Lucene.Net.Documents
 			buffer.Append(">");
 			return buffer.ToString();
 		}
+
+        public System.Collections.IList fields_ForNUnit
+        {
+            get { return fields; }
+        }
 	}
 }

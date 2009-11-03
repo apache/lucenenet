@@ -231,7 +231,7 @@ namespace Lucene.Net.Analysis
 		/// <throws>  NullPointerException </throws>
 		/// <summary>           if the given set is <code>null</code>.
 		/// </summary>
-		public static CharArraySet unmodifiableSet(CharArraySet set_Renamed)
+		public static CharArraySet UnmodifiableSet(CharArraySet set_Renamed)
 		{
 			if (set_Renamed == null)
 				throw new System.NullReferenceException("Given set is null");
@@ -319,7 +319,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary> Efficient unmodifiable {@link CharArraySet}. This implementation does not
 		/// delegate calls to a give {@link CharArraySet} like
-		/// {@link Collections#unmodifiableSet(java.util.Set)} does. Instead is passes
+		/// {@link Collections#UnmodifiableSet(java.util.Set)} does. Instead is passes
 		/// the internal representation of a {@link CharArraySet} to a super
 		/// constructor and overrides all mutators. 
 		/// </summary>

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using NUnit.Framework;
+
 namespace Lucene.Net.Store
 {
 	
@@ -24,7 +26,7 @@ namespace Lucene.Net.Store
 	/// keeps track of when it's been closed.
 	/// </summary>
 	
-	public class MockRAMInputStream : RAMInputStream, System.ICloneable
+	public class MockRAMInputStream:RAMInputStream, System.ICloneable
 	{
 		private MockRAMDirectory dir;
 		private System.String name;
@@ -46,22 +48,22 @@ namespace Lucene.Net.Store
 			// all clones get closed:
 			if (!isClone)
 			{
-				lock (dir.openFiles.SyncRoot)
+				lock (dir)
 				{
-                    // could be null when MockRAMDIrectory.Crash() was called
-                    if (dir.openFiles[name] != null)
-                    {
-                        System.Int32 v = (System.Int32)dir.openFiles[name];
-                        if (v == 1)
-                        {
-                            dir.openFiles.Remove(name);
-                        }
-                        else
-                        {
-                            v = (System.Int32)(v - 1);
-                            dir.openFiles[name] = v;
-                        }
-                    }
+					// Could be null when MockRAMDirectory.crash() was called
+					if (dir.openFiles[name] != null)
+					{
+						System.Int32 v = (System.Int32) dir.openFiles[name];
+						if (v == 1)
+						{
+							dir.openFiles.Remove(name);
+						}
+						else
+						{
+							v = (System.Int32) (v - 1);
+							dir.openFiles[name] = v;
+						}
+					}
 				}
 			}
 		}

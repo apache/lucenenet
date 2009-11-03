@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -33,11 +33,11 @@ namespace Lucene.Net.Search
 	/// <summary> Tests {@link PrefixFilter} class.
 	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestPrefixFilter : LuceneTestCase
+    [TestFixture]
+	public class TestPrefixFilter:LuceneTestCase
 	{
 		[Test]
-		public virtual void  TestPrefixFilter_Renamed_Method()
+		public virtual void  TestPrefixFilter_Renamed()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			

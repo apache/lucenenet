@@ -369,5 +369,10 @@ namespace Lucene.Net.Search
 			fieldSortDoTrackScores = doTrackScores;
 			fieldSortDoMaxScore = doMaxScore;
 		}
+
+        public IndexReader reader_ForNUnit
+        {
+            get { return reader; }
+        }
 	}
 }

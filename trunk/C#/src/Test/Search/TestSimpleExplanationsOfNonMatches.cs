@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,22 +19,21 @@ using System;
 
 using NUnit.Framework;
 
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
-	[TestFixture]
-	public class TestSimpleExplanationsOfNonMatches : TestSimpleExplanations
+	public class TestSimpleExplanationsOfNonMatches:TestSimpleExplanations
 	{
 		
 		/// <summary> Overrides superclass to ignore matches and focus on non-matches

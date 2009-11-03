@@ -261,10 +261,15 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <throws>  AlreadyClosedException if this Directory is closed </throws>
-		protected internal void  EnsureOpen()
+		public /*protected internal*/ void  EnsureOpen()
 		{
 			if (!isOpen)
 				throw new AlreadyClosedException("this Directory is closed");
 		}
+
+        public bool isOpen_ForNUnit
+        {
+            get { return isOpen; }
+        }
 	}
 }

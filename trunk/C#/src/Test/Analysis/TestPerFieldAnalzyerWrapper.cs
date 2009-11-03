@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,15 +19,15 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
-	
-	[TestFixture]	
-	public class TestPerFieldAnalyzerWrapper : LuceneTestCase
+
+    [TestFixture]
+    public class TestPerFieldAnalzyerWrapper : BaseTokenStreamTestCase
 	{
-		[Test]
+        [Test]
 		public virtual void  TestPerField()
 		{
 			System.String text = "Qwerty";
@@ -35,13 +35,15 @@ namespace Lucene.Net.Analysis
 			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
 			
 			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
-            Token reusableToken = new Token();
-			Token nextToken = tokenStream.Next(reusableToken);
-			Assert.AreEqual("Qwerty", nextToken.Term(), "WhitespaceAnalyzer does not lowercase");
+			TermAttribute termAtt = (TermAttribute) tokenStream.GetAttribute(typeof(TermAttribute));
+			
+			Assert.IsTrue(tokenStream.IncrementToken());
+			Assert.AreEqual("Qwerty", termAtt.Term(), "WhitespaceAnalyzer does not lowercase");
 			
 			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
-			nextToken = tokenStream.Next(reusableToken);
-			Assert.AreEqual("qwerty", nextToken.Term(), "SimpleAnalyzer lowercases");
+			termAtt = (TermAttribute) tokenStream.GetAttribute(typeof(TermAttribute));
+			Assert.IsTrue(tokenStream.IncrementToken());
+			Assert.AreEqual("qwerty", termAtt.Term(), "SimpleAnalyzer lowercases");
 		}
 	}
 }

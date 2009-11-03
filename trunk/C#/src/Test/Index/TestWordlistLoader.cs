@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,9 +24,11 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
-	[TestFixture]
-	public class TestWordlistLoader : LuceneTestCase
+	
+    [TestFixture]
+	public class TestWordlistLoader:LuceneTestCase
 	{
+		
 		[Test]
 		public virtual void  TestWordlistLoading()
 		{
@@ -36,6 +38,17 @@ namespace Lucene.Net.Index
 			System.Collections.Hashtable wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
 			CheckSet(wordSet2);
 		}
+		
+		[Test]
+		public virtual void  TestComments()
+		{
+			System.String s = "ONE\n  two \nthree\n#comment";
+			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StreamReader(s), "#");
+			CheckSet(wordSet1);
+			Assert.IsFalse(wordSet1.Contains("#comment"));
+			Assert.IsFalse(wordSet1.Contains("comment"));
+		}
+		
 		
 		private void  CheckSet(System.Collections.Hashtable wordset)
 		{
