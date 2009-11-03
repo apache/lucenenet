@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,8 +24,8 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestPositionBasedTermVectorMapper : LuceneTestCase
+    [TestFixture]
+	public class TestPositionBasedTermVectorMapper:LuceneTestCase
 	{
 		protected internal System.String[] tokens;
 		protected internal int[][] thePositions;
@@ -33,9 +33,9 @@ namespace Lucene.Net.Index
 		protected internal int numPositions;
 		
 		
-		//public TestPositionBasedTermVectorMapper(System.String s):base(s)
-		//{
-		//}
+		public TestPositionBasedTermVectorMapper(System.String s):base(s)
+		{
+		}
 		
 		[SetUp]
 		public override void  SetUp()
@@ -85,32 +85,27 @@ namespace Lucene.Net.Index
 			
 			Assert.IsTrue(positions.Count == numPositions, "thePositions Size: " + positions.Count + " is not: " + numPositions);
 			System.Collections.BitArray bits = new System.Collections.BitArray((numPositions % 64 == 0?numPositions / 64:numPositions / 64 + 1) * 64);
-			for (System.Collections.IEnumerator iterator = new System.Collections.Hashtable(positions).GetEnumerator(); iterator.MoveNext(); )
+			for (System.Collections.IEnumerator iterator = positions.GetEnumerator(); iterator.MoveNext(); )
 			{
 				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
 				PositionBasedTermVectorMapper.TVPositionInfo info = (PositionBasedTermVectorMapper.TVPositionInfo) entry.Value;
 				Assert.IsTrue(info != null, "info is null and it shouldn't be");
 				int pos = ((System.Int32) entry.Key);
 				bits.Set(pos, true);
-				Assert.IsTrue(info.GetPosition() == pos, info.GetPosition() + " does not equal: " + pos);
-				Assert.IsTrue(info.GetOffsets() != null, "info.getOffsets() is null and it shouldn't be");
+				Assert.IsTrue(info.Position == pos, info.Position + " does not equal: " + pos);
+				Assert.IsTrue(info.Offsets != null, "info.getOffsets() is null and it shouldn't be");
 				if (pos == 0)
 				{
-					Assert.IsTrue(info.GetTerms().Count == 2, "info.getTerms() Size: " + info.GetTerms().Count + " is not: " + 2); //need a test for multiple terms at one pos
-					Assert.IsTrue(info.GetOffsets().Count == 2, "info.getOffsets() Size: " + info.GetOffsets().Count + " is not: " + 2);
+					Assert.IsTrue(info.Terms.Count == 2, "info.getTerms() Size: " + info.Terms.Count + " is not: " + 2); //need a test for multiple terms at one pos
+					Assert.IsTrue(info.Offsets.Count == 2, "info.getOffsets() Size: " + info.Offsets.Count + " is not: " + 2);
 				}
 				else
 				{
-					Assert.IsTrue(info.GetTerms().Count == 1, "info.getTerms() Size: " + info.GetTerms().Count + " is not: " + 1); //need a test for multiple terms at one pos
-					Assert.IsTrue(info.GetOffsets().Count == 1, "info.getOffsets() Size: " + info.GetOffsets().Count + " is not: " + 1);
+					Assert.IsTrue(info.Terms.Count == 1, "info.getTerms() Size: " + info.Terms.Count + " is not: " + 1); //need a test for multiple terms at one pos
+					Assert.IsTrue(info.Offsets.Count == 1, "info.getOffsets() Size: " + info.Offsets.Count + " is not: " + 1);
 				}
 			}
-			int cardinality = 0;
-			for (int i = 0; i < bits.Count; i++)
-			{
-				if (bits.Get(i)) cardinality++;
-			}
-			Assert.IsTrue(cardinality == numPositions, "Bits are not all on");
+			Assert.IsTrue(SupportClass.BitSetSupport.Cardinality(bits) == numPositions, "Bits are not all on");
 		}
-	}
+    }
 }

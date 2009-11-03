@@ -1,4 +1,4 @@
-﻿/*
+﻿/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Lucene.Net.Documents;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
@@ -33,8 +33,8 @@ namespace Lucene.Net.Index
 	/// <summary> Test demonstrating EOF bug on the last field of the last doc 
 	/// if other docs have allready been accessed.
 	/// </summary>
-	[TestFixture]
-	public class TestLazyBug : LuceneTestCase
+    [TestFixture]
+	public class TestLazyBug:LuceneTestCase
 	{
 		[Serializable]
 		public class AnonymousClassFieldSelector : FieldSelector
@@ -49,8 +49,6 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public static int BASE_SEED = 13;
-		
 		public static int NUM_DOCS = 500;
 		public static int NUM_FIELDS = 100;
 		
@@ -62,20 +60,20 @@ namespace Lucene.Net.Index
 		
 		private static FieldSelector SELECTOR;
 		
-		private static Directory MakeIndex()
+		private Directory MakeIndex()
 		{
 			Directory dir = new RAMDirectory();
 			try
 			{
-				System.Random r = new System.Random((System.Int32) (BASE_SEED + 42));
+				System.Random r = NewRandom();
 				Analyzer analyzer = new SimpleAnalyzer();
-                IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+				IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 				
 				writer.SetUseCompoundFile(false);
 				
 				for (int d = 1; d <= NUM_DOCS; d++)
 				{
-					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+					Document doc = new Document();
 					for (int f = 1; f <= NUM_FIELDS; f++)
 					{
 						doc.Add(new Field("f" + f, data[f % data.Length] + '#' + data[r.Next(data.Length)], Field.Store.YES, Field.Index.ANALYZED));
@@ -91,22 +89,18 @@ namespace Lucene.Net.Index
 			return dir;
 		}
 		
-		public static void  DoTest(int[] docs)
+		public virtual void  DoTest(int[] docs)
 		{
-			if (dataset.Count == 0)
-			{
-				for (int i = 0; i < data.Length; i++)
-				{
-					dataset.Add(data[i], data[i]);
-				}
-			}
+            if (dataset.Count == 0)
+                for (int i = 0; i < data.Length; i++)
+                    dataset.Add(data[i], data[i]);
 
 			Directory dir = MakeIndex();
 			IndexReader reader = IndexReader.Open(dir);
 			for (int i = 0; i < docs.Length; i++)
 			{
-				Lucene.Net.Documents.Document d = reader.Document(docs[i], SELECTOR);
-				System.String trash = d.Get(MAGIC_FIELD);
+				Document d = reader.Document(docs[i], SELECTOR);
+				d.Get(MAGIC_FIELD);
 				
 				System.Collections.IList fields = d.GetFields();
 				for (System.Collections.IEnumerator fi = fields.GetEnumerator(); fi.MoveNext(); )
@@ -117,7 +111,7 @@ namespace Lucene.Net.Index
 						f = (Fieldable) fi.Current;
 						System.String fname = f.Name();
 						System.String fval = f.StringValue();
-						Assert.IsNotNull(fval, docs[i] + " FIELD: " + fname);
+						Assert.IsNotNull(docs[i] + " FIELD: " + fname, fval);
 						System.String[] vals = fval.Split('#');
 						if (!dataset.Contains(vals[0]) || !dataset.Contains(vals[1]))
 						{
@@ -150,7 +144,6 @@ namespace Lucene.Net.Index
 		{
 			DoTest(new int[]{150, 399});
 		}
-
 		static TestLazyBug()
 		{
 			SELECTOR = new AnonymousClassFieldSelector();

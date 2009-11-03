@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,6 +28,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -35,61 +36,68 @@ namespace Lucene.Net.Search
 	/// <summary> Unit test for sorting code.
 	/// 
 	/// </summary>
+	
 	[Serializable]
-	[TestFixture]
-	public class TestCustomSearcherSort
+    [TestFixture]
+	public class TestCustomSearcherSort:LuceneTestCase
 	{
-		private Directory Index
-		{
-			// create an index for testing
-			
-			get
-			{
-				RAMDirectory indexStore = new RAMDirectory();
-				IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				RandomGen random = new RandomGen(this);
-				for (int i = 0; i < INDEX_SIZE; ++i)
-				{
-					// don't decrease; if to low the problem doesn't show up
-					Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-					if ((i % 5) != 0)
-					{
-						// some documents must not have an entry in the first sort field
-						doc.Add(new Field("publicationDate_", random.GetLuceneDate(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-					}
-					if ((i % 7) == 0)
-					{
-						// some documents to match the query (see below) 
-						doc.Add(new Field("content", "test", Field.Store.YES, Field.Index.ANALYZED));
-					}
-					// every document has a defined 'mandant' field
-					doc.Add(new Field("mandant", System.Convert.ToString(i % 3), Field.Store.YES, Field.Index.NOT_ANALYZED));
-					writer.AddDocument(doc);
-				}
-				writer.Optimize();
-				writer.Close();
-				return indexStore;
-			}
-			
-		}
 		
 		private Directory index = null;
 		private Query query = null;
 		// reduced from 20000 to 2000 to speed up test...
 		private const int INDEX_SIZE = 2000;
 		
+		public TestCustomSearcherSort(System.String name):base(name)
+		{
+		}
 		
 		[STAThread]
 		public static void  Main(System.String[] argv)
 		{
-			// TestRunner.run(Suite()); // {{Aroush}} how is this done in NUnit?
+			// TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
+		}
+		
+		/*public static Test suite()
+		{
+			return new TestSuite(typeof(TestCustomSearcherSort));
+		}*/
+		
+		
+		// create an index for testing
+		private Directory GetIndex()
+		{
+			RAMDirectory indexStore = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			RandomGen random = new RandomGen(this, NewRandom());
+			for (int i = 0; i < INDEX_SIZE; ++i)
+			{
+				// don't decrease; if to low the problem doesn't show up
+				Document doc = new Document();
+				if ((i % 5) != 0)
+				{
+					// some documents must not have an entry in the first sort field
+					doc.Add(new Field("publicationDate_", random.GetLuceneDate(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+				}
+				if ((i % 7) == 0)
+				{
+					// some documents to match the query (see below) 
+					doc.Add(new Field("content", "test", Field.Store.YES, Field.Index.ANALYZED));
+				}
+				// every document has a defined 'mandant' field
+				doc.Add(new Field("mandant", System.Convert.ToString(i % 3), Field.Store.YES, Field.Index.NOT_ANALYZED));
+				writer.AddDocument(doc);
+			}
+			writer.Optimize();
+			writer.Close();
+			return indexStore;
 		}
 		
 		/// <summary> Create index and query for test cases. </summary>
 		[SetUp]
-		public virtual void  SetUp()
+		public override void  SetUp()
 		{
-			index = Index;
+			base.SetUp();
+			index = GetIndex();
 			query = new TermQuery(new Term("content", "test"));
 		}
 		
@@ -111,7 +119,7 @@ namespace Lucene.Net.Search
 			// log("Run testFieldSortSingleSearcher");
 			// define the sort criteria
 			Sort custSort = new Sort(new SortField[]{new SortField("publicationDate_"), SortField.FIELD_SCORE});
-			Searcher searcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{new CustomSearcher(this, index, 2)});
+			Searcher searcher = new MultiSearcher(new Searcher[]{new CustomSearcher(this, index, 2)});
 			// search and check hits
 			MatchHits(searcher, custSort);
 		}
@@ -122,7 +130,7 @@ namespace Lucene.Net.Search
 			// log("Run testFieldSortMultiCustomSearcher");
 			// define the sort criteria
 			Sort custSort = new Sort(new SortField[]{new SortField("publicationDate_"), SortField.FIELD_SCORE});
-			Searcher searcher = new MultiSearcher(new Lucene.Net.Search.Searchable[]{new CustomSearcher(this, index, 0), new CustomSearcher(this, index, 2)});
+			Searcher searcher = new MultiSearcher(new Searchable[]{new CustomSearcher(this, index, 0), new CustomSearcher(this, index, 2)});
 			// search and check hits
 			MatchHits(searcher, custSort);
 		}
@@ -145,7 +153,6 @@ namespace Lucene.Net.Search
 			ScoreDoc[] resultSort = searcher.Search(query, null, 1000, sort).scoreDocs;
 			CheckHits(resultSort, "Sort by custom criteria: "); // check for duplicates
 			
-			System.String lf = SupportClass.AppSettings.Get("line.separator", "\n");
 			// besides the sorting both sets of hits must be identical
 			for (int hitid = 0; hitid < resultSort.Length; ++hitid)
 			{
@@ -181,23 +188,24 @@ namespace Lucene.Net.Search
 				for (int docnum = 0; docnum < hits.Length; ++docnum)
 				{
 					System.Int32 luceneId;
-                    luceneId = (System.Int32)hits[docnum].doc;
-                    if (idMap.Contains(luceneId))
-                    {
-                        System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
-                        message.Append("Duplicate key for hit index = ");
-                        message.Append(docnum);
-                        message.Append(", previous index = ");
-                        message.Append(((System.Int32)idMap[luceneId]).ToString());
-                        message.Append(", Lucene ID = ");
-                        message.Append(luceneId);
-                        Log(message.ToString());
-                    }
-                    else
-                    {
-                        idMap[luceneId] = (System.Int32)docnum;
-                    }
-                }
+					
+					luceneId = (System.Int32) hits[docnum].doc;
+					if (idMap.Contains(luceneId))
+					{
+						System.Text.StringBuilder message = new System.Text.StringBuilder(prefix);
+						message.Append("Duplicate key for hit index = ");
+						message.Append(docnum);
+						message.Append(", previous index = ");
+						message.Append(((System.Int32) idMap[luceneId]).ToString());
+						message.Append(", Lucene ID = ");
+						message.Append(luceneId);
+						Log(message.ToString());
+					}
+					else
+					{
+						idMap[luceneId] = (System.Int32) docnum;
+					}
+				}
 			}
 		}
 		
@@ -207,7 +215,7 @@ namespace Lucene.Net.Search
 			System.Console.Out.WriteLine(message);
 		}
 		
-		public class CustomSearcher : IndexSearcher
+		public class CustomSearcher:IndexSearcher
 		{
 			private void  InitBlock(TestCustomSearcherSort enclosingInstance)
 			{
@@ -247,7 +255,7 @@ namespace Lucene.Net.Search
 				this.switcher = switcher;
 			}
 			/* (non-Javadoc)
-			* @see Lucene.Net.search.Searchable#search(Lucene.Net.search.Query, Lucene.Net.search.Filter, int, Lucene.Net.search.Sort)
+			* @see Lucene.Net.Search.Searchable#search(Lucene.Net.Search.Query, Lucene.Net.Search.Filter, int, Lucene.Net.Search.Sort)
 			*/
 			public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
 			{
@@ -257,7 +265,7 @@ namespace Lucene.Net.Search
 				return base.Search(bq, filter, nDocs, sort);
 			}
 			/* (non-Javadoc)
-			* @see Lucene.Net.search.Searchable#search(Lucene.Net.search.Query, Lucene.Net.search.Filter, int)
+			* @see Lucene.Net.Search.Searchable#search(Lucene.Net.Search.Query, Lucene.Net.Search.Filter, int)
 			*/
 			public override TopDocs Search(Query query, Filter filter, int nDocs)
 			{
@@ -267,13 +275,8 @@ namespace Lucene.Net.Search
 				return base.Search(bq, filter, nDocs);
 			}
 		}
-
 		private class RandomGen
 		{
-			public RandomGen(TestCustomSearcherSort enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
 			private void  InitBlock(TestCustomSearcherSort enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
@@ -284,26 +287,24 @@ namespace Lucene.Net.Search
 			private TestCustomSearcherSort enclosingInstance;
 			public TestCustomSearcherSort Enclosing_Instance
 			{
-				// Just to generate some different Lucene Date strings
-				
 				get
 				{
 					return enclosingInstance;
 				}
 				
 			}
-
-			private System.Random random = new System.Random((System.Int32) 0); // to generate some arbitrary contents
-			// private System.Globalization.Calendar base_Renamed;
+			internal RandomGen(TestCustomSearcherSort enclosingInstance, System.Random random)
+			{
+				InitBlock(enclosingInstance);
+				this.random = random;
+			}
+			private System.Random random;
 			private System.DateTime base_Renamed;
 			
 			// Just to generate some different Lucene Date strings
-			public System.String GetLuceneDate()
+			public /*private*/ System.String GetLuceneDate()
 			{
-				long v1 = base_Renamed.Millisecond;
-				long v2 = random.Next();
-				long v3 = System.Int32.MinValue;
-				return DateTools.TimeToString(v1 + v2 - v3, DateTools.Resolution.DAY);
+                return DateTools.TimeToString(base_Renamed.Millisecond + random.Next() - System.Int32.MinValue, DateTools.Resolution.DAY);
 			}
 		}
 	}

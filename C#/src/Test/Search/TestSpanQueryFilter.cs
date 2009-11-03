@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,17 +27,20 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
 namespace Lucene.Net.Search
 {
 	
-	[TestFixture]
-	public class TestSpanQueryFilter : LuceneTestCase
+    [TestFixture]
+	public class TestSpanQueryFilter:LuceneTestCase
 	{
+		
+		
+		public TestSpanQueryFilter(System.String s):base(s)
+		{
+		}
 		
 		[Test]
 		public virtual void  TestFilterWorks()
@@ -56,39 +60,41 @@ namespace Lucene.Net.Search
 			SpanTermQuery query = new SpanTermQuery(new Term("field", English.IntToEnglish(10).Trim()));
 			SpanQueryFilter filter = new SpanQueryFilter(query);
 			SpanFilterResult result = filter.BitSpans(reader);
-            DocIdSet docIdSet = result.GetDocIdSet();
+			DocIdSet docIdSet = result.GetDocIdSet();
 			Assert.IsTrue(docIdSet != null, "docIdSet is null and it shouldn't be");
 			AssertContainsDocId("docIdSet doesn't contain docId 10", docIdSet, 10);
 			System.Collections.IList spans = result.GetPositions();
 			Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
-            int size = GetDocIdSetSize(docIdSet);
-            Assert.IsTrue(spans.Count == size, "spans Size: " + spans.Count + " is not: " + size);
+			int size = GetDocIdSetSize(docIdSet);
+			Assert.IsTrue(spans.Count == size, "spans Size: " + spans.Count + " is not: " + size);
 			for (System.Collections.IEnumerator iterator = spans.GetEnumerator(); iterator.MoveNext(); )
 			{
 				SpanFilterResult.PositionInfo info = (SpanFilterResult.PositionInfo) iterator.Current;
 				Assert.IsTrue(info != null, "info is null and it shouldn't be");
 				//The doc should indicate the bit is on
-                AssertContainsDocId("docIdSet doesn't contain docId " + info.GetDoc(), docIdSet, info.GetDoc());
+				AssertContainsDocId("docIdSet doesn't contain docId " + info.GetDoc(), docIdSet, info.GetDoc());
 				//There should be two positions in each
 				Assert.IsTrue(info.GetPositions().Count == 2, "info.getPositions() Size: " + info.GetPositions().Count + " is not: " + 2);
 			}
 			reader.Close();
 		}
-
-        internal int GetDocIdSetSize(DocIdSet docIdSet)
-        {
-            int size = 0;
-            DocIdSetIterator it = docIdSet.Iterator();
-            while (it.Next())
-                size++;
-            return size;
-        }
-
-        public void AssertContainsDocId(string msg, DocIdSet docIdSet, int docId)
-        {
-            DocIdSetIterator it = docIdSet.Iterator();
-            Assert.IsTrue(it.SkipTo(docId), msg);
-            Assert.IsTrue(it.Doc() == docId, msg);
-        }
+		
+		internal virtual int GetDocIdSetSize(DocIdSet docIdSet)
+		{
+			int size = 0;
+			DocIdSetIterator it = docIdSet.Iterator();
+			while (it.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			{
+				size++;
+			}
+			return size;
+		}
+		
+		public virtual void  AssertContainsDocId(System.String msg, DocIdSet docIdSet, int docId)
+		{
+			DocIdSetIterator it = docIdSet.Iterator();
+			Assert.IsTrue(it.Advance(docId) != DocIdSetIterator.NO_MORE_DOCS, msg);
+			Assert.IsTrue(it.DocID() == docId, msg);
+		}
 	}
 }

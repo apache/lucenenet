@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,14 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Index = Lucene.Net.Documents.Field.Index;
 using Store = Lucene.Net.Documents.Field.Store;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -37,12 +37,12 @@ namespace Lucene.Net.Index
 	/// <summary> Test that norms info is preserved during index life - including
 	/// separate norms, addDocument, addIndexes, optimize.
 	/// </summary>
-	[TestFixture]
-	public class TestNorms : LuceneTestCase
+    [TestFixture]
+	public class TestNorms:LuceneTestCase
 	{
 		
 		[Serializable]
-		private class SimilarityOne : DefaultSimilarity
+		private class SimilarityOne:DefaultSimilarity
 		{
 			public SimilarityOne(TestNorms enclosingInstance)
 			{
@@ -77,9 +77,12 @@ namespace Lucene.Net.Index
 		private float lastNorm = 0;
 		private float normDelta = (float) 0.001;
 		
+		public TestNorms(System.String s):base(s)
+		{
+		}
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			similarityOne = new SimilarityOne(this);
@@ -103,7 +106,7 @@ namespace Lucene.Net.Index
 			
 			// test with a single index: index1
 			System.IO.FileInfo indexDir1 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex1"));
-			Directory dir1 = FSDirectory.GetDirectory(indexDir1);
+			Directory dir1 = FSDirectory.Open(indexDir1);
 			
 			norms = new System.Collections.ArrayList();
 			modifiedNorms = new System.Collections.ArrayList();
@@ -121,17 +124,17 @@ namespace Lucene.Net.Index
 			numDocNorms = 0;
 			
 			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex2"));
-			Directory dir2 = FSDirectory.GetDirectory(indexDir2);
+			Directory dir2 = FSDirectory.Open(indexDir2);
 			
 			CreateIndex(dir2);
 			DoTestNorms(dir2);
 			
 			// add index1 and index2 to a third index: index3
 			System.IO.FileInfo indexDir3 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex3"));
-			Directory dir3 = FSDirectory.GetDirectory(indexDir3);
+			Directory dir3 = FSDirectory.Open(indexDir3);
 			
 			CreateIndex(dir3);
-            IndexWriter iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.AddIndexes(new Directory[]{dir1, dir2});
@@ -148,7 +151,7 @@ namespace Lucene.Net.Index
 			DoTestNorms(dir3);
 			
 			// now with optimize
-            iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
+			iw = new IndexWriter(dir3, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.Optimize();
@@ -177,7 +180,7 @@ namespace Lucene.Net.Index
 		
 		private void  CreateIndex(Directory dir)
 		{
-            IndexWriter iw = new IndexWriter(dir, anlzr, true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(dir, anlzr, true, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
@@ -226,7 +229,7 @@ namespace Lucene.Net.Index
 		
 		private void  AddDocs(Directory dir, int ndocs, bool compound)
 		{
-            IndexWriter iw = new IndexWriter(dir, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(dir, anlzr, false, IndexWriter.MaxFieldLength.LIMITED);
 			iw.SetMaxBufferedDocs(5);
 			iw.SetMergeFactor(3);
 			iw.SetSimilarity(similarityOne);
@@ -239,13 +242,13 @@ namespace Lucene.Net.Index
 		}
 		
 		// create the next document
-		private Lucene.Net.Documents.Document NewDoc()
+		private Document NewDoc()
 		{
-			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+			Document d = new Document();
 			float boost = NextNorm();
 			for (int i = 0; i < 10; i++)
 			{
-				Field f = new Field("f" + i, "v" + i, Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.NOT_ANALYZED);
+				Field f = new Field("f" + i, "v" + i, Field.Store.NO, Field.Index.NOT_ANALYZED);
 				f.SetBoost(boost);
 				d.Add(f);
 			}
@@ -272,7 +275,7 @@ namespace Lucene.Net.Index
 			modifiedNorms.Insert(numDocNorms, (float) norm);
 			//System.out.println("creating norm("+numDocNorms+"): "+norm);
 			numDocNorms++;
-			lastNorm = (norm > 10 ? 0 : norm); //there's a limit to how many distinct values can be stored in a ingle byte
+			lastNorm = (norm > 10?0:norm); //there's a limit to how many distinct values can be stored in a ingle byte
 			return norm;
 		}
 	}

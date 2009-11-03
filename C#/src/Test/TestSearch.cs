@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
-using Lucene.Net.Analysis;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net
@@ -34,17 +33,17 @@ namespace Lucene.Net
 	/// <summary>JUnit adaptation of an older test case SearchTest.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestSearch.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestSearch.java 694004 2008-09-10 21:38:52Z mikemccand $
 	/// </version>
 	[TestFixture]
-	public class TestSearch : LuceneTestCase
+	public class TestSearch:LuceneTestCase
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestSearch))); // {{Aroush-1.9}} where is 'TestRunner' in NUnit?
+			// TestRunner.run(new TestSuite(typeof(TestSearch))); // {{Aroush-2.9}} how is this done in NUnit?
 		}
 		
 		/// <summary>This test performs a number of searches. It also compares output
@@ -56,8 +55,8 @@ namespace Lucene.Net
 		/// passes if the results are the same between multi-file and
 		/// single-file formats, even if the results are wrong.
 		/// </summary>
-		[Test]
-		public virtual void  TestSearch_Renamed_Method()
+        [Test]
+        public virtual void TestSearch_Renamed()
 		{
 			System.IO.MemoryStream sw = new System.IO.MemoryStream();
 			System.IO.StreamWriter pw = new System.IO.StreamWriter(sw);
@@ -89,7 +88,7 @@ namespace Lucene.Net
 			System.String[] docs = new System.String[]{"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
 			for (int j = 0; j < docs.Length; j++)
 			{
-				Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+				Document d = new Document();
 				d.Add(new Field("contents", docs[j], Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(d);
 			}
@@ -100,7 +99,7 @@ namespace Lucene.Net
 			System.String[] queries = new System.String[]{"a b", "\"a b\"", "\"a b c\"", "a c", "\"a c\"", "\"a c e\""};
 			ScoreDoc[] hits = null;
 			
-			Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser("contents", analyzer);
+			QueryParser parser = new QueryParser("contents", analyzer);
 			parser.SetPhraseSlop(4);
 			for (int j = 0; j < queries.Length; j++)
 			{
@@ -117,7 +116,7 @@ namespace Lucene.Net
 				out_Renamed.WriteLine(hits.Length + " total results");
 				for (int i = 0; i < hits.Length && i < 10; i++)
 				{
-					Lucene.Net.Documents.Document d = searcher.Doc(hits[i].doc);
+					Document d = searcher.Doc(hits[i].doc);
 					out_Renamed.WriteLine(i + " " + hits[i].score + " " + d.Get("contents"));
 				}
 			}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,55 +19,55 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Lucene.Net.Search.Spans;
+using SpanFirstQuery = Lucene.Net.Search.Spans.SpanFirstQuery;
+using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+using SpanNotQuery = Lucene.Net.Search.Spans.SpanNotQuery;
+using SpanOrQuery = Lucene.Net.Search.Spans.SpanOrQuery;
+using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Tests primative queries (ie: that rewrite to themselves) to
+	/// <summary> Tests primitive queries (ie: that rewrite to themselves) to
 	/// insure they match the expected set of docs, and that the score of each
 	/// match is equal to the value of the scores explanation.
 	/// 
 	/// <p>
-	/// The assumption is that if all of the "primative" queries work well,
-	/// then anythingthat rewrites to a primative will work well also.
+	/// The assumption is that if all of the "primitive" queries work well,
+	/// then anything that rewrites to a primitive will work well also.
 	/// </p>
 	/// 
 	/// </summary>
 	/// <seealso cref=""Subclasses for actual tests"">
 	/// </seealso>
-	[TestFixture]
-	public class TestExplanations : LuceneTestCase
+    [TestFixture]
+	public class TestExplanations:LuceneTestCase
 	{
 		protected internal IndexSearcher searcher;
 		
+		public const System.String KEY = "KEY";
 		public const System.String FIELD = "field";
-		public static readonly Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(FIELD, new WhitespaceAnalyzer());
+		public static readonly QueryParser qp = new QueryParser(FIELD, new WhitespaceAnalyzer());
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
 			base.TearDown();
-			if (searcher != null)
-			{
-				searcher.Close();
-				searcher = null;
-			}
+			searcher.Close();
 		}
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
@@ -75,6 +75,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < docFields.Length; i++)
 			{
 				Document doc = new Document();
+				doc.Add(new Field(KEY, "" + i, Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field(FIELD, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -102,11 +103,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Tests a query using qtest after wrapping it with both optB and reqB</summary>
-		/// <seealso cref="Qtest">
+		/// <seealso cref="qtest">
 		/// </seealso>
-		/// <seealso cref="ReqB">
+		/// <seealso cref="reqB">
 		/// </seealso>
-		/// <seealso cref="OptB">
+		/// <seealso cref="optB">
 		/// </seealso>
 		public virtual void  Bqtest(Query q, int[] expDocNrs)
 		{
@@ -114,45 +115,36 @@ namespace Lucene.Net.Search
 			Qtest(OptB(q), expDocNrs);
 		}
 		/// <summary> Tests a query using qtest after wrapping it with both optB and reqB</summary>
-		/// <seealso cref="Qtest">
+		/// <seealso cref="qtest">
 		/// </seealso>
-		/// <seealso cref="ReqB">
+		/// <seealso cref="reqB">
 		/// </seealso>
-		/// <seealso cref="OptB">
+		/// <seealso cref="optB">
 		/// </seealso>
 		public virtual void  Bqtest(System.String queryText, int[] expDocNrs)
 		{
 			Bqtest(MakeQuery(queryText), expDocNrs);
 		}
 		
-		/// <summary>A filter that only lets the specified document numbers pass </summary>
+		/// <summary> Convenience subclass of FieldCacheTermsFilter</summary>
 		[Serializable]
-		public class ItemizedFilter : Filter
+		public class ItemizedFilter:FieldCacheTermsFilter
 		{
-			internal int[] docs;
-			public ItemizedFilter(int[] docs)
+			private static System.String[] int2str(int[] terms)
 			{
-				this.docs = docs;
+				System.String[] out_Renamed = new System.String[terms.Length];
+				for (int i = 0; i < terms.Length; i++)
+				{
+					out_Renamed[i] = "" + terms[i];
+				}
+				return out_Renamed;
 			}
-            public override DocIdSet GetDocIdSet(IndexReader r)
-            {
-                System.Collections.BitArray b = new System.Collections.BitArray((r.MaxDoc() % 64 == 0 ? r.MaxDoc() / 64 : r.MaxDoc() / 64 + 1) * 64);
-                for (int i = 0; i < docs.Length; i++)
-                {
-                    b.Set(docs[i], true);
-                }
-                return new DocIdBitSet(b);
-            }
-            [System.Obsolete()]
-            public override System.Collections.BitArray Bits(IndexReader r)
-            {
-                System.Collections.BitArray b = new System.Collections.BitArray((r.MaxDoc() % 64 == 0 ? r.MaxDoc() / 64 : r.MaxDoc() / 64 + 1) * 64);
-                for (int i = 0; i < docs.Length; i++)
-                {
-                    b.Set(docs[i], true);
-                }
-                return b;
-            }
+			public ItemizedFilter(System.String keyField, int[] keys):base(keyField, int2str(keys))
+			{
+			}
+			public ItemizedFilter(int[] keys):base(Lucene.Net.Search.TestExplanations.KEY, int2str(keys))
+			{
+			}
 		}
 		
 		/// <summary>helper for generating MultiPhraseQueries </summary>

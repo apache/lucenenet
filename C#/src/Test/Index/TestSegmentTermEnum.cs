@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,21 +19,20 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-	/// <author>  goller
-	/// </author>
-	[TestFixture]
-	public class TestSegmentTermEnum : LuceneTestCase
+	
+    [TestFixture]
+	public class TestSegmentTermEnum:LuceneTestCase
 	{
 		internal Directory dir = new RAMDirectory();
 		
@@ -44,7 +43,7 @@ namespace Lucene.Net.Index
 			
 			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
-			// add 100 documents with term : aaa
+			// ADD 100 documents with term : aaa
 			// add 100 documents with terms: aaa bbb
 			// Therefore, term 'aaa' has document frequency of 200 and term 'bbb' 100
 			for (int i = 0; i < 100; i++)
@@ -59,7 +58,7 @@ namespace Lucene.Net.Index
 			VerifyDocFreq();
 			
 			// merge segments by optimizing the index
-            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Optimize();
 			writer.Close();
 			
@@ -71,10 +70,10 @@ namespace Lucene.Net.Index
 		public virtual void  TestPrevTermAtEnd()
 		{
 			Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDoc(writer, "aaa bbb");
 			writer.Close();
-			IndexReader reader = IndexReader.Open(dir);
+			SegmentReader reader = SegmentReader.GetOnlySegmentReader(dir);
 			SegmentTermEnum termEnum = (SegmentTermEnum) reader.Terms();
 			Assert.IsTrue(termEnum.Next());
 			Assert.AreEqual("aaa", termEnum.Term().Text());
@@ -122,7 +121,7 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,16 +29,18 @@ using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Store
 {
 	
 	[TestFixture]
-	public class TestLockFactory : LuceneTestCase
+	public class TestLockFactory:LuceneTestCase
 	{
 		
 		// Verify: we can provide our own LockFactory implementation, the right
 		// methods are called at the right time, locks are created, etc.
+		
 		[Test]
 		public virtual void  TestCustomLockFactory()
 		{
@@ -122,7 +124,7 @@ namespace Lucene.Net.Store
 				writer2 = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.Fail("Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 			}
 			
@@ -138,7 +140,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDefaultFSDirectory()
 		{
-			System.String indexDirName = "index.TestLockFactory1";
+			System.IO.FileInfo indexDirName = _TestUtil.GetTempDir("index.TestLockFactory1");
 			
 			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
@@ -152,7 +154,7 @@ namespace Lucene.Net.Store
 				writer2 = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.Fail("Should have hit an IOException with two IndexWriters on default SimpleFSLockFactory");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 			}
 			
@@ -163,14 +165,14 @@ namespace Lucene.Net.Store
 			}
 			
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDirName);
 		}
 		
 		// Verify: FSDirectory's default lockFactory clears all locks correctly
 		[Test]
 		public virtual void  TestFSDirectoryTwoCreates()
 		{
-			System.String indexDirName = "index.TestLockFactory2";
+			System.IO.FileInfo indexDirName = _TestUtil.GetTempDir("index.TestLockFactory2");
 			
 			IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
@@ -198,7 +200,7 @@ namespace Lucene.Net.Store
 			}
 			catch (System.IO.IOException e)
 			{
-				System.Console.Error.WriteLine(e.StackTrace);
+				System.Console.Out.WriteLine(e.StackTrace);
 				Assert.Fail("Should not have hit an IOException with two IndexWriters with create=true, on default SimpleFSLockFactory");
 			}
 			
@@ -210,14 +212,14 @@ namespace Lucene.Net.Store
 					writer2.Close();
 					// expected
 				}
-				catch (LockReleaseFailedException)
+				catch (LockReleaseFailedException e)
 				{
 					Assert.Fail("writer2.close() should not have hit LockReleaseFailedException");
 				}
 			}
 			
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDirName);
 		}
 		
 		
@@ -228,7 +230,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestLockClassProperty()
 		{
-			System.String indexDirName = "index.TestLockFactory3";
+			System.IO.FileInfo indexDirName = _TestUtil.GetTempDir("index.TestLockFactory3");
 			System.String prpName = "Lucene.Net.Store.FSDirectoryLockFactoryClass";
 			
 			try
@@ -265,14 +267,14 @@ namespace Lucene.Net.Store
 			}
 			
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDirName);
 		}
 		
 		// Verify: setDisableLocks works
 		[Test]
 		public virtual void  TestDisableLocks()
 		{
-			System.String indexDirName = "index.TestLockFactory4";
+			System.IO.FileInfo indexDirName = _TestUtil.GetTempDir("index.TestLockFactory4");
 			
 			Assert.IsTrue(!FSDirectory.GetDisableLocks(), "Locks are already disabled");
 			FSDirectory.SetDisableLocks(true);
@@ -289,7 +291,7 @@ namespace Lucene.Net.Store
 			}
 			catch (System.IO.IOException e)
 			{
-				System.Console.Error.WriteLine(e.StackTrace);
+				System.Console.Out.WriteLine(e.StackTrace);
 				Assert.Fail("Should not have hit an IOException with locking disabled");
 			}
 			
@@ -300,14 +302,14 @@ namespace Lucene.Net.Store
 				writer2.Close();
 			}
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDirName);
 		}
 		
 		// Verify: if I try to getDirectory() with two different locking implementations, I get an IOException
 		[Test]
 		public virtual void  TestFSDirectoryDifferentLockFactory()
 		{
-			System.String indexDirName = "index.TestLockFactory5";
+			System.IO.FileInfo indexDirName = _TestUtil.GetTempDir("index.TestLockFactory5");
 			
 			LockFactory lf = new SingleInstanceLockFactory();
 			FSDirectory fs1 = FSDirectory.GetDirectory(indexDirName, lf);
@@ -315,33 +317,33 @@ namespace Lucene.Net.Store
 			// Different lock factory instance should hit IOException:
 			try
 			{
-				FSDirectory fs2 = FSDirectory.GetDirectory(indexDirName, new SingleInstanceLockFactory());
+				FSDirectory.GetDirectory(indexDirName, new SingleInstanceLockFactory());
 				Assert.Fail("Should have hit an IOException because LockFactory instances differ");
 			}
-			catch (System.IO.IOException)
+			catch (System.IO.IOException e)
 			{
 			}
 			
-			FSDirectory fs3 = null;
+			FSDirectory fs2 = null;
 			
 			// Same lock factory instance should not:
 			try
 			{
-				fs3 = FSDirectory.GetDirectory(indexDirName, lf);
+				fs2 = FSDirectory.GetDirectory(indexDirName, lf);
 			}
 			catch (System.IO.IOException e)
 			{
-				System.Console.Error.WriteLine(e.StackTrace);
+				System.Console.Out.WriteLine(e.StackTrace);
 				Assert.Fail("Should not have hit an IOException because LockFactory instances are the same");
 			}
 			
 			fs1.Close();
-			if (fs3 != null)
+			if (fs2 != null)
 			{
-				fs3.Close();
+				fs2.Close();
 			}
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDirName);
 		}
 		
 		// Verify: do stress test, by opening IndexReaders and
@@ -350,24 +352,26 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestStressLocks()
 		{
-			_TestStressLocks(null, "index.TestLockFactory6");
+			_testStressLocks(null, _TestUtil.GetTempDir("index.TestLockFactory6"));
 		}
 		
 		// Verify: do stress test, by opening IndexReaders and
 		// IndexWriters over & over in 2 threads and making sure
 		// no unexpected exceptions are raised, but use
 		// NativeFSLockFactory:
-		public virtual void  testStressLocksNativeFSLockFactory()
+		[Test]
+		public virtual void  TestStressLocksNativeFSLockFactory()
 		{
-			_TestStressLocks(new NativeFSLockFactory("index.TestLockFactory7"), "index.TestLockFactory7");
+			System.IO.FileInfo dir = _TestUtil.GetTempDir("index.TestLockFactory7");
+			_testStressLocks(new NativeFSLockFactory(dir), dir);
 		}
 		
-		public virtual void  _TestStressLocks(LockFactory lockFactory, System.String indexDirName)
+		public virtual void  _testStressLocks(LockFactory lockFactory, System.IO.FileInfo indexDir)
 		{
-			FSDirectory fs1 = FSDirectory.GetDirectory(indexDirName, lockFactory);
+			FSDirectory fs1 = FSDirectory.Open(indexDir, lockFactory);
 			
 			// First create a 1 doc index:
-			IndexWriter w = new IndexWriter(fs1, new WhitespaceAnalyzer(), true);
+			IndexWriter w = new IndexWriter(fs1, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDoc(w);
 			w.Close();
 			
@@ -378,31 +382,22 @@ namespace Lucene.Net.Store
 			
 			while (writer.IsAlive || searcher.IsAlive)
 			{
-				try
-				{
-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 1000));
-				}
-				catch (System.Threading.ThreadInterruptedException)
-				{
-				}
+				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 1000));
 			}
 			
 			Assert.IsTrue(!writer.hitException, "IndexWriter hit unexpected exceptions");
 			Assert.IsTrue(!searcher.hitException, "IndexSearcher hit unexpected exceptions");
 			
 			// Cleanup
-			RmDir(indexDirName);
+			_TestUtil.RmDir(indexDir);
 		}
 		
 		// Verify: NativeFSLockFactory works correctly
 		[Test]
 		public virtual void  TestNativeFSLockFactory()
 		{
-			System.String altTempDir = System.IO.Path.GetTempPath();
-
-			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", altTempDir));
 			
-			NativeFSLockFactory f2 = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", altTempDir));
+			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
 			
 			f.SetLockPrefix("test");
 			Lock l = f.MakeLock("commit");
@@ -415,27 +410,34 @@ namespace Lucene.Net.Store
 			Assert.IsTrue(l2.Obtain(), "failed to obtain 2nd lock after first one was freed");
 			l2.Release();
 			
-			// Make sure we can obtain first one again:
+			// Make sure we can obtain first one again, test isLocked():
 			Assert.IsTrue(l.Obtain(), "failed to obtain lock");
+			Assert.IsTrue(l.IsLocked());
+			Assert.IsTrue(l2.IsLocked());
 			l.Release();
+			Assert.IsFalse(l.IsLocked());
+			Assert.IsFalse(l2.IsLocked());
 		}
 		
-		// Verify: NativeFSLockFactory assigns different lock
-		// prefixes to different directories:
+		// Verify: NativeFSLockFactory assigns null as lockPrefix if the lockDir is inside directory
 		[Test]
 		public virtual void  TestNativeFSLockFactoryPrefix()
 		{
 			
-			// Make sure we get identical instances:
-			Directory dir1 = FSDirectory.GetDirectory("TestLockFactory.8", new NativeFSLockFactory("TestLockFactory.8"));
-			Directory dir2 = FSDirectory.GetDirectory("TestLockFactory.9", new NativeFSLockFactory("TestLockFactory.9"));
+			System.IO.FileInfo fdir1 = _TestUtil.GetTempDir("TestLockFactory.8");
+			System.IO.FileInfo fdir2 = _TestUtil.GetTempDir("TestLockFactory.8.Lockdir");
+			Directory dir1 = FSDirectory.Open(fdir1, new NativeFSLockFactory(fdir1));
+			// same directory, but locks are stored somewhere else. The prefix of the lock factory should != null
+			Directory dir2 = FSDirectory.Open(fdir1, new NativeFSLockFactory(fdir2));
 			
 			System.String prefix1 = dir1.GetLockFactory().GetLockPrefix();
-			System.String prefix2 = dir2.GetLockFactory().GetLockPrefix();
+			Assert.IsNull(prefix1, "Lock prefix for lockDir same as directory should be null");
 			
-			Assert.IsTrue(!prefix1.Equals(prefix2), "Native Lock Factories are incorrectly shared: dir1 and dir2 have same lock prefix '" + prefix1 + "'; they should be different");
-			RmDir("TestLockFactory.8");
-			RmDir("TestLockFactory.9");
+			System.String prefix2 = dir2.GetLockFactory().GetLockPrefix();
+			Assert.IsNotNull(prefix2, "Lock prefix for lockDir outside of directory should be not null");
+			
+			_TestUtil.RmDir(fdir1);
+			_TestUtil.RmDir(fdir2);
 		}
 		
 		// Verify: default LockFactory has no prefix (ie
@@ -445,16 +447,17 @@ namespace Lucene.Net.Store
 		{
 			
 			// Make sure we get null prefix:
-			Directory dir = FSDirectory.GetDirectory("TestLockFactory.10");
+			System.IO.FileInfo dirName = _TestUtil.GetTempDir("TestLockFactory.10");
+			Directory dir = FSDirectory.Open(dirName);
 			
 			System.String prefix = dir.GetLockFactory().GetLockPrefix();
 			
 			Assert.IsTrue(null == prefix, "Default lock prefix should be null");
 			
-			RmDir("TestLockFactory.10");
+			_TestUtil.RmDir(dirName);
 		}
 		
-		private class WriterThread : SupportClass.ThreadClass
+		private class WriterThread:SupportClass.ThreadClass
 		{
 			private void  InitBlock(TestLockFactory enclosingInstance)
 			{
@@ -493,6 +496,8 @@ namespace Lucene.Net.Store
 						if (e.ToString().IndexOf(" timed out:") == - 1)
 						{
 							hitException = true;
+							System.Console.Out.WriteLine("Stress Test Index Writer: creation hit unexpected IOException: " + e.ToString());
+							System.Console.Out.WriteLine(e.StackTrace);
 						}
 						else
 						{
@@ -508,7 +513,7 @@ namespace Lucene.Net.Store
 					{
 						hitException = true;
 						System.Console.Out.WriteLine("Stress Test Index Writer: creation hit unexpected exception: " + e.ToString());
-						System.Console.Error.WriteLine(e.StackTrace);
+						System.Console.Out.WriteLine(e.StackTrace);
 						break;
 					}
 					if (writer != null)
@@ -520,8 +525,8 @@ namespace Lucene.Net.Store
 						catch (System.IO.IOException e)
 						{
 							hitException = true;
-							System.Console.Out.WriteLine("Stress Test Index Writer: AddDoc hit unexpected exception: " + e.ToString());
-							System.Console.Error.WriteLine(e.StackTrace);
+							System.Console.Out.WriteLine("Stress Test Index Writer: addDoc hit unexpected exception: " + e.ToString());
+							System.Console.Out.WriteLine(e.StackTrace);
 							break;
 						}
 						try
@@ -532,7 +537,7 @@ namespace Lucene.Net.Store
 						{
 							hitException = true;
 							System.Console.Out.WriteLine("Stress Test Index Writer: close hit unexpected exception: " + e.ToString());
-							System.Console.Error.WriteLine(e.StackTrace);
+							System.Console.Out.WriteLine(e.StackTrace);
 							break;
 						}
 						writer = null;
@@ -541,7 +546,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		private class SearcherThread : SupportClass.ThreadClass
+		private class SearcherThread:SupportClass.ThreadClass
 		{
 			private void  InitBlock(TestLockFactory enclosingInstance)
 			{
@@ -568,7 +573,6 @@ namespace Lucene.Net.Store
 			override public void  Run()
 			{
 				IndexSearcher searcher = null;
-				WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
 				Query query = new TermQuery(new Term("content", "aaa"));
 				for (int i = 0; i < this.numIteration; i++)
 				{
@@ -580,7 +584,7 @@ namespace Lucene.Net.Store
 					{
 						hitException = true;
 						System.Console.Out.WriteLine("Stress Test Index Searcher: create hit unexpected exception: " + e.ToString());
-						System.Console.Error.WriteLine(e.StackTrace);
+						System.Console.Out.WriteLine(e.StackTrace);
 						break;
 					}
 					if (searcher != null)
@@ -594,7 +598,7 @@ namespace Lucene.Net.Store
 						{
 							hitException = true;
 							System.Console.Out.WriteLine("Stress Test Index Searcher: search hit unexpected exception: " + e.ToString());
-							System.Console.Error.WriteLine(e.StackTrace);
+							System.Console.Out.WriteLine(e.StackTrace);
 							break;
 						}
 						// System.out.println(hits.length() + " total results");
@@ -615,7 +619,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		public class MockLockFactory : LockFactory
+		public class MockLockFactory:LockFactory
 		{
 			public MockLockFactory(TestLockFactory enclosingInstance)
 			{
@@ -636,7 +640,7 @@ namespace Lucene.Net.Store
 			}
 			
 			public bool lockPrefixSet;
-			public System.Collections.Hashtable locksCreated = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
+			public System.Collections.IDictionary locksCreated = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable(new System.Collections.Hashtable()));
 			public int makeLockCount = 0;
 			
 			public override void  SetLockPrefix(System.String lockPrefix)
@@ -660,7 +664,7 @@ namespace Lucene.Net.Store
 			{
 			}
 			
-			public class MockLock : Lock
+			public class MockLock:Lock
 			{
 				public MockLock(MockLockFactory enclosingInstance)
 				{
@@ -702,44 +706,6 @@ namespace Lucene.Net.Store
 			Document doc = new Document();
 			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
-		}
-		
-		private void  RmDir(System.String dirName)
-		{
-			System.IO.FileInfo dir = new System.IO.FileInfo(dirName);
-			System.String[] files = System.IO.Directory.GetFileSystemEntries(dir.FullName); // clear old files
-			for (int i = 0; i < files.Length; i++)
-			{
-				System.IO.FileInfo file = new System.IO.FileInfo(files[i]);
-				bool tmpBool;
-				if (System.IO.File.Exists(file.FullName))
-				{
-					System.IO.File.Delete(file.FullName);
-					tmpBool = true;
-				}
-				else if (System.IO.Directory.Exists(file.FullName))
-				{
-					System.IO.Directory.Delete(file.FullName);
-					tmpBool = true;
-				}
-				else
-					tmpBool = false;
-				bool generatedAux = tmpBool;
-			}
-			bool tmpBool2;
-			if (System.IO.File.Exists(dir.FullName))
-			{
-				System.IO.File.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else if (System.IO.Directory.Exists(dir.FullName))
-			{
-				System.IO.Directory.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else
-				tmpBool2 = false;
-			bool generatedAux2 = tmpBool2;
 		}
 	}
 }

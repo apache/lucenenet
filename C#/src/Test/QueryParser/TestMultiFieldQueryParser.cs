@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,34 +20,32 @@ using System;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Directory = Lucene.Net.Store.Directory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Occur = Lucene.Net.Search.BooleanClause.Occur;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary> Tests QueryParser.</summary>
-	[TestFixture]
-	public class TestMultiFieldQueryParser : LuceneTestCase
+    [TestFixture]
+	public class TestMultiFieldQueryParser:BaseTokenStreamTestCase
 	{
 		
 		/// <summary>test stop words arsing for both the non static form, and for the 
 		/// corresponding static form (qtxt, fields[]). 
 		/// </summary>
-		[Test]
-		public virtual void  TesStopwordsParsing()
+		public virtual void  tesStopwordsParsing()
 		{
 			AssertStopQueryEquals("one", "b:one t:one");
 			AssertStopQueryEquals("one stop", "b:one t:one");
@@ -118,16 +116,16 @@ namespace Lucene.Net.QueryParsers
 			q = mfqp.Parse("\"foo bar\"~4");
 			Assert.AreEqual("b:\"foo bar\"~4 t:\"foo bar\"~4", q.ToString());
 			
-            // LUCENE-1213: MultiFieldQueryParser was ignoring slop when phrase had a field
-            q = mfqp.Parse("b:\"foo bar\"~4");
-            Assert.AreEqual("b:\"foo bar\"~4", q.ToString());
-
+			// LUCENE-1213: MultiFieldQueryParser was ignoring slop when phrase had a field.
+			q = mfqp.Parse("b:\"foo bar\"~4");
+			Assert.AreEqual("b:\"foo bar\"~4", q.ToString());
+			
 			// make sure that terms which have a field are not touched:
 			q = mfqp.Parse("one f:two");
 			Assert.AreEqual("(b:one t:one) f:two", q.ToString());
 			
 			// AND mode:
-			mfqp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
+			mfqp.SetDefaultOperator(QueryParser.AND_OPERATOR);
 			q = mfqp.Parse("one two");
 			Assert.AreEqual("+(b:one t:one) +(b:two t:two)", q.ToString());
 			q = mfqp.Parse("\"aa bb cc\" \"dd ee\"");
@@ -190,7 +188,7 @@ namespace Lucene.Net.QueryParsers
 				q = MultiFieldQueryParser.Parse(queries5, fields, new StandardAnalyzer());
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception, array length differs
 			}
@@ -224,7 +222,7 @@ namespace Lucene.Net.QueryParsers
 				q = MultiFieldQueryParser.Parse("blah", fields, flags2, new StandardAnalyzer());
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception, array length differs
 			}
@@ -250,7 +248,7 @@ namespace Lucene.Net.QueryParsers
 				q = MultiFieldQueryParser.Parse("blah", fields, flags2, new StandardAnalyzer());
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception, array length differs
 			}
@@ -271,7 +269,7 @@ namespace Lucene.Net.QueryParsers
 				q = MultiFieldQueryParser.Parse(queries, fields, flags2, new StandardAnalyzer());
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception, array length differs
 			}
@@ -292,7 +290,7 @@ namespace Lucene.Net.QueryParsers
 				q = MultiFieldQueryParser.Parse(queries, fields, flags2, new StandardAnalyzer());
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception, array length differs
 			}
@@ -320,13 +318,13 @@ namespace Lucene.Net.QueryParsers
 			Analyzer analyzer = new StandardAnalyzer();
 			Directory ramDir = new RAMDirectory();
 			IndexWriter iw = new IndexWriter(ramDir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("body", "blah the footest blah", Field.Store.NO, Field.Index.ANALYZED));
 			iw.AddDocument(doc);
 			iw.Close();
 			
 			MultiFieldQueryParser mfqp = new MultiFieldQueryParser(new System.String[]{"body"}, analyzer);
-			mfqp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.Operator.AND);
+			mfqp.SetDefaultOperator(QueryParser.Operator.AND);
 			Query q = mfqp.Parse("the footest");
 			IndexSearcher is_Renamed = new IndexSearcher(ramDir);
 			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
@@ -335,7 +333,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Return empty tokens for field "f1".</summary>
-		private class AnalyzerReturningNull : Analyzer
+		private class AnalyzerReturningNull:Analyzer
 		{
 			internal StandardAnalyzer stdAnalyzer = new StandardAnalyzer();
 			
@@ -355,11 +353,11 @@ namespace Lucene.Net.QueryParsers
 				}
 			}
 			
-			private class EmptyTokenStream : TokenStream
+			private class EmptyTokenStream:TokenStream
 			{
-				public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
+				public override bool IncrementToken()
 				{
-					return null;
+					return false;
 				}
 			}
 		}

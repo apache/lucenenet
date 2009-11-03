@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,22 +17,19 @@
 
 using System;
 
+using NUnit.Framework;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
 
 namespace Lucene.Net.Search
 {
+	
 	[Serializable]
-	public class MockFilter : Filter
+	public class MockFilter:Filter
 	{
 		private bool wasCalled;
-
-        [System.Obsolete()]
-        public override System.Collections.BitArray Bits(IndexReader reader)
-        {
-            return null;
-        }
-
+		
 		public override DocIdSet GetDocIdSet(IndexReader reader)
 		{
 			wasCalled = true;

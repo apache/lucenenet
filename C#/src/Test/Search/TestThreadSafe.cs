@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,35 +19,36 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Lucene.Net.Documents;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestThreadSafe.java 598296 2007-11-26 14:52:01Z mikemccand $
+	/// <version>  $Id: TestThreadSafe.java 741311 2009-02-05 21:53:40Z mikemccand $
 	/// </version>
-	[TestFixture]
-	public class TestThreadSafe : LuceneTestCase
+    [TestFixture]
+	public class TestThreadSafe:LuceneTestCase
 	{
-		internal System.Random r = new System.Random();
+		internal System.Random r;
 		internal Directory dir1;
-		//internal Directory dir2;
+		internal Directory dir2;
 		
 		internal IndexReader ir1;
-		//internal IndexReader ir2;
+		internal IndexReader ir2;
 		
 		internal System.String failure = null;
 		
 		
-		internal class Thr : SupportClass.ThreadClass
+		internal class Thr:SupportClass.ThreadClass
 		{
+			[Serializable]
 			private class AnonymousClassFieldSelector : FieldSelector
 			{
 				public AnonymousClassFieldSelector(Thr enclosingInstance)
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search
 			internal int iter;
 			internal System.Random rand;
 			// pass in random in case we want to make things reproducable
-			public Thr(TestThreadSafe enclosingInstance, int iter, System.Random rand, int level)
+			public Thr(TestThreadSafe enclosingInstance, int iter, System.Random rand)
 			{
 				InitBlock(enclosingInstance);
 				this.iter = iter;
@@ -119,19 +120,19 @@ namespace Lucene.Net.Search
 						switch (rand.Next(1))
 						{
 							
-							case 0:  LoadDoc(Enclosing_Instance.ir1); break;
+							case 0:  loadDoc(Enclosing_Instance.ir1); break;
 							}
 					}
 				}
 				catch (System.Exception th)
 				{
 					Enclosing_Instance.failure = th.ToString();
-					Assert.Fail(Enclosing_Instance.failure);
+					Assert.Fail(Enclosing_Instance.failure); // TestCase.fail(Enclosing_Instance.failure);
 				}
 			}
 			
 			
-			internal virtual void  LoadDoc(IndexReader ir)
+			internal virtual void  loadDoc(IndexReader ir)
 			{
 				// beware of deleted docs in the future
 				Document doc = ir.Document(rand.Next(ir.MaxDoc()), new AnonymousClassFieldSelector(this));
@@ -187,7 +188,7 @@ namespace Lucene.Net.Search
 			Thr[] tarr = new Thr[nThreads];
 			for (int i = 0; i < nThreads; i++)
 			{
-				tarr[i] = new Thr(this, iter, new System.Random(), 1);
+				tarr[i] = new Thr(this, iter, new System.Random((System.Int32) r.Next(System.Int32.MaxValue)));
 				tarr[i].Start();
 			}
 			for (int i = 0; i < nThreads; i++)
@@ -196,13 +197,14 @@ namespace Lucene.Net.Search
 			}
 			if (failure != null)
 			{
-				Assert.Fail(failure);
+                Assert.Fail(failure); // TestCase.fail(failure);
 			}
 		}
 		
 		[Test]
 		public virtual void  TestLazyLoadThreadSafety()
 		{
+			r = NewRandom();
 			dir1 = new RAMDirectory();
 			// test w/ field sizes bigger than the buffer of an index input
 			BuildDir(dir1, 15, 5, 2000);

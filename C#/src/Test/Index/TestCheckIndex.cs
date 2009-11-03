@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,18 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using Constants = Lucene.Net.Util.Constants;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestCheckIndex : LuceneTestCase
+	public class TestCheckIndex:LuceneTestCase
 	{
 		
 		[Test]
@@ -48,21 +49,64 @@ namespace Lucene.Net.Index
 			IndexReader reader = IndexReader.Open(dir);
 			reader.DeleteDocument(5);
 			reader.Close();
-
-            System.IO.StringWriter sw = new System.IO.StringWriter();
-            CheckIndex checker = new CheckIndex(dir);
-            checker.SetInfoStream(sw);
-            CheckIndex.Status indexStatus = checker.CheckIndex_Renamed();
-            if (!indexStatus.clean)
-            {
-                System.Console.WriteLine("CheckIndex failed");
-                System.Console.WriteLine(sw.ToString());
-                Assert.Fail();
-            }
-            System.Collections.Generic.List<object> onlySegments = new System.Collections.Generic.List<object>();
-            onlySegments.Add("_0");
-
-            Assert.IsTrue(checker.CheckIndex_Renamed(onlySegments).clean);
+			
+			System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
+			CheckIndex checker = new CheckIndex(dir);
+			checker.SetInfoStream(new System.IO.StreamWriter(bos));
+			//checker.setInfoStream(System.out);
+			CheckIndex.Status indexStatus = checker.CheckIndex_Renamed_Method();
+			if (indexStatus.clean == false)
+			{
+				System.Console.Out.WriteLine("CheckIndex failed");
+				char[] tmpChar;
+				byte[] tmpByte;
+				tmpByte = bos.GetBuffer();
+				tmpChar = new char[bos.Length];
+				System.Array.Copy(tmpByte, 0, tmpChar, 0, tmpChar.Length);
+				System.Console.Out.WriteLine(new System.String(tmpChar));
+				Assert.Fail();
+			}
+			
+			CheckIndex.Status.SegmentInfoStatus seg = (CheckIndex.Status.SegmentInfoStatus) indexStatus.segmentInfos[0];
+			Assert.IsTrue(seg.openReaderPassed);
+			
+			Assert.IsNotNull(seg.diagnostics);
+			
+			Assert.IsNotNull(seg.fieldNormStatus);
+			Assert.IsNull(seg.fieldNormStatus.error);
+			Assert.AreEqual(1, seg.fieldNormStatus.totFields);
+			
+			Assert.IsNotNull(seg.termIndexStatus);
+			Assert.IsNull(seg.termIndexStatus.error);
+			Assert.AreEqual(1, seg.termIndexStatus.termCount);
+			Assert.AreEqual(19, seg.termIndexStatus.totFreq);
+			Assert.AreEqual(18, seg.termIndexStatus.totPos);
+			
+			Assert.IsNotNull(seg.storedFieldStatus);
+			Assert.IsNull(seg.storedFieldStatus.error);
+			Assert.AreEqual(18, seg.storedFieldStatus.docCount);
+			Assert.AreEqual(18, seg.storedFieldStatus.totFields);
+			
+			Assert.IsNotNull(seg.termVectorStatus);
+			Assert.IsNull(seg.termVectorStatus.error);
+			Assert.AreEqual(18, seg.termVectorStatus.docCount);
+			Assert.AreEqual(18, seg.termVectorStatus.totVectors);
+			
+			Assert.IsTrue(seg.diagnostics.Count > 0);
+			System.Collections.IList onlySegments = new System.Collections.ArrayList();
+			onlySegments.Add("_0");
+			
+			Assert.IsTrue(checker.CheckIndex_Renamed_Method(onlySegments).clean == true);
+		}
+		
+		[Test]
+		public virtual void  TestLuceneConstantVersion()
+		{
+			// common-build.xml sets lucene.version
+			System.String version = SupportClass.AppSettings.Get("lucene.version", "");
+			Assert.IsNotNull(version);
+			Assert.IsTrue(version.Equals(Constants.LUCENE_MAIN_VERSION + "-dev") || version.Equals(Constants.LUCENE_MAIN_VERSION));
+			Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(version));
 		}
 	}
 }

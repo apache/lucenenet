@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,24 +19,24 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	[TestFixture]
-	public class TestTermScorer : LuceneTestCase
+    [TestFixture]
+	public class TestTermScorer:LuceneTestCase
 	{
-		private class AnonymousClassHitCollector : HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(System.Collections.IList docs, TestTermScorer enclosingInstance)
+			public AnonymousClassCollector(System.Collections.IList docs, TestTermScorer enclosingInstance)
 			{
 				InitBlock(docs, enclosingInstance);
 			}
@@ -55,11 +55,28 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private int base_Renamed = 0;
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
 			{
+				this.scorer = scorer;
+			}
+			
+			public override void  Collect(int doc)
+			{
+				float score = scorer.Score();
+				doc = doc + base_Renamed;
 				docs.Add(new TestHit(enclosingInstance, doc, score));
 				Assert.IsTrue(score > 0, "score " + score + " is not greater than 0");
-				Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal: " + 0 + " or doc does not equaal: " + 5);
+				Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal 0 or doc does not equal 5");
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
 		protected internal RAMDirectory directory;
@@ -70,12 +87,12 @@ namespace Lucene.Net.Search
 		protected internal IndexReader indexReader;
 		
 		
-		//public TestTermScorer(System.String s) : base(s)
-		//{
-		//}
+		public TestTermScorer(System.String s):base(s)
+		{
+		}
 		
-		[SetUp]
-		public override void SetUp()
+		[Test]
+		public override void  SetUp()
 		{
 			base.SetUp();
 			directory = new RAMDirectory();
@@ -102,14 +119,13 @@ namespace Lucene.Net.Search
 			
 			Weight weight = termQuery.Weight(indexSearcher);
 			
-			Lucene.Net.Search.TermScorer ts = new Lucene.Net.Search.TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Assert.IsTrue(ts != null, "ts is null and it shouldn't be");
+			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
 			//we have 2 documents with the term all in them, one document for all the other values
 			System.Collections.IList docs = new System.Collections.ArrayList();
 			//must call next first
 			
 			
-			ts.Score(new AnonymousClassHitCollector(docs, this));
+			ts.Score(new AnonymousClassCollector(docs, this));
 			Assert.IsTrue(docs.Count == 2, "docs Size: " + docs.Count + " is not: " + 2);
 			TestHit doc0 = (TestHit) docs[0];
 			TestHit doc5 = (TestHit) docs[1];
@@ -145,12 +161,11 @@ namespace Lucene.Net.Search
 			Weight weight = termQuery.Weight(indexSearcher);
 			
 			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Assert.IsTrue(ts != null, "ts is null and it shouldn't be");
-			Assert.IsTrue(ts.Next() == true, "next did not return a doc");
+			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
 			Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
-			Assert.IsTrue(ts.Next() == true, "next did not return a doc");
+			Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
 			Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
-			Assert.IsTrue(ts.Next() == false, "next returned a doc and it should not have");
+			Assert.IsTrue(ts.NextDoc() == DocIdSetIterator.NO_MORE_DOCS, "next returned a doc and it should not have");
 		}
 		
 		[Test]
@@ -163,10 +178,9 @@ namespace Lucene.Net.Search
 			Weight weight = termQuery.Weight(indexSearcher);
 			
 			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Assert.IsTrue(ts != null, "ts is null and it shouldn't be");
-			Assert.IsTrue(ts.SkipTo(3) == true, "Didn't skip");
+			Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
 			//The next doc should be doc 5
-			Assert.IsTrue(ts.Doc() == 5, "doc should be number 5");
+			Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");
 		}
 		
 		[Test]
@@ -178,7 +192,6 @@ namespace Lucene.Net.Search
 			Weight weight = termQuery.Weight(indexSearcher);
 			
 			TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Assert.IsTrue(ts != null, "ts is null and it shouldn't be");
 			Explanation explanation = ts.Explain(0);
 			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
 			//System.out.println("Explanation: " + explanation.toString());
@@ -195,7 +208,6 @@ namespace Lucene.Net.Search
 			weight = termQuery.Weight(indexSearcher);
 			
 			ts = new TermScorer(weight, indexReader.TermDocs(dogsTerm), indexSearcher.GetSimilarity(), indexReader.Norms(FIELD));
-			Assert.IsTrue(ts != null, "ts is null and it shouldn't be");
 			explanation = ts.Explain(1);
 			Assert.IsTrue(explanation != null, "explanation is null and it shouldn't be");
 			//System.out.println("Explanation: " + explanation.toString());

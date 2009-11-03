@@ -163,11 +163,11 @@ namespace Lucene.Net.Util
 		public SortedVIntList(System.Collections.BitArray bits)
 		{
 			SortedVIntListBuilder builder = new SortedVIntListBuilder(this);
-			int nextInt = SupportClass.Number.NextSetBit(bits, 0);
+			int nextInt = SupportClass.BitSetSupport.NextSetBit(bits, 0);
 			while (nextInt != - 1)
 			{
 				builder.AddInt(nextInt);
-				nextInt = SupportClass.Number.NextSetBit(bits, nextInt + 1);
+				nextInt = SupportClass.BitSetSupport.NextSetBit(bits, nextInt + 1);
 			}
 			builder.Done();
 		}

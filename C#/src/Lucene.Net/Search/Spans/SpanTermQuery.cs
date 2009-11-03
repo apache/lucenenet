@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-			SupportClass.HashtableHelper.AddIfNotContains(terms, term);
+			SupportClass.CollectionsHelper.AddIfNotContains(terms, term);
 		}
 		
 		public override System.String ToString(System.String field)

@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <version>  $Id: CompoundFileReader.java 673371 2008-07-02 11:57:27Z mikemccand $
 	/// </version>
-	class CompoundFileReader:Directory
+	public class CompoundFileReader:Directory
 	{
 		
 		private int readBufferSize;
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
 		/// this helps with testing since JUnit test cases in a different class
 		/// can then access package fields of this class.
 		/// </summary>
-		internal sealed class CSIndexInput:BufferedIndexInput, System.ICloneable
+		public /*internal*/ sealed class CSIndexInput:BufferedIndexInput, System.ICloneable
 		{
 			
 			internal IndexInput base_Renamed;
@@ -293,6 +293,11 @@ namespace Lucene.Net.Index
 			{
 				return length;
 			}
+
+            public IndexInput base_Renamed_ForNUnit
+            {
+                get { return base_Renamed; }
+            }
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,21 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using IndexReader = Lucene.Net.Index.IndexReader;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	[TestFixture]
-	public class TestBooleanQuery : LuceneTestCase
+	
+    [TestFixture]
+	public class TestBooleanQuery:LuceneTestCase
 	{
 		
 		[Test]
@@ -58,10 +66,47 @@ namespace Lucene.Net.Search
 				BooleanQuery.SetMaxClauseCount(0);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// okay
 			}
+		}
+		
+		// LUCENE-1630
+		[Test]
+		public virtual void  TestNullOrSubScorer()
+		{
+			Directory dir = new MockRAMDirectory();
+			IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+			Document doc = new Document();
+			doc.Add(new Field("field", "a b c d", Field.Store.NO, Field.Index.ANALYZED));
+			w.AddDocument(doc);
+			IndexReader r = w.GetReader();
+			IndexSearcher s = new IndexSearcher(r);
+			BooleanQuery q = new BooleanQuery();
+			q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
+			
+			// PhraseQuery w/ no terms added returns a null scorer
+			PhraseQuery pq = new PhraseQuery();
+			q.Add(pq, BooleanClause.Occur.SHOULD);
+			Assert.AreEqual(1, s.Search(q, 10).totalHits);
+			
+			// A required clause which returns null scorer should return null scorer to
+			// IndexSearcher.
+			q = new BooleanQuery();
+			pq = new PhraseQuery();
+			q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
+			q.Add(pq, BooleanClause.Occur.MUST);
+			Assert.AreEqual(0, s.Search(q, 10).totalHits);
+			
+			DisjunctionMaxQuery dmq = new DisjunctionMaxQuery(1.0f);
+			dmq.Add(new TermQuery(new Term("field", "a")));
+			dmq.Add(pq);
+			Assert.AreEqual(1, s.Search(dmq, 10).totalHits);
+			
+			r.Close();
+			w.Close();
+			dir.Close();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,18 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	[TestFixture]
-	public class TestCachingWrapperFilter : LuceneTestCase
+	
+    [TestFixture]
+	public class TestCachingWrapperFilter:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestCachingWorks()
@@ -47,9 +48,13 @@ namespace Lucene.Net.Search
 			cacher.GetDocIdSet(reader);
 			Assert.IsTrue(filter.WasCalled(), "first time");
 			
+			// make sure no exception if cache is holding the wrong bitset
+			cacher.Bits(reader);
+			cacher.GetDocIdSet(reader);
+			
 			// second time, nested filter should not be called
 			filter.Clear();
-            cacher.GetDocIdSet(reader);
+			cacher.GetDocIdSet(reader);
 			Assert.IsFalse(filter.WasCalled(), "second time");
 			
 			reader.Close();

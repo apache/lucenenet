@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		internal RAMOutputStream(RAMFile f)
+		public /*internal*/ RAMOutputStream(RAMFile f)
 		{
 			file = f;
 			
@@ -185,5 +185,10 @@ namespace Lucene.Net.Store
 		{
 			return file.NumBuffers() * BUFFER_SIZE;
 		}
+
+        public static int BUFFER_SIZE_ForNUnit
+        {
+            get { return BUFFER_SIZE; }
+        }
 	}
 }

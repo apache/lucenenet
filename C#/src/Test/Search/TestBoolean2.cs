@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -26,18 +27,16 @@ using Term = Lucene.Net.Index.Term;
 using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	
 	/// <summary>Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
 	/// This also tests the scoring order of BooleanQuery.
 	/// </summary>
-	[TestFixture]
-	public class TestBoolean2 : LuceneTestCase
+    [TestFixture]
+	public class TestBoolean2:LuceneTestCase
 	{
 		[Serializable]
 		private class AnonymousClassDefaultSimilarity:DefaultSimilarity
@@ -69,14 +68,14 @@ namespace Lucene.Net.Search
 		public const System.String field = "field";
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < docFields.Length; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field(field, docFields[i], Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -88,7 +87,7 @@ namespace Lucene.Net.Search
 		
 		public virtual Query MakeQuery(System.String queryText)
 		{
-			Query q = (new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
+			Query q = (new QueryParser(field, new WhitespaceAnalyzer())).Parse(queryText);
 			return q;
 		}
 		
@@ -104,7 +103,7 @@ namespace Lucene.Net.Search
 				
 				Query query2 = MakeQuery(queryText); // there should be no need to parse again...
 				BooleanQuery.SetAllowDocsOutOfOrder(false);
-                ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).scoreDocs;
+				ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).scoreDocs;
 				
 				CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
 			}
@@ -199,12 +198,13 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestRandomQueries()
 		{
-			System.Random rnd = new System.Random((System.Int32) 0);
+			System.Random rnd = NewRandom();
 			
 			System.String[] vals = new System.String[]{"w1", "w2", "w3", "w4", "w5", "xx", "yy", "zzz"};
 			
 			int tot = 0;
 			
+			BooleanQuery q1 = null;
 			try
 			{
 				
@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
 				for (int i = 0; i < 1000; i++)
 				{
 					int level = rnd.Next(3);
-					BooleanQuery q1 = RandBoolQuery(new System.Random((System.Int32) i), level, field, vals, null);
+					q1 = RandBoolQuery(new System.Random((System.Int32) rnd.Next(System.Int32.MaxValue)), level, field, vals, null);
 					
 					// Can't sort by relevance since floating point numbers may not quite
 					// match up.
@@ -221,14 +221,20 @@ namespace Lucene.Net.Search
 					BooleanQuery.SetAllowDocsOutOfOrder(false);
 					
 					QueryUtils.Check(q1, searcher);
-
-                    ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).scoreDocs;
+					
+					ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).scoreDocs;
 					
 					BooleanQuery.SetAllowDocsOutOfOrder(true);
-                    ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).scoreDocs;
+					ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).scoreDocs;
 					tot += hits2.Length;
 					CheckHits.CheckEqual(q1, hits1, hits2);
 				}
+			}
+			catch (System.Exception e)
+			{
+				// For easier debugging
+				System.Console.Out.WriteLine("failed query: " + q1);
+				throw e;
 			}
 			finally
 			{
@@ -278,7 +284,6 @@ namespace Lucene.Net.Search
 			}
 			if (cb != null)
 				cb.PostCreate(current);
-			((System.Collections.ArrayList)current.Clauses()).TrimToSize();
 			return current;
 		}
 	}

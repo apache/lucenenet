@@ -82,8 +82,14 @@
       <Name>Lucene.Net</Name>
       <HintPath>..\Lucene.Net\bin\Debug\Lucene.Net.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework, Version=2.5.2.9222, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\NUnit.Net\NUnit-2.5.2.9222\bin\net-2.0\framework\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks, Version=2.5.2.9222, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\NUnit.Net\NUnit-2.5.2.9222\bin\net-2.0\framework\nunit.mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -98,15 +104,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalysisTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\TeeSinkTokenTest.cs" />
+    <Compile Include="Analysis\BaseTokenStreamTestCase.cs" />
+    <Compile Include="Analysis\Tokenattributes\TestSimpleAttributeImpls.cs" />
+    <Compile Include="Analysis\Tokenattributes\TestTermAttributeImpl.cs" />
     <Compile Include="Analysis\TestAnalyzers.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\TestCachingTokenFilter.cs" />
+    <Compile Include="Analysis\TestCharacterCache.cs" />
     <Compile Include="Analysis\TestCharArraySet.cs" />
+    <Compile Include="Analysis\TestCharFilter.cs" />
     <Compile Include="Analysis\TestISOLatin1AccentFilter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -116,6 +124,8 @@
     <Compile Include="Analysis\TestLengthFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TestMappingCharFilter.cs" />
+    <Compile Include="Analysis\TestNumericTokenStream.cs" />
     <Compile Include="Analysis\TestPerFieldAnalzyerWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -128,7 +138,10 @@
     <Compile Include="Analysis\TestStopFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\TestTeeSinkTokenFilter.cs" />
+    <Compile Include="Analysis\TestTeeTokenFilter.cs" />
     <Compile Include="Analysis\TestToken.cs" />
+    <Compile Include="Analysis\TestTokenStreamBWComp.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -136,21 +149,12 @@
     <Compile Include="Document\TestDateTools.cs" />
     <Compile Include="Document\TestDocument.cs" />
     <Compile Include="Document\TestNumberTools.cs" />
-    <Compile Include="IndexTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Index\DocHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\DocTest.cs" />
     <Compile Include="Index\MockIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\MockInputStream.cs" />
-    <Compile Include="Index\Store\TestRAMDirectory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\TermInfosTest.cs" />
     <Compile Include="Index\TestAddIndexesNoOptimize.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -160,13 +164,13 @@
     </Compile>
     <Compile Include="Index\TestByteSlices.cs" />
     <Compile Include="Index\TestCheckIndex.cs" />
-    <Compile Include="Index\TestCloseableThreadLocal.cs" />
     <Compile Include="Index\TestCompoundFile.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\TestConcurrentMergeScheduler.cs" />
     <Compile Include="Index\TestCrash.cs" />
     <Compile Include="Index\TestDeletionPolicy.cs" />
+    <Compile Include="Index\TestDirectoryReader.cs" />
     <Compile Include="Index\TestDoc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -194,10 +198,10 @@
     <Compile Include="Index\TestIndexReader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestIndexReaderClone.cs" />
+    <Compile Include="Index\TestIndexReaderCloneNorms.cs" />
     <Compile Include="Index\TestIndexReaderReopen.cs" />
-    <Compile Include="Index\TestIndexWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Index\TestIndexWriter.cs" />
     <Compile Include="Index\TestIndexWriterDelete.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -211,7 +215,7 @@
     <Compile Include="Index\TestIndexWriterMerging.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\TestInputStream.cs" />
+    <Compile Include="Index\TestIndexWriterReader.cs" />
     <Compile Include="Index\TestLazyBug.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -222,10 +226,10 @@
     <Compile Include="Index\TestMultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\TestMultiSegmentReader.cs" />
     <Compile Include="Index\TestNorms.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\TestNRTReaderWithThreads.cs" />
     <Compile Include="Index\TestOmitTf.cs" />
     <Compile Include="Index\TestParallelReader.cs">
       <SubType>Code</SubType>
@@ -258,10 +262,8 @@
     <Compile Include="Index\TestTermVectorsReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Index\TestTermVectorsWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Index\TestThreadedOptimize.cs" />
+    <Compile Include="Index\TestTransactionRollback.cs" />
     <Compile Include="Index\TestTransactions.cs" />
     <Compile Include="Index\TestWordlistLoader.cs">
       <SubType>Code</SubType>
@@ -275,29 +277,30 @@
     <Compile Include="QueryParser\TestQueryParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SearchTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SearchTestForDuplicates.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\BaseTestRangeFilter.cs" />
     <Compile Include="Search\CachingWrapperFilterHelper.cs" />
     <Compile Include="Search\CheckHits.cs" />
     <Compile Include="Search\Function\FunctionTestSetup.cs" />
+    <Compile Include="Search\Function\JustCompileSearchSpans.cs" />
     <Compile Include="Search\Function\TestCustomScoreQuery.cs" />
+    <Compile Include="Search\Function\TestDocValues.cs" />
     <Compile Include="Search\Function\TestFieldScoreQuery.cs" />
     <Compile Include="Search\Function\TestOrdValues.cs" />
+    <Compile Include="Search\Function\TestValueSource.cs" />
+    <Compile Include="Search\JustCompileSearch.cs" />
     <Compile Include="Search\MockFilter.cs" />
     <Compile Include="Search\Payloads\PayloadHelper.cs" />
     <Compile Include="Search\Payloads\TestBoostingTermQuery.cs" />
+    <Compile Include="Search\Payloads\TestPayloadNearQuery.cs" />
+    <Compile Include="Search\Payloads\TestPayloadTermQuery.cs" />
     <Compile Include="Search\QueryUtils.cs" />
-    <Compile Include="Search\RemoteCachingWrapperFilterHelper.cs" />
     <Compile Include="Search\SampleComparable.cs" />
     <Compile Include="Search\SingleDocTestFilter.cs" />
+    <Compile Include="Search\Spans\JustCompileSearchSpans.cs" />
     <Compile Include="Search\Spans\TestBasics.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Spans\TestFieldMaskingSpanQuery.cs" />
     <Compile Include="Search\Spans\TestNearSpansOrdered.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -326,14 +329,17 @@
     <Compile Include="Search\TestCachingWrapperFilter.cs" />
     <Compile Include="Search\TestComplexExplanations.cs" />
     <Compile Include="Search\TestComplexExplanationsOfNonMatches.cs" />
-    <Compile Include="Search\TestConstantScoreRangeQuery.cs" />
     <Compile Include="Search\TestCustomSearcherSort.cs" />
     <Compile Include="Search\TestDateFilter.cs" />
     <Compile Include="Search\TestDateSort.cs" />
     <Compile Include="Search\TestDisjunctionMaxQuery.cs" />
     <Compile Include="Search\TestDocBoost.cs" />
+    <Compile Include="Search\TestDocIdSet.cs" />
+    <Compile Include="Search\TestElevationComparator.cs" />
     <Compile Include="Search\TestExplanations.cs" />
-    <Compile Include="Search\TestExtendedFieldCache.cs" />
+    <Compile Include="Search\TestFieldCache.cs" />
+    <Compile Include="Search\TestFieldCacheRangeFilter.cs" />
+    <Compile Include="Search\TestFieldCacheTermsFilter.cs" />
     <Compile Include="Search\TestFilteredQuery.cs" />
     <Compile Include="Search\TestFilteredSearch.cs" />
     <Compile Include="Search\TestFuzzyQuery.cs" />
@@ -341,19 +347,22 @@
     <Compile Include="Search\TestMultiPhraseQuery.cs" />
     <Compile Include="Search\TestMultiSearcher.cs" />
     <Compile Include="Search\TestMultiSearcherRanking.cs" />
+    <Compile Include="Search\TestMultiTermConstantScore.cs" />
     <Compile Include="Search\TestMultiThreadTermVectors.cs" />
+    <Compile Include="Search\TestMultiValuedNumericRangeQuery.cs" />
     <Compile Include="Search\TestNot.cs" />
+    <Compile Include="Search\TestNumericRangeQuery32.cs" />
+    <Compile Include="Search\TestNumericRangeQuery64.cs" />
     <Compile Include="Search\TestParallelMultiSearcher.cs" />
     <Compile Include="Search\TestPhrasePrefixQuery.cs" />
     <Compile Include="Search\TestPhraseQuery.cs" />
     <Compile Include="Search\TestPositionIncrement.cs" />
+    <Compile Include="Search\TestPositiveScoresOnlyCollector.cs" />
     <Compile Include="Search\TestPrefixFilter.cs" />
     <Compile Include="Search\TestPrefixQuery.cs" />
     <Compile Include="Search\TestQueryTermVector.cs" />
-    <Compile Include="Search\TestRangeFilter.cs" />
-    <Compile Include="Search\TestRangeQuery.cs" />
-    <Compile Include="Search\TestRemoteCachingWrapperFilter.cs" />
-    <Compile Include="Search\TestRemoteSearchable.cs" />
+    <Compile Include="Search\TestQueryWrapperFilter.cs" />
+    <Compile Include="Search\TestScoreCachingWrappingScorer.cs" />
     <Compile Include="Search\TestScorerPerf.cs" />
     <Compile Include="Search\TestSearchHitsWithDeletions.cs" />
     <Compile Include="Search\TestSetNorm.cs" />
@@ -363,14 +372,17 @@
     <Compile Include="Search\TestSloppyPhraseQuery.cs" />
     <Compile Include="Search\TestSort.cs" />
     <Compile Include="Search\TestSpanQueryFilter.cs" />
+    <Compile Include="Search\TestStressSort.cs" />
+    <Compile Include="Search\TestTermRangeFilter.cs" />
+    <Compile Include="Search\TestTermRangeQuery.cs" />
     <Compile Include="Search\TestTermScorer.cs" />
     <Compile Include="Search\TestTermVectors.cs" />
     <Compile Include="Search\TestThreadSafe.cs" />
     <Compile Include="Search\TestTimeLimitedCollector.cs" />
+    <Compile Include="Search\TestTimeLimitingCollector.cs" />
+    <Compile Include="Search\TestTopDocsCollector.cs" />
+    <Compile Include="Search\TestTopScoreDocCollector.cs" />
     <Compile Include="Search\TestWildcard.cs" />
-    <Compile Include="StoreTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Store\MockRAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -382,6 +394,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\TestDirectory.cs" />
+    <Compile Include="Store\TestFileSwitchDirectory.cs" />
     <Compile Include="Store\TestHugeRamFile.cs" />
     <Compile Include="Store\TestLock.cs">
       <SubType>Code</SubType>
@@ -389,7 +402,7 @@
     <Compile Include="Store\TestLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\TestMMapDirectory.cs" />
+    <Compile Include="Store\TestRAMDirectory.cs" />
     <Compile Include="Store\TestWindowsMMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -410,22 +423,26 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TestSnapshotDeletionPolicy.cs" />
-    <Compile Include="ThreadSafetyTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Util\ArrayUtilTest.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\LocalizedTestCase.cs" />
     <Compile Include="Util\LuceneTestCase.cs" />
-    <Compile Include="Util\StringHelperTest.cs" />
+    <Compile Include="Util\TestAttributeSource.cs" />
     <Compile Include="Util\TestBitVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\TestCloseableThreadLocal.cs" />
+    <Compile Include="Util\TestFieldCacheSanityChecker.cs" />
+    <Compile Include="Util\TestIndexableBinaryStringTools.cs" />
+    <Compile Include="Util\TestNumericUtils.cs" />
     <Compile Include="Util\TestOpenBitSet.cs" />
     <Compile Include="Util\TestPriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\TestRamUsageEstimator.cs" />
     <Compile Include="Util\TestSmallFloat.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -433,7 +450,7 @@
     <Compile Include="Util\TestStringHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestSupportClass.cs" />
+    <Compile Include="Util\TestStringIntern.cs" />
     <Compile Include="Util\_TestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -448,6 +465,8 @@
     <None Include="Index\index.22.nocfs.zip" />
     <None Include="Index\index.23.cfs.zip" />
     <None Include="Index\index.23.nocfs.zip" />
+    <None Include="Index\index.24.cfs.zip" />
+    <None Include="Index\index.24.nocfs.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

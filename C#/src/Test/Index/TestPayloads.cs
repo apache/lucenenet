@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,28 +19,30 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
+using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Token = Lucene.Net.Analysis.Token;
-using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using WhitespaceTokenizer = Lucene.Net.Analysis.WhitespaceTokenizer;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
 	
 	
-	[TestFixture]
-	public class TestPayloads : LuceneTestCase
+    [TestFixture]
+	public class TestPayloads:LuceneTestCase
 	{
-		private class AnonymousClassThread : SupportClass.ThreadClass
+		private class AnonymousClassThread:SupportClass.ThreadClass
 		{
 			public AnonymousClassThread(int numDocs, System.String field, Lucene.Net.Index.TestPayloads.ByteArrayPool pool, Lucene.Net.Index.IndexWriter writer, TestPayloads enclosingInstance)
 			{
@@ -74,7 +76,7 @@ namespace Lucene.Net.Index
 					for (int j = 0; j < numDocs; j++)
 					{
 						Document d = new Document();
-						d.Add(new Field(field, new PoolingPayloadTokenStream(pool)));
+						d.Add(new Field(field, new PoolingPayloadTokenStream(enclosingInstance, pool)));
 						writer.AddDocument(d);
 					}
 				}
@@ -90,7 +92,8 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestPayload()
 		{
-			byte[] testData = System.Text.Encoding.UTF8.GetBytes("This is a test!");
+			rnd = NewRandom();
+			byte[] testData = System.Text.UTF8Encoding.UTF8.GetBytes("This is a test!");
 			Payload payload = new Payload(testData);
 			Assert.AreEqual(testData.Length, payload.Length(), "Wrong payload length.");
 			
@@ -101,7 +104,7 @@ namespace Lucene.Net.Index
 				payload.CopyTo(target, 0);
 				Assert.Fail("Expected exception not thrown");
 			}
-			catch (System.Exception)
+			catch (System.Exception expected)
 			{
 				// expected exception
 			}
@@ -130,7 +133,7 @@ namespace Lucene.Net.Index
 				payload.ByteAt(testData.Length + 1);
 				Assert.Fail("Expected exception not thrown");
 			}
-			catch (System.Exception)
+			catch (System.Exception expected)
 			{
 				// expected exception
 			}
@@ -148,9 +151,10 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestPayloadFieldBit()
 		{
+			rnd = NewRandom();
 			Directory ram = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer();
-            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			Document d = new Document();
 			// this field won't have any payloads
 			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.ANALYZED));
@@ -163,42 +167,40 @@ namespace Lucene.Net.Index
 			// enabled in only some documents
 			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.ANALYZED));
 			// only add payload data for field f2
-			analyzer.SetPayloadData("f2", 1, System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 1);
+			analyzer.SetPayloadData("f2", 1, System.Text.UTF8Encoding.UTF8.GetBytes("somedata"), 0, 1);
 			writer.AddDocument(d);
 			// flush
 			writer.Close();
 			
-			// only one segment in the index, so we can cast to SegmentReader
-			SegmentReader reader = (SegmentReader) IndexReader.Open(ram);
+			SegmentReader reader = SegmentReader.GetOnlySegmentReader(ram);
 			FieldInfos fi = reader.FieldInfos();
-			Assert.IsFalse(fi.FieldInfo("f1").StorePayloads_ForNUnitTest, "Payload field bit should not be set.");
-			Assert.IsTrue(fi.FieldInfo("f2").StorePayloads_ForNUnitTest, "Payload field bit should be set.");
-			Assert.IsFalse(fi.FieldInfo("f3").StorePayloads_ForNUnitTest, "Payload field bit should not be set.");
+			Assert.IsFalse(fi.FieldInfo("f1").storePayloads_ForNUnit, "Payload field bit should not be set.");
+			Assert.IsTrue(fi.FieldInfo("f2").storePayloads_ForNUnit, "Payload field bit should be set.");
+			Assert.IsFalse(fi.FieldInfo("f3").storePayloads_ForNUnit, "Payload field bit should not be set.");
 			reader.Close();
 			
 			// now we add another document which has payloads for field f3 and verify if the SegmentMerger
 			// enabled payloads for that field
-            writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+			writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			d = new Document();
 			d.Add(new Field("f1", "This field has no payloads", Field.Store.NO, Field.Index.ANALYZED));
 			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
 			d.Add(new Field("f2", "This field has payloads in all docs", Field.Store.NO, Field.Index.ANALYZED));
 			d.Add(new Field("f3", "This field has payloads in some docs", Field.Store.NO, Field.Index.ANALYZED));
 			// add payload data for field f2 and f3
-			analyzer.SetPayloadData("f2", System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 1);
-			analyzer.SetPayloadData("f3", System.Text.Encoding.UTF8.GetBytes("somedata"), 0, 3);
+			analyzer.SetPayloadData("f2", System.Text.UTF8Encoding.UTF8.GetBytes("somedata"), 0, 1);
+			analyzer.SetPayloadData("f3", System.Text.UTF8Encoding.UTF8.GetBytes("somedata"), 0, 3);
 			writer.AddDocument(d);
 			// force merge
 			writer.Optimize();
 			// flush
 			writer.Close();
 			
-			// only one segment in the index, so we can cast to SegmentReader
-			reader = (SegmentReader) IndexReader.Open(ram);
+			reader = SegmentReader.GetOnlySegmentReader(ram);
 			fi = reader.FieldInfos();
-			Assert.IsFalse(fi.FieldInfo("f1").StorePayloads_ForNUnitTest, "Payload field bit should not be set.");
-			Assert.IsTrue(fi.FieldInfo("f2").StorePayloads_ForNUnitTest, "Payload field bit should be set.");
-			Assert.IsTrue(fi.FieldInfo("f3").StorePayloads_ForNUnitTest, "Payload field bit should be set.");
+			Assert.IsFalse(fi.FieldInfo("f1").storePayloads_ForNUnit, "Payload field bit should not be set.");
+			Assert.IsTrue(fi.FieldInfo("f2").storePayloads_ForNUnit, "Payload field bit should be set.");
+			Assert.IsTrue(fi.FieldInfo("f3").storePayloads_ForNUnit, "Payload field bit should be set.");
 			reader.Close();
 		}
 		
@@ -206,15 +208,16 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestPayloadsEncoding()
 		{
+			rnd = NewRandom();
 			// first perform the test using a RAMDirectory
 			Directory dir = new RAMDirectory();
 			PerformTest(dir);
 			
 			// now use a FSDirectory and repeat same test
-			System.String dirName = "test_payloads";
-			dir = FSDirectory.GetDirectory(dirName);
+			System.IO.FileInfo dirName = _TestUtil.GetTempDir("test_payloads");
+			dir = FSDirectory.Open(dirName);
 			PerformTest(dir);
-			RmDir(dirName);
+			_TestUtil.RmDir(dirName);
 		}
 		
 		// builds an index with payloads in the given Directory and performs
@@ -222,7 +225,7 @@ namespace Lucene.Net.Index
 		private void  PerformTest(Directory dir)
 		{
 			PayloadAnalyzer analyzer = new PayloadAnalyzer();
-            IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			// should be in sync with value in TermInfosWriter
 			int skipInterval = 16;
@@ -236,7 +239,7 @@ namespace Lucene.Net.Index
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (int i = 0; i < terms.Length; i++)
 			{
-				sb.Append(terms[i].text_ForNUnitTest);
+				sb.Append(terms[i].text_ForNUnit);
 				sb.Append(" ");
 			}
 			System.String content = sb.ToString();
@@ -362,7 +365,7 @@ namespace Lucene.Net.Index
 				tp.GetPayload(null, 0);
 				Assert.Fail("Expected exception not thrown");
 			}
-			catch (System.Exception)
+			catch (System.Exception expected)
 			{
 				// expected exception
 			}
@@ -371,7 +374,7 @@ namespace Lucene.Net.Index
 			
 			// test long payload
 			analyzer = new PayloadAnalyzer();
-            writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+			writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			System.String singleTerm = "lucene";
 			
 			d = new Document();
@@ -400,14 +403,14 @@ namespace Lucene.Net.Index
 			reader.Close();
 		}
 		
-		private static System.Random rnd = new System.Random();
+		private System.Random rnd;
 		
-		private static void  GenerateRandomData(byte[] data)
+		private void  GenerateRandomData(byte[] data)
 		{
 			rnd.NextBytes(data);
 		}
 		
-		private static byte[] GenerateRandomData(int n)
+		private byte[] GenerateRandomData(int n)
 		{
 			byte[] data = new byte[n];
 			GenerateRandomData(data);
@@ -435,56 +438,6 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		private void  RmDir(System.String dir)
-		{
-			System.IO.FileInfo fileDir = new System.IO.FileInfo(dir);
-			bool tmpBool;
-			if (System.IO.File.Exists(fileDir.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(fileDir.FullName);
-			if (tmpBool)
-			{
-				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(fileDir);
-				if (files != null)
-				{
-					for (int i = 0; i < files.Length; i++)
-					{
-						bool tmpBool2;
-						if (System.IO.File.Exists(files[i].FullName))
-						{
-							System.IO.File.Delete(files[i].FullName);
-							tmpBool2 = true;
-						}
-						else if (System.IO.Directory.Exists(files[i].FullName))
-						{
-							System.IO.Directory.Delete(files[i].FullName);
-							tmpBool2 = true;
-						}
-						else
-							tmpBool2 = false;
-						bool generatedAux = tmpBool2;
-					}
-				}
-				bool tmpBool3;
-				if (System.IO.File.Exists(fileDir.FullName))
-				{
-					System.IO.File.Delete(fileDir.FullName);
-					tmpBool3 = true;
-				}
-				else if (System.IO.Directory.Exists(fileDir.FullName))
-				{
-					System.IO.Directory.Delete(fileDir.FullName);
-					tmpBool3 = true;
-				}
-				else
-					tmpBool3 = false;
-				bool generatedAux2 = tmpBool3;
-			}
-		}
-		
-		
-		
 		internal virtual void  AssertByteArrayEquals(byte[] b1, byte[] b2)
 		{
 			if (b1.Length != b2.Length)
@@ -503,7 +456,7 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary> This Analyzer uses an WhitespaceTokenizer and PayloadFilter.</summary>
-		private class PayloadAnalyzer : Analyzer
+		private class PayloadAnalyzer:Analyzer
 		{
 			internal System.Collections.IDictionary fieldToData = new System.Collections.Hashtable();
 			
@@ -554,25 +507,26 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary> This Filter adds payloads to the tokens.</summary>
-		private class PayloadFilter : TokenFilter
+		private class PayloadFilter:TokenFilter
 		{
 			private byte[] data;
 			private int length;
 			private int offset;
 			internal Payload payload = new Payload();
+			internal PayloadAttribute payloadAtt;
 			
 			public PayloadFilter(TokenStream in_Renamed, byte[] data, int offset, int length):base(in_Renamed)
 			{
 				this.data = data;
 				this.length = length;
 				this.offset = offset;
+				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
 			}
 			
-			public override Token Next(Token reusableToken)
+			public override bool IncrementToken()
 			{
-                System.Diagnostics.Debug.Assert(reusableToken != null);
-				Token nextToken = input.Next(reusableToken);
-				if (nextToken != null)
+				bool hasNext = input.IncrementToken();
+				if (hasNext)
 				{
 					if (offset + length <= data.Length)
 					{
@@ -580,30 +534,31 @@ namespace Lucene.Net.Index
 						if (p == null)
 						{
 							p = new Payload();
-							nextToken.SetPayload(p);
+							payloadAtt.SetPayload(p);
 						}
 						p.SetData(data, offset, length);
 						offset += length;
 					}
 					else
 					{
-						nextToken.SetPayload(null);
+						payloadAtt.SetPayload(null);
 					}
 				}
 				
-				return nextToken;
+				return hasNext;
 			}
 		}
 		
 		[Test]
 		public virtual void  TestThreadSafety()
 		{
+			rnd = NewRandom();
 			int numThreads = 5;
 			int numDocs = 50;
 			ByteArrayPool pool = new ByteArrayPool(numThreads, 5);
 			
 			Directory dir = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			System.String field = "test";
 			
 			SupportClass.ThreadClass[] ingesters = new SupportClass.ThreadClass[numThreads];
@@ -615,13 +570,7 @@ namespace Lucene.Net.Index
 			
 			for (int i = 0; i < numThreads; i++)
 			{
-				try
-				{
-					ingesters[i].Join();
-				}
-				catch (System.Threading.ThreadInterruptedException)
-				{
-				}
+				ingesters[i].Join();
 			}
 			writer.Close();
 			IndexReader reader = IndexReader.Open(dir);
@@ -635,9 +584,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < freq; i++)
 					{
 						tp.NextPosition();
-                        //System.String s = System.Text.Encoding.UTF8.GetString(tp.GetPayload(new byte[5], 0));
-                        //Assert.AreEqual(s, terms.Term().text_ForNUnitTest);
-                        Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().text_ForNUnitTest);
+						Assert.AreEqual(pool.BytesToString(tp.GetPayload(new byte[5], 0)), terms.Term().text_ForNUnit);
 					}
 				}
 				tp.Close();
@@ -648,28 +595,49 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(pool.Size(), numThreads);
 		}
 		
-		private class PoolingPayloadTokenStream : TokenStream
+		private class PoolingPayloadTokenStream:TokenStream
 		{
+			private void  InitBlock(TestPayloads enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestPayloads enclosingInstance;
+			public TestPayloads Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
 			private byte[] payload;
 			private bool first;
 			private ByteArrayPool pool;
-            private string term;
-			internal PoolingPayloadTokenStream(ByteArrayPool pool)
+			private System.String term;
+			
+			internal TermAttribute termAtt;
+			internal PayloadAttribute payloadAtt;
+			
+			internal PoolingPayloadTokenStream(TestPayloads enclosingInstance, ByteArrayPool pool)
 			{
+				InitBlock(enclosingInstance);
 				this.pool = pool;
 				payload = pool.Get();
-				Lucene.Net.Index.TestPayloads.GenerateRandomData(payload);
-                term = pool.BytesToString(payload);
+				Enclosing_Instance.GenerateRandomData(payload);
+				term = pool.BytesToString(payload);
 				first = true;
+				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
 			}
 			
-			public override Token Next(Token reusableToken)
+			public override bool IncrementToken()
 			{
 				if (!first)
-					return null;
-				reusableToken.Reinit(term, 0, 0);
-				reusableToken.SetPayload(new Payload(payload));
-				return reusableToken;
+					return false;
+				first = false;
+				termAtt.SetTermBuffer(term);
+				payloadAtt.SetPayload(new Payload(payload));
+				return true;
 			}
 			
 			public override void  Close()
@@ -690,25 +658,28 @@ namespace Lucene.Net.Index
 					pool.Add(new byte[size]);
 				}
 			}
-
-            private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
-
-            internal string BytesToString(byte[] bytes)
-            {
-                lock (this)
-                {
-                    string s = System.Text.Encoding.Default.GetString(bytes);
-                    UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
-                    try{
-                        return System.Text.Encoding.UTF8.GetString(utf8Result.result, 0, utf8Result.length);
-                    }
-                    catch (System.Text.DecoderFallbackException)
-                    {
-                        return null;
-                    }
-                }
-            }
-
+			
+			private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
+			
+			internal virtual System.String BytesToString(byte[] bytes)
+			{
+				lock (this)
+				{
+					System.String s = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(bytes));
+					UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+					try
+					{
+						System.String tempStr;
+						tempStr = System.Text.Encoding.GetEncoding("UTF-8").GetString(utf8Result.result);
+						return new System.String(tempStr.ToCharArray(), 0, utf8Result.length);
+					}
+					catch (System.IO.IOException uee)
+					{
+						return null;
+					}
+				}
+			}
+			
 			internal virtual byte[] Get()
 			{
 				lock (this)

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,17 +19,15 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
-using Index = Lucene.Net.Documents.Field.Index;
-using Store = Lucene.Net.Documents.Field.Store;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Index
 {
@@ -40,8 +38,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <deprecated>
 	/// </deprecated>
-	[TestFixture]
-	public class TestIndexModifier : LuceneTestCase
+    [TestFixture]
+	public class TestIndexModifier:LuceneTestCase
 	{
 		
 		private int docCount = 0;
@@ -68,7 +66,7 @@ namespace Lucene.Net.Index
 			i.AddDocument(GetDoc());
 			i.AddDocument(GetDoc());
 			i.Flush();
-			// depend on merge policy - assertEquals(3, i.docCount());
+			// depend on merge policy - Assert.AreEqual(3, i.docCount());
 			i.DeleteDocuments(allDocTerm);
 			Assert.AreEqual(0, i.DocCount());
 			i.Optimize();
@@ -111,7 +109,7 @@ namespace Lucene.Net.Index
 				i.DocCount();
 				Assert.Fail();
 			}
-			catch (System.SystemException)
+			catch (System.SystemException e)
 			{
 				// expected exception
 			}
@@ -132,9 +130,9 @@ namespace Lucene.Net.Index
 			powerIndex.Close();
 		}
 		
-		private Lucene.Net.Documents.Document GetDoc()
+		private Document GetDoc()
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("body", System.Convert.ToString(docCount), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("all", "x", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			docCount++;
@@ -144,12 +142,12 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestIndexWithThreads()
 		{
-			_TestIndexInternal(0);
-			_TestIndexInternal(10);
-			_TestIndexInternal(50);
+			TestIndexInternal(0);
+			TestIndexInternal(10);
+			TestIndexInternal(50);
 		}
 		
-		private void  _TestIndexInternal(int maxWait)
+		private void  TestIndexInternal(int maxWait)
 		{
 			bool create = true;
 			//Directory rd = new RAMDirectory();
@@ -158,7 +156,7 @@ namespace Lucene.Net.Index
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
 			System.IO.FileInfo indexDir = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucenetestindex"));
-			Directory rd = FSDirectory.GetDirectory(indexDir, create);
+			Directory rd = FSDirectory.Open(indexDir);
 			IndexThread.id = 0;
 			IndexThread.idStack.Clear();
 			IndexModifier index = new IndexModifier(rd, new StandardAnalyzer(), create);
@@ -168,14 +166,7 @@ namespace Lucene.Net.Index
 			thread2.Start();
 			while (thread1.IsAlive || thread2.IsAlive)
 			{
-				try
-				{
-					System.Threading.Thread.Sleep(100);
-				}
-				catch (System.Threading.ThreadInterruptedException e)
-				{
-					throw new System.SystemException(e.Message);
-				}
+				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 100));
 			}
 			index.Optimize();
 			int added = thread1.added + thread2.added;
@@ -188,7 +179,7 @@ namespace Lucene.Net.Index
 				index.Close();
 				Assert.Fail();
 			}
-			catch (System.SystemException)
+			catch (System.SystemException e)
 			{
 				// expected exception
 			}
@@ -231,7 +222,7 @@ namespace Lucene.Net.Index
 			bool generatedAux2 = tmpBool2;
 		}
 		
-		private class PowerIndex : IndexModifier
+		private class PowerIndex:IndexModifier
 		{
 			private void  InitBlock(TestIndexModifier enclosingInstance)
 			{
@@ -262,15 +253,14 @@ namespace Lucene.Net.Index
 		}
 	}
 	
-	class IndexThread : SupportClass.ThreadClass
+	class IndexThread:SupportClass.ThreadClass
 	{
 		
-		private const int TEST_SECONDS = 3; // how many seconds to tun each test
+		private const int TEST_SECONDS = 3; // how many seconds to run each test 
 		
 		internal static int id = 0;
-		//internal static System.Collections.ArrayList idStack = new System.Collections.ArrayList();
-        internal static System.Collections.Stack idStack = new System.Collections.Stack();
-
+		internal static System.Collections.ArrayList idStack = new System.Collections.ArrayList();
+		
 		internal int added = 0;
 		internal int deleted = 0;
 		
@@ -290,11 +280,12 @@ namespace Lucene.Net.Index
 		
 		override public void  Run()
 		{
-            System.DateTime endTime = System.DateTime.Now.AddSeconds(3.0);
+			
+			long endTime = System.DateTime.Now.Millisecond + 1000 * TEST_SECONDS;
 			try
 			{
-                while (System.DateTime.Now < endTime)
-                {
+				while (System.DateTime.Now.Millisecond < endTime)
+				{
 					int rand = random.Next(101);
 					if (rand < 5)
 					{
@@ -302,12 +293,9 @@ namespace Lucene.Net.Index
 					}
 					else if (rand < 60)
 					{
-						Lucene.Net.Documents.Document doc = GetDocument();
+						Document doc = GetDocument();
 						index.AddDocument(doc);
-                        lock (idStack.SyncRoot)
-                        {
-                            idStack.Push(doc.Get("id"));
-                        }
+						idStack.Add(doc.Get("id"));
 						added++;
 					}
 					else
@@ -317,12 +305,10 @@ namespace Lucene.Net.Index
 						System.String delId = null;
 						try
 						{
-                            lock (idStack.SyncRoot)
-                            {
-                                delId = (string)idStack.Pop();
-                            }
+                            delId = idStack[idStack.Count - 1] as System.String;
+                            idStack.RemoveAt(idStack.Count - 1);
 						}
-						catch (System.InvalidOperationException)
+						catch (System.ArgumentOutOfRangeException e)
 						{
 							continue;
 						}
@@ -336,28 +322,29 @@ namespace Lucene.Net.Index
 					}
 					if (maxWait > 0)
 					{
+						rand = random.Next(maxWait);
+						//System.out.println("waiting " + rand + "ms");
 						try
 						{
-							rand = random.Next(maxWait);
-							//System.out.println("waiting " + rand + "ms");
-							System.Threading.Thread.Sleep(rand);
+							System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * rand));
 						}
-						catch (System.Threading.ThreadInterruptedException e)
+						catch (System.Threading.ThreadInterruptedException ie)
 						{
-							throw new System.SystemException(e.Message);
+							SupportClass.ThreadClass.Current().Interrupt();
+							throw new System.SystemException("", ie);
 						}
 					}
 				}
 			}
 			catch (System.IO.IOException e)
 			{
-				throw new System.SystemException(e.Message);
+				throw new System.SystemException("", e);
 			}
 		}
 		
-		private Lucene.Net.Documents.Document GetDocument()
+		private Document GetDocument()
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			lock (GetType())
 			{
 				doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));

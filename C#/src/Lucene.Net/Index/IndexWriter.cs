@@ -1830,7 +1830,7 @@ namespace Lucene.Net.Index
 						// commit if there is no segments file in this dir
 						// already.
 						segmentInfos.Commit(directory);
-						SupportClass.HashtableHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+						SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
 					}
 					else
 					{
@@ -1862,7 +1862,7 @@ namespace Lucene.Net.Index
 					
 					// We assume that this segments_N was previously
 					// properly sync'd:
-					SupportClass.HashtableHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+					SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
 				}
 				
 				this.autoCommit = autoCommit;
@@ -3026,7 +3026,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetSegmentCount()
+		public /*internal*/ int GetSegmentCount()
 		{
 			lock (this)
 			{
@@ -3035,7 +3035,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetNumBufferedDocuments()
+		public /*internal*/ int GetNumBufferedDocuments()
 		{
 			lock (this)
 			{
@@ -3044,7 +3044,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetDocCount(int i)
+		public /*internal*/ int GetDocCount(int i)
 		{
 			lock (this)
 			{
@@ -3060,7 +3060,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetFlushCount()
+		public /*internal*/ int GetFlushCount()
 		{
 			lock (this)
 			{
@@ -3069,7 +3069,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for test purpose
-		internal int GetFlushDeletesCount()
+		public /*internal*/ int GetFlushDeletesCount()
 		{
 			lock (this)
 			{
@@ -3219,7 +3219,7 @@ namespace Lucene.Net.Index
 				segmentsToOptimize = new System.Collections.Hashtable();
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
-					SupportClass.HashtableHelper.AddIfNotContains(segmentsToOptimize, segmentInfos.Info(i));
+					SupportClass.CollectionsHelper.AddIfNotContains(segmentsToOptimize, segmentInfos.Info(i));
 				
 				// Now mark all pending & running merges as optimize
 				// merge:
@@ -3497,7 +3497,7 @@ namespace Lucene.Net.Index
 		/// to retrieve the next merge requested by the
 		/// MergePolicy 
 		/// </summary>
-		internal virtual MergePolicy.OneMerge GetNextMerge()
+		public /*internal*/ virtual MergePolicy.OneMerge GetNextMerge()
 		{
 			lock (this)
 			{
@@ -4813,7 +4813,7 @@ namespace Lucene.Net.Index
 		/// <param name="flushDeletes">whether pending deletes should also
 		/// be flushed
 		/// </param>
-		protected internal void  Flush(bool triggerMerge, bool flushDocStores, bool flushDeletes)
+		public /*protected internal*/ void  Flush(bool triggerMerge, bool flushDocStores, bool flushDeletes)
 		{
 			// We can be called during close, when closing==true, so we must pass false to ensureOpen:
 			EnsureOpen(false);
@@ -5297,7 +5297,7 @@ namespace Lucene.Net.Index
 		/// single segment.
 		/// </summary>
 		
-		internal void  Merge(MergePolicy.OneMerge merge)
+		public /*internal*/ void  Merge(MergePolicy.OneMerge merge)
 		{
 			
 			bool success = false;
@@ -6042,7 +6042,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetBufferedDeleteTermsSize()
+		public /*internal*/ int GetBufferedDeleteTermsSize()
 		{
 			lock (this)
 			{
@@ -6051,7 +6051,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// For test purposes.
-		internal int GetNumBufferedDeleteTerms()
+		public /*internal*/ int GetNumBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -6060,7 +6060,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// utility routines for tests
-		internal virtual SegmentInfo NewestSegment()
+		public /*internal*/ virtual SegmentInfo NewestSegment()
 		{
 			return segmentInfos.Info(segmentInfos.Count - 1);
 		}

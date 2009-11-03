@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,16 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Index = Lucene.Net.Documents.Field.Index;
+using Store = Lucene.Net.Documents.Field.Store;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -35,11 +37,11 @@ namespace Lucene.Net.Search
 	/// <summary> TestWildcard tests the '*' and '?' wildcard characters.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestWildcard.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestWildcard.java 694004 2008-09-10 21:38:52Z mikemccand $
 	/// 
 	/// </version>
-	[TestFixture]
-	public class TestWildcard : LuceneTestCase
+    [TestFixture]
+	public class TestWildcard:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestEquals()
@@ -144,7 +146,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < contents.Length; ++i)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field(field, contents[i], Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -171,7 +173,7 @@ namespace Lucene.Net.Search
 		{
 			System.String field = "content";
 			bool dbg = false;
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(field, new WhitespaceAnalyzer());
+			QueryParser qp = new QueryParser(field, new WhitespaceAnalyzer());
 			qp.SetAllowLeadingWildcard(true);
 			System.String[] docs = new System.String[]{"\\ abcdefg1", "\\79 hijklmn1", "\\\\ opqrstu1"};
 			// queries that should find all docs

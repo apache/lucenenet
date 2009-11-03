@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,23 +19,26 @@ using System;
 
 using NUnit.Framework;
 
-using Lucene.Net.Util;
-using Lucene.Net.Store;
-using Lucene.Net.Documents;
 using Lucene.Net.Analysis;
-using Lucene.Net.Search;
+using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Search;
+using English = Lucene.Net.Util.English;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestStressIndexing : LuceneTestCase
+    [TestFixture]
+	public class TestStressIndexing:LuceneTestCase
 	{
 		private static readonly Analyzer ANALYZER = new SimpleAnalyzer();
-		private static readonly System.Random RANDOM = new System.Random();
+		private System.Random RANDOM;
 		
-		abstract public class TimedThread : SupportClass.ThreadClass
+		abstract public class TimedThread:SupportClass.ThreadClass
 		{
 			internal bool failed;
 			internal int count;
@@ -51,13 +54,13 @@ namespace Lucene.Net.Index
 			
 			override public void  Run()
 			{
-				long stopTime = (System.DateTime.Now.Ticks - 621355968000000000) / 10000 + 1000 * RUN_TIME_SEC;
+				long stopTime = System.DateTime.Now.Millisecond + 1000 * RUN_TIME_SEC;
 				
 				count = 0;
 				
 				try
 				{
-					while ((System.DateTime.Now.Ticks - 621355968000000000) / 10000 < stopTime && !AnyErrors())
+					while (System.DateTime.Now.Millisecond < stopTime && !AnyErrors())
 					{
 						DoWork();
 						count++;
@@ -65,8 +68,8 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-                    System.Console.Out.WriteLine(System.Threading.Thread.CurrentThread + ": exc");
-                    System.Console.Out.WriteLine(e.StackTrace);
+					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current() + ": exc");
+					System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}
 			}
@@ -80,14 +83,28 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class IndexerThread : TimedThread
+		private class IndexerThread:TimedThread
 		{
+			private void  InitBlock(TestStressIndexing enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TestStressIndexing enclosingInstance;
+			public TestStressIndexing Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
 			internal IndexWriter writer;
-			//new public int count;
+			new public int count;
 			internal int nextID;
 			
-			public IndexerThread(IndexWriter writer, TimedThread[] threads):base(threads)
+			public IndexerThread(TestStressIndexing enclosingInstance, IndexWriter writer, TimedThread[] threads):base(threads)
 			{
+				InitBlock(enclosingInstance);
 				this.writer = writer;
 			}
 			
@@ -97,7 +114,7 @@ namespace Lucene.Net.Index
 				for (int j = 0; j < 10; j++)
 				{
 					Document d = new Document();
-					int n = Lucene.Net.Index.TestStressIndexing.RANDOM.Next();
+					int n = Enclosing_Instance.RANDOM.Next();
 					d.Add(new Field("id", System.Convert.ToString(nextID++), Field.Store.YES, Field.Index.NOT_ANALYZED));
 					d.Add(new Field("contents", English.IntToEnglish(n), Field.Store.NO, Field.Index.ANALYZED));
 					writer.AddDocument(d);
@@ -113,7 +130,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class SearcherThread : TimedThread
+		private class SearcherThread:TimedThread
 		{
 			private Directory directory;
 			
@@ -139,42 +156,40 @@ namespace Lucene.Net.Index
 			IndexWriter modifier = new IndexWriter(directory, autoCommit, ANALYZER, true);
 			
 			modifier.SetMaxBufferedDocs(10);
-
+			
 			TimedThread[] threads = new TimedThread[4];
-            int numThread = 0;
+			int numThread = 0;
 			
 			if (mergeScheduler != null)
 				modifier.SetMergeScheduler(mergeScheduler);
 			
 			// One modifier that writes 10 docs then removes 5, over
 			// and over:
-			IndexerThread indexerThread = new IndexerThread(modifier, threads);
+			IndexerThread indexerThread = new IndexerThread(this, modifier, threads);
 			threads[numThread++] = indexerThread;
 			indexerThread.Start();
-
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
-            threads[numThread++] = indexerThread2;
-            indexerThread2.Start();
-
-            // Two searchers that constantly just re-instantiate the
-            // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
-            threads[numThread++] = searcherThread1;
-            searcherThread1.Start();
-
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
-            threads[numThread++] = searcherThread2;
-            searcherThread2.Start();
-
-            for (int i = 0; i < threads.Length; i++)
-                //threads[i].Join();
-                if (threads[i] != null) threads[i].Join();
-
+			
+			IndexerThread indexerThread2 = new IndexerThread(this, modifier, threads);
+			threads[numThread++] = indexerThread2;
+			indexerThread2.Start();
+			
+			// Two searchers that constantly just re-instantiate the
+			// searcher:
+			SearcherThread searcherThread1 = new SearcherThread(directory, threads);
+			threads[numThread++] = searcherThread1;
+			searcherThread1.Start();
+			
+			SearcherThread searcherThread2 = new SearcherThread(directory, threads);
+			threads[numThread++] = searcherThread2;
+			searcherThread2.Start();
+			
+			for (int i = 0; i < numThread; i++)
+				threads[i].Join();
+			
 			modifier.Close();
-
-            for (int i = 0; i < threads.Length; i++)
-                //Assert.IsTrue(!((TimedThread)threads[i]).failed);
-                if (threads[i] != null) Assert.IsTrue(!((TimedThread)threads[i]).failed);
+			
+			for (int i = 0; i < numThread; i++)
+				Assert.IsTrue(!((TimedThread) threads[i]).failed);
 			
 			//System.out.println("    Writer: " + indexerThread.count + " iterations");
 			//System.out.println("Searcher 1: " + searcherThread1.count + " searchers created");
@@ -188,44 +203,40 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestStressIndexAndSearching()
 		{
-            ////for (int i = 0; i < 10; i++)
-            ////{
-            //// RAMDir
-            //Directory directory = new MockRAMDirectory();
-            //RunStressTest(directory, true, null);
-            //directory.Close();
-Directory directory;
-
-            // FSDir
-            System.String tempDir = System.IO.Path.GetTempPath();
-            System.IO.FileInfo dirPath = new System.IO.FileInfo(tempDir + "\\" + "lucene.test.stress");
-            directory = FSDirectory.GetDirectory(dirPath);
-            RunStressTest(directory, true, null);
-            directory.Close();
-
-//System.Console.WriteLine("Index Path: {0}", dirPath);
-
-            //// With ConcurrentMergeScheduler, in RAMDir
-            //directory = new MockRAMDirectory();
-            //RunStressTest(directory, true, new ConcurrentMergeScheduler());
-            //directory.Close();
-
-            // With ConcurrentMergeScheduler, in FSDir
-            directory = FSDirectory.GetDirectory(dirPath);
-            RunStressTest(directory, true, new ConcurrentMergeScheduler());
-            directory.Close();
-
-            //// With ConcurrentMergeScheduler and autoCommit=false, in RAMDir
-            //directory = new MockRAMDirectory();
-            //RunStressTest(directory, false, new ConcurrentMergeScheduler());
-            //directory.Close();
-
-            // With ConcurrentMergeScheduler and autoCommit=false, in FSDir
-            directory = FSDirectory.GetDirectory(dirPath);
-            RunStressTest(directory, false, new ConcurrentMergeScheduler());
-            directory.Close();
-
-            _TestUtil.RmDir(dirPath);
+			RANDOM = NewRandom();
+			
+			// RAMDir
+			Directory directory = new MockRAMDirectory();
+			RunStressTest(directory, true, null);
+			directory.Close();
+			
+			// FSDir
+			System.IO.FileInfo dirPath = _TestUtil.GetTempDir("lucene.test.stress");
+			directory = FSDirectory.Open(dirPath);
+			RunStressTest(directory, true, null);
+			directory.Close();
+			
+			// With ConcurrentMergeScheduler, in RAMDir
+			directory = new MockRAMDirectory();
+			RunStressTest(directory, true, new ConcurrentMergeScheduler());
+			directory.Close();
+			
+			// With ConcurrentMergeScheduler, in FSDir
+			directory = FSDirectory.Open(dirPath);
+			RunStressTest(directory, true, new ConcurrentMergeScheduler());
+			directory.Close();
+			
+			// With ConcurrentMergeScheduler and autoCommit=false, in RAMDir
+			directory = new MockRAMDirectory();
+			RunStressTest(directory, false, new ConcurrentMergeScheduler());
+			directory.Close();
+			
+			// With ConcurrentMergeScheduler and autoCommit=false, in FSDir
+			directory = FSDirectory.Open(dirPath);
+			RunStressTest(directory, false, new ConcurrentMergeScheduler());
+			directory.Close();
+			
+			_TestUtil.RmDir(dirPath);
 		}
 	}
 }

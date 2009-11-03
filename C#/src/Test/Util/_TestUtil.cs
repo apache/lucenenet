@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 
 using System;
 
+using NUnit.Framework;
+
 using CheckIndex = Lucene.Net.Index.CheckIndex;
 using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -28,6 +30,17 @@ namespace Lucene.Net.Util
 	
 	public class _TestUtil
 	{
+		
+		/// <summary>Returns temp dir, containing String arg in its name;
+		/// does not create the directory. 
+		/// </summary>
+		public static System.IO.FileInfo GetTempDir(System.String desc)
+		{
+			System.String tempDir = System.IO.Path.GetTempPath();
+			if (tempDir == null)
+				throw new System.SystemException("java.io.tmpdir undefined, cannot run test");
+			return new System.IO.FileInfo(System.IO.Path.Combine(tempDir, desc + "." + (new System.Random()).Next(System.Int32.MaxValue)));
+		}
 		
 		public static void  RmDir(System.IO.FileInfo dir)
 		{
@@ -91,28 +104,76 @@ namespace Lucene.Net.Util
 			if (ms is ConcurrentMergeScheduler)
 				((ConcurrentMergeScheduler) ms).Sync();
 		}
-
-        /// <summary>
-        /// This runs the CheckIndex tool on the index in dir.
-        /// If any issues are hit, a System.Exception is thrown; else,
-        /// true is returned.
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
-        public static bool CheckIndex(Directory dir)
-        {
-            System.IO.StringWriter sw = new System.IO.StringWriter();
-            CheckIndex checker = new CheckIndex(dir);
-            checker.SetInfoStream(sw);
-            CheckIndex.Status indexStatus = checker.CheckIndex_Renamed();
-            if (indexStatus == null || !indexStatus.clean)
-            {
-                System.Console.WriteLine("CheckIndex failed");
-                System.Console.WriteLine(sw.ToString());
-                throw new System.Exception("CheckIndex failed");
-            }
-            else
-                return true;
-        }
+		
+		/// <summary>This runs the CheckIndex tool on the index in.  If any
+		/// issues are hit, a RuntimeException is thrown; else,
+		/// true is returned. 
+		/// </summary>
+		public static bool CheckIndex(Directory dir)
+		{
+			System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
+			
+			CheckIndex checker = new CheckIndex(dir);
+			checker.SetInfoStream(new System.IO.StreamWriter(bos));
+			CheckIndex.Status indexStatus = checker.CheckIndex_Renamed_Method();
+			if (indexStatus == null || indexStatus.clean == false)
+			{
+				System.Console.Out.WriteLine("CheckIndex failed");
+				char[] tmpChar;
+				byte[] tmpByte;
+				tmpByte = bos.GetBuffer();
+				tmpChar = new char[bos.Length];
+				System.Array.Copy(tmpByte, 0, tmpChar, 0, tmpChar.Length);
+				System.Console.Out.WriteLine(new System.String(tmpChar));
+				throw new System.SystemException("CheckIndex failed");
+			}
+			else
+				return true;
+		}
+		
+		/// <summary>Use only for testing.</summary>
+		/// <deprecated> -- in 3.0 we can use Arrays.toString
+		/// instead 
+		/// </deprecated>
+		public static System.String ArrayToString(int[] array)
+		{
+			System.Text.StringBuilder buf = new System.Text.StringBuilder();
+			buf.Append("[");
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (i > 0)
+				{
+					buf.Append(" ");
+				}
+				buf.Append(array[i]);
+			}
+			buf.Append("]");
+			return buf.ToString();
+		}
+		
+		/// <summary>Use only for testing.</summary>
+		/// <deprecated> -- in 3.0 we can use Arrays.toString
+		/// instead 
+		/// </deprecated>
+		public static System.String ArrayToString(System.Object[] array)
+		{
+			System.Text.StringBuilder buf = new System.Text.StringBuilder();
+			buf.Append("[");
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (i > 0)
+				{
+					buf.Append(" ");
+				}
+				buf.Append(array[i]);
+			}
+			buf.Append("]");
+			return buf.ToString();
+		}
+		
+		public static int GetRandomSocketPort()
+		{
+			return 1024 + new System.Random().Next(64512);
+		}
 	}
 }

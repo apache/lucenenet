@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 			// FieldInfo.storePayload.
 			System.String fileName = state.SegmentFileName(IndexFileNames.FIELD_INFOS_EXTENSION);
 			fieldInfos.Write(state.directory, fileName);
-			SupportClass.HashtableHelper.AddIfNotContains(state.flushedFiles, fileName);
+			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
 		}
 		
 		public override void  Abort()

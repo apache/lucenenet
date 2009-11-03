@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,20 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
+using BooleanClause = Lucene.Net.Search.BooleanClause;
+using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+using CheckHits = Lucene.Net.Search.CheckHits;
+using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using Query = Lucene.Net.Search.Query;
+using QueryUtils = Lucene.Net.Search.QueryUtils;
+using TermQuery = Lucene.Net.Search.TermQuery;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -44,15 +50,13 @@ namespace Lucene.Net.Search.Spans
 	/// testing of the indexing and search code.
 	/// 
 	/// </summary>
-	/// <author>  Doug Cutting
-	/// </author>
-	[TestFixture]
-	public class TestBasics : LuceneTestCase
+    [TestFixture]
+	public class TestBasics:LuceneTestCase
 	{
 		private IndexSearcher searcher;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
@@ -60,7 +64,7 @@ namespace Lucene.Net.Search.Spans
 			//writer.infoStream = System.out;
 			for (int i = 0; i < 1000; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -88,8 +92,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestPhrase()
 		{
 			PhraseQuery query = new PhraseQuery();
-			query.Add(new Term("field", "seventy"));
-			query.Add(new Term("field", "seven"));
+			query.add(new Term("field", "seventy"));
+			query.add(new Term("field", "seven"));
 			CheckHits(query, new int[]{77, 177, 277, 377, 477, 577, 677, 777, 877, 977});
 		}
 		
@@ -97,8 +101,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestPhrase2()
 		{
 			PhraseQuery query = new PhraseQuery();
-			query.Add(new Term("field", "seventish"));
-			query.Add(new Term("field", "sevenon"));
+			query.add(new Term("field", "seventish"));
+			query.add(new Term("field", "sevenon"));
 			CheckHits(query, new int[]{});
 		}
 		
@@ -142,9 +146,8 @@ namespace Lucene.Net.Search.Spans
 			SpanTermQuery term1 = new SpanTermQuery(new Term("field", "nine"));
 			SpanTermQuery term2 = new SpanTermQuery(new Term("field", "six"));
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{term1, term2}, 4, false);
-
-			//CheckHits(query, new int[] { 609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996 });
-			CheckHits(query, new int[] { 609, 906, 629, 639, 649, 659, 669, 679, 689, 699, 926, 936, 946, 956, 966, 976, 986, 996 });
+			
+			CheckHits(query, new int[]{609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996});
 		}
 		
 		[Test]
@@ -305,9 +308,8 @@ namespace Lucene.Net.Search.Spans
 			SpanOrQuery to2 = new SpanOrQuery(new SpanQuery[]{t5, t6});
 			
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{to1, to2}, 10, true);
-
-			//CheckHits(query, new int[] { 606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
-			CheckHits(query, new int[] { 606, 607, 706, 707, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
+			
+			CheckHits(query, new int[]{606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797});
 		}
 		
 		[Test]
@@ -329,15 +331,58 @@ namespace Lucene.Net.Search.Spans
 			SpanOrQuery to2 = new SpanOrQuery(new SpanQuery[]{t5, t6});
 			
 			SpanNearQuery query = new SpanNearQuery(new SpanQuery[]{to1, to2}, 100, true);
-
-			//CheckHits(query, new int[] { 606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
-			CheckHits(query, new int[] { 606, 607, 706, 707, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797 });
+			
+			CheckHits(query, new int[]{606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797});
 		}
 		
+		[Test]
+		public virtual void  TestSpansSkipTo()
+		{
+			SpanTermQuery t1 = new SpanTermQuery(new Term("field", "seventy"));
+			SpanTermQuery t2 = new SpanTermQuery(new Term("field", "seventy"));
+			Spans s1 = t1.GetSpans(searcher.GetIndexReader());
+			Spans s2 = t2.GetSpans(searcher.GetIndexReader());
+			
+			Assert.IsTrue(s1.Next());
+			Assert.IsTrue(s2.Next());
+			
+			bool hasMore = true;
+			
+			do 
+			{
+				hasMore = SkipToAccoringToJavaDocs(s1, s1.Doc());
+				Assert.AreEqual(hasMore, s2.SkipTo(s2.Doc()));
+				Assert.AreEqual(s1.Doc(), s2.Doc());
+			}
+			while (hasMore);
+		}
+		
+		/// <summary>Skips to the first match beyond the current, whose document number is
+		/// greater than or equal to <i>target</i>. <p>Returns true iff there is such
+		/// a match.  <p>Behaves as if written: <pre>
+		/// boolean skipTo(int target) {
+		/// do {
+		/// if (!next())
+		/// return false;
+		/// } while (target > doc());
+		/// return true;
+		/// }
+		/// </pre>
+		/// </summary>
+		private bool SkipToAccoringToJavaDocs(Spans s, int target)
+		{
+			do 
+			{
+				if (!s.Next())
+					return false;
+			}
+			while (target > s.Doc());
+			return true;
+		}
 		
 		private void  CheckHits(Query query, int[] results)
 		{
-			Lucene.Net.Search.CheckHits.CheckHits_Renamed(query, "field", searcher, results);
+			Lucene.Net.Search.CheckHits.CheckHits_Renamed_Method(query, "field", searcher, results);
 		}
 	}
 }

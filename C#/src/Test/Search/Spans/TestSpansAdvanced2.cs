@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,11 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Lucene.Net.Search;
-using Searchable = Lucene.Net.Search.Searchable;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -34,24 +33,22 @@ namespace Lucene.Net.Search.Spans
 	/// functionality.
 	/// 
 	/// </summary>
-	/// <author>  Reece Wilton
-	/// </author>
-	[TestFixture]
+    [TestFixture]
 	public class TestSpansAdvanced2:TestSpansAdvanced
 	{
 		internal IndexSearcher searcher2;
 		/// <summary> Initializes the tests by adding documents to the index.</summary>
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			
 			// create test index
 			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-			AddDocument(writer, "A", "Should we, could we, would we?");
-			AddDocument(writer, "B", "it should.  Should it?");
-			AddDocument(writer, "C", "it shouldn't.");
-			AddDocument(writer, "D", "Should we, should we, should we.");
+			addDocument(writer, "A", "Should we, could we, would we?");
+			addDocument(writer, "B", "It should.  Should it?");
+			addDocument(writer, "C", "It shouldn't.");
+			addDocument(writer, "D", "Should we, should we, should we.");
 			writer.Close();
 			
 			// re-open the searcher since we added more docs
@@ -81,7 +78,7 @@ namespace Lucene.Net.Search.Spans
 			Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
 			System.String[] expectedIds = new System.String[]{"B", "D", "1", "2", "3", "4", "A"};
 			float[] expectedScores = new float[]{0.625f, 0.45927936f, 0.35355338f, 0.35355338f, 0.35355338f, 0.35355338f, 0.26516503f};
-			AssertHits(searcher2, spanQuery, "single span query", expectedIds, expectedScores);
+			assertHits(searcher2, spanQuery, "single span query", expectedIds, expectedScores);
 		}
 		
 		/// <summary> Tests a single span query that matches multiple documents.
@@ -99,9 +96,9 @@ namespace Lucene.Net.Search.Spans
 			query.Add(spanQuery2, BooleanClause.Occur.MUST);
 			System.String[] expectedIds = new System.String[]{"D", "A"};
 			// these values were pre LUCENE-413
-			// float[] expectedScores = new float[]{0.93163157f, 0.20698164f};
+			// final float[] expectedScores = new float[] { 0.93163157f, 0.20698164f };
 			float[] expectedScores = new float[]{1.0191123f, 0.93163157f};
-			AssertHits(searcher2, query, "multiple different span queries", expectedIds, expectedScores);
+			assertHits(searcher2, query, "multiple different span queries", expectedIds, expectedScores);
 		}
 		
 		/// <summary> Tests two span queries.
@@ -112,7 +109,7 @@ namespace Lucene.Net.Search.Spans
 		public override void  TestBooleanQueryWithSpanQueries()
 		{
 			
-			DoTestBooleanQueryWithSpanQueries(searcher2, 0.73500174f);
+			doTestBooleanQueryWithSpanQueries(searcher2, 0.73500174f);
 		}
 	}
 }

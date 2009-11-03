@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,7 +27,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -35,9 +36,10 @@ namespace Lucene.Net.Search
 	/// 
 	/// See {@link http://issues.apache.org/jira/browse/LUCENE-1096}.
 	/// </summary>
-    [System.Obsolete("Hits will be removed in Lucene 3.0")]
-	[TestFixture]
-	public class TestSearchHitsWithDeletions
+	/// <deprecated> Hits will be removed in Lucene 3.0
+	/// </deprecated>
+    [TestFixture]
+	public class TestSearchHitsWithDeletions:LuceneTestCase
 	{
 		
 		private static bool VERBOSE = false;
@@ -46,9 +48,10 @@ namespace Lucene.Net.Search
 		
 		private static Directory directory;
 		
-		[SetUp]
-		public virtual void  SetUp()
+		[Test]
+		public override void  SetUp()
 		{
+			base.SetUp();
 			// Create an index writer.
 			directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);

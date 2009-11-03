@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Spans
             System.Collections.Hashtable possibleMatchPayloads = new System.Collections.Hashtable();
 			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
 			{
-				SupportClass.HashtableHelper.AddAllIfNotContains(possibleMatchPayloads, subSpans[subSpans.Length - 1].GetPayload());
+				SupportClass.CollectionsHelper.AddAllIfNotContains(possibleMatchPayloads, subSpans[subSpans.Length - 1].GetPayload());
 			}
 			
 			System.Collections.ArrayList possiblePayload = null;
@@ -385,7 +385,7 @@ namespace Lucene.Net.Search.Spans
 				
 				if (collectPayloads && possiblePayload != null)
 				{
-					SupportClass.HashtableHelper.AddAllIfNotContains(possibleMatchPayloads, possiblePayload);
+					SupportClass.CollectionsHelper.AddAllIfNotContains(possibleMatchPayloads, possiblePayload);
 				}
 				
 				System.Diagnostics.Debug.Assert(prevStart <= matchStart);

@@ -22,7 +22,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	sealed class SegmentTermEnum:TermEnum, System.ICloneable
+	public sealed class SegmentTermEnum:TermEnum, System.ICloneable
 	{
 		private IndexInput input;
 		internal FieldInfos fieldInfos;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the previous Term enumerated. Initially null.</summary>
-		internal Term Prev()
+		public /*internal*/ Term Prev()
 		{
 			return prevBuffer.ToTerm();
 		}

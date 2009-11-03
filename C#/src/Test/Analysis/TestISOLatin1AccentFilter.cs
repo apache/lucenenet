@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,96 +19,102 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestISOLatin1AccentFilter : LuceneTestCase
+    [TestFixture]
+	public class TestISOLatin1AccentFilter:BaseTokenStreamTestCase
 	{
-		[Test]
+        [Test]
 		public virtual void  TestU()
 		{
-            TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ"));
+			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À �? Â Ã Ä Å Æ Ç È É Ê Ë Ì �? Î �? Ĳ �? Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü �? Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ �? ﬂ"));
 			ISOLatin1AccentFilter filter = new ISOLatin1AccentFilter(stream);
-            Token reusableToken = new Token();
-            Assert.AreEqual("Des", filter.Next(reusableToken).Term());
-			Assert.AreEqual("mot", filter.Next(reusableToken).Term());
-			Assert.AreEqual("cles", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("LA", filter.Next(reusableToken).Term());
-			Assert.AreEqual("CHAINE", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("A", filter.Next(reusableToken).Term());
-			Assert.AreEqual("AE", filter.Next(reusableToken).Term());
-			Assert.AreEqual("C", filter.Next(reusableToken).Term());
-			Assert.AreEqual("E", filter.Next(reusableToken).Term());
-			Assert.AreEqual("E", filter.Next(reusableToken).Term());
-			Assert.AreEqual("E", filter.Next(reusableToken).Term());
-			Assert.AreEqual("E", filter.Next(reusableToken).Term());
-			Assert.AreEqual("I", filter.Next(reusableToken).Term());
-			Assert.AreEqual("I", filter.Next(reusableToken).Term());
-			Assert.AreEqual("I", filter.Next(reusableToken).Term());
-            Assert.AreEqual("I", filter.Next(reusableToken).Term());
-            Assert.AreEqual("IJ", filter.Next(reusableToken).Term());
-			Assert.AreEqual("D", filter.Next(reusableToken).Term());
-			Assert.AreEqual("N", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("O", filter.Next(reusableToken).Term());
-			Assert.AreEqual("OE", filter.Next(reusableToken).Term());
-			Assert.AreEqual("TH", filter.Next(reusableToken).Term());
-			Assert.AreEqual("U", filter.Next(reusableToken).Term());
-			Assert.AreEqual("U", filter.Next(reusableToken).Term());
-			Assert.AreEqual("U", filter.Next(reusableToken).Term());
-			Assert.AreEqual("U", filter.Next(reusableToken).Term());
-			Assert.AreEqual("Y", filter.Next(reusableToken).Term());
-			Assert.AreEqual("Y", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("a", filter.Next(reusableToken).Term());
-			Assert.AreEqual("ae", filter.Next(reusableToken).Term());
-			Assert.AreEqual("c", filter.Next(reusableToken).Term());
-			Assert.AreEqual("e", filter.Next(reusableToken).Term());
-			Assert.AreEqual("e", filter.Next(reusableToken).Term());
-			Assert.AreEqual("e", filter.Next(reusableToken).Term());
-			Assert.AreEqual("e", filter.Next(reusableToken).Term());
-			Assert.AreEqual("i", filter.Next(reusableToken).Term());
-			Assert.AreEqual("i", filter.Next(reusableToken).Term());
-			Assert.AreEqual("i", filter.Next(reusableToken).Term());
-            Assert.AreEqual("i", filter.Next(reusableToken).Term());
-            Assert.AreEqual("ij", filter.Next(reusableToken).Term());
-			Assert.AreEqual("d", filter.Next(reusableToken).Term());
-			Assert.AreEqual("n", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("o", filter.Next(reusableToken).Term());
-			Assert.AreEqual("oe", filter.Next(reusableToken).Term());
-			Assert.AreEqual("ss", filter.Next(reusableToken).Term());
-			Assert.AreEqual("th", filter.Next(reusableToken).Term());
-			Assert.AreEqual("u", filter.Next(reusableToken).Term());
-			Assert.AreEqual("u", filter.Next(reusableToken).Term());
-			Assert.AreEqual("u", filter.Next(reusableToken).Term());
-			Assert.AreEqual("u", filter.Next(reusableToken).Term());
-			Assert.AreEqual("y", filter.Next(reusableToken).Term());
-            Assert.AreEqual("y", filter.Next(reusableToken).Term());
-            Assert.AreEqual("fi", filter.Next(reusableToken).Term());
-            Assert.AreEqual("fl", filter.Next(reusableToken).Term());
-			Assert.IsNull(filter.Next(reusableToken));
+			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
+			AssertTermEquals("Des", filter, termAtt);
+			AssertTermEquals("mot", filter, termAtt);
+			AssertTermEquals("cles", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("LA", filter, termAtt);
+			AssertTermEquals("CHAINE", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("A", filter, termAtt);
+			AssertTermEquals("AE", filter, termAtt);
+			AssertTermEquals("C", filter, termAtt);
+			AssertTermEquals("E", filter, termAtt);
+			AssertTermEquals("E", filter, termAtt);
+			AssertTermEquals("E", filter, termAtt);
+			AssertTermEquals("E", filter, termAtt);
+			AssertTermEquals("I", filter, termAtt);
+			AssertTermEquals("I", filter, termAtt);
+			AssertTermEquals("I", filter, termAtt);
+			AssertTermEquals("I", filter, termAtt);
+			AssertTermEquals("IJ", filter, termAtt);
+			AssertTermEquals("D", filter, termAtt);
+			AssertTermEquals("N", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("O", filter, termAtt);
+			AssertTermEquals("OE", filter, termAtt);
+			AssertTermEquals("TH", filter, termAtt);
+			AssertTermEquals("U", filter, termAtt);
+			AssertTermEquals("U", filter, termAtt);
+			AssertTermEquals("U", filter, termAtt);
+			AssertTermEquals("U", filter, termAtt);
+			AssertTermEquals("Y", filter, termAtt);
+			AssertTermEquals("Y", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("a", filter, termAtt);
+			AssertTermEquals("ae", filter, termAtt);
+			AssertTermEquals("c", filter, termAtt);
+			AssertTermEquals("e", filter, termAtt);
+			AssertTermEquals("e", filter, termAtt);
+			AssertTermEquals("e", filter, termAtt);
+			AssertTermEquals("e", filter, termAtt);
+			AssertTermEquals("i", filter, termAtt);
+			AssertTermEquals("i", filter, termAtt);
+			AssertTermEquals("i", filter, termAtt);
+			AssertTermEquals("i", filter, termAtt);
+			AssertTermEquals("ij", filter, termAtt);
+			AssertTermEquals("d", filter, termAtt);
+			AssertTermEquals("n", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("o", filter, termAtt);
+			AssertTermEquals("oe", filter, termAtt);
+			AssertTermEquals("ss", filter, termAtt);
+			AssertTermEquals("th", filter, termAtt);
+			AssertTermEquals("u", filter, termAtt);
+			AssertTermEquals("u", filter, termAtt);
+			AssertTermEquals("u", filter, termAtt);
+			AssertTermEquals("u", filter, termAtt);
+			AssertTermEquals("y", filter, termAtt);
+			AssertTermEquals("y", filter, termAtt);
+			AssertTermEquals("fi", filter, termAtt);
+			AssertTermEquals("fl", filter, termAtt);
+			Assert.IsFalse(filter.IncrementToken());
+		}
+		
+		internal virtual void  AssertTermEquals(System.String expected, TokenStream stream, TermAttribute termAtt)
+		{
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual(expected, termAtt.Term());
 		}
 	}
 }

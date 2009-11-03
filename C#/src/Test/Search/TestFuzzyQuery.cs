@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -33,9 +33,10 @@ namespace Lucene.Net.Search
 	/// <summary> Tests {@link FuzzyQuery}.
 	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestFuzzyQuery : LuceneTestCase
+    [TestFixture]
+	public class TestFuzzyQuery:LuceneTestCase
 	{
+		
 		[Test]
 		public virtual void  TestFuzziness()
 		{
@@ -244,7 +245,7 @@ namespace Lucene.Net.Search
 				query = new FuzzyQuery(new Term("field", "student"), 1.1f);
 				Assert.Fail("Expected IllegalArgumentException");
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expecting exception
 			}
@@ -253,7 +254,7 @@ namespace Lucene.Net.Search
 				query = new FuzzyQuery(new Term("field", "student"), - 0.1f);
 				Assert.Fail("Expected IllegalArgumentException");
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expecting exception
 			}
@@ -262,9 +263,42 @@ namespace Lucene.Net.Search
 			directory.Close();
 		}
 		
+		[Test]
+		public virtual void  TestTokenLengthOpt()
+		{
+			RAMDirectory directory = new RAMDirectory();
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			AddDoc("12345678911", writer);
+			AddDoc("segment", writer);
+			writer.Optimize();
+			writer.Close();
+			IndexSearcher searcher = new IndexSearcher(directory);
+			
+			Query query;
+			// term not over 10 chars, so optimization shortcuts
+			query = new FuzzyQuery(new Term("field", "1234569"), 0.9f);
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(0, hits.Length);
+			
+			// 10 chars, so no optimization
+			query = new FuzzyQuery(new Term("field", "1234567891"), 0.9f);
+			hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(0, hits.Length);
+			
+			// over 10 chars, so no optimization
+			query = new FuzzyQuery(new Term("field", "12345678911"), 0.9f);
+			hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
+			
+			// over 10 chars, no match
+			query = new FuzzyQuery(new Term("field", "sdfsdfsdfsdf"), 0.9f);
+			hits = searcher.Search(query, null, 1000).scoreDocs;
+			Assert.AreEqual(0, hits.Length);
+		}
+		
 		private void  AddDoc(System.String text, IndexWriter writer)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("field", text, Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}

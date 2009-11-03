@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,10 +19,10 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -30,18 +30,17 @@ namespace Lucene.Net.Store
 {
 	
 	[TestFixture]
-	public class TestWindowsMMap : LuceneTestCase
+	public class TestWindowsMMap:LuceneTestCase
 	{
 		
 		private const System.String alphabet = "abcdefghijklmnopqrstuvwzyz";
 		private System.Random random;
 		
-		[SetUp]
-		public override void SetUp()
+		[Test]
+		public override void  SetUp()
 		{
 			base.SetUp();
-			random = new System.Random();
-			SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", "Lucene.Net.Store.MMapDirectory");
+			random = NewRandom();
 		}
 		
 		private System.String RandomToken()
@@ -67,14 +66,14 @@ namespace Lucene.Net.Store
 			}
 			return fb.ToString();
 		}
-
+		
 		private static readonly System.String storePathname = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testLuceneMmap")).FullName;
 		
 		[Test]
 		public virtual void  TestMmapIndex()
 		{
 			FSDirectory storeDirectory;
-			storeDirectory = FSDirectory.GetDirectory(storePathname);
+			storeDirectory = new MMapDirectory(new System.IO.FileInfo(storePathname), null);
 			
 			// plan to add a set of useful stopwords, consider changing some of the
 			// interior filters.

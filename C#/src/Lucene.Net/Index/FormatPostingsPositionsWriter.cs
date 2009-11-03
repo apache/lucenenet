@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 				// At least one field does not omit TF, so create the
 				// prox file
 				System.String fileName = IndexFileNames.SegmentFileName(parent.parent.parent.segment, IndexFileNames.PROX_EXTENSION);
-				SupportClass.HashtableHelper.AddIfNotContains(state.flushedFiles, fileName);
+				SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
 				out_Renamed = parent.parent.parent.dir.CreateOutput(fileName);
 				parent.skipListWriter.SetProxOutput(out_Renamed);
 			}

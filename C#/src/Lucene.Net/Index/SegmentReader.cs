@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
 		
 		// Holds core readers that are shared (unchanged) when
 		// SegmentReader is cloned or reopened
-		internal sealed class CoreReaders
+		public /*internal*/ sealed class CoreReaders
 		{
 			
 			// Counts how many other reader share the core objects
@@ -367,6 +367,11 @@ namespace Lucene.Net.Index
 					}
 				}
 			}
+
+            public FieldInfos fieldInfos_ForNUnit
+            {
+                get { return fieldInfos; }
+            }
 		}
 		
 		/// <summary> Sets the initial value </summary>
@@ -395,7 +400,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal class Ref
+		public /*internal*/ class Ref
 		{
 			private int refCount = 1;
 			
@@ -631,7 +636,7 @@ namespace Lucene.Net.Index
 			}
 			
 			// Only for testing
-			internal Ref BytesRef()
+			public /*internal*/ Ref BytesRef()
 			{
 				return bytesRef;
 			}
@@ -1159,7 +1164,7 @@ namespace Lucene.Net.Index
 			return core.GetTermsReader().Terms(t);
 		}
 		
-		internal virtual FieldInfos FieldInfos()
+		public /*internal*/ virtual FieldInfos FieldInfos()
 		{
 			return core.fieldInfos;
 		}
@@ -1429,7 +1434,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal virtual bool TermsIndexLoaded()
+		public /*internal*/ virtual bool TermsIndexLoaded()
 		{
 			return core.TermsIndexIsLoaded();
 		}
@@ -1445,7 +1450,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing only
-		internal virtual bool NormsClosed()
+		public /*internal*/ virtual bool NormsClosed()
 		{
 			if (singleNormStream != null)
 			{
@@ -1464,7 +1469,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing only
-		internal virtual bool NormsClosed(System.String field)
+		public /*internal*/ virtual bool NormsClosed(System.String field)
 		{
 			Norm norm = (Norm) norms[field];
 			return norm.refCount == 0;
@@ -1644,12 +1649,12 @@ namespace Lucene.Net.Index
 		/// SegmentReader reader = (SegmentReader) IndexReader.open(dir);<br/>
 		/// They broke. This method serves as a hack to keep hacks working
 		/// </summary>
-		internal static SegmentReader GetOnlySegmentReader(Directory dir)
+		public /*internal*/ static SegmentReader GetOnlySegmentReader(Directory dir)
 		{
 			return GetOnlySegmentReader(IndexReader.Open(dir));
 		}
 		
-		internal static SegmentReader GetOnlySegmentReader(IndexReader reader)
+		public /*internal*/ static SegmentReader GetOnlySegmentReader(IndexReader reader)
 		{
 			if (reader is SegmentReader)
 				return (SegmentReader) reader;
@@ -1719,5 +1724,25 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
+
+        public System.Collections.IDictionary norms_ForNUnit
+        {
+            get { return norms; }
+        }
+
+        public BitVector deletedDocs_ForNUnit
+        {
+            get { return deletedDocs; }
+        }
+
+        public CoreReaders core_ForNUnit
+        {
+            get { return core; }
+        }
+
+        public Ref deletedDocsRef_ForNUnit
+        {
+            get { return deletedDocsRef; }
+        }
 	}
 }

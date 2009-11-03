@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,12 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using Directory = Lucene.Net.Store.Directory;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
 using FileDocument = Lucene.Net.Demo.FileDocument;
+using Document = Lucene.Net.Documents.Document;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
@@ -35,17 +33,17 @@ namespace Lucene.Net.Index
 	/// <summary>JUnit adaptation of an older test case DocTest.
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestDoc.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestDoc.java 780770 2009-06-01 18:34:10Z uschindler $
 	/// </version>
 	[TestFixture]
-	public class TestDoc
+	public class TestDoc:LuceneTestCase
 	{
 		
 		/// <summary>Main for running test case by itself. </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
-			// NUnit.Core.TestRunner.Run(new NUnit.Core.TestSuite(typeof(TestDoc)));    // {{Aroush}} where is 'TestRunner' in NUnit
+			// TestRunner.run(new TestSuite(typeof(TestDoc))); // {{Aroush-2.9}} how is this done in NUnit?
 		}
 		
 		
@@ -58,15 +56,16 @@ namespace Lucene.Net.Index
 		/// a few text files created in the current working directory.
 		/// </summary>
 		[SetUp]
-		public virtual void  SetUp()
+		public override void  SetUp()
 		{
-			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", "tempDir"), "TestDoc"));
+			base.SetUp();
+			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
 			
 			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, "testIndex"));
 			System.IO.Directory.CreateDirectory(indexDir.FullName);
 			
-			Directory directory = FSDirectory.GetDirectory(indexDir, true);
+			Directory directory = FSDirectory.Open(indexDir);
 			directory.Close();
 			
 			files = new System.Collections.ArrayList();
@@ -117,8 +116,8 @@ namespace Lucene.Net.Index
 				{
 					pw.Close();
 				}
-				// if (fw != null)
-				//	fw.Close();     // No need to close fw in .NET as it is clased when pw is cloased
+				if (fw != null)
+					fw.Close();
 			}
 		}
 		
@@ -137,7 +136,7 @@ namespace Lucene.Net.Index
 			System.IO.MemoryStream sw = new System.IO.MemoryStream();
 			System.IO.StreamWriter out_Renamed = new System.IO.StreamWriter(sw);
 			
-			Directory directory = FSDirectory.GetDirectory(indexDir);
+			Directory directory = FSDirectory.Open(indexDir);
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			SegmentInfo si1 = IndexDoc(writer, "test.txt");
@@ -155,8 +154,8 @@ namespace Lucene.Net.Index
 			
 			SegmentInfo siMerge3 = Merge(siMerge, siMerge2, "merge3", false);
 			PrintSegment(out_Renamed, siMerge3);
-
-            directory.Close();
+			
+			directory.Close();
 			out_Renamed.Close();
 			sw.Close();
 			System.String multiFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
@@ -165,7 +164,7 @@ namespace Lucene.Net.Index
 			sw = new System.IO.MemoryStream();
 			out_Renamed = new System.IO.StreamWriter(sw);
 			
-			directory = FSDirectory.GetDirectory(indexDir);
+			directory = FSDirectory.Open(indexDir);
 			writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			
 			si1 = IndexDoc(writer, "test.txt");
@@ -183,15 +182,15 @@ namespace Lucene.Net.Index
 			
 			siMerge3 = Merge(siMerge, siMerge2, "merge3", true);
 			PrintSegment(out_Renamed, siMerge3);
-
-            directory.Close();
-            out_Renamed.Close();
+			
+			directory.Close();
+			out_Renamed.Close();
 			sw.Close();
 			System.String singleFileOutput = System.Text.ASCIIEncoding.ASCII.GetString(sw.ToArray());
 			
 			Assert.AreEqual(multiFileOutput, singleFileOutput);
 		}
-				
+		
 		private SegmentInfo IndexDoc(IndexWriter writer, System.String fileName)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, fileName));
@@ -204,12 +203,10 @@ namespace Lucene.Net.Index
 		
 		private SegmentInfo Merge(SegmentInfo si1, SegmentInfo si2, System.String merged, bool useCompoundFile)
 		{
-			Directory directory = FSDirectory.GetDirectory(indexDir, false);
-			
 			SegmentReader r1 = SegmentReader.Get(si1);
 			SegmentReader r2 = SegmentReader.Get(si2);
 			
-			SegmentMerger merger = new SegmentMerger(directory, merged);
+			SegmentMerger merger = new SegmentMerger(si1.dir, merged);
 			
 			merger.Add(r1);
 			merger.Add(r2);
@@ -218,21 +215,19 @@ namespace Lucene.Net.Index
 			
 			if (useCompoundFile)
 			{
-				System.Collections.ArrayList filesToDelete = merger.CreateCompoundFile(merged + ".cfs");
+				System.Collections.IList filesToDelete = merger.CreateCompoundFile(merged + ".cfs");
 				for (System.Collections.IEnumerator iter = filesToDelete.GetEnumerator(); iter.MoveNext(); )
 				{
-					directory.DeleteFile((System.String) iter.Current);
+					si1.dir.DeleteFile((System.String) iter.Current);
 				}
 			}
 			
-			directory.Close();
-			return new SegmentInfo(merged, si1.docCount + si2.docCount, directory, useCompoundFile, true);
+			return new SegmentInfo(merged, si1.docCount + si2.docCount, si1.dir, useCompoundFile, true);
 		}
 		
 		
 		private void  PrintSegment(System.IO.StreamWriter out_Renamed, SegmentInfo si)
 		{
-			Directory directory = FSDirectory.GetDirectory(indexDir, false);
 			SegmentReader reader = SegmentReader.Get(si);
 			
 			for (int i = 0; i < reader.NumDocs(); i++)
@@ -267,7 +262,6 @@ namespace Lucene.Net.Index
 			}
 			tis.Close();
 			reader.Close();
-			directory.Close();
 		}
 	}
 }

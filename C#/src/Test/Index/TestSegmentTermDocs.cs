@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,41 +19,32 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestSegmentTermDocs : LuceneTestCase
+    [TestFixture]
+	public class TestSegmentTermDocs:LuceneTestCase
 	{
-		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
+		private Document testDoc = new Document();
 		private Directory dir = new RAMDirectory();
 		private SegmentInfo info;
 		
-		// got the idea for this from George's note in TestSegmentReader
-		// it seems that JUnit creates a new instance of the class for each test invocation
-		// while NUnit does not (seems like a flaw in JUnit, to be honest)
-		// forcing the re-init of the variables for each run solves the problem
-		private void SetUpInternal()
+		public TestSegmentTermDocs(System.String s):base(s)
 		{
-			dir = new RAMDirectory();
-			testDoc = new Lucene.Net.Documents.Document();
-			info = null;
 		}
-
+		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
-			SetUpInternal();
 			DocHelper.SetupDoc(testDoc);
 			info = DocHelper.WriteDoc(dir, testDoc);
 		}
@@ -73,9 +64,9 @@ namespace Lucene.Net.Index
 		public virtual void  TestTermDocs(int indexDivisor)
 		{
 			//After adding the document, we should be able to read it back in
-			SegmentReader reader = SegmentReader.Get(info);
-			reader.SetTermInfosIndexDivisor(indexDivisor);
+			SegmentReader reader = SegmentReader.Get(true, info, indexDivisor);
 			Assert.IsTrue(reader != null);
+			Assert.AreEqual(indexDivisor, reader.GetTermInfosIndexDivisor());
 			SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 			Assert.IsTrue(segTermDocs != null);
 			segTermDocs.Seek(new Term(DocHelper.TEXT_FIELD_2_KEY, "field"));
@@ -92,15 +83,14 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestBadSeek()
 		{
-			TestBadSeek(1);
+			testBadSeek(1);
 		}
 		
-		public virtual void  TestBadSeek(int indexDivisor)
+		public virtual void  testBadSeek(int indexDivisor)
 		{
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(info);
-				reader.SetTermInfosIndexDivisor(indexDivisor);
+				SegmentReader reader = SegmentReader.Get(true, info, indexDivisor);
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);
@@ -110,8 +100,7 @@ namespace Lucene.Net.Index
 			}
 			{
 				//After adding the document, we should be able to read it back in
-				SegmentReader reader = SegmentReader.Get(info);
-				reader.SetTermInfosIndexDivisor(indexDivisor);
+				SegmentReader reader = SegmentReader.Get(true, info, indexDivisor);
 				Assert.IsTrue(reader != null);
 				SegmentTermDocs segTermDocs = new SegmentTermDocs(reader);
 				Assert.IsTrue(segTermDocs != null);
@@ -124,10 +113,10 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestSkipTo()
 		{
-			TestSkipTo(1);
+			testSkipTo(1);
 		}
 		
-		public virtual void  TestSkipTo(int indexDivisor)
+		public virtual void  testSkipTo(int indexDivisor)
 		{
 			Directory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
@@ -148,9 +137,7 @@ namespace Lucene.Net.Index
 			writer.Optimize();
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
-			reader.SetTermInfosIndexDivisor(indexDivisor);
-			Assert.AreEqual(indexDivisor, reader.GetTermInfosIndexDivisor());
+			IndexReader reader = IndexReader.Open(dir, null, true, indexDivisor);
 			
 			TermDocs tdocs = reader.TermDocs();
 			
@@ -263,33 +250,13 @@ namespace Lucene.Net.Index
 			DocHelper.SetupDoc(testDoc);
 			DocHelper.WriteDoc(dir, testDoc);
 			TestTermDocs(2);
-			TestBadSeek(2);
-			TestSkipTo(2);
-		}
-		
-		[Test]
-		public virtual void  TestIndexDivisorAfterLoad()
-		{
-			dir = new MockRAMDirectory();
-			testDoc = new Document();
-			DocHelper.SetupDoc(testDoc);
-			SegmentInfo si = DocHelper.WriteDoc(dir, testDoc);
-			SegmentReader reader = SegmentReader.Get(si);
-			Assert.AreEqual(1, reader.DocFreq(new Term("keyField", "Keyword")));
-			try
-			{
-				reader.SetTermInfosIndexDivisor(2);
-				Assert.Fail("did not hit IllegalStateException exception");
-			}
-			catch (System.SystemException)
-			{
-				// expected
-			}
+			testBadSeek(2);
+			testSkipTo(2);
 		}
 		
 		private void  AddDoc(IndexWriter writer, System.String value_Renamed)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("content", value_Renamed, Field.Store.NO, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 		}

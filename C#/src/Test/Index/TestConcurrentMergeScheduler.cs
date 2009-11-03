@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,45 +19,49 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestConcurrentMergeScheduler : LuceneTestCase
+	public class TestConcurrentMergeScheduler:LuceneTestCase
 	{
 		
 		private static readonly Analyzer ANALYZER = new SimpleAnalyzer();
 		
-		private class FailOnlyOnFlush : MockRAMDirectory.Failure
+		private class FailOnlyOnFlush:MockRAMDirectory.Failure
 		{
-			new internal bool doFail = false;
+			internal bool doFail = false;
 			
-			public override void  SetDoFail()
+			public virtual void  SetDoFail()
 			{
 				this.doFail = true;
 			}
-			public override void  ClearDoFail()
+			public virtual void  ClearDoFail()
 			{
 				this.doFail = false;
 			}
-
-			public override void Eval(MockRAMDirectory dir)
+			
+			public virtual void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
-					System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
-					foreach (System.Diagnostics.StackFrame f in st.GetFrames())
+					System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
+					for (int i = 0; i < trace.FrameCount; i++)
 					{
-						if ("DoFlush" == f.GetMethod().Name)
+						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
+						if ("DoFlush".Equals(sf.GetMethod()))
+						{
+							//new RuntimeException().printStackTrace(System.out);
 							throw new System.IO.IOException("now failing during flush");
+						}
 					}
 				}
 			}
@@ -96,7 +100,7 @@ namespace Lucene.Net.Index
 					writer.Flush();
 					Assert.Fail("failed to hit IOException");
 				}
-				catch (System.IO.IOException)
+				catch (System.IO.IOException ioe)
 				{
 					failure.ClearDoFail();
 				}
@@ -114,13 +118,14 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDeleteMerging()
 		{
+			
 			RAMDirectory directory = new MockRAMDirectory();
 			
 			IndexWriter writer = new IndexWriter(directory, true, ANALYZER, true);
 			ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
 			writer.SetMergeScheduler(cms);
 			
-			LogDocMergePolicy mp = new LogDocMergePolicy();
+			LogDocMergePolicy mp = new LogDocMergePolicy(writer);
 			writer.SetMergePolicy(mp);
 			
 			// Force degenerate merging so we can get a mix of

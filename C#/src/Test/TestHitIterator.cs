@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,30 +18,30 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Hit = Lucene.Net.Search.Hit;
-using Hits = Lucene.Net.Search.Hits;
 using HitIterator = Lucene.Net.Search.HitIterator;
-using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+using Hits = Lucene.Net.Search.Hits;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
-
 namespace Lucene.Net
 {
 	
 	/// <summary> This test intentionally not put in the search package in order
 	/// to test HitIterator and Hit package protection.
+	/// 
 	/// </summary>
-    [System.Obsolete("Hits will be removed in Lucene 3.0.")]
-    [TestFixture]
-	public class TestHitIterator : LuceneTestCase
+	/// <deprecated> Hits will be removed in Lucene 3.0 
+	/// </deprecated>
+	[TestFixture]
+	public class TestHitIterator:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestIterator()
@@ -49,18 +49,18 @@ namespace Lucene.Net
 			RAMDirectory directory = new RAMDirectory();
 			
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("field", "iterator test doc 1", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
-			doc = new Lucene.Net.Documents.Document();
+			doc = new Document();
 			doc.Add(new Field("field", "iterator test doc 2", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			
 			writer.Close();
-
-            _TestUtil.CheckIndex(directory);
-
+			
+			_TestUtil.CheckIndex(directory);
+			
 			IndexSearcher searcher = new IndexSearcher(directory);
 			Hits hits = searcher.Search(new TermQuery(new Term("field", "iterator")));
 			
@@ -81,7 +81,7 @@ namespace Lucene.Net
 			{
 				System.Object generatedAux = iterator.Current;
 			}
-			catch (System.ArgumentOutOfRangeException)
+			catch (System.ArgumentOutOfRangeException e)
 			{
 				Assert.IsTrue(true);
 				caughtException = true;

@@ -71,8 +71,8 @@ namespace Lucene.Net.Index
 				while (fieldsIt.MoveNext())
 				{
 					DocFieldConsumersPerField perField = (DocFieldConsumersPerField) fieldsIt.Current;
-					SupportClass.HashtableHelper.AddIfNotContains(oneFields, perField.one);
-					SupportClass.HashtableHelper.AddIfNotContains(twoFields, perField.two);
+					SupportClass.CollectionsHelper.AddIfNotContains(oneFields, perField.one);
+					SupportClass.CollectionsHelper.AddIfNotContains(twoFields, perField.two);
 				}
 				
 				oneThreadsAndFields[perThread.one] = oneFields;

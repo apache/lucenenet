@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,16 +15,21 @@
  * limitations under the License.
  */
 
-using NUnit.Framework;
 using System;
+
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
-	[TestFixture]
-	public class TestParallelMultiSearcher : TestMultiSearcher
+    [TestFixture]
+	public class TestParallelMultiSearcher:TestMultiSearcher
 	{
+		
+		public TestParallelMultiSearcher(System.String name):base(name)
+		{
+		}
 		
 		protected internal override MultiSearcher GetMultiSearcherInstance(Searcher[] searchers)
 		{

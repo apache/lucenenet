@@ -948,7 +948,7 @@ namespace Lucene.Net.Index
             System.Collections.Hashtable files = new System.Collections.Hashtable();
 			if (includeSegmentsFile)
 			{
-				SupportClass.HashtableHelper.AddIfNotContains(files, GetCurrentSegmentFileName());
+				SupportClass.CollectionsHelper.AddIfNotContains(files, GetCurrentSegmentFileName());
 			}
 			int size = Count;
 			for (int i = 0; i < size; i++)
@@ -956,7 +956,7 @@ namespace Lucene.Net.Index
 				SegmentInfo info = Info(i);
 				if (info.dir == dir)
 				{
-					SupportClass.HashtableHelper.AddAllIfNotContains(files, Info(i).Files());
+					SupportClass.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
 				}
 			}
 			return files;
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
 		/// <summary>Writes & syncs to the Directory dir, taking care to
 		/// remove the segments file on exception 
 		/// </summary>
-		internal void  Commit(Directory dir)
+		public /*internal*/ void  Commit(Directory dir)
 		{
 			PrepareCommit(dir);
 			FinishCommit(dir);

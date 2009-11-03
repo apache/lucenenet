@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
@@ -26,16 +29,14 @@ using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestThreadedOptimize : LuceneTestCase
+    [TestFixture]
+	public class TestThreadedOptimize:LuceneTestCase
 	{
-		private class AnonymousClassThread : SupportClass.ThreadClass
+		private class AnonymousClassThread:SupportClass.ThreadClass
 		{
 			public AnonymousClassThread(Lucene.Net.Index.IndexWriter writerFinal, int iFinal, int iterFinal, TestThreadedOptimize enclosingInstance)
 			{
@@ -81,7 +82,7 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception t)
 				{
-					Enclosing_Instance.SetFailed();
+					Enclosing_Instance.setFailed();
 					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": hit exception");
 					System.Console.Out.WriteLine(t.StackTrace);
 				}
@@ -101,12 +102,12 @@ namespace Lucene.Net.Index
 		
 		private bool failed;
 		
-		private void  SetFailed()
+		private void  setFailed()
 		{
 			failed = true;
 		}
 		
-		public virtual void  RunTest(Directory directory, bool autoCommit, MergeScheduler merger)
+		public virtual void  runTest(Directory directory, bool autoCommit, MergeScheduler merger)
 		{
 			
 			IndexWriter writer = new IndexWriter(directory, autoCommit, ANALYZER, true);
@@ -176,25 +177,25 @@ namespace Lucene.Net.Index
 		FSDirectory.
 		*/
 		[Test]
-		public virtual void  TestThreadedOptimize_Renamed_Method()
+		public virtual void  TestThreadedOptimize_Renamed()
 		{
 			Directory directory = new MockRAMDirectory();
-            RunTest(directory, false, new SerialMergeScheduler());
-            RunTest(directory, true, new SerialMergeScheduler());
-			RunTest(directory, false, new ConcurrentMergeScheduler());
-			RunTest(directory, true, new ConcurrentMergeScheduler());
+			runTest(directory, false, new SerialMergeScheduler());
+			runTest(directory, true, new SerialMergeScheduler());
+			runTest(directory, false, new ConcurrentMergeScheduler());
+			runTest(directory, true, new ConcurrentMergeScheduler());
 			directory.Close();
-
-            System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
+			
+			System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
 			if (tempDir == null)
 				throw new System.IO.IOException("tempDir undefined, cannot run test");
 			
 			System.String dirName = tempDir + "/luceneTestThreadedOptimize";
-			directory = FSDirectory.GetDirectory(dirName);
-            RunTest(directory, false, new SerialMergeScheduler());
-            RunTest(directory, true, new SerialMergeScheduler());
-			RunTest(directory, false, new ConcurrentMergeScheduler());
-			RunTest(directory, true, new ConcurrentMergeScheduler());
+			directory = FSDirectory.Open(new System.IO.FileInfo(dirName));
+			runTest(directory, false, new SerialMergeScheduler());
+			runTest(directory, true, new SerialMergeScheduler());
+			runTest(directory, false, new ConcurrentMergeScheduler());
+			runTest(directory, true, new ConcurrentMergeScheduler());
 			directory.Close();
 			_TestUtil.RmDir(dirName);
 		}

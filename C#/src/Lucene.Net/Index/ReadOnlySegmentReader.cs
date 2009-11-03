@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	class ReadOnlySegmentReader:SegmentReader
+	public class ReadOnlySegmentReader:SegmentReader
 	{
 		
 		internal static void  NoWrite()

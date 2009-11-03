@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,52 +21,32 @@ using NUnit.Framework;
 
 using Document = Lucene.Net.Documents.Document;
 using Fieldable = Lucene.Net.Documents.Fieldable;
-using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
-using Similarity = Lucene.Net.Search.Similarity;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestSegmentReader : LuceneTestCase
+    [TestFixture]
+	public class TestSegmentReader:LuceneTestCase
 	{
 		private RAMDirectory dir = new RAMDirectory();
-		private Lucene.Net.Documents.Document testDoc = new Lucene.Net.Documents.Document();
+		private Document testDoc = new Document();
 		private SegmentReader reader = null;
 		
-		// public TestSegmentReader(System.String s)
-		// {
-		// }
-		
-		// This is needed if for the test to pass and mimic what happens wiht JUnit
-		// For some reason, JUnit is creating a new member variable for each sub-test
-		// but NUnit is not -- who is wrong/right, I don't know.
-		private void SetUpInternal()        // {{Aroush-1.9}} See note above
+		public TestSegmentReader(System.String s):base(s)
 		{
-			dir = new RAMDirectory();
-			testDoc = new Lucene.Net.Documents.Document();
-			reader = null;
 		}
-
+		
 		//TODO: Setup the reader w/ multiple documents
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
-			SetUpInternal();
 			DocHelper.SetupDoc(testDoc);
 			SegmentInfo info = DocHelper.WriteDoc(dir, testDoc);
 			reader = SegmentReader.Get(info);
-		}
-		
-		[TearDown]
-		public override void TearDown()
-		{
-			
 		}
 		
 		[Test]
@@ -83,14 +63,15 @@ namespace Lucene.Net.Index
 		{
 			Assert.IsTrue(reader.NumDocs() == 1);
 			Assert.IsTrue(reader.MaxDoc() >= 1);
-			Lucene.Net.Documents.Document result = reader.Document(0);
+			Document result = reader.Document(0);
 			Assert.IsTrue(result != null);
 			//There are 2 unstored fields on the document that are not preserved across writing
 			Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(testDoc) - DocHelper.unstored.Count);
-			System.Collections.IEnumerator e = result.Fields();
-			while (e.MoveNext())
+			
+			System.Collections.IList fields = result.GetFields();
+			for (System.Collections.IEnumerator iter = fields.GetEnumerator(); iter.MoveNext(); )
 			{
-				Lucene.Net.Documents.Field field = (Lucene.Net.Documents.Field) e.Current;
+				Fieldable field = (Fieldable) iter.Current;
 				Assert.IsTrue(field != null);
 				Assert.IsTrue(DocHelper.nameValues.Contains(field.Name()));
 			}
@@ -99,7 +80,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestDelete()
 		{
-			Lucene.Net.Documents.Document docToDelete = new Lucene.Net.Documents.Document();
+			Document docToDelete = new Document();
 			DocHelper.SetupDoc(docToDelete);
 			SegmentInfo info = DocHelper.WriteDoc(dir, docToDelete);
 			SegmentReader deleteReader = SegmentReader.Get(info);
@@ -109,42 +90,32 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(deleteReader.IsDeleted(0) == true);
 			Assert.IsTrue(deleteReader.HasDeletions() == true);
 			Assert.IsTrue(deleteReader.NumDocs() == 0);
-			try
-			{
-				deleteReader.Document(0);
-				Assert.Fail();
-			}
-			catch (System.ArgumentException)
-			{
-				// expcected exception
-			}
 		}
 		
 		[Test]
 		public virtual void  TestGetFieldNameVariations()
 		{
-			System.Collections.Generic.ICollection<string> result = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			System.Collections.ICollection result = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.all.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-                System.String s = (System.String)iter.Current;
-                Assert.IsTrue(DocHelper.nameValues.Contains(s) == true || s.Equals(""));
+				System.String s = (System.String) iter.Current;
+				//System.out.println("Name: " + s);
+				Assert.IsTrue(DocHelper.nameValues.Contains(s) == true || s.Equals(""));
 			}
-
 			result = reader.GetFieldNames(IndexReader.FieldOption.INDEXED);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.indexed.Count);
 			for (System.Collections.IEnumerator iter = result.GetEnumerator(); iter.MoveNext(); )
 			{
-                System.String s = (System.String)iter.Current;
-                Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
+				System.String s = (System.String) iter.Current;
+				Assert.IsTrue(DocHelper.indexed.Contains(s) == true || s.Equals(""));
 			}
 			
 			result = reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED);
 			Assert.IsTrue(result != null);
 			Assert.IsTrue(result.Count == DocHelper.unindexed.Count);
-
 			//Get all indexed fields that are storing term vectors
 			result = reader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(result != null);
@@ -207,31 +178,38 @@ namespace Lucene.Net.Index
 			// test omit norms
 			for (int i = 0; i < DocHelper.fields.Length; i++)
 			{
-				Lucene.Net.Documents.Fieldable f = DocHelper.fields[i];
+				Fieldable f = DocHelper.fields[i];
 				if (f.IsIndexed())
 				{
 					Assert.AreEqual(reader.HasNorms(f.Name()), !f.GetOmitNorms());
 					Assert.AreEqual(reader.HasNorms(f.Name()), !DocHelper.noNorms.Contains(f.Name()));
 					if (!reader.HasNorms(f.Name()))
 					{
-						// test for fake norms of 1.0
+						// test for fake norms of 1.0 or null depending on the flag
 						byte[] norms = reader.Norms(f.Name());
-						Assert.AreEqual(norms.Length, reader.MaxDoc());
-						for (int j = 0; j < reader.MaxDoc(); j++)
+						byte norm1 = DefaultSimilarity.EncodeNorm(1.0f);
+						if (reader.GetDisableFakeNorms())
+							Assert.IsNull(norms);
+						else
 						{
-							Assert.AreEqual(norms[j], DefaultSimilarity.EncodeNorm(1.0f));
+							Assert.AreEqual(norms.Length, reader.MaxDoc());
+							for (int j = 0; j < reader.MaxDoc(); j++)
+							{
+								Assert.AreEqual(norms[j], norm1);
+							}
 						}
 						norms = new byte[reader.MaxDoc()];
 						reader.Norms(f.Name(), norms, 0);
 						for (int j = 0; j < reader.MaxDoc(); j++)
 						{
-							Assert.AreEqual(norms[j], DefaultSimilarity.EncodeNorm(1.0f));
+							Assert.AreEqual(norms[j], norm1);
 						}
 					}
 				}
 			}
 		}
 		
+		[Test]
 		public virtual void  TestTermVectors()
 		{
 			TermFreqVector result = reader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
@@ -250,24 +228,6 @@ namespace Lucene.Net.Index
 			TermFreqVector[] results = reader.GetTermFreqVectors(0);
 			Assert.IsTrue(results != null);
 			Assert.IsTrue(results.Length == 4, "We do not have 4 term freq vectors, we have: " + results.Length);
-		}
-		
-		[Test]
-		public virtual void  TestIndexDivisor()
-		{
-			dir = new MockRAMDirectory();
-			testDoc = new Document();
-			DocHelper.SetupDoc(testDoc);
-			SegmentInfo si = DocHelper.WriteDoc(dir, testDoc);
-			
-			reader = SegmentReader.Get(si);
-			reader.SetTermInfosIndexDivisor(3);
-			TestDocument();
-			TestDelete();
-			TestGetFieldNameVariations();
-			TestNorms();
-			TestTerms();
-			TestTermVectors();
 		}
 	}
 }

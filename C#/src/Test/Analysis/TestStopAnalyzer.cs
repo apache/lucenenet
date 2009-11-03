@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,46 +19,51 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestStopAnalyzer : LuceneTestCase
+    [TestFixture]
+	public class TestStopAnalyzer:BaseTokenStreamTestCase
 	{
 		
-		private StopAnalyzer stop = new StopAnalyzer();
+		private StopAnalyzer stop = new StopAnalyzer(false);
 		private System.Collections.Hashtable inValidTokens = new System.Collections.Hashtable();
+		
+		public TestStopAnalyzer(System.String s):base(s)
+		{
+		}
 		
 		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
-			stop = new StopAnalyzer();
-			inValidTokens = new System.Collections.Hashtable();
-
-			for (int i = 0; i < StopAnalyzer.ENGLISH_STOP_WORDS.Length; i++)
+			
+			System.Collections.IEnumerator it = StopAnalyzer.ENGLISH_STOP_WORDS_SET.GetEnumerator();
+			while (it.MoveNext())
 			{
-				inValidTokens.Add(StopAnalyzer.ENGLISH_STOP_WORDS[i], StopAnalyzer.ENGLISH_STOP_WORDS[i]);
+				inValidTokens.Add(it.Current, it.Current);
 			}
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestDefaults()
 		{
 			Assert.IsTrue(stop != null);
 			System.IO.StringReader reader = new System.IO.StringReader("This is a test of the english stop analyzer");
 			TokenStream stream = stop.TokenStream("test", reader);
 			Assert.IsTrue(stream != null);
-			Token reusableToken = new Token();
-			for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			
+			while (stream.IncrementToken())
 			{
-				Assert.IsFalse(inValidTokens.Contains(nextToken.Term()));
+				Assert.IsFalse(inValidTokens.Contains(termAtt.Term()));
 			}
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestStopList()
 		{
 			System.Collections.Hashtable stopWordsSet = new System.Collections.Hashtable();
@@ -69,16 +74,18 @@ namespace Lucene.Net.Analysis
 			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
 			TokenStream stream = newStop.TokenStream("test", reader);
 			Assert.IsNotNull(stream);
-			Token reusableToken = new Token();
-			for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			PositionIncrementAttribute posIncrAtt = (PositionIncrementAttribute) stream.AddAttribute(typeof(PositionIncrementAttribute));
+			
+			while (stream.IncrementToken())
 			{
-                System.String text = nextToken.Term();
+				System.String text = termAtt.Term();
 				Assert.IsFalse(stopWordsSet.Contains(text));
-                Assert.AreEqual(1, nextToken.GetPositionIncrement()); // by default stop tokenizer does not apply increments.
+				Assert.AreEqual(1, posIncrAtt.GetPositionIncrement()); // by default stop tokenizer does not apply increments.
 			}
 		}
-
-		[Test]
+		
+        [Test]
 		public virtual void  TestStopListPositions()
 		{
 			bool defaultEnable = StopFilter.GetEnablePositionIncrementsDefault();
@@ -95,12 +102,14 @@ namespace Lucene.Net.Analysis
 				TokenStream stream = newStop.TokenStream("test", reader);
 				Assert.IsNotNull(stream);
 				int i = 0;
-                Token reusableToken = new Token();
-                for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
+				TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+				PositionIncrementAttribute posIncrAtt = (PositionIncrementAttribute) stream.AddAttribute(typeof(PositionIncrementAttribute));
+				
+				while (stream.IncrementToken())
 				{
-                    System.String text = nextToken.Term();
+					System.String text = termAtt.Term();
 					Assert.IsFalse(stopWordsSet.Contains(text));
-                    Assert.AreEqual(expectedIncr[i++], nextToken.GetPositionIncrement());
+					Assert.AreEqual(expectedIncr[i++], posIncrAtt.GetPositionIncrement());
 				}
 			}
 			finally

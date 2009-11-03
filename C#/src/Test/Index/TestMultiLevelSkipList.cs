@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,16 +19,18 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
+using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Index = Lucene.Net.Documents.Field.Index;
+using Store = Lucene.Net.Documents.Field.Store;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
-using Token = Lucene.Net.Analysis.Token;
-using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 namespace Lucene.Net.Index
 {
@@ -40,14 +42,14 @@ namespace Lucene.Net.Index
 	/// testcases.
 	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestMultiLevelSkipList : LuceneTestCase
+    [TestFixture]
+	public class TestMultiLevelSkipList:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestSimpleSkip()
 		{
 			RAMDirectory dir = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new PayloadAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			Term term = new Term("test", "a");
 			for (int i = 0; i < 5000; i++)
 			{
@@ -59,9 +61,9 @@ namespace Lucene.Net.Index
 			writer.Optimize();
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = SegmentReader.GetOnlySegmentReader(dir);
 			SegmentTermPositions tp = (SegmentTermPositions) reader.TermPositions();
-			tp.FreqStream_ForNUnitTest = new CountingStream(this, tp.FreqStream_ForNUnitTest);
+			tp.freqStream_ForNUnit = new CountingStream(this, tp.freqStream_ForNUnit);
 			
 			for (int i = 0; i < 2; i++)
 			{
@@ -94,7 +96,7 @@ namespace Lucene.Net.Index
 			Assert.AreEqual((byte) target, b[0], "Wrong payload for the target " + target + ": " + b[0]);
 		}
 		
-		private class PayloadAnalyzer : Analyzer
+		private class PayloadAnalyzer:Analyzer
 		{
 			public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 			{
@@ -102,23 +104,25 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private class PayloadFilter : TokenFilter
+		private class PayloadFilter:TokenFilter
 		{
 			internal static int count = 0;
 			
+			internal PayloadAttribute payloadAtt;
+			
 			protected internal PayloadFilter(TokenStream input):base(input)
 			{
+				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
 			}
 			
-			public override Token Next(Token reusableToken)
+			public override bool IncrementToken()
 			{
-                System.Diagnostics.Debug.Assert(reusableToken != null);
-				Token nextToken = input.Next(reusableToken);
-				if (nextToken != null)
+				bool hasNext = input.IncrementToken();
+				if (hasNext)
 				{
-					nextToken.SetPayload(new Payload(new byte[]{(byte) count++}));
+					payloadAtt.SetPayload(new Payload(new byte[]{(byte) count++}));
 				}
-				return nextToken;
+				return hasNext;
 			}
 		}
 		
@@ -126,7 +130,7 @@ namespace Lucene.Net.Index
 		
 		// Simply extends IndexInput in a way that we are able to count the number
 		// of bytes read
-		internal class CountingStream : IndexInput, System.ICloneable
+		internal class CountingStream:IndexInput, System.ICloneable
 		{
 			private void  InitBlock(TestMultiLevelSkipList enclosingInstance)
 			{

@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				if (cell.IsPayloadAvailable())
 				{
-					SupportClass.HashtableHelper.AddAllIfNotContains(matchPayload, cell.GetPayload());
+					SupportClass.CollectionsHelper.AddAllIfNotContains(matchPayload, cell.GetPayload());
 				}
 			}
 			return matchPayload;

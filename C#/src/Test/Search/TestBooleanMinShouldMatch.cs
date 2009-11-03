@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,16 +27,14 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
 	
-	
 	/// <summary>Test that BooleanQuery.setMinimumNumberShouldMatch works.</summary>
-	[TestFixture]
-	public class TestBooleanMinShouldMatch : LuceneTestCase
+    [TestFixture]
+	public class TestBooleanMinShouldMatch:LuceneTestCase
 	{
 		private class AnonymousClassCallback : TestBoolean2.Callback
 		{
@@ -48,10 +47,8 @@ namespace Lucene.Net.Search
 				this.rnd = rnd;
 				this.enclosingInstance = enclosingInstance;
 			}
-
 			private System.Random rnd;
 			private TestBooleanMinShouldMatch enclosingInstance;
-
 			public TestBooleanMinShouldMatch Enclosing_Instance
 			{
 				get
@@ -79,10 +76,8 @@ namespace Lucene.Net.Search
 		public IndexSearcher s;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
-			
-			
 			base.SetUp();
 			
 			
@@ -93,7 +88,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < data.Length; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("id",String.valueOf(i)));
 				doc.Add(new Field("all", "all", Field.Store.YES, Field.Index.NOT_ANALYZED)); //Field.Keyword("all","all"));
 				if (null != data[i])
@@ -117,7 +112,7 @@ namespace Lucene.Net.Search
 			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			if (expected != h.Length)
 			{
-				PrintHits("TestBooleanMinShouldMatch", h, s);  // PrintHits(TestCase.GetName(), h);    // {{Aroush-1.9}} 'GetName()' gives us the name of the test in JUnit, how is it done in NUnit?
+				PrintHits("getName()", h, s);  // {{Aroush-2.9}} String junit.framework.TestCase.getName()
 			}
 			Assert.AreEqual(expected, h.Length, "result count");
 			QueryUtils.Check(q, s);
@@ -342,24 +337,24 @@ namespace Lucene.Net.Search
 			
 			VerifyNrHits(q, 0);
 		}
-
-        [Test]
-        public virtual void TestNoOptionalButMin2()
-        {
-
-            /* one required, no optional */
-            BooleanQuery q = new BooleanQuery();
-            q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
-
-            q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
-
-            VerifyNrHits(q, 0);
-        }
-
-        [Test]
+		
+		[Test]
+		public virtual void  TestNoOptionalButMin2()
+		{
+			
+			/* one required, no optional */
+			BooleanQuery q = new BooleanQuery();
+			q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
+			
+			q.SetMinimumNumberShouldMatch(1); // 1 of 0 optional 
+			
+			VerifyNrHits(q, 0);
+		}
+		
+		[Test]
 		public virtual void  TestRandomQueries()
 		{
-			System.Random rnd = new System.Random((System.Int32) 0);
+			System.Random rnd = NewRandom();
 			
 			System.String field = "data";
 			System.String[] vals = new System.String[]{"1", "2", "3", "4", "5", "6", "A", "Z", "B", "Y", "Z", "X", "foo"};
@@ -369,14 +364,15 @@ namespace Lucene.Net.Search
 			TestBoolean2.Callback minNrCB = new AnonymousClassCallback(rnd, this);
 			
 			
-
+			
 			// increase number of iterations for more complete testing      
 			for (int i = 0; i < 1000; i++)
 			{
 				int lev = rnd.Next(maxLev);
-				BooleanQuery q1 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) i), lev, field, vals, null);
-				// BooleanQuery q2 = TestBoolean2.randBoolQuery(new Random(i), lev, field, vals, minNrCB);
-				BooleanQuery q2 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) i), lev, field, vals, null);
+				long seed = rnd.Next(System.Int32.MaxValue);
+				BooleanQuery q1 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), lev, field, vals, null);
+				// BooleanQuery q2 = TestBoolean2.randBoolQuery(new Random(seed), lev, field, vals, minNrCB);
+				BooleanQuery q2 = TestBoolean2.RandBoolQuery(new System.Random((System.Int32) seed), lev, field, vals, null);
 				// only set minimumNumberShouldMatch on the top level query since setting
 				// at a lower level can change the score.
 				minNrCB.PostCreate(q2);
@@ -394,6 +390,7 @@ namespace Lucene.Net.Search
 				// should be a superset to the unconstrained query.
 				if (top2.totalHits > top1.totalHits)
 				{
+					//TestCase.fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 					Assert.Fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 				}
 				
@@ -412,6 +409,7 @@ namespace Lucene.Net.Search
 							// check if scores match
 							if (System.Math.Abs(otherScore - score) > 1.0e-6f)
 							{
+								//TestCase.fail("Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 								Assert.Fail("Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 							}
 						}
@@ -420,6 +418,7 @@ namespace Lucene.Net.Search
 					// check if subset
 					if (!found)
 					{
+						//TestCase.fail("Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 						Assert.Fail("Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 					}
 				}
@@ -436,8 +435,8 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				Lucene.Net.Documents.Document d = searcher.Doc(h[i].doc);
-                float score = h[i].score;
+				Document d = searcher.Doc(h[i].doc);
+				float score = h[i].score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000}" + score + " - " + d.Get("id") + " - " + d.Get("data"));
 			}
 		}

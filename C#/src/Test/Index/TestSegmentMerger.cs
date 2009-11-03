@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,8 +27,8 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
-	public class TestSegmentMerger : LuceneTestCase
+    [TestFixture]
+	public class TestSegmentMerger:LuceneTestCase
 	{
 		//The variables for the new merged segment
 		private Directory mergedDir = new RAMDirectory();
@@ -41,32 +41,16 @@ namespace Lucene.Net.Index
 		private Directory merge2Dir = new RAMDirectory();
 		private Document doc2 = new Document();
 		private SegmentReader reader2 = null;
-
-		// This is needed if for the test to pass and mimic what happens wiht JUnit
-		// For some reason, JUnit is creating a new member variable for each sub-test
-		// but NUnit is not -- who is wrong/right, I don't know.
-		private void SetUpInternal()        // {{Aroush-1.9}} See note above
+		
+		
+		public TestSegmentMerger(System.String s):base(s)
 		{
-			//The variables for the new merged segment
-			mergedDir = new RAMDirectory();
-			mergedSegment = "test";
-			//First segment to be merged
-			merge1Dir = new RAMDirectory();
-			doc1 = new Lucene.Net.Documents.Document();
-			//merge1Segment = "test-1";
-			reader1 = null;
-			//Second Segment to be merged
-			merge2Dir = new RAMDirectory();
-			doc2 = new Lucene.Net.Documents.Document();
-			//merge2Segment = "test-2";
-			reader2 = null;
 		}
-
+		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
-			SetUpInternal();
 			DocHelper.SetupDoc(doc1);
 			SegmentInfo info1 = DocHelper.WriteDoc(merge1Dir, doc1);
 			DocHelper.SetupDoc(doc2);
@@ -98,11 +82,11 @@ namespace Lucene.Net.Index
 			SegmentReader mergedReader = SegmentReader.Get(new SegmentInfo(mergedSegment, docsMerged, mergedDir, false, true));
 			Assert.IsTrue(mergedReader != null);
 			Assert.IsTrue(mergedReader.NumDocs() == 2);
-			Lucene.Net.Documents.Document newDoc1 = mergedReader.Document(0);
+			Document newDoc1 = mergedReader.Document(0);
 			Assert.IsTrue(newDoc1 != null);
 			//There are 2 unstored fields on the document
 			Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(doc1) - DocHelper.unstored.Count);
-			Lucene.Net.Documents.Document newDoc2 = mergedReader.Document(1);
+			Document newDoc2 = mergedReader.Document(1);
 			Assert.IsTrue(newDoc2 != null);
 			Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.unstored.Count);
 			
@@ -110,7 +94,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(termDocs != null);
 			Assert.IsTrue(termDocs.Next() == true);
 			
-			System.Collections.Generic.ICollection<string> stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
+			System.Collections.ICollection stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(stored != null);
 			//System.out.println("stored size: " + stored.size());
 			Assert.IsTrue(stored.Count == 4, "We do not have 4 fields that were indexed with term vector");

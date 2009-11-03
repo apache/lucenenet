@@ -178,5 +178,10 @@ namespace Lucene.Net.Index
 
             System.Diagnostics.Debug.Fail("Port issue", "This needs checking; see ReadObject() for the non-ported Java version."); // {{Aroush-2.9}}
 		}
+
+        public System.String text_ForNUnit
+        {
+            get { return text; }
+        }
 	}
 }

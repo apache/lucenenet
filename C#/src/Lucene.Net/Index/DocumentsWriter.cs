@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 	/// or none") added to the index.
 	/// </summary>
 	
-	sealed class DocumentsWriter
+	public sealed class DocumentsWriter
 	{
 		internal class AnonymousClassIndexingChain:IndexingChain
 		{
@@ -1976,5 +1976,15 @@ namespace Lucene.Net.Index
 			DefaultIndexingChain = new AnonymousClassIndexingChain();
 			POINTER_NUM_BYTE = Constants.JRE_IS_64BIT?8:4;
 		}
+
+        public static int BYTE_BLOCK_SIZE_ForNUnit
+        {
+            get { return BYTE_BLOCK_SIZE; }
+        }
+
+        public static int CHAR_BLOCK_SIZE_ForNUnit
+        {
+            get { return CHAR_BLOCK_SIZE; }
+        }
 	}
 }

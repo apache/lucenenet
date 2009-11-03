@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	
 	/// <version>  $Id: TermVectorsReader.java 687046 2008-08-19 13:01:11Z mikemccand $
 	/// </version>
-	class TermVectorsReader : System.ICloneable
+	public class TermVectorsReader : System.ICloneable
 	{
 		
 		// NOTE: if you make a new format, it must be larger than
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 		
 		private int format;
 		
-		internal TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos):this(d, segment, fieldInfos, BufferedIndexInput.BUFFER_SIZE)
+		public /*internal*/ TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos):this(d, segment, fieldInfos, BufferedIndexInput.BUFFER_SIZE)
 		{
 		}
 		
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
 		/// <returns> The TermFreqVector for the document and field or null if there is no termVector for this field.
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files </throws>
-		internal virtual TermFreqVector Get(int docNum, System.String field)
+		public /*internal*/ virtual TermFreqVector Get(int docNum, System.String field)
 		{
 			// Check if no term vectors are available for this segment at all
 			ParallelArrayTermVectorMapper mapper = new ParallelArrayTermVectorMapper();
@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
 		/// <returns> All term frequency vectors
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files  </throws>
-		internal virtual TermFreqVector[] Get(int docNum)
+		public /*internal*/ virtual TermFreqVector[] Get(int docNum)
 		{
 			TermFreqVector[] result = null;
 			if (tvx != null)

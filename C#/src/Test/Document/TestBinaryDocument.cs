@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,11 +19,11 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Documents
 {
@@ -32,22 +32,22 @@ namespace Lucene.Net.Documents
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestBinaryDocument.java 598296 2007-11-26 14:52:01Z mikemccand $
+	/// <version>  $Id: TestBinaryDocument.java 756760 2009-03-20 21:10:12Z mikemccand $
 	/// </version>
-	[TestFixture]
-	public class TestBinaryDocument : LuceneTestCase    
+    [TestFixture]
+	public class TestBinaryDocument:LuceneTestCase
 	{
 		
 		internal System.String binaryValStored = "this text will be stored as a byte array in the index";
 		internal System.String binaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 		
-		[Test]
+        [Test]
 		public virtual void  TestBinaryFieldInIndex()
 		{
-			Lucene.Net.Documents.Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
-			Lucene.Net.Documents.Fieldable binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
-			Lucene.Net.Documents.Fieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
-			Lucene.Net.Documents.Fieldable stringFldCompressed = new Field("stringCompressed", binaryValCompressed, Field.Store.COMPRESS, Field.Index.NO, Field.TermVector.NO);
+			Fieldable binaryFldStored = new Field("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValStored), Field.Store.YES);
+			Fieldable binaryFldCompressed = new Field("binaryCompressed", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.COMPRESS);
+			Fieldable stringFldStored = new Field("stringStored", binaryValStored, Field.Store.YES, Field.Index.NO, Field.TermVector.NO);
+			Fieldable stringFldCompressed = new Field("stringCompressed", binaryValCompressed, Field.Store.COMPRESS, Field.Index.NO, Field.TermVector.NO);
 			
 			try
 			{
@@ -55,11 +55,12 @@ namespace Lucene.Net.Documents
 				new Field("fail", System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed), Field.Store.NO);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException iae)
 			{
+				;
 			}
 			
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			
 			doc.Add(binaryFldStored);
 			doc.Add(binaryFldCompressed);
@@ -68,25 +69,25 @@ namespace Lucene.Net.Documents
 			doc.Add(stringFldCompressed);
 			
 			/** test for field count */
-			Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.fields_ForNUnit.Count);
 			
 			/** add the doc to a ram index */
-			RAMDirectory dir = new RAMDirectory();
+			MockRAMDirectory dir = new MockRAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			writer.Close();
 			
 			/** open a reader and fetch the document */
 			IndexReader reader = IndexReader.Open(dir);
-			Lucene.Net.Documents.Document docFromReader = reader.Document(0);
+			Document docFromReader = reader.Document(0);
 			Assert.IsTrue(docFromReader != null);
 			
 			/** fetch the binary stored field and compare it's content with the original one */
-			System.String binaryFldStoredTest = System.Text.UTF8Encoding.UTF8.GetString(docFromReader.GetBinaryValue("binaryStored"));
+			System.String binaryFldStoredTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(docFromReader.GetBinaryValue("binaryStored")));
 			Assert.IsTrue(binaryFldStoredTest.Equals(binaryValStored));
 			
 			/** fetch the binary compressed field and compare it's content with the original one */
-			System.String binaryFldCompressedTest = System.Text.UTF8Encoding.UTF8.GetString(docFromReader.GetBinaryValue("binaryCompressed"));
+			System.String binaryFldCompressedTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(docFromReader.GetBinaryValue("binaryCompressed")));
 			Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed));
 			
 			/** fetch the string field and compare it's content with the original one */
@@ -102,6 +103,38 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual(0, reader.NumDocs());
 			
 			reader.Close();
+			dir.Close();
+		}
+		
+        [Test]
+		public virtual void  TestCompressionTools()
+		{
+			Fieldable binaryFldCompressed = new Field("binaryCompressed", CompressionTools.Compress(System.Text.UTF8Encoding.UTF8.GetBytes(binaryValCompressed)), Field.Store.YES);
+			Fieldable stringFldCompressed = new Field("stringCompressed", CompressionTools.CompressString(binaryValCompressed), Field.Store.YES);
+			
+			Document doc = new Document();
+			
+			doc.Add(binaryFldCompressed);
+			doc.Add(stringFldCompressed);
+			
+			/** add the doc to a ram index */
+			MockRAMDirectory dir = new MockRAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			writer.AddDocument(doc);
+			writer.Close();
+			
+			/** open a reader and fetch the document */
+			IndexReader reader = IndexReader.Open(dir);
+			Document docFromReader = reader.Document(0);
+			Assert.IsTrue(docFromReader != null);
+			
+			/** fetch the binary compressed field and compare it's content with the original one */
+			System.String binaryFldCompressedTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed"))));
+			Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed));
+			Assert.IsTrue(CompressionTools.DecompressString(docFromReader.GetBinaryValue("stringCompressed")).Equals(binaryValCompressed));
+			
+			reader.Close();
+			dir.Close();
 		}
 	}
 }

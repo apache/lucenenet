@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,12 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -33,13 +33,11 @@ namespace Lucene.Net.Search
 	/// <summary> Tests {@link PrefixQuery} class.
 	/// 
 	/// </summary>
-	/// <author>  Erik Hatcher
-	/// </author>
-	[TestFixture]
-	public class TestPrefixQuery : LuceneTestCase
+    [TestFixture]
+	public class TestPrefixQuery:LuceneTestCase
 	{
 		[Test]
-		public virtual void  TestPrefixQuery_Renamed_Method()
+		public virtual void  TestPrefixQuery_Renamed()
 		{
 			RAMDirectory directory = new RAMDirectory();
 			
@@ -47,7 +45,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			for (int i = 0; i < categories.Length; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field("category", categories[i], Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,13 @@ using NUnit.Framework;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
@@ -38,28 +39,28 @@ namespace Lucene.Net.Index
 	against it, and add documents to it.*/
 	
 	[TestFixture]
-	public class TestDeletionPolicy : LuceneTestCase
+	public class TestDeletionPolicy:LuceneTestCase
 	{
 		private void  VerifyCommitOrder(System.Collections.IList commits)
 		{
-            IndexCommit firstCommit = (IndexCommit)commits[0];
+			IndexCommit firstCommit = ((IndexCommit) commits[0]);
 			long last = SegmentInfos.GenerationFromSegmentsFileName(firstCommit.GetSegmentsFileName());
-            Assert.AreEqual(last, firstCommit.GetGeneration());
-            long lastVersion = firstCommit.GetVersion();
-            long lastTimestamp = firstCommit.GetTimestamp();
+			Assert.AreEqual(last, firstCommit.GetGeneration());
+			long lastVersion = firstCommit.GetVersion();
+			long lastTimestamp = firstCommit.GetTimestamp();
 			for (int i = 1; i < commits.Count; i++)
 			{
-                IndexCommit commit = (IndexCommit)commits[i];
-                long now = SegmentInfos.GenerationFromSegmentsFileName(commit.GetSegmentsFileName());
-                long nowVersion = commit.GetVersion();
-                long nowTimestamp = commit.GetTimestamp();
-                Assert.IsTrue(now > last, "SegmentInfos commits are out-of-order");
-                Assert.IsTrue(nowVersion > lastVersion, "SegmentInfos versions are out-of-order");
-                Assert.IsTrue(nowTimestamp >= lastTimestamp, "SegmentInfos timestamps are out-of-order: now=" + nowTimestamp + " vs last=" + lastTimestamp);
-                Assert.AreEqual(now, commit.GetGeneration());
+				IndexCommit commit = ((IndexCommit) commits[i]);
+				long now = SegmentInfos.GenerationFromSegmentsFileName(commit.GetSegmentsFileName());
+				long nowVersion = commit.GetVersion();
+				long nowTimestamp = commit.GetTimestamp();
+				Assert.IsTrue(now > last, "SegmentInfos commits are out-of-order");
+				Assert.IsTrue(nowVersion > lastVersion, "SegmentInfos versions are out-of-order");
+				Assert.IsTrue(nowTimestamp >= lastTimestamp, "SegmentInfos timestamps are out-of-order: now=" + nowTimestamp + " vs last=" + lastTimestamp);
+				Assert.AreEqual(now, commit.GetGeneration());
 				last = now;
-                lastVersion = nowVersion;
-                lastTimestamp = nowTimestamp;
+				lastVersion = nowVersion;
+				lastTimestamp = nowTimestamp;
 			}
 		}
 		
@@ -80,21 +81,22 @@ namespace Lucene.Net.Index
 				{
 					return enclosingInstance;
 				}
+				
 			}
 			internal int numOnInit;
 			internal int numOnCommit;
-            internal Directory dir;
-			public virtual void  OnInit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			internal Directory dir;
+			public virtual void  OnInit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 			}
-            public virtual void OnCommit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			public virtual void  OnCommit(System.Collections.IList commits)
 			{
-                IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
-                IndexReader r = IndexReader.Open(dir);
-                Assert.AreEqual(r.IsOptimized(), lastCommit.IsOptimized(), "lastCommit.IsOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.IsOptimized()=" + r.IsOptimized());
-                r.Close();
+				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
+				IndexReader r = IndexReader.Open(dir);
+				Assert.AreEqual(r.IsOptimized(), lastCommit.IsOptimized(), "lastCommit.isOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.isOptimized=" + r.IsOptimized());
+				r.Close();
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnCommit++;
 			}
@@ -124,20 +126,20 @@ namespace Lucene.Net.Index
 			}
 			internal int numOnInit;
 			internal int numOnCommit;
-            public virtual void OnInit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			public virtual void  OnInit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 				// On init, delete all commit points:
-				System.Collections.Generic.IEnumerator<IndexCommitPoint> it = commits.GetEnumerator();
+				System.Collections.IEnumerator it = commits.GetEnumerator();
 				while (it.MoveNext())
 				{
-                    IndexCommit commit = (IndexCommit)it.Current;
-                    commit.Delete();
-                    Assert.IsTrue(commit.IsDeleted());
+					IndexCommit commit = (IndexCommit) it.Current;
+					commit.Delete();
+					Assert.IsTrue(commit.IsDeleted());
 				}
 			}
-            public virtual void OnCommit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			public virtual void  OnCommit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				int size = commits.Count;
@@ -176,16 +178,16 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.numToKeep = numToKeep;
 			}
-
-            public virtual void OnInit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			
+			public virtual void  OnInit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 				// do no deletions on init
 				DoDeletes(commits, false);
 			}
-
-            public virtual void OnCommit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			
+			public virtual void  OnCommit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				DoDeletes(commits, true);
@@ -245,14 +247,14 @@ namespace Lucene.Net.Index
 				this.dir = dir;
 				this.expirationTimeSeconds = seconds;
 			}
-
-            public virtual void OnInit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			
+			public virtual void  OnInit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				OnCommit(commits);
 			}
-
-            public virtual void OnCommit(System.Collections.Generic.List<IndexCommitPoint> commits)
+			
+			public virtual void  OnCommit(System.Collections.IList commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				
@@ -261,7 +263,7 @@ namespace Lucene.Net.Index
 				// Any commit older than expireTime should be deleted:
 				double expireTime = dir.FileModified(lastCommit.GetSegmentsFileName()) / 1000.0 - expirationTimeSeconds;
 				
-				System.Collections.Generic.IEnumerator<IndexCommitPoint> it = commits.GetEnumerator();
+				System.Collections.IEnumerator it = commits.GetEnumerator();
 				
 				while (it.MoveNext())
 				{
@@ -299,7 +301,7 @@ namespace Lucene.Net.Index
 			{
 				// Record last time when writer performed deletes of
 				// past commits
-				lastDeleteTime = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+				lastDeleteTime = System.DateTime.Now.Millisecond;
 				writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
 				writer.SetUseCompoundFile(useCompoundFile);
 				for (int j = 0; j < 17; j++)
@@ -334,7 +336,7 @@ namespace Lucene.Net.Index
 					long modTime = dir.FileModified(fileName);
 					Assert.IsTrue(lastDeleteTime - modTime <= (SECONDS * 1000), "commit point was older than " + SECONDS + " seconds (" + (lastDeleteTime - modTime) + " msec) but did not get deleted");
 				}
-				catch (System.IO.IOException)
+				catch (System.IO.IOException e)
 				{
 					// OK
 					break;
@@ -360,20 +362,21 @@ namespace Lucene.Net.Index
 				bool autoCommit = pass < 2;
 				bool useCompoundFile = (pass % 2) > 0;
 				
+				// Never deletes a commit
 				KeepAllDeletionPolicy policy = new KeepAllDeletionPolicy(this);
 				
 				Directory dir = new RAMDirectory();
-                policy.dir = dir;
+				policy.dir = dir;
 				
 				IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetUseCompoundFile(useCompoundFile);
-                writer.SetMergeScheduler(new SerialMergeScheduler());
+				writer.SetMergeScheduler(new SerialMergeScheduler());
 				for (int i = 0; i < 107; i++)
 				{
 					AddDoc(writer);
-                    if (autoCommit && i % 10 == 0)
-                        writer.Commit();
+					if (autoCommit && i % 10 == 0)
+						writer.Commit();
 				}
 				writer.Close();
 				
@@ -384,28 +387,28 @@ namespace Lucene.Net.Index
 				
 				Assert.AreEqual(2, policy.numOnInit);
 				if (!autoCommit)
-					// If we are not auto committing then there should
-					// be exactly 2 commits (one per close above):
+				// If we are not auto committing then there should
+				// be exactly 2 commits (one per close above):
 					Assert.AreEqual(2, policy.numOnCommit);
-
-                // Test: ListCommits(Directory)
-                System.Collections.Generic.ICollection<IndexCommitPoint> commits = IndexReader.ListCommits(dir);
-                if (!autoCommit)
-                    // 1 from opening writer + 2 from closing writer
-                    Assert.AreEqual(3, commits.Count);
-                else
-                    // 1 from opening writer + 2 from closing writer
-                    // + 11 from calling writer.Commit() explicitly
-                    Assert.AreEqual(14, commits.Count);
-
-                System.Collections.Generic.IEnumerator<IndexCommitPoint> it = commits.GetEnumerator();
-                // Make sure we can open a reader on each commit
-                while (it.MoveNext())
-                {
-                    IndexCommit commit = (IndexCommit)it.Current;
-                    IndexReader r = IndexReader.Open(commit, null);
-                    r.Close();
-                }
+				
+				// Test listCommits
+				System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+				if (!autoCommit)
+				// 1 from opening writer + 2 from closing writer
+					Assert.AreEqual(3, commits.Count);
+				// 1 from opening writer + 2 from closing writer +
+				// 11 from calling writer.commit() explicitly above
+				else
+					Assert.AreEqual(14, commits.Count);
+				
+				System.Collections.IEnumerator it = commits.GetEnumerator();
+				// Make sure we can open a reader on each commit:
+				while (it.MoveNext())
+				{
+					IndexCommit commit = (IndexCommit) it.Current;
+					IndexReader r = IndexReader.Open(commit, null);
+					r.Close();
+				}
 				
 				// Simplistic check: just verify all segments_N's still
 				// exist, and, I can open a reader on each:
@@ -424,10 +427,10 @@ namespace Lucene.Net.Index
 						// should have orphan'd at least one index file.
 						// Open & close a writer and assert that it
 						// actually removed something:
-						int preCount = dir.List().Length;
+						int preCount = dir.ListAll().Length;
 						writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.LIMITED);
 						writer.Close();
-						int postCount = dir.List().Length;
+						int postCount = dir.ListAll().Length;
 						Assert.IsTrue(postCount < preCount);
 					}
 				}
@@ -435,6 +438,112 @@ namespace Lucene.Net.Index
 				dir.Close();
 			}
 		}
+		
+		/* Uses KeepAllDeletionPolicy to keep all commits around,
+		* then, opens a new IndexWriter on a previous commit
+		* point. */
+		[Test]
+		public virtual void  TestOpenPriorSnapshot()
+		{
+			
+			// Never deletes a commit
+			KeepAllDeletionPolicy policy = new KeepAllDeletionPolicy(this);
+			
+			Directory dir = new MockRAMDirectory();
+			policy.dir = dir;
+			
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED);
+			writer.SetMaxBufferedDocs(2);
+			for (int i = 0; i < 10; i++)
+			{
+				AddDoc(writer);
+				if ((1 + i) % 2 == 0)
+					writer.Commit();
+			}
+			writer.Close();
+			
+			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			Assert.AreEqual(6, commits.Count);
+			IndexCommit lastCommit = null;
+			System.Collections.IEnumerator it = commits.GetEnumerator();
+			while (it.MoveNext())
+			{
+				IndexCommit commit = (IndexCommit) it.Current;
+				if (lastCommit == null || commit.GetGeneration() > lastCommit.GetGeneration())
+					lastCommit = commit;
+			}
+			Assert.IsTrue(lastCommit != null);
+			
+			// Now add 1 doc and optimize
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED);
+			AddDoc(writer);
+			Assert.AreEqual(11, writer.NumDocs());
+			writer.Optimize();
+			writer.Close();
+			
+			Assert.AreEqual(7, IndexReader.ListCommits(dir).Count);
+			
+			// Now open writer on the commit just before optimize:
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED, lastCommit);
+			Assert.AreEqual(10, writer.NumDocs());
+			
+			// Should undo our rollback:
+			writer.Rollback();
+			
+			IndexReader r = IndexReader.Open(dir);
+			// Still optimized, still 11 docs
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(11, r.NumDocs());
+			r.Close();
+			
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED, lastCommit);
+			Assert.AreEqual(10, writer.NumDocs());
+			// Commits the rollback:
+			writer.Close();
+			
+			// Now 8 because we made another commit
+			Assert.AreEqual(8, IndexReader.ListCommits(dir).Count);
+			
+			r = IndexReader.Open(dir);
+			// Not optimized because we rolled it back, and now only
+			// 10 docs
+			Assert.IsTrue(!r.IsOptimized());
+			Assert.AreEqual(10, r.NumDocs());
+			r.Close();
+			
+			// Reoptimize
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), policy, IndexWriter.MaxFieldLength.LIMITED);
+			writer.Optimize();
+			writer.Close();
+			
+			r = IndexReader.Open(dir);
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(10, r.NumDocs());
+			r.Close();
+			
+			// Now open writer on the commit just before optimize,
+			// but this time keeping only the last commit:
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), new KeepOnlyLastCommitDeletionPolicy(), IndexWriter.MaxFieldLength.LIMITED, lastCommit);
+			Assert.AreEqual(10, writer.NumDocs());
+			
+			// Reader still sees optimized index, because writer
+			// opened on the prior commit has not yet committed:
+			r = IndexReader.Open(dir);
+			Assert.IsTrue(r.IsOptimized());
+			Assert.AreEqual(10, r.NumDocs());
+			r.Close();
+			
+			writer.Close();
+			
+			// Now reader sees unoptimized index:
+			r = IndexReader.Open(dir);
+			Assert.IsTrue(!r.IsOptimized());
+			Assert.AreEqual(10, r.NumDocs());
+			r.Close();
+			
+			dir.Close();
+		}
+		
 		
 		/* Test keeping NO commit points.  This is a viable and
 		* useful case eg where you want to build a big index with
@@ -470,8 +579,8 @@ namespace Lucene.Net.Index
 				
 				Assert.AreEqual(2, policy.numOnInit);
 				if (!autoCommit)
-					// If we are not auto committing then there should
-					// be exactly 2 commits (one per close above):
+				// If we are not auto committing then there should
+				// be exactly 2 commits (one per close above):
 					Assert.AreEqual(2, policy.numOnCommit);
 				
 				// Simplistic check: just verify the index is in fact
@@ -732,7 +841,7 @@ namespace Lucene.Net.Index
 				
 				Assert.AreEqual(1 + 3 * (N + 1), policy.numOnInit);
 				if (!autoCommit)
-					Assert.AreEqual(2 * (N + 1), policy.numOnCommit);
+					Assert.AreEqual(3 * (N + 1), policy.numOnCommit);
 				
 				IndexSearcher searcher2 = new IndexSearcher(dir);
 				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).scoreDocs;

@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 	* directly with no retry logic.
 	*/
 	
-	sealed class IndexFileDeleter
+	public sealed class IndexFileDeleter
 	{
 		
 		/* Files that we tried to delete but failed (likely

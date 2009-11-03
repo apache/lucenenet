@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis
 				System.String word = null;
 				while ((word = br.ReadLine()) != null)
 				{
-					SupportClass.HashtableHelper.Add(result, word.Trim());
+					SupportClass.CollectionsHelper.Add(result, word.Trim());
 				}
 			}
 			finally
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis
 				{
 					if (word.StartsWith(comment) == false)
 					{
-						SupportClass.HashtableHelper.Add(result, word.Trim());
+						SupportClass.CollectionsHelper.Add(result, word.Trim());
 					}
 				}
 			}

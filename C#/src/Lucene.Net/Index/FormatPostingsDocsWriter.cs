@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 		{
 			this.parent = parent;
 			System.String fileName = IndexFileNames.SegmentFileName(parent.parent.segment, IndexFileNames.FREQ_EXTENSION);
-			SupportClass.HashtableHelper.AddIfNotContains(state.flushedFiles, fileName);
+			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
 			out_Renamed = parent.parent.dir.CreateOutput(fileName);
 			totalNumDocs = parent.parent.totalNumDocs;
 			

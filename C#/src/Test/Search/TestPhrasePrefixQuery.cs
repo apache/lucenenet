@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -26,7 +27,6 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -36,22 +36,26 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestPhrasePrefixQuery.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestPhrasePrefixQuery.java 694004 2008-09-10 21:38:52Z mikemccand $
 	/// </version>
-	[TestFixture]
-	public class TestPhrasePrefixQuery : LuceneTestCase
+    [TestFixture]
+	public class TestPhrasePrefixQuery:LuceneTestCase
 	{
+		public TestPhrasePrefixQuery(System.String name):base(name)
+		{
+		}
+		
 		/// <summary> </summary>
 		[Test]
 		public virtual void  TestPhrasePrefix()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-			Lucene.Net.Documents.Document doc1 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document doc2 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document doc3 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document doc4 = new Lucene.Net.Documents.Document();
-			Lucene.Net.Documents.Document doc5 = new Lucene.Net.Documents.Document();
+			IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			Document doc1 = new Document();
+			Document doc2 = new Document();
+			Document doc3 = new Document();
+			Document doc4 = new Document();
+			Document doc5 = new Document();
 			doc1.Add(new Field("body", "blueberry pie", Field.Store.YES, Field.Index.ANALYZED));
 			doc2.Add(new Field("body", "blueberry strudel", Field.Store.YES, Field.Index.ANALYZED));
 			doc3.Add(new Field("body", "blueberry pizza", Field.Store.YES, Field.Index.ANALYZED));
@@ -95,8 +99,8 @@ namespace Lucene.Net.Search
 			ScoreDoc[] result;
 			result = searcher.Search(query1, null, 1000).scoreDocs;
 			Assert.AreEqual(2, result.Length);
-
-            result = searcher.Search(query2, null, 1000).scoreDocs;
+			
+			result = searcher.Search(query2, null, 1000).scoreDocs;
 			Assert.AreEqual(0, result.Length);
 		}
 	}

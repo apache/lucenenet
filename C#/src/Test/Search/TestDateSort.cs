@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using DateTools = Lucene.Net.Documents.DateTools;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -26,7 +27,7 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
@@ -34,8 +35,8 @@ namespace Lucene.Net.Search
 	/// <summary> Test date sorting, i.e. auto-sorting of fields with type "long".
 	/// See http://issues.apache.org/jira/browse/LUCENE-1045 
 	/// </summary>
-	[TestFixture]
-	public class TestDateSort
+    [TestFixture]
+	public class TestDateSort:LuceneTestCase
 	{
 		
 		private const System.String TEXT_FIELD = "text";
@@ -44,37 +45,25 @@ namespace Lucene.Net.Search
 		private static Directory directory;
 		
 		[SetUp]
-		public virtual void  SetUp()
+		public override void  SetUp()
 		{
+			base.SetUp();
 			// Create an index writer.
 			directory = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-
+			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			
 			// oldest doc:
 			// Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
-			writer.AddDocument(CreateDocument("Document 1", 633275835220000000L));
+			writer.AddDocument(CreateDocument("Document 1", 1192001122000L));
 			// Add the second document.  text = "Document 2"  dateTime = Oct 10 03:25:26 EDT 2007 
-			writer.AddDocument(CreateDocument("Document 2", 633275835260000000L));
+			writer.AddDocument(CreateDocument("Document 2", 1192001126000L));
 			// Add the third document.  text = "Document 3"  dateTime = Oct 11 07:12:13 EDT 2007 
-			writer.AddDocument(CreateDocument("Document 3", 633276835330000000L));
+			writer.AddDocument(CreateDocument("Document 3", 1192101133000L));
 			// Add the fourth document.  text = "Document 4"  dateTime = Oct 11 08:02:09 EDT 2007
-			writer.AddDocument(CreateDocument("Document 4", 633276865290000000L));
+			writer.AddDocument(CreateDocument("Document 4", 1192104129000L));
 			// latest doc:
 			// Add the fifth document.  text = "Document 5"  dateTime = Oct 12 13:25:43 EDT 2007
-			writer.AddDocument(CreateDocument("Document 5", 633277923430000000L));
-
-			//// oldest doc:
-			//// Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
-			//writer.AddDocument(CreateDocument("Document 1", 1192001122000L));
-			//// Add the second document.  text = "Document 2"  dateTime = Oct 10 03:25:26 EDT 2007 
-			//writer.AddDocument(CreateDocument("Document 2", 1192001126000L));
-			//// Add the third document.  text = "Document 3"  dateTime = Oct 11 07:12:13 EDT 2007 
-			//writer.AddDocument(CreateDocument("Document 3", 1192101133000L));
-			//// Add the fourth document.  text = "Document 4"  dateTime = Oct 11 08:02:09 EDT 2007
-			//writer.AddDocument(CreateDocument("Document 4", 1192104129000L));
-			//// latest doc:
-			//// Add the fifth document.  text = "Document 5"  dateTime = Oct 12 13:25:43 EDT 2007
-			//writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
+			writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
 			
 			writer.Optimize();
 			writer.Close();
@@ -88,8 +77,8 @@ namespace Lucene.Net.Search
 			// Create a Sort object.  reverse is set to true.
 			// problem occurs only with SortField.AUTO:
 			Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.AUTO, true));
-
-			Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(TEXT_FIELD, new WhitespaceAnalyzer());
+			
+			QueryParser queryParser = new QueryParser(TEXT_FIELD, new WhitespaceAnalyzer());
 			Query query = queryParser.Parse("Document");
 			
 			// Execute the search and process the search results.
@@ -111,10 +100,7 @@ namespace Lucene.Net.Search
 			expectedOrder[3] = "Document 2";
 			expectedOrder[4] = "Document 1";
 			
-			for (int i = 0; i < expectedOrder.Length; i++)
-			{
-				Assert.AreEqual(expectedOrder[i], actualOrder[i]);
-			}
+			Assert.AreEqual(new System.Collections.ArrayList(expectedOrder), new System.Collections.ArrayList(actualOrder));
 		}
 		
 		private static Document CreateDocument(System.String text, long time)

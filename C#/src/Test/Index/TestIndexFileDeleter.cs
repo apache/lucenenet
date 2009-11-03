@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,14 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
@@ -35,8 +35,8 @@ namespace Lucene.Net.Index
 	Verify we can read the pre-2.1 file format, do searches
 	against it, and add documents to it.*/
 	
-	[TestFixture]
-	public class TestIndexFileDeleter : LuceneTestCase
+    [TestFixture]
+	public class TestIndexFileDeleter:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestDeleteLeftoverFiles()
@@ -70,12 +70,12 @@ namespace Lucene.Net.Index
 			
 			// Now, artificially create an extra .del file & extra
 			// .s0 file:
-			System.String[] files = dir.List();
+			System.String[] files = dir.ListAll();
 			
-			for(int j=0;j<files.Length;j++) {
-			System.Console.Out.WriteLine(j + ": " + files[j]);
-			}
 			/*
+			for(int j=0;j<files.length;j++) {
+			System.out.println(j + ": " + files[j]);
+			}
 			*/
 			
 			// The numbering of fields can vary depending on which
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 			for (i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.Name_ForNUnitTest.Equals("content"))
+				if (fi.name_ForNUnit.Equals("content"))
 				{
 					contentFieldIndex = i;
 					break;
@@ -149,23 +149,59 @@ namespace Lucene.Net.Index
 			// Create a bogus cfs file shadowing a non-cfs segment:
 			CopyFile(dir, "_2.cfs", "_3.cfs");
 			
-			System.String[] filesPre = dir.List();
+			System.String[] filesPre = dir.ListAll();
 			
 			// Open & close a writer: it should delete the above 4
 			// files and nothing more:
-            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Close();
 			
-			System.String[] files2 = dir.List();
+			System.String[] files2 = dir.ListAll();
 			dir.Close();
 			
 			System.Array.Sort(files);
 			System.Array.Sort(files2);
 			
-			if (!ArrayEquals(files, files2))
+			System.Collections.Hashtable dif = DifFiles(files, files2);
+			
+			if (!SupportClass.CollectionsHelper.Equals(files, files2))
 			{
-				Assert.Fail("IndexFileDeleter failed to delete unreferenced extra files: should have deleted " + (filesPre.Length - files.Length) + " files but only deleted " + (filesPre.Length - files2.Length) + "; expected files:\n    " + AsString(files) + "\n  actual files:\n    " + AsString(files2));
+				Assert.Fail("IndexFileDeleter failed to delete unreferenced extra files: should have deleted " + (filesPre.Length - files.Length) + " files but only deleted " + (filesPre.Length - files2.Length) + "; expected files:\n    " + AsString(files) + "\n  actual files:\n    " + AsString(files2) + "\ndif: " + SupportClass.CollectionsHelper.CollectionToString(dif));
 			}
+		}
+		
+		private static System.Collections.Hashtable DifFiles(System.String[] files1, System.String[] files2)
+		{
+			System.Collections.Hashtable set1 = new System.Collections.Hashtable();
+			System.Collections.Hashtable set2 = new System.Collections.Hashtable();
+			System.Collections.Hashtable extra = new System.Collections.Hashtable();
+			for (int x = 0; x < files1.Length; x++)
+			{
+				SupportClass.CollectionsHelper.AddIfNotContains(set1, files1[x]);
+			}
+			for (int x = 0; x < files2.Length; x++)
+			{
+				SupportClass.CollectionsHelper.AddIfNotContains(set2, files2[x]);
+			}
+			System.Collections.IEnumerator i1 = set1.GetEnumerator();
+			while (i1.MoveNext())
+			{
+				System.Object o = i1.Current;
+				if (!set2.Contains(o))
+				{
+					SupportClass.CollectionsHelper.AddIfNotContains(extra, o);
+				}
+			}
+			System.Collections.IEnumerator i2 = set2.GetEnumerator();
+			while (i2.MoveNext())
+			{
+				System.Object o = i2.Current;
+				if (!set1.Contains(o))
+				{
+					SupportClass.CollectionsHelper.AddIfNotContains(extra, o);
+				}
+			}
+			return extra;
 		}
 		
 		private System.String AsString(System.String[] l)
@@ -201,34 +237,10 @@ namespace Lucene.Net.Index
 		
 		private void  AddDoc(IndexWriter writer, int id)
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
 			doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			writer.AddDocument(doc);
-		}
-
-		public static bool ArrayEquals(System.Array array1, System.Array array2)
-		{
-			bool result = false;
-			if ((array1 == null) && (array2 == null))
-				result = true;
-			else if ((array1 != null) && (array2 != null))
-			{
-				if (array1.Length == array2.Length)
-				{
-					int length = array1.Length;
-					result = true;
-					for (int index = 0; index < length; index++)
-					{
-						if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
-						{
-							result = false;
-							break;
-						}
-					}
-				}
-			}
-			return result;
 		}
 	}
 }

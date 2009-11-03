@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,14 +19,17 @@ using System;
 
 using NUnit.Framework;
 
+using LocalizedTestCase = Lucene.Net.Util.LocalizedTestCase;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
 {
-	[TestFixture]
-	public class TestDateTools : LuceneTestCase
+	
+    [TestFixture]
+	public class TestDateTools:LocalizedTestCase
 	{
-		[Test]
+		
+        [Test]
 		public virtual void  TestStringToDate()
 		{
 			
@@ -45,7 +48,7 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("97"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException)
+			catch (System.FormatException e)
 			{
 				/* expected exception */
 			}
@@ -54,7 +57,7 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("200401011235009999"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException)
+			catch (System.FormatException e)
 			{
 				/* expected exception */
 			}
@@ -63,13 +66,13 @@ namespace Lucene.Net.Documents
 				d = DateTools.StringToDate("aaaa"); // no date
 				Assert.Fail();
 			}
-			catch (System.FormatException)
+			catch (System.FormatException e)
 			{
 				/* expected exception */
 			}
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestStringtoTime()
 		{
 			long time = DateTools.StringToTime("197001010000");
@@ -82,7 +85,7 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual(cal.Ticks, time);
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestDateAndTimetoString()
 		{
 			System.DateTime cal = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
@@ -154,7 +157,7 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual("19700101010203000", dateString);
 		}
 		
-		[Test]
+        [Test]
 		public virtual void  TestRound()
 		{
 			System.DateTime date = new System.DateTime(2004, 2, 3, 22, 8, 56, 333, new System.Globalization.GregorianCalendar());
@@ -193,10 +196,10 @@ namespace Lucene.Net.Documents
 		
 		private System.String IsoFormat(System.DateTime date)
 		{
-			return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
-		}
-	
-		[Test]
+            return date.ToString("yyyy-MM-dd HH:mm:ss:fff");
+        }
+		
+        [Test]
 		public virtual void  TestDateToolsUTC()
 		{
 			// Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London

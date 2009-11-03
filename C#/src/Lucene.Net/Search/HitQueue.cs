@@ -22,7 +22,7 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search
 {
 	
-	sealed class HitQueue:PriorityQueue
+	public sealed class HitQueue:PriorityQueue
 	{
 		
 		private bool prePopulate;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <seealso cref="GetSentinelObject()">
 		/// </seealso>
-		internal HitQueue(int size, bool prePopulate)
+		public /*internal*/ HitQueue(int size, bool prePopulate)
 		{
 			this.prePopulate = prePopulate;
 			Initialize(size);

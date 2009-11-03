@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,12 +21,15 @@ using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using LowerCaseFilter = Lucene.Net.Analysis.LowerCaseFilter;
-using Token = Lucene.Net.Analysis.Token;
 using TokenFilter = Lucene.Net.Analysis.TokenFilter;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardTokenizer = Lucene.Net.Analysis.Standard.StandardTokenizer;
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
+using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+using BaseTokenStreamTestCase = Lucene.Net.Analysis.BaseTokenStreamTestCase;
 using Query = Lucene.Net.Search.Query;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -34,18 +37,19 @@ namespace Lucene.Net.QueryParsers
 	/// <summary> Test QueryParser's ability to deal with Analyzers that return more
 	/// than one token per position or that return tokens with a position
 	/// increment &gt; 1.
+	/// 
 	/// </summary>
-	[TestFixture]
-	public class TestMultiAnalyzer : LuceneTestCase
+    [TestFixture]
+	public class TestMultiAnalyzer:BaseTokenStreamTestCase
 	{
 		
 		private static int multiToken = 0;
 		
 		[Test]
-		public virtual void  TestMultiAnalyzer_Renamed_Method()
+		public virtual void  TestMultiAnalyzer_Rename()
 		{
 			
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("", new MultiAnalyzer(this));
+			QueryParser qp = new QueryParser("", new MultiAnalyzer(this));
 			
 			// trivial, no multiple tokens:
 			Assert.AreEqual("foo", qp.Parse("foo").ToString());
@@ -87,7 +91,7 @@ namespace Lucene.Net.QueryParsers
 			qp.SetPhraseSlop(0);
 			
 			// non-default operator:
-			qp.SetDefaultOperator(Lucene.Net.QueryParsers.QueryParser.AND_OPERATOR);
+			qp.SetDefaultOperator(QueryParser.AND_OPERATOR);
 			Assert.AreEqual("+(multi multi2) +foo", qp.Parse("multi foo").ToString());
 		}
 		
@@ -111,7 +115,7 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestPosIncrementAnalyzer()
 		{
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("", new PosIncrementAnalyzer(this));
+			QueryParser qp = new QueryParser("", new PosIncrementAnalyzer(this));
 			Assert.AreEqual("quick brown", qp.Parse("the quick brown").ToString());
 			Assert.AreEqual("\"quick brown\"", qp.Parse("\"the quick brown\"").ToString());
 			Assert.AreEqual("quick brown fox", qp.Parse("the quick brown fox").ToString());
@@ -121,14 +125,13 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Expands "multi" to "multi" and "multi2", both at the same position,
 		/// and expands "triplemulti" to "triplemulti", "multi3", and "multi2".  
 		/// </summary>
-		private class MultiAnalyzer : Analyzer
+		private class MultiAnalyzer:Analyzer
 		{
 			private void  InitBlock(TestMultiAnalyzer enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
 			}
 			private TestMultiAnalyzer enclosingInstance;
-			
 			public TestMultiAnalyzer Enclosing_Instance
 			{
 				get
@@ -152,7 +155,7 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		private sealed class TestFilter : TokenFilter
+		private sealed class TestFilter:TokenFilter
 		{
 			private void  InitBlock(TestMultiAnalyzer enclosingInstance)
 			{
@@ -168,45 +171,59 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 			
-			private Lucene.Net.Analysis.Token prevToken;
+			private System.String prevType;
+			private int prevStartOffset;
+			private int prevEndOffset;
 			
-			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
+			internal TermAttribute termAtt;
+			internal PositionIncrementAttribute posIncrAtt;
+			internal OffsetAttribute offsetAtt;
+			internal TypeAttribute typeAtt;
+			
+			public TestFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
+				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+				typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
 			}
 			
-			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
+			public override bool IncrementToken()
 			{
-				if (TestMultiAnalyzer.multiToken > 0)
+				if (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken > 0)
 				{
-                    reusableToken.Reinit("multi" + (TestMultiAnalyzer.multiToken + 1), prevToken.StartOffset(), prevToken.EndOffset(), prevToken.Type());
-					reusableToken.SetPositionIncrement(0);
-					TestMultiAnalyzer.multiToken--;
-					return reusableToken;
+					termAtt.SetTermBuffer("multi" + (Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken + 1));
+					offsetAtt.SetOffset(prevStartOffset, prevEndOffset);
+					typeAtt.SetType(prevType);
+					posIncrAtt.SetPositionIncrement(0);
+					Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken--;
+					return true;
 				}
 				else
 				{
-					Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken);
-                    if (nextToken == null)
-                    {
-                        prevToken = null;
-                        return null;
-                    }
-                    prevToken = (Lucene.Net.Analysis.Token)(nextToken.Clone());
-					string text = nextToken.Term();
+					bool next = input.IncrementToken();
+					if (next == false)
+					{
+						return false;
+					}
+					prevType = typeAtt.Type();
+					prevStartOffset = offsetAtt.StartOffset();
+					prevEndOffset = offsetAtt.EndOffset();
+					System.String text = termAtt.Term();
 					if (text.Equals("triplemulti"))
 					{
-						TestMultiAnalyzer.multiToken = 2;
-						return nextToken;
+						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 2;
+						return true;
 					}
 					else if (text.Equals("multi"))
 					{
-						TestMultiAnalyzer.multiToken = 1;
-						return nextToken;
+						Lucene.Net.QueryParsers.TestMultiAnalyzer.multiToken = 1;
+						return true;
 					}
 					else
 					{
-						return nextToken;
+						return true;
 					}
 				}
 			}
@@ -215,7 +232,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Analyzes "the quick brown" as: quick(incr=2) brown(incr=1).
 		/// Does not work correctly for input other than "the quick brown ...".
 		/// </summary>
-		private class PosIncrementAnalyzer : Analyzer
+		private class PosIncrementAnalyzer:Analyzer
 		{
 			private void  InitBlock(TestMultiAnalyzer enclosingInstance)
 			{
@@ -245,7 +262,7 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		private sealed class TestPosIncrementFilter : TokenFilter
+		private sealed class TestPosIncrementFilter:TokenFilter
 		{
 			private void  InitBlock(TestMultiAnalyzer enclosingInstance)
 			{
@@ -261,36 +278,41 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 			
-			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed) : base(in_Renamed)
+			internal TermAttribute termAtt;
+			internal PositionIncrementAttribute posIncrAtt;
+			
+			public TestPosIncrementFilter(TestMultiAnalyzer enclosingInstance, TokenStream in_Renamed):base(in_Renamed)
 			{
 				InitBlock(enclosingInstance);
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
 			}
 			
-			public override Lucene.Net.Analysis.Token Next(Lucene.Net.Analysis.Token reusableToken)
+			public override bool IncrementToken()
 			{
-                for (Lucene.Net.Analysis.Token nextToken = input.Next(reusableToken); nextToken != null; nextToken = input.Next(reusableToken))
+				while (input.IncrementToken())
 				{
-					if (nextToken.Term().Equals("the"))
+					if (termAtt.Term().Equals("the"))
 					{
 						// stopword, do nothing
 					}
-					else if (nextToken.Term().Equals("quick"))
+					else if (termAtt.Term().Equals("quick"))
 					{
-						nextToken.SetPositionIncrement(2);
-						return nextToken;
+						posIncrAtt.SetPositionIncrement(2);
+						return true;
 					}
 					else
 					{
-						nextToken.SetPositionIncrement(1);
-                        return nextToken;
+						posIncrAtt.SetPositionIncrement(1);
+						return true;
 					}
 				}
-				return null;
+				return false;
 			}
 		}
 		
 		/// <summary>a very simple subclass of QueryParser </summary>
-		public class DumbQueryParser : Lucene.Net.QueryParsers.QueryParser
+		private sealed class DumbQueryParser:QueryParser
 		{
 			
 			public DumbQueryParser(System.String f, Analyzer a):base(f, a)
@@ -298,12 +320,12 @@ namespace Lucene.Net.QueryParsers
 			}
 			
 			/// <summary>expose super's version </summary>
-			public Lucene.Net.Search.Query GetSuperFieldQuery(System.String f, System.String t)
+			public Query GetSuperFieldQuery(System.String f, System.String t)
 			{
 				return base.GetFieldQuery(f, t);
 			}
 			/// <summary>wrap super's version </summary>
-			public override Lucene.Net.Search.Query GetFieldQuery(System.String f, System.String t)
+			public /*protected internal*/ override Query GetFieldQuery(System.String f, System.String t)
 			{
 				return new DumbQueryWrapper(GetSuperFieldQuery(f, t));
 			}
@@ -313,11 +335,11 @@ namespace Lucene.Net.QueryParsers
 		/// the toString of the query it wraps.
 		/// </summary>
 		[Serializable]
-		private sealed class DumbQueryWrapper : Lucene.Net.Search.Query
+		private sealed class DumbQueryWrapper:Query
 		{
 			
-			private Lucene.Net.Search.Query q;
-			public DumbQueryWrapper(Lucene.Net.Search.Query q):base()
+			private Query q;
+			public DumbQueryWrapper(Query q):base()
 			{
 				this.q = q;
 			}
@@ -327,6 +349,7 @@ namespace Lucene.Net.QueryParsers
 			}
 			override public System.Object Clone()
 			{
+                System.Diagnostics.Debug.Fail("Port issue:", "Do we need TestMultiAnalyzer.DumbQueryWrapper.Clone()?");
 				return null;
 			}
 		}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -26,7 +27,6 @@ using ParseException = Lucene.Net.QueryParsers.ParseException;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -38,8 +38,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <version>  $Id: TestMultiSearcher.java 150492 2004-09-06 22:01:49Z dnaber $
 	/// </version>
-	[TestFixture]
-	public class TestMultiSearcherRanking : LuceneTestCase
+    [TestFixture]
+	public class TestMultiSearcherRanking:LuceneTestCase
 	{
 		
 		private bool verbose = false; // set to true to output hits
@@ -109,15 +109,15 @@ namespace Lucene.Net.Search
 			// check result hit ranking
 			if (verbose)
 				System.Console.Out.WriteLine("Query: " + queryStr);
-			Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser(FIELD_NAME, new StandardAnalyzer());
-			Lucene.Net.Search.Query query = queryParser.Parse(queryStr);
+			QueryParser queryParser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+			Query query = queryParser.Parse(queryStr);
 			ScoreDoc[] multiSearcherHits = multiSearcher.Search(query, null, 1000).scoreDocs;
-            ScoreDoc[] singleSearcherHits = singleSearcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] singleSearcherHits = singleSearcher.Search(query, null, 1000).scoreDocs;
 			Assert.AreEqual(multiSearcherHits.Length, singleSearcherHits.Length);
 			for (int i = 0; i < multiSearcherHits.Length; i++)
 			{
-                Lucene.Net.Documents.Document docMulti = multiSearcher.Doc(multiSearcherHits[i].doc);
-				Lucene.Net.Documents.Document docSingle = singleSearcher.Doc(singleSearcherHits[i].doc);
+				Document docMulti = multiSearcher.Doc(multiSearcherHits[i].doc);
+				Document docSingle = singleSearcher.Doc(singleSearcherHits[i].doc);
 				if (verbose)
 					System.Console.Out.WriteLine("Multi:  " + docMulti.Get(FIELD_NAME) + " score=" + multiSearcherHits[i].score);
 				if (verbose)
@@ -130,8 +130,8 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> initializes multiSearcher and singleSearcher with the same document set</summary>
-		[SetUp]
-		public override void SetUp()
+		[Test]
+		public override void  SetUp()
 		{
 			base.SetUp();
 			// create MultiSearcher from two seperate searchers
@@ -140,18 +140,18 @@ namespace Lucene.Net.Search
 			AddCollection1(iw1);
 			iw1.Close();
 			Directory d2 = new RAMDirectory();
-            IndexWriter iw2 = new IndexWriter(d2, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw2 = new IndexWriter(d2, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddCollection2(iw2);
 			iw2.Close();
 			
-			Lucene.Net.Search.Searchable[] s = new Lucene.Net.Search.Searchable[2];
+			Searchable[] s = new Searchable[2];
 			s[0] = new IndexSearcher(d1);
 			s[1] = new IndexSearcher(d2);
 			multiSearcher = new MultiSearcher(s);
 			
 			// create IndexSearcher which contains all documents
 			Directory d = new RAMDirectory();
-            IndexWriter iw = new IndexWriter(d, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter iw = new IndexWriter(d, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddCollection1(iw);
 			AddCollection2(iw);
 			iw.Close();
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
 		
 		private void  Add(System.String value_Renamed, IndexWriter iw)
 		{
-			Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+			Document d = new Document();
 			d.Add(new Field(FIELD_NAME, value_Renamed, Field.Store.YES, Field.Index.ANALYZED));
 			iw.AddDocument(d);
 		}

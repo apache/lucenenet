@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +19,19 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Index
 {
 	
 	
-	[TestFixture]
-	public class TestIndexWriterMerging : LuceneTestCase
+    [TestFixture]
+	public class TestIndexWriterMerging:LuceneTestCase
 	{
 		
 		/// <summary> Tests that index merging (specifically addIndexes()) doesn't
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 		{
 			
 			int num = 100;
-
+			
 			Directory indexA = new MockRAMDirectory();
 			Directory indexB = new MockRAMDirectory();
 			
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 			{
 				Assert.Fail("Index b is invalid");
 			}
-
+			
 			Directory merged = new MockRAMDirectory();
 			
 			IndexWriter writer = new IndexWriter(merged, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 			int max = reader.MaxDoc();
 			for (int i = 0; i < max; i++)
 			{
-				Lucene.Net.Documents.Document temp = reader.Document(i);
+				Document temp = reader.Document(i);
 				//System.out.println("doc "+i+"="+temp.getField("count").stringValue());
 				//compare the index doc number to the value that it should be
 				if (!temp.GetField("count").StringValue().Equals((i + startAt) + ""))
@@ -97,14 +97,14 @@ namespace Lucene.Net.Index
 		
 		private void  FillIndex(Directory dir, int start, int numDocs)
 		{
-
-            IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			writer.SetMaxBufferedDocs(2);
 			
 			for (int i = start; i < (start + numDocs); i++)
 			{
-				Lucene.Net.Documents.Document temp = new Lucene.Net.Documents.Document();
+				Document temp = new Document();
 				temp.Add(new Field("count", ("" + i), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				
 				writer.AddDocument(temp);

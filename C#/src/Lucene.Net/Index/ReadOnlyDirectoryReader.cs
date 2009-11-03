@@ -22,7 +22,7 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
 	
-	class ReadOnlyDirectoryReader:DirectoryReader
+	public class ReadOnlyDirectoryReader:DirectoryReader
 	{
 		internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor):base(directory, sis, deletionPolicy, true, termInfosIndexDivisor)
 		{

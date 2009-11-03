@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ using System;
 
 using NUnit.Framework;
 
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -27,28 +28,27 @@ using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 
 namespace Lucene.Net.Analysis
 {
 	
-	[TestFixture]
-	public class TestKeywordAnalyzer : LuceneTestCase
+    [TestFixture]
+	public class TestKeywordAnalyzer:BaseTokenStreamTestCase
 	{
 		
 		private RAMDirectory directory;
 		private IndexSearcher searcher;
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-//writer.SetInfoStream(System.Console.Out);			
+			
 			Document doc = new Document();
 			doc.Add(new Field("partnum", "Q36", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("description", "Illidium Space Modulator", Field.Store.YES, Field.Index.ANALYZED));
@@ -58,32 +58,14 @@ namespace Lucene.Net.Analysis
 			
 			searcher = new IndexSearcher(directory);
 		}
-
-        //[Test]
-        //public void TestSameThreadConsecutive()
-        //{
-        //    TestMultipleDocument();
-        //    TestPerFieldAnalyzer();
-        //}
-
-        //[Test]
-        //public void TestDistinctThreadConsecutive()
-        //{
-        //    SupportClass.ThreadClass thread1 = new SupportClass.ThreadClass(new System.Threading.ThreadStart(TestMultipleDocument));
-        //    thread1.Start();
-        //    System.Threading.Thread.CurrentThread.Join();
-        //    SupportClass.ThreadClass thread2 = new SupportClass.ThreadClass(new System.Threading.ThreadStart(TestPerFieldAnalyzer));
-        //    thread2.Start();
-        //    System.Threading.Thread.CurrentThread.Join();
-        //}
-
+		
         [Test]
 		public virtual void  TestPerFieldAnalyzer()
 		{
-            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new SimpleAnalyzer());
+			PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new SimpleAnalyzer());
 			analyzer.AddAnalyzer("partnum", new KeywordAnalyzer());
-
-			Lucene.Net.QueryParsers.QueryParser queryParser = new Lucene.Net.QueryParsers.QueryParser("description", analyzer);
+			
+			QueryParser queryParser = new QueryParser("description", analyzer);
 			Query query = queryParser.Parse("partnum:Q36 AND SPACE");
 			
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
@@ -91,8 +73,8 @@ namespace Lucene.Net.Analysis
 			Assert.AreEqual(1, hits.Length, "doc found!");
 		}
 		
-		[Test]
-		public virtual void  TestMultipleDocument()
+        [Test]
+		public virtual void  TestMutipleDocument()
 		{
 			RAMDirectory dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new KeywordAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
@@ -104,14 +86,22 @@ namespace Lucene.Net.Analysis
 			writer.AddDocument(doc);
 			writer.Close();
 			
-            IndexReader reader = IndexReader.Open(dir);
-            // following is the line whose inclusion causes TestPerFieldAnalyzer to fail:
-            TermDocs td = reader.TermDocs(new Term("partnum", "Q36"));
-            Assert.IsTrue(td.Next());
-            td = reader.TermDocs(new Term("partnum", "Q37"));
-            Assert.IsTrue(td.Next());
-//this fixes TestPerFieldAnalyzer:
-//((Lucene.Net.Index.SegmentReader)reader).foo();
+			IndexReader reader = IndexReader.Open(dir);
+			TermDocs td = reader.TermDocs(new Term("partnum", "Q36"));
+			Assert.IsTrue(td.Next());
+			td = reader.TermDocs(new Term("partnum", "Q37"));
+			Assert.IsTrue(td.Next());
+		}
+		
+		// LUCENE-1441
+        [Test]
+		public virtual void  TestOffsets()
+		{
+			TokenStream stream = new KeywordAnalyzer().TokenStream("field", new System.IO.StringReader("abcd"));
+			OffsetAttribute offsetAtt = (OffsetAttribute) stream.AddAttribute(typeof(OffsetAttribute));
+			Assert.IsTrue(stream.IncrementToken());
+			Assert.AreEqual(0, offsetAtt.StartOffset());
+			Assert.AreEqual(4, offsetAtt.EndOffset());
 		}
 	}
 }

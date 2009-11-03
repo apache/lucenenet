@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,28 +31,13 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Test CustomScoreQuery search.</summary>
-	[TestFixture]
-	public class TestCustomScoreQuery : FunctionTestSetup
+    [TestFixture]
+	public class TestCustomScoreQuery:FunctionTestSetup
 	{
 		
 		/* @override constructor */
-		//public TestCustomScoreQuery(System.String name):base(name)
-		//{
-		//}
-		
-		/* @override */
-		[TearDown]
-		public override void  TearDown()
+		public TestCustomScoreQuery(System.String name):base(name)
 		{
-			base.TearDown();
-		}
-		
-		/* @override */
-		[SetUp]
-		public override void  SetUp()
-		{
-			// prepare a small index with just a few documents.  
-			base.SetUp();
 		}
 		
 		/// <summary>Test that CustomScoreQuery of Type.BYTE returns the expected scores. </summary>
@@ -95,7 +80,7 @@ namespace Lucene.Net.Search.Function
 		
 		// must have static class otherwise serialization tests fail
 		[Serializable]
-		private class CustomAddQuery : CustomScoreQuery
+		private class CustomAddQuery:CustomScoreQuery
 		{
 			// constructor
 			internal CustomAddQuery(Query q, ValueSourceQuery qValSrc):base(q, qValSrc)
@@ -127,7 +112,7 @@ namespace Lucene.Net.Search.Function
 		
 		// must have static class otherwise serialization tests fail
 		[Serializable]
-		private class CustomMulAddQuery : CustomScoreQuery
+		private class CustomMulAddQuery:CustomScoreQuery
 		{
 			// constructor
 			internal CustomMulAddQuery(Query q, ValueSourceQuery qValSrc1, ValueSourceQuery qValSrc2):base(q, new ValueSourceQuery[]{qValSrc1, qValSrc2})
@@ -179,10 +164,10 @@ namespace Lucene.Net.Search.Function
 			float boost = (float) dboost;
 			IndexSearcher s = new IndexSearcher(dir);
 			FieldScoreQuery qValSrc = new FieldScoreQuery(field, tp); // a query that would score by the field
-			Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(TEXT_FIELD, anlzr);
+			QueryParser qp = new QueryParser(TEXT_FIELD, anlzr);
 			System.String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
 			
-			// regular (bool) query.
+			// regular (boolean) query.
 			Query q1 = qp.Parse(qtxt);
 			Log(q1);
 			

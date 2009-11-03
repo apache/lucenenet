@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ using System;
 
 using NUnit.Framework;
 
+using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using TermVector = Lucene.Net.Documents.Field.TermVector;
@@ -28,14 +30,14 @@ using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
-	[TestFixture]
-	public class TestCachingTokenFilter : LuceneTestCase
+	
+    [TestFixture]
+	public class TestCachingTokenFilter:BaseTokenStreamTestCase
 	{
-		private class AnonymousClassTokenStream : TokenStream
+		private class AnonymousClassTokenStream:TokenStream
 		{
 			public AnonymousClassTokenStream(TestCachingTokenFilter enclosingInstance)
 			{
@@ -44,6 +46,8 @@ namespace Lucene.Net.Analysis
 			private void  InitBlock(TestCachingTokenFilter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
+				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+				offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
 			}
 			private TestCachingTokenFilter enclosingInstance;
 			public TestCachingTokenFilter Enclosing_Instance
@@ -55,23 +59,26 @@ namespace Lucene.Net.Analysis
 				
 			}
 			private int index = 0;
+			private TermAttribute termAtt;
+			private OffsetAttribute offsetAtt;
 			
-			public override Token Next(Token reusableToken)
+			public override bool IncrementToken()
 			{
-                System.Diagnostics.Debug.Assert(reusableToken != null);
 				if (index == Enclosing_Instance.tokens.Length)
 				{
-					return null;
+					return false;
 				}
 				else
 				{
-					return reusableToken.Reinit(Enclosing_Instance.tokens[index++], 0, 0);
+					termAtt.SetTermBuffer(Enclosing_Instance.tokens[index++]);
+					offsetAtt.SetOffset(0, 0);
+					return true;
 				}
 			}
 		}
 		private System.String[] tokens = new System.String[]{"term1", "term2", "term3", "term2"};
 		
-		[NUnit.Framework.Test]
+        [Test]
 		public virtual void  TestCaching()
 		{
 			Directory dir = new RAMDirectory();
@@ -84,9 +91,9 @@ namespace Lucene.Net.Analysis
 			doc.Add(new Field("preanalyzed", stream, TermVector.NO));
 			
 			// 1) we consume all tokens twice before we add the doc to the index
-			CheckTokens(stream);
+			checkTokens(stream);
 			stream.Reset();
-			CheckTokens(stream);
+			checkTokens(stream);
 			
 			// 2) now add the document to the index and verify if all tokens are indexed
 			//    don't reset the stream here, the DocumentWriter should do that implicitly
@@ -113,17 +120,19 @@ namespace Lucene.Net.Analysis
 			
 			// 3) reset stream and consume tokens again
 			stream.Reset();
-			CheckTokens(stream);
+			checkTokens(stream);
 		}
 		
-		private void  CheckTokens(TokenStream stream)
+		private void  checkTokens(TokenStream stream)
 		{
 			int count = 0;
-			Token reusableToken = new Token();
-            for (Token nextToken = stream.Next(reusableToken); nextToken != null; nextToken = stream.Next(reusableToken))
+			
+			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
+			Assert.IsNotNull(termAtt);
+			while (stream.IncrementToken())
 			{
 				Assert.IsTrue(count < tokens.Length);
-				Assert.AreEqual(tokens[count], nextToken.Term());
+				Assert.AreEqual(tokens[count], termAtt.Term());
 				count++;
 			}
 			

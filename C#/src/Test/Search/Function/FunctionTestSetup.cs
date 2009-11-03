@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,8 @@ using System;
 
 using NUnit.Framework;
 
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Fieldable = Lucene.Net.Documents.Fieldable;
@@ -26,15 +28,13 @@ using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Directory = Lucene.Net.Store.Directory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 
 namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Setup for function tests</summary>
-	[TestFixture]
-	public /*abstract*/ class FunctionTestSetup : LuceneTestCase
+    [TestFixture]
+	public abstract class FunctionTestSetup:LuceneTestCase
 	{
 		
 		/// <summary> Actual score computation order is slightly different than assumptios
@@ -57,15 +57,14 @@ namespace Lucene.Net.Search.Function
 		protected internal Analyzer anlzr;
 		
 		/* @override constructor */
-		//public FunctionTestSetup(System.String name):base(name)
-		//{
-		//}
+		public FunctionTestSetup(System.String name):base(name)
+		{
+		}
 		
 		/* @override */
 		[TearDown]
 		public override void  TearDown()
 		{
-			base.TearDown();
 			base.TearDown();
 			dir = null;
 			anlzr = null;
@@ -77,6 +76,7 @@ namespace Lucene.Net.Search.Function
 		{
 			base.SetUp();
 			// prepare a small index with just a few documents.  
+			base.SetUp();
 			dir = new RAMDirectory();
 			anlzr = new StandardAnalyzer();
 			IndexWriter iw = new IndexWriter(dir, anlzr, IndexWriter.MaxFieldLength.LIMITED);
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Function
 		// extract expected doc score from its ID Field: "ID7" --> 7.0
 		protected internal virtual float ExpectedFieldScore(System.String docIDFieldVal)
 		{
-			return SupportClass.Single.Parse(docIDFieldVal.Substring(2));
+			return System.Single.Parse(docIDFieldVal.Substring(2));
 		}
 		
 		// debug messages (change DBG to true for anything to print) 
@@ -152,12 +152,6 @@ namespace Lucene.Net.Search.Function
 			{
 				System.Console.Out.WriteLine(o.ToString());
 			}
-		}
-
-		[Test]
-		override public void TestDummy()
-		{
-            // So that NUnit doesn't complain
 		}
 	}
 }

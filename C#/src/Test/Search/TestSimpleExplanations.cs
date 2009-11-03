@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,25 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Term = Lucene.Net.Index.Term;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
+
 namespace Lucene.Net.Search
 {
 	
+	
 	/// <summary> TestExplanations subclass focusing on basic query types</summary>
-	[TestFixture]
-	public class TestSimpleExplanations : TestExplanations
+    [TestFixture]
+	public class TestSimpleExplanations:TestExplanations
 	{
 		
 		// we focus on queries that don't rewrite to other queries.
@@ -33,13 +46,12 @@ namespace Lucene.Net.Search
 		
 		
 		/* simple term tests */
-
+		
 		[Test]
 		public virtual void  TestT1()
 		{
 			Qtest("w1", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestT2()
 		{
@@ -53,7 +65,6 @@ namespace Lucene.Net.Search
 		{
 			Qtest(new MatchAllDocsQuery(), new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestMA2()
 		{
@@ -69,39 +80,33 @@ namespace Lucene.Net.Search
 		{
 			Qtest("\"w1 w2\"", new int[]{0});
 		}
-
 		[Test]
 		public virtual void  TestP2()
 		{
 			Qtest("\"w1 w3\"", new int[]{1, 3});
 		}
-
 		[Test]
 		public virtual void  TestP3()
 		{
 			Qtest("\"w1 w2\"~1", new int[]{0, 1, 2});
 		}
-
 		[Test]
 		public virtual void  TestP4()
 		{
 			Qtest("\"w2 w3\"~1", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestP5()
 		{
 			Qtest("\"w3 w2\"~1", new int[]{1, 3});
 		}
-
 		[Test]
 		public virtual void  TestP6()
 		{
 			Qtest("\"w3 w2\"~2", new int[]{0, 1, 3});
 		}
-
-		[Test]
-		public virtual void  TestP7()
+        [Test]
+        public virtual void TestP7()
 		{
 			Qtest("\"w3 w2\"~3", new int[]{0, 1, 2, 3});
 		}
@@ -113,38 +118,26 @@ namespace Lucene.Net.Search
 		{
 			Qtest(new FilteredQuery(qp.Parse("w1"), new ItemizedFilter(new int[]{0, 1, 2, 3})), new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestFQ2()
 		{
 			Qtest(new FilteredQuery(qp.Parse("w1"), new ItemizedFilter(new int[]{0, 2, 3})), new int[]{0, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestFQ3()
 		{
 			Qtest(new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3})), new int[]{3});
 		}
-
 		[Test]
 		public virtual void  TestFQ4()
 		{
 			Qtest(new FilteredQuery(qp.Parse("xx^1000"), new ItemizedFilter(new int[]{1, 3})), new int[]{3});
 		}
-
 		[Test]
 		public virtual void  TestFQ6()
 		{
 			Query q = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
 			q.SetBoost(1000);
-			Qtest(q, new int[]{3});
-		}
-
-		[Test]
-		public virtual void  TestFQ7()
-		{
-			Query q = new FilteredQuery(qp.Parse("xx"), new ItemizedFilter(new int[]{1, 3}));
-			q.SetBoost(0);
 			Qtest(q, new int[]{3});
 		}
 		
@@ -156,14 +149,12 @@ namespace Lucene.Net.Search
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{0, 1, 2, 3}));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestCSQ2()
 		{
 			Query q = new ConstantScoreQuery(new ItemizedFilter(new int[]{1, 3}));
 			Qtest(q, new int[]{1, 3});
 		}
-
 		[Test]
 		public virtual void  TestCSQ3()
 		{
@@ -173,16 +164,15 @@ namespace Lucene.Net.Search
 		}
 		
 		/* DisjunctionMaxQuery */
-		
-		[Test]
-		public virtual void  TestDMQ1()
+
+        [Test]
+        public virtual void TestDMQ1()
 		{
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
 			q.Add(qp.Parse("w1"));
 			q.Add(qp.Parse("w5"));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ2()
 		{
@@ -191,7 +181,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w5"));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ3()
 		{
@@ -200,7 +189,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w5"));
 			Qtest(q, new int[]{0});
 		}
-
 		[Test]
 		public virtual void  TestDMQ4()
 		{
@@ -209,7 +197,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("xx"));
 			Qtest(q, new int[]{2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ5()
 		{
@@ -218,16 +205,14 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("xx"));
 			Qtest(q, new int[]{2, 3});
 		}
-
-		[Test]
-		public virtual void  TestDMQ6()
+        [Test]
+        public virtual void TestDMQ6()
 		{
 			DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);
 			q.Add(qp.Parse("-yy w3"));
 			q.Add(qp.Parse("xx"));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ7()
 		{
@@ -236,7 +221,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w2"));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ8()
 		{
@@ -245,7 +229,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("xx^100000"));
 			Qtest(q, new int[]{0, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestDMQ9()
 		{
@@ -265,7 +248,6 @@ namespace Lucene.Net.Search
 			q.Add(Ta(new System.String[]{"w2", "w3", "xx"}));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestMPQ2()
 		{
@@ -274,7 +256,6 @@ namespace Lucene.Net.Search
 			q.Add(Ta(new System.String[]{"w2", "w3"}));
 			Qtest(q, new int[]{0, 1, 3});
 		}
-
 		[Test]
 		public virtual void  TestMPQ3()
 		{
@@ -283,7 +264,6 @@ namespace Lucene.Net.Search
 			q.Add(Ta(new System.String[]{"w2", "w3"}));
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestMPQ4()
 		{
@@ -292,7 +272,6 @@ namespace Lucene.Net.Search
 			q.Add(Ta(new System.String[]{"w2"}));
 			Qtest(q, new int[]{0});
 		}
-
 		[Test]
 		public virtual void  TestMPQ5()
 		{
@@ -302,7 +281,6 @@ namespace Lucene.Net.Search
 			q.SetSlop(1);
 			Qtest(q, new int[]{0, 1, 2});
 		}
-
 		[Test]
 		public virtual void  TestMPQ6()
 		{
@@ -313,74 +291,63 @@ namespace Lucene.Net.Search
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
 		
-		/* some simple tests of bool queries containing term queries */
+		/* some simple tests of boolean queries containing term queries */
 		
 		[Test]
 		public virtual void  TestBQ1()
 		{
 			Qtest("+w1 +w2", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ2()
 		{
 			Qtest("+yy +w3", new int[]{2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ3()
 		{
 			Qtest("yy +w3", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ4()
 		{
 			Qtest("w1 (-xx w2)", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ5()
 		{
 			Qtest("w1 (+qq w2)", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ6()
 		{
 			Qtest("w1 -(-qq w5)", new int[]{1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ7()
 		{
 			Qtest("+w1 +(qq (xx -w2) (+w3 +w4))", new int[]{0});
 		}
-
 		[Test]
 		public virtual void  TestBQ8()
 		{
 			Qtest("+w1 (qq (xx -w2) (+w3 +w4))", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ9()
 		{
 			Qtest("+w1 (qq (-xx w2) -(+w3 +w4))", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ10()
 		{
 			Qtest("+w1 +(qq (-xx w2) -(+w3 +w4))", new int[]{1});
 		}
-
 		[Test]
 		public virtual void  TestBQ11()
 		{
 			Qtest("w1 w2^1000.0", new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ14()
 		{
@@ -389,7 +356,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ15()
 		{
@@ -398,7 +364,6 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w1"), BooleanClause.Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ16()
 		{
@@ -407,16 +372,14 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
 			Qtest(q, new int[]{0, 1});
 		}
-
-		[Test]
-		public virtual void  TestBQ17()
+        [Test]
+        public virtual void TestBQ17()
 		{
 			BooleanQuery q = new BooleanQuery(true);
 			q.Add(qp.Parse("w2"), BooleanClause.Occur.SHOULD);
 			q.Add(qp.Parse("w1 -xx"), BooleanClause.Occur.SHOULD);
 			Qtest(q, new int[]{0, 1, 2, 3});
 		}
-
 		[Test]
 		public virtual void  TestBQ19()
 		{
@@ -435,6 +398,70 @@ namespace Lucene.Net.Search
 			q.Add(qp.Parse("w4"), BooleanClause.Occur.SHOULD);
 			
 			Qtest(q, new int[]{0, 3});
+		}
+		
+		
+		[Test]
+		public virtual void  TestTermQueryMultiSearcherExplain()
+		{
+			// creating two directories for indices
+			Directory indexStoreA = new MockRAMDirectory();
+			Directory indexStoreB = new MockRAMDirectory();
+			
+			Document lDoc = new Document();
+			lDoc.Add(new Field("handle", "1 2", Field.Store.YES, Field.Index.ANALYZED));
+			Document lDoc2 = new Document();
+			lDoc2.Add(new Field("handle", "1 2", Field.Store.YES, Field.Index.ANALYZED));
+			Document lDoc3 = new Document();
+			lDoc3.Add(new Field("handle", "1 2", Field.Store.YES, Field.Index.ANALYZED));
+			
+			IndexWriter writerA = new IndexWriter(indexStoreA, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writerB = new IndexWriter(indexStoreB, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			
+			writerA.AddDocument(lDoc);
+			writerA.AddDocument(lDoc2);
+			writerA.Optimize();
+			writerA.Close();
+			
+			writerB.AddDocument(lDoc3);
+			writerB.Close();
+			
+			QueryParser parser = new QueryParser("fulltext", new StandardAnalyzer());
+			Query query = parser.Parse("handle:1");
+			
+			Searcher[] searchers = new Searcher[2];
+			searchers[0] = new IndexSearcher(indexStoreB);
+			searchers[1] = new IndexSearcher(indexStoreA);
+			Searcher mSearcher = new MultiSearcher(searchers);
+			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			
+			Assert.AreEqual(3, hits.Length);
+			
+			Explanation explain = mSearcher.Explain(query, hits[0].doc);
+			System.String exp = explain.ToString(0);
+			Assert.IsTrue(exp.IndexOf("maxDocs=3") > - 1, exp);
+			Assert.IsTrue(exp.IndexOf("docFreq=3") > - 1, exp);
+			
+			query = parser.Parse("handle:\"1 2\"");
+			hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			
+			Assert.AreEqual(3, hits.Length);
+			
+			explain = mSearcher.Explain(query, hits[0].doc);
+			exp = explain.ToString(0);
+			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
+			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
+			
+			query = new SpanNearQuery(new SpanQuery[]{new SpanTermQuery(new Term("handle", "1")), new SpanTermQuery(new Term("handle", "2"))}, 0, true);
+			hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			
+			Assert.AreEqual(3, hits.Length);
+			
+			explain = mSearcher.Explain(query, hits[0].doc);
+			exp = explain.ToString(0);
+			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
+			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
+			mSearcher.Close();
 		}
 	}
 }

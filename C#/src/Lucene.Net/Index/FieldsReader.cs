@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <version>  $Id: FieldsReader.java 801344 2009-08-05 18:05:06Z yonik $
 	/// </version>
-	sealed class FieldsReader : System.ICloneable
+	public sealed class FieldsReader : System.ICloneable
 	{
 		private FieldInfos fieldInfos;
 		
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 			indexStream = (IndexInput) cloneableIndexStream.Clone();
 		}
 		
-		internal FieldsReader(Directory d, System.String segment, FieldInfos fn):this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, - 1, 0)
+		public /*internal*/ FieldsReader(Directory d, System.String segment, FieldInfos fn):this(d, segment, fn, BufferedIndexInput.BUFFER_SIZE, - 1, 0)
 		{
 		}
 		
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		internal void  Close()
+		public /*internal*/ void  Close()
 		{
 			if (!closed)
 			{
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal int Size()
+		public /*internal*/ int Size()
 		{
 			return size;
 		}
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
 			return format >= FieldsWriter.FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
 		}
 		
-		internal Document Doc(int n, FieldSelector fieldSelector)
+		public /*internal*/ Document Doc(int n, FieldSelector fieldSelector)
 		{
 			SeekIndex(n);
 			long position = indexStream.ReadLong();

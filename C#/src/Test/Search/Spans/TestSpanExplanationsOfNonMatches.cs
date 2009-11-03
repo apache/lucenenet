@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-using NUnit.Framework;
-
 using System;
 
-using Query = Lucene.Net.Search.Query;
+using NUnit.Framework;
+
 using CheckHits = Lucene.Net.Search.CheckHits;
+using Query = Lucene.Net.Search.Query;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	
 	/// <summary> subclass of TestSimpleExplanations that verifies non matches.</summary>
-	[TestFixture]
-	public class TestSpanExplanationsOfNonMatches : TestSpanExplanations
+    [TestFixture]
+	public class TestSpanExplanationsOfNonMatches:TestSpanExplanations
 	{
 		
 		/// <summary> Overrides superclass to ignore matches and focus on non-matches

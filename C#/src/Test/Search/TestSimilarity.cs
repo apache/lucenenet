@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,12 +19,13 @@ using System;
 
 using NUnit.Framework;
 
+using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
@@ -34,14 +35,14 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 583534 $
+	/// <version>  $Revision: 787772 $
 	/// </version>
-	[TestFixture]
-	public class TestSimilarity : LuceneTestCase
+    [TestFixture]
+	public class TestSimilarity:LuceneTestCase
 	{
-		private class AnonymousClassHitCollector : HitCollector
+		private class AnonymousClassCollector:Collector
 		{
-			public AnonymousClassHitCollector(TestSimilarity enclosingInstance)
+			public AnonymousClassCollector(TestSimilarity enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -58,15 +59,26 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
 			{
-				Assert.IsTrue(score == 1.0f);
+				this.scorer = scorer;
+			}
+			public override void  Collect(int doc)
+			{
+				Assert.IsTrue(scorer.Score() == 1.0f);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
-
-		private class AnonymousClassHitCollector1 : HitCollector
+		private class AnonymousClassCollector1:Collector
 		{
-			public AnonymousClassHitCollector1(TestSimilarity enclosingInstance)
+			public AnonymousClassCollector1(TestSimilarity enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -83,16 +95,29 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private int base_Renamed = 0;
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
+			{
+				this.scorer = scorer;
+			}
+			public override void  Collect(int doc)
 			{
 				//System.out.println("Doc=" + doc + " score=" + score);
-				Assert.IsTrue(score == (float) doc + 1);
+				Assert.IsTrue(scorer.Score() == (float) doc + base_Renamed + 1);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+				base_Renamed = docBase;
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
-
-		private class AnonymousClassHitCollector2 : HitCollector
+		private class AnonymousClassCollector2:Collector
 		{
-			public AnonymousClassHitCollector2(TestSimilarity enclosingInstance)
+			public AnonymousClassCollector2(TestSimilarity enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -109,16 +134,27 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
+			{
+				this.scorer = scorer;
+			}
+			public override void  Collect(int doc)
 			{
 				//System.out.println("Doc=" + doc + " score=" + score);
-				Assert.IsTrue(score == 1.0f);
+				Assert.IsTrue(scorer.Score() == 1.0f);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
-
-		private class AnonymousClassHitCollector3 : HitCollector
+		private class AnonymousClassCollector3:Collector
 		{
-			public AnonymousClassHitCollector3(TestSimilarity enclosingInstance)
+			public AnonymousClassCollector3(TestSimilarity enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -135,16 +171,30 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public override void  Collect(int doc, float score)
+			private Scorer scorer;
+			public override void  SetScorer(Scorer scorer)
+			{
+				this.scorer = scorer;
+			}
+			public override void  Collect(int doc)
 			{
 				//System.out.println("Doc=" + doc + " score=" + score);
-				Assert.IsTrue(score == 2.0f);
+				Assert.IsTrue(scorer.Score() == 2.0f);
+			}
+			public override void  SetNextReader(IndexReader reader, int docBase)
+			{
+			}
+			public override bool AcceptsDocsOutOfOrder()
+			{
+				return true;
 			}
 		}
-
+		public TestSimilarity(System.String name):base(name)
+		{
+		}
 		
 		[Serializable]
-		public class SimpleSimilarity : Similarity
+		public class SimpleSimilarity:Similarity
 		{
 			public override float LengthNorm(System.String field, int numTerms)
 			{
@@ -177,16 +227,16 @@ namespace Lucene.Net.Search
 		}
 		
 		[Test]
-		public virtual void  TestSimilarity_Renamed_Method()
+		public virtual void  TestSimilarity_Renamed()
 		{
 			RAMDirectory store = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetSimilarity(new SimpleSimilarity());
 			
-			Lucene.Net.Documents.Document d1 = new Lucene.Net.Documents.Document();
+			Document d1 = new Document();
 			d1.Add(new Field("field", "a c", Field.Store.YES, Field.Index.ANALYZED));
 			
-			Lucene.Net.Documents.Document d2 = new Lucene.Net.Documents.Document();
+			Document d2 = new Document();
 			d2.Add(new Field("field", "a b c", Field.Store.YES, Field.Index.ANALYZED));
 			
 			writer.AddDocument(d1);
@@ -201,23 +251,23 @@ namespace Lucene.Net.Search
 			Term b = new Term("field", "b");
 			Term c = new Term("field", "c");
 			
-			searcher.Search(new TermQuery(b), new AnonymousClassHitCollector(this));
+			searcher.Search(new TermQuery(b), new AnonymousClassCollector(this));
 			
 			BooleanQuery bq = new BooleanQuery();
 			bq.Add(new TermQuery(a), BooleanClause.Occur.SHOULD);
 			bq.Add(new TermQuery(b), BooleanClause.Occur.SHOULD);
 			//System.out.println(bq.toString("field"));
-			searcher.Search(bq, new AnonymousClassHitCollector1(this));
+			searcher.Search(bq, new AnonymousClassCollector1(this));
 			
 			PhraseQuery pq = new PhraseQuery();
-			pq.Add(a);
-			pq.Add(c);
+			pq.add(a);
+			pq.add(c);
 			//System.out.println(pq.toString("field"));
-			searcher.Search(pq, new AnonymousClassHitCollector2(this));
+			searcher.Search(pq, new AnonymousClassCollector2(this));
 			
 			pq.SetSlop(2);
 			//System.out.println(pq.toString("field"));
-			searcher.Search(pq, new AnonymousClassHitCollector3(this));
+			searcher.Search(pq, new AnonymousClassCollector3(this));
 		}
 	}
 }

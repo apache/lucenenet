@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ using System;
 using NUnit.Framework;
 
 using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
@@ -39,28 +40,13 @@ namespace Lucene.Net.Search.Function
 	/// <p>
 	/// The exact score tests use TopDocs top to verify the exact score.  
 	/// </summary>
-	[TestFixture]
-	public class TestOrdValues : FunctionTestSetup
+    [TestFixture]
+	public class TestOrdValues:FunctionTestSetup
 	{
 		
 		/* @override constructor */
-		//public TestOrdValues(System.String name):base(name)
-		//{
-		//}
-		
-		/* @override */
-		[TearDown]
-		public override void  TearDown()
+		public TestOrdValues(System.String name):base(name)
 		{
-			base.TearDown();
-		}
-		
-		/* @override */
-		[SetUp]
-		public override void  SetUp()
-		{
-			// prepare a small index with just a few documents.  
-			base.SetUp();
 		}
 		
 		/// <summary>Test OrdFieldSource </summary>
@@ -84,17 +70,17 @@ namespace Lucene.Net.Search.Function
 			ValueSource vs;
 			if (inOrder)
 			{
-				vs = new OrdFieldSource(field);
+				vs = new MultiValueSource(new OrdFieldSource(field));
 			}
 			else
 			{
-				vs = new ReverseOrdFieldSource(field);
+				vs = new MultiValueSource(new ReverseOrdFieldSource(field));
 			}
 			
 			Query q = new ValueSourceQuery(vs);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
-			ScoreDoc[] h = s.Search(q,null, 1000).scoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 			System.String prevID = inOrder?"IE":"IC"; // smaller than all ids of docs in this test ("ID0001", etc.)
 			
@@ -168,8 +154,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary>Test caching for ReverseOrdFieldSource </summary>
-		[Test]
-		public virtual void  TesCachingReverseOrd()
+		public virtual void  tesCachingReverseOrd()
 		{
 			DoTestCaching(ID_FIELD, false);
 		}
@@ -194,21 +179,27 @@ namespace Lucene.Net.Search.Function
 					vs = new ReverseOrdFieldSource(field);
 				}
 				ValueSourceQuery q = new ValueSourceQuery(vs);
-                ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
-                try
+				ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+				try
 				{
 					Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
-					if (i == 0)
+					IndexReader[] readers = s.GetIndexReader().GetSequentialSubReaders();
+					
+					for (int j = 0; j < readers.Length; j++)
 					{
-						innerArray = q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray();
-					}
-					else
-					{
-						Log(i + ".  compare: " + innerArray + " to " + q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
-						Assert.AreSame(innerArray, q.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray(), "field values should be cached and reused!");
+						IndexReader reader = readers[j];
+						if (i == 0)
+						{
+							innerArray = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
+						}
+						else
+						{
+							Log(i + ".  compare: " + innerArray + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+							Assert.AreSame(innerArray, q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
+						}
 					}
 				}
-				catch (System.NotSupportedException)
+				catch (System.NotSupportedException e)
 				{
 					if (!warned)
 					{
@@ -236,17 +227,23 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			try
+			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			
+			for (int j = 0; j < readers2.Length; j++)
 			{
-				Log("compare (should differ): " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
-				Assert.AreNotSame(innerArray, q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray(), "different values shuold be loaded for a different field!");
-			}
-			catch (System.NotSupportedException)
-			{
-				if (!warned)
+				IndexReader reader = readers2[j];
+				try
 				{
-					System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
-					warned = true;
+					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "different values shuold be loaded for a different field!");
+				}
+				catch (System.NotSupportedException e)
+				{
+					if (!warned)
+					{
+						System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
+						warned = true;
+					}
 				}
 			}
 			
@@ -263,24 +260,30 @@ namespace Lucene.Net.Search.Function
 			q2 = new ValueSourceQuery(vs2);
 			h2 = s.Search(q2, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
-			try
+			readers2 = s.GetIndexReader().GetSequentialSubReaders();
+			
+			for (int j = 0; j < readers2.Length; j++)
 			{
-				Log("compare (should differ): " + innerArray + " to " + q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray());
-				Assert.AreNotSame(innerArray, q2.ValSrc_ForNUnitTest.GetValues(s.GetIndexReader()).GetInnerArray(), "cached field values should not be reused if reader as changed!");
-			}
-			catch (System.NotSupportedException)
-			{
-				if (!warned)
+				IndexReader reader = readers2[j];
+				try
 				{
-					System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
-					warned = true;
+					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+					Assert.AreNotEqual(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
+				}
+				catch (System.NotSupportedException e)
+				{
+					if (!warned)
+					{
+						System.Console.Error.WriteLine("WARNING: " + TestName() + " cannot fully test values of " + q2);
+						warned = true;
+					}
 				}
 			}
 		}
 		
 		private System.String TestName()
 		{
-			return GetType().FullName;
-		}
+			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+        }
 	}
 }

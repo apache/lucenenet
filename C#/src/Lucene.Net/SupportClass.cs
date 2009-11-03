@@ -126,192 +126,6 @@ public class SupportClass
         }
     }
 
-    public class CollectionsSupport
-    {
-        public class BitSet
-        {
-            private System.Collections.BitArray bitArray = null;
-
-            public BitSet()
-                : this(0)
-            {
-            }
-
-            public BitSet(int size)
-            {
-                bitArray = new System.Collections.BitArray(size, false);
-            }
-
-            public void Set(int index)
-            {
-                if (index >= bitArray.Count)
-                    GrowBitArray(index + 1);
-                bitArray.Set(index, true);
-            }
-
-            public int Cardinality()
-            {
-                int cardinality = 0;
-                for (int i = 0; i < bitArray.Length; i++)
-                    if (bitArray.Get(i))
-                        cardinality++;
-                return cardinality;
-            }
-
-            /// <summary>
-            /// Returns the next set bit at or index, or -1 if no such bit exists.
-            /// </summary>
-            /// <param name="index">the index of the bit at which to start checking</param>
-            /// <returns>the next set bit or -1</returns>
-            public int NextSetBit(int index)
-            {
-                while (index < bitArray.Count)
-                {
-                    // if index bit is set, return it; otherwise check next index bit
-                    if (bitArray.Get(index))
-                        return index;
-                    else
-                        index++;
-                }
-                // if no bits are set at or after index, return -1
-                return -1;
-            }
-
-            private void GrowBitArray(int size)
-            {
-                //TODO:
-                // might be able to change this to:
-                bitArray.Length = size;
-
-                //System.Collections.BitArray tmp = new System.Collections.BitArray(size, false);
-                //for (int i = 0; i < bitArray.Count; i++)
-                //    tmp.Set(i, bitArray.Get(i));
-                //bitArray = tmp;
-            }
-        }
-
-        public static void ArrayFill(object[] array, object fillValue)
-        {
-            ArrayFill(array, 0, array.Length, fillValue);
-        }
-        public static void ArrayFill(object[] array, int from, int to, object fillValue)
-        {
-            for (int i = from; i < to; i++)
-                array[i] = fillValue;
-        }
-
-        public static void ArrayFill(byte[] array, byte fillValue)
-        {
-            ArrayFill(array, 0, array.Length, fillValue);
-        }
-        public static void ArrayFill(byte[] array, int from, int to, byte fillValue)
-        {
-            for (int i = from; i < to; i++)
-                array[i] = fillValue;
-        }
-
-        public static void ArrayFill(char[] array, char fillValue)
-        {
-            ArrayFill(array, 0, array.Length, fillValue);
-        }
-        public static void ArrayFill(char[] array, int from, int to, char fillValue)
-        {
-            for (int i = from; i < to; i++)
-                array[i] = fillValue;
-        }
-
-        public static void ArrayFill(int[] array, int fillValue)
-        {
-            ArrayFill(array, 0, array.Length, fillValue);
-        }
-        public static void ArrayFill(int[] array, int from, int to, int fillValue)
-        {
-            for (int i = from; i < to; i++)
-                array[i] = fillValue;
-        }
-
-        public static void ArrayFill(long[] array, long fillValue)
-        {
-            ArrayFill(array, 0, array.Length, fillValue);
-        }
-        public static void ArrayFill(long[] array, int from, int to, long fillValue)
-        {
-            for (int i = from; i < to; i++)
-                array[i] = fillValue;
-        }
-
-        public static void AddAll(System.Collections.Generic.ICollection<byte[]> source, System.Collections.Generic.ICollection<byte[]> destination)
-        {
-            System.Collections.Generic.IEnumerator<byte[]> enumerator = source.GetEnumerator();
-            while (enumerator.MoveNext())
-                destination.Add(enumerator.Current);
-        }
-
-        public static void AddAll(System.Collections.Generic.ICollection<string> source, System.Collections.Generic.ICollection<string> destination)
-        {
-            System.Collections.Generic.IEnumerator<string> enumerator = source.GetEnumerator();
-            while (enumerator.MoveNext())
-                destination.Add(enumerator.Current);
-        }
-
-        public static void AddAll(System.Collections.Generic.IList<object> source, System.Collections.Generic.IList<object> destination)
-        {
-            System.Collections.Generic.IEnumerator<object> enumerator = source.GetEnumerator();
-            while (enumerator.MoveNext())
-                destination.Add(enumerator.Current);
-        }
-
-        public static System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> TailMap(System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> map, string fromKey)
-        {
-            System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader> tailMap;
-
-            if (map.Comparer != null)
-                tailMap = new System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader>(map.Comparer);
-            else
-                tailMap = new System.Collections.Generic.SortedDictionary<string, Lucene.Net.Index.IndexReader>();
-
-            if (map != null && map.Count > 0)
-            {
-                System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string, Lucene.Net.Index.IndexReader>> e = map.GetEnumerator();
-
-                if (map.Comparer != null)
-                    while (e.MoveNext())
-                    {
-                        if (map.Comparer.Compare(fromKey, e.Current.Key) <= 0)
-                            tailMap[e.Current.Key] = e.Current.Value;
-                    }
-                else
-                    while (e.MoveNext())
-                    {
-                        if (string.CompareOrdinal(fromKey, e.Current.Key) <= 0)
-                            tailMap[e.Current.Key] = e.Current.Value;
-                    }
-            }
-
-            return tailMap;
-        }
-
-        public static void PutAll(System.Collections.IDictionary source, System.Collections.IDictionary destination)
-        {
-            // using destination[key] = source[key] avoids exceptions on duplicate, and
-            // preserves the most recent duplicate key, which is semantically equivalent
-            // to the java.util.Map functionality
-            System.Collections.IEnumerator enumerator = source.Keys.GetEnumerator();
-            while (enumerator.MoveNext())
-                destination[enumerator.Current] = source[enumerator.Current];
-        }
-
-        public static void PutAll(System.Collections.Generic.IDictionary<object, object> source, System.Collections.Generic.IDictionary<object, object> destination)
-        {
-            // using destination[key] = source[key] avoids exceptions on duplicate, and
-            // preserves the most recent duplicate key, which is semantically equivalent
-            // to the java.util.Map functionality
-            System.Collections.Generic.IEnumerator<object> enumerator = source.Keys.GetEnumerator();
-            while (enumerator.MoveNext())
-                destination[enumerator.Current] = source[enumerator.Current];
-        }
-    }
-
     /// <summary>
     /// Support class used to handle threads
     /// </summary>
@@ -840,23 +654,6 @@ public class SupportClass
             }
             return -1;
         }
-
-        /// <summary>
-        /// Returns the number of bits set to true in this BitSet.
-        /// </summary>
-        /// <param name="bits">The BitArray object.</param>
-        /// <returns>The number of bits set to true in this BitSet.</returns>
-        public static int Cardinality(System.Collections.BitArray bits)
-        {
-            int count = 0;
-            for (int i = 0; i < bits.Count; i++)
-            {
-                if (bits[i])
-                    count++;
-            }
-            return count;
-        }
-
         
         /// <summary>
         /// Converts a System.String number to long.
@@ -951,24 +748,6 @@ public class SupportClass
 
             // otherwise, return 'a' plus digit.
             return (char) ((int) charA + digit - 10);
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class Date
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
-        static public long GetTime(DateTime dateTime)
-        {
-            TimeSpan ts = dateTime.Subtract(new DateTime(1970, 1, 1));
-            ts = ts.Subtract(TimeZone.CurrentTimeZone.GetUtcOffset(dateTime));
-            return ts.Ticks / TimeSpan.TicksPerMillisecond;
         }
     }
 
@@ -1226,7 +1005,6 @@ public class SupportClass
             settings[key] = retValue;
             return retValue;
         }
-
     }
 
     /// <summary>
@@ -1236,27 +1014,62 @@ public class SupportClass
     public class BitSetSupport
     {
         /// <summary>
-        /// Returns the next set bit at or after docId, or -1 if no such bit exists.
+        /// Returns the next set bit at or after index, or -1 if no such bit exists.
         /// </summary>
         /// <param name="bitArray"></param>
-        /// <param name="docId">the index of bit array at which to start checking</param>
+        /// <param name="index">the index of bit array at which to start checking</param>
         /// <returns>the next set bit or -1</returns>
-        public static int NextSetBit(System.Collections.BitArray bitArray, int docId)
+        public static int NextSetBit(System.Collections.BitArray bitArray, int index)
         {
-            while (docId < bitArray.Length)
+            while (index < bitArray.Length)
             {
-                // if docId bit is set, return it
-                // otherwise check next docId bit
-                if (bitArray.Get(docId))
-                    return docId;
+                // if index bit is set, return it
+                // otherwise check next index bit
+                if (bitArray.Get(index))
+                    return index;
                 else
-                    docId++;
+                    index++;
             }
-            // if no bits are set at or after docId, return -1
+            // if no bits are set at or after index, return -1
             return -1;
         }
 
-        private BitSetSupport() { }
+        /// <summary>
+        /// Returns the next un-set bit at or after index, or -1 if no such bit exists.
+        /// </summary>
+        /// <param name="bitArray"></param>
+        /// <param name="index">the index of bit array at which to start checking</param>
+        /// <returns>the next set bit or -1</returns>
+        public static int NextClearBit(System.Collections.BitArray bitArray, int index)
+        {
+            while (index < bitArray.Length)
+            {
+                // if index bit is not set, return it
+                // otherwise check next index bit
+                if (!bitArray.Get(index))
+                    return index;
+                else
+                    index++;
+            }
+            // if no bits are set at or after index, return -1
+            return -1;
+        }
+
+        /// <summary>
+        /// Returns the number of bits set to true in this BitSet.
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        /// <returns>The number of bits set to true in this BitSet.</returns>
+        public static int Cardinality(System.Collections.BitArray bits)
+        {
+            int count = 0;
+            for (int i = 0; i < bits.Count; i++)
+            {
+                if (bits[i])
+                    count++;
+            }
+            return count;
+        }
     }
 
     /// <summary>
@@ -1282,24 +1095,6 @@ public class SupportClass
                 }
             }
             return false;
-        }
-
-        /// <summary>
-        /// Compares two string arrays for equality.
-        /// </summary>
-        /// <param name="l1">First string array list to compare</param>
-        /// <param name="l2">Second string array list to compare</param>
-        /// <returns>true if the strings are equal in both arrays, false otherwise</returns>
-        public static bool CompareStringArrays(System.String[] l1, System.String[] l2)
-        {
-            if (l1.Length != l2.Length)
-                return false;
-            for (int i = 0; i < l1.Length; i++)
-            {
-                if (l1[i] != l2[i])
-                    return false;
-            }
-            return true;
         }
     }
 
@@ -1608,32 +1403,11 @@ public class SupportClass
         }
     }
 
-
-    public class FileStream
-    {
-        //[System.Runtime.InteropServices.DllImport("kernel32")]
-        //public static extern int FlushFileBuffers(Microsoft.Win32.SafeHandles.SafeFileHandle SafeFileHandle);
-
-        //public static void Sync(System.IO.FileStream fs)
-        //{
-        //    if (FlushFileBuffers(fs.SafeFileHandle) == 0) { throw new SyncFailedException(); }
-        //}
-
-        //public class SyncFailedException : Exception
-        //{
-        //}
-
-        public static void Sync(System.IO.FileStream fs)
-        {
-            fs.Flush();
-        }
-    }
-
     /// <summary>
     /// Support class used to handle Hashtable addition, which does a check 
     /// first to make sure the added item is unique in the hash.
     /// </summary>
-    public class HashtableHelper
+    public class CollectionsHelper
     {
         public static void Add(System.Collections.Hashtable hashtable, System.Object item)
         {
@@ -1645,6 +1419,14 @@ public class SupportClass
             if (hashtable.Contains(item) == false)
             {
                 hashtable.Add(item, item);
+            }
+        }
+
+        public static void AddIfNotContains(System.Collections.ArrayList hashtable, System.Object item)
+        {
+            if (hashtable.Contains(item) == false)
+            {
+                hashtable.Add(item);
             }
         }
 
@@ -1685,65 +1467,193 @@ public class SupportClass
                 }
             }
         }
-    }
 
-    /// <summary>
-    /// Converts the specified collection to its string representation.
-    /// </summary>
-    /// <param name="c">The collection to convert to string.</param>
-    /// <returns>A string representation of the specified collection.</returns>
-    public static System.String CollectionToString(System.Collections.ICollection c)
-    {
-        System.Text.StringBuilder s = new System.Text.StringBuilder();
-
-        if (c != null)
+        public static bool Contains(System.Collections.ICollection col, System.Object item)
         {
-
-            System.Collections.ArrayList l = new System.Collections.ArrayList(c);
-
-            bool isDictionary = (c is System.Collections.BitArray || c is System.Collections.Hashtable || c is System.Collections.IDictionary || c is System.Collections.Specialized.NameValueCollection || (l.Count > 0 && l[0] is System.Collections.DictionaryEntry));
-            for (int index = 0; index < l.Count; index++)
+            System.Collections.IEnumerator iter = col.GetEnumerator();
+            while (iter.MoveNext())
             {
-                if (l[index] == null)
-                    s.Append("null");
-                else if (!isDictionary)
-                    s.Append(l[index]);
+                if (iter.Current.Equals(item))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Converts the specified collection to its string representation.
+        /// </summary>
+        /// <param name="c">The collection to convert to string.</param>
+        /// <returns>A string representation of the specified collection.</returns>
+        public static System.String CollectionToString(System.Collections.ICollection c)
+        {
+            System.Text.StringBuilder s = new System.Text.StringBuilder();
+
+            if (c != null)
+            {
+
+                System.Collections.ArrayList l = new System.Collections.ArrayList(c);
+
+                bool isDictionary = (c is System.Collections.BitArray || c is System.Collections.Hashtable || c is System.Collections.IDictionary || c is System.Collections.Specialized.NameValueCollection || (l.Count > 0 && l[0] is System.Collections.DictionaryEntry));
+                for (int index = 0; index < l.Count; index++)
+                {
+                    if (l[index] == null)
+                        s.Append("null");
+                    else if (!isDictionary)
+                        s.Append(l[index]);
+                    else
+                    {
+                        isDictionary = true;
+                        if (c is System.Collections.Specialized.NameValueCollection)
+                            s.Append(((System.Collections.Specialized.NameValueCollection)c).GetKey(index));
+                        else
+                            s.Append(((System.Collections.DictionaryEntry)l[index]).Key);
+                        s.Append("=");
+                        if (c is System.Collections.Specialized.NameValueCollection)
+                            s.Append(((System.Collections.Specialized.NameValueCollection)c).GetValues(index)[0]);
+                        else
+                            s.Append(((System.Collections.DictionaryEntry)l[index]).Value);
+
+                    }
+                    if (index < l.Count - 1)
+                        s.Append(", ");
+                }
+
+                if (isDictionary)
+                {
+                    if (c is System.Collections.ArrayList)
+                        isDictionary = false;
+                }
+                if (isDictionary)
+                {
+                    s.Insert(0, "{");
+                    s.Append("}");
+                }
                 else
                 {
-                    isDictionary = true;
-                    if (c is System.Collections.Specialized.NameValueCollection)
-                        s.Append(((System.Collections.Specialized.NameValueCollection)c).GetKey(index));
-                    else
-                        s.Append(((System.Collections.DictionaryEntry)l[index]).Key);
-                    s.Append("=");
-                    if (c is System.Collections.Specialized.NameValueCollection)
-                        s.Append(((System.Collections.Specialized.NameValueCollection)c).GetValues(index)[0]);
-                    else
-                        s.Append(((System.Collections.DictionaryEntry)l[index]).Value);
-
+                    s.Insert(0, "[");
+                    s.Append("]");
                 }
-                if (index < l.Count - 1)
-                    s.Append(", ");
             }
+            else
+                s.Insert(0, "null");
+            return s.ToString();
+        }
 
-            if (isDictionary)
+        /// <summary>
+        /// Compares two string arrays for equality.
+        /// </summary>
+        /// <param name="l1">First string array list to compare</param>
+        /// <param name="l2">Second string array list to compare</param>
+        /// <returns>true if the strings are equal in both arrays, false otherwise</returns>
+        public static bool CompareStringArrays(System.String[] l1, System.String[] l2)
+        {
+            if (l1.Length != l2.Length)
+                return false;
+            for (int i = 0; i < l1.Length; i++)
             {
-                if (c is System.Collections.ArrayList)
-                    isDictionary = false;
+                if (l1[i] != l2[i])
+                    return false;
             }
-            if (isDictionary)
+            return true;
+        }
+
+        /// <summary>
+        /// Sorts an IList collections
+        /// </summary>
+        /// <param name="list">The System.Collections.IList instance that will be sorted</param>
+        /// <param name="Comparator">The Comparator criteria, null to use natural comparator.</param>
+        public static void Sort(System.Collections.IList list, System.Collections.IComparer Comparator)
+        {
+            if (((System.Collections.ArrayList)list).IsReadOnly)
+                throw new System.NotSupportedException();
+
+            if ((Comparator == null) || (Comparator is System.Collections.Comparer))
             {
-                s.Insert(0, "{");
-                s.Append("}");
+                try
+                {
+                    ((System.Collections.ArrayList)list).Sort();
+                }
+                catch (System.InvalidOperationException e)
+                {
+                    throw new System.InvalidCastException(e.Message);
+                }
             }
             else
             {
-                s.Insert(0, "[");
-                s.Append("]");
+                try
+                {
+                    ((System.Collections.ArrayList)list).Sort(Comparator);
+                }
+                catch (System.InvalidOperationException e)
+                {
+                    throw new System.InvalidCastException(e.Message);
+                }
             }
         }
-        else
-            s.Insert(0, "null");
-        return s.ToString();
+
+        /// <summary>
+        /// Fills the array with an specific value from an specific index to an specific index.
+        /// </summary>
+        /// <param name="array">The array to be filled.</param>
+        /// <param name="fromindex">The first index to be filled.</param>
+        /// <param name="toindex">The last index to be filled.</param>
+        /// <param name="val">The value to fill the array with.</param>
+        public static void Fill(System.Array array, System.Int32 fromindex, System.Int32 toindex, System.Object val)
+        {
+            System.Object Temp_Object = val;
+            System.Type elementtype = array.GetType().GetElementType();
+            if (elementtype != val.GetType())
+                Temp_Object = System.Convert.ChangeType(val, elementtype);
+            if (array.Length == 0)
+                throw (new System.NullReferenceException());
+            if (fromindex > toindex)
+                throw (new System.ArgumentException());
+            if ((fromindex < 0) || ((System.Array)array).Length < toindex)
+                throw (new System.IndexOutOfRangeException());
+            for (int index = (fromindex > 0) ? fromindex-- : fromindex; index < toindex; index++)
+                array.SetValue(Temp_Object, index);
+        }
+
+
+        /// <summary>
+        /// Fills the array with an specific value.
+        /// </summary>
+        /// <param name="array">The array to be filled.</param>
+        /// <param name="val">The value to fill the array with.</param>
+        public static void Fill(System.Array array, System.Object val)
+        {
+            Fill(array, 0, array.Length, val);
+        }
+
+        /// <summary>
+        /// Compares the entire members of one array whith the other one.
+        /// </summary>
+        /// <param name="array1">The array to be compared.</param>
+        /// <param name="array2">The array to be compared with.</param>
+        /// <returns>True if both arrays are equals otherwise it returns false.</returns>
+        /// <remarks>Two arrays are equal if they contains the same elements in the same order.</remarks>
+        public static bool Equals(System.Array array1, System.Array array2)
+        {
+            bool result = false;
+            if ((array1 == null) && (array2 == null))
+                result = true;
+            else if ((array1 != null) && (array2 != null))
+            {
+                if (array1.Length == array2.Length)
+                {
+                    int length = array1.Length;
+                    result = true;
+                    for (int index = 0; index < length; index++)
+                    {
+                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 }

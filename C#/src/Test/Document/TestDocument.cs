@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,12 +22,12 @@ using NUnit.Framework;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 using TermQuery = Lucene.Net.Search.TermQuery;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Documents
@@ -37,10 +37,10 @@ namespace Lucene.Net.Documents
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: TestDocument.java 583534 2007-10-10 16:46:35Z mikemccand $
+	/// <version>  $Id: TestDocument.java 754789 2009-03-15 23:24:39Z mikemccand $
 	/// </version>
 	[TestFixture]
-	public class TestDocument : LuceneTestCase
+	public class TestDocument:LuceneTestCase
 	{
 		
 		internal System.String binaryVal = "this text will be stored as a byte array in the index";
@@ -49,22 +49,22 @@ namespace Lucene.Net.Documents
 		[Test]
 		public virtual void  TestBinaryField()
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			Fieldable stringFld = new Field("string", binaryVal, Field.Store.YES, Field.Index.NO);
-			Fieldable binaryFld = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal), Field.Store.YES);
-			Fieldable binaryFld2 = new Field("binary", (new System.Text.ASCIIEncoding()).GetBytes(binaryVal2), Field.Store.YES);
-
+			Fieldable binaryFld = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal), Field.Store.YES);
+			Fieldable binaryFld2 = new Field("binary", System.Text.UTF8Encoding.UTF8.GetBytes(binaryVal2), Field.Store.YES);
+			
 			doc.Add(stringFld);
 			doc.Add(binaryFld);
-
-			Assert.AreEqual(2, doc.GetFieldsCount());
+			
+			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			
 			Assert.IsTrue(binaryFld.IsBinary());
 			Assert.IsTrue(binaryFld.IsStored());
 			Assert.IsFalse(binaryFld.IsIndexed());
 			Assert.IsFalse(binaryFld.IsTokenized());
 			
-			System.String binaryTest = (new System.Text.ASCIIEncoding()).GetString(doc.GetBinaryValue("binary"));
+			System.String binaryTest = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(doc.GetBinaryValue("binary")));
 			Assert.IsTrue(binaryTest.Equals(binaryVal));
 			
 			System.String stringTest = doc.Get("string");
@@ -72,7 +72,7 @@ namespace Lucene.Net.Documents
 			
 			doc.Add(binaryFld2);
 			
-			Assert.AreEqual(3, doc.GetFieldsCount());
+			Assert.AreEqual(3, doc.fields_ForNUnit.Count);
 			
 			byte[][] binaryTests = doc.GetBinaryValues("binary");
 			
@@ -87,10 +87,10 @@ namespace Lucene.Net.Documents
 			Assert.IsTrue(binaryTest2.Equals(binaryVal2));
 			
 			doc.RemoveField("string");
-			Assert.AreEqual(2, doc.GetFieldsCount());
+			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			
 			doc.RemoveFields("binary");
-			Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.fields_ForNUnit.Count);
 		}
 		
 		/// <summary> Tests {@link Document#RemoveField(String)} method for a brand new Document
@@ -101,27 +101,27 @@ namespace Lucene.Net.Documents
 		[Test]
 		public virtual void  TestRemoveForNewDocument()
 		{
-			Lucene.Net.Documents.Document doc = MakeDocumentWithFields();
-			Assert.AreEqual(8, doc.GetFieldsCount());
+			Document doc = MakeDocumentWithFields();
+			Assert.AreEqual(8, doc.fields_ForNUnit.Count);
 			doc.RemoveFields("keyword");
-			Assert.AreEqual(6, doc.GetFieldsCount());
+			Assert.AreEqual(6, doc.fields_ForNUnit.Count);
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
 			doc.RemoveFields("keyword"); // removing a field more than once
-			Assert.AreEqual(6, doc.GetFieldsCount());
+			Assert.AreEqual(6, doc.fields_ForNUnit.Count);
 			doc.RemoveField("text");
-			Assert.AreEqual(5, doc.GetFieldsCount());
+			Assert.AreEqual(5, doc.fields_ForNUnit.Count);
 			doc.RemoveField("text");
-			Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.fields_ForNUnit.Count);
 			doc.RemoveField("text");
-			Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.fields_ForNUnit.Count);
 			doc.RemoveField("doesnotexists"); // removing non-existing fields is siltenlty ignored
-			Assert.AreEqual(4, doc.GetFieldsCount());
+			Assert.AreEqual(4, doc.fields_ForNUnit.Count);
 			doc.RemoveFields("unindexed");
-			Assert.AreEqual(2, doc.GetFieldsCount());
+			Assert.AreEqual(2, doc.fields_ForNUnit.Count);
 			doc.RemoveFields("unstored");
-			Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.fields_ForNUnit.Count);
 			doc.RemoveFields("doesnotexists"); // removing non-existing fields is siltenlty ignored
-			Assert.AreEqual(0, doc.GetFieldsCount());
+			Assert.AreEqual(0, doc.fields_ForNUnit.Count);
 		}
 		
 		[Test]
@@ -134,7 +134,7 @@ namespace Lucene.Net.Documents
 				new Field("name", "value", Field.Store.NO, Field.Index.NO);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception
 			}
@@ -144,7 +144,7 @@ namespace Lucene.Net.Documents
 				new Field("name", "value", Field.Store.YES, Field.Index.NO, Field.TermVector.YES);
 				Assert.Fail();
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				// expected exception
 			}
@@ -187,9 +187,9 @@ namespace Lucene.Net.Documents
 			searcher.Close();
 		}
 		
-		private Lucene.Net.Documents.Document MakeDocumentWithFields()
+		private Document MakeDocumentWithFields()
 		{
-			Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+			Document doc = new Document();
 			doc.Add(new Field("keyword", "test1", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("keyword", "test2", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			doc.Add(new Field("text", "test1", Field.Store.YES, Field.Index.ANALYZED));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Documents
 			return doc;
 		}
 		
-		private void  DoAssert(Lucene.Net.Documents.Document doc, bool fromIndex)
+		private void  DoAssert(Document doc, bool fromIndex)
 		{
 			System.String[] keywordFieldValues = doc.GetValues("keyword");
 			System.String[] textFieldValues = doc.GetValues("text");
@@ -275,6 +275,31 @@ namespace Lucene.Net.Documents
 			searcher.Close();
 			dir.Close();
 			Assert.AreEqual(7, result, "did not see all IDs");
+		}
+		
+		[Test]
+		public virtual void  TestFieldSetValueChangeBinary()
+		{
+			Field field1 = new Field("field1", new byte[0], Field.Store.YES);
+			Field field2 = new Field("field2", "", Field.Store.YES, Field.Index.ANALYZED);
+			try
+			{
+				field1.SetValue("abc");
+				Assert.Fail("did not hit expected exception");
+			}
+			catch (System.ArgumentException iae)
+			{
+				// expected
+			}
+			try
+			{
+				field2.SetValue(new byte[0]);
+				Assert.Fail("did not hit expected exception");
+			}
+			catch (System.ArgumentException iae)
+			{
+				// expected
+			}
 		}
 	}
 }

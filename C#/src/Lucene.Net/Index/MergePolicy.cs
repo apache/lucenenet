@@ -166,6 +166,11 @@ namespace Lucene.Net.Index
 				}
 				return b.ToString();
 			}
+
+            public SegmentInfos segments_ForNUnit
+            {
+                get { return segments; }
+            }
 		}
 		
 		/// <summary> A MergeSpecification instance provides the information

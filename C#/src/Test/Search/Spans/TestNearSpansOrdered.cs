@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,13 +19,13 @@ using System;
 
 using NUnit.Framework;
 
+using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using CheckHits = Lucene.Net.Search.CheckHits;
 using Explanation = Lucene.Net.Search.Explanation;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -36,23 +36,23 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search.Spans
 {
 	
-	[TestFixture]
-	public class TestNearSpansOrdered : LuceneTestCase
+    [TestFixture]
+	public class TestNearSpansOrdered:LuceneTestCase
 	{
 		protected internal IndexSearcher searcher;
 		
 		public const System.String FIELD = "field";
-		public static readonly Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser(FIELD, new WhitespaceAnalyzer());
+		public static readonly QueryParser qp = new QueryParser(FIELD, new WhitespaceAnalyzer());
 		
 		[TearDown]
-		public override void TearDown()
+		public override void  TearDown()
 		{
 			base.TearDown();
 			searcher.Close();
 		}
 		
 		[SetUp]
-		public override void SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			RAMDirectory directory = new RAMDirectory();
@@ -73,7 +73,6 @@ namespace Lucene.Net.Search.Spans
 		{
 			return new SpanNearQuery(new SpanQuery[]{new SpanTermQuery(new Term(FIELD, s1)), new SpanTermQuery(new Term(FIELD, s2)), new SpanTermQuery(new Term(FIELD, s3))}, slop, inOrder);
 		}
-
 		protected internal virtual SpanNearQuery MakeQuery()
 		{
 			return MakeQuery("w1", "w2", "w3", 1, true);
@@ -83,14 +82,13 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSpanNearQuery()
 		{
 			SpanNearQuery q = MakeQuery();
-			CheckHits.CheckHits_Renamed(q, FIELD, searcher, new int[]{0, 1});
+			CheckHits.CheckHits_Renamed_Method(q, FIELD, searcher, new int[]{0, 1});
 		}
 		
 		public virtual System.String S(Spans span)
 		{
 			return S(span.Doc(), span.Start(), span.End());
 		}
-
 		public virtual System.String S(int doc, int start, int end)
 		{
 			return "s(" + doc + "," + start + "," + end + ")";
@@ -179,10 +177,9 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSpanNearScorerSkipTo1()
 		{
 			SpanNearQuery q = MakeQuery();
-			Weight w = q.CreateWeight_ForNUnitTest(searcher);
-			Scorer s = w.Scorer(searcher.GetIndexReader());
-			Assert.AreEqual(true, s.SkipTo(1));
-			Assert.AreEqual(1, s.Doc());
+			Weight w = q.Weight(searcher);
+			Scorer s = w.Scorer(searcher.GetIndexReader(), true, false);
+			Assert.AreEqual(1, s.Advance(1));
 		}
 		/// <summary> not a direct test of NearSpans, but a demonstration of how/when
 		/// this causes problems
@@ -191,8 +188,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestSpanNearScorerExplain()
 		{
 			SpanNearQuery q = MakeQuery();
-			Weight w = q.CreateWeight_ForNUnitTest(searcher);
-			Scorer s = w.Scorer(searcher.GetIndexReader());
+			Weight w = q.Weight(searcher);
+			Scorer s = w.Scorer(searcher.GetIndexReader(), true, false);
 			Explanation e = s.Explain(1);
 			Assert.IsTrue(0.0f < e.GetValue(), "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
 		}

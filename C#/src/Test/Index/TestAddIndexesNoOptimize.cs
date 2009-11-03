@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,21 +19,20 @@ using System;
 
 using NUnit.Framework;
 
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Index
 {
 	
 	[TestFixture]
-	public class TestAddIndexesNoOptimize : LuceneTestCase
+	public class TestAddIndexesNoOptimize:LuceneTestCase
 	{
 		[Test]
 		public virtual void  TestSimpleCase()
@@ -130,126 +129,128 @@ namespace Lucene.Net.Index
 		}
 		
 		[Test]
-  public void TestWithPendingDeletes() {
-    // main directory
-    Directory dir = new RAMDirectory();
-    // auxiliary directory
-    Directory aux = new RAMDirectory();
-
-    SetUpDirs(dir, aux);
-    IndexWriter writer = NewWriter(dir, false);
-    writer.AddIndexesNoOptimize(new Directory[] {aux});
-
-    // Adds 10 docs, then replaces them with another 10
-    // docs, so 10 pending deletes:
-    for (int i = 0; i < 20; i++) {
-      Document doc = new Document();
-      doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
-      doc.Add(new Field("content", "bbb " + i, Field.Store.NO,
-                        Field.Index.ANALYZED));
-      writer.UpdateDocument(new Term("id", "" + (i%10)), doc);
-    }
-    // Deletes one of the 10 added docs, leaving 9:
-    PhraseQuery q = new PhraseQuery();
-    q.Add(new Term("content", "bbb"));
-    q.Add(new Term("content", "14"));
-    writer.DeleteDocuments(q);
-
-    writer.Optimize();
-
-    VerifyNumDocs(dir, 1039);
-    VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
-    VerifyTermDocs(dir, new Term("content", "bbb"), 9);
-
-    writer.Close();
-    dir.Close();
-    aux.Close();
-  }
-
+		public virtual void  TestWithPendingDeletes()
+		{
+			// main directory
+			Directory dir = new RAMDirectory();
+			// auxiliary directory
+			Directory aux = new RAMDirectory();
+			
+			SetUpDirs(dir, aux);
+			IndexWriter writer = NewWriter(dir, false);
+			writer.AddIndexesNoOptimize(new Directory[]{aux});
+			
+			// Adds 10 docs, then replaces them with another 10
+			// docs, so 10 pending deletes:
+			for (int i = 0; i < 20; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("content", "bbb " + i, Field.Store.NO, Field.Index.ANALYZED));
+				writer.UpdateDocument(new Term("id", "" + (i % 10)), doc);
+			}
+			// Deletes one of the 10 added docs, leaving 9:
+			PhraseQuery q = new PhraseQuery();
+			q.add(new Term("content", "bbb"));
+			q.add(new Term("content", "14"));
+			writer.DeleteDocuments(q);
+			
+			writer.Optimize();
+			
+			VerifyNumDocs(dir, 1039);
+			VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
+			VerifyTermDocs(dir, new Term("content", "bbb"), 9);
+			
+			writer.Close();
+			dir.Close();
+			aux.Close();
+		}
+		
 		[Test]
-  public void TestWithPendingDeletes2() {
-    // main directory
-    Directory dir = new RAMDirectory();
-    // auxiliary directory
-    Directory aux = new RAMDirectory();
-
-    SetUpDirs(dir, aux);
-    IndexWriter writer = NewWriter(dir, false);
-
-    // Adds 10 docs, then replaces them with another 10
-    // docs, so 10 pending deletes:
-    for (int i = 0; i < 20; i++) {
-      Document doc = new Document();
-      doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
-      doc.Add(new Field("content", "bbb " + i, Field.Store.NO,
-                        Field.Index.ANALYZED));
-      writer.UpdateDocument(new Term("id", "" + (i%10)), doc);
-    }
-
-    writer.AddIndexesNoOptimize(new Directory[] {aux});
-
-    // Deletes one of the 10 added docs, leaving 9:
-    PhraseQuery q = new PhraseQuery();
-    q.Add(new Term("content", "bbb"));
-    q.Add(new Term("content", "14"));
-    writer.DeleteDocuments(q);
-
-    writer.Optimize();
-
-    VerifyNumDocs(dir, 1039);
-    VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
-    VerifyTermDocs(dir, new Term("content", "bbb"), 9);
-
-    writer.Close();
-    dir.Close();
-    aux.Close();
-  }
-
+		public virtual void  TestWithPendingDeletes2()
+		{
+			// main directory
+			Directory dir = new RAMDirectory();
+			// auxiliary directory
+			Directory aux = new RAMDirectory();
+			
+			SetUpDirs(dir, aux);
+			IndexWriter writer = NewWriter(dir, false);
+			
+			// Adds 10 docs, then replaces them with another 10
+			// docs, so 10 pending deletes:
+			for (int i = 0; i < 20; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("content", "bbb " + i, Field.Store.NO, Field.Index.ANALYZED));
+				writer.UpdateDocument(new Term("id", "" + (i % 10)), doc);
+			}
+			
+			writer.AddIndexesNoOptimize(new Directory[]{aux});
+			
+			// Deletes one of the 10 added docs, leaving 9:
+			PhraseQuery q = new PhraseQuery();
+			q.add(new Term("content", "bbb"));
+			q.add(new Term("content", "14"));
+			writer.DeleteDocuments(q);
+			
+			writer.Optimize();
+			
+			VerifyNumDocs(dir, 1039);
+			VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
+			VerifyTermDocs(dir, new Term("content", "bbb"), 9);
+			
+			writer.Close();
+			dir.Close();
+			aux.Close();
+		}
+		
 		[Test]
-  public void TestWithPendingDeletes3() {
-    // main directory
-    Directory dir = new RAMDirectory();
-    // auxiliary directory
-    Directory aux = new RAMDirectory();
-
-    SetUpDirs(dir, aux);
-    IndexWriter writer = NewWriter(dir, false);
-
-    // Adds 10 docs, then replaces them with another 10
-    // docs, so 10 pending deletes:
-    for (int i = 0; i < 20; i++) {
-      Document doc = new Document();
-      doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
-      doc.Add(new Field("content", "bbb " + i, Field.Store.NO,
-                        Field.Index.ANALYZED));
-      writer.UpdateDocument(new Term("id", "" + (i%10)), doc);
-    }
-
-    // Deletes one of the 10 added docs, leaving 9:
-    PhraseQuery q = new PhraseQuery();
-    q.Add(new Term("content", "bbb"));
-    q.Add(new Term("content", "14"));
-    writer.DeleteDocuments(q);
-
-    writer.AddIndexesNoOptimize(new Directory[] {aux});
-
-    writer.Optimize();
-
-    VerifyNumDocs(dir, 1039);
-    VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
-    VerifyTermDocs(dir, new Term("content", "bbb"), 9);
-
-    writer.Close();
-    dir.Close();
-    aux.Close();
-  }
-
-
+		public virtual void  TestWithPendingDeletes3()
+		{
+			// main directory
+			Directory dir = new RAMDirectory();
+			// auxiliary directory
+			Directory aux = new RAMDirectory();
+			
+			SetUpDirs(dir, aux);
+			IndexWriter writer = NewWriter(dir, false);
+			
+			// Adds 10 docs, then replaces them with another 10
+			// docs, so 10 pending deletes:
+			for (int i = 0; i < 20; i++)
+			{
+				Document doc = new Document();
+				doc.Add(new Field("id", "" + (i % 10), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("content", "bbb " + i, Field.Store.NO, Field.Index.ANALYZED));
+				writer.UpdateDocument(new Term("id", "" + (i % 10)), doc);
+			}
+			
+			// Deletes one of the 10 added docs, leaving 9:
+			PhraseQuery q = new PhraseQuery();
+			q.add(new Term("content", "bbb"));
+			q.add(new Term("content", "14"));
+			writer.DeleteDocuments(q);
+			
+			writer.AddIndexesNoOptimize(new Directory[]{aux});
+			
+			writer.Optimize();
+			
+			VerifyNumDocs(dir, 1039);
+			VerifyTermDocs(dir, new Term("content", "aaa"), 1030);
+			VerifyTermDocs(dir, new Term("content", "bbb"), 9);
+			
+			writer.Close();
+			dir.Close();
+			aux.Close();
+		}
+		
 		// case 0: add self or exceed maxMergeDocs, expect exception
 		[Test]
 		public virtual void  TestAddSelf()
-        {
-            // main directory
+		{
+			// main directory
 			Directory dir = new RAMDirectory();
 			// auxiliary directory
 			Directory aux = new RAMDirectory();
@@ -281,7 +282,7 @@ namespace Lucene.Net.Index
 				writer.AddIndexesNoOptimize(new Directory[]{aux, dir});
 				Assert.IsTrue(false);
 			}
-			catch (System.ArgumentException)
+			catch (System.ArgumentException e)
 			{
 				Assert.AreEqual(100, writer.DocCount());
 			}
@@ -355,11 +356,12 @@ namespace Lucene.Net.Index
 			Directory aux = new RAMDirectory();
 			
 			SetUpDirs(dir, aux);
-
+			
 			IndexWriter writer = NewWriter(dir, false);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(4);
-			writer.AddIndexesNoOptimize(new Directory[] { aux, new RAMDirectory(aux) });
+			
+			writer.AddIndexesNoOptimize(new Directory[]{aux, new RAMDirectory(aux)});
 			Assert.AreEqual(1060, writer.DocCount());
 			Assert.AreEqual(1000, writer.GetDocCount(0));
 			writer.Close();
@@ -452,7 +454,7 @@ namespace Lucene.Net.Index
 		private IndexWriter NewWriter(Directory dir, bool create)
 		{
 			IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), create);
-			writer.SetMergePolicy(new LogDocMergePolicy());
+			writer.SetMergePolicy(new LogDocMergePolicy(writer));
 			return writer;
 		}
 		
@@ -460,7 +462,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < numDocs; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -470,7 +472,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < numDocs; i++)
 			{
-				Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+				Document doc = new Document();
 				doc.Add(new Field("content", "bbb", Field.Store.NO, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
@@ -525,45 +527,64 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(3, writer.GetSegmentCount());
 			writer.Close();
 		}
-
-        // LUCENE-1270
-        [Test]
-        public void TestHangOnClose()
-        {
-            Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetMergePolicy(new LogByteSizeMergePolicy());
-            writer.SetMaxBufferedDocs(5);
-            writer.SetUseCompoundFile(false);
-            writer.SetMergeFactor(100);
-
-            Document doc = new Document();
-            doc.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
-            for (int i = 0; i < 60; i++)
-                writer.AddDocument(doc);
-            writer.SetMaxBufferedDocs(200);
-            Document doc2 = new Document();
-            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
-            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
-            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
-            doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
-            for (int i = 0; i < 10; i++)
-                writer.AddDocument(doc2);
-            writer.Close();
-
-            Directory dir2 = new MockRAMDirectory();
-            writer = new IndexWriter(dir2, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
-            lmp.SetMinMergeMB(0.0001);
-            writer.SetMergePolicy(lmp);
-            writer.SetMergeFactor(4);
-            writer.SetUseCompoundFile(false);
-            writer.SetMergeScheduler(new SerialMergeScheduler());
-            writer.AddIndexesNoOptimize(new Directory[] { dir });
-            writer.Close();
-
-            dir.Close();
-            dir2.Close();
-        }
-    }
+		
+		// LUCENE-1270
+		[Test]
+		public virtual void  TestHangOnClose()
+		{
+			
+			Directory dir = new MockRAMDirectory();
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			writer.SetMergePolicy(new LogByteSizeMergePolicy(writer));
+			writer.SetMaxBufferedDocs(5);
+			writer.SetUseCompoundFile(false);
+			writer.SetMergeFactor(100);
+			
+			Document doc = new Document();
+			doc.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			for (int i = 0; i < 60; i++)
+				writer.AddDocument(doc);
+			writer.SetMaxBufferedDocs(200);
+			Document doc2 = new Document();
+			doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+			doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+			doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+			doc2.Add(new Field("content", "aaa bbb ccc ddd eee fff ggg hhh iii", Field.Store.YES, Field.Index.NO));
+			for (int i = 0; i < 10; i++)
+				writer.AddDocument(doc2);
+			writer.Close();
+			
+			Directory dir2 = new MockRAMDirectory();
+			writer = new IndexWriter(dir2, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy(writer);
+			lmp.SetMinMergeMB(0.0001);
+			writer.SetMergePolicy(lmp);
+			writer.SetMergeFactor(4);
+			writer.SetUseCompoundFile(false);
+			writer.SetMergeScheduler(new SerialMergeScheduler());
+			writer.AddIndexesNoOptimize(new Directory[]{dir});
+			writer.Close();
+			dir.Close();
+			dir2.Close();
+		}
+		
+		// LUCENE-1642: make sure CFS of destination indexwriter
+		// is respected when copying tail segments
+		[Test]
+		public virtual void  TestTargetCFS()
+		{
+			Directory dir = new RAMDirectory();
+			IndexWriter writer = NewWriter(dir, true);
+			writer.SetUseCompoundFile(false);
+			AddDocs(writer, 1);
+			writer.Close();
+			
+			Directory other = new RAMDirectory();
+			writer = NewWriter(other, true);
+			writer.SetUseCompoundFile(true);
+			writer.AddIndexesNoOptimize(new Directory[]{dir});
+			Assert.IsTrue(writer.NewestSegment().GetUseCompoundFile());
+			writer.Close();
+		}
+	}
 }
