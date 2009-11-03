@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Function
 		{
 			// prepare expected array types for comparison
 			System.Collections.Hashtable expectedArrayTypes = new System.Collections.Hashtable();
-			expectedArrayTypes[FieldScoreQuery.Type.BYTE] = new sbyte[0];
+			expectedArrayTypes[FieldScoreQuery.Type.BYTE] = new byte[0];
 			expectedArrayTypes[FieldScoreQuery.Type.SHORT] = new short[0];
 			expectedArrayTypes[FieldScoreQuery.Type.INT] = new int[0];
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];

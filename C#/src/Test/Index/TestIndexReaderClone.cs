@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(tempDir + "\\" + "FSDirIndexReaderClone");
+			System.IO.FileInfo indexDir2 = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "FSDirIndexReaderClone"));
 			
 			Directory dir1 = FSDirectory.GetDirectory(indexDir2);
 			TestIndexReaderReopen.CreateIndex(dir1, false);
