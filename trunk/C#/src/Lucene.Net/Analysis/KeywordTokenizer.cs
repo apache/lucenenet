@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
 				while (true)
 				{
 					int length = input.Read(buffer, upto, buffer.Length - upto);
-					if (length == - 1)
+					if (length == 0)
 						break;
 					upto += length;
 					if (upto == buffer.Length)

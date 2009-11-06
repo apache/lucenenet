@@ -33,13 +33,20 @@ namespace Lucene.Net.Analysis
 		
 		public static CharStream Get(System.IO.TextReader input)
 		{
-			return input is CharStream?(CharStream) input:new CharReader(input);
+            if (input is CharStream)
+                return (CharStream) input;
+            else
+            {
+                // {{Aroush-2.9}} isn't there a better (faster) way to do this?
+                System.IO.MemoryStream theString = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(input.ReadToEnd()));
+                return new CharReader(new System.IO.StreamReader(theString));
+            }
+			//return input is CharStream?(CharStream) input:new CharReader(input);
 		}
 		
-		private CharReader(System.IO.TextReader in_Renamed) : base(null)    // {{Aroush-2.9}} the base is 'null'
+		private CharReader(System.IO.StreamReader in_Renamed) : base(in_Renamed)
 		{
-			// input = in_Renamed;  // {{Aroush-2.9}}
-            System.Diagnostics.Debug.Fail("Port issue:", "Still needs work"); // {{Aroush-2.9}}
+			input = in_Renamed;
 		}
 		
 		public override int CorrectOffset(int currentOff)

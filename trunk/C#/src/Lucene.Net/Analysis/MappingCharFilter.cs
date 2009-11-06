@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis
 		{
 			char[] tmp = new char[len];
 			int l = input.Read(tmp, 0, len);
-			if (l != - 1)
+			if (l != 0)
 			{
 				for (int i = 0; i < l; i++)
 					PushLastChar(tmp[i]);

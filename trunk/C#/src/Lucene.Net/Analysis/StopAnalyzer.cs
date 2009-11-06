@@ -1,3 +1,4 @@
+
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -231,7 +232,11 @@ namespace Lucene.Net.Analysis
 			{
 				System.String[] stopWords = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
 				CharArraySet stopSet = new CharArraySet(stopWords.Length, false);
-				stopSet.Add(new System.Collections.ArrayList(stopWords));
+				//stopSet.AddAll(new System.Collections.ArrayList(stopWords));
+                for (int i = 0; i < stopWords.Length; i++)
+                {
+                    stopSet.Add(stopWords[i]);
+                }
 				ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
 			}
 		}

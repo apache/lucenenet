@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis
 			
 			try
 			{
-				System.Reflection.MethodInfo m = this.GetType().GetMethod("tokenStream", (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed);
+				System.Reflection.MethodInfo m = this.GetType().GetMethod("TokenStream", (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed);
 				if (m != null)
 				{
 					overridesTokenStreamMethod = m.DeclaringType != baseClass;
