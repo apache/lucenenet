@@ -50,37 +50,50 @@ namespace Lucene.Net.Demo.Html
 		private MyPipedInputStream pipeInStream = null;
 		private System.IO.StreamWriter pipeOutStream = null;
 		
-		private class MyPipedInputStream:System.IO.StreamReader
-		{
-			private void  InitBlock(HTMLParser enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private HTMLParser enclosingInstance;
-			public HTMLParser Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			
-			//public MyPipedInputStream(HTMLParser enclosingInstance):base(null)
-			//{
-			//	InitBlock(enclosingInstance);
-			//}
-			
-			public MyPipedInputStream(HTMLParser enclosingInstance, System.IO.StreamReader src):base(src.BaseStream)
-			{
-				InitBlock(enclosingInstance);
-			}
-			
-			public virtual bool Full()
-			{
-				return enclosingInstance.summaryComplete;
-			}
-		}
+		private class MyPipedInputStream : System.IO.MemoryStream
+        {
+            long _readPtr = 0;
+            long _writePtr = 0;
+
+            public System.IO.Stream BaseStream
+            {
+                get
+                {
+                    return this;
+                }
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                lock (this)
+                {
+                    base.Seek(_readPtr, System.IO.SeekOrigin.Begin);
+                    int x = base.Read(buffer, offset, count);
+                    _readPtr += x;
+                    return x;
+                }
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                lock (this)
+                {
+                    base.Seek(_writePtr, System.IO.SeekOrigin.Begin);
+                    base.Write(buffer, offset, count);
+                    _writePtr += count;
+                }
+            }
+
+            public override void Close()
+            {
+
+            }
+
+            public virtual bool Full()
+            {
+                return false;
+            }
+        }
 		
 		/// <deprecated> Use HTMLParser(FileInputStream) instead
 		/// </deprecated>
@@ -149,7 +162,7 @@ namespace Lucene.Net.Demo.Html
 		{
 			if (pipeIn == null)
 			{
-				pipeInStream = new MyPipedInputStream(this, new System.IO.StreamReader(new System.IO.MemoryStream(1024)));
+				pipeInStream = new MyPipedInputStream();
 				pipeOutStream = new System.IO.StreamWriter(pipeInStream.BaseStream);
 				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
 				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
