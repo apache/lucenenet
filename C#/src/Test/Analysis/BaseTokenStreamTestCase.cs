@@ -30,7 +30,6 @@ namespace Lucene.Net.Analysis
 	/// This class runs all tests twice, one time with {@link TokenStream#setOnlyUseNewAPI} <code>false</code>
 	/// and after that one time with <code>true</code>.
 	/// </summary>
-    [TestFixture]
 	public abstract class BaseTokenStreamTestCase:LuceneTestCase
 	{
 		

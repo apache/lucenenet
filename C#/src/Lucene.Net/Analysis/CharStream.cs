@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
 	/// original Reader.
 	public abstract class CharStream:System.IO.StreamReader
 	{
-        public CharStream(CharStream reader) : base(reader.BaseStream)
+        public CharStream(System.IO.StreamReader reader) : base(reader.BaseStream)
         {
         }
 		

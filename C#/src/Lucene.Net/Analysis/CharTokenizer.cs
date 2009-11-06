@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
 				{
 					offset += dataLen;
 					dataLen = input.Read((System.Char[]) ioBuffer, 0, ioBuffer.Length);
-					if (dataLen == - 1)
+					if (dataLen == 0)
 					{
 						dataLen = 0; // so next offset += dataLen won't decrement offset
 						if (length > 0)

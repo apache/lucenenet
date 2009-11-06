@@ -28,15 +28,15 @@ using Payload = Lucene.Net.Index.Payload;
 namespace Lucene.Net.Analysis
 {
 	
-    [TestFixture]
+	[TestFixture]
 	public class TestAnalyzers:BaseTokenStreamTestCase
 	{
 		
-		public TestAnalyzers(System.String name):base(name)
+		/*public TestAnalyzers(System.String name):base(name)
 		{
-		}
+		}*/
 		
-        [Test]
+		[Test]
 		public virtual void  TestSimple()
 		{
 			Analyzer a = new SimpleAnalyzer();
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "\"QUOTED\" word", new System.String[]{"quoted", "word"});
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestNull()
 		{
 			Analyzer a = new WhitespaceAnalyzer();
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis
 			AssertAnalyzesTo(a, "\"QUOTED\" word", new System.String[]{"\"QUOTED\"", "word"});
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestStop()
 		{
 			Analyzer a = new StopAnalyzer();
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// Make sure old style next() calls result in a new copy of payloads
-        [Test]
+		[Test]
 		public virtual void  TestPayloadCopy()
 		{
 			System.String s = "how now brown cow";
@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestSubclassOverridingOnlyTokenStream()
 		{
 			Analyzer a = new MyStandardAnalyzer();
