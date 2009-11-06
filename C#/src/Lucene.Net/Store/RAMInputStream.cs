@@ -133,11 +133,6 @@ namespace Lucene.Net.Store
 			bufferPosition = (int) (pos % BUFFER_SIZE);
 		}
 		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this");   // {{Aroush-2.9}}
-			return null;
-		}
 		static RAMInputStream()
 		{
 			BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
