@@ -81,7 +81,12 @@ namespace Lucene.Net.Analysis
 			return entries[GetSlot(text, off, len)] != null;
 		}
 		
-		/// <summary>Returns true if the String is in the set </summary>
+		/// <summary>true if the <code>System.String</code> is in the set </summary>
+		public virtual bool Contains(System.String cs)
+		{
+			return entries[GetSlot(cs)] != null;
+		}
+		
 		private int GetSlot(char[] text, int off, int len)
 		{
 			int code = GetHashCode(text, off, len);
@@ -97,6 +102,26 @@ namespace Lucene.Net.Analysis
 					text2 = entries[pos];
 				}
 				while (text2 != null && !Equals(text, off, len, text2));
+			}
+			return pos;
+		}
+		
+		/// <summary>Returns true if the String is in the set </summary>
+		private int GetSlot(System.String text)
+		{
+			int code = GetHashCode(text);
+			int pos = code & (entries.Length - 1);
+			char[] text2 = entries[pos];
+			if (text2 != null && !Equals(text, text2))
+			{
+				int inc = ((code >> 8) + code) | 1;
+				do 
+				{
+					code += inc;
+					pos = code & (entries.Length - 1);
+					text2 = entries[pos];
+				}
+				while (text2 != null && !Equals(text, text2));
 			}
 			return pos;
 		}
@@ -153,6 +178,30 @@ namespace Lucene.Net.Analysis
 			return true;
 		}
 		
+		private bool Equals(System.String text1, char[] text2)
+		{
+			int len = text1.Length;
+			if (len != text2.Length)
+				return false;
+			if (ignoreCase)
+			{
+				for (int i = 0; i < len; i++)
+				{
+					if (System.Char.ToLower(text1[i]) != text2[i])
+						return false;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < len; i++)
+				{
+					if (text1[i] != text2[i])
+						return false;
+				}
+			}
+			return true;
+		}
+		
 		private void  Rehash()
 		{
 			int newSize = 2 * entries.Length;
@@ -169,8 +218,8 @@ namespace Lucene.Net.Analysis
 				}
 			}
 		}
-		
-		private int GetHashCode(char[] text, int offset, int len)
+
+        private int GetHashCode(char[] text, int offset, int len)
 		{
 			int code = 0;
 			int stop = offset + len;
@@ -184,6 +233,27 @@ namespace Lucene.Net.Analysis
 			else
 			{
 				for (int i = offset; i < stop; i++)
+				{
+					code = code * 31 + text[i];
+				}
+			}
+			return code;
+		}
+		
+		private int GetHashCode(System.String text)
+		{
+			int code = 0;
+			int len = text.Length;
+			if (ignoreCase)
+			{
+				for (int i = 0; i < len; i++)
+				{
+					code = code * 31 + System.Char.ToLower(text[i]);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < len; i++)
 				{
 					code = code * 31 + text[i];
 				}
@@ -350,5 +420,37 @@ namespace Lucene.Net.Analysis
 				throw new System.NotSupportedException();
 			}
 		}
-	}
+
+        /// <summary>Adds all of the elements in the specified collection to this collection </summary>
+        public virtual bool AddAll(System.Collections.ICollection items)
+        {
+            bool added = false;
+            System.Collections.IEnumerator iter = items.GetEnumerator();
+            System.Object item;
+            while (iter.MoveNext())
+            {
+                item = iter.Current;
+                added = Add(item);
+            }
+            return added;
+        }
+
+        /// <summary>Removes all elements from the set </summary>
+        public virtual bool Clear()
+        {
+            throw new System.NotSupportedException();
+        }
+
+        /// <summary>Removes from this set all of its elements that are contained in the specified collection </summary>
+        public virtual bool RemoveAll(System.Collections.ICollection items)
+        {
+            throw new System.NotSupportedException();
+        }
+
+        /// <summary>Retains only the elements in this set that are contained in the specified collection </summary>
+        public bool RetainAll(System.Collections.ICollection coll)
+        {
+            throw new System.NotSupportedException();
+        }
+    }
 }
