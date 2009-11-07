@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 						// un-tokenized field
 						System.String stringValue = field.StringValue();
 						int valueLength = stringValue.Length;
-						perThread.singleTokenTokenStream.reinit(stringValue, 0, valueLength);
+						perThread.singleTokenTokenStream.Reinit(stringValue, 0, valueLength);
 						fieldState.attributeSource = perThread.singleTokenTokenStream;
 						consumer.Start(field);
 						
