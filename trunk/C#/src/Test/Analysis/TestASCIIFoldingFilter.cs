@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
 		
 		// testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
         [Test]
-		public virtual void  testLatin1Accents()
+		public virtual void  TestLatin1Accents()
 		{
 			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clÃ©s Ã€ LA CHAÃŽNE Ã€ ï¿½? Ã‚ Ãƒ Ã„ Ã… Ã† Ã‡ Ãˆ Ã‰ ÃŠ Ã‹ ÃŒ ï¿½? ÃŽ ï¿½? Ä² ï¿½? Ã‘" + " Ã’ Ã“ Ã” Ã• Ã– Ã˜ Å’ Ãž Ã™ Ãš Ã› Ãœ ï¿½? Å¸ Ã  Ã¡ Ã¢ Ã£ Ã¤ Ã¥ Ã¦ Ã§ Ã¨ Ã© Ãª Ã« Ã¬ Ã­ Ã® Ã¯ Ä³" + " Ã° Ã± Ã² Ã³ Ã´ Ãµ Ã¶ Ã¸ Å“ ÃŸ Ã¾ Ã¹ Ãº Ã» Ã¼ Ã½ Ã¿ ï¿½? ï¬‚"));
 			ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis
 		//    ============== end get.test.cases.pl ==============
 		//
         [Test]
-		public virtual void  testAllFoldings()
+		public virtual void  TestAllFoldings()
 		{
 			// Alternating strings of:
 			//   1. All non-ASCII characters to be folded, concatenated together as a
