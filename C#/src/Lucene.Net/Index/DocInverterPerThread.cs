@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 				offsetAttribute = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
 			}
 			
-			public void  reinit(System.String stringValue, int startOffset, int endOffset)
+			public void  Reinit(System.String stringValue, int startOffset, int endOffset)
 			{
 				termAttribute.SetTermBuffer(stringValue);
 				offsetAttribute.SetOffset(startOffset, endOffset);
