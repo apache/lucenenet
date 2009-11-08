@@ -58,8 +58,7 @@ namespace Lucene.Net.Util
 					System.Reflection.FieldInfo f = fields[i];
 					if (f.IsStatic)
 						continue;
-                    // f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
-                    System.Diagnostics.Debug.Fail("Port issue:", "java.lang.reflect.AccessibleObject.setAccessible()"); // {{Aroush-2.9}}
+                    //f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
 					System.Object value_Renamed = f.GetValue(this);
 					if (buffer.Length > 0)
 					{

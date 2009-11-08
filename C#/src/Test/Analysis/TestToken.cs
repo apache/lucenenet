@@ -29,6 +29,9 @@ namespace Lucene.Net.Analysis
     [TestFixture]
 	public class TestToken:LuceneTestCase
 	{
+        public TestToken()
+        {
+        }
 		
 		public TestToken(System.String name):base(name)
 		{
@@ -211,13 +214,13 @@ namespace Lucene.Net.Analysis
 			char[] buf = t.TermBuffer();
 			Token copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
-            Assert.AreNotEqual(buf, copy.TermBuffer());
+            Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
 			t.SetPayload(pl);
 			copy = (Token) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
 			Assert.AreEqual(pl, copy.GetPayload());
-			Assert.AreNotEqual(pl, copy.GetPayload());
+			Assert.AreNotSame(pl, copy.GetPayload());
 		}
 		
         [Test]
@@ -234,13 +237,13 @@ namespace Lucene.Net.Analysis
 			char[] buf = t.TermBuffer();
 			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
-			Assert.AreNotEqual(buf, copy.TermBuffer());
+			Assert.AreNotSame(buf, copy.TermBuffer());
 			
 			Payload pl = new Payload(new byte[]{1, 2, 3, 4});
 			t.SetPayload(pl);
 			copy = (Token) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
 			Assert.AreEqual(pl, copy.GetPayload());
-			Assert.AreNotEqual(pl, copy.GetPayload());
+            Assert.AreNotSame(pl, copy.GetPayload());
 		}
 	}
 }

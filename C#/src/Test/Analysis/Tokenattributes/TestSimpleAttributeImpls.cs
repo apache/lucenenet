@@ -30,10 +30,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	public class TestSimpleAttributeImpls:LuceneTestCase
 	{
 		
-		public TestSimpleAttributeImpls(System.String name):base(name)
+		public TestSimpleAttributeImpls():base("")
 		{
 		}
-		
+        
         [Test]
 		public virtual void  TestFlagsAttribute()
 		{
@@ -102,11 +102,11 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			
 			PayloadAttributeImpl att2 = (PayloadAttributeImpl) AssertCloneIsEqual(att);
 			Assert.AreEqual(pl, att2.GetPayload());
-			Assert.AreNotEqual(pl, att2.GetPayload());
+			Assert.AreNotSame(pl, att2.GetPayload());
 			
 			att2 = (PayloadAttributeImpl) AssertCopyIsEqual(att);
 			Assert.AreEqual(pl, att2.GetPayload());
-			Assert.AreNotEqual(pl, att2.GetPayload());
+            Assert.AreNotSame(pl, att2.GetPayload());
 			
 			att.Clear();
 			Assert.IsNull(att.GetPayload());

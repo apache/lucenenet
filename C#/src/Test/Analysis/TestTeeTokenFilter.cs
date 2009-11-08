@@ -121,6 +121,10 @@ namespace Lucene.Net.Analysis
 		public TestTeeTokenFilter(System.String s):base(s)
 		{
 		}
+
+        public TestTeeTokenFilter()
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()

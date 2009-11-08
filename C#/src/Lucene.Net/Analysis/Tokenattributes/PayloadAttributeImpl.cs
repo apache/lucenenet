@@ -59,12 +59,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		public override System.Object Clone()
 		{
-			PayloadAttributeImpl clone = (PayloadAttributeImpl) base.Clone();
-			if (payload != null)
-			{
-				clone.payload = (Payload) payload.Clone();
-			}
-			return clone;
+            PayloadAttributeImpl impl = new PayloadAttributeImpl();
+            impl.payload = new Payload(this.payload.data, this.payload.offset, this.payload.length);
+            return impl;
 		}
 		
 		public  override bool Equals(System.Object other)
