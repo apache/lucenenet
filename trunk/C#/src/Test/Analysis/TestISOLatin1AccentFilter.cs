@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestU()
 		{
-			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À �? Â Ã Ä Å Æ Ç È É Ê Ë Ì �? Î �? Ĳ �? Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü �? Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ �? ﬂ"));
+			TokenStream stream = new WhitespaceTokenizer(new System.IO.StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ"));
 			ISOLatin1AccentFilter filter = new ISOLatin1AccentFilter(stream);
 			TermAttribute termAtt = (TermAttribute) filter.GetAttribute(typeof(TermAttribute));
 			AssertTermEquals("Des", filter, termAtt);

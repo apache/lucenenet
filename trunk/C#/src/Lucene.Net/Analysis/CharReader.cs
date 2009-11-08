@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
             else
             {
                 // {{Aroush-2.9}} isn't there a better (faster) way to do this?
-                System.IO.MemoryStream theString = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(input.ReadToEnd()));
+                System.IO.MemoryStream theString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(input.ReadToEnd()));
                 return new CharReader(new System.IO.StreamReader(theString));
             }
 			//return input is CharStream?(CharStream) input:new CharReader(input);

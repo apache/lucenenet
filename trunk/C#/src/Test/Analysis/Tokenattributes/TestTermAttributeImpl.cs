@@ -28,10 +28,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	public class TestTermAttributeImpl:LuceneTestCase
 	{
 		
-		public TestTermAttributeImpl(System.String name):base(name)
+		public TestTermAttributeImpl():base("")
 		{
 		}
-		
+
         [Test]
 		public virtual void  TestResize()
 		{
@@ -160,7 +160,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			char[] buf = t.TermBuffer();
 			TermAttributeImpl copy = (TermAttributeImpl) TestSimpleAttributeImpls.AssertCloneIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
-			Assert.AreNotEqual(buf, copy.TermBuffer());
+			Assert.AreNotSame(buf, copy.TermBuffer());
 		}
 		
         [Test]
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			char[] buf = t.TermBuffer();
 			copy = (TermAttributeImpl) TestSimpleAttributeImpls.AssertCopyIsEqual(t);
 			Assert.AreEqual(t.Term(), copy.Term());
-			Assert.AreNotEqual(buf, copy.TermBuffer());
+			Assert.AreNotSame(buf, copy.TermBuffer());
 		}
 	}
 }

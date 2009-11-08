@@ -85,8 +85,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		override public System.Object Clone()
 		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Let see if we need this TypeAttributeImpl.Clone()");  // {{Aroush-2.9}}
-			return null;
+            TypeAttributeImpl impl = new TypeAttributeImpl();
+            impl.type = type;
+            return impl;
 		}
 	}
 }

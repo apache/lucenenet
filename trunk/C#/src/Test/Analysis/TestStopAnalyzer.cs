@@ -35,6 +35,10 @@ namespace Lucene.Net.Analysis
 		public TestStopAnalyzer(System.String s):base(s)
 		{
 		}
+
+        public TestStopAnalyzer() 
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()

@@ -287,6 +287,16 @@ namespace Lucene.Net.Analysis
 			{
 				return Add((char[]) o);
 			}
+
+            if (o is System.Collections.Hashtable)
+            {
+                foreach (string word in ((System.Collections.Hashtable)o).Keys)
+                {
+                    Add(word);
+                }
+                return true;
+            }
+
 			return Add(o.ToString());
 		}
 		

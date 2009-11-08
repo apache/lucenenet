@@ -98,8 +98,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		override public System.Object Clone()
 		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Let see if we need this OffsetAttributeImpl.Clone()"); // {{Aroush-2.9}}
-			return null;
+            OffsetAttributeImpl impl = new OffsetAttributeImpl();
+            impl.endOffset = endOffset;
+            impl.startOffset = startOffset;
+            return impl;
 		}
 	}
 }

@@ -58,6 +58,10 @@ namespace Lucene.Net.Analysis
 		public TestTeeSinkTokenFilter(System.String s):base(s)
 		{
 		}
+
+        public TestTeeSinkTokenFilter()
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
