@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// @Override
-		public void  reset()
+		public override void  Reset()
 		{
 			if (valSize == 0)
 				throw new System.SystemException("call set???Value() before usage");
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		// @Override
-		public bool incrementToken()
+		public override bool IncrementToken()
 		{
 			if (valSize == 0)
 				throw new System.SystemException("call set???Value() before usage");

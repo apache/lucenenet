@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis
 			{
 				try
 				{
-					return clazz.GetMethod(name, (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed).DeclaringType != typeof(TokenStream);
+					return clazz.GetMethod(name, params_Renamed).DeclaringType != typeof(TokenStream);
 				}
 				catch (System.MethodAccessException e)
 				{
