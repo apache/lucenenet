@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
 	/// </p>
 	/// </summary>
     [TestFixture]
-	public abstract class LocalizedTestCase:LuceneTestCase
+	public class LocalizedTestCase:LuceneTestCase
 	{
 		/// <summary> Before changing the default Locale, save the default Locale here so that it
 		/// can be restored.
