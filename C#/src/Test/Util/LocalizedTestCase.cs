@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
 		private System.Globalization.CultureInfo defaultLocale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		
 		/// <summary> The locale being used as the system default Locale</summary>
-		private System.Globalization.CultureInfo locale;
+        private System.Globalization.CultureInfo locale = System.Globalization.CultureInfo.CurrentCulture;
 		
 		/// <summary> An optional limited set of testcases that will run under different Locales.</summary>
 		private System.Collections.Hashtable testWithDifferentLocales;

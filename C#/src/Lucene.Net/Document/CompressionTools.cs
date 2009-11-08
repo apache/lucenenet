@@ -72,8 +72,6 @@ namespace Lucene.Net.Documents
 			}
 			finally
 			{
-				//compressor.End();   // {{Aroush-2.9}} should this be compressor.Finish()?
-                System.Diagnostics.Debug.Fail("Port issue:", "What's the equivalent to 'java.util.zip.Inflater.end()'?");
 			}
 			
 			return bos.ToArray();
@@ -132,8 +130,6 @@ namespace Lucene.Net.Documents
 			}
 			finally
 			{
-				// decompressor.End();     // {{Aroush-2.9}} Do we need this?
-                System.Diagnostics.Debug.Fail("Port issue:", "What's the equivalent to 'java.util.zip.Inflater.end()'?");
 			}
 			
 			return bos.ToArray();

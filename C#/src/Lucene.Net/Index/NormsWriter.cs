@@ -98,10 +98,10 @@ namespace Lucene.Net.Index
 					}
 				}
 
+                System.Collections.Hashtable fieldsHT = (System.Collections.Hashtable)fields;
                 for (int i = 0; i < fieldsToRemove.Count; i++)
                 {
-                    // fields.Remove(fieldsToRemove[i]);    // {{Aroush-2.9}}
-                    System.Diagnostics.Debug.Fail("Port issue:", "workout the fields.Remove() call"); // {{Aroush-2.9}}
+                    fieldsHT.Remove(fieldsToRemove[i]);    
                 }
 			}
 			
