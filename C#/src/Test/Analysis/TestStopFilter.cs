@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestStopPositons()
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.Collections.ArrayList a = new System.Collections.ArrayList();
+			System.Collections.Generic.List<string> a = new System.Collections.Generic.List<string>();
 			for (int i = 0; i < 20; i++)
 			{
 				System.String w = English.IntToEnglish(i).Trim();
@@ -103,8 +103,8 @@ namespace Lucene.Net.Analysis
 			stpf = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
 			DoTestStopPositons(stpf, false);
 			// with increments, concatenating two stop filters
-			System.Collections.ArrayList a0 = new System.Collections.ArrayList();
-			System.Collections.ArrayList a1 = new System.Collections.ArrayList();
+			System.Collections.Generic.List<System.String> a0 = new System.Collections.Generic.List<System.String>();
+			System.Collections.Generic.List<System.String> a1 = new System.Collections.Generic.List<System.String>();
 			for (int i = 0; i < a.Count; i++)
 			{
 				if (i % 2 == 0)

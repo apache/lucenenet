@@ -215,7 +215,7 @@ namespace Lucene.Net.Analysis
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
-			stopSet.Add(new System.Collections.ArrayList(stopWords));
+			stopSet.AddAll(new System.Collections.ArrayList(stopWords));
 			return stopSet;
 		}
 		
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis
 		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
-			stopSet.Add(stopWords);
+			stopSet.AddAll(stopWords);
 			return stopSet;
 		}
 		
