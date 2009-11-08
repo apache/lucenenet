@@ -34,9 +34,6 @@ namespace Lucene.Net.Util
 	[TestFixture]
 	public class TestBitVector:LuceneTestCase
 	{
-		public TestBitVector(System.String s):base(s)
-		{
-		}
 		
 		/// <summary> Test the default constructor on BitVectors of various sizes.</summary>
 		/// <throws>  Exception </throws>
