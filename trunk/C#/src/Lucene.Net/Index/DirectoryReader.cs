@@ -914,7 +914,7 @@ namespace Lucene.Net.Index
 					System.Collections.IEnumerator it = segmentInfos.Files(directory, false).GetEnumerator();
 					while (it.MoveNext())
 					{
-						System.String fileName = (System.String) it.Current;
+						System.String fileName = (string)((System.Collections.DictionaryEntry) it.Current).Value;
 						if (!synced.Contains(fileName))
 						{
 							System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
