@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
 		public virtual System.Object Get()
 		{
 			System.WeakReference weakRef = (System.WeakReference) System.Threading.Thread.GetData(t);
-			if (weakRef == null)
+			if (weakRef == null || weakRef.Target==null)
 			{
 				System.Object iv = InitialValue();
 				if (iv != null)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
                         tmp.Add(t);
 					}
 				}
-                foreach (System.Threading.Thread th in tmp)
+                foreach (SupportClass.ThreadClass th in tmp)
                 {
                     hardRefs.Remove(th);
                 }
