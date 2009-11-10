@@ -171,7 +171,7 @@ namespace Lucene.Net.Store
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
-		private static System.Type IMPL;
+		private static readonly System.Type IMPL = typeof(Lucene.Net.Store.FSDirectory);
 		
 		private static System.Security.Cryptography.HashAlgorithm DIGESTER;
 		
@@ -252,7 +252,7 @@ namespace Lucene.Net.Store
 				{
 					try
 					{
-						dir = (FSDirectory) System.Activator.CreateInstance(IMPL);
+						dir = (FSDirectory) System.Activator.CreateInstance(IMPL, true);
 					}
 					catch (System.Exception e)
 					{
@@ -619,7 +619,13 @@ namespace Lucene.Net.Store
 				throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
 			
 			// Exclude subdirs
-            System.String[] result = System.IO.Directory.GetFileSystemEntries(dir.FullName);
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(dir.FullName);
+            System.IO.FileInfo[] files = di.GetFiles();
+            System.String[] result = new System.String[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                result[i] = files[i].Name;
+            }
 			
 			if (result == null)
 				throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
