@@ -143,7 +143,6 @@ public class SupportClass
         public ThreadClass()
         {
             threadField = new System.Threading.Thread(new System.Threading.ThreadStart(Run));
-            This = this;
         }
 
         /// <summary>
@@ -154,7 +153,6 @@ public class SupportClass
         {
             threadField = new System.Threading.Thread(new System.Threading.ThreadStart(Run));
             this.Name = Name;
-            This = this;
         }
 
         /// <summary>
@@ -164,7 +162,6 @@ public class SupportClass
         public ThreadClass(System.Threading.ThreadStart Start)
         {
             threadField = new System.Threading.Thread(Start);
-            This = this;
         }
 
         /// <summary>
@@ -176,7 +173,6 @@ public class SupportClass
         {
             threadField = new System.Threading.Thread(Start);
             this.Name = Name;
-            This = this;
         }
 
         /// <summary>
@@ -192,11 +188,6 @@ public class SupportClass
         public virtual void Start()
         {
             threadField.Start();
-            if (This == null)
-            {
-                This = this;
-                This.Instance = threadField;
-            }
         }
 
         /// <summary>
@@ -379,7 +370,7 @@ public class SupportClass
         /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
-            return "Thread[" + Name + "," + Priority.ToString() + "," + "" + "]";
+            return "Thread[" + Name + "," + Priority.ToString() + "]";
         }
 
         [ThreadStatic]
@@ -410,6 +401,24 @@ public class SupportClass
                 This.Instance = System.Threading.Thread.CurrentThread;
             }
             return This;
+        }
+
+        public static bool operator ==(ThreadClass t1, object t2)
+        {
+            if (((object)t1) == null) return t2 == null;
+            return t1.Equals(t2);
+        }
+
+        public static bool operator !=(ThreadClass t1, object t2)
+        {
+            return !(t1 == t2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj is ThreadClass) return this.threadField.Equals( ((ThreadClass)obj).threadField  );
+            return false;
         }
     }
 
