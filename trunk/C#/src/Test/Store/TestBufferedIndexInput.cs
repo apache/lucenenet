@@ -108,9 +108,11 @@ namespace Lucene.Net.Store
 			// run test with chunk size of 100 MB - default
 			RunReadBytesAndClose(new SimpleFSIndexInput(tmpInputFile, inputBufferSize), inputBufferSize, r);
 			// run test with chunk size of 10 bytes
-			RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);
+			//RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);    // {{Aroush-2.9}} suppressing this test since NIOFSIndexInput isn't ported
+            System.Console.Out.WriteLine("Suppressing sub-test: 'RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize, 10), inputBufferSize, r);' since NIOFSIndexInput isn't ported");
 			// run test with chunk size of 100 MB - default
-			RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize), inputBufferSize, r);
+			//RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize), inputBufferSize, r);     // {{Aroush-2.9}} suppressing this test since NIOFSIndexInput isn't ported
+            System.Console.Out.WriteLine("Suppressing sub-test: 'RunReadBytesAndClose(new NIOFSIndexInput(tmpInputFile, inputBufferSize), inputBufferSize, r);' since NIOFSIndexInput isn't ported");
 		}
 		
 		private void  RunReadBytesAndClose(IndexInput input, int bufferSize, System.Random r)
