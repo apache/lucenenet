@@ -24,6 +24,42 @@ using NUnit.Framework;
 
 namespace Lucene.Net._SupportClass
 {
+    [TestFixture]
+    public class _SupportClassTestCases
+    {
+        [Test]
+        public void Count()
+        {
+            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+            Type[] types = asm.GetTypes();
+
+            int countSupport = 0;
+            int countOther = 0;
+            foreach (Type type in types)
+            {
+                object[] o1 = type.GetCustomAttributes(typeof(NUnit.Framework.TestFixtureAttribute), true);
+                if (o1 == null || o1.Length == 0) continue;
+
+                foreach (System.Reflection.MethodInfo mi in type.GetMethods())
+                {
+                    object[] o2 = mi.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true);
+                    if (o2 == null || o2.Length == 0) continue;
+
+                    if (type.FullName.StartsWith("Lucene.Net._SupportClass"))
+                    {
+                        countSupport++;
+                    }
+                    else
+                    {
+                        countOther++;
+                    }
+                }
+            }
+
+            Assert.Fail("Lucene.Net TestCases:" + countSupport + " Others TestCases:" + countOther);
+        }
+    }
+
 /// <summary>
 /// </summary>
 	[TestFixture]
@@ -39,10 +75,10 @@ namespace Lucene.Net._SupportClass
 				b[i] = (byte)i;
 
 			SupportClass.Checksum digest = new SupportClass.CRC32();
-			digest.update(b, 0, b.Length);
+			digest.Update(b, 0, b.Length);
 
 			Int64 expected = 688229491;
-			Assert.AreEqual(expected, digest.getValue());
+			Assert.AreEqual(expected, digest.GetValue());
 		}
 	}
 
@@ -607,6 +643,40 @@ namespace Lucene.Net._SupportClass
         public SmallObject(int i)
         {
             this.i = i;
+        }
+    }
+
+    [TestFixture]
+    public class TestThreadClass
+    {
+        [Test]
+        public void Test()
+        {
+            SupportClass.ThreadClass thread = new SupportClass.ThreadClass();
+
+            //Compare Current Thread Ids
+            Assert.IsTrue(SupportClass.ThreadClass.Current().Instance.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId);
+
+
+            //Compare instances of ThreadClass
+            MyThread mythread = new MyThread();
+            mythread.Start();
+            while (mythread.Result == null) System.Threading.Thread.Sleep(1);
+            Assert.IsTrue((bool)mythread.Result);
+
+
+            SupportClass.ThreadClass nullThread = null;
+            Assert.IsTrue(nullThread == null); //test overloaded operator == with null values
+            Assert.IsFalse(nullThread != null); //test overloaded operator != with null values
+        }
+
+        class MyThread : SupportClass.ThreadClass
+        {
+            public object Result = null;
+            public override void Run()
+            {
+                Result = SupportClass.ThreadClass.Current() == this;
+            }
         }
     }
 }
