@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
 		private System.Collections.Generic.List<MergePolicy.OneMerge> pendingMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
-        private System.Collections.Hashtable runningMerges = new System.Collections.Hashtable();
+		private System.Collections.Generic.List<MergePolicy.OneMerge> runningMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
 		private System.Collections.IList mergeExceptions = new System.Collections.ArrayList();
 		private long mergeGen;
 		private bool stopMerges;
@@ -3301,19 +3301,21 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.IEnumerator it = pendingMerges.GetEnumerator();
-				while (it.MoveNext())
-				{
-					if (((MergePolicy.OneMerge) it.Current).optimize)
-						return true;
-				}
-				
-				it = runningMerges.GetEnumerator();
-				while (it.MoveNext())
-				{
-					if (((MergePolicy.OneMerge) it.Current).optimize)
-						return true;
-				}
+                for (int i = 0; i < pendingMerges.Count; i++)
+                {
+                    if (pendingMerges[i].optimize)
+                    {
+                        return true;
+                    }
+                }
+
+                for (int i = 0; i < runningMerges.Count; i++)
+                {
+                    if (runningMerges[i].optimize)
+                    {
+                        return true;
+                    }
+                }
 				
 				return false;
 			}
@@ -3510,7 +3512,7 @@ namespace Lucene.Net.Index
 					tempObject = pendingMerges[0];
 					pendingMerges.RemoveAt(0);
 					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) tempObject;
-					runningMerges[merge] = merge;
+					runningMerges.Add(merge);
 					return merge;
 				}
 			}
@@ -3534,8 +3536,8 @@ namespace Lucene.Net.Index
 						if (merge.isExternal)
 						{
 							// Advance the merge from pending to running
-                            pendingMerges.Remove(merge);
-                            runningMerges[merge] = merge;
+                            pendingMerges.Remove(merge);  // {{Aroush-2.9}} From Mike Garski: this is an O(n) op... is that an issue?
+                            runningMerges.Add(merge);
 							return merge;
 						}
 					}
@@ -4354,8 +4356,8 @@ namespace Lucene.Net.Index
 								// If this segment is not currently being
 								// merged, then advance it to running & run
 								// the merge ourself (below):
-								pendingMerges.Remove(merge);
-								runningMerges[merge] = merge;
+                                pendingMerges.Remove(merge);    // {{Aroush-2.9}} From Mike Garski: this is an O(n) op... is that an issue?
+								runningMerges.Add(merge);
 								break;
 							}
 						}
