@@ -664,7 +664,7 @@ namespace Lucene.Net.Index
 				byte[] b = new byte[reader.MaxDoc()];
 				while (it.MoveNext())
 				{
-					System.String fieldName = (System.String) it.Current;
+					System.String fieldName = (System.String) ((System.Collections.DictionaryEntry) it.Current).Value;
 					reader.Norms(fieldName, b, 0);
 					++status.totFields;
 				}
