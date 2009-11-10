@@ -245,8 +245,9 @@ namespace Lucene.Net.Store
 			long headerSize = bos.Length;
 	        System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 	        formatter.Serialize(out_Renamed.BaseStream, dir);
-			out_Renamed.Close();
+			out_Renamed.Flush();  // In Java, this is Close(), but we can't do this in .NET, and the Close() is moved to after the validation check
 			Assert.IsTrue(headerSize < bos.Length, "contains more then just header");
+            out_Renamed.Close();
 		}
 		
 		[TearDown]
