@@ -81,28 +81,33 @@ namespace Lucene.Net.Index
 			{
 				this.allThreads = threads;
 			}
-			
-			override public void  Run()
-			{
-				long stopTime = System.DateTime.Now.Millisecond + 1000 * RUN_TIME_SEC;
-				
-				count = 0;
-				
-				try
-				{
-					while (System.DateTime.Now.Millisecond < stopTime && !AnyErrors())
-					{
-						DoWork();
-						count++;
-					}
-				}
-				catch (System.Exception e)
-				{
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": exc");
-					System.Console.Out.WriteLine(e.StackTrace);
-					failed = true;
-				}
-			}
+
+            long Millisecond()
+            {
+                return System.DateTime.Now.Ticks / 10000;
+            }
+
+            override public void Run()
+            {
+                long stopTime = Millisecond() + 1000 * RUN_TIME_SEC;
+
+                count = 0;
+
+                try
+                {
+                    while (Millisecond() < stopTime && !AnyErrors())
+                    {
+                        DoWork();
+                        count++;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": exc");
+                    System.Console.Out.WriteLine(e.StackTrace);
+                    failed = true;
+                }
+            }
 			
 			private bool AnyErrors()
 			{

@@ -106,10 +106,7 @@ namespace Lucene.Net.Index
 			if (numPostings > 0)
 			{
 				perThread.termsHash.RecyclePostings(postingsHash, numPostings);
-                for (int i = 0; i < numPostingInt; i++)
-                {
-                    postingsHash[i] = null;
-                }
+                Array.Clear(postingsHash, 0, numPostings);
 				numPostings = 0;
 			}
 			postingsCompacted = false;

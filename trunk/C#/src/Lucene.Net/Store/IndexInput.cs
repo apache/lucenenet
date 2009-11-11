@@ -143,9 +143,7 @@ namespace Lucene.Net.Store
 				bytes = new byte[(int) (length * 1.25)];
 			}
 			ReadBytes(bytes, 0, length);
-			System.String tempStr;
-			tempStr = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
-			return new System.String(tempStr.ToCharArray(), 0, length);
+            return System.Text.Encoding.UTF8.GetString(bytes, 0, length);
 		}
 		
 		private System.String ReadModifiedUTF8String()
