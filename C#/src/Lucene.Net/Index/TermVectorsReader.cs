@@ -574,9 +574,7 @@ namespace Lucene.Net.Index
 						byteBuffer = newByteBuffer;
 					}
 					tvf.ReadBytes(byteBuffer, start, deltaLength);
-					System.String tempStr;
-					tempStr = System.Text.Encoding.GetEncoding("UTF-8").GetString(byteBuffer);
-					term = new System.String(tempStr.ToCharArray(), 0, totalLength);
+                    term = System.Text.Encoding.UTF8.GetString(byteBuffer, 0, totalLength);
 				}
 				int freq = tvf.ReadVInt();
 				int[] positions = null;

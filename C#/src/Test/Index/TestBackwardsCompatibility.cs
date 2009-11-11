@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+				System.String dirName = "../../index/index." + oldNames[i];
 				Unzip(dirName, oldNames[i]);
 				System.String fullPath = FullDir(oldNames[i]);
 				Directory dir = FSDirectory.Open(new System.IO.FileInfo(fullPath));
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+                System.String dirName = "../../index/index." + oldNames[i];
 				Unzip(dirName, oldNames[i]);
 				searchIndex(oldNames[i], oldNames[i]);
 				RmDir(oldNames[i]);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+                System.String dirName = "../../index/index." + oldNames[i];
 				Unzip(dirName, oldNames[i]);
 				ChangeIndexNoAdds(oldNames[i], true);
 				RmDir(oldNames[i]);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < oldNames.Length; i++)
 			{
-				System.String dirName = "src/test/org/apache/lucene/index/index." + oldNames[i];
+                System.String dirName = "../../index/index." + oldNames[i];
 				Unzip(dirName, oldNames[i]);
 				ChangeIndexWithAdds(oldNames[i], true);
 				RmDir(oldNames[i]);
