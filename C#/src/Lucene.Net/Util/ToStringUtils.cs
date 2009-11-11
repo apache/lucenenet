@@ -28,7 +28,10 @@ namespace Lucene.Net.Util
 		{
 			if (boost != 1.0f)
 			{
-				return "^" + boost.ToString();
+                float boostAsLong = (long) boost;
+                if (boostAsLong == boost)
+                    return "^" + boost.ToString(".0").Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                return "^" + boost.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
 			}
 			else
 				return "";
