@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -31,77 +32,76 @@ namespace Lucene.Net.Util
         [Test]
 		public virtual void  TestSingleBinaryRoundTrip()
 		{
-            System.Diagnostics.Debug.Fail("Port issue:", "byteBuf = ByteBuffer.wrap(newBuffer)"); // {{Aroush-2.9}}
+            byte[] binary = new byte[] {(byte)0x23, (byte)0x98, (byte)0x13, (byte)0xE4, (byte)0x76, (byte)0x41, (byte)0xB2, (byte)0xC9, (byte)0x7F, (byte)0x0A, (byte)0xA6, (byte)0xD8 };
 
-			//byte[] binary = new byte[]{(byte) 0x23, (byte) SupportClass.Identity(0x98), (byte) 0x13, (byte) SupportClass.Identity(0xE4), (byte) 0x76, (byte) 0x41, (byte) SupportClass.Identity(0xB2), (byte) SupportClass.Identity(0xC9), (byte) 0x7F, (byte) 0x0A, (byte) SupportClass.Identity(0xA6), (byte) SupportClass.Identity(0xD8)};
-			//
-			//System.IO.MemoryStream binaryBuf = ByteBuffer.wrap(binary);
-			//System.IO.MemoryStream encoded = IndexableBinaryStringTools.Encode(binaryBuf);
-			//ByteBuffer decoded = IndexableBinaryStringTools.Decode(encoded);
-            //Assert.AreEqual(binaryBuf, decoded, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + " encoded: " + CharArrayDump(encoded) + System.Environment.NewLine + " decoded: " + BinaryDump(decoded));
+            List<byte> binaryBuf = new List<byte>(binary);
+            List<char> encoded = IndexableBinaryStringTools.Encode(binaryBuf);
+            List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
+            Assert.AreEqual(binaryBuf, decoded, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + " encoded: " + CharArrayDump(encoded) + System.Environment.NewLine + " decoded: " + BinaryDump(decoded));
+
 		}
 		
         [Test]
 		public virtual void  TestEncodedSortability()
 		{
-			System.Random random = NewRandom();
-			byte[] originalArray1 = new byte[MAX_RANDOM_BINARY_LENGTH];
-            System.IO.MemoryStream originalBuf1 = new System.IO.MemoryStream(originalArray1);
-			byte[] originalString1 = new byte[MAX_RANDOM_BINARY_LENGTH];    // {{Aroush-2.9}} this is char[] in Java
-			System.IO.MemoryStream originalStringBuf1 = new System.IO.MemoryStream(originalString1);
-			byte[] encoded1 = new byte[IndexableBinaryStringTools.GetEncodedLength(originalBuf1)];  // {{Aroush-2.9}} this is char[] in Java
-			System.IO.MemoryStream encodedBuf1 = new System.IO.MemoryStream(encoded1);
-			byte[] original2 = new byte[MAX_RANDOM_BINARY_LENGTH];
-			System.IO.MemoryStream originalBuf2 = new System.IO.MemoryStream(original2);
-			byte[] originalString2 = new byte[MAX_RANDOM_BINARY_LENGTH];    // {{Aroush-2.9}} this is char[] in Java
-			System.IO.MemoryStream originalStringBuf2 = new System.IO.MemoryStream(originalString2);
-			byte[] encoded2 = new byte[IndexableBinaryStringTools.GetEncodedLength(originalBuf2)];  // {{Aroush-2.9}} this is char[] in Java
-			System.IO.MemoryStream encodedBuf2 = new System.IO.MemoryStream(encoded2);
-			for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
-			{
-				int numBytes1 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-				originalBuf1.Capacity = numBytes1;
-				originalStringBuf1.Capacity = numBytes1;
-				
-				for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
-				{
-					int randomInt = random.Next(0x100);
-					originalArray1[byteNum] = (byte) randomInt;
-					originalString1[byteNum] = (byte) randomInt;
-				}
-				
-				int numBytes2 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-				originalBuf2.Capacity = numBytes2;
-				originalStringBuf2.Capacity = numBytes2;
-				for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
-				{
-					int randomInt = random.Next(0x100);
-					original2[byteNum] = (byte) randomInt;
-					originalString2[byteNum] = (byte) randomInt;
-				}
-                System.Diagnostics.Debug.Fail("Port issue:", "int originalComparison = originalStringBuf1.CompareTo(originalStringBuf2);"); // {{Aroush-2.9}}
-                int originalComparison = 0;
-				//int originalComparison = originalStringBuf1.CompareTo(originalStringBuf2);
-				//originalComparison = originalComparison < 0?- 1:(originalComparison > 0?1:0);
-				
-				IndexableBinaryStringTools.Encode(originalBuf1, encodedBuf1);
-				IndexableBinaryStringTools.Encode(originalBuf2, encodedBuf2);
+            System.Random random = NewRandom();
+            byte[] originalArray1 = new byte[MAX_RANDOM_BINARY_LENGTH];
+            List<byte> originalBuf1 = new List<byte>(originalArray1);
+            char[] originalString1 = new char[MAX_RANDOM_BINARY_LENGTH];
+            List<char> originalStringBuf1 = new List<char>(originalString1);
+            char[] encoded1 = new char[IndexableBinaryStringTools.GetEncodedLength(originalBuf1)];
+            List<char> encodedBuf1 = new List<char>(encoded1);
+            byte[] original2 = new byte[MAX_RANDOM_BINARY_LENGTH];
+            List<byte> originalBuf2 = new List<byte>(original2);
+            char[] originalString2 = new char[MAX_RANDOM_BINARY_LENGTH];
+            List<char> originalStringBuf2 = new List<char>(originalString2);
+            char[] encoded2 = new char[IndexableBinaryStringTools.GetEncodedLength(originalBuf2)];
+            List<char> encodedBuf2 = new List<char>(encoded2);
+            for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
+            {
+                int numBytes1 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                
+                for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
+                {
+                    int randomInt = random.Next(0x100);
+                    originalArray1[byteNum] = (byte) randomInt;
+                    originalString1[byteNum] = (char) randomInt;
+                }
+                
+                int numBytes2 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
+                {
+                    int randomInt = random.Next(0x100);
+                    original2[byteNum] = (byte) randomInt;
+                    originalString2[byteNum] = (char) randomInt;
+                }
+                // put in strings to compare ordinals
+                string orgStrBuf1 = new string(originalStringBuf1.ToArray());
+                string orgStrBuf2 = new string(originalStringBuf2.ToArray());
 
-                System.Diagnostics.Debug.Fail("Port issue:", "int encodedComparison = encodedBuf1.CompareTo(encodedBuf2);"); // {{Aroush-2.9}}
-                int encodedComparison = 0;
-				//int encodedComparison = encodedBuf1.CompareTo(encodedBuf2);
-				//encodedComparison = encodedComparison < 0?- 1:(encodedComparison > 0?1:0);
-				
-				Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.Environment.NewLine + " binary 1: " + BinaryDump(originalBuf1) + System.Environment.NewLine + " binary 2: " + BinaryDump(originalBuf2) + System.Environment.NewLine + "encoded 1: " + CharArrayDump(encodedBuf1) + System.Environment.NewLine + "encoded 2: " + CharArrayDump(encodedBuf2) + System.Environment.NewLine);
-			}
+                int originalComparison = string.CompareOrdinal(orgStrBuf1, orgStrBuf2);
+                originalComparison = originalComparison < 0 ? -1 : (originalComparison > 0 ? 1 : 0);
+                
+                IndexableBinaryStringTools.Encode(originalBuf1, encodedBuf1);
+                IndexableBinaryStringTools.Encode(originalBuf2, encodedBuf2);
+
+                // put in strings to compare ordinals
+                string encBuf1 = new string(encodedBuf1.ToArray());
+                string encBuf2 = new string(encodedBuf2.ToArray());
+
+                int encodedComparison = string.CompareOrdinal(encBuf1, encBuf2);
+                encodedComparison = encodedComparison < 0?- 1:(encodedComparison > 0?1:0);
+                
+                Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.Environment.NewLine + " binary 1: " + BinaryDump(originalBuf1) + System.Environment.NewLine + " binary 2: " + BinaryDump(originalBuf2) + System.Environment.NewLine + "encoded 1: " + CharArrayDump(encodedBuf1) + System.Environment.NewLine + "encoded 2: " + CharArrayDump(encodedBuf2) + System.Environment.NewLine);
+            }
 		}
 		
-        [Test]
+		[Test]
 		public virtual void  TestEmptyInput()
 		{
 			byte[] binary = new byte[0];
-            System.IO.MemoryStream encoded = IndexableBinaryStringTools.Encode((new System.IO.MemoryStream(binary)));
-			System.IO.MemoryStream decoded = IndexableBinaryStringTools.Decode(encoded);
+            List<char> encoded = IndexableBinaryStringTools.Encode(new List<byte>(binary));
+			List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
 			Assert.IsNotNull(decoded, "decode() returned null");
 			Assert.AreEqual(decoded.Capacity, 0, "decoded empty input was not empty");
 		}
@@ -110,10 +110,10 @@ namespace Lucene.Net.Util
 		public virtual void  TestAllNullInput()
 		{
 			byte[] binary = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-			System.IO.MemoryStream binaryBuf = new System.IO.MemoryStream(binary);
-			System.IO.MemoryStream encoded = IndexableBinaryStringTools.Encode(binaryBuf);
+            List<byte> binaryBuf = new List<byte>(binary);
+            List<char> encoded = IndexableBinaryStringTools.Encode(binaryBuf);
 			Assert.IsNotNull(encoded, "encode() returned null");
-			System.IO.MemoryStream decodedBuf = IndexableBinaryStringTools.Decode(encoded);
+            List<byte> decodedBuf = IndexableBinaryStringTools.Decode(encoded);
 			Assert.IsNotNull(decodedBuf, "decode() returned null");
 			Assert.AreEqual(binaryBuf, decodedBuf, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
 		}
@@ -123,15 +123,14 @@ namespace Lucene.Net.Util
 		{
 			System.Random random = NewRandom();
 			byte[] binary = new byte[MAX_RANDOM_BINARY_LENGTH];
-			System.IO.MemoryStream binaryBuf = new System.IO.MemoryStream(binary);
-			byte[] encoded = new byte[IndexableBinaryStringTools.GetEncodedLength(binaryBuf)];  // {{Aroush-2.9}} this is char[] in Java
-			System.IO.MemoryStream encodedBuf = new System.IO.MemoryStream(encoded);
+            List<byte> binaryBuf = new List<byte>(binary);
+			char[] encoded = new char[IndexableBinaryStringTools.GetEncodedLength(binaryBuf)];
+            List<char> encodedBuf = new List<char>(encoded);
 			byte[] decoded = new byte[MAX_RANDOM_BINARY_LENGTH];
-			System.IO.MemoryStream decodedBuf = new System.IO.MemoryStream(decoded);
+            List<byte> decodedBuf = new List<byte>(decoded);
 			for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
 			{
 				int numBytes = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-				binaryBuf.Capacity = numBytes;
 				for (int byteNum = 0; byteNum < numBytes; ++byteNum)
 				{
 					binary[byteNum] = (byte) random.Next(0x100);
@@ -142,20 +141,18 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		public virtual System.String BinaryDump(System.IO.MemoryStream binaryBuf)
+		public virtual System.String BinaryDump(List<byte> binaryBuf)
 		{
 			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			long numBytes = binaryBuf.Capacity - binaryBuf.Position;
-			byte[] binary = binaryBuf.ToArray();
-			for (int byteNum = 0; byteNum < numBytes; ++byteNum)
+			for (int byteNum = 0; byteNum < binaryBuf.Count; ++byteNum)
 			{
-				System.String hex = System.Convert.ToString((int) binary[byteNum] & 0xFF, 16);
+				System.String hex = System.Convert.ToString((int) binaryBuf[byteNum] & 0xFF, 16);
 				if (hex.Length == 1)
 				{
 					buf.Append('0');
 				}
 				buf.Append(hex.ToUpper());
-				if (byteNum < numBytes - 1)
+				if (byteNum < binaryBuf.Count - 1)
 				{
 					buf.Append(' ');
 				}
@@ -163,20 +160,18 @@ namespace Lucene.Net.Util
 			return buf.ToString();
 		}
 		
-		public virtual System.String CharArrayDump(System.IO.MemoryStream charBuf)
+		public virtual System.String CharArrayDump(List<char> charBuf)
 		{
 			System.Text.StringBuilder buf = new System.Text.StringBuilder();
-			long numBytes = charBuf.Capacity - charBuf.Position;
-			byte[] charArray = charBuf.GetBuffer(); // {{Aroush-2.9}} this is char[] in Java
-			for (int charNum = 0; charNum < numBytes; ++charNum)
+			for (int charNum = 0; charNum < charBuf.Count; ++charNum)
 			{
-				System.String hex = System.Convert.ToString((int) charArray[charNum], 16);
+				System.String hex = System.Convert.ToString((int) charBuf[charNum], 16);
 				for (int digit = 0; digit < 4 - hex.Length; ++digit)
 				{
 					buf.Append('0');
 				}
 				buf.Append(hex.ToUpper());
-				if (charNum < numBytes - 1)
+				if (charNum < charBuf.Count - 1)
 				{
 					buf.Append(' ');
 				}
