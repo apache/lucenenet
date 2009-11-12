@@ -21,21 +21,22 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Helper class for keeping Listss of Objects associated with keys. <b>WARNING: THIS CLASS IS NOT THREAD SAFE</b></summary>
-	public class MapOfSets
-	{
+    public class MapOfSets<T, V>
+    {
 		
-		private System.Collections.IDictionary theMap;
+		// TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
+		private System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> theMap;
 		
 		/// <param name="m">the backing store for this object
 		/// </param>
-		public MapOfSets(System.Collections.IDictionary m)
+		public MapOfSets(System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> m)
 		{
 			theMap = m;
 		}
 		
 		/// <returns> direct access to the map backing this object.
 		/// </returns>
-		public virtual System.Collections.IDictionary GetMap()
+		public virtual System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> GetMap()
 		{
 			return theMap;
 		}
@@ -45,19 +46,19 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.
 		/// </returns>
-		public virtual int Put(System.Object key, System.Object val)
+		public virtual int Put(T key, V val)
 		{
-			System.Collections.Hashtable theSet;
-			if (theMap.Contains(key))
-			{
-				theSet = (System.Collections.Hashtable) theMap[key];
-			}
-			else
-			{
-				theSet = new System.Collections.Hashtable(23);
-				theMap[key] = theSet;
-			}
-			SupportClass.CollectionsHelper.AddIfNotContains(theSet, val);
+            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
+            System.Collections.Generic.Dictionary<V, V> theSet;
+            if (!theMap.TryGetValue(key, out theSet))
+            {
+                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theMap[key] = theSet;
+            }
+            if (!theSet.ContainsKey(val))
+            {
+                theSet.Add(val, val);
+            }
 			return theSet.Count;
 		}
 		/// <summary> Adds multiple vals to the Set associated with key in the Map.  
@@ -66,19 +67,22 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.
 		/// </returns>
-		public virtual int PutAll(System.Object key, System.Collections.ICollection vals)
+		public virtual int PutAll(T key, System.Collections.Generic.Dictionary<V, V> vals)
 		{
-			System.Collections.Hashtable theSet;
-			if (theMap.Contains(key))
-			{
-				theSet = (System.Collections.Hashtable) theMap[key];
-			}
-			else
-			{
-				theSet = new System.Collections.Hashtable(23);
-				theMap[key] = theSet;
-			}
-			SupportClass.CollectionsHelper.AddAllIfNotContains(theSet, vals);
+            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
+            System.Collections.Generic.Dictionary<V, V> theSet;
+            if (!theMap.TryGetValue(key, out theSet))
+            {
+                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theMap[key] = theSet;
+            }
+            foreach(V item in vals.Keys)
+            {
+                if (!theSet.ContainsKey(item))
+                {
+                    theSet.Add(item, item);
+                }
+            }
 			return theSet.Count;
 		}
 	}

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using FieldCache = Lucene.Net.Search.FieldCache;
@@ -114,13 +115,14 @@ namespace Lucene.Net.Util
 			//
 			// maps the (valId) identityhashCode of cache values to 
 			// sets of CacheEntry instances
-			MapOfSets valIdToItems = new MapOfSets(new System.Collections.Hashtable(17));
+			MapOfSets<int,CacheEntry> valIdToItems = new MapOfSets<int,CacheEntry>(new Dictionary<int,Dictionary<CacheEntry,CacheEntry>>(17));
 			// maps ReaderField keys to Sets of ValueIds
-			MapOfSets readerFieldToValIds = new MapOfSets(new System.Collections.Hashtable(17));
+			MapOfSets<ReaderField,int> readerFieldToValIds = new MapOfSets<ReaderField,int>(new Dictionary<ReaderField,Dictionary<int,int>>(17));
 			//
 			
 			// any keys that we know result in more then one valId
-			System.Collections.Hashtable valMismatchKeys = new System.Collections.Hashtable();
+            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
+            Dictionary<ReaderField, ReaderField> valMismatchKeys = new Dictionary<ReaderField, ReaderField>();
 			
 			// iterate over all the cacheEntries to get the mappings we'll need
 			for (int i = 0; i < cacheEntries.Length; i++)
@@ -133,22 +135,25 @@ namespace Lucene.Net.Util
 				
 				ReaderField rf = new ReaderField(item.GetReaderKey(), item.GetFieldName());
 				
-				System.Int32 valId = (System.Int32) val.GetHashCode();
+				System.Int32 valId = val.GetHashCode();
 				
 				// indirect mapping, so the MapOfSet will dedup identical valIds for us
-				valIdToItems.Put((System.Object) valId, item);
-				if (1 < readerFieldToValIds.Put(rf, (System.Object) valId))
+				valIdToItems.Put(valId, item);
+				if (1 < readerFieldToValIds.Put(rf, valId))
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(valMismatchKeys, rf);
+                    if (!valMismatchKeys.ContainsKey(rf))
+                    {
+                        valMismatchKeys.Add(rf, rf);
+                    }
 				}
 			}
 			
-			System.Collections.ArrayList insanity = new System.Collections.ArrayList(valMismatchKeys.Count * 3);
+			List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 			
 			insanity.AddRange(CheckValueMismatch(valIdToItems, readerFieldToValIds, valMismatchKeys));
 			insanity.AddRange(CheckSubreaders(valIdToItems, readerFieldToValIds));
 			
-			return (Insanity[]) insanity.ToArray(typeof(Insanity));
+			return insanity.ToArray();
 		}
 		
 		/// <summary> Internal helper method used by check that iterates over 
@@ -158,38 +163,31 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <seealso cref="InsanityType.VALUEMISMATCH">
 		/// </seealso>
-		private System.Collections.ICollection CheckValueMismatch(MapOfSets valIdToItems, MapOfSets readerFieldToValIds, System.Collections.Hashtable valMismatchKeys)
+		private List<Insanity> CheckValueMismatch(MapOfSets<int,CacheEntry> valIdToItems, MapOfSets<ReaderField,int> readerFieldToValIds, Dictionary<ReaderField,ReaderField> valMismatchKeys)
 		{
 			
-			System.Collections.IList insanity = new System.Collections.ArrayList(valMismatchKeys.Count * 3);
+			List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 			
 			if (!(valMismatchKeys.Count == 0))
 			{
 				// we have multiple values for some ReaderFields
 				
-				System.Collections.IDictionary rfMap = readerFieldToValIds.GetMap();
-				System.Collections.IDictionary valMap = valIdToItems.GetMap();
-				System.Collections.IEnumerator mismatchIter = valMismatchKeys.GetEnumerator();
-				while (mismatchIter.MoveNext())
-				{
-					ReaderField rf = (ReaderField) mismatchIter.Current;
-					System.Collections.ArrayList badEntries = new System.Collections.ArrayList(valMismatchKeys.Count * 2);
-					System.Collections.IEnumerator valIter = ((System.Collections.Hashtable) rfMap[rf]).GetEnumerator();
-					while (valIter.MoveNext())
-					{
-						System.Collections.IEnumerator entriesIter = ((System.Collections.Hashtable) valMap[valIter.Current]).GetEnumerator();
-						while (entriesIter.MoveNext())
-						{
-							badEntries.Add(entriesIter.Current);
-						}
-					}
-					
-					CacheEntry[] badness = new CacheEntry[badEntries.Count];
-					badness = (CacheEntry[]) badEntries.ToArray(typeof(CacheEntry));
-					
-					insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badness));
-				}
-			}
+                IDictionary<ReaderField,Dictionary<int,int>> rfMap = readerFieldToValIds.GetMap();
+                IDictionary<int,Dictionary<CacheEntry,CacheEntry>> valMap = valIdToItems.GetMap();
+                foreach (ReaderField rf in valMismatchKeys.Keys)
+                {
+                    List<CacheEntry> badEntries = new List<CacheEntry>(valMismatchKeys.Count * 2);
+                    foreach (int val in rfMap[rf].Keys)
+                    {
+                        foreach (CacheEntry entry in valMap[val].Keys)
+                        {
+                            badEntries.Add(entry);
+                        }
+                    }
+
+                    insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badEntries.ToArray()));
+                }
+            }
 			return insanity;
 		}
 		
@@ -201,85 +199,78 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <seealso cref="InsanityType.SUBREADER">
 		/// </seealso>
-		private System.Collections.ICollection CheckSubreaders(MapOfSets valIdToItems, MapOfSets readerFieldToValIds)
+		private List<Insanity> CheckSubreaders(MapOfSets<int,CacheEntry> valIdToItems, MapOfSets<ReaderField,int> readerFieldToValIds)
 		{
 			
-			System.Collections.IList insanity = new System.Collections.ArrayList(23);
-			
-			System.Collections.IDictionary badChildren = new System.Collections.Hashtable(17);
-			MapOfSets badKids = new MapOfSets(badChildren); // wrapper
-			
-			System.Collections.IDictionary viToItemSets = valIdToItems.GetMap();
-			System.Collections.IDictionary rfToValIdSets = readerFieldToValIds.GetMap();
-			
-			System.Collections.Hashtable seen = new System.Collections.Hashtable(17);
+            List<Insanity> insanity = new List<Insanity>(23);
 
-            System.Collections.Hashtable readerFields = new System.Collections.Hashtable(rfToValIdSets);
-			System.Collections.IEnumerator rfIter = readerFields.GetEnumerator();
-			while (rfIter.MoveNext())
-			{
-				ReaderField rf = (ReaderField) rfIter.Current;
-				
-				if (seen.Contains(rf))
-					continue;
-				
-				System.Collections.IList kids = GetAllDecendentReaderKeys(rf.readerKey);
+            Dictionary<ReaderField, Dictionary<ReaderField, ReaderField>> badChildren = new Dictionary<ReaderField, Dictionary<ReaderField, ReaderField>>(17);
+			MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
+
+            IDictionary<int, Dictionary<CacheEntry, CacheEntry>> viToItemSets = valIdToItems.GetMap();
+            IDictionary<ReaderField, Dictionary<int, int>> rfToValIdSets = readerFieldToValIds.GetMap();
+
+            Dictionary<ReaderField, ReaderField> seen = new Dictionary<ReaderField, ReaderField>(17);
+
+            foreach (ReaderField rf in rfToValIdSets.Keys)
+            {
+                if (seen.ContainsKey(rf))
+                    continue;
+
+                System.Collections.IList kids = GetAllDecendentReaderKeys(rf.readerKey);
 				for (int i = 0; i < kids.Count; i++)
 				{
 					ReaderField kid = new ReaderField(kids[i], rf.fieldName);
-					
-					if (badChildren.Contains(kid))
+
+					if (badChildren.ContainsKey(kid))
 					{
 						// we've already process this kid as RF and found other problems
 						// track those problems as our own
 						badKids.Put(rf, kid);
-						badKids.PutAll(rf, (System.Collections.ICollection) badChildren[kid]);
+						badKids.PutAll(rf, badChildren[kid]);
 						badChildren.Remove(kid);
 					}
-					else if (rfToValIdSets.Contains(kid))
+					else if (rfToValIdSets.ContainsKey(kid))
 					{
 						// we have cache entries for the kid
 						badKids.Put(rf, kid);
 					}
-					SupportClass.CollectionsHelper.AddIfNotContains(seen, kid);
+                    if (!seen.ContainsKey(kid))
+                    {
+                        seen.Add(kid, kid);
+                    }
 				}
-				SupportClass.CollectionsHelper.AddIfNotContains(seen, rf);
+                if (!seen.ContainsKey(rf))
+                {
+                    seen.Add(rf, rf);
+                }
 			}
 			
 			// every mapping in badKids represents an Insanity
-			System.Collections.IEnumerator parentsIter = new System.Collections.Hashtable(badChildren).GetEnumerator();
-			while (parentsIter.MoveNext())
+			foreach (ReaderField parent in badChildren.Keys)
 			{
-				ReaderField parent = (ReaderField) parentsIter.Current;
-				System.Collections.Hashtable kids = (System.Collections.Hashtable) badChildren[parent];
+				Dictionary<ReaderField,ReaderField> kids = badChildren[parent];
 				
-				System.Collections.ArrayList badEntries = new System.Collections.ArrayList(kids.Count * 2);
+				List<CacheEntry> badEntries = new List<CacheEntry>(kids.Count * 2);
 				
 				// put parent entr(ies) in first
 				{
-					System.Collections.IEnumerator valIter = ((System.Collections.Hashtable) rfToValIdSets[parent]).GetEnumerator();
-					while (valIter.MoveNext())
+					foreach (int val in rfToValIdSets[parent].Keys)
 					{
-						badEntries.AddRange((System.Collections.Hashtable) viToItemSets[valIter.Current]);
+						badEntries.AddRange(viToItemSets[val].Keys);
 					}
 				}
 				
 				// now the entries for the descendants
-				System.Collections.IEnumerator kidsIter = kids.GetEnumerator();
-				while (kidsIter.MoveNext())
+				foreach (ReaderField kid in kids.Keys)
 				{
-					ReaderField kid = (ReaderField) kidsIter.Current;
-					System.Collections.IEnumerator valIter = ((System.Collections.Hashtable) rfToValIdSets[kid]).GetEnumerator();
-					while (valIter.MoveNext())
+					foreach (int val in rfToValIdSets[kid].Keys)
 					{
-						badEntries.AddRange((System.Collections.Hashtable)viToItemSets[valIter.Current]);
+						badEntries.AddRange(viToItemSets[val].Keys);
 					}
 				}
 				
-				CacheEntry[] badness = new CacheEntry[badEntries.Count];
-				badness = (CacheEntry[]) badEntries.ToArray(typeof(CacheEntry));
-				
-				insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for decendents of " + parent.ToString(), badness));
+				insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for decendents of " + parent.ToString(), badEntries.ToArray()));
 			}
 			
 			return insanity;
