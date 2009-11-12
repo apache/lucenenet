@@ -68,19 +68,9 @@ namespace Lucene.Net.Util
 		/// <returns> The number of chars required to encode the given byte sequence
 		/// </returns>
 		/// <throws>  IllegalArgumentException If the given ByteBuffer is not backed by an array </throws>
-		public static int GetEncodedLength(System.IO.MemoryStream original)
+		public static int GetEncodedLength(System.Collections.Generic.List<byte> original)
 		{
-			// if (original.hasArray()) // {{Aroush-2.9}}
-			{
-				// Use long for intermediaries to protect against overflow
-				// long length = (long) (original.limit() - original.arrayOffset()); // {{Aroush-2.9}}
-                long length = (long) (original.Capacity - original.Position);
-				return (int) ((length * 8L + 14L) / 15L) + 1;
-			}
-			// else // {{Aroush-2.9}}
-			// { // {{Aroush-2.9}}
-			// 	throw new System.ArgumentException("original argument must have a backing array"); // {{Aroush-2.9}}
-			// } // {{Aroush-2.9}}
+            return (original.Count == 0) ? 0 : ((original.Count * 8 + 14) / 15) + 1;
 		}
 		
 		/// <summary> Returns the number of bytes required to decode the given char sequence.
@@ -91,29 +81,19 @@ namespace Lucene.Net.Util
 		/// <returns> The number of bytes required to decode the given char sequence
 		/// </returns>
 		/// <throws>  IllegalArgumentException If the given CharBuffer is not backed by an array </throws>
-        public static int GetDecodedLength(System.IO.MemoryStream encoded)
+        public static int GetDecodedLength(System.Collections.Generic.List<char> encoded)
 		{
-			// if (encoded.hasArray()) // {{Aroush-2.9}}
-			{
-				// int numChars = encoded.limit() - encoded.arrayOffset() - 1; // {{Aroush-2.9}}
-                long numChars = encoded.Capacity - encoded.Position - 1;
-				if (numChars <= 0)
-				{
-					return 0;
-				}
-				else
-				{
-                    // int numFullBytesInFinalChar = encoded.charAt(encoded.limit() - 1); // {{Aroush-2.9}}
-                    byte[] buf = new byte[1];
-                    int numFullBytesInFinalChar = encoded.Read(buf, encoded.Capacity - 1, 1);
-					long numEncodedChars = numChars - 1;
-					return (int) ((numEncodedChars * 15 + 7) / 8 + numFullBytesInFinalChar);
-				}
-			}
-			// else // {{Aroush-2.9}}
-			// {
-			// 	throw new System.ArgumentException("encoded argument must have a backing array"); // {{Aroush-2.9}}
-			// } // {{Aroush-2.9}}
+            int numChars = encoded.Count - 1;
+            if (numChars <= 0)
+            {
+                return 0;
+            }
+            else
+            {
+                int numFullBytesInFinalChar = encoded[encoded.Count - 1];
+                int numEncodedChars = numChars - 1;
+                return ((numEncodedChars * 15 + 7) / 8 + numFullBytesInFinalChar);
+            }
 		}
 		
 		/// <summary> Encodes the input byte sequence into the output char sequence.  Before
@@ -129,77 +109,71 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
 		/// <summary>  is not backed by an array
 		/// </summary>
-		public static void  Encode(System.IO.MemoryStream input, System.IO.MemoryStream output)
+		public static void  Encode(System.Collections.Generic.List<byte> input, System.Collections.Generic.List<char> output)
 		{
-			// if (input.hasArray() && output.hasArray()) // {{Aroush-2.9}}
-			{
-				// byte[] inputArray = input.array();   // {{Aroush-2.9}}
-                byte[] inputArray = input.GetBuffer();
-				// int inputOffset = input.arrayOffset(); // {{Aroush-2.9}}
-                long inputOffset = input.Position;
-				// int inputLength = input.limit() - inputOffset; // {{Aroush-2.9}}
-                long inputLength = input.Capacity - inputOffset;
-				// char[] outputArray = output.array(); // {{Aroush-2.9}}
-                byte[] outputArray = output.GetBuffer();
-				// int outputOffset = output.arrayOffset(); // {{Aroush-2.9}}
-                long outputOffset = output.Position;
-				int outputLength = GetEncodedLength(input);
-				// output.limit(outputOffset + outputLength); // Set output final pos + 1 // {{Aroush-2.9}}
-                output.Position = outputOffset + outputLength;
-				// output.position(0); // {{Aroush-2.9}}
-                output.Position = 0;
-				if (inputLength > 0)
-				{
-					long inputByteNum = inputOffset;
-					int caseNum = 0;
-					long outputCharNum = outputOffset;
-					CodingCase codingCase;
-					for (; inputByteNum + CODING_CASES[caseNum].numBytes <= inputLength; ++outputCharNum)
-					{
-						codingCase = CODING_CASES[caseNum];
-						if (2 == codingCase.numBytes)
-						{
-							outputArray[outputCharNum] = (byte) (((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + ((SupportClass.Number.URShift((inputArray[inputByteNum + 1] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short) 0x7FFF);
-						}
-						else
-						{
-							// numBytes is 3
-							outputArray[outputCharNum] = (byte) (((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.middleShift) + ((SupportClass.Number.URShift((inputArray[inputByteNum + 2] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short) 0x7FFF);
-						}
-						inputByteNum += codingCase.advanceBytes;
-						if (++caseNum == CODING_CASES.Length)
-						{
-							caseNum = 0;
-						}
-					}
-					// Produce final char (if any) and trailing count chars.
-					codingCase = CODING_CASES[caseNum];
-					
-					if (inputByteNum + 1 < inputLength)
-					{
-						// codingCase.numBytes must be 3
-						outputArray[outputCharNum++] = (byte) ((((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.middleShift)) & (short) 0x7FFF);
-						// Add trailing char containing the number of full bytes in final char
-						outputArray[outputCharNum++] = (byte) 1;
-					}
-					else if (inputByteNum < inputLength)
-					{
-						outputArray[outputCharNum++] = (byte) (((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift) & (short) 0x7FFF);
-						// Add trailing char containing the number of full bytes in final char
-						outputArray[outputCharNum++] = caseNum == 0?(byte) 1:(byte) 0;
-					}
-					else
-					{
-						// No left over bits - last char is completely filled.
-						// Add trailing char containing the number of full bytes in final char
-						outputArray[outputCharNum++] = (byte) 1;
-					}
-				}
-			}
-            // else // {{Aroush-2.9}}
-			// {
-			// 	throw new System.ArgumentException("Arguments must have backing arrays"); // {{Aroush-2.9}}
-			// }
+            int outputLength = GetEncodedLength(input);
+            // only adjust capacity if needed
+            if (output.Capacity < outputLength)
+            {
+                output.Capacity = outputLength;
+            }
+
+            // ensure the buffer we are writing into is occupied with nulls
+            if (output.Count < outputLength)
+            {
+                for (int i = output.Count; i < outputLength; i++)
+                {
+                    output.Add(Char.MinValue);
+                }
+            }
+
+            if (input.Count > 0)
+            {
+                int inputByteNum = 0;
+                int caseNum = 0;
+                int outputCharNum = 0;
+                CodingCase codingCase;
+                for (; inputByteNum + CODING_CASES[caseNum].numBytes <= input.Count; ++outputCharNum)
+                {
+                    codingCase = CODING_CASES[caseNum];
+                    if (2 == codingCase.numBytes)
+                    {
+                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((SupportClass.Number.URShift((input[inputByteNum + 1] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
+                    }
+                    else
+                    {
+                        // numBytes is 3
+                        output[outputCharNum] = (char)(((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((input[inputByteNum + 1] & 0xFF) << codingCase.middleShift) + ((SupportClass.Number.URShift((input[inputByteNum + 2] & 0xFF), codingCase.finalShift)) & codingCase.finalMask) & (short)0x7FFF);
+                    }
+                    inputByteNum += codingCase.advanceBytes;
+                    if (++caseNum == CODING_CASES.Length)
+                    {
+                        caseNum = 0;
+                    }
+                }
+                // Produce final char (if any) and trailing count chars.
+                codingCase = CODING_CASES[caseNum];
+                
+                if (inputByteNum + 1 < input.Count)
+                {
+                    // codingCase.numBytes must be 3
+                    output[outputCharNum++] = (char) ((((input[inputByteNum] & 0xFF) << codingCase.initialShift) + ((input[inputByteNum + 1] & 0xFF) << codingCase.middleShift)) & (short) 0x7FFF);
+                    // Add trailing char containing the number of full bytes in final char
+                    output[outputCharNum++] = (char) 1;
+                }
+                else if (inputByteNum < input.Count)
+                {
+                    output[outputCharNum++] = (char) (((input[inputByteNum] & 0xFF) << codingCase.initialShift) & (short) 0x7FFF);
+                    // Add trailing char containing the number of full bytes in final char
+                    output[outputCharNum++] = caseNum == 0?(char) 1:(char) 0;
+                }
+                else
+                {
+                    // No left over bits - last char is completely filled.
+                    // Add trailing char containing the number of full bytes in final char
+                    output[outputCharNum++] = (char) 1;
+                }
+            }
 		}
 		
 		/// <summary> Decodes the input char sequence into the output byte sequence.  Before
@@ -215,90 +189,85 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If either the input or the output buffer </throws>
 		/// <summary>  is not backed by an array
 		/// </summary>
-		public static void  Decode(System.IO.MemoryStream input, System.IO.MemoryStream output)
+		public static void Decode(System.Collections.Generic.List<char> input, System.Collections.Generic.List<byte> output)
 		{
-			// if (input.hasArray() && output.hasArray()) // {{Aroush-2.9}}
-			{
-				// int numInputChars = input.limit() - input.arrayOffset() - 1; // {{Aroush-2.9}}
-                long numInputChars = input.Capacity - input.Position - 1;
-				int numOutputBytes = GetDecodedLength(input);
-				// output.limit(numOutputBytes + output.arrayOffset()); // Set output final pos + 1 // {{Aroush-2.9}}
-                output.Capacity = (int) (numOutputBytes + output.Position);
-				// output.position(0); // {{Aroush-2.9}}
-                output.Position = 0;
-				// byte[] outputArray = output.array(); // {{Aroush-2.9}}
-                byte[] outputArray = output.GetBuffer();
-				// char[] inputArray = input.array(); // {{Aroush-2.9}}
-                byte[] inputArray = (byte[]) input.GetBuffer(); 
-				if (numOutputBytes > 0)
-				{
-					int caseNum = 0;
-					// int outputByteNum = output.arrayOffset(); // {{Aroush-2.9}}
-                    long outputByteNum = output.Position;
-					// int inputCharNum = input.arrayOffset(); // {{Aroush-2.9}}
-                    long inputCharNum = input.Position;
-					short inputChar;
-					CodingCase codingCase;
-					for (; inputCharNum < numInputChars - 1; ++inputCharNum)
-					{
-						codingCase = CODING_CASES[caseNum];
-						inputChar = (short) inputArray[inputCharNum];
-						if (2 == codingCase.numBytes)
-						{
-							if (0 == caseNum)
-							{
-								outputArray[outputByteNum] = (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift));
-							}
-							else
-							{
-								outputArray[outputByteNum] = (byte) (outputArray[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
-							}
-							outputArray[outputByteNum + 1] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
-						}
-						else
-						{
-							// numBytes is 3
-							outputArray[outputByteNum] = (byte) (outputArray[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
-							outputArray[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
-							outputArray[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
-						}
-						outputByteNum += codingCase.advanceBytes;
-						if (++caseNum == CODING_CASES.Length)
-						{
-							caseNum = 0;
-						}
-					}
-					// Handle final char
-					inputChar = (short) inputArray[inputCharNum];
-					codingCase = CODING_CASES[caseNum];
-					if (0 == caseNum)
-					{
-						outputArray[outputByteNum] = 0;
-					}
-					outputArray[outputByteNum] = (byte) (outputArray[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
-					long bytesLeft = numOutputBytes - outputByteNum;
-					if (bytesLeft > 1)
-					{
-						if (2 == codingCase.numBytes)
-						{
-							outputArray[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
-						}
-						else
-						{
-							// numBytes is 3
-							outputArray[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
-							if (bytesLeft > 2)
-							{
-								outputArray[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
-							}
-						}
-					}
-				}
-			}
-            // else // {{Aroush-2.9}}
-			// {
-			// 	throw new System.ArgumentException("Arguments must have backing arrays"); // {{Aroush-2.9}}
-			// }
+            int numOutputBytes = GetDecodedLength(input);
+            if (output.Capacity < numOutputBytes)
+            {
+                output.Capacity = numOutputBytes;
+            }
+
+            // ensure the buffer we are writing into is occupied with nulls
+            if (output.Count < numOutputBytes)
+            {
+                for (int i = output.Count; i < numOutputBytes; i++)
+                {
+                    output.Add(Byte.MinValue);
+                }
+            }
+
+            if (input.Count > 0)
+            {
+                int caseNum = 0;
+                int outputByteNum = 0;
+                int inputCharNum = 0;
+                short inputChar;
+                CodingCase codingCase;
+                for (; inputCharNum < input.Count - 2; ++inputCharNum)
+                {
+                    codingCase = CODING_CASES[caseNum];
+                    inputChar = (short) input[inputCharNum];
+                    if (2 == codingCase.numBytes)
+                    {
+                        if (0 == caseNum)
+                        {
+                            output[outputByteNum] = (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift));
+                        }
+                        else
+                        {
+                            output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
+                        }
+                        output[outputByteNum + 1] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                    }
+                    else
+                    {
+                        // numBytes is 3
+                        output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
+                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                    }
+                    outputByteNum += codingCase.advanceBytes;
+                    if (++caseNum == CODING_CASES.Length)
+                    {
+                        caseNum = 0;
+                    }
+                }
+                // Handle final char
+                inputChar = (short) input[inputCharNum];
+                codingCase = CODING_CASES[caseNum];
+                if (0 == caseNum)
+                {
+                    output[outputByteNum] = 0;
+                }
+                output[outputByteNum] = (byte) (output[outputByteNum] + (byte) (SupportClass.Number.URShift(inputChar, codingCase.initialShift)));
+                long bytesLeft = numOutputBytes - outputByteNum;
+                if (bytesLeft > 1)
+                {
+                    if (2 == codingCase.numBytes)
+                    {
+                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.finalMask), codingCase.finalShift));
+                    }
+                    else
+                    {
+                        // numBytes is 3
+                        output[outputByteNum + 1] = (byte) (SupportClass.Number.URShift((inputChar & codingCase.middleMask), codingCase.middleShift));
+                        if (bytesLeft > 2)
+                        {
+                            output[outputByteNum + 2] = (byte) ((inputChar & codingCase.finalMask) << codingCase.finalShift);
+                        }
+                    }
+                }
+            }
 		}
 		
 		/// <summary> Decodes the given char sequence, which must have been encoded by
@@ -314,10 +283,10 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
 		/// <summary>  array
 		/// </summary>
-		public static System.IO.MemoryStream Decode(System.IO.MemoryStream input)
+        public static System.Collections.Generic.List<byte> Decode(System.Collections.Generic.List<char> input)
 		{
-			byte[] outputArray = new byte[GetDecodedLength(input)];
-			System.IO.MemoryStream output = new System.IO.MemoryStream(outputArray);
+            System.Collections.Generic.List<byte> output = 
+                new System.Collections.Generic.List<byte>(new byte[GetDecodedLength(input)]);
 			Decode(input, output);
 			return output;
 		}
@@ -333,10 +302,10 @@ namespace Lucene.Net.Util
 		/// <throws>  IllegalArgumentException If the input buffer is not backed by an </throws>
 		/// <summary>  array
 		/// </summary>
-		public static System.IO.MemoryStream Encode(System.IO.MemoryStream input)
+		public static System.Collections.Generic.List<char> Encode(System.Collections.Generic.List<byte> input)
 		{
-			byte[] outputArray = new byte[GetEncodedLength(input)];
-			System.IO.MemoryStream output = new System.IO.MemoryStream(outputArray);
+            System.Collections.Generic.List<char> output = 
+                new System.Collections.Generic.List<char>(new char[GetEncodedLength(input)]);
 			Encode(input, output);
 			return output;
 		}
