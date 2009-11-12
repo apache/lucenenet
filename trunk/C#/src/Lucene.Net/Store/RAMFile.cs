@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 		internal long sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
 		
 		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
-		private long lastModified = System.DateTime.Now.Millisecond;
+		private long lastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 		
 		// File used as buffer, in no RAMDirectory
 		public /*internal*/ RAMFile()

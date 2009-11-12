@@ -262,7 +262,7 @@ namespace Lucene.Net.Analysis
 				for (int j = 0; j < modCounts.Length; j++)
 				{
 					int tfPos = 0;
-					long start = System.DateTime.Now.Millisecond;
+					long start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					for (int i = 0; i < 20; i++)
 					{
 						stream = new StandardFilter(new StandardTokenizer(new System.IO.StringReader(buffer.ToString())));
@@ -276,11 +276,11 @@ namespace Lucene.Net.Analysis
 							tfPos += nextToken.GetPositionIncrement();
 						}
 					}
-					long finish = System.DateTime.Now.Millisecond;
+					long finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					System.Console.Out.WriteLine("ModCount: " + modCounts[j] + " Two fields took " + (finish - start) + " ms");
 					int sinkPos = 0;
 					//simulate one field with one sink
-					start = System.DateTime.Now.Millisecond;
+					start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					for (int i = 0; i < 20; i++)
 					{
 						sink = new ModuloSinkTokenizer(this, tokCount[k], modCounts[j]);
@@ -296,7 +296,7 @@ namespace Lucene.Net.Analysis
 							sinkPos += nextToken.GetPositionIncrement();
 						}
 					}
-					finish = System.DateTime.Now.Millisecond;
+					finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 					System.Console.Out.WriteLine("ModCount: " + modCounts[j] + " Tee fields took " + (finish - start) + " ms");
 					Assert.IsTrue(sinkPos == tfPos, sinkPos + " does not equal: " + tfPos);
 				}

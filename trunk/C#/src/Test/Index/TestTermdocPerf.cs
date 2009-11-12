@@ -126,16 +126,16 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new RAMDirectory();
 			
-			long start = System.DateTime.Now.Millisecond;
+			long start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			AddDocs(dir, ndocs, "foo", "val", maxTF, percentDocs);
-			long end = System.DateTime.Now.Millisecond;
+			long end = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			System.Console.Out.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
 			
 			IndexReader reader = IndexReader.Open(dir);
 			TermEnum tenum = reader.Terms(new Term("foo", "val"));
 			TermDocs tdocs = reader.TermDocs();
 			
-			start = System.DateTime.Now.Millisecond;
+			start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			
 			int ret = 0;
 			for (int i = 0; i < iter; i++)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			end = System.DateTime.Now.Millisecond;
+			end = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			System.Console.Out.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));
 			
 			return ret;

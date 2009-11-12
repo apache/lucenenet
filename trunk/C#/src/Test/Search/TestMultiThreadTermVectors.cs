@@ -184,16 +184,16 @@ namespace Lucene.Net.Search
 			long start = 0L;
 			for (int docId = 0; docId < numDocs; docId++)
 			{
-				start = System.DateTime.Now.Millisecond;
+				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				TermFreqVector[] vectors = reader.GetTermFreqVectors(docId);
-				timeElapsed += System.DateTime.Now.Millisecond - start;
+				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
 				// verify vectors result
 				VerifyVectors(vectors, docId);
 				
-				start = System.DateTime.Now.Millisecond;
+				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				TermFreqVector vector = reader.GetTermFreqVector(docId, "field");
-				timeElapsed += System.DateTime.Now.Millisecond - start;
+				timeElapsed += (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - start;
 				
 				vectors = new TermFreqVector[1];
 				vectors[0] = vector;

@@ -75,7 +75,7 @@ namespace Lucene.Net
 			{
 				Document doc = new Document();
 				doc.Add(new Field("content", "aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				while (System.DateTime.Now.Millisecond < stopTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime)
 				{
 					for (int i = 0; i < 27; i++)
 					{
@@ -168,7 +168,7 @@ namespace Lucene.Net
 		private void  RunTest(Directory dir)
 		{
 			// Run for ~7 seconds
-			long stopTime = System.DateTime.Now.Millisecond + 7000;
+			long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 7000;
 			
 			SnapshotDeletionPolicy dp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 			IndexWriter writer = new IndexWriter(dir, true, new StandardAnalyzer(), dp);
@@ -182,7 +182,7 @@ namespace Lucene.Net
 			
 			// While the above indexing thread is running, take many
 			// backups:
-			while (System.DateTime.Now.Millisecond < stopTime)
+			while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime)
 			{
 				BackupIndex(dir, dp);
 				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 20));

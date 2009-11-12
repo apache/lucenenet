@@ -2899,9 +2899,9 @@ namespace Lucene.Net.Index
 				
 				int idUpto = 0;
 				int fullCount = 0;
-				long stopTime = System.DateTime.Now.Millisecond + 500;
+				long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 500;
 				
-				while (System.DateTime.Now.Millisecond < stopTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime)
 				{
 					try
 					{

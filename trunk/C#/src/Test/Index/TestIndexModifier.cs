@@ -281,10 +281,10 @@ namespace Lucene.Net.Index
 		override public void  Run()
 		{
 			
-			long endTime = System.DateTime.Now.Millisecond + 1000 * TEST_SECONDS;
+			long endTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000 * TEST_SECONDS;
 			try
 			{
-				while (System.DateTime.Now.Millisecond < endTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 				{
 					int rand = random.Next(101);
 					if (rand < 5)

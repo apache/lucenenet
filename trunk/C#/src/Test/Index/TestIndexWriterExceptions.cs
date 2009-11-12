@@ -83,9 +83,9 @@ namespace Lucene.Net.Index
 				Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
 				doc.Add(idField);
 				
-				long stopTime = System.DateTime.Now.Millisecond + 3000;
+				long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 3000;
 				
-				while (System.DateTime.Now.Millisecond < stopTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime)
 				{
 					System.Threading.Thread.SetData(Enclosing_Instance.doFail, this);
 					System.String id = "" + r.Next(50);

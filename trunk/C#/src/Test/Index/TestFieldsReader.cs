@@ -294,10 +294,10 @@ namespace Lucene.Net.Index
 				System.String value_Renamed;
 				long start;
 				long finish;
-				start = System.DateTime.Now.Millisecond;
+				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				//On my machine this was always 0ms.
 				value_Renamed = field.StringValue();
-				finish = System.DateTime.Now.Millisecond;
+				finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 				Assert.IsTrue(field != null, "field is null and it shouldn't be");
 				regularTime += (finish - start);
@@ -310,10 +310,10 @@ namespace Lucene.Net.Index
 				doc = reader.Doc(0, fieldSelector);
 				field = doc.GetFieldable(DocHelper.LARGE_LAZY_FIELD_KEY);
 				Assert.IsTrue(field.IsLazy() == true, "field is not lazy");
-				start = System.DateTime.Now.Millisecond;
+				start = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				//On my machine this took around 50 - 70ms
 				value_Renamed = field.StringValue();
-				finish = System.DateTime.Now.Millisecond;
+				finish = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 				Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 				lazyTime += (finish - start);
 				reader.Close();
