@@ -119,7 +119,7 @@ namespace Lucene.Net.Store
 				int count = 0;
 				while (it.MoveNext())
 				{
-					System.String name = (System.String) it.Current;
+					System.String name = (System.String) ((System.Collections.DictionaryEntry)it.Current).Value;
 					RAMFile file = (RAMFile) fileMap_ForNUnit[name];
 					if (count % 3 == 0)
 					{
