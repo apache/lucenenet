@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 				this.doFail = false;
 			}
 			
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("DoFlush".Equals(sf.GetMethod()))
+						if ("DoFlush".Equals(sf.GetMethod().Name))
 						{
 							//new RuntimeException().printStackTrace(System.out);
 							throw new System.IO.IOException("now failing during flush");
