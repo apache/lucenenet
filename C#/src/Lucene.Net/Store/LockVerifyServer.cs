@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 		
 		private static System.String GetTime(long startTime)
 		{
-			return "[" + ((System.DateTime.Now.Millisecond - startTime) / 1000) + "s] ";
+			return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
 		}
 		
 		[STAThread]
@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
 			System.Console.Out.WriteLine("\nReady on port " + port + "...");
 			
 			int lockedID = 0;
-			long startTime = System.DateTime.Now.Millisecond;
+			long startTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			
 			while (true)
 			{

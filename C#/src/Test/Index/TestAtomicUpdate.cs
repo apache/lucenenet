@@ -82,20 +82,15 @@ namespace Lucene.Net.Index
 				this.allThreads = threads;
 			}
 
-            long Millisecond()
-            {
-                return System.DateTime.Now.Ticks / 10000;
-            }
-
             override public void Run()
             {
-                long stopTime = Millisecond() + 1000 * RUN_TIME_SEC;
+                long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000 * RUN_TIME_SEC;
 
                 count = 0;
 
                 try
                 {
-                    while (Millisecond() < stopTime && !AnyErrors())
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime && !AnyErrors())
                     {
                         DoWork();
                         count++;

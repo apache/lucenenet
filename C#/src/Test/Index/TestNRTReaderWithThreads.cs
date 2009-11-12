@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
 				indexThreads[x].Name = "Thread " + x;
 				indexThreads[x].Start();
 			}
-			long startTime = System.DateTime.Now.Millisecond;
+			long startTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 			long duration = 5 * 1000;
-			while ((System.DateTime.Now.Millisecond - startTime) < duration)
+			while (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) < duration)
 			{
 				System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 100));
 			}

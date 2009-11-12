@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 			}
 			override public void  Run()
 			{
-				while (System.DateTime.Now.Millisecond < endTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 				{
 					try
 					{
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 			{
 				int count = 0;
 				System.Random r = new System.Random();
-				while (System.DateTime.Now.Millisecond < endTime)
+				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 				{
 					try
 					{
@@ -936,7 +936,7 @@ namespace Lucene.Net.Index
 			int NUM_THREAD = 5;
 			float SECONDS = 3;
 			
-			long endTime = (long) (System.DateTime.Now.Millisecond + 1000.0 * SECONDS);
+			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 			
 			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
@@ -948,7 +948,7 @@ namespace Lucene.Net.Index
 			}
 			
 			int lastCount = 0;
-			while (System.DateTime.Now.Millisecond < endTime)
+			while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 			{
 				IndexReader r2 = r.Reopen();
 				if (r2 != r)
@@ -993,7 +993,7 @@ namespace Lucene.Net.Index
 			int NUM_THREAD = 5;
 			float SECONDS = 3;
 			
-			long endTime = (long) (System.DateTime.Now.Millisecond + 1000.0 * SECONDS);
+			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 			
 			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
@@ -1005,7 +1005,7 @@ namespace Lucene.Net.Index
 			}
 			
 			int sum = 0;
-			while (System.DateTime.Now.Millisecond < endTime)
+			while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 			{
 				IndexReader r2 = r.Reopen();
 				if (r2 != r)

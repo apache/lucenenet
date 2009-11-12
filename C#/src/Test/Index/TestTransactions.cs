@@ -76,11 +76,11 @@ namespace Lucene.Net.Index
 			
 			override public void  Run()
 			{
-				long stopTime = System.DateTime.Now.Millisecond + 1000 * RUN_TIME_SEC;
+				long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000 * RUN_TIME_SEC;
 				
 				try
 				{
-					while (System.DateTime.Now.Millisecond < stopTime && !AnyErrors())
+					while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < stopTime && !AnyErrors())
 						DoWork();
 				}
 				catch (System.Exception e)
