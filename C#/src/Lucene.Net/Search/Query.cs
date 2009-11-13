@@ -164,14 +164,16 @@ namespace Lucene.Net.Search
 			// optimization: if we have just one query, just return it
 			if (uniques.Count == 1)
 			{
-				return (Query) uniques.GetEnumerator().Current;
+                foreach (object key in uniques.Keys)
+                {
+                    return (Query) key;
+                }
 			}
-			System.Collections.IEnumerator it = uniques.GetEnumerator();
 			BooleanQuery result = new BooleanQuery(true);
-			while (it.MoveNext())
-			{
-				result.Add((Query) it.Current, BooleanClause.Occur.SHOULD);
-			}
+            foreach (object key in uniques.Keys)
+            {
+                result.Add((Query) key, BooleanClause.Occur.SHOULD);
+            }
 			return result;
 		}
 		
