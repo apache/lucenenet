@@ -96,15 +96,17 @@ namespace Lucene.Net.Util
 			typeAtt.SetType("TestType");
 			
 			AttributeSource clone = src.CloneAttributes();
-			System.Collections.IEnumerator it = clone.GetAttributeClassesIterator();
+			System.Collections.IEnumerator it = clone.GetAttributeClassesIterator().GetEnumerator();
+            Assert.IsTrue(it.MoveNext());
 			Assert.AreEqual(typeof(TermAttribute), it.Current, "TermAttribute must be the first attribute");
-			Assert.AreEqual(typeof(TypeAttribute), it.Current, "TypeAttribute must be the second attribute");
+            Assert.IsTrue(it.MoveNext());
+            Assert.AreEqual(typeof(TypeAttribute), it.Current, "TypeAttribute must be the second attribute");
 			Assert.IsFalse(it.MoveNext(), "No more attributes");
 			
-			TermAttribute termAtt2 = (TermAttribute) clone.GetAttribute(typeof(TermAttribute));
-			TypeAttribute typeAtt2 = (TypeAttribute) clone.GetAttribute(typeof(TypeAttribute));
-			Assert.AreNotEqual(termAtt2, termAtt, "TermAttribute of original and clone must be different instances");
-			Assert.AreNotEqual(typeAtt2, typeAtt, "TypeAttribute of original and clone must be different instances");
+			TermAttribute termAtt2 = (TermAttribute)clone.GetAttribute(typeof(TermAttribute));
+			TypeAttribute typeAtt2 = (TypeAttribute)clone.GetAttribute(typeof(TypeAttribute));
+			Assert.IsFalse(ReferenceEquals(termAtt2, termAtt), "TermAttribute of original and clone must be different instances");
+			Assert.IsFalse(ReferenceEquals(typeAtt2, typeAtt), "TypeAttribute of original and clone must be different instances");
 			Assert.AreEqual(termAtt2, termAtt, "TermAttribute of original and clone must be equal");
 			Assert.AreEqual(typeAtt2, typeAtt, "TypeAttribute of original and clone must be equal");
 		}
@@ -118,7 +120,7 @@ namespace Lucene.Net.Util
 			termAtt.SetTermBuffer("TestTerm");
 			typeAtt.SetType("TestType");
 			Assert.AreEqual("(" + termAtt.ToString() + "," + typeAtt.ToString() + ")", src.ToString(), "Attributes should appear in original order");
-			System.Collections.IEnumerator it = src.GetAttributeImplsIterator();
+			System.Collections.Generic.IEnumerator<AttributeImpl> it = src.GetAttributeImplsIterator().GetEnumerator();
 			Assert.IsTrue(it.MoveNext(), "Iterator should have 2 attributes left");
 			Assert.AreSame(termAtt, it.Current, "First AttributeImpl from iterator should be termAtt");
 			Assert.IsTrue(it.MoveNext(), "Iterator should have 1 attributes left");
@@ -131,8 +133,9 @@ namespace Lucene.Net.Util
 			termAtt = (TermAttribute) src.AddAttribute(typeof(TermAttribute));
 			Assert.IsTrue(termAtt is Token, "TermAttribute should be implemented by Token");
 			// get the Token attribute and check, that it is the only one
-			it = src.GetAttributeImplsIterator();
-			Token tok = (Token) it.Current;
+            it = src.GetAttributeImplsIterator().GetEnumerator();
+            Assert.IsTrue(it.MoveNext());
+            Token tok = (Token)it.Current;
 			Assert.IsFalse(it.MoveNext(), "There should be only one attribute implementation instance");
 			
 			termAtt.SetTermBuffer("TestTerm");
