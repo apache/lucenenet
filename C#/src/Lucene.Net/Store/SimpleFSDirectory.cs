@@ -38,9 +38,22 @@ namespace Lucene.Net.Store
 		/// <param name="lockFactory">the lock factory to use, or null for the default.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public SimpleFSDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(path, lockFactory)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public SimpleFSDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
 		{
 		}
+		
+        /// <summary>Create a new SimpleFSDirectory for the named location.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <param name="lockFactory">the lock factory to use, or null for the default.
+        /// </param>
+        /// <throws>  IOException </throws>
+        public SimpleFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        {
+        }
 		
 		/// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
 		/// 
@@ -48,7 +61,8 @@ namespace Lucene.Net.Store
 		/// <param name="path">the path of the directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		public SimpleFSDirectory(System.IO.FileInfo path):base(path, null)
+        [System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public SimpleFSDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
 		{
 		}
 		
@@ -59,6 +73,16 @@ namespace Lucene.Net.Store
 		{
 		}
 		
+        /// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <throws>  IOException </throws>
+        public SimpleFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
+        {
+        }
+
 		/// <summary>Creates an IndexOutput for the file with the given name. </summary>
 		public override IndexOutput CreateOutput(System.String name)
 		{

@@ -59,24 +59,33 @@ namespace Lucene.Net.Store
 		/// directory itsself. Be sure to create one instance for each directory
 		/// your create!
 		/// </summary>
-		public SimpleFSLockFactory():this((System.IO.FileInfo) null)
+		public SimpleFSLockFactory():this((System.IO.DirectoryInfo) null)
 		{
 		}
 		
 		/// <summary> Instantiate using the provided directory (as a File instance).</summary>
 		/// <param name="lockDir">where lock files should be created.
 		/// </param>
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public SimpleFSLockFactory(System.IO.FileInfo lockDir)
 		{
-			SetLockDir(lockDir);
+			SetLockDir(new System.IO.DirectoryInfo(lockDir.FullName));
 		}
+
+        /// <summary> Instantiate using the provided directory (as a File instance).</summary>
+        /// <param name="lockDir">where lock files should be created.
+        /// </param>
+        public SimpleFSLockFactory(System.IO.DirectoryInfo lockDir)
+        {
+            SetLockDir(lockDir);
+        }
 		
 		/// <summary> Instantiate using the provided directory name (String).</summary>
 		/// <param name="lockDirName">where lock files should be created.
 		/// </param>
 		public SimpleFSLockFactory(System.String lockDirName)
 		{
-			lockDir = new System.IO.FileInfo(lockDirName);
+			lockDir = new System.IO.DirectoryInfo(lockDirName);
 			SetLockDir(lockDir);
 		}
 		
@@ -134,13 +143,18 @@ namespace Lucene.Net.Store
 	{
 		
 		internal System.IO.FileInfo lockFile;
-		internal System.IO.FileInfo lockDir;
-		
-		public SimpleFSLock(System.IO.FileInfo lockDir, System.String lockFileName)
+		internal System.IO.DirectoryInfo lockDir;
+
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public SimpleFSLock(System.IO.FileInfo lockDir, System.String lockFileName) : this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)
 		{
-			this.lockDir = lockDir;
-			lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
 		}
+
+        public SimpleFSLock(System.IO.DirectoryInfo lockDir, System.String lockFileName)
+        {
+            this.lockDir = new System.IO.DirectoryInfo(lockDir.FullName);
+            lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
+        }
 		
 		public override bool Obtain()
 		{

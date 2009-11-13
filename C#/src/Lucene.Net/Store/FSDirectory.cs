@@ -191,7 +191,7 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.String path)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), null);
+			return GetDirectory(new System.IO.DirectoryInfo(path), null);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -209,7 +209,7 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.String path, LockFactory lockFactory)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), lockFactory);
+			return GetDirectory(new System.IO.DirectoryInfo(path), lockFactory);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -222,10 +222,26 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
-		public static FSDirectory GetDirectory(System.IO.FileInfo file)
+		public static FSDirectory GetDirectory(System.IO.DirectoryInfo file)
 		{
 			return GetDirectory(file, null);
 		}
+
+        /// <summary>Returns the directory instance for the named location.
+        /// 
+        /// </summary>
+        /// <deprecated> Use {@link #Open(File)}
+        /// 
+        /// </deprecated>
+        /// <param name="file">the path to the directory.
+        /// </param>
+        /// <returns> the FSDirectory for the named file.  
+        /// </returns>
+        [System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+        public static FSDirectory GetDirectory(System.IO.FileInfo file)
+        {
+            return GetDirectory(new System.IO.DirectoryInfo(file.FullName), null);
+        }
 		
 		/// <summary>Returns the directory instance for the named location.
 		/// 
@@ -240,44 +256,61 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static FSDirectory GetDirectory(System.IO.FileInfo file, LockFactory lockFactory)
 		{
-			file = GetCanonicalPath(file);
-			
-			FSDirectory dir;
-			lock (DIRECTORIES.SyncRoot)
-			{
-				dir = (FSDirectory) DIRECTORIES[file];
-				if (dir == null)
-				{
-					try
-					{
-						dir = (FSDirectory) System.Activator.CreateInstance(IMPL, true);
-					}
-					catch (System.Exception e)
-					{
-						throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
-					}
-					dir.Init(file, lockFactory);
-					DIRECTORIES[file] = dir;
-				}
-				else
-				{
-					// Catch the case where a Directory is pulled from the cache, but has a
-					// different LockFactory instance.
-					if (lockFactory != null && lockFactory != dir.GetLockFactory())
-					{
-						throw new System.IO.IOException("Directory was previously created with a different LockFactory instance; please pass null as the lockFactory instance and use setLockFactory to change it");
-					}
-					dir.checked_Renamed = false;
-				}
-			}
-			lock (dir)
-			{
-				dir.refCount++;
-			}
-			return dir;
+            return GetDirectory(new System.IO.DirectoryInfo(file.FullName), lockFactory);
 		}
+
+        /// <summary>Returns the directory instance for the named location.
+        /// 
+        /// </summary>
+        /// <deprecated> Use {@link #Open(File, LockFactory)}
+        /// 
+        /// </deprecated>
+        /// <param name="file">the path to the directory.
+        /// </param>
+        /// <param name="lockFactory">instance of {@link LockFactory} providing the
+        /// locking implementation.
+        /// </param>
+        /// <returns> the FSDirectory for the named file.  
+        /// </returns>
+        public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, LockFactory lockFactory)
+        {
+            FSDirectory dir;
+            lock (DIRECTORIES.SyncRoot)
+            {
+                dir = (FSDirectory)DIRECTORIES[file];
+                if (dir == null)
+                {
+                    try
+                    {
+                        dir = (FSDirectory)System.Activator.CreateInstance(IMPL);
+                    }
+                    catch (System.Exception e)
+                    {
+                        throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
+                    }
+                    dir.Init(file, lockFactory);
+                    DIRECTORIES[file] = dir;
+                }
+                else
+                {
+                    // Catch the case where a Directory is pulled from the cache, but has a
+                    // different LockFactory instance.
+                    if (lockFactory != null && lockFactory != dir.GetLockFactory())
+                    {
+                        throw new System.IO.IOException("Directory was previously created with a different LockFactory instance; please pass null as the lockFactory instance and use setLockFactory to change it");
+                    }
+                    dir.checked_Renamed = false;
+                }
+            }
+            lock (dir)
+            {
+                dir.refCount++;
+            }
+            return dir;
+        }
 		
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -295,7 +328,7 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), create);
+			return GetDirectory(new System.IO.DirectoryInfo(path), create);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -311,61 +344,63 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
 		{
-			FSDirectory dir = GetDirectory(file, null);
-			
-			// This is now deprecated (creation should only be done
-			// by IndexWriter):
-			if (create)
-			{
-				dir.Create();
-			}
-			
-			return dir;
+			return GetDirectory(new System.IO.DirectoryInfo(file.FullName), create);
 		}
+
+        /// <summary>Returns the directory instance for the named location.
+        /// 
+        /// </summary>
+        /// <deprecated> Use IndexWriter's create flag, instead, to
+        /// create a new index.
+        /// 
+        /// </deprecated>
+        /// <param name="file">the path to the directory.
+        /// </param>
+        /// <param name="create">if true, create, or erase any existing contents.
+        /// </param>
+        /// <returns> the FSDirectory for the named file.  
+        /// </returns>
+        public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, bool create)
+        {
+            FSDirectory dir = GetDirectory(file, null);
+
+            // This is now deprecated (creation should only be done
+            // by IndexWriter):
+            if (create)
+            {
+                dir.Create();
+            }
+
+            return dir;
+        }
 		
 		/// <deprecated> 
 		/// </deprecated>
 		private void  Create()
 		{
-			bool tmpBool;
-			if (System.IO.File.Exists(directory.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(directory.FullName);
-			if (tmpBool)
-			{
-				System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter()); // clear old files
-				if (files == null)
-					throw new System.IO.IOException("cannot read directory " + directory.FullName + ": list() returned null");
-				for (int i = 0; i < files.Length; i++)
-				{
-					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, files[i]));
-					bool tmpBool2;
-					if (System.IO.File.Exists(file.FullName))
-					{
-						System.IO.File.Delete(file.FullName);
-						tmpBool2 = true;
-					}
-					else if (System.IO.Directory.Exists(file.FullName))
-					{
-						System.IO.Directory.Delete(file.FullName);
-						tmpBool2 = true;
-					}
-					else
-						tmpBool2 = false;
-					if (!tmpBool2)
-						throw new System.IO.IOException("Cannot delete " + file);
-				}
-			}
-			lockFactory.ClearLock(IndexWriter.WRITE_LOCK_NAME);
-		}
-		
-		// returns the canonical version of the directory, creating it if it doesn't exist.
-		private static System.IO.FileInfo GetCanonicalPath(System.IO.FileInfo file)
-		{
-			return new System.IO.FileInfo(file.FullName);
+			if (directory.Exists)
+ 			{
+ 				System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter()); // clear old files
+ 				if (files == null)
+ 					throw new System.IO.IOException("cannot read directory " + directory.FullName + ": list() returned null");
+ 				for (int i = 0; i < files.Length; i++)
+ 				{
+                    System.String fileOrDir = System.IO.Path.Combine(directory.FullName, files[i]);
+                    if (System.IO.File.Exists(fileOrDir))
+ 					{
+                        System.IO.File.Delete(fileOrDir);
+ 					}
+                    else if (System.IO.Directory.Exists(fileOrDir))
+ 					{
+                        System.IO.Directory.Delete(fileOrDir);
+ 					}
+                    // no need to throw anything - if a delete fails the exc will propogate to the caller
+ 				}
+ 			}
+ 			lockFactory.ClearLock(IndexWriter.WRITE_LOCK_NAME);
 		}
 		
 		private bool checked_Renamed;
@@ -426,7 +461,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>The underlying filesystem directory </summary>
-		protected internal System.IO.FileInfo directory = null;
+		protected internal System.IO.DirectoryInfo directory = null;
 		
 		/// <deprecated> 
 		/// </deprecated>
@@ -446,9 +481,8 @@ namespace Lucene.Net.Store
 		/// ({@link NativeFSLockFactory});
 		/// </param>
 		/// <throws>  IOException </throws>
-		protected internal FSDirectory(System.IO.FileInfo path, LockFactory lockFactory)
+		protected internal FSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
 		{
-			path = GetCanonicalPath(path);
 			// new ctors use always NativeFSLockFactory as default:
 			if (lockFactory == null)
 			{
@@ -462,9 +496,8 @@ namespace Lucene.Net.Store
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
 		/// 
-		/// <p>Currently this returns {@link NIOFSDirectory}
-		/// on non-Windows JREs and {@link SimpleFSDirectory}
-		/// on Windows.
+		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// NIOFSDirectory is currently not supported.
 		/// 
 		/// <p><b>NOTE</b>: this method may suddenly change which
 		/// implementation is returned from release to release, in
@@ -479,7 +512,34 @@ namespace Lucene.Net.Store
 		/// 
 		/// <p>See <a href="#subclasses">above</a> 
 		/// </summary>
+		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static FSDirectory Open(System.IO.FileInfo path)
+		{
+			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(path.FullName);
+			return Open(dir, null);
+		}
+		
+		/// <summary>Creates an FSDirectory instance, trying to pick the
+		/// best implementation given the current environment.
+		/// The directory returned uses the {@link NativeFSLockFactory}.
+		/// 
+		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// NIOFSDirectory is currently not supported.
+		/// 
+		/// <p><b>NOTE</b>: this method may suddenly change which
+		/// implementation is returned from release to release, in
+		/// the event that higher performance defaults become
+		/// possible; if the precise implementation is important to
+		/// your application, please instantiate it directly,
+		/// instead. On 64 bit systems, it may also good to
+		/// return {@link MMapDirectory}, but this is disabled
+		/// because of officially missing unmap support in Java.
+		/// For optimal performance you should consider using
+		/// this implementation on 64 bit JVMs.
+		/// 
+		/// <p>See <a href="#subclasses">above</a> 
+		/// </summary>
+		public static FSDirectory Open(System.IO.DirectoryInfo path)
 		{
 			return Open(path, null);
 		}
@@ -487,7 +547,7 @@ namespace Lucene.Net.Store
 		/// <summary>Just like {@link #Open(File)}, but allows you to
 		/// also specify a custom {@link LockFactory}. 
 		/// </summary>
-		public static FSDirectory Open(System.IO.FileInfo path, LockFactory lockFactory)
+		public static FSDirectory Open(System.IO.DirectoryInfo path, LockFactory lockFactory)
 		{
 			/* For testing:
 			MMapDirectory dir=new MMapDirectory(path, lockFactory);
@@ -506,7 +566,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/* will move to ctor, when reflection is removed in 3.0 */
-		private void  Init(System.IO.FileInfo path, LockFactory lockFactory)
+		private void  Init(System.IO.DirectoryInfo path, LockFactory lockFactory)
 		{
 			
 			// Set up lockFactory with cascaded defaults: if an instance was passed in,
@@ -516,13 +576,11 @@ namespace Lucene.Net.Store
 			
 			directory = path;
 			
-			bool tmpBool;
-			if (System.IO.File.Exists(directory.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(directory.FullName);
-			if (tmpBool && !System.IO.Directory.Exists(directory.FullName))
-				throw new NoSuchDirectoryException("file '" + directory + "' exists but is not a directory");
+            // due to differences in how Java & .NET refer to files, the checks are a bit different
+            if (!directory.Exists && System.IO.File.Exists(directory.FullName))
+            {
+                throw new NoSuchDirectoryException("file '" + directory.FullName + "' exists but is not a directory");
+            }
 			
 			if (lockFactory == null)
 			{
@@ -582,7 +640,7 @@ namespace Lucene.Net.Store
 			if (lockFactory is FSLockFactory)
 			{
 				FSLockFactory lf = (FSLockFactory) lockFactory;
-				System.IO.FileInfo dir = lf.GetLockDir();
+				System.IO.DirectoryInfo dir = lf.GetLockDir();
 				// if the lock factory has no lockDir set, use the this directory as lockDir
 				if (dir == null)
 				{
@@ -606,32 +664,42 @@ namespace Lucene.Net.Store
 		/// directory.
 		/// </summary>
 		/// <throws>  IOException if list() returns null  </throws>
+		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static System.String[] ListAll(System.IO.FileInfo dir)
 		{
-			bool tmpBool;
-			if (System.IO.File.Exists(dir.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(dir.FullName);
-			if (!tmpBool)
-				throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
-			else if (!System.IO.Directory.Exists(dir.FullName))
-				throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
-			
-			// Exclude subdirs
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(dir.FullName);
-            System.IO.FileInfo[] files = di.GetFiles();
+			return ListAll(new System.IO.DirectoryInfo(dir.FullName));
+		}
+		
+        /// <summary>Lists all files (not subdirectories) in the
+        /// directory.  This method never returns null (throws
+        /// {@link IOException} instead).
+        /// 
+        /// </summary>
+        /// <throws>  NoSuchDirectoryException if the directory </throws>
+        /// <summary>   does not exist, or does exist but is not a
+        /// directory.
+        /// </summary>
+        /// <throws>  IOException if list() returns null  </throws>
+        public static System.String[] ListAll(System.IO.DirectoryInfo dir)
+        {
+            if (!dir.Exists)
+            {
+                throw new NoSuchDirectoryException("directory '" + dir.FullName + "' does not exist");
+            }
+            // Exclude subdirs, only the file names, not the paths
+            System.IO.FileInfo[] files = dir.GetFiles();
             System.String[] result = new System.String[files.Length];
             for (int i = 0; i < files.Length; i++)
             {
                 result[i] = files[i].Name;
             }
-			
-			if (result == null)
-				throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
-			
-			return result;
-		}
+
+            // no reason to return null, if the directory cannot be listed, an exception 
+            // will be thrown on the above call to dir.GetFiles()
+            // use of LINQ to create the return value array may be a bit more efficient
+
+            return result;
+        }
 		
 		public override System.String[] List()
 		{
@@ -988,8 +1056,16 @@ namespace Lucene.Net.Store
 		public virtual System.IO.FileInfo GetFile()
 		{
 			EnsureOpen();
-			return directory;
+			return new System.IO.FileInfo(directory.FullName);
 		}
+
+        // Java Lucene implements GetFile() which returns a FileInfo.
+        // For Lucene.Net, GetDirectory() is more appropriate
+        public virtual System.IO.DirectoryInfo GetDirectory()
+        {
+            EnsureOpen();
+            return directory;
+        }
 		
 		/// <summary>For debug output. </summary>
 		public override System.String ToString()
