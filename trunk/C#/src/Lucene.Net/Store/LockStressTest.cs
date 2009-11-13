@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
 				throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
 			}
 			
-			System.IO.FileInfo lockDir = new System.IO.FileInfo(lockDirName);
+			System.IO.DirectoryInfo lockDir = new System.IO.DirectoryInfo(lockDirName);
 			
 			if (lockFactory is NativeFSLockFactory)
 			{

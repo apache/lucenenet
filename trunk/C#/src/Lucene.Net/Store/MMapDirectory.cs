@@ -112,10 +112,24 @@ namespace Lucene.Net.Store
 		/// <param name="lockFactory">the lock factory to use, or null for the default.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public MMapDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(path, lockFactory)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public MMapDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
 		{
 			InitBlock();
 		}
+		
+        /// <summary>Create a new MMapDirectory for the named location.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <param name="lockFactory">the lock factory to use, or null for the default.
+        /// </param>
+        /// <throws>  IOException </throws>
+        public MMapDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        {
+            InitBlock();
+        }
 		
 		/// <summary>Create a new MMapDirectory for the named location and the default lock factory.
 		/// 
@@ -123,10 +137,22 @@ namespace Lucene.Net.Store
 		/// <param name="path">the path of the directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		public MMapDirectory(System.IO.FileInfo path):base(path, null)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public MMapDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
 		{
 			InitBlock();
 		}
+		
+        /// <summary>Create a new MMapDirectory for the named location and the default lock factory.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <throws>  IOException </throws>
+        public MMapDirectory(System.IO.DirectoryInfo path) : base(path, null)
+        {
+            InitBlock();
+        }
 		
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
@@ -488,8 +514,8 @@ namespace Lucene.Net.Store
 		public override IndexInput OpenInput(System.String name, int bufferSize)
 		{
 			EnsureOpen();
-			System.IO.FileInfo f = new System.IO.FileInfo(System.IO.Path.Combine(GetFile().FullName, name));
-			System.IO.FileStream raf = new System.IO.FileStream(f.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+			System.String path = System.IO.Path.Combine(GetDirectory().FullName, name);
+			System.IO.FileStream raf = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
 			try
 			{
 				return (raf.Length <= (long) maxBBuf)?(IndexInput) new MMapIndexInput(this, raf):(IndexInput) new MultiMMapIndexInput(this, raf, maxBBuf);

@@ -112,7 +112,7 @@ namespace Lucene.Net.Store
 		/// directory itsself. Be sure to create one instance for each directory
 		/// your create!
 		/// </summary>
-		public NativeFSLockFactory():this((System.IO.FileInfo) null)
+		public NativeFSLockFactory():this((System.IO.DirectoryInfo) null)
 		{
 		}
 		
@@ -122,7 +122,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="lockDirName">where lock files are created.
 		/// </param>
-		public NativeFSLockFactory(System.String lockDirName):this(new System.IO.FileInfo(lockDirName))
+		public NativeFSLockFactory(System.String lockDirName):this(new System.IO.DirectoryInfo(lockDirName))
 		{
 		}
 		
@@ -132,10 +132,21 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="lockDir">where lock files are created.
 		/// </param>
-		public NativeFSLockFactory(System.IO.FileInfo lockDir)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public NativeFSLockFactory(System.IO.FileInfo lockDir) : this(new System.IO.DirectoryInfo(lockDir.FullName))
 		{
-			SetLockDir(lockDir);
 		}
+		
+        /// <summary> Create a NativeFSLockFactory instance, storing lock
+        /// files into the specified lockDir:
+        /// 
+        /// </summary>
+        /// <param name="lockDir">where lock files are created.
+        /// </param>
+        public NativeFSLockFactory(System.IO.DirectoryInfo lockDir)
+        {
+            SetLockDir(lockDir);
+        }
 		
 		public override Lock MakeLock(System.String lockName)
 		{
@@ -200,7 +211,7 @@ namespace Lucene.Net.Store
 		private System.IO.FileStream channel;
 		private bool lock_Renamed;
 		private System.IO.FileInfo path;
-		private System.IO.FileInfo lockDir;
+		private System.IO.DirectoryInfo lockDir;
 		
 		/*
 		* The javadocs for FileChannel state that you should have
@@ -213,12 +224,17 @@ namespace Lucene.Net.Store
 		* instance) have set the same lock dir and lock prefix.
 		*/
 		private static System.Collections.Hashtable LOCK_HELD = new System.Collections.Hashtable();
-		
-		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName)
+
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName):this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)
 		{
-			this.lockDir = lockDir;
-			path = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
 		}
+		
+        public NativeFSLock(System.IO.DirectoryInfo lockDir, System.String lockFileName)
+        {
+            this.lockDir = lockDir;
+            path = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
+        }
 		
 		private bool LockExists()
 		{

@@ -46,9 +46,22 @@ namespace Lucene.Net.Store
 		/// <param name="lockFactory">the lock factory to use, or null for the default.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public NIOFSDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(path, lockFactory)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public NIOFSDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
 		{
 		}
+
+        /// <summary>Create a new NIOFSDirectory for the named location.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <param name="lockFactory">the lock factory to use, or null for the default.
+        /// </param>
+        /// <throws>  IOException </throws>
+        public NIOFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        {
+        }
 		
 		/// <summary>Create a new NIOFSDirectory for the named location and the default lock factory.
 		/// 
@@ -56,9 +69,20 @@ namespace Lucene.Net.Store
 		/// <param name="path">the path of the directory
 		/// </param>
 		/// <throws>  IOException </throws>
-		public NIOFSDirectory(System.IO.FileInfo path):base(path, null)
+		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
+		public NIOFSDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
 		{
 		}
+
+        /// <summary>Create a new NIOFSDirectory for the named location and the default lock factory.
+        /// 
+        /// </summary>
+        /// <param name="path">the path of the directory
+        /// </param>
+        /// <throws>  IOException </throws>
+        public NIOFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
+        {
+        }
 		
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
