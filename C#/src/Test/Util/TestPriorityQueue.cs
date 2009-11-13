@@ -25,9 +25,6 @@ namespace Lucene.Net.Util
 	[TestFixture]
 	public class TestPriorityQueue:LuceneTestCase
 	{
-		public TestPriorityQueue(System.String name):base(name)
-		{
-		}
 		
 		private class IntegerQueue:PriorityQueue
 		{
@@ -121,12 +118,12 @@ namespace Lucene.Net.Util
 			System.Int32 i5 = 7;
 			System.Int32 i6 = 1;
 			
-			Assert.IsNull(pq.InsertWithOverflow((System.Object) i1));
-			Assert.IsNull(pq.InsertWithOverflow((System.Object) i2));
-			Assert.IsNull(pq.InsertWithOverflow((System.Object) i3));
-			Assert.IsNull(pq.InsertWithOverflow((System.Object) i4));
-			Assert.IsTrue(pq.InsertWithOverflow((System.Object) i5) == (System.Object) i3); // i3 should have been dropped
-			Assert.IsTrue(pq.InsertWithOverflow((System.Object) i6) == (System.Object) i6); // i6 should not have been inserted
+			Assert.IsNull(pq.InsertWithOverflow(i1));
+			Assert.IsNull(pq.InsertWithOverflow(i2));
+			Assert.IsNull(pq.InsertWithOverflow(i3));
+			Assert.IsNull(pq.InsertWithOverflow(i4));
+			Assert.IsTrue((int) pq.InsertWithOverflow(i5) == i3); // i3 should have been dropped
+			Assert.IsTrue((int) pq.InsertWithOverflow(i6) == i6); // i6 should not have been inserted
 			Assert.AreEqual(size, pq.Size());
 			Assert.AreEqual(2, ((System.Int32) pq.Top()));
 		}
