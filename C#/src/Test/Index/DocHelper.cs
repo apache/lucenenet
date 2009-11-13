@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 		
 		// ordered list of all the fields...
 		// could use LinkedHashMap for this purpose if Java1.4 is OK
-		public static Field[] fields = new Field[]{textField1, textField2, textField3, compressedTextField2, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField};
+        public static Field[] fields = null;
 		
 		// Map<String fieldName, Fieldable field>
 		public static System.Collections.IDictionary all = new System.Collections.Hashtable();
@@ -201,6 +201,7 @@ namespace Lucene.Net.Index
 			lazyField = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			textUtfField1 = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
 			textUtfField2 = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
+            fields = new Field[] { textField1, textField2, textField3, compressedTextField2, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
 			{
 				//Initialize the large Lazy Field
 				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -211,7 +212,7 @@ namespace Lucene.Net.Index
 				
 				try
 				{
-					LAZY_FIELD_BINARY_BYTES = System.Text.Encoding.GetEncoding("UTF8").GetBytes("These are some binary field bytes");
+					LAZY_FIELD_BINARY_BYTES = System.Text.Encoding.UTF8.GetBytes("These are some binary field bytes");
 				}
 				catch (System.IO.IOException e)
 				{
@@ -220,6 +221,7 @@ namespace Lucene.Net.Index
 				fields[fields.Length - 2] = lazyFieldBinary;
 				LARGE_LAZY_FIELD_TEXT = buffer.ToString();
 				largeLazyField = new Field(LARGE_LAZY_FIELD_KEY, LARGE_LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
+
 				fields[fields.Length - 1] = largeLazyField;
 				for (int i = 0; i < fields.Length; i++)
 				{

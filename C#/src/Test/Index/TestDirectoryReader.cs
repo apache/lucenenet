@@ -42,6 +42,10 @@ namespace Lucene.Net.Index
 		public TestDirectoryReader(System.String s):base(s)
 		{
 		}
+
+        public TestDirectoryReader() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
