@@ -308,7 +308,9 @@ namespace Lucene.Net.Search
 				int shouldMatchCount = 0;
 				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
 				{
-					Weight w = (Weight) wIter.Current;
+                    cIter.MoveNext();
+
+                    Weight w = (Weight)wIter.Current;
 					BooleanClause c = (BooleanClause) cIter.Current;
 					if (w.Scorer(reader, true, true) == null)
 					{
