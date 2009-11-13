@@ -310,7 +310,9 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
-				System.String field = (System.String) i.Current;
+                //There are too much indirections here. After all tests pass, some cleanup may be needed. {{DIGY}}
+                System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry)((System.Collections.DictionaryEntry)i.Current).Key;
+				System.String field = (System.String) tmp.Key;
 				fInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field), storePayloads, omitTFAndPositions);
 			}
 		}
