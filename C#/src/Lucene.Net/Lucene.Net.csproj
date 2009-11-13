@@ -75,7 +75,7 @@
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\SharpZipLib\netcf-20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -900,6 +900,7 @@
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
     <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="QueryParser\QueryParser.jj" />

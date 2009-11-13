@@ -40,13 +40,10 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestDateFilter:LuceneTestCase
 	{
-		public TestDateFilter(System.String name):base(name)
-		{
-		}
 		
 		/// <summary> </summary>
 		[Test]
-		public static void  TestBefore()
+		public virtual void  TestBefore()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();
@@ -103,7 +100,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> </summary>
 		[Test]
-		public static void  TestAfter()
+		public virtual void  TestAfter()
 		{
 			// create an index
 			RAMDirectory indexStore = new RAMDirectory();

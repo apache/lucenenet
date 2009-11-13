@@ -76,10 +76,7 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public static System.String DateToString(System.DateTime date, Resolution resolution)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
-			{
-				return TimeToString(date.Ticks, resolution);
-			}
+			return TimeToString(date.Ticks / TimeSpan.TicksPerMillisecond, resolution);
 		}
 		
 		/// <summary> Converts a millisecond time to a string suitable for indexing.
@@ -95,41 +92,38 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public static System.String TimeToString(long time, Resolution resolution)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
+            System.DateTime date = new System.DateTime(Round(time, resolution));
+			
+			if (resolution == Resolution.YEAR)
 			{
-                System.DateTime date = new System.DateTime(Round(time, resolution));
-				
-				if (resolution == Resolution.YEAR)
-				{
-					return date.ToString(YEAR_FORMAT);
-				}
-				else if (resolution == Resolution.MONTH)
-				{
-					return date.ToString(MONTH_FORMAT);
-				}
-				else if (resolution == Resolution.DAY)
-				{
-					return date.ToString(DAY_FORMAT);
-				}
-				else if (resolution == Resolution.HOUR)
-				{
-					return date.ToString(HOUR_FORMAT);
-				}
-				else if (resolution == Resolution.MINUTE)
-				{
-					return date.ToString(MINUTE_FORMAT);
-				}
-				else if (resolution == Resolution.SECOND)
-				{
-					return date.ToString(SECOND_FORMAT);
-				}
-				else if (resolution == Resolution.MILLISECOND)
-				{
-					return date.ToString(MILLISECOND_FORMAT);
-				}
-				
-				throw new System.ArgumentException("unknown resolution " + resolution);
+				return date.ToString(YEAR_FORMAT);
 			}
+			else if (resolution == Resolution.MONTH)
+			{
+				return date.ToString(MONTH_FORMAT);
+			}
+			else if (resolution == Resolution.DAY)
+			{
+				return date.ToString(DAY_FORMAT);
+			}
+			else if (resolution == Resolution.HOUR)
+			{
+				return date.ToString(HOUR_FORMAT);
+			}
+			else if (resolution == Resolution.MINUTE)
+			{
+				return date.ToString(MINUTE_FORMAT);
+			}
+			else if (resolution == Resolution.SECOND)
+			{
+				return date.ToString(SECOND_FORMAT);
+			}
+			else if (resolution == Resolution.MILLISECOND)
+			{
+				return date.ToString(MILLISECOND_FORMAT);
+			}
+			
+			throw new System.ArgumentException("unknown resolution " + resolution);
 		}
 		
 		/// <summary> Converts a string produced by <code>timeToString</code> or
@@ -146,10 +140,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		public static long StringToTime(System.String dateString)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
-			{
-				return StringToDate(dateString).Ticks;
-			}
+			return StringToDate(dateString).Ticks;
 		}
 		
 		/// <summary> Converts a string produced by <code>timeToString</code> or
@@ -166,70 +157,67 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		public static System.DateTime StringToDate(System.String dateString)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
-			{
-                System.DateTime date;
-                if (dateString.Length == 4)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        1, 1, 0, 0, 0, 0);
-                }
-                else if (dateString.Length == 6)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        1, 0, 0, 0, 0);
-                }
-                else if (dateString.Length == 8)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        Convert.ToInt16(dateString.Substring(6, 2)),
-                        0, 0, 0, 0);
-                }
-                else if (dateString.Length == 10)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        Convert.ToInt16(dateString.Substring(6, 2)),
-                        Convert.ToInt16(dateString.Substring(8, 2)),
-                        0, 0, 0);
-                }
-                else if (dateString.Length == 12)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        Convert.ToInt16(dateString.Substring(6, 2)),
-                        Convert.ToInt16(dateString.Substring(8, 2)),
-                        Convert.ToInt16(dateString.Substring(10, 2)),
-                        0, 0);
-                }
-                else if (dateString.Length == 14)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        Convert.ToInt16(dateString.Substring(6, 2)),
-                        Convert.ToInt16(dateString.Substring(8, 2)),
-                        Convert.ToInt16(dateString.Substring(10, 2)),
-                        Convert.ToInt16(dateString.Substring(12, 2)),
-                        0);
-                }
-                else if (dateString.Length == 17)
-                {
-                    date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                        Convert.ToInt16(dateString.Substring(4, 2)),
-                        Convert.ToInt16(dateString.Substring(6, 2)),
-                        Convert.ToInt16(dateString.Substring(8, 2)),
-                        Convert.ToInt16(dateString.Substring(10, 2)),
-                        Convert.ToInt16(dateString.Substring(12, 2)),
-                        Convert.ToInt16(dateString.Substring(14, 3)));
-                }
-                else
-                {
-                    throw new System.FormatException("Input is not valid date string: " + dateString);
-                }
-                return date;
+            System.DateTime date;
+            if (dateString.Length == 4)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    1, 1, 0, 0, 0, 0);
             }
+            else if (dateString.Length == 6)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    1, 0, 0, 0, 0);
+            }
+            else if (dateString.Length == 8)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    Convert.ToInt16(dateString.Substring(6, 2)),
+                    0, 0, 0, 0);
+            }
+            else if (dateString.Length == 10)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    Convert.ToInt16(dateString.Substring(6, 2)),
+                    Convert.ToInt16(dateString.Substring(8, 2)),
+                    0, 0, 0);
+            }
+            else if (dateString.Length == 12)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    Convert.ToInt16(dateString.Substring(6, 2)),
+                    Convert.ToInt16(dateString.Substring(8, 2)),
+                    Convert.ToInt16(dateString.Substring(10, 2)),
+                    0, 0);
+            }
+            else if (dateString.Length == 14)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    Convert.ToInt16(dateString.Substring(6, 2)),
+                    Convert.ToInt16(dateString.Substring(8, 2)),
+                    Convert.ToInt16(dateString.Substring(10, 2)),
+                    Convert.ToInt16(dateString.Substring(12, 2)),
+                    0);
+            }
+            else if (dateString.Length == 17)
+            {
+                date = new System.DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                    Convert.ToInt16(dateString.Substring(4, 2)),
+                    Convert.ToInt16(dateString.Substring(6, 2)),
+                    Convert.ToInt16(dateString.Substring(8, 2)),
+                    Convert.ToInt16(dateString.Substring(10, 2)),
+                    Convert.ToInt16(dateString.Substring(12, 2)),
+                    Convert.ToInt16(dateString.Substring(14, 3)));
+            }
+            else
+            {
+                throw new System.FormatException("Input is not valid date string: " + dateString);
+            }
+            return date;
 		}
 		
 		/// <summary> Limit a date's resolution. For example, the date <code>2004-09-21 13:50:11</code>
@@ -244,10 +232,7 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public static System.DateTime Round(System.DateTime date, Resolution resolution)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
-			{
-				return new System.DateTime(Round(date.Ticks, resolution));
-			}
+			return new System.DateTime(Round(date.Ticks / TimeSpan.TicksPerMillisecond, resolution));
 		}
 		
 		/// <summary> Limit a date's resolution. For example, the date <code>1095767411000</code>
@@ -256,6 +241,7 @@ namespace Lucene.Net.Documents
 		/// <code>Resolution.MONTH</code>.
 		/// 
 		/// </summary>
+		/// <param name="time">The time in milliseconds (not ticks).</param>
 		/// <param name="resolution">The desired resolution of the date to be returned
 		/// </param>
 		/// <returns> the date with all values more precise than <code>resolution</code>
@@ -263,59 +249,56 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public static long Round(long time, Resolution resolution)
 		{
-			lock (typeof(Lucene.Net.Documents.DateTools))
+			System.DateTime dt = new System.DateTime(time * TimeSpan.TicksPerMillisecond);
+			
+			if (resolution == Resolution.YEAR)
 			{
-				System.DateTime dt = new System.DateTime(time);
-				
-				if (resolution == Resolution.YEAR)
-				{
-                    dt = dt.AddMonths(1 - dt.Month);
-                    dt = dt.AddDays(1 - dt.Day);
-                    dt = dt.AddHours(0 - dt.Hour);
-                    dt = dt.AddMinutes(0 - dt.Minute);
-                    dt = dt.AddSeconds(0 - dt.Second);
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.MONTH)
-				{
-                    dt = dt.AddDays(1 - dt.Day);
-                    dt = dt.AddHours(0 - dt.Hour);
-                    dt = dt.AddMinutes(0 - dt.Minute);
-                    dt = dt.AddSeconds(0 - dt.Second);
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.DAY)
-				{
-                    dt = dt.AddHours(0 - dt.Hour);
-                    dt = dt.AddMinutes(0 - dt.Minute);
-                    dt = dt.AddSeconds(0 - dt.Second);
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.HOUR)
-				{
-                    dt = dt.AddMinutes(0 - dt.Minute);
-                    dt = dt.AddSeconds(0 - dt.Second);
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.MINUTE)
-				{
-                    dt = dt.AddSeconds(0 - dt.Second);
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.SECOND)
-				{
-                    dt = dt.AddMilliseconds(0 - dt.Millisecond);
-                }
-				else if (resolution == Resolution.MILLISECOND)
-				{
-					// don't cut off anything
-				}
-				else
-				{
-					throw new System.ArgumentException("unknown resolution " + resolution);
-				}
-				return dt.Ticks;
+                dt = dt.AddMonths(1 - dt.Month);
+                dt = dt.AddDays(1 - dt.Day);
+                dt = dt.AddHours(0 - dt.Hour);
+                dt = dt.AddMinutes(0 - dt.Minute);
+                dt = dt.AddSeconds(0 - dt.Second);
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.MONTH)
+			{
+                dt = dt.AddDays(1 - dt.Day);
+                dt = dt.AddHours(0 - dt.Hour);
+                dt = dt.AddMinutes(0 - dt.Minute);
+                dt = dt.AddSeconds(0 - dt.Second);
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.DAY)
+			{
+                dt = dt.AddHours(0 - dt.Hour);
+                dt = dt.AddMinutes(0 - dt.Minute);
+                dt = dt.AddSeconds(0 - dt.Second);
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.HOUR)
+			{
+                dt = dt.AddMinutes(0 - dt.Minute);
+                dt = dt.AddSeconds(0 - dt.Second);
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.MINUTE)
+			{
+                dt = dt.AddSeconds(0 - dt.Second);
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.SECOND)
+			{
+                dt = dt.AddMilliseconds(0 - dt.Millisecond);
+            }
+			else if (resolution == Resolution.MILLISECOND)
+			{
+				// don't cut off anything
 			}
+			else
+			{
+				throw new System.ArgumentException("unknown resolution " + resolution);
+			}
+			return dt.Ticks;
 		}
 		
 		/// <summary>Specifies the time granularity. </summary>
