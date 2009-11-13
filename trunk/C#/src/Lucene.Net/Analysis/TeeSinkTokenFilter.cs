@@ -111,10 +111,10 @@ namespace Lucene.Net.Analysis
 				throw new System.ArgumentException("The supplied sink is not compatible to this tee");
 			}
 			// add eventually missing attribute impls to the existing sink
-			for (System.Collections.IEnumerator it = this.CloneAttributes().GetAttributeImplsIterator(); it.MoveNext(); )
-			{
-				sink.AddAttributeImpl((AttributeImpl) it.Current);
-			}
+            foreach (AttributeImpl impl in this.CloneAttributes().GetAttributeImplsIterator())
+            {
+                sink.AddAttributeImpl(impl);
+            }
 			this.sinks.Add(new System.WeakReference(sink));
 		}
 		

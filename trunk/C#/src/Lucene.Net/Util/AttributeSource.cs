@@ -32,57 +32,6 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public class AttributeSource
 	{
-		private class AnonymousClassIterator : System.Collections.IEnumerator
-		{
-			public AnonymousClassIterator(Lucene.Net.Util.AttributeSource.State initState, AttributeSource enclosingInstance)
-			{
-				InitBlock(initState, enclosingInstance);
-			}
-			private void  InitBlock(Lucene.Net.Util.AttributeSource.State initState, AttributeSource enclosingInstance)
-			{
-				this.initState = initState;
-				this.enclosingInstance = enclosingInstance;
-				state = initState;
-			}
-			private Lucene.Net.Util.AttributeSource.State initState;
-			private AttributeSource enclosingInstance;
-			public virtual System.Object Current
-			{
-				get
-				{
-					if (state == null)
-						throw new System.ArgumentOutOfRangeException();
-					AttributeImpl att = state.attribute;
-					state = state.next;
-					return att;
-				}
-				
-			}
-			public AttributeSource Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private State state;
-			
-			public virtual void  Remove()
-			{
-				throw new System.NotSupportedException();
-			}
-			
-			public virtual bool MoveNext()
-			{
-				return state != null;
-			}
-			
-			virtual public void  Reset()
-			{
-                System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this"); // {{Aroush-2.9}}
-			}
-		}
 		/// <summary> An AttributeFactory creates instances of {@link AttributeImpl}s.</summary>
 		public abstract class AttributeFactory
 		{
@@ -156,8 +105,8 @@ namespace Lucene.Net.Util
 		
 		// These two maps must always be in sync!!!
 		// So they are private, final and read-only from the outside (read-only iterators)
-		private System.Collections.IDictionary attributes;
-		private System.Collections.Hashtable attributeImpls;
+		private SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem> attributes;
+		private SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem> attributeImpls;
 		
 		private AttributeFactory factory;
 		
@@ -181,8 +130,8 @@ namespace Lucene.Net.Util
 		/// <summary> An AttributeSource using the supplied {@link AttributeFactory} for creating new {@link Attribute} instances.</summary>
 		public AttributeSource(AttributeFactory factory)
 		{
-            this.attributes = new System.Collections.Hashtable();       // {{Aroush-2.9}} Port issue; in Java, this is java.util.LinkedHashMap
-            this.attributeImpls = new System.Collections.Hashtable();   // {{Aroush-2.9}} Port issue; in Java, this is java.util.LinkedHashMap
+            this.attributes = new SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem>(delegate(SupportClass.AttributeImplItem att) { return att.Key; });
+            this.attributeImpls = new SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem>(delegate(SupportClass.AttributeImplItem att) { return att.Key; });
 			this.factory = factory;
 		}
 		
@@ -195,10 +144,16 @@ namespace Lucene.Net.Util
 		/// <summary>Returns a new iterator that iterates the attribute classes
 		/// in the same order they were added in.
 		/// <p>Signature for Java 1.5: <code>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</code>
+		///
+		/// Note that this return value is different from Java in that it enumerates over the values
+		/// and not the keys
 		/// </summary>
-		public virtual System.Collections.IEnumerator GetAttributeClassesIterator()
+		public virtual System.Collections.Generic.IEnumerable<Type> GetAttributeClassesIterator()
 		{
-			return (new System.Collections.Hashtable(attributes)).GetEnumerator();
+            foreach (SupportClass.AttributeImplItem item in this.attributes)
+            {
+                yield return item.Key;
+            }
 		}
 		
 		/// <summary>Returns a new iterator that iterates all unique Attribute implementations.
@@ -206,7 +161,7 @@ namespace Lucene.Net.Util
 		/// if one instance implements more than one Attribute interface.
 		/// <p>Signature for Java 1.5: <code>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</code>
 		/// </summary>
-		public virtual System.Collections.IEnumerator GetAttributeImplsIterator()
+		public virtual System.Collections.Generic.IEnumerable<AttributeImpl> GetAttributeImplsIterator()
 		{
 			if (HasAttributes())
 			{
@@ -214,12 +169,12 @@ namespace Lucene.Net.Util
 				{
 					ComputeCurrentState();
 				}
-				State initState = currentState;
-				return new AnonymousClassIterator(initState, this);
-			}
-			else
-			{
-				return ((System.Collections.Hashtable) new System.Collections.Hashtable()).GetEnumerator();
+                while (currentState != null)
+                {
+                    AttributeImpl att = currentState.attribute;
+                    currentState = currentState.next;
+                    yield return att;
+                }
 			}
 		}
 		
@@ -276,12 +231,15 @@ namespace Lucene.Net.Util
 			{
 				System.Type curInterface = (System.Type) it.Current;
 				// Attribute is a superclass of this interface
-				if (!attributes.Contains(curInterface))
+				if (!attributes.ContainsKey(curInterface))
 				{
 					// invalidate state to force recomputation in captureState()
 					this.currentState = null;
-					attributes[curInterface] = att;
-					attributeImpls[clazz] = att;
+                    attributes.Add(new SupportClass.AttributeImplItem(curInterface, att));
+                    if (!attributeImpls.ContainsKey(clazz))
+                    {
+                        attributeImpls.Add(new SupportClass.AttributeImplItem(clazz, att));
+                    }
 				}
 			}
 		}
@@ -294,8 +252,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public virtual Attribute AddAttribute(System.Type attClass)
 		{
-			Attribute att = (Attribute) attributes[attClass];
-			if (att == null)
+			if (!attributes.ContainsKey(attClass))
 			{
 				AttributeImpl attImpl = this.factory.CreateAttributeInstance(attClass);
 				AddAttributeImpl(attImpl);
@@ -303,7 +260,7 @@ namespace Lucene.Net.Util
 			}
 			else
 			{
-				return att;
+				return attributes[attClass].Value;
 			}
 		}
 		
@@ -336,13 +293,14 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public virtual Attribute GetAttribute(System.Type attClass)
 		{
-			Attribute att = (Attribute) this.attributes[attClass];
-			if (att == null)
-			{
-				throw new System.ArgumentException("This AttributeSource does not have the attribute '" + attClass.FullName + "'.");
-			}
-			
-			return att;
+            if (!this.attributes.ContainsKey(attClass))
+            {
+                throw new System.ArgumentException("This AttributeSource does not have the attribute '" + attClass.FullName + "'.");
+            }
+            else
+            {
+                return this.attributes[attClass].Value;
+            }
 		}
 		
 		/// <summary> This class holds the state of an AttributeSource.</summary>
@@ -375,14 +333,14 @@ namespace Lucene.Net.Util
 		{
 			currentState = new State();
 			State c = currentState;
-            System.Collections.IEnumerator it = attributeImpls.GetEnumerator();
-            if (it.MoveNext())
-			    c.attribute = (AttributeImpl) ((System.Collections.DictionaryEntry) it.Current).Value;
+            System.Collections.Generic.IEnumerator<SupportClass.AttributeImplItem> it = attributeImpls.GetEnumerator();
+			if (it.MoveNext())
+				c.attribute = it.Current.Value;
 			while (it.MoveNext())
 			{
 				c.next = new State();
 				c = c.next;
-                c.attribute = (AttributeImpl) ((System.Collections.DictionaryEntry) it.Current).Value;
+				c.attribute = it.Current.Value;
 			}
 		}
 		
@@ -442,10 +400,11 @@ namespace Lucene.Net.Util
 			
 			do 
 			{
-				AttributeImpl targetImpl = (AttributeImpl) attributeImpls[state.attribute.GetType()];
-				if (targetImpl == null)
+				if (!attributeImpls.ContainsKey(state.attribute.GetType()))
+				{
 					throw new System.ArgumentException("State contains an AttributeImpl that is not in this AttributeSource");
-				state.attribute.CopyTo(targetImpl);
+				}
+				state.attribute.CopyTo(attributeImpls[state.attribute.GetType()].Value);
 				state = state.next;
 			}
 			while (state != null);
@@ -562,16 +521,15 @@ namespace Lucene.Net.Util
 				}
 				for (State state = currentState; state != null; state = state.next)
 				{
-					clone.attributeImpls[state.attribute.GetType()] = state.attribute.Clone();
+					AttributeImpl impl = (AttributeImpl) state.attribute.Clone();
+                    clone.attributeImpls.Add(new SupportClass.AttributeImplItem(impl.GetType(), impl));
 				}
 			}
 			
 			// now the interfaces
-			System.Collections.IEnumerator attIt = new System.Collections.Hashtable(this.attributes).GetEnumerator();
-			while (attIt.MoveNext())
+            foreach (SupportClass.AttributeImplItem att in this.attributes)
 			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) attIt.Current;
-				clone.attributes[entry.Key] = clone.attributeImpls[entry.Value.GetType()];
+                clone.attributes.Add(new SupportClass.AttributeImplItem(att.Key, clone.attributeImpls[att.Value.GetType()].Value));
 			}
 			
 			return clone;
