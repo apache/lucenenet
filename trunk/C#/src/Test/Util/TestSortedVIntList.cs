@@ -27,12 +27,6 @@ namespace Lucene.Net.Util
 	[TestFixture]
 	public class TestSortedVIntList:LuceneTestCase
 	{
-		/// <summary>Main for running test case by itself. </summary>
-		[STAThread]
-		public static void  Main(System.String[] args)
-		{
-			// TestRunner.run(new TestSuite(typeof(TestSortedVIntList))); // {{Aroush-2.9}} how is this done in NUnit?
-		}
 		
 		internal virtual void  TstIterator(SortedVIntList vintList, int[] ints)
 		{
@@ -62,7 +56,8 @@ namespace Lucene.Net.Util
 		public virtual void  TstViaBitSet(int[] ints, int expectedByteSize)
 		{
 			int MAX_INT_FOR_BITSET = 1024 * 1024;
-			System.Collections.BitArray bs = new System.Collections.BitArray(64);
+			//mgarski - BitArray cannot grow, so make as large as we would need it to be
+			System.Collections.BitArray bs = new System.Collections.BitArray(MAX_INT_FOR_BITSET);
 			for (int i = 0; i < ints.Length; i++)
 			{
 				if (ints[i] > MAX_INT_FOR_BITSET)
