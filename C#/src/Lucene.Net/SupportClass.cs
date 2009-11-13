@@ -622,10 +622,7 @@ public class SupportClass
         /// <returns>The resulting number from the shift operation</returns>
         public static int URShift(int number, int bits)
         {
-            if (number >= 0)
-                return number >> bits;
-            else
-                return (number >> bits) + (2 << ~bits);
+            return (int) (((uint) number) >> bits);
         }
 
 
@@ -637,10 +634,7 @@ public class SupportClass
         /// <returns>The resulting number from the shift operation</returns>
         public static long URShift(long number, int bits)
         {
-            if (number >= 0)
-                return number >> bits;
-            else
-                return (number >> bits) + (2 << ~bits);
+            return (long) (((ulong) number) >> bits);
         }
 
 
