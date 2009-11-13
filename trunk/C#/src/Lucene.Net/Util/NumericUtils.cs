@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
 		/// </seealso>
 		public static int FloatToSortableInt(float val)
 		{
-			int f = System.Convert.ToInt32(val);
+			int f = BitConverter.ToInt32(BitConverter.GetBytes(val), 0);
 			if (f < 0)
 				f ^= 0x7fffffff;
 			return f;

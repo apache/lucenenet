@@ -64,12 +64,14 @@ namespace Lucene.Net.Util
 						Assert.IsFalse(bits.GetAndSet(l - lower), "ranges should not overlap");
 					}
 				// make unsigned longs for easier display and understanding
-				min ^= unchecked((int) 0x8000000000000000L);
-				max ^= unchecked((int) 0x8000000000000000L);
+				min ^= unchecked((long) 0x8000000000000000L);
+				max ^= unchecked((long) 0x8000000000000000L);
 				//System.out.println("new Long(0x"+Long.toHexString(min>>>shift)+"L),new Long(0x"+Long.toHexString(max>>>shift)+"L),");
-				Assert.AreEqual((long) ((System.Int64) neededBounds.Current), SupportClass.Number.URShift(min, shift), "inner min bound");
-				Assert.AreEqual((long) ((System.Int64) neededBounds.Current), SupportClass.Number.URShift(max, shift), "inner max bound");
-			}
+                neededBounds.MoveNext();
+				Assert.AreEqual((long) neededBounds.Current, SupportClass.Number.URShift(min, shift), "inner min bound");
+                neededBounds.MoveNext();
+				Assert.AreEqual((long) neededBounds.Current, SupportClass.Number.URShift(max, shift), "inner max bound");
+            }
 		}
 		private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
 		{
@@ -113,7 +115,9 @@ namespace Lucene.Net.Util
 				min ^= unchecked((int) 0x80000000);
 				max ^= unchecked((int) 0x80000000);
 				//System.out.println("new Integer(0x"+Integer.toHexString(min>>>shift)+"),new Integer(0x"+Integer.toHexString(max>>>shift)+"),");
+                neededBounds.MoveNext();
 				Assert.AreEqual(((System.Int32) neededBounds.Current), SupportClass.Number.URShift(min, shift), "inner min bound");
+                neededBounds.MoveNext();
 				Assert.AreEqual(((System.Int32) neededBounds.Current), SupportClass.Number.URShift(max, shift), "inner max bound");
 			}
 		}
@@ -254,7 +258,7 @@ namespace Lucene.Net.Util
 			for (int i = 0; i < vals.Length; i++)
 			{
 				longVals[i] = NumericUtils.DoubleToSortableLong(vals[i]);
-				Assert.IsTrue(BitConverter.Int64BitsToDouble((long) vals[i]) == NumericUtils.SortableLongToDouble(longVals[i]), "forward and back conversion should generate same double");
+				Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableLongToDouble(longVals[i])) == 0, "forward and back conversion should generate same double");
 			}
 			
 			// check sort order (prefixVals should be ascending)
@@ -274,7 +278,7 @@ namespace Lucene.Net.Util
 			for (int i = 0; i < vals.Length; i++)
 			{
 				intVals[i] = NumericUtils.FloatToSortableInt(vals[i]);
-				Assert.IsTrue(BitConverter.ToSingle(BitConverter.GetBytes(vals[i]), 0) == NumericUtils.SortableIntToFloat(intVals[i]), "forward and back conversion should generate same double");
+				Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableIntToFloat(intVals[i])) == 0, "forward and back conversion should generate same double");
 			}
 			
 			// check sort order (prefixVals should be ascending)
