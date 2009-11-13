@@ -149,11 +149,11 @@ namespace Lucene.Net.Documents
 			
 			// timeToString:
 			cal = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar());
-			dateString = DateTools.TimeToString(cal.Ticks, DateTools.Resolution.MILLISECOND);
+			dateString = DateTools.TimeToString(cal.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.MILLISECOND);
 			Assert.AreEqual("19700101000000000", dateString);
 			
 			cal = new System.DateTime(1970, 1, 1, 1, 2, 3, 0, new System.Globalization.GregorianCalendar());
-			dateString = DateTools.TimeToString(cal.Ticks, DateTools.Resolution.MILLISECOND);
+			dateString = DateTools.TimeToString(cal.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.MILLISECOND);
 			Assert.AreEqual("19700101010203000", dateString);
 		}
 		
@@ -185,11 +185,11 @@ namespace Lucene.Net.Documents
 			Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(dateMillisecond));
 			
 			// long parameter:
-			long dateYearLong = DateTools.Round(date.Ticks, DateTools.Resolution.YEAR);
+			long dateYearLong = DateTools.Round(date.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.YEAR);
 			System.DateTime tempAux = new System.DateTime(dateYearLong);
 			Assert.AreEqual("2004-01-01 00:00:00:000", IsoFormat(tempAux));
 			
-			long dateMillisecondLong = DateTools.Round(date.Ticks, DateTools.Resolution.MILLISECOND);
+			long dateMillisecondLong = DateTools.Round(date.Ticks / TimeSpan.TicksPerMillisecond, DateTools.Resolution.MILLISECOND);
 			System.DateTime tempAux2 = new System.DateTime(dateMillisecondLong);
 			Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(tempAux2));
 		}
