@@ -133,7 +133,6 @@ namespace Lucene.Net.Index
 		}
 		
 		
-        [Test]
 		public virtual void  _testTermVectors()
 		{
 			MultiReader reader = new MultiReader(readers);
