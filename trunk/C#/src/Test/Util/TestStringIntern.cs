@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -29,18 +30,15 @@ namespace Lucene.Net.Util
 		{
 			InitBlock();
 		}
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class TestRun
 		{
-			public AnonymousClassThread(System.Int32 seed, int iter, bool newStrings, TestStringIntern enclosingInstance)
-			{
-				InitBlock(seed, iter, newStrings, enclosingInstance);
-			}
-			private void  InitBlock(System.Int32 seed, int iter, bool newStrings, TestStringIntern enclosingInstance)
+			public TestRun(Int32 seed, int iter, bool newStrings, TestStringIntern enclosingInstance)
 			{
 				this.seed = seed;
 				this.iter = iter;
 				this.newStrings = newStrings;
 				this.enclosingInstance = enclosingInstance;
+                this.Reset = new ManualResetEvent(false);
 			}
 			private System.Int32 seed;
 			private int iter;
@@ -54,7 +52,10 @@ namespace Lucene.Net.Util
 				}
 				
 			}
-			override public void  Run()
+
+            public ManualResetEvent Reset;
+
+			public void Run(System.Object state)
 			{
 				System.Random rand = new Random(seed);
 				System.String[] myInterned = new System.String[Enclosing_Instance.testStrings.Length];
@@ -69,19 +70,20 @@ namespace Lucene.Net.Util
 					System.String otherInterned = Enclosing_Instance.internedStrings[idx];
 					
 					// test against other threads
-					if (otherInterned != null && (System.Object) otherInterned != (System.Object) interned)
+					if (otherInterned != null && otherInterned != interned)
 					{
 						Assert.Fail(); // TestCase.fail();
 					}
 					Enclosing_Instance.internedStrings[idx] = interned;
 					
 					// test against local copy
-					if (prevInterned != null && (System.Object) prevInterned != (System.Object) interned)
+					if (prevInterned != null && prevInterned != interned)
 					{
 						Assert.Fail(); // TestCase.fail();
 					}
 					myInterned[idx] = interned;
 				}
+                this.Reset.Set();
 			}
 		}
 		private void  InitBlock()
@@ -125,19 +127,17 @@ namespace Lucene.Net.Util
 			// try native intern
 			// StringHelper.interner = new StringInterner();
 			
-			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[nThreads];
+			TestRun[] threads = new TestRun[nThreads];
+            ManualResetEvent[] resets = new ManualResetEvent[nThreads];
 			for (int i = 0; i < nThreads; i++)
 			{
 				int seed = i;
-				threads[i] = new AnonymousClassThread(seed, iter, newStrings, this);
-				
-				threads[i].Start();
+				threads[i] = new TestRun(seed, iter, newStrings, this);
+                resets[i] = threads[i].Reset;
+                ThreadPool.QueueUserWorkItem(new WaitCallback(threads[i].Run));
 			}
-			
-			for (int i = 0; i < nThreads; i++)
-			{
-				threads[i].Join();
-			}
+
+            WaitHandle.WaitAll(resets);
 		}
 	}
 }
