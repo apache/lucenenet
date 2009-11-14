@@ -38,6 +38,10 @@ namespace Lucene.Net.Index
 		public TestFieldInfos(System.String s):base(s)
 		{
 		}
+
+        public TestFieldInfos() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
