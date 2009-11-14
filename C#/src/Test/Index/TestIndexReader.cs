@@ -61,6 +61,10 @@ namespace Lucene.Net.Index
 		public TestIndexReader(System.String name):base(name)
 		{
 		}
+
+        public TestIndexReader(): base("")
+        {
+        }
 		
 		[Test]
 		public virtual void  TestCommitUserData()
