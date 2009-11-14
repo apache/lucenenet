@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -94,14 +95,14 @@ namespace Lucene.Net.Store
 		private int docsToAdd = 500;
 		
 		// setup the index
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			indexDir = new System.IO.FileInfo(tempDir + "\\" + "RAMDirIndex");
+			indexDir = new System.IO.FileInfo(Path.Combine(tempDir, "RAMDirIndex"));
 			
 			IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			// add some documents
@@ -255,15 +256,10 @@ namespace Lucene.Net.Store
 		{
 			base.TearDown();
 			// cleanup 
-			bool tmpBool;
-			if (System.IO.File.Exists(indexDir.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(indexDir.FullName);
-			if (indexDir != null && tmpBool)
-			{
-				RmDir(indexDir);
-			}
+            if(System.IO.Directory.Exists(indexDir.FullName))
+            {
+                System.IO.Directory.Delete(indexDir.FullName, true);
+            }
 		}
 		
 		// LUCENE-1196
@@ -279,42 +275,6 @@ namespace Lucene.Net.Store
 			i.Seek(1024);
 			i.Close();
 			dir.Close();
-		}
-		
-		private void  RmDir(System.IO.FileInfo dir)
-		{
-			System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
-			for (int i = 0; i < files.Length; i++)
-			{
-				bool tmpBool;
-				if (System.IO.File.Exists(files[i].FullName))
-				{
-					System.IO.File.Delete(files[i].FullName);
-					tmpBool = true;
-				}
-				else if (System.IO.Directory.Exists(files[i].FullName))
-				{
-					System.IO.Directory.Delete(files[i].FullName);
-					tmpBool = true;
-				}
-				else
-					tmpBool = false;
-				bool generatedAux = tmpBool;
-			}
-			bool tmpBool2;
-			if (System.IO.File.Exists(dir.FullName))
-			{
-				System.IO.File.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else if (System.IO.Directory.Exists(dir.FullName))
-			{
-				System.IO.Directory.Delete(dir.FullName);
-				tmpBool2 = true;
-			}
-			else
-				tmpBool2 = false;
-			bool generatedAux2 = tmpBool2;
 		}
 	}
 }

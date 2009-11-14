@@ -428,7 +428,7 @@ namespace Lucene.Net.Store
 			System.IO.FileInfo fdir2 = _TestUtil.GetTempDir("TestLockFactory.8.Lockdir");
 			Directory dir1 = FSDirectory.Open(new System.IO.DirectoryInfo(fdir1.FullName), new NativeFSLockFactory(fdir1));
 			// same directory, but locks are stored somewhere else. The prefix of the lock factory should != null
-			Directory dir2 = FSDirectory.Open(new System.IO.DirectoryInfo(fdir2.FullName), new NativeFSLockFactory(fdir2));
+			Directory dir2 = FSDirectory.Open(new System.IO.DirectoryInfo(fdir1.FullName), new NativeFSLockFactory(fdir2));
 			
 			System.String prefix1 = dir1.GetLockFactory().GetLockPrefix();
 			Assert.IsNull(prefix1, "Lock prefix for lockDir same as directory should be null");

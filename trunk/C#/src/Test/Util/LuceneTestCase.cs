@@ -116,6 +116,7 @@ namespace Lucene.Net.Util
 			
 			TokenStream.SetOnlyUseNewAPI(savedAPISetting);
 			//base.TearDown();  // {{Aroush-2.9}}
+            this.seed_init = false;
 		}
 		
 		/// <summary> Asserts that FieldCacheSanityChecker does not detect any 
