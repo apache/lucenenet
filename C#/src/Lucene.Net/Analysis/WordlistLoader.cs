@@ -102,17 +102,8 @@ namespace Lucene.Net.Analysis
 			System.IO.TextReader br = null;
 			try
 			{
-				if (reader is System.IO.TextReader)
-				{
-					br = (System.IO.TextReader) reader;
-				}
-				else
-				{
-					//br = new System.IO.StreamReader(reader.BaseStream, reader.CurrentEncoding);
-                    System.Diagnostics.Debug.Fail("Port issue:", "Is there a need to build a StreamReader()?");   // {{Aroush-2.9}}
-				}
 				System.String word = null;
-				while ((word = br.ReadLine()) != null)
+				while ((word = reader.ReadLine()) != null)
 				{
 					SupportClass.CollectionsHelper.Add(result, word.Trim());
 				}
@@ -137,22 +128,14 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.StreamReader reader, System.String comment)
+        public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
 			System.Collections.Hashtable result = new System.Collections.Hashtable();
 			System.IO.StreamReader br = null;
 			try
 			{
-				if (reader is System.IO.StreamReader)
-				{
-					br = (System.IO.StreamReader) reader;
-				}
-				else
-				{
-					br = new System.IO.StreamReader(reader.BaseStream, reader.CurrentEncoding);
-				}
 				System.String word = null;
-				while ((word = br.ReadLine()) != null)
+				while ((word = reader.ReadLine()) != null)
 				{
 					if (word.StartsWith(comment) == false)
 					{

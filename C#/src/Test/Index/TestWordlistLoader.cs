@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestComments()
 		{
 			System.String s = "ONE\n  two \nthree\n#comment";
-			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StreamReader(s), "#");
+			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s), "#");
 			CheckSet(wordSet1);
 			Assert.IsFalse(wordSet1.Contains("#comment"));
 			Assert.IsFalse(wordSet1.Contains("comment"));
