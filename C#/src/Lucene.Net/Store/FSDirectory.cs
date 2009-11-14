@@ -411,7 +411,14 @@ namespace Lucene.Net.Store
 			{
                 if (!this.directory.Exists)
                 {
-                    this.directory.Create();
+                    try
+                    {
+                        this.directory.Create();
+                    }
+                    catch (Exception)
+                    {
+                        throw new System.IO.IOException("Cannot create directory: " + directory);
+                    }
                     this.directory.Refresh(); // need to see the creation
                 }
 				
@@ -427,9 +434,16 @@ namespace Lucene.Net.Store
 			EnsureOpen();
 			CreateDir();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-            if (file.Exists)
+            if (file.Exists) // delete existing, if any
             {
-                file.Delete(); // handled by caller if error
+                try
+                {
+                    file.Delete();
+                }
+                catch (Exception)
+                {
+                    throw new System.IO.IOException("Cannot overwrite: " + file);
+                }
             }
 		}
 		
@@ -738,7 +752,14 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-            file.Delete();
+            try
+            {
+                file.Delete();
+            }
+            catch (Exception)
+            {
+                throw new System.IO.IOException("Cannot delete " + file);
+            }
 		}
 		
 		/// <summary>Renames an existing file in the directory. 
@@ -752,7 +773,15 @@ namespace Lucene.Net.Store
 			{
 				EnsureOpen();
                 System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
-                old.MoveTo(System.IO.Path.Combine(directory.FullName, to));
+                try
+                {
+                    old.MoveTo(System.IO.Path.Combine(directory.FullName, to));
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    System.IO.IOException newExc = new System.IO.IOException("Cannot rename " + old + " to " + directory, ioe);
+                    throw newExc;
+                }
 			}
 		}
 		
