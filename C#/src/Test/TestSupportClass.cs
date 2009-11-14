@@ -56,7 +56,7 @@ namespace Lucene.Net._SupportClass
                 }
             }
 
-            Assert.Fail("Lucene.Net TestCases:" + countSupport + " Others TestCases:" + countOther);
+            Assert.Fail("Lucene.Net TestCases:" + countSupport + "     Other TestCases:" + countOther);
         }
     }
 
