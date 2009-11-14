@@ -86,6 +86,10 @@ namespace Lucene.Net.Index
 		public TestIndexReaderCloneNorms(System.String s):base(s)
 		{
 		}
+
+        public TestIndexReaderCloneNorms(): base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
