@@ -76,6 +76,10 @@ namespace Lucene.Net.Index
 		public TestFieldsReader(System.String s):base(s)
 		{
 		}
+
+        public TestFieldsReader() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
