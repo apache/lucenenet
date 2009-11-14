@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
 using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
@@ -119,7 +120,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> Not used by any non-deprecated methods anymore
 		/// </deprecated>
-		private static readonly System.Collections.IDictionary DIRECTORIES = new System.Collections.Hashtable();
+        private static readonly Dictionary<string, FSDirectory> DIRECTORIES = new Dictionary<string, FSDirectory>();
 		
 		private static bool disableLocks = false;
 		
@@ -171,7 +172,7 @@ namespace Lucene.Net.Store
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
-		private static readonly System.Type IMPL = typeof(Lucene.Net.Store.FSDirectory);
+        private static readonly System.Type IMPL = typeof(Lucene.Net.Store.SimpleFSDirectory);
 		
 		private static System.Security.Cryptography.HashAlgorithm DIGESTER;
 		
@@ -278,21 +279,20 @@ namespace Lucene.Net.Store
         public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, LockFactory lockFactory)
         {
             FSDirectory dir;
-            lock (DIRECTORIES.SyncRoot)
+            lock (DIRECTORIES)
             {
-                dir = (FSDirectory)DIRECTORIES[file];
-                if (dir == null)
+                if(!DIRECTORIES.TryGetValue(file.FullName, out dir))
                 {
                     try
                     {
-                        dir = (FSDirectory)System.Activator.CreateInstance(IMPL);
+                        dir = (FSDirectory)System.Activator.CreateInstance(IMPL, true);
                     }
                     catch (System.Exception e)
                     {
                         throw new System.SystemException("cannot load FSDirectory class: " + e.ToString(), e);
                     }
                     dir.Init(file, lockFactory);
-                    DIRECTORIES[file] = dir;
+                    DIRECTORIES.Add(file.FullName, dir);
                 }
                 else
                 {
@@ -409,21 +409,11 @@ namespace Lucene.Net.Store
 		{
 			if (!checked_Renamed)
 			{
-				bool tmpBool;
-				if (System.IO.File.Exists(directory.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(directory.FullName);
-				if (!tmpBool)
-				{
-					try {
-                        System.IO.Directory.CreateDirectory(directory.FullName);
-                    }
-                    catch (Exception)
-                    {
-						throw new System.IO.IOException("Cannot create directory: " + directory);
-                    }
-				}
+                if (!this.directory.Exists)
+                {
+                    this.directory.Create();
+                    this.directory.Refresh(); // need to see the creation
+                }
 				
 				checked_Renamed = true;
 			}
@@ -437,27 +427,10 @@ namespace Lucene.Net.Store
 			EnsureOpen();
 			CreateDir();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			bool tmpBool;
-			if (System.IO.File.Exists(file.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(file.FullName);
-			bool tmpBool2;
-			if (System.IO.File.Exists(file.FullName))
-			{
-				System.IO.File.Delete(file.FullName);
-				tmpBool2 = true;
-			}
-			else if (System.IO.Directory.Exists(file.FullName))
-			{
-				System.IO.Directory.Delete(file.FullName);
-				tmpBool2 = true;
-			}
-			else
-				tmpBool2 = false;
-			if (tmpBool && !tmpBool2)
-			// delete existing, if any
-				throw new System.IO.IOException("Cannot overwrite: " + file);
+            if (file.Exists)
+            {
+                file.Delete(); // handled by caller if error
+            }
 		}
 		
 		/// <summary>The underlying filesystem directory </summary>
@@ -495,6 +468,9 @@ namespace Lucene.Net.Store
 		/// <summary>Creates an FSDirectory instance, trying to pick the
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
+        /// 
+        /// <p>Currently this returns {@link SimpleFSDirectory} as
+        /// NIOFSDirectory is currently not supported.
 		/// 
 		/// <p>Currently this returns {@link SimpleFSDirectory} as
 		/// NIOFSDirectory is currently not supported.
@@ -563,7 +539,7 @@ namespace Lucene.Net.Store
 			{
 				return new NIOFSDirectory(path, lockFactory);
 			}
-		}
+        }
 		
 		/* will move to ctor, when reflection is removed in 3.0 */
 		private void  Init(System.IO.DirectoryInfo path, LockFactory lockFactory)
@@ -723,12 +699,7 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			bool tmpBool;
-			if (System.IO.File.Exists(file.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(file.FullName);
-			return tmpBool;
+            return file.Exists;
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
@@ -767,21 +738,7 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			bool tmpBool;
-			if (System.IO.File.Exists(file.FullName))
-			{
-				System.IO.File.Delete(file.FullName);
-				tmpBool = true;
-			}
-			else if (System.IO.Directory.Exists(file.FullName))
-			{
-				System.IO.Directory.Delete(file.FullName);
-				tmpBool = true;
-			}
-			else
-				tmpBool = false;
-			if (!tmpBool)
-				throw new System.IO.IOException("Cannot delete " + file);
+            file.Delete();
 		}
 		
 		/// <summary>Renames an existing file in the directory. 
@@ -794,118 +751,8 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
-				System.IO.FileInfo nu = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, to));
-				
-				/* This is not atomic.  If the program crashes between the call to
-				delete() and the call to renameTo() then we're screwed, but I've
-				been unable to figure out how else to do this... */
-				
-				bool tmpBool;
-				if (System.IO.File.Exists(nu.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(nu.FullName);
-				if (tmpBool)
-				{
-					bool tmpBool2;
-					if (System.IO.File.Exists(nu.FullName))
-					{
-						System.IO.File.Delete(nu.FullName);
-						tmpBool2 = true;
-					}
-					else if (System.IO.Directory.Exists(nu.FullName))
-					{
-						System.IO.Directory.Delete(nu.FullName);
-						tmpBool2 = true;
-					}
-					else
-						tmpBool2 = false;
-					if (!tmpBool2)
-						throw new System.IO.IOException("Cannot delete " + nu);
-				}
-				
-				// Rename the old file to the new one. Unfortunately, the renameTo()
-				// method does not work reliably under some JVMs.  Therefore, if the
-				// rename fails, we manually rename by copying the old file to the new one
-                try
-                {
-                    old.MoveTo(nu.FullName);
-                }
-                catch
-				{
-					System.IO.Stream in_Renamed = null;
-					System.IO.Stream out_Renamed = null;
-					try
-					{
-						in_Renamed = new System.IO.FileStream(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
-						// see if the buffer needs to be initialized. Initialization is
-						// only done on-demand since many VM's will never run into the renameTo
-						// bug and hence shouldn't waste 1K of mem for no reason.
-						if (buffer == null)
-						{
-							buffer = new byte[1024];
-						}
-						int len;
-						while ((len = in_Renamed.Read(buffer, 0, buffer.Length)) >= 0)
-						{
-							out_Renamed.Write(buffer, 0, len);
-						}
-						
-						// delete the old file.
-						bool tmpBool3;
-						if (System.IO.File.Exists(old.FullName))
-						{
-							System.IO.File.Delete(old.FullName);
-							tmpBool3 = true;
-						}
-						else if (System.IO.Directory.Exists(old.FullName))
-						{
-							System.IO.Directory.Delete(old.FullName);
-							tmpBool3 = true;
-						}
-						else
-							tmpBool3 = false;
-						bool generatedAux = tmpBool3;
-					}
-					catch (System.IO.IOException ioe)
-					{
-						System.IO.IOException newExc = new System.IO.IOException("Cannot rename " + old + " to " + nu, ioe);
-						throw newExc;
-					}
-					finally
-					{
-						try
-						{
-							if (in_Renamed != null)
-							{
-								try
-								{
-									in_Renamed.Close();
-								}
-								catch (System.IO.IOException e)
-								{
-									throw new System.SystemException("Cannot close input stream: " + e.ToString(), e);
-								}
-							}
-						}
-						finally
-						{
-							if (out_Renamed != null)
-							{
-								try
-								{
-									out_Renamed.Close();
-								}
-								catch (System.IO.IOException e)
-								{
-									throw new System.SystemException("Cannot close output stream: " + e.ToString(), e);
-								}
-							}
-						}
-					}
-				}
+                System.IO.FileInfo old = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, from));
+                old.MoveTo(System.IO.Path.Combine(directory.FullName, to));
 			}
 		}
 		
@@ -1045,19 +892,21 @@ namespace Lucene.Net.Store
 				if (isOpen && --refCount <= 0)
 				{
 					isOpen = false;
-					lock (DIRECTORIES.SyncRoot)
+					lock (DIRECTORIES)
 					{
-						DIRECTORIES.Remove(directory);
+						DIRECTORIES.Remove(directory.FullName);
 					}
 				}
 			}
 		}
-		
+
+        [System.Obsolete("A DirectoryInfo is more appropriate, however this is here for backwards compatibility. This will be removed in the 3.0 release")]
 		public virtual System.IO.FileInfo GetFile()
 		{
 			EnsureOpen();
 			return new System.IO.FileInfo(directory.FullName);
 		}
+
 
         // Java Lucene implements GetFile() which returns a FileInfo.
         // For Lucene.Net, GetDirectory() is more appropriate

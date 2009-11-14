@@ -420,6 +420,10 @@ namespace Lucene.Net.Index
 		public TestIndexWriter(System.String name):base(name, testWithNewApiData)
 		{
 		}
+
+        public TestIndexWriter() : base("", testWithNewApiData)
+        {
+        }
 		
         [Test]
 		public virtual void  TestDocCount()
@@ -4569,7 +4573,7 @@ namespace Lucene.Net.Index
 			
 			internal virtual void  LaunchThreads(int numIter)
 			{
-				
+                threads = new SupportClass.ThreadClass[NUM_THREADS]; //{{DIGY}} Should this be created somewhere else?
 				for (int i = 0; i < NUM_THREADS; i++)
 				{
 					threads[i] = new AnonymousClassThread2(numIter, this);

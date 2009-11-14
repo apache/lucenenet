@@ -69,7 +69,7 @@ namespace Lucene.Net.Store
 			dirs[0] = new SimpleFSDirectory(path, null);
 			// dirs[1] = new NIOFSDirectory(path, null);
             System.Console.WriteLine("Skipping NIOFSDirectory() test under Lucene.Net");
-			dirs[2] = new MMapDirectory(path, null);
+			dirs[1] = new MMapDirectory(path, null);
 			
 			for (int i = 0; i < sz; i++)
 			{

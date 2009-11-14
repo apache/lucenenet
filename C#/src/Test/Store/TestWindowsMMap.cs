@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 		private const System.String alphabet = "abcdefghijklmnopqrstuvwzyz";
 		private System.Random random;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
