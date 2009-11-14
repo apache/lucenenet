@@ -202,6 +202,10 @@ namespace Lucene.Net.Index
 		public TestDocumentWriter(System.String s):base(s)
 		{
 		}
+
+        public TestDocumentWriter() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
