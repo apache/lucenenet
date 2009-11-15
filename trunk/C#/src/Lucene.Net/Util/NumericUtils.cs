@@ -117,15 +117,15 @@ namespace Lucene.Net.Util
 				throw new System.ArgumentException("Illegal shift value, must be 0..63");
 			int nChars = (63 - shift) / 7 + 1, len = nChars + 1;
 			buffer[0] = (char) (SHIFT_START_LONG + shift);
-			long sortableBits = val ^ unchecked((long) 0x8000000000000000L);   // {{Aroush-2.9}} using 'unchecked' here!
-			sortableBits = SupportClass.Number.URShift(sortableBits, shift);
+            ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L;
+			sortableBits = sortableBits >> shift;
 			while (nChars >= 1)
 			{
 				// Store 7 bits per character for good efficiency when UTF-8 encoding.
 				// The whole number is right-justified so that lucene can prefix-encode
 				// the terms more efficiently.
 				buffer[nChars--] = (char) (sortableBits & 0x7f);
-				sortableBits = SupportClass.Number.URShift(sortableBits, 7);
+				sortableBits = sortableBits >> 7;
 			}
 			return len;
 		}
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util
 			int shift = prefixCoded[0] - SHIFT_START_LONG;
 			if (shift > 63 || shift < 0)
 				throw new System.FormatException("Invalid shift value in prefixCoded string (is encoded value really a LONG?)");
-			long sortableBits = 0L;
+			ulong sortableBits = 0UL;
 			for (int i = 1, len = prefixCoded.Length; i < len; i++)
 			{
 				sortableBits <<= 7;
@@ -232,9 +232,9 @@ namespace Lucene.Net.Util
 				{
 					throw new System.FormatException("Invalid prefixCoded numerical value representation (char " + System.Convert.ToString((int) ch, 16) + " at position " + i + " is invalid)");
 				}
-				sortableBits |= (long) ch;
+				sortableBits |= (ulong) ch;
 			}
-			return (sortableBits << shift) ^ unchecked((long) 0x8000000000000000L); // {{Aroush-2.9}} using 'unchecked' here!
+			return BitConverter.ToInt64(BitConverter.GetBytes((sortableBits << shift) ^ 0x8000000000000000L), 0);
 		}
 		
 		/// <summary> Returns an int from prefixCoded characters.
