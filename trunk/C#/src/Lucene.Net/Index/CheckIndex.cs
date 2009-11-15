@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 					{
 						infoStream.Write("    test: fields..............");
 					}
-					System.Collections.ICollection fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+                    System.Collections.Generic.ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 					Msg("OK [" + fieldNames.Count + " fields]");
 					segInfoStat.numFields = fieldNames.Count;
 					
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Test field norms.</summary>
-		private Status.FieldNormStatus TestFieldNorms(System.Collections.ICollection fieldNames, SegmentReader reader)
+        private Status.FieldNormStatus TestFieldNorms(System.Collections.Generic.ICollection<string> fieldNames, SegmentReader reader)
 		{
 			Status.FieldNormStatus status = new Status.FieldNormStatus();
 			
@@ -664,7 +664,7 @@ namespace Lucene.Net.Index
 				byte[] b = new byte[reader.MaxDoc()];
 				while (it.MoveNext())
 				{
-					System.String fieldName = (System.String) ((System.Collections.DictionaryEntry) it.Current).Value;
+					System.String fieldName = (System.String) it.Current;
 					reader.Norms(fieldName, b, 0);
 					++status.totFields;
 				}

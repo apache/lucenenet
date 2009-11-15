@@ -233,7 +233,7 @@ namespace Lucene.Net
 			// While we hold the snapshot, and nomatter how long
 			// we take to do the backup, the IndexWriter will
 			// never delete the files in the snapshot:
-			System.Collections.ICollection files = cp.GetFileNames();
+			System.Collections.Generic.ICollection<string> files = cp.GetFileNames();
 			System.Collections.IEnumerator it = files.GetEnumerator();
 			while (it.MoveNext())
 			{

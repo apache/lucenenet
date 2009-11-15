@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 			if (reader.NumDocs() != numDocs)
 				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs());
 			
-			System.Collections.ICollection fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			System.Collections.Generic.ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
 			System.Collections.IEnumerator i = fields.GetEnumerator();
 			while (i.MoveNext())
@@ -534,16 +534,16 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+
+        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
-            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            System.Collections.Generic.List<string> fieldSet = new System.Collections.Generic.List<string>();
 			for (int i = 0; i < readers.Count; i++)
 			{
 				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-				SupportClass.CollectionsHelper.AddAll(fieldSet, names);
+				System.Collections.Generic.ICollection<string> names = reader.GetFieldNames(fieldNames);
+                fieldSet.AddRange(names);
 			}
 			return fieldSet;
 		}
@@ -623,6 +623,7 @@ namespace Lucene.Net.Index
                     }
 
                     fieldIterator = newList.Keys.GetEnumerator();
+                    fieldIterator.MoveNext();
 					System.Object generatedAux = fieldIterator.Current; // Skip field to get next one
 				}
 				while (fieldIterator.MoveNext())

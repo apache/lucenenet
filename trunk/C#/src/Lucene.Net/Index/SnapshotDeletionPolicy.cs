@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetSegmentsFileName();
 			}
-			public override System.Collections.ICollection GetFileNames()
+            public override System.Collections.Generic.ICollection<string> GetFileNames()
 			{
 				return cp.GetFileNames();
 			}

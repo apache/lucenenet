@@ -473,9 +473,9 @@ namespace Lucene.Net.Index
 		public override System.Object Clone()
 		{
             SegmentInfos sis = new SegmentInfos();
-            for (int i = 0; i < base.Count; i++)
+            for (int i = 0; i < this.Count; i++)
             {
-                sis.Add(((SegmentInfo) base[i]).Clone());
+                sis.Add(((SegmentInfo) this[i]).Clone());
             }
             sis.counter = this.counter;
             sis.generation = this.generation;
@@ -943,12 +943,13 @@ namespace Lucene.Net.Index
 		/// The returned collection is recomputed on each
 		/// invocation.  
 		/// </summary>
-		public System.Collections.ICollection Files(Directory dir, bool includeSegmentsFile)
+        public System.Collections.Generic.ICollection<string> Files(Directory dir, bool includeSegmentsFile)
 		{
-            System.Collections.Hashtable files = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<string, string> files = new System.Collections.Generic.Dictionary<string, string>();
 			if (includeSegmentsFile)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(files, GetCurrentSegmentFileName());
+                string tmp = GetCurrentSegmentFileName();
+                files.Add(tmp, tmp);
 			}
 			int size = Count;
 			for (int i = 0; i < size; i++)
@@ -959,7 +960,7 @@ namespace Lucene.Net.Index
 					SupportClass.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
 				}
 			}
-			return files;
+			return files.Keys;
 		}
 		
 		internal void  FinishCommit(Directory dir)

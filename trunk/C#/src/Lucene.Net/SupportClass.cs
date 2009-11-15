@@ -1511,6 +1511,31 @@ public class SupportClass
             }
         }
 
+        public static void AddAllIfNotContains(System.Collections.Generic.IDictionary<string,string> hashtable, System.Collections.Generic.ICollection<string> items)
+        {
+            foreach (string s in items)
+            {
+                if (hashtable.ContainsKey(s) == false)
+                {
+                    hashtable.Add(s, s);
+                }
+            }
+        }
+
+        public static void AddAll(System.Collections.Generic.IDictionary<string, string> hashtable, System.Collections.Generic.ICollection<string> items)
+        {
+            foreach (string s in items)
+            {
+                hashtable.Add(s, s);
+            }
+        }
+
+        public static bool Contains(System.Collections.Generic.ICollection<string> col, string item)
+        {
+            foreach (string s in col) if (s == item) return true;
+            return false;
+        }
+
         public static bool Contains(System.Collections.ICollection col, System.Object item)
         {
             System.Collections.IEnumerator iter = col.GetEnumerator();

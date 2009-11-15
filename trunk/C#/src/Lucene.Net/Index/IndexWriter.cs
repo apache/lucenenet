@@ -2832,7 +2832,7 @@ namespace Lucene.Net.Index
 							// never incref'd, then we clean them up here
 							if (docWriter != null)
 							{
-								System.Collections.ICollection files = docWriter.AbortedFiles();
+                                System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
 								if (files != null)
 									deleter.DeleteNewFiles(files);
 							}
@@ -3010,7 +3010,7 @@ namespace Lucene.Net.Index
 						{
 							// If docWriter has some aborted files that were
 							// never incref'd, then we clean them up here
-							System.Collections.ICollection files = docWriter.AbortedFiles();
+                            System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
 							if (files != null)
 								deleter.DeleteNewFiles(files);
 						}
@@ -4523,7 +4523,7 @@ namespace Lucene.Net.Index
 				if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
 				{
 					
-					System.Collections.IList files = null;
+					System.Collections.Generic.IList<string> files = null;
 					
 					lock (this)
 					{
@@ -6097,7 +6097,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// Files that have been sync'd already
-        private System.Collections.Hashtable synced = new System.Collections.Hashtable();
+        private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
 		
 		// Files that are now being sync'd
         private System.Collections.Hashtable syncing = new System.Collections.Hashtable();
@@ -6106,7 +6106,7 @@ namespace Lucene.Net.Index
 		{
 			lock (synced)
 			{
-				if (!synced.Contains(fileName))
+				if (!synced.ContainsKey(fileName))
 				{
 					if (!syncing.Contains(fileName))
 					{
@@ -6145,7 +6145,7 @@ namespace Lucene.Net.Index
 				while (it.MoveNext())
 				{
 					System.String fileName = (System.String) it.Current;
-					while (!synced.Contains(fileName))
+					while (!synced.ContainsKey(fileName))
 					{
 						if (!syncing.Contains(fileName))
 						// There was an error because a file that was
@@ -6313,10 +6313,10 @@ namespace Lucene.Net.Index
 						deleter.IncRef(toSync, false);
 						myChangeCount = changeCount;
 						
-						System.Collections.IEnumerator it = toSync.Files(directory, false).GetEnumerator();
+						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
-							System.String fileName = (System.String) ((System.Collections.DictionaryEntry) it.Current).Key;
+							System.String fileName = it.Current;
 							System.Diagnostics.Debug.Assert(directory.FileExists(fileName), "file " + fileName + " does not exist");
 						}
 					}
@@ -6339,10 +6339,10 @@ namespace Lucene.Net.Index
 						
 						System.Collections.Generic.ICollection<System.String> pending = new System.Collections.Generic.List<System.String>();
 						
-						System.Collections.IEnumerator it = toSync.Files(directory, false).GetEnumerator();
+						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
-							System.String fileName = (System.String) ((System.Collections.DictionaryEntry) it.Current).Key;
+							System.String fileName = it.Current;
 							if (StartSync(fileName, pending))
 							{
 								bool success = false;

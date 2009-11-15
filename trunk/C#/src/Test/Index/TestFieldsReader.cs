@@ -93,6 +93,14 @@ namespace Lucene.Net.Index
 			writer.AddDocument(testDoc);
 			writer.Close();
 		}
+
+        [TearDown]
+        public void TearDown()
+        {
+            fieldInfos = null;
+            testDoc = new Document();
+            dir = new RAMDirectory();
+        }
 		
 		[Test]
 		public virtual void  Test()

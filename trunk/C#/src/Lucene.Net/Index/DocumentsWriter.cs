@@ -473,11 +473,11 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private System.Collections.ICollection abortedFiles; // List of files that were written before last abort()
+		private System.Collections.Generic.ICollection<string> abortedFiles; // List of files that were written before last abort()
 		
 		private SegmentWriteState flushState;
-		
-		internal System.Collections.ICollection AbortedFiles()
+
+        internal System.Collections.Generic.ICollection<string> AbortedFiles()
 		{
 			return abortedFiles;
 		}
@@ -487,26 +487,30 @@ namespace Lucene.Net.Index
 			if (infoStream != null)
 				writer.Message("DW: " + message);
 		}
-		
-		internal System.Collections.IList openFiles = new System.Collections.ArrayList();
-		internal System.Collections.IList closedFiles = new System.Collections.ArrayList();
+
+        internal System.Collections.Generic.IList<string> openFiles = new System.Collections.Generic.List<string>();
+        internal System.Collections.Generic.IList<string> closedFiles = new System.Collections.Generic.List<string>();
 		
 		/* Returns Collection of files in use by this instance,
 		* including any flushed segments. */
-		internal System.Collections.IList OpenFiles()
+		internal System.Collections.Generic.IList<string> OpenFiles()
 		{
 			lock (this)
 			{
-				return (System.Collections.IList) ((System.Collections.ArrayList) openFiles).Clone();
+                string[] tmp = new string[openFiles.Count];
+                openFiles.CopyTo(tmp, 0);
+				return tmp;
 			}
 		}
 		
-		internal System.Collections.IList ClosedFiles()
+		internal System.Collections.Generic.IList<string> ClosedFiles()
 		{
-			lock (this)
-			{
-				return (System.Collections.IList) ((System.Collections.ArrayList) closedFiles).Clone();
-			}
+            lock (this)
+            {
+                string[] tmp = new string[closedFiles.Count];
+                closedFiles.CopyTo(tmp, 0);
+                return tmp;
+            }
 		}
 		
 		internal void  AddOpenFile(System.String name)

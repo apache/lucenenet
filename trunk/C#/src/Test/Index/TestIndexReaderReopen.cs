@@ -1159,7 +1159,7 @@ namespace Lucene.Net.Index
 			System.Collections.IEnumerator it = readersToClose.GetEnumerator();
 			while (it.MoveNext())
 			{
-				((IndexReader) it.Current).Close();
+				((IndexReader) ((System.Collections.DictionaryEntry)it.Current).Key).Close();
 			}
 			
 			firstReader.Close();
@@ -1168,7 +1168,7 @@ namespace Lucene.Net.Index
 			it = readersToClose.GetEnumerator();
 			while (it.MoveNext())
 			{
-				AssertReaderClosed((IndexReader) it.Current, true, true);
+                AssertReaderClosed((IndexReader)((System.Collections.DictionaryEntry)it.Current).Key, true, true);
 			}
 			
 			AssertReaderClosed(reader, true, true);

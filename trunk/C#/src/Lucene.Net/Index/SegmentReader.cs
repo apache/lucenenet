@@ -1147,9 +1147,9 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal virtual System.Collections.IList Files()
+		internal virtual System.Collections.Generic.IList<string> Files()
 		{
-			return new System.Collections.ArrayList(si.Files());
+			return si.Files();
 		}
 		
 		public override TermEnum Terms()
@@ -1234,11 +1234,11 @@ namespace Lucene.Net.Index
 		
 		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
 		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldOption)
+        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
 			EnsureOpen();
 
-            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            System.Collections.Generic.IDictionary<string, string> fieldSet = new System.Collections.Generic.Dictionary<string, string>();
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
@@ -1287,7 +1287,7 @@ namespace Lucene.Net.Index
 					fieldSet[fi.name] = fi.name;
 				}
 			}
-			return fieldSet;
+			return fieldSet.Keys;
 		}
 		
 		

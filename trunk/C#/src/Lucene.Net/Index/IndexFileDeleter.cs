@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		
 		/* Holds files we had incref'd from the previous
 		* non-commit checkpoint: */
-		private System.Collections.IList lastFiles = new System.Collections.ArrayList();
+        private System.Collections.Generic.IList<string> lastFiles = new System.Collections.Generic.List<string>();
 		
 		/* Commits that the IndexDeletionPolicy have decided to delete: */
 		private System.Collections.ArrayList commitsToDelete = new System.Collections.ArrayList();
@@ -286,10 +286,10 @@ namespace Lucene.Net.Index
 					{
 						Message("deleteCommits: now decRef commit \"" + commit.GetSegmentsFileName() + "\"");
 					}
-					System.Collections.IEnumerator it = commit.files.GetEnumerator();
+					System.Collections.Generic.IEnumerator<string> it = commit.files.GetEnumerator();
 					while (it.MoveNext())
 					{
-						DecRef((System.String) ((System.Collections.DictionaryEntry) it.Current).Key);
+						DecRef(it.Current);
 					}
 				}
 				commitsToDelete.Clear();
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
 			if (size > 0)
 			{
 				for (int i = 0; i < size; i++)
-					DecRef((System.Collections.ICollection) lastFiles[i]);
+					DecRef(lastFiles[i]);
 				lastFiles.Clear();
 			}
 			
@@ -444,7 +444,7 @@ namespace Lucene.Net.Index
 			else
 			{
 				
-				System.Collections.IList docWriterFiles;
+				System.Collections.Generic.IList<string> docWriterFiles;
 				if (docWriter != null)
 				{
 					docWriterFiles = docWriter.OpenFiles();
@@ -462,15 +462,23 @@ namespace Lucene.Net.Index
 				if (size > 0)
 				{
 					for (int i = 0; i < size; i++)
-						DecRef((System.Collections.ICollection) lastFiles[i]);
+						DecRef(lastFiles[i]);
 					lastFiles.Clear();
 				}
 				
 				// Save files so we can decr on next checkpoint/commit:
-				lastFiles.Add(segmentInfos.Files(directory, false));
+                foreach (string fname in segmentInfos.Files(directory, false))
+                {
+                    lastFiles.Add(fname);
+                }
 				
-				if (docWriterFiles != null)
-					lastFiles.Add(docWriterFiles);
+                if (docWriterFiles != null)
+                {
+                    foreach (string fname in docWriterFiles)
+                    {
+                        lastFiles.Add(fname);
+                    }
+                }
 			}
 		}
 		
@@ -478,14 +486,14 @@ namespace Lucene.Net.Index
 		{
 			// If this is a commit point, also incRef the
 			// segments_N file:
-			System.Collections.IEnumerator it = segmentInfos.Files(directory, isCommit).GetEnumerator();
+			System.Collections.Generic.IEnumerator<string> it = segmentInfos.Files(directory, isCommit).GetEnumerator();
 			while (it.MoveNext())
 			{
-				IncRef((System.String) ((System.Collections.DictionaryEntry) it.Current).Key);
+				IncRef(it.Current);
 			}
 		}
 		
-		internal void  IncRef(System.Collections.IList files)
+		internal void  IncRef(System.Collections.Generic.IList<string> files)
 		{
 			int size = files.Count;
 			for (int i = 0; i < size; i++)
@@ -504,7 +512,7 @@ namespace Lucene.Net.Index
 			rc.IncRef();
 		}
 		
-		internal void  DecRef(System.Collections.ICollection files)
+		internal void  DecRef(System.Collections.Generic.ICollection<string> files)
 		{
             if (files is System.Collections.Hashtable)
             {
@@ -542,10 +550,10 @@ namespace Lucene.Net.Index
 		
 		internal void  DecRef(SegmentInfos segmentInfos)
 		{
-			System.Collections.IEnumerator it = segmentInfos.Files(directory, false).GetEnumerator();
+			System.Collections.Generic.IEnumerator<string> it = segmentInfos.Files(directory, false).GetEnumerator();
 			while (it.MoveNext())
 			{
-				DecRef((System.String)((System.Collections.DictionaryEntry) it.Current).Key);
+				DecRef(it.Current);
 			}
 		}
 		
@@ -574,7 +582,7 @@ namespace Lucene.Net.Index
 		/// <summary>Deletes the specified files, but only if they are new
 		/// (have not yet been incref'd). 
 		/// </summary>
-		internal void  DeleteNewFiles(System.Collections.ICollection files)
+        internal void DeleteNewFiles(System.Collections.Generic.ICollection<string> files)
 		{
 			System.Collections.IEnumerator it = files.GetEnumerator();
 			while (it.MoveNext())
@@ -678,7 +686,7 @@ namespace Lucene.Net.Index
             }
 			
 			internal long gen;
-			internal System.Collections.ICollection files;
+            internal System.Collections.Generic.ICollection<string> files;
 			internal System.String segmentsFileName;
 			internal bool deleted;
 			internal Directory directory;
@@ -697,7 +705,7 @@ namespace Lucene.Net.Index
 				segmentsFileName = segmentInfos.GetCurrentSegmentFileName();
 				version = segmentInfos.GetVersion();
 				generation = segmentInfos.GetGeneration();
-				files = System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(segmentInfos.Files(directory, true)));
+                files = segmentInfos.Files(directory, true);
 				gen = segmentInfos.GetGeneration();
 				isOptimized = segmentInfos.Count == 1 && !segmentInfos.Info(0).HasDeletions();
 				
@@ -713,8 +721,8 @@ namespace Lucene.Net.Index
 			{
 				return segmentsFileName;
 			}
-			
-			public override System.Collections.ICollection GetFileNames()
+
+            public override System.Collections.Generic.ICollection<string> GetFileNames()
 			{
 				return files;
 			}

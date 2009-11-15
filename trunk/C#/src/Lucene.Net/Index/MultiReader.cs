@@ -464,8 +464,8 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+
+        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return DirectoryReader.GetFieldNames(fieldNames, this.subReaders);

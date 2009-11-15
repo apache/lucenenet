@@ -298,9 +298,9 @@ namespace Lucene.Net.Index
 		{
 			in_Renamed.Close();
 		}
-		
-		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+
+
+        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return in_Renamed.GetFieldNames(fieldNames);
