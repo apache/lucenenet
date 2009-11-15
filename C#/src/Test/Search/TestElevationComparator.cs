@@ -180,8 +180,8 @@ namespace Lucene.Net.Search
 			private int DocVal(int doc)
 			{
 				System.String id = idIndex.lookup[idIndex.order[doc]];
-				System.Int32 prio = (System.Int32) Enclosing_Instance.priority[id];
-				return Enclosing_Instance.priority[id] == null ? 0 : prio;
+				object prio = Enclosing_Instance.priority[id];
+                return prio == null ? 0 : (int)prio;
 			}
 			
 			public override int CompareBottom(int doc)

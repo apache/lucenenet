@@ -247,7 +247,14 @@ namespace Lucene.Net.Search
 	{
 		public virtual float ParseFloat(System.String value_Renamed)
 		{
-			return System.Single.Parse(value_Renamed);
+            try
+            {
+                return System.Single.Parse(value_Renamed);
+            }
+            catch (System.OverflowException)
+            {
+                return value_Renamed.StartsWith("-") ? float.PositiveInfinity : float.NegativeInfinity;
+            }
 		}
 		protected internal virtual System.Object ReadResolve()
 		{

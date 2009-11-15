@@ -36,10 +36,6 @@ namespace Lucene.Net.Search
 		protected internal IndexReader reader;
 		private const int NUM_DOCS = 1000;
 		
-		public TestFieldCache(System.String s):base(s)
-		{
-		}
-		
 		[SetUp]
 		public override void  SetUp()
 		{
@@ -56,11 +52,11 @@ namespace Lucene.Net.Search
 			{
 				Document doc = new Document();
 				doc.Add(new Field("theLong", System.Convert.ToString(theLong--), Field.Store.NO, Field.Index.NOT_ANALYZED));
-				doc.Add(new Field("theDouble", System.Convert.ToString(theDouble--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("theDouble", theDouble.ToString("E16"), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theByte", System.Convert.ToString((byte) theByte--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theShort", System.Convert.ToString(theShort--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theInt", System.Convert.ToString(theInt--), Field.Store.NO, Field.Index.NOT_ANALYZED));
-				doc.Add(new Field("theFloat", System.Convert.ToString(theFloat--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("theFloat", theFloat.ToString("E8"), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Close();
@@ -74,11 +70,13 @@ namespace Lucene.Net.Search
 			{
 				FieldCache cache = Lucene.Net.Search.FieldCache_Fields.DEFAULT;
 				System.IO.MemoryStream bos = new System.IO.MemoryStream(1024);
-				cache.SetInfoStream(new System.IO.StreamWriter(bos));
+                System.IO.StreamWriter writer = new System.IO.StreamWriter(bos);
+				cache.SetInfoStream(writer);
 				double[] doubles = cache.GetDoubles(reader, "theDouble");
 				float[] floats = cache.GetFloats(reader, "theDouble");
 				char[] tmpChar;
 				byte[] tmpByte;
+                writer.Flush();
 				tmpByte = bos.GetBuffer();
 				tmpChar = new char[bos.Length];
 				System.Array.Copy(tmpByte, 0, tmpChar, 0, tmpChar.Length);

@@ -142,8 +142,7 @@ namespace Lucene.Net.Util
 					else
 					{
 						size += refSize;
-                        fields[i].GetType(); // {{Aroush-2.9}} how to do the following in C#: java.lang.reflect.AccessibleObject.setAccessible(true)
-                        System.Diagnostics.Debug.Fail("Port issue:", "java.lang.reflect.AccessibleObject.setAccessible()");
+                        fields[i].GetType(); 
 						try
 						{
 							System.Object value_Renamed = fields[i].GetValue(obj);

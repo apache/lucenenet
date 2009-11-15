@@ -79,9 +79,6 @@ namespace Lucene.Net.Search
 				return true;
 			}
 		}
-		public TestDocBoost(System.String name):base(name)
-		{
-		}
 		
 		[Test]
 		public virtual void  TestDocBoost_Renamed()
