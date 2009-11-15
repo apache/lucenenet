@@ -810,29 +810,8 @@ namespace Lucene.Net.Store
 					try
 					{
                         file = new System.IO.FileStream(fullFile.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                        
-                        //TODO
-                        // {{dougsale-2.4}}:
-                        // 
-                        // in Lucene (Java):
-                        // file.getFD().sync();
-                        // file is a java.io.RandomAccessFile
-                        // getFD() returns java.io.FileDescriptor
-                        // sync() documentation states: "Force all system buffers to synchronize with the underlying device."
-                        //
-                        // what they try to do here is get ahold of the underlying file descriptor
-                        // for the given file name and make sure all (downstream) associated system buffers are
-                        // flushed to disk
-                        // 
-                        // how do i do that in .Net?  flushing the created stream might inadvertently do it, or it
-                        // may do nothing at all.  I can find references to the file HANDLE, but it's not really
-                        // a type, simply an int pointer.
-                        //
-                        // where is FSDirectory.Sync(string name) called from - if this isn't a new feature but rather a refactor, maybe
-                        // i can snip the old code from where it was re-factored...
-
-                        file.Flush();
-						success = true;
+                        SupportClass.FileSupport.Sync(file);
+                        success = true;
 					}
 					finally
 					{
