@@ -468,6 +468,46 @@ public class SupportClass
             list.CopyTo(retFiles);
             return retFiles;
         }
+
+		// Disable the obsolete warning since we must use FileStream.Handle
+		// because Mono does not support FileSystem.SafeFileHandle at present.
+#pragma warning disable 618
+
+		/// <summary>
+		/// Flushes the specified file stream. Ensures that all buffered
+		/// data is actually written to the file system.
+		/// </summary>
+		/// <param name="fileStream">The file stream.</param>
+		public static void Sync(System.IO.FileStream fileStream)
+		{
+			if (fileStream == null)
+				throw new ArgumentNullException("fileStream");
+
+			fileStream.Flush();
+
+			if (OS.IsWindows)
+			{
+				if (!FlushFileBuffers(fileStream.Handle))
+					throw new System.IO.IOException();
+			}
+			else if (OS.IsUnix)
+			{
+				if (fsync(fileStream.Handle) != IntPtr.Zero)
+				throw new System.IO.IOException();
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+#pragma warning restore 618
+
+		[System.Runtime.InteropServices.DllImport("libc")]
+		extern static IntPtr fsync(IntPtr fd);
+
+		[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+		extern static bool FlushFileBuffers(IntPtr hFile);
     }
 
     /// <summary>
@@ -1739,4 +1779,41 @@ public class SupportClass
         internal Type Key;
         internal Lucene.Net.Util.AttributeImpl Value;
     }
+
+	/// <summary>
+	/// Provides platform infos.
+	/// </summary>
+	public class OS
+	{
+		static bool isUnix;
+		static bool isWindows;
+
+		static OS()
+		{
+			PlatformID pid = Environment.OSVersion.Platform;
+			isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
+
+			// we use integers instead of enum tags because "MacOS"
+			// requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
+			// 128 is mono's old platform tag for Unix.
+			int id = (int)pid;
+			isUnix = id == 4 || id == 6 || id == 128;
+		}
+
+		/// <summary>
+		/// Whether we run under a Unix platform.
+		/// </summary>
+		public static bool IsUnix
+		{
+			get { return isUnix; }
+		}
+
+		/// <summary>
+		/// Whether we run under a supported Windows platform.
+		/// </summary>
+		public static bool IsWindows
+		{
+			get { return isWindows; }
+		}
+	}
 }

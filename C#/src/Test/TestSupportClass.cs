@@ -679,4 +679,27 @@ namespace Lucene.Net._SupportClass
             }
         }
     }
+
+    [TestFixture]
+    public class TestOSClass
+    {
+        // LUCENENET-216
+        [Test]
+        public void TestFSDirectorySync()
+        {
+            System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testsync"));
+            Lucene.Net.Store.Directory directory = new Lucene.Net.Store.SimpleFSDirectory(path, null);
+            try
+            {
+                Lucene.Net.Store.IndexOutput io = directory.CreateOutput("syncfile");
+                io.Close();
+                directory.Sync("syncfile");
+            }
+            finally
+            {
+                directory.Close();
+                Lucene.Net.Util._TestUtil.RmDir(path);
+            }
+        }
+    }
 }
