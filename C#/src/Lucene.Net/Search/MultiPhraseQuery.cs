@@ -447,12 +447,6 @@ namespace Lucene.Net.Search
 			}
 			return true;
 		}
-		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "do we need to implement 'Clone'?");   // {{Aroush-2.9}}
-			return null;
-		}
 
         public static bool TermEquals(System.Array array1, System.Array array2)
         {

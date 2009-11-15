@@ -220,11 +220,5 @@ namespace Lucene.Net.Search
 		{
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ 0x1AA71190;
 		}
-		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Do we need this clone?"); // {{Aroush-.29}}
-			return null;
-		}
 	}
 }

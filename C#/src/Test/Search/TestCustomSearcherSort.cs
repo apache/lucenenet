@@ -47,15 +47,15 @@ namespace Lucene.Net.Search
 		// reduced from 20000 to 2000 to speed up test...
 		private const int INDEX_SIZE = 2000;
 		
-		public TestCustomSearcherSort(System.String name):base(name)
+		/*public TestCustomSearcherSort(System.String name):base(name)
 		{
-		}
+		}*/
 		
-		[STAThread]
+		/*[STAThread]
 		public static void  Main(System.String[] argv)
 		{
 			// TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
-		}
+		}*/
 		
 		/*public static Test suite()
 		{
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
 			// Just to generate some different Lucene Date strings
 			public /*private*/ System.String GetLuceneDate()
 			{
-                return DateTools.TimeToString(base_Renamed.Millisecond + random.Next() - System.Int32.MinValue, DateTools.Resolution.DAY);
+                return DateTools.TimeToString((base_Renamed.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - System.Int32.MinValue, DateTools.Resolution.DAY);
 			}
 		}
 	}

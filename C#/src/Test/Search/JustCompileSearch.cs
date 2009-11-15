@@ -365,10 +365,6 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
-			override public System.Object Clone()
-			{
-				return null;
-			}
 		}
 		
 		internal sealed class JustCompileScorer:Scorer
