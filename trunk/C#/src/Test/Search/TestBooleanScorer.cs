@@ -99,9 +99,9 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		public TestBooleanScorer(System.String name):base(name)
+		/*public TestBooleanScorer(System.String name):base(name)
 		{
-		}
+		}*/
 		
 		private const System.String FIELD = "category";
 		

@@ -364,11 +364,5 @@ namespace Lucene.Net.Search
 		{
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
 		}
-		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Do we need this Clone()?");   // {{Aroush-2.9}}
-			return null;
-		}
 	}
 }

@@ -328,11 +328,5 @@ namespace Lucene.Net.Search
 		{
 			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(GetBoost());
 		}
-		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this FilteredQuery.Clone()"); // {{Aroush-2.9}}
-			return null;
-		}
 	}
 }

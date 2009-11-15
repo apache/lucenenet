@@ -347,11 +347,6 @@ namespace Lucene.Net.QueryParsers
 			{
 				return q.ToString(f);
 			}
-			override public System.Object Clone()
-			{
-                System.Diagnostics.Debug.Fail("Port issue:", "Do we need TestMultiAnalyzer.DumbQueryWrapper.Clone()?");
-				return null;
-			}
 		}
 	}
 }

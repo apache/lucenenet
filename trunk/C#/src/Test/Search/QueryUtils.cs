@@ -42,11 +42,6 @@ namespace Lucene.Net.Search
 			{
 				return "My Whacky Query";
 			}
-			override public System.Object Clone()
-			{
-                System.Diagnostics.Debug.Fail("Port issue:", "Do we need QueryUtils.AnonymousClassQuery.Clone()?");
-				return null;
-			}
 		}
 		private class AnonymousClassCollector:Collector
 		{

@@ -40,20 +40,20 @@ namespace Lucene.Net.Search
 	public class TestBooleanPrefixQuery:LuceneTestCase
 	{
 		
-		[STAThread]
+		/*[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			// TestRunner.run(suite()); // {{Aroush-2.9}} how is this done in NUnit?
-		}
+		}*/
 		
 		/*public static Test suite()
 		{
 			return new TestSuite(typeof(TestBooleanPrefixQuery));
 		}*/
 		
-		public TestBooleanPrefixQuery(System.String name):base(name)
+		/*public TestBooleanPrefixQuery(System.String name):base(name)
 		{
-		}
+		}*/
 		
 		private int GetCount(IndexReader r, Query q)
 		{

@@ -209,11 +209,5 @@ namespace Lucene.Net.Search
 		{
 			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
         }
-		
-		override public System.Object Clone()
-		{
-            System.Diagnostics.Debug.Fail("Port issue:", "Do we need this?");   // {{Aroush-2.9}}
-			return null;
-		}
 	}
 }

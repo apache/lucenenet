@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
-				Assert.AreEqual(s.Doc(h[0].doc).Get("id"), "wrong first", "d2");
+				Assert.AreEqual(s.Doc(h[0].doc).Get("id"), "d2", "wrong first");
 				float score0 = h[0].score;
 				float score1 = h[1].score;
 				float score2 = h[2].score;
