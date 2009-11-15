@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 		internal IndexWriter writer;
 		
 		private IndexDeletionPolicy deletionPolicy;
-		private System.Collections.Hashtable synced = new System.Collections.Hashtable();
+        private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
 		private Lock writeLock;
 		private SegmentInfos segmentInfos;
 		private bool stale;
@@ -365,8 +365,13 @@ namespace Lucene.Net.Index
 					
 					for (int i = 0; i < subReaders.Length; i++)
 					{
-						int oldReaderIndex = (System.Int32) segmentReaders[subReaders[i].GetSegmentName()];
                         bool exist = segmentReaders.Contains(subReaders[i].GetSegmentName());
+                        int oldReaderIndex = -1;
+                        if (exist)
+                        {
+                            oldReaderIndex = (System.Int32)segmentReaders[subReaders[i].GetSegmentName()];
+                        }
+                        
 						
 						// this SegmentReader was not re-opened, we can copy all of its norms 
                         if (exist && (oldReaders[oldReaderIndex] == subReaders[i] || oldReaders[oldReaderIndex].norms[field] == subReaders[i].norms[field]))
@@ -909,19 +914,17 @@ namespace Lucene.Net.Index
 				{
 					for (int i = 0; i < subReaders.Length; i++)
 						subReaders[i].Commit();
-					
-					// Sync all files we just wrote
-					System.Collections.IEnumerator it = segmentInfos.Files(directory, false).GetEnumerator();
-					while (it.MoveNext())
-					{
-						System.String fileName = (string)((System.Collections.DictionaryEntry) it.Current).Value;
-						if (!synced.Contains(fileName))
-						{
-							System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
+
+                    // Sync all files we just wrote
+                    foreach(string fileName in segmentInfos.Files(directory, false))
+                    {
+                        if(!synced.ContainsKey(fileName))
+                        {
+                            System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
 							directory.Sync(fileName);
-							SupportClass.CollectionsHelper.AddIfNotContains(synced, fileName);
-						}
-					}
+                            synced.Add(fileName,fileName);
+                        }
+                    }
 					
 					segmentInfos.Commit(directory);
 					success = true;
@@ -1033,24 +1036,24 @@ namespace Lucene.Net.Index
 					throw ioe;
 			}
 		}
-		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+
+        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return GetFieldNames(fieldNames, this.subReaders);
 		}
-		
-		internal static System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
+
+        internal static System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
 		{
 			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<string,string> fieldSet = new System.Collections.Generic.Dictionary<string,string>();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
+                System.Collections.Generic.ICollection<string> names = reader.GetFieldNames(fieldNames);
 				SupportClass.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
 			}
-			return fieldSet;
+			return fieldSet.Keys;
 		}
 		
 		public override IndexReader[] GetSequentialSubReaders()
@@ -1140,7 +1143,7 @@ namespace Lucene.Net.Index
 		private sealed class ReaderCommit:IndexCommit
 		{
 			private System.String segmentsFileName;
-			internal System.Collections.ICollection files;
+			internal System.Collections.Generic.ICollection<string> files;
 			internal Directory dir;
 			internal long generation;
 			internal long version;
@@ -1152,7 +1155,7 @@ namespace Lucene.Net.Index
 				segmentsFileName = infos.GetCurrentSegmentFileName();
 				this.dir = dir;
 				userData = infos.GetUserData();
-				files = System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(infos.Files(dir, true)));
+                files = infos.Files(dir, true);
 				version = infos.GetVersion();
 				generation = infos.GetGeneration();
 				isOptimized = infos.Count == 1 && !infos.Info(0).HasDeletions();
@@ -1167,8 +1170,8 @@ namespace Lucene.Net.Index
 			{
 				return segmentsFileName;
 			}
-			
-			public override System.Collections.ICollection GetFileNames()
+
+            public override System.Collections.Generic.ICollection<string> GetFileNames()
 			{
 				return files;
 			}

@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			// set up reader
 			IndexReader reader = IndexReader.Open(d);
-			System.Collections.ICollection fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			System.Collections.Generic.ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword"));
 			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text"));
 			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed"));
@@ -265,10 +265,10 @@ namespace Lucene.Net.Index
 			System.Collections.IDictionary map = mapper.GetFieldToTerms();
 			Assert.IsTrue(map != null, "map is null and it shouldn't be");
 			Assert.IsTrue(map.Count == 4, "map Size: " + map.Count + " is not: " + 4);
-			System.Collections.Hashtable set_Renamed = (System.Collections.Hashtable) map["termvector"];
+            System.Collections.Generic.SortedDictionary<object, object> set_Renamed = (System.Collections.Generic.SortedDictionary<object, object>)map["termvector"];
 			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
 			{
-				TermVectorEntry entry = (TermVectorEntry) iterator.Current;
+                TermVectorEntry entry = (TermVectorEntry)((System.Collections.Generic.KeyValuePair<object, object>)iterator.Current).Key;
 				Assert.IsTrue(entry != null, "entry is null and it shouldn't be");
 				System.Console.Out.WriteLine("Entry: " + entry);
 			}
@@ -1541,18 +1541,22 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(index1.IsOptimized(), index2.IsOptimized(), "Only one index is optimized.");
 			
 			// check field names
-			System.Collections.ICollection fields1 = index1.GetFieldNames(FieldOption.ALL);
-			System.Collections.ICollection fields2 = index1.GetFieldNames(FieldOption.ALL);
-			Assert.AreEqual(fields1.Count, fields2.Count, "IndexReaders have different numbers of fields.");
-			System.Collections.IEnumerator it1 = fields1.GetEnumerator();
-			System.Collections.IEnumerator it2 = fields1.GetEnumerator();
-			while (it1.MoveNext())
+			System.Collections.Generic.ICollection<string> fieldsNames1 = index1.GetFieldNames(FieldOption.ALL);
+			System.Collections.Generic.ICollection<string> fieldsNames2 = index1.GetFieldNames(FieldOption.ALL);
+
+            System.Collections.ICollection fields1 = null;
+            System.Collections.ICollection fields2 = null;
+
+            Assert.AreEqual(fieldsNames1.Count, fieldsNames2.Count, "IndexReaders have different numbers of fields.");
+            System.Collections.IEnumerator it1 = fieldsNames1.GetEnumerator();
+            System.Collections.IEnumerator it2 = fieldsNames2.GetEnumerator();
+			while (it1.MoveNext() && it2.MoveNext())
 			{
 				Assert.AreEqual((System.String) it1.Current, (System.String) it2.Current, "Different field names.");
 			}
 			
 			// check norms
-			it1 = fields1.GetEnumerator();
+            it1 = fieldsNames1.GetEnumerator();
 			while (it1.MoveNext())
 			{
 				System.String curField = (System.String) it1.Current;
@@ -1590,7 +1594,7 @@ namespace Lucene.Net.Index
 					Assert.AreEqual(fields1.Count, fields2.Count, "Different numbers of fields for doc " + i + ".");
 					it1 = fields1.GetEnumerator();
 					it2 = fields2.GetEnumerator();
-					while (it1.MoveNext())
+					while (it1.MoveNext() && it2.MoveNext())
 					{
 						Field curField1 = (Field) it1.Current;
 						Field curField2 = (Field) it2.Current;
@@ -1887,7 +1891,7 @@ namespace Lucene.Net.Index
 			while (it.MoveNext())
 			{
 				IndexCommit commit = (IndexCommit) it.Current;
-				System.Collections.ICollection files = commit.GetFileNames();
+				System.Collections.Generic.ICollection<string> files = commit.GetFileNames();
 				System.Collections.Hashtable seen = new System.Collections.Hashtable();
 				System.Collections.IEnumerator it2 = files.GetEnumerator();
 				while (it2.MoveNext())

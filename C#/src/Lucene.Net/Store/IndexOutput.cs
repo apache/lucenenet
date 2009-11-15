@@ -266,6 +266,10 @@ namespace Lucene.Net.Store
 				while (it.MoveNext())
 				{
 					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
+                    if (entry.Key is System.Collections.DictionaryEntry)
+                    {
+                        entry = (System.Collections.DictionaryEntry)entry.Key;
+                    }
 					WriteString((System.String) entry.Key);
 					WriteString((System.String) entry.Value);
 				}

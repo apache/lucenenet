@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 		System.String GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		System.Collections.ICollection GetFileNames();
+        System.Collections.Generic.ICollection<string> GetFileNames();
 		
 		/// <summary> Delete this commit point.
 		/// <p>

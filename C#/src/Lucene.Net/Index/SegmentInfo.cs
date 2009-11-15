@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 		// and true for newly created merged segments (both
 		// compound and non compound).
 		
-		private System.Collections.IList files; // cached list of files that this segment uses
+		private System.Collections.Generic.IList<string> files; // cached list of files that this segment uses
 		// in the Directory
 		
 		internal long sizeInBytes = - 1; // total byte size of all of our files (computed on demand)
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
 		{
 			if (sizeInBytes == - 1)
 			{
-				System.Collections.IList files = Files();
+				System.Collections.Generic.IList<string> files = Files();
 				int size = files.Count;
 				sizeInBytes = 0;
 				for (int i = 0; i < size; i++)
@@ -368,7 +368,14 @@ namespace Lucene.Net.Index
 			si.hasProx = hasProx;
 			si.preLockless = preLockless;
 			si.hasSingleNormFile = hasSingleNormFile;
-			si.diagnostics = new System.Collections.Hashtable(diagnostics);
+            if (this.diagnostics != null)
+            {
+                si.diagnostics = new System.Collections.Hashtable();
+                foreach (object o in diagnostics)
+                {
+                    si.diagnostics.Add(o,o);
+                }
+            }
 			if (normGen != null)
 			{
 				si.normGen = new long[normGen.Length];
@@ -377,6 +384,15 @@ namespace Lucene.Net.Index
 			si.docStoreOffset = docStoreOffset;
 			si.docStoreSegment = docStoreSegment;
 			si.docStoreIsCompoundFile = docStoreIsCompoundFile;
+            if (this.files != null)
+            {
+                si.files = new System.Collections.Generic.List<string>();
+                foreach (string file in files)
+                {
+                    si.files.Add(file);
+                }
+            }
+            
 			return si;
 		}
 		
@@ -674,7 +690,7 @@ namespace Lucene.Net.Index
 			return hasProx;
 		}
 		
-		private void  AddIfExists(System.Collections.IList files, System.String fileName)
+		private void  AddIfExists(System.Collections.Generic.IList<string> files, System.String fileName)
 		{
 			if (dir.FileExists(fileName))
 				files.Add(fileName);
@@ -686,7 +702,7 @@ namespace Lucene.Net.Index
 		* modify it.
 		*/
 		
-		public System.Collections.IList Files()
+		public System.Collections.Generic.IList<string> Files()
 		{
 			
 			if (files != null)
@@ -694,8 +710,8 @@ namespace Lucene.Net.Index
 				// Already cached:
 				return files;
 			}
-			
-			files = new System.Collections.ArrayList();
+
+            files = new System.Collections.Generic.List<string>();
 			
 			bool useCompoundFile = GetUseCompoundFile();
 			

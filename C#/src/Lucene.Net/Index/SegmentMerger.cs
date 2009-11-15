@@ -304,8 +304,8 @@ namespace Lucene.Net.Index
 			
 			return files;
 		}
-		
-		private void  AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
+
+        private void AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
 		{
 			System.Collections.IEnumerator i = names.GetEnumerator();
 			while (i.MoveNext())

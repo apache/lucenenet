@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 		public abstract System.String GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		public abstract System.Collections.ICollection GetFileNames();
+		public abstract System.Collections.Generic.ICollection<string> GetFileNames();
 		
 		/// <summary> Returns the {@link Directory} for the index.</summary>
 		public abstract Directory GetDirectory();

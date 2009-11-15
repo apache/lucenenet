@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 			ParallelReader pr = new ParallelReader();
 			pr.Add(IndexReader.Open(dir1));
 			pr.Add(IndexReader.Open(dir2));
-			System.Collections.ICollection fieldNames = pr.GetFieldNames(IndexReader.FieldOption.ALL);
+            System.Collections.Generic.ICollection<string> fieldNames = pr.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.AreEqual(4, fieldNames.Count);
 			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f1"));
 			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f2"));

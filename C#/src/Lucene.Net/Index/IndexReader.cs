@@ -1015,7 +1015,9 @@ namespace Lucene.Net.Index
 		
 		public static bool IndexExists(System.IO.FileInfo directory)
 		{
-			return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory.FullName)) != - 1;
+            System.String[] list = null;
+			if (System.IO.Directory.Exists(directory.FullName)) list = System.IO.Directory.GetFileSystemEntries(directory.FullName);
+ 			return SegmentInfos.GetCurrentSegmentGeneration(list) != - 1;
 		}
 		
 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
@@ -1496,7 +1498,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <seealso cref="IndexReader.FieldOption">
 		/// </seealso>
-		public abstract System.Collections.ICollection GetFieldNames(FieldOption fldOption);
+		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
 		
 		/// <summary> Returns <code>true</code> iff the index in the named directory is
 		/// currently locked.

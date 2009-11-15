@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
 				b = in_Renamed.ReadByte();
 				Assert.Fail("expected readByte() to throw exception");
 			}
-			catch (System.IO.IOException e)
+			catch (System.Exception e)
 			{
 				// expected exception
 			}

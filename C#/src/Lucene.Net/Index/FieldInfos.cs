@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <seealso cref="Add(String, boolean)">
 		/// </seealso>
-		public void  Add(System.Collections.ICollection names, bool isIndexed)
+        public void Add(System.Collections.Generic.ICollection<string> names, bool isIndexed)
 		{
 			lock (this)
 			{

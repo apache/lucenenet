@@ -116,8 +116,6 @@ namespace Lucene.Net.Index
 				{
 					pw.Close();
 				}
-				if (fw != null)
-					fw.Close();
 			}
 		}
 		
