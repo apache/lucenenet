@@ -665,13 +665,11 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-					System.String s = new System.String(System.Text.UTF8Encoding.UTF8.GetChars(bytes));
+                    System.String s = System.Text.Encoding.Default.GetString(bytes);
 					UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
 					try
 					{
-						System.String tempStr;
-						tempStr = System.Text.Encoding.GetEncoding("UTF-8").GetString(utf8Result.result);
-						return new System.String(tempStr.ToCharArray(), 0, utf8Result.length);
+                        return System.Text.Encoding.UTF8.GetString(utf8Result.result, 0, utf8Result.length);
 					}
 					catch (System.IO.IOException uee)
 					{
