@@ -253,7 +253,7 @@ namespace Lucene.Net.Store
 		
 		
 		// map must be Map<String, String>
-		public virtual void  WriteStringStringMap(System.Collections.IDictionary map)
+		public virtual void  WriteStringStringMap(System.Collections.Generic.IDictionary<string,string> map)
 		{
 			if (map == null)
 			{
@@ -262,17 +262,11 @@ namespace Lucene.Net.Store
 			else
 			{
 				WriteInt(map.Count);
-				System.Collections.IEnumerator it = new System.Collections.Hashtable(map).GetEnumerator();
-				while (it.MoveNext())
-				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-                    if (entry.Key is System.Collections.DictionaryEntry)
-                    {
-                        entry = (System.Collections.DictionaryEntry)entry.Key;
-                    }
-					WriteString((System.String) entry.Key);
-					WriteString((System.String) entry.Value);
-				}
+                foreach (string key in map.Keys)
+                {
+                    WriteString(key);
+                    WriteString(map[key]);
+                }
 			}
 		}
 	}

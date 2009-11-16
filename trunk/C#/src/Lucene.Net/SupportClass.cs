@@ -1547,6 +1547,17 @@ public class SupportClass
             return false;
         }
 
+
+        public static System.String CollectionToString(System.Collections.Generic.IDictionary<string, string> c)
+        {
+            Hashtable t = new Hashtable();
+            foreach (string key in c.Keys)
+            {
+                t.Add(key, c[key]);
+            }
+            return CollectionToString(t);
+        }
+
         /// <summary>
         /// Converts the specified collection to its string representation.
         /// </summary>

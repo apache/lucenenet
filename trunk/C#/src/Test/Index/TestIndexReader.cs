@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
 		public virtual void  TestCommitUserData()
 		{
 			RAMDirectory d = new MockRAMDirectory();
-			
-			System.Collections.IDictionary commitUserData = new System.Collections.Hashtable();
+
+            System.Collections.Generic.IDictionary<string, string> commitUserData = new System.Collections.Generic.Dictionary<string,string>();
 			commitUserData["foo"] = "fighters";
 			
 			// set up writer

@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 			public bool partial;
 			
 			/// <summary>Holds the userData of the last commit in the index </summary>
-			public System.Collections.IDictionary userData;
+            public System.Collections.Generic.IDictionary<string, string> userData;
 			
 			/// <summary>Holds the status of each segment in the index.
 			/// See {@link #segmentInfos}.
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 				/// debugging details that IndexWriter records into
 				/// each segment it creates 
 				/// </summary>
-				public System.Collections.IDictionary diagnostics;
+                public System.Collections.Generic.IDictionary<string, string> diagnostics;
 				
 				/// <summary>Status for testing of field norms (null if field norms could not be tested). </summary>
 				public FieldNormStatus fieldNormStatus;
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
 					segInfoStat.numFiles = info.Files().Count;
 					Msg(System.String.Format(nf, "    size (MB)={0:f}", new System.Object[] { (info.SizeInBytes() / (1024.0 * 1024.0)) }));
 					segInfoStat.sizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
-					System.Collections.IDictionary diagnostics = info.GetDiagnostics();
+                    System.Collections.Generic.IDictionary<string, string> diagnostics = info.GetDiagnostics();
 					segInfoStat.diagnostics = diagnostics;
 					if (diagnostics.Count > 0)
 					{

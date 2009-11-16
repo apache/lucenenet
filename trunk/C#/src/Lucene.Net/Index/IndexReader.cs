@@ -831,7 +831,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="GetCommitUserData()">
 		/// </seealso>
-		public static System.Collections.IDictionary GetCommitUserData(Directory directory)
+        public static System.Collections.Generic.IDictionary<string, string> GetCommitUserData(Directory directory)
 		{
 			return SegmentInfos.ReadCurrentUserData(directory);
 		}
@@ -851,7 +851,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="GetCommitUserData(Directory)">
 		/// </seealso>
-		public virtual System.Collections.IDictionary GetCommitUserData()
+        public virtual System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
 		{
 			throw new System.NotSupportedException("This reader does not support this method.");
 		}
@@ -1407,7 +1407,7 @@ namespace Lucene.Net.Index
 		/// IndexReader#getCommitUserData}.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public void  Flush(System.Collections.IDictionary commitUserData)
+        public void Flush(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1440,7 +1440,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		protected internal void  Commit(System.Collections.IDictionary commitUserData)
+        protected internal void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1461,7 +1461,7 @@ namespace Lucene.Net.Index
 		/// <summary>Implements commit.  NOTE: subclasses should override
 		/// this.  In 3.0 this will become an abstract method. 
 		/// </summary>
-		protected internal virtual void  DoCommit(System.Collections.IDictionary commitUserData)
+        protected internal virtual void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			// Default impl discards commitUserData; all Lucene
 			// subclasses override this (do not discard it).

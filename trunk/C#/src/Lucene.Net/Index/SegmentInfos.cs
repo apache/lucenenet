@@ -163,8 +163,8 @@ namespace Lucene.Net.Index
 		private long lastGeneration = 0; // generation of the "segments_N" file we last successfully read
 		// or wrote; this is normally the same as generation except if
 		// there was an IOException that had interrupted a commit
-		
-		private System.Collections.IDictionary userData = (System.Collections.IDictionary) new System.Collections.Hashtable(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
+
+        private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
 		/// <seealso cref="setInfoStream.">
@@ -348,21 +348,21 @@ namespace Lucene.Net.Index
 				{
 					if (format <= FORMAT_DIAGNOSTICS)
 					{
-						userData = input.readStringStringMap();
+						userData = input.ReadStringStringMap();
 					}
 					else if (0 != input.ReadByte())
 					{
-                        userData = new System.Collections.Hashtable();
+                        userData = new System.Collections.Generic.Dictionary<string,string>();
 						userData.Add("userData", input.ReadString());
 					}
 					else
 					{
-						userData = (System.Collections.IDictionary) new System.Collections.Hashtable();
+                        userData = new System.Collections.Generic.Dictionary<string, string>();
 					}
 				}
 				else
 				{
-					userData = (System.Collections.IDictionary) new System.Collections.Hashtable();
+                    userData = new System.Collections.Generic.Dictionary<string, string>();
 				}
 				
 				if (format <= FORMAT_CHECKSUM)
@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             sis.generation = this.generation;
             sis.lastGeneration = this.lastGeneration;
             // sis.pendingSegnOutput = this.pendingSegnOutput; // {{Aroush-2.9}} needed?
-            sis.userData = new System.Collections.Hashtable(userData);
+            sis.userData = new System.Collections.Generic.Dictionary<string, string>(userData);
             sis.version = this.version;
             return sis;
 		}
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns userData from latest segments file</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public static System.Collections.IDictionary ReadCurrentUserData(Directory directory)
+        public static System.Collections.Generic.IDictionary<string, string> ReadCurrentUserData(Directory directory)
 		{
 			SegmentInfos sis = new SegmentInfos();
 			sis.Read(directory);
@@ -1066,16 +1066,16 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public System.Collections.IDictionary GetUserData()
+		public System.Collections.Generic.IDictionary<string,string> GetUserData()
 		{
 			return userData;
 		}
-		
-		internal void  SetUserData(System.Collections.IDictionary data)
+
+        internal void SetUserData(System.Collections.Generic.IDictionary<string, string> data)
 		{
 			if (data == null)
 			{
-				userData = (System.Collections.IDictionary) new System.Collections.Hashtable();
+				userData = new System.Collections.Generic.Dictionary<string,string>();
 			}
 			else
 			{

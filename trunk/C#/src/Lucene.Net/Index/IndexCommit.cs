@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 		/// IndexWriter#Commit(Map)} for this commit.  Map is
 		/// String -> String. 
 		/// </summary>
-		public virtual System.Collections.IDictionary GetUserData()
+        public virtual System.Collections.Generic.IDictionary<string, string> GetUserData()
 		{
 			throw new System.NotSupportedException("This IndexCommit does not support this method.");
 		}

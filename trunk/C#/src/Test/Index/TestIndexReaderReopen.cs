@@ -1647,14 +1647,14 @@ namespace Lucene.Net.Index
 				Document doc = new Document();
 				doc.Add(new Field("id", "" + i, Field.Store.NO, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
-				System.Collections.IDictionary data = new System.Collections.Hashtable();
+                System.Collections.Generic.IDictionary<string, string> data = new System.Collections.Generic.Dictionary<string, string>();
 				data["index"] = i + "";
 				writer.Commit(data);
 			}
 			for (int i = 0; i < 4; i++)
 			{
 				writer.DeleteDocuments(new Term("id", "" + i));
-				System.Collections.IDictionary data = new System.Collections.Hashtable();
+                System.Collections.Generic.IDictionary<string, string> data = new System.Collections.Generic.Dictionary<string,string>();
 				data["index"] = (4 + i) + "";
 				writer.Commit(data);
 			}
@@ -1681,8 +1681,8 @@ namespace Lucene.Net.Index
 				{
 					// expected
 				}
-				
-				System.Collections.IDictionary s = commit.GetUserData();
+
+                System.Collections.Generic.IDictionary<string, string> s = commit.GetUserData();
 				int v;
 				if (s.Count == 0)
 				{
