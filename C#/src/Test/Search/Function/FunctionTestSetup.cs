@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Setup for function tests</summary>
-    [TestFixture]
+
 	public abstract class FunctionTestSetup:LuceneTestCase
 	{
 		
@@ -60,7 +60,10 @@ namespace Lucene.Net.Search.Function
 		public FunctionTestSetup(System.String name):base(name)
 		{
 		}
-		
+        public FunctionTestSetup()
+            : base()
+        {
+        }
 		/* @override */
 		[TearDown]
 		public override void  TearDown()

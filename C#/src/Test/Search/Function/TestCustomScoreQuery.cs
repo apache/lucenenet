@@ -39,7 +39,10 @@ namespace Lucene.Net.Search.Function
 		public TestCustomScoreQuery(System.String name):base(name)
 		{
 		}
-		
+        public TestCustomScoreQuery()
+            : base()
+        {
+        }
 		/// <summary>Test that CustomScoreQuery of Type.BYTE returns the expected scores. </summary>
 		[Test]
 		public virtual void  TestCustomScoreByte()

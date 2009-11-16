@@ -48,7 +48,10 @@ namespace Lucene.Net.Search.Function
 		public TestOrdValues(System.String name):base(name)
 		{
 		}
-		
+        public TestOrdValues()
+            : base()
+        {
+        }
 		/// <summary>Test OrdFieldSource </summary>
 		[Test]
 		public virtual void  TestOrdFieldRank()
