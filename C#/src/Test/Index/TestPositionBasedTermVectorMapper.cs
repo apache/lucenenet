@@ -36,6 +36,10 @@ namespace Lucene.Net.Index
 		public TestPositionBasedTermVectorMapper(System.String s):base(s)
 		{
 		}
+
+        public TestPositionBasedTermVectorMapper() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()

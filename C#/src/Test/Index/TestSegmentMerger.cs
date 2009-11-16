@@ -46,6 +46,10 @@ namespace Lucene.Net.Index
 		public TestSegmentMerger(System.String s):base(s)
 		{
 		}
+
+        public TestSegmentMerger(): base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
@@ -58,6 +62,16 @@ namespace Lucene.Net.Index
 			reader1 = SegmentReader.Get(info1);
 			reader2 = SegmentReader.Get(info2);
 		}
+
+        [TearDown]
+        public void TearDown()
+        {
+            mergedDir = new RAMDirectory();
+            merge1Dir = new RAMDirectory();
+            doc1 = new Document();
+            merge2Dir = new RAMDirectory();
+            doc2 = new Document();
+        }
 		
 		[Test]
 		public virtual void  Test()
