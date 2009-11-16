@@ -98,11 +98,11 @@ namespace Lucene.Net.Index
 				{
 					System.String sval = r.Document(i).Get(FIELD_RECORD_ID);
 					if (sval != null)
-					{
-						int val = System.Int32.Parse(sval);
-						Assert.IsTrue(expecteds.Get(val), "Did not expect document #" + val);
-						expecteds.Set(val, true);
-					}
+                    {
+                        int val = System.Int32.Parse(sval);
+                        Assert.IsTrue(expecteds.Get(val), "Did not expect document #" + val);
+                        expecteds.Set(val, false); 
+                    }
 				}
 			}
 			r.Close();
