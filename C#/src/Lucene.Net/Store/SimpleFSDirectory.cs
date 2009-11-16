@@ -261,6 +261,17 @@ namespace Lucene.Net.Store
 			public override void  FlushBuffer(byte[] b, int offset, int size)
 			{
 				file.Write(b, offset, size);
+                // {{dougsale-2.4.0}}
+                // FSIndexOutput.Flush
+                // When writing frequently with small amounts of data, the data isn't flushed to disk.
+                // Thus, attempting to read the data soon after this method is invoked leads to
+                // BufferedIndexInput.Refill() throwing an IOException for reading past EOF.
+                // Test\Index\TestDoc.cs demonstrates such a situation.
+                // Forcing a flush here prevents said issue.
+                // {{DIGY 2.9.0}}
+                // This code is not available in Lucene.Java 2.9.X.
+                // Can there be a indexing-performance problem?
+                file.Flush();
 			}
 			public override void  Close()
 			{
