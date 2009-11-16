@@ -40,6 +40,10 @@ namespace Lucene.Net.Index
 		public TestSegmentTermDocs(System.String s):base(s)
 		{
 		}
+
+        public TestSegmentTermDocs() : base("")
+        {
+        }
 		
 		[SetUp]
 		public override void  SetUp()
@@ -48,6 +52,13 @@ namespace Lucene.Net.Index
 			DocHelper.SetupDoc(testDoc);
 			info = DocHelper.WriteDoc(dir, testDoc);
 		}
+
+        [TearDown]
+        public void TearDown()
+        {
+            testDoc = new Document();
+		    dir = new RAMDirectory();
+        }
 		
 		[Test]
 		public virtual void  Test()
