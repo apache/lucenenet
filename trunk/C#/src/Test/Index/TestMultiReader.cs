@@ -28,6 +28,10 @@ namespace Lucene.Net.Index
 		public TestMultiReader(System.String s):base(s)
 		{
 		}
+        public TestMultiReader()
+            : base()
+        {
+        }
 		
 		protected internal override IndexReader OpenReader()
 		{
