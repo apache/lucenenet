@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
 			internal long version;
 			internal long generation;
 			internal bool isOptimized;
-			internal System.Collections.IDictionary userData;
+            internal System.Collections.Generic.IDictionary<string, string> userData;
 			
 			public CommitPoint(IndexFileDeleter enclosingInstance, System.Collections.ICollection commitsToDelete, Directory directory, SegmentInfos segmentInfos)
 			{
@@ -741,8 +741,8 @@ namespace Lucene.Net.Index
 			{
 				return generation;
 			}
-			
-			public override System.Collections.IDictionary GetUserData()
+
+            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
 			{
 				return userData;
 			}

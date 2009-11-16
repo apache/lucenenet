@@ -85,8 +85,8 @@ namespace Lucene.Net.Index
 		// (if it's an older index)
 		
 		private bool hasProx; // True if this segment has any fields with omitTermFreqAndPositions==false
-		
-		private System.Collections.IDictionary diagnostics;
+
+        private System.Collections.Generic.IDictionary<string, string> diagnostics;
 		
 		public override System.String ToString()
 		{
@@ -152,13 +152,13 @@ namespace Lucene.Net.Index
 		}
 		
 		// must be Map<String, String>
-		internal void  SetDiagnostics(System.Collections.IDictionary diagnostics)
+        internal void SetDiagnostics(System.Collections.Generic.IDictionary<string, string> diagnostics)
 		{
 			this.diagnostics = diagnostics;
 		}
 		
 		// returns Map<String, String>
-		public System.Collections.IDictionary GetDiagnostics()
+        public System.Collections.Generic.IDictionary<string, string> GetDiagnostics()
 		{
 			return diagnostics;
 		}
@@ -238,11 +238,11 @@ namespace Lucene.Net.Index
 				
 				if (format <= SegmentInfos.FORMAT_DIAGNOSTICS)
 				{
-					diagnostics = input.readStringStringMap();
+					diagnostics = input.ReadStringStringMap();
 				}
 				else
 				{
-					diagnostics = (System.Collections.IDictionary) new System.Collections.Hashtable();
+					diagnostics = new System.Collections.Generic.Dictionary<string,string>();
 				}
 			}
 			else
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
 				docStoreSegment = null;
 				delCount = - 1;
 				hasProx = true;
-				diagnostics = (System.Collections.IDictionary) new System.Collections.Hashtable();
+				diagnostics = new System.Collections.Generic.Dictionary<string,string>();
 			}
 		}
 		
@@ -370,10 +370,10 @@ namespace Lucene.Net.Index
 			si.hasSingleNormFile = hasSingleNormFile;
             if (this.diagnostics != null)
             {
-                si.diagnostics = new System.Collections.Hashtable();
-                foreach (object o in diagnostics)
+                si.diagnostics = new System.Collections.Generic.Dictionary<string, string>();
+                foreach (string o in diagnostics.Keys)
                 {
-                    si.diagnostics.Add(o,o);
+                    si.diagnostics.Add(o,diagnostics[o]);
                 }
             }
 			if (normGen != null)

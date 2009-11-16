@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetGeneration();
 			}
-			public override System.Collections.IDictionary GetUserData()
+            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
 			{
 				return cp.GetUserData();
 			}

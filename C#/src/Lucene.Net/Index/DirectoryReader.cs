@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		protected internal override void  DoCommit(System.Collections.IDictionary commitUserData)
+        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			if (hasChanges)
 			{
@@ -990,8 +990,8 @@ namespace Lucene.Net.Index
 				subReaders[i].RollbackCommit();
 			}
 		}
-		
-		public override System.Collections.IDictionary GetCommitUserData()
+
+        public override System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
 		{
 			EnsureOpen();
 			return segmentInfos.GetUserData();
@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Index
 			internal long generation;
 			internal long version;
 			internal bool isOptimized;
-			internal System.Collections.IDictionary userData;
+            internal System.Collections.Generic.IDictionary<string, string> userData;
 			
 			internal ReaderCommit(SegmentInfos infos, Directory dir)
 			{
@@ -1195,8 +1195,8 @@ namespace Lucene.Net.Index
 			{
 				return false;
 			}
-			
-			public override System.Collections.IDictionary GetUserData()
+
+            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
 			{
 				return userData;
 			}

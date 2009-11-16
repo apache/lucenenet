@@ -267,9 +267,9 @@ namespace Lucene.Net.Store
 		}
 		
 		// returns Map<String, String>
-		public virtual System.Collections.IDictionary readStringStringMap()
+		public virtual System.Collections.Generic.IDictionary<string,string> ReadStringStringMap()
 		{
-			System.Collections.IDictionary map = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<string, string> map = new System.Collections.Generic.Dictionary<string, string>();
 			int count = ReadInt();
 			for (int i = 0; i < count; i++)
 			{

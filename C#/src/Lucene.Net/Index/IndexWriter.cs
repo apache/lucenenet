@@ -4670,12 +4670,12 @@ namespace Lucene.Net.Index
 		/// index to commit.  Therefore it's best to use this
 		/// feature only when autoCommit is false.
 		/// </param>
-		public void  PrepareCommit(System.Collections.IDictionary commitUserData)
+        public void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			PrepareCommit(commitUserData, false);
 		}
-		
-		private void  PrepareCommit(System.Collections.IDictionary commitUserData, bool internal_Renamed)
+
+        private void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData, bool internal_Renamed)
 		{
 			
 			if (hitOOM)
@@ -4748,7 +4748,7 @@ namespace Lucene.Net.Index
 		/// you should immediately close the writer.  See <a
 		/// href="#OOME">above</a> for details.</p>
 		/// </summary>
-		public void  Commit(System.Collections.IDictionary commitUserData)
+        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			
 			EnsureOpen();
@@ -5574,9 +5574,9 @@ namespace Lucene.Net.Index
 				// ConcurrentMergePolicy we keep deterministic segment
 				// names.
 				merge.info = new SegmentInfo(NewSegmentName(), 0, directory, false, true, docStoreOffset, docStoreSegment2, docStoreIsCompoundFile, false);
-				
-				
-				System.Collections.IDictionary details = new System.Collections.Hashtable();
+
+
+                System.Collections.Generic.IDictionary<string, string> details = new System.Collections.Generic.Dictionary<string, string>();
 				details["optimize"] = merge.optimize + "";
 				details["mergeFactor"] = end + "";
 				details["mergeDocStores"] = mergeDocStores + "";
@@ -5594,10 +5594,10 @@ namespace Lucene.Net.Index
 		{
 			SetDiagnostics(info, source, null);
 		}
-		
-		private void  SetDiagnostics(SegmentInfo info, System.String source, System.Collections.IDictionary details)
+
+        private void SetDiagnostics(SegmentInfo info, System.String source, System.Collections.Generic.IDictionary<string, string> details)
 		{
-			System.Collections.IDictionary diagnostics = new System.Collections.Hashtable();
+            System.Collections.Generic.IDictionary<string, string> diagnostics = new System.Collections.Generic.Dictionary<string,string>();
 			diagnostics["source"] = source;
 			diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
 			diagnostics["os"] = Constants.OS_NAME + "";
@@ -5607,10 +5607,12 @@ namespace Lucene.Net.Index
 			diagnostics["java.vendor"] = Constants.JAVA_VENDOR + "";
 			if (details != null)
 			{
-				System.Collections.ArrayList keys = new System.Collections.ArrayList(details.Keys);
-				System.Collections.ArrayList values = new System.Collections.ArrayList(details.Values);
-				for (int i=0; i < keys.Count; i++)
-					diagnostics[keys[i]] = values[i];
+				//System.Collections.ArrayList keys = new System.Collections.ArrayList(details.Keys);
+				//System.Collections.ArrayList values = new System.Collections.ArrayList(details.Values);
+                foreach (string key in details.Keys)
+                {
+                    diagnostics[key] = details[key];
+                }
 			}
 			info.SetDiagnostics(diagnostics);
 		}
@@ -6240,7 +6242,7 @@ namespace Lucene.Net.Index
 		/// prepare a new segments_N file but do not fully commit
 		/// it. 
 		/// </summary>
-		private void  StartCommit(long sizeInBytes, System.Collections.IDictionary commitUserData)
+        private void StartCommit(long sizeInBytes, System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			
 			System.Diagnostics.Debug.Assert(TestPoint("startStartCommit"));

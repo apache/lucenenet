@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 			for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 			{
 				IndexCommit commit = (IndexCommit) iterator.Current;
-				System.Collections.IDictionary ud = commit.GetUserData();
+                System.Collections.Generic.IDictionary<string, string> ud = commit.GetUserData();
 				if (ud.Count > 0)
 					if (((System.String) ud["index"]).EndsWith(ids))
 						last = commit;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 				throw new System.SystemException("Couldn't find commit point " + id);
 			
 			IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), new RollbackDeletionPolicy(this, id), MaxFieldLength.UNLIMITED, last);
-			System.Collections.IDictionary data = new System.Collections.Hashtable();
+            System.Collections.Generic.IDictionary<string, string> data = new System.Collections.Generic.Dictionary<string, string>();
 			data["index"] = "Rolled back to 1-" + id;
 			w.Commit(data);
 			w.Close();
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 				
 				if (currentRecordId % 10 == 0)
 				{
-					System.Collections.IDictionary data = new System.Collections.Hashtable();
+                    System.Collections.Generic.IDictionary<string, string> data = new System.Collections.Generic.Dictionary<string,string>();
 					data["index"] = "records 1-" + currentRecordId;
 					w.Commit(data);
 				}
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 				for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 				{
 					IndexCommit commit = (IndexCommit) iterator.Current;
-					System.Collections.IDictionary userData = commit.GetUserData();
+                    System.Collections.Generic.IDictionary<string, string> userData = commit.GetUserData();
 					if (userData.Count > 0)
 					{
 						// Label for a commit point is "Records 1-30"

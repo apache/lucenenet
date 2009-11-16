@@ -5033,7 +5033,7 @@ namespace Lucene.Net.Index
 			w.SetMaxBufferedDocs(2);
 			for (int j = 0; j < 17; j++)
 				AddDoc(w);
-			System.Collections.IDictionary data = new System.Collections.Hashtable();
+            System.Collections.Generic.IDictionary<string, string> data = new System.Collections.Generic.Dictionary<string,string>();
 			data["label"] = "test1";
 			w.Commit(data);
 			w.Close();

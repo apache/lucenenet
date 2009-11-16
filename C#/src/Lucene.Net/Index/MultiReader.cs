@@ -440,8 +440,8 @@ namespace Lucene.Net.Index
 		{
 			DoCommit(null);
 		}
-		
-		protected internal override void  DoCommit(System.Collections.IDictionary commitUserData)
+
+        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			for (int i = 0; i < subReaders.Length; i++)
 				subReaders[i].Commit(commitUserData);
