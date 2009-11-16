@@ -80,7 +80,9 @@ namespace Lucene.Net.Index
 		public TestNorms(System.String s):base(s)
 		{
 		}
-		
+        public TestNorms() : base("")
+        {
+        }
 		[SetUp]
 		public override void  SetUp()
 		{

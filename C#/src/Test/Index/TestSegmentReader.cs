@@ -38,6 +38,10 @@ namespace Lucene.Net.Index
 		public TestSegmentReader(System.String s):base(s)
 		{
 		}
+
+        public TestSegmentReader() : base("")
+        {
+        }
 		
 		//TODO: Setup the reader w/ multiple documents
 		[SetUp]
@@ -48,6 +52,13 @@ namespace Lucene.Net.Index
 			SegmentInfo info = DocHelper.WriteDoc(dir, testDoc);
 			reader = SegmentReader.Get(info);
 		}
+
+        [TearDown]
+        public void TearDown()
+        {
+            dir = new RAMDirectory();
+		    testDoc = new Document();
+        }
 		
 		[Test]
 		public virtual void  Test()
