@@ -307,12 +307,10 @@ namespace Lucene.Net.Index
 
         private void AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
 		{
-			System.Collections.IEnumerator i = names.GetEnumerator();
+			System.Collections.Generic.IEnumerator<string> i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
-                //There are too much indirections here. After all tests pass, some cleanup may be needed. {{DIGY}}
-                System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry)((System.Collections.DictionaryEntry)i.Current).Key;
-				System.String field = (System.String) tmp.Key;
+                System.String field = i.Current;
 				fInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field), storePayloads, omitTFAndPositions);
 			}
 		}
