@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
 	/// <version>  $Id$
 	/// </version>
 	
-    [TestFixture]
 	class RepeatingTokenStream:TokenStream
 	{
 		public int num;

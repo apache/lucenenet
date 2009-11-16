@@ -33,7 +33,10 @@ namespace Lucene.Net.Search.Function
 		public TestDocValues(System.String name):base(name)
 		{
 		}
-		
+        public TestDocValues()
+            : base()
+        {
+        }
         [Test]
 		public virtual void  TestGetMinValue()
 		{

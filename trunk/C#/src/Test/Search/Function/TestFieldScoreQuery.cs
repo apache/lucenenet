@@ -48,7 +48,10 @@ namespace Lucene.Net.Search.Function
 		public TestFieldScoreQuery(System.String name):base(name)
 		{
 		}
-		
+        public TestFieldScoreQuery()
+            : base()
+        {
+        }
 		/// <summary>Test that FieldScoreQuery of Type.BYTE returns docs in expected order. </summary>
 		[Test]
 		public virtual void  TestRankByte()

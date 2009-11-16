@@ -24,7 +24,7 @@ using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 namespace Lucene.Net.Index
 {
 	
-	[TestFixture]
+
 	public class MockIndexInput:BufferedIndexInput
 	{
 		new private byte[] buffer;
