@@ -98,7 +98,6 @@ namespace Lucene.Net.Search.Payloads
 		
 		public override int GetHashCode()
 		{
-            //System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this"); // {{Aroush-2.9}}
 			return base.GetHashCode();
 		}
 	}
