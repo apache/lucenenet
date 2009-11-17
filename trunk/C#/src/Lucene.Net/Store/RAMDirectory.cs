@@ -99,7 +99,17 @@ namespace Lucene.Net.Store
 		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
-		
+
+         //https://issues.apache.org/jira/browse/LUCENENET-174
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
+        {
+            if (lockFactory == null)
+            {
+                SetLockFactory(new SingleInstanceLockFactory());
+            }
+        }
+
 		public override System.String[] List()
 		{
 			lock (this)
