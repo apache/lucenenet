@@ -4611,7 +4611,7 @@ namespace Lucene.Net.Index
 		// This is called after pending added and deleted
 		// documents have been flushed to the Directory but before
 		// the change is committed (new segments_N file written).
-		internal virtual void  DoAfterFlush()
+		protected  virtual void  DoAfterFlush()
 		{
 		}
 		

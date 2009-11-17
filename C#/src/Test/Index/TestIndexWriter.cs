@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 				}
 				private int count = 0;
 				
-				public virtual bool IncrementToken()
+				public override bool IncrementToken()
 				{
 					if (count++ == 5)
 					{
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public virtual void  Message(System.String message)
+			public override void  Message(System.String message)
 			{
 				if (message.StartsWith("now flush at close") && 0 == thrown.Count)
 				{
@@ -2477,7 +2477,7 @@ namespace Lucene.Net.Index
 				this.doFail = false;
 			}
 			
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -2487,9 +2487,10 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("Lucene.Net.Index.FreqProxTermsWriter".Equals(sf.GetType()) && "AppendPostings".Equals(sf.GetMethod()))
+                        string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
+                        if ("Lucene.Net.Index.FreqProxTermsWriter".Equals(className) && "AppendPostings".Equals(sf.GetMethod().Name))
 							sawAppend = true;
-						if ("DoFlush".Equals(sf.GetMethod()))
+						if ("DoFlush".Equals(sf.GetMethod().Name))
 							sawFlush = true;
 					}
 					
@@ -3123,7 +3124,7 @@ namespace Lucene.Net.Index
 			{
 				this.onlyOnce = onlyOnce;
 			}
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -3131,7 +3132,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("Abort".Equals(sf.GetMethod()) || "FlushDocument".Equals(sf.GetMethod()))
+						if ("Abort".Equals(sf.GetMethod().Name) || "FlushDocument".Equals(sf.GetMethod().Name))
 						{
 							if (onlyOnce)
 								doFail = false;
@@ -3281,7 +3282,7 @@ namespace Lucene.Net.Index
 			{
 				this.onlyOnce = onlyOnce;
 			}
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -3289,7 +3290,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("closeDocStore".Equals(sf.GetMethod()))
+						if ("CloseDocStore".Equals(sf.GetMethod().Name))
 						{
 							if (onlyOnce)
 								doFail = false;
@@ -3336,7 +3337,7 @@ namespace Lucene.Net.Index
 			{
 				this.onlyOnce = onlyOnce;
 			}
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -3344,7 +3345,8 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("Flush".Equals(sf.GetMethod()) && "Lucene.Net.Index.DocFieldProcessor".Equals(sf.GetType()))
+                        string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
+						if ("Flush".Equals(sf.GetMethod().Name) && "Lucene.Net.Index.DocFieldProcessor".Equals(className))
 						{
 							if (onlyOnce)
 								doFail = false;
@@ -3492,7 +3494,7 @@ namespace Lucene.Net.Index
 		private class FailOnlyInSync:MockRAMDirectory.Failure
 		{
 			internal bool didFail;
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				if (doFail)
 				{
@@ -3500,7 +3502,8 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if (doFail && "Lucene.Net.Store.MockRAMDirectory".Equals(sf.GetType()) && "Sync".Equals(sf.GetMethod()))
+                        string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
+						if (doFail && "Lucene.Net.Store.MockRAMDirectory".Equals(className) && "Sync".Equals(sf.GetMethod().Name))
 						{
 							didFail = true;
 							throw new System.IO.IOException("now failing on purpose during sync");
@@ -3860,7 +3863,7 @@ namespace Lucene.Net.Index
 			
 			internal bool doFail;
 			
-			internal virtual bool TestPoint(System.String name)
+			public override bool TestPoint(System.String name)
 			{
 				if (doFail && name.Equals("DocumentsWriter.ThreadState.init start"))
 					throw new System.SystemException("intentionally failing");
@@ -3944,7 +3947,7 @@ namespace Lucene.Net.Index
 			internal bool doFail;
 			internal bool failed;
 			
-			internal virtual bool TestPoint(System.String name)
+			public override bool TestPoint(System.String name)
 			{
 				if (doFail && name.Equals("startMergeInit"))
 				{
@@ -4006,7 +4009,7 @@ namespace Lucene.Net.Index
 			
 			internal bool wasCalled;
 			
-			public virtual void  DoAfterFlush()
+			protected override void  DoAfterFlush()
 			{
 				wasCalled = true;
 			}
@@ -4042,7 +4045,7 @@ namespace Lucene.Net.Index
 			
 			internal bool fail1, fail2;
 			
-			public virtual void  Eval(MockRAMDirectory dir)
+			public override void  Eval(MockRAMDirectory dir)
 			{
 				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
 				bool isCommit = false;
@@ -4050,9 +4053,10 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < trace.FrameCount; i++)
 				{
 					System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-					if ("Lucene.Net.Index.SegmentInfos".Equals(sf.GetType()) && "PrepareCommit".Equals(sf.GetMethod()))
+                    string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
+					if ("Lucene.Net.Index.SegmentInfos".Equals(className) && "PrepareCommit".Equals(sf.GetMethod().Name))
 						isCommit = true;
-					if ("Lucene.Net.Store.MockRAMDirectory".Equals(sf.GetType()) && "DeleteFile".Equals(sf.GetMethod()))
+					if ("Lucene.Net.Store.MockRAMDirectory".Equals(className) && "DeleteFile".Equals(sf.GetMethod().Name))
 						isDelete = true;
 				}
 				
@@ -4890,7 +4894,7 @@ namespace Lucene.Net.Index
 			
 			internal bool doFail;
 			
-			internal virtual bool TestPoint(System.String name)
+			public override bool TestPoint(System.String name)
 			{
 				if (doFail && name.Equals("rollback before checkpoint"))
 					throw new System.SystemException("intentionally failing");
