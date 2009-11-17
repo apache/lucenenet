@@ -42,9 +42,6 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestMultiPhraseQuery:LuceneTestCase
 	{
-		public TestMultiPhraseQuery(System.String name):base(name)
-		{
-		}
 		
 		[Test]
 		public virtual void  TestPhrasePrefix()
