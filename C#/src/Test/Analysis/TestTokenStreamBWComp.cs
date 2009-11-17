@@ -324,31 +324,6 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		public interface SenselessAttribute:Attribute
-		{
-		}
-		
-		public sealed class SenselessAttributeImpl:AttributeImpl, TestTokenStreamBWComp.SenselessAttribute
-		{
-			public override void  CopyTo(AttributeImpl target)
-			{
-			}
-			
-			public override void  Clear()
-			{
-			}
-			
-			public  override bool Equals(System.Object o)
-			{
-				return (o is SenselessAttributeImpl);
-			}
-			
-			public override int GetHashCode()
-			{
-				return 0;
-			}
-		}
-		
 		// test if tokenization fails, if only the new API is allowed and an old TokenStream is in the chain
         [Test]
 		public virtual void  TestOnlyNewAPI()
@@ -387,7 +362,7 @@ namespace Lucene.Net.Analysis
 				Assert.IsTrue(stream2.AddAttribute(typeof(PayloadAttribute)) is PayloadAttributeImpl, "PayloadAttribute is implemented by PayloadAttributeImpl");
 				Assert.IsTrue(stream2.AddAttribute(typeof(PositionIncrementAttribute)) is PositionIncrementAttributeImpl, "PositionIncrementAttribute is implemented by PositionIncrementAttributeImpl");
 				Assert.IsTrue(stream2.AddAttribute(typeof(TypeAttribute)) is TypeAttributeImpl, "TypeAttribute is implemented by TypeAttributeImpl");
-				Assert.IsTrue(stream2.AddAttribute(typeof(TestTokenStreamBWComp.SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
+				Assert.IsTrue(stream2.AddAttribute(typeof(SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 				
 				// try to call old API, this should fail
 				try
@@ -428,7 +403,7 @@ namespace Lucene.Net.Analysis
 				Assert.IsTrue(stream2.AddAttribute(typeof(PositionIncrementAttribute)) is TokenWrapper, "PositionIncrementAttribute is implemented by TokenWrapper");
 				Assert.IsTrue(stream2.AddAttribute(typeof(TypeAttribute)) is TokenWrapper, "TypeAttribute is implemented by TokenWrapper");
 				// This one is not implemented by TokenWrapper:
-				Assert.IsTrue(stream2.AddAttribute(typeof(TestTokenStreamBWComp.SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
+				Assert.IsTrue(stream2.AddAttribute(typeof(SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 			}
 			finally
 			{
@@ -453,6 +428,31 @@ namespace Lucene.Net.Analysis
 			{
 				Assert.IsTrue(uoe.Message.EndsWith("does not implement any of incrementToken(), next(Token), next()."));
 			}
+		}
+	}
+		
+	public interface SenselessAttribute:Attribute
+	{
+	}
+	
+	public sealed class SenselessAttributeImpl:AttributeImpl, SenselessAttribute
+	{
+		public override void  CopyTo(AttributeImpl target)
+		{
+		}
+		
+		public override void  Clear()
+		{
+		}
+		
+		public  override bool Equals(System.Object o)
+		{
+			return (o is SenselessAttributeImpl);
+		}
+		
+		public override int GetHashCode()
+		{
+			return 0;
 		}
 	}
 }
