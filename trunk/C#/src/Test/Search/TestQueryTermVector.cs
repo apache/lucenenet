@@ -28,12 +28,7 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestQueryTermVector:LuceneTestCase
 	{
-		
-		
-		public TestQueryTermVector(System.String s):base(s)
-		{
-		}
-		
+				
 		[Test]
 		public virtual void  TestConstructor()
 		{

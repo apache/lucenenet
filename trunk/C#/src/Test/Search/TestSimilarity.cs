@@ -189,9 +189,6 @@ namespace Lucene.Net.Search
 				return true;
 			}
 		}
-		public TestSimilarity(System.String name):base(name)
-		{
-		}
 		
 		[Serializable]
 		public class SimpleSimilarity:Similarity

@@ -86,11 +86,7 @@ namespace Lucene.Net.Search
 		protected internal IndexSearcher indexSearcher;
 		protected internal IndexReader indexReader;
 		
-		
-		public TestTermScorer(System.String s):base(s)
-		{
-		}
-		
+				
 		[Test]
 		public override void  SetUp()
 		{
