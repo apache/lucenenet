@@ -244,9 +244,9 @@ namespace Lucene.Net.Search
 		private Sort sort;
 		
 		
-		public TestSort(System.String name):base(name)
+		/*public TestSort(System.String name):base(name)
 		{
-		}
+		}*/
 		
 		/*public static Test Suite()
 		{
