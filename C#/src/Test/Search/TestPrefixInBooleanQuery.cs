@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 		private RAMDirectory directory = new RAMDirectory();
 
 		[SetUp]
-		protected internal virtual void  SetUp()
+		public override void  SetUp()
 		{
 			base.SetUp();
 			
