@@ -748,10 +748,8 @@ namespace Lucene.Net.Search
 			int max = searcher.MaxDoc();
 			float idf2 = 0.0f;
 			System.Text.StringBuilder exp = new System.Text.StringBuilder();
-			System.Collections.IEnumerator i = terms.GetEnumerator();
-			while (i.MoveNext())
+            foreach (Term term in terms)
 			{
-				Term term = (Term) i.Current;
 				int df = searcher.DocFreq(term);
 				idf2 += Idf(df, max);
 				exp.Append(" ");

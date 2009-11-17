@@ -113,12 +113,10 @@ namespace Lucene.Net.Search.Spans
 		
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
-			{
-				SpanQuery clause = (SpanQuery) i.Current;
-				clause.ExtractTerms(terms);
-			}
+            foreach (SpanQuery clause in clauses)
+            {
+                clause.ExtractTerms(terms);
+            }
 		}
 		
 		
@@ -227,8 +225,13 @@ namespace Lucene.Net.Search.Spans
 		
 		public override int GetHashCode()
 		{
-			long result;
-			result = clauses.GetHashCode();
+			long result = 0;
+            //mgarski .NET uses the arraylist's location, not contents to calculate the hash
+            // need to start with result being the hash of the contents.
+            foreach (SpanQuery sq in clauses)
+            {
+                result += sq.GetHashCode();
+            }
 			// Mix bits before folding in things like boost, since it could cancel the
 			// last element of clauses.  This particular mix also serves to
 			// differentiate SpanNearQuery hashcodes from others.
