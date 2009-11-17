@@ -23,22 +23,22 @@ using Version = Lucene.Net.Util.Version;
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
-	/// LowerCaseFilter} and {@link StopFilter}, using a list of
-	/// English stop words.
+	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter},
+	/// {@link LowerCaseFilter} and {@link StopFilter}, using a list of English stop
+	/// words.
 	/// 
 	/// <a name="version"/>
-	/// <p>You must specify the required {@link Version}
-	/// compatibility when creating StandardAnalyzer:
+	/// <p>
+	/// You must specify the required {@link Version} compatibility when creating
+	/// StandardAnalyzer:
 	/// <ul>
-	/// <li> As of 2.9, StopFilter preserves position
-	/// increments by default
-	/// <li> As of 2.9, Tokens incorrectly identified as acronyms
-	/// are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
+	/// <li>As of 2.9, StopFilter preserves position increments
+	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
 	/// </ul>
 	/// 
 	/// </summary>
-	/// <version>  $Id: StandardAnalyzer.java 811070 2009-09-03 18:31:41Z hossman $
+	/// <version>  $Id: StandardAnalyzer.java 829134 2009-10-23 17:18:53Z mikemccand $
 	/// </version>
 	public class StandardAnalyzer : Analyzer
 	{
@@ -279,6 +279,14 @@ namespace Lucene.Net.Analysis.Standard
 			else
 			{
 				useDefaultStopPositionIncrements = true;
+			}
+			if (matchVersion.OnOrAfter(Version.LUCENE_24))
+			{
+				replaceInvalidAcronym = defaultReplaceInvalidAcronym;
+			}
+			else
+			{
+				replaceInvalidAcronym = false;
 			}
 		}
 		

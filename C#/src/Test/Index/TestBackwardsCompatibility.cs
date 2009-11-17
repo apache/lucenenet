@@ -24,6 +24,7 @@ using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
+using CompressionTools = Lucene.Net.Documents.CompressionTools;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
@@ -531,6 +532,16 @@ namespace Lucene.Net.Index
 			doc.Add(new Field("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			doc.Add(new Field("content2", "here is more content with aaa aaa aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 			doc.Add(new Field("fie\u2C77ld", "field with non-ascii name", Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+			if (id % 2 == 0)
+			{
+				doc.Add(new Field("compressed", TEXT_TO_COMPRESS, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("compressedSize", System.Convert.ToString(TEXT_COMPRESSED_LENGTH), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			}
+			else
+			{
+				doc.Add(new Field("compressed", BINARY_TO_COMPRESS, Field.Store.COMPRESS));
+				doc.Add(new Field("compressedSize", System.Convert.ToString(BINARY_COMPRESSED_LENGTH), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			}
 			writer.AddDocument(doc);
 		}
 		
@@ -597,6 +608,29 @@ namespace Lucene.Net.Index
 		public static System.String FullDir(System.String dirName)
 		{
 			return new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), dirName)).FullName;
+		}
+		
+		internal const System.String TEXT_TO_COMPRESS = "this is a compressed field and should appear in 3.0 as an uncompressed field after merge";
+		// FieldSelectorResult.SIZE returns compressed size for compressed fields,
+		// which are internally handled as binary;
+		// do it in the same way like FieldsWriter, do not use
+		// CompressionTools.compressString() for compressed fields:
+		internal static int TEXT_COMPRESSED_LENGTH;
+		
+		internal static readonly byte[] BINARY_TO_COMPRESS = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+		internal static readonly int BINARY_COMPRESSED_LENGTH = CompressionTools.Compress(BINARY_TO_COMPRESS).Length;
+		static TestBackwardsCompatibility()
+		{
+			{
+				try
+				{
+					TEXT_COMPRESSED_LENGTH = CompressionTools.Compress(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(TEXT_TO_COMPRESS)).Length;
+				}
+				catch (System.Exception e)
+				{
+					throw new System.SystemException();
+				}
+			}
 		}
 	}
 }

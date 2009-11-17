@@ -38,6 +38,18 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public static readonly Version LUCENE_CURRENT = new Version("LUCENE_CURRENT", 0);
 		
+		/// <summary>Match settings and bugs in Lucene's 2.0 release. </summary>
+		public static readonly Version LUCENE_20 = new Version("LUCENE_20", 2000);
+		
+		/// <summary>Match settings and bugs in Lucene's 2.1 release. </summary>
+		public static readonly Version LUCENE_21 = new Version("LUCENE_21", 2100);
+		
+		/// <summary>Match settings and bugs in Lucene's 2.2 release. </summary>
+		public static readonly Version LUCENE_22 = new Version("LUCENE_22", 2200);
+		
+		/// <summary>Match settings and bugs in Lucene's 2.3 release. </summary>
+		public static readonly Version LUCENE_23 = new Version("LUCENE_23", 2300);
+		
 		/// <summary>Match settings and bugs in Lucene's 2.4 release.</summary>
 		/// <deprecated> This will be removed in 3.0 
 		/// </deprecated>

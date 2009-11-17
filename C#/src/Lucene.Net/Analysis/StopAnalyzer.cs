@@ -1,4 +1,3 @@
-
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,10 +17,22 @@
 
 using System;
 
+using Version = Lucene.Net.Util.Version;
+
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>Filters {@link LetterTokenizer} with {@link LowerCaseFilter} and {@link StopFilter}. </summary>
+	/// <summary> Filters {@link LetterTokenizer} with {@link LowerCaseFilter} and
+	/// {@link StopFilter}.
+	/// 
+	/// <a name="version"/>
+	/// <p>
+	/// You must specify the required {@link Version} compatibility when creating
+	/// StopAnalyzer:
+	/// <ul>
+	/// <li>As of 2.9, position increments are preserved
+	/// </ul>
+	/// </summary>
 	
 	public sealed class StopAnalyzer:Analyzer
 	{
@@ -45,7 +56,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>Builds an analyzer which removes words in
 		/// ENGLISH_STOP_WORDS.
 		/// </summary>
-		/// <deprecated> Use {@link #StopAnalyzer(boolean)} instead 
+		/// <deprecated> Use {@link #StopAnalyzer(Version)} instead
 		/// </deprecated>
 		public StopAnalyzer()
 		{
@@ -54,12 +65,22 @@ namespace Lucene.Net.Analysis
 			enablePositionIncrements = false;
 		}
 		
+		/// <summary> Builds an analyzer which removes words in ENGLISH_STOP_WORDS.</summary>
+		public StopAnalyzer(Version matchVersion)
+		{
+			stopWords = ENGLISH_STOP_WORDS_SET;
+			useDefaultStopPositionIncrement = false;
+			enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+		}
+		
 		/// <summary>Builds an analyzer which removes words in
 		/// ENGLISH_STOP_WORDS.
 		/// </summary>
-		/// <param name="enablePositionIncrements">See {@link
-		/// StopFilter#setEnablePositionIncrements} 
+		/// <param name="enablePositionIncrements">
+		/// See {@link StopFilter#SetEnablePositionIncrements}
 		/// </param>
+		/// <deprecated> Use {@link #StopAnalyzer(Version)} instead
+		/// </deprecated>
 		public StopAnalyzer(bool enablePositionIncrements)
 		{
 			stopWords = ENGLISH_STOP_WORDS_SET;
@@ -68,7 +89,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
-		/// <deprecated> Use {@link #StopAnalyzer(Set, boolean)} instead 
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
 		public StopAnalyzer(System.Collections.Hashtable stopWords)
 		{
@@ -78,11 +99,21 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
+		public StopAnalyzer(Version matchVersion, System.Collections.Hashtable stopWords)
+		{
+			this.stopWords = stopWords;
+			useDefaultStopPositionIncrement = false;
+			enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+		}
+		
+		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
 		/// <param name="stopWords">Set of stop words
 		/// </param>
-		/// <param name="enablePositionIncrements">See {@link
-		/// StopFilter#setEnablePositionIncrements} 
+		/// <param name="enablePositionIncrements">
+		/// See {@link StopFilter#SetEnablePositionIncrements}
 		/// </param>
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
+		/// </deprecated>
 		public StopAnalyzer(System.Collections.Hashtable stopWords, bool enablePositionIncrements)
 		{
 			this.stopWords = stopWords;
@@ -92,6 +123,8 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Builds an analyzer which removes words in the provided array.</summary>
 		/// <deprecated> Use {@link #StopAnalyzer(Set, boolean)} instead 
+		/// </deprecated>
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
 		public StopAnalyzer(System.String[] stopWords)
 		{
@@ -103,10 +136,10 @@ namespace Lucene.Net.Analysis
 		/// <summary>Builds an analyzer which removes words in the provided array.</summary>
 		/// <param name="stopWords">Array of stop words
 		/// </param>
-		/// <param name="enablePositionIncrements">See {@link
-		/// StopFilter#setEnablePositionIncrements} 
+		/// <param name="enablePositionIncrements">
+		/// See {@link StopFilter#SetEnablePositionIncrements}
 		/// </param>
-		/// <deprecated> Use {@link #StopAnalyzer(Set, boolean)} instead
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
 		public StopAnalyzer(System.String[] stopWords, bool enablePositionIncrements)
 		{
@@ -118,7 +151,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
 		/// <seealso cref="WordlistLoader.GetWordSet(File)">
 		/// </seealso>
-		/// <deprecated> Use {@link #StopAnalyzer(File, boolean)} instead 
+		/// <deprecated> Use {@link #StopAnalyzer(Version, File)} instead
 		/// </deprecated>
 		public StopAnalyzer(System.IO.FileInfo stopwordsFile)
 		{
@@ -132,9 +165,11 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <param name="stopwordsFile">File to load stop words from
 		/// </param>
-		/// <param name="enablePositionIncrements">See {@link
-		/// StopFilter#setEnablePositionIncrements} 
+		/// <param name="enablePositionIncrements">
+		/// See {@link StopFilter#SetEnablePositionIncrements}
 		/// </param>
+		/// <deprecated> Use {@link #StopAnalyzer(Version, File)} instead
+		/// </deprecated>
 		public StopAnalyzer(System.IO.FileInfo stopwordsFile, bool enablePositionIncrements)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
@@ -142,10 +177,26 @@ namespace Lucene.Net.Analysis
 			useDefaultStopPositionIncrement = false;
 		}
 		
+		/// <summary> Builds an analyzer with the stop words from the given file.
+		/// 
+		/// </summary>
+		/// <seealso cref="WordlistLoader.getWordSet(File)">
+		/// </seealso>
+		/// <param name="matchVersion">See <a href="#version">above</a>
+		/// </param>
+		/// <param name="stopwordsFile">File to load stop words from
+		/// </param>
+		public StopAnalyzer(Version matchVersion, System.IO.FileInfo stopwordsFile)
+		{
+			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
+			this.enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+			useDefaultStopPositionIncrement = false;
+		}
+		
 		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
 		/// <seealso cref="WordlistLoader.GetWordSet(Reader)">
 		/// </seealso>
-		/// <deprecated> Use {@link #StopAnalyzer(Reader, boolean)} instead
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Reader)} instead
 		/// </deprecated>
 		public StopAnalyzer(System.IO.TextReader stopwords)
 		{
@@ -159,17 +210,33 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <param name="stopwords">Reader to load stop words from
 		/// </param>
-		/// <param name="enablePositionIncrements">See {@link
-		/// StopFilter#setEnablePositionIncrements} 
+		/// <param name="enablePositionIncrements">
+		/// See {@link StopFilter#SetEnablePositionIncrements}
 		/// </param>
+		/// <deprecated> Use {@link #StopAnalyzer(Version, Reader)} instead
+		/// </deprecated>
 		public StopAnalyzer(System.IO.TextReader stopwords, bool enablePositionIncrements)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwords);
 			this.enablePositionIncrements = enablePositionIncrements;
 			useDefaultStopPositionIncrement = false;
 		}
-		
-		/// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
+
+        /// <summary>Builds an analyzer with the stop words from the given reader. </summary>
+        /// <seealso cref="WordlistLoader.GetWordSet(Reader)">
+        /// </seealso>
+        /// <param name="matchVersion">See <a href="#Version">above</a>
+        /// </param>
+        /// <param name="stopwords">Reader to load stop words from
+        /// </param>
+        public StopAnalyzer(Version matchVersion, System.IO.TextReader stopwords)
+        {
+            stopWords = WordlistLoader.GetWordSet(stopwords);
+            this.enablePositionIncrements = StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion);
+            useDefaultStopPositionIncrement = false;
+        }
+
+        /// <summary>Filters LowerCaseTokenizer with StopFilter. </summary>
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			if (useDefaultStopPositionIncrement)

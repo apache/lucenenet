@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> </summary>
-	/// <version>  $Id: TestIndexWriter.java 806847 2009-08-22 12:40:09Z uschindler $
+	/// <version>  $Id: TestIndexWriter.java 831036 2009-10-29 17:15:12Z mikemccand $
 	/// </version>
     [TestFixture]
 	public class TestIndexWriter:BaseTokenStreamTestCase

@@ -19,13 +19,18 @@ using System;
 
 using NUnit.Framework;
 
+using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+using QueryParser = Lucene.Net.QueryParsers.QueryParser;
 
 namespace Lucene.Net.Search
 {
@@ -294,6 +299,45 @@ namespace Lucene.Net.Search
 			query = new FuzzyQuery(new Term("field", "sdfsdfsdfsdf"), 0.9f);
 			hits = searcher.Search(query, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);
+		}
+		
+		[Test]
+		public virtual void  TestGiga()
+		{
+			
+			StandardAnalyzer analyzer = new StandardAnalyzer();
+			
+			Directory index = new MockRAMDirectory();
+			IndexWriter w = new IndexWriter(index, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+			
+			AddDoc("Lucene in Action", w);
+			AddDoc("Lucene for Dummies", w);
+			
+			// addDoc("Giga", w);
+			AddDoc("Giga byte", w);
+			
+			AddDoc("ManagingGigabytesManagingGigabyte", w);
+			AddDoc("ManagingGigabytesManagingGigabytes", w);
+			
+			AddDoc("The Art of Computer Science", w);
+			AddDoc("J. K. Rowling", w);
+			AddDoc("JK Rowling", w);
+			AddDoc("Joanne K Roling", w);
+			AddDoc("Bruce Willis", w);
+			AddDoc("Willis bruce", w);
+			AddDoc("Brute willis", w);
+			AddDoc("B. willis", w);
+			IndexReader r = w.GetReader();
+			w.Close();
+			
+			Query q = new QueryParser("field", analyzer).Parse("giga~0.9");
+			
+			// 3. search
+			IndexSearcher searcher = new IndexSearcher(r);
+			ScoreDoc[] hits = searcher.Search(q, 10).scoreDocs;
+			Assert.AreEqual(1, hits.Length);
+			Assert.AreEqual(searcher.Doc(hits[0].doc).Get("field"), "Giga byte");
+			r.Close();
 		}
 		
 		private void  AddDoc(System.String text, IndexWriter writer)

@@ -350,13 +350,21 @@ namespace Lucene.Net.Index
 		// readers.
 		private volatile bool poolReaders;
 		
-		/// <summary> Expert: returns a readonly reader containing all
-		/// current updates.  Flush is called automatically.  This
-		/// provides "near real-time" searching, in that changes
-		/// made during an IndexWriter session can be made
-		/// available for searching without closing the writer.
+		/// <summary> Expert: returns a readonly reader, covering all committed as well as
+		/// un-committed changes to the index. This provides "near real-time"
+		/// searching, in that changes made during an IndexWriter session can be
+		/// quickly made available for searching without closing the writer nor
+		/// calling {@link #commit}.
 		/// 
-		/// <p>It's near real-time because there is no hard
+		/// <p>
+		/// Note that this is functionally equivalent to calling {#commit} and then
+		/// using {@link IndexReader#open} to open a new reader. But the turarnound
+		/// time of this method should be faster since it avoids the potentially
+		/// costly {@link #commit}.
+		/// <p>
+		/// 
+		/// <p>
+		/// It's <i>near</i> real-time because there is no hard
 		/// guarantee on how quickly you can get a new reader after
 		/// making changes with IndexWriter.  You'll have to
 		/// experiment in your situation to determine if it's
@@ -2137,6 +2145,14 @@ namespace Lucene.Net.Index
 		/// instead of RAM usage (each buffered delete Query counts
 		/// as one).
 		/// 
+		/// <p>
+		/// <b>NOTE</b>: because IndexWriter uses <code>int</code>s when managing its
+		/// internal storage, the absolute maximum value for this setting is somewhat
+		/// less than 2048 MB. The precise limit depends on various factors, such as
+		/// how large your documents are, how many fields have norms, etc., so it's
+		/// best to set this value comfortably under 2048.
+		/// </p>
+		/// 
 		/// <p> The default value is {@link #DEFAULT_RAM_BUFFER_SIZE_MB}.</p>
 		/// 
 		/// </summary>
@@ -2146,6 +2162,10 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public virtual void  SetRAMBufferSizeMB(double mb)
 		{
+			if (mb > 2048.0)
+			{
+				throw new System.ArgumentException("ramBufferSize " + mb + " is too large; should be comfortably less than 2048");
+			}
 			if (mb != DISABLE_AUTO_FLUSH && mb <= 0.0)
 				throw new System.ArgumentException("ramBufferSize should be > 0.0 MB when enabled");
 			if (mb == DISABLE_AUTO_FLUSH && GetMaxBufferedDocs() == DISABLE_AUTO_FLUSH)
@@ -5237,7 +5257,7 @@ namespace Lucene.Net.Index
 				
 				// Must note the change to segmentInfos so any commits
 				// in-flight don't lose it:
-				changeCount++;
+				Checkpoint();
 				
 				// If the merged segments had pending changes, clear
 				// them so that they don't bother writing them to
@@ -6643,6 +6663,31 @@ namespace Lucene.Net.Index
 		public /*internal*/ virtual bool TestPoint(System.String name)
 		{
 			return true;
+		}
+		
+		internal virtual bool NrtIsCurrent(SegmentInfos infos)
+		{
+			lock (this)
+			{
+				if (!infos.Equals(segmentInfos))
+				{
+					// if any structural changes (new segments), we are
+					// stale
+					return false;
+				}
+				else
+				{
+					return !docWriter.AnyChanges();
+				}
+			}
+		}
+		
+		internal virtual bool IsClosed()
+		{
+			lock (this)
+			{
+				return closed;
+			}
 		}
 		static IndexWriter()
 		{

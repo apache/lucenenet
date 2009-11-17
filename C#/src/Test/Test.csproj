@@ -74,9 +74,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DemoLib">
-      <Name>DemoLib</Name>
-      <HintPath>..\Demo\DemoLib\bin\Release\DemoLib.dll</HintPath>
+    <Reference Include="DemoLib, Version=2.9.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Demo\DemoLib\bin\Debug\DemoLib.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -363,6 +363,7 @@
     <Compile Include="Search\TestPositionIncrement.cs" />
     <Compile Include="Search\TestPositiveScoresOnlyCollector.cs" />
     <Compile Include="Search\TestPrefixFilter.cs" />
+    <Compile Include="Search\TestPrefixInBooleanQuery.cs" />
     <Compile Include="Search\TestPrefixQuery.cs" />
     <Compile Include="Search\TestQueryTermVector.cs" />
     <Compile Include="Search\TestQueryWrapperFilter.cs" />

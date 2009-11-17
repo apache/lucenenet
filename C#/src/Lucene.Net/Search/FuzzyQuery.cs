@@ -133,8 +133,8 @@ namespace Lucene.Net.Search
 		{
 			if (!termLongEnough)
 			{
-				// can't match
-				return new BooleanQuery();
+				// can only match if it's exact
+				return new TermQuery(term);
 			}
 			
 			FilteredTermEnum enumerator = GetEnum(reader);

@@ -255,6 +255,10 @@ namespace Lucene.Net.Search.Payloads
 			//
 			public /*protected internal*/ override bool SetFreqCurrentDoc()
 			{
+				if (!more)
+				{
+					return false;
+				}
 				Lucene.Net.Search.Spans.Spans[] spansArr = new Lucene.Net.Search.Spans.Spans[1];
 				spansArr[0] = spans;
 				payloadScore = 0;

@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
 				collector.Collect(doc);
 				doc = NextDoc();
 			}
-			return doc == NO_MORE_DOCS;
+			return doc != NO_MORE_DOCS;
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.

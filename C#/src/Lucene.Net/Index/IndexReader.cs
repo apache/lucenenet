@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 	/// <code>IndexReader</code> instance; use your own
 	/// (non-Lucene) objects instead.
 	/// </summary>
-	/// <version>  $Id: IndexReader.java 807735 2009-08-25 18:02:39Z markrmiller $
+	/// <version>  $Id: IndexReader.java 826049 2009-10-16 19:28:55Z mikemccand $
 	/// </version>
 	public abstract class IndexReader : System.ICloneable
 	{
@@ -836,8 +836,31 @@ namespace Lucene.Net.Index
 			return SegmentInfos.ReadCurrentUserData(directory);
 		}
 		
-		/// <summary> Version number when this IndexReader was opened. Not implemented in the IndexReader base class.</summary>
-		/// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
+		/// <summary> Version number when this IndexReader was opened. Not implemented in the
+		/// IndexReader base class.
+		/// 
+		/// <p>
+		/// If this reader is based on a Directory (ie, was created by calling
+		/// {@link #Open}, or {@link #Reopen} on a reader based on a Directory), then
+		/// this method returns the version recorded in the commit that the reader
+		/// opened. This version is advanced every time {@link IndexWriter#Commit} is
+		/// called.
+		/// </p>
+		/// 
+		/// <p>
+		/// If instead this reader is a near real-time reader (ie, obtained by a call
+		/// to {@link IndexWriter#GetReader}, or by calling {@link #Reopen} on a near
+		/// real-time reader), then this method returns the version of the last
+		/// commit done by the writer. Note that even as further changes are made
+		/// with the writer, the version will not changed until a commit is
+		/// completed. Thus, you should not rely on this method to determine when a
+		/// near real-time reader should be opened. Use {@link #IsCurrent} instead.
+		/// </p>
+		/// 
+		/// </summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		/// <summary>             unless overridden in subclass
+		/// </summary>
 		public virtual long GetVersion()
 		{
 			throw new System.NotSupportedException("This reader does not support this method.");
@@ -890,19 +913,30 @@ namespace Lucene.Net.Index
 			throw new System.NotSupportedException("This reader does not support this method.");
 		}
 		
-		/// <summary> Check whether this IndexReader is still using the
-		/// current (i.e., most recently committed) version of the
-		/// index.  If a writer has committed any changes to the
-		/// index since this reader was opened, this will return
-		/// <code>false</code>, in which case you must open a new
-		/// IndexReader in order to see the changes.  See the
-		/// description of the <a href="IndexWriter.html#autoCommit"><code>autoCommit</code></a>
-		/// flag which controls when the {@link IndexWriter}
-		/// actually commits changes to the index.
+		/// <summary> Check whether any new changes have occurred to the index since this
+		/// reader was opened.
 		/// 
 		/// <p>
-		/// Not implemented in the IndexReader base class.
+		/// If this reader is based on a Directory (ie, was created by calling
+		/// {@link #open}, or {@link #reopen} on a reader based on a Directory), then
+		/// this method checks if any further commits (see {@link IndexWriter#commit}
+		/// have occurred in that directory).
 		/// </p>
+		/// 
+		/// <p>
+		/// If instead this reader is a near real-time reader (ie, obtained by a call
+		/// to {@link IndexWriter#getReader}, or by calling {@link #reopen} on a near
+		/// real-time reader), then this method checks if either a new commmit has
+		/// occurred, or any new uncommitted changes have taken place via the writer.
+		/// Note that even if the writer has only performed merging, this method will
+		/// still return false.
+		/// </p>
+		/// 
+		/// <p>
+		/// In any event, if this returns false, you should call {@link #reopen} to
+		/// get a new reader that sees the changes.
+		/// </p>
+		/// 
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>

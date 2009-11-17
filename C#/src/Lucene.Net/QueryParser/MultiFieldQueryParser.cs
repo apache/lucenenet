@@ -23,6 +23,7 @@ using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using MultiPhraseQuery = Lucene.Net.Search.MultiPhraseQuery;
 using PhraseQuery = Lucene.Net.Search.PhraseQuery;
 using Query = Lucene.Net.Search.Query;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -30,64 +31,156 @@ namespace Lucene.Net.QueryParsers
 	/// <summary> A QueryParser which constructs queries to search multiple fields.
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 804016 $
+	/// <version>  $Revision: 829134 $
 	/// </version>
 	public class MultiFieldQueryParser:QueryParser
 	{
 		protected internal System.String[] fields;
 		protected internal System.Collections.IDictionary boosts;
 		
-		/// <summary> Creates a MultiFieldQueryParser. 
-		/// Allows passing of a map with term to Boost, and the boost to apply to each term.
+		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
+		/// Boost, and the boost to apply to each term.
 		/// 
-		/// <p>It will, when parse(String query)
-		/// is called, construct a query like this (assuming the query consists of
-		/// two terms and you specify the two fields <code>title</code> and <code>body</code>):</p>
+		/// <p>
+		/// It will, when parse(String query) is called, construct a query like this
+		/// (assuming the query consists of two terms and you specify the two fields
+		/// <code>title</code> and <code>body</code>):
+		/// </p>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>When setDefaultOperator(AND_OPERATOR) is set, the result will be:</p>
+		/// <p>
+		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
+		/// </p>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>When you pass a boost (title=>5 body=>10) you can get </p>
+		/// <p>
+		/// When you pass a boost (title=>5 body=>10) you can get
+		/// </p>
 		/// 
 		/// <code>
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
 		/// </code>
 		/// 
-		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
-		/// what fields they appear.</p>
+		/// <p>
+		/// In other words, all the query's terms must appear, but it doesn't matter
+		/// in what fields they appear.
+		/// </p>
+		/// 
 		/// </summary>
-		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(fields, analyzer)
+		/// <deprecated> Please use
+		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer, Map)}
+		/// instead
+		/// </deprecated>
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(Version.LUCENE_24, fields, analyzer)
+		{
+			this.boosts = boosts;
+		}
+		
+		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
+		/// Boost, and the boost to apply to each term.
+		/// 
+		/// <p>
+		/// It will, when parse(String query) is called, construct a query like this
+		/// (assuming the query consists of two terms and you specify the two fields
+		/// <code>title</code> and <code>body</code>):
+		/// </p>
+		/// 
+		/// <code>
+		/// (title:term1 body:term1) (title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>
+		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
+		/// </p>
+		/// 
+		/// <code>
+		/// +(title:term1 body:term1) +(title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>
+		/// When you pass a boost (title=>5 body=>10) you can get
+		/// </p>
+		/// 
+		/// <code>
+		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
+		/// </code>
+		/// 
+		/// <p>
+		/// In other words, all the query's terms must appear, but it doesn't matter
+		/// in what fields they appear.
+		/// </p>
+		/// </summary>
+		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(matchVersion, fields, analyzer)
 		{
 			this.boosts = boosts;
 		}
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
-		/// <p>It will, when parse(String query)
-		/// is called, construct a query like this (assuming the query consists of
-		/// two terms and you specify the two fields <code>title</code> and <code>body</code>):</p>
+		/// <p>
+		/// It will, when parse(String query) is called, construct a query like this
+		/// (assuming the query consists of two terms and you specify the two fields
+		/// <code>title</code> and <code>body</code>):
+		/// </p>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>When setDefaultOperator(AND_OPERATOR) is set, the result will be:</p>
+		/// <p>
+		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
+		/// </p>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>In other words, all the query's terms must appear, but it doesn't matter in
-		/// what fields they appear.</p>
+		/// <p>
+		/// In other words, all the query's terms must appear, but it doesn't matter
+		/// in what fields they appear.
+		/// </p>
+		/// 
 		/// </summary>
-		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):base(null, analyzer)
+		/// <deprecated> Please use
+		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer)}
+		/// instead
+		/// </deprecated>
+		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):this(Version.LUCENE_24, fields, analyzer)
+		{
+		}
+		
+		/// <summary> Creates a MultiFieldQueryParser.
+		/// 
+		/// <p>
+		/// It will, when parse(String query) is called, construct a query like this
+		/// (assuming the query consists of two terms and you specify the two fields
+		/// <code>title</code> and <code>body</code>):
+		/// </p>
+		/// 
+		/// <code>
+		/// (title:term1 body:term1) (title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>
+		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
+		/// </p>
+		/// 
+		/// <code>
+		/// +(title:term1 body:term1) +(title:term2 body:term2)
+		/// </code>
+		/// 
+		/// <p>
+		/// In other words, all the query's terms must appear, but it doesn't matter
+		/// in what fields they appear.
+		/// </p>
+		/// </summary>
+		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer):base(matchVersion, null, analyzer)
 		{
 			this.fields = fields;
 		}
@@ -205,11 +298,13 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query which searches on the fields specified.
 		/// <p>
 		/// If x fields are specified, this effectively constructs:
+		/// 
 		/// <pre>
-		/// <code>
+		/// &lt;code&gt;
 		/// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
-		/// </code>
+		/// &lt;/code&gt;
 		/// </pre>
+		/// 
 		/// </summary>
 		/// <param name="queries">Queries strings to parse
 		/// </param>
@@ -217,18 +312,56 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <param name="analyzer">Analyzer to use
 		/// </param>
-		/// <throws>  ParseException if query parsing fails </throws>
-		/// <throws>  IllegalArgumentException if the length of the queries array differs </throws>
-		/// <summary>  from the length of the fields array
+		/// <throws>  ParseException </throws>
+		/// <summary>             if query parsing fails
 		/// </summary>
+		/// <throws>  IllegalArgumentException </throws>
+		/// <summary>             if the length of the queries array differs from the length of
+		/// the fields array
+		/// </summary>
+		/// <deprecated> Use {@link #Parse(Version,String[],String[],Analyzer)}
+		/// instead
+		/// </deprecated>
 		public static Query Parse(System.String[] queries, System.String[] fields, Analyzer analyzer)
+		{
+			return Parse(Version.LUCENE_24, queries, fields, analyzer);
+		}
+		
+		/// <summary> Parses a query which searches on the fields specified.
+		/// <p>
+		/// If x fields are specified, this effectively constructs:
+		/// 
+		/// <pre>
+		/// &lt;code&gt;
+		/// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
+		/// &lt;/code&gt;
+		/// </pre>
+		/// 
+		/// </summary>
+		/// <param name="matchVersion">Lucene version to match; this is passed through to
+		/// QueryParser.
+		/// </param>
+		/// <param name="queries">Queries strings to parse
+		/// </param>
+		/// <param name="fields">Fields to search on
+		/// </param>
+		/// <param name="analyzer">Analyzer to use
+		/// </param>
+		/// <throws>  ParseException </throws>
+		/// <summary>             if query parsing fails
+		/// </summary>
+		/// <throws>  IllegalArgumentException </throws>
+		/// <summary>             if the length of the queries array differs from the length of
+		/// the fields array
+		/// </summary>
+		public static Query Parse(Version matchVersion, System.String[] queries, System.String[] fields, Analyzer analyzer)
 		{
 			if (queries.Length != fields.Length)
 				throw new System.ArgumentException("queries.length != fields.length");
 			BooleanQuery bQuery = new BooleanQuery();
 			for (int i = 0; i < fields.Length; i++)
 			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
+				QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
 				Query q = qp.Parse(queries[i]);
 				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
 				{
@@ -272,14 +405,65 @@ namespace Lucene.Net.QueryParsers
 		/// <throws>  IllegalArgumentException if the length of the fields array differs </throws>
 		/// <summary>  from the length of the flags array
 		/// </summary>
+		/// <deprecated> Use
+		/// {@link #Parse(Version, String, String[], BooleanClause.Occur[], Analyzer)}
+		/// instead
+		/// </deprecated>
 		public static Query Parse(System.String query, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+		{
+			return Parse(Version.LUCENE_24, query, fields, flags, analyzer);
+		}
+		
+		/// <summary> Parses a query, searching on the fields specified. Use this if you need
+		/// to specify certain fields as required, and others as prohibited.
+		/// <p>
+		/// 
+		/// <pre>
+		/// Usage:
+		/// &lt;code&gt;
+		/// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+		/// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
+		/// BooleanClause.Occur.MUST,
+		/// BooleanClause.Occur.MUST_NOT};
+		/// MultiFieldQueryParser.parse(&quot;query&quot;, fields, flags, analyzer);
+		/// &lt;/code&gt;
+		/// </pre>
+		/// <p>
+		/// The code above would construct a query:
+		/// 
+		/// <pre>
+		/// &lt;code&gt;
+		/// (filename:query) +(contents:query) -(description:query)
+		/// &lt;/code&gt;
+		/// </pre>
+		/// 
+		/// </summary>
+		/// <param name="matchVersion">Lucene version to match; this is passed through to
+		/// QueryParser.
+		/// </param>
+		/// <param name="query">Query string to parse
+		/// </param>
+		/// <param name="fields">Fields to search on
+		/// </param>
+		/// <param name="flags">Flags describing the fields
+		/// </param>
+		/// <param name="analyzer">Analyzer to use
+		/// </param>
+		/// <throws>  ParseException </throws>
+		/// <summary>             if query parsing fails
+		/// </summary>
+		/// <throws>  IllegalArgumentException </throws>
+		/// <summary>             if the length of the fields array differs from the length of
+		/// the flags array
+		/// </summary>
+		public static Query Parse(Version matchVersion, System.String query, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			if (fields.Length != flags.Length)
 				throw new System.ArgumentException("fields.length != flags.length");
 			BooleanQuery bQuery = new BooleanQuery();
 			for (int i = 0; i < fields.Length; i++)
 			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
+				QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
 				Query q = qp.Parse(query);
 				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
 				{
@@ -324,14 +508,65 @@ namespace Lucene.Net.QueryParsers
 		/// <throws>  IllegalArgumentException if the length of the queries, fields, </throws>
 		/// <summary>  and flags array differ
 		/// </summary>
+		/// <deprecated> Used
+		/// {@link #Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer)}
+		/// instead
+		/// </deprecated>
 		public static Query Parse(System.String[] queries, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
+		{
+			return Parse(Version.LUCENE_24, queries, fields, flags, analyzer);
+		}
+		
+		/// <summary> Parses a query, searching on the fields specified. Use this if you need
+		/// to specify certain fields as required, and others as prohibited.
+		/// <p>
+		/// 
+		/// <pre>
+		/// Usage:
+		/// &lt;code&gt;
+		/// String[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
+		/// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
+		/// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
+		/// BooleanClause.Occur.MUST,
+		/// BooleanClause.Occur.MUST_NOT};
+		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
+		/// &lt;/code&gt;
+		/// </pre>
+		/// <p>
+		/// The code above would construct a query:
+		/// 
+		/// <pre>
+		/// &lt;code&gt;
+		/// (filename:query1) +(contents:query2) -(description:query3)
+		/// &lt;/code&gt;
+		/// </pre>
+		/// 
+		/// </summary>
+		/// <param name="matchVersion">Lucene version to match; this is passed through to
+		/// QueryParser.
+		/// </param>
+		/// <param name="queries">Queries string to parse
+		/// </param>
+		/// <param name="fields">Fields to search on
+		/// </param>
+		/// <param name="flags">Flags describing the fields
+		/// </param>
+		/// <param name="analyzer">Analyzer to use
+		/// </param>
+		/// <throws>  ParseException </throws>
+		/// <summary>             if query parsing fails
+		/// </summary>
+		/// <throws>  IllegalArgumentException </throws>
+		/// <summary>             if the length of the queries, fields, and flags array differ
+		/// </summary>
+		public static Query Parse(Version matchVersion, System.String[] queries, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			if (!(queries.Length == fields.Length && queries.Length == flags.Length))
 				throw new System.ArgumentException("queries, fields, and flags array have have different length");
 			BooleanQuery bQuery = new BooleanQuery();
 			for (int i = 0; i < fields.Length; i++)
 			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
+				QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
 				Query q = qp.Parse(queries[i]);
 				if (q != null && (!(q is BooleanQuery) || ((BooleanQuery) q).GetClauses().Length > 0))
 				{

@@ -20,16 +20,13 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A TokenFilter is a TokenStream whose input is another token stream.
+	/// <summary> A TokenFilter is a TokenStream whose input is another TokenStream.
 	/// <p>
-	/// This is an abstract class.
-	/// NOTE: subclasses must override 
-	/// {@link #IncrementToken()} if the new TokenStream API is used
-	/// and {@link #Next(Token)} or {@link #Next()} if the old
-	/// TokenStream API is used.
-	/// <p>
-	/// See {@link TokenStream}
+	/// This is an abstract class; subclasses must override {@link #IncrementToken()}.
+	/// 
 	/// </summary>
+	/// <seealso cref="TokenStream">
+	/// </seealso>
 	public abstract class TokenFilter:TokenStream
 	{
 		/// <summary>The source of tokens for this filter. </summary>

@@ -436,9 +436,11 @@ namespace Lucene.Net.Index
 						}
 					}
 				}
-				else if (ch >= UnicodeUtil.UNI_SUR_HIGH_START && ch <= UnicodeUtil.UNI_SUR_HIGH_END)
-				// Unpaired
+				else if (ch >= UnicodeUtil.UNI_SUR_HIGH_START && (ch <= UnicodeUtil.UNI_SUR_HIGH_END || ch == 0xffff))
+				{
+					// Unpaired or 0xffff
 					ch = tokenText[downto] = (char) (UnicodeUtil.UNI_REPLACEMENT_CHAR);
+				}
 				
 				code = (code * 31) + ch;
 			}

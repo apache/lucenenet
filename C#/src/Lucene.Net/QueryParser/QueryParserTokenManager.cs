@@ -40,6 +40,7 @@ using Query = Lucene.Net.Search.Query;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
 using WildcardQuery = Lucene.Net.Search.WildcardQuery;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.QueryParsers
 {

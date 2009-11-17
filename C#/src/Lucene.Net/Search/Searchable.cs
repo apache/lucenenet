@@ -123,8 +123,6 @@ namespace Lucene.Net.Search
 		/// {@link Searcher#Search(Query,Filter)} instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		/// <deprecated> use {@link #Search(Weight, Filter, int)} instead.
-		/// </deprecated>
 		TopDocs Search(Weight weight, Filter filter, int n);
 		
 		/// <summary>Expert: Returns the stored fields of document <code>i</code>.
@@ -189,8 +187,8 @@ namespace Lucene.Net.Search
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
 		/// 
-		/// <p>Applications should usually call {@link
-		/// Searcher#Search(Query,Filter,Sort)} instead.
+		/// <p>Applications should usually call
+		/// {@link Searcher#Search(Query,Filter,int,Sort)} instead.
 		/// 
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>

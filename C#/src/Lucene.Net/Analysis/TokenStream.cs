@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
 	/// <li>Instantiation of <code>TokenStream</code>/{@link TokenFilter}s which add/get
 	/// attributes to/from the {@link AttributeSource}.
 	/// <li>The consumer calls {@link TokenStream#Reset()}.
-	/// <li>the consumer retrieves attributes from the stream and stores local
+	/// <li>The consumer retrieves attributes from the stream and stores local
 	/// references to all attributes it wants to access
 	/// <li>The consumer calls {@link #IncrementToken()} until it returns false and
 	/// consumes the attributes after each call.
@@ -317,10 +317,15 @@ namespace Lucene.Net.Analysis
 			return onlyUseNewAPI;
 		}
 		
-		/// <summary> Consumers (ie {@link IndexWriter}) use this method to advance the stream to
+		/// <summary> Consumers (i.e., {@link IndexWriter}) use this method to advance the stream to
 		/// the next token. Implementing classes must implement this method and update
 		/// the appropriate {@link AttributeImpl}s with the attributes of the next
 		/// token.
+		/// <P>
+		/// The producer must make no assumptions about the attributes after the
+		/// method has been returned: the caller may arbitrarily change it. If the
+		/// producer needs to preserve the state for subsequent calls, it can use
+		/// {@link #captureState} to create a copy of the current attribute state.
 		/// <p>
 		/// This method is called for every token of a document, so an efficient
 		/// implementation is crucial for good performance. To avoid calls to
