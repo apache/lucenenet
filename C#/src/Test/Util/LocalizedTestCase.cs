@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
 		}
 		
 		// @Override
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
