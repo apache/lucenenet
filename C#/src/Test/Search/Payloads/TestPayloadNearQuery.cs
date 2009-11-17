@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Payloads
 		private byte[] payload2 = new byte[]{2};
 		private byte[] payload4 = new byte[]{4};
 		
-		public TestPayloadNearQuery(System.String s):base(s)
+		public TestPayloadNearQuery():base()
 		{
 			InitBlock();
 		}
