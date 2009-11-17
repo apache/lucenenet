@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
 		
 		private const int NUM_DOCS = 1000;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
