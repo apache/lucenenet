@@ -60,6 +60,7 @@ namespace Lucene.Net.QueryParsers
 {
 	
 	/// <summary> Tests QueryParser.</summary>
+	[TestFixture]
 	public class TestQueryParser:LocalizedTestCase
 	{
         static System.Collections.Hashtable dataTestWithDifferentLocals = new System.Collections.Hashtable();
@@ -113,9 +114,9 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 		
-		public TestQueryParser(System.String name):base(name, dataTestWithDifferentLocals)
+		/*public TestQueryParser(System.String name):base(name, dataTestWithDifferentLocals)
 		{
-		}
+		}*/
 		
 		public static Analyzer qpAnalyzer = new QPTestAnalyzer();
 		
