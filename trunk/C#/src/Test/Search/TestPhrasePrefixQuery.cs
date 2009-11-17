@@ -41,9 +41,9 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestPhrasePrefixQuery:LuceneTestCase
 	{
-		public TestPhrasePrefixQuery(System.String name):base(name)
+		/*public TestPhrasePrefixQuery(System.String name):base(name)
 		{
-		}
+		}*/
 		
 		/// <summary> </summary>
 		[Test]

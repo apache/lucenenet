@@ -155,9 +155,9 @@ namespace Lucene.Net.Search.Spans
 				return spans.End();
 			}
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.ICollection GetPayload()
+			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 			{
-				return new System.Collections.ArrayList(spans.GetPayload());
+				return spans.GetPayload();
 			}
 			
 			// TODO: Remove warning after API has been finalized
@@ -318,17 +318,25 @@ namespace Lucene.Net.Search.Spans
 		/// <returns> Collection of <code>byte[]</code> payloads
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public override System.Collections.ICollection GetPayload()
+		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 		{
-            System.Collections.Hashtable matchPayload = new System.Collections.Hashtable();
+            //mgarski: faking out another HashSet<T>...
+			System.Collections.Generic.Dictionary<byte[], byte[]> matchPayload = new System.Collections.Generic.Dictionary<byte[], byte[]>(); 
 			for (SpansCell cell = first; cell != null; cell = cell.next)
 			{
 				if (cell.IsPayloadAvailable())
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(matchPayload, cell.GetPayload());
+                    System.Collections.Generic.ICollection<byte[]> cellPayload = cell.GetPayload();
+                    foreach (byte[] val in cellPayload)
+                    {
+                        if (!matchPayload.ContainsKey(val))
+                        {
+                            matchPayload.Add(val, val);
+                        }
+                    }
 				}
 			}
-			return matchPayload;
+			return matchPayload.Keys;
 		}
 		
 		// TODO: Remove warning after API has been finalized

@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Spans
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}
 			
-			public override System.Collections.ICollection GetPayload()
+			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Spans
 		internal sealed class JustCompilePayloadSpans:Spans
 		{
 			
-			public override System.Collections.ICollection GetPayload()
+			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}

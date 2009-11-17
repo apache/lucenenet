@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Spans
 		/// </returns>
 		/// <throws>  java.io.IOException </throws>
 		// TODO: Remove warning after API has been finalized
-		public abstract System.Collections.ICollection GetPayload();
+		public abstract System.Collections.Generic.ICollection<byte[]> GetPayload();
 		
 		/// <summary> Checks if a payload can be loaded at this position.
 		/// <p/>

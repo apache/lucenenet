@@ -200,14 +200,12 @@ namespace Lucene.Net.Search.Payloads
 				if (spans.IsPayloadAvailable())
 				{
 					//ICollection<byte[]> payload = spans.GetPayload();
-                    System.Collections.ICollection payload = spans.GetPayload();
+                    System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
 					//IEnumerator<byte[]> it = payload.GetEnumerator();
-                    System.Collections.IEnumerator it = payload.GetEnumerator();
-					while (it.MoveNext())
-					{
-						byte[] bytes = (byte[]) it.Current;
-						payloads.Add(bytes);
-					}
+                    foreach (byte[] bytes in payload)
+                    {
+                        payloads.Add(bytes);
+                    }
 				}
 			}
 		}
