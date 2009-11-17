@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		private int docCount = 0;
 		private RAMDirectory dir;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

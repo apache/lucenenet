@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> initializes multiSearcher and singleSearcher with the same document set</summary>
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

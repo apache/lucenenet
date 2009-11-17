@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 		private IndexSearcher searcher;
 		private Directory directory = new MockRAMDirectory();
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

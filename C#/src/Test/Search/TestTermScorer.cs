@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 		protected internal IndexReader indexReader;
 		
 				
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

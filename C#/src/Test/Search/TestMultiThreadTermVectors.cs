@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 		public int numDocs = 100;
 		public int numThreads = 3;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

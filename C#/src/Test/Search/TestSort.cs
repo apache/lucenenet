@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
 			return GetIndex(false, false);
 		}
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

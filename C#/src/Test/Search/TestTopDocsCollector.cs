@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 			return tdc;
 		}
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
