@@ -36,12 +36,7 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestSpanQueryFilter:LuceneTestCase
 	{
-		
-		
-		public TestSpanQueryFilter(System.String s):base(s)
-		{
-		}
-		
+				
 		[Test]
 		public virtual void  TestFilterWorks()
 		{

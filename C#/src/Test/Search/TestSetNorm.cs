@@ -79,9 +79,6 @@ namespace Lucene.Net.Search
 				return true;
 			}
 		}
-		public TestSetNorm(System.String name):base(name)
-		{
-		}
 		
 		[Test]
 		public virtual void  TestSetNorm_Renamed()

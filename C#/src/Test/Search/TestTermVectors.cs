@@ -36,9 +36,6 @@ namespace Lucene.Net.Search
 	{
 		private IndexSearcher searcher;
 		private Directory directory = new MockRAMDirectory();
-		public TestTermVectors(System.String s):base(s)
-		{
-		}
 		
 		[Test]
 		public override void  SetUp()
@@ -353,9 +350,8 @@ namespace Lucene.Net.Search
 				System.Collections.Generic.SortedDictionary<object, object> vectorEntrySet = mapper.GetTermVectorEntrySet();
 				Assert.IsTrue(vectorEntrySet.Count == 10, "mapper.getTermVectorEntrySet() Size: " + vectorEntrySet.Count + " is not: " + 10);
 				TermVectorEntry last = null;
-				for (System.Collections.IEnumerator iterator = vectorEntrySet.GetEnumerator(); iterator.MoveNext(); )
+                foreach(TermVectorEntry tve in vectorEntrySet.Keys)
 				{
-					TermVectorEntry tve = (TermVectorEntry) iterator.Current;
 					if (tve != null && last != null)
 					{
 						Assert.IsTrue(last.GetFrequency() >= tve.GetFrequency(), "terms are not properly sorted");
