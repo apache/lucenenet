@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1 + maxId - medId, result.Length, "med and up");
 			
 			result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id", minIP, medIP, T, T), numDocs).scoreDocs;
-			Assert.AreEqual(+ medId - minId, result.Length, "up to med");
+			Assert.AreEqual(1 + medId - minId, result.Length, "up to med");
 			
 			// unbounded id
 			
