@@ -157,7 +157,8 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary>Test caching for ReverseOrdFieldSource </summary>
-		public virtual void  tesCachingReverseOrd()
+		[Test]
+		public virtual void  TesCachingReverseOrd()
 		{
 			DoTestCaching(ID_FIELD, false);
 		}
@@ -271,7 +272,7 @@ namespace Lucene.Net.Search.Function
 				try
 				{
 					Log("compare (should differ): " + innerArray + " to " + q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-					Assert.AreNotEqual(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
+					Assert.AreNotSame(innerArray, q2.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "cached field values should not be reused if reader as changed!");
 				}
 				catch (System.NotSupportedException e)
 				{
