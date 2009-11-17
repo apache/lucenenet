@@ -37,11 +37,7 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestFilteredSearch:LuceneTestCase
 	{
-		
-		public TestFilteredSearch(System.String name):base(name)
-		{
-		}
-		
+				
 		private const System.String FIELD = "category";
 		
 		[Test]

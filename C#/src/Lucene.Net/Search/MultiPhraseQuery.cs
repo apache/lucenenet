@@ -329,8 +329,18 @@ namespace Lucene.Net.Search
 			
 			buffer.Append("\"");
 			System.Collections.IEnumerator i = termArrays.GetEnumerator();
+            bool first = true;
 			while (i.MoveNext())
 			{
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    buffer.Append(" ");
+                }
+
 				Term[] terms = (Term[]) i.Current;
 				if (terms.Length > 1)
 				{
@@ -347,8 +357,6 @@ namespace Lucene.Net.Search
 				{
 					buffer.Append(terms[0].Text());
 				}
-				if (i.MoveNext())
-					buffer.Append(" ");
 			}
 			buffer.Append("\"");
 			
@@ -370,23 +378,38 @@ namespace Lucene.Net.Search
 			if (!(o is MultiPhraseQuery))
 				return false;
 			MultiPhraseQuery other = (MultiPhraseQuery) o;
-            if (this.GetBoost() == other.GetBoost() && this.slop == other.slop)
+            bool eq = this.GetBoost() == other.GetBoost() && this.slop == other.slop;
+            if(!eq)
             {
-                System.Collections.IEnumerator iter1 = this.termArrays.GetEnumerator();
-                System.Collections.IEnumerator iter2 = other.termArrays.GetEnumerator();
-                while (iter1.MoveNext() && iter2.MoveNext())
+                return false;
+            }
+            eq = this.termArrays.Count.Equals(other.termArrays.Count);
+            if (!eq)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.termArrays.Count; i++)
+            {
+                if (!SupportClass.Compare.CompareTermArrays((Term[])this.termArrays[i], (Term[])other.termArrays[i]))
                 {
-                    if (SupportClass.Compare.CompareTermArrays((Term[])iter1.Current, (Term[])iter2.Current) == false)
-                        return false;
+                    return false;
                 }
-                iter1 = this.positions.GetEnumerator();
-                iter2 = other.positions.GetEnumerator();
-                while (iter1.MoveNext() && iter2.MoveNext())
+            }
+            if(!eq)
+            {
+                return false;
+            }
+            eq = this.positions.Count.Equals(other.positions.Count);
+            if (!eq)
+            {
+                return false;
+            }
+            for (int i = 0; i < this.positions.Count; i++)
+            {
+                if (!((int)this.positions[i] == (int)other.positions[i]))
                 {
-                    System.Int32 item1 = (System.Int32)iter1.Current;
-                    System.Int32 item2 = (System.Int32)iter2.Current;
-                    if (!item1.Equals(item2))
-                        return false;
+                    return false;
                 }
             }
             return true;
@@ -395,7 +418,12 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ TermArraysHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
+            int posHash = 0;
+            foreach(int pos in positions)
+            {
+                posHash += pos.GetHashCode();
+            }
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ slop ^ TermArraysHashCode() ^ posHash ^ 0x4AC65113;
 		}
 		
 		// Breakout calculation of the termArrays hashcode
