@@ -292,10 +292,7 @@ public class SupportClass
         /// </summary>
         public void Join()
         {
-            lock (this)
-            {
-                threadField.Join();
-            }
+            threadField.Join();
         }
 
         /// <summary>
@@ -304,10 +301,7 @@ public class SupportClass
         /// <param name="MiliSeconds">Time of wait in milliseconds</param>
         public void Join(long MiliSeconds)
         {
-            lock (this)
-            {
-                threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
-            }
+            threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
         }
 
         /// <summary>
@@ -317,10 +311,7 @@ public class SupportClass
         /// <param name="NanoSeconds">Time of wait in nanoseconds</param>
         public void Join(long MiliSeconds, int NanoSeconds)
         {
-            lock (this)
-            {
-                threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
-            }
+            threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
         }
 
         /// <summary>
@@ -350,10 +341,7 @@ public class SupportClass
         /// <param name="stateInfo">An object that contains application-specific information, such as state, which can be used by the thread being aborted</param>
         public void Abort(object stateInfo)
         {
-            lock (this)
-            {
-                threadField.Abort(stateInfo);
-            }
+            threadField.Abort(stateInfo);
         }
 
         /// <summary>
