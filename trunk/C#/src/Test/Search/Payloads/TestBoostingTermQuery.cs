@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Payloads
 		private byte[] payloadMultiField1 = new byte[]{2};
 		private byte[] payloadMultiField2 = new byte[]{4};
 		
-		public TestBoostingTermQuery(System.String s):base(s)
+		public TestBoostingTermQuery():base()
 		{
 			InitBlock();
 		}

@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Payloads
 		private byte[] payloadMultiField2 = new byte[]{4};
 		protected internal RAMDirectory directory;
 		
-		public TestPayloadTermQuery(System.String s):base(s)
+		public TestPayloadTermQuery():base()
 		{
 			InitBlock();
 		}
