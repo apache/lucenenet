@@ -25,12 +25,7 @@ namespace Lucene.Net.Search
 	/// <summary> Unit tests for the ParallelMultiSearcher </summary>
     [TestFixture]
 	public class TestParallelMultiSearcher:TestMultiSearcher
-	{
-		
-		public TestParallelMultiSearcher(System.String name):base(name)
-		{
-		}
-		
+	{		
 		protected internal override MultiSearcher GetMultiSearcherInstance(Searcher[] searchers)
 		{
 			return new ParallelMultiSearcher(searchers);
