@@ -97,12 +97,12 @@ namespace Lucene.Net.Search
 		private System.String FIELD_NAME = "body";
 		private Query query;
 		
-		public TestTimeLimitingCollector(System.String name):base(name)
+		/*public TestTimeLimitingCollector(System.String name):base(name)
 		{
-		}
+		}*/
 		
 		/// <summary> initializes searcher with a document set</summary>
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

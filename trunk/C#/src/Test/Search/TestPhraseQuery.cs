@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		private PhraseQuery query;
 		private RAMDirectory directory;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

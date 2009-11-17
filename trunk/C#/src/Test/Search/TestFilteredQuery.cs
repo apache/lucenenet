@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 		private Query query;
 		private Filter filter;
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();

@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(e, a, m);
 		}
 		
-		[Test]
+		[SetUp]
 		public override void  SetUp()
 		{
 			base.SetUp();
