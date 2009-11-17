@@ -93,11 +93,8 @@ namespace Lucene.Net.Search
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
 		/// 
-		/// <b>NOTE:</b> currently, this method tracks document scores and sets them in
-		/// the returned {@link FieldDoc}, however in 3.0 it will move to not track
-		/// document scores. If document scores tracking is still needed, you can use
-		/// {@link #Search(Weight, Filter, Collector)} and pass in a
-		/// {@link TopFieldCollector} instance.
+		/// <p>NOTE: this does not compute scores by default; use
+		/// {@link IndexSearcher#setDefaultFieldSortScoring} to enable scoring.
 		/// 
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
@@ -131,10 +128,9 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p>{@link Collector#Collect(int)} is called for every matching document.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API ({@link
-		/// Searcher#Search(Query)}) is usually more efficient, as it skips
-		/// non-high-scoring hits.
+		/// <p>Applications should only use this if they need <i>all</i> of the matching
+		/// documents. The high-level search API ({@link Searcher#Search(Query, int)}
+		/// ) is usually more efficient, as it skips non-high-scoring hits.
 		/// <p>Note: The <code>score</code> passed to this method is a raw score.
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.

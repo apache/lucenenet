@@ -75,7 +75,7 @@
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lucene-2.9\SharpZipLib\netcf-20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>

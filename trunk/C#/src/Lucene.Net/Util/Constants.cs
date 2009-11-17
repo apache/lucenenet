@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Id: Constants.java 780225 2009-05-30 10:00:45Z mikemccand $
+	/// <version>  $Id: Constants.java 828327 2009-10-22 06:47:40Z uschindler $
 	/// 
 	/// </version>
 	
@@ -61,8 +61,16 @@ namespace Lucene.Net.Util
 		// NOTE: this logic may not be correct; if you know of a
 		// more reliable approach please raise it on java-dev!
 		public static bool JRE_IS_64BIT;
-		
-		public const System.String LUCENE_MAIN_VERSION = "2.9";
+
+        // this method prevents inlining the final version constant in compiled
+        // classes,
+        // see: http://www.javaworld.com/community/node/3400
+        private static System.String Ident(System.String s)
+        {
+            return s.ToString();
+        }
+
+		public static readonly System.String LUCENE_MAIN_VERSION = Ident("2.9.1");
 		
 		public static System.String LUCENE_VERSION;
 		static Constants()
@@ -98,7 +106,7 @@ namespace Lucene.Net.Util
 				{
 					v = v + " [" + LUCENE_MAIN_VERSION + "]";
 				}
-				LUCENE_VERSION = v;
+				LUCENE_VERSION = Ident(v);
                 */
                 LUCENE_VERSION = " [" + LUCENE_MAIN_VERSION + "]";
                 // {{Aroush-2.9}}

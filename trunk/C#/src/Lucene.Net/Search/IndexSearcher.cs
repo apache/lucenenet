@@ -194,13 +194,15 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Just like {@link #Search(Weight, Filter, int, Sort)}, but you choose
-		/// whether or not the fields in the returned {@link FieldDoc} instances should
-		/// be set by specifying fillFields.<br>
-		/// <b>NOTE:</b> currently, this method tracks document scores and sets them in
-		/// the returned {@link FieldDoc}, however in 3.0 it will move to not track
-		/// document scores. If document scores tracking is still needed, you can use
-		/// {@link #Search(Weight, Filter, Collector)} and pass in a
-		/// {@link TopFieldCollector} instance.
+		/// whether or not the fields in the returned {@link FieldDoc} instances
+		/// should be set by specifying fillFields.<br>
+		/// 
+		/// <p>
+		/// NOTE: this does not compute scores by default. If you need scores, create
+		/// a {@link TopFieldCollector} instance by calling
+		/// {@link TopFieldCollector#create} and then pass that to
+		/// {@link #Search(Weight, Filter, Collector)}.
+		/// </p>
 		/// </summary>
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
 		{
@@ -362,8 +364,18 @@ namespace Lucene.Net.Search
 		private bool fieldSortDoTrackScores;
 		private bool fieldSortDoMaxScore;
 		
-		/// <deprecated> 
-		/// </deprecated>
+		/// <summary> By default, no scores are computed when sorting by field (using
+		/// {@link #Search(Query,Filter,int,Sort)}). You can change that, per
+		/// IndexSearcher instance, by calling this method. Note that this will incur
+		/// a CPU cost.
+		/// 
+		/// </summary>
+		/// <param name="doTrackScores">If true, then scores are returned for every matching document
+		/// in {@link TopFieldDocs}.
+		/// 
+		/// </param>
+		/// <param name="doMaxScore">If true, then the max score for all matching docs is computed.
+		/// </param>
 		public virtual void  SetDefaultFieldSortScoring(bool doTrackScores, bool doMaxScore)
 		{
 			fieldSortDoTrackScores = doTrackScores;

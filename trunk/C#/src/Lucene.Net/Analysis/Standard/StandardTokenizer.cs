@@ -25,6 +25,7 @@ using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionI
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -44,6 +45,15 @@ namespace Lucene.Net.Analysis.Standard
 	/// <p>Many applications have specific tokenizer needs.  If this tokenizer does
 	/// not suit your application, please consider copying this source code
 	/// directory to your project and maintaining your own grammar-based tokenizer.
+	/// 
+	/// <a name="version"/>
+	/// <p>
+	/// You must specify the required {@link Version} compatibility when creating
+	/// StandardAnalyzer:
+	/// <ul>
+	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
+	/// </ul>
 	/// </summary>
 	
 	public class StandardTokenizer:Tokenizer
@@ -107,7 +117,9 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary> Creates a new instance of the {@link StandardTokenizer}. Attaches the
 		/// <code>input</code> to a newly created JFlex scanner.
 		/// </summary>
-		public StandardTokenizer(System.IO.TextReader input):this(input, false)
+		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
+		/// </deprecated>
+		public StandardTokenizer(System.IO.TextReader input):this(Version.LUCENE_24, input)
 		{
 		}
 		
@@ -121,6 +133,8 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See http://issues.apache.org/jira/browse/LUCENE-1068
 		/// </param>
+		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
+		/// </deprecated>
 		public StandardTokenizer(System.IO.TextReader input, bool replaceInvalidAcronym):base()
 		{
 			InitBlock();
@@ -128,7 +142,27 @@ namespace Lucene.Net.Analysis.Standard
 			Init(input, replaceInvalidAcronym);
 		}
 		
+		/// <summary> Creates a new instance of the
+		/// {@link org.apache.lucene.analysis.standard.StandardTokenizer}. Attaches
+		/// the <code>input</code> to the newly created JFlex scanner.
+		/// 
+		/// </summary>
+		/// <param name="input">The input reader
+		/// 
+		/// See http://issues.apache.org/jira/browse/LUCENE-1068
+		/// </param>
+		public StandardTokenizer(Version matchVersion, System.IO.TextReader input):base()
+		{
+			InitBlock();
+			this.scanner = new StandardTokenizerImpl(input);
+			Init(input, matchVersion);
+		}
+		
 		/// <summary> Creates a new StandardTokenizer with a given {@link AttributeSource}. </summary>
+		/// <deprecated> Use
+		/// {@link #StandardTokenizer(Version, AttributeSource, Reader)}
+		/// instead
+		/// </deprecated>
 		public StandardTokenizer(AttributeSource source, System.IO.TextReader input, bool replaceInvalidAcronym):base(source)
 		{
 			InitBlock();
@@ -136,12 +170,34 @@ namespace Lucene.Net.Analysis.Standard
 			Init(input, replaceInvalidAcronym);
 		}
 		
+		/// <summary> Creates a new StandardTokenizer with a given {@link AttributeSource}.</summary>
+		public StandardTokenizer(Version matchVersion, AttributeSource source, System.IO.TextReader input):base(source)
+		{
+			InitBlock();
+			this.scanner = new StandardTokenizerImpl(input);
+			Init(input, matchVersion);
+		}
+		
 		/// <summary> Creates a new StandardTokenizer with a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory} </summary>
+		/// <deprecated> Use
+		/// {@link #StandardTokenizer(Version, org.apache.lucene.util.AttributeSource.AttributeFactory, Reader)}
+		/// instead
+		/// </deprecated>
 		public StandardTokenizer(AttributeFactory factory, System.IO.TextReader input, bool replaceInvalidAcronym):base(factory)
 		{
 			InitBlock();
 			this.scanner = new StandardTokenizerImpl(input);
 			Init(input, replaceInvalidAcronym);
+		}
+		
+		/// <summary> Creates a new StandardTokenizer with a given
+		/// {@link org.apache.lucene.util.AttributeSource.AttributeFactory}
+		/// </summary>
+		public StandardTokenizer(Version matchVersion, AttributeFactory factory, System.IO.TextReader input):base(factory)
+		{
+			InitBlock();
+			this.scanner = new StandardTokenizerImpl(input);
+			Init(input, matchVersion);
 		}
 		
 		private void  Init(System.IO.TextReader input, bool replaceInvalidAcronym)
@@ -152,6 +208,18 @@ namespace Lucene.Net.Analysis.Standard
 			offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
 			posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
 			typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
+		}
+		
+		private void  Init(System.IO.TextReader input, Version matchVersion)
+		{
+			if (matchVersion.OnOrAfter(Version.LUCENE_24))
+			{
+				Init(input, true);
+			}
+			else
+			{
+				Init(input, false);
+			}
 		}
 		
 		// this tokenizer generates three attributes:

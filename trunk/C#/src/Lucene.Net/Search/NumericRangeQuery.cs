@@ -188,6 +188,12 @@ namespace Lucene.Net.Search
 					throw new System.ArgumentException("valSize must be 32 or 64");
 				
 			}
+			
+			// shortcut if upper bound == lower bound
+			if (min != null && min.Equals(max))
+			{
+				SetRewriteMethod(CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
+			}
 		}
 		
 		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>

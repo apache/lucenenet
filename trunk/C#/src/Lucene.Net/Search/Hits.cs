@@ -23,30 +23,33 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A ranked list of documents, used to hold search results.
+	/// <summary> A ranked list of documents, used to hold search results.
 	/// <p>
-	/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
-	/// hits is generally not desirable and may be the source of
-	/// performance issues. If you need to iterate over many or all hits, consider
-	/// using the search method that takes a {@link HitCollector}.
+	/// <b>Caution:</b> Iterate only over the hits needed. Iterating over all hits is
+	/// generally not desirable and may be the source of performance issues. If you
+	/// need to iterate over many or all hits, consider using the search method that
+	/// takes a {@link HitCollector}.
 	/// </p>
-	/// <p><b>Note:</b> Deleting matching documents concurrently with traversing 
-	/// the hits, might, when deleting hits that were not yet retrieved, decrease
-	/// {@link #Length()}. In such case, 
-	/// {@link java.util.ConcurrentModificationException ConcurrentModificationException}
-	/// is thrown when accessing hit <code>n</code> &ge; current_{@link #Length()} 
-	/// (but <code>n</code> &lt; {@link #Length()}_at_start). 
+	/// <p>
+	/// <b>Note:</b> Deleting matching documents concurrently with traversing the
+	/// hits, might, when deleting hits that were not yet retrieved, decrease
+	/// {@link #Length()}. In such case,
+	/// {@link java.util.ConcurrentModificationException
+	/// ConcurrentModificationException} is thrown when accessing hit <code>n</code>
+	/// &ge; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
+	/// _at_start).
 	/// 
 	/// </summary>
-	/// <deprecated>
-	/// see {@link TopScoreDocCollector} and {@link TopDocs} :<br>
+	/// <deprecated> see {@link Searcher#Search(Query, int)},
+	/// {@link Searcher#Search(Query, Filter, int)} and
+	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br>
+	/// 
 	/// <pre>
-	/// TopScoreDocCollector collector = new TopScoreDocCollector(hitsPerPage);
-	/// searcher.search(query, collector);
-	/// ScoreDoc[] hits = collector.topDocs().scoreDocs;
-	/// for (int i = 0; i < hits.length; i++) {
+	/// TopDocs topDocs = searcher.Search(query, numHits);
+	/// ScoreDoc[] hits = topDocs.scoreDocs;
+	/// for (int i = 0; i &lt; hits.Length; i++) {
 	/// int docId = hits[i].doc;
-	/// Document d = searcher.doc(docId);
+	/// Document d = searcher.Doc(docId);
 	/// // do something with current hit
 	/// ...
 	/// </pre>

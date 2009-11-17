@@ -2,6 +2,10 @@ Apache Lucene.Net History
 -------------------------
 
 
+16Nov09:
+	- Release: Apache Lucene.Net 2.9.1 build 001 "Beta"
+
+
 03Nov09:
 	- Release: Apache Lucene.Net 2.9.0 build 001 "Alpha"
 	- Port: Test code

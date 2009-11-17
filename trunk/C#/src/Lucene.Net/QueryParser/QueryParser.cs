@@ -40,6 +40,7 @@ using Query = Lucene.Net.Search.Query;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
 using WildcardQuery = Lucene.Net.Search.WildcardQuery;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -109,6 +110,17 @@ namespace Lucene.Net.QueryParsers
 	/// the same syntax as this class, but is more modular,
 	/// enabling substantial customization to how a query is created.
 	/// </summary>
+	/// 
+	/// <p><b>NOTE</b>: there is a new QueryParser in contrib, which matches
+	/// the same syntax as this class, but is more modular,
+	/// enabling substantial customization to how a query is created.
+	/// </summary>
+	/// <b>NOTE</b>: You must specify the required {@link Version} compatibility when
+	/// creating QueryParser:
+	/// <ul>
+	/// <li>As of 2.9, {@link #SetEnablePositionIncrements} is true by default.
+	/// </ul>
+	/// </summary>
 	public class QueryParser : QueryParserConstants
 	{
 		private void  InitBlock()
@@ -141,7 +153,7 @@ namespace Lucene.Net.QueryParsers
 		internal bool lowercaseExpandedTerms = true;
 		internal MultiTermQuery.RewriteMethod multiTermRewriteMethod;
 		internal bool allowLeadingWildcard = false;
-		internal bool enablePositionIncrements = false;
+		internal bool enablePositionIncrements = true;
 		
 		internal Analyzer analyzer;
 		internal System.String field;
@@ -178,10 +190,33 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <param name="a">  used to find terms in the query text.
 		/// </param>
-		public QueryParser(System.String f, Analyzer a):this(new FastCharStream(new System.IO.StringReader("")))
+		/// <deprecated> Use {@link #QueryParser(Version, String, Analyzer)} instead
+		/// </deprecated>
+		public QueryParser(System.String f, Analyzer a):this(Version.LUCENE_24, f, a)
+		{
+		}
+		
+		/// <summary> Constructs a query parser.
+		/// 
+		/// </summary>
+		/// <param name="matchVersion">Lucene version to match. See <a href="#version">above</a>)
+		/// </param>
+		/// <param name="f">the default field for query terms.
+		/// </param>
+		/// <param name="a">used to find terms in the query text.
+		/// </param>
+		public QueryParser(Version matchVersion, System.String f, Analyzer a):this(new FastCharStream(new System.IO.StringReader("")))
 		{
 			analyzer = a;
 			field = f;
+			if (matchVersion.OnOrAfter(Version.LUCENE_29))
+			{
+				enablePositionIncrements = true;
+			}
+			else
+			{
+				enablePositionIncrements = false;
+			}
 		}
 		
 		/// <summary>Parses a query string, returning a {@link Lucene.Net.Search.Query}.</summary>
@@ -867,7 +902,7 @@ namespace Lucene.Net.QueryParsers
                 if (resolution == null)
                 {
                     // no default or field specific date resolution has been set,
-                    // use deprecated DateField to maintain compatibilty with
+					// use deprecated DateField to maintain compatibility with
                     // pre-1.9 Lucene versions.
                     part1 = DateField.DateToString(d1);
                     part2 = DateField.DateToString(d2);
@@ -1333,7 +1368,7 @@ namespace Lucene.Net.QueryParsers
 				System.Console.Out.WriteLine("Usage: java Lucene.Net.QueryParsers.QueryParser <input>");
 				System.Environment.Exit(0);
 			}
-			QueryParser qp = new QueryParser("field", new Lucene.Net.Analysis.SimpleAnalyzer());
+			QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "field", new Lucene.Net.Analysis.SimpleAnalyzer());
 			Query q = qp.Parse(args[0]);
 			System.Console.Out.WriteLine(q.ToString("field"));
 		}
@@ -1962,6 +1997,15 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 			}
 		}
 		
+		private bool Jj_3R_2()
+		{
+			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.TERM))
+				return true;
+			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.COLON))
+				return true;
+			return false;
+		}
+		
 		private bool Jj_3_1()
 		{
 			Token xsp;
@@ -1978,15 +2022,6 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		private bool Jj_3R_3()
 		{
 			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.STAR))
-				return true;
-			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.COLON))
-				return true;
-			return false;
-		}
-		
-		private bool Jj_3R_2()
-		{
-			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.TERM))
 				return true;
 			if (Jj_scan_token(Lucene.Net.QueryParsers.QueryParserConstants.COLON))
 				return true;
@@ -2019,7 +2054,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		private int jj_gc = 0;
 		
 		/// <summary>Constructor with user supplied CharStream. </summary>
-		public QueryParser(CharStream stream)
+		protected internal QueryParser(CharStream stream)
 		{
 			InitBlock();
 			token_source = new QueryParserTokenManager(stream);
@@ -2046,7 +2081,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		}
 		
 		/// <summary>Constructor with generated Token Manager. </summary>
-		public QueryParser(QueryParserTokenManager tm)
+		protected internal QueryParser(QueryParserTokenManager tm)
 		{
 			InitBlock();
 			token_source = tm;

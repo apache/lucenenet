@@ -143,6 +143,19 @@ namespace Lucene.Net.Search
 			Assert.AreSame(DocIdSet.EMPTY_DOCIDSET, f.GetDocIdSet(searcher.GetIndexReader()), "A exclusive range ending with Integer.MIN_VALUE should return the EMPTY_DOCIDSET instance");
 		}
 		
+        [Test]
+		public virtual void  TestOneMatchQuery()
+		{
+			System.Int32 tempAux = 1000;
+			System.Int32 tempAux2 = 1000;
+			NumericRangeQuery q = NumericRangeQuery.NewIntRange("ascfield8", 8, tempAux, tempAux2, true, true);
+			Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.GetRewriteMethod());
+			TopDocs topDocs = searcher.Search(q, noDocs);
+			ScoreDoc[] sd = topDocs.scoreDocs;
+			Assert.IsNotNull(sd);
+			Assert.AreEqual(1, sd.Length, "Score doc count");
+		}
+		
 		private void  TestLeftOpenRange(int precisionStep)
 		{
 			System.String field = "field" + precisionStep;

@@ -21,6 +21,8 @@ using NUnit.Framework;
 
 using Lucene.Net.Analysis.Tokenattributes;
 using Payload = Lucene.Net.Index.Payload;
+using Attribute = Lucene.Net.Util.Attribute;
+using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
@@ -54,6 +56,7 @@ namespace Lucene.Net.Analysis
 		
 		private System.String doc = "This is the new TokenStream api";
 		private System.String[] stopwords = new System.String[]{"is", "the", "this"};
+        private static System.String[] results = new System.String[]{"new", "tokenstream", "api"};
 		
 		[Serializable]
 		public class POSToken:Token
@@ -257,6 +260,7 @@ namespace Lucene.Net.Analysis
 			PayloadAttribute payloadAtt = (PayloadAttribute) stream.AddAttribute(typeof(PayloadAttribute));
 			TermAttribute termAtt = (TermAttribute) stream.AddAttribute(typeof(TermAttribute));
 			
+			int i = 0;
 			while (stream.IncrementToken())
 			{
 				System.String term = termAtt.Term();
@@ -269,6 +273,8 @@ namespace Lucene.Net.Analysis
 				{
 					Assert.IsFalse("tokenstream".Equals(term), "all other tokens (if this test fails, the special POSToken subclass is not correctly passed through the chain)");
 				}
+				Assert.AreEqual(results[i], term);
+				i++;
 			}
 		}
 		
@@ -277,6 +283,7 @@ namespace Lucene.Net.Analysis
 			stream.Reset();
 			Token reusableToken = new Token();
 			
+			int i = 0;
 			while ((reusableToken = stream.Next(reusableToken)) != null)
 			{
 				System.String term = reusableToken.Term();
@@ -289,6 +296,8 @@ namespace Lucene.Net.Analysis
 				{
 					Assert.IsFalse("tokenstream".Equals(term), "all other tokens (if this test fails, the special POSToken subclass is not correctly passed through the chain)");
 				}
+				Assert.AreEqual(results[i], term);
+				i++;
 			}
 		}
 		
@@ -297,6 +306,7 @@ namespace Lucene.Net.Analysis
 			stream.Reset();
 			
 			Token token;
+			int i = 0;
 			while ((token = stream.Next()) != null)
 			{
 				System.String term = token.Term();
@@ -309,6 +319,33 @@ namespace Lucene.Net.Analysis
 				{
 					Assert.IsFalse("tokenstream".Equals(term), "all other tokens (if this test fails, the special POSToken subclass is not correctly passed through the chain)");
 				}
+				Assert.AreEqual(results[i], term);
+				i++;
+			}
+		}
+		
+		public interface SenselessAttribute:Attribute
+		{
+		}
+		
+		public sealed class SenselessAttributeImpl:AttributeImpl, TestTokenStreamBWComp.SenselessAttribute
+		{
+			public override void  CopyTo(AttributeImpl target)
+			{
+			}
+			
+			public override void  Clear()
+			{
+			}
+			
+			public  override bool Equals(System.Object o)
+			{
+				return (o is SenselessAttributeImpl);
+			}
+			
+			public override int GetHashCode()
+			{
+				return 0;
 			}
 		}
 		
@@ -350,6 +387,7 @@ namespace Lucene.Net.Analysis
 				Assert.IsTrue(stream2.AddAttribute(typeof(PayloadAttribute)) is PayloadAttributeImpl, "PayloadAttribute is implemented by PayloadAttributeImpl");
 				Assert.IsTrue(stream2.AddAttribute(typeof(PositionIncrementAttribute)) is PositionIncrementAttributeImpl, "PositionIncrementAttribute is implemented by PositionIncrementAttributeImpl");
 				Assert.IsTrue(stream2.AddAttribute(typeof(TypeAttribute)) is TypeAttributeImpl, "TypeAttribute is implemented by TypeAttributeImpl");
+				Assert.IsTrue(stream2.AddAttribute(typeof(TestTokenStreamBWComp.SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 				
 				// try to call old API, this should fail
 				try
@@ -389,6 +427,8 @@ namespace Lucene.Net.Analysis
 				Assert.IsTrue(stream2.AddAttribute(typeof(PayloadAttribute)) is TokenWrapper, "PayloadAttribute is implemented by TokenWrapper");
 				Assert.IsTrue(stream2.AddAttribute(typeof(PositionIncrementAttribute)) is TokenWrapper, "PositionIncrementAttribute is implemented by TokenWrapper");
 				Assert.IsTrue(stream2.AddAttribute(typeof(TypeAttribute)) is TokenWrapper, "TypeAttribute is implemented by TokenWrapper");
+				// This one is not implemented by TokenWrapper:
+				Assert.IsTrue(stream2.AddAttribute(typeof(TestTokenStreamBWComp.SenselessAttribute)) is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 			}
 			finally
 			{

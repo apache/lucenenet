@@ -683,6 +683,14 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		internal bool AnyChanges()
+		{
+			lock (this)
+			{
+				return numDocsInRAM != 0 || deletesInRAM.numTerms != 0 || deletesInRAM.docIDs.Count != 0 || deletesInRAM.queries.Count != 0;
+			}
+		}
+		
 		private void  InitFlushState(bool onlyDocStore)
 		{
 			lock (this)

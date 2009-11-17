@@ -20,6 +20,7 @@ using System;
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using QueryParser = Lucene.Net.QueryParsers.QueryParser;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
 {
@@ -263,14 +264,34 @@ namespace Lucene.Net.Analysis
 			return ENABLE_POSITION_INCREMENTS_DEFAULT;
 		}
 		
-		/// <summary> Set the default position increments behavior of every StopFilter created from now on.
+		/// <summary> Returns version-dependent default for enablePositionIncrements. Analyzers
+		/// that embed StopFilter use this method when creating the StopFilter. Prior
+		/// to 2.9, this returns {@link #getEnablePositionIncrementsDefault}. On 2.9
+		/// or later, it returns true.
+		/// </summary>
+		public static bool GetEnablePositionIncrementsVersionDefault(Version matchVersion)
+		{
+			if (matchVersion.OnOrAfter(Version.LUCENE_29))
+			{
+				return true;
+			}
+			else
+			{
+				return ENABLE_POSITION_INCREMENTS_DEFAULT;
+			}
+		}
+		
+		/// <summary> Set the default position increments behavior of every StopFilter created
+		/// from now on.
 		/// <p>
-		/// Note: behavior of a single StopFilter instance can be modified 
-		/// with {@link #SetEnablePositionIncrements(boolean)}.
-		/// This static method allows control over behavior of classes using StopFilters internally, 
-		/// for example {@link Lucene.Net.Analysis.Standard.StandardAnalyzer StandardAnalyzer}. 
+		/// Note: behavior of a single StopFilter instance can be modified with
+		/// {@link #SetEnablePositionIncrements(boolean)}. This static method allows
+		/// control over behavior of classes using StopFilters internally, for
+		/// example {@link Lucene.Net.Analysis.Standard.StandardAnalyzer
+		/// StandardAnalyzer} if used with the no-arg ctor.
 		/// <p>
 		/// Default : false.
+		/// 
 		/// </summary>
 		/// <seealso cref="setEnablePositionIncrements(boolean).">
 		/// </seealso>

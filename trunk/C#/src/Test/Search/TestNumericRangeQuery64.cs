@@ -32,7 +32,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Search
 {
 	
-    [TestFixture]
+	[TestFixture]
 	public class TestNumericRangeQuery64:LuceneTestCase
 	{
 		// distance of entries
@@ -147,6 +147,20 @@ namespace Lucene.Net.Search
 			System.Int64 tempAux4 = (long) System.Int64.MinValue;
 			f = NumericRangeFilter.NewLongRange("field8", 8, null, tempAux4, false, false);
 			Assert.AreSame(DocIdSet.EMPTY_DOCIDSET, f.GetDocIdSet(searcher.GetIndexReader()), "A exclusive range ending with Long.MIN_VALUE should return the EMPTY_DOCIDSET instance");
+		}
+		
+        [Test]
+		public virtual void  TestOneMatchQuery()
+		{
+			System.Int64 tempAux = 1000L;
+			//UPGRADE_NOTE: ref keyword was added to struct-type parameters. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1303'"
+			System.Int64 tempAux2 = 1000L;
+			NumericRangeQuery q = NumericRangeQuery.NewLongRange("ascfield8", 8, tempAux, tempAux2, true, true);
+			Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.GetRewriteMethod());
+			TopDocs topDocs = searcher.Search(q, noDocs);
+			ScoreDoc[] sd = topDocs.scoreDocs;
+			Assert.IsNotNull(sd);
+			Assert.AreEqual(1, sd.Length, "Score doc count");
 		}
 		
 		private void  TestLeftOpenRange(int precisionStep)

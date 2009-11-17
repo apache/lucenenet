@@ -30,7 +30,6 @@ using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Payload = Lucene.Net.Index.Payload;
 using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
@@ -38,6 +37,8 @@ using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using Searcher = Lucene.Net.Search.Searcher;
 using TopDocs = Lucene.Net.Search.TopDocs;
 using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
 using English = Lucene.Net.Util.English;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -160,6 +161,8 @@ namespace Lucene.Net.Search.Payloads
 			{
 				Document doc = new Document();
 				doc.Add(new Field("field", English.IntToEnglish(i), Field.Store.YES, Field.Index.ANALYZED));
+				System.String txt = English.IntToEnglish(i) + ' ' + English.IntToEnglish(i + 1);
+				doc.Add(new Field("field2", txt, Field.Store.YES, Field.Index.ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();
@@ -204,6 +207,39 @@ namespace Lucene.Net.Search.Payloads
 					Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
 				}
 			}
+		}
+		
+        [Test]
+		public virtual void  TestPayloadNear()
+		{
+			SpanNearQuery q1, q2;
+			PayloadNearQuery query;
+			TopDocs hits;
+			// SpanNearQuery(clauses, 10000, false)
+            q1 = SpanNearQuery_Renamed("field2", "twenty two");
+            q2 = SpanNearQuery_Renamed("field2", "twenty three");
+			SpanQuery[] clauses = new SpanQuery[2];
+			clauses[0] = q1;
+			clauses[1] = q2;
+			query = new PayloadNearQuery(clauses, 10, false);
+			// System.out.println(query.toString());
+			Assert.AreEqual(12, searcher.Search(query, null, 100).totalHits);
+			/*
+			* System.out.println(hits.totalHits); for (int j = 0; j <
+			* hits.scoreDocs.length; j++) { ScoreDoc doc = hits.scoreDocs[j];
+			* System.out.println("doc: "+doc.doc+", score: "+doc.score); }
+			*/
+		}
+		
+		private SpanNearQuery SpanNearQuery_Renamed(System.String fieldName, System.String words)
+		{
+			System.String[] wordList = System.Text.RegularExpressions.Regex.Split(words, "[\\s]+");
+			SpanQuery[] clauses = new SpanQuery[wordList.Length];
+			for (int i = 0; i < clauses.Length; i++)
+			{
+				clauses[i] = new PayloadTermQuery(new Term(fieldName, wordList[i]), new AveragePayloadFunction());
+			}
+			return new SpanNearQuery(clauses, 10000, false);
 		}
 		
         [Test]

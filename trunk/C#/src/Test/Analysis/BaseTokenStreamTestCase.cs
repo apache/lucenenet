@@ -128,6 +128,17 @@ namespace Lucene.Net.Analysis
 			ts.Reset();
 			for (int i = 0; i < output.Length; i++)
 			{
+				// extra safety to enforce, that the state is not preserved and also
+				// assign bogus values
+				ts.ClearAttributes();
+				termAtt.SetTermBuffer("bogusTerm");
+				if (offsetAtt != null)
+					offsetAtt.SetOffset(14584724, 24683243);
+				if (typeAtt != null)
+					typeAtt.SetType("bogusType");
+				if (posIncrAtt != null)
+					posIncrAtt.SetPositionIncrement(45987657);
+				
 				Assert.IsTrue(ts.IncrementToken(), "token " + i + " exists");
 				Assert.AreEqual(output[i], termAtt.Term(), "term " + i);
 				if (startOffsets != null)
@@ -140,6 +151,7 @@ namespace Lucene.Net.Analysis
 					Assert.AreEqual(posIncrements[i], posIncrAtt.GetPositionIncrement(), "posIncrement " + i);
 			}
 			Assert.IsFalse(ts.IncrementToken(), "end of stream");
+			ts.End();
 			ts.Close();
 		}
 		

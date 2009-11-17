@@ -93,6 +93,7 @@ namespace Lucene.Net.Index
         private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
 		private Lock writeLock;
 		private SegmentInfos segmentInfos;
+		private SegmentInfos segmentInfosStart;
 		private bool stale;
 		private int termInfosIndexDivisor;
 		
@@ -170,6 +171,7 @@ namespace Lucene.Net.Index
 			this.directory = writer.GetDirectory();
 			this.readOnly = true;
 			this.segmentInfos = infos;
+			segmentInfosStart = (SegmentInfos) infos.Clone();
 			this.termInfosIndexDivisor = termInfosIndexDivisor;
 			if (!readOnly)
 			{
@@ -997,19 +999,18 @@ namespace Lucene.Net.Index
 			return segmentInfos.GetUserData();
 		}
 		
-		/// <summary> Check whether this IndexReader is still using the current (i.e., most recently committed) version of the index.  If
-		/// a writer has committed any changes to the index since this reader was opened, this will return <code>false</code>,
-		/// in which case you must open a new IndexReader in order to see the changes.  See the description of the <a
-		/// href="IndexWriter.html#autoCommit"><code>autoCommit</code></a> flag which controls when the {@link IndexWriter}
-		/// actually commits changes to the index.
-		/// 
-		/// </summary>
-		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <throws>  IOException           if there is a low-level IO error </throws>
 		public override bool IsCurrent()
 		{
 			EnsureOpen();
-			return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.GetVersion();
+			if (writer == null || writer.IsClosed())
+			{
+				// we loaded SegmentInfos from the directory
+				return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.GetVersion();
+			}
+			else
+			{
+				return writer.NrtIsCurrent(segmentInfosStart);
+			}
 		}
 		
 		protected internal override void  DoClose()

@@ -1,5 +1,72 @@
 Lucene Change Log
-$Id: CHANGES.txt 817268 2009-09-21 14:23:44Z markrmiller $
+$Id: CHANGES.txt 832363 2009-11-03 09:37:36Z mikemccand $
+
+======================= Release 2.9.1 2009-11-06 =======================
+
+Changes in backwards compatibility policy
+
+ * LUCENE-2002: Add required Version matchVersion argument when
+   constructing QueryParser or MultiFieldQueryParser and, default (as
+   of 2.9) enablePositionIncrements to true to match
+   StandardAnalyzer's 2.9 default (Uwe Schindler, Mike McCandless)
+
+Bug fixes
+
+ * LUCENE-1974: Fixed nasty bug in BooleanQuery (when it used
+   BooleanScorer for scoring), whereby some matching documents fail to
+   be collected.  (Fulin Tang via Mike McCandless)
+
+ * LUCENE-1124: Make sure FuzzyQuery always matches the precise term.
+   (stefatwork@gmail.com via Mike McCandless)
+
+ * LUCENE-1976: Fix IndexReader.isCurrent() to return the right thing
+   when the reader is a near real-time reader.  (Jake Mannix via Mike
+   McCandless)
+
+ * LUCENE-1986: Fix NPE when scoring PayloadNearQuery (Peter Keegan,
+   Mark Miller via Mike McCandless)
+
+ * LUCENE-1992: Fix thread hazard if a merge is committing just as an
+   exception occurs during sync (Uwe Schindler, Mike McCandless)
+
+ * LUCENE-1995: Note in javadocs that IndexWriter.setRAMBufferSizeMB
+   cannot exceed 2048 MB, and throw IllegalArgumentException if it
+   does.  (Aaron McKee, Yonik Seeley, Mike McCandless)
+
+ * LUCENE-2004: Fix Constants.LUCENE_MAIN_VERSION to not be inlined
+   by client code.  (Uwe Schindler)
+
+ * LUCENE-2016: Replace illegal U+FFFF character with the replacement
+   char (U+FFFD) during indexing, to prevent silent index corruption.
+   (Peter Keegan, Mike McCandless)
+
+API Changes
+
+ * Un-deprecate search(Weight weight, Filter filter, int n) from
+   Searchable interface (deprecated by accident).  (Uwe Schindler)
+
+ * Un-deprecate o.a.l.util.Version constants.  (Mike McCandless)
+
+ * LUCENE-1987: Un-deprecate some ctors of Token, as they will not
+   be removed in 3.0 and are still useful. Also add some missing
+   o.a.l.util.Version constants for enabling invalid acronym
+   settings in StandardAnalyzer to be compatible with the coming
+   Lucene 3.0.  (Uwe Schindler)
+
+ * LUCENE-1973: Un-deprecate IndexSearcher.setDefaultFieldSortScoring,
+   to allow controlling per-IndexSearcher whether scores are computed
+   when sorting by field.  (Uwe Schindler, Mike McCandless)
+   
+Documentation
+
+ * LUCENE-1955: Fix Hits deprecation notice to point users in right
+   direction. (Mike McCandless, Mark Miller)
+   
+ * Fix javadoc about score tracking done by search methods in Searcher 
+   and IndexSearcher.  (Mike McCandless)
+
+ * LUCENE-2008: Javadoc improvements for TokenStream/Tokenizer/Token
+   (Luke Nezda via Mike McCandless)
 
 ======================= Release 2.9.0 2009-09-23 =======================
 
@@ -99,6 +166,11 @@ Changes in backwards compatibility policy
     abstract rather than an interface) back compat break if you have overridden 
     Query.creatWeight, so we have taken the opportunity to make this change.
     (Tim Smith, Shai Erera via Mark Miller)
+
+ * LUCENE-1708 - IndexReader.document() no longer checks if the document is 
+    deleted. You can call IndexReader.isDeleted(n) prior to calling document(n).
+    (Shai Erera via Mike McCandless)
+
  
 Changes in runtime behavior
 
@@ -149,9 +221,6 @@ Changes in runtime behavior
     rely on this behavior by the 3.0 release of Lucene. (Jonathan
     Mamou, Mark Miller via Mike McCandless)
 
- * LUCENE-1708 - IndexReader.document() no longer checks if the document is 
-    deleted. You can call IndexReader.isDeleted(n) prior to calling document(n).
-    (Shai Erera via Mike McCandless)
 
  * LUCENE-1715: Finalizers have been removed from the 4 core classes
     that still had them, since they will cause GC to take longer, thus
@@ -793,7 +862,7 @@ Optimizations
     using CloseableThreadLocal internally.  (Jason Rutherglen via Mike
     McCandless).
     
- * LUCENE-1224: Short circuit FuzzyQuery.rewrite when input token length 
+ * LUCENE-1124: Short circuit FuzzyQuery.rewrite when input token length 
     is small compared to minSimilarity. (Timo Nentwig, Mark Miller)
 
  * LUCENE-1316: MatchAllDocsQuery now avoids the synchronized

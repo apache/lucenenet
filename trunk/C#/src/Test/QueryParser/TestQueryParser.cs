@@ -37,6 +37,7 @@ using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 using FuzzyQuery = Lucene.Net.Search.FuzzyQuery;
@@ -50,7 +51,10 @@ using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 using TermQuery = Lucene.Net.Search.TermQuery;
 using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
 using WildcardQuery = Lucene.Net.Search.WildcardQuery;
+using Directory = Lucene.Net.Store.Directory;
+using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using LocalizedTestCase = Lucene.Net.Util.LocalizedTestCase;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.QueryParsers
 {
@@ -1104,6 +1108,61 @@ namespace Lucene.Net.QueryParsers
 		{
 			base.TearDown();
 			BooleanQuery.SetMaxClauseCount(originalMaxClauses);
+		}
+		
+		// LUCENE-2002: make sure defaults for StandardAnalyzer's
+		// enableStopPositionIncr & QueryParser's enablePosIncr
+		// "match"
+		[Test]
+		public virtual void  TestPositionIncrements()
+		{
+			Directory dir = new MockRAMDirectory();
+			Analyzer a = new StandardAnalyzer(Version.LUCENE_CURRENT);
+			IndexWriter w = new IndexWriter(dir, a, IndexWriter.MaxFieldLength.UNLIMITED);
+			Document doc = new Document();
+			doc.Add(new Field("f", "the wizard of ozzy", Field.Store.NO, Field.Index.ANALYZED));
+			w.AddDocument(doc);
+			IndexReader r = w.GetReader();
+			w.Close();
+			IndexSearcher s = new IndexSearcher(r);
+			QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "f", a);
+			Query q = qp.Parse("\"wizard of ozzy\"");
+			Assert.AreEqual(1, s.Search(q, 1).totalHits);
+			r.Close();
+			dir.Close();
+		}
+		
+		// LUCENE-2002: when we run javacc to regen QueryParser,
+		// we also run a replaceregexp step to fix 2 of the public
+		// ctors (change them to protected):
+		//
+		// protected QueryParser(CharStream stream)
+		//
+		// protected QueryParser(QueryParserTokenManager tm)
+		//
+		// This test is here as a safety, in case that ant step
+		// doesn't work for some reason.
+		[Test]
+		public virtual void  TestProtectedCtors()
+		{
+			try
+			{
+				typeof(QueryParser).GetConstructor(new System.Type[]{typeof(CharStream)});
+				Assert.Fail("please switch public QueryParser(CharStream) to be protected");
+			}
+			catch (System.MethodAccessException nsme)
+			{
+				// expected
+			}
+			try
+			{
+				typeof(QueryParser).GetConstructor(new System.Type[]{typeof(QueryParserTokenManager)});
+				Assert.Fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
+			}
+			catch (System.MethodAccessException nsme)
+			{
+				// expected
+			}
 		}
 	}
 }

@@ -24,6 +24,7 @@ using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis
 {
@@ -138,15 +139,24 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestDomainNames()
 		{
-			// Don't reuse a because we alter its state (setReplaceInvalidAcronym)
-			StandardAnalyzer a2 = new StandardAnalyzer();
+			// Don't reuse a because we alter its state
+			// (setReplaceInvalidAcronym)
+			
+			// Current lucene should not show the bug
+			StandardAnalyzer a2 = new StandardAnalyzer(Version.LUCENE_CURRENT);
 			// domain names
 			AssertAnalyzesTo(a2, "www.nutch.org", new System.String[]{"www.nutch.org"});
 			//Notice the trailing .  See https://issues.apache.org/jira/browse/LUCENE-1068.
 			// the following should be recognized as HOST:
 			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
-			a2.SetReplaceInvalidAcronym(false);
+			
+			// 2.3 should show the bug
+			a2 = new StandardAnalyzer(Version.LUCENE_23);
 			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"wwwnutchorg"}, new System.String[]{"<ACRONYM>"});
+			
+			// 2.4 should not show the bug
+			a2 = new StandardAnalyzer(Version.LUCENE_24);
+			AssertAnalyzesTo(a2, "www.nutch.org.", new System.String[]{"www.nutch.org"}, new System.String[]{"<HOST>"});
 		}
 		
         [Test]

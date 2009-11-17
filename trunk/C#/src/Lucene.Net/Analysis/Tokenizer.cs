@@ -22,20 +22,14 @@ using AttributeSource = Lucene.Net.Util.AttributeSource;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A Tokenizer is a TokenStream whose input is a Reader.
+	/// <summary> A Tokenizer is a TokenStream whose input is a Reader.
 	/// <p>
-	/// This is an abstract class.
+	/// This is an abstract class; subclasses must override {@link #IncrementToken()}
 	/// <p>
-	/// NOTE: subclasses must override 
-	/// {@link #IncrementToken()} if the new TokenStream API is used
-	/// and {@link #Next(Token)} or {@link #Next()} if the old
-	/// TokenStream API is used.
-	/// <p>
-	/// NOTE: Subclasses overriding {@link #IncrementToken()} must
-	/// call {@link AttributeSource#ClearAttributes()} before
-	/// setting attributes.
-	/// Subclasses overriding {@link #Next(Token)} must call
-	/// {@link Token#Clear()} before setting Token attributes. 
+	/// NOTE: Subclasses overriding {@link #IncrementToken()} must call
+	/// {@link AttributeSource#ClearAttributes()} before setting attributes.
+	/// Subclasses overriding {@link #IncrementToken()} must call
+	/// {@link Token#Clear()} before setting Token attributes.
 	/// </summary>
 	
 	public abstract class Tokenizer:TokenStream
