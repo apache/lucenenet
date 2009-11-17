@@ -138,13 +138,13 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.ICollection GetPayload()
+			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 			{
-				System.Collections.ArrayList result = null;
+				System.Collections.Generic.ICollection<byte[]> result = null;
 				Spans theTop = Top();
 				if (theTop != null && theTop.IsPayloadAvailable())
 				{
-					result = new System.Collections.ArrayList(theTop.GetPayload());
+					result = theTop.GetPayload();
 				}
 				return result;
 			}

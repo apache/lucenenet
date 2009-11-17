@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				while (spans.Next())
 				{
-					System.Collections.ICollection payloads = spans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payloads = spans.GetPayload();
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				while (spans.Next())
 				{
-					System.Collections.ICollection payloads = spans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payloads = spans.GetPayload();
 					int cnt = 0;
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Spans
 			{
 				while (spans.Next())
 				{
-					System.Collections.ICollection payloads = spans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payloads = spans.GetPayload();
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
@@ -431,7 +431,7 @@ namespace Lucene.Net.Search.Spans
 				//See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
 				if (spans.IsPayloadAvailable())
 				{
-					System.Collections.ICollection payload = spans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
 					Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
 					for (System.Collections.IEnumerator iterator = payload.GetEnumerator(); iterator.MoveNext(); )
 					{
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Spans
 					System.Console.Out.WriteLine("\nSpans Dump --");
 				if (spans.IsPayloadAvailable())
 				{
-					System.Collections.ICollection payload = spans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
 					if (DEBUG)
 						System.Console.Out.WriteLine("payloads for span:" + payload.Count);
 					System.Collections.IEnumerator it = payload.GetEnumerator();

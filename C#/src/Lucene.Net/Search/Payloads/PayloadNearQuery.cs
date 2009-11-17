@@ -242,14 +242,13 @@ namespace Lucene.Net.Search.Payloads
 			/// </param>
 			/// <seealso cref="Spans">
 			/// </seealso>
-			protected internal virtual void  ProcessPayloads(System.Collections.ICollection payLoads, int start, int end)
+			protected internal virtual void  ProcessPayloads(System.Collections.Generic.ICollection<byte[]> payLoads, int start, int end)
 			{
-				for (System.Collections.IEnumerator iterator = payLoads.GetEnumerator(); iterator.MoveNext(); )
-				{
-					byte[] thePayload = (byte[]) iterator.Current;
-					payloadScore = Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.fieldName, start, end, payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.fieldName, spans.Start(), spans.End(), thePayload, 0, thePayload.Length));
-					++payloadsSeen;
-				}
+                foreach (byte[] thePayload in payLoads)
+                {
+                    payloadScore = Enclosing_Instance.function.CurrentScore(doc, Enclosing_Instance.fieldName, start, end, payloadsSeen, payloadScore, similarity.ScorePayload(doc, Enclosing_Instance.fieldName, spans.Start(), spans.End(), thePayload, 0, thePayload.Length));
+                    ++payloadsSeen;
+                }
 			}
 			
 			//

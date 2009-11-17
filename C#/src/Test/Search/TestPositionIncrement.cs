@@ -286,7 +286,13 @@ namespace Lucene.Net.Search
 					writer.SetAllowMinus1Position();
 				}
 				Document doc = new Document();
-				doc.Add(new Field("content", new System.IO.StreamReader("a a b c d e a f g h i j a b k k")));
+                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+                System.IO.StreamWriter sw = new System.IO.StreamWriter(ms);
+                sw.Write("a a b c d e a f g h i j a b k k");
+                // flush to stream & reset it's position so it can be read
+                sw.Flush();
+                ms.Position = 0;
+                doc.Add(new Field("content", new System.IO.StreamReader(ms)));
 				writer.AddDocument(doc);
 				
 				IndexReader r = writer.GetReader();
@@ -331,7 +337,7 @@ namespace Lucene.Net.Search
 				while (pspans.Next())
 				{
 					//System.out.println(pspans.doc() + " - " + pspans.start() + " - "+ pspans.end());
-					System.Collections.ICollection payloads = pspans.GetPayload();
+					System.Collections.Generic.ICollection<byte[]> payloads = pspans.GetPayload();
 					sawZero |= pspans.Start() == 0;
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{

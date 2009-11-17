@@ -121,12 +121,12 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalizedb
-			public override System.Collections.ICollection GetPayload()
+			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 			{
-				System.Collections.ArrayList result = null;
+				System.Collections.Generic.ICollection<byte[]> result = null;
 				if (includeSpans.IsPayloadAvailable())
 				{
-					result = new System.Collections.ArrayList(includeSpans.GetPayload());
+					result = includeSpans.GetPayload();
 				}
 				return result;
 			}

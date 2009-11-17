@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spans
 		private int matchDoc = - 1;
 		private int matchStart = - 1;
 		private int matchEnd = - 1;
-		private System.Collections.ArrayList matchPayload;
+		private System.Collections.Generic.List<byte[]> matchPayload;
 		
 		private Spans[] subSpansByDoc;
 		private System.Collections.IComparer spanDocComparator;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
 			allowedSlop = spanNearQuery.GetSlop();
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
 			subSpans = new Spans[clauses.Length];
-			matchPayload = new System.Collections.ArrayList();
+			matchPayload = new System.Collections.Generic.List<byte[]>();
 			subSpansByDoc = new Spans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Spans
 		
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
-		public override System.Collections.ICollection GetPayload()
+		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
 		{
 			return matchPayload;
 		}
@@ -323,13 +323,20 @@ namespace Lucene.Net.Search.Spans
 		{
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
-            System.Collections.Hashtable possibleMatchPayloads = new System.Collections.Hashtable();
+            System.Collections.Generic.Dictionary<byte[], byte[]> possibleMatchPayloads = new System.Collections.Generic.Dictionary<byte[], byte[]>();
 			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
 			{
-				SupportClass.CollectionsHelper.AddAllIfNotContains(possibleMatchPayloads, subSpans[subSpans.Length - 1].GetPayload());
+                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
+                foreach(byte[] pl in payload)
+                {
+                    if (!possibleMatchPayloads.ContainsKey(pl))
+                    {
+                        possibleMatchPayloads.Add(pl, pl);
+                    }
+                }
 			}
 			
-			System.Collections.ArrayList possiblePayload = null;
+			System.Collections.Generic.List<byte[]> possiblePayload = null;
 			
 			int matchSlop = 0;
 			int lastStart = matchStart;
@@ -339,8 +346,8 @@ namespace Lucene.Net.Search.Spans
 				Spans prevSpans = subSpans[i];
 				if (collectPayloads && prevSpans.IsPayloadAvailable())
 				{
-					System.Collections.ICollection payload = prevSpans.GetPayload();
-					possiblePayload = new System.Collections.ArrayList(payload.Count);
+					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
+					possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 					possiblePayload.AddRange(payload);
 				}
 				
@@ -375,8 +382,8 @@ namespace Lucene.Net.Search.Spans
 							prevEnd = ppEnd;
 							if (collectPayloads && prevSpans.IsPayloadAvailable())
 							{
-								System.Collections.ICollection payload = prevSpans.GetPayload();
-								possiblePayload = new System.Collections.ArrayList(payload.Count);
+								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
+								possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
 								possiblePayload.AddRange(payload);
 							}
 						}
@@ -385,7 +392,13 @@ namespace Lucene.Net.Search.Spans
 				
 				if (collectPayloads && possiblePayload != null)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(possibleMatchPayloads, possiblePayload);
+                    foreach (byte[] pl in possiblePayload)
+                    {
+                        if (!possibleMatchPayloads.ContainsKey(pl))
+                        {
+                            possibleMatchPayloads.Add(pl, pl);
+                        }
+                    }
 				}
 				
 				System.Diagnostics.Debug.Assert(prevStart <= matchStart);
@@ -407,7 +420,7 @@ namespace Lucene.Net.Search.Spans
 			
 			if (collectPayloads && match && possibleMatchPayloads.Count > 0)
 			{
-				matchPayload.AddRange(possibleMatchPayloads);
+				matchPayload.AddRange(possibleMatchPayloads.Keys);
 			}
 			
 			return match; // ordered and allowed slop
