@@ -90,9 +90,6 @@ namespace Lucene.Net.Search
 				return 1.0f;
 			}
 		}
-		public TestMultiSearcher(System.String name):base(name)
-		{
-		}
 		
 		/// <summary> ReturnS a new instance of the concrete MultiSearcher class
 		/// used in this test.

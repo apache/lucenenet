@@ -38,11 +38,7 @@ namespace Lucene.Net.Search
 	/// </version>
     [TestFixture]
 	public class TestNot:LuceneTestCase
-	{
-		public TestNot(System.String name):base(name)
-		{
-		}
-		
+	{		
 		[Test]
 		public virtual void  TestNot_Renamed()
 		{

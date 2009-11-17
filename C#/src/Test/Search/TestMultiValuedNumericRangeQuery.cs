@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 				for (int m = 0, c = rnd.Next(10); m <= c; m++)
 				{
 					int value_Renamed = rnd.Next(System.Int32.MaxValue);
-                    doc.Add(new Field("asc", "{00000000000}", Field.Store.NO, Field.Index.NOT_ANALYZED));
+                    doc.Add(new Field("asc", value_Renamed.ToString().PadLeft(11, '0'), Field.Store.NO, Field.Index.NOT_ANALYZED));
 					doc.Add(new NumericField("trie", Field.Store.NO, true).SetIntValue(value_Renamed));
 				}
 				writer.AddDocument(doc);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 				{
 					int a = lower; lower = upper; upper = a;
 				}
-				TermRangeQuery cq = new TermRangeQuery("asc", "{" + lower.ToString() + "}", "{" + upper.ToString() + "}", true, true);
+				TermRangeQuery cq = new TermRangeQuery("asc", lower.ToString().PadLeft(11, '0'),  upper.ToString().PadLeft(11, '0'), true, true);
 				System.Int32 tempAux = (System.Int32) lower;
 				System.Int32 tempAux2 = (System.Int32) upper;
 				NumericRangeQuery tq = NumericRangeQuery.NewIntRange("trie", tempAux, tempAux2, true, true);

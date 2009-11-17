@@ -41,10 +41,6 @@ namespace Lucene.Net.Search
 		public int numDocs = 100;
 		public int numThreads = 3;
 		
-		public TestMultiThreadTermVectors(System.String s):base(s)
-		{
-		}
-		
 		[Test]
 		public override void  SetUp()
 		{
@@ -95,7 +91,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		[Test]
+
 		public virtual void  TestTermPositionVectors(IndexReader reader, int threadCount)
 		{
 			MultiThreadTermVectorsReader[] mtr = new MultiThreadTermVectorsReader[threadCount];
