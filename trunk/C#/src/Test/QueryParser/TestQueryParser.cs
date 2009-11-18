@@ -1146,23 +1146,18 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestProtectedCtors()
 		{
-			try
-			{
-				typeof(QueryParser).GetConstructor(new System.Type[]{typeof(CharStream)});
+            // If the return type is not null, then fail the assertion.
+			if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(CharStream)}) != null)
+            {
+                // Fail the assertion.
 				Assert.Fail("please switch public QueryParser(CharStream) to be protected");
 			}
-			catch (System.MethodAccessException nsme)
-			{
-				// expected
-			}
-			try
-			{
-				typeof(QueryParser).GetConstructor(new System.Type[]{typeof(QueryParserTokenManager)});
-				Assert.Fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
-			}
-			catch (System.MethodAccessException nsme)
-			{
-				// expected
+
+            // Same for the constructor for the constructor with the query parser token manager.
+            if (typeof(QueryParser).GetConstructor(new System.Type[]{typeof(QueryParserTokenManager)}) != null)
+            {
+                // Fail the assertion.
+                Assert.Fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
 			}
 		}
 	}
