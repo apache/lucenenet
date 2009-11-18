@@ -294,13 +294,29 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		[Test]
-		public virtual void  TestCJK()
-		{
-			// Test Ideographic Space - As wide as a CJK character cell (fullwidth)
-			// used google to translate the word "term" to japanese -> ç”¨èªž
-			AssertQueryEquals("term\u3000term\u3000term", null, "term\u0020term\u0020term");
-			AssertQueryEquals("ç”¨èªž\u3000ç”¨èªž\u3000ç”¨èªž", null, "ç”¨èªž\u0020ç”¨èªž\u0020ç”¨èªž");
-		}
+        public virtual void TestCJK()
+        {
+            // Test Ideographic Space - As wide as a CJK character cell (fullwidth)
+            // used google to translate the word "term" to japanese -> ç”¨èªž
+            //
+            // NOTE: What is printed above is not the translation of "term" into
+            // Japanese.  Google translate currently gives:
+            //
+            // 期間
+            //
+            // Which translates to unicode characters 26399 and 38291, or
+            // the literals '\u671f' and '\u9593'.
+            //
+            // Unlike the second and third characters in the previous string ('\u201d' and '\u00a8')
+            // which fail the test for IsCharacter when tokenized by LetterTokenizer (as it should
+            // in Java), which causes the word to be split differently than if it actually used
+            // letters as defined by Unicode.
+            //
+            // Using the string "\u671f\u9593\u3000\u671f\u9593\u3000\u671f\u9593" with just the two
+            // characters is enough, as it uses two characters with the full width of a CJK character cell.
+            AssertQueryEquals("term\u3000term\u3000term", null, "term\u0020term\u0020term");
+            AssertQueryEquals("\u671f\u9593\u3000\u671f\u9593\u3000\u671f\u9593", null, "\u671f\u9593\u0020\u671f\u9593\u0020\u671f\u9593");
+        }
 		
 		[Test]
 		public virtual void  TestSimple()
