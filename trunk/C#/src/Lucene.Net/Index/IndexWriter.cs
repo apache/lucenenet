@@ -5707,7 +5707,8 @@ namespace Lucene.Net.Index
 					int end = sourceSegments.Count;
 					for (int i = 0; i < end; i++)
 						mergingSegments.Remove(sourceSegments.Info(i));
-					mergingSegments.Remove(merge.info);
+                    if(merge.info != null)
+					    mergingSegments.Remove(merge.info);
 					merge.registerDone = false;
 				}
 				
