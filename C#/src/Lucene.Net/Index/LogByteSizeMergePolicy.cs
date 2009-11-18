@@ -33,12 +33,14 @@ namespace Lucene.Net.Index
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
 		/// <seealso cref="setMaxMergeMB">
 		/// </seealso>
-		public static readonly double DEFAULT_MAX_MERGE_MB = System.Int64.MaxValue;
+		public static readonly long DEFAULT_MAX_MERGE_MB = System.Int64.MaxValue;
 		
 		public LogByteSizeMergePolicy(IndexWriter writer):base(writer)
 		{
 			minMergeSize = (long) (DEFAULT_MIN_MERGE_MB * 1024 * 1024);
-			maxMergeSize = (long) (DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+            //mgarski - the line below causes an overflow in .NET, resulting in a negative number...
+			//maxMergeSize = (long) (DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+            maxMergeSize = DEFAULT_MAX_MERGE_MB;
 		}
 		protected internal override long Size(SegmentInfo info)
 		{
