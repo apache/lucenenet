@@ -90,7 +90,8 @@ namespace Lucene.Net.Util
 						{
 							try
 							{
-								attClassImplMap.Add(attClass, clazz = System.Type.GetType(attClass.FullName + "Impl"));
+                                string name = attClass.FullName + "Impl," + attClass.Assembly.FullName;
+								attClassImplMap.Add(attClass, clazz = System.Type.GetType(name, true));
 							}
 							catch (System.Exception e)
 							{
