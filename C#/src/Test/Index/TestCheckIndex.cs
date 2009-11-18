@@ -102,11 +102,22 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestLuceneConstantVersion()
 		{
-			// common-build.xml sets lucene.version
-			System.String version = SupportClass.AppSettings.Get("lucene.version", "");
-			Assert.IsNotNull(version);
-			Assert.IsTrue(version.Equals(Constants.LUCENE_MAIN_VERSION + "-dev") || version.Equals(Constants.LUCENE_MAIN_VERSION));
-			Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(version));
+			System.String version = null;
+
+            AppDomain MyDomain = AppDomain.CurrentDomain;
+            System.Reflection.Assembly[] AssembliesLoaded = MyDomain.GetAssemblies();
+
+            foreach (System.Reflection.Assembly assembly in AssembliesLoaded)
+            {
+                if(assembly.FullName.StartsWith("Lucene.Net")){
+                    version =assembly.GetName().Version.ToString(3);
+                    break;
+                }
+            }
+            Assert.IsNotNull(version);
+            Assert.IsTrue(version.Equals(Constants.LUCENE_MAIN_VERSION + "-dev") || version.Equals(Constants.LUCENE_MAIN_VERSION));
+            Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(version));
+
 		}
 	}
 }

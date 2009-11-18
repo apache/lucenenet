@@ -75,42 +75,17 @@ namespace Lucene.Net.Util
 		public static System.String LUCENE_VERSION;
 		static Constants()
 		{
-			{
-				System.String x = SupportClass.AppSettings.Get("sun.arch.data.model", "");
-				if (x != null)
-				{
-					JRE_IS_64BIT = x.IndexOf("64") != - 1;
-				}
-				else
-				{
-					if (OS_ARCH != null && OS_ARCH.IndexOf("64") != - 1)
-					{
-						JRE_IS_64BIT = true;
-					}
-					else
-					{
-						JRE_IS_64BIT = false;
-					}
-				}
-			}
-			{
-                // {{Aroush-2.9}}
-                /*
-				Package pkg = LucenePackage.Get();
-				System.String v = (pkg == null)?null:pkg.getImplementationVersion();
-				if (v == null)
-				{
-					v = LUCENE_MAIN_VERSION + "-dev";
-				}
-				else if (v.IndexOf(LUCENE_MAIN_VERSION) == - 1)
-				{
-					v = v + " [" + LUCENE_MAIN_VERSION + "]";
-				}
-				LUCENE_VERSION = Ident(v);
-                */
-                LUCENE_VERSION = " [" + LUCENE_MAIN_VERSION + "]";
-                // {{Aroush-2.9}}
-			}
+            if (IntPtr.Size == 8)
+            {
+                JRE_IS_64BIT = true;// 64 bit machine
+            }
+            else if (IntPtr.Size == 4)
+            {
+                JRE_IS_64BIT = false;// 32 bit machine
+            }
+
+            LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
 		}
 	}
 }
