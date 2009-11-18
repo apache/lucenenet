@@ -61,7 +61,12 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public virtual void  SetMaxMergeMB(double mb)
 		{
+            //mgarski: java gracefully overflows to Int64.MaxValue, .NET to MinValue...
 			maxMergeSize = (long) (mb * 1024 * 1024);
+            if (maxMergeSize < 0)
+            {
+                maxMergeSize = DEFAULT_MAX_MERGE_MB;
+            }
 		}
 		
 		/// <summary>Returns the largest segment (meaured by total byte
