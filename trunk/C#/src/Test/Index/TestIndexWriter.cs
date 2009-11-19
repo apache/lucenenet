@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 				lockFactory = null;
 				myLockFactory = new SingleInstanceLockFactory();
 			}
-			public Lock MakeLock(System.String name)
+			public override Lock MakeLock(System.String name)
 			{
 				return myLockFactory.MakeLock(name);
 			}
@@ -360,6 +360,8 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TestIndexWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
+                this.termAtt = (TermAttribute)this.AddAttribute(typeof(TermAttribute));
+                this.posIncrAtt = (PositionIncrementAttribute)this.AddAttribute(typeof(PositionIncrementAttribute));
 			}
 			private TestIndexWriter enclosingInstance;
 			public TestIndexWriter Enclosing_Instance
@@ -370,8 +372,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			internal TermAttribute termAtt = (TermAttribute) (new Lucene.Net.Util.AttributeSource()).AddAttribute(typeof(TermAttribute));
-			internal PositionIncrementAttribute posIncrAtt = (PositionIncrementAttribute) (new Lucene.Net.Util.AttributeSource()).AddAttribute(typeof(PositionIncrementAttribute));
+			internal TermAttribute termAtt;
+			internal PositionIncrementAttribute posIncrAtt;
 			
 			internal System.Collections.IEnumerator tokens = new System.Collections.ArrayList(new System.String[]{"a", "b", "c"}).GetEnumerator();
 			internal bool first = true;
