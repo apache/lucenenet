@@ -958,7 +958,7 @@ namespace Lucene.Net.Search
 							{
 								try
 								{
-									System.Single.Parse(termtext);
+                                    SupportClass.Single.Parse(termtext);
 									ret = wrapper.GetFloats(reader, field);
 								}
 								catch (System.FormatException nfe3)

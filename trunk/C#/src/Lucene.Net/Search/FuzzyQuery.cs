@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(term.Text());
 			buffer.Append('~');
-			buffer.Append(minimumSimilarity.ToString());
+			buffer.Append(SupportClass.Single.ToString(minimumSimilarity));
 			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
