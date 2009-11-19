@@ -1615,7 +1615,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				float f = (float) 1.0;
 				try
 				{
-					f = (float) System.Single.Parse(boost.image);
+					f = (float) SupportClass.Single.Parse(boost.image);
 					q.SetBoost(f);
 				}
 				catch (System.Exception ignored)
@@ -1732,7 +1732,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 						float fms = fuzzyMinSim;
 						try
 						{
-							fms = (float) System.Single.Parse(fuzzySlop.image.Substring(1));
+							fms = (float) SupportClass.Single.Parse(fuzzySlop.image.Substring(1));
 						}
 						catch (System.Exception ignored)
 						{
@@ -1938,7 +1938,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 					{
 						try
 						{
-							s = (int) System.Single.Parse(fuzzySlop.image.Substring(1));
+							s = (int) SupportClass.Single.Parse(fuzzySlop.image.Substring(1));
 						}
 						catch (System.Exception ignored)
 						{
@@ -1958,7 +1958,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				float f = (float) 1.0;
 				try
 				{
-					f = (float) System.Single.Parse(boost.image);
+					f = (float) SupportClass.Single.Parse(boost.image);
 				}
 				catch (System.Exception ignored)
 				{

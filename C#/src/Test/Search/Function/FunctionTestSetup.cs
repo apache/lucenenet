@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.Function
 		// extract expected doc score from its ID Field: "ID7" --> 7.0
 		protected internal virtual float ExpectedFieldScore(System.String docIDFieldVal)
 		{
-			return System.Single.Parse(docIDFieldVal.Substring(2));
+            return SupportClass.Single.Parse(docIDFieldVal.Substring(2));
 		}
 		
 		// debug messages (change DBG to true for anything to print) 

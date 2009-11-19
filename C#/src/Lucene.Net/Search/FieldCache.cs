@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
 		{
             try
             {
-                return System.Single.Parse(value_Renamed);
+                return SupportClass.Single.Parse(value_Renamed);
             }
             catch (System.OverflowException)
             {
