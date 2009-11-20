@@ -54,11 +54,7 @@ namespace Lucene.Net.Search.Spans
 		private IndexSearcher searcher;
 		private Similarity similarity = new DefaultSimilarity();
 		protected internal IndexReader indexReader;
-		
-		/*public TestPayloadSpans(System.String s):base(s)
-		{
-		}*/
-		
+						
 		[SetUp]
 		public override void  SetUp()
 		{
@@ -268,7 +264,7 @@ namespace Lucene.Net.Search.Spans
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new TestPayloadAnalyzer(this), IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
-			doc.Add(new Field("content", new System.IO.StreamReader("a b c d e f g h i j a k")));
+			doc.Add(new Field("content", new System.IO.StreamReader( new System.IO.MemoryStream( System.Text.Encoding.ASCII.GetBytes( "a b c d e f g h i j a k")))));
 			writer.AddDocument(doc);
 			writer.Close();
 			
@@ -305,7 +301,7 @@ namespace Lucene.Net.Search.Spans
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new TestPayloadAnalyzer(this), IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
-			doc.Add(new Field("content", new System.IO.StreamReader("a b a d k f a h i k a k")));
+            doc.Add(new Field("content", new System.IO.StreamReader(new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes("a b a d k f a h i k a k")))));
 			writer.AddDocument(doc);
 			writer.Close();
 			
@@ -342,7 +338,7 @@ namespace Lucene.Net.Search.Spans
 			RAMDirectory directory = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(directory, new TestPayloadAnalyzer(this), IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
-			doc.Add(new Field("content", new System.IO.StreamReader("j k a l f k k p a t a k l k t a")));
+            doc.Add(new Field("content", new System.IO.StreamReader(new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes("j k a l f k k p a t a k l k t a")))));
 			writer.AddDocument(doc);
 			writer.Close();
 			
