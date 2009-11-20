@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Spans
 				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size() > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
 			}
 		}
-		private System.Collections.ArrayList clauses;
+		private SupportClass.EquatableList<SpanQuery> clauses;
 		private System.String field;
 		
 		/// <summary>Construct a SpanOrQuery merging the provided clauses. </summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			// copy clauses array into an ArrayList
-			this.clauses = new System.Collections.ArrayList(clauses.Length);
+			this.clauses = new SupportClass.EquatableList<SpanQuery>(clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
 				SpanQuery clause = clauses[i];
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
-			return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery[]));
+			return (SpanQuery[]) clauses.ToArray();
 		}
 		
 		public override System.String GetField()

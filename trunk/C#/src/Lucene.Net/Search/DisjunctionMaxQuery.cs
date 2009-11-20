@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	{
 		
 		/* The subqueries */
-		private System.Collections.ArrayList disjuncts = new System.Collections.ArrayList();
+		private SupportClass.EquatableList<Query> disjuncts = new SupportClass.EquatableList<Query>();
 		
 		/* Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking. */
 		private float tieBreakerMultiplier = 0.0f;
