@@ -116,6 +116,7 @@ namespace Lucene.Net.Search
 			
 			// populate an index with 30 documents, this should be enough for the test.
 			// The documents have no content - the test uses MatchAllDocsQuery().
+            dir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(dir, new KeywordAnalyzer(), MaxFieldLength.UNLIMITED);
 			for (int i = 0; i < 30; i++)
 			{
