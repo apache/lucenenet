@@ -415,7 +415,7 @@ namespace Lucene.Net.Search.Function
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				Explanation explain = DoExplain(reader, doc);
-				return explain == null?new Explanation(0.0f, "no matching docs"):DoExplain(reader, doc);
+				return explain == null?new Explanation(0.0f, "no matching docs"):explain;
 			}
 			
 			private Explanation DoExplain(IndexReader reader, int doc)
