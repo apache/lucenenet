@@ -35,8 +35,8 @@ namespace Lucene.Net.Search
 	public class PhraseQuery:Query
 	{
 		private System.String field;
-		private System.Collections.ArrayList terms = new System.Collections.ArrayList(4);
-		private System.Collections.ArrayList positions = new System.Collections.ArrayList(4);
+        private SupportClass.EquatableList<Term> terms = new SupportClass.EquatableList<Term>(4);
+        private SupportClass.EquatableList<int> positions = new SupportClass.EquatableList<int>(4);
 		private int maxPosition = 0;
 		private int slop = 0;
 		
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the set of terms in this phrase. </summary>
 		public virtual Term[] GetTerms()
 		{
-			return (Term[]) terms.ToArray(typeof(Term));
+			return (Term[])terms.ToArray();
 		}
 		
 		/// <summary> Returns the relative positions of terms in this phrase.</summary>

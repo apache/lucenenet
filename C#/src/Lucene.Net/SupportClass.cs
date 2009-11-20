@@ -1788,6 +1788,244 @@ public class SupportClass
         }
     }
 
+    /// <summary>Represents a strongly typed list of objects that can be accessed by index.
+    /// Provides methods to search, sort, and manipulate lists. Also provides functionality
+    /// to compare lists against each other through an implementations of
+    /// <see cref="IEquatable{T}"/>.</summary>
+    /// <typeparam name="T">The type of elements in the list.</typeparam>
+    [Serializable]
+    internal class EquatableList<T> : System.Collections.Generic.List<T>,
+        IEquatable<System.Collections.Generic.IEnumerable<T>>
+    {
+        /// <summary>Initializes a new instance of the 
+        /// <see cref="ComparableList{T}"/> class that is empty and has the 
+        /// default initial capacity.</summary>
+        internal EquatableList() : base() { }
+
+        /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/>
+        /// class that contains elements copied from the specified collection and has
+        /// sufficient capacity to accommodate the number of elements copied.</summary>
+        /// <param name="collection">The collection whose elements are copied to the new list.</param>
+        internal EquatableList(System.Collections.Generic.IEnumerable<T> collection) : base(collection) { }
+
+        /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/> 
+        /// class that is empty and has the specified initial capacity.</summary>
+        /// <param name="capacity">The number of elements that the new list can initially store.</param>
+        internal EquatableList(int capacity) : base(capacity) { }
+
+        /// <summary>Adds a range of objects represented by the <see cref="ICollection"/>
+        /// implementation.</summary>
+        /// <param name="c">The <see cref="ICollection"/>
+        /// implementation to add to this list.</param>
+        internal void AddRange(ICollection c)
+        {
+            // If the collection is null, throw an exception.
+            if (c == null) throw new ArgumentNullException("c");
+
+            // Pre-compute capacity.
+            Capacity = c.Count - (Capacity - Count);
+
+            // Cycle through the items and add.
+            foreach (T item in c)
+            {
+                // Add the item.
+                Add(item);
+            }
+        }
+
+        /// <summary>Compares the contents of a <see cref="IEnumerable{T}"/>
+        /// implementation to another one to determine equality.</summary>
+        /// <remarks>Thinking of the <see cref="IEnumerable{T}"/> implementation as
+        /// a string with any number of characters, the algorithm checks
+        /// each item in each list.  If any item of the list is not equal (or
+        /// one list contains all the elements of another list), then that list
+        /// element is compared to the other list element to see which
+        /// list is greater.</remarks>
+        /// <param name="x">The <see cref="IEnumerable{T}"/> implementation
+        /// that is considered the left hand side.</param>
+        /// <param name="y">The <see cref="IEnumerable{T}"/> implementation
+        /// that is considered the right hand side.</param>
+        /// <returns>True if the items are equal, false otherwise.</returns>
+        private static bool Equals(System.Collections.Generic.IEnumerable<T> x,
+            System.Collections.Generic.IEnumerable<T> y)
+        {
+            // If x and y are null, then return true, they are the same.
+            if (x == null && y == null)
+            {
+                // They are the same, return 0.
+                return true;
+            }
+
+            // If one is null, then return a value based on whether or not
+            // one is null or not.
+            if (x == null || y == null)
+            {
+                // Return false, one is null, the other is not.
+                return false;
+            }
+
+            // The default comparer.
+            System.Collections.Generic.EqualityComparer<T> defaultComparer =
+                System.Collections.Generic.EqualityComparer<T>.Default;
+
+            // Get the enumerator for other.
+            System.Collections.Generic.IEnumerator<T> otherEnumerator = y.GetEnumerator();
+
+            // Dispose if there is an implementation.
+            using (otherEnumerator as IDisposable)
+            {
+                // Cycle through the items in this list.
+                foreach (T item in x)
+                {
+                    // If there isn't an item to get, then this has more
+                    // items than that, they are not equal.
+                    if (!otherEnumerator.MoveNext())
+                    {
+                        // Return false.
+                        return false;
+                    }
+
+                    // Perform a comparison.  Must check this on the left hand side
+                    // and that on the right hand side.
+                    bool comparison = defaultComparer.Equals(item, otherEnumerator.Current);
+
+                    // If the value is false, return false.
+                    if (!comparison)
+                    {
+                        // Return the value.
+                        return comparison;
+                    }
+                }
+
+                // If there are no more items, then return true, the sequences
+                // are equal.
+                if (!otherEnumerator.MoveNext())
+                {
+                    // The sequences are equal.
+                    return true;
+                }
+
+                // The other sequence has more items than this one, return
+                // false, these are not equal.
+                return false;
+            }
+        }
+
+#region IEquatable<IEnumerable<T>> Members
+        /// <summary>Compares this sequence to another <see cref="IEnumerable{T}"/>
+        /// implementation, returning true if they are equal, false otherwise.</summary>
+        /// <param name="other">The other <see cref="IEnumerable{T}"/> implementation
+        /// to compare against.</param>
+        /// <returns>True if the sequence in <paramref name="other"/> 
+        /// is the same as this one.</returns>
+        public bool Equals(System.Collections.Generic.IEnumerable<T> other)
+        {
+            // Compare to the other sequence.  If 0, then equal.
+            return Equals(this, other);
+        }
+#endregion
+
+        /// <summary>Compares this object for equality against other.</summary>
+        /// <param name="obj">The other object to compare this object against.</param>
+        /// <returns>True if this object and <paramref name="obj"/> are equal, false
+        /// otherwise.</returns>
+        public override bool Equals(object obj)
+        {
+            // Call the strongly typed version.
+            return Equals(obj as System.Collections.Generic.IEnumerable<T>);
+        }
+
+        /// <summary>Gets the hash code for the list.</summary>
+        /// <returns>The hash code value.</returns>
+        public override int GetHashCode()
+        {
+            // Call the static method, passing this.
+            return GetHashCode(this);
+        }
+
+        /// <summary>Gets the hash code for the list.</summary>
+        /// <param name="source">The <see cref="IEnumerable{T}"/>
+        /// implementation which will have all the contents hashed.</param>
+        /// <returns>The hash code value.</returns>
+        public static int GetHashCode(System.Collections.Generic.IEnumerable<T> source)
+        {
+            // If source is null, then return 0.
+            if (source == null) return 0;
+
+            // Seed the hash code with the hash code of the type.
+            // This is done so that you don't have a lot of collisions of empty
+            // ComparableList instances when placed in dictionaries
+            // and things that rely on hashcodes.
+            int hashCode = typeof(T).GetHashCode();
+
+            // Iterate through the items in this implementation.
+            foreach (T item in source)
+            {
+                // Adjust the hash code.
+                hashCode = 31 * hashCode + (item == null ? 0 : item.GetHashCode());
+            }
+
+            // Return the hash code.
+            return hashCode;
+        }
+
+        /// <summary>Overload of the == operator, it compares a
+        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        /// implementation.</summary>
+        /// <param name="x">The <see cref="ComparableList{T}"/> to compare
+        /// against <paramref name="y"/>.</param>
+        /// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        /// against <paramref name="x"/>.</param>
+        /// <returns>True if the instances are equal, false otherwise.</returns>
+        public static bool operator ==(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
+        {
+            // Call Equals.
+            return Equals(x, y);
+        }
+
+        /// <summary>Overload of the == operator, it compares a
+        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        /// implementation.</summary>
+        /// <param name="y">The <see cref="ComparableList{T}"/> to compare
+        /// against <paramref name="x"/>.</param>
+        /// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        /// against <paramref name="y"/>.</param>
+        /// <returns>True if the instances are equal, false otherwise.</returns>
+        public static bool operator ==(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
+        {
+            // Call equals.
+            return Equals(x, y);
+        }
+
+        /// <summary>Overload of the != operator, it compares a
+        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        /// implementation.</summary>
+        /// <param name="x">The <see cref="ComparableList{T}"/> to compare
+        /// against <paramref name="y"/>.</param>
+        /// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        /// against <paramref name="x"/>.</param>
+        /// <returns>True if the instances are not equal, false otherwise.</returns>
+        public static bool operator !=(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
+        {
+            // Return the negative of the equals operation.
+            return !(x == y);
+        }
+
+        /// <summary>Overload of the != operator, it compares a
+        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        /// implementation.</summary>
+        /// <param name="y">The <see cref="ComparableList{T}"/> to compare
+        /// against <paramref name="x"/>.</param>
+        /// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        /// against <paramref name="y"/>.</param>
+        /// <returns>True if the instances are not equal, false otherwise.</returns>
+        public static bool operator !=(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
+        {
+            // Return the negative of the equals operation.
+            return !(x == y);
+        }
+    }
+
     /// <summary>
     /// A simple wrapper to allow for the use of the GeneralKeyedCollection.  The
     /// wrapper is required as there can be several keys for an object depending
