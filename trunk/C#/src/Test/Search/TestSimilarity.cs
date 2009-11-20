@@ -257,8 +257,8 @@ namespace Lucene.Net.Search
 			searcher.Search(bq, new AnonymousClassCollector1(this));
 			
 			PhraseQuery pq = new PhraseQuery();
-			pq.add(a);
-			pq.add(c);
+			pq.Add(a);
+			pq.Add(c);
 			//System.out.println(pq.toString("field"));
 			searcher.Search(pq, new AnonymousClassCollector2(this));
 			

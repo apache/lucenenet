@@ -151,8 +151,8 @@ namespace Lucene.Net.Index
 			}
 			// Deletes one of the 10 added docs, leaving 9:
 			PhraseQuery q = new PhraseQuery();
-			q.add(new Term("content", "bbb"));
-			q.add(new Term("content", "14"));
+			q.Add(new Term("content", "bbb"));
+			q.Add(new Term("content", "14"));
 			writer.DeleteDocuments(q);
 			
 			writer.Optimize();
@@ -191,8 +191,8 @@ namespace Lucene.Net.Index
 			
 			// Deletes one of the 10 added docs, leaving 9:
 			PhraseQuery q = new PhraseQuery();
-			q.add(new Term("content", "bbb"));
-			q.add(new Term("content", "14"));
+			q.Add(new Term("content", "bbb"));
+			q.Add(new Term("content", "14"));
 			writer.DeleteDocuments(q);
 			
 			writer.Optimize();
@@ -229,8 +229,8 @@ namespace Lucene.Net.Index
 			
 			// Deletes one of the 10 added docs, leaving 9:
 			PhraseQuery q = new PhraseQuery();
-			q.add(new Term("content", "bbb"));
-			q.add(new Term("content", "14"));
+			q.Add(new Term("content", "bbb"));
+			q.Add(new Term("content", "14"));
 			writer.DeleteDocuments(q);
 			
 			writer.AddIndexesNoOptimize(new Directory[]{aux});

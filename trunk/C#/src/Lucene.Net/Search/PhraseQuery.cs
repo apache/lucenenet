@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		/// <summary> Adds a term to the end of the query phrase.
 		/// The relative position of the term is the one immediately after the last term added.
 		/// </summary>
-		public virtual void  add(Term term)
+		public virtual void  Add(Term term)
 		{
 			int position = 0;
 			if (positions.Count > 0)

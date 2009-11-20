@@ -821,7 +821,7 @@ namespace Lucene.Net.QueryParsers
 						}
 						else
 						{
-							pq.add(new Term(field, term));
+							pq.Add(new Term(field, term));
 						}
 					}
 					return pq;

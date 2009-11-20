@@ -4348,9 +4348,9 @@ namespace Lucene.Net.Index
 			
 			IndexSearcher s = new IndexSearcher(dir);
 			PhraseQuery pq = new PhraseQuery();
-			pq.add(new Term("field", "a"));
-			pq.add(new Term("field", "b"));
-			pq.add(new Term("field", "c"));
+			pq.Add(new Term("field", "a"));
+			pq.Add(new Term("field", "b"));
+			pq.Add(new Term("field", "c"));
 			ScoreDoc[] hits = s.Search(pq, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
