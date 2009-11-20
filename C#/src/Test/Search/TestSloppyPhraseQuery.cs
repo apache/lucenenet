@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
 			System.String[] t = System.Text.RegularExpressions.Regex.Split(terms, " +");
 			for (int i = 0; i < t.Length; i++)
 			{
-				query.add(new Term("f", t[i]));
+				query.Add(new Term("f", t[i]));
 			}
 			return query;
 		}

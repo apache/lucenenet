@@ -125,8 +125,8 @@ namespace Lucene.Net.Index
 		{
 			// create PhraseQuery "term1 term2" and search
 			PhraseQuery pq = new PhraseQuery();
-			pq.add(new Term(this.field, this.term1));
-			pq.add(new Term(this.field, this.term2));
+			pq.Add(new Term(this.field, this.term1));
+			pq.Add(new Term(this.field, this.term2));
 			return this.searcher.Search(pq, null, 1000).scoreDocs;
 		}
 		

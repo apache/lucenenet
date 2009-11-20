@@ -92,8 +92,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestPhrase()
 		{
 			PhraseQuery query = new PhraseQuery();
-			query.add(new Term("field", "seventy"));
-			query.add(new Term("field", "seven"));
+			query.Add(new Term("field", "seventy"));
+			query.Add(new Term("field", "seven"));
 			CheckHits(query, new int[]{77, 177, 277, 377, 477, 577, 677, 777, 877, 977});
 		}
 		
@@ -101,8 +101,8 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestPhrase2()
 		{
 			PhraseQuery query = new PhraseQuery();
-			query.add(new Term("field", "seventish"));
-			query.add(new Term("field", "sevenon"));
+			query.Add(new Term("field", "seventish"));
+			query.Add(new Term("field", "sevenon"));
 			CheckHits(query, new int[]{});
 		}
 		

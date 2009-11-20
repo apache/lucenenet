@@ -151,8 +151,8 @@ namespace Lucene.Net.Search
 			ScoreDoc[] hits;
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "1"));
-			q.add(new Term("field", "2"));
+			q.Add(new Term("field", "1"));
+			q.Add(new Term("field", "2"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
@@ -171,14 +171,14 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "2"));
-			q.add(new Term("field", "3"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "3"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "3"));
-			q.add(new Term("field", "4"));
+			q.Add(new Term("field", "3"));
+			q.Add(new Term("field", "4"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
@@ -205,26 +205,26 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "2"));
-			q.add(new Term("field", "4"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "4"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "3"));
-			q.add(new Term("field", "5"));
+			q.Add(new Term("field", "3"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "4"));
-			q.add(new Term("field", "5"));
+			q.Add(new Term("field", "4"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
-			q.add(new Term("field", "2"));
-			q.add(new Term("field", "5"));
+			q.Add(new Term("field", "2"));
+			q.Add(new Term("field", "5"));
 			hits = searcher.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
