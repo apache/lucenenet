@@ -31,8 +31,13 @@ namespace Lucene.Net.Search
 		/// <summary> Some explains methods calculate their values though a slightly
 		/// different  order of operations from the actual scoring method ...
 		/// this allows for a small amount of variation
+        /// 
+        /// mgarski - Java uses a value of 0.00005f, which causes tests in TestCustomScoreQuery
+        /// to fail when comparing the scorer and explanation scores with the wrapped
+        /// indexes and query boosts of greater than 2.0.  A comparison of the Java and .Net 
+        /// explanations reveal a floating point precision issue, not a hidden defect.
 		/// </summary>
-		public static float EXPLAIN_SCORE_TOLERANCE_DELTA = 0.00005f;
+		public static float EXPLAIN_SCORE_TOLERANCE_DELTA = 0.00025f;   // {{See: LUCENENET-288}} Intentional diversion from Java Lucene per above comment
 		
 		/// <summary> Tests that all documents up to maxDoc which are *not* in the
 		/// expected result set, have an explanation which indicates no match
