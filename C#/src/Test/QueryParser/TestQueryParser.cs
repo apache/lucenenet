@@ -656,7 +656,7 @@ namespace Lucene.Net.QueryParsers
 			System.String startDate = GetLocalizedDate(2002, 1, 1, false);
 			System.String endDate = GetLocalizedDate(2002, 1, 4, false);
 			System.Globalization.Calendar endDateExpected = new System.Globalization.GregorianCalendar();
-			System.DateTime tempAux = new System.DateTime(2002, 2, 4, 23, 59, 59, 999, endDateExpected);
+			System.DateTime tempAux = new System.DateTime(2002, 1, 4, 23, 59, 59, 999, endDateExpected);
 			AssertQueryEquals("[ " + EscapeDateString(startDate) + " TO " + EscapeDateString(endDate) + "]", null, "[" + GetLegacyDate(startDate) + " TO " + DateField.DateToString(tempAux) + "]");
 			AssertQueryEquals("{  " + EscapeDateString(startDate) + "    " + EscapeDateString(endDate) + "   }", null, "{" + GetLegacyDate(startDate) + " TO " + GetLegacyDate(endDate) + "}");
 		}
@@ -667,7 +667,7 @@ namespace Lucene.Net.QueryParsers
 			System.String startDate = GetLocalizedDate(2002, 1, 1, false);
 			System.String endDate = GetLocalizedDate(2002, 1, 4, false);
 			System.Globalization.Calendar calendar = new System.Globalization.GregorianCalendar();
-            System.DateTime endDateExpected = new System.DateTime(2002, 2, 4, 23, 59, 59, 999, calendar);
+            System.DateTime endDateExpected = new System.DateTime(2002, 1, 4, 23, 59, 59, 999, calendar);
 			System.String defaultField = "default";
 			System.String monthField = "month";
 			System.String hourField = "hour";
@@ -1104,7 +1104,7 @@ namespace Lucene.Net.QueryParsers
 		private void  AssertHits(int expected, System.String query, IndexSearcher is_Renamed)
 		{
 			QueryParser qp = new QueryParser("date", new WhitespaceAnalyzer());
-			qp.SetLocale(new System.Globalization.CultureInfo("en"));
+			qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
 			Query q = qp.Parse(query);
 			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(expected, hits.Length);
