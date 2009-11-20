@@ -55,9 +55,9 @@ namespace Lucene.Net.Search.Spans
 		private Similarity similarity = new DefaultSimilarity();
 		protected internal IndexReader indexReader;
 		
-		public TestPayloadSpans(System.String s):base(s)
+		/*public TestPayloadSpans(System.String s):base(s)
 		{
-		}
+		}*/
 		
 		[SetUp]
 		public override void  SetUp()
