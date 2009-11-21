@@ -1050,8 +1050,20 @@ namespace Lucene.Net.Index
 		public static bool IndexExists(System.IO.FileInfo directory)
 		{
             System.String[] list = null;
-			if (System.IO.Directory.Exists(directory.FullName)) list = System.IO.Directory.GetFileSystemEntries(directory.FullName);
- 			return SegmentInfos.GetCurrentSegmentGeneration(list) != - 1;
+            if (System.IO.Directory.Exists(directory.FullName))
+            {
+                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(directory.FullName);
+                System.IO.FileInfo[] fi = di.GetFiles();
+                if (fi.Length > 0)
+                {
+                    list = new System.String[fi.Length];
+                    for (int i = 0; i < fi.Length; i++)
+                    {
+                        list[i] = fi[i].Name;
+                    }
+                }
+            }
+			return SegmentInfos.GetCurrentSegmentGeneration(list) != - 1;
 		}
 		
 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
