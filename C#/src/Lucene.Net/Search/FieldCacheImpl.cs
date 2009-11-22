@@ -197,8 +197,8 @@ namespace Lucene.Net.Search
 			}
 			
 			internal FieldCache wrapper;
-			
-			internal System.Collections.IDictionary readerCache = new System.Collections.Hashtable();
+
+            internal System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
 			

@@ -82,6 +82,15 @@ namespace Lucene.Net.Search
 			writer.Close();
 			searcher = new IndexSearcher(directory);
 		}
+
+        [TearDown]
+        public override void TearDown()
+        {
+            searcher.Close();
+            searcher = null;
+            GC.Collect();
+            base.TearDown();
+        }
 		
 		private System.String[] docFields = new System.String[]{"w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3"};
 		
