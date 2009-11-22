@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 		{
 			if (cache == null)
 			{
-				cache = new System.Collections.Hashtable();
+                cache = new SupportClass.WeakHashTable();
 			}
 			
 			System.Object cached = null;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 		{
 			if (cache == null)
 			{
-				cache = new System.Collections.Hashtable();
+                cache = new SupportClass.WeakHashTable();
 			}
 			
 			System.Object cached = null;

@@ -62,8 +62,10 @@ namespace Lucene.Net.Search
 		[TearDown]
 		public override void  TearDown()
 		{
-			base.TearDown();
 			searcher.Close();
+            searcher = null;
+            GC.Collect();
+			base.TearDown();
 		}
 		
 		[SetUp]

@@ -50,6 +50,12 @@ namespace Lucene.Net.Search
 			base.SetUp();
 			searcher.SetSimilarity(createQnorm1Similarity());
 		}
+
+        [TearDown]
+        public override void TearDown()
+        {
+            base.TearDown();
+        }
 		
 		// must be static for weight serialization tests 
 		private static DefaultSimilarity createQnorm1Similarity()
