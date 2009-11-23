@@ -259,6 +259,7 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
+            clone.disjuncts = (SupportClass.EquatableList<Query>) this.disjuncts.Clone();
 			return clone;
 		}
 		
