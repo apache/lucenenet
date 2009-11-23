@@ -1697,8 +1697,14 @@ public class SupportClass
         /// </summary>
         /// <param name="array1">The array to be compared.</param>
         /// <param name="array2">The array to be compared with.</param>
-        /// <returns>True if both arrays are equals otherwise it returns false.</returns>
-        /// <remarks>Two arrays are equal if they contains the same elements in the same order.</remarks>
+        /// <returns>Returns true if the two specified arrays of Objects are equal 
+        /// to one another. The two arrays are considered equal if both arrays 
+        /// contain the same number of elements, and all corresponding pairs of 
+        /// elements in the two arrays are equal. Two objects e1 and e2 are 
+        /// considered equal if (e1==null ? e2==null : e1.equals(e2)). In other 
+        /// words, the two arrays are equal if they contain the same elements in 
+        /// the same order. Also, two array references are considered equal if 
+        /// both are null.</returns>
         public static bool Equals(System.Array array1, System.Array array2)
         {
             bool result = false;
@@ -1794,36 +1800,37 @@ public class SupportClass
     /// <see cref="IEquatable{T}"/>.</summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     [Serializable]
-    internal class EquatableList<T> : System.Collections.Generic.List<T>,
-        IEquatable<System.Collections.Generic.IEnumerable<T>>
+    public class EquatableList<T> : System.Collections.Generic.List<T>,
+        IEquatable<System.Collections.Generic.IEnumerable<T>>,
+        ICloneable
     {
         /// <summary>Initializes a new instance of the 
         /// <see cref="ComparableList{T}"/> class that is empty and has the 
         /// default initial capacity.</summary>
-        internal EquatableList() : base() { }
+        public EquatableList() : base() { }
 
         /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/>
         /// class that contains elements copied from the specified collection and has
         /// sufficient capacity to accommodate the number of elements copied.</summary>
         /// <param name="collection">The collection whose elements are copied to the new list.</param>
-        internal EquatableList(System.Collections.Generic.IEnumerable<T> collection) : base(collection) { }
+        public EquatableList(System.Collections.Generic.IEnumerable<T> collection) : base(collection) { }
 
         /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/> 
         /// class that is empty and has the specified initial capacity.</summary>
         /// <param name="capacity">The number of elements that the new list can initially store.</param>
-        internal EquatableList(int capacity) : base(capacity) { }
+        public EquatableList(int capacity) : base(capacity) { }
 
         /// <summary>Adds a range of objects represented by the <see cref="ICollection"/>
         /// implementation.</summary>
         /// <param name="c">The <see cref="ICollection"/>
         /// implementation to add to this list.</param>
-        internal void AddRange(ICollection c)
+        public void AddRange(ICollection c)
         {
             // If the collection is null, throw an exception.
             if (c == null) throw new ArgumentNullException("c");
 
             // Pre-compute capacity.
-            Capacity = c.Count - (Capacity - Count);
+            Capacity = Math.Max(c.Count + Count, Capacity);
 
             // Cycle through the items and add.
             foreach (T item in c)
@@ -1969,61 +1976,76 @@ public class SupportClass
             return hashCode;
         }
 
-        /// <summary>Overload of the == operator, it compares a
-        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
-        /// implementation.</summary>
-        /// <param name="x">The <see cref="ComparableList{T}"/> to compare
-        /// against <paramref name="y"/>.</param>
-        /// <param name="y">The <see cref="IEnumerable{T}"/> to compare
-        /// against <paramref name="x"/>.</param>
-        /// <returns>True if the instances are equal, false otherwise.</returns>
-        public static bool operator ==(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
+        // TODO: When diverging from Java version of Lucene, can uncomment these to adhere to best practices when overriding the Equals method and implementing IEquatable<T>.
+        ///// <summary>Overload of the == operator, it compares a
+        ///// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="x">The <see cref="ComparableList{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <returns>True if the instances are equal, false otherwise.</returns>
+        //public static bool operator ==(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
+        //{
+        //    // Call Equals.
+        //    return Equals(x, y);
+        //}
+
+        ///// <summary>Overload of the == operator, it compares a
+        ///// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="y">The <see cref="ComparableList{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <returns>True if the instances are equal, false otherwise.</returns>
+        //public static bool operator ==(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
+        //{
+        //    // Call equals.
+        //    return Equals(x, y);
+        //}
+
+        ///// <summary>Overload of the != operator, it compares a
+        ///// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="x">The <see cref="ComparableList{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <returns>True if the instances are not equal, false otherwise.</returns>
+        //public static bool operator !=(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
+        //{
+        //    // Return the negative of the equals operation.
+        //    return !(x == y);
+        //}
+
+        ///// <summary>Overload of the != operator, it compares a
+        ///// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="y">The <see cref="ComparableList{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <returns>True if the instances are not equal, false otherwise.</returns>
+        //public static bool operator !=(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
+        //{
+        //    // Return the negative of the equals operation.
+        //    return !(x == y);
+        //}
+
+        #region ICloneable Members
+
+        /// <summary>Clones the <see cref="EquatableList{T}"/>.</summary>
+        /// <remarks>This is a shallow clone.</remarks>
+        /// <returns>A new shallow clone of this
+        /// <see cref="EquatableList{T}"/>.</returns>
+        public object Clone()
         {
-            // Call Equals.
-            return Equals(x, y);
+            // Just create a new one, passing this to the constructor.
+            return new EquatableList<T>(this);
         }
 
-        /// <summary>Overload of the == operator, it compares a
-        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
-        /// implementation.</summary>
-        /// <param name="y">The <see cref="ComparableList{T}"/> to compare
-        /// against <paramref name="x"/>.</param>
-        /// <param name="x">The <see cref="IEnumerable{T}"/> to compare
-        /// against <paramref name="y"/>.</param>
-        /// <returns>True if the instances are equal, false otherwise.</returns>
-        public static bool operator ==(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
-        {
-            // Call equals.
-            return Equals(x, y);
-        }
-
-        /// <summary>Overload of the != operator, it compares a
-        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
-        /// implementation.</summary>
-        /// <param name="x">The <see cref="ComparableList{T}"/> to compare
-        /// against <paramref name="y"/>.</param>
-        /// <param name="y">The <see cref="IEnumerable{T}"/> to compare
-        /// against <paramref name="x"/>.</param>
-        /// <returns>True if the instances are not equal, false otherwise.</returns>
-        public static bool operator !=(EquatableList<T> x, System.Collections.Generic.IEnumerable<T> y)
-        {
-            // Return the negative of the equals operation.
-            return !(x == y);
-        }
-
-        /// <summary>Overload of the != operator, it compares a
-        /// <see cref="ComparableList{T}"/> to an <see cref="IEnumerable{T}"/>
-        /// implementation.</summary>
-        /// <param name="y">The <see cref="ComparableList{T}"/> to compare
-        /// against <paramref name="x"/>.</param>
-        /// <param name="x">The <see cref="IEnumerable{T}"/> to compare
-        /// against <paramref name="y"/>.</param>
-        /// <returns>True if the instances are not equal, false otherwise.</returns>
-        public static bool operator !=(System.Collections.Generic.IEnumerable<T> x, EquatableList<T> y)
-        {
-            // Return the negative of the equals operation.
-            return !(x == y);
-        }
+        #endregion
     }
 
     /// <summary>
