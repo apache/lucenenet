@@ -199,6 +199,10 @@ namespace Lucene.Net.Search
 	{
 		public virtual byte ParseByte(System.String value_Renamed)
 		{
+            if (value_Renamed[0] == '-')
+            {
+                return (byte) System.SByte.Parse(value_Renamed);
+            }
 			return (byte) System.Byte.Parse(value_Renamed);
 		}
 		protected internal virtual System.Object ReadResolve()
