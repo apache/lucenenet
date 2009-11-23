@@ -1840,6 +1840,44 @@ public class SupportClass
             }
         }
 
+        /// <summary>Compares the counts of two <see cref="IEnumerable{T}"/>
+        /// implementations.</summary>
+        /// <remarks>This uses a trick in LINQ, sniffing types for implementations
+        /// of interfaces that might supply shortcuts when trying to make comparisons.
+        /// In this case, that is the <see cref="ICollection{T}"/> and
+        /// <see cref="ICollection"/> interfaces, either of which can provide a count
+        /// which can be used in determining the equality of sequences (if they don't have
+        /// the same count, then they can't be equal).</remarks>
+        /// <param name="x">The <see cref="IEnumerable{T}"/> from the left hand side of the
+        /// comparison to check the count of.</param>
+        /// <param name="y">The <see cref="IEnumerable{T}"/> from the right hand side of the
+        /// comparison to check the count of.</param>
+        /// <returns>Null if the result is indeterminate.  This occurs when either <paramref name="x"/>
+        /// or <paramref name="y"/> doesn't implement <see cref="ICollection"/> or <see cref="ICollection{T}"/>.
+        /// Otherwise, it will get the count from each and return true if they are equal, false otherwise.</returns>
+        private static bool? EnumerableCountsEqual(System.Collections.Generic.IEnumerable<T> x, System.Collections.Generic.IEnumerable<T> y)
+        {
+            // Get the ICollection<T> and ICollection interfaces.
+            System.Collections.Generic.ICollection<T> xOfTCollection = x as System.Collections.Generic.ICollection<T>;
+            System.Collections.Generic.ICollection<T> yOfTCollection = y as System.Collections.Generic.ICollection<T>;
+            ICollection xCollection = x as ICollection;
+            ICollection yCollection = y as ICollection;
+
+            // The count in x and y.
+            int? xCount = xOfTCollection != null ? xOfTCollection.Count : xCollection != null ? xCollection.Count : (int?)null;
+            int? yCount = yOfTCollection != null ? yOfTCollection.Count : yCollection != null ? yCollection.Count : (int?)null;
+
+            // If either are null, return null, the result is indeterminate.
+            if (xCount == null || yCount == null)
+            {
+                // Return null, indeterminate.
+                return null;
+            }
+
+            // Both counts are non-null, compare.
+            return xCount == yCount;
+        }
+
         /// <summary>Compares the contents of a <see cref="IEnumerable{T}"/>
         /// implementation to another one to determine equality.</summary>
         /// <remarks>Thinking of the <see cref="IEnumerable{T}"/> implementation as
@@ -1871,14 +1909,30 @@ public class SupportClass
                 return false;
             }
 
-            // The default comparer.
+            // Check to see if the counts on the IEnumerable implementations are equal.
+            // This is a shortcut, if they are not equal, then the lists are not equal.
+            // If the result is indeterminate, then get out.
+            bool? enumerableCountsEqual = EnumerableCountsEqual(x, y);
+
+            // If the enumerable counts have been able to be calculated (indicated by
+            // a non-null value) and it is false, then no need to iterate through the items.
+            if (enumerableCountsEqual != null && !enumerableCountsEqual.Value)
+            {
+                // The sequences are not equal.
+                return false;
+            }
+
+            // The counts of the items in the enumerations are equal, or indeterminate
+            // so a full iteration needs to be made to compare each item.
+            // Get the default comparer for T first.
             System.Collections.Generic.EqualityComparer<T> defaultComparer =
                 System.Collections.Generic.EqualityComparer<T>.Default;
 
-            // Get the enumerator for other.
+            // Get the enumerator for y.
             System.Collections.Generic.IEnumerator<T> otherEnumerator = y.GetEnumerator();
 
-            // Dispose if there is an implementation.
+            // Call Dispose on IDisposable if there is an implementation on the
+            // IEnumerator<T> returned by a call to y.GetEnumerator().
             using (otherEnumerator as IDisposable)
             {
                 // Cycle through the items in this list.
