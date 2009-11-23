@@ -139,7 +139,7 @@ namespace Lucene.Net
 				for (int i = 0; i < trace.FrameCount; i++)
 				{
                     System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-					if ("DoMerge".Equals(sf.GetMethod()))
+					if ("DoMerge".Equals(sf.GetMethod().Name))
 						throw new System.IO.IOException("now failing during merge");
 				}
 			}
