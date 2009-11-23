@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("ApplyDeletes".Equals(sf.GetMethod()))
+						if ("ApplyDeletes".Equals(sf.GetMethod().Name))
 						{
 							seen = true;
 							break;
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 					for (int i = 0; i < trace.FrameCount; i++)
 					{
 						System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-						if ("ApplyDeletes".Equals(sf.GetMethod()))
+						if ("ApplyDeletes".Equals(sf.GetMethod().Name))
 						{
 							sawMaybe = true;
 							break;
