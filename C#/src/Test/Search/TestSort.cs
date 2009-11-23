@@ -261,7 +261,24 @@ namespace Lucene.Net.Search
 		// the float field to sort by float
 		// the string field to sort by string
 		// the i18n field includes accented characters for testing locale-specific sorting
-		private System.String[][] data = new System.String[][]{new System.String[]{"A", "x a", "5", "4f", "c", "A-3", "p\u00EAche", "10", "-4.0", "3", "126", "J"}, new System.String[]{"B", "y a", "5", "3.4028235E38", "i", "B-10", "HAT", "1000000000", "40.0", "24", "1", "I"}, new System.String[]{"C", "x a b c", "2147483647", "1.0", "j", "A-2", "p\u00E9ch\u00E9", "99999999", "40.00002343", "125", "15", "H"}, new System.String[]{"D", "y a b c", "-1", "0.0f", "a", "C-0", "HUT", System.Convert.ToString(System.Int64.MaxValue), System.Convert.ToString(System.Double.MinValue), System.Convert.ToString(System.Int16.MinValue), System.Convert.ToString((byte) System.Byte.MinValue), "G"}, new System.String[]{"E", "x a b c d", "5", "2f", "h", "B-8", "peach", System.Convert.ToString(System.Int64.MinValue), System.Convert.ToString(System.Double.MaxValue), System.Convert.ToString(System.Int16.MaxValue), System.Convert.ToString((byte) System.SByte.MaxValue), "F"}, new System.String[]{"F", "y a b c d", "2", "3.14159f", "g", "B-1", "H\u00C5T", "-44", "343.034435444", "-3", "0", "E"}, new System.String[]{"G", "x a b c d", "3", "-1.0", "f", "C-100", "sin", "323254543543", "4.043544", "5", "100", "D"}, new System.String[]{"H", "y a b c d", "0", "1.4E-45", "e", "C-88", "H\u00D8T", "1023423423005", "4.043545", "10", "-50", "C"}, new System.String[]{"I", "x a b c d e f", "-2147483648", "1.0e+0", "d", "A-10", "s\u00EDn", "332422459999", "4.043546", "-340", "51", "B"}, new System.String[]{"J", "y a b c d e f", "4", ".5", "b", "C-7", "HOT", "34334543543", "4.0000220343", "300", "2", "A"}, new System.String[]{"W", "g", "1", null, null, null, null, null, null, null, null, null}, new System.String[]{"X", "g", "1", "0.1", null, null, null, null, null, null, null, null}, new System.String[]{"Y", "g", "1", "0.2", null, null, null, null, null, null, null, null}, new System.String[]{"Z", "f g", null, null, null, null, null, null, null, null, null, null}};
+        private System.String[][] data = new System.String[][] { 
+          //              tracer contents         int            float            string   custom   i18n               long                       double,                       'short',                    byte,                   'custom parser encoding'
+          new string[]{   "A",   "x a",           "5",           "4f",            "c",     "A-3",   "p\u00EAche",      "10",                      "-4.0",                       "3",                        "126",                      "J"},//A, x
+          new string[]{   "B",   "y a",           "5",           "3.4028235E38",  "i",     "B-10",  "HAT",             "1000000000",              "40.0",                       "24",                       "1",                        "I"},//B, y
+          new string[]{   "C",   "x a b c",       "2147483647",  "1.0",           "j",     "A-2",   "p\u00E9ch\u00E9", "99999999",                "40.00002343",                "125",                      "15",                       "H"},//C, x
+          new string[]{   "D",   "y a b c",       "-1",          "0.0f",          "a",     "C-0",   "HUT",             long.MaxValue.ToString(),  double.MinValue.ToString(),   short.MinValue.ToString(),  byte.MinValue.ToString(),   "G"},//D, y
+          new string[]{   "E",   "x a b c d",     "5",           "2f",            "h",     "B-8",   "peach",           long.MinValue.ToString(),  double.MaxValue.ToString(),   short.MaxValue.ToString(),  byte.MaxValue.ToString(),   "F"},//E,x
+          new string[]{   "F",   "y a b c d",     "2",           "3.14159f",      "g",     "B-1",   "H\u00C5T",        "-44",                     "343.034435444",              "-3",                       "0",                        "E"},//F,y
+          new string[]{   "G",   "x a b c d",     "3",           "-1.0",          "f",     "C-100", "sin",             "323254543543",            "4.043544",                   "5",                        "100",                      "D"},//G,x
+          new string[]{   "H",   "y a b c d",     "0",           "1.4E-45",       "e",     "C-88",  "H\u00D8T",        "1023423423005",           "4.043545",                   "10",                       "-50",                      "C"},//H,y
+          new string[]{   "I",   "x a b c d e f", "-2147483648", "1.0e+0",        "d",     "A-10",  "s\u00EDn",        "332422459999",            "4.043546",                   "-340",                     "51",                       "B"},//I,x
+          new string[]{   "J",   "y a b c d e f", "4",           ".5",            "b",     "C-7",   "HOT",             "34334543543",             "4.0000220343",               "300",                      "2",                        "A"},//J,y
+          new string[]{   "W",   "g",             "1",           null,            null,    null,    null,              null,                      null,                         null,                       null,                       null},
+          new string[]{   "X",   "g",             "1",           "0.1",           null,    null,    null,              null,                      null,                         null,                       null,                       null},
+          new string[]{   "Y",   "g",             "1",           "0.2",           null,    null,    null,              null,                      null,                         null,                       null,                       null},
+          new string[]{   "Z",   "f g",           null,          null,            null,    null,    null,              null,                      null,                         null,                       null,                       null}
+        };
+		
 		
 		// create an index of all the documents, or just the x, or just the y documents
 		private Searcher GetIndex(bool even, bool odd)
@@ -804,12 +821,12 @@ namespace Lucene.Net.Search
 		public virtual void  TestInternationalSort()
 		{
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-			AssertMatches(full, queryY, sort, "BFJDH");
+			AssertMatches(full, queryY, sort, "BFJHD");
 			
-			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv" + "-" + "se")));
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("sv-se")));
 			AssertMatches(full, queryY, sort, "BJDFH");
 			
-			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
+			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da-dk")));
 			AssertMatches(full, queryY, sort, "BJDHF");
 			
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
@@ -830,7 +847,7 @@ namespace Lucene.Net.Search
 			AssertMatches(multiSearcher, queryY, sort, "BJDFH");
 			
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("en-US")));
-			AssertMatches(multiSearcher, queryY, sort, "BFJDH");
+			AssertMatches(multiSearcher, queryY, sort, "BFJHD");
 			
 			sort.SetSort(new SortField("i18n", new System.Globalization.CultureInfo("da" + "-" + "dk")));
 			AssertMatches(multiSearcher, queryY, sort, "BJDHF");
