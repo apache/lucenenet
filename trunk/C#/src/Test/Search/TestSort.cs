@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Search
 					{
 						TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 						
-						Assert.IsTrue(tdc.GetType().FullName.EndsWith("$" + actualTFCClasses[j]));
+						Assert.IsTrue(tdc.GetType().FullName.EndsWith("+" + actualTFCClasses[j]));
 						
 						full.Search(bq, tdc);
 						
