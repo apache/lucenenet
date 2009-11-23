@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 			BooleanQuery.maxClauseCount = maxClauseCount;
 		}
 		
-		private System.Collections.ArrayList clauses = new System.Collections.ArrayList();
+		private SupportClass.EquatableList<BooleanClause> clauses = new SupportClass.EquatableList<BooleanClause>();
 		private bool disableCoord;
 		
 		/// <summary>Constructs an empty boolean query. </summary>
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the set of clauses in this query. </summary>
 		public virtual BooleanClause[] GetClauses()
 		{
-			return (BooleanClause[]) clauses.ToArray(typeof(BooleanClause));
+			return (BooleanClause[]) clauses.ToArray();
 		}
 		
 		/// <summary>Returns the list of clauses in this query. </summary>
@@ -593,7 +593,7 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			BooleanQuery clone = (BooleanQuery) base.Clone();
-			clone.clauses = (System.Collections.ArrayList) this.clauses.Clone();
+			clone.clauses = (SupportClass.EquatableList<BooleanClause>) this.clauses.Clone();
 			return clone;
 		}
 		
@@ -661,30 +661,18 @@ namespace Lucene.Net.Search
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
-			if (!(o is BooleanQuery))
-				return false;
-			BooleanQuery other = (BooleanQuery) o;
-			if (this.GetBoost() != other.GetBoost())
-				return false;
-			if (this.clauses.Count != other.clauses.Count)
-				return false;
-			for (int i = 0; i < this.clauses.Count; i++)
-			{
-				if (this.clauses[i].Equals(other.clauses[i]) == false)
-					return false;
-			}
-			return this.GetMinimumNumberShouldMatch() == other.GetMinimumNumberShouldMatch();
+            if (!(o is BooleanQuery))
+                return false;
+            BooleanQuery other = (BooleanQuery)o;
+            return (this.GetBoost() == other.GetBoost())
+                    && this.clauses.Equals(other.clauses)
+                    && this.GetMinimumNumberShouldMatch() == other.GetMinimumNumberShouldMatch();
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			int hashCode = 0;
-			for (int i = 0; i < clauses.Count; i++)
-			{
-				hashCode += clauses[i].GetHashCode();
-			}
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ hashCode + GetMinimumNumberShouldMatch();
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + GetMinimumNumberShouldMatch();
 		}
 	}
 }
