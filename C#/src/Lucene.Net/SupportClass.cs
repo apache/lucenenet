@@ -1718,7 +1718,11 @@ public class SupportClass
                     result = true;
                     for (int index = 0; index < length; index++)
                     {
-                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
+                        System.Object o1 = array1.GetValue(index);
+                        System.Object o2 = array2.GetValue(index);
+                        if (o1 == null && o2 == null)
+                            continue;   // they match
+                        else if (o1 == null || !o1.Equals(o2))
                         {
                             result = false;
                             break;
