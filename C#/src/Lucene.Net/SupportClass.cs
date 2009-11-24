@@ -785,6 +785,24 @@ public class SupportClass
     /// <summary>
     /// 
     /// </summary>
+    public class Double
+    {
+        public static System.Double Parse(System.String s)
+        {
+            try
+            {
+                return System.Double.Parse(s.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
+            }
+            catch (OverflowException)
+            {
+                return double.MaxValue;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class Single
     {
         /// <summary>
