@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 			IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			long theLong = System.Int64.MaxValue;
 			double theDouble = System.Double.MaxValue;
-			byte theByte = (byte) System.SByte.MaxValue;
+			sbyte theByte = (sbyte) System.SByte.MaxValue;
 			short theShort = System.Int16.MaxValue;
 			int theInt = System.Int32.MaxValue;
 			float theFloat = System.Single.MaxValue;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 				Document doc = new Document();
 				doc.Add(new Field("theLong", System.Convert.ToString(theLong--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theDouble", theDouble.ToString("E16"), Field.Store.NO, Field.Index.NOT_ANALYZED));
-				doc.Add(new Field("theByte", System.Convert.ToString((byte) theByte--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("theByte", System.Convert.ToString((sbyte) theByte--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theShort", System.Convert.ToString(theShort--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theInt", System.Convert.ToString(theInt--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theFloat", theFloat.ToString("E8"), Field.Store.NO, Field.Index.NOT_ANALYZED));
@@ -110,13 +110,13 @@ namespace Lucene.Net.Search
 				Assert.IsTrue(longs[i] == (System.Int64.MaxValue - i), longs[i] + " does not equal: " + (System.Int64.MaxValue - i));
 			}
 			
-			byte[] bytes = cache.GetBytes(reader, "theByte");
+			sbyte[] bytes = cache.GetBytes(reader, "theByte");
 			Assert.AreSame(bytes, cache.GetBytes(reader, "theByte"), "Second request to cache return same array");
 			Assert.AreSame(bytes, cache.GetBytes(reader, "theByte", Lucene.Net.Search.FieldCache_Fields.DEFAULT_BYTE_PARSER), "Second request with explicit parser return same array");
 			Assert.IsTrue(bytes.Length == NUM_DOCS, "bytes Size: " + bytes.Length + " is not: " + NUM_DOCS);
 			for (int i = 0; i < bytes.Length; i++)
 			{
-				Assert.IsTrue(bytes[i] == (byte) ((byte) System.SByte.MaxValue - i), bytes[i] + " does not equal: " + ((byte) System.SByte.MaxValue - i));
+				Assert.IsTrue(bytes[i] == (sbyte) ((byte) System.SByte.MaxValue - i), bytes[i] + " does not equal: " + ((byte) System.SByte.MaxValue - i));
 			}
 			
 			short[] shorts = cache.GetShorts(reader, "theShort");

@@ -40,6 +40,7 @@ namespace Lucene.Net.Util
 				this.enclosingInstance = enclosingInstance;
 				Add(typeof(bool), 1);
 				Add(typeof(byte), 1);
+                Add(typeof(sbyte), 1);
 				Add(typeof(char), 2);
 				Add(typeof(short), 2);
 				Add(typeof(int), 4);

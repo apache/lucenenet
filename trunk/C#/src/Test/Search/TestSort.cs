@@ -170,9 +170,9 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			public byte ParseByte(System.String val)
+			public sbyte ParseByte(System.String val)
 			{
-				return (byte) (val[0] - 'A');
+				return (sbyte) (val[0] - 'A');
 			}
 		}
 		[Serializable]
@@ -266,8 +266,8 @@ namespace Lucene.Net.Search
           new string[]{   "A",   "x a",           "5",           "4f",            "c",     "A-3",   "p\u00EAche",      "10",                      "-4.0",                           "3",                        "126",                      "J"},//A, x
           new string[]{   "B",   "y a",           "5",           "3.4028235E38",  "i",     "B-10",  "HAT",             "1000000000",              "40.0",                           "24",                       "1",                        "I"},//B, y
           new string[]{   "C",   "x a b c",       "2147483647",  "1.0",           "j",     "A-2",   "p\u00E9ch\u00E9", "99999999",                "40.00002343",                    "125",                      "15",                       "H"},//C, x
-          new string[]{   "D",   "y a b c",       "-1",          "0.0f",          "a",     "C-0",   "HUT",             long.MaxValue.ToString(),  double.MinValue.ToString("E16"),  short.MinValue.ToString(),  byte.MinValue.ToString(),   "G"},//D, y
-          new string[]{   "E",   "x a b c d",     "5",           "2f",            "h",     "B-8",   "peach",           long.MinValue.ToString(),  double.MaxValue.ToString("E16"),  short.MaxValue.ToString(),  byte.MaxValue.ToString(),   "F"},//E,x
+          new string[]{   "D",   "y a b c",       "-1",          "0.0f",          "a",     "C-0",   "HUT",             long.MaxValue.ToString(),  double.MinValue.ToString("E16"),  short.MinValue.ToString(),  sbyte.MinValue.ToString(),   "G"},//D, y
+          new string[]{   "E",   "x a b c d",     "5",           "2f",            "h",     "B-8",   "peach",           long.MinValue.ToString(),  double.MaxValue.ToString("E16"),  short.MaxValue.ToString(),  sbyte.MaxValue.ToString(),   "F"},//E,x
           new string[]{   "F",   "y a b c d",     "2",           "3.14159f",      "g",     "B-1",   "H\u00C5T",        "-44",                     "343.034435444",                  "-3",                       "0",                        "E"},//F,y
           new string[]{   "G",   "x a b c d",     "3",           "-1.0",          "f",     "C-100", "sin",             "323254543543",            "4.043544",                       "5",                        "100",                      "D"},//G,x
           new string[]{   "H",   "y a b c d",     "0",           "1.4E-45",       "e",     "C-88",  "H\u00D8T",        "1023423423005",           "4.043545",                       "10",                       "-50",                      "C"},//H,y
@@ -439,21 +439,21 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestTypedSort()
 		{
-			sort.SetSort(new SortField[]{new SortField("int", SortField.INT), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "IGAEC");
-			AssertMatches(full, queryY, sort, "DHFJB");
-			
-			sort.SetSort(new SortField[]{new SortField("float", SortField.FLOAT), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "GCIEA");
-			AssertMatches(full, queryY, sort, "DHJFB");
-			
-			sort.SetSort(new SortField[]{new SortField("long", SortField.LONG), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "EACGI");
-			AssertMatches(full, queryY, sort, "FBJHD");
-			
-			sort.SetSort(new SortField[]{new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC});
-			AssertMatches(full, queryX, sort, "AGICE");
-			AssertMatches(full, queryY, sort, "DJHBF");
+            sort.SetSort(new SortField[] { new SortField("int", SortField.INT), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "IGAEC");
+            AssertMatches(full, queryY, sort, "DHFJB");
+
+            sort.SetSort(new SortField[] { new SortField("float", SortField.FLOAT), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "GCIEA");
+            AssertMatches(full, queryY, sort, "DHJFB");
+
+            sort.SetSort(new SortField[] { new SortField("long", SortField.LONG), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "EACGI");
+            AssertMatches(full, queryY, sort, "FBJHD");
+
+            sort.SetSort(new SortField[] { new SortField("double", SortField.DOUBLE), SortField.FIELD_DOC });
+            AssertMatches(full, queryX, sort, "AGICE");
+            AssertMatches(full, queryY, sort, "DJHBF");
 			
 			sort.SetSort(new SortField[]{new SortField("byte", SortField.BYTE), SortField.FIELD_DOC});
 			AssertMatches(full, queryX, sort, "CIGAE");

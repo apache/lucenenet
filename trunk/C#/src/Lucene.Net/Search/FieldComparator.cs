@@ -88,15 +88,15 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public sealed class ByteComparator:FieldComparator
 		{
-			private byte[] values;
-			private byte[] currentReaderValues;
+			private sbyte[] values;
+			private sbyte[] currentReaderValues;
 			private System.String field;
 			private ByteParser parser;
-			private byte bottom;
+			private sbyte bottom;
 			
 			internal ByteComparator(int numHits, System.String field, Lucene.Net.Search.Parser parser)
 			{
-				values = new byte[numHits];
+				values = new sbyte[numHits];
 				this.field = field;
 				this.parser = (ByteParser) parser;
 			}
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
 			
 			public override System.IComparable Value(int slot)
 			{
-				return (byte) values[slot];
+				return (sbyte) values[slot];
 			}
 		}
 		
