@@ -156,14 +156,14 @@ namespace Lucene.Net.Search
 		{
 			private class AnonymousClassFieldCacheDocIdSet:FieldCacheDocIdSet
 			{
-				private void  InitBlock(byte[] values, byte inclusiveLowerPoint, byte inclusiveUpperPoint, AnonymousClassFieldCacheRangeFilter1 enclosingInstance)
+				private void  InitBlock(sbyte[] values, byte inclusiveLowerPoint, byte inclusiveUpperPoint, AnonymousClassFieldCacheRangeFilter1 enclosingInstance)
 				{
 					this.values = values;
 					this.inclusiveLowerPoint = inclusiveLowerPoint;
 					this.inclusiveUpperPoint = inclusiveUpperPoint;
 					this.enclosingInstance = enclosingInstance;
 				}
-				private byte[] values;
+				private sbyte[] values;
 				private byte inclusiveLowerPoint;
 				private byte inclusiveUpperPoint;
 				private AnonymousClassFieldCacheRangeFilter1 enclosingInstance;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				internal AnonymousClassFieldCacheDocIdSet(byte[] values, byte inclusiveLowerPoint, byte inclusiveUpperPoint, AnonymousClassFieldCacheRangeFilter1 enclosingInstance, Lucene.Net.Index.IndexReader Param1, bool Param2):base(Param1, Param2)
+				internal AnonymousClassFieldCacheDocIdSet(sbyte[] values, byte inclusiveLowerPoint, byte inclusiveUpperPoint, AnonymousClassFieldCacheRangeFilter1 enclosingInstance, Lucene.Net.Index.IndexReader Param1, bool Param2):base(Param1, Param2)
 				{
 					InitBlock(values, inclusiveLowerPoint, inclusiveUpperPoint, enclosingInstance);
 				}
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
 				if (inclusiveLowerPoint > inclusiveUpperPoint)
 					return DocIdSet.EMPTY_DOCIDSET;
 				
-				byte[] values = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, (Lucene.Net.Search.ByteParser) parser);
+				sbyte[] values = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, (Lucene.Net.Search.ByteParser) parser);
 				// we only request the usage of termDocs, if the range contains 0
 				return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, this, reader, (inclusiveLowerPoint <= 0 && inclusiveUpperPoint >= 0));
 			}

@@ -52,16 +52,16 @@ namespace Lucene.Net.Search.Function
 	{
 		private class AnonymousClassDocValues:DocValues
 		{
-			public AnonymousClassDocValues(byte[] arr, ByteFieldSource enclosingInstance)
+			public AnonymousClassDocValues(sbyte[] arr, ByteFieldSource enclosingInstance)
 			{
 				InitBlock(arr, enclosingInstance);
 			}
-			private void  InitBlock(byte[] arr, ByteFieldSource enclosingInstance)
+			private void  InitBlock(sbyte[] arr, ByteFieldSource enclosingInstance)
 			{
 				this.arr = arr;
 				this.enclosingInstance = enclosingInstance;
 			}
-			private byte[] arr;
+			private sbyte[] arr;
 			private ByteFieldSource enclosingInstance;
 			public ByteFieldSource Enclosing_Instance
 			{
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Function
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.FieldCacheSource#getCachedValues(Lucene.Net.Search.FieldCache, java.lang.String, Lucene.Net.Index.IndexReader) */
 		public override DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader)
 		{
-			byte[] arr = cache.GetBytes(reader, field, parser);
+			sbyte[] arr = cache.GetBytes(reader, field, parser);
 			return new AnonymousClassDocValues(arr, this);
 		}
 		

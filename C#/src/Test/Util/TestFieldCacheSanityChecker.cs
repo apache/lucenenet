@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
 			
 			int[] ints;
 			System.String[] strings;
-			byte[] bytes;
+			sbyte[] bytes;
 			
 			ints = cache.GetInts(readerX, "theInt", Lucene.Net.Search.FieldCache_Fields.DEFAULT_INT_PARSER);
 			strings = cache.GetStrings(readerX, "theInt");
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
 			cache.PurgeAllCaches();
 			
 			System.String[] strings;
-			byte[] bytes;
+			sbyte[] bytes;
 			
 			strings = cache.GetStrings(readerA, "theString");
 			strings = cache.GetStrings(readerB, "theString");

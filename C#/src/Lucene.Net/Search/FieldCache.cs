@@ -197,13 +197,9 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class AnonymousClassByteParser : ByteParser
 	{
-		public virtual byte ParseByte(System.String value_Renamed)
+		public virtual sbyte ParseByte(System.String value_Renamed)
 		{
-            if (value_Renamed[0] == '-')
-            {
-                return (byte) System.SByte.Parse(value_Renamed);
-            }
-			return (byte) System.Byte.Parse(value_Renamed);
+            return System.SByte.Parse(value_Renamed);
 		}
 		protected internal virtual System.Object ReadResolve()
 		{
@@ -392,7 +388,7 @@ namespace Lucene.Net.Search
 		/// <returns> The values in the given field for each document.
 		/// </returns>
 		/// <throws>  IOException  If any error occurs. </throws>
-		byte[] GetBytes(IndexReader reader, System.String field);
+		sbyte[] GetBytes(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
 		/// reads the terms in <code>field</code> as bytes and returns an array of
@@ -408,7 +404,7 @@ namespace Lucene.Net.Search
 		/// <returns> The values in the given field for each document.
 		/// </returns>
 		/// <throws>  IOException  If any error occurs. </throws>
-		byte[] GetBytes(IndexReader reader, System.String field, ByteParser parser);
+		sbyte[] GetBytes(IndexReader reader, System.String field, ByteParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <code>field</code> as shorts and returns an array
@@ -691,7 +687,7 @@ namespace Lucene.Net.Search
 	public interface ByteParser:Parser
 	{
 		/// <summary>Return a single Byte representation of this field's value. </summary>
-		byte ParseByte(System.String string_Renamed);
+		sbyte ParseByte(System.String string_Renamed);
 	}
 	
 	/// <summary>Interface to parse shorts from document fields.</summary>

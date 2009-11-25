@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 			lock (this)
 			{
 				caches = new System.Collections.Hashtable(7);
-				caches[System.Type.GetType("System.Byte")] = new ByteCache(this);
+				caches[System.Type.GetType("System.SByte")] = new ByteCache(this);
 				caches[System.Type.GetType("System.Int16")] = new ShortCache(this);
 				caches[System.Type.GetType("System.Int32")] = new IntCache(this);
 				caches[System.Type.GetType("System.Single")] = new FloatCache(this);
@@ -357,15 +357,15 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadocs
-		public virtual byte[] GetBytes(IndexReader reader, System.String field)
+		public virtual sbyte[] GetBytes(IndexReader reader, System.String field)
 		{
 			return GetBytes(reader, field, null);
 		}
 		
 		// inherit javadocs
-		public virtual byte[] GetBytes(IndexReader reader, System.String field, ByteParser parser)
+		public virtual sbyte[] GetBytes(IndexReader reader, System.String field, ByteParser parser)
 		{
-			return (byte[]) ((Cache) caches[System.Type.GetType("System.Byte")]).Get(reader, new Entry(field, parser));
+			return (sbyte[]) ((Cache) caches[System.Type.GetType("System.SByte")]).Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class ByteCache:Cache
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search
 				{
 					return wrapper.GetBytes(reader, field, Lucene.Net.Search.FieldCache_Fields.DEFAULT_BYTE_PARSER);
 				}
-				byte[] retArray = new byte[reader.MaxDoc()];
+				sbyte[] retArray = new sbyte[reader.MaxDoc()];
 				TermDocs termDocs = reader.TermDocs();
 				TermEnum termEnum = reader.Terms(new Term(field));
 				try
@@ -392,7 +392,7 @@ namespace Lucene.Net.Search
 						Term term = termEnum.Term();
 						if (term == null || (System.Object) term.Field() != (System.Object) field)
 							break;
-						byte termval = parser.ParseByte(term.Text());
+						sbyte termval = parser.ParseByte(term.Text());
 						termDocs.Seek(termEnum);
 						while (termDocs.Next())
 						{

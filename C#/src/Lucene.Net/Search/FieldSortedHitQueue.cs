@@ -112,15 +112,15 @@ namespace Lucene.Net.Search
 		}
 		private class AnonymousClassScoreDocComparator : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator(byte[] fieldOrder)
+			public AnonymousClassScoreDocComparator(sbyte[] fieldOrder)
 			{
 				InitBlock(fieldOrder);
 			}
-			private void  InitBlock(byte[] fieldOrder)
+			private void  InitBlock(sbyte[] fieldOrder)
 			{
 				this.fieldOrder = fieldOrder;
 			}
-			private byte[] fieldOrder;
+			private sbyte[] fieldOrder;
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (byte) fieldOrder[i.doc];
+				return (sbyte) fieldOrder[i.doc];
 			}
 			
 			public virtual int SortType()
@@ -556,7 +556,7 @@ namespace Lucene.Net.Search
 		internal static ScoreDocComparator comparatorByte(IndexReader reader, System.String fieldname, Lucene.Net.Search.ByteParser parser)
 		{
 			System.String field = String.Intern(fieldname);
-			byte[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, parser);
+			sbyte[] fieldOrder = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetBytes(reader, field, parser);
 			return new AnonymousClassScoreDocComparator(fieldOrder);
 		}
 		
