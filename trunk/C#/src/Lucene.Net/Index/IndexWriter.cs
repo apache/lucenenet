@@ -5795,7 +5795,8 @@ namespace Lucene.Net.Index
 					merge.mergeDocStores = true;
 					lock (this)
 					{
-						if (dss.Contains(docWriter.GetDocStoreSegment()))
+                        String key = docWriter.GetDocStoreSegment();
+						if (key!=null && dss.Contains(key))
 						{
 							if (infoStream != null)
 								Message("now flush at mergeMiddle");

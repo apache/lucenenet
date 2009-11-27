@@ -1102,6 +1102,47 @@ namespace Lucene.Net.Index
 				if (Info(i).dir != dir)
 					return true;
 			return false;
-		}
+        }
+
+        #region Lucene.NET (Equals & GetHashCode )
+        /// <summary>
+        /// Simple brute force implementation.
+        /// If size is equal, compare items one by one.
+        /// </summary>
+        /// <param name="obj">SegmentInfos object to check equality for</param>
+        /// <returns>true if lists are equal, false otherwise</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+
+            SegmentInfos objToCompare = obj as SegmentInfos;
+            if (objToCompare == null) return false;
+
+            if (this.Count != objToCompare.Count) return false;
+
+            for (int idx = 0; idx < this.Count; idx++)
+            {
+                if (!this[idx].Equals(objToCompare[idx])) return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Calculate hash code of SegmentInfos
+        /// </summary>
+        /// <returns>hash code as in java version of ArrayList</returns>
+        public override int GetHashCode()
+        {
+            int h = 1;
+            for (int i = 0; i < this.Count; i++)
+            {
+                SegmentInfo si = (this[i] as SegmentInfo);
+                h = 31 * h + (si == null ? 0 : si.GetHashCode());
+            }
+
+            return h;
+        }
+        #endregion
 	}
 }
