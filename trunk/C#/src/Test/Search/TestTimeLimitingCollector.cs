@@ -396,6 +396,7 @@ namespace Lucene.Net.Search
 					}
 				}
 				System.Diagnostics.Debug.Assert(docId >= 0, "base=" + docBase + " doc=" + doc);
+                bits.Length = Math.Max(bits.Length, docId + 1);
 				bits.Set(docId, true);
 				lastDocCollected = docId;
 			}
