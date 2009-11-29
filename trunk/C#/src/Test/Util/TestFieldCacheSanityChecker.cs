@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
 			
 			long theLong = System.Int64.MaxValue;
 			double theDouble = System.Double.MaxValue;
-			byte theByte = (byte) System.SByte.MaxValue;
+			sbyte theByte = (sbyte) System.SByte.MaxValue;
 			short theShort = System.Int16.MaxValue;
 			int theInt = System.Int32.MaxValue;
 			float theFloat = System.Single.MaxValue;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
 				Document doc = new Document();
 				doc.Add(new Field("theLong", System.Convert.ToString(theLong--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theDouble", (theDouble--).ToString("E16"), Field.Store.NO, Field.Index.NOT_ANALYZED));
-				doc.Add(new Field("theByte", System.Convert.ToString((byte) theByte--), Field.Store.NO, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("theByte", System.Convert.ToString((sbyte) theByte--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theShort", System.Convert.ToString(theShort--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theInt", System.Convert.ToString(theInt--), Field.Store.NO, Field.Index.NOT_ANALYZED));
 				doc.Add(new Field("theFloat", (theFloat--).ToString("E8"), Field.Store.NO, Field.Index.NOT_ANALYZED));
