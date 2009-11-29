@@ -645,32 +645,12 @@ namespace Lucene.Net.Search
 				if ((System.Object) term.Field() == (System.Object) field)
 				{
 					System.String termtext = term.Text().Trim();
-					
-					try
-					{
-						System.Int32.Parse(termtext);
-						ret = SortField.INT;
-					}
-					catch (System.FormatException nfe1)
-					{
-						try
-						{
-							System.Int64.Parse(termtext);
-							ret = SortField.LONG;
-						}
-						catch (System.FormatException nfe2)
-						{
-							try
-							{
-                                SupportClass.Single.Parse(termtext);
-								ret = SortField.FLOAT;
-							}
-							catch (System.FormatException nfe3)
-							{
-								ret = SortField.STRING;
-							}
-						}
-					}
+                    
+                    int tmpI32; long tmpI64; float tmpF;
+                    if      (System.Int32.TryParse(termtext, out tmpI32))       ret = SortField.INT;
+                    else if (System.Int64.TryParse(termtext, out tmpI64))       ret = SortField.LONG;
+                    else if (SupportClass.Single.TryParse(termtext, out tmpF))  ret = SortField.FLOAT;
+                    else ret = SortField.STRING;
 				}
 				else
 				{
