@@ -52,7 +52,8 @@ namespace Lucene.Net.Util
 		
 		[NonSerialized]
 		private bool savedAPISetting = false;
-		
+        bool allowDocsOutOfOrder = true;
+
 		public LuceneTestCase():base()
 		{
 		}
@@ -60,10 +61,14 @@ namespace Lucene.Net.Util
 		public LuceneTestCase(System.String name)
 		{
 		}
-		
+
+        
 		[SetUp]
 		public virtual void  SetUp()
 		{
+            //{{Lucene.Net-2.9.1}}
+            allowDocsOutOfOrder = Lucene.Net.Search.BooleanQuery.GetAllowDocsOutOfOrder();
+
 			ConcurrentMergeScheduler.SetTestMode();
 			
 			savedAPISetting = TokenStream.GetOnlyUseNewAPI();
@@ -117,6 +122,9 @@ namespace Lucene.Net.Util
 			TokenStream.SetOnlyUseNewAPI(savedAPISetting);
 			//base.TearDown();  // {{Aroush-2.9}}
             this.seed_init = false;
+
+            //{{Lucene.Net-2.9.1}}
+            Lucene.Net.Search.BooleanQuery.SetAllowDocsOutOfOrder(allowDocsOutOfOrder); 
 		}
 		
 		/// <summary> Asserts that FieldCacheSanityChecker does not detect any 
