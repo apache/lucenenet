@@ -1146,52 +1146,6 @@ public class SupportClass
             return false;
         }
     }
-
-    /// <summary>
-    /// Use for .NET 1.1 Framework only.
-    /// </summary>
-    public class CompressionSupport
-    {
-        public interface ICompressionAdapter
-        {
-            byte[] Compress(byte[] input, int offset, int length);
-            byte[] Uncompress(byte[] input);
-        }
-
-#if SHARP_ZIP_LIB
-        private static ICompressionAdapter compressionAdapter = new Lucene.Net.Index.Compression.SharpZipLibAdapter();
-#else
-        private static ICompressionAdapter compressionAdapter;
-#endif
-
-        public static byte[] Uncompress(byte[] input)
-        {
-            CheckCompressionSupport();
-            return compressionAdapter.Uncompress(input);
-        }
-
-        public static byte[] Compress(byte[] input, int offset, int length)
-        {
-            CheckCompressionSupport();
-            return compressionAdapter.Compress(input, offset, length);
-        }
-
-        private static void CheckCompressionSupport()
-        {
-            if (compressionAdapter == null)
-            {
-                System.String compressionLibClassName = SupportClass.AppSettings.Get("Lucene.Net.CompressionLib.class", null);
-                if (compressionLibClassName == null)
-                    throw new System.SystemException("Compression support not configured"); 
-
-                Type compressionLibClass = Type.GetType(compressionLibClassName, true);
-                object compressionAdapterObj = Activator.CreateInstance(compressionLibClass);
-                compressionAdapter = compressionAdapterObj as ICompressionAdapter;
-                if (compressionAdapter == null)
-                    throw new System.SystemException("Compression adapter does not support the ICompressionAdapter interface");
-            }
-        }
-    }
 	
 	#region WEAKHASHTABLE
     /// <summary>
