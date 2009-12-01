@@ -279,7 +279,8 @@ namespace Lucene.Net.Index
 				System.Collections.ArrayList fields = new System.Collections.ArrayList();
 				fields.AddRange(d.GetFields());
 				// put fields in same order each time
-				SupportClass.CollectionsHelper.Sort(fields, fieldNameComparator);
+                //{{Lucene.Net-2.9.1}} No, don't change the order of the fields
+				//SupportClass.CollectionsHelper.Sort(fields, fieldNameComparator);
 				
 				Document d1 = new Document();
 				d1.SetBoost(d.GetBoost());
