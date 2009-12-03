@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 				fieldExpl.SetValue(tfExpl.GetValue() * expl.GetValue() * fieldNormExpl.GetValue());
 				
 				result.AddDetail(fieldExpl);
-				System.Boolean tempAux = fieldExpl.GetMatch();
+				System.Boolean? tempAux = fieldExpl.GetMatch();
 				result.SetMatch(tempAux);
 				
 				// combine them

@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class ComplexExplanation:Explanation
 	{
-		private System.Boolean match;
+		private System.Boolean? match;
         private bool isMatchSet = false;
 		
 		public ComplexExplanation():base()
@@ -42,14 +42,14 @@ namespace Lucene.Net.Search
 		/// <summary> The match status of this explanation node.</summary>
 		/// <returns> May be null if match status is unknown
 		/// </returns>
-		public virtual System.Boolean GetMatch()
+		public virtual System.Boolean? GetMatch()
 		{
 			return match;
 		}
 		/// <summary> Sets the match status assigned to this explanation node.</summary>
 		/// <param name="match">May be null if match status is unknown
 		/// </param>
-		public virtual void  SetMatch(System.Boolean match)
+		public virtual void  SetMatch(System.Boolean? match)
 		{
 			this.match = match;
             this.isMatchSet = true;
@@ -65,8 +65,8 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public override bool IsMatch()
 		{
-			System.Boolean m = GetMatch();
-			return (null != m?m:base.IsMatch());
+			System.Boolean? m = GetMatch();
+            return m ?? base.IsMatch();
 		}
 		
 		protected internal override System.String GetSummary()
