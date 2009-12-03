@@ -20,161 +20,88 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Cache
 {
-    public class SimpleLRUCache : SimpleLRUCache_LUCENENET_190_1
+    public class SimpleLRUCache : SimpleMapCache
     {
+        /// <summary>
+        /// The maximum number of items to cache.
+        /// </summary>
+        private int capacity;
+
+        /// <summary>
+        /// The list to efficiently maintain the LRU state.
+        /// </summary>
+        private LinkedList<ListValueEntry> list;
+
+        /// <summary>
+        /// The dictionary to hash into any location in the list.
+        /// </summary>
+        private Dictionary<object, LinkedListNode<ListValueEntry>> lookup;
+
+        /// <summary>
+        /// The node instance to use/re-use when adding an item to the cache.
+        /// </summary>
+        private LinkedListNode<ListValueEntry> openNode;
+
         public SimpleLRUCache(int Capacity)
-            : base(Capacity)
         {
-        }
-    }
-
-
-    /// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
-    /// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
-    /// if needed.
-    /// 
-    /// Implemented for LUCENENET-190. Good for capacity < 1536
-    /// </summary>
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public class SimpleLRUCache_LUCENENET_190_1 : Cache
-    {
-        System.Collections.Generic.Dictionary<object, LRUCacheValueEntry> Data = new Dictionary<object, LRUCacheValueEntry>();
-        SortedList<long, object> TimeStamps = new SortedList<long, object>();
-
-        long TimeStamp = 0;
-        int Capacity = 1024;
-
-        /// <summary> Creates a last-recently-used cache with the specified size. </summary>
-        public SimpleLRUCache_LUCENENET_190_1(int Capacity)
-        {
-            this.Capacity = Capacity;
+            this.capacity = Capacity;
+            this.list = new LinkedList<ListValueEntry>();
+            this.lookup = new Dictionary<object, LinkedListNode<ListValueEntry>>(Capacity + 1);
+            this.openNode = new LinkedListNode<ListValueEntry>(new ListValueEntry(null, null));
         }
 
         public override void Put(object Key, object Value)
         {
             if (Get(Key) == null)
             {
-                TimeStamp++;
-                Data.Add(Key, new LRUCacheValueEntry(TimeStamp, Value));
-                TimeStamps.Add(TimeStamp, Key);
+                this.openNode.Value.ItemKey = Key;
+                this.openNode.Value.ItemValue = Value;
+                this.list.AddFirst(this.openNode);
+                this.lookup.Add(Key, this.openNode);
 
-                if (Data.Count > Capacity)
+                if (this.list.Count > this.capacity)
                 {
-                    long key = TimeStamps.Keys[0];
-                    Data.Remove(TimeStamps[key]);
-                    TimeStamps.RemoveAt(0);
+                    // last node is to be removed and saved for the next addition to the cache
+                    this.openNode = this.list.Last;
+
+                    // remove from list & dictionary
+                    this.list.RemoveLast();
+                    this.lookup.Remove(this.openNode.Value.ItemKey);
+                }
+                else
+                {
+                    // still filling the cache, create a new open node for the next time
+                    this.openNode = new LinkedListNode<ListValueEntry>(new ListValueEntry(null, null));
                 }
             }
         }
 
         public override object Get(object Key)
         {
-            LRUCacheValueEntry e = null;
-            Data.TryGetValue(Key, out e);
-            if (e == null) return null;
-
-            TimeStamps.Remove(e.TimeStamp);
-            e.TimeStamp = ++TimeStamp;
-            TimeStamps.Add(e.TimeStamp, Key);
-            return e.Value;
-
-        }
-
-        public override bool ContainsKey(object key)
-        {
-            return Data.ContainsKey(key);
-        }
-
-        public override void Close()
-        {
-        }
-
-        class LRUCacheValueEntry
-        {
-            public long TimeStamp = 0;
-            public object Value;
-
-            public LRUCacheValueEntry(long TimeStamp, object Value)
+            LinkedListNode<ListValueEntry> node = null;
+            if(!this.lookup.TryGetValue(Key, out node))
             {
-                this.TimeStamp = TimeStamp;
-                this.Value = Value;
+                return null;
             }
-        }
-    }
-
-
-    /// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
-    /// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
-    /// if needed.
-    /// 
-    /// Implemented for LUCENENET-190. Good for capacity > 1536
-    /// </summary>
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public class SimpleLRUCache_LUCENENET_190_2 : Lucene.Net.Util.Cache.Cache
-    {
-        System.Collections.Generic.Dictionary<object, LRUCacheValueEntry> Data = new Dictionary<object, LRUCacheValueEntry>();
-        System.Collections.Generic.SortedDictionary<long, object> TimeStamps = new SortedDictionary<long, object>();
-
-        long TimeStamp = 0;
-        int Capacity = 1024;
-
-        /// <summary> Creates a last-recently-used cache with the specified size. </summary>
-        public SimpleLRUCache_LUCENENET_190_2(int Capacity)
-        {
-            this.Capacity = Capacity;
+            this.list.Remove(node);
+            this.list.AddFirst(node);
+            return node.Value.ItemValue;
         }
 
-        public override void Put(object Key, object Value)
+        /// <summary>
+        /// Container to hold the key and value to aid in removal from 
+        /// the <see cref="lookup"/> dictionary when an item is removed from cache.
+        /// </summary>
+        class ListValueEntry
         {
-            if (Get(Key) == null)
+            internal object ItemValue;
+            internal object ItemKey;
+
+            internal ListValueEntry(object key, object value)
             {
-                TimeStamp++;
-                Data.Add(Key, new LRUCacheValueEntry(TimeStamp, Value));
-                TimeStamps.Add(TimeStamp, Key);
-
-                if (Data.Count > Capacity)
-                {
-                    SortedDictionary<long, object>.Enumerator enumTimeStamps = TimeStamps.GetEnumerator();
-                    enumTimeStamps.MoveNext();
-                    long key = enumTimeStamps.Current.Key;
-                    Data.Remove(TimeStamps[key]);
-                    TimeStamps.Remove(key);
-                }
-
+                this.ItemKey = key;
+                this.ItemValue = value;
             }
-        }
-
-        public override object Get(object Key)
-        {
-            LRUCacheValueEntry e = null;
-            Data.TryGetValue(Key, out e);
-            if (e == null) return null;
-
-            TimeStamps.Remove(e.TimeStamp);
-            e.TimeStamp = ++TimeStamp;
-            TimeStamps.Add(e.TimeStamp, Key);
-            return e.Value;
-        }
-
-        class LRUCacheValueEntry
-        {
-            public long TimeStamp = 0;
-            public object Value;
-
-            public LRUCacheValueEntry(long TimeStamp, object Value)
-            {
-                this.TimeStamp = TimeStamp;
-                this.Value = Value;
-            }
-        }
-
-        public override bool ContainsKey(object key)
-        {
-            return Data.ContainsKey(key);
-        }
-
-        public override void Close()
-        {
         }
     }
 
