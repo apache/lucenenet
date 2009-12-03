@@ -5479,21 +5479,31 @@ namespace Lucene.Net.Index
 					catch (System.SystemException re)
 					{
 						System.Exception e = re.InnerException;
-						if (e is System.Threading.ThreadInterruptedException)
+                        if (re is System.Threading.ThreadInterruptedException || e is System.Threading.ThreadInterruptedException)
 						{
-							// Make sure IW restored interrupted bit
-							if (Instance.ThreadState != System.Threading.ThreadState.Running)  // {{Aroush-2.9}} in Java, this is: java.lang.Thread.interrupted()
-							{
-								System.Console.Out.WriteLine("FAILED; InterruptedException hit but thread.interrupted() was false");
-								System.Console.Out.WriteLine(e.StackTrace);
-								failed = true;
-								break;
-							}
+                            // {{Aroush-2.9}} in Java, this is: java.lang.Thread.interrupted()
+                            //{There is no way in .Net to check interrupted state. So comment it out
+
+                            //// Make sure IW restored interrupted bit
+                            //if ((Instance.ThreadState & (System.Threading.ThreadState.Stopped | System.Threading.ThreadState.Unstarted)) != System.Threading.ThreadState.Running)  // {{Aroush-2.9}} in Java, this is: java.lang.Thread.interrupted()
+                            //{
+                            //    System.Console.Out.WriteLine("FAILED; InterruptedException hit but thread.interrupted() was false");
+                            //    System.Console.Out.WriteLine(e.StackTrace);
+                            //    failed = true;
+                            //    break;
+                            //}
 						}
 						else
 						{
 							System.Console.Out.WriteLine("FAILED; unexpected exception");
-							System.Console.Out.WriteLine(e.StackTrace);
+                            if (e != null)
+                            {
+                                System.Console.Out.WriteLine(e.StackTrace);
+                            }
+                            else
+                            {
+                                System.Console.Out.WriteLine(re.StackTrace);
+                            }
 							failed = true;
 							break;
 						}
