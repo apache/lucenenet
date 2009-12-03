@@ -29,7 +29,6 @@ namespace Lucene.Net.Util
 	/// not fail under a different environment.
 	/// </p>
 	/// </summary>
-    [TestFixture]
 	public class LocalizedTestCase:LuceneTestCase
 	{
 		/// <summary> Before changing the default Locale, save the default Locale here so that it
