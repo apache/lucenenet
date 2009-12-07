@@ -744,6 +744,7 @@ namespace Lucene.Net._SupportClass
     [TestFixture]
     public class TestOldPatches
     {
+        //-------------------------------------------
         [Test]
         [Description("LUCENENET-170")]
         public void Test_Lucene_Net_Util_Parameter()
@@ -766,6 +767,7 @@ namespace Lucene.Net._SupportClass
             Assert.AreEqual(queryPreSerialized, queryPostSerialized, "See the issue: LUCENENET-170");
         }
 
+        //-------------------------------------------
         [Test]
         [Description("LUCENENET-174")]
         public void Test_Lucene_Net_Store_RAMDirectory()
@@ -808,5 +810,50 @@ namespace Lucene.Net._SupportClass
 
             Assert.AreEqual(topDocs.totalHits, 2,"See the issue: LUCENENET-174");
         }
+
+
+
+        //-------------------------------------------
+        [Test]
+        [Description("LUCENENET-150")]
+        public void Test_Lucene_Net_Index_ReusableStringReader()
+        {
+            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(new Lucene.Net.Store.RAMDirectory(), new TestAnalyzer(), true);
+
+            Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+            Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("f1", TEST_STRING, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+            doc.Add(f1);
+            wr.AddDocument(doc);
+
+            wr.Close();
+        }
+
+        static string TEST_STRING = "Some Text and some more Text";
+
+        class TestAnalyzer : Lucene.Net.Analysis.Analyzer
+        {
+            public override Lucene.Net.Analysis.TokenStream TokenStream(string fieldName, System.IO.TextReader reader)
+            {
+                return new TestTokenizer(reader);
+            }
+        }
+
+        class TestTokenizer : Lucene.Net.Analysis.CharTokenizer
+        {
+            public TestTokenizer(System.IO.TextReader Reader)
+                : base(Reader)
+            {
+                //Caution: "Reader" is actually of type "ReusableStringReader" and some 
+                //methods (for ex. "ReadToEnd", "Peek",  "ReadLine") is not implemented. 
+                Assert.AreEqual(TEST_STRING, Reader.ReadToEnd(), "Issue LUCENENET-150: \"ReadToEnd\" method is not implemented");
+            }
+
+            protected override bool IsTokenChar(char c)
+            {
+                return char.IsLetterOrDigit(c);
+            }
+        }
+        //-------------------------------------------
+
     }
 }

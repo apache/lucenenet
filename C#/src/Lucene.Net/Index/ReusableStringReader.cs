@@ -24,46 +24,72 @@ namespace Lucene.Net.Index
 	/// that can be reset to a new string; we use this when
 	/// tokenizing the string value from a Field. 
 	/// </summary>
-	sealed class ReusableStringReader:System.IO.TextReader
-	{
-		internal int upto;
-		internal int left;
-		internal System.String s;
-		internal void  Init(System.String s)
-		{
-			this.s = s;
-			left = s.Length;
-			this.upto = 0;
-		}
-		public int Read(char[] c)
-		{
-			return Read(c, 0, c.Length);
-		}
-		public  override int Read(System.Char[] c, int off, int len)
-		{
-			if (left > len)
-			{
-				SupportClass.TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
-				upto += len;
-				left -= len;
-				return len;
-			}
-			else if (0 == left)
-			{
-				return 0;
-			}
-			else
-			{
-				SupportClass.TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
-				int r = left;
-				left = 0;
-				upto = s.Length;
-				return r;
-			}
-		}
-		public override void  Close()
-		{
-		}
-		
-	}
+    sealed class ReusableStringReader : System.IO.TextReader
+    {
+        internal int upto;
+        internal int left;
+        internal System.String s;
+        internal void Init(System.String s)
+        {
+            this.s = s;
+            left = s.Length;
+            this.upto = 0;
+        }
+        public int Read(char[] c)
+        {
+            return Read(c, 0, c.Length);
+        }
+        public override int Read(System.Char[] c, int off, int len)
+        {
+            if (left > len)
+            {
+                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
+                upto += len;
+                left -= len;
+                return len;
+            }
+            else if (0 == left)
+            {
+                return 0;
+            }
+            else
+            {
+                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
+                int r = left;
+                left = 0;
+                upto = s.Length;
+                return r;
+            }
+        }
+        public override void Close()
+        {
+        }
+
+
+        public override int Read()
+        {
+            throw new NotImplementedException("This method is not implemented");
+        }
+
+        public override int ReadBlock(char[] buffer, int index, int count)
+        {
+            throw new NotImplementedException("This method is not implemented");
+        }
+
+        public override string ReadLine()
+        {
+            throw new NotImplementedException("This method is not implemented");
+        }
+
+        public override int Peek()
+        {
+            throw new NotImplementedException("This method is not implemented");
+        }
+
+        public override string ReadToEnd()
+        {
+            left = 0;
+            return s;
+        }
+    }
 }
