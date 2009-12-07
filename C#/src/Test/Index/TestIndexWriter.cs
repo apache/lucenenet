@@ -3885,8 +3885,12 @@ namespace Lucene.Net.Index
 			try
 			{
 				w.AddDocument(doc);
-				Assert.Fail("did not hit exception");
-			}
+
+                if (SupportClass.BuildType.Debug)
+                    Assert.Fail("did not hit exception");
+                else
+                    Assert.Ignore("This test is not executed in release mode");
+            }
 			catch (System.SystemException re)
 			{
 				// expected
@@ -3983,7 +3987,10 @@ namespace Lucene.Net.Index
 				}
 			
 			((ConcurrentMergeScheduler) w.GetMergeScheduler()).Sync();
-			Assert.IsTrue(w.failed);
+            if (SupportClass.BuildType.Debug)
+                Assert.IsTrue(w.failed);
+            else
+                Assert.Ignore("This test is not executed in release mode");
 			w.Close();
 			dir.Close();
 		}
@@ -4916,7 +4923,11 @@ namespace Lucene.Net.Index
 			try
 			{
 				w.Rollback();
-				Assert.Fail("did not hit intentional RuntimeException");
+                if (SupportClass.BuildType.Debug)
+                    Assert.Fail("did not hit intentional RuntimeException");
+                else
+                    Assert.Ignore("This test is not executed in release mode");
+				
 			}
 			catch (System.SystemException re)
 			{
