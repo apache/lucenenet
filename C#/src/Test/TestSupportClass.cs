@@ -55,8 +55,9 @@ namespace Lucene.Net._SupportClass
                     }
                 }
             }
-
-            Assert.Fail("Lucene.Net TestCases:" + countSupport + "     Other TestCases:" + countOther);
+            string msg = "Lucene.Net TestCases:" + countSupport + "     Other TestCases:" + countOther;
+            Console.WriteLine(msg);
+            Assert.Ignore("[Intentionally ignored test case] " + msg);
         }
     }
 
