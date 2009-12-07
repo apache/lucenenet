@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 			{
 			}
 			
-			dir = FSDirectory.Open(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", "")));
+			dir = FSDirectory.Open(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
 			dir.Close();
 			try
 			{
@@ -61,7 +61,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDirectInstantiation()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", ""));
+			System.IO.FileInfo path = new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
 			int sz = 2;
 			Directory[] dirs = new Directory[sz];

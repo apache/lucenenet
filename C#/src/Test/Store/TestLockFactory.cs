@@ -397,7 +397,7 @@ namespace Lucene.Net.Store
 		public virtual void  TestNativeFSLockFactory()
 		{
 			
-			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", ""));
+			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
 			f.SetLockPrefix("test");
 			Lock l = f.MakeLock("commit");
