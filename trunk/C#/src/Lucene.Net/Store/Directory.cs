@@ -41,8 +41,6 @@ namespace Lucene.Net.Store
 	[Serializable]
 	public abstract class Directory
 	{
-		
-		[NonSerialized]
 		protected internal volatile bool isOpen = true;
 		
 		/// <summary>Holds the LockFactory instance (implements locking for

@@ -740,4 +740,73 @@ namespace Lucene.Net._SupportClass
             Assert.IsNotNull(cache.Get("c"));
         }
     }
+
+    [TestFixture]
+    public class TestOldPatches
+    {
+        [Test]
+        [Description("LUCENENET-170")]
+        public void Test_Lucene_Net_Util_Parameter()
+        {
+            Lucene.Net.Search.BooleanQuery queryPreSerialized = new Lucene.Net.Search.BooleanQuery();
+            queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "Russia")), Lucene.Net.Search.BooleanClause.Occur.MUST);
+            queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "France")), Lucene.Net.Search.BooleanClause.Occur.MUST);
+            
+            //now serialize it 
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            serializer.Serialize(memoryStream, queryPreSerialized);
+
+            //now deserialize 
+            memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
+            Lucene.Net.Search.BooleanQuery queryPostSerialized = (Lucene.Net.Search.BooleanQuery)serializer.Deserialize(memoryStream);
+            
+            memoryStream.Close();
+
+            Assert.AreEqual(queryPreSerialized, queryPostSerialized, "See the issue: LUCENENET-170");
+        }
+
+        [Test]
+        [Description("LUCENENET-174")]
+        public void Test_Lucene_Net_Store_RAMDirectory()
+        {
+            Lucene.Net.Store.RAMDirectory ramDIR = new Lucene.Net.Store.RAMDirectory();
+
+            //Index 1 Doc
+            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(ramDIR, new Lucene.Net.Analysis.WhitespaceAnalyzer(),true);
+            Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
+            doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
+            wr.AddDocument(doc);
+            wr.Close();
+
+            //now serialize it 
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            serializer.Serialize(memoryStream, ramDIR);
+
+            //Close DIR
+            ramDIR.Close();
+            ramDIR = null;
+
+            //now deserialize 
+            memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
+            Lucene.Net.Store.RAMDirectory ramDIR2 = (Lucene.Net.Store.RAMDirectory)serializer.Deserialize(memoryStream);
+
+            //Add 1 more doc
+            wr = new Lucene.Net.Index.IndexWriter(ramDIR2, new Lucene.Net.Analysis.WhitespaceAnalyzer(), false);
+            doc = new Lucene.Net.Documents.Document();
+            doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
+            wr.AddDocument(doc);
+            wr.Close();
+            
+            //Search
+            Lucene.Net.Search.IndexSearcher s = new Lucene.Net.Search.IndexSearcher(ramDIR2);
+            Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field1", new Lucene.Net.Analysis.Standard.StandardAnalyzer());
+            Lucene.Net.Search.Query q = qp.Parse("value1");
+            Lucene.Net.Search.TopDocs topDocs = s.Search(q,100);
+            s.Close();
+
+            Assert.AreEqual(topDocs.totalHits, 2,"See the issue: LUCENENET-174");
+        }
+    }
 }
