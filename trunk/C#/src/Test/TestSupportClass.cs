@@ -145,11 +145,26 @@ namespace Lucene.Net._SupportClass
         [Test]
         public void B_TestOutOfMemory()
         {
-            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary(); //new SupportClass.TjWeakHashTable();
+            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary(); 
+            int OOMECount = 0;
 
-            for (int i = 0; i < 1024 * 8 + 32; i++) // requested Mem. > 8GB
+            for (int i = 0; i < 1024 * 24 + 32; i++) // total requested Mem. > 24GB
             {
-                wht.Add(new BigObject(i), i);
+                try
+                {
+                    wht.Add(new BigObject(i), i);
+                    if(i%1024==0) Console.WriteLine("Requested Mem: " + i.ToString() + " MB");
+                    OOMECount = 0;
+                }
+                catch (OutOfMemoryException oom)
+                {
+                    if (OOMECount++ > 10) throw new Exception("Memory Allocation Error in B_TestOutOfMemory");
+                    //Try Again. GC will eventually release some memory.
+                    Console.WriteLine("OOME WHEN i=" + i.ToString() + ". Try Again");
+                    System.Threading.Thread.Sleep(10);
+                    i--;
+                    continue;
+                }
             }
 
             GC.Collect();
