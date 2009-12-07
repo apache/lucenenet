@@ -2229,6 +2229,14 @@ public class SupportClass
                 return (int)deflaterType.InvokeMember("Deflate", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { output });
             }
         }
+    }
 
+    public class BuildType
+    {
+#if DEBUG
+       public static bool Debug = true;
+#else
+        public static bool Debug = false;
+#endif
     }
 }
