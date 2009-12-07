@@ -448,6 +448,10 @@
     <Compile Include="LucenePackage.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\MessageImpl.cs" />
+    <Compile Include="Messages\NLS.cs" />
+    <Compile Include="Messages\NLSException.cs" />
     <Compile Include="QueryParser\CharStream.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -900,6 +904,7 @@
     <Content Include="Document\Package.html" />
     <Content Include="Index\Package.html" />
     <Content Include="Lucene.Net.xml" />
+    <Content Include="Messages\Package.html" />
     <Content Include="Overview.html" />
     <Content Include="Package.html" />
     <Content Include="QueryParser\Package.html" />
