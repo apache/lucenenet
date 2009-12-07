@@ -2130,4 +2130,105 @@ public class SupportClass
 			get { return isWindows; }
 		}
 	}
+
+    public class SharpZipLib
+    {
+        static System.Reflection.Assembly asm = null;
+
+        static SharpZipLib()
+        {
+            try
+            {
+                asm = System.Reflection.Assembly.Load("ICSharpCode.SharpZipLib");
+            }
+            catch{}
+        }
+
+        public static Deflater CreateDeflater()
+        {
+            if (asm == null) throw new System.IO.FileNotFoundException("Can not load ICSharpCode.SharpZipLib.dll"); 
+            return new Deflater(asm.CreateInstance("ICSharpCode.SharpZipLib.Zip.Compression.Deflater"));
+        }
+
+        public static Inflater CreateInflater()
+        {
+            if (asm == null) throw new System.IO.FileNotFoundException("Can not load ICSharpCode.SharpZipLib.dll");
+            return new Inflater(asm.CreateInstance("ICSharpCode.SharpZipLib.Zip.Compression.Inflater"));
+        }
+
+
+        public class Inflater
+        {
+            object inflaterInstance = null;
+            Type inflaterType;
+
+            internal Inflater(object inflaterInstance)
+            {
+                this.inflaterInstance = inflaterInstance;
+                this.inflaterType = inflaterInstance.GetType();
+            }
+
+            public void SetInput(byte[] buffer)
+            {
+                inflaterType.InvokeMember("SetInput", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, new object[] { buffer });
+            }
+
+            public bool IsFinished
+            {
+                get
+                {
+                    return (bool)inflaterType.InvokeMember("get_IsFinished", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, null);
+                }
+            }
+
+            public int Inflate(byte[] buffer)
+            {
+                return (int)inflaterType.InvokeMember("Inflate", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, new object[] { buffer });                
+            }
+        }
+
+
+        public class Deflater 
+        {
+            public const int BEST_COMPRESSION = 9;
+
+            object deflaterInstance = null;
+            Type deflaterType;
+
+            internal Deflater(object deflaterInstance)
+            {
+                this.deflaterInstance = deflaterInstance;
+                this.deflaterType = deflaterInstance.GetType();
+            }
+            
+            public void SetLevel(int level)
+            {
+                deflaterType.InvokeMember("SetLevel", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { level });
+            }
+
+            public void SetInput(byte[] input, int offset, int count)
+            {
+                deflaterType.InvokeMember("SetInput", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { input,offset,count });
+            }
+
+            public void Finish()
+            {
+                deflaterType.InvokeMember("Finish", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, null);
+            }
+
+            public bool IsFinished
+            {
+                get
+                {
+                    return (bool)deflaterType.InvokeMember("get_IsFinished", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, null); ;
+                }
+            }
+
+            public int Deflate(byte[] output)
+            {
+                return (int)deflaterType.InvokeMember("Deflate", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { output });
+            }
+        }
+
+    }
 }
