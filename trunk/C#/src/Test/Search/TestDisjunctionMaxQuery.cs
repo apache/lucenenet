@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>threshold for comparing floats </summary>
-		public const float SCORE_COMP_THRESH = 0.0000f;
+        public const float SCORE_COMP_THRESH = 0.000001f;
 		
 		/// <summary> Similarity to eliminate tf, idf and lengthNorm effects to
 		/// isolate test case.

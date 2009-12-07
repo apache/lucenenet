@@ -419,7 +419,7 @@ namespace Lucene.Net.Search
 		private static void  CheckFirstSkipTo(Query q, IndexSearcher s)
 		{
 			//System.out.println("checkFirstSkipTo: "+q);
-			float maxDiff = 1e-5f;
+            float maxDiff = 1e-4f; //{{Lucene.Net-2.9.1}}Intentional diversion from Java Lucene
 			int[] lastDoc = new int[]{- 1};
 			s.Search(q, new AnonymousClassCollector1(lastDoc, q, s, maxDiff));
 			
