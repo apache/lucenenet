@@ -23,11 +23,6 @@
 
 using System;
 
-#if SHARP_ZIP_LIB
-using ICSharpCode.SharpZipLib;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-#endif
-
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Documents
@@ -55,14 +50,13 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		public static byte[] Compress(byte[] value_Renamed, int offset, int length, int compressionLevel)
 		{
-			#if SHARP_ZIP_LIB
 			/* Create an expandable byte array to hold the compressed data.
 			* You cannot use an array that's the same size as the orginal because
 			* there is no guarantee that the compressed data will be smaller than
 			* the uncompressed data. */
 			System.IO.MemoryStream bos = new System.IO.MemoryStream(length);
-			
-			Deflater compressor = new Deflater();
+
+            SupportClass.SharpZipLib.Deflater compressor = SupportClass.SharpZipLib.CreateDeflater();
 			
 			try
 			{
@@ -83,40 +77,24 @@ namespace Lucene.Net.Documents
 			}
 			
 			return bos.ToArray();
-            #else
-            throw new System.SystemException("Compression support not configured"); 
-            #endif
 		}
 		
 		/// <summary>Compresses the specified byte range, with default BEST_COMPRESSION level </summary>
 		public static byte[] Compress(byte[] value_Renamed, int offset, int length)
         {
-            #if SHARP_ZIP_LIB
-			return Compress(value_Renamed, offset, length, Deflater.BEST_COMPRESSION);
-            #else
-            throw new System.SystemException("Compression support not configured"); 
-            #endif
+			return Compress(value_Renamed, offset, length, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses all bytes in the array, with default BEST_COMPRESSION level </summary>
 		public static byte[] Compress(byte[] value_Renamed)
 		{
-            #if SHARP_ZIP_LIB
-			return Compress(value_Renamed, 0, value_Renamed.Length, Deflater.BEST_COMPRESSION);
-            #else
-            throw new System.SystemException("Compression support not configured"); 
-            #endif
+            return Compress(value_Renamed, 0, value_Renamed.Length, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses the String value, with default BEST_COMPRESSION level </summary>
 		public static byte[] CompressString(System.String value_Renamed)
 		{
-			
-            #if SHARP_ZIP_LIB
-			return CompressString(value_Renamed, Deflater.BEST_COMPRESSION);
-            #else
-            throw new System.SystemException("Compression support not configured"); 
-            #endif
+            return CompressString(value_Renamed, SupportClass.SharpZipLib.Deflater.BEST_COMPRESSION);
 		}
 		
 		/// <summary>Compresses the String value using the specified
@@ -135,11 +113,10 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		public static byte[] Decompress(byte[] value_Renamed)
 		{
-            #if SHARP_ZIP_LIB
 			// Create an expandable byte array to hold the decompressed data
 			System.IO.MemoryStream bos = new System.IO.MemoryStream(value_Renamed.Length);
 			
-			Inflater decompressor = new Inflater();
+			SupportClass.SharpZipLib.Inflater decompressor = SupportClass.SharpZipLib.CreateInflater();
 			
 			try
 			{
@@ -158,9 +135,6 @@ namespace Lucene.Net.Documents
 			}
 			
 			return bos.ToArray();
-            #else
-            throw new System.SystemException("Compression support not configured"); 
-            #endif
 		}
 		
 		/// <summary>Decompress the byte array previously returned by
