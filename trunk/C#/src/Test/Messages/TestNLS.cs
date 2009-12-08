@@ -30,7 +30,7 @@ namespace Lucene.Net.Messages
 		public virtual void  TestMessageLoading()
 		{
 			Message invalidSyntax = new MessageImpl(MessagesTestBundle.Q0001E_INVALID_SYNTAX, new System.Object[]{"XXX"});
-			Assert.AreEqual("Syntax Error: XXX", invalidSyntax.GetLocalizedMessage());
+            Assert.AreEqual("Syntax Error: XXX", invalidSyntax.GetLocalizedMessage());
 		}
 		
 		[Test]
@@ -63,7 +63,15 @@ namespace Lucene.Net.Messages
 		[Test]
 		public virtual void  TestNLSLoading_xx_XX()
 		{
-			System.Globalization.CultureInfo locale = new System.Globalization.CultureInfo("xx" + "-" + "XX");
+            System.Globalization.CultureInfo locale;
+            try
+            {
+                locale = new System.Globalization.CultureInfo("xx" + "-" + "XX");
+            }
+            catch
+            {
+                locale = System.Threading.Thread.CurrentThread.CurrentUICulture;
+            }
 			System.String message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, locale);
 			Assert.AreEqual("Truncated unicode escape sequence.", message);
 			

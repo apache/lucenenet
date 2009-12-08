@@ -134,7 +134,7 @@ namespace Lucene.Net.Messages
 			{
 				System.Type clazz = (System.Type) bundles[(System.String) it.Current];
 				System.Threading.Thread.CurrentThread.CurrentUICulture = locale;
-				System.Resources.ResourceManager resourceBundle = System.Resources.ResourceManager.CreateFileBasedResourceManager(clazz.FullName, "", null);
+                System.Resources.ResourceManager resourceBundle = System.Resources.ResourceManager.CreateFileBasedResourceManager(clazz.Name, "Messages", null); //{{Lucene.Net-2.9.1}} Can we make resourceDir "Messages" more general?
 				if (resourceBundle != null)
 				{
 					try
