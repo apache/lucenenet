@@ -61,27 +61,27 @@ namespace Lucene.Net._SupportClass
         }
     }
 
-/// <summary>
-/// </summary>
-	[TestFixture]
-	public class TestSupportClass
-	{
-		/// <summary></summary>
-		/// <throws></throws>
-		[Test]
-		public virtual void TestCRC32()
-		{
-			byte[] b = new byte[256];
-			for (int i = 0; i < b.Length; i++)
-				b[i] = (byte)i;
+    /// <summary>
+    /// </summary>
+    [TestFixture]
+    public class TestSupportClass
+    {
+        /// <summary></summary>
+        /// <throws></throws>
+        [Test]
+        public virtual void TestCRC32()
+        {
+            byte[] b = new byte[256];
+            for (int i = 0; i < b.Length; i++)
+                b[i] = (byte)i;
 
-			SupportClass.Checksum digest = new SupportClass.CRC32();
-			digest.Update(b, 0, b.Length);
+            SupportClass.Checksum digest = new SupportClass.CRC32();
+            digest.Update(b, 0, b.Length);
 
-			Int64 expected = 688229491;
-			Assert.AreEqual(expected, digest.GetValue());
-		}
-	}
+            Int64 expected = 688229491;
+            Assert.AreEqual(expected, digest.GetValue());
+        }
+    }
 
     [TestFixture]
     public class TestWeakHashTable
@@ -145,7 +145,7 @@ namespace Lucene.Net._SupportClass
         [Test]
         public void B_TestOutOfMemory()
         {
-            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary(); 
+            IDictionary wht = TestWeakHashTableBehavior.CreateDictionary();
             int OOMECount = 0;
 
             for (int i = 0; i < 1024 * 24 + 32; i++) // total requested Mem. > 24GB
@@ -153,7 +153,7 @@ namespace Lucene.Net._SupportClass
                 try
                 {
                     wht.Add(new BigObject(i), i);
-                    if(i%1024==0) Console.WriteLine("Requested Mem: " + i.ToString() + " MB");
+                    if (i % 1024 == 0) Console.WriteLine("Requested Mem: " + i.ToString() + " MB");
                     OOMECount = 0;
                 }
                 catch (OutOfMemoryException oom)
@@ -752,7 +752,7 @@ namespace Lucene.Net._SupportClass
             Lucene.Net.Search.BooleanQuery queryPreSerialized = new Lucene.Net.Search.BooleanQuery();
             queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "Russia")), Lucene.Net.Search.BooleanClause.Occur.MUST);
             queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "France")), Lucene.Net.Search.BooleanClause.Occur.MUST);
-            
+
             //now serialize it 
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
@@ -761,7 +761,7 @@ namespace Lucene.Net._SupportClass
             //now deserialize 
             memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
             Lucene.Net.Search.BooleanQuery queryPostSerialized = (Lucene.Net.Search.BooleanQuery)serializer.Deserialize(memoryStream);
-            
+
             memoryStream.Close();
 
             Assert.AreEqual(queryPreSerialized, queryPostSerialized, "See the issue: LUCENENET-170");
@@ -775,7 +775,7 @@ namespace Lucene.Net._SupportClass
             Lucene.Net.Store.RAMDirectory ramDIR = new Lucene.Net.Store.RAMDirectory();
 
             //Index 1 Doc
-            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(ramDIR, new Lucene.Net.Analysis.WhitespaceAnalyzer(),true);
+            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(ramDIR, new Lucene.Net.Analysis.WhitespaceAnalyzer(), true);
             Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
             doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
             wr.AddDocument(doc);
@@ -800,15 +800,15 @@ namespace Lucene.Net._SupportClass
             doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED));
             wr.AddDocument(doc);
             wr.Close();
-            
+
             //Search
             Lucene.Net.Search.IndexSearcher s = new Lucene.Net.Search.IndexSearcher(ramDIR2);
             Lucene.Net.QueryParsers.QueryParser qp = new Lucene.Net.QueryParsers.QueryParser("field1", new Lucene.Net.Analysis.Standard.StandardAnalyzer());
             Lucene.Net.Search.Query q = qp.Parse("value1");
-            Lucene.Net.Search.TopDocs topDocs = s.Search(q,100);
+            Lucene.Net.Search.TopDocs topDocs = s.Search(q, 100);
             s.Close();
 
-            Assert.AreEqual(topDocs.totalHits, 2,"See the issue: LUCENENET-174");
+            Assert.AreEqual(topDocs.totalHits, 2, "See the issue: LUCENENET-174");
         }
 
 
@@ -853,7 +853,88 @@ namespace Lucene.Net._SupportClass
                 return char.IsLetterOrDigit(c);
             }
         }
+
+
         //-------------------------------------------
+        [Test]
+        [Description("LUCENENET-100")]
+        public void Lucene_Net_Search_FieldDoc()
+        {
+            try
+            {
+                LUCENENET_100_CreateIndex();
+
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38085));
+
+                Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
+                System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
+
+                LUCENENET_100_ClientSearch();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            //Wait Client to finish
+            while (LUCENENET_100_testFinished == false) System.Threading.Thread.Sleep(10);
+
+            if (LUCENENET_100_Exception != null) throw LUCENENET_100_Exception;
+
+        }
+
+        Lucene.Net.Store.RAMDirectory LUCENENET_100_Dir = new Lucene.Net.Store.RAMDirectory();
+        bool LUCENENET_100_testFinished = false;
+        Exception LUCENENET_100_Exception = null;
+
+
+        void LUCENENET_100_ClientSearch()
+        {
+            try
+            {
+                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38085/Searcher");
+                Lucene.Net.Search.MultiSearcher searcher = new Lucene.Net.Search.MultiSearcher(new Lucene.Net.Search.Searchable[] { s });
+
+                Lucene.Net.Search.Query q = new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field1", "moon"));
+
+                Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
+                sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.INT));
+
+                Lucene.Net.Search.Hits h = searcher.Search(q, sort);
+            }
+            catch (Exception ex)
+            {
+                LUCENENET_100_Exception = ex;
+            }
+            finally
+            {
+                LUCENENET_100_testFinished = true;
+            }
+        }
+
+        void LUCENENET_100_CreateIndex()
+        {
+            Lucene.Net.Index.IndexWriter w = new Lucene.Net.Index.IndexWriter(LUCENENET_100_Dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), true);
+
+            Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("field1", "dark side of the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+            Lucene.Net.Documents.Field f2 = new Lucene.Net.Documents.Field("field2", "123", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+            Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+            d.Add(f1);
+            d.Add(f2);
+            w.AddDocument(d);
+
+            f1 = new Lucene.Net.Documents.Field("field1", "Fly me to the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+            f2 = new Lucene.Net.Documents.Field("field2", "456", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+            d = new Lucene.Net.Documents.Document();
+            d.Add(f1);
+            d.Add(f2);
+            w.AddDocument(d);
+
+            w.Close();
+        }
+
+        //-------------------------------------------
+
 
     }
 }

@@ -56,6 +56,7 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 		/// </seealso>
+        [NonSerialized]
 		public System.IComparable[] fields;
 		
 		/// <summary>Expert: Creates one of these objects with empty sort information. </summary>
