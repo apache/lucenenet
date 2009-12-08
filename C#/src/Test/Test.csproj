@@ -473,8 +473,12 @@
     <None Include="Index\index.24.nocfs.zip" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Messages\MessagesTestBundle.ja.resources" />
-    <EmbeddedResource Include="Messages\MessagesTestBundle.resources" />
+    <EmbeddedResource Include="Messages\MessagesTestBundle.ja.resources">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Messages\MessagesTestBundle.resources">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
