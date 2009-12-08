@@ -747,7 +747,7 @@ namespace Lucene.Net._SupportClass
         //-------------------------------------------
         [Test]
         [Description("LUCENENET-170")]
-        public void Test_Lucene_Net_Util_Parameter()
+        public void Test_Util_Parameter()
         {
             Lucene.Net.Search.BooleanQuery queryPreSerialized = new Lucene.Net.Search.BooleanQuery();
             queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "Russia")), Lucene.Net.Search.BooleanClause.Occur.MUST);
@@ -770,7 +770,7 @@ namespace Lucene.Net._SupportClass
         //-------------------------------------------
         [Test]
         [Description("LUCENENET-174")]
-        public void Test_Lucene_Net_Store_RAMDirectory()
+        public void Test_Store_RAMDirectory()
         {
             Lucene.Net.Store.RAMDirectory ramDIR = new Lucene.Net.Store.RAMDirectory();
 
@@ -816,7 +816,7 @@ namespace Lucene.Net._SupportClass
         //-------------------------------------------
         [Test]
         [Description("LUCENENET-150")]
-        public void Test_Lucene_Net_Index_ReusableStringReader()
+        public void Test_Index_ReusableStringReader()
         {
             Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(new Lucene.Net.Store.RAMDirectory(), new TestAnalyzer(), true);
 
@@ -858,7 +858,7 @@ namespace Lucene.Net._SupportClass
         //-------------------------------------------
         [Test]
         [Description("LUCENENET-100")]
-        public void Lucene_Net_Search_FieldDoc()
+        public void Test_Search_FieldDoc()
         {
             try
             {
