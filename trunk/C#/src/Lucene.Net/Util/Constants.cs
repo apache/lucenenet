@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
 		public static readonly bool JAVA_1_3 = JAVA_VERSION.StartsWith("1.3.");
 		
 		/// <summary>The value of <tt>System.getProperty("os.name")<tt>. *</summary>
-		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS");
+		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS") ?? "Linux";
 		/// <summary>True iff running on Linux. </summary>
 		public static readonly bool LINUX = OS_NAME.StartsWith("Linux");
 		/// <summary>True iff running on Windows. </summary>
