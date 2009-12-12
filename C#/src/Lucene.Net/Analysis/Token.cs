@@ -387,7 +387,7 @@ namespace Lucene.Net.Analysis
 		/// because the text is stored internally in a char[].  If
 		/// possible, use {@link #TermBuffer()} and {@link
 		/// #TermLength()} directly instead.  If you really need a
-		/// String, use {@link #Term()}</b>
+		/// String, use {@link #Term()}
 		/// </deprecated>
 		public System.String TermText()
 		{
