@@ -195,7 +195,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassByteParser : ByteParser
+	class AnonymousClassByteParser : ByteParser
 	{
 		public virtual sbyte ParseByte(System.String value_Renamed)
 		{
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassShortParser : ShortParser
+	class AnonymousClassShortParser : ShortParser
 	{
 		public virtual short ParseShort(System.String value_Renamed)
 		{
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassIntParser : IntParser
+	class AnonymousClassIntParser : IntParser
 	{
 		public virtual int ParseInt(System.String value_Renamed)
 		{
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassFloatParser : FloatParser
+	class AnonymousClassFloatParser : FloatParser
 	{
 		public virtual float ParseFloat(System.String value_Renamed)
 		{
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassLongParser : LongParser
+	class AnonymousClassLongParser : LongParser
 	{
 		public virtual long ParseLong(System.String value_Renamed)
 		{
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassDoubleParser : DoubleParser
+	class AnonymousClassDoubleParser : DoubleParser
 	{
 		public virtual double ParseDouble(System.String value_Renamed)
 		{
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassIntParser1 : IntParser
+	class AnonymousClassIntParser1 : IntParser
 	{
 		public virtual int ParseInt(System.String val)
 		{
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassFloatParser1 : FloatParser
+	class AnonymousClassFloatParser1 : FloatParser
 	{
 		public virtual float ParseFloat(System.String val)
 		{
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassLongParser1 : LongParser
+	class AnonymousClassLongParser1 : LongParser
 	{
 		public virtual long ParseLong(System.String val)
 		{
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	[Serializable]
-	public class AnonymousClassDoubleParser1 : DoubleParser
+	class AnonymousClassDoubleParser1 : DoubleParser
 	{
 		public virtual double ParseDouble(System.String val)
 		{

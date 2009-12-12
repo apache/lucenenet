@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 			INDEXORDER = new AnonymousClassScoreDocComparator1();
 		}
 	}
-	public class AnonymousClassScoreDocComparator : ScoreDocComparator
+	class AnonymousClassScoreDocComparator : ScoreDocComparator
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 			return SortField.SCORE;
 		}
 	}
-	public class AnonymousClassScoreDocComparator1 : ScoreDocComparator
+	class AnonymousClassScoreDocComparator1 : ScoreDocComparator
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
