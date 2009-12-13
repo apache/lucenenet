@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 				QueryUtils.Check(query, searcher);
 			}
 			
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			
 			System.Collections.ArrayList correct = new System.Collections.ArrayList();
 			for (int i = 0; i < results.Length; i++)
@@ -271,19 +271,19 @@ namespace Lucene.Net.Search
 		public static System.String TopdocsString(TopDocs docs, int start, int end)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			sb.Append("TopDocs totalHits=").Append(docs.totalHits).Append(" top=").Append(docs.scoreDocs.Length).Append('\n');
+			sb.Append("TopDocs totalHits=").Append(docs.TotalHits).Append(" top=").Append(docs.ScoreDocs.Length).Append('\n');
 			if (end <= 0)
-				end = docs.scoreDocs.Length;
+				end = docs.ScoreDocs.Length;
 			else
-				end = System.Math.Min(end, docs.scoreDocs.Length);
+				end = System.Math.Min(end, docs.ScoreDocs.Length);
 			for (int i = start; i < end; i++)
 			{
 				sb.Append('\t');
 				sb.Append(i);
 				sb.Append(") doc=");
-				sb.Append(docs.scoreDocs[i].doc);
+				sb.Append(docs.ScoreDocs[i].doc);
 				sb.Append("\tscore=");
-				sb.Append(docs.scoreDocs[i].score);
+				sb.Append(docs.ScoreDocs[i].score);
 				sb.Append('\n');
 			}
 			return sb.ToString();

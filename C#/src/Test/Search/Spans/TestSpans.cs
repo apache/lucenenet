@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Spans
 		// LUCENE-1404
 		private int HitCount(Searcher searcher, System.String word)
 		{
-			return searcher.Search(new TermQuery(new Term("text", word)), 10).totalHits;
+			return searcher.Search(new TermQuery(new Term("text", word)), 10).TotalHits;
 		}
 		
 		// LUCENE-1404
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search.Spans
 			Assert.AreEqual(0, HitCount(searcher, "rabbit"));
 			
 			// This throws exception (it shouldn't)
-			Assert.AreEqual(1, searcher.Search(CreateSpan(0, true, new SpanQuery[]{CreateSpan(4, false, "chased", "cat"), CreateSpan("ate")}), 10).totalHits);
+			Assert.AreEqual(1, searcher.Search(CreateSpan(0, true, new SpanQuery[]{CreateSpan(4, false, "chased", "cat"), CreateSpan("ate")}), 10).TotalHits);
 			reader.Close();
 			dir.Close();
 		}

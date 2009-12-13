@@ -97,10 +97,10 @@ namespace Lucene.Net.Search
 			query2.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			
 			ScoreDoc[] result;
-			result = searcher.Search(query1, null, 1000).scoreDocs;
+			result = searcher.Search(query1, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, result.Length);
 			
-			result = searcher.Search(query2, null, 1000).scoreDocs;
+			result = searcher.Search(query2, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 		}
 	}

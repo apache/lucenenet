@@ -156,14 +156,14 @@ namespace Lucene.Net.Search.Spans
 			*****/
 			
 			// did we get the hits we expected
-			Assert.AreEqual(expectedIds.Length, topdocs.totalHits);
-			for (int i = 0; i < topdocs.totalHits; i++)
+			Assert.AreEqual(expectedIds.Length, topdocs.TotalHits);
+			for (int i = 0; i < topdocs.TotalHits; i++)
 			{
 				//System.out.println(i + " exp: " + expectedIds[i]);
 				//System.out.println(i + " field: " + hits.doc(i).get(FIELD_ID));
 				
-				int id = topdocs.scoreDocs[i].doc;
-				float score = topdocs.scoreDocs[i].score;
+				int id = topdocs.ScoreDocs[i].doc;
+				float score = topdocs.ScoreDocs[i].score;
 				Document doc = s.Doc(id);
 				Assert.AreEqual(expectedIds[i], doc.Get(FIELD_ID));
 				bool scoreEq = System.Math.Abs(expectedScores[i] - score) < tolerance;

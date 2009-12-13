@@ -271,9 +271,9 @@ namespace Lucene.Net.Search.Function
 		private System.Collections.Hashtable TopDocsToMap(TopDocs td)
 		{
 			System.Collections.Hashtable h = new System.Collections.Hashtable();
-			for (int i = 0; i < td.totalHits; i++)
+			for (int i = 0; i < td.TotalHits; i++)
 			{
-				h[(System.Int32) td.scoreDocs[i].doc] = (float) td.scoreDocs[i].score;
+				h[(System.Int32) td.ScoreDocs[i].doc] = (float) td.ScoreDocs[i].score;
 			}
 			return h;
 		}

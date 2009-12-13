@@ -255,8 +255,8 @@ namespace Lucene.Net.Search
 			{
 				// search each searcher
 				TopDocs docs = searchables[i].Search(weight, filter, nDocs);
-				totalHits += docs.totalHits; // update totalHits
-				ScoreDoc[] scoreDocs = docs.scoreDocs;
+				totalHits += docs.TotalHits; // update totalHits
+				ScoreDoc[] scoreDocs = docs.ScoreDocs;
 				for (int j = 0; j < scoreDocs.Length; j++)
 				{
 					// merge scoreDocs into hq
@@ -296,9 +296,9 @@ namespace Lucene.Net.Search
 					if (docs.fields[j].GetType() == SortField.DOC)
 					{
 						// iterate over the score docs and change their fields value
-						for (int j2 = 0; j2 < docs.scoreDocs.Length; j2++)
+						for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
 						{
-							FieldDoc fd = (FieldDoc) docs.scoreDocs[j2];
+							FieldDoc fd = (FieldDoc) docs.ScoreDocs[j2];
 							fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
 						}
 						break;
@@ -306,9 +306,9 @@ namespace Lucene.Net.Search
 				}
 				if (hq == null)
 					hq = new FieldDocSortedHitQueue(docs.fields, n);
-				totalHits += docs.totalHits; // update totalHits
+				totalHits += docs.TotalHits; // update totalHits
 				maxScore = System.Math.Max(maxScore, docs.GetMaxScore());
-				ScoreDoc[] scoreDocs = docs.scoreDocs;
+				ScoreDoc[] scoreDocs = docs.ScoreDocs;
 				for (int j = 0; j < scoreDocs.Length; j++)
 				{
 					// merge scoreDocs into hq

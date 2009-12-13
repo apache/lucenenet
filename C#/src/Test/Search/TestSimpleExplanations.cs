@@ -433,7 +433,7 @@ namespace Lucene.Net.Search
 			searchers[0] = new IndexSearcher(indexStoreB);
 			searchers[1] = new IndexSearcher(indexStoreA);
 			Searcher mSearcher = new MultiSearcher(searchers);
-			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits.Length);
 			
@@ -443,7 +443,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(exp.IndexOf("docFreq=3") > - 1, exp);
 			
 			query = parser.Parse("handle:\"1 2\"");
-			hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits.Length);
 			
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
 			
 			query = new SpanNearQuery(new SpanQuery[]{new SpanTermQuery(new Term("handle", "1")), new SpanTermQuery(new Term("handle", "2"))}, 0, true);
-			hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits.Length);
 			

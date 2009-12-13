@@ -77,24 +77,24 @@ namespace Lucene.Net.Search
 			ScoreDoc[] result;
 			
 			// ensure that queries return expected results without DateFilter first
-			result = searcher.Search(query1, null, 1000).scoreDocs;
+			result = searcher.Search(query1, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, null, 1000).scoreDocs;
+			result = searcher.Search(query2, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, result.Length);
 			
 			
 			// run queries with DateFilter
-			result = searcher.Search(query1, df1, 1000).scoreDocs;
+			result = searcher.Search(query1, df1, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query1, df2, 1000).scoreDocs;
+			result = searcher.Search(query1, df2, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, df1, 1000).scoreDocs;
+			result = searcher.Search(query2, df1, 1000).ScoreDocs;
 			Assert.AreEqual(1, result.Length);
 			
-			result = searcher.Search(query2, df2, 1000).scoreDocs;
+			result = searcher.Search(query2, df2, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 		}
 		
@@ -134,24 +134,24 @@ namespace Lucene.Net.Search
 			ScoreDoc[] result;
 			
 			// ensure that queries return expected results without DateFilter first
-			result = searcher.Search(query1, null, 1000).scoreDocs;
+			result = searcher.Search(query1, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, null, 1000).scoreDocs;
+			result = searcher.Search(query2, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, result.Length);
 			
 			
 			// run queries with DateFilter
-			result = searcher.Search(query1, df1, 1000).scoreDocs;
+			result = searcher.Search(query1, df1, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query1, df2, 1000).scoreDocs;
+			result = searcher.Search(query1, df2, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
-			result = searcher.Search(query2, df1, 1000).scoreDocs;
+			result = searcher.Search(query2, df1, 1000).ScoreDocs;
 			Assert.AreEqual(1, result.Length);
 			
-			result = searcher.Search(query2, df2, 1000).scoreDocs;
+			result = searcher.Search(query2, df2, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 		}
 	}

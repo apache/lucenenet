@@ -55,19 +55,19 @@ namespace Lucene.Net.Search
 			Query query = new TermRangeQuery("content", "A", "C", false, false);
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "A,B,C,D, only B in range");
 			searcher.Close();
 			
 			InitializeIndex(new System.String[]{"A", "B", "D"});
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "A,B,D, only B in range");
 			searcher.Close();
 			
 			AddDoc("C");
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "C added, still only B in range");
 			searcher.Close();
 		}
@@ -79,14 +79,14 @@ namespace Lucene.Net.Search
 			Query query = new RangeQuery(null, new Term("content", "C"), false);
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length, "A,B,C,D, only B in range");
 			searcher.Close();
 			
 			query = new RangeQuery(new Term("content", "C"), null, false);
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "A,B,C,D, only B in range");
 			searcher.Close();
 		}
@@ -98,19 +98,19 @@ namespace Lucene.Net.Search
 			
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length, "A,B,C,D - A,B,C in range");
 			searcher.Close();
 			
 			InitializeIndex(new System.String[]{"A", "B", "D"});
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length, "A,B,D - A and B in range");
 			searcher.Close();
 			
 			AddDoc("C");
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length, "C added - A, B, C in range");
 			searcher.Close();
 		}
@@ -169,19 +169,19 @@ namespace Lucene.Net.Search
 			Query query = new TermRangeQuery("content", "A", "C", false, false, new System.Globalization.CultureInfo("en").CompareInfo);
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "A,B,C,D, only B in range");
 			searcher.Close();
 			
 			InitializeIndex(new System.String[]{"A", "B", "D"});
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "A,B,D, only B in range");
 			searcher.Close();
 			
 			AddDoc("C");
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "C added, still only B in range");
 			searcher.Close();
 		}
@@ -193,19 +193,19 @@ namespace Lucene.Net.Search
 			
 			InitializeIndex(new System.String[]{"A", "B", "C", "D"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length, "A,B,C,D - A,B,C in range");
 			searcher.Close();
 			
 			InitializeIndex(new System.String[]{"A", "B", "D"});
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length, "A,B,D - A and B in range");
 			searcher.Close();
 			
 			AddDoc("C");
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length, "C added - A, B, C in range");
 			searcher.Close();
 		}
@@ -224,11 +224,11 @@ namespace Lucene.Net.Search
 			// Collator (or an Arabic one for the case when Farsi is not supported).
 			InitializeIndex(new System.String[]{"\u0633\u0627\u0628"});
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
 			
 			query = new TermRangeQuery("content", "\u0633", "\u0638", true, true, collator);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "The index Term should be included.");
 			searcher.Close();
 		}
@@ -246,11 +246,11 @@ namespace Lucene.Net.Search
 			// but Danish collation does.
 			InitializeIndex(words);
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "The index Term should be included.");
 			
 			query = new TermRangeQuery("content", "H\u00C5T", "MAND", false, false, collator);
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
 			searcher.Close();
 		}

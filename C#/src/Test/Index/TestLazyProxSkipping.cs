@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 			PhraseQuery pq = new PhraseQuery();
 			pq.Add(new Term(this.field, this.term1));
 			pq.Add(new Term(this.field, this.term2));
-			return this.searcher.Search(pq, null, 1000).scoreDocs;
+			return this.searcher.Search(pq, null, 1000).ScoreDocs;
 		}
 		
 		private void  PerformTest(int numHits)

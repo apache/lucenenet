@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Function
 			Query q = new FieldScoreQuery(field, tp);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
-			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 			System.String prevID = "ID" + (N_DOCS + 1); // greater than all ids of docs in this test
 			for (int i = 0; i < h.Length; i++)
@@ -144,8 +144,8 @@ namespace Lucene.Net.Search.Function
 			IndexSearcher s = new IndexSearcher(dir);
 			Query q = new FieldScoreQuery(field, tp);
 			TopDocs td = s.Search(q, null, 1000);
-			Assert.AreEqual(N_DOCS, td.totalHits, "All docs should be matched!");
-			ScoreDoc[] sd = td.scoreDocs;
+			Assert.AreEqual(N_DOCS, td.TotalHits, "All docs should be matched!");
+			ScoreDoc[] sd = td.ScoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
 				float score = sd[i].score;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Function
 			for (int i = 0; i < 10; i++)
 			{
 				FieldScoreQuery q = new FieldScoreQuery(field, tp);
-				ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
+				ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 				Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 				IndexReader[] readers = s.GetIndexReader().GetSequentialSubReaders();
 				for (int j = 0; j < readers.Length; j++)
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search.Function
 			// verify new values are reloaded (not reused) for a new reader
 			s = new IndexSearcher(dir);
 			FieldScoreQuery q2 = new FieldScoreQuery(field, tp);
-			ScoreDoc[] h2 = s.Search(q2, null, 1000).scoreDocs;
+			ScoreDoc[] h2 = s.Search(q2, null, 1000).ScoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
 			for (int j = 0; j < readers2.Length; j++)
