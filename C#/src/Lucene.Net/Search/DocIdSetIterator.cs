@@ -43,6 +43,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #DocID()} instead.
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public virtual int Doc()
 		{
 			throw new System.NotSupportedException("Call docID() instead.");
@@ -72,6 +73,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #NextDoc()} instead. This will be removed in 3.0
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. This will be removed in 3.0")]
 		public virtual bool Next()
 		{
 			throw new System.NotSupportedException("Call nextDoc() instead.");
@@ -83,6 +85,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #Advance(int)} instead. This will be removed in 3.0
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead. This will be removed in 3.0")]
 		public virtual bool SkipTo(int target)
 		{
 			throw new System.NotSupportedException("Call advance() instead.");

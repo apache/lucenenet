@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 	/// {@link NumericRangeQuery} for numeric ranges instead.
 	/// This class will be removed in Lucene 3.0.
 	/// </deprecated>
+    [Obsolete("Use TermRangeQuery for term ranges or NumericRangeQuery for numeric ranges instead. This class will be removed in Lucene 3.0")]
 	[Serializable]
 	public class RangeQuery:Query
 	{

@@ -65,6 +65,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector) instead.")]
 		public virtual void  Score(HitCollector hc)
 		{
 			Score(new HitCollectorWrapper(hc));
@@ -97,6 +98,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector, int, int) instead")]
 		protected internal virtual bool Score(HitCollector hc, int max)
 		{
 			return Score(new HitCollectorWrapper(hc), max, DocID());

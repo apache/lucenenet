@@ -722,6 +722,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <deprecated> Use {@link FieldCache.LongParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.LongParser, this will be removed in Lucene 3.0")]
 	public interface LongParser:Parser
 	{
 		/// <summary>Return an long representation of this field's value. </summary>
@@ -733,6 +734,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <deprecated> Use {@link FieldCache.DoubleParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.DoubleParser, this will be removed in Lucene 3.0 ")]
 	public interface DoubleParser:Parser
 	{
 		/// <summary>Return an long representation of this field's value. </summary>

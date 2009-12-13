@@ -33,6 +33,7 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// 
 	/// </deprecated>
+    [Obsolete("Use TeeSinkTokenFilter instead")]
 	public class SinkTokenizer:Tokenizer
 	{
 		protected internal System.Collections.IList lst = new System.Collections.ArrayList();

@@ -1086,8 +1086,9 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <deprecated> Use {@link #IndexWriter(Directory, Analyzer,
 		/// boolean, MaxFieldLength)}
-		/// </deprecated>
-		public IndexWriter(System.String path, Analyzer a, bool create, MaxFieldLength mfl)
+        /// </deprecated>
+        [Obsolete("Use IndexWriter(Directory, Analyzer,boolean, MaxFieldLength)")]
+        public IndexWriter(System.String path, Analyzer a, bool create, MaxFieldLength mfl)
 		{
 			InitBlock();
 			Init(FSDirectory.GetDirectory(path), a, create, true, null, false, mfl.GetLimit(), null, null);
@@ -1162,6 +1163,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #IndexWriter(Directory,
 		/// Analyzer, boolean, MaxFieldLength)}
 		/// </deprecated>
+        [Obsolete("Use IndexWriter(Directory, Analyzer, boolean, MaxFieldLength)")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create, MaxFieldLength mfl)
 		{
 			InitBlock();
@@ -1302,6 +1304,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <deprecated> Use {@link #IndexWriter(Directory, Analyzer, MaxFieldLength)}
 		/// </deprecated>
+        [Obsolete("Use IndexWriter(Directory, Analyzer, MaxFieldLength)")]
 		public IndexWriter(System.String path, Analyzer a, MaxFieldLength mfl)
 		{
 			InitBlock();
@@ -1366,6 +1369,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #IndexWriter(Directory,
 		/// Analyzer, MaxFieldLength)}
 		/// </deprecated>
+        [Obsolete("Use {@link #IndexWriter(Directory,Analyzer, MaxFieldLength)")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, MaxFieldLength mfl)
 		{
 			InitBlock();
@@ -4087,6 +4091,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
+        [Obsolete("Use {@link #addIndexesNoOptimize} instead,then separately call {@link #optimize} afterwards if you need to.")]
 		public virtual void  AddIndexes(Directory[] dirs)
 		{
 			
@@ -6504,6 +6509,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated> Use {@link #IsLocked(Directory)}
 		/// </deprecated>
+        [Obsolete("Use IsLocked(Directory)")]
 		public static bool IsLocked(System.String directory)
 		{
 			Directory dir = FSDirectory.GetDirectory(directory);

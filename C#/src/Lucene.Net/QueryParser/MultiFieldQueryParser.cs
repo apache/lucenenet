@@ -322,6 +322,7 @@ namespace Lucene.Net.QueryParsers
 		/// <deprecated> Use {@link #Parse(Version,String[],String[],Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version,String[],String[],Analyzer) instead")]
 		public static Query Parse(System.String[] queries, System.String[] fields, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, queries, fields, analyzer);
@@ -409,6 +410,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #Parse(Version, String, String[], BooleanClause.Occur[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version, String, String[], BooleanClause.Occur[], Analyzer) instead")]
 		public static Query Parse(System.String query, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, query, fields, flags, analyzer);
@@ -512,6 +514,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer) instead")]
 		public static Query Parse(System.String[] queries, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, queries, fields, flags, analyzer);

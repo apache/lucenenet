@@ -374,6 +374,7 @@ namespace Lucene.Net.Analysis
 		/// {@link #SetTermBuffer(String)} or
 		/// {@link #SetTermBuffer(String, int, int)}.
 		/// </deprecated>
+        [Obsolete("Use SetTermBuffer(char[], int, int) or SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		public virtual void  SetTermText(System.String text)
 		{
 			termText = text;

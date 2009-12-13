@@ -137,6 +137,7 @@ namespace Lucene.Net.Store
 		/// with {@link #open(File)} only the deprecated <code>getDirectory</code>
 		/// respect this setting.   
 		/// </deprecated>
+        [Obsolete("Use a Open(File, LockFactory) or a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory. This setting does not work with Open(File) only the deprecated GetDirectory respect this setting.")]
 		public static void  SetDisableLocks(bool doDisableLocks)
 		{
 			FSDirectory.disableLocks = doDisableLocks;
@@ -150,6 +151,7 @@ namespace Lucene.Net.Store
 		/// <deprecated> Use a constructor that takes a {@link LockFactory} and
 		/// supply {@link NoLockFactory#getNoLockFactory}.
 		/// </deprecated>
+        [Obsolete("Use a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory.")]
 		public static bool GetDisableLocks()
 		{
 			return FSDirectory.disableLocks;
@@ -190,6 +192,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File)")]
 		public static FSDirectory GetDirectory(System.String path)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), null);
@@ -208,6 +211,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File, LockFactory)")]
 		public static FSDirectory GetDirectory(System.String path, LockFactory lockFactory)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), lockFactory);
@@ -223,6 +227,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File)")]
 		public static FSDirectory GetDirectory(System.IO.DirectoryInfo file)
 		{
 			return GetDirectory(file, null);
@@ -276,6 +281,7 @@ namespace Lucene.Net.Store
         /// </param>
         /// <returns> the FSDirectory for the named file.  
         /// </returns>
+        [Obsolete("Use Open(File, LockFactory)")]
         public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, LockFactory lockFactory)
         {
             FSDirectory dir;
@@ -326,6 +332,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), create);
@@ -363,6 +370,7 @@ namespace Lucene.Net.Store
         /// </param>
         /// <returns> the FSDirectory for the named file.  
         /// </returns>
+        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
         public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, bool create)
         {
             FSDirectory dir = GetDirectory(file, null);
@@ -989,6 +997,7 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexInput instead 
 		/// </deprecated>
+        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexInput instead ")]
 		public /*protected internal*/ class FSIndexInput:SimpleFSDirectory.SimpleFSIndexInput
 		{
 			
@@ -1018,6 +1027,7 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexOutput instead 
 		/// </deprecated>
+        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexOutput instead ")]
 		protected internal class FSIndexOutput:SimpleFSDirectory.SimpleFSIndexOutput
 		{
 			

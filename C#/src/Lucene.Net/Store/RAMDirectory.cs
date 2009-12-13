@@ -82,6 +82,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
 		/// </deprecated>
+        [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
@@ -96,6 +97,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
 		/// </deprecated>
+        [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}

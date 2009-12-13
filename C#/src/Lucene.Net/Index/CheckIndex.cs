@@ -45,6 +45,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #setInfoStream} per instance,
 		/// instead. 
 		/// </deprecated>
+        [Obsolete("Use SetInfoStream per instance,instead.")]
 		public static System.IO.StreamWriter out_Renamed = null;
 		
 		private System.IO.StreamWriter infoStream;

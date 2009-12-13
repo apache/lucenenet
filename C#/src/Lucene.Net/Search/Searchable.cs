@@ -65,6 +65,7 @@ namespace Lucene.Net.Search
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		/// <deprecated> use {@link #Search(Weight, Filter, Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Search(Weight, Filter, Collector) instead.")]
 		void  Search(Weight weight, Filter filter, HitCollector results);
 		
 		/// <summary> Lower-level search API.

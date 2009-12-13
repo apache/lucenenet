@@ -44,6 +44,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> Use {@link #SpanFilterResult(DocIdSet, List)} instead
 		/// </deprecated>
+        [Obsolete("Use SpanFilterResult(DocIdSet, List) instead")]
 		public SpanFilterResult(System.Collections.BitArray bits, System.Collections.IList positions)
 		{
 			this.bits = bits;
@@ -73,6 +74,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Use {@link #GetDocIdSet()}
 		/// </deprecated>
+        [Obsolete("Use GetDocIdSet()")]
 		public virtual System.Collections.BitArray GetBits()
 		{
 			return bits;

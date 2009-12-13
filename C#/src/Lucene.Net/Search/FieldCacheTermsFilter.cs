@@ -183,6 +183,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #DocID()} instead. 
 				/// </deprecated>
+                [Obsolete("use DocID() instead.")]
 				public override int Doc()
 				{
 					return doc;
@@ -195,6 +196,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #NextDoc()} instead. 
 				/// </deprecated>
+                [Obsolete("use NextDoc() instead.")]
 				public override bool Next()
 				{
 					return NextDoc() != NO_MORE_DOCS;
@@ -217,6 +219,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #Advance(int)} instead. 
 				/// </deprecated>
+                [Obsolete("use Advance(int) instead.")]
 				public override bool SkipTo(int target)
 				{
 					return Advance(target) != NO_MORE_DOCS;

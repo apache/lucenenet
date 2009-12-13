@@ -208,6 +208,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
 		/// </deprecated>
 		//@Override
+        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
 			TermEnum enumerator = query.GetEnum(reader);

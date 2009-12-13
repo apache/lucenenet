@@ -246,6 +246,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Returns an Enumeration of all the fields in a document.</summary>
 		/// <deprecated> use {@link #GetFields()} instead
 		/// </deprecated>
+        [Obsolete("Use GetFields() instead")]
 		public System.Collections.IEnumerator Fields()
 		{
 			return new AnonymousClassEnumeration(this);

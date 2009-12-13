@@ -61,6 +61,7 @@ namespace Lucene.Net.Analysis
 	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
 	/// 
 	/// </deprecated>
+    [Obsolete("Use TeeSinkTokenFilter instead")]
 	public class TeeTokenFilter:TokenFilter
 	{
 		internal SinkTokenizer sink;

@@ -278,6 +278,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator)
 		/// </deprecated>
+        [Obsolete("use SortField (String field, FieldComparatorSource comparator)")]
 		public SortField(System.String field, SortComparatorSource comparator)
 		{
 			InitFieldType(field, CUSTOM);
@@ -305,6 +306,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator, boolean reverse)
 		/// </deprecated>
+        [Obsolete("use SortField(String field, FieldComparatorSource comparator, boolean reverse)")]
 		public SortField(System.String field, SortComparatorSource comparator, bool reverse)
 		{
 			InitFieldType(field, CUSTOM);
@@ -391,6 +393,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #GetComparatorSource()}
 		/// </deprecated>
+        [Obsolete("use GetComparatorSource()")]
 		public virtual SortComparatorSource GetFactory()
 		{
 			return factory;

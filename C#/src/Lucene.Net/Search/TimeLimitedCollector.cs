@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	/// <deprecated> Use {@link TimeLimitingCollector} instead, which extends the new
 	/// {@link Collector}. This class will be removed in 3.0.
 	/// </deprecated>
+    [Obsolete("Use TimeLimitingCollector instead, which extends the new Collector. This class will be removed in 3.0.")]
 	public class TimeLimitedCollector:HitCollector
 	{
 		private void  InitBlock()

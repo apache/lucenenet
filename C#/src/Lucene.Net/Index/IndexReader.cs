@@ -253,6 +253,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <param name="path">the path to the index directory 
 		/// </param>
+        [Obsolete("Use Open(Directory, boolean) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(System.String path)
 		{
 			return Open(path, false);
@@ -275,6 +276,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(System.String path, bool readOnly)
 		{
 			Directory dir = FSDirectory.GetDirectory(path);
@@ -302,6 +304,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use Open(Directory, bool) instead.This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(System.IO.FileInfo path)
 		{
 			return Open(path, false);
@@ -324,6 +327,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(System.IO.FileInfo path, bool readOnly)
 		{
 			Directory dir = FSDirectory.GetDirectory(path);
@@ -351,6 +355,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use Open(Directory, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(Directory directory)
 		{
 			return Open(directory, null, null, false, DEFAULT_TERMS_INDEX_DIVISOR);
@@ -384,6 +389,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </deprecated>
 		/// <throws>  IOException if there is a low-level IO error </throws>
+        [Obsolete("Use Open(IndexCommit, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(IndexCommit commit)
 		{
 			return Open(commit.GetDirectory(), null, commit, false, DEFAULT_TERMS_INDEX_DIVISOR);
@@ -421,6 +427,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
+        [Obsolete("Use Open(Directory, IndexDeletionPolicy, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy)
 		{
 			return Open(directory, deletionPolicy, null, false, DEFAULT_TERMS_INDEX_DIVISOR);
@@ -499,6 +506,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
+        [Obsolete("Use Open(IndexCommit, IndexDeletionPolicy, bool) instead. This method will be removed in the 3.0 release.")]
 		public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy)
 		{
 			return Open(commit.GetDirectory(), deletionPolicy, commit, false, DEFAULT_TERMS_INDEX_DIVISOR);
@@ -713,6 +721,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #LastModified(Directory)} instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
+        [Obsolete("Use LastModified(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static long LastModified(System.String directory)
 		{
 			return LastModified(new System.IO.FileInfo(directory));
@@ -728,6 +737,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use LastModified(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static long LastModified(System.IO.FileInfo fileDirectory)
 		{
 			Directory dir = FSDirectory.GetDirectory(fileDirectory); // use new static method here
@@ -766,6 +776,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #GetCurrentVersion(Directory)} instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
+        [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static long GetCurrentVersion(System.String directory)
 		{
 			return GetCurrentVersion(new System.IO.FileInfo(directory));
@@ -785,6 +796,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Use {@link #GetCurrentVersion(Directory)} instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
+        [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static long GetCurrentVersion(System.IO.FileInfo directory)
 		{
 			Directory dir = FSDirectory.GetDirectory(directory);
@@ -1030,6 +1042,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use IndexExists(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static bool IndexExists(System.String directory)
 		{
 			return IndexExists(new System.IO.FileInfo(directory));
@@ -1046,7 +1059,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
-		
+        [Obsolete("Use IndexExists(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static bool IndexExists(System.IO.FileInfo directory)
 		{
             System.String[] list = null;
@@ -1571,6 +1584,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Use IsLocked(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static bool IsLocked(System.String directory)
 		{
 			Directory dir = FSDirectory.GetDirectory(directory);

@@ -517,6 +517,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Use {@link #SetAllowDocsOutOfOrder(boolean)} instead. 
 		/// </deprecated>
+        [Obsolete("Use SetAllowDocsOutOfOrder(bool) instead.")]
 		public static void  SetUseScorer14(bool use14)
 		{
 			SetAllowDocsOutOfOrder(use14);
@@ -524,6 +525,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Use {@link #GetAllowDocsOutOfOrder()} instead.
 		/// </deprecated>
+        [Obsolete("Use GetAllowDocsOutOfOrder() instead.")]
 		public static bool GetUseScorer14()
 		{
 			return GetAllowDocsOutOfOrder();

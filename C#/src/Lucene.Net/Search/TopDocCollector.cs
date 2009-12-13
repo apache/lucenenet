@@ -56,6 +56,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> use TopDocCollector(hq) instead. numHits is not used by this
 		/// constructor. It will be removed in a future release.
 		/// </deprecated>
+        [Obsolete("use TopDocCollector(hq) instead. numHits is not used by this constructor. It will be removed in a future release.")]
 		internal TopDocCollector(int numHits, PriorityQueue hq)
 		{
 			this.hq = hq;

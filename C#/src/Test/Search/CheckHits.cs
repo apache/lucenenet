@@ -458,6 +458,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #Search(Query, Collector)} instead. 
 			/// </deprecated>
+            [Obsolete("use Search(Query, Collector) instead. ")]
 			public override void  Search(Query query, HitCollector results)
 			{
 				Search(query, new HitCollectorWrapper(results));
@@ -469,6 +470,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead. 
 			/// </deprecated>
+            [Obsolete("use Search(Query, Filter, Collector) instead. ")]
 			public override void  Search(Query query, Filter filter, HitCollector results)
 			{
 				Search(query, filter, new HitCollectorWrapper(results));

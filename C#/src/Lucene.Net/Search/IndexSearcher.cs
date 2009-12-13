@@ -57,6 +57,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
 		/// </deprecated>
+        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(System.String path):this(IndexReader.Open(path), true)
 		{
 		}
@@ -76,6 +77,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
 		/// </deprecated>
+        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(System.String path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
 		{
 		}
@@ -85,6 +87,7 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
 		/// </deprecated>
+        [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(Directory directory):this(IndexReader.Open(directory), true)
 		{
 		}

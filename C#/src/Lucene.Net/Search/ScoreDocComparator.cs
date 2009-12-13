@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
 	/// </version>
 	/// <deprecated> use {@link FieldComparator}
 	/// </deprecated>
+    [Obsolete("use FieldComparator")]
 	public struct ScoreDocComparator_Fields{
 		/// <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>
 		public readonly static ScoreDocComparator RELEVANCE;

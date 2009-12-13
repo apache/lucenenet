@@ -119,6 +119,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
 		/// </deprecated>
+        [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
 		public StandardTokenizer(System.IO.TextReader input):this(Version.LUCENE_24, input)
 		{
 		}
@@ -135,6 +136,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
 		/// </deprecated>
+        [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
 		public StandardTokenizer(System.IO.TextReader input, bool replaceInvalidAcronym):base()
 		{
 			InitBlock();
@@ -163,6 +165,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// {@link #StandardTokenizer(Version, AttributeSource, Reader)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardTokenizer(Version, AttributeSource, Reader) instead")]
 		public StandardTokenizer(AttributeSource source, System.IO.TextReader input, bool replaceInvalidAcronym):base(source)
 		{
 			InitBlock();
@@ -183,6 +186,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// {@link #StandardTokenizer(Version, org.apache.lucene.util.AttributeSource.AttributeFactory, Reader)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardTokenizer(Version, Lucene.Net.Util.AttributeSource.AttributeFactory, Reader) instead")]
 		public StandardTokenizer(AttributeFactory factory, System.IO.TextReader input, bool replaceInvalidAcronym):base(factory)
 		{
 			InitBlock();

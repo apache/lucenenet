@@ -117,6 +117,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #Add(Object)} which returns the new top object,
 		/// saving an additional call to {@link #Top()}.
 		/// </deprecated>
+        [Obsolete("use Add(Object) which returns the new top object, saving an additional call to Top().")]
 		public void  Put(System.Object element)
 		{
 			size++;
@@ -150,6 +151,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #InsertWithOverflow(Object)} instead, which
 		/// encourages objects reuse.
 		/// </deprecated>
+        [Obsolete("use InsertWithOverflow(Object) instead, which encourages objects reuse.")]
 		public virtual bool Insert(System.Object element)
 		{
 			return InsertWithOverflow(element) != element;
@@ -231,6 +233,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #UpdateTop()} which returns the new top element and
 		/// saves an additional call to {@link #Top()}.
 		/// </deprecated>
+        [Obsolete("use UpdateTop() which returns the new top element and saves an additional call to Top()")]
 		public void  AdjustTop()
 		{
 			DownHeap();

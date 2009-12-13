@@ -122,6 +122,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector) instead.")]
 		public override void  Score(HitCollector hc)
 		{
 			Score(new HitCollectorWrapper(hc));
@@ -153,6 +154,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector hc, int max)
 		{
 			return Score(new HitCollectorWrapper(hc), max, DocID());
@@ -185,6 +187,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
@@ -267,6 +270,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead. ")]
 		public override int Doc()
 		{
 			return currentDoc;
@@ -298,6 +302,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Advance(int)} instead.
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return Advance(target) != NO_MORE_DOCS;

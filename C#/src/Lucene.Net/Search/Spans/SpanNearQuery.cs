@@ -99,6 +99,7 @@ namespace Lucene.Net.Search.Spans
 		/// </deprecated>
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
+        [Obsolete("use ExtractTerms instead")]
 		public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();

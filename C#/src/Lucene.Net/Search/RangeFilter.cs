@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	/// {@link NumericRangeFilter} for numeric ranges instead.
 	/// This class will be removed in Lucene 3.0.
 	/// </deprecated>
+    [Obsolete("Use TermRangeFilter for term ranges or NumericRangeFilter for numeric ranges instead. This class will be removed in Lucene 3.0")]
 	[Serializable]
 	public class RangeFilter:MultiTermQueryWrapperFilter
 	{

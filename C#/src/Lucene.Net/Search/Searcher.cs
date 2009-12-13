@@ -119,6 +119,7 @@ namespace Lucene.Net.Search
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		/// <deprecated> use {@link #Search(Query, Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Search(Query, Collector) instead.")]
 		public virtual void  Search(Query query, HitCollector results)
 		{
 			Search(CreateWeight(query), null, new HitCollectorWrapper(results));
@@ -162,6 +163,7 @@ namespace Lucene.Net.Search
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Search(Query, Filter, Collector) instead.")]
 		public virtual void  Search(Query query, Filter filter, HitCollector results)
 		{
 			Search(CreateWeight(query), filter, new HitCollectorWrapper(results));
@@ -270,6 +272,7 @@ namespace Lucene.Net.Search
 		*/
 		/// <deprecated> use {@link #Search(Weight, Filter, Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Search(Weight, Filter, Collector) instead.")]
 		public virtual void  Search(Weight weight, Filter filter, HitCollector results)
 		{
 			Search(weight, filter, new HitCollectorWrapper(results));

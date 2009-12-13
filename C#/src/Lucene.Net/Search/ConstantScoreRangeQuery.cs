@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 	/// </deprecated>
 	/// <version>  $Id: ConstantScoreRangeQuery.java 797694 2009-07-25 00:03:33Z mikemccand $
 	/// </version>
+    [Obsolete("Use TermRangeQuery for term ranges or NumericRangeQuery for numeric ranges instead. This class will be removed in Lucene 3.0.")]
 	[Serializable]
 	public class ConstantScoreRangeQuery:TermRangeQuery
 	{

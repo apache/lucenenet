@@ -46,6 +46,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <deprecated> Use {@link #ENGLISH_STOP_WORDS_SET} instead 
 		/// </deprecated>
+        [Obsolete("Use ENGLISH_STOP_WORDS_SET instead ")]
 		public static readonly System.String[] ENGLISH_STOP_WORDS = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
 		
 		/// <summary>An unmodifiable set containing some common English words that are not usually useful
@@ -58,6 +59,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <deprecated> Use {@link #StopAnalyzer(Version)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version) instead")]
 		public StopAnalyzer()
 		{
 			stopWords = ENGLISH_STOP_WORDS_SET;
@@ -81,6 +83,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopAnalyzer(Version)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version) instead")]
 		public StopAnalyzer(bool enablePositionIncrements)
 		{
 			stopWords = ENGLISH_STOP_WORDS_SET;
@@ -91,6 +94,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, Set) instead")]
 		public StopAnalyzer(System.Collections.Hashtable stopWords)
 		{
 			this.stopWords = stopWords;
@@ -114,6 +118,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, Set) instead")]
 		public StopAnalyzer(System.Collections.Hashtable stopWords, bool enablePositionIncrements)
 		{
 			this.stopWords = stopWords;
@@ -126,6 +131,7 @@ namespace Lucene.Net.Analysis
 		/// </deprecated>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Set, boolean) or StopAnalyzer(Version, Set) instead ")]
 		public StopAnalyzer(System.String[] stopWords)
 		{
 			this.stopWords = StopFilter.MakeStopSet(stopWords);
@@ -141,6 +147,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, Set) instead")]
 		public StopAnalyzer(System.String[] stopWords, bool enablePositionIncrements)
 		{
 			this.stopWords = StopFilter.MakeStopSet(stopWords);
@@ -153,6 +160,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, File)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, File) instead")]
 		public StopAnalyzer(System.IO.FileInfo stopwordsFile)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
@@ -170,6 +178,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, File)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, File) instead")]
 		public StopAnalyzer(System.IO.FileInfo stopwordsFile, bool enablePositionIncrements)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwordsFile);
@@ -198,6 +207,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Reader)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, Reader) instead")]
 		public StopAnalyzer(System.IO.TextReader stopwords)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwords);
@@ -215,6 +225,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Reader)} instead
 		/// </deprecated>
+        [Obsolete("Use StopAnalyzer(Version, Reader) instead")]
 		public StopAnalyzer(System.IO.TextReader stopwords, bool enablePositionIncrements)
 		{
 			stopWords = WordlistLoader.GetWordSet(stopwords);

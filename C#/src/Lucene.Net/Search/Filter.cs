@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
 		/// </deprecated>
+        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public virtual System.Collections.BitArray Bits(IndexReader reader)
 		{
 			throw new System.NotSupportedException();

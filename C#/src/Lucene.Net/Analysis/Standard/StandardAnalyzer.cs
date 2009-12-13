@@ -97,6 +97,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> Use {@link #STOP_WORDS_SET} instead 
 		/// </deprecated>
+        [Obsolete("Use STOP_WORDS_SET instead ")]
 		public static readonly System.String[] STOP_WORDS;
 		
 		/// <summary>An unmodifiable set containing some common English words that are usually not
@@ -109,6 +110,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> Use {@link #StandardAnalyzer(Version)} instead. 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version) instead")]
 		public StandardAnalyzer():this(Version.LUCENE_24, STOP_WORDS_SET)
 		{
 		}
@@ -127,6 +129,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)}
 		/// instead 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
 		public StandardAnalyzer(System.Collections.Hashtable stopWords):this(Version.LUCENE_24, stopWords)
 		{
 		}
@@ -146,6 +149,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>Builds an analyzer with the given stop words.</summary>
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)} instead 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
 		public StandardAnalyzer(System.String[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
 		{
 		}
@@ -156,6 +160,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, File)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, File) instead")]
 		public StandardAnalyzer(System.IO.FileInfo stopwords):this(Version.LUCENE_24, stopwords)
 		{
 		}
@@ -180,6 +185,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Reader)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Reader) instead")]
 		public StandardAnalyzer(System.IO.TextReader stopwords):this(Version.LUCENE_24, stopwords)
 		{
 		}
@@ -340,6 +346,7 @@ namespace Lucene.Net.Analysis.Standard
 		
 		/// <deprecated> Use {@link #tokenStream} instead 
 		/// </deprecated>
+        [Obsolete("Use TokenStream instead")]
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			if (overridesTokenStreamMethod)

@@ -297,6 +297,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>.</summary>
 		/// <deprecated> use {@link #setTokenStream} 
 		/// </deprecated>
+        [Obsolete("use SetTokenStream ")]
 		public void  SetValue(TokenStream value_Renamed)
 		{
 			if (isBinary)

@@ -42,6 +42,7 @@ namespace Lucene.Net.Search.Spans
 		/// </deprecated>
 		/// <seealso cref="Query.ExtractTerms(Set)">
 		/// </seealso>
+        [Obsolete("use ExtractTerms instead")]
 		public abstract System.Collections.ICollection GetTerms();
 		
 		public override Weight CreateWeight(Searcher searcher)

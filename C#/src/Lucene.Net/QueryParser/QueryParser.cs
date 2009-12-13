@@ -192,6 +192,7 @@ namespace Lucene.Net.QueryParsers
 		/// </param>
 		/// <deprecated> Use {@link #QueryParser(Version, String, Analyzer)} instead
 		/// </deprecated>
+        [Obsolete("Use QueryParser(Version, String, Analyzer) instead")]
 		public QueryParser(System.String f, Analyzer a):this(Version.LUCENE_24, f, a)
 		{
 		}
@@ -542,6 +543,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <deprecated> use {@link #AddClause(List, int, int, Query)} instead.
 		/// </deprecated>
+        [Obsolete("use AddClause(List, int, int, Query) instead.")]
 		protected internal virtual void  AddClause(System.Collections.ArrayList clauses, int conj, int mods, Query q)
 		{
 			AddClause((System.Collections.IList) clauses, conj, mods, q);
@@ -1050,6 +1052,7 @@ namespace Lucene.Net.QueryParsers
 		/// </exception>
 		/// <deprecated> use {@link #GetBooleanQuery(List)} instead
 		/// </deprecated>
+        [Obsolete("use GetBooleanQuery(List) instead")]
 		protected internal virtual Query GetBooleanQuery(System.Collections.ArrayList clauses)
 		{
 			return GetBooleanQuery((System.Collections.IList) clauses, false);
@@ -1094,6 +1097,7 @@ namespace Lucene.Net.QueryParsers
 		/// </exception>
 		/// <deprecated> use {@link #GetBooleanQuery(List, boolean)} instead
 		/// </deprecated>
+        [Obsolete("use GetBooleanQuery(List, bool) instead")]
 		protected internal virtual Query GetBooleanQuery(System.Collections.ArrayList clauses, bool disableCoord)
 		{
 			return GetBooleanQuery((System.Collections.IList) clauses, disableCoord);

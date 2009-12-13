@@ -72,6 +72,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #DocID()} instead. 
 			/// </deprecated>
+            [Obsolete("use DocID() instead.")]
 			public override int Doc()
 			{
 				return lastInt;
@@ -84,6 +85,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #NextDoc()} instead. 
 			/// </deprecated>
+            [Obsolete("use NextDoc() instead.")]
 			public override bool Next()
 			{
 				return NextDoc() != NO_MORE_DOCS;
@@ -105,6 +107,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #Advance(int)} instead. 
 			/// </deprecated>
+            [Obsolete("use Advance(int) instead.")]
 			public override bool SkipTo(int docNr)
 			{
 				return Advance(docNr) != NO_MORE_DOCS;
