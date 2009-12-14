@@ -91,22 +91,27 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static readonly AttributeFactory DEFAULT_TOKEN_WRAPPER_ATTRIBUTE_FACTORY = new TokenWrapperAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private TokenWrapper tokenWrapper;
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static bool onlyUseNewAPI = false;
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private MethodSupport supportedMethods;
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private sealed class MethodSupport
 		{
 			internal bool hasIncrementToken;
@@ -139,6 +144,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static readonly System.Collections.Hashtable knownMethodSupport = new System.Collections.Hashtable();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
@@ -155,6 +161,7 @@ namespace Lucene.Net.Analysis
 
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static MethodSupport GetSupportedMethods(System.Type clazz)
 		{
 			MethodSupport supportedMethods;
@@ -171,6 +178,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private sealed class TokenWrapperAttributeFactory:AttributeFactory
 		{
 			private AttributeFactory delegate_Renamed;
@@ -231,6 +239,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private TokenWrapper InitTokenWrapper(AttributeSource input)
 		{
 			if (onlyUseNewAPI)
@@ -260,6 +269,7 @@ namespace Lucene.Net.Analysis
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private void  Check()
 		{
 			if (onlyUseNewAPI && !supportedMethods.hasIncrementToken)
@@ -299,6 +309,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> This setting will no longer be needed in Lucene 3.0 as the old
 		/// API will be removed.
 		/// </deprecated>
+        [Obsolete("This setting will no longer be needed in Lucene 3.0 as the old API will be removed.")]
 		public static void  SetOnlyUseNewAPI(bool onlyUseNewAPI)
 		{
 			TokenStream.onlyUseNewAPI = onlyUseNewAPI;
@@ -312,6 +323,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> This setting will no longer be needed in Lucene 3.0 as
 		/// the old API will be removed.
 		/// </deprecated>
+        [Obsolete("This setting will no longer be needed in Lucene 3.0 as the old API will be removed.")]
 		public static bool GetOnlyUseNewAPI()
 		{
 			return onlyUseNewAPI;
@@ -414,6 +426,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> The new {@link #IncrementToken()} and {@link AttributeSource}
 		/// APIs should be used instead.
 		/// </deprecated>
+        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
 		public virtual Token Next(Token reusableToken)
 		{
 			System.Diagnostics.Debug.Assert(reusableToken != null);
@@ -441,6 +454,7 @@ namespace Lucene.Net.Analysis
 		/// {@link #Next(Token)} or using the new {@link #IncrementToken()}
 		/// method with the new {@link AttributeSource} API.
 		/// </deprecated>
+        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling {@link #Next(Token)} or using the new IncrementToken() method with the new AttributeSource API.")]
 		public virtual Token Next()
 		{
 			if (tokenWrapper == null)

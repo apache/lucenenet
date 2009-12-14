@@ -159,10 +159,12 @@ namespace Lucene.Net.Documents
 		
 		/// <deprecated> Renamed to {@link AbstractField#setOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to AbstractField.SetOmitTermFreqAndPositions")]
 		void  SetOmitTf(bool omitTf);
 		
 		/// <deprecated> Renamed to {@link AbstractField#getOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to AbstractField.GetOmitTermFreqAndPositions")]
 		bool GetOmitTf();
 		
 		/// <summary> Indicates whether a Field is Lazy or not.  The semantics of Lazy loading are such that if a Field is lazily loaded, retrieving

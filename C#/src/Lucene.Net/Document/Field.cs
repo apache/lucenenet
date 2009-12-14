@@ -90,6 +90,7 @@ namespace Lucene.Net.Documents
 			
 			/// <deprecated> this has been renamed to {@link #ANALYZED} 
 			/// </deprecated>
+            [Obsolete("this has been renamed to ANALYZED")]
 			public static readonly Index TOKENIZED;
 			
 			/// <summary>Index the field's value without using an Analyzer, so it can be searched.
@@ -100,6 +101,7 @@ namespace Lucene.Net.Documents
 			
 			/// <deprecated> This has been renamed to {@link #NOT_ANALYZED} 
 			/// </deprecated>
+            [Obsolete("This has been renamed to NOT_ANALYZED")]
 			public static readonly Index UN_TOKENIZED;
 			
 			/// <summary>Expert: Index the field's value without an Analyzer,
@@ -122,6 +124,7 @@ namespace Lucene.Net.Documents
 			/// <deprecated> This has been renamed to
 			/// {@link #NOT_ANALYZED_NO_NORMS} 
 			/// </deprecated>
+            [Obsolete("This has been renamed to NOT_ANALYZED_NO_NORMS")]
 			public static readonly Index NO_NORMS;
 			
 			/// <summary>Expert: Index the tokens produced by running the
@@ -212,6 +215,7 @@ namespace Lucene.Net.Documents
 		/// AbstractField#GetBinaryValue()} instead, which simply
 		/// returns the byte[].
 		/// </deprecated>
+        [Obsolete("This method must allocate a new byte[] if the AbstractField.GetBinaryOffset() is non-zero or AbstractField.GetBinaryLength() is not the full length of the byte[]. Please use AbstractField.GetBinaryValue() instead, which simply returns the byte[].")]
 		public override byte[] BinaryValue()
 		{
 			if (!isBinary)

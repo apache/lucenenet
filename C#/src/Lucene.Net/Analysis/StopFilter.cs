@@ -265,6 +265,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
+        [Obsolete("Please specify this when you create the StopFilter")]
 		public static bool GetEnablePositionIncrementsDefault()
 		{
 			return ENABLE_POSITION_INCREMENTS_DEFAULT;
@@ -303,6 +304,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
+        [Obsolete("Please specify this when you create the StopFilter")]
 		public static void  SetEnablePositionIncrementsDefault(bool defaultValue)
 		{
 			ENABLE_POSITION_INCREMENTS_DEFAULT = defaultValue;

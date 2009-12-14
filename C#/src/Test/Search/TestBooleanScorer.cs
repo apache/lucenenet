@@ -66,6 +66,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> delete in 3.0. 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override int Doc()
 			{
 				return 3000;
@@ -76,6 +77,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool Next()
 			{
 				return NextDoc() != NO_MORE_DOCS;
@@ -88,6 +90,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool SkipTo(int target)
 			{
 				return Advance(target) != NO_MORE_DOCS;

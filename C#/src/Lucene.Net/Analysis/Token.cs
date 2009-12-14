@@ -144,6 +144,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> We will remove this when we remove the
 		/// deprecated APIs 
 		/// </deprecated>
+        [Obsolete("We will remove this when we remove the deprecated APIs")]
 		private System.String termText;
 		
 		/// <summary> Characters for the term text.</summary>
@@ -153,30 +154,35 @@ namespace Lucene.Net.Analysis
 		/// {@link #SetTermBuffer(String)}, or
 		/// {@link #SetTermBuffer(String, int, int)}
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: TermBuffer(), SetTermBuffer(char[], int, int), SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		internal char[] termBuffer;
 		
 		/// <summary> Length of term text in the buffer.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #TermLength()}, or @{link setTermLength(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: TermLength(), or setTermLength(int)")]
 		internal int termLength;
 		
 		/// <summary> Start in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #StartOffset()}, or @{link setStartOffset(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: StartOffset(), or SetStartOffset(int).")]
 		internal int startOffset;
 		
 		/// <summary> End in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #EndOffset()}, or @{link setEndOffset(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: EndOffset(), or SetEndOffset(int).")]
 		internal int endOffset;
 		
 		/// <summary> The lexical type of the token.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #Type()}, or @{link setType(String)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: Type(), or SetType(String).")]
 		internal System.String type = DEFAULT_TYPE;
 		
 		private int flags;
@@ -184,11 +190,13 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #GetPayload()}, or @{link setPayload(Payload)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: GetPayload(), or SetPayload(Payload).")]
 		internal Payload payload;
 		
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #GetPositionIncrement()}, or @{link setPositionIncrement(String)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: GetPositionIncrement(), or SetPositionIncrement(String).")]
 		internal int positionIncrement = 1;
 		
 		/// <summary>Constructs a Token will null text. </summary>

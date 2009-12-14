@@ -249,6 +249,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// as ACRONYMs. It is deprecated and will be removed in the next
 		/// release.
 		/// </deprecated>
+        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs. It is deprecated and will be removed in the next release.")]
 		public static readonly int ACRONYM_DEP;
 		
 		public static readonly System.String[] TOKEN_TYPES;

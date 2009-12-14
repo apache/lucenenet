@@ -59,6 +59,7 @@ namespace Lucene.Net.Documents
 	/// This class is included for use with existing
 	/// indices and will be removed in a future release.
 	/// </deprecated>
+    [Obsolete("If you build a new index, use DateTools or NumericField instead.This class is included for use with existing indices and will be removed in a future release.")]
 	public class DateField
 	{
 		

@@ -32,6 +32,7 @@ namespace Lucene.Net.Search
 	/// </version>
 	/// <deprecated> Please use {@link Collector} instead.
 	/// </deprecated>
+    [Obsolete("Please use Collector instead.")]
 	public abstract class HitCollector
 	{
 		/// <summary>Called once for every document matching a query, with the document

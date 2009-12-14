@@ -340,6 +340,7 @@ namespace Lucene.Net.Documents
 		
 		/// <deprecated> Renamed to {@link #getOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to GetOmitTermFreqAndPositions")]
 		public virtual bool GetOmitTf()
 		{
 			return omitTermFreqAndPositions;
@@ -364,6 +365,7 @@ namespace Lucene.Net.Documents
 		
 		/// <deprecated> Renamed to {@link #setOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to SetOmitTermFreqAndPositions")]
 		public virtual void  SetOmitTf(bool omitTermFreqAndPositions)
 		{
 			this.omitTermFreqAndPositions = omitTermFreqAndPositions;

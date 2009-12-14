@@ -78,6 +78,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// as ACRONYMs. It is deprecated and will be removed in the next
 		/// release.
 		/// </deprecated>
+        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs. It is deprecated and will be removed in the next release.")]
 		public const int ACRONYM_DEP = 8;
 		
 		/// <summary>String token types that correspond to token type int constants </summary>
@@ -85,6 +86,7 @@ namespace Lucene.Net.Analysis.Standard
 		
 		/// <deprecated> Please use {@link #TOKEN_TYPES} instead 
 		/// </deprecated>
+        [Obsolete("Please use TOKEN_TYPES instead")]
 		public static readonly System.String[] tokenImage = TOKEN_TYPES;
 		
 		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
@@ -95,6 +97,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> this should be removed in the next release (3.0).
 		/// </deprecated>
+        [Obsolete("this should be removed in the next release (3.0).")]
 		private bool replaceInvalidAcronym;
 		
 		private int maxTokenLength;
@@ -296,6 +299,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next(Token reusableToken)
 		{
 			return base.Next(reusableToken);
@@ -304,6 +308,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next()
 		{
 			return base.Next();
@@ -334,6 +339,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </returns>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public virtual bool IsReplaceInvalidAcronym()
 		{
 			return replaceInvalidAcronym;
@@ -346,6 +352,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value. See https://issues.apache.org/jira/browse/LUCENE-1068")]
 		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
