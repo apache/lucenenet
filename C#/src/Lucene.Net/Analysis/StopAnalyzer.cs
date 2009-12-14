@@ -38,6 +38,7 @@ namespace Lucene.Net.Analysis
 	{
 		private System.Collections.Hashtable stopWords;
 		// @deprecated
+        [Obsolete]
 		private bool useDefaultStopPositionIncrement;
 		private bool enablePositionIncrements;
 		

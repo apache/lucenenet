@@ -31,6 +31,7 @@ namespace Lucene.Net.Analysis
 	{
 		
 		// deprecated
+        [Obsolete]
 		private static bool ENABLE_POSITION_INCREMENTS_DEFAULT = false;
 		
 		private CharArraySet stopWords;

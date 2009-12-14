@@ -176,6 +176,7 @@ namespace Lucene.Net.Store
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
+        [Obsolete]
         private static readonly System.Type IMPL = typeof(Lucene.Net.Store.SimpleFSDirectory);
 		
 		private static System.Security.Cryptography.HashAlgorithm DIGESTER;

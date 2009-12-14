@@ -58,6 +58,7 @@ namespace Lucene.Net.Analysis.Standard
 		private bool enableStopPositionIncrements;
 		
 		// @deprecated
+        [Obsolete]
 		private bool useDefaultStopPositionIncrements;
 		
 		/// <summary> </summary>

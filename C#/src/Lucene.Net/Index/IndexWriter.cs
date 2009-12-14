@@ -6657,6 +6657,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// deprecated
+        [Obsolete]
 		private bool allowMinus1Position;
 		
 		/// <summary>Deprecated: emulates IndexWriter's buggy behavior when
@@ -6670,6 +6671,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// deprecated
+        [Obsolete]
 		internal virtual bool GetAllowMinus1Position()
 		{
 			return allowMinus1Position;

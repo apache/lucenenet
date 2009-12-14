@@ -105,6 +105,7 @@ namespace Lucene.Net.Analysis
 		/// back-compat of classes that subclass a core analyzer
 		/// and override tokenStream but not reusableTokenStream 
 		/// </deprecated>
+        [Obsolete("This is only present to preserve back-compat of classes that subclass a core analyzer and override tokenStream but not reusableTokenStream ")]
 		protected internal virtual void  SetOverridesTokenStreamMethod(System.Type baseClass)
 		{
 			
