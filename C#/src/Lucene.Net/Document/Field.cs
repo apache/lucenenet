@@ -238,14 +238,14 @@ namespace Lucene.Net.Documents
 		}
 		
 		
-		/// <summary><p>Expert: change the value of this field.  This can
+		/// <summary><p/>Expert: change the value of this field.  This can
 		/// be used during indexing to re-use a single Field
 		/// instance to improve indexing speed by avoiding GC cost
 		/// of new'ing and reclaiming Field instances.  Typically
 		/// a single {@link Document} instance is re-used as
 		/// well.  This helps most on small documents.</p>
 		/// 
-		/// <p>Each Field instance should only be used once
+		/// <p/>Each Field instance should only be used once
 		/// within a single {@link Document} instance.  See <a
 		/// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
 		/// for details.</p> 

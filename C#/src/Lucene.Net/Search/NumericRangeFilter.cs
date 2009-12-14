@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// numeric values using {@link NumericField} (expert: {@link
 	/// NumericTokenStream}).
 	/// 
-	/// <p>You create a new NumericRangeFilter with the static
+	/// <p/>You create a new NumericRangeFilter with the static
 	/// factory methods, eg:
 	/// 
 	/// <pre>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 	/// See {@link NumericRangeQuery} for details on how Lucene
 	/// indexes and searches numeric valued fields.
 	/// 
-	/// <p><font color="red"><b>NOTE:</b> This API is experimental and
+	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next
 	/// release.</font>
 	/// 

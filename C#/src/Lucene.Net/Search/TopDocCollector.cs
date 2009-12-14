@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// documents, returning them as a {@link TopDocs}.  This is used by {@link
 	/// IndexSearcher} to implement {@link TopDocs}-based search.
 	/// 
-	/// <p>This may be extended, overriding the collect method to, e.g.,
+	/// <p/>This may be extended, overriding the collect method to, e.g.,
 	/// conditionally invoke <code>super()</code> in order to filter which
 	/// documents are collected.
 	/// 

@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// <summary> Constrains search results to only match those which also match a provided
 	/// query.  
 	/// 
-	/// <p> This could be used, for example, with a {@link TermRangeQuery} on a suitably
+	/// <p/> This could be used, for example, with a {@link TermRangeQuery} on a suitably
 	/// formatted date field to implement date filtering.  One could re-use a single
 	/// QueryFilter that matches, e.g., only documents modified within the last
 	/// week.  The QueryFilter and TermRangeQuery would only need to be reconstructed

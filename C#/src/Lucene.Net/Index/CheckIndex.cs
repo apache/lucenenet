@@ -30,10 +30,10 @@ namespace Lucene.Net.Index
 	/// write a new segments file that removes reference to
 	/// problematic segments.
 	/// 
-	/// <p>As this tool checks every byte in the index, on a large
+	/// <p/>As this tool checks every byte in the index, on a large
 	/// index it can take quite a long time to run.
 	/// 
-	/// <p><b>WARNING</b>: this tool and API is new and
+	/// <p/><b>WARNING</b>: this tool and API is new and
 	/// experimental and is subject to suddenly change in the
 	/// next release.  Please make a complete backup of your
 	/// index before using this to fix your index!
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returned from {@link #CheckIndex()} detailing the health and status of the index.
 		/// 
-		/// <p><b>WARNING</b>: this API is new and experimental and is
+		/// <p/><b>WARNING</b>: this API is new and experimental and is
 		/// subject to suddenly change in the next release.
 		/// 
 		/// </summary>
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 			/// <summary>Holds the status of each segment in the index.
 			/// See {@link #segmentInfos}.
 			/// 
-			/// <p><b>WARNING</b>: this API is new and experimental and is
+			/// <p/><b>WARNING</b>: this API is new and experimental and is
 			/// subject to suddenly change in the next release.
 			/// </summary>
 			public class SegmentInfoStatus
@@ -324,10 +324,10 @@ namespace Lucene.Net.Index
 		/// <summary>Returns a {@link Status} instance detailing
 		/// the state of the index.
 		/// 
-		/// <p>As this method checks every byte in the index, on a large
+		/// <p/>As this method checks every byte in the index, on a large
 		/// index it can take quite a long time to run.
 		/// 
-		/// <p><b>WARNING</b>: make sure
+		/// <p/><b>WARNING</b>: make sure
 		/// you only call this when the index is not opened by any
 		/// writer. 
 		/// </summary>
@@ -342,11 +342,11 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="onlySegments">list of specific segment names to check
 		/// 
-		/// <p>As this method checks every byte in the specified
+		/// <p/>As this method checks every byte in the specified
 		/// segments, on a large index it can take quite a long
 		/// time to run.
 		/// 
-		/// <p><b>WARNING</b>: make sure
+		/// <p/><b>WARNING</b>: make sure
 		/// you only call this when the index is not opened by any
 		/// writer. 
 		/// </param>
@@ -879,12 +879,12 @@ namespace Lucene.Net.Index
 		/// you must separately open an {@link IndexWriter}, which
 		/// deletes unreferenced files when it's created.
 		/// 
-		/// <p><b>WARNING</b>: this writes a
+		/// <p/><b>WARNING</b>: this writes a
 		/// new segments file into the index, effectively removing
 		/// all documents in broken segments from the index.
 		/// BE CAREFUL.
 		/// 
-		/// <p><b>WARNING</b>: Make sure you only call this when the
+		/// <p/><b>WARNING</b>: Make sure you only call this when the
 		/// index is not opened  by any writer. 
 		/// </summary>
 		public virtual void  FixIndex(Status result)
@@ -909,7 +909,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Command-line interface to check and fix an index.
-		/// <p>
+		/// <p/>
 		/// Run it like this:
 		/// <pre>
 		/// java -ea:Lucene.Net... Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-segment X] [-segment Y]
@@ -922,16 +922,16 @@ namespace Lucene.Net.Index
 		/// -segment _a</code>.  You can't use this with the -fix
 		/// option.
 		/// </ul>
-		/// <p><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
+		/// <p/><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
 		/// documents (perhaps many) to be permanently removed from the index.  Always make
 		/// a backup copy of your index before running this!  Do not run this tool on an index
 		/// that is actively being written to.  You have been warned!
-		/// <p>                Run without -fix, this tool will open the index, report version information
+		/// <p/>                Run without -fix, this tool will open the index, report version information
 		/// and report any exceptions it hits and what action it would take if -fix were
 		/// specified.  With -fix, this tool will remove any segments that have issues and
 		/// write a new segments_N file.  This means all documents contained in the affected
 		/// segments will be removed.
-		/// <p>
+		/// <p/>
 		/// This tool exits with exit code 1 if the index cannot be opened or has any
 		/// corruption, else 0.
 		/// </summary>

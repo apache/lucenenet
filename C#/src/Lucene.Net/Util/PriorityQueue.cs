@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 	/// least element can always be found in constant time.  Put()'s and pop()'s
 	/// require log(size) time.
 	/// 
-	/// <p><b>NOTE</b>: This class pre-allocates a full array of
+	/// <p/><b>NOTE</b>: This class pre-allocates a full array of
 	/// length <code>maxSize+1</code>, in {@link #initialize}.
 	/// 
 	/// </summary>

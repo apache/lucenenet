@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// a Wildcard term should not start with one of the wildcards <code>*</code> or
 	/// <code>?</code>.
 	/// 
-	/// <p>This query uses the {@link
+	/// <p/>This query uses the {@link
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
 	/// rewrite method.
 	/// 

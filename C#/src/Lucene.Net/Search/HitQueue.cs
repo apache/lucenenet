@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		/// }
 		/// </pre>
 		/// 
-		/// <p><b>NOTE</b>: This class pre-allocate a full array of
+		/// <p/><b>NOTE</b>: This class pre-allocate a full array of
 		/// length <code>size</code>.
 		/// 
 		/// </summary>

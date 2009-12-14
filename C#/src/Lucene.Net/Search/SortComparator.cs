@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Abstract base class for sorting hits returned by a Query.
 	/// 
-	/// <p>
+	/// <p/>
 	/// This class should only be used if the other SortField types (SCORE, DOC,
 	/// STRING, INT, FLOAT) do not provide an adequate sorting. It maintains an
 	/// internal cache of values which could be quite large. The cache is an array of
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	/// instance on every call to the server, so hashCode/equals is very important in
 	/// that situation.
 	/// 
-	/// <p>
+	/// <p/>
 	/// Created: Apr 21, 2004 5:08:38 PM
 	/// 
 	/// 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Returns an object which, when sorted according to natural order,
 		/// will order the Term values in the correct order.
-		/// <p>For example, if the Terms contained integer values, this method
+		/// <p/>For example, if the Terms contained integer values, this method
 		/// would return <code>new Integer(termtext)</code>.  Note that this
 		/// might not always be the most efficient implementation - for this
 		/// particular example, a better implementation might be to make a

@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
 	/// mmap for reading, and {@link
 	/// SimpleFSDirectory.SimpleFSIndexOutput} for writing.
 	/// 
-	/// <p><b>NOTE</b>: memory mapping uses up a portion of the
+	/// <p/><b>NOTE</b>: memory mapping uses up a portion of the
 	/// virtual memory address space in your process equal to the
 	/// size of the file being mapped.  Before using this class,
 	/// be sure your have plenty of virtual address space, e.g. by
@@ -37,13 +37,13 @@ namespace Lucene.Net.Store
 	/// address space. If you get an OutOfMemoryException, it is recommened
 	/// to reduce the chunk size, until it works.
 	/// 
-	/// <p>Due to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
+	/// <p/>Due to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
 	/// this bug</a> in Sun's JRE, MMapDirectory's {@link IndexInput#close}
 	/// is unable to close the underlying OS file handle.  Only when GC
 	/// finally collects the underlying objects, which could be quite
 	/// some time later, will the file handle be closed.
 	/// 
-	/// <p>This will consume additional transient disk usage: on Windows,
+	/// <p/>This will consume additional transient disk usage: on Windows,
 	/// attempts to delete or overwrite the files will result in an
 	/// exception; on other platforms, which typically have a &quot;delete on
 	/// last close&quot; semantics, while such operations will succeed, the bytes
@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
 	/// and you don't rely on overwriting files on Windows) but it's still
 	/// an important limitation to be aware of.
 	/// 
-	/// <p>This class supplies the workaround mentioned in the bug report
+	/// <p/>This class supplies the workaround mentioned in the bug report
 	/// (disabled by default, see {@link #setUseUnmap}), which may fail on
 	/// non-Sun JVMs. It forcefully unmaps the buffer on close by using
 	/// an undocumented internal cleanup functionality.
@@ -177,7 +177,7 @@ namespace Lucene.Net.Store
 		/// mentioned in the bug report. This hack may fail on non-Sun JVMs.
 		/// It forcefully unmaps the buffer on close by using
 		/// an undocumented internal cleanup functionality.
-		/// <p><b>NOTE:</b> Enabling this is completely unsupported
+		/// <p/><b>NOTE:</b> Enabling this is completely unsupported
 		/// by Java and may lead to JVM crashs if <code>IndexInput</code>
 		/// is closed while another thread is still accessing it (SIGSEGV).
 		/// </summary>

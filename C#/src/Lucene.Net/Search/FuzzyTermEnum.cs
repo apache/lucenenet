@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary>Subclass of FilteredTermEnum for enumerating all terms that are similiar
 	/// to the specified filter term.
 	/// 
-	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
 	/// </summary>
 	public sealed class FuzzyTermEnum:FilteredTermEnum
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		private int[] maxDistances = new int[TYPICAL_LONGEST_WORD_IN_INDEX];
 		
 		/// <summary> Creates a FuzzyTermEnum with an empty prefix and a minSimilarity of 0.5f.
-		/// <p>
+		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists. 
 		/// 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Creates a FuzzyTermEnum with an empty prefix.
-		/// <p>
+		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists. 
 		/// 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 		/// <summary> Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
 		/// length <code>prefixLength</code> with <code>term</code> and which have a fuzzy similarity &gt;
 		/// <code>minSimilarity</code>.
-		/// <p>
+		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists. 
 		/// 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 			return tmpArray;
 		}
 		
-		/// <summary> <p>Similarity returns a number that is 1.0f or less (including negative numbers)
+		/// <summary> <p/>Similarity returns a number that is 1.0f or less (including negative numbers)
 		/// based on how similar the Term is compared to a target term.  It returns
 		/// exactly 0.0f when
 		/// <pre>
@@ -196,12 +196,12 @@ namespace Lucene.Net.Search
 		/// prefix that are identical and editDistance is the Levenshtein distance for
 		/// the two words.</p>
 		/// 
-		/// <p>Embedded within this algorithm is a fail-fast Levenshtein distance
+		/// <p/>Embedded within this algorithm is a fail-fast Levenshtein distance
 		/// algorithm.  The fail-fast algorithm differs from the standard Levenshtein
 		/// distance algorithm in that it is aborted if it is discovered that the
 		/// mimimum distance between the words is greater than some threshold.
 		/// 
-		/// <p>To calculate the maximum distance threshold we use the following formula:
+		/// <p/>To calculate the maximum distance threshold we use the following formula:
 		/// <pre>
 		/// (1 - minimumSimilarity) * length</pre>
 		/// where length is the shortest term including any prefix that is not part of the
@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
 		/// return (similarity > minimumSimilarity);</pre>
 		/// where distance is the Levenshtein distance for the two words.
 		/// </p>
-		/// <p>Levenshtein distance (also known as edit distance) is a measure of similiarity
+		/// <p/>Levenshtein distance (also known as edit distance) is a measure of similiarity
 		/// between two strings where the distance is measured as the number of character
 		/// deletions, insertions or substitutions required to transform one string to
 		/// the other string.

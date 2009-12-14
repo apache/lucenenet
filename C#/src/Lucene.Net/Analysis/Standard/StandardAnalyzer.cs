@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// words.
 	/// 
 	/// <a name="version"/>
-	/// <p>
+	/// <p/>
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StandardAnalyzer:
 	/// <ul>

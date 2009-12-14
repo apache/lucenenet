@@ -150,17 +150,17 @@ namespace Lucene.Net.Search
 		/// <summary> Specifies a minimum number of the optional BooleanClauses
 		/// which must be satisfied.
 		/// 
-		/// <p>
+		/// <p/>
 		/// By default no optional clauses are necessary for a match
 		/// (unless there are no required clauses).  If this method is used,
 		/// then the specified number of clauses is required.
 		/// </p>
-		/// <p>
+		/// <p/>
 		/// Use of this method is totally independent of specifying that
 		/// any specific clauses are required (or prohibited).  This number will
 		/// only be compared against the number of matching optional clauses.
 		/// </p>
-		/// <p>
+		/// <p/>
 		/// EXPERT NOTE: Using this method may force collecting docs in order,
 		/// regardless of whether setAllowDocsOutOfOrder(true) has been called.
 		/// </p>
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: the Weight for BooleanQuery, used to
 		/// normalize, score and explain these queries.
 		/// 
-		/// <p>NOTE: this API and implementation is subject to
+		/// <p/>NOTE: this API and implementation is subject to
 		/// change suddenly in the next release.</p>
 		/// </summary>
 		[Serializable]
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Expert: Indicates whether hit docs may be collected out of docid order.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Background: although the contract of the Scorer class requires that
 		/// documents be iterated in order of doc id, this was not true in early
 		/// versions of Lucene. Many pieces of functionality in the current Lucene code
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search
 		/// queries.)
 		/// </p>
 		/// 
-		/// <p>
+		/// <p/>
 		/// Specifics: By setting this option to true, docid N might be scored for a
 		/// single segment before docid N-1. Across multiple segments, docs may be
 		/// scored out of order regardless of this setting - it only applies to scoring

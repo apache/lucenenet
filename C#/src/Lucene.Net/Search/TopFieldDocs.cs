@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Returned by low-level sorted search implementations.
 	/// 
-	/// <p>Created: Feb 12, 2004 8:58:46 AM 
+	/// <p/>Created: Feb 12, 2004 8:58:46 AM 
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

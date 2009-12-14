@@ -35,31 +35,31 @@ namespace Lucene.Net.Analysis
 	/// <summary>A Token is an occurrence of a term from the text of a field.  It consists of
 	/// a term's text, the start and end offset of the term in the text of the field,
 	/// and a type string.
-	/// <p>
+	/// <p/>
 	/// The start and end offsets permit applications to re-associate a token with
 	/// its source text, e.g., to display highlighted query terms in a document
 	/// browser, or to show matching text fragments in a <abbr
 	/// title="KeyWord In Context">KWIC</abbr> display, etc.
-	/// <p>
+	/// <p/>
 	/// The type is a string, assigned by a lexical analyzer
 	/// (a.k.a. tokenizer), naming the lexical or syntactic class that the token
 	/// belongs to.  For example an end of sentence marker token might be implemented
 	/// with type "eos".  The default token type is "word".  
-	/// <p>
+	/// <p/>
 	/// A Token can optionally have metadata (a.k.a. Payload) in the form of a variable
 	/// length byte array. Use {@link TermPositions#GetPayloadLength()} and 
 	/// {@link TermPositions#GetPayload(byte[], int)} to retrieve the payloads from the index.
 	/// </summary>
 	/// <summary><br><br>
 	/// </summary>
-	/// <summary><p><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
+	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
 	/// that are part of core Lucene and can be found in the {@code tokenattributes} subpackage.
 	/// Even though it is not necessary to use Token anymore, with the new TokenStream API it can
 	/// be used as convenience class that implements all {@link Attribute}s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
 	/// </summary>
 	/// <summary><br><br>
-	/// <p><b>NOTE:</b> As of 2.3, Token stores the term text
+	/// <p/><b>NOTE:</b> As of 2.3, Token stores the term text
 	/// internally as a malleable char[] termBuffer instead of
 	/// String termText.  The indexing code and core tokenizers
 	/// have been changed to re-use a single Token instance, changing
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis
 	/// associated performance cost has been added (below).  The
 	/// {@link #TermText()} method has been deprecated.</p>
 	/// </summary>
-	/// <summary><p>Tokenizers and TokenFilters should try to re-use a Token instance when
+	/// <summary><p/>Tokenizers and TokenFilters should try to re-use a Token instance when
 	/// possible for best performance, by implementing the
 	/// {@link TokenStream#IncrementToken()} API.
 	/// Failing that, to create a new Token you should first use
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
 	/// set the length of the term text.  See <a target="_top"
 	/// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
 	/// for details.</p>
-	/// <p>Typical Token reuse patterns:
+	/// <p/>Typical Token reuse patterns:
 	/// <ul>
 	/// <li> Copying text from a string (type is reset to {@link #DEFAULT_TYPE} if not
 	/// specified):<br/>
@@ -335,9 +335,9 @@ namespace Lucene.Net.Analysis
 		/// relative to the previous Token in a {@link TokenStream}, used in phrase
 		/// searching.
 		/// 
-		/// <p>The default value is one.
+		/// <p/>The default value is one.
 		/// 
-		/// <p>Some common uses for this are:<ul>
+		/// <p/>Some common uses for this are:<ul>
 		/// 
 		/// <li>Set it to zero to put multiple terms in the same position.  This is
 		/// useful if, e.g., a word has multiple stems.  Searches for phrases

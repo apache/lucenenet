@@ -25,10 +25,10 @@ namespace Lucene.Net.Store
 	/// multiple threads to read from the same file without
 	/// synchronizing.
 	/// 
-	/// <p>This class only uses FileChannel when reading; writing
+	/// <p/>This class only uses FileChannel when reading; writing
 	/// is achieved with {@link SimpleFSDirectory.SimpleFSIndexOutput}.
 	/// 
-	/// <p><b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug
+	/// <p/><b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug
 	/// in how FileChannel.read is implemented in Sun's JRE.
 	/// Inside of the implementation the position is apparently
 	/// synchronized.  See <a

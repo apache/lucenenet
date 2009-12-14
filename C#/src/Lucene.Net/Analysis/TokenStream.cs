@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary> A <code>TokenStream</code> enumerates the sequence of tokens, either from
 	/// {@link Field}s of a {@link Document} or from query text.
-	/// <p>
+	/// <p/>
 	/// This is an abstract class. Concrete subclasses are:
 	/// <ul>
 	/// <li>{@link Tokenizer}, a <code>TokenStream</code> whose input is a Reader; and
@@ -46,14 +46,14 @@ namespace Lucene.Net.Analysis
 	/// has moved from being {@link Token} based to {@link Attribute} based. While
 	/// {@link Token} still exists in 2.9 as a convenience class, the preferred way
 	/// to store the information of a {@link Token} is to use {@link AttributeImpl}s.
-	/// <p>
+	/// <p/>
 	/// <code>TokenStream</code> now extends {@link AttributeSource}, which provides
 	/// access to all of the token {@link Attribute}s for the <code>TokenStream</code>.
 	/// Note that only one instance per {@link AttributeImpl} is created and reused
 	/// for every token. This approach reduces object creation and allows local
 	/// caching of references to the {@link AttributeImpl}s. See
 	/// {@link #IncrementToken()} for further details.
-	/// <p>
+	/// <p/>
 	/// <b>The workflow of the new <code>TokenStream</code> API is as follows:</b>
 	/// <ol>
 	/// <li>Instantiation of <code>TokenStream</code>/{@link TokenFilter}s which add/get
@@ -72,10 +72,10 @@ namespace Lucene.Net.Analysis
 	/// the attributes must be added during instantiation. Filters and consumers are
 	/// not required to check for availability of attributes in
 	/// {@link #IncrementToken()}.
-	/// <p>
+	/// <p/>
 	/// You can find some example code for the new API in the analysis package level
 	/// Javadoc.
-	/// <p>
+	/// <p/>
 	/// Sometimes it is desirable to capture a current state of a <code>TokenStream</code>
 	/// , e. g. for buffering purposes (see {@link CachingTokenFilter},
 	/// {@link TeeSinkTokenFilter}). For this usecase
@@ -290,18 +290,18 @@ namespace Lucene.Net.Analysis
 		/// but it only works if <b>all</b> <code>TokenStream</code>s use the new API and
 		/// implement {@link #IncrementToken}. This setting can only be enabled
 		/// globally.
-		/// <P>
+		/// <p/>
 		/// This setting only affects <code>TokenStream</code>s instantiated after this
 		/// call. All <code>TokenStream</code>s already created use the other setting.
-		/// <P>
+		/// <p/>
 		/// All core {@link Analyzer}s are compatible with this setting, if you have
 		/// your own <code>TokenStream</code>s that are also compatible, you should enable
 		/// this.
-		/// <P>
+		/// <p/>
 		/// When enabled, tokenization may throw {@link UnsupportedOperationException}
 		/// s, if the whole tokenizer chain is not compatible eg one of the
 		/// <code>TokenStream</code>s does not implement the new <code>TokenStream</code> API.
-		/// <P>
+		/// <p/>
 		/// The default is <code>false</code>, so there is the fallback to the old API
 		/// available.
 		/// 

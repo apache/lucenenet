@@ -27,12 +27,12 @@ namespace Lucene.Net.Search
 	
 	/// <summary> The interface for search implementations.
 	/// 
-	/// <p>
+	/// <p/>
 	/// Searchable is the abstract network protocol for searching. Implementations
 	/// provide search over a single index, over multiple indices, and over indices
 	/// on remote servers.
 	/// 
-	/// <p>
+	/// <p/>
 	/// Queries, filters and sort criteria are designed to be compact so that they
 	/// may be efficiently passed to a remote index, with only the top-scoring hits
 	/// being returned, rather than every matching hit.
@@ -46,11 +46,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every non-zero
+		/// <p/>{@link HitCollector#Collect(int,float)} is called for every non-zero
 		/// scoring document.
 		/// <br>HitCollector-based access to remote indexes is discouraged.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
 		/// Searcher#Search(Query)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.
@@ -70,11 +70,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Lower-level search API.
 		/// 
-		/// <p>
+		/// <p/>
 		/// {@link Collector#Collect(int)} is called for every document. <br>
 		/// Collector-based access to remote indexes is discouraged.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Applications should only use this if they need <i>all</i> of the matching
 		/// documents. The high-level search API ({@link Searcher#Search(Query)}) is
 		/// usually more efficient, as it skips non-high-scoring hits.
@@ -118,9 +118,9 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Low-level search implementation.  Finds the top <code>n</code>
 		/// hits for <code>query</code>, applying <code>filter</code> if non-null.
 		/// 
-		/// <p>Called by {@link Hits}.
+		/// <p/>Called by {@link Hits}.
 		/// 
-		/// <p>Applications should usually call {@link Searcher#Search(Query)} or
+		/// <p/>Applications should usually call {@link Searcher#Search(Query)} or
 		/// {@link Searcher#Search(Query,Filter)} instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
@@ -174,11 +174,11 @@ namespace Lucene.Net.Search
 		/// Returns an Explanation that describes how <code>doc</code> scored against
 		/// <code>weight</code>.
 		/// 
-		/// <p>This is intended to be used in developing Similarity implementations,
+		/// <p/>This is intended to be used in developing Similarity implementations,
 		/// and, for good performance, should not be displayed with every hit.
 		/// Computing an explanation is as expensive as executing the query over the
 		/// entire index.
-		/// <p>Applications should call {@link Searcher#Explain(Query, int)}.
+		/// <p/>Applications should call {@link Searcher#Explain(Query, int)}.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		Explanation Explain(Weight weight, int doc);
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
 		/// 
-		/// <p>Applications should usually call
+		/// <p/>Applications should usually call
 		/// {@link Searcher#Search(Query,Filter,int,Sort)} instead.
 		/// 
 		/// </summary>

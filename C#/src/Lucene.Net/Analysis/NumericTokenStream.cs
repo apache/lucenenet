@@ -37,16 +37,16 @@ namespace Lucene.Net.Analysis
 	/// for indexing numeric values that can be used by {@link
 	/// NumericRangeQuery} or {@link NumericRangeFilter}.
 	/// 
-	/// <p>Note that for simple usage, {@link NumericField} is
+	/// <p/>Note that for simple usage, {@link NumericField} is
 	/// recommended.  {@link NumericField} disables norms and
 	/// term freqs, as they are not usually needed during
 	/// searching.  If you need to change these settings, you
 	/// should use this class.
 	/// 
-	/// <p>See {@link NumericField} for capabilities of fields
+	/// <p/>See {@link NumericField} for capabilities of fields
 	/// indexed numerically.</p>
 	/// 
-	/// <p>Here's an example usage, for an <code>int</code> field:
+	/// <p/>Here's an example usage, for an <code>int</code> field:
 	/// 
 	/// <pre>
 	///  Field field = new Field(name, new NumericTokenStream(precisionStep).setIntValue(value));
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis
 	///  document.add(field);
 	/// </pre>
 	/// 
-	/// <p>For optimal performance, re-use the TokenStream and Field instance
+	/// <p/>For optimal performance, re-use the TokenStream and Field instance
 	/// for more than one document:
 	/// 
 	/// <pre>
@@ -72,21 +72,21 @@ namespace Lucene.Net.Analysis
 	///  }
 	/// </pre>
 	/// 
-	/// <p>This stream is not intended to be used in analyzers;
+	/// <p/>This stream is not intended to be used in analyzers;
 	/// it's more for iterating the different precisions during
 	/// indexing a specific numeric value.</p>
 	/// 
-	/// <p><b>NOTE</b>: as token streams are only consumed once
+	/// <p/><b>NOTE</b>: as token streams are only consumed once
 	/// the document is added to the index, if you index more
 	/// than one numeric field, use a separate <code>NumericTokenStream</code>
 	/// instance for each.</p>
 	/// 
-	/// <p>See {@link NumericRangeQuery} for more details on the
+	/// <p/>See {@link NumericRangeQuery} for more details on the
 	/// <a
 	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
 	/// parameter as well as how numeric fields work under the hood.</p>
 	/// 
-	/// <p><font color="red"><b>NOTE:</b> This API is experimental and
+	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>
 	/// 
 	/// </summary>

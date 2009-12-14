@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		}
 		/// <summary> Indicates whether or not this Explanation models a good match.
 		/// 
-		/// <p>
+		/// <p/>
 		/// If the match status is explicitly set (i.e.: not null) this method
 		/// uses it; otherwise it defers to the superclass.
 		/// </p>

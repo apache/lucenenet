@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// See the {@link #create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)} method
 	/// for instantiating a TopFieldCollector.
 	/// 
-	/// <p><b>NOTE:</b> This API is experimental and might change in
+	/// <p/><b>NOTE:</b> This API is experimental and might change in
 	/// incompatible ways in the next release.</p>
 	/// </summary>
 	public abstract class TopFieldCollector:TopDocsCollector
@@ -979,7 +979,7 @@ namespace Lucene.Net.Search
 		/// <summary> Creates a new {@link TopFieldCollector} from the given
 		/// arguments.
 		/// 
-		/// <p><b>NOTE</b>: The instances returned by this method
+		/// <p/><b>NOTE</b>: The instances returned by this method
 		/// pre-allocate a full array of length
 		/// <code>numHits</code>.
 		/// 

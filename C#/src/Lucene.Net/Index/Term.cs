@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 		internal System.String text;
 		
 		/// <summary>Constructs a Term with the given field and text.
-		/// <p>Note that a null field or null text value results in undefined
+		/// <p/>Note that a null field or null text value results in undefined
 		/// behavior for most Lucene APIs that accept a Term parameter. 
 		/// </summary>
 		public Term(System.String fld, System.String txt)

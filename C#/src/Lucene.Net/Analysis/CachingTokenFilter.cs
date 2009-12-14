@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 	/// are intended to be consumed more than once. It caches
 	/// all token attribute states locally in a List.
 	/// 
-	/// <P>CachingTokenFilter implements the optional method
+	/// <p/>CachingTokenFilter implements the optional method
 	/// {@link TokenStream#Reset()}, which repositions the
 	/// stream to the first Token. 
 	/// </summary>

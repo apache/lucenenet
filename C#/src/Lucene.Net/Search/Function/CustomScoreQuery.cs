@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Function
 	/// </ol>
 	/// Subclasses can modify the computation by overriding {@link #CustomScore(int, float, float)}.
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
@@ -172,16 +172,16 @@ namespace Lucene.Net.Search.Function
 		
 		/// <summary> Compute a custom score by the subQuery score and a number of 
 		/// ValueSourceQuery scores.
-		/// <p> 
+		/// <p/> 
 		/// Subclasses can override this method to modify the custom score.  
-		/// <p>
+		/// <p/>
 		/// If your custom scoring is different than the default herein you 
 		/// should override at least one of the two customScore() methods.
 		/// If the number of ValueSourceQueries is always &lt; 2 it is 
 		/// sufficient to override the other 
 		/// {@link #CustomScore(int, float, float) customScore()} 
 		/// method, which is simpler. 
-		/// <p>
+		/// <p/>
 		/// The default computation herein is a multiplication of given scores:
 		/// <pre>
 		/// ModifiedScore = valSrcScore * valSrcScores[0] * valSrcScores[1] * ...
@@ -215,14 +215,14 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Compute a custom score by the subQuery score and the ValueSourceQuery score.
-		/// <p> 
+		/// <p/> 
 		/// Subclasses can override this method to modify the custom score.
-		/// <p>
+		/// <p/>
 		/// If your custom scoring is different than the default herein you 
 		/// should override at least one of the two customScore() methods.
 		/// If the number of ValueSourceQueries is always &lt; 2 it is 
 		/// sufficient to override this customScore() method, which is simpler. 
-		/// <p>
+		/// <p/>
 		/// The default computation herein is a multiplication of the two scores:
 		/// <pre>
 		/// ModifiedScore = subQueryScore * valSrcScore
@@ -587,7 +587,7 @@ namespace Lucene.Net.Search.Function
 		/// This may be useful when one wants full control over how scores are modified, and does 
 		/// not care about normalizing by the ValueSource part.
 		/// One particular case where this is useful if for testing this query.   
-		/// <P>
+		/// <p/>
 		/// Note: only has effect when the ValueSource part is not null.
 		/// </summary>
 		public virtual bool IsStrict()

@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// <summary> Stores information about how to sort documents by terms in an individual
 	/// field.  Fields must be indexed in order to sort by them.
 	/// 
-	/// <p>Created: Feb 11, 2004 1:25:29 PM
+	/// <p/>Created: Feb 11, 2004 1:25:29 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

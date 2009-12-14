@@ -32,12 +32,12 @@ namespace Lucene.Net.Index
 	/// documents with the same document number.  When searching, matches for a
 	/// query term are from the first index added that has the field.
 	/// 
-	/// <p>This is useful, e.g., with collections that have large fields which
+	/// <p/>This is useful, e.g., with collections that have large fields which
 	/// change rarely and small fields that change more frequently.  The smaller
 	/// fields may be re-indexed in a new index and both indexes may be searched
 	/// together.
 	/// 
-	/// <p><strong>Warning:</strong> It is up to you to make sure all indexes
+	/// <p/><strong>Warning:</strong> It is up to you to make sure all indexes
 	/// are created and modified the same way. For example, if you add
 	/// documents to one index, you need to add the same documents in the
 	/// same order to the other indexes. <em>Failure to do so will result in
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 		private bool hasDeletions;
 		
 		/// <summary>Construct a ParallelReader. 
-		/// <p>Note that all subreaders are closed if this ParallelReader is closed.</p>
+		/// <p/>Note that all subreaders are closed if this ParallelReader is closed.</p>
 		/// </summary>
 		public ParallelReader():this(true)
 		{
@@ -148,12 +148,12 @@ namespace Lucene.Net.Index
 		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
 		/// returned a new instance != subReader), then a new ParallelReader instance 
 		/// is returned, otherwise this instance is returned.
-		/// <p>
+		/// <p/>
 		/// A re-opened instance might share one or more subreaders with the old 
 		/// instance. Index modification operations result in undefined behavior
 		/// when performed before the old instance is closed.
 		/// (see {@link IndexReader#Reopen()}).
-		/// <p>
+		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open
 		/// until the last referring reader is closed.

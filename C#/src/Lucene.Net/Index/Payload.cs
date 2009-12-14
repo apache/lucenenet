@@ -26,10 +26,10 @@ namespace Lucene.Net.Index
 	/// <summary>  A Payload is metadata that can be stored together with each occurrence 
 	/// of a term. This metadata is stored inline in the posting list of the
 	/// specific term.  
-	/// <p>
+	/// <p/>
 	/// To store payloads in the index a {@link TokenStream} has to be used that
 	/// produces payload data.
-	/// <p>
+	/// <p/>
 	/// Use {@link TermPositions#GetPayloadLength()} and {@link TermPositions#GetPayload(byte[], int)}
 	/// to retrieve the payloads from the index.<br>
 	/// 

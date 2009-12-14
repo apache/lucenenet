@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
 	/// <summary> Provides methods for sanity checking that entries in the FieldCache 
 	/// are not wasteful or inconsistent.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// Lucene 2.9 Introduced numerous enhancements into how the FieldCache 
 	/// is used by the low levels of Lucene searching (for Sorting and 
 	/// ValueSourceQueries) to improve both the speed for Sorting, as well 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Util
 	/// Unit tests) to check at run time if the FieldCache contains "insane" 
 	/// usages of the FieldCache.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced and 
 	/// experimental.  It may be removed or altered w/o warning in future releases 
 	/// of Lucene.
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary> Tests a CacheEntry[] for indication of "insane" cache usage.
-		/// <p>
+		/// <p/>
 		/// <B>NOTE:</b>FieldCache CreationPlaceholder objects are ignored.
 		/// (:TODO: is this a bad idea? are we masking a real problem?)
 		/// </p>
@@ -418,13 +418,13 @@ namespace Lucene.Net.Util
 			/// </summary>
 			public static readonly InsanityType SUBREADER = new InsanityType("SUBREADER");
 			
-			/// <summary> <p>
+			/// <summary> <p/>
 			/// Indicates entries have the same reader+fieldname but 
 			/// different cached values.  This can happen if different datatypes, 
 			/// or parsers are used -- and while it's not necessarily a bug 
 			/// it's typically an indication of a possible problem.
 			/// </p>
-			/// <p>
+			/// <p/>
 			/// <bPNOTE:</b> Only the reader, fieldname, and cached value are actually 
 			/// tested -- if two cache entries have different parsers or datatypes but 
 			/// the cached values are the same Object (== not just equal()) this method 

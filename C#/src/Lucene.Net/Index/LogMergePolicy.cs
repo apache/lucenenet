@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary><p>This class implements a {@link MergePolicy} that tries
+	/// <summary><p/>This class implements a {@link MergePolicy} that tries
 	/// to merge segments into levels of exponentially
 	/// increasing size, where each level has fewer segments than
 	/// the value of the merge factor. Whenever extra segments
@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// set the merge factor using {@link #GetMergeFactor()} and
 	/// {@link #SetMergeFactor(int)} respectively.</p>
 	/// 
-	/// <p>This class is abstract and requires a subclass to
+	/// <p/>This class is abstract and requires a subclass to
 	/// define the {@link #size} method which specifies how a
 	/// segment's size is determined.  {@link LogDocMergePolicy}
 	/// is one subclass that measures size by document count in
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 				writer.Message("LMP: " + message);
 		}
 		
-		/// <summary><p>Returns the number of segments that are merged at
+		/// <summary><p/>Returns the number of segments that are merged at
 		/// once and also controls the total number of segments
 		/// allowed to accumulate in the index.</p> 
 		/// </summary>
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
 			return spec;
 		}
 		
-		/// <summary><p>Determines the largest segment (measured by
+		/// <summary><p/>Determines the largest segment (measured by
 		/// document count) that may be merged with other segments.
 		/// Small values (e.g., less than 10,000) are best for
 		/// interactive indexing, as this limits the length of
@@ -522,9 +522,9 @@ namespace Lucene.Net.Index
 		/// are best for batched indexing and speedier
 		/// searches.</p>
 		/// 
-		/// <p>The default value is {@link Integer#MAX_VALUE}.</p>
+		/// <p/>The default value is {@link Integer#MAX_VALUE}.</p>
 		/// 
-		/// <p>The default merge policy ({@link
+		/// <p/>The default merge policy ({@link
 		/// LogByteSizeMergePolicy}) also allows you to set this
 		/// limit by net size (in MB) of the segment, using {@link
 		/// LogByteSizeMergePolicy#setMaxMergeMB}.</p>

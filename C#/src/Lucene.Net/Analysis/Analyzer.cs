@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary>An Analyzer builds TokenStreams, which analyze text.  It thus represents a
 	/// policy for extracting index terms from text.
-	/// <p>
+	/// <p/>
 	/// Typical implementations first build a Tokenizer, which breaks the stream of
 	/// characters from the Reader into raw Tokens.  One or more TokenFilters may
 	/// then be applied to the output of the Tokenizer.

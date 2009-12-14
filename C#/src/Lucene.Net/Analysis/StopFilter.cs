@@ -291,13 +291,13 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary> Set the default position increments behavior of every StopFilter created
 		/// from now on.
-		/// <p>
+		/// <p/>
 		/// Note: behavior of a single StopFilter instance can be modified with
 		/// {@link #SetEnablePositionIncrements(boolean)}. This static method allows
 		/// control over behavior of classes using StopFilters internally, for
 		/// example {@link Lucene.Net.Analysis.Standard.StandardAnalyzer
 		/// StandardAnalyzer} if used with the no-arg ctor.
-		/// <p>
+		/// <p/>
 		/// Default : false.
 		/// 
 		/// </summary>
@@ -325,11 +325,11 @@ namespace Lucene.Net.Analysis
 		/// lose information (positions of the original tokens)
 		/// during indexing.
 		/// 
-		/// <p> When set, when a token is stopped
+		/// <p/> When set, when a token is stopped
 		/// (omitted), the position increment of the following
 		/// token is incremented.
 		/// 
-		/// <p> <b>NOTE</b>: be sure to also
+		/// <p/> <b>NOTE</b>: be sure to also
 		/// set {@link QueryParser#setEnablePositionIncrements} if
 		/// you use QueryParser to create queries.
 		/// </summary>

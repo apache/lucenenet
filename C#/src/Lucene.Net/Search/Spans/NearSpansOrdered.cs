@@ -24,13 +24,13 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary>A Spans that is formed from the ordered subspans of a SpanNearQuery
 	/// where the subspans do not overlap and have a maximum slop between them.
-	/// <p>
+	/// <p/>
 	/// The formed spans only contains minimum slop matches.<br>
 	/// The matching slop is computed from the distance(s) between
 	/// the non overlapping matching Spans.<br>
 	/// Successive matches are always formed from the successive Spans
 	/// of the SpanNearQuery.
-	/// <p>
+	/// <p/>
 	/// The formed spans may contain overlaps when the slop is at least 1.
 	/// For example, when querying using
 	/// <pre>t1 t2 t3</pre>

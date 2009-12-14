@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// <summary> Expert: Collects sorted results from Searchable's and collates them.
 	/// The elements put into this queue must be of type FieldDoc.
 	/// 
-	/// <p>Created: Feb 11, 2004 2:04:21 PM
+	/// <p/>Created: Feb 11, 2004 2:04:21 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

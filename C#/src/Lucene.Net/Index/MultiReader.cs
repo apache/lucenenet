@@ -42,10 +42,10 @@ namespace Lucene.Net.Index
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
 		
-		/// <summary> <p>Construct a MultiReader aggregating the named set of (sub)readers.
+		/// <summary> <p/>Construct a MultiReader aggregating the named set of (sub)readers.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
 		/// left to the subreaders. </p>
-		/// <p>Note that all subreaders are closed if this Multireader is closed.</p>
+		/// <p/>Note that all subreaders are closed if this Multireader is closed.</p>
 		/// </summary>
 		/// <param name="subReaders">set of (sub)readers
 		/// </param>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 			Initialize(subReaders, true);
 		}
 		
-		/// <summary> <p>Construct a MultiReader aggregating the named set of (sub)readers.
+		/// <summary> <p/>Construct a MultiReader aggregating the named set of (sub)readers.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
 		/// left to the subreaders. </p>
 		/// </summary>
@@ -102,12 +102,12 @@ namespace Lucene.Net.Index
 		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
 		/// returned a new instance != subReader), then a new MultiReader instance 
 		/// is returned, otherwise this instance is returned.
-		/// <p>
+		/// <p/>
 		/// A re-opened instance might share one or more subreaders with the old 
 		/// instance. Index modification operations result in undefined behavior
 		/// when performed before the old instance is closed.
 		/// (see {@link IndexReader#Reopen()}).
-		/// <p>
+		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open
 		/// until the last referring reader is closed.
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 		/// <summary> Clones the subreaders.
 		/// (see {@link IndexReader#clone()}).
 		/// <br>
-		/// <p>
+		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open
 		/// until the last referring reader is closed.

@@ -244,10 +244,10 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Returns a clone of this stream.
 		/// 
-		/// <p>Clones of a stream access the same data, and are positioned at the same
+		/// <p/>Clones of a stream access the same data, and are positioned at the same
 		/// point as the stream they were cloned from.
 		/// 
-		/// <p>Expert: Subclasses must ensure that clones may be positioned at
+		/// <p/>Expert: Subclasses must ensure that clones may be positioned at
 		/// different points in the input from each other and from the stream they
 		/// were cloned from.
 		/// </summary>

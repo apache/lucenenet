@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: returns a comparator for sorting ScoreDocs.
 	/// 
-	/// <p>
+	/// <p/>
 	/// Created: Apr 21, 2004 3:49:28 PM
 	/// 
 	/// This class will be used as part of a key to a FieldCache value. You must

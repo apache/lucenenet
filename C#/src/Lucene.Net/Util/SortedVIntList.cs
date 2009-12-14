@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	/// The code for compressing the differences between ascending integers was
 	/// borrowed from {@link Lucene.Net.Store.IndexInput} and
 	/// {@link Lucene.Net.Store.IndexOutput}.
-	/// <p>
+	/// <p/>
 	/// <b>NOTE:</b> this class assumes the stored integers are doc Ids (hence why it
 	/// extends {@link DocIdSet}). Therefore its {@link #Iterator()} assumes {@link
 	/// DocIdSetIterator#NO_MORE_DOCS} can be used as sentinel. If you intent to use

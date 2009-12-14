@@ -25,26 +25,26 @@ namespace Lucene.Net.Search.Function
 	
 	/// <summary> Expert: obtains the ordinal of the field value from the default Lucene 
 	/// {@link Lucene.Net.Search.FieldCache Fieldcache} using getStringIndex().
-	/// <p>
+	/// <p/>
 	/// The native lucene index order is used to assign an ordinal value for each field value.
 	/// <p
 	/// Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
-	/// <p>
+	/// <p/>
 	/// Example:
 	/// <br>If there were only three field values: "apple","banana","pear"
 	/// <br>then ord("apple")=1, ord("banana")=2, ord("pear")=3
-	/// <p>
+	/// <p/>
 	/// WARNING: 
 	/// ord() depends on the position in an index and can thus change 
 	/// when other documents are inserted or deleted,
 	/// or if a MultiSearcher is used. 
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
-	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based
 	/// searching, if {@link #getValues} is invoked with a
 	/// composite (multi-segment) reader, this can easily cause
 	/// double RAM usage for the values in the FieldCache.  It's

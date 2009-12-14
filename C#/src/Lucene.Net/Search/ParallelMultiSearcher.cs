@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements parallel search over a set of <code>Searchables</code>.
 	/// 
-	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
+	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
 	/// or {@link #Search(Query,Filter)} methods.
 	/// </summary>
 	public class ParallelMultiSearcher:MultiSearcher
@@ -196,9 +196,9 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link Collector#Collect(int)} is called for every matching document.
+		/// <p/>{@link Collector#Collect(int)} is called for every matching document.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
 		/// Searcher#Search(Query)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.

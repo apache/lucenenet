@@ -28,24 +28,24 @@ namespace Lucene.Net.Index
 	/// <summary>IndexReader is an abstract class, providing an interface for accessing an
 	/// index.  Search of an index is done entirely through this abstract interface,
 	/// so that any subclass which implements it is searchable.
-	/// <p> Concrete subclasses of IndexReader are usually constructed with a call to
+	/// <p/> Concrete subclasses of IndexReader are usually constructed with a call to
 	/// one of the static <code>open()</code> methods, e.g. {@link
 	/// #Open(String, boolean)}.
-	/// <p> For efficiency, in this API documents are often referred to via
+	/// <p/> For efficiency, in this API documents are often referred to via
 	/// <i>document numbers</i>, non-negative integers which each name a unique
 	/// document in the index.  These document numbers are ephemeral--they may change
 	/// as documents are added to and deleted from an index.  Clients should thus not
 	/// rely on a given document having the same number between sessions.
-	/// <p> An IndexReader can be opened on a directory for which an IndexWriter is
+	/// <p/> An IndexReader can be opened on a directory for which an IndexWriter is
 	/// opened already, but it cannot be used to delete documents from the index then.
-	/// <p>
+	/// <p/>
 	/// <b>NOTE</b>: for backwards API compatibility, several methods are not listed 
 	/// as abstract, but have no useful implementations in this base class and 
 	/// instead always throw UnsupportedOperationException.  Subclasses are 
 	/// strongly encouraged to override these methods, but in many cases may not 
 	/// need to.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// <b>NOTE</b>: as of 2.4, it's possible to open a read-only
 	/// IndexReader using one of the static open methods that
 	/// accepts the boolean readOnly parameter.  Such a reader has
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 	/// change to true, meaning you must explicitly specify false
 	/// if you want to make changes with the resulting IndexReader.
 	/// </p>
-	/// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
 	/// <code>IndexReader</code>} instances are completely thread
 	/// safe, meaning multiple threads can call any of its methods,
 	/// concurrently.  If your application requires external
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Legacy Constructor for backwards compatibility.
 		/// 
-		/// <p>
+		/// <p/>
 		/// This Constructor should not be used, it exists for backwards 
 		/// compatibility only to support legacy subclasses that did not "own" 
 		/// a specific directory, but needed to specify something to be returned 
@@ -581,22 +581,22 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Refreshes an IndexReader if the index has changed since this instance 
 		/// was (re)opened. 
-		/// <p>
+		/// <p/>
 		/// Opening an IndexReader is an expensive operation. This method can be used
 		/// to refresh an existing IndexReader to reduce these costs. This method 
 		/// tries to only load segments that have changed or were created after the 
 		/// IndexReader was (re)opened.
-		/// <p>
+		/// <p/>
 		/// If the index has not changed since this instance was (re)opened, then this
 		/// call is a NOOP and returns this instance. Otherwise, a new instance is 
 		/// returned. The old instance is <b>not</b> closed and remains usable.<br>
-		/// <p>   
+		/// <p/>   
 		/// If the reader is reopened, even though they share
 		/// resources internally, it's safe to make changes
 		/// (deletions, norms) with the new reader.  All shared
 		/// mutable state obeys "copy on write" semantics to ensure
 		/// the changes are not seen by other readers.
-		/// <p>
+		/// <p/>
 		/// You can determine whether a reader was actually reopened by comparing the
 		/// old instance with the instance returned by this method: 
 		/// <pre>
@@ -615,7 +615,7 @@ namespace Lucene.Net.Index
 		/// if present, can never use reader after it has been
 		/// closed and before it's switched to newReader.
 		/// 
-		/// <p><b>NOTE</b>: If this reader is a near real-time
+		/// <p/><b>NOTE</b>: If this reader is a near real-time
 		/// reader (obtained from {@link IndexWriter#GetReader()},
 		/// reopen() will simply call writer.getReader() again for
 		/// you, though this may change in the future.
@@ -662,19 +662,19 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Efficiently clones the IndexReader (sharing most
 		/// internal state).
-		/// <p>
+		/// <p/>
 		/// On cloning a reader with pending changes (deletions,
 		/// norms), the original reader transfers its write lock to
 		/// the cloned reader.  This means only the cloned reader
 		/// may make further changes to the index, and commit the
 		/// changes to the index on close, but the old reader still
 		/// reflects all changes made up until it was cloned.
-		/// <p>
+		/// <p/>
 		/// Like {@link #Reopen()}, it's safe to make changes to
 		/// either the original or the cloned reader: all shared
 		/// mutable state obeys "copy on write" semantics to ensure
 		/// the changes are not seen by other readers.
-		/// <p>
+		/// <p/>
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -854,7 +854,7 @@ namespace Lucene.Net.Index
 		/// <summary> Version number when this IndexReader was opened. Not implemented in the
 		/// IndexReader base class.
 		/// 
-		/// <p>
+		/// <p/>
 		/// If this reader is based on a Directory (ie, was created by calling
 		/// {@link #Open}, or {@link #Reopen} on a reader based on a Directory), then
 		/// this method returns the version recorded in the commit that the reader
@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
 		/// called.
 		/// </p>
 		/// 
-		/// <p>
+		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
 		/// to {@link IndexWriter#GetReader}, or by calling {@link #Reopen} on a near
 		/// real-time reader), then this method returns the version of the last
@@ -894,7 +894,7 @@ namespace Lucene.Net.Index
 			throw new System.NotSupportedException("This reader does not support this method.");
 		}
 		
-		/// <summary><p>For IndexReader implementations that use
+		/// <summary><p/>For IndexReader implementations that use
 		/// TermInfosReader to read terms, this sets the
 		/// indexDivisor to subsample the number of indexed terms
 		/// loaded into memory.  This has the same effect as {@link
@@ -919,7 +919,7 @@ namespace Lucene.Net.Index
 			throw new System.NotSupportedException("Please pass termInfosIndexDivisor up-front when opening IndexReader");
 		}
 		
-		/// <summary><p>For IndexReader implementations that use
+		/// <summary><p/>For IndexReader implementations that use
 		/// TermInfosReader to read terms, this returns the
 		/// current indexDivisor as specified when the reader was
 		/// opened.
@@ -932,14 +932,14 @@ namespace Lucene.Net.Index
 		/// <summary> Check whether any new changes have occurred to the index since this
 		/// reader was opened.
 		/// 
-		/// <p>
+		/// <p/>
 		/// If this reader is based on a Directory (ie, was created by calling
 		/// {@link #open}, or {@link #reopen} on a reader based on a Directory), then
 		/// this method checks if any further commits (see {@link IndexWriter#commit}
 		/// have occurred in that directory).
 		/// </p>
 		/// 
-		/// <p>
+		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
 		/// to {@link IndexWriter#getReader}, or by calling {@link #reopen} on a near
 		/// real-time reader), then this method checks if either a new commmit has
@@ -948,7 +948,7 @@ namespace Lucene.Net.Index
 		/// still return false.
 		/// </p>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In any event, if this returns false, you should call {@link #reopen} to
 		/// get a new reader that sees the changes.
 		/// </p>
@@ -1113,7 +1113,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the stored fields of the <code>n</code><sup>th</sup>
 		/// <code>Document</code> in this index.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> for performance reasons, this method does not check if the
 		/// requested document is deleted, and therefore asking for a deleted document
 		/// may yield unspecified results. Usually this is not required, however you
@@ -1138,7 +1138,7 @@ namespace Lucene.Net.Index
 		/// thrown. If you want the value of a lazy
 		/// {@link Lucene.Net.Documents.Field} to be available after closing you
 		/// must explicitly load it or fetch the Document again with a new loader.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> for performance reasons, this method does not check if the
 		/// requested document is deleted, and therefore asking for a deleted document
 		/// may yield unspecified results. Usually this is not required, however you
@@ -1289,10 +1289,10 @@ namespace Lucene.Net.Index
 		/// search scoring.  If term is null, then all non-deleted
 		/// docs are returned with freq=1.
 		/// Thus, this method implements the mapping:
-		/// <p><ul>
+		/// <p/><ul>
 		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq&gt;<sup>*</sup>
 		/// </ul>
-		/// <p>The enumeration is ordered by document number.  Each document number
+		/// <p/>The enumeration is ordered by document number.  Each document number
 		/// is greater than all that precede it in the enumeration.
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1314,14 +1314,14 @@ namespace Lucene.Net.Index
 		/// positions of the term in the document is available.  Thus, this method
 		/// implements the mapping:
 		/// 
-		/// <p><ul>
+		/// <p/><ul>
 		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq,
 		/// &lt;pos<sub>1</sub>, pos<sub>2</sub>, ...
 		/// pos<sub>freq-1</sub>&gt;
 		/// &gt;<sup>*</sup>
 		/// </ul>
-		/// <p> This positional information facilitates phrase and proximity searching.
-		/// <p>The enumeration is ordered by document number.  Each document number is
+		/// <p/> This positional information facilitates phrase and proximity searching.
+		/// <p/>The enumeration is ordered by document number.  Each document number is
 		/// greater than all that precede it in the enumeration.
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1605,7 +1605,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Forcibly unlocks the index in the named directory.
-		/// <P>
+		/// <p/>
 		/// Caution: this should only be used by failure recovery code,
 		/// when it is known that no other process nor thread is in fact
 		/// currently accessing this index.
@@ -1625,7 +1625,7 @@ namespace Lucene.Net.Index
 		/// readers that correspond to a Directory with its own
 		/// segments_N file.
 		/// 
-		/// <p><b>WARNING</b>: this API is new and experimental and
+		/// <p/><b>WARNING</b>: this API is new and experimental and
 		/// may suddenly change.</p>
 		/// </summary>
 		public virtual IndexCommit GetIndexCommit()
@@ -1753,7 +1753,7 @@ namespace Lucene.Net.Index
 		/// If this method returns an empty array, that means this
 		/// reader is a null reader (for example a MultiReader
 		/// that has no sub readers).
-		/// <p>
+		/// <p/>
 		/// NOTE: You should not try using sub-readers returned by
 		/// this method to make any changes (setNorm, deleteDocument,
 		/// etc.). While this might succeed for one composite reader

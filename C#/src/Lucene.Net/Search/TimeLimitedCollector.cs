@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> <p>
+	/// <summary> <p/>
 	/// The TimeLimitedCollector is used to timeout search requests that take longer
 	/// than the maximum allowed search time limit. After this time is exceeded, the
 	/// search thread is stopped by throwing a TimeExceeded Exception.

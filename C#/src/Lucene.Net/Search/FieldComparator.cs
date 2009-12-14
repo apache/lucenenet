@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
 	/// TopFieldCollector}.  The concrete public FieldComparator
 	/// classes here correspond to the SortField types.
 	/// 
-	/// <p>This API is designed to achieve high performance
+	/// <p/>This API is designed to achieve high performance
 	/// sorting, by exposing a tight interaction with {@link
 	/// FieldValueHitQueue} as it visits hits.  Whenever a hit is
 	/// competitive, it's enrolled into a virtual slot, which is
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 	/// during searching in case any internal state it's tracking
 	/// needs to be recomputed during these transitions.</p>
 	/// 
-	/// <p>A comparator must define these functions:</p>
+	/// <p/>A comparator must define these functions:</p>
 	/// 
 	/// <ul>
 	/// 
@@ -1004,7 +1004,7 @@ namespace Lucene.Net.Search
 		/// #Compare(int,int)}} as if bottom were slot1 and the new
 		/// document were slot 2.
 		/// 
-		/// <p>For a search that hits many results, this method
+		/// <p/>For a search that hits many results, this method
 		/// will be the hotspot (invoked by far the most
 		/// frequently).</p>
 		/// 

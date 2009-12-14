@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	/// <summary> Information about a segment such as it's name, directory, and files related
 	/// to the segment.
 	/// 
-	/// * <p><b>NOTE:</b> This API is new and still experimental
+	/// * <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)</p>
 	/// </summary>
 	public sealed class SegmentInfo : System.ICloneable

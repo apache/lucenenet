@@ -72,13 +72,13 @@ namespace Lucene.Net.QueryParsers
 	/// Clause ::= ["+", "-"] [&lt;TERM&gt; ":"] ( &lt;TERM&gt; | "(" Query ")" )
 	/// </pre>
 	/// 
-	/// <p>
+	/// <p/>
 	/// Examples of appropriately formatted queries can be found in the <a
 	/// href="../../../../../../queryparsersyntax.html">query syntax
 	/// documentation</a>.
 	/// </p>
 	/// 
-	/// <p>
+	/// <p/>
 	/// In {@link TermRangeQuery}s, QueryParser tries to detect date values, e.g.
 	/// <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches
 	/// for "date" fields between 2005-06-01 and 2005-06-04. Note that the format
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers
 	/// To use the new {@link DateTools} to convert dates, a
 	/// {@link Lucene.Net.Documents.DateTools.Resolution} has to be set.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// The date resolution that shall be used for RangeQueries can be set
 	/// using {@link #SetDateResolution(DateTools.Resolution)}
 	/// or {@link #SetDateResolution(String, DateTools.Resolution)}. The former
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers
 	/// be used to set field specific date resolutions. Field specific date
 	/// resolutions take, if set, precedence over the default date resolution.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// If you use neither {@link DateField} nor {@link DateTools} in your
 	/// index, you can create your own
 	/// query parser that inherits QueryParser and overwrites
@@ -104,14 +104,14 @@ namespace Lucene.Net.QueryParsers
 	/// use a different method for date conversion.
 	/// </p>
 	/// 
-	/// <p>Note that QueryParser is <em>not</em> thread-safe.</p> 
+	/// <p/>Note that QueryParser is <em>not</em> thread-safe.</p> 
 	/// 
-	/// <p><b>NOTE</b>: there is a new QueryParser in contrib, which matches
+	/// <p/><b>NOTE</b>: there is a new QueryParser in contrib, which matches
 	/// the same syntax as this class, but is more modular,
 	/// enabling substantial customization to how a query is created.
 	/// </summary>
 	/// 
-	/// <p><b>NOTE</b>: there is a new QueryParser in contrib, which matches
+	/// <p/><b>NOTE</b>: there is a new QueryParser in contrib, which matches
 	/// the same syntax as this class, but is more modular,
 	/// enabling substantial customization to how a query is created.
 	/// </summary>
@@ -311,12 +311,12 @@ namespace Lucene.Net.QueryParsers
 		
 		
 		/// <summary> Set to <code>true</code> to allow leading wildcard characters.
-		/// <p>
+		/// <p/>
 		/// When set, <code>*</code> or <code>?</code> are allowed as 
 		/// the first character of a PrefixQuery and WildcardQuery.
 		/// Note that this can produce very slow
 		/// queries on big indexes. 
-		/// <p>
+		/// <p/>
 		/// Default: false.
 		/// </summary>
 		public virtual void  SetAllowLeadingWildcard(bool allowLeadingWildcard)
@@ -332,12 +332,12 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Set to <code>true</code> to enable position increments in result query.
-		/// <p>
+		/// <p/>
 		/// When set, result phrase and multi-phrase queries will
 		/// be aware of position increments.
 		/// Useful when e.g. a StopFilter increases the position increment of
 		/// the token that follows an omitted token.
-		/// <p>
+		/// <p/>
 		/// Default: false.
 		/// </summary>
 		public virtual void  SetEnablePositionIncrements(bool enable)
@@ -1140,12 +1140,12 @@ namespace Lucene.Net.QueryParsers
 		/// parses an input term token that contains one or more wildcard
 		/// characters (? and *), but is not a prefix term token (one
 		/// that has just a single * character at the end)
-		/// <p>
+		/// <p/>
 		/// Depending on settings, prefix term may be lower-cased
 		/// automatically. It will not go through the default Analyzer,
 		/// however, since normal Analyzers are unlikely to work properly
 		/// with wildcard templates.
-		/// <p>
+		/// <p/>
 		/// Can be overridden by extending classes, to provide custom handling for
 		/// wildcard queries, which may be necessary due to missing analyzer calls.
 		/// 
@@ -1183,12 +1183,12 @@ namespace Lucene.Net.QueryParsers
 		/// character as its last character. Since this is a special case
 		/// of generic wildcard term, and such a query can be optimized easily,
 		/// this usually results in a different query object.
-		/// <p>
+		/// <p/>
 		/// Depending on settings, a prefix term may be lower-cased
 		/// automatically. It will not go through the default Analyzer,
 		/// however, since normal Analyzers are unlikely to work properly
 		/// with wildcard templates.
-		/// <p>
+		/// <p/>
 		/// Can be overridden by extending classes, to provide custom handling for
 		/// wild card queries, which may be necessary due to missing analyzer calls.
 		/// 

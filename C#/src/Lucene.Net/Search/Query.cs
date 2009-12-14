@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>The abstract base class for queries.
-	/// <p>Instantiable subclasses are:
+	/// <p/>Instantiable subclasses are:
 	/// <ul>
 	/// <li> {@link TermQuery}
 	/// <li> {@link MultiTermQuery}
@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 	/// <li> {@link NumericRangeQuery}
 	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
 	/// </ul>
-	/// <p>A parser for queries is contained in:
+	/// <p/>A parser for queries is contained in:
 	/// <ul>
 	/// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser}
 	/// </ul>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
 		/// default field and omitted.
-		/// <p>The representation used is one that is supposed to be readable
+		/// <p/>The representation used is one that is supposed to be readable
 		/// by {@link Lucene.Net.QueryParsers.QueryParser QueryParser}. However,
 		/// there are the following limitations:
 		/// <ul>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Expert: Constructs an appropriate Weight implementation for this query.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Only implemented by primitive queries, which re-write to themselves.
 		/// </summary>
 		public virtual Weight CreateWeight(Searcher searcher)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
 		/// BooleanQuery.
 		/// 
-		/// <p>A utility for use by {@link #Combine(Query[])} implementations.
+		/// <p/>A utility for use by {@link #Combine(Query[])} implementations.
 		/// </summary>
 		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{

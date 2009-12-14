@@ -28,11 +28,11 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A wrapper for {@link MultiTermQuery}, that exposes its
 	/// functionality as a {@link Filter}.
-	/// <P>
+	/// <p/>
 	/// <code>MultiTermQueryWrapperFilter</code> is not designed to
 	/// be used by itself. Normally you subclass it to provide a Filter
 	/// counterpart for a {@link MultiTermQuery} subclass.
-	/// <P>
+	/// <p/>
 	/// For example, {@link TermRangeFilter} and {@link PrefixFilter} extend
 	/// <code>MultiTermQueryWrapperFilter</code>.
 	/// This class also provides the functionality behind
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: Return the number of unique terms visited during execution of the filter.
 		/// If there are many of them, you may consider using another filter type
 		/// or optimize your total term count in index.
-		/// <p>This method is not thread safe, be sure to only call it when no filter is running!
+		/// <p/>This method is not thread safe, be sure to only call it when no filter is running!
 		/// If you re-use the same filter instance for another
 		/// search, be sure to first reset the term counter
 		/// with {@link #clearTotalNumberOfTerms}.

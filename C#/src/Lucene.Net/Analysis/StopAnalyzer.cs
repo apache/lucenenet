@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 	/// {@link StopFilter}.
 	/// 
 	/// <a name="version"/>
-	/// <p>
+	/// <p/>
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StopAnalyzer:
 	/// <ul>

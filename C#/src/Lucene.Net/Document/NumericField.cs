@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
 {
 	// javadocs
 	
-	/// <summary> <p>This class provides a {@link Field} that enables indexing
+	/// <summary> <p/>This class provides a {@link Field} that enables indexing
 	/// of numeric values for efficient range filtering and
 	/// sorting.  Here's an example usage, adding an int value:
 	/// <pre>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Documents
 	/// }
 	/// </pre>
 	/// 
-	/// <p>The java native types <code>int</code>, <code>long</code>,
+	/// <p/>The java native types <code>int</code>, <code>long</code>,
 	/// <code>float</code> and <code>double</code> are
 	/// directly supported.  However, any value that can be
 	/// converted into these native types can also be indexed.
@@ -66,7 +66,7 @@ namespace Lucene.Net.Documents
 	/// (for year, month, etc.) to construct an <code>int</code> or
 	/// <code>long</code> value.</p>
 	/// 
-	/// <p>To perform range querying or filtering against a
+	/// <p/>To perform range querying or filtering against a
 	/// <code>NumericField</code>, use {@link NumericRangeQuery} or {@link
 	/// NumericRangeFilter}.  To sort according to a
 	/// <code>NumericField</code>, use the normal numeric sort types, eg
@@ -74,25 +74,25 @@ namespace Lucene.Net.Documents
 	/// will not work with these fields).  <code>NumericField</code> values
 	/// can also be loaded directly from {@link FieldCache}.</p>
 	/// 
-	/// <p>By default, a <code>NumericField</code>'s value is not stored but
+	/// <p/>By default, a <code>NumericField</code>'s value is not stored but
 	/// is indexed for range filtering and sorting.  You can use
 	/// the {@link #NumericField(String,Field.Store,boolean)}
 	/// constructor if you need to change these defaults.</p>
 	/// 
-	/// <p>You may add the same field name as a <code>NumericField</code> to
+	/// <p/>You may add the same field name as a <code>NumericField</code> to
 	/// the same document more than once.  Range querying and
 	/// filtering will be the logical OR of all values; so a range query
 	/// will hit all documents that have at least one value in
 	/// the range. However sort behavior is not defined.  If you need to sort,
 	/// you should separately index a single-valued <code>NumericField</code>.</p>
 	/// 
-	/// <p>A <code>NumericField</code> will consume somewhat more disk space
+	/// <p/>A <code>NumericField</code> will consume somewhat more disk space
 	/// in the index than an ordinary single-valued field.
 	/// However, for a typical index that includes substantial
 	/// textual content per document, this increase will likely
 	/// be in the noise. </p>
 	/// 
-	/// <p>Within Lucene, each numeric value is indexed as a
+	/// <p/>Within Lucene, each numeric value is indexed as a
 	/// <em>trie</em> structure, where each term is logically
 	/// assigned to larger and larger pre-defined brackets (which
 	/// are simply lower-precision representations of the value).
@@ -113,30 +113,30 @@ namespace Lucene.Net.Documents
 	/// to use {@link Integer#MAX_VALUE}, which produces one
 	/// term per value.
 	/// 
-	/// <p>For more information on the internals of numeric trie
+	/// <p/>For more information on the internals of numeric trie
 	/// indexing, including the <a
 	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
 	/// configuration, see {@link NumericRangeQuery}. The format of
 	/// indexed values is described in {@link NumericUtils}.
 	/// 
-	/// <p>If you only need to sort by numeric value, and never
+	/// <p/>If you only need to sort by numeric value, and never
 	/// run range querying/filtering, you can index using a
 	/// <code>precisionStep</code> of {@link Integer#MAX_VALUE}.
 	/// This will minimize disk space consumed. </p>
 	/// 
-	/// <p>More advanced users can instead use {@link
+	/// <p/>More advanced users can instead use {@link
 	/// NumericTokenStream} directly, when indexing numbers. This
 	/// class is a wrapper around this token stream type for
 	/// easier, more intuitive usage.</p>
 	/// 
-	/// <p><b>NOTE:</b> This class is only used during
+	/// <p/><b>NOTE:</b> This class is only used during
 	/// indexing. When retrieving the stored field value from a
 	/// {@link Document} instance after search, you will get a
 	/// conventional {@link Fieldable} instance where the numeric
 	/// values are returned as {@link String}s (according to
 	/// <code>toString(value)</code> of the used data type).
 	/// 
-	/// <p><font color="red"><b>NOTE:</b> This API is
+	/// <p/><font color="red"><b>NOTE:</b> This API is
 	/// experimental and might change in incompatible ways in the
 	/// next release.</font>
 	/// 

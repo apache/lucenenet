@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
 	/// are created.  Once a file is created it may only be opened for read, or
 	/// deleted.  Random access is permitted both when reading and writing.
 	/// 
-	/// <p> Java's i/o APIs not used directly, but rather all i/o is
+	/// <p/> Java's i/o APIs not used directly, but rather all i/o is
 	/// through this API.  This permits things such as: <ul>
 	/// <li> implementation of RAM-based indices;
 	/// <li> implementation indices stored in a database, via JDBC;
@@ -192,12 +192,12 @@ namespace Lucene.Net.Store
 		/// If a file in src already exists in dest then the
 		/// one in dest will be blindly overwritten.
 		/// 
-		/// <p><b>NOTE:</b> the source directory cannot change
+		/// <p/><b>NOTE:</b> the source directory cannot change
 		/// while this method is running.  Otherwise the results
 		/// are undefined and you could easily hit a
 		/// FileNotFoundException.
 		/// 
-		/// <p><b>NOTE:</b> this method only copies files that look
+		/// <p/><b>NOTE:</b> this method only copies files that look
 		/// like index files (ie, have extensions matching the
 		/// known extensions of index files).
 		/// 

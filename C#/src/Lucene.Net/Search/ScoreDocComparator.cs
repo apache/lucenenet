@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Compares two ScoreDoc objects for sorting.
 	/// 
-	/// <p>Created: Feb 3, 2004 9:00:16 AM 
+	/// <p/>Created: Feb 3, 2004 9:00:16 AM 
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

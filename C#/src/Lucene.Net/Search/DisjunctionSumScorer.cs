@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 		/// <br>An exhausted scorer is immediately removed from the scorerDocQueue.
 		/// <br>If less than the minimumNrMatchers scorers
 		/// remain in the scorerDocQueue next() and skipTo() return false.
-		/// <p>
+		/// <p/>
 		/// After each to call to next() or skipTo()
 		/// <code>currentSumScore</code> is the total score of the current matching doc,
 		/// <code>nrMatchers</code> is the number of matching scorers,

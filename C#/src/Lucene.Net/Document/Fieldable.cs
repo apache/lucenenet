@@ -25,7 +25,7 @@ namespace Lucene.Net.Documents
 	
 	/// <summary> Synonymous with {@link Field}.
 	/// 
-	/// <p><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
+	/// <p/><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
 	/// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
 	/// compatibility promises remain intact. For example, Lucene can still
 	/// read and write indices created within the same major version.
@@ -39,7 +39,7 @@ namespace Lucene.Net.Documents
 		/// multiplied into the score of all hits on this this field of this
 		/// document.
 		/// 
-		/// <p>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
+		/// <p/>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
 		/// used to compute the norm factor for the field.  By
@@ -63,9 +63,9 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>Returns the boost factor for hits for this field.
 		/// 
-		/// <p>The default value is 1.0.
+		/// <p/>The default value is 1.0.
 		/// 
-		/// <p>Note: this value is not stored directly with the document in the index.
+		/// <p/>Note: this value is not stored directly with the document in the index.
 		/// Documents returned from {@link Lucene.Net.Index.IndexReader#Document(int)} and
 		/// {@link Lucene.Net.Search.Hits#Doc(int)} may thus not have the same value present as when
 		/// this field was indexed.
@@ -81,7 +81,7 @@ namespace Lucene.Net.Documents
 		System.String Name();
 		
 		/// <summary>The value of the field as a String, or null.
-		/// <p>
+		/// <p/>
 		/// For indexing, if isStored()==true, the stringValue() will be used as the stored field value
 		/// unless isBinary()==true, in which case binaryValue() will be used.
 		/// 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Documents
 		/// <summary> Return the raw byte[] for the binary field.  Note that
 		/// you must also call {@link #getBinaryLength} and {@link
 		/// #getBinaryOffset} to know which range of bytes in this
-		/// returned array belong to the field.<p>
+		/// returned array belong to the field.<p/>
 		/// About reuse: if you pass in the result byte[] and it is
 		/// used, likely the underlying implementation will hold
 		/// onto this byte[] and return it in future calls to

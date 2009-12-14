@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: the Weight for DisjunctionMaxQuery, used to
 		/// normalize, score and explain these queries.
 		/// 
-		/// <p>NOTE: this API and implementation is subject to
+		/// <p/>NOTE: this API and implementation is subject to
 		/// change suddenly in the next release.</p>
 		/// </summary>
 		[Serializable]

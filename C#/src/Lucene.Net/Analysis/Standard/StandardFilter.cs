@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis.Standard
 		private TermAttribute termAtt;
 		
 		/// <summary>Returns the next token in the stream, or null at EOS.
-		/// <p>Removes <tt>'s</tt> from the end of words.
-		/// <p>Removes dots from acronyms.
+		/// <p/>Removes <tt>'s</tt> from the end of words.
+		/// <p/>Removes dots from acronyms.
 		/// </summary>
 		public override bool IncrementToken()
 		{

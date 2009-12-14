@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Maintains caches of term values.
 	/// 
-	/// <p>Created: May 19, 2004 11:13:14 AM
+	/// <p/>Created: May 19, 2004 11:13:14 AM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 	}
 	/// <summary> EXPERT: A unique Identifier/Description for each item in the FieldCache. 
 	/// Can be useful for logging/debugging.
-	/// <p>
+	/// <p/>
 	/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 	/// and experimental.  It may be removed or altered w/o warning in future 
 	/// releases 
@@ -633,13 +633,13 @@ namespace Lucene.Net.Search
 		
 		/// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
 		/// currently in the FieldCache.
-		/// <p>
+		/// <p/>
 		/// NOTE: These CacheEntry objects maintain a strong refrence to the 
 		/// Cached Values.  Maintaining refrences to a CacheEntry the IndexReader 
 		/// associated with it has garbage collected will prevent the Value itself
 		/// from being garbage collected when the Cache drops the WeakRefrence.
 		/// </p>
-		/// <p>
+		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 
@@ -648,7 +648,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		CacheEntry[] GetCacheEntries();
 		
-		/// <summary> <p>
+		/// <summary> <p/>
 		/// EXPERT: Instructs the FieldCache to forcibly expunge all entries 
 		/// from the underlying caches.  This is intended only to be used for 
 		/// test methods as a way to ensure a known base state of the Cache 
@@ -656,7 +656,7 @@ namespace Lucene.Net.Search
 		/// It should not be relied on for "Cache maintenance" in general 
 		/// application code.
 		/// </p>
-		/// <p>
+		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 

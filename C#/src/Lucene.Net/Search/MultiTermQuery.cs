@@ -30,12 +30,12 @@ namespace Lucene.Net.Search
 	/// containing a subset of terms provided by a {@link
 	/// FilteredTermEnum} enumeration.
 	/// 
-	/// <p>This query cannot be used directly; you must subclass
+	/// <p/>This query cannot be used directly; you must subclass
 	/// it and define {@link #getEnum} to provide a {@link
 	/// FilteredTermEnum} that iterates through the terms to be
 	/// matched.
 	/// 
-	/// <p><b>NOTE</b>: if {@link #setRewriteMethod} is either
+	/// <p/><b>NOTE</b>: if {@link #setRewriteMethod} is either
 	/// {@link #CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE} or {@link
 	/// #SCORING_BOOLEAN_QUERY_REWRITE}, you may encounter a
 	/// {@link BooleanQuery.TooManyClauses} exception during
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 	/// #setRewriteMethod} to {@link #CONSTANT_SCORE_FILTER_REWRITE}
 	/// prevents this.
 	/// 
-	/// <p>The recommended rewrite method is {@link
+	/// <p/>The recommended rewrite method is {@link
 	/// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}: it doesn't spend CPU
 	/// computing unhelpful scores, and it tries to pick the most
 	/// performant rewrite method given the query.
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 		/// for that term.  Matching documents are assigned a
 		/// constant score equal to the query's boost.
 		/// 
-		/// <p> This method is faster than the BooleanQuery
+		/// <p/> This method is faster than the BooleanQuery
 		/// rewrite methods when the number of matched terms or
 		/// matched documents is non-trivial. Also, it will never
 		/// hit an errant {@link BooleanQuery.TooManyClauses}
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 		/// to compute, so it's almost always better to use {@link
 		/// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} instead.
 		/// 
-		/// <p><b>NOTE</b>: This rewrite method will hit {@link
+		/// <p/><b>NOTE</b>: This rewrite method will hit {@link
 		/// BooleanQuery.TooManyClauses} if the number of terms
 		/// exceeds {@link BooleanQuery#getMaxClauseCount}.
 		/// 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
 		/// document receives a constant score equal to the
 		/// query's boost.
 		/// 
-		/// <p><b>NOTE</b>: This rewrite method will hit {@link
+		/// <p/><b>NOTE</b>: This rewrite method will hit {@link
 		/// BooleanQuery.TooManyClauses} if the number of terms
 		/// exceeds {@link BooleanQuery#getMaxClauseCount}.
 		/// 
@@ -417,11 +417,11 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: Return the number of unique terms visited during execution of the query.
 		/// If there are many of them, you may consider using another query type
 		/// or optimize your total term count in index.
-		/// <p>This method is not thread safe, be sure to only call it when no query is running!
+		/// <p/>This method is not thread safe, be sure to only call it when no query is running!
 		/// If you re-use the same query instance for another
 		/// search, be sure to first reset the term counter
 		/// with {@link #clearTotalNumberOfTerms}.
-		/// <p>On optimized indexes / no MultiReaders, you get the correct number of
+		/// <p/>On optimized indexes / no MultiReaders, you get the correct number of
 		/// unique terms for the whole index. Use this number to compare different queries.
 		/// For non-optimized indexes this number can also be achived in
 		/// non-constant-score mode. In constant-score mode you get the total number of

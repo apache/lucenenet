@@ -30,14 +30,14 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements search over a single IndexReader.
 	/// 
-	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
+	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
 	/// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
-	/// <p>Note that you can only access Hits from an IndexSearcher as long as it is
+	/// <p/>Note that you can only access Hits from an IndexSearcher as long as it is
 	/// not yet closed, otherwise an IOException will be thrown. 
 	/// 
-	/// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
 	/// <code>IndexSearcher</code>} instances are completely
 	/// thread safe, meaning multiple threads can call any of its
 	/// methods, concurrently.  If your application requires
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 		/// whether or not the fields in the returned {@link FieldDoc} instances
 		/// should be set by specifying fillFields.<br>
 		/// 
-		/// <p>
+		/// <p/>
 		/// NOTE: this does not compute scores by default. If you need scores, create
 		/// a {@link TopFieldCollector} instance by calling
 		/// {@link TopFieldCollector#create} and then pass that to

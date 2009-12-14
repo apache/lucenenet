@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
 		/// Boost, and the boost to apply to each term.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
 		/// </p>
 		/// 
@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
 		/// </p>
 		/// 
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
 		/// </p>
@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
 		/// Boost, and the boost to apply to each term.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
 		/// </p>
 		/// 
@@ -104,7 +104,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
 		/// </p>
 		/// 
@@ -112,7 +112,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
 		/// </p>
@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
@@ -134,7 +134,7 @@ namespace Lucene.Net.QueryParsers
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
 		/// </p>
 		/// 
@@ -142,7 +142,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
 		/// </p>
@@ -159,7 +159,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
@@ -169,7 +169,7 @@ namespace Lucene.Net.QueryParsers
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
 		/// </p>
 		/// 
@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParsers
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
 		/// </p>
@@ -298,7 +298,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Parses a query which searches on the fields specified.
-		/// <p>
+		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
 		/// <pre>
@@ -331,7 +331,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Parses a query which searches on the fields specified.
-		/// <p>
+		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
 		/// <pre>
@@ -377,7 +377,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p><pre>
+		/// <p/><pre>
 		/// Usage:
 		/// <code>
 		/// String[] fields = {"filename", "contents", "description"};
@@ -387,7 +387,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse("query", fields, flags, analyzer);
 		/// </code>
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// <pre>
 		/// <code>
@@ -420,7 +420,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
-		/// <p>
+		/// <p/>
 		/// 
 		/// <pre>
 		/// Usage:
@@ -432,7 +432,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(&quot;query&quot;, fields, flags, analyzer);
 		/// &lt;/code&gt;
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// 
 		/// <pre>
@@ -480,7 +480,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p><pre>
+		/// <p/><pre>
 		/// Usage:
 		/// <code>
 		/// String[] query = {"query1", "query2", "query3"};
@@ -491,7 +491,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
 		/// </code>
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// <pre>
 		/// <code>
@@ -524,7 +524,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
-		/// <p>
+		/// <p/>
 		/// 
 		/// <pre>
 		/// Usage:
@@ -537,7 +537,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
 		/// &lt;/code&gt;
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// 
 		/// <pre>

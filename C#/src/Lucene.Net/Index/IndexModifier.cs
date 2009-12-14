@@ -26,7 +26,7 @@ using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> <p>[Note that as of <b>2.1</b>, all but one of the
+	/// <summary> <p/>[Note that as of <b>2.1</b>, all but one of the
 	/// methods in this class are available via {@link
 	/// IndexWriter}.  The one method that is not available is
 	/// {@link #DeleteDocument(int)}.]</p>
@@ -36,10 +36,10 @@ namespace Lucene.Net.Index
 	/// do not need to care about implementation details such as that adding
 	/// documents is done via IndexWriter and deletion is done via IndexReader.
 	/// 
-	/// <p>Note that you cannot create more than one <code>IndexModifier</code> object
+	/// <p/>Note that you cannot create more than one <code>IndexModifier</code> object
 	/// on the same directory at the same time.
 	/// 
-	/// <p>Example usage:
+	/// <p/>Example usage:
 	/// 
 	/// <!-- ======================================================== -->
 	/// <!-- = Java Sourcecode to HTML automatically converted code = -->
@@ -71,16 +71,16 @@ namespace Lucene.Net.Index
 	/// <!-- =       END of automatically generated HTML code       = -->
 	/// <!-- ======================================================== -->
 	/// 
-	/// <p>Not all methods of IndexReader and IndexWriter are offered by this
+	/// <p/>Not all methods of IndexReader and IndexWriter are offered by this
 	/// class. If you need access to additional methods, either use those classes
 	/// directly or implement your own class that extends <code>IndexModifier</code>.
 	/// 
-	/// <p>Although an instance of this class can be used from more than one
+	/// <p/>Although an instance of this class can be used from more than one
 	/// thread, you will not get the best performance. You might want to use
 	/// IndexReader and IndexWriter directly for that (but you will need to
 	/// care about synchronization yourself then).
 	/// 
-	/// <p>While you can freely mix calls to add() and delete() using this class,
+	/// <p/>While you can freely mix calls to add() and delete() using this class,
 	/// you should batch you calls for best performance. For example, if you
 	/// want to update 20 documents, you should first delete all those documents,
 	/// then add all the new documents.
@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> If non-null, information about merges and a message when
 		/// {@link #GetMaxFieldLength()} is reached will be printed to this.
-		/// <p>Example: <tt>index.setInfoStream(System.err);</tt>
+		/// <p/>Example: <tt>index.setInfoStream(System.err);</tt>
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetInfoStream(PrintStream)">
 		/// </seealso>
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
 		/// large value gives faster indexing.  At the same time, mergeFactor limits
 		/// the number of files open in a FSDirectory.
 		/// 
-		/// <p>The default value is 10.
+		/// <p/>The default value is 10.
 		/// 
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetMaxBufferedDocs(int)">
@@ -598,7 +598,7 @@ namespace Lucene.Net.Index
 		/// indices are slower, indexing is faster.  Thus larger values (&gt; 10) are best
 		/// for batch index creation, and smaller values (&lt; 10) for indices that are
 		/// interactively maintained.
-		/// <p>This must never be less than 2.  The default value is 10.
+		/// <p/>This must never be less than 2.  The default value is 10.
 		/// 
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetMergeFactor(int)">

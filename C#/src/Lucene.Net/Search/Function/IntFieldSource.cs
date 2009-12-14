@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Function
 	/// using <code>getInts()</code> and makes those values 
 	/// available as other numeric types, casting as needed.
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Function
 	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource for requirements">
 	/// on the field.
 	/// 
-	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based
 	/// searching, if {@link #getValues} is invoked with a
 	/// composite (multi-segment) reader, this can easily cause
 	/// double RAM usage for the values in the FieldCache.  It's

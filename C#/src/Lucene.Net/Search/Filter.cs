@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Abstract base class providing a mechanism to use a subset of an index
 	/// for restriction or permission of index search results.
-	/// <p>
+	/// <p/>
 	/// <b>Note:</b> In Lucene 3.0 {@link #Bits(IndexReader)} will be removed
 	/// and {@link #GetDocIdSet(IndexReader)} will be defined as abstract.
 	/// All implementing classes must therefore implement {@link #GetDocIdSet(IndexReader)}

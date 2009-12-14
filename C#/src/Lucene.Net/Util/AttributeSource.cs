@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
 		public abstract class AttributeFactory
 		{
 			/// <summary> returns an {@link AttributeImpl} for the supplied {@link Attribute} interface class.
-			/// <p>Signature for Java 1.5: <code>public AttributeImpl createAttributeInstance(Class%lt;? extends Attribute&gt; attClass)</code>
+			/// <p/>Signature for Java 1.5: <code>public AttributeImpl createAttributeInstance(Class%lt;? extends Attribute&gt; attClass)</code>
 			/// </summary>
 			public abstract AttributeImpl CreateAttributeInstance(System.Type attClass);
 			

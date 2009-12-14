@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
 	/// Uses <code>FieldCache.DEFAULT</code> for maintaining internal term lookup tables.
 	/// 
-	/// <p>Created: Dec 8, 2003 12:56:03 PM
+	/// <p/>Created: Dec 8, 2003 12:56:03 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Creates a hit queue sorted by the given list of fields.
 		/// 
-		/// <p><b>NOTE</b>: The instances returned by this method
+		/// <p/><b>NOTE</b>: The instances returned by this method
 		/// pre-allocate a full array of length <code>numHits</code>.
 		/// 
 		/// </summary>

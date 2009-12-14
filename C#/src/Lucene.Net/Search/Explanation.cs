@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Indicates whether or not this Explanation models a good match.
 		/// 
-		/// <p>
+		/// <p/>
 		/// By default, an Explanation represents a "match" if the value is positive.
 		/// </p>
 		/// </summary>

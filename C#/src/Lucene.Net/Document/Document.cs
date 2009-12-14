@@ -33,7 +33,7 @@ namespace Lucene.Net.Documents
 	/// should typically contain one or more stored fields which uniquely identify
 	/// it.
 	/// 
-	/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
+	/// <p/>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
 	/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
 	/// ScoreDoc#doc}, {@link Searcher#Doc(int)} or {@link
 	/// IndexReader#Document(int)}.
@@ -106,9 +106,9 @@ namespace Lucene.Net.Documents
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
 		/// 
-		/// <p>The default value is 1.0.
+		/// <p/>The default value is 1.0.
 		/// 
-		/// <p>Values are multiplied into the value of {@link Fieldable#GetBoost()} of
+		/// <p/>Values are multiplied into the value of {@link Fieldable#GetBoost()} of
 		/// each field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
 		/// 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>Returns, at indexing time, the boost factor as set by {@link #SetBoost(float)}. 
 		/// 
-		/// <p>Note that once a document is indexed this value is no longer available
+		/// <p/>Note that once a document is indexed this value is no longer available
 		/// from the index.  At search time, for retrieved documents, this method always 
 		/// returns 1. This however does not mean that the boost value set at  indexing 
 		/// time was ignored - it was just combined with other indexing time factors and 
@@ -138,10 +138,10 @@ namespace Lucene.Net.Documents
 			return boost;
 		}
 		
-		/// <summary> <p>Adds a field to a document.  Several fields may be added with
+		/// <summary> <p/>Adds a field to a document.  Several fields may be added with
 		/// the same name.  In this case, if the fields are indexed, their text is
 		/// treated as though appended for the purposes of search.</p>
-		/// <p> Note that add like the removeField(s) methods only makes sense 
+		/// <p/> Note that add like the removeField(s) methods only makes sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
@@ -152,10 +152,10 @@ namespace Lucene.Net.Documents
 			fields.Add(field);
 		}
 		
-		/// <summary> <p>Removes field with the specified name from the document.
+		/// <summary> <p/>Removes field with the specified name from the document.
 		/// If multiple fields exist with this name, this method removes the first field that has been added.
 		/// If there is no field with the specified name, the document remains unchanged.</p>
-		/// <p> Note that the removeField(s) methods like the add method only make sense 
+		/// <p/> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
@@ -175,9 +175,9 @@ namespace Lucene.Net.Documents
 			}
 		}
 		
-		/// <summary> <p>Removes all fields with the given name from the document.
+		/// <summary> <p/>Removes all fields with the given name from the document.
 		/// If there is no field with the specified name, the document remains unchanged.</p>
-		/// <p> Note that the removeField(s) methods like the add method only make sense 
+		/// <p/> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
@@ -253,7 +253,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns a List of all the fields in a document.
-		/// <p>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
+		/// <p/>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
 		/// <i>not</i> available in documents retrieved from the
 		/// index, e.g. {@link Searcher#Doc(int)} or {@link
 		/// IndexReader#Document(int)}.

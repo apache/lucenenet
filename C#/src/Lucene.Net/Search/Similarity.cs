@@ -26,9 +26,9 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: Scoring API.
-	/// <p>Subclasses implement search scoring.
+	/// <p/>Subclasses implement search scoring.
 	/// 
-	/// <p>The score of query <code>q</code> for document <code>d</code> correlates to the
+	/// <p/>The score of query <code>q</code> for document <code>d</code> correlates to the
 	/// cosine-distance or dot-product between document and query vectors in a
 	/// <a href="http://en.wikipedia.org/wiki/Vector_Space_Model">
 	/// Vector Space Model (VSM) of Information Retrieval</a>.
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// The score is computed as follows:
 	/// 
-	/// <P>
+	/// <p/>
 	/// <table cellpadding="1" cellspacing="0" border="1" align="center">
 	/// <tr><td>
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 	/// </td></tr>
 	/// </table>
 	/// 
-	/// <p> where
+	/// <p/> where
 	/// <ol>
 	/// <li>
 	/// <A NAME="formula_tf"></A>
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
 	/// </li>
 	/// </ul>
 	/// 
-	/// <p>
+	/// <p/>
 	/// When a document is added to the index, all the above factors are multiplied.
 	/// If the document has multiple fields with the same name, all their boosts are multiplied together:
 	/// 
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
 		/// <summary>Return the default Similarity implementation used by indexing and search
 		/// code.
 		/// 
-		/// <p>This is initially an instance of {@link DefaultSimilarity}.
+		/// <p/>This is initially an instance of {@link DefaultSimilarity}.
 		/// 
 		/// </summary>
 		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
@@ -490,15 +490,15 @@ namespace Lucene.Net.Search
 		/// <summary> Compute the normalization value for a field, given the accumulated
 		/// state of term processing for this field (see {@link FieldInvertState}).
 		/// 
-		/// <p>Implementations should calculate a float value based on the field
+		/// <p/>Implementations should calculate a float value based on the field
 		/// state and then return that value.
 		/// 
-		/// <p>For backward compatibility this method by default calls
+		/// <p/>For backward compatibility this method by default calls
 		/// {@link #LengthNorm(String, int)} passing
 		/// {@link FieldInvertState#GetLength()} as the second argument, and
 		/// then multiplies this value by {@link FieldInvertState#GetBoost()}.</p>
 		/// 
-		/// <p><b>WARNING</b>: This API is new and experimental and may
+		/// <p/><b>WARNING</b>: This API is new and experimental and may
 		/// suddenly change.</p>
 		/// 
 		/// </summary>
@@ -518,11 +518,11 @@ namespace Lucene.Net.Search
 		/// stored in an index and multipled into scores for hits on each field by the
 		/// search code.
 		/// 
-		/// <p>Matches in longer fields are less precise, so implementations of this
+		/// <p/>Matches in longer fields are less precise, so implementations of this
 		/// method usually return smaller values when <code>numTokens</code> is large,
 		/// and larger values when <code>numTokens</code> is small.
 		/// 
-		/// <p>Note that the return values are computed under 
+		/// <p/>Note that the return values are computed under 
 		/// {@link Lucene.Net.Index.IndexWriter#AddDocument(Lucene.Net.Documents.Document)} 
 		/// and then stored using
 		/// {@link #EncodeNorm(float)}.  
@@ -546,7 +546,7 @@ namespace Lucene.Net.Search
 		/// weights of each of the query terms.  This value is then multipled into the
 		/// weight of each query term.
 		/// 
-		/// <p>This does not affect ranking, but rather just attempts to make scores
+		/// <p/>This does not affect ranking, but rather just attempts to make scores
 		/// from different queries comparable.
 		/// 
 		/// </summary>
@@ -558,7 +558,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Encodes a normalization factor for storage in an index.
 		/// 
-		/// <p>The encoding uses a three-bit mantissa, a five-bit exponent, and
+		/// <p/>The encoding uses a three-bit mantissa, a five-bit exponent, and
 		/// the zero-exponent point at 15, thus
 		/// representing values from around 7x10^9 to 2x10^-9 with about one
 		/// significant decimal digit of accuracy.  Zero is also represented.
@@ -583,12 +583,12 @@ namespace Lucene.Net.Search
 		/// factor for each term in the query and these products are then summed to
 		/// form the initial score for a document.
 		/// 
-		/// <p>Terms and phrases repeated in a document indicate the topic of the
+		/// <p/>Terms and phrases repeated in a document indicate the topic of the
 		/// document, so implementations of this method usually return larger values
 		/// when <code>freq</code> is large, and smaller values when <code>freq</code>
 		/// is small.
 		/// 
-		/// <p>The default implementation calls {@link #Tf(float)}.
+		/// <p/>The default implementation calls {@link #Tf(float)}.
 		/// 
 		/// </summary>
 		/// <param name="freq">the frequency of a term within a document
@@ -604,7 +604,7 @@ namespace Lucene.Net.Search
 		/// This value is summed for each sloppy phrase match in a document to form
 		/// the frequency that is passed to {@link #Tf(float)}.
 		/// 
-		/// <p>A phrase match with a small edit distance to a document passage more
+		/// <p/>A phrase match with a small edit distance to a document passage more
 		/// closely matches the document, so implementations of this method usually
 		/// return larger values when the edit distance is small and smaller values
 		/// when it is large.
@@ -623,7 +623,7 @@ namespace Lucene.Net.Search
 		/// factor for each term in the query and these products are then summed to
 		/// form the initial score for a document.
 		/// 
-		/// <p>Terms and phrases repeated in a document indicate the topic of the
+		/// <p/>Terms and phrases repeated in a document indicate the topic of the
 		/// document, so implementations of this method usually return larger values
 		/// when <code>freq</code> is large, and smaller values when <code>freq</code>
 		/// is small.
@@ -637,7 +637,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes a score factor for a simple term.
 		/// 
-		/// <p>The default implementation is:<pre>
+		/// <p/>The default implementation is:<pre>
 		/// return idf(searcher.docFreq(term), searcher.maxDoc());
 		/// </pre>
 		/// 
@@ -664,7 +664,7 @@ namespace Lucene.Net.Search
 		/// <summary> Computes a score factor for a simple term and returns an explanation
 		/// for that score factor.
 		/// 
-		/// <p>
+		/// <p/>
 		/// The default implementation uses:
 		/// 
 		/// <pre>
@@ -700,7 +700,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes a score factor for a phrase.
 		/// 
-		/// <p>The default implementation sums the {@link #Idf(Term,Searcher)} factor
+		/// <p/>The default implementation sums the {@link #Idf(Term,Searcher)} factor
 		/// for each term in the phrase.
 		/// 
 		/// </summary>
@@ -726,7 +726,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Computes a score factor for a phrase.
 		/// 
-		/// <p>
+		/// <p/>
 		/// The default implementation sums the idf factor for
 		/// each term in the phrase.
 		/// 
@@ -768,7 +768,7 @@ namespace Lucene.Net.Search
 		/// {@link #Tf(int)} factor for each term in the query and these products are
 		/// then summed to form the initial score for a document.
 		/// 
-		/// <p>Terms that occur in fewer documents are better indicators of topic, so
+		/// <p/>Terms that occur in fewer documents are better indicators of topic, so
 		/// implementations of this method usually return larger values for rare terms,
 		/// and smaller values for common terms.
 		/// 
@@ -784,7 +784,7 @@ namespace Lucene.Net.Search
 		/// <summary>Computes a score factor based on the fraction of all query terms that a
 		/// document contains.  This value is multiplied into scores.
 		/// 
-		/// <p>The presence of a large portion of the query terms indicates a better
+		/// <p/>The presence of a large portion of the query terms indicates a better
 		/// match with the query, so implementations of this method usually return
 		/// larger values when the ratio between these parameters is large and smaller
 		/// values when the ratio between them is small.
@@ -804,7 +804,7 @@ namespace Lucene.Net.Search
 		/// <summary> Calculate a scoring factor based on the data in the payload.  Overriding implementations
 		/// are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
 		/// what is in the byte array.
-		/// <p>
+		/// <p/>
 		/// The default implementation returns 1.
 		/// 
 		/// </summary>
@@ -832,7 +832,7 @@ namespace Lucene.Net.Search
 		/// <summary> Calculate a scoring factor based on the data in the payload.  Overriding implementations
 		/// are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
 		/// what is in the byte array.
-		/// <p>
+		/// <p/>
 		/// The default implementation returns 1.
 		/// 
 		/// </summary>

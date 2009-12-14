@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
 		/// <summary>Use this to get the latest & greatest settings, bug
 		/// fixes, etc, for Lucene.
 		/// 
-		/// <p><b>WARNING</b>: if you use this setting, and then
+		/// <p/><b>WARNING</b>: if you use this setting, and then
 		/// upgrade to a newer release of Lucene, sizable changes
 		/// may happen.  If precise back compatibility is important
 		/// then you should instead explicitly specify an actual

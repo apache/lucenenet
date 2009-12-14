@@ -20,10 +20,10 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> <p>Implements {@link LockFactory} using {@link
+	/// <summary> <p/>Implements {@link LockFactory} using {@link
 	/// File#createNewFile()}.</p>
 	/// 
-	/// <p><b>NOTE:</b> the <a target="_top"
+	/// <p/><b>NOTE:</b> the <a target="_top"
 	/// href="http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html#createNewFile()">javadocs
 	/// for <code>File.createNewFile</code></a> contain a vague
 	/// yet spooky warning about not using the API for file
@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 	/// bug</a>, and in fact the only known problem with using
 	/// this API for locking is that the Lucene write lock may
 	/// not be released when the JVM exits abnormally.</p>
-	/// <p>When this happens, a {@link LockObtainFailedException}
+	/// <p/>When this happens, a {@link LockObtainFailedException}
 	/// is hit when trying to create a writer, in which case you
 	/// need to explicitly clear the lock file first.  You can
 	/// either manually remove the file, or use the {@link
@@ -41,7 +41,7 @@ namespace Lucene.Net.Store
 	/// writing to the index otherwise you can easily corrupt
 	/// your index.</p>
 	/// 
-	/// <p>If you suspect that this or any other LockFactory is
+	/// <p/>If you suspect that this or any other LockFactory is
 	/// not working properly in your environment, you can easily
 	/// test it by using {@link VerifyingLockFactory}, {@link
 	/// LockVerifyServer} and {@link LockStressTest}.</p>

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	
 	/// <version>  $Id 
 	/// </version>
-	/// <summary> <p><b>NOTE:</b> This API is new and still experimental
+	/// <summary> <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)</p>
 	/// </summary>
 	public class SegmentReader:IndexReader, System.ICloneable

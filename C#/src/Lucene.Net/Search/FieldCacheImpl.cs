@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// <summary> Expert: The default cache implementation, storing all values in memory.
 	/// A WeakHashMap is used for storage.
 	/// 
-	/// <p>Created: May 19, 2004 4:40:36 PM
+	/// <p/>Created: May 19, 2004 4:40:36 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

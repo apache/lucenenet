@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	/// <summary> An abstract base class for search implementations. Implements the main search
 	/// methods.
 	/// 
-	/// <p>
+	/// <p/>
 	/// Note that you can only access hits from a Searcher as long as it is not yet
 	/// closed, otherwise an IOException will be thrown.
 	/// </summary>
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
 		/// <code>sort</code>.
 		/// 
-		/// <p>NOTE: this does not compute scores by default; use
+		/// <p/>NOTE: this does not compute scores by default; use
 		/// {@link IndexSearcher#setDefaultFieldSortScoring} to enable scoring.
 		/// 
 		/// </summary>
@@ -109,14 +109,14 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching
+		/// <p/>{@link HitCollector#Collect(int,float)} is called for every matching
 		/// document.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
 		/// Searcher#Search(Query)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.
-		/// <p>Note: The <code>score</code> passed to this method is a raw score.
+		/// <p/>Note: The <code>score</code> passed to this method is a raw score.
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.
 		/// </summary>
@@ -131,12 +131,12 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link Collector#Collect(int)} is called for every matching document.
+		/// <p/>{@link Collector#Collect(int)} is called for every matching document.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the matching
+		/// <p/>Applications should only use this if they need <i>all</i> of the matching
 		/// documents. The high-level search API ({@link Searcher#Search(Query, int)}
 		/// ) is usually more efficient, as it skips non-high-scoring hits.
-		/// <p>Note: The <code>score</code> passed to this method is a raw score.
+		/// <p/>Note: The <code>score</code> passed to this method is a raw score.
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.
 		/// </summary>
@@ -148,11 +148,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link HitCollector#Collect(int,float)} is called for every matching
+		/// <p/>{@link HitCollector#Collect(int,float)} is called for every matching
 		/// document.
 		/// <br>HitCollector-based access to remote indexes is discouraged.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
 		/// Searcher#Search(Query, Filter, int)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.
@@ -175,11 +175,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p>{@link Collector#Collect(int)} is called for every matching
+		/// <p/>{@link Collector#Collect(int)} is called for every matching
 		/// document.
 		/// <br>Collector-based access to remote indexes is discouraged.
 		/// 
-		/// <p>Applications should only use this if they need <i>all</i> of the
+		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
 		/// Searcher#Search(Query, Filter, int)}) is usually more efficient, as it skips
 		/// non-high-scoring hits.
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns an Explanation that describes how <code>doc</code> scored against
 		/// <code>query</code>.
 		/// 
-		/// <p>This is intended to be used in developing Similarity implementations,
+		/// <p/>This is intended to be used in developing Similarity implementations,
 		/// and, for good performance, should not be displayed with every hit.
 		/// Computing an explanation is as expensive as executing the query over the
 		/// entire index.
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Expert: Return the Similarity implementation used by this Searcher.
 		/// 
-		/// <p>This defaults to the current value of {@link Similarity#GetDefault()}.
+		/// <p/>This defaults to the current value of {@link Similarity#GetDefault()}.
 		/// </summary>
 		public virtual Similarity GetSimilarity()
 		{

@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary>Abstract class for enumerating terms.
-	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
 	
@@ -40,8 +40,8 @@ namespace Lucene.Net.Index
 		public abstract void  Close();
 		
 		/// <summary>Skips terms to the first beyond the current whose value is
-		/// greater or equal to <i>target</i>. <p>Returns true iff there is such
-		/// an entry.  <p>Behaves as if written: <pre>
+		/// greater or equal to <i>target</i>. <p/>Returns true iff there is such
+		/// an entry.  <p/>Behaves as if written: <pre>
 		/// public boolean skipTo(Term target) {
 		/// do {
 		/// if (!next())

@@ -26,12 +26,12 @@ namespace Lucene.Net.Analysis
 	/// Note: the input to the stemming filter must already be in lower case,
 	/// so you will need to use LowerCaseFilter or LowerCaseTokenizer farther
 	/// down the Tokenizer chain in order for this to work properly!
-	/// <P>
+	/// <p/>
 	/// To use this filter with other analyzers, you'll want to write an
 	/// Analyzer class that sets up the TokenStream chain as you want it.
 	/// To use this with LowerCaseTokenizer, for example, you'd write an
 	/// analyzer like this:
-	/// <P>
+	/// <p/>
 	/// <PRE>
 	/// class MyAnalyzer extends Analyzer {
 	/// public final TokenStream tokenStream(String fieldName, Reader reader) {

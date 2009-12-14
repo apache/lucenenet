@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 			return SizeBytes(info);
 		}
 		
-		/// <summary><p>Determines the largest segment (measured by total
+		/// <summary><p/>Determines the largest segment (measured by total
 		/// byte size of the segment's files, in MB) that may be
 		/// merged with other segments.  Small values (e.g., less
 		/// than 50 MB) are best for interactive indexing, as this
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		/// seconds.  Larger values are best for batched indexing
 		/// and speedier searches.</p>
 		/// 
-		/// <p>Note that {@link #setMaxMergeDocs} is also
+		/// <p/>Note that {@link #setMaxMergeDocs} is also
 		/// used to check whether a segment is too large for
 		/// merging (it's either or).</p>
 		/// </summary>

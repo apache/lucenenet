@@ -27,11 +27,11 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A range filter built on top of a cached single term field (in {@link FieldCache}).
 	/// 
-	/// <p>FieldCacheRangeFilter builds a single cache for the field the first time it is used.
+	/// <p/>FieldCacheRangeFilter builds a single cache for the field the first time it is used.
 	/// Each subsequent FieldCacheRangeFilter on the same field then reuses this cache,
 	/// even if the range itself changes. 
 	/// 
-	/// <p>This means that FieldCacheRangeFilter is much faster (sometimes more than 100x as fast) 
+	/// <p/>This means that FieldCacheRangeFilter is much faster (sometimes more than 100x as fast) 
 	/// as building a {@link TermRangeFilter} (or {@link ConstantScoreRangeQuery} on a {@link TermRangeFilter})
 	/// for each query, if using a {@link #newStringRange}. However, if the range never changes it
 	/// is slower (around 2x as slow) than building a CachingWrapperFilter on top of a single TermRangeFilter.
@@ -40,16 +40,16 @@ namespace Lucene.Net.Search
 	/// Furthermore, it does not need the numeric values encoded by {@link NumericField}. But
 	/// it has the problem that it only works with exact one value/document (see below).
 	/// 
-	/// <p>As with all {@link FieldCache} based functionality, FieldCacheRangeFilter is only valid for 
+	/// <p/>As with all {@link FieldCache} based functionality, FieldCacheRangeFilter is only valid for 
 	/// fields which exact one term for each document (except for {@link #newStringRange}
 	/// where 0 terms are also allowed). Due to a restriction of {@link FieldCache}, for numeric ranges
 	/// all terms that do not have a numeric value, 0 is assumed.
 	/// 
-	/// <p>Thus it works on dates, prices and other single value fields but will not work on
+	/// <p/>Thus it works on dates, prices and other single value fields but will not work on
 	/// regular text fields. It is preferable to use a <code>NOT_ANALYZED</code> field to ensure that
 	/// there is only a single term. 
 	/// 
-	/// <p>This class does not have an constructor, use one of the static factory methods available,
+	/// <p/>This class does not have an constructor, use one of the static factory methods available,
 	/// that create a correct instance for different data types supported by {@link FieldCache}.
 	/// </summary>
 	

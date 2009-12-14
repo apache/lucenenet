@@ -22,16 +22,16 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Common scoring functionality for different types of queries.
 	/// 
-	/// <p>
+	/// <p/>
 	/// A <code>Scorer</code> iterates over documents matching a
 	/// query in increasing order of doc Id.
 	/// </p>
-	/// <p>
+	/// <p/>
 	/// Document scores are computed using a given <code>Similarity</code>
 	/// implementation.
 	/// </p>
 	/// 
-	/// <p><b>NOTE</b>: The values Float.Nan,
+	/// <p/><b>NOTE</b>: The values Float.Nan,
 	/// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
 	/// not valid scores.  Certain collectors (eg {@link
 	/// TopScoreDocCollector}) will not properly collect hits

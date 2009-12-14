@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Abstract class for enumerating a subset of all terms. 
-	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// <p/>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
 	public abstract class FilteredTermEnum:TermEnum

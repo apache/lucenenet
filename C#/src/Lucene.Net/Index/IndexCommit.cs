@@ -22,21 +22,21 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> <p>Expert: represents a single commit into an index as seen by the
+	/// <summary> <p/>Expert: represents a single commit into an index as seen by the
 	/// {@link IndexDeletionPolicy} or {@link IndexReader}.</p>
 	/// 
-	/// <p> Changes to the content of an index are made visible
+	/// <p/> Changes to the content of an index are made visible
 	/// only after the writer who made that change commits by
 	/// writing a new segments file
 	/// (<code>segments_N</code>). This point in time, when the
 	/// action of writing of a new segments file to the directory
 	/// is completed, is an index commit.</p>
 	/// 
-	/// <p>Each index commit point has a unique segments file
+	/// <p/>Each index commit point has a unique segments file
 	/// associated with it. The segments file associated with a
 	/// later index commit point would have a larger N.</p>
 	/// 
-	/// <p><b>WARNING</b>: This API is a new and experimental and
+	/// <p/><b>WARNING</b>: This API is a new and experimental and
 	/// may suddenly change. </p>
 	/// </summary>
 	
@@ -57,10 +57,10 @@ namespace Lucene.Net.Index
 		/// <summary> Delete this commit point.  This only applies when using
 		/// the commit point in the context of IndexWriter's
 		/// IndexDeletionPolicy.
-		/// <p>
+		/// <p/>
 		/// Upon calling this, the writer is notified that this commit 
 		/// point should be deleted. 
-		/// <p>
+		/// <p/>
 		/// Decision that a commit-point should be deleted is taken by the {@link IndexDeletionPolicy} in effect
 		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
 		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.

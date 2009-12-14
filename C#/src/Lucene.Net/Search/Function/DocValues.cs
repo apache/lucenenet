@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Function
 	/// {@link Lucene.Net.Search.Function.ValueSource ValueSuorce} 
 	/// for a particular field and reader.
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
@@ -46,14 +46,14 @@ namespace Lucene.Net.Search.Function
 		*/
 		
 		/// <summary> Return doc value as a float. 
-		/// <P>Mandatory: every DocValues implementation must implement at least this method. 
+		/// <p/>Mandatory: every DocValues implementation must implement at least this method. 
 		/// </summary>
 		/// <param name="doc">document whose float value is requested. 
 		/// </param>
 		public abstract float FloatVal(int doc);
 		
 		/// <summary> Return doc value as an int. 
-		/// <P>Optional: DocValues implementation can (but don't have to) override this method. 
+		/// <p/>Optional: DocValues implementation can (but don't have to) override this method. 
 		/// </summary>
 		/// <param name="doc">document whose int value is requested.
 		/// </param>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Return doc value as a long. 
-		/// <P>Optional: DocValues implementation can (but don't have to) override this method. 
+		/// <p/>Optional: DocValues implementation can (but don't have to) override this method. 
 		/// </summary>
 		/// <param name="doc">document whose long value is requested.
 		/// </param>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Return doc value as a double. 
-		/// <P>Optional: DocValues implementation can (but don't have to) override this method. 
+		/// <p/>Optional: DocValues implementation can (but don't have to) override this method. 
 		/// </summary>
 		/// <param name="doc">document whose double value is requested.
 		/// </param>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Return doc value as a string. 
-		/// <P>Optional: DocValues implementation can (but don't have to) override this method. 
+		/// <p/>Optional: DocValues implementation can (but don't have to) override this method. 
 		/// </summary>
 		/// <param name="doc">document whose string value is requested.
 		/// </param>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/// <summary> Expert: for test purposes only, return the inner array of values, or null if not applicable.
-		/// <p>
+		/// <p/>
 		/// Allows tests to verify that loaded values are:
 		/// <ol>
 		/// <li>indeed cached/reused.</li>
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Function
 		
 		/// <summary> Returns the minimum of all values or <code>Float.NaN</code> if this
 		/// DocValues instance does not contain any value.
-		/// <p>
+		/// <p/>
 		/// This operation is optional
 		/// </p>
 		/// 
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Function
 		
 		/// <summary> Returns the maximum of all values or <code>Float.NaN</code> if this
 		/// DocValues instance does not contain any value.
-		/// <p>
+		/// <p/>
 		/// This operation is optional
 		/// </p>
 		/// 
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search.Function
 		
 		/// <summary> Returns the average of all values or <code>Float.NaN</code> if this
 		/// DocValues instance does not contain any value. *
-		/// <p>
+		/// <p/>
 		/// This operation is optional
 		/// </p>
 		/// 

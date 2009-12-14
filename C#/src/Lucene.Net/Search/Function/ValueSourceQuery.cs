@@ -27,15 +27,15 @@ namespace Lucene.Net.Search.Function
 	
 	/// <summary> Expert: A Query that sets the scores of document to the
 	/// values obtained from a {@link Lucene.Net.Search.Function.ValueSource ValueSource}.
-	/// <p>
+	/// <p/>
 	/// This query provides a score for <em>each and every</em> undeleted document in the index.    
-	/// <p>
+	/// <p/>
 	/// The value source can be based on a (cached) value of an indexed field, but it
 	/// can also be based on an external source, e.g. values read from an external database. 
-	/// <p>
+	/// <p/>
 	/// Score is set as: Score(doc,query) = query.getBoost()<sup>2</sup> * valueSource(doc).  
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>

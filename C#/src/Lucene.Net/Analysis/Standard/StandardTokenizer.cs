@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Standard
 	
 	/// <summary>A grammar-based tokenizer constructed with JFlex
 	/// 
-	/// <p> This should be a good tokenizer for most European-language documents:
+	/// <p/> This should be a good tokenizer for most European-language documents:
 	/// 
 	/// <ul>
 	/// <li>Splits words at punctuation characters, removing punctuation. However, a 
@@ -42,12 +42,12 @@ namespace Lucene.Net.Analysis.Standard
 	/// <li>Recognizes email addresses and internet hostnames as one token.
 	/// </ul>
 	/// 
-	/// <p>Many applications have specific tokenizer needs.  If this tokenizer does
+	/// <p/>Many applications have specific tokenizer needs.  If this tokenizer does
 	/// not suit your application, please consider copying this source code
 	/// directory to your project and maintaining your own grammar-based tokenizer.
 	/// 
 	/// <a name="version"/>
-	/// <p>
+	/// <p/>
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StandardAnalyzer:
 	/// <ul>

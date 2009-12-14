@@ -26,9 +26,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// relative to the previous Token in a TokenStream, used in phrase
 	/// searching.
 	/// 
-	/// <p>The default value is one.
+	/// <p/>The default value is one.
 	/// 
-	/// <p>Some common uses for this are:<ul>
+	/// <p/>Some common uses for this are:<ul>
 	/// 
 	/// <li>Set it to zero to put multiple terms in the same position.  This is
 	/// useful if, e.g., a word has multiple stems.  Searches for phrases

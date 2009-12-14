@@ -49,9 +49,9 @@ namespace Lucene.Net.Store
 		/// <summary> Creates a new <code>RAMDirectory</code> instance from a different
 		/// <code>Directory</code> implementation.  This can be used to load
 		/// a disk-based index into memory.
-		/// <P>
+		/// <p/>
 		/// This should be used only with indices that can fit into memory.
-		/// <P>
+		/// <p/>
 		/// Note that the resulting <code>RAMDirectory</code> instance is fully
 		/// independent from the original <code>Directory</code> (it is a
 		/// complete copy).  Any subsequent changes to the

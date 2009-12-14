@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		/// <li>{@link #NO_MORE_DOCS} if the iterator has exhausted.
 		/// <li>Otherwise it should return the doc ID it is currently on.
 		/// </ul>
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> in 3.0, this method will become abstract.
 		/// 
 		/// </summary>
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
 		/// <summary> Advances to the first beyond the current whose document number is greater
 		/// than or equal to <i>target</i>. Returns the current document number or
 		/// {@link #NO_MORE_DOCS} if there are no more docs in the set.
-		/// <p>
+		/// <p/>
 		/// Behaves as if written:
 		/// 
 		/// <pre>
@@ -131,18 +131,18 @@ namespace Lucene.Net.Search
 		/// </pre>
 		/// 
 		/// Some implementations are considerably more efficient than that.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> certain implemenations may return a different value (each
 		/// time) if called several times in a row with the same target.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> this method may be called with {@value #NO_MORE_DOCS} for
 		/// efficiency by some Scorers. If your implementation cannot efficiently
 		/// determine that it should exhaust, it is recommended that you check for that
 		/// value in each call to this method.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> after the iterator has exhausted you should not call this
 		/// method, as it may result in unpredicted behavior.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> in 3.0 this method will become abstract, following the removal
 		/// of {@link #SkipTo(int)}.
 		/// 

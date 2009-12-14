@@ -22,11 +22,11 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> <p>Expert: a MergePolicy determines the sequence of
+	/// <summary> <p/>Expert: a MergePolicy determines the sequence of
 	/// primitive merge operations to be used for overall merge
 	/// and optimize operations.</p>
 	/// 
-	/// <p>Whenever the segments in an index have been altered by
+	/// <p/>Whenever the segments in an index have been altered by
 	/// {@link IndexWriter}, either the addition of a newly
 	/// flushed segment, addition of many segments from
 	/// addIndexes* calls, or a previous merge that may now need
@@ -39,19 +39,19 @@ namespace Lucene.Net.Index
 	/// {@link #findMergesForOptimize} and the MergePolicy should
 	/// then return the necessary merges.</p>
 	/// 
-	/// <p>Note that the policy can return more than one merge at
+	/// <p/>Note that the policy can return more than one merge at
 	/// a time.  In this case, if the writer is using {@link
 	/// SerialMergeScheduler}, the merges will be run
 	/// sequentially but if it is using {@link
 	/// ConcurrentMergeScheduler} they will be run concurrently.</p>
 	/// 
-	/// <p>The default MergePolicy is {@link
+	/// <p/>The default MergePolicy is {@link
 	/// LogByteSizeMergePolicy}.</p>
 	/// 
-	/// <p><b>NOTE:</b> This API is new and still experimental
+	/// <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)</p>
 	/// 
-	/// <p><b>NOTE</b>: This class typically requires access to
+	/// <p/><b>NOTE</b>: This class typically requires access to
 	/// package-private APIs (e.g. <code>SegmentInfos</code>) to do its job;
 	/// if you implement your own MergePolicy, you'll need to put
 	/// it in package Lucene.Net.Index in order to use

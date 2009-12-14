@@ -28,36 +28,36 @@ namespace Lucene.Net.Util
 	/// <summary> This is a helper class to generate prefix-encoded representations for numerical values
 	/// and supplies converters to represent float/double values as sortable integers/longs.
 	/// 
-	/// <p>To quickly execute range queries in Apache Lucene, a range is divided recursively
+	/// <p/>To quickly execute range queries in Apache Lucene, a range is divided recursively
 	/// into multiple intervals for searching: The center of the range is searched only with
 	/// the lowest possible precision in the trie, while the boundaries are matched
 	/// more exactly. This reduces the number of terms dramatically.
 	/// 
-	/// <p>This class generates terms to achive this: First the numerical integer values need to
+	/// <p/>This class generates terms to achive this: First the numerical integer values need to
 	/// be converted to strings. For that integer values (32 bit or 64 bit) are made unsigned
 	/// and the bits are converted to ASCII chars with each 7 bit. The resulting string is
 	/// sortable like the original integer value. Each value is also prefixed
 	/// (in the first char) by the <code>shift</code> value (number of bits removed) used
 	/// during encoding.
 	/// 
-	/// <p>To also index floating point numbers, this class supplies two methods to convert them
+	/// <p/>To also index floating point numbers, this class supplies two methods to convert them
 	/// to integer values by changing their bit layout: {@link #doubleToSortableLong},
 	/// {@link #floatToSortableInt}. You will have no precision loss by
 	/// converting floating point numbers to integers and back (only that the integer form
 	/// is not usable). Other data types like dates can easily converted to longs or ints (e.g.
 	/// date to long: {@link java.util.Date#getTime}).
 	/// 
-	/// <p>For easy usage, the trie algorithm is implemented for indexing inside
+	/// <p/>For easy usage, the trie algorithm is implemented for indexing inside
 	/// {@link NumericTokenStream} that can index <code>int</code>, <code>long</code>,
 	/// <code>float</code>, and <code>double</code>. For querying,
 	/// {@link NumericRangeQuery} and {@link NumericRangeFilter} implement the query part
 	/// for the same data types.
 	/// 
-	/// <p>This class can also be used, to generate lexicographically sortable (according
+	/// <p/>This class can also be used, to generate lexicographically sortable (according
 	/// {@link String#compareTo(String)}) representations of numeric data types for other
 	/// usages (e.g. sorting).
 	/// 
-	/// <p><font color="red"><b>NOTE:</b> This API is experimental and
+	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>
 	/// 
 	/// </summary>
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
 		/// <summary> This is a convenience method, that returns prefix coded bits of a long without
 		/// reducing the precision. It can be used to store the full precision value as a
 		/// stored field in index.
-		/// <p>To decode, use {@link #prefixCodedToLong}.
+		/// <p/>To decode, use {@link #prefixCodedToLong}.
 		/// </summary>
 		public static System.String LongToPrefixCoded(long val)
 		{
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
 		/// <summary> This is a convenience method, that returns prefix coded bits of an int without
 		/// reducing the precision. It can be used to store the full precision value as a
 		/// stored field in index.
-		/// <p>To decode, use {@link #prefixCodedToInt}.
+		/// <p/>To decode, use {@link #prefixCodedToInt}.
 		/// </summary>
 		public static System.String IntToPrefixCoded(int val)
 		{
@@ -352,7 +352,7 @@ namespace Lucene.Net.Util
 		/// {@link Lucene.Net.Search.BooleanQuery} for each call to its
 		/// {@link LongRangeBuilder#AddRange(String,String)}
 		/// method.
-		/// <p>This method is used by {@link NumericRangeQuery}.
+		/// <p/>This method is used by {@link NumericRangeQuery}.
 		/// </summary>
 		public static void  SplitLongRange(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound)
 		{
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
 		/// {@link Lucene.Net.Search.BooleanQuery} for each call to its
 		/// {@link IntRangeBuilder#AddRange(String,String)}
 		/// method.
-		/// <p>This method is used by {@link NumericRangeQuery}.
+		/// <p/>This method is used by {@link NumericRangeQuery}.
 		/// </summary>
 		public static void  SplitIntRange(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound)
 		{
@@ -436,7 +436,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Expert: Callback for {@link #splitLongRange}.
 		/// You need to overwrite only one of the methods.
-		/// <p><font color="red"><b>NOTE:</b> This is a very low-level interface,
+		/// <p/><font color="red"><b>NOTE:</b> This is a very low-level interface,
 		/// the method signatures may change in later versions.</font>
 		/// </summary>
 		public abstract class LongRangeBuilder
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Expert: Callback for {@link #splitIntRange}.
 		/// You need to overwrite only one of the methods.
-		/// <p><font color="red"><b>NOTE:</b> This is a very low-level interface,
+		/// <p/><font color="red"><b>NOTE:</b> This is a very low-level interface,
 		/// the method signatures may change in later versions.</font>
 		/// </summary>
 		public abstract class IntRangeBuilder

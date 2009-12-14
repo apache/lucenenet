@@ -33,18 +33,18 @@ namespace Lucene.Net.Documents
 	/// The strings are structured so that lexicographic sorting orders by date,
 	/// which makes them suitable for use as field values and search terms.
 	/// 
-	/// <P>Note that this class saves dates with millisecond granularity,
+	/// <p/>Note that this class saves dates with millisecond granularity,
 	/// which is bad for {@link TermRangeQuery} and {@link PrefixQuery}, as those
 	/// queries are expanded to a BooleanQuery with a potentially large number
 	/// of terms when searching. Thus you might want to use
 	/// {@link DateTools} instead.
 	/// 
-	/// <P>
+	/// <p/>
 	/// Note: dates before 1970 cannot be used, and therefore cannot be
 	/// indexed when using this class. See {@link DateTools} for an
 	/// alternative without such a limitation.
 	/// 
-	/// <P>
+	/// <p/>
 	/// Another approach is {@link NumericUtils}, which provides
 	/// a sortable binary representation (prefix encoded) of numeric values, which
 	/// date/time are.

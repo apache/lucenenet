@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Query that matches documents containing a particular sequence of terms.
 	/// A PhraseQuery is built by QueryParser for input like <code>"new york"</code>.
 	/// 
-	/// <p>This query may be combined with other terms or queries with a {@link BooleanQuery}.
+	/// <p/>This query may be combined with other terms or queries with a {@link BooleanQuery}.
 	/// </summary>
 	[Serializable]
 	public class PhraseQuery:Query
@@ -48,14 +48,14 @@ namespace Lucene.Net.Search
 		/// <summary>Sets the number of other words permitted between words in query phrase.
 		/// If zero, then this is an exact phrase search.  For larger values this works
 		/// like a <code>WITHIN</code> or <code>NEAR</code> operator.
-		/// <p>The slop is in fact an edit-distance, where the units correspond to
+		/// <p/>The slop is in fact an edit-distance, where the units correspond to
 		/// moves of terms in the query phrase out of position.  For example, to switch
 		/// the order of two words requires two moves (the first move places the words
 		/// atop one another), so to permit re-orderings of phrases, the slop must be
 		/// at least two.
-		/// <p>More exact matches are scored higher than sloppier matches, thus search
+		/// <p/>More exact matches are scored higher than sloppier matches, thus search
 		/// results are sorted by exactness.
-		/// <p>The slop is zero by default, requiring exact matches.
+		/// <p/>The slop is zero by default, requiring exact matches.
 		/// </summary>
 		public virtual void  SetSlop(int s)
 		{

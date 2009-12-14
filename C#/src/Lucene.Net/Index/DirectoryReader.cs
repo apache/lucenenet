@@ -1086,7 +1086,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Expert: return the IndexCommit that this reader has opened.
 		/// <p/>
-		/// <p><b>WARNING</b>: this API is new and experimental and may suddenly change.</p>
+		/// <p/><b>WARNING</b>: this API is new and experimental and may suddenly change.</p>
 		/// </summary>
 		public override IndexCommit GetIndexCommit()
 		{

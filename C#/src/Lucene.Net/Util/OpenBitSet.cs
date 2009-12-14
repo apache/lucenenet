@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
 		/// with bit index 0 at the least significant bit, and bit index 63 at the most significant.
 		/// Given a bit index,
 		/// the word containing it is long[index/64], and it is at bit number index%64 within that word.
-		/// <p>
+		/// <p/>
 		/// numWords are the number of elements in the array that contain
 		/// set bits (non-zero longs).
 		/// numWords should be &lt= bits.length, and

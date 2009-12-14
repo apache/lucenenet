@@ -28,7 +28,7 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> <p>A {@link Query} that matches numeric values within a
+	/// <summary> <p/>A {@link Query} that matches numeric values within a
 	/// specified range.  To use this, you must first index the
 	/// numeric values using {@link NumericField} (expert: {@link
 	/// NumericTokenStream}).  If your terms are instead textual,
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	/// NumericRangeFilter} is the filter equivalent of this
 	/// query.</p>
 	/// 
-	/// <p>You create a new NumericRangeQuery with the static
+	/// <p/>You create a new NumericRangeQuery with the static
 	/// factory methods, eg:
 	/// 
 	/// <pre>
@@ -48,12 +48,12 @@ namespace Lucene.Net.Search
 	/// matches all documents whose float valued "weight" field
 	/// ranges from 0.3 to 0.10, inclusive.
 	/// 
-	/// <p>The performance of NumericRangeQuery is much better
+	/// <p/>The performance of NumericRangeQuery is much better
 	/// than the corresponding {@link TermRangeQuery} because the
 	/// number of terms that must be searched is usually far
 	/// fewer, thanks to trie indexing, described below.</p>
 	/// 
-	/// <p>You can optionally specify a <a
+	/// <p/>You can optionally specify a <a
 	/// href="#precisionStepDesc"><code>precisionStep</code></a>
 	/// when creating this query.  This is necessary if you've
 	/// changed this configuration from its default (4) during
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 	/// classes.  See <a href="#precisionStepDesc">below</a> for
 	/// details.
 	/// 
-	/// <p>This query defaults to {@linkplain
+	/// <p/>This query defaults to {@linkplain
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} for
 	/// 32 bit (int/float) ranges with precisionStep &le;8 and 64
 	/// bit (long/double) ranges with precisionStep &le;6.
@@ -75,12 +75,12 @@ namespace Lucene.Net.Search
 	/// BooleanQuery rewrite methods without changing
 	/// BooleanQuery's default max clause count.
 	/// 
-	/// <p><font color="red"><b>NOTE:</b> This API is experimental and
+	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>
 	/// 
 	/// <br><h3>How it works</h3>
 	/// 
-	/// <p>See the publication about <a target="_blank" href="http://www.panfmp.org">panFMP</a>,
+	/// <p/>See the publication about <a target="_blank" href="http://www.panfmp.org">panFMP</a>,
 	/// where this algorithm was described (referred to as <code>TrieRangeQuery</code>):
 	/// 
 	/// <blockquote><strong>Schindler, U, Diepenbroek, M</strong>, 2008.
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 	/// <a href="http://dx.doi.org/10.1016/j.cageo.2008.02.023"
 	/// target="_blank">doi:10.1016/j.cageo.2008.02.023</a></blockquote>
 	/// 
-	/// <p><em>A quote from this paper:</em> Because Apache Lucene is a full-text
+	/// <p/><em>A quote from this paper:</em> Because Apache Lucene is a full-text
 	/// search engine and not a conventional database, it cannot handle numerical ranges
 	/// (e.g., field value is inside user defined bounds, even dates are numerical values).
 	/// We have developed an extension to Apache Lucene that stores
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 	/// The center of the range is searched only with the lowest possible precision in the <em>trie</em>,
 	/// while the boundaries are matched more exactly. This reduces the number of terms dramatically.</p>
 	/// 
-	/// <p>For the variant that stores long values in 8 different precisions (each reduced by 8 bits) that
+	/// <p/>For the variant that stores long values in 8 different precisions (each reduced by 8 bits) that
 	/// uses a lowest precision of 1 byte, the index contains only a maximum of 256 distinct values in the
 	/// lowest precision. Overall, a range could consist of a theoretical maximum of
 	/// <code>7*255*2 + 255 = 3825</code> distinct terms (when there is a term for every distinct value of an
@@ -111,14 +111,14 @@ namespace Lucene.Net.Search
 	/// and a uniform value distribution).</p>
 	/// 
 	/// <a name="precisionStepDesc"><h3>Precision Step</h3>
-	/// <p>You can choose any <code>precisionStep</code> when encoding values.
+	/// <p/>You can choose any <code>precisionStep</code> when encoding values.
 	/// Lower step values mean more precisions and so more terms in index (and index gets larger).
 	/// On the other hand, the maximum number of terms to match reduces, which optimized query speed.
 	/// The formula to calculate the maximum term count is:
 	/// <pre>
 	/// n = [ (bitsPerValue/precisionStep - 1) * (2^precisionStep - 1 ) * 2 ] + (2^precisionStep - 1 )
 	/// </pre>
-	/// <p><em>(this formula is only correct, when <code>bitsPerValue/precisionStep</code> is an integer;
+	/// <p/><em>(this formula is only correct, when <code>bitsPerValue/precisionStep</code> is an integer;
 	/// in other cases, the value must be rounded up and the last summand must contain the modulo of the division as
 	/// precision step)</em>.
 	/// For longs stored using a precision step of 4, <code>n = 15*15*2 + 15 = 465</code>, and for a precision
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 	/// be found out by testing. <b>Important:</b> You can index with a lower precision step value and test search speed
 	/// using a multiple of the original step value.</p>
 	/// 
-	/// <p>Good values for <code>precisionStep</code> are depending on usage and data type:
+	/// <p/>Good values for <code>precisionStep</code> are depending on usage and data type:
 	/// <ul>
 	/// <li>The default for all data types is <b>4</b>, which is used, when no <code>precisionStep</code> is given.
 	/// <li>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 	/// Sorting is also possible with range query optimized fields using one of the above <code>precisionSteps</code>.
 	/// </ul>
 	/// 
-	/// <p>Comparisons of the different types of RangeQueries on an index with about 500,000 docs showed
+	/// <p/>Comparisons of the different types of RangeQueries on an index with about 500,000 docs showed
 	/// that {@link TermRangeQuery} in boolean rewrite mode (with raised {@link BooleanQuery} clause count)
 	/// took about 30-40 secs to complete, {@link TermRangeQuery} in constant score filter rewrite mode took 5 secs
 	/// and executing this class took &lt;100ms to complete (on an Opteron64 machine, Java 1.5, 8 bit
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
 		/// sub-ranges for trie range queries.
-		/// <p>
+		/// <p/>
 		/// WARNING: This term enumeration is not guaranteed to be always ordered by
 		/// {@link Term#compareTo}.
 		/// The ordering depends on how {@link NumericUtils#splitLongRange} and

@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 		/// <summary>Called once for every document matching a query, with the document
 		/// number and its raw score.
 		/// 
-		/// <P>If, for example, an application wished to collect all of the hits for a
+		/// <p/>If, for example, an application wished to collect all of the hits for a
 		/// query in a BitSet, then it might:<pre>
 		/// Searcher searcher = new IndexSearcher(indexReader);
 		/// final BitSet bits = new BitSet(indexReader.maxDoc());
@@ -49,13 +49,13 @@ namespace Lucene.Net.Search
 		/// });
 		/// </pre>
 		/// 
-		/// <p>Note: This is called in an inner search loop.  For good search
+		/// <p/>Note: This is called in an inner search loop.  For good search
 		/// performance, implementations of this method should not call
 		/// {@link Searcher#Doc(int)} or
 		/// {@link Lucene.Net.Index.IndexReader#Document(int)} on every
 		/// document number encountered.  Doing so can slow searches by an order
 		/// of magnitude or more.
-		/// <p>Note: The <code>score</code> passed to this method is a raw score.
+		/// <p/>Note: The <code>score</code> passed to this method is a raw score.
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.
 		/// </summary>

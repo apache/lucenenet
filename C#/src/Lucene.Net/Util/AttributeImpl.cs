@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 	
 	/// <summary> Base class for Attributes that can be added to a 
 	/// {@link Lucene.Net.Util.AttributeSource}.
-	/// <p>
+	/// <p/>
 	/// Attributes are used to add data in a dynamic, yet type-safe way to a source
 	/// of usually streamed objects, e. g. a {@link Lucene.Net.Analysis.TokenStream}.
 	/// </summary>

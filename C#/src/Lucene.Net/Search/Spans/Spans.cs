@@ -31,8 +31,8 @@ namespace Lucene.Net.Search.Spans
 		public abstract bool Next();
 		
 		/// <summary>Skips to the first match beyond the current, whose document number is
-		/// greater than or equal to <i>target</i>. <p>Returns true iff there is such
-		/// a match.  <p>Behaves as if written: <pre>
+		/// greater than or equal to <i>target</i>. <p/>Returns true iff there is such
+		/// a match.  <p/>Behaves as if written: <pre>
 		/// boolean skipTo(int target) {
 		/// do {
 		/// if (!next())
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Spans
 		/// 
 		/// Note that the return type is a collection, thus the ordering should not be relied upon.
 		/// </br>
-		/// <p><font color="#FF0000">
+		/// <p/><font color="#FF0000">
 		/// WARNING: The status of the <b>Payloads</b> feature is experimental.
 		/// The APIs introduced here might change in the future and will not be
 		/// supported anymore in such a case.</font></p>

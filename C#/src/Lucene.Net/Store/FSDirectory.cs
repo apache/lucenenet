@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
 	/// #open}.  For all others, you should instantiate the
 	/// desired implementation directly.
 	/// 
-	/// <p>The locking implementation is by default {@link
+	/// <p/>The locking implementation is by default {@link
 	/// NativeFSLockFactory}, but can be changed by
 	/// passing in a custom {@link LockFactory} instance.
 	/// The deprecated <code>getDirectory</code> methods default to use
@@ -101,7 +101,7 @@ namespace Lucene.Net.Store
 	/// SimpleFSLockFactory} (or {@link NativeFSLockFactory},
 	/// etc.) passing in your preferred lock directory.
 	/// 
-	/// <p><em>In 3.0 this class will become abstract.</em>
+	/// <p/><em>In 3.0 this class will become abstract.</em>
 	/// 
 	/// </summary>
 	/// <seealso cref="Directory">
@@ -497,13 +497,13 @@ namespace Lucene.Net.Store
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
         /// 
-        /// <p>Currently this returns {@link SimpleFSDirectory} as
+        /// <p/>Currently this returns {@link SimpleFSDirectory} as
         /// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns {@link SimpleFSDirectory} as
 		/// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p><b>NOTE</b>: this method may suddenly change which
+		/// <p/><b>NOTE</b>: this method may suddenly change which
 		/// implementation is returned from release to release, in
 		/// the event that higher performance defaults become
 		/// possible; if the precise implementation is important to
@@ -514,7 +514,7 @@ namespace Lucene.Net.Store
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
 		/// 
-		/// <p>See <a href="#subclasses">above</a> 
+		/// <p/>See <a href="#subclasses">above</a> 
 		/// </summary>
 		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static FSDirectory Open(System.IO.FileInfo path)
@@ -527,10 +527,10 @@ namespace Lucene.Net.Store
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
 		/// 
-		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns {@link SimpleFSDirectory} as
 		/// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p><b>NOTE</b>: this method may suddenly change which
+		/// <p/><b>NOTE</b>: this method may suddenly change which
 		/// implementation is returned from release to release, in
 		/// the event that higher performance defaults become
 		/// possible; if the precise implementation is important to
@@ -541,7 +541,7 @@ namespace Lucene.Net.Store
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
 		/// 
-		/// <p>See <a href="#subclasses">above</a> 
+		/// <p/>See <a href="#subclasses">above</a> 
 		/// </summary>
 		public static FSDirectory Open(System.IO.DirectoryInfo path)
 		{
@@ -960,19 +960,19 @@ namespace Lucene.Net.Store
 		/// underlying file during {@link IndexInput#readBytes}.
 		/// The default value is {@link #DEFAULT_READ_CHUNK_SIZE};
 		/// 
-		/// <p> This was introduced due to <a
+		/// <p/> This was introduced due to <a
 		/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546">Sun
 		/// JVM Bug 6478546</a>, which throws an incorrect
 		/// OutOfMemoryError when attempting to read too many bytes
 		/// at once.  It only happens on 32bit JVMs with a large
 		/// maximum heap size.</p>
 		/// 
-		/// <p>Changes to this value will not impact any
+		/// <p/>Changes to this value will not impact any
 		/// already-opened {@link IndexInput}s.  You should call
 		/// this before attempting to open an index on the
 		/// directory.</p>
 		/// 
-		/// <p> <b>NOTE</b>: This value should be as large as
+		/// <p/> <b>NOTE</b>: This value should be as large as
 		/// possible to reduce any possible performance impact.  If
 		/// you still encounter an incorrect OutOfMemoryError,
 		/// trying lowering the chunk size.</p>

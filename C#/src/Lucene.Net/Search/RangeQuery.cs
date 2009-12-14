@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A Query that matches documents within an exclusive range of terms.
 	/// 
-	/// <p>This query matches the documents looking for terms that fall into the
+	/// <p/>This query matches the documents looking for terms that fall into the
 	/// supplied range according to {@link Term#CompareTo(Term)}. It is not intended
 	/// for numerical ranges, use {@link NumericRangeQuery} instead.
 	/// 
-	/// <p>This query uses {@linkplain
+	/// <p/>This query uses {@linkplain
 	/// MultiTermQuery#SCORING_BOOLEAN_QUERY_REWRITE}.  If you
 	/// want to change this, use the new {@link TermRangeQuery}
 	/// instead.
@@ -68,11 +68,11 @@ namespace Lucene.Net.Search
 		/// There must be at least one term and either term may be null,
 		/// in which case there is no bound on that side, but if there are
 		/// two terms, both terms <b>must</b> be for the same field.
-		/// <p>
+		/// <p/>
 		/// If <code>collator</code> is not null, it will be used to decide whether
 		/// index terms are within the given range, rather than using the Unicode code
 		/// point order in which index terms are stored.
-		/// <p>
+		/// <p/>
 		/// <strong>WARNING:</strong> Using this constructor and supplying a non-null
 		/// value in the <code>collator</code> parameter will cause every single 
 		/// index Term in the Field referenced by lowerTerm and/or upperTerm to be
