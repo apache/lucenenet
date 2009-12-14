@@ -88,6 +88,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <deprecated> Please use {@link IndexWriter} instead.
 	/// </deprecated>
+    [Obsolete("Please use IndexWriter instead.")]
 	public class IndexModifier
 	{
 		private void  InitBlock()

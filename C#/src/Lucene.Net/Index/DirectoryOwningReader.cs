@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	/// <deprecated> This helper class is removed with all String/File
 	/// IndexReader.open() methods in Lucene 3.0
 	/// </deprecated>
+    [Obsolete("This helper class is removed with all String/File IndexReader.open() methods in Lucene 3.0")]
 	sealed class DirectoryOwningReader:FilterIndexReader, System.ICloneable
 	{
 		

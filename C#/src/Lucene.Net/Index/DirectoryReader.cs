@@ -886,6 +886,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated>  
 		/// </deprecated>
+        [Obsolete]
 		protected internal override void  DoCommit()
 		{
 			DoCommit(null);

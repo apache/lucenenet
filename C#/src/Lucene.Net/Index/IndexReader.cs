@@ -112,6 +112,7 @@ namespace Lucene.Net.Index
 			public static readonly FieldOption OMIT_TERM_FREQ_AND_POSITIONS = new FieldOption("OMIT_TERM_FREQ_AND_POSITIONS");
 			/// <deprecated> Renamed to {@link #OMIT_TERM_FREQ_AND_POSITIONS} 
 			/// </deprecated>
+            [Obsolete("Renamed to OMIT_TERM_FREQ_AND_POSITIONS")]
 			public static readonly FieldOption OMIT_TF;
 			/// <summary>All fields which are not indexed </summary>
 			public static readonly FieldOption UNINDEXED = new FieldOption("UNINDEXED");
@@ -205,6 +206,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <seealso cref="Directory()">
 		/// </seealso>
+        [Obsolete("will be deleted when IndexReader(Directory) is deleted")]
 		private Directory directory;
 		
 		/// <summary> Legacy Constructor for backwards compatibility.
@@ -223,6 +225,7 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		/// <deprecated> - use IndexReader()
 		/// </deprecated>
+        [Obsolete("- use IndexReader()")]
 		protected internal IndexReader(Directory directory):this()
 		{
 			this.directory = directory;
@@ -910,6 +913,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalStateException if the term index has already been loaded into memory </throws>
 		/// <deprecated> Please use {@link IndexReader#Open(Directory, IndexDeletionPolicy, boolean, int)} to specify the required TermInfos index divisor instead.
 		/// </deprecated>
+        [Obsolete("Please use IndexReader.Open(Directory, IndexDeletionPolicy, bool, int) to specify the required TermInfos index divisor instead.")]
 		public virtual void  SetTermInfosIndexDivisor(int indexDivisor)
 		{
 			throw new System.NotSupportedException("Please pass termInfosIndexDivisor up-front when opening IndexReader");
@@ -1515,6 +1519,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Please implement {@link #DoCommit(Map)
 		/// instead}. 
 		/// </deprecated>
+        [Obsolete("Please implement DoCommit(IDictionary<string, string>) instead")]
 		protected internal abstract void  DoCommit();
 		
 		/// <summary>Implements commit.  NOTE: subclasses should override
@@ -1569,6 +1574,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Please use IndexWriter.IsLocked(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static bool IsLocked(Directory directory)
 		{
 			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked();
@@ -1608,6 +1614,7 @@ namespace Lucene.Net.Index
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
+        [Obsolete("Please use IndexWriter.Unlock(Directory) instead. This method will be removed in the 3.0 release.")]
 		public static void  Unlock(Directory directory)
 		{
 			directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
@@ -1762,6 +1769,7 @@ namespace Lucene.Net.Index
 		/// <summary>Expert    </summary>
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public virtual System.Object GetFieldCacheKey()
 		{
 			return this;
@@ -1794,6 +1802,7 @@ namespace Lucene.Net.Index
 		/// true, meaning the norms() methods will return null for
 		/// fields that had disabled norms.
 		/// </deprecated>
+        [Obsolete("This currently defaults to false (to remain back-compatible), but in 3.0 it will be hardwired to true, meaning the norms() methods will return null for fields that had disabled norms.")]
 		public virtual bool GetDisableFakeNorms()
 		{
 			return disableFakeNorms;
@@ -1807,6 +1816,7 @@ namespace Lucene.Net.Index
 		/// true, meaning the norms() methods will return null for
 		/// fields that had disabled norms.
 		/// </deprecated>
+        [Obsolete("This currently defaults to false (to remain back-compatible), but in 3.0 it will be hardwired to true, meaning the norms() methods will return null for fields that had disabled norms.")]
 		public virtual void  SetDisableFakeNorms(bool disableFakeNorms)
 		{
 			this.disableFakeNorms = disableFakeNorms;

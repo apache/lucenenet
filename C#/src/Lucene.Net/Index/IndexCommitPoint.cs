@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 	
 	/// <deprecated> Please subclass IndexCommit class instead
 	/// </deprecated>
-	
+    [Obsolete("Please subclass IndexCommit class instead")]
 	public interface IndexCommitPoint
 	{
 		

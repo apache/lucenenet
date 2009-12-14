@@ -301,6 +301,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns true if index is clean, else false. </summary>
 		/// <deprecated> Please instantiate a CheckIndex and then use {@link #CheckIndex()} instead 
 		/// </deprecated>
+        [Obsolete("Please instantiate a CheckIndex and then use CheckIndex() instead")]
 		public static bool Check(Directory dir, bool doFix)
 		{
 			return Check(dir, doFix, null);
@@ -309,6 +310,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns true if index is clean, else false.</summary>
 		/// <deprecated> Please instantiate a CheckIndex and then use {@link #CheckIndex(List)} instead 
 		/// </deprecated>
+        [Obsolete("Please instantiate a CheckIndex and then use CheckIndex(List) instead")]
 		public static bool Check(Directory dir, bool doFix, System.Collections.IList onlySegments)
 		{
 			CheckIndex checker = new CheckIndex(dir);

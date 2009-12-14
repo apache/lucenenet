@@ -223,6 +223,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <seealso cref="LogMergePolicy.DEFAULT_MERGE_FACTOR">
 		/// </seealso>
+        [Obsolete("See LogMergePolicy.DEFAULT_MERGE_FACTOR")]
 		public static readonly int DEFAULT_MERGE_FACTOR;
 		
 		/// <summary> Value to denote a flush trigger is disabled</summary>
@@ -247,6 +248,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <seealso cref="LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS">
 		/// </seealso>
+        [Obsolete("See LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS")]
 		public static readonly int DEFAULT_MAX_MERGE_DOCS;
 		
 		/// <summary> Default value is 10,000. Change using {@link #SetMaxFieldLength(int)}.</summary>
@@ -1123,6 +1125,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed")]
 		public IndexWriter(System.String path, Analyzer a, bool create)
 		{
 			InitBlock();
@@ -1199,6 +1202,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create)
 		{
 			InitBlock();
@@ -1270,6 +1274,7 @@ namespace Lucene.Net.Index
 		/// release, and call {@link #Commit()} when needed.
 		/// Use {@link #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)} instead.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead.")]
 		public IndexWriter(Directory d, Analyzer a, bool create)
 		{
 			InitBlock();
@@ -1334,6 +1339,7 @@ namespace Lucene.Net.Index
 		/// release, and call {@link #Commit()} when needed.
 		/// Use {@link #IndexWriter(Directory,Analyzer,MaxFieldLength)} instead.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead.")]
 		public IndexWriter(System.String path, Analyzer a)
 		{
 			InitBlock();
@@ -1399,6 +1405,7 @@ namespace Lucene.Net.Index
 		/// Use {@link #IndexWriter(Directory,Analyzer,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a)
 		{
 			InitBlock();
@@ -1461,6 +1468,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, Analyzer a)
 		{
 			InitBlock();
@@ -1493,6 +1501,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a)
 		{
 			InitBlock();
@@ -1530,6 +1539,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create)
 		{
 			InitBlock();
@@ -1597,6 +1607,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, IndexDeletionPolicy deletionPolicy)
 		{
 			InitBlock();
@@ -1724,6 +1735,7 @@ namespace Lucene.Net.Index
 		/// #IndexWriter(Directory,Analyzer,boolean,IndexDeletionPolicy,MaxFieldLength)}
 		/// instead, and call {@link #Commit()} when needed.
 		/// </deprecated>
+        [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy)
 		{
 			InitBlock();
@@ -2265,6 +2277,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> This will be removed in 3.0, when
 		/// autoCommit=true is removed from IndexWriter.
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0, when autoCommit=true is removed from IndexWriter.")]
 		public virtual double GetMaxSyncPauseSeconds()
 		{
 			return maxSyncPauseSeconds;
@@ -2278,6 +2291,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> This will be removed in 3.0, when
 		/// autoCommit=true is removed from IndexWriter.
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0, when autoCommit=true is removed from IndexWriter.")]
 		public virtual void  SetMaxSyncPauseSeconds(double seconds)
 		{
 			maxSyncPauseSeconds = seconds;
@@ -2678,6 +2692,7 @@ namespace Lucene.Net.Index
 		/// method) or {@link #NumDocs()} (also takes deletions
 		/// into account), instead. 
 		/// </deprecated>
+        [Obsolete("Please use MaxDoc() (same as this method) or NumDocs() (also takes deletions into account), instead. ")]
 		public virtual int DocCount()
 		{
 			lock (this)
@@ -3776,6 +3791,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated> Please use {@link #rollback} instead.
 		/// </deprecated>
+        [Obsolete("Please use Rollback instead.")]
 		public virtual void  Abort()
 		{
 			Rollback();
@@ -4636,6 +4652,7 @@ namespace Lucene.Net.Index
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
+        [Obsolete("please call Commit() instead")]
 		public void  Flush()
 		{
 			if (hitOOM)
@@ -5654,6 +5671,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> -- this will be removed in 3.0 when
 		/// autoCommit is hardwired to false 
 		/// </deprecated>
+        [Obsolete("-- this will be removed in 3.0 when autoCommit is hardwired to false ")]
 		private bool DoCommitBeforeMergeCFS(MergePolicy.OneMerge merge)
 		{
 			lock (this)
@@ -6206,6 +6224,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> -- this will be removed in 3.0 when
 		/// autoCommit is hardwired to false 
 		/// </deprecated>
+        [Obsolete("-- this will be removed in 3.0 when autoCommit is hardwired to false ")]
 		private void  SyncPause(long sizeInBytes)
 		{
 			if (mergeScheduler is ConcurrentMergeScheduler && maxSyncPauseSeconds > 0)
