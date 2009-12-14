@@ -51,6 +51,7 @@ namespace Lucene.Net.Search
 	/// </since>
 	/// <deprecated> Please use {@link FieldComparatorSource} instead.
 	/// </deprecated>
+    [Obsolete("Please use FieldComparatorSource instead.")]
 	[Serializable]
 	public abstract class SortComparator : SortComparatorSource
 	{

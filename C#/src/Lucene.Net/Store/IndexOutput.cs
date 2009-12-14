@@ -136,6 +136,7 @@ namespace Lucene.Net.Store
 		/// <deprecated> -- please pre-convert to utf8 bytes
 		/// instead or use {@link #writeString}
 		/// </deprecated>
+        [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(System.String s, int start, int length)
 		{
 			int end = start + length;
@@ -169,6 +170,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <deprecated> -- please pre-convert to utf8 bytes instead or use {@link #writeString}
 		/// </deprecated>
+        [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(char[] s, int start, int length)
 		{
 			int end = start + length;

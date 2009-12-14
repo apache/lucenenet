@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <deprecated> see {@link FieldValueHitQueue}
 	/// </deprecated>
+    [Obsolete("see FieldValueHitQueue")]
 	public class FieldSortedHitQueue:PriorityQueue
 	{
 		internal class AnonymousClassCache:FieldCacheImpl.Cache

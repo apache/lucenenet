@@ -392,6 +392,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <deprecated> Please use {@link #setMultiTermRewriteMethod} instead.
 		/// </deprecated>
+        [Obsolete("Please use SetMultiTermRewriteMethod instead.")]
 		public virtual void  SetUseOldRangeQuery(bool useOldRangeQuery)
 		{
 			if (useOldRangeQuery)
@@ -407,6 +408,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <deprecated> Please use {@link #getMultiTermRewriteMethod} instead.
 		/// </deprecated>
+        [Obsolete("Please use GetMultiTermRewriteMethod} instead.")]
 		public virtual bool GetUseOldRangeQuery()
 		{
 			if (GetMultiTermRewriteMethod() == MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE)

@@ -607,6 +607,7 @@ namespace Lucene.Net.Search
 		/// Especially, guessing does <b>not</b> work with the new
 		/// {@link NumericField} type.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		System.Object GetAuto(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
@@ -627,6 +628,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Please implement {@link
 		/// FieldComparatorSource} directly, instead.
 		/// </deprecated>
+        [Obsolete("Please implement FieldComparatorSource directly, instead.")]
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 		
 		/// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 

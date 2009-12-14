@@ -57,6 +57,7 @@ namespace Lucene.Net.Index
 		/// Use {@link IndexReader#Terms(Term)} to create a new TermEnum positioned at a
 		/// given term.
 		/// </deprecated>
+        [Obsolete("This method is not performant and will be removed in Lucene 3.0.Use IndexReader.Terms(Term) to create a new TermEnum positioned at a given term.")]
 		public virtual bool SkipTo(Term target)
 		{
 			do 

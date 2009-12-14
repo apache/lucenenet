@@ -107,11 +107,13 @@ namespace Lucene.Net.Search
 			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
 			/// is removed
 			/// </deprecated>
+            [Obsolete("Only needed because of Entry (ab)use by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			private int sortFieldType;
 			/// <deprecated> Only needed because of Entry (ab)use by 
 			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
 			/// is removed
 			/// </deprecated>
+            [Obsolete("Only needed because of Entry (ab)use by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			private System.Globalization.CultureInfo locale;
 			
 			private System.Object readerKey;
@@ -159,6 +161,7 @@ namespace Lucene.Net.Search
 			/// FieldSortedHitQueue, remove when FieldSortedHitQueue 
 			/// is removed
 			/// </deprecated>
+            [Obsolete("Only needed because of Entry (ab)use by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			public override System.String ToString()
 			{
 				System.String r = base.ToString();
@@ -286,16 +289,19 @@ namespace Lucene.Net.Search
 			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
 			/// remove when FieldSortedHitQueue is removed
 			/// </deprecated>
+            [Obsolete("Only (ab)used by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			internal int type; // which SortField type
 			internal System.Object custom; // which custom comparator or parser
 			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
 			/// remove when FieldSortedHitQueue is removed
 			/// </deprecated>
+            [Obsolete("Only (ab)used by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			internal System.Globalization.CultureInfo locale; // the locale we're sorting (if string)
 			
 			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
 			/// remove when FieldSortedHitQueue is removed
 			/// </deprecated>
+            [Obsolete("Only (ab)used by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			internal Entry(System.String field, int type, System.Globalization.CultureInfo locale)
 			{
 				this.field = StringHelper.Intern(field);
@@ -316,6 +322,7 @@ namespace Lucene.Net.Search
 			/// <deprecated> Only (ab)used by FieldSortedHitQueue, 
 			/// remove when FieldSortedHitQueue is removed
 			/// </deprecated>
+            [Obsolete("Only (ab)used by FieldSortedHitQueue, remove when FieldSortedHitQueue is removed")]
 			internal Entry(System.String field, int type, Parser parser)
 			{
 				this.field = StringHelper.Intern(field);
@@ -633,6 +640,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		public virtual long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.LongParser parser)
 		{
 			return (long[]) ((Cache) caches[System.Type.GetType("System.Int64")]).Get(reader, new Entry(field, parser));
@@ -712,6 +720,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		public virtual double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.DoubleParser parser)
 		{
 			return (double[]) ((Cache) caches[System.Type.GetType("System.Double")]).Get(reader, new Entry(field, parser));
@@ -920,6 +929,7 @@ namespace Lucene.Net.Search
 		/// Especially, guessing does <b>not</b> work with the new
 		/// {@link NumericField} type.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		internal sealed class AutoCache:Cache
 		{
 			internal AutoCache(FieldCache wrapper):base(wrapper)
@@ -984,6 +994,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public virtual System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator)
 		{
 			return (System.IComparable[]) ((Cache) caches[typeof(System.IComparable)]).Get(reader, new Entry(field, comparator));
@@ -991,6 +1002,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		internal sealed class CustomCache:Cache
 		{
 			internal CustomCache(FieldCache wrapper):base(wrapper)

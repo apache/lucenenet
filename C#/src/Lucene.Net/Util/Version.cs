@@ -53,11 +53,13 @@ namespace Lucene.Net.Util
 		/// <summary>Match settings and bugs in Lucene's 2.4 release.</summary>
 		/// <deprecated> This will be removed in 3.0 
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0 ")]
 		public static readonly Version LUCENE_24 = new Version("LUCENE_24", 2400);
 		
 		/// <summary>Match settings and bugs in Lucene's 2.9 release.</summary>
 		/// <deprecated> This will be removed in 3.0 
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0 ")]
 		public static readonly Version LUCENE_29 = new Version("LUCENE_29", 2900);
 		
 		private int v;

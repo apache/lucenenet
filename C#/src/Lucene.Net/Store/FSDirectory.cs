@@ -120,6 +120,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> Not used by any non-deprecated methods anymore
 		/// </deprecated>
+        [Obsolete("Not used by any non-deprecated methods anymore")]
         private static readonly Dictionary<string, FSDirectory> DIRECTORIES = new Dictionary<string, FSDirectory>();
 		
 		private static bool disableLocks = false;
@@ -170,6 +171,7 @@ namespace Lucene.Net.Store
 		/// the <code>open</code> methods that take a
 		/// <code>lockFactory</code> (for example, {@link #open(File, LockFactory)}).
 		/// </deprecated>
+        [Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
 		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
@@ -387,6 +389,7 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		private void  Create()
 		{
 			if (directory.Exists)
@@ -460,10 +463,12 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		private int refCount = 0;
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		protected internal FSDirectory()
 		{
 		}
@@ -775,6 +780,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			lock (this)
@@ -1003,10 +1009,12 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			new protected internal class Descriptor:SimpleFSDirectory.SimpleFSIndexInput.Descriptor
 			{
 				/// <deprecated> 
 				/// </deprecated>
+                [Obsolete]
 				public Descriptor(/*FSIndexInput enclosingInstance,*/ System.IO.FileInfo file, System.IO.FileAccess mode) : base(file, mode)
 				{
 				}
@@ -1014,12 +1022,14 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexInput(System.IO.FileInfo path):base(path)
 			{
 			}
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexInput(System.IO.FileInfo path, int bufferSize):base(path, bufferSize)
 			{
 			}
@@ -1033,6 +1043,7 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexOutput(System.IO.FileInfo path):base(path)
 			{
 			}

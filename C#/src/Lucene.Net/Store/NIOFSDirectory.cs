@@ -87,6 +87,7 @@ namespace Lucene.Net.Store
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		internal NIOFSDirectory()
 		{
 		}
@@ -117,6 +118,7 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> Please use ctor taking chunkSize 
 			/// </deprecated>
+            [Obsolete("Please use ctor taking chunkSize")]
 			public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, FSDirectory.DEFAULT_READ_CHUNK_SIZE)
 			{
 			}

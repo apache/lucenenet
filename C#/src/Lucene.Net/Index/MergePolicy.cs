@@ -211,6 +211,7 @@ namespace Lucene.Net.Index
 			/// <deprecated>
 			/// Use {@link #MergePolicy.MergeException(String,Directory)} instead 
 			/// </deprecated>
+            [Obsolete("Use MergePolicy.MergeException(String,Directory) instead ")]
 			public MergeException(System.String message):base(message)
 			{
 			}
@@ -221,6 +222,7 @@ namespace Lucene.Net.Index
 			/// <deprecated>
 			/// Use {@link #MergePolicy.MergeException(Throwable,Directory)} instead 
 			/// </deprecated>
+            [Obsolete("Use MergePolicy.MergeException(Throwable,Directory) instead ")]
 			public MergeException(System.Exception exc):base(null, exc)
 			{
 			}

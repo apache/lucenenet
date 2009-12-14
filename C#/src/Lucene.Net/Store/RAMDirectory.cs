@@ -249,6 +249,7 @@ namespace Lucene.Net.Store
 		/// <throws>  FileNotFoundException if from does not exist </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			lock (this)

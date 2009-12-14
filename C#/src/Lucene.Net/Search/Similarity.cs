@@ -655,6 +655,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> see {@link #IdfExplain(Term, Searcher)}
 		/// </deprecated>
+        [Obsolete("see IdfExplain(Term, Searcher)")]
 		public virtual float Idf(Term term, Searcher searcher)
 		{
 			return Idf(searcher.DocFreq(term), searcher.MaxDoc());
@@ -711,6 +712,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> see {@link #idfExplain(Collection, Searcher)}
 		/// </deprecated>
+        [Obsolete("see IdfExplain(Collection, Searcher)")]
 		public virtual float Idf(System.Collections.ICollection terms, Searcher searcher)
 		{
 			float idf = 0.0f;
@@ -820,6 +822,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> See {@link #ScorePayload(int, String, int, int, byte[], int, int)}
 		/// </deprecated>
 		//TODO: When removing this, set the default value below to return 1.
+        [Obsolete("See ScorePayload(int, String, int, int, byte[], int, int)")]
 		public virtual float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
 		{
 			//Do nothing
@@ -858,10 +861,12 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private MethodSupport SupportedMethods;
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		[Serializable]
 		private sealed class MethodSupport
 		{
@@ -888,15 +893,18 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> Remove this when old API is removed! 
 			/// </deprecated>
+            [Obsolete("Remove this when old API is removed! ")]
 			private static readonly System.Type[] T_IDF_METHOD_PARAMS = new System.Type[]{typeof(Term), typeof(Searcher)};
 			
 			/// <deprecated> Remove this when old API is removed! 
 			/// </deprecated>
+            [Obsolete("Remove this when old API is removed! ")]
 			private static readonly System.Type[] C_IDF_METHOD_PARAMS = new System.Type[]{typeof(System.Collections.ICollection), typeof(Searcher)};
 		}
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static readonly System.Collections.Hashtable knownMethodSupport = new System.Collections.Hashtable();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
@@ -913,6 +921,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
+        [Obsolete("Remove this when old API is removed! ")]
 		private static MethodSupport GetSupportedMethods(System.Type clazz)
 		{
 			MethodSupport supportedMethods;

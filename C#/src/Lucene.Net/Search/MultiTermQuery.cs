@@ -388,6 +388,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> check sub class for possible term access - the Term does not
 		/// make sense for all MultiTermQuerys and will be removed.
 		/// </deprecated>
+        [Obsolete("check sub class for possible term access - the Term does not make sense for all MultiTermQuerys and will be removed.")]
 		public MultiTermQuery(Term term)
 		{
 			this.term = term;
@@ -404,6 +405,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> check sub class for possible term access - getTerm does not
 		/// make sense for all MultiTermQuerys and will be removed.
 		/// </deprecated>
+        [Obsolete("check sub class for possible term access - getTerm does not make sense for all MultiTermQuerys and will be removed.")]
 		public virtual Term GetTerm()
 		{
 			return term;

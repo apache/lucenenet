@@ -470,6 +470,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> this will not be needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this will not be needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		private static bool allowDocsOutOfOrder = true;
 		
 		/// <summary> Expert: Indicates whether hit docs may be collected out of docid order.
@@ -497,6 +498,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> this is not needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static void  SetAllowDocsOutOfOrder(bool allow)
 		{
 			allowDocsOutOfOrder = allow;
@@ -510,6 +512,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> this is not needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static bool GetAllowDocsOutOfOrder()
 		{
 			return allowDocsOutOfOrder;

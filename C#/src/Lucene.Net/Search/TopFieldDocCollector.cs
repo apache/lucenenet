@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <deprecated> Please use {@link TopFieldCollector} instead.
 	/// </deprecated>
+    [Obsolete("Please use TopFieldCollector instead.")]
 	public class TopFieldDocCollector:TopDocCollector
 	{
 		

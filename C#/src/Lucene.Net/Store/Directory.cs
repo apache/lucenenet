@@ -55,6 +55,7 @@ namespace Lucene.Net.Store
 		/// files.  Please use {@link #listAll} instead, which
 		/// does no filtering. 
 		/// </deprecated>
+        [Obsolete("For some Directory implementations (FSDirectory}, and its subclasses), this method silently filters its results to include only index files.  Please use ListAll instead, which does no filtering. ")]
 		public abstract System.String[] List();
 		
 		/// <summary>Returns an array of strings, one for each file in the
@@ -90,6 +91,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public abstract void  RenameFile(System.String from, System.String to);
 		
 		/// <summary>Returns the length of a file in the directory. </summary>

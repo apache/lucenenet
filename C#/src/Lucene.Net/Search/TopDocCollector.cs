@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	/// instead, which has better performance.
 	/// 
 	/// </deprecated>
+    [Obsolete("Please use TopScoreDocCollector instead, which has better performance.")]
 	public class TopDocCollector:HitCollector
 	{
 		

@@ -744,6 +744,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		public static SegmentReader Get(SegmentInfo si)
 		{
 			return Get(false, si.dir, si, BufferedIndexInput.BUFFER_SIZE, true, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
@@ -760,6 +761,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		internal static SegmentReader Get(SegmentInfo si, int readBufferSize, bool doOpenStores, int termInfosIndexDivisor)
 		{
 			return Get(false, si.dir, si, readBufferSize, doOpenStores, termInfosIndexDivisor);
@@ -1007,6 +1009,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated>  
 		/// </deprecated>
+        [Obsolete]
 		protected internal override void  DoCommit()
 		{
 			DoCommit(null);

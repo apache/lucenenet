@@ -42,6 +42,7 @@ namespace Lucene.Net.Search.Payloads
 	/// </seealso>
 	/// <deprecated> See {@link Lucene.Net.Search.Payloads.PayloadTermQuery}
 	/// </deprecated>
+    [Obsolete("See Lucene.Net.Search.Payloads.PayloadTermQuery")]
 	[Serializable]
 	public class BoostingTermQuery:PayloadTermQuery
 	{

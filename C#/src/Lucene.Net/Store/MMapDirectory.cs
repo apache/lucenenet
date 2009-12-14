@@ -157,6 +157,7 @@ namespace Lucene.Net.Store
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		internal MMapDirectory()
 		{
 			InitBlock();

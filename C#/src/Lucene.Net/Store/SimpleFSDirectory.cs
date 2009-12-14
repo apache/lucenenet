@@ -69,6 +69,7 @@ namespace Lucene.Net.Store
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		internal SimpleFSDirectory()
 		{
 		}
@@ -143,12 +144,14 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> Please use ctor taking chunkSize 
 			/// </deprecated>
+            [Obsolete("Please use ctor taking chunkSize ")]
 			public SimpleFSIndexInput(System.IO.FileInfo path):this(path, BufferedIndexInput.BUFFER_SIZE, SimpleFSDirectory.DEFAULT_READ_CHUNK_SIZE)
 			{
 			}
 			
 			/// <deprecated> Please use ctor taking chunkSize 
 			/// </deprecated>
+            [Obsolete("Please use ctor taking chunkSize ")]
 			public SimpleFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, SimpleFSDirectory.DEFAULT_READ_CHUNK_SIZE)
 			{
 			}

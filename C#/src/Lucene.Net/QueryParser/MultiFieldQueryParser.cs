@@ -77,6 +77,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer, Map)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer, IDictionary) instead")]
 		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(Version.LUCENE_24, fields, analyzer)
 		{
 			this.boosts = boosts;
@@ -151,6 +152,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer) instead")]
 		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):this(Version.LUCENE_24, fields, analyzer)
 		{
 		}

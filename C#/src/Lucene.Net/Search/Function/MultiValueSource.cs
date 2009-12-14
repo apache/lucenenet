@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Function
 	/// migration to segment-based searching. Please change your
 	/// code to not pass composite readers to these APIs. 
 	/// </deprecated>
-	
+    [Obsolete("This class is temporary, to ease the migration to segment-based searching. Please change your code to not pass composite readers to these APIs. ")]
 	[Serializable]
 	public sealed class MultiValueSource:ValueSource
 	{

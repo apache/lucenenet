@@ -35,6 +35,7 @@ namespace Lucene.Net.Search.Spans
 		
 		/// <deprecated> not needed anymore 
 		/// </deprecated>
+        [Obsolete("not needed anymore ")]
 		protected internal bool firstTime = true;
 		protected internal bool more = true;
 		

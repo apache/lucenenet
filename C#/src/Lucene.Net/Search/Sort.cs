@@ -135,6 +135,7 @@ namespace Lucene.Net.Search
 		/// first creating a {@link SortField} and then use {@link
 		/// #Sort(SortField)}
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating a SortField and then use Sort(SortField)")]
 		public Sort(System.String field)
 		{
 			SetSort(field, false);
@@ -151,6 +152,7 @@ namespace Lucene.Net.Search
 		/// first creating a {@link SortField} and then use {@link
 		/// #Sort(SortField)}
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating a SortField and then use Sort(SortField)")]
 		public Sort(System.String field, bool reverse)
 		{
 			SetSort(field, reverse);
@@ -166,6 +168,7 @@ namespace Lucene.Net.Search
 		/// first creating {@link SortField}s and then use {@link
 		/// #Sort(SortField[])}
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating SortFields and then use Sort(SortField[])")]
 		public Sort(System.String[] fields)
 		{
 			SetSort(fields);
@@ -190,6 +193,7 @@ namespace Lucene.Net.Search
 		/// first creating a {@link SortField} and then use {@link
 		/// #SetSort(SortField)}
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating a SortField and then use SetSort(SortField)")]
 		public void  SetSort(System.String field)
 		{
 			SetSort(field, false);
@@ -202,6 +206,7 @@ namespace Lucene.Net.Search
 		/// first creating a {@link SortField} and then use {@link
 		/// #SetSort(SortField)}
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating a SortField and then use SetSort(SortField)")]
 		public virtual void  SetSort(System.String field, bool reverse)
 		{
 			fields = new SortField[]{new SortField(field, SortField.AUTO, reverse)};
@@ -212,6 +217,7 @@ namespace Lucene.Net.Search
 		/// first creating {@link SortField}s and then use {@link
 		/// #SetSort(SortField[])} 
 		/// </deprecated>
+        [Obsolete("Please specify the type explicitly by first creating a SortFields and then use SetSort(SortField[])")]
 		public virtual void  SetSort(System.String[] fieldnames)
 		{
 			int n = fieldnames.Length;

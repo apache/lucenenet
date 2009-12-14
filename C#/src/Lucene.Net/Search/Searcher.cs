@@ -47,6 +47,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Hits will be removed in Lucene 3.0. Use
 		/// {@link #Search(Query, Filter, int)} instead.
 		/// </deprecated>
+        [Obsolete("Hits will be removed in Lucene 3.0. Use Search(Query, Filter, int) instead")]
 		public Hits Search(Query query)
 		{
 			return Search(query, (Filter) null);
@@ -59,6 +60,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Hits will be removed in Lucene 3.0. Use
 		/// {@link #Search(Query, Filter, int)} instead.
 		/// </deprecated>
+        [Obsolete("Hits will be removed in Lucene 3.0. Use Search(Query, Filter, int) instead")]
 		public virtual Hits Search(Query query, Filter filter)
 		{
 			return new Hits(this, query, filter);
@@ -71,6 +73,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Hits will be removed in Lucene 3.0. Use 
 		/// {@link #Search(Query, Filter, int, Sort)} instead.
 		/// </deprecated>
+        [Obsolete("Hits will be removed in Lucene 3.0. Use Search(Query, Filter, int, Sort) instead")]
 		public virtual Hits Search(Query query, Sort sort)
 		{
 			return new Hits(this, query, null, sort);
@@ -83,6 +86,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Hits will be removed in Lucene 3.0. Use 
 		/// {@link #Search(Query, Filter, int, Sort)} instead.
 		/// </deprecated>
+        [Obsolete("Hits will be removed in Lucene 3.0. Use Search(Query, Filter, int, Sort) instead")]
 		public virtual Hits Search(Query query, Filter filter, Sort sort)
 		{
 			return new Hits(this, query, filter, sort);

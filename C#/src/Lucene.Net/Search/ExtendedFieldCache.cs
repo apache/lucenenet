@@ -44,10 +44,12 @@ namespace Lucene.Net.Search.ExtendedFieldCache_old
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		new long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.LongParser parser);
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		new double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.DoubleParser parser);
 	}
 

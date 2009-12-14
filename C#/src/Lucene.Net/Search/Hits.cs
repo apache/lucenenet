@@ -54,6 +54,7 @@ namespace Lucene.Net.Search
 	/// ...
 	/// </pre>
 	/// </deprecated>
+    [Obsolete("see Searcher.Search(Query, int), Searcher.Search(Query, Filter, int) and Searcher.Search(Query, Filter, int, Sort)")]
 	public sealed class Hits
 	{
 		private Weight weight;

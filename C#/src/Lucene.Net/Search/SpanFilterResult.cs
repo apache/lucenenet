@@ -32,6 +32,7 @@ namespace Lucene.Net.Search
 	{
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		private System.Collections.BitArray bits;
 		
 		private DocIdSet docIdSet;
