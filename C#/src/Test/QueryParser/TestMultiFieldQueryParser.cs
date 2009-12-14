@@ -327,7 +327,7 @@ namespace Lucene.Net.QueryParsers
 			mfqp.SetDefaultOperator(QueryParser.Operator.AND);
 			Query q = mfqp.Parse("the footest");
 			IndexSearcher is_Renamed = new IndexSearcher(ramDir);
-			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			is_Renamed.Close();
 		}

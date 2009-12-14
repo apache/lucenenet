@@ -29,9 +29,9 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: The total number of hits for the query.</summary>
 		/// <seealso cref="Hits.Length()">
 		/// </seealso>
-		public int TotalHits;
+		public int totalHits;
 		/// <summary>Expert: The top hits for the query. </summary>
-		public ScoreDoc[] ScoreDocs;
+		public ScoreDoc[] scoreDocs;
 		/// <summary>Expert: Stores the maximum score value encountered, needed for normalizing. </summary>
 		private float maxScore;
 		
@@ -57,8 +57,8 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: Constructs a TopDocs.</summary>
 		public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
 		{
-			this.TotalHits = totalHits;
-			this.ScoreDocs = scoreDocs;
+			this.totalHits = totalHits;
+			this.scoreDocs = scoreDocs;
 			this.maxScore = maxScore;
 		}
 	}

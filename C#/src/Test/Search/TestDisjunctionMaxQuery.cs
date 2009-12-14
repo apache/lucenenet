@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 			q.Add(Tq("hed", "elephant"));
 			QueryUtils.Check(q, s);
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -313,7 +313,7 @@ namespace Lucene.Net.Search
 			
 			QueryUtils.Check(q, s);
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(q, s);
 			
 			
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			
 			try
 			{

@@ -579,18 +579,18 @@ namespace Lucene.Net.QueryParsers
 			
 			// Test ConstantScoreRangeQuery
 			qp.SetMultiTermRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
-			ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).ScoreDocs;
+			ScoreDoc[] result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
 			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
 			
-			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).ScoreDocs;
+			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
 			Assert.AreEqual(1, result.Length, "The index Term should be included.");
 			
 			// Test TermRangeQuery
 			qp.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-			result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).ScoreDocs;
+			result = is_Renamed.Search(qp.Parse("[ \u062F TO \u0698 ]"), null, 1000).scoreDocs;
 			Assert.AreEqual(0, result.Length, "The index Term should not be included.");
 			
-			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).ScoreDocs;
+			result = is_Renamed.Search(qp.Parse("[ \u0633 TO \u0638 ]"), null, 1000).scoreDocs;
 			Assert.AreEqual(1, result.Length, "The index Term should be included.");
 			
 			is_Renamed.Close();
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.QueryParsers
 			QueryParser qp = new QueryParser("date", new WhitespaceAnalyzer());
 			qp.SetLocale(new System.Globalization.CultureInfo("en-US"));
 			Query q = qp.Parse(query);
-			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] hits = is_Renamed.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(expected, hits.Length);
 		}
 		
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.QueryParsers
 			IndexSearcher s = new IndexSearcher(r);
 			QueryParser qp = new QueryParser(Version.LUCENE_CURRENT, "f", a);
 			Query q = qp.Parse("\"wizard of ozzy\"");
-			Assert.AreEqual(1, s.Search(q, 1).TotalHits);
+			Assert.AreEqual(1, s.Search(q, 1).totalHits);
 			r.Close();
 			dir.Close();
 		}

@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Function
 			Query q = new ValueSourceQuery(vs);
 			Log("test: " + q);
 			QueryUtils.Check(q, s);
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
 			System.String prevID = inOrder?"IE":"IC"; // smaller than all ids of docs in this test ("ID0001", etc.)
 			
@@ -134,8 +134,8 @@ namespace Lucene.Net.Search.Function
 			}
 			Query q = new ValueSourceQuery(vs);
 			TopDocs td = s.Search(q, null, 1000);
-			Assert.AreEqual(N_DOCS, td.TotalHits, "All docs should be matched!");
-			ScoreDoc[] sd = td.ScoreDocs;
+			Assert.AreEqual(N_DOCS, td.totalHits, "All docs should be matched!");
+			ScoreDoc[] sd = td.scoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
 				float score = sd[i].score;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Function
 					vs = new ReverseOrdFieldSource(field);
 				}
 				ValueSourceQuery q = new ValueSourceQuery(vs);
-				ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+				ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 				try
 				{
 					Assert.AreEqual(N_DOCS, h.Length, "All docs should be matched!");
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search.Function
 				vs2 = new ReverseOrdFieldSource(field2);
 			}
 			q2 = new ValueSourceQuery(vs2);
-			h2 = s.Search(q2, null, 1000).ScoreDocs;
+			h2 = s.Search(q2, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			IndexReader[] readers2 = s.GetIndexReader().GetSequentialSubReaders();
 			
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search.Function
 				vs2 = new ReverseOrdFieldSource(field);
 			}
 			q2 = new ValueSourceQuery(vs2);
-			h2 = s.Search(q2, null, 1000).ScoreDocs;
+			h2 = s.Search(q2, null, 1000).scoreDocs;
 			Assert.AreEqual(N_DOCS, h2.Length, "All docs should be matched!");
 			readers2 = s.GetIndexReader().GetSequentialSubReaders();
 			

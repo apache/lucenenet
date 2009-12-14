@@ -53,11 +53,11 @@ namespace Lucene.Net.Search
 			
 			PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
 			IndexSearcher searcher = new IndexSearcher(directory);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
 			Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
 			
 			query = new PrefixQuery(new Term("category", "/Computers/Mac"));
-			hits = searcher.Search(query, null, 1000).ScoreDocs;
+			hits = searcher.Search(query, null, 1000).scoreDocs;
 			Assert.AreEqual(1, hits.Length, "One in /Computers/Mac");
 		}
 	}

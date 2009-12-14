@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 		
 		public virtual void  VerifyNrHits(Query q, int expected)
 		{
-			ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
+			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			if (expected != h.Length)
 			{
 				PrintHits("getName()", h, s);  // {{Aroush-2.9}} String junit.framework.TestCase.getName()
@@ -388,24 +388,24 @@ namespace Lucene.Net.Search
 				
 				// The constrained query
 				// should be a superset to the unconstrained query.
-				if (top2.TotalHits > top1.TotalHits)
+				if (top2.totalHits > top1.totalHits)
 				{
 					//TestCase.fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 					Assert.Fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q2.ToString());
 				}
 				
-				for (int hit = 0; hit < top2.TotalHits; hit++)
+				for (int hit = 0; hit < top2.totalHits; hit++)
 				{
-					int id = top2.ScoreDocs[hit].doc;
-					float score = top2.ScoreDocs[hit].score;
+					int id = top2.scoreDocs[hit].doc;
+					float score = top2.scoreDocs[hit].score;
 					bool found = false;
 					// find this doc in other hits
-					for (int other = 0; other < top1.TotalHits; other++)
+					for (int other = 0; other < top1.totalHits; other++)
 					{
-						if (top1.ScoreDocs[other].doc == id)
+						if (top1.scoreDocs[other].doc == id)
 						{
 							found = true;
-							float otherScore = top1.ScoreDocs[other].score;
+							float otherScore = top1.scoreDocs[other].score;
 							// check if scores match
 							if (System.Math.Abs(otherScore - score) > 1.0e-6f)
 							{

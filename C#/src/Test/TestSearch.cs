@@ -111,7 +111,7 @@ namespace Lucene.Net
 				//DateFilter filter = DateFilter.Before("modified", Time(1997,00,01));
 				//System.out.println(filter);
 				
-				hits = searcher.Search(query, null, 1000).ScoreDocs;
+				hits = searcher.Search(query, null, 1000).scoreDocs;
 				
 				out_Renamed.WriteLine(hits.Length + " total results");
 				for (int i = 0; i < hits.Length && i < 10; i++)

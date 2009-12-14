@@ -808,7 +808,7 @@ namespace Lucene.Net._SupportClass
             Lucene.Net.Search.TopDocs topDocs = s.Search(q, 100);
             s.Close();
 
-            Assert.AreEqual(topDocs.TotalHits, 2, "See the issue: LUCENENET-174");
+            Assert.AreEqual(topDocs.totalHits, 2, "See the issue: LUCENENET-174");
         }
 
 
