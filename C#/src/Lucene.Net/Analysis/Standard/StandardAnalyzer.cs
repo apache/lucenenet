@@ -52,6 +52,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </deprecated>
+        [Obsolete("this should be removed in the next release (3.0).")]
 		private bool replaceInvalidAcronym = defaultReplaceInvalidAcronym;
 		
 		private static bool defaultReplaceInvalidAcronym;
@@ -69,6 +70,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </returns>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public static bool GetDefaultReplaceInvalidAcronym()
 		{
 			return defaultReplaceInvalidAcronym;
@@ -87,6 +89,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public static void  SetDefaultReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			defaultReplaceInvalidAcronym = replaceInvalidAcronym;
@@ -213,6 +216,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(bool replaceInvalidAcronym):this(Version.LUCENE_24, STOP_WORDS_SET)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -228,6 +232,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.IO.TextReader stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -242,6 +247,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.IO.FileInfo stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -257,6 +263,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.String[] stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopwords))
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -271,6 +278,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.Collections.Hashtable stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -392,6 +400,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </returns>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public virtual bool IsReplaceInvalidAcronym()
 		{
 			return replaceInvalidAcronym;
@@ -404,6 +413,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
