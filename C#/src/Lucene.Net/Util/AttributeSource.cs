@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary>Returns a new iterator that iterates the attribute classes
 		/// in the same order they were added in.
-		/// <p>Signature for Java 1.5: <code>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</code>
+		/// Signature for Java 1.5: <code>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</code>
 		///
 		/// Note that this return value is different from Java in that it enumerates over the values
 		/// and not the keys
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
 		/// <summary>Returns a new iterator that iterates all unique Attribute implementations.
 		/// This iterator may contain less entries that {@link #getAttributeClassesIterator},
 		/// if one instance implements more than one Attribute interface.
-		/// <p>Signature for Java 1.5: <code>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</code>
+		/// Signature for Java 1.5: <code>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</code>
 		/// </summary>
 		public virtual System.Collections.Generic.IEnumerable<AttributeImpl> GetAttributeImplsIterator()
 		{
@@ -249,7 +249,7 @@ namespace Lucene.Net.Util
 		/// This method first checks if an instance of that class is 
 		/// already in this AttributeSource and returns it. Otherwise a
 		/// new instance is created, added to this AttributeSource and returned. 
-		/// <p>Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T addAttribute(Class&lt;T&gt;)</code>
+		/// Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T addAttribute(Class&lt;T&gt;)</code>
 		/// </summary>
 		public virtual Attribute AddAttribute(System.Type attClass)
 		{
@@ -273,7 +273,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns true, iff this AttributeSource contains the passed-in Attribute.
-		/// <p>Signature for Java 1.5: <code>public boolean hasAttribute(Class&lt;? extends Attribute&gt;)</code>
+		/// Signature for Java 1.5: <code>public boolean hasAttribute(Class&lt;? extends Attribute&gt;)</code>
 		/// </summary>
 		public virtual bool HasAttribute(System.Type attClass)
 		{
@@ -282,7 +282,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns the instance of the passed in Attribute contained in this AttributeSource
-		/// <p>Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T getAttribute(Class&lt;T&gt;)</code>
+		/// Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T getAttribute(Class&lt;T&gt;)</code>
 		/// 
 		/// </summary>
 		/// <throws>  IllegalArgumentException if this AttributeSource does not contain the </throws>
@@ -386,7 +386,7 @@ namespace Lucene.Net.Util
 		/// contained in this state (e.g. it is not possible to restore the state of
 		/// an AttributeSource containing a TermAttribute into a AttributeSource using
 		/// a Token instance as implementation).
-		/// <p>
+		/// 
 		/// Note that this method does not affect attributes of the targetStream
 		/// that are not contained in this state. In other words, if for example
 		/// the targetStream contains an OffsetAttribute, but this state doesn't, then

@@ -333,18 +333,18 @@ namespace Lucene.Net.Analysis
 		/// the next token. Implementing classes must implement this method and update
 		/// the appropriate {@link AttributeImpl}s with the attributes of the next
 		/// token.
-		/// <P>
+		/// 
 		/// The producer must make no assumptions about the attributes after the
 		/// method has been returned: the caller may arbitrarily change it. If the
 		/// producer needs to preserve the state for subsequent calls, it can use
 		/// {@link #captureState} to create a copy of the current attribute state.
-		/// <p>
+		/// 
 		/// This method is called for every token of a document, so an efficient
 		/// implementation is crucial for good performance. To avoid calls to
 		/// {@link #AddAttribute(Class)} and {@link #GetAttribute(Class)} or downcasts,
 		/// references to all {@link AttributeImpl}s that this stream uses should be
 		/// retrieved during instantiation.
-		/// <p>
+		/// 
 		/// To ensure that filters and consumers know which attributes are available,
 		/// the attributes must be added during instantiation. Filters and consumers
 		/// are not required to check for availability of attributes in
@@ -353,9 +353,8 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <returns> false for end of stream; true otherwise
 		/// 
-		/// <p>
-		/// <b>Note that this method will be defined abstract in Lucene
-		/// 3.0.</b>
+		/// Note that this method will be defined abstract in Lucene
+		/// 3.0.
 		/// </returns>
 		public virtual bool IncrementToken()
 		{
@@ -399,7 +398,7 @@ namespace Lucene.Net.Analysis
 		/// tokenization performance), but this is not required and a new Token may be
 		/// returned. Callers may re-use a single Token instance for successive calls
 		/// to this method.
-		/// <p>
+		/// 
 		/// This implicitly defines a "contract" between consumers (callers of this
 		/// method) and producers (implementations of this method that are the source
 		/// for tokens):
