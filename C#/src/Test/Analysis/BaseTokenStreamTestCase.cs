@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> Base class for all Lucene unit tests that use TokenStreams.  
-	/// <p>
+	/// <p/>
 	/// This class runs all tests twice, one time with {@link TokenStream#setOnlyUseNewAPI} <code>false</code>
 	/// and after that one time with <code>true</code>.
 	/// </summary>

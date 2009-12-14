@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StopAnalyzer:
 	/// <ul>
-	/// <li>As of 2.9, position increments are preserved
+	/// <li>As of 2.9, position increments are preserved</li>
 	/// </ul>
 	/// </summary>
 	
