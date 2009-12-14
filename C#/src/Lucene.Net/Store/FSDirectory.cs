@@ -38,7 +38,7 @@ namespace Lucene.Net.Store
 	/// However, it has poor concurrent performance
 	/// (multiple threads will bottleneck) as it
 	/// synchronizes when multiple threads read from the
-	/// same file.
+	/// same file.</li>
 	/// 
 	/// <li> {@link NIOFSDirectory} uses java.nio's
 	/// FileChannel's positional io when reading to avoid
@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
 	/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
 	/// JRE bug</a> this is a poor choice for Windows, but
 	/// on all other platforms this is the preferred
-	/// choice.
+	/// choice.</li>
 	/// 
 	/// <li> {@link MMapDirectory} uses memory-mapped IO when
 	/// reading. This is a good choice if you have plenty
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
 	/// and you don't rely on overwriting files on Windows) but it's still
 	/// an important limitation to be aware of. This class supplies a
 	/// (possibly dangerous) workaround mentioned in the bug report,
-	/// which may fail on non-Sun JVMs.
+	/// which may fail on non-Sun JVMs.</li>
 	/// </ul>
 	/// 
 	/// Unfortunately, because of system peculiarities, there is
@@ -965,17 +965,17 @@ namespace Lucene.Net.Store
 		/// JVM Bug 6478546</a>, which throws an incorrect
 		/// OutOfMemoryError when attempting to read too many bytes
 		/// at once.  It only happens on 32bit JVMs with a large
-		/// maximum heap size.</p>
+		/// maximum heap size.<p/>
 		/// 
 		/// <p/>Changes to this value will not impact any
 		/// already-opened {@link IndexInput}s.  You should call
 		/// this before attempting to open an index on the
-		/// directory.</p>
+		/// directory.<p/>
 		/// 
 		/// <p/> <b>NOTE</b>: This value should be as large as
 		/// possible to reduce any possible performance impact.  If
 		/// you still encounter an incorrect OutOfMemoryError,
-		/// trying lowering the chunk size.</p>
+		/// trying lowering the chunk size.<p/>
 		/// </summary>
 		public void  SetReadChunkSize(int chunkSize)
 		{

@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
 	/// primary directory; others are placed in the secondary
 	/// directory.  The provided Set must not change once passed
 	/// to this class, and must allow multiple threads to call
-	/// contains at once.</p>
+	/// contains at once.<p/>
 	/// 
 	/// <p/><b>NOTE</b>: this API is new and experimental and is
 	/// subject to suddenly change in the next release.

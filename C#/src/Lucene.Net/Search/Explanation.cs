@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>
 		/// By default, an Explanation represents a "match" if the value is positive.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="getValue">
 		/// </seealso>

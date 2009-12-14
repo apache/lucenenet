@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>A Scorer for queries with a required part and an optional part.
 	/// Delays skipTo() on the optional part until a score() is needed.
-	/// <br>
+	/// <br/>
 	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)}.
 	/// </summary>
 	class ReqOptSumScorer:Scorer

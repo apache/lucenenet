@@ -154,16 +154,16 @@ namespace Lucene.Net.Search
 		/// By default no optional clauses are necessary for a match
 		/// (unless there are no required clauses).  If this method is used,
 		/// then the specified number of clauses is required.
-		/// </p>
+		/// <p/>
 		/// <p/>
 		/// Use of this method is totally independent of specifying that
 		/// any specific clauses are required (or prohibited).  This number will
 		/// only be compared against the number of matching optional clauses.
-		/// </p>
+		/// <p/>
 		/// <p/>
 		/// EXPERT NOTE: Using this method may force collecting docs in order,
 		/// regardless of whether setAllowDocsOutOfOrder(true) has been called.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <param name="min">the number of optional clauses that must match
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
 		/// normalize, score and explain these queries.
 		/// 
 		/// <p/>NOTE: this API and implementation is subject to
-		/// change suddenly in the next release.</p>
+		/// change suddenly in the next release.<p/>
 		/// </summary>
 		[Serializable]
 		protected internal class BooleanWeight:Weight
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
 		/// specific simple cases may be faster. (For example: disjunction queries with
 		/// less than 32 prohibited clauses; This setting has no effect for other
 		/// queries.)
-		/// </p>
+		/// <p/>
 		/// 
 		/// <p/>
 		/// Specifics: By setting this option to true, docid N might be scored for a
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search
 		/// a single segment.
 		/// 
 		/// Being static, this setting is system wide.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> this is not needed anymore, as

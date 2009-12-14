@@ -23,7 +23,7 @@ using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> Stores and iterate on sorted integers in compressed form in RAM. <br>
+	/// <summary> Stores and iterate on sorted integers in compressed form in RAM. <br/>
 	/// The code for compressing the differences between ascending integers was
 	/// borrowed from {@link Lucene.Net.Store.IndexInput} and
 	/// {@link Lucene.Net.Store.IndexOutput}.

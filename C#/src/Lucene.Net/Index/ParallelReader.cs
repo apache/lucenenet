@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 		private bool hasDeletions;
 		
 		/// <summary>Construct a ParallelReader. 
-		/// <p/>Note that all subreaders are closed if this ParallelReader is closed.</p>
+		/// <p/>Note that all subreaders are closed if this ParallelReader is closed.<p/>
 		/// </summary>
 		public ParallelReader():this(true)
 		{
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Tries to reopen the subreaders.
-		/// <br>
+		/// <br/>
 		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
 		/// returned a new instance != subReader), then a new ParallelReader instance 
 		/// is returned, otherwise this instance is returned.

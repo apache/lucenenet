@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// to the segment.
 	/// 
 	/// * <p/><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	public sealed class SegmentInfo : System.ICloneable
 	{

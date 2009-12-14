@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// If the match status is explicitly set (i.e.: not null) this method
 		/// uses it; otherwise it defers to the superclass.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="getMatch">
 		/// </seealso>

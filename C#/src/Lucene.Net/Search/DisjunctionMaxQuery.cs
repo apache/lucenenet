@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
 		/// normalize, score and explain these queries.
 		/// 
 		/// <p/>NOTE: this API and implementation is subject to
-		/// change suddenly in the next release.</p>
+		/// change suddenly in the next release.<p/>
 		/// </summary>
 		[Serializable]
 		protected internal class DisjunctionMaxWeight:Weight

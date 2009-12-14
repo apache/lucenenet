@@ -36,10 +36,10 @@ namespace Lucene.Net.Analysis.Standard
 	/// 
 	/// <ul>
 	/// <li>Splits words at punctuation characters, removing punctuation. However, a 
-	/// dot that's not followed by whitespace is considered part of a token.
+	/// dot that's not followed by whitespace is considered part of a token.</li>
 	/// <li>Splits words at hyphens, unless there's a number in the token, in which case
-	/// the whole token is interpreted as a product number and is not split.
-	/// <li>Recognizes email addresses and internet hostnames as one token.
+	/// the whole token is interpreted as a product number and is not split.</li>
+	/// <li>Recognizes email addresses and internet hostnames as one token.</li>
 	/// </ul>
 	/// 
 	/// <p/>Many applications have specific tokenizer needs.  If this tokenizer does
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// StandardAnalyzer:
 	/// <ul>
 	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></li>
 	/// </ul>
 	/// </summary>
 	

@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 		/// <code>prePopulate</code> is set to true, the queue will pre-populate itself
 		/// with sentinel objects and set its {@link #Size()} to <code>size</code>. In
 		/// that case, you should not rely on {@link #Size()} to get the number of
-		/// actual elements that were added to the queue, but keep track yourself.<br>
+		/// actual elements that were added to the queue, but keep track yourself.<br/>
 		/// <b>NOTE:</b> in case <code>prePopulate</code> is true, you should pop
 		/// elements from the queue using the following code example:
 		/// 

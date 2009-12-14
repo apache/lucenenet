@@ -28,9 +28,9 @@ namespace Lucene.Net.Store
 	/// 
 	/// <p/> Java's i/o APIs not used directly, but rather all i/o is
 	/// through this API.  This permits things such as: <ul>
-	/// <li> implementation of RAM-based indices;
-	/// <li> implementation indices stored in a database, via JDBC;
-	/// <li> implementation of an index as a single file;
+	/// <li> implementation of RAM-based indices;</li>
+	/// <li> implementation indices stored in a database, via JDBC;</li>
+	/// <li> implementation of an index as a single file;</li>
 	/// </ul>
 	/// 
 	/// Directory locking is implemented by an instance of {@link

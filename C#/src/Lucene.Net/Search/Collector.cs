@@ -24,14 +24,14 @@ namespace Lucene.Net.Search
 	
 	/// <summary> <p/>Expert: Collectors are primarily meant to be used to
 	/// gather raw results from a search, and implement sorting
-	/// or custom result filtering, collation, etc. </p>
+	/// or custom result filtering, collation, etc. <p/>
 	/// 
 	/// <p/>As of 2.9, this class replaces the deprecated
 	/// HitCollector, and offers an API for efficient collection
 	/// of hits across sequential {@link IndexReader}s. {@link
 	/// IndexSearcher} advances the collector through each of the
 	/// sub readers, in an arbitrary order. This results in a
-	/// higher performance means of collection.</p>
+	/// higher performance means of collection.<p/>
 	/// 
 	/// <p/>Lucene's core collectors are derived from Collector.
 	/// Likely your application can use one of these classes, or
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 	/// TopDocsCollector} and sorts according to a specified
 	/// {@link Sort} object (sort by field).  This is used
 	/// internally by the {@link IndexSearcher} search methods
-	/// that take an explicit {@link Sort}.
+	/// that take an explicit {@link Sort}.</li>
 	/// 
 	/// <li>{@link TimeLimitingCollector}, which wraps any other
 	/// Collector and aborts the search if it's taken too much
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 	/// Scorer#Score()} within the collect method to compute the
 	/// current hit's score.  If your collector may request the
 	/// score for a single hit multiple times, you should use
-	/// {@link ScoreCachingWrappingScorer}. </p>
+	/// {@link ScoreCachingWrappingScorer}. <p/>
 	/// 
 	/// <p/><b>NOTE:</b> The doc that is passed to the collect
 	/// method is relative to the current reader. If your
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 	/// Multi*Reader, you must re-base it by recording the
 	/// docBase from the most recent setNextReader call.  Here's
 	/// a simple example showing how to collect docIDs into a
-	/// BitSet:</p>
+	/// BitSet:<p/>
 	/// 
 	/// <pre>
 	/// Searcher searcher = new IndexSearcher(indexReader);
@@ -114,18 +114,18 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>Not all collectors will need to rebase the docID.  For
 	/// example, a collector that simply counts the total number
-	/// of hits would skip it.</p>
+	/// of hits would skip it.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> Prior to 2.9, Lucene silently filtered
-	/// out hits with score <= 0.  As of 2.9, the core Collectors
+	/// out hits with score &lt;= 0.  As of 2.9, the core Collectors
 	/// no longer do that.  It's very unusual to have such hits
 	/// (a negative query boost, or function query returning
 	/// negative custom scores, could cause it to happen).  If
 	/// you need that behavior, use {@link
-	/// PositiveScoresOnlyCollector}.</p>
+	/// PositiveScoresOnlyCollector}.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This API is experimental and might change
-	/// in incompatible ways in the next release.</p>
+	/// in incompatible ways in the next release.<p/>
 	/// 
 	/// </summary>
 	/// <since> 2.9

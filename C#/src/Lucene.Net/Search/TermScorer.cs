@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <summary> Advances to the next document matching the query. <br>
+		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
 		/// {@link TermDocs#Read(int[],int[])}.
 		/// 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 			return NextDoc() != NO_MORE_DOCS;
 		}
 		
-		/// <summary> Advances to the next document matching the query. <br>
+		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
 		/// {@link TermDocs#Read(int[],int[])}.
 		/// 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// The implementation uses {@link TermDocs#SkipTo(int)}.
 		/// 
 		/// </summary>
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// The implementation uses {@link TermDocs#SkipTo(int)}.
 		/// 
 		/// </summary>
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #Next()} method
+		/// <br/>When this method is used, the {@link #Next()} method
 		/// and the {@link #Score(HitCollector)} method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.

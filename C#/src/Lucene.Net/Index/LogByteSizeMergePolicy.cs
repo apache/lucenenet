@@ -53,11 +53,11 @@ namespace Lucene.Net.Index
 		/// than 50 MB) are best for interactive indexing, as this
 		/// limits the length of pauses while indexing to a few
 		/// seconds.  Larger values are best for batched indexing
-		/// and speedier searches.</p>
+		/// and speedier searches.<p/>
 		/// 
 		/// <p/>Note that {@link #setMaxMergeDocs} is also
 		/// used to check whether a segment is too large for
-		/// merging (it's either or).</p>
+		/// merging (it's either or).<p/>
 		/// </summary>
 		public virtual void  SetMaxMergeMB(double mb)
 		{

@@ -25,21 +25,21 @@ namespace Lucene.Net.Search
 	/// <summary>The abstract base class for queries.
 	/// <p/>Instantiable subclasses are:
 	/// <ul>
-	/// <li> {@link TermQuery}
-	/// <li> {@link MultiTermQuery}
-	/// <li> {@link BooleanQuery}
-	/// <li> {@link WildcardQuery}
-	/// <li> {@link PhraseQuery}
-	/// <li> {@link PrefixQuery}
-	/// <li> {@link MultiPhraseQuery}
-	/// <li> {@link FuzzyQuery}
-	/// <li> {@link TermRangeQuery}
-	/// <li> {@link NumericRangeQuery}
-	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
+	/// <li> {@link TermQuery} </li>
+    /// <li> {@link MultiTermQuery} </li>
+    /// <li> {@link BooleanQuery} </li>
+    /// <li> {@link WildcardQuery} </li>
+    /// <li> {@link PhraseQuery} </li>
+    /// <li> {@link PrefixQuery} </li>
+    /// <li> {@link MultiPhraseQuery} </li>
+    /// <li> {@link FuzzyQuery} </li>
+    /// <li> {@link TermRangeQuery} </li>
+    /// <li> {@link NumericRangeQuery} </li>
+    /// <li> {@link Lucene.Net.Search.Spans.SpanQuery} </li>
 	/// </ul>
 	/// <p/>A parser for queries is contained in:
 	/// <ul>
-	/// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser}
+    /// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser} </li>
 	/// </ul>
 	/// </summary>
 	[Serializable]

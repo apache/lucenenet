@@ -41,14 +41,14 @@ namespace Lucene.Net.Search
 	/// an int ranging from 0 to numHits-1.  The {@link
 	/// FieldComparator} is made aware of segment transitions
 	/// during searching in case any internal state it's tracking
-	/// needs to be recomputed during these transitions.</p>
+	/// needs to be recomputed during these transitions.<p/>
 	/// 
-	/// <p/>A comparator must define these functions:</p>
+	/// <p/>A comparator must define these functions:<p/>
 	/// 
 	/// <ul>
 	/// 
 	/// <li> {@link #compare} Compare a hit at 'slot a'
-	/// with hit 'slot b'.
+	/// with hit 'slot b'.</li>
 	/// 
 	/// <li> {@link #setBottom} This method is called by
 	/// {@link FieldValueHitQueue} to notify the
@@ -56,25 +56,25 @@ namespace Lucene.Net.Search
 	/// slot.  Note that this slot may not hold the weakest
 	/// value according to your comparator, in cases where
 	/// your comparator is not the primary one (ie, is only
-	/// used to break ties from the comparators before it).
+	/// used to break ties from the comparators before it).</li>
 	/// 
 	/// <li> {@link #compareBottom} Compare a new hit (docID)
-	/// against the "weakest" (bottom) entry in the queue.
+	/// against the "weakest" (bottom) entry in the queue.</li>
 	/// 
 	/// <li> {@link #copy} Installs a new hit into the
 	/// priority queue.  The {@link FieldValueHitQueue}
-	/// calls this method when a new hit is competitive.
+	/// calls this method when a new hit is competitive.</li>
 	/// 
 	/// <li> {@link #setNextReader} Invoked
 	/// when the search is switching to the next segment.
 	/// You may need to update internal state of the
 	/// comparator, for example retrieving new values from
-	/// the {@link FieldCache}.
+	/// the {@link FieldCache}.</li>
 	/// 
 	/// <li> {@link #value} Return the sort value stored in
 	/// the specified slot.  This is only called at the end
 	/// of the search, in order to populate {@link
-	/// FieldDoc#fields} when returning the top results.
+	/// FieldDoc#fields} when returning the top results.</li>
 	/// </ul>
 	/// 
 	/// <b>NOTE:</b> This API is experimental and might change in
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>For a search that hits many results, this method
 		/// will be the hotspot (invoked by far the most
-		/// frequently).</p>
+		/// frequently).<p/>
 		/// 
 		/// </summary>
 		/// <param name="doc">that was hit

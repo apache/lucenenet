@@ -143,8 +143,8 @@ namespace Lucene.Net.Index
 		
 		/// <summary> <p/>Construct a FilterIndexReader based on the specified base reader.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
-		/// left to the base reader.</p>
-		/// <p/>Note that base reader is closed if this FilterIndexReader is closed.</p>
+		/// left to the base reader.<p/>
+		/// <p/>Note that base reader is closed if this FilterIndexReader is closed.<p/>
 		/// </summary>
 		/// <param name="in">specified base reader.
 		/// </param>

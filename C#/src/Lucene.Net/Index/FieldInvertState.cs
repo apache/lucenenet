@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	/// also used to calculate the normalization factor for a field.
 	/// 
 	/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
-	/// change.</p>
+	/// change.<p/>
 	/// </summary>
 	public sealed class FieldInvertState
 	{

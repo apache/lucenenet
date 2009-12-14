@@ -23,21 +23,21 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> <p/>Expert: represents a single commit into an index as seen by the
-	/// {@link IndexDeletionPolicy} or {@link IndexReader}.</p>
+	/// {@link IndexDeletionPolicy} or {@link IndexReader}.<p/>
 	/// 
 	/// <p/> Changes to the content of an index are made visible
 	/// only after the writer who made that change commits by
 	/// writing a new segments file
 	/// (<code>segments_N</code>). This point in time, when the
 	/// action of writing of a new segments file to the directory
-	/// is completed, is an index commit.</p>
+	/// is completed, is an index commit.<p/>
 	/// 
 	/// <p/>Each index commit point has a unique segments file
 	/// associated with it. The segments file associated with a
-	/// later index commit point would have a larger N.</p>
+	/// later index commit point would have a larger N.<p/>
 	/// 
 	/// <p/><b>WARNING</b>: This API is a new and experimental and
-	/// may suddenly change. </p>
+	/// may suddenly change. <p/>
 	/// </summary>
 	
 	public abstract class IndexCommit : IndexCommitPoint

@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Function
 	/// 
 	/// <p/><b>NOTE</b>: this class adds a CPU penalty to every
 	/// lookup, as it must resolve the incoming document to the
-	/// right sub-reader using a binary search.</p>
+	/// right sub-reader using a binary search.<p/>
 	/// 
 	/// </summary>
 	/// <deprecated> This class is temporary, to ease the

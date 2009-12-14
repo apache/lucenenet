@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// A <code>Scorer</code> iterates over documents matching a
 	/// query in increasing order of doc Id.
-	/// </p>
+	/// <p/>
 	/// <p/>
 	/// Document scores are computed using a given <code>Similarity</code>
 	/// implementation.
-	/// </p>
+	/// <p/>
 	/// 
 	/// <p/><b>NOTE</b>: The values Float.Nan,
 	/// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
 		/// {@link HitCollector#Collect(int, float)}.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		public virtual void  Score(Collector collector)
 		{
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
 		public abstract float Score();
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #Next()}, {@link #SkipTo(int)} and
+		/// <br/>When this method is used, the {@link #Next()}, {@link #SkipTo(int)} and
 		/// {@link #Score(HitCollector)} methods should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.

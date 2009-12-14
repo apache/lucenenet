@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
 		/// <p>
 		/// Note that when using the HitCollector API, documents will be collected
 		/// if they "match" regardless of what their score is.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <param name="query">the query to test
 		/// </param>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 		/// <p>
 		/// Note that when using the Hits API, documents will only be returned
 		/// if they have a positive normalized score.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <param name="query">the query to test
 		/// </param>

@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
 	/// length byte array. Use {@link TermPositions#GetPayloadLength()} and 
 	/// {@link TermPositions#GetPayload(byte[], int)} to retrieve the payloads from the index.
 	/// </summary>
-	/// <summary><br><br>
+	/// <summary><br/><br/>
 	/// </summary>
 	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
 	/// that are part of core Lucene and can be found in the {@code tokenattributes} subpackage.
@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
 	/// be used as convenience class that implements all {@link Attribute}s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
 	/// </summary>
-	/// <summary><br><br>
+	/// <summary><br/><br/>
 	/// <p/><b>NOTE:</b> As of 2.3, Token stores the term text
 	/// internally as a malleable char[] termBuffer instead of
 	/// String termText.  The indexing code and core tokenizers
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
 	/// String for every term.  The APIs that accept String
 	/// termText are still available but a warning about the
 	/// associated performance cost has been added (below).  The
-	/// {@link #TermText()} method has been deprecated.</p>
+	/// {@link #TermText()} method has been deprecated.<p/>
 	/// </summary>
 	/// <summary><p/>Tokenizers and TokenFilters should try to re-use a Token instance when
 	/// possible for best performance, by implementing the
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
 	/// or with {@link System#arraycopy(Object, int, Object, int, int)}, and finally call {@link #SetTermLength(int)} to
 	/// set the length of the term text.  See <a target="_top"
 	/// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
-	/// for details.</p>
+	/// for details.<p/>
 	/// <p/>Typical Token reuse patterns:
 	/// <ul>
 	/// <li> Copying text from a string (type is reset to {@link #DEFAULT_TYPE} if not
@@ -100,7 +100,6 @@ namespace Lucene.Net.Analysis
 	/// <pre>
 	/// return reusableToken.reinit(string, 0, string.length(), startOffset, endOffset[, type]);
 	/// </pre>
-	/// </li>
 	/// </li>
 	/// <li> Copying text from char[] buffer (type is reset to {@link #DEFAULT_TYPE}
 	/// if not specified):<br/>
@@ -129,7 +128,7 @@ namespace Lucene.Net.Analysis
 	/// source text, so be careful in adjusting them.</li>
 	/// <li>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</li>
 	/// </ul>
-	/// </p>
+	/// <p/>
 	/// </summary>
 	/// <seealso cref="Lucene.Net.Index.Payload">
 	/// </seealso>

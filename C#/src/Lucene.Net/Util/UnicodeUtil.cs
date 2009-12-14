@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
 	/// String.getBytes("UTF-8") does.
 	/// 
 	/// <p/><b>WARNING</b>: This API is a new and experimental and
-	/// may suddenly change. </p>
+	/// may suddenly change. <p/>
 	/// </summary>
 	
 	sealed public class UnicodeUtil

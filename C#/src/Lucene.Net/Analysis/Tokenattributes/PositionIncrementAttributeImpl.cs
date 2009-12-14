@@ -36,14 +36,14 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	/// including either stem will match.  In this case, all but the first stem's
 	/// increment should be set to zero: the increment of the first instance
 	/// should be one.  Repeating a token with an increment of zero can also be
-	/// used to boost the scores of matches on that token.
+	/// used to boost the scores of matches on that token.</li>
 	/// 
 	/// <li>Set it to values greater than one to inhibit exact phrase matches.
 	/// If, for example, one does not want phrases to match across removed stop
 	/// words, then one could build a stop word filter that removes stop words and
 	/// also sets the increment to the number of stop words removed before each
 	/// non-stop word.  Then exact phrase queries will only match when the terms
-	/// occur with no intervening stop words.
+	/// occur with no intervening stop words.</li>
 	/// 
 	/// </ul>
 	/// </summary>

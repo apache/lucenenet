@@ -25,8 +25,8 @@ namespace Lucene.Net.Search
 	
 	/// <summary>An alternative to BooleanScorer that also allows a minimum number
 	/// of optional scorers that should match.
-	/// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
-	/// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
+	/// <br/>Implements skipTo(), and has no limitations on the numbers of added scorers.
+	/// <br/>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
 	/// </summary>
 	class BooleanScorer2:Scorer
 	{
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
 		/// {@link HitCollector#Collect(int, float)}.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		public override void  Score(Collector collector)
 		{
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Expert: Collects matching documents in a range.
-		/// <br>Note that {@link #Next()} must be called once before this method is
+		/// <br/>Note that {@link #Next()} must be called once before this method is
 		/// called for the first time.
 		/// </summary>
 		/// <param name="hc">The collector to which all matching documents are passed through

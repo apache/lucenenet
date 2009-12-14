@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// for instantiating a TopFieldCollector.
 	/// 
 	/// <p/><b>NOTE:</b> This API is experimental and might change in
-	/// incompatible ways in the next release.</p>
+	/// incompatible ways in the next release.<p/>
 	/// </summary>
 	public abstract class TopFieldCollector:TopDocsCollector
 	{

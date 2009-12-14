@@ -30,21 +30,21 @@ namespace Lucene.Net.Store
 	/// environments.  For NFS based access to an index, it's
 	/// recommended that you try {@link SimpleFSLockFactory}
 	/// first and work around the one limitation that a lock file
-	/// could be left when the JVM exits abnormally.</p>
+	/// could be left when the JVM exits abnormally.<p/>
 	/// 
 	/// <p/>The primary benefit of {@link NativeFSLockFactory} is
 	/// that lock files will be properly removed (by the OS) if
-	/// the JVM has an abnormal exit.</p>
+	/// the JVM has an abnormal exit.<p/>
 	/// 
 	/// <p/>Note that, unlike {@link SimpleFSLockFactory}, the existence of
 	/// leftover lock files in the filesystem on exiting the JVM
 	/// is fine because the OS will free the locks held against
-	/// these files even though the files still remain.</p>
+	/// these files even though the files still remain.<p/>
 	/// 
 	/// <p/>If you suspect that this or any other LockFactory is
 	/// not working properly in your environment, you can easily
 	/// test it by using {@link VerifyingLockFactory}, {@link
-	/// LockVerifyServer} and {@link LockStressTest}.</p>
+	/// LockVerifyServer} and {@link LockStressTest}.<p/>
 	/// 
 	/// </summary>
 	/// <seealso cref="LockFactory">

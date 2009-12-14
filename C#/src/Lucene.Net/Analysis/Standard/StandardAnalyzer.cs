@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis.Standard
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StandardAnalyzer:
 	/// <ul>
-	/// <li>As of 2.9, StopFilter preserves position increments
+	/// <li>As of 2.9, StopFilter preserves position increments</li>
 	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></li>
 	/// </ul>
 	/// 
 	/// </summary>

@@ -91,8 +91,8 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="j">Second ScoreDoc
 		/// </param>
-		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br>
-		/// a positive integer if <code>i</code> should come after <code>j</code><br>
+		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br/>
+		/// a positive integer if <code>i</code> should come after <code>j</code><br/>
 		/// <code>0</code> if they are equal
 		/// </returns>
 		/// <seealso cref="java.util.Comparator">

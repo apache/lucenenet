@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	/// (beyond the merge factor upper bound) are encountered,
 	/// all segments within the level are merged. You can get or
 	/// set the merge factor using {@link #GetMergeFactor()} and
-	/// {@link #SetMergeFactor(int)} respectively.</p>
+	/// {@link #SetMergeFactor(int)} respectively.<p/>
 	/// 
 	/// <p/>This class is abstract and requires a subclass to
 	/// define the {@link #size} method which specifies how a
@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// is one subclass that measures size by document count in
 	/// the segment.  {@link LogByteSizeMergePolicy} is another
 	/// subclass that measures size as the total byte size of the
-	/// file(s) for the segment.</p>
+	/// file(s) for the segment.<p/>
 	/// </summary>
 	
 	public abstract class LogMergePolicy:MergePolicy
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary><p/>Returns the number of segments that are merged at
 		/// once and also controls the total number of segments
-		/// allowed to accumulate in the index.</p> 
+		/// allowed to accumulate in the index.<p/> 
 		/// </summary>
 		public virtual int GetMergeFactor()
 		{
@@ -520,14 +520,14 @@ namespace Lucene.Net.Index
 		/// interactive indexing, as this limits the length of
 		/// pauses while indexing to a few seconds.  Larger values
 		/// are best for batched indexing and speedier
-		/// searches.</p>
+		/// searches.<p/>
 		/// 
-		/// <p/>The default value is {@link Integer#MAX_VALUE}.</p>
+		/// <p/>The default value is {@link Integer#MAX_VALUE}.<p/>
 		/// 
 		/// <p/>The default merge policy ({@link
 		/// LogByteSizeMergePolicy}) also allows you to set this
 		/// limit by net size (in MB) of the segment, using {@link
-		/// LogByteSizeMergePolicy#setMaxMergeMB}.</p>
+		/// LogByteSizeMergePolicy#setMaxMergeMB}.<p/>
 		/// </summary>
 		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
 		{

@@ -30,10 +30,10 @@ namespace Lucene.Net.Search.Function
 	/// The native lucene index order is used to assign an ordinal value for each field value.
 	/// <p/>
 	/// Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
-	/// <br>
+	/// <br/>
 	/// Example of reverse ordinal (rord):
-	/// <br>If there were only three field values: "apple","banana","pear"
-	/// <br>then rord("apple")=3, rord("banana")=2, ord("pear")=1
+	/// <br/>If there were only three field values: "apple","banana","pear"
+	/// <br/>then rord("apple")=3, rord("banana")=2, ord("pear")=1
 	/// <p/>
 	/// WARNING: 
 	/// rord() depends on the position in an index and can thus change 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Function
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
 	/// {@link MultiValueSource}, which costs more CPU per lookup
-	/// but will not consume double the FieldCache RAM.</p>
+	/// but will not consume double the FieldCache RAM.<p/>
 	/// </summary>
 	
 	[Serializable]

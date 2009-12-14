@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 	/// should use this class.
 	/// 
 	/// <p/>See {@link NumericField} for capabilities of fields
-	/// indexed numerically.</p>
+	/// indexed numerically.<p/>
 	/// 
 	/// <p/>Here's an example usage, for an <code>int</code> field:
 	/// 
@@ -74,17 +74,17 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// <p/>This stream is not intended to be used in analyzers;
 	/// it's more for iterating the different precisions during
-	/// indexing a specific numeric value.</p>
+	/// indexing a specific numeric value.<p/>
 	/// 
 	/// <p/><b>NOTE</b>: as token streams are only consumed once
 	/// the document is added to the index, if you index more
 	/// than one numeric field, use a separate <code>NumericTokenStream</code>
-	/// instance for each.</p>
+	/// instance for each.<p/>
 	/// 
 	/// <p/>See {@link NumericRangeQuery} for more details on the
 	/// <a
 	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
-	/// parameter as well as how numeric fields work under the hood.</p>
+	/// parameter as well as how numeric fields work under the hood.<p/>
 	/// 
 	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>

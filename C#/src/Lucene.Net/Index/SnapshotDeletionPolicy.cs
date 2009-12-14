@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	/// when the next writer is opened.
 	/// 
 	/// <p/><b>WARNING</b>: This API is a new and experimental and
-	/// may suddenly change.</p> 
+	/// may suddenly change.<p/> 
 	/// </summary>
 	
 	public class SnapshotDeletionPolicy : IndexDeletionPolicy

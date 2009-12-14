@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
 	/// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
 	/// compatibility promises remain intact. For example, Lucene can still
 	/// read and write indices created within the same major version.
-	/// </p>
+	/// <p/>
 	/// 
 	/// 
 	/// </summary>

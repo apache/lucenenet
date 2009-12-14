@@ -64,7 +64,7 @@ namespace Lucene.Net.Documents
 	/// value, either by dividing the result of
 	/// {@link java.util.Date#getTime} or using the separate getters
 	/// (for year, month, etc.) to construct an <code>int</code> or
-	/// <code>long</code> value.</p>
+	/// <code>long</code> value.<p/>
 	/// 
 	/// <p/>To perform range querying or filtering against a
 	/// <code>NumericField</code>, use {@link NumericRangeQuery} or {@link
@@ -72,25 +72,25 @@ namespace Lucene.Net.Documents
 	/// <code>NumericField</code>, use the normal numeric sort types, eg
 	/// {@link SortField#INT} (note that {@link SortField#AUTO}
 	/// will not work with these fields).  <code>NumericField</code> values
-	/// can also be loaded directly from {@link FieldCache}.</p>
+	/// can also be loaded directly from {@link FieldCache}.<p/>
 	/// 
 	/// <p/>By default, a <code>NumericField</code>'s value is not stored but
 	/// is indexed for range filtering and sorting.  You can use
 	/// the {@link #NumericField(String,Field.Store,boolean)}
-	/// constructor if you need to change these defaults.</p>
+	/// constructor if you need to change these defaults.<p/>
 	/// 
 	/// <p/>You may add the same field name as a <code>NumericField</code> to
 	/// the same document more than once.  Range querying and
 	/// filtering will be the logical OR of all values; so a range query
 	/// will hit all documents that have at least one value in
 	/// the range. However sort behavior is not defined.  If you need to sort,
-	/// you should separately index a single-valued <code>NumericField</code>.</p>
+	/// you should separately index a single-valued <code>NumericField</code>.<p/>
 	/// 
 	/// <p/>A <code>NumericField</code> will consume somewhat more disk space
 	/// in the index than an ordinary single-valued field.
 	/// However, for a typical index that includes substantial
 	/// textual content per document, this increase will likely
-	/// be in the noise. </p>
+	/// be in the noise. <p/>
 	/// 
 	/// <p/>Within Lucene, each numeric value is indexed as a
 	/// <em>trie</em> structure, where each term is logically
@@ -122,12 +122,12 @@ namespace Lucene.Net.Documents
 	/// <p/>If you only need to sort by numeric value, and never
 	/// run range querying/filtering, you can index using a
 	/// <code>precisionStep</code> of {@link Integer#MAX_VALUE}.
-	/// This will minimize disk space consumed. </p>
+	/// This will minimize disk space consumed. <p/>
 	/// 
 	/// <p/>More advanced users can instead use {@link
 	/// NumericTokenStream} directly, when indexing numbers. This
 	/// class is a wrapper around this token stream type for
-	/// easier, more intuitive usage.</p>
+	/// easier, more intuitive usage.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This class is only used during
 	/// indexing. When retrieving the stored field value from a

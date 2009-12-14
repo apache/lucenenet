@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Function
 		/// DocValues instance does not contain any value.
 		/// <p/>
 		/// This operation is optional
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <returns> the minimum of all values or <code>Float.NaN</code> if this
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Function
 		/// DocValues instance does not contain any value.
 		/// <p/>
 		/// This operation is optional
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <returns> the maximum of all values or <code>Float.NaN</code> if this
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search.Function
 		/// DocValues instance does not contain any value. *
 		/// <p/>
 		/// This operation is optional
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <returns> the average of all values or <code>Float.NaN</code> if this

@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>{@link HitCollector#Collect(int,float)} is called for every matching
 		/// document.
-		/// <br>HitCollector-based access to remote indexes is discouraged.
+		/// <br/>HitCollector-based access to remote indexes is discouraged.
 		/// 
 		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>{@link Collector#Collect(int)} is called for every matching
 		/// document.
-		/// <br>Collector-based access to remote indexes is discouraged.
+		/// <br/>Collector-based access to remote indexes is discouraged.
 		/// 
 		/// <p/>Applications should only use this if they need <i>all</i> of the
 		/// matching documents.  The high-level search API ({@link

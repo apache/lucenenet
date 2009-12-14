@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Lower-level search API. <br>
+	/// <summary> Lower-level search API. <br/>
 	/// HitCollectors are primarily meant to be used to implement queries, sorting
 	/// and filtering. See {@link Collector} for a lower level and higher performance
 	/// (on a multi-segment index) API.

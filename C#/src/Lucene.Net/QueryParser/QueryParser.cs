@@ -53,17 +53,17 @@ namespace Lucene.Net.QueryParsers
 	/// A clause may be prefixed by:
 	/// <ul>
 	/// <li> a plus (<code>+</code>) or a minus (<code>-</code>) sign, indicating
-	/// that the clause is required or prohibited respectively; or
+	/// that the clause is required or prohibited respectively; or</li>
 	/// <li> a term followed by a colon, indicating the field to be searched.
-	/// This enables one to construct queries which search multiple fields.
+	/// This enables one to construct queries which search multiple fields.</li>
 	/// </ul>
 	/// 
 	/// A clause may be either:
 	/// <ul>
-	/// <li> a term, indicating all the documents that contain this term; or
+	/// <li> a term, indicating all the documents that contain this term; or</li>
 	/// <li> a nested query, enclosed in parentheses.  Note that this may be used
 	/// with a <code>+</code>/<code>-</code> prefix to require any of a set of
-	/// terms.
+	/// terms.</li>
 	/// </ul>
 	/// 
 	/// Thus, in BNF, the query grammar is:
@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers
 	/// Examples of appropriately formatted queries can be found in the <a
 	/// href="../../../../../../queryparsersyntax.html">query syntax
 	/// documentation</a>.
-	/// </p>
+	/// <p/>
 	/// 
 	/// <p/>
 	/// In {@link TermRangeQuery}s, QueryParser tries to detect date values, e.g.
@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers
 	/// {@link DateField} for compatibility reasons.
 	/// To use the new {@link DateTools} to convert dates, a
 	/// {@link Lucene.Net.Documents.DateTools.Resolution} has to be set.
-	/// </p>
+	/// <p/>
 	/// <p/>
 	/// The date resolution that shall be used for RangeQueries can be set
 	/// using {@link #SetDateResolution(DateTools.Resolution)}
@@ -95,30 +95,28 @@ namespace Lucene.Net.QueryParsers
 	/// sets the default date resolution for all fields, whereas the latter can
 	/// be used to set field specific date resolutions. Field specific date
 	/// resolutions take, if set, precedence over the default date resolution.
-	/// </p>
+	/// <p/>
 	/// <p/>
 	/// If you use neither {@link DateField} nor {@link DateTools} in your
 	/// index, you can create your own
 	/// query parser that inherits QueryParser and overwrites
 	/// {@link #GetRangeQuery(String, String, String, boolean)} to
 	/// use a different method for date conversion.
-	/// </p>
+	/// <p/>
 	/// 
-	/// <p/>Note that QueryParser is <em>not</em> thread-safe.</p> 
-	/// 
-	/// <p/><b>NOTE</b>: there is a new QueryParser in contrib, which matches
-	/// the same syntax as this class, but is more modular,
-	/// enabling substantial customization to how a query is created.
-	/// </summary>
+	/// <p/>Note that QueryParser is <em>not</em> thread-safe.<p/> 
 	/// 
 	/// <p/><b>NOTE</b>: there is a new QueryParser in contrib, which matches
 	/// the same syntax as this class, but is more modular,
 	/// enabling substantial customization to how a query is created.
-	/// </summary>
+	/// 
+	/// <p/><b>NOTE</b>: there is a new QueryParser in contrib, which matches
+	/// the same syntax as this class, but is more modular,
+	/// enabling substantial customization to how a query is created.
 	/// <b>NOTE</b>: You must specify the required {@link Version} compatibility when
 	/// creating QueryParser:
 	/// <ul>
-	/// <li>As of 2.9, {@link #SetEnablePositionIncrements} is true by default.
+	/// <li>As of 2.9, {@link #SetEnablePositionIncrements} is true by default.</li>
 	/// </ul>
 	/// </summary>
 	public class QueryParser : QueryParserConstants
@@ -1363,7 +1361,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Command line tool to test QueryParser, using {@link Lucene.Net.Analysis.SimpleAnalyzer}.
-		/// Usage:<br>
+		/// Usage:<br/>
 		/// <code>java Lucene.Net.QueryParsers.QueryParser &lt;input&gt;</code>
 		/// </summary>
 		[STAThread]

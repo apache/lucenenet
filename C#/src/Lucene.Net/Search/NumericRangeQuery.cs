@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
 	/// NumericTokenStream}).  If your terms are instead textual,
 	/// you should use {@link TermRangeQuery}.  {@link
 	/// NumericRangeFilter} is the filter equivalent of this
-	/// query.</p>
+	/// query.<p/>
 	/// 
 	/// <p/>You create a new NumericRangeQuery with the static
 	/// factory methods, eg:
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
 	/// <p/>The performance of NumericRangeQuery is much better
 	/// than the corresponding {@link TermRangeQuery} because the
 	/// number of terms that must be searched is usually far
-	/// fewer, thanks to trie indexing, described below.</p>
+	/// fewer, thanks to trie indexing, described below.<p/>
 	/// 
 	/// <p/>You can optionally specify a <a
 	/// href="#precisionStepDesc"><code>precisionStep</code></a>
@@ -66,19 +66,19 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>This query defaults to {@linkplain
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} for
-	/// 32 bit (int/float) ranges with precisionStep &le;8 and 64
-	/// bit (long/double) ranges with precisionStep &le;6.
+	/// 32 bit (int/float) ranges with precisionStep &lt;8 and 64
+	/// bit (long/double) ranges with precisionStep &lt;6.
 	/// Otherwise it uses {@linkplain
 	/// MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE} as the
 	/// number of terms is likely to be high.  With precision
-	/// steps of &le;4, this query can be run with one of the
+	/// steps of &lt;4, this query can be run with one of the
 	/// BooleanQuery rewrite methods without changing
 	/// BooleanQuery's default max clause count.
 	/// 
 	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>
 	/// 
-	/// <br><h3>How it works</h3>
+	/// <br/><h3>How it works</h3>
 	/// 
 	/// <p/>See the publication about <a target="_blank" href="http://www.panfmp.org">panFMP</a>,
 	/// where this algorithm was described (referred to as <code>TrieRangeQuery</code>):
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 	/// (for a more detailed description of how the values are stored,
 	/// see {@link NumericUtils}). A range is then divided recursively into multiple intervals for searching:
 	/// The center of the range is searched only with the lowest possible precision in the <em>trie</em>,
-	/// while the boundaries are matched more exactly. This reduces the number of terms dramatically.</p>
+	/// while the boundaries are matched more exactly. This reduces the number of terms dramatically.<p/>
 	/// 
 	/// <p/>For the variant that stores long values in 8 different precisions (each reduced by 8 bits) that
 	/// uses a lowest precision of 1 byte, the index contains only a maximum of 256 distinct values in the
@@ -108,9 +108,9 @@ namespace Lucene.Net.Search
 	/// 8-byte-number in the index and the range covers almost all of them; a maximum of 255 distinct values is used
 	/// because it would always be possible to reduce the full 256 values to one term with degraded precision).
 	/// In practice, we have seen up to 300 terms in most cases (index with 500,000 metadata records
-	/// and a uniform value distribution).</p>
+	/// and a uniform value distribution).<p/>
 	/// 
-	/// <a name="precisionStepDesc"><h3>Precision Step</h3>
+	/// <a name="precisionStepDesc"/><h3>Precision Step</h3>
 	/// <p/>You can choose any <code>precisionStep</code> when encoding values.
 	/// Lower step values mean more precisions and so more terms in index (and index gets larger).
 	/// On the other hand, the maximum number of terms to match reduces, which optimized query speed.
@@ -125,19 +125,19 @@ namespace Lucene.Net.Search
 	/// step of 2, <code>n = 31*3*2 + 3 = 189</code>. But the faster search speed is reduced by more seeking
 	/// in the term enum of the index. Because of this, the ideal <code>precisionStep</code> value can only
 	/// be found out by testing. <b>Important:</b> You can index with a lower precision step value and test search speed
-	/// using a multiple of the original step value.</p>
+	/// using a multiple of the original step value.<p/>
 	/// 
 	/// <p/>Good values for <code>precisionStep</code> are depending on usage and data type:
 	/// <ul>
-	/// <li>The default for all data types is <b>4</b>, which is used, when no <code>precisionStep</code> is given.
-	/// <li>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.
-	/// <li>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.
-	/// <li>Steps <b>&ge;64</b> for <em>long/double</em> and <b>&ge;32</b> for <em>int/float</em> produces one token
+	/// <li>The default for all data types is <b>4</b>, which is used, when no <code>precisionStep</code> is given.</li>
+	/// <li>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.</li>
+	/// <li>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.</li>
+	/// <li>Steps <b>&gt;64</b> for <em>long/double</em> and <b>&gt;32</b> for <em>int/float</em> produces one token
 	/// per value in the index and querying is as slow as a conventional {@link TermRangeQuery}. But it can be used
 	/// to produce fields, that are solely used for sorting (in this case simply use {@link Integer#MAX_VALUE} as
 	/// <code>precisionStep</code>). Using {@link NumericField NumericFields} for sorting
 	/// is ideal, because building the field cache is much faster than with text-only numbers.
-	/// Sorting is also possible with range query optimized fields using one of the above <code>precisionSteps</code>.
+	/// Sorting is also possible with range query optimized fields using one of the above <code>precisionSteps</code>.</li>
 	/// </ul>
 	/// 
 	/// <p/>Comparisons of the different types of RangeQueries on an index with about 500,000 docs showed
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 	/// took about 30-40 secs to complete, {@link TermRangeQuery} in constant score filter rewrite mode took 5 secs
 	/// and executing this class took &lt;100ms to complete (on an Opteron64 machine, Java 1.5, 8 bit
 	/// precision step). This query type was developed for a geographic portal, where the performance for
-	/// e.g. bounding boxes or exact date/time stamps is important.</p>
+	/// e.g. bounding boxes or exact date/time stamps is important.<p/>
 	/// 
 	/// </summary>
 	/// <since> 2.9

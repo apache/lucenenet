@@ -63,14 +63,14 @@ namespace Lucene.Net.Search.Spans
 		/// this method may not be called at all for performance reasons. An ordered
 		/// SpanQuery does not lazy load, so if you have payloads in your index and
 		/// you do not want ordered SpanNearQuerys to collect payloads, you can
-		/// disable collection with a constructor option.<br>
+		/// disable collection with a constructor option.<br/>
 		/// 
 		/// Note that the return type is a collection, thus the ordering should not be relied upon.
 		/// </br>
 		/// <p/><font color="#FF0000">
 		/// WARNING: The status of the <b>Payloads</b> feature is experimental.
 		/// The APIs introduced here might change in the future and will not be
-		/// supported anymore in such a case.</font></p>
+		/// supported anymore in such a case.</font><p/>
 		/// 
 		/// </summary>
 		/// <returns> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false

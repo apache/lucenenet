@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	/// <summary> A {@link Scorer} which wraps another scorer and caches the score of the
 	/// current document. Successive calls to {@link #Score()} will return the same
 	/// result and will not invoke the wrapped Scorer's score() method, unless the
-	/// current document has changed.<br>
+	/// current document has changed.<br/>
 	/// This class might be useful due to the changes done to the {@link Collector}
 	/// interface, in which the score is not computed for a document by default, only
 	/// if the collector requests it. Some collectors may need to use the score in

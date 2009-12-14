@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 	/// and experimental.  It may be removed or altered w/o warning in future 
 	/// releases 
 	/// of Lucene.
-	/// </p>
+	/// <p/>
 	/// </summary>
 	public abstract class CacheEntry
 	{
@@ -638,13 +638,13 @@ namespace Lucene.Net.Search
 		/// Cached Values.  Maintaining refrences to a CacheEntry the IndexReader 
 		/// associated with it has garbage collected will prevent the Value itself
 		/// from being garbage collected when the Cache drops the WeakRefrence.
-		/// </p>
+		/// <p/>
 		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 
 		/// of Lucene.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		CacheEntry[] GetCacheEntries();
 		
@@ -655,13 +655,13 @@ namespace Lucene.Net.Search
 		/// (with out needing to rely on GC to free WeakReferences).  
 		/// It should not be relied on for "Cache maintenance" in general 
 		/// application code.
-		/// </p>
+		/// <p/>
 		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 
 		/// of Lucene.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		void  PurgeAllCaches();
 		

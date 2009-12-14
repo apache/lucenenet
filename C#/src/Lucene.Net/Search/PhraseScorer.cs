@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: Scoring functionality for phrase queries.
-	/// <br>A document is considered matching if it contains the phrase-query terms  
+	/// <br/>A document is considered matching if it contains the phrase-query terms  
 	/// at "valid" positons. What "valid positions" are
 	/// depends on the type of the phrase query: for an exact phrase query terms are required 
 	/// to appear in adjacent locations, while for a sloppy phrase query some distance between 
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 		/// <summary> For a document containing all the phrase query terms, compute the
 		/// frequency of the phrase in that document. 
 		/// A non zero frequency means a match.
-		/// <br>Note, that containing all phrase terms does not guarantee a match - they have to be found in matching locations.  
+		/// <br/>Note, that containing all phrase terms does not guarantee a match - they have to be found in matching locations.  
 		/// </summary>
 		/// <returns> frequency of the phrase in current doc, 0 if not found. 
 		/// </returns>

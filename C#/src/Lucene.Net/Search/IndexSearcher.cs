@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 	/// methods, concurrently.  If your application requires
 	/// external synchronization, you should <b>not</b>
 	/// synchronize on the <code>IndexSearcher</code> instance;
-	/// use your own (non-Lucene) objects instead.</p>
+	/// use your own (non-Lucene) objects instead.<p/>
 	/// </summary>
 	public class IndexSearcher:Searcher
 	{
@@ -198,14 +198,14 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Just like {@link #Search(Weight, Filter, int, Sort)}, but you choose
 		/// whether or not the fields in the returned {@link FieldDoc} instances
-		/// should be set by specifying fillFields.<br>
+		/// should be set by specifying fillFields.<br/>
 		/// 
 		/// <p/>
 		/// NOTE: this does not compute scores by default. If you need scores, create
 		/// a {@link TopFieldCollector} instance by calling
 		/// {@link TopFieldCollector#create} and then pass that to
 		/// {@link #Search(Weight, Filter, Collector)}.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
 		{

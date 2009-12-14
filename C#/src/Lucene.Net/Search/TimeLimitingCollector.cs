@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
 		/// The default timer resolution is 20 milliseconds. 
 		/// This means that a search required to take no longer than 
 		/// 800 milliseconds may be stopped after 780 to 820 milliseconds.
-		/// <br>Note that: 
+		/// <br/>Note that: 
 		/// <ul>
 		/// <li>Finer (smaller) resolution is more accurate but less efficient.</li>
 		/// <li>Setting resolution to less than 5 milliseconds will be silently modified to 5 milliseconds.</li>

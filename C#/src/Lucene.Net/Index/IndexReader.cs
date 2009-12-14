@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 	/// instead always throw UnsupportedOperationException.  Subclasses are 
 	/// strongly encouraged to override these methods, but in many cases may not 
 	/// need to.
-	/// </p>
+	/// <p/>
 	/// <p/>
 	/// <b>NOTE</b>: as of 2.4, it's possible to open a read-only
 	/// IndexReader using one of the static open methods that
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 	/// read/write IndexReader.  But in 3.0 this default will
 	/// change to true, meaning you must explicitly specify false
 	/// if you want to make changes with the resulting IndexReader.
-	/// </p>
+	/// <p/>
 	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
 	/// <code>IndexReader</code>} instances are completely thread
 	/// safe, meaning multiple threads can call any of its methods,
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
 		/// <p/>
 		/// If the index has not changed since this instance was (re)opened, then this
 		/// call is a NOOP and returns this instance. Otherwise, a new instance is 
-		/// returned. The old instance is <b>not</b> closed and remains usable.<br>
+		/// returned. The old instance is <b>not</b> closed and remains usable.<br/>
 		/// <p/>   
 		/// If the reader is reopened, even though they share
 		/// resources internally, it's safe to make changes
@@ -860,7 +860,7 @@ namespace Lucene.Net.Index
 		/// this method returns the version recorded in the commit that the reader
 		/// opened. This version is advanced every time {@link IndexWriter#Commit} is
 		/// called.
-		/// </p>
+		/// <p/>
 		/// 
 		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
@@ -870,7 +870,7 @@ namespace Lucene.Net.Index
 		/// with the writer, the version will not changed until a commit is
 		/// completed. Thus, you should not rely on this method to determine when a
 		/// near real-time reader should be opened. Use {@link #IsCurrent} instead.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException </throws>
@@ -904,7 +904,7 @@ namespace Lucene.Net.Index
 		/// N*termIndexInterval terms in the index is loaded into
 		/// memory.  By setting this to a value > 1 you can reduce
 		/// memory usage, at the expense of higher latency when
-		/// loading a TermInfo.  The default value is 1.</p>
+		/// loading a TermInfo.  The default value is 1.<p/>
 		/// 
 		/// <b>NOTE:</b> you must call this before the term
 		/// index is loaded.  If the index is already loaded, 
@@ -937,7 +937,7 @@ namespace Lucene.Net.Index
 		/// {@link #open}, or {@link #reopen} on a reader based on a Directory), then
 		/// this method checks if any further commits (see {@link IndexWriter#commit}
 		/// have occurred in that directory).
-		/// </p>
+		/// <p/>
 		/// 
 		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
@@ -946,12 +946,12 @@ namespace Lucene.Net.Index
 		/// occurred, or any new uncommitted changes have taken place via the writer.
 		/// Note that even if the writer has only performed merging, this method will
 		/// still return false.
-		/// </p>
+		/// <p/>
 		/// 
 		/// <p/>
 		/// In any event, if this returns false, you should call {@link #reopen} to
 		/// get a new reader that sees the changes.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -1626,7 +1626,7 @@ namespace Lucene.Net.Index
 		/// segments_N file.
 		/// 
 		/// <p/><b>WARNING</b>: this API is new and experimental and
-		/// may suddenly change.</p>
+		/// may suddenly change.<p/>
 		/// </summary>
 		public virtual IndexCommit GetIndexCommit()
 		{

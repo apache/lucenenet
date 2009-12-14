@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Function
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
 	/// {@link MultiValueSource}, which costs more CPU per lookup
-	/// but will not consume double the FieldCache RAM.</p>
+	/// but will not consume double the FieldCache RAM.<p/>
 	/// </seealso>
 	[Serializable]
 	public class ByteFieldSource:FieldCacheSource

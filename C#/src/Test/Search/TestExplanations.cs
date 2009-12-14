@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 	/// <p>
 	/// The assumption is that if all of the "primitive" queries work well,
 	/// then anything that rewrites to a primitive will work well also.
-	/// </p>
+	/// <p/>
 	/// 
 	/// </summary>
 	/// <seealso cref=""Subclasses for actual tests"">

@@ -44,8 +44,8 @@ namespace Lucene.Net.Index
 		
 		/// <summary> <p/>Construct a MultiReader aggregating the named set of (sub)readers.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
-		/// left to the subreaders. </p>
-		/// <p/>Note that all subreaders are closed if this Multireader is closed.</p>
+		/// left to the subreaders. <p/>
+		/// <p/>Note that all subreaders are closed if this Multireader is closed.<p/>
 		/// </summary>
 		/// <param name="subReaders">set of (sub)readers
 		/// </param>
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> <p/>Construct a MultiReader aggregating the named set of (sub)readers.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
-		/// left to the subreaders. </p>
+		/// left to the subreaders. <p/>
 		/// </summary>
 		/// <param name="closeSubReaders">indicates whether the subreaders should be closed
 		/// when this MultiReader is closed
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Tries to reopen the subreaders.
-		/// <br>
+		/// <br/>
 		/// If one or more subreaders could be re-opened (i. e. subReader.reopen() 
 		/// returned a new instance != subReader), then a new MultiReader instance 
 		/// is returned, otherwise this instance is returned.
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Clones the subreaders.
 		/// (see {@link IndexReader#clone()}).
-		/// <br>
+		/// <br/>
 		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open

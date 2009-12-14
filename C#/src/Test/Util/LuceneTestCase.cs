@@ -35,14 +35,14 @@ namespace Lucene.Net.Util
 	/// asserting that no unhandled exceptions occurred in
 	/// threads launched by ConcurrentMergeScheduler and asserting sane
 	/// FieldCache usage athe moment of tearDown.
-	/// </p>
+	/// <p/>
 	/// <p>
 	/// If you
 	/// override either <code>setUp()</code> or
 	/// <code>tearDown()</code> in your unit test, make sure you
 	/// call <code>super.setUp()</code> and
 	/// <code>super.tearDown()</code>
-	/// </p>
+	/// <p/>
 	/// </summary>
 	/// <seealso cref="assertSaneFieldCaches">
 	/// </seealso>
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
 		/// If a (poorly written) test has some expectation that the FieldCache
 		/// will persist across test methods (ie: a static IndexReader) this 
 		/// method can be overridden to do nothing.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="FieldCache.PurgeAllCaches()">
 		/// </seealso>
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util
 		/// <p>
 		/// If any problems are found, they are logged to System.err 
 		/// (allong with the msg) when the Assertion is thrown.
-		/// </p>
+		/// <p/>
 		/// <p>
 		/// This method is called by tearDown after every test method, 
 		/// however IndexReaders scoped inside test methods may be garbage 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
 		/// be overlooked. Tests are encouraged to keep their IndexReaders 
 		/// scoped at the class level, or to explicitly call this method 
 		/// directly in the same scope as the IndexReader.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="FieldCacheSanityChecker">
 		/// </seealso>

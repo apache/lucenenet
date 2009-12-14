@@ -31,14 +31,14 @@ namespace Lucene.Net.Search.Spans
 	/// single-field SpanQueries by 'lying' about their search field. That is, 
 	/// the masked SpanQuery will function as normal, 
 	/// but {@link SpanQuery#GetField()} simply hands back the value supplied 
-	/// in this class's constructor.</p>
+	/// in this class's constructor.<p/>
 	/// 
 	/// <p/>This can be used to support Queries like {@link SpanNearQuery} or 
 	/// {@link SpanOrQuery} across different fields, which is not ordinarily 
-	/// permitted.</p>
+	/// permitted.<p/>
 	/// 
 	/// <p/>This can be useful for denormalized relational data: for example, when 
-	/// indexing a document with conceptually many 'children': </p>
+	/// indexing a document with conceptually many 'children': <p/>
 	/// 
 	/// <pre>
 	/// teacherid: 1
@@ -62,11 +62,11 @@ namespace Lucene.Net.Search.Spans
 	/// </pre>
 	/// to search for 'studentfirstname:james studentsurname:jones' and find 
 	/// teacherid 1 without matching teacherid 2 (which has a 'james' in position 0 
-	/// and 'jones' in position 1). </p>
+	/// and 'jones' in position 1). <p/>
 	/// 
 	/// <p/>Note: as {@link #GetField()} returns the masked field, scoring will be 
 	/// done using the norms of the field name supplied. This may lead to unexpected
-	/// scoring behaviour.</p>
+	/// scoring behaviour.<p/>
 	/// </summary>
 	[Serializable]
 	public class FieldMaskingSpanQuery:SpanQuery

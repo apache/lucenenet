@@ -31,8 +31,8 @@ namespace Lucene.Net.Search.Function
 	/// Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
 	/// <p/>
 	/// Example:
-	/// <br>If there were only three field values: "apple","banana","pear"
-	/// <br>then ord("apple")=1, ord("banana")=2, ord("pear")=3
+	/// <br/>If there were only three field values: "apple","banana","pear"
+	/// <br/>then ord("apple")=1, ord("banana")=2, ord("pear")=3
 	/// <p/>
 	/// WARNING: 
 	/// ord() depends on the position in an index and can thus change 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Function
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
 	/// {@link MultiValueSource}, which costs more CPU per lookup
-	/// but will not consume double the FieldCache RAM.</p>
+	/// but will not consume double the FieldCache RAM.<p/>
 	/// </summary>
 	
 	[Serializable]

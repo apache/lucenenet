@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// are deleted from the index directory.  The default deletion policy
 	/// is {@link KeepOnlyLastCommitDeletionPolicy}, which always
 	/// removes old commits as soon as a new commit is done (this
-	/// matches the behavior before 2.2).</p>
+	/// matches the behavior before 2.2).<p/>
 	/// 
 	/// <p/>One expected use case for this (and the reason why it
 	/// was first created) is to work around problems with an
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 	/// increase the storage requirements of the index.  See <a
 	/// target="top"
 	/// href="http://issues.apache.org/jira/browse/LUCENE-710">LUCENE-710</a>
-	/// for details.</p>
+	/// for details.<p/>
 	/// </summary>
 	
 	public interface IndexDeletionPolicy
@@ -52,13 +52,13 @@ namespace Lucene.Net.Index
 		
 		/// <summary> <p/>This is called once when a writer is first
 		/// instantiated to give the policy a chance to remove old
-		/// commit points.</p>
+		/// commit points.<p/>
 		/// 
 		/// <p/>The writer locates all index commits present in the 
 		/// index directory and calls this method.  The policy may 
 		/// choose to delete some of the commit points, doing so by
 		/// calling method {@link IndexCommit#delete delete()} 
-		/// of {@link IndexCommit}.</p>
+		/// of {@link IndexCommit}.<p/>
 		/// 
 		/// <p/><u>Note:</u> the last CommitPoint is the most recent one,
 		/// i.e. the "front index state". Be careful not to delete it,
@@ -74,11 +74,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary> <p/>This is called each time the writer completed a commit.
 		/// This gives the policy a chance to remove old commit points
-		/// with each commit.</p>
+		/// with each commit.<p/>
 		/// 
 		/// <p/>The policy may now choose to delete old commit points 
 		/// by calling method {@link IndexCommit#delete delete()} 
-		/// of {@link IndexCommit}.</p>
+		/// of {@link IndexCommit}.<p/>
 		/// 
 		/// <p/>If writer has <code>autoCommit = true</code> then
 		/// this method will in general be called many times during

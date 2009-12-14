@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
@@ -90,7 +90,7 @@ namespace Lucene.Net.QueryParsers
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
@@ -98,7 +98,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
@@ -115,7 +115,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(matchVersion, fields, analyzer)
 		{
@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
@@ -136,7 +136,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
@@ -145,7 +145,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
@@ -163,7 +163,7 @@ namespace Lucene.Net.QueryParsers
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
@@ -171,7 +171,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
@@ -180,7 +180,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer):base(matchVersion, null, analyzer)
 		{

@@ -38,9 +38,9 @@ namespace Lucene.Net.Analysis
 	/// <p/>
 	/// This is an abstract class. Concrete subclasses are:
 	/// <ul>
-	/// <li>{@link Tokenizer}, a <code>TokenStream</code> whose input is a Reader; and
+	/// <li>{@link Tokenizer}, a <code>TokenStream</code> whose input is a Reader; and</li>
 	/// <li>{@link TokenFilter}, a <code>TokenStream</code> whose input is another
-	/// <code>TokenStream</code>.
+	/// <code>TokenStream</code>.</li>
 	/// </ul>
 	/// A new <code>TokenStream</code> API has been introduced with Lucene 2.9. This API
 	/// has moved from being {@link Token} based to {@link Attribute} based. While
@@ -57,16 +57,16 @@ namespace Lucene.Net.Analysis
 	/// <b>The workflow of the new <code>TokenStream</code> API is as follows:</b>
 	/// <ol>
 	/// <li>Instantiation of <code>TokenStream</code>/{@link TokenFilter}s which add/get
-	/// attributes to/from the {@link AttributeSource}.
-	/// <li>The consumer calls {@link TokenStream#Reset()}.
+	/// attributes to/from the {@link AttributeSource}.</li>
+	/// <li>The consumer calls {@link TokenStream#Reset()}.</li>
 	/// <li>The consumer retrieves attributes from the stream and stores local
-	/// references to all attributes it wants to access
+	/// references to all attributes it wants to access</li>
 	/// <li>The consumer calls {@link #IncrementToken()} until it returns false and
-	/// consumes the attributes after each call.
+	/// consumes the attributes after each call.</li>
 	/// <li>The consumer calls {@link #End()} so that any end-of-stream operations
-	/// can be performed.
+	/// can be performed.</li>
 	/// <li>The consumer calls {@link #Close()} to release any resource when finished
-	/// using the <code>TokenStream</code>
+	/// using the <code>TokenStream</code></li>
 	/// </ol>
 	/// To make sure that filters and consumers know which attributes are available,
 	/// the attributes must be added during instantiation. Filters and consumers are

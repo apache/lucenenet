@@ -140,12 +140,12 @@ namespace Lucene.Net.Documents
 		
 		/// <summary> <p/>Adds a field to a document.  Several fields may be added with
 		/// the same name.  In this case, if the fields are indexed, their text is
-		/// treated as though appended for the purposes of search.</p>
+		/// treated as though appended for the purposes of search.<p/>
 		/// <p/> Note that add like the removeField(s) methods only makes sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
-		/// document has to be added.</p>
+		/// document has to be added.<p/>
 		/// </summary>
 		public void  Add(Fieldable field)
 		{
@@ -154,12 +154,12 @@ namespace Lucene.Net.Documents
 		
 		/// <summary> <p/>Removes field with the specified name from the document.
 		/// If multiple fields exist with this name, this method removes the first field that has been added.
-		/// If there is no field with the specified name, the document remains unchanged.</p>
+		/// If there is no field with the specified name, the document remains unchanged.<p/>
 		/// <p/> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
-		/// document has to be added.</p>
+		/// document has to be added.<p/>
 		/// </summary>
 		public void  RemoveField(System.String name)
 		{
@@ -176,12 +176,12 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> <p/>Removes all fields with the given name from the document.
-		/// If there is no field with the specified name, the document remains unchanged.</p>
+		/// If there is no field with the specified name, the document remains unchanged.<p/>
 		/// <p/> Note that the removeField(s) methods like the add method only make sense 
 		/// prior to adding a document to an index. These methods cannot
 		/// be used to change the content of an existing index! In order to achieve this,
 		/// a document has to be deleted from an index and a new changed version of that
-		/// document has to be added.</p>
+		/// document has to be added.<p/>
 		/// </summary>
 		public void  RemoveFields(System.String name)
 		{

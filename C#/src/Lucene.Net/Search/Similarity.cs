@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 	/// The default computation for <i>tf(t in d)</i> in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) DefaultSimilarity} is:
 	/// 
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 	/// The default computation for <i>idf(t)</i> in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) DefaultSimilarity} is:
 	/// 
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right">
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 	/// This is a search time factor computed in
 	/// {@link #Coord(int, int) coord(q,d)}
 	/// by the Similarity in effect at search time.
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// </li>
 	/// 
 	/// <li><b>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 	/// The default computation in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) DefaultSimilarity}
 	/// is:
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
@@ -168,14 +168,14 @@ namespace Lucene.Net.Search
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// 
 	/// The sum of squared weights (of the query terms) is
 	/// computed by the query {@link Lucene.Net.Search.Weight} object.
 	/// For example, a {@link Lucene.Net.Search.BooleanQuery boolean query}
 	/// computes this value as:
 	/// 
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0"n align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 	/// <td></td>
 	/// </tr>
 	/// </table>
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// 
 	/// </li>
 	/// 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search
 	/// {@link Lucene.Net.Search.TermQuery TermQuery} objects,
 	/// and so the boost of a term in the query is accessible by calling the sub-query
 	/// {@link Lucene.Net.Search.Query#GetBoost() getBoost()}.
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
 	/// When a document is added to the index, all the above factors are multiplied.
 	/// If the document has multiple fields with the same name, all their boosts are multiplied together:
 	/// 
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0"n align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
 	/// <td></td>
 	/// </tr>
 	/// </table>
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// However the resulted <i>norm</i> value is {@link #EncodeNorm(float) encoded} as a single byte
 	/// before being stored.
 	/// At search time, the norm byte value is read from the index
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
 	/// For instance, decode(encode(0.89)) = 0.75.
 	/// Also notice that search time is too late to modify this <i>norm</i> part of scoring, e.g. by
 	/// using a different {@link Similarity} for search.
-	/// <br>&nbsp;<br>
+	/// <br/>&nbsp;<br/>
 	/// </li>
 	/// </ol>
 	/// 
@@ -496,10 +496,10 @@ namespace Lucene.Net.Search
 		/// <p/>For backward compatibility this method by default calls
 		/// {@link #LengthNorm(String, int)} passing
 		/// {@link FieldInvertState#GetLength()} as the second argument, and
-		/// then multiplies this value by {@link FieldInvertState#GetBoost()}.</p>
+		/// then multiplies this value by {@link FieldInvertState#GetBoost()}.<p/>
 		/// 
 		/// <p/><b>WARNING</b>: This API is new and experimental and may
-		/// suddenly change.</p>
+		/// suddenly change.<p/>
 		/// 
 		/// </summary>
 		/// <param name="field">field name

@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// generally not desirable and may be the source of performance issues. If you
 	/// need to iterate over many or all hits, consider using the search method that
 	/// takes a {@link HitCollector}.
-	/// </p>
+	/// <p/>
 	/// <p/>
 	/// <b>Note:</b> Deleting matching documents concurrently with traversing the
 	/// hits, might, when deleting hits that were not yet retrieved, decrease
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <deprecated> see {@link Searcher#Search(Query, int)},
 	/// {@link Searcher#Search(Query, Filter, int)} and
-	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br>
+	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br/>
 	/// 
 	/// <pre>
 	/// TopDocs topDocs = searcher.Search(query, numHits);
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search
 		/// hits is generally not desirable and may be the source of
 		/// performance issues. If you need to iterate over many or all hits, consider
 		/// using a search method that takes a {@link HitCollector}.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public System.Collections.IEnumerator Iterator()
 		{

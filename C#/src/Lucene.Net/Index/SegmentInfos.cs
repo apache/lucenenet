@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	/// those segments in relation to the file system.
 	/// 
 	/// <p/><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	[Serializable]
 	public sealed class SegmentInfos:System.Collections.ArrayList

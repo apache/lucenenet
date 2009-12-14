@@ -42,15 +42,15 @@ namespace Lucene.Net.Util
 		/// <summary> This method can be overridden by extending classes to return a sentinel
 		/// object which will be used by {@link #Initialize(int)} to fill the queue, so
 		/// that the code which uses that queue can always assume it's full and only
-		/// change the top without attempting to insert any new object.<br>
+		/// change the top without attempting to insert any new object.<br/>
 		/// 
 		/// Those sentinel values should always compare worse than any non-sentinel
 		/// value (i.e., {@link #LessThan(Object, Object)} should always favor the
-		/// non-sentinel values).<br>
+		/// non-sentinel values).<br/>
 		/// 
 		/// By default, this method returns false, which means the queue will not be
 		/// filled with sentinel values. Otherwise, the value returned will be used to
-		/// pre-populate the queue. Adds sentinel values to the queue.<br>
+		/// pre-populate the queue. Adds sentinel values to the queue.<br/>
 		/// 
 		/// If this method is extended to return a non-null value, then the following
 		/// usage pattern is recommended:

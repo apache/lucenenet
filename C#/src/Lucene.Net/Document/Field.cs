@@ -243,12 +243,12 @@ namespace Lucene.Net.Documents
 		/// instance to improve indexing speed by avoiding GC cost
 		/// of new'ing and reclaiming Field instances.  Typically
 		/// a single {@link Document} instance is re-used as
-		/// well.  This helps most on small documents.</p>
+		/// well.  This helps most on small documents.<p/>
 		/// 
 		/// <p/>Each Field instance should only be used once
 		/// within a single {@link Document} instance.  See <a
 		/// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
-		/// for details.</p> 
+		/// for details.<p/> 
 		/// </summary>
 		public void  SetValue(System.String value_Renamed)
 		{

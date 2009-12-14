@@ -25,22 +25,22 @@ namespace Lucene.Net.Search
 	/// <summary> Expert: Calculate query weights and build query scorers.
 	/// <p/>
 	/// The purpose of {@link Weight} is to ensure searching does not
-	/// modify a {@link Query}, so that a {@link Query} instance can be reused. <br>
+	/// modify a {@link Query}, so that a {@link Query} instance can be reused. <br/>
 	/// {@link Searcher} dependent state of the query should reside in the
-	/// {@link Weight}. <br>
+	/// {@link Weight}. <br/>
 	/// {@link IndexReader} dependent state should reside in the {@link Scorer}.
 	/// <p/>
 	/// A <code>Weight</code> is used in the following way:
 	/// <ol>
 	/// <li>A <code>Weight</code> is constructed by a top-level query, given a
-	/// <code>Searcher</code> ({@link Query#CreateWeight(Searcher)}).
+	/// <code>Searcher</code> ({@link Query#CreateWeight(Searcher)}).</li>
 	/// <li>The {@link #SumOfSquaredWeights()} method is called on the
 	/// <code>Weight</code> to compute the query normalization factor
 	/// {@link Similarity#QueryNorm(float)} of the query clauses contained in the
-	/// query.
+	/// query.</li>
 	/// <li>The query normalization factor is passed to {@link #Normalize(float)}. At
-	/// this point the weighting is complete.
-	/// <li>A <code>Scorer</code> is constructed by {@link #Scorer(IndexReader,boolean,boolean)}.
+	/// this point the weighting is complete.</li>
+	/// <li>A <code>Scorer</code> is constructed by {@link #Scorer(IndexReader,boolean,boolean)}.</li>
 	/// </ol>
 	/// 
 	/// </summary>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 		/// recommended to check whether the returned <code>Scorer</code> indeed scores
 		/// documents out of order (i.e., call {@link #ScoresDocsOutOfOrder()}), as
 		/// some <code>Scorer</code> implementations will always return documents
-		/// in-order.<br>
+		/// in-order.<br/>
 		/// <b>NOTE:</b> null can be returned if no documents will be scored by this
 		/// query.
 		/// 

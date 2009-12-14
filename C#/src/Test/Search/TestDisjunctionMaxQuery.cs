@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		/// <p>
 		/// same as TestRankingSimilarity in TestRanking.zip from
 		/// http://issues.apache.org/jira/browse/LUCENE-323
-		/// </p>
+		/// <p/>
 		/// </summary>
 		[Serializable]
 		private class TestSimilarity:DefaultSimilarity

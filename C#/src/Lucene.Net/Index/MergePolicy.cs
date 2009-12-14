@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	
 	/// <summary> <p/>Expert: a MergePolicy determines the sequence of
 	/// primitive merge operations to be used for overall merge
-	/// and optimize operations.</p>
+	/// and optimize operations.<p/>
 	/// 
 	/// <p/>Whenever the segments in an index have been altered by
 	/// {@link IndexWriter}, either the addition of a newly
@@ -37,19 +37,19 @@ namespace Lucene.Net.Index
 	/// merges that should be done, or null if no merges are
 	/// necessary.  When IndexWriter.optimize is called, it calls
 	/// {@link #findMergesForOptimize} and the MergePolicy should
-	/// then return the necessary merges.</p>
+	/// then return the necessary merges.<p/>
 	/// 
 	/// <p/>Note that the policy can return more than one merge at
 	/// a time.  In this case, if the writer is using {@link
 	/// SerialMergeScheduler}, the merges will be run
 	/// sequentially but if it is using {@link
-	/// ConcurrentMergeScheduler} they will be run concurrently.</p>
+	/// ConcurrentMergeScheduler} they will be run concurrently.<p/>
 	/// 
 	/// <p/>The default MergePolicy is {@link
-	/// LogByteSizeMergePolicy}.</p>
+	/// LogByteSizeMergePolicy}.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// (subject to change suddenly in the next release)<p/>
 	/// 
 	/// <p/><b>NOTE</b>: This class typically requires access to
 	/// package-private APIs (e.g. <code>SegmentInfos</code>) to do its job;

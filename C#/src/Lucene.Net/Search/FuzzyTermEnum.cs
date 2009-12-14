@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 		/// 1 - (editDistance / length)</pre>
 		/// where length is the length of the shortest term (text or target) including a
 		/// prefix that are identical and editDistance is the Levenshtein distance for
-		/// the two words.</p>
+		/// the two words.<p/>
 		/// 
 		/// <p/>Embedded within this algorithm is a fail-fast Levenshtein distance
 		/// algorithm.  The fail-fast algorithm differs from the standard Levenshtein
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 		/// similarity = 1 - ((float)distance / (float) (prefixLength + Math.min(textlen, targetlen)));
 		/// return (similarity > minimumSimilarity);</pre>
 		/// where distance is the Levenshtein distance for the two words.
-		/// </p>
+		/// <p/>
 		/// <p/>Levenshtein distance (also known as edit distance) is a measure of similiarity
 		/// between two strings where the distance is measured as the number of character
 		/// deletions, insertions or substitutions required to transform one string to

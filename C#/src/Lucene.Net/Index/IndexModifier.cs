@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// <summary> <p/>[Note that as of <b>2.1</b>, all but one of the
 	/// methods in this class are available via {@link
 	/// IndexWriter}.  The one method that is not available is
-	/// {@link #DeleteDocument(int)}.]</p>
+	/// {@link #DeleteDocument(int)}.]<p/>
 	/// 
 	/// A class to modify an index, i.e. to delete and add documents. This
 	/// class hides {@link IndexReader} and {@link IndexWriter} so that you

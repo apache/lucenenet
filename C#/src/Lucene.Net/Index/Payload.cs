@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	/// produces payload data.
 	/// <p/>
 	/// Use {@link TermPositions#GetPayloadLength()} and {@link TermPositions#GetPayload(byte[], int)}
-	/// to retrieve the payloads from the index.<br>
+	/// to retrieve the payloads from the index.<br/>
 	/// 
 	/// </summary>
 	[Serializable]

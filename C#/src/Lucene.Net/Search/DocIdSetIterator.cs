@@ -52,9 +52,9 @@ namespace Lucene.Net.Search
 		/// <summary> Returns the following:
 		/// <ul>
 		/// <li>-1 or {@link #NO_MORE_DOCS} if {@link #NextDoc()} or
-		/// {@link #Advance(int)} were not called yet.
-		/// <li>{@link #NO_MORE_DOCS} if the iterator has exhausted.
-		/// <li>Otherwise it should return the doc ID it is currently on.
+		/// {@link #Advance(int)} were not called yet.</li>
+		/// <li>{@link #NO_MORE_DOCS} if the iterator has exhausted.</li>
+		/// <li>Otherwise it should return the doc ID it is currently on.</li>
 		/// </ul>
 		/// <p/>
 		/// <b>NOTE:</b> in 3.0, this method will become abstract.
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Advances to the next document in the set and returns the doc it is
 		/// currently on, or {@link #NO_MORE_DOCS} if there are no more docs in the
-		/// set.<br>
+		/// set.<br/>
 		/// 
 		/// <b>NOTE:</b> in 3.0 this method will become abstract, following the removal
 		/// of {@link #Next()}. For backward compatibility it is implemented as:

@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <p/><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</code></p>
+	/// <p/><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</code><p/>
 	/// 
 	/// 
 	/// <p/><h3>Valid Types of Values</h3>
