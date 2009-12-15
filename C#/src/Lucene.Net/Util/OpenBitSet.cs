@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
 		/// numWords are the number of elements in the array that contain
 		/// set bits (non-zero longs).
 		/// numWords should be &lt;= bits.length, and
-		/// any existing words in the array at position &gt= numWords should be zero.
+		/// any existing words in the array at position &gt;= numWords should be zero.
 		/// 
 		/// </summary>
 		public OpenBitSet(long[] bits, int numWords)

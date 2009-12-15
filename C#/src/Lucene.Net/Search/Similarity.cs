@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
 	/// If the document has multiple fields with the same name, all their boosts are multiplied together:
 	/// 
 	/// <br/>&#160;<br/>
-	/// <table cellpadding="1" cellspacing="0" border="0"n align="center">
+	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// norm(t,d) &#160; = &#160;
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
 	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
-	/// <big><big><big>&prod;</big></big></big>
+    /// <big><big><big>&#8719;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// {@link Lucene.Net.Documents.Fieldable#GetBoost() f.getBoost}()

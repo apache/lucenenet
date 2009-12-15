@@ -193,7 +193,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
 		{
@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords)
 		{
@@ -262,7 +262,7 @@ namespace Lucene.Net.Analysis
 			return false;
 		}
 		
-		/// <seealso cref="setEnablePositionIncrementsDefault(boolean).">
+		/// <seealso cref="SetEnablePositionIncrementsDefault(bool)">
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
@@ -301,7 +301,7 @@ namespace Lucene.Net.Analysis
 		/// Default : false.
 		/// 
 		/// </summary>
-		/// <seealso cref="setEnablePositionIncrements(boolean).">
+		/// <seealso cref="setEnablePositionIncrements(bool)">
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
@@ -311,7 +311,7 @@ namespace Lucene.Net.Analysis
 			ENABLE_POSITION_INCREMENTS_DEFAULT = defaultValue;
 		}
 		
-		/// <seealso cref="setEnablePositionIncrements(boolean).">
+		/// <seealso cref="SetEnablePositionIncrements(bool)">
 		/// </seealso>
 		public bool GetEnablePositionIncrements()
 		{

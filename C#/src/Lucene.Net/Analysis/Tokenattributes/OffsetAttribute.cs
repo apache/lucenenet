@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		int StartOffset();
 		
 		
-		/// <summary>Set the starting and ending offset.</summary>
-		/// <seealso cref="StartOffset() and #endOffset()">
-		/// </seealso>
+		/// <summary>Set the starting and ending offset.
+        /// See StartOffset() and EndOffset()
+        /// </summary>
 		void  SetOffset(int startOffset, int endOffset);
 		
 		

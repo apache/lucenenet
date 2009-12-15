@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that filters a <code>long</code>
 		/// range using the given <a href="NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>.
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that queries a <code>long</code>
 		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that filters a <code>int</code>
 		/// range using the given <a href="NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>.
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that queries a <code>int</code>
 		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that filters a <code>double</code>
 		/// range using the given <a href="NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>.
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that queries a <code>double</code>
 		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that filters a <code>float</code>
 		/// range using the given <a href="NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>.
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Factory that creates a <code>NumericRangeFilter</code>, that queries a <code>float</code>
 		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
-		/// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
 		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>

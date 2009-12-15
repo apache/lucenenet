@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary> This exception is thrown when the <code>write.lock</code>
 	/// could not be released.
 	/// </summary>
-	/// <seealso cref="Lock.release().">
+	/// <seealso cref="Lock.release()">
 	/// </seealso>
 	[Serializable]
 	public class LockReleaseFailedException:System.IO.IOException

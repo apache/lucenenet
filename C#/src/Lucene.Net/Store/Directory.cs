@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
 		/// never return null (throws IOException instead).
 		/// 
 		/// Currently this method simply fallsback to {@link
-		/// #list} for Directory impls outside of Lucene's core &
+		/// #list} for Directory impls outside of Lucene's core &amp;
 		/// contrib, but in 3.0 that method will be removed and
 		/// this method will become abstract. 
 		/// </summary>

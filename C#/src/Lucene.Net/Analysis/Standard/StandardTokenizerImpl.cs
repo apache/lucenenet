@@ -228,11 +228,11 @@ namespace Lucene.Net.Analysis.Standard
 		/// matched text
 		/// </summary>
 		private int yycolumn;
-		
-		/// <summary> zzAtBOL == true <=> the scanner is currently at the beginning of a line</summary>
+
+        /// <summary> zzAtBOL == true &lt;=&gt; the scanner is currently at the beginning of a line</summary>
 		private bool zzAtBOL = true;
-		
-		/// <summary>zzAtEOF == true <=> the scanner is at the EOF </summary>
+
+        /// <summary>zzAtEOF == true &lt;=&gt; the scanner is at the EOF </summary>
 		private bool zzAtEOF;
 		
 		/* user code: */

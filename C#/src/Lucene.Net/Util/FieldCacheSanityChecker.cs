@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Tests a CacheEntry[] for indication of "insane" cache usage.
 		/// <p/>
-		/// <B>NOTE:</b>FieldCache CreationPlaceholder objects are ignored.
+		/// NOTE:FieldCache CreationPlaceholder objects are ignored.
 		/// (:TODO: is this a bad idea? are we masking a real problem?)
 		/// <p/>
 		/// </summary>
@@ -425,7 +425,7 @@ namespace Lucene.Net.Util
 			/// it's typically an indication of a possible problem.
 			/// <p/>
 			/// <p/>
-			/// <bPNOTE:</b> Only the reader, fieldname, and cached value are actually 
+			/// PNOTE: Only the reader, fieldname, and cached value are actually 
 			/// tested -- if two cache entries have different parsers or datatypes but 
 			/// the cached values are the same Object (== not just equal()) this method 
 			/// does not consider that a red flag.  This allows for subtle variations 

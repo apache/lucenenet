@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Function
 	/// {@link Lucene.Net.Search.FieldCache Fieldcache} using getStringIndex().
 	/// <p/>
 	/// The native lucene index order is used to assign an ordinal value for each field value.
-	/// <p
+	/// <p/>
 	/// Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
 	/// <p/>
 	/// Example:

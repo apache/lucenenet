@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Collapse the hash table & sort in-place. </summary>
+		/// <summary>Collapse the hash table &amp; sort in-place. </summary>
 		public RawPostingList[] SortPostings()
 		{
 			CompactPostings();
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Compares term text for two Posting instance and
-		/// returns -1 if p1 < p2; 1 if p1 > p2; else 0. 
+        /// returns -1 if p1 &lt; p2; 1 if p1 &gt; p2; else 0. 
 		/// </summary>
 		internal int ComparePostings(RawPostingList p1, RawPostingList p2)
 		{
@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Called when postings hash is too small (> 50%
-		/// occupied) or too large (< 20% occupied). 
+        /// occupied) or too large (&lt; 20% occupied). 
 		/// </summary>
 		internal void  RehashPostings(int newSize)
 		{

@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
 		/// nothing (it's optional for a Directory to implement
 		/// it).  But, certain Directory implementations (for
 		/// </summary>
-		/// <seealso cref="FSDirectory) can use this to inform the">
+		/// <seealso cref="FSDirectory"> can use this to inform the
 		/// underlying IO system to pre-allocate the file to the
 		/// specified size.  If the length is longer than the
 		/// current file length, the bytes added to the file are

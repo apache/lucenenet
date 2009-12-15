@@ -100,8 +100,8 @@ namespace Lucene.Net.Index
 		/// faster, but indexing speed is slower.  With larger
 		/// values, more RAM is used during indexing, and while
 		/// searches on unoptimized indices are slower, indexing is
-		/// faster.  Thus larger values (> 10) are best for batch
-		/// index creation, and smaller values (< 10) for indices
+        /// faster.  Thus larger values (&gt; 10) are best for batch
+        /// index creation, and smaller values (&lt; 10) for indices
 		/// that are interactively maintained. 
 		/// </summary>
 		public virtual void  SetMergeFactor(int mergeFactor)
@@ -126,8 +126,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns true if newly flushed and newly merge segments</summary>
-		/// <seealso cref="">
-		/// #setUseCompoundFile 
+        /// <seealso cref="SetUseCompoundFile">
 		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
@@ -152,8 +151,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns true if newly flushed and newly merge doc
 		/// store segment files (term vectors and stored fields)
 		/// </summary>
-		/// <seealso cref="">
-		/// #setUseCompoundDocStore 
+        /// <seealso cref="SetUseCompoundDocStore ">
 		/// </seealso>
 		public virtual bool GetUseCompoundDocStore()
 		{

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	/// {@link #Length()}. In such case,
 	/// {@link java.util.ConcurrentModificationException
 	/// ConcurrentModificationException} is thrown when accessing hit <code>n</code>
-	/// &ge; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
+	/// &gt; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
 	/// _at_start).
 	/// 
 	/// </summary>

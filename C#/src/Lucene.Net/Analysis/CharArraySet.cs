@@ -321,8 +321,8 @@ namespace Lucene.Net.Analysis
 			*/
 			return new UnmodifiableCharArraySet(set_Renamed.entries, set_Renamed.ignoreCase, set_Renamed.count);
 		}
-		
-		/// <summary>The Iterator<String> for this set.  Strings are constructed on the fly, so
+
+        /// <summary>The Iterator&lt;String&gt; for this set.  Strings are constructed on the fly, so
 		/// use <code>nextCharArray</code> for more efficient access. 
 		/// </summary>
 		public class CharArraySetIterator : System.Collections.IEnumerator
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis
 				this.enclosingInstance = enclosingInstance;
 			}
 			private CharArraySet enclosingInstance;
-			/// <summary>Returns the next String, as a Set<String> would...
+            /// <summary>Returns the next String, as a Set&lt;String&gt; would...
 			/// use nextCharArray() for better efficiency. 
 			/// </summary>
 			public virtual System.Object Current

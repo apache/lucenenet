@@ -43,9 +43,9 @@ namespace Lucene.Net.Util
 		/// def bits2int(val):
 		/// arr=0
 		/// for shift in range(8,0,-1):
-		/// if val & 0x80:
-		/// arr = (arr << 4) | shift
-		/// val = val << 1
+		/// if val &amp; 0x80:
+        /// arr = (arr &lt;&lt; 4) | shift
+        /// val = val &lt;&lt; 1
 		/// return arr
 		/// def int_table():
 		/// tbl = [ hex(bits2int(val)).strip('L') for val in range(256) ]

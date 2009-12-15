@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	public sealed class Version:Parameter
 	{
 		
-		/// <summary>Use this to get the latest & greatest settings, bug
+		/// <summary>Use this to get the latest &amp; greatest settings, bug
 		/// fixes, etc, for Lucene.
 		/// 
 		/// <p/><b>WARNING</b>: if you use this setting, and then

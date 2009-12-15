@@ -443,7 +443,7 @@ namespace Lucene.Net.Util
 			return tot;
 		}
 		
-		/// <summary>Returns the popcount or cardinality of A & ~B
+		/// <summary>Returns the popcount or cardinality of A &amp; ~B
 		/// Neither array is modified.
 		/// </summary>
 		public static long Pop_andnot(long[] A, long[] B, int wordOffset, int numWords)

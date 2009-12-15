@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
         private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
-		/// <seealso cref="setInfoStream.">
+		/// <seealso cref="setInfoStream">
 		/// </seealso>
 		private static System.IO.StreamWriter infoStream;
 		
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Writes & syncs to the Directory dir, taking care to
+		/// <summary>Writes &amp; syncs to the Directory dir, taking care to
 		/// remove the segments file on exception 
 		/// </summary>
 		public /*internal*/ void  Commit(Directory dir)

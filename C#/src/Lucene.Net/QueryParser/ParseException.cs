@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers
 		/// This constructor calls its super class with the empty string
 		/// to force the "toString" method of parent class "Throwable" to
 		/// print the error message in the form:
-		/// ParseException: <result of getMessage>
+        /// ParseException: &lt;result of getMessage&gt;
 		/// </summary>
 		public ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, System.String[] tokenImageVal):base("")
 		{

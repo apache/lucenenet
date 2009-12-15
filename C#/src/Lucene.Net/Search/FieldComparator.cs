@@ -982,7 +982,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="slot2">second slot to compare
 		/// </param>
-		/// <returns> any N < 0 if slot2's value is sorted after
+        /// <returns> any N &lt; 0 if slot2's value is sorted after
 		/// slot1, any N > 0 if the slot2's value is sorted before
 		/// slot1 and 0 if they are equal
 		/// </returns>
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="doc">that was hit
 		/// </param>
-		/// <returns> any N < 0 if the doc's value is sorted after
+        /// <returns> any N &lt; 0 if the doc's value is sorted after
 		/// the bottom entry (not competitive), any N > 0 if the
 		/// doc's value is sorted before the bottom entry and 0 if
 		/// they are equal.

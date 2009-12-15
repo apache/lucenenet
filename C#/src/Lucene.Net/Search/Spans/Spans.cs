@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spans
 		/// disable collection with a constructor option.<br/>
 		/// 
 		/// Note that the return type is a collection, thus the ordering should not be relied upon.
-		/// </br>
+		/// <br/>
 		/// <p/><font color="#FF0000">
 		/// WARNING: The status of the <b>Payloads</b> feature is experimental.
 		/// The APIs introduced here might change in the future and will not be

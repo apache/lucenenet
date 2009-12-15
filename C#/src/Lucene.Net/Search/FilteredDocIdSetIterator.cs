@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true if input docid should be in the result set, false otherwise.
 		/// </returns>
-		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator).">
+		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)">
 		/// </seealso>
 		public abstract /*protected internal*/ bool Match(int doc);
 		

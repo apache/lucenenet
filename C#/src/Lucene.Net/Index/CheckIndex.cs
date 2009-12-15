@@ -181,8 +181,8 @@ namespace Lucene.Net.Index
 				/// <seealso cref="AbstractField.setOmitTermFreqAndPositions">
 				/// </seealso>
 				public bool hasProx;
-				
-				/// <summary>Map<String, String> that includes certain
+
+                /// <summary>Map&lt;String, String&gt; that includes certain
 				/// debugging details that IndexWriter records into
 				/// each segment it creates 
 				/// </summary>
@@ -915,12 +915,12 @@ namespace Lucene.Net.Index
 		/// java -ea:Lucene.Net... Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-segment X] [-segment Y]
 		/// </pre>
 		/// <ul>
-		/// <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments
+		/// <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments</li>
 		/// <li><code>-segment X</code>: only check the specified
 		/// segment(s).  This can be specified multiple times,
 		/// to check more than one segment, eg <code>-segment _2
 		/// -segment _a</code>.  You can't use this with the -fix
-		/// option.
+		/// option.</li>
 		/// </ul>
 		/// <p/><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
 		/// documents (perhaps many) to be permanently removed from the index.  Always make

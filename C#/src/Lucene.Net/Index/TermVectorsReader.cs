@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
 		/// entries for the next numDocs starting with
 		/// startDocID.  This is used for bulk copying when
 		/// merging segments, if the field numbers are
-		/// congruent.  Once this returns, the tvf & tvd streams
+		/// congruent.  Once this returns, the tvf &amp; tvd streams
 		/// are seeked to the startDocID. 
 		/// </summary>
 		internal void  RawDocs(int[] tvdLengths, int[] tvfLengths, int startDocID, int numDocs)

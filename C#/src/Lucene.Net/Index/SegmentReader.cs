@@ -1235,7 +1235,7 @@ namespace Lucene.Net.Index
 			return si.docCount;
 		}
 		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
+		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{

@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary>Constructs a Token with null text and start & end
+		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis
 			endOffset = end;
 		}
 		
-		/// <summary>Constructs a Token with null text and start & end
+		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets plus the Token type.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis
 			type = typ;
 		}
 		
-		/// <summary> Constructs a Token with null text and start & end
+		/// <summary> Constructs a Token with null text and start &amp; end
 		/// offsets plus flags. NOTE: flags is EXPERIMENTAL.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Constructs a Token with the given term text, and start
-		/// & end offsets.  The type defaults to "word."
+		/// &amp; end offsets.  The type defaults to "word."
 		/// <b>NOTE:</b> for better indexing speed you should
 		/// instead use the char[] termBuffer methods to set the
 		/// term text.
@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Constructs a Token with the given text, start and end
-		/// offsets, & type.  <b>NOTE:</b> for better indexing
+		/// offsets, &amp; type.  <b>NOTE:</b> for better indexing
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
@@ -289,7 +289,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>  Constructs a Token with the given text, start and end
-		/// offsets, & type.  <b>NOTE:</b> for better indexing
+		/// offsets, &amp; type.  <b>NOTE:</b> for better indexing
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>  Constructs a Token with the given term buffer (offset
-		/// & length), start and end
+		/// &amp; length), start and end
 		/// offsets
 		/// </summary>
 		/// <param name="startTermBuffer">
@@ -343,14 +343,14 @@ namespace Lucene.Net.Analysis
 		/// including either stem will match.  In this case, all but the first stem's
 		/// increment should be set to zero: the increment of the first instance
 		/// should be one.  Repeating a token with an increment of zero can also be
-		/// used to boost the scores of matches on that token.
+		/// used to boost the scores of matches on that token.</li>
 		/// 
 		/// <li>Set it to values greater than one to inhibit exact phrase matches.
 		/// If, for example, one does not want phrases to match across removed stop
 		/// words, then one could build a stop word filter that removes stop words and
 		/// also sets the increment to the number of stop words removed before each
 		/// non-stop word.  Then exact phrase queries will only match when the terms
-		/// occur with no intervening stop words.
+		/// occur with no intervening stop words.</li>
 		/// 
 		/// </ul>
 		/// </summary>
@@ -644,9 +644,9 @@ namespace Lucene.Net.Analysis
 			this.endOffset = offset;
 		}
 		
-		/// <summary>Set the starting and ending offset.</summary>
-		/// <seealso cref="StartOffset() and #endOffset()">
-		/// </seealso>
+		/// <summary>Set the starting and ending offset.
+		/// See StartOffset() and EndOffset()
+		/// </summary>
 		public virtual void  SetOffset(int startOffset, int endOffset)
 		{
 			this.startOffset = startOffset;
@@ -750,7 +750,7 @@ namespace Lucene.Net.Analysis
 			return t;
 		}
 		
-		/// <summary>Makes a clone, but replaces the term buffer &
+		/// <summary>Makes a clone, but replaces the term buffer &amp;
 		/// start/end offset in the process.  This is more
 		/// efficient than doing a full clone (and then calling
 		/// setTermBuffer) because it saves a wasted copy of the old

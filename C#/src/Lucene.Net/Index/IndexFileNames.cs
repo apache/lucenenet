@@ -116,8 +116,8 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Computes the full file name from base, extension and
 		/// generation.  If the generation is -1, the file name is
-		/// null.  If it's 0, the file name is <base><extension>.
-		/// If it's > 0, the file name is <base>_<generation><extension>.
+		/// null.  If it's 0, the file name is 
+		/// If it's > 0, the file name is 
 		/// 
 		/// </summary>
 		/// <param name="base">-- main part of the file name

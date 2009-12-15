@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource for requirements">
+	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource"> for requirements"
 	/// on the field.
 	/// 
 	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based

@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
 		{
 		} // can't construct
 		
-		/// <summary>The value of <tt>System.getProperty("java.version")<tt>. *</summary>
+		/// <summary>The value of <tt>System.getProperty("java.version")</tt>. *</summary>
 		public static readonly System.String JAVA_VERSION = SupportClass.AppSettings.Get("java.version", "");
 		/// <summary>True iff this is Java version 1.1. </summary>
 		public static readonly bool JAVA_1_1 = JAVA_VERSION.StartsWith("1.1.");
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
 		/// <summary>True iff this is Java version 1.3. </summary>
 		public static readonly bool JAVA_1_3 = JAVA_VERSION.StartsWith("1.3.");
 		
-		/// <summary>The value of <tt>System.getProperty("os.name")<tt>. *</summary>
+		/// <summary>The value of <tt>System.getProperty("os.name")</tt>. *</summary>
 		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS") ?? "Linux";
 		/// <summary>True iff running on Linux. </summary>
 		public static readonly bool LINUX = OS_NAME.StartsWith("Linux");

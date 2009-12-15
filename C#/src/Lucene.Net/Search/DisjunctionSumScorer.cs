@@ -210,8 +210,8 @@ namespace Lucene.Net.Search
 		/// available. At least the scorer with the minimum document number will be advanced.
 		/// </summary>
 		/// <returns> true iff there is a match.
-		/// <br/>In case there is a match, </code>currentDoc</code>, </code>currentSumScore</code>,
-		/// and </code>nrMatchers</code> describe the match.
+		/// <br/>In case there is a match, <code>currentDoc</code>, <code>currentSumScore</code>,
+		/// and <code>nrMatchers</code> describe the match.
 		/// 
 		/// TODO: Investigate whether it is possible to use skipTo() when
 		/// the minimum number of matchers is bigger than one, ie. try and use the

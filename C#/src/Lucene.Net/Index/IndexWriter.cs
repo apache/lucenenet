@@ -2235,7 +2235,7 @@ namespace Lucene.Net.Index
 		/// unoptimized indices are faster, but indexing speed is slower.  With larger
 		/// values, more RAM is used during indexing, and while searches on unoptimized
 		/// indices are slower, indexing is faster.  Thus larger values (> 10) are best
-		/// for batch index creation, and smaller values (< 10) for indices that are
+        /// for batch index creation, and smaller values (&lt; 10) for indices that are
 		/// interactively maintained.
 		/// 
 		/// <p/>Note that this method is a convenience method: it
@@ -2351,9 +2351,7 @@ namespace Lucene.Net.Index
 			return infoStream != null;
 		}
 		
-		/// <seealso cref="">
-		/// </seealso>
-		/// <seealso cref="setDefaultWriteLockTimeout to change the default value for all instances of IndexWriter.">
+		/// <seealso cref="setDefaultWriteLockTimeout"> to change the default value for all instances of IndexWriter.
 		/// </seealso>
 		public virtual void  SetWriteLockTimeout(long writeLockTimeout)
 		{
@@ -2587,7 +2585,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Tells the docWriter to close its currently open shared
-		/// doc stores (stored fields & vectors files).
+		/// doc stores (stored fields &amp; vectors files).
 		/// Return value specifices whether new doc store files are compound or not.
 		/// </summary>
 		private bool FlushDocStores()
@@ -3197,8 +3195,8 @@ namespace Lucene.Net.Index
 		{
 			Optimize(true);
 		}
-		
-		/// <summary> Optimize the index down to <= maxNumSegments.  If
+
+        /// <summary> Optimize the index down to &lt;= maxNumSegments.  If
 		/// maxNumSegments==1 then this is the same as {@link
 		/// #Optimize()}.
 		/// 
@@ -4745,7 +4743,7 @@ namespace Lucene.Net.Index
 			FinishCommit();
 		}
 		
-		/// <summary> <p/>Commits all pending changes (added & deleted
+		/// <summary> <p/>Commits all pending changes (added &amp; deleted
 		/// documents, optimizations, segment merges, added
 		/// indexes, etc.) to the index, and syncs all referenced
 		/// index files, such that a reader will see the changes
@@ -4757,7 +4755,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/> Note that this operation calls Directory.sync on
 		/// the index files.  That call should not return until the
-		/// file contents & metadata are on stable storage.  For
+		/// file contents &amp; metadata are on stable storage.  For
 		/// FSDirectory, this calls the OS's fsync.  But, beware:
 		/// some hardware devices may in fact cache writes even
 		/// during fsync, and return before the bits are actually
@@ -5663,7 +5661,7 @@ namespace Lucene.Net.Index
 		/// building its CFS.  Return true if the files should be
 		/// sync'd.  If you return false, then the source segment
 		/// files that were merged cannot be deleted until the CFS
-		/// file is built & sync'd.  So, returning false consumes
+		/// file is built &amp; sync'd.  So, returning false consumes
 		/// more transient disk space, but saves performance of
 		/// not having to sync files which will shortly be deleted
 		/// anyway.

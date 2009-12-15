@@ -25,7 +25,7 @@ namespace Lucene.Net.Store
 	/// happens when a writer tries to open an index
 	/// that another writer already has open.
 	/// </summary>
-	/// <seealso cref="Lock.obtain(long).">
+	/// <seealso cref="Lock.obtain(long)">
 	/// </seealso>
 	[Serializable]
 	public class LockObtainFailedException:System.IO.IOException

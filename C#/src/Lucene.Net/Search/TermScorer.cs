@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="td">An iterator over the documents matching the <code>Term</code>.
 		/// </param>
-		/// <param name="similarity">The </code>Similarity</code> implementation to be used for score
+		/// <param name="similarity">The <code>Similarity</code> implementation to be used for score
 		/// computations.
 		/// </param>
 		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.

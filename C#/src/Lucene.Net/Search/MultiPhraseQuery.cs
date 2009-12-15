@@ -109,8 +109,8 @@ namespace Lucene.Net.Search
 			termArrays.Add(terms);
 			positions.Add((System.Int32) position);
 		}
-		
-		/// <summary> Returns a List<Term[]> of the terms in the multiphrase.
+
+        /// <summary> Returns a List&lt;Term[]&gt; of the terms in the multiphrase.
 		/// Do not modify the List or its contents.
 		/// </summary>
 		public virtual System.Collections.IList GetTermArrays()
