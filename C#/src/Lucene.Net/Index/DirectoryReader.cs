@@ -1062,7 +1062,8 @@ namespace Lucene.Net.Index
 		{
 			return subReaders;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Index.IndexReader.SetDisableFakeNorms(bool)")]
 		public override void  SetDisableFakeNorms(bool disableFakeNorms)
 		{
 			base.SetDisableFakeNorms(disableFakeNorms);

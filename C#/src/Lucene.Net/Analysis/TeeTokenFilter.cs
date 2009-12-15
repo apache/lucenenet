@@ -70,7 +70,8 @@ namespace Lucene.Net.Analysis
 		{
 			this.sink = sink;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Analysis.TokenStream.Next(Lucene.Net.Analysis.Token)")]
 		public override Token Next(Token reusableToken)
 		{
 			System.Diagnostics.Debug.Assert(reusableToken != null);

@@ -56,6 +56,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns the pattern term.</summary>
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.MultiTermQuery.GetTerm()")]
 		public override Term GetTerm()
 		{
 			return term;

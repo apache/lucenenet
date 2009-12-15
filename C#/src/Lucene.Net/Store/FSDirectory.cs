@@ -705,6 +705,7 @@ namespace Lucene.Net.Store
             return result;
         }
 		
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			EnsureOpen();

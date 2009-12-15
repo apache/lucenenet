@@ -461,6 +461,7 @@ namespace Lucene.Net.Search
 		// This overrides PriorityQueue.insert() so that insert(FieldDoc) that
 		// keeps track of the score isn't accidentally bypassed.  
 		// inherit javadoc
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Util.PriorityQueue.Insert(object)")]
 		public override bool Insert(System.Object fdoc)
 		{
 			return Insert((FieldDoc) fdoc);

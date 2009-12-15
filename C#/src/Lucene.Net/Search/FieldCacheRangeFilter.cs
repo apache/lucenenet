@@ -786,6 +786,7 @@ namespace Lucene.Net.Search
 				private int doc = - 1;
 				
 				/** @deprecated use {@link #NextDoc()} instead. */
+                [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.DocIdSetIterator.Next()")]
 				public override bool Next()
 				{
 					return NextDoc() != NO_MORE_DOCS;

@@ -1638,6 +1638,7 @@ namespace Lucene.Net.Index
 		// This is necessary so that cloned SegmentReaders (which
 		// share the underlying postings data) will map to the
 		// same entry in the FieldCache.  See LUCENE-1579.
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Index.IndexReader.GetFieldCacheKey()")]
 		public override System.Object GetFieldCacheKey()
 		{
 			return core.freqStream;

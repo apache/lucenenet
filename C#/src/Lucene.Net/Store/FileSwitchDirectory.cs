@@ -85,7 +85,8 @@ namespace Lucene.Net.Store
 			Array.Copy(secondaryFiles, 0, files, primaryFiles.Length, secondaryFiles.Length);
 			return files;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			return ListAll();
@@ -134,7 +135,8 @@ namespace Lucene.Net.Store
 		{
 			GetDirectory(name).DeleteFile(name);
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.RenameFile(string, string)")]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			GetDirectory(from).RenameFile(from, to);
