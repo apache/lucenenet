@@ -1290,7 +1290,7 @@ namespace Lucene.Net.Index
 		/// docs are returned with freq=1.
 		/// Thus, this method implements the mapping:
 		/// <p/><ul>
-		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq&gt;<sup>*</sup>
+		/// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq&gt;<sup>*</sup>
 		/// </ul>
 		/// <p/>The enumeration is ordered by document number.  Each document number
 		/// is greater than all that precede it in the enumeration.
@@ -1315,7 +1315,7 @@ namespace Lucene.Net.Index
 		/// implements the mapping:
 		/// 
 		/// <p/><ul>
-		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq,
+		/// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq,
 		/// &lt;pos<sub>1</sub>, pos<sub>2</sub>, ...
 		/// pos<sub>freq-1</sub>&gt;
 		/// &gt;<sup>*</sup>

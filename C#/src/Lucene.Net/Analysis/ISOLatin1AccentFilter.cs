@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
 	/// <summary> A filter that replaces accented characters in the ISO Latin 1 character set 
 	/// (ISO-8859-1) by their unaccented equivalent. The case will not be altered.
 	/// <p/>
-	/// For instance, '&amp;agrave;' will be replaced by 'a'.
+	/// For instance, '&#192;' will be replaced by 'a'.
 	/// <p/>
 	/// 
 	/// </summary>

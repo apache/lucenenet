@@ -42,18 +42,18 @@ namespace Lucene.Net.Search
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// score(q,d) &nbsp; = &nbsp;
-	/// <A HREF="#formula_coord">coord(q,d)</A> &nbsp;&middot;&nbsp;
-	/// <A HREF="#formula_queryNorm">queryNorm(q)</A> &nbsp;&middot;&nbsp;
+	/// score(q,d) &#160; = &#160;
+	/// <A HREF="#formula_coord">coord(q,d)</A> &#160;&#183;&#160;
+	/// <A HREF="#formula_queryNorm">queryNorm(q)</A> &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
-	/// <big><big><big>&sum;</big></big></big>
+	/// <big><big><big>&#8721;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// <big><big>(</big></big>
-	/// <A HREF="#formula_tf">tf(t in d)</A> &nbsp;&middot;&nbsp;
-	/// <A HREF="#formula_idf">idf(t)</A><sup>2</sup> &nbsp;&middot;&nbsp;
-	/// <A HREF="#formula_termBoost">t.getBoost()</A>&nbsp;&middot;&nbsp;
+	/// <A HREF="#formula_tf">tf(t in d)</A> &#160;&#183;&#160;
+	/// <A HREF="#formula_idf">idf(t)</A><sup>2</sup> &#160;&#183;&#160;
+	/// <A HREF="#formula_termBoost">t.getBoost()</A>&#160;&#183;&#160;
 	/// <A HREF="#formula_norm">norm(t,d)</A>
 	/// <big><big>)</big></big>
 	/// </td>
@@ -78,18 +78,18 @@ namespace Lucene.Net.Search
 	/// The default computation for <i>tf(t in d)</i> in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) DefaultSimilarity} is:
 	/// 
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) tf(t in d)} &nbsp; = &nbsp;
+	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) tf(t in d)} &#160; = &#160;
 	/// </td>
 	/// <td valign="top" align="center" rowspan="1">
-	/// frequency<sup><big>&frac12;</big></sup>
+	/// frequency<sup><big>&#189;</big></sup>
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -101,11 +101,11 @@ namespace Lucene.Net.Search
 	/// The default computation for <i>idf(t)</i> in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) DefaultSimilarity} is:
 	/// 
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right">
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) idf(t)}&nbsp; = &nbsp;
+	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) idf(t)}&#160; = &#160;
 	/// </td>
 	/// <td valign="middle" align="center">
 	/// 1 + log <big>(</big>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
 	/// <td valign="middle" align="center">
 	/// <table>
 	/// <tr><td align="center"><small>numDocs</small></td></tr>
-	/// <tr><td align="center">&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;</td></tr>
+	/// <tr><td align="center">&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;</td></tr>
 	/// <tr><td align="center"><small>docFreq+1</small></td></tr>
 	/// </table>
 	/// </td>
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 	/// This is a search time factor computed in
 	/// {@link #Coord(int, int) coord(q,d)}
 	/// by the Similarity in effect at search time.
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// </li>
 	/// 
 	/// <li><b>
@@ -149,46 +149,46 @@ namespace Lucene.Net.Search
 	/// The default computation in
 	/// {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) DefaultSimilarity}
 	/// is:
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// queryNorm(q)  &nbsp; = &nbsp;
+	/// queryNorm(q)  &#160; = &#160;
 	/// {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) queryNorm(sumOfSquaredWeights)}
-	/// &nbsp; = &nbsp;
+	/// &#160; = &#160;
 	/// </td>
 	/// <td valign="middle" align="center" rowspan="1">
 	/// <table>
 	/// <tr><td align="center"><big>1</big></td></tr>
 	/// <tr><td align="center"><big>
-	/// &ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;&ndash;
+	/// &#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;
 	/// </big></td></tr>
-	/// <tr><td align="center">sumOfSquaredWeights<sup><big>&frac12;</big></sup></td></tr>
+	/// <tr><td align="center">sumOfSquaredWeights<sup><big>&#189;</big></sup></td></tr>
 	/// </table>
 	/// </td>
 	/// </tr>
 	/// </table>
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// 
 	/// The sum of squared weights (of the query terms) is
 	/// computed by the query {@link Lucene.Net.Search.Weight} object.
 	/// For example, a {@link Lucene.Net.Search.BooleanQuery boolean query}
 	/// computes this value as:
 	/// 
-	/// <br/>&nbsp;<br/>
-	/// <table cellpadding="1" cellspacing="0" border="0"n align="center">
+	/// <br/>&#160;<br/>
+	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// {@link Lucene.Net.Search.Weight#SumOfSquaredWeights() sumOfSquaredWeights} &nbsp; = &nbsp;
+	/// {@link Lucene.Net.Search.Weight#SumOfSquaredWeights() sumOfSquaredWeights} &#160; = &#160;
 	/// {@link Lucene.Net.Search.Query#GetBoost() q.getBoost()} <sup><big>2</big></sup>
-	/// &nbsp;&middot;&nbsp;
+	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
-	/// <big><big><big>&sum;</big></big></big>
+	/// <big><big><big>&#8721;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// <big><big>(</big></big>
-	/// <A HREF="#formula_idf">idf(t)</A> &nbsp;&middot;&nbsp;
+	/// <A HREF="#formula_idf">idf(t)</A> &#160;&#183;&#160;
 	/// <A HREF="#formula_termBoost">t.getBoost()</A>
 	/// <big><big>) <sup>2</sup> </big></big>
 	/// </td>
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 	/// <td></td>
 	/// </tr>
 	/// </table>
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// 
 	/// </li>
 	/// 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search
 	/// {@link Lucene.Net.Search.TermQuery TermQuery} objects,
 	/// and so the boost of a term in the query is accessible by calling the sub-query
 	/// {@link Lucene.Net.Search.Query#GetBoost() getBoost()}.
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// </li>
 	/// 
 	/// <li>
@@ -243,15 +243,15 @@ namespace Lucene.Net.Search
 	/// When a document is added to the index, all the above factors are multiplied.
 	/// If the document has multiple fields with the same name, all their boosts are multiplied together:
 	/// 
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0"n align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// norm(t,d) &nbsp; = &nbsp;
+	/// norm(t,d) &#160; = &#160;
 	/// {@link Lucene.Net.Documents.Document#GetBoost() doc.getBoost()}
-	/// &nbsp;&middot;&nbsp;
+	/// &#160;&#183;&#160;
 	/// {@link #LengthNorm(String, int) lengthNorm(field)}
-	/// &nbsp;&middot;&nbsp;
+	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
 	/// <big><big><big>&prod;</big></big></big>
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
 	/// <td></td>
 	/// </tr>
 	/// </table>
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// However the resulted <i>norm</i> value is {@link #EncodeNorm(float) encoded} as a single byte
 	/// before being stored.
 	/// At search time, the norm byte value is read from the index
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
 	/// For instance, decode(encode(0.89)) = 0.75.
 	/// Also notice that search time is too late to modify this <i>norm</i> part of scoring, e.g. by
 	/// using a different {@link Similarity} for search.
-	/// <br/>&nbsp;<br/>
+	/// <br/>&#160;<br/>
 	/// </li>
 	/// </ol>
 	/// 

@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
 	/// <th>50% full</th> <td>3.36</td> <td>3.96</td> <td>1.44</td> <td>1.46</td> <td>1.99</td> <td>1.58</td>
 	/// </tr>
 	/// <tr>
-	/// <th>1% full</th> <td>3.31</td> <td>3.90</td> <td>&nbsp;</td> <td>1.04</td> <td>&nbsp;</td> <td>0.99</td>
+	/// <th>1% full</th> <td>3.31</td> <td>3.90</td> <td>&#160;</td> <td>1.04</td> <td>&#160;</td> <td>0.99</td>
 	/// </tr>
 	/// </table>
 	/// <br/>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
 	/// <th>50% full</th> <td>2.50</td> <td>3.50</td> <td>1.00</td> <td>1.03</td> <td>1.12</td> <td>1.25</td>
 	/// </tr>
 	/// <tr>
-	/// <th>1% full</th> <td>2.51</td> <td>3.49</td> <td>&nbsp;</td> <td>1.00</td> <td>&nbsp;</td> <td>1.02</td>
+	/// <th>1% full</th> <td>2.51</td> <td>3.49</td> <td>&#160;</td> <td>1.00</td> <td>&#160;</td> <td>1.02</td>
 	/// </tr>
 	/// </table>
 	/// </summary>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
 		/// <p/>
 		/// numWords are the number of elements in the array that contain
 		/// set bits (non-zero longs).
-		/// numWords should be &lt= bits.length, and
+		/// numWords should be &lt;= bits.length, and
 		/// any existing words in the array at position &gt= numWords should be zero.
 		/// 
 		/// </summary>

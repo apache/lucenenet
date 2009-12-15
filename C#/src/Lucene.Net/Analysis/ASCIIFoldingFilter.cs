@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// The set of character conversions supported by this class is a superset of
 	/// those supported by Lucene's {@link ISOLatin1AccentFilter} which strips
-	/// accents from Latin1 characters.  For example, '&amp;agrave;' will be replaced by
+	/// accents from Latin1 characters.  For example, '&#192;' will be replaced by
 	/// 'a'.
 	/// </summary>
 	public sealed class ASCIIFoldingFilter:TokenFilter
