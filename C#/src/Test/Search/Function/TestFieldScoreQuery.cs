@@ -31,13 +31,13 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Test FieldScoreQuery search.
-	/// <p>
+	/// <p/>
 	/// Tests here create an index with a few documents, each having
 	/// an int value indexed  field and a float value indexed field.
 	/// The values of these fields are later used for scoring.
-	/// <p>
+	/// <p/>
 	/// The rank tests use Hits to verify that docs are ordered (by score) as expected.
-	/// <p>
+	/// <p/>
 	/// The exact score tests use TopDocs top to verify the exact score.  
 	/// </summary>
     [TestFixture]

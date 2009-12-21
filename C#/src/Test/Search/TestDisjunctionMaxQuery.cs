@@ -53,10 +53,9 @@ namespace Lucene.Net.Search
 		/// <summary> Similarity to eliminate tf, idf and lengthNorm effects to
 		/// isolate test case.
 		/// 
-		/// <p>
+		/// <p/>
 		/// same as TestRankingSimilarity in TestRanking.zip from
 		/// http://issues.apache.org/jira/browse/LUCENE-323
-		/// <p/>
 		/// </summary>
 		[Serializable]
 		private class TestSimilarity:DefaultSimilarity

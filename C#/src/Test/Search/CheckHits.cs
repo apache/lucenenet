@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 		/// <summary> Tests that a query matches the an expected set of documents using a
 		/// HitCollector.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Note that when using the HitCollector API, documents will be collected
 		/// if they "match" regardless of what their score is.
 		/// <p/>
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Tests that a query matches the an expected set of documents using Hits.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Note that when using the Hits API, documents will only be returned
 		/// if they have a positive normalized score.
 		/// <p/>

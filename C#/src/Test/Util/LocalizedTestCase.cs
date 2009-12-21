@@ -23,11 +23,10 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Base test class for Lucene test classes that test Locale-sensitive behavior.
-	/// <p>
+	/// <p/>
 	/// This class will run tests under the default Locale, but then will also run
 	/// tests under all available JVM locales. This is helpful to ensure tests will
 	/// not fail under a different environment.
-	/// <p/>
 	/// </summary>
 	public class LocalizedTestCase:LuceneTestCase
 	{

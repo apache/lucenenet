@@ -29,14 +29,13 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Base class for all Lucene unit tests.  
-	/// <p>
+	/// <p/>
 	/// Currently the
 	/// only added functionality over JUnit's TestCase is
 	/// asserting that no unhandled exceptions occurred in
 	/// threads launched by ConcurrentMergeScheduler and asserting sane
 	/// FieldCache usage athe moment of tearDown.
 	/// <p/>
-	/// <p>
 	/// If you
 	/// override either <code>setUp()</code> or
 	/// <code>tearDown()</code> in your unit test, make sure you
@@ -76,7 +75,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Forcible purges all cache entries from the FieldCache.
-		/// <p>
+		/// <p/>
 		/// This method will be called by tearDown to clean up FieldCache.DEFAULT.
 		/// If a (poorly written) test has some expectation that the FieldCache
 		/// will persist across test methods (ie: a static IndexReader) this 
@@ -129,11 +128,10 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Asserts that FieldCacheSanityChecker does not detect any 
 		/// problems with FieldCache.DEFAULT.
-		/// <p>
+		/// <p/>
 		/// If any problems are found, they are logged to System.err 
 		/// (allong with the msg) when the Assertion is thrown.
 		/// <p/>
-		/// <p>
 		/// This method is called by tearDown after every test method, 
 		/// however IndexReaders scoped inside test methods may be garbage 
 		/// collected prior to this method being called, causing errors to 
