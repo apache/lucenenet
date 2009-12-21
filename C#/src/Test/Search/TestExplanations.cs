@@ -42,13 +42,12 @@ namespace Lucene.Net.Search
 	/// insure they match the expected set of docs, and that the score of each
 	/// match is equal to the value of the scores explanation.
 	/// 
-	/// <p>
+	/// <p/>
 	/// The assumption is that if all of the "primitive" queries work well,
 	/// then anything that rewrites to a primitive will work well also.
-	/// <p/>
 	/// 
 	/// </summary>
-	/// <seealso cref=""Subclasses for actual tests"">
+	/// <seealso cref="Subclasses for actual tests">
 	/// </seealso>
     [TestFixture]
 	public class TestExplanations:LuceneTestCase
