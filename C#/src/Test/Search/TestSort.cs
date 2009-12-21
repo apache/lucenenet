@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Unit tests for sorting code.
 	/// 
-	/// <p>Created: Feb 17, 2004 4:55:10 PM
+	/// <p/>Created: Feb 17, 2004 4:55:10 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
