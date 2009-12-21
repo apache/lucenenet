@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
 		
 		protected internal virtual System.String GetTestLabel()
 		{
-			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            return Lucene.Net.TestCase.GetFullName();
 		}
 		
 		[TearDown]

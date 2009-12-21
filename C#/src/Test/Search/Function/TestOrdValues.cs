@@ -287,7 +287,7 @@ namespace Lucene.Net.Search.Function
 		
 		private System.String TestName()
 		{
-			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            return Lucene.Net.TestCase.GetFullName();
         }
 	}
 }

@@ -549,32 +549,32 @@ namespace Lucene.Net.Search
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassIntParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " IntParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " IntParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassFloatParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " FloatParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " FloatParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassLongParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " LongParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " LongParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassDoubleParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " DoubleParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " DoubleParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassByteParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " ByteParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ByteParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassShortParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " ShortParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ShortParser"); 
 			fc.PurgeAllCaches();
 		}
 		
@@ -1205,7 +1205,7 @@ namespace Lucene.Net.Search
 			
 			// up to this point, all of the searches should have "sane" 
 			// FieldCache behavior, and should have reused hte cache in several cases
-			AssertSaneFieldCaches("getName()" + " various"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " various"); 
 			// next we'll check Locale based (String[]) for 'string', so purge first
 			Lucene.Net.Search.FieldCache_Fields.DEFAULT.PurgeAllCaches();
 			
@@ -1217,8 +1217,8 @@ namespace Lucene.Net.Search
 			
 			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-GB"))});
 			AssertMatches(multi, queryA, sort, "DJAIHGFEBC");
-			
-			AssertSaneFieldCaches("getName()" + " Locale.US + Locale.UK"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " Locale.US + Locale.UK"); 
 			Lucene.Net.Search.FieldCache_Fields.DEFAULT.PurgeAllCaches();
 		}
 		
