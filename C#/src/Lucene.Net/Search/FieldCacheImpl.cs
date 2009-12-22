@@ -51,17 +51,18 @@ namespace Lucene.Net.Search
 		{
 			lock (this)
 			{
-				caches = new System.Collections.Hashtable(7);
-				caches[System.Type.GetType("System.SByte")] = new ByteCache(this);
-				caches[System.Type.GetType("System.Int16")] = new ShortCache(this);
-				caches[System.Type.GetType("System.Int32")] = new IntCache(this);
-				caches[System.Type.GetType("System.Single")] = new FloatCache(this);
-				caches[System.Type.GetType("System.Int64")] = new LongCache(this);
-				caches[System.Type.GetType("System.Double")] = new DoubleCache(this);
-				caches[typeof(System.String)] = new StringCache(this);
-				caches[typeof(StringIndex)] = new StringIndexCache(this);
-				caches[typeof(System.IComparable)] = new CustomCache(this);
-				caches[typeof(System.Object)] = new AutoCache(this);
+                System.Collections.Hashtable caches2 = new System.Collections.Hashtable(7);
+                caches2[System.Type.GetType("System.SByte")] = new ByteCache(this);
+                caches2[System.Type.GetType("System.Int16")] = new ShortCache(this);
+                caches2[System.Type.GetType("System.Int32")] = new IntCache(this);
+                caches2[System.Type.GetType("System.Single")] = new FloatCache(this);
+                caches2[System.Type.GetType("System.Int64")] = new LongCache(this);
+                caches2[System.Type.GetType("System.Double")] = new DoubleCache(this);
+                caches2[typeof(System.String)] = new StringCache(this);
+                caches2[typeof(StringIndex)] = new StringIndexCache(this);
+                caches2[typeof(System.IComparable)] = new CustomCache(this);
+                caches2[typeof(System.Object)] = new AutoCache(this);
+                caches = caches2;
 			}
 		}
 		

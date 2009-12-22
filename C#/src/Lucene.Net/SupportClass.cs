@@ -1306,16 +1306,19 @@ public class SupportClass
         private void Clean()
         {
             ArrayList keysToDelete = new ArrayList();
-            foreach (WeakKey wtk in base.Keys)
+            lock (this)
             {
-                if (!wtk.IsAlive)
+                foreach (WeakKey wtk in base.Keys)
                 {
-                    keysToDelete.Add(wtk);
+                    if (!wtk.IsAlive)
+                    {
+                        keysToDelete.Add(wtk);
+                    }
                 }
-            }
 
-            foreach (WeakKey wtk in keysToDelete)
-                Remove(wtk);
+                foreach (WeakKey wtk in keysToDelete)
+                    Remove(wtk);
+            }
         }
 
 
@@ -1325,12 +1328,20 @@ public class SupportClass
         public override void Add(object key, object value)
         {
             CleanIfNeeded();
-            base.Add(new WeakKey(key), value);
+            lock (this)
+            {
+                base.Add(new WeakKey(key), value);
+            }
         }
 
         public override IDictionaryEnumerator GetEnumerator()
         {
-            return new WeakDictionaryEnumerator(base.GetEnumerator());
+            Hashtable tmp = null;
+            lock (this)
+            {
+                tmp = (Hashtable)base.Clone();
+            }
+            return new WeakDictionaryEnumerator(tmp.GetEnumerator());
         }
 
         /// <summary>
@@ -1341,11 +1352,15 @@ public class SupportClass
             get
             {
                 ArrayList keys = new ArrayList(Count);
-                foreach (WeakKey key in base.Keys)
+                lock (this)
                 {
-                    object realKey = key.Target;
-                    if (realKey != null)
-                        keys.Add(realKey);
+
+                    foreach (WeakKey key in base.Keys)
+                    {
+                        object realKey = key.Target;
+                        if (realKey != null)
+                            keys.Add(realKey);
+                    }
                 }
                 return keys;
             }
@@ -1360,7 +1375,10 @@ public class SupportClass
             set
             {
                 CleanIfNeeded();
-                base[new WeakKey(key)] = value;
+                lock (this)
+                {
+                    base[new WeakKey(key)] = value;
+                }
             }
         }
 
