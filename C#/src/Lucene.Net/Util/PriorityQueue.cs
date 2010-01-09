@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 	/// least element can always be found in constant time.  Put()'s and pop()'s
 	/// require log(size) time.
 	/// 
-	/// <p><b>NOTE</b>: This class pre-allocates a full array of
+	/// <p/><b>NOTE</b>: This class pre-allocates a full array of
 	/// length <code>maxSize+1</code>, in {@link #initialize}.
 	/// 
 	/// </summary>
@@ -42,15 +42,15 @@ namespace Lucene.Net.Util
 		/// <summary> This method can be overridden by extending classes to return a sentinel
 		/// object which will be used by {@link #Initialize(int)} to fill the queue, so
 		/// that the code which uses that queue can always assume it's full and only
-		/// change the top without attempting to insert any new object.<br>
+		/// change the top without attempting to insert any new object.<br/>
 		/// 
 		/// Those sentinel values should always compare worse than any non-sentinel
 		/// value (i.e., {@link #LessThan(Object, Object)} should always favor the
-		/// non-sentinel values).<br>
+		/// non-sentinel values).<br/>
 		/// 
 		/// By default, this method returns false, which means the queue will not be
 		/// filled with sentinel values. Otherwise, the value returned will be used to
-		/// pre-populate the queue. Adds sentinel values to the queue.<br>
+		/// pre-populate the queue. Adds sentinel values to the queue.<br/>
 		/// 
 		/// If this method is extended to return a non-null value, then the following
 		/// usage pattern is recommended:
@@ -117,6 +117,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #Add(Object)} which returns the new top object,
 		/// saving an additional call to {@link #Top()}.
 		/// </deprecated>
+        [Obsolete("use Add(Object) which returns the new top object, saving an additional call to Top().")]
 		public void  Put(System.Object element)
 		{
 			size++;
@@ -150,6 +151,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #InsertWithOverflow(Object)} instead, which
 		/// encourages objects reuse.
 		/// </deprecated>
+        [Obsolete("use InsertWithOverflow(Object) instead, which encourages objects reuse.")]
 		public virtual bool Insert(System.Object element)
 		{
 			return InsertWithOverflow(element) != element;
@@ -231,6 +233,7 @@ namespace Lucene.Net.Util
 		/// <deprecated> use {@link #UpdateTop()} which returns the new top element and
 		/// saves an additional call to {@link #Top()}.
 		/// </deprecated>
+        [Obsolete("use UpdateTop() which returns the new top element and saves an additional call to Top()")]
 		public void  AdjustTop()
 		{
 			DownHeap();

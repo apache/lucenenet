@@ -48,12 +48,13 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true if input docid should be in the result set, false otherwise.
 		/// </returns>
-		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator).">
+		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)">
 		/// </seealso>
 		public abstract /*protected internal*/ bool Match(int doc);
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public override int Doc()
 		{
 			return doc;
@@ -66,6 +67,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
@@ -85,6 +87,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Advance(int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead. ")]
 		public override bool SkipTo(int n)
 		{
 			return Advance(n) != NO_MORE_DOCS;

@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
 		/// FieldInvertState#GetLength()} - {@link
 		/// FieldInvertState#GetNumOverlap()}.
 		/// 
-		/// <p><b>WARNING</b>: This API is new and experimental, and may suddenly
-		/// change.</p> 
+		/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
+		/// change.<p/> 
 		/// </summary>
 		public override float ComputeNorm(System.String field, FieldInvertState state)
 		{
@@ -91,8 +91,8 @@ namespace Lucene.Net.Search
 		/// norm.  By default this is false, meaning overlap
 		/// tokens are counted just like non-overlap tokens.
 		/// 
-		/// <p><b>WARNING</b>: This API is new and experimental, and may suddenly
-		/// change.</p>
+		/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
+		/// change.<p/>
 		/// 
 		/// </summary>
 		/// <seealso cref="computeNorm">

@@ -28,12 +28,12 @@ namespace Lucene.Net.Documents
 	/// <summary> Provides support for converting longs to Strings, and back again. The strings
 	/// are structured so that lexicographic sorting order is preserved.
 	/// 
-	/// <p>
+	/// <p/>
 	/// That is, if l1 is less than l2 for any two longs l1 and l2, then
 	/// NumberTools.longToString(l1) is lexicographically less than
 	/// NumberTools.longToString(l2). (Similarly for "greater than" and "equals".)
 	/// 
-	/// <p>
+	/// <p/>
 	/// This class handles <b>all</b> long values (unlike
 	/// {@link Lucene.Net.Documents.DateField}).
 	/// 
@@ -46,6 +46,7 @@ namespace Lucene.Net.Documents
 	/// This class is included for use with existing
 	/// indices and will be removed in a future release.
 	/// </deprecated>
+    [Obsolete("For new indexes use NumericUtils instead, which provides a sortable binary representation (prefix encoded) of numeric values. To index and efficiently query numeric values use NumericField and NumericRangeQuery. This class is included for use with existing indices and will be removed in a future release.")]
 	public class NumberTools
 	{
 		

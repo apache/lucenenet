@@ -24,14 +24,15 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary> A filter that replaces accented characters in the ISO Latin 1 character set 
 	/// (ISO-8859-1) by their unaccented equivalent. The case will not be altered.
-	/// <p>
-	/// For instance, '&agrave;' will be replaced by 'a'.
-	/// <p>
+	/// <p/>
+	/// For instance, '&#192;' will be replaced by 'a'.
+	/// <p/>
 	/// 
 	/// </summary>
 	/// <deprecated> in favor of {@link ASCIIFoldingFilter} which covers a superset 
 	/// of Latin 1. This class will be removed in Lucene 3.0.
 	/// </deprecated>
+    [Obsolete("in favor of ASCIIFoldingFilter which covers a superset of Latin 1. This class will be removed in Lucene 3.0.")]
 	public class ISOLatin1AccentFilter:TokenFilter
 	{
 		public ISOLatin1AccentFilter(TokenStream input):base(input)
@@ -70,6 +71,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next(Token reusableToken)
 		{
 			return base.Next(reusableToken);
@@ -78,6 +80,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next()
 		{
 			return base.Next();

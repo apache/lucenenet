@@ -192,6 +192,7 @@ namespace Lucene.Net.Index
 			internal System.String maxTermPrefix;
 			
 			// deprecated
+            [Obsolete]
 			internal bool allowMinus1Position;
 			
 			// Only called by asserts

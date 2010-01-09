@@ -38,11 +38,11 @@ namespace Lucene.Net.Search.Payloads
 	/// {@link Lucene.Net.Search.Spans.SpanTermQuery} except that it factors
 	/// in the value of the payload located at each of the positions where the
 	/// {@link Lucene.Net.Index.Term} occurs.
-	/// <p>
+	/// <p/>
 	/// In order to take advantage of this, you must override
 	/// {@link Lucene.Net.Search.Similarity#ScorePayload(String, byte[],int,int)}
 	/// which returns 1 by default.
-	/// <p>
+	/// <p/>
 	/// Payload scores are aggregated using a pluggable {@link PayloadFunction}.
 	/// 
 	/// </summary>

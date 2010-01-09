@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> Simple standalone tool that forever acquires & releases a
+	/// <summary> Simple standalone tool that forever acquires &amp; releases a
 	/// lock using a specific LockFactory.  Run without any args
 	/// to see usage.
 	/// 

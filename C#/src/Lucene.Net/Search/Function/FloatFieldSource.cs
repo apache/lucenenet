@@ -28,16 +28,16 @@ namespace Lucene.Net.Search.Function
 	/// using <code>getFloats()</code> and makes those values 
 	/// available as other numeric types, casting as needed.
 	/// 
-	/// <p><font color="#FF0000">
+	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
 	/// The APIs introduced here might change in the future and will not be 
 	/// supported anymore in such a case.</font>
 	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource for requirements">
+	/// <seealso cref="Lucene.Net.Search.Function.FieldCacheSource"> for requirements"
 	/// on the field.
 	/// 
-	/// <p><b>NOTE</b>: with the switch in 2.9 to segment-based
+	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based
 	/// searching, if {@link #getValues} is invoked with a
 	/// composite (multi-segment) reader, this can easily cause
 	/// double RAM usage for the values in the FieldCache.  It's
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Function
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
 	/// {@link MultiValueSource}, which costs more CPU per lookup
-	/// but will not consume double the FieldCache RAM.</p>
+	/// but will not consume double the FieldCache RAM.<p/>
 	/// </seealso>
 	[Serializable]
 	public class FloatFieldSource:FieldCacheSource

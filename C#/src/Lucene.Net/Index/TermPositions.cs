@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> TermPositions provides an interface for enumerating the &lt;document,
-	/// frequency, &lt;position&gt;* &gt; tuples for a term.  <p> The document and
+	/// frequency, &lt;position&gt;* &gt; tuples for a term.  <p/> The document and
 	/// frequency are the same as for a TermDocs.  The positions portion lists the ordinal
 	/// positions of each occurrence of a term in a document.
 	/// 
@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	{
 		/// <summary>Returns next position in the current document.  It is an error to call
 		/// this more than {@link #Freq()} times
-		/// without calling {@link #Next()}<p> This is
+		/// without calling {@link #Next()}<p/> This is
 		/// invalid until {@link #Next()} is called for
 		/// the first time.
 		/// </summary>
@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the length of the payload at the current term position.
 		/// This is invalid until {@link #NextPosition()} is called for
-		/// the first time.<br>
+		/// the first time.<br/>
 		/// </summary>
 		/// <returns> length of the current payload in number of bytes
 		/// </returns>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		/// This method must not be called more than once after each call
 		/// of {@link #NextPosition()}. However, payloads are loaded lazily,
 		/// so if the payload data for the current position is not needed,
-		/// this method may not be called at all for performance reasons.<br>
+		/// this method may not be called at all for performance reasons.<br/>
 		/// 
 		/// </summary>
 		/// <param name="data">the array into which the data of this payload is to be
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 		byte[] GetPayload(byte[] data, int offset);
 		
 		/// <summary> Checks if a payload can be loaded at this position.
-		/// <p>
+		/// <p/>
 		/// Payloads can only be loaded once per call to 
 		/// {@link #NextPosition()}.
 		/// 

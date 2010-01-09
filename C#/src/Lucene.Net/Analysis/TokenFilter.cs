@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> A TokenFilter is a TokenStream whose input is another TokenStream.
-	/// <p>
+	/// <p/>
 	/// This is an abstract class; subclasses must override {@link #IncrementToken()}.
 	/// 
 	/// </summary>

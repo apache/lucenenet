@@ -9,6 +9,7 @@ SpellChecker.Net
 WordNet.Net
 Similarity.Net
 Analyzers\BR
+Spatial.Net
 
 
 Contributed code:

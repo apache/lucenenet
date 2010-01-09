@@ -34,21 +34,21 @@ namespace Lucene.Net.Search
 	/// TopFieldCollector}.  The concrete public FieldComparator
 	/// classes here correspond to the SortField types.
 	/// 
-	/// <p>This API is designed to achieve high performance
+	/// <p/>This API is designed to achieve high performance
 	/// sorting, by exposing a tight interaction with {@link
 	/// FieldValueHitQueue} as it visits hits.  Whenever a hit is
 	/// competitive, it's enrolled into a virtual slot, which is
 	/// an int ranging from 0 to numHits-1.  The {@link
 	/// FieldComparator} is made aware of segment transitions
 	/// during searching in case any internal state it's tracking
-	/// needs to be recomputed during these transitions.</p>
+	/// needs to be recomputed during these transitions.<p/>
 	/// 
-	/// <p>A comparator must define these functions:</p>
+	/// <p/>A comparator must define these functions:<p/>
 	/// 
 	/// <ul>
 	/// 
 	/// <li> {@link #compare} Compare a hit at 'slot a'
-	/// with hit 'slot b'.
+	/// with hit 'slot b'.</li>
 	/// 
 	/// <li> {@link #setBottom} This method is called by
 	/// {@link FieldValueHitQueue} to notify the
@@ -56,25 +56,25 @@ namespace Lucene.Net.Search
 	/// slot.  Note that this slot may not hold the weakest
 	/// value according to your comparator, in cases where
 	/// your comparator is not the primary one (ie, is only
-	/// used to break ties from the comparators before it).
+	/// used to break ties from the comparators before it).</li>
 	/// 
 	/// <li> {@link #compareBottom} Compare a new hit (docID)
-	/// against the "weakest" (bottom) entry in the queue.
+	/// against the "weakest" (bottom) entry in the queue.</li>
 	/// 
 	/// <li> {@link #copy} Installs a new hit into the
 	/// priority queue.  The {@link FieldValueHitQueue}
-	/// calls this method when a new hit is competitive.
+	/// calls this method when a new hit is competitive.</li>
 	/// 
 	/// <li> {@link #setNextReader} Invoked
 	/// when the search is switching to the next segment.
 	/// You may need to update internal state of the
 	/// comparator, for example retrieving new values from
-	/// the {@link FieldCache}.
+	/// the {@link FieldCache}.</li>
 	/// 
 	/// <li> {@link #value} Return the sort value stored in
 	/// the specified slot.  This is only called at the end
 	/// of the search, in order to populate {@link
-	/// FieldDoc#fields} when returning the top results.
+	/// FieldDoc#fields} when returning the top results.</li>
 	/// </ul>
 	/// 
 	/// <b>NOTE:</b> This API is experimental and might change in
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="slot2">second slot to compare
 		/// </param>
-		/// <returns> any N < 0 if slot2's value is sorted after
+        /// <returns> any N &lt; 0 if slot2's value is sorted after
 		/// slot1, any N > 0 if the slot2's value is sorted before
 		/// slot1 and 0 if they are equal
 		/// </returns>
@@ -1004,14 +1004,14 @@ namespace Lucene.Net.Search
 		/// #Compare(int,int)}} as if bottom were slot1 and the new
 		/// document were slot 2.
 		/// 
-		/// <p>For a search that hits many results, this method
+		/// <p/>For a search that hits many results, this method
 		/// will be the hotspot (invoked by far the most
-		/// frequently).</p>
+		/// frequently).<p/>
 		/// 
 		/// </summary>
 		/// <param name="doc">that was hit
 		/// </param>
-		/// <returns> any N < 0 if the doc's value is sorted after
+        /// <returns> any N &lt; 0 if the doc's value is sorted after
 		/// the bottom entry (not competitive), any N > 0 if the
 		/// doc's value is sorted before the bottom entry and 0 if
 		/// they are equal.

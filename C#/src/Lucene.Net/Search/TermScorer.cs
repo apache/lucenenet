@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="td">An iterator over the documents matching the <code>Term</code>.
 		/// </param>
-		/// <param name="similarity">The </code>Similarity</code> implementation to be used for score
+		/// <param name="similarity">The <code>Similarity</code> implementation to be used for score
 		/// computations.
 		/// </param>
 		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
@@ -67,6 +67,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Score(Collector)} instead. 
 		/// </deprecated>
+        [Obsolete("use Score(Collector) instead. ")]
 		public override void  Score(HitCollector hc)
 		{
 			Score(new HitCollectorWrapper(hc));
@@ -79,6 +80,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Score(Collector, int, int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector c, int end)
 		{
 			return Score(new HitCollectorWrapper(c), end, doc);
@@ -114,6 +116,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead. ")]
 		public override int Doc()
 		{
 			return doc;
@@ -124,7 +127,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <summary> Advances to the next document matching the query. <br>
+		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
 		/// {@link TermDocs#Read(int[],int[])}.
 		/// 
@@ -133,12 +136,13 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #NextDoc()} instead.
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
 		}
 		
-		/// <summary> Advances to the next document matching the query. <br>
+		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
 		/// {@link TermDocs#Read(int[],int[])}.
 		/// 
@@ -175,7 +179,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// The implementation uses {@link TermDocs#SkipTo(int)}.
 		/// 
 		/// </summary>
@@ -185,13 +189,14 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Advance(int)} instead.
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// The implementation uses {@link TermDocs#SkipTo(int)}.
 		/// 
 		/// </summary>
@@ -227,7 +232,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #Next()} method
+		/// <br/>When this method is used, the {@link #Next()} method
 		/// and the {@link #Score(HitCollector)} method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.

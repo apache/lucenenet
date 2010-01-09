@@ -150,20 +150,20 @@ namespace Lucene.Net.Search
 		/// <summary> Specifies a minimum number of the optional BooleanClauses
 		/// which must be satisfied.
 		/// 
-		/// <p>
+		/// <p/>
 		/// By default no optional clauses are necessary for a match
 		/// (unless there are no required clauses).  If this method is used,
 		/// then the specified number of clauses is required.
-		/// </p>
-		/// <p>
+		/// <p/>
+		/// <p/>
 		/// Use of this method is totally independent of specifying that
 		/// any specific clauses are required (or prohibited).  This number will
 		/// only be compared against the number of matching optional clauses.
-		/// </p>
-		/// <p>
+		/// <p/>
+		/// <p/>
 		/// EXPERT NOTE: Using this method may force collecting docs in order,
 		/// regardless of whether setAllowDocsOutOfOrder(true) has been called.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <param name="min">the number of optional clauses that must match
@@ -222,8 +222,8 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: the Weight for BooleanQuery, used to
 		/// normalize, score and explain these queries.
 		/// 
-		/// <p>NOTE: this API and implementation is subject to
-		/// change suddenly in the next release.</p>
+		/// <p/>NOTE: this API and implementation is subject to
+		/// change suddenly in the next release.<p/>
 		/// </summary>
 		[Serializable]
 		protected internal class BooleanWeight:Weight
@@ -470,11 +470,12 @@ namespace Lucene.Net.Search
 		/// <deprecated> this will not be needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this will not be needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		private static bool allowDocsOutOfOrder = true;
 		
 		/// <summary> Expert: Indicates whether hit docs may be collected out of docid order.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Background: although the contract of the Scorer class requires that
 		/// documents be iterated in order of doc id, this was not true in early
 		/// versions of Lucene. Many pieces of functionality in the current Lucene code
@@ -482,21 +483,22 @@ namespace Lucene.Net.Search
 		/// specific simple cases may be faster. (For example: disjunction queries with
 		/// less than 32 prohibited clauses; This setting has no effect for other
 		/// queries.)
-		/// </p>
+		/// <p/>
 		/// 
-		/// <p>
+		/// <p/>
 		/// Specifics: By setting this option to true, docid N might be scored for a
 		/// single segment before docid N-1. Across multiple segments, docs may be
 		/// scored out of order regardless of this setting - it only applies to scoring
 		/// a single segment.
 		/// 
 		/// Being static, this setting is system wide.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> this is not needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static void  SetAllowDocsOutOfOrder(bool allow)
 		{
 			allowDocsOutOfOrder = allow;
@@ -510,6 +512,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> this is not needed anymore, as
 		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
 		/// </deprecated>
+        [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static bool GetAllowDocsOutOfOrder()
 		{
 			return allowDocsOutOfOrder;
@@ -517,6 +520,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Use {@link #SetAllowDocsOutOfOrder(boolean)} instead. 
 		/// </deprecated>
+        [Obsolete("Use SetAllowDocsOutOfOrder(bool) instead.")]
 		public static void  SetUseScorer14(bool use14)
 		{
 			SetAllowDocsOutOfOrder(use14);
@@ -524,6 +528,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Use {@link #GetAllowDocsOutOfOrder()} instead.
 		/// </deprecated>
+        [Obsolete("Use GetAllowDocsOutOfOrder() instead.")]
 		public static bool GetUseScorer14()
 		{
 			return GetAllowDocsOutOfOrder();

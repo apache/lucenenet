@@ -21,9 +21,9 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary>TermDocs provides an interface for enumerating &lt;document, frequency&gt;
-	/// pairs for a term.  <p> The document portion names each document containing
+	/// pairs for a term.  <p/> The document portion names each document containing
 	/// the term.  Documents are indicated by number.  The frequency portion gives
-	/// the number of times the term occurred in each document.  <p> The pairs are
+	/// the number of times the term occurred in each document.  <p/> The pairs are
 	/// ordered by document number.
 	/// </summary>
 	/// <seealso cref="IndexReader.TermDocs()">
@@ -41,17 +41,17 @@ namespace Lucene.Net.Index
 		/// </summary>
 		void  Seek(TermEnum termEnum);
 		
-		/// <summary>Returns the current document number.  <p> This is invalid until {@link
+		/// <summary>Returns the current document number.  <p/> This is invalid until {@link
 		/// #Next()} is called for the first time.
 		/// </summary>
 		int Doc();
 		
-		/// <summary>Returns the frequency of the term within the current document.  <p> This
+		/// <summary>Returns the frequency of the term within the current document.  <p/> This
 		/// is invalid until {@link #Next()} is called for the first time.
 		/// </summary>
 		int Freq();
 		
-		/// <summary>Moves to the next pair in the enumeration.  <p> Returns true iff there is
+		/// <summary>Moves to the next pair in the enumeration.  <p/> Returns true iff there is
 		/// such a next pair in the enumeration. 
 		/// </summary>
 		bool Next();
@@ -61,14 +61,14 @@ namespace Lucene.Net.Index
 		/// frequencies are stored in <i>freqs</i>.  The <i>freqs</i> array must be as
 		/// long as the <i>docs</i> array.
 		/// 
-		/// <p>Returns the number of entries read.  Zero is only returned when the
+		/// <p/>Returns the number of entries read.  Zero is only returned when the
 		/// stream has been exhausted.  
 		/// </summary>
 		int Read(int[] docs, int[] freqs);
 		
 		/// <summary>Skips entries to the first beyond the current whose document number is
-		/// greater than or equal to <i>target</i>. <p>Returns true iff there is such
-		/// an entry.  <p>Behaves as if written: <pre>
+		/// greater than or equal to <i>target</i>. <p/>Returns true iff there is such
+		/// an entry.  <p/>Behaves as if written: <pre>
 		/// boolean skipTo(int target) {
 		/// do {
 		/// if (!next())

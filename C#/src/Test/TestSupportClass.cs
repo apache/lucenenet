@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -492,6 +493,86 @@ namespace Lucene.Net._SupportClass
         }
     }
 
+    [TestFixture]
+    public class TestWeakHashTableMultiThreadAccess
+    {
+        SupportClass.WeakHashTable wht = new SupportClass.WeakHashTable();
+        Exception AnyException = null;
+        bool EndOfTest = false;
+
+        [Test]
+        public void Test()
+        {
+            CreateThread(Add);
+            CreateThread(Enum);
+            
+            int count = 200;
+            while (count-- > 0)
+            {
+                Thread.Sleep(50);
+                if (AnyException != null)
+                {
+                    EndOfTest = true;
+                    Thread.Sleep(50);
+                    Assert.Fail(AnyException.Message);
+                }
+            }
+        }
+
+        void CreateThread(ThreadStart fxn)
+        {
+            Thread t = new Thread(fxn);
+            t.IsBackground = true;
+            t.Start();
+        }
+        
+
+        void Add()
+        {
+            try
+            {
+                long count = 0;
+                while (EndOfTest==false)
+                {
+                    wht.Add(count.ToString(), count.ToString());
+                    Thread.Sleep(1);
+
+                    string toReplace = (count - 10).ToString();
+                    if (wht.Contains(toReplace))
+                    {
+                        wht[toReplace] = "aa";
+                    }
+
+                    count++;
+                }
+            }
+            catch (Exception ex)
+            {
+                AnyException = ex;
+            }
+        }
+
+        void Enum()
+        {
+            try
+            {
+                while (EndOfTest==false)
+                {
+                    System.Collections.IEnumerator e = wht.Keys.GetEnumerator();
+                    while (e.MoveNext())
+                    {
+                        string s = (string)e.Current;
+                    }
+                    Thread.Sleep(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                AnyException = ex;
+            }
+        }
+    }
+
     class CollisionTester
     {
         int id;
@@ -934,7 +1015,41 @@ namespace Lucene.Net._SupportClass
         }
 
         //-------------------------------------------
+    }
+
+}
 
 
+namespace Lucene.Net
+{
+    /// <summary>
+    /// Support for junit.framework.TestCase.getName().
+    /// {{Lucene.Net-2.9.1}} Move to another location after LUCENENET-266
+    /// </summary>
+    public class TestCase
+    {
+        public static string GetName()
+        {
+            return GetTestCaseName(false);
+        }
+
+        public static string GetFullName()
+        {
+            return GetTestCaseName(true);
+        }
+
+        static string GetTestCaseName(bool fullName)
+        {
+            System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
+            for (int i = 0; i < stackTrace.FrameCount; i++)
+            {
+                System.Reflection.MethodBase method = stackTrace.GetFrame(i).GetMethod();
+                object[] testAttrs = method.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), false);
+                if (testAttrs != null && testAttrs.Length > 0)
+                    if (fullName) return method.DeclaringType.FullName + "." + method.Name;
+                    else return method.Name;
+            }
+            return "GetTestCaseName[UnknownTestMethod]";
+        }
     }
 }

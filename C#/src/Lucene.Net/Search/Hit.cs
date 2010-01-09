@@ -29,6 +29,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
 	/// </deprecated>
+    [Obsolete("Use TopScoreDocCollector and TopDocs instead. Hits will be removed in Lucene 3.0.")]
 	[Serializable]
 	public class Hit
 	{

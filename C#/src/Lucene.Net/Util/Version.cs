@@ -27,10 +27,10 @@ namespace Lucene.Net.Util
 	public sealed class Version:Parameter
 	{
 		
-		/// <summary>Use this to get the latest & greatest settings, bug
+		/// <summary>Use this to get the latest &amp; greatest settings, bug
 		/// fixes, etc, for Lucene.
 		/// 
-		/// <p><b>WARNING</b>: if you use this setting, and then
+		/// <p/><b>WARNING</b>: if you use this setting, and then
 		/// upgrade to a newer release of Lucene, sizable changes
 		/// may happen.  If precise back compatibility is important
 		/// then you should instead explicitly specify an actual
@@ -53,11 +53,13 @@ namespace Lucene.Net.Util
 		/// <summary>Match settings and bugs in Lucene's 2.4 release.</summary>
 		/// <deprecated> This will be removed in 3.0 
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0 ")]
 		public static readonly Version LUCENE_24 = new Version("LUCENE_24", 2400);
 		
 		/// <summary>Match settings and bugs in Lucene's 2.9 release.</summary>
 		/// <deprecated> This will be removed in 3.0 
 		/// </deprecated>
+        [Obsolete("This will be removed in 3.0 ")]
 		public static readonly Version LUCENE_29 = new Version("LUCENE_29", 2900);
 		
 		private int v;

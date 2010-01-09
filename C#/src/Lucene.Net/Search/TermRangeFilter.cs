@@ -23,11 +23,11 @@ namespace Lucene.Net.Search
 	/// <summary> A Filter that restricts search results to a range of values in a given
 	/// field.
 	/// 
-	/// <p>This filter matches the documents looking for terms that fall into the
+	/// <p/>This filter matches the documents looking for terms that fall into the
 	/// supplied range according to {@link String#compareTo(String)}. It is not intended
 	/// for numerical ranges, use {@link NumericRangeFilter} instead.
 	/// 
-	/// <p>If you construct a large number of range filters with different ranges but on the 
+	/// <p/>If you construct a large number of range filters with different ranges but on the 
 	/// same field, {@link FieldCacheRangeFilter} may have significantly better performance. 
 	/// </summary>
 	/// <since> 2.9

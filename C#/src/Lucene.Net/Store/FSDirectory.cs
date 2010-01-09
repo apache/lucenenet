@@ -38,7 +38,7 @@ namespace Lucene.Net.Store
 	/// However, it has poor concurrent performance
 	/// (multiple threads will bottleneck) as it
 	/// synchronizes when multiple threads read from the
-	/// same file.
+	/// same file.</li>
 	/// 
 	/// <li> {@link NIOFSDirectory} uses java.nio's
 	/// FileChannel's positional io when reading to avoid
@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
 	/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
 	/// JRE bug</a> this is a poor choice for Windows, but
 	/// on all other platforms this is the preferred
-	/// choice.
+	/// choice.</li>
 	/// 
 	/// <li> {@link MMapDirectory} uses memory-mapped IO when
 	/// reading. This is a good choice if you have plenty
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
 	/// and you don't rely on overwriting files on Windows) but it's still
 	/// an important limitation to be aware of. This class supplies a
 	/// (possibly dangerous) workaround mentioned in the bug report,
-	/// which may fail on non-Sun JVMs.
+	/// which may fail on non-Sun JVMs.</li>
 	/// </ul>
 	/// 
 	/// Unfortunately, because of system peculiarities, there is
@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
 	/// #open}.  For all others, you should instantiate the
 	/// desired implementation directly.
 	/// 
-	/// <p>The locking implementation is by default {@link
+	/// <p/>The locking implementation is by default {@link
 	/// NativeFSLockFactory}, but can be changed by
 	/// passing in a custom {@link LockFactory} instance.
 	/// The deprecated <code>getDirectory</code> methods default to use
@@ -101,7 +101,7 @@ namespace Lucene.Net.Store
 	/// SimpleFSLockFactory} (or {@link NativeFSLockFactory},
 	/// etc.) passing in your preferred lock directory.
 	/// 
-	/// <p><em>In 3.0 this class will become abstract.</em>
+	/// <p/><em>In 3.0 this class will become abstract.</em>
 	/// 
 	/// </summary>
 	/// <seealso cref="Directory">
@@ -120,6 +120,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> Not used by any non-deprecated methods anymore
 		/// </deprecated>
+        [Obsolete("Not used by any non-deprecated methods anymore")]
         private static readonly Dictionary<string, FSDirectory> DIRECTORIES = new Dictionary<string, FSDirectory>();
 		
 		private static bool disableLocks = false;
@@ -137,6 +138,7 @@ namespace Lucene.Net.Store
 		/// with {@link #open(File)} only the deprecated <code>getDirectory</code>
 		/// respect this setting.   
 		/// </deprecated>
+        [Obsolete("Use a Open(File, LockFactory) or a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory. This setting does not work with Open(File) only the deprecated GetDirectory respect this setting.")]
 		public static void  SetDisableLocks(bool doDisableLocks)
 		{
 			FSDirectory.disableLocks = doDisableLocks;
@@ -150,6 +152,7 @@ namespace Lucene.Net.Store
 		/// <deprecated> Use a constructor that takes a {@link LockFactory} and
 		/// supply {@link NoLockFactory#getNoLockFactory}.
 		/// </deprecated>
+        [Obsolete("Use a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory.")]
 		public static bool GetDisableLocks()
 		{
 			return FSDirectory.disableLocks;
@@ -168,10 +171,12 @@ namespace Lucene.Net.Store
 		/// the <code>open</code> methods that take a
 		/// <code>lockFactory</code> (for example, {@link #open(File, LockFactory)}).
 		/// </deprecated>
+        [Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
 		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
+        [Obsolete]
         private static readonly System.Type IMPL = typeof(Lucene.Net.Store.SimpleFSDirectory);
 		
 		private static System.Security.Cryptography.HashAlgorithm DIGESTER;
@@ -190,6 +195,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File)")]
 		public static FSDirectory GetDirectory(System.String path)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), null);
@@ -208,6 +214,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File, LockFactory)")]
 		public static FSDirectory GetDirectory(System.String path, LockFactory lockFactory)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), lockFactory);
@@ -223,6 +230,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use Open(File)")]
 		public static FSDirectory GetDirectory(System.IO.DirectoryInfo file)
 		{
 			return GetDirectory(file, null);
@@ -276,6 +284,7 @@ namespace Lucene.Net.Store
         /// </param>
         /// <returns> the FSDirectory for the named file.  
         /// </returns>
+        [Obsolete("Use Open(File, LockFactory)")]
         public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, LockFactory lockFactory)
         {
             FSDirectory dir;
@@ -326,6 +335,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), create);
@@ -363,6 +373,7 @@ namespace Lucene.Net.Store
         /// </param>
         /// <returns> the FSDirectory for the named file.  
         /// </returns>
+        [Obsolete("Use IndexWriter's create flag, instead, to create a new index.")]
         public static FSDirectory GetDirectory(System.IO.DirectoryInfo file, bool create)
         {
             FSDirectory dir = GetDirectory(file, null);
@@ -379,6 +390,7 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		private void  Create()
 		{
 			if (directory.Exists)
@@ -452,10 +464,12 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		private int refCount = 0;
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		protected internal FSDirectory()
 		{
 		}
@@ -483,13 +497,13 @@ namespace Lucene.Net.Store
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
         /// 
-        /// <p>Currently this returns {@link SimpleFSDirectory} as
+        /// <p/>Currently this returns {@link SimpleFSDirectory} as
         /// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns {@link SimpleFSDirectory} as
 		/// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p><b>NOTE</b>: this method may suddenly change which
+		/// <p/><b>NOTE</b>: this method may suddenly change which
 		/// implementation is returned from release to release, in
 		/// the event that higher performance defaults become
 		/// possible; if the precise implementation is important to
@@ -500,7 +514,7 @@ namespace Lucene.Net.Store
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
 		/// 
-		/// <p>See <a href="#subclasses">above</a> 
+		/// <p/>See <a href="#subclasses">above</a> 
 		/// </summary>
 		[System.Obsolete("Use the method that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public static FSDirectory Open(System.IO.FileInfo path)
@@ -513,10 +527,10 @@ namespace Lucene.Net.Store
 		/// best implementation given the current environment.
 		/// The directory returned uses the {@link NativeFSLockFactory}.
 		/// 
-		/// <p>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns {@link SimpleFSDirectory} as
 		/// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p><b>NOTE</b>: this method may suddenly change which
+		/// <p/><b>NOTE</b>: this method may suddenly change which
 		/// implementation is returned from release to release, in
 		/// the event that higher performance defaults become
 		/// possible; if the precise implementation is important to
@@ -527,7 +541,7 @@ namespace Lucene.Net.Store
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
 		/// 
-		/// <p>See <a href="#subclasses">above</a> 
+		/// <p/>See <a href="#subclasses">above</a> 
 		/// </summary>
 		public static FSDirectory Open(System.IO.DirectoryInfo path)
 		{
@@ -691,6 +705,7 @@ namespace Lucene.Net.Store
             return result;
         }
 		
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			EnsureOpen();
@@ -767,6 +782,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			lock (this)
@@ -945,22 +961,22 @@ namespace Lucene.Net.Store
 		/// underlying file during {@link IndexInput#readBytes}.
 		/// The default value is {@link #DEFAULT_READ_CHUNK_SIZE};
 		/// 
-		/// <p> This was introduced due to <a
+		/// <p/> This was introduced due to <a
 		/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546">Sun
 		/// JVM Bug 6478546</a>, which throws an incorrect
 		/// OutOfMemoryError when attempting to read too many bytes
 		/// at once.  It only happens on 32bit JVMs with a large
-		/// maximum heap size.</p>
+		/// maximum heap size.<p/>
 		/// 
-		/// <p>Changes to this value will not impact any
+		/// <p/>Changes to this value will not impact any
 		/// already-opened {@link IndexInput}s.  You should call
 		/// this before attempting to open an index on the
-		/// directory.</p>
+		/// directory.<p/>
 		/// 
-		/// <p> <b>NOTE</b>: This value should be as large as
+		/// <p/> <b>NOTE</b>: This value should be as large as
 		/// possible to reduce any possible performance impact.  If
 		/// you still encounter an incorrect OutOfMemoryError,
-		/// trying lowering the chunk size.</p>
+		/// trying lowering the chunk size.<p/>
 		/// </summary>
 		public void  SetReadChunkSize(int chunkSize)
 		{
@@ -989,15 +1005,18 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexInput instead 
 		/// </deprecated>
+        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexInput instead ")]
 		public /*protected internal*/ class FSIndexInput:SimpleFSDirectory.SimpleFSIndexInput
 		{
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			new protected internal class Descriptor:SimpleFSDirectory.SimpleFSIndexInput.Descriptor
 			{
 				/// <deprecated> 
 				/// </deprecated>
+                [Obsolete]
 				public Descriptor(/*FSIndexInput enclosingInstance,*/ System.IO.FileInfo file, System.IO.FileAccess mode) : base(file, mode)
 				{
 				}
@@ -1005,12 +1024,14 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexInput(System.IO.FileInfo path):base(path)
 			{
 			}
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexInput(System.IO.FileInfo path, int bufferSize):base(path, bufferSize)
 			{
 			}
@@ -1018,11 +1039,13 @@ namespace Lucene.Net.Store
 		
 		/// <deprecated> Use SimpleFSDirectory.SimpleFSIndexOutput instead 
 		/// </deprecated>
+        [Obsolete("Use SimpleFSDirectory.SimpleFSIndexOutput instead ")]
 		protected internal class FSIndexOutput:SimpleFSDirectory.SimpleFSIndexOutput
 		{
 			
 			/// <deprecated> 
 			/// </deprecated>
+            [Obsolete]
 			public FSIndexOutput(System.IO.FileInfo path):base(path)
 			{
 			}

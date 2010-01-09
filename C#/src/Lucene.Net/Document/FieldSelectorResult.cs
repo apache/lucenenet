@@ -70,6 +70,7 @@ namespace Lucene.Net.Documents
 		/// no longer needed now that {@link CompressionTools}
 		/// is used for field compression.
 		/// </deprecated>
+        [Obsolete("This is an internal option only, and is no longer needed now that CompressionTools is used for field compression.")]
 		[NonSerialized]
 		public static readonly FieldSelectorResult LOAD_FOR_MERGE = new FieldSelectorResult(4);
 		

@@ -31,6 +31,7 @@ namespace Lucene.Net.Analysis
 	{
 		
 		// deprecated
+        [Obsolete]
 		private static bool ENABLE_POSITION_INCREMENTS_DEFAULT = false;
 		
 		private CharArraySet stopWords;
@@ -42,6 +43,7 @@ namespace Lucene.Net.Analysis
 		/// <summary> Construct a token stream filtering the given input.</summary>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, String[])} instead
 		/// </deprecated>
+        [Obsolete("Use StopFilter(bool, TokenStream, String[]) instead")]
 		public StopFilter(TokenStream input, System.String[] stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, false)
 		{
 		}
@@ -55,6 +57,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead.
 		/// </deprecated>
+        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead.")]
 		public StopFilter(bool enablePositionIncrements, TokenStream input, System.String[] stopWords):this(enablePositionIncrements, input, stopWords, false)
 		{
 		}
@@ -64,6 +67,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, String[], boolean)} instead
 		/// </deprecated>
+        [Obsolete("Use {@link #StopFilter(bool, TokenStream, String[], bool)} instead")]
 		public StopFilter(TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, ignoreCase)
 		{
 		}
@@ -81,6 +85,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead.
 		/// </deprecated>
+        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable, bool) instead.")]
 		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):base(in_Renamed)
 		{
 			this.stopWords = (CharArraySet) MakeStopSet(stopWords, ignoreCase);
@@ -108,6 +113,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead
 		/// </deprecated>
+        [Obsolete("Use StopFilter(bool, TokenStream, Set, bool) instead")]
 		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
 		{
 		}
@@ -154,6 +160,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead
 		/// </deprecated>
+        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead")]
 		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
 		{
 		}
@@ -186,7 +193,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
 		{
@@ -199,7 +206,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords)
 		{
@@ -255,10 +262,11 @@ namespace Lucene.Net.Analysis
 			return false;
 		}
 		
-		/// <seealso cref="setEnablePositionIncrementsDefault(boolean).">
+		/// <seealso cref="SetEnablePositionIncrementsDefault(bool)">
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
+        [Obsolete("Please specify this when you create the StopFilter")]
 		public static bool GetEnablePositionIncrementsDefault()
 		{
 			return ENABLE_POSITION_INCREMENTS_DEFAULT;
@@ -283,26 +291,27 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary> Set the default position increments behavior of every StopFilter created
 		/// from now on.
-		/// <p>
+		/// <p/>
 		/// Note: behavior of a single StopFilter instance can be modified with
 		/// {@link #SetEnablePositionIncrements(boolean)}. This static method allows
 		/// control over behavior of classes using StopFilters internally, for
 		/// example {@link Lucene.Net.Analysis.Standard.StandardAnalyzer
 		/// StandardAnalyzer} if used with the no-arg ctor.
-		/// <p>
+		/// <p/>
 		/// Default : false.
 		/// 
 		/// </summary>
-		/// <seealso cref="setEnablePositionIncrements(boolean).">
+		/// <seealso cref="setEnablePositionIncrements(bool)">
 		/// </seealso>
 		/// <deprecated> Please specify this when you create the StopFilter
 		/// </deprecated>
+        [Obsolete("Please specify this when you create the StopFilter")]
 		public static void  SetEnablePositionIncrementsDefault(bool defaultValue)
 		{
 			ENABLE_POSITION_INCREMENTS_DEFAULT = defaultValue;
 		}
 		
-		/// <seealso cref="setEnablePositionIncrements(boolean).">
+		/// <seealso cref="SetEnablePositionIncrements(bool)">
 		/// </seealso>
 		public bool GetEnablePositionIncrements()
 		{
@@ -316,11 +325,11 @@ namespace Lucene.Net.Analysis
 		/// lose information (positions of the original tokens)
 		/// during indexing.
 		/// 
-		/// <p> When set, when a token is stopped
+		/// <p/> When set, when a token is stopped
 		/// (omitted), the position increment of the following
 		/// token is incremented.
 		/// 
-		/// <p> <b>NOTE</b>: be sure to also
+		/// <p/> <b>NOTE</b>: be sure to also
 		/// set {@link QueryParser#setEnablePositionIncrements} if
 		/// you use QueryParser to create queries.
 		/// </summary>

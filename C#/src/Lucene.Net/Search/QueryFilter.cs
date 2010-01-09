@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	/// </version>
 	/// <deprecated> use a CachingWrapperFilter with QueryWrapperFilter
 	/// </deprecated>
+    [Obsolete("use a CachingWrapperFilter with QueryWrapperFilter")]
 	[Serializable]
 	public class QueryFilter:CachingWrapperFilter
 	{

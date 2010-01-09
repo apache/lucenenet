@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		
 		internal int lastPosition;
 		
-		/// <summary>Add a new position & payload </summary>
+		/// <summary>Add a new position &amp; payload </summary>
 		internal override void  AddPosition(int position, byte[] payload, int payloadOffset, int payloadLength)
 		{
 			System.Diagnostics.Debug.Assert(!omitTermFreqAndPositions, "omitTermFreqAndPositions is true");
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 			storePayloads = omitTermFreqAndPositions?false:fieldInfo.storePayloads;
 		}
 		
-		/// <summary>Called when we are done adding positions & payloads </summary>
+		/// <summary>Called when we are done adding positions &amp; payloads </summary>
 		internal override void  Finish()
 		{
 			lastPosition = 0;

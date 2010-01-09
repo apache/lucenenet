@@ -41,42 +41,43 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
 		/// Boost, and the boost to apply to each term.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
 		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer, Map)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer, IDictionary) instead")]
 		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(Version.LUCENE_24, fields, analyzer)
 		{
 			this.boosts = boosts;
@@ -85,36 +86,36 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Creates a MultiFieldQueryParser. Allows passing of a map with term to
 		/// Boost, and the boost to apply to each term.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When you pass a boost (title=>5 body=>10) you can get
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer, System.Collections.IDictionary boosts):this(matchVersion, fields, analyzer)
 		{
@@ -123,62 +124,63 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
 		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer) instead")]
 		public MultiFieldQueryParser(System.String[] fields, Analyzer analyzer):this(Version.LUCENE_24, fields, analyzer)
 		{
 		}
 		
 		/// <summary> Creates a MultiFieldQueryParser.
 		/// 
-		/// <p>
+		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
 		/// <code>title</code> and <code>body</code>):
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// (title:term1 body:term1) (title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// When setDefaultOperator(AND_OPERATOR) is set, the result will be:
-		/// </p>
+		/// <p/>
 		/// 
 		/// <code>
 		/// +(title:term1 body:term1) +(title:term2 body:term2)
 		/// </code>
 		/// 
-		/// <p>
+		/// <p/>
 		/// In other words, all the query's terms must appear, but it doesn't matter
 		/// in what fields they appear.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public MultiFieldQueryParser(Version matchVersion, System.String[] fields, Analyzer analyzer):base(matchVersion, null, analyzer)
 		{
@@ -296,7 +298,7 @@ namespace Lucene.Net.QueryParsers
 		}
 		
 		/// <summary> Parses a query which searches on the fields specified.
-		/// <p>
+		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
 		/// <pre>
@@ -322,13 +324,14 @@ namespace Lucene.Net.QueryParsers
 		/// <deprecated> Use {@link #Parse(Version,String[],String[],Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version,String[],String[],Analyzer) instead")]
 		public static Query Parse(System.String[] queries, System.String[] fields, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, queries, fields, analyzer);
 		}
 		
 		/// <summary> Parses a query which searches on the fields specified.
-		/// <p>
+		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
 		/// <pre>
@@ -374,7 +377,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p><pre>
+		/// <p/><pre>
 		/// Usage:
 		/// <code>
 		/// String[] fields = {"filename", "contents", "description"};
@@ -384,7 +387,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse("query", fields, flags, analyzer);
 		/// </code>
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// <pre>
 		/// <code>
@@ -409,6 +412,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #Parse(Version, String, String[], BooleanClause.Occur[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version, String, String[], BooleanClause.Occur[], Analyzer) instead")]
 		public static Query Parse(System.String query, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, query, fields, flags, analyzer);
@@ -416,7 +420,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
-		/// <p>
+		/// <p/>
 		/// 
 		/// <pre>
 		/// Usage:
@@ -428,7 +432,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(&quot;query&quot;, fields, flags, analyzer);
 		/// &lt;/code&gt;
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// 
 		/// <pre>
@@ -476,7 +480,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p><pre>
+		/// <p/><pre>
 		/// Usage:
 		/// <code>
 		/// String[] query = {"query1", "query2", "query3"};
@@ -487,7 +491,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
 		/// </code>
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// <pre>
 		/// <code>
@@ -512,6 +516,7 @@ namespace Lucene.Net.QueryParsers
 		/// {@link #Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer) instead")]
 		public static Query Parse(System.String[] queries, System.String[] fields, BooleanClause.Occur[] flags, Analyzer analyzer)
 		{
 			return Parse(Version.LUCENE_24, queries, fields, flags, analyzer);
@@ -519,7 +524,7 @@ namespace Lucene.Net.QueryParsers
 		
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
-		/// <p>
+		/// <p/>
 		/// 
 		/// <pre>
 		/// Usage:
@@ -532,7 +537,7 @@ namespace Lucene.Net.QueryParsers
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
 		/// &lt;/code&gt;
 		/// </pre>
-		/// <p>
+		/// <p/>
 		/// The code above would construct a query:
 		/// 
 		/// <pre>

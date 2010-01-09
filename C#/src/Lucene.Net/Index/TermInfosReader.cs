@@ -23,8 +23,8 @@ using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>This stores a monotonically increasing set of <Term, TermInfo> pairs in a
+
+    /// <summary>This stores a monotonically increasing set of &lt;Term, TermInfo&gt; pairs in a
 	/// Directory.  Pairs are accessed either by Term or by ordinal position the
 	/// set.  
 	/// </summary>

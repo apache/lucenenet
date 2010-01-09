@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Compares two ScoreDoc objects for sorting.
 	/// 
-	/// <p>Created: Feb 3, 2004 9:00:16 AM 
+	/// <p/>Created: Feb 3, 2004 9:00:16 AM 
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
 	/// </version>
 	/// <deprecated> use {@link FieldComparator}
 	/// </deprecated>
+    [Obsolete("use FieldComparator")]
 	public struct ScoreDocComparator_Fields{
 		/// <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>
 		public readonly static ScoreDocComparator RELEVANCE;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search
 			INDEXORDER = new AnonymousClassScoreDocComparator1();
 		}
 	}
-	public class AnonymousClassScoreDocComparator : ScoreDocComparator
+	class AnonymousClassScoreDocComparator : ScoreDocComparator
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
 			return SortField.SCORE;
 		}
 	}
-	public class AnonymousClassScoreDocComparator1 : ScoreDocComparator
+	class AnonymousClassScoreDocComparator1 : ScoreDocComparator
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
@@ -90,8 +91,8 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="j">Second ScoreDoc
 		/// </param>
-		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br>
-		/// a positive integer if <code>i</code> should come after <code>j</code><br>
+		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br/>
+		/// a positive integer if <code>i</code> should come after <code>j</code><br/>
 		/// <code>0</code> if they are equal
 		/// </returns>
 		/// <seealso cref="java.util.Comparator">

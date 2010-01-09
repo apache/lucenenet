@@ -32,8 +32,8 @@ namespace Lucene.Net.Index
 	
 	/// <version>  $Id 
 	/// </version>
-	/// <summary> <p><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// <summary> <p/><b>NOTE:</b> This API is new and still experimental
+	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	public class SegmentReader:IndexReader, System.ICloneable
 	{
@@ -744,6 +744,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		public static SegmentReader Get(SegmentInfo si)
 		{
 			return Get(false, si.dir, si, BufferedIndexInput.BUFFER_SIZE, true, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
@@ -760,6 +761,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		internal static SegmentReader Get(SegmentInfo si, int readBufferSize, bool doOpenStores, int termInfosIndexDivisor)
 		{
 			return Get(false, si.dir, si, readBufferSize, doOpenStores, termInfosIndexDivisor);
@@ -1007,6 +1009,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated>  
 		/// </deprecated>
+        [Obsolete]
 		protected internal override void  DoCommit()
 		{
 			DoCommit(null);
@@ -1232,7 +1235,7 @@ namespace Lucene.Net.Index
 			return si.docCount;
 		}
 		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
+		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
@@ -1635,6 +1638,7 @@ namespace Lucene.Net.Index
 		// This is necessary so that cloned SegmentReaders (which
 		// share the underlying postings data) will map to the
 		// same entry in the FieldCache.  See LUCENE-1579.
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Index.IndexReader.GetFieldCacheKey()")]
 		public override System.Object GetFieldCacheKey()
 		{
 			return core.freqStream;

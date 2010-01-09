@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// <summary> Stores information about how to sort documents by terms in an individual
 	/// field.  Fields must be indexed in order to sort by them.
 	/// 
-	/// <p>Created: Feb 11, 2004 1:25:29 PM
+	/// <p/>Created: Feb 11, 2004 1:25:29 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -61,6 +61,7 @@ namespace Lucene.Net.Search
 		/// Especially, guessing does <b>not</b> work with the new
 		/// {@link NumericField} type.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		public const int AUTO = 2;
 		
 		/// <summary>Sort using term values as Strings.  Sort values are String and lower
@@ -140,6 +141,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> Please specify the exact type instead.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type instead.")]
 		public SortField(System.String field)
 		{
 			InitFieldType(field, AUTO);
@@ -154,6 +156,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> Please specify the exact type instead.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type instead.")]
 		public SortField(System.String field, bool reverse)
 		{
 			InitFieldType(field, AUTO);
@@ -278,6 +281,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator)
 		/// </deprecated>
+        [Obsolete("use SortField (String field, FieldComparatorSource comparator)")]
 		public SortField(System.String field, SortComparatorSource comparator)
 		{
 			InitFieldType(field, CUSTOM);
@@ -305,6 +309,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator, boolean reverse)
 		/// </deprecated>
+        [Obsolete("use SortField(String field, FieldComparatorSource comparator, boolean reverse)")]
 		public SortField(System.String field, SortComparatorSource comparator, bool reverse)
 		{
 			InitFieldType(field, CUSTOM);
@@ -391,6 +396,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #GetComparatorSource()}
 		/// </deprecated>
+        [Obsolete("use GetComparatorSource()")]
 		public virtual SortComparatorSource GetFactory()
 		{
 			return factory;
@@ -409,6 +415,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> will be removed in Lucene 3.0.
 		/// </deprecated>
+        [Obsolete("will be removed in Lucene 3.0.")]
 		public virtual void  SetUseLegacySearch(bool legacy)
 		{
 			this.useLegacy = legacy;
@@ -419,6 +426,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> will be removed in Lucene 3.0.
 		/// </deprecated>
+        [Obsolete("will be removed in Lucene 3.0.")]
 		public virtual bool GetUseLegacySearch()
 		{
 			return this.useLegacy;
@@ -630,6 +638,7 @@ namespace Lucene.Net.Search
 		/// <summary> Attempts to detect the given field type for an IndexReader.</summary>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		internal static int DetectFieldType(IndexReader reader, System.String fieldKey)
 		{
 			System.String field = StringHelper.Intern(fieldKey);

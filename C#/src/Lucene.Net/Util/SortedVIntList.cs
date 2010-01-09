@@ -23,11 +23,11 @@ using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> Stores and iterate on sorted integers in compressed form in RAM. <br>
+	/// <summary> Stores and iterate on sorted integers in compressed form in RAM. <br/>
 	/// The code for compressing the differences between ascending integers was
 	/// borrowed from {@link Lucene.Net.Store.IndexInput} and
 	/// {@link Lucene.Net.Store.IndexOutput}.
-	/// <p>
+	/// <p/>
 	/// <b>NOTE:</b> this class assumes the stored integers are doc Ids (hence why it
 	/// extends {@link DocIdSet}). Therefore its {@link #Iterator()} assumes {@link
 	/// DocIdSetIterator#NO_MORE_DOCS} can be used as sentinel. If you intent to use
@@ -72,6 +72,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #DocID()} instead. 
 			/// </deprecated>
+            [Obsolete("use DocID() instead.")]
 			public override int Doc()
 			{
 				return lastInt;
@@ -84,6 +85,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #NextDoc()} instead. 
 			/// </deprecated>
+            [Obsolete("use NextDoc() instead.")]
 			public override bool Next()
 			{
 				return NextDoc() != NO_MORE_DOCS;
@@ -105,6 +107,7 @@ namespace Lucene.Net.Util
 			
 			/// <deprecated> use {@link #Advance(int)} instead. 
 			/// </deprecated>
+            [Obsolete("use Advance(int) instead.")]
 			public override bool SkipTo(int docNr)
 			{
 				return Advance(docNr) != NO_MORE_DOCS;

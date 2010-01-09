@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// instance of this collector you should know in advance whether documents are
 	/// going to be collected in doc Id order or not.
 	/// 
-	/// <p><b>NOTE</b>: The values Float.Nan,
+	/// <p/><b>NOTE</b>: The values Float.Nan,
 	/// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
 	/// not valid scores.  This collector will not properly
 	/// collect hits with such scores.
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 		/// collect and whether documents are scored in order by the input
 		/// {@link Scorer} to {@link #SetScorer(Scorer)}.
 		/// 
-		/// <p><b>NOTE</b>: The instances returned by this method
+		/// <p/><b>NOTE</b>: The instances returned by this method
 		/// pre-allocate a full array of length
 		/// <code>numHits</code>, and fill the array with sentinel
 		/// objects.

@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> A Tokenizer is a TokenStream whose input is a Reader.
-	/// <p>
+	/// <p/>
 	/// This is an abstract class; subclasses must override {@link #IncrementToken()}
-	/// <p>
+	/// <p/>
 	/// NOTE: Subclasses overriding {@link #IncrementToken()} must call
 	/// {@link AttributeSource#ClearAttributes()} before setting attributes.
 	/// Subclasses overriding {@link #IncrementToken()} must call

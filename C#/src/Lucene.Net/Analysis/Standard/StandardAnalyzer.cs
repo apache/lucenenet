@@ -28,13 +28,13 @@ namespace Lucene.Net.Analysis.Standard
 	/// words.
 	/// 
 	/// <a name="version"/>
-	/// <p>
+	/// <p/>
 	/// You must specify the required {@link Version} compatibility when creating
 	/// StandardAnalyzer:
 	/// <ul>
-	/// <li>As of 2.9, StopFilter preserves position increments
+	/// <li>As of 2.9, StopFilter preserves position increments</li>
 	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></li>
 	/// </ul>
 	/// 
 	/// </summary>
@@ -52,12 +52,14 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
 		/// </deprecated>
+        [Obsolete("this should be removed in the next release (3.0).")]
 		private bool replaceInvalidAcronym = defaultReplaceInvalidAcronym;
 		
 		private static bool defaultReplaceInvalidAcronym;
 		private bool enableStopPositionIncrements;
 		
 		// @deprecated
+        [Obsolete]
 		private bool useDefaultStopPositionIncrements;
 		
 		/// <summary> </summary>
@@ -68,6 +70,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </returns>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public static bool GetDefaultReplaceInvalidAcronym()
 		{
 			return defaultReplaceInvalidAcronym;
@@ -86,6 +89,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public static void  SetDefaultReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			defaultReplaceInvalidAcronym = replaceInvalidAcronym;
@@ -97,6 +101,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> Use {@link #STOP_WORDS_SET} instead 
 		/// </deprecated>
+        [Obsolete("Use STOP_WORDS_SET instead ")]
 		public static readonly System.String[] STOP_WORDS;
 		
 		/// <summary>An unmodifiable set containing some common English words that are usually not
@@ -109,6 +114,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <deprecated> Use {@link #StandardAnalyzer(Version)} instead. 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version) instead")]
 		public StandardAnalyzer():this(Version.LUCENE_24, STOP_WORDS_SET)
 		{
 		}
@@ -127,6 +133,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)}
 		/// instead 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
 		public StandardAnalyzer(System.Collections.Hashtable stopWords):this(Version.LUCENE_24, stopWords)
 		{
 		}
@@ -146,6 +153,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>Builds an analyzer with the given stop words.</summary>
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)} instead 
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
 		public StandardAnalyzer(System.String[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
 		{
 		}
@@ -156,6 +164,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, File)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, File) instead")]
 		public StandardAnalyzer(System.IO.FileInfo stopwords):this(Version.LUCENE_24, stopwords)
 		{
 		}
@@ -180,6 +189,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Reader)}
 		/// instead
 		/// </deprecated>
+        [Obsolete("Use StandardAnalyzer(Version, Reader) instead")]
 		public StandardAnalyzer(System.IO.TextReader stopwords):this(Version.LUCENE_24, stopwords)
 		{
 		}
@@ -206,6 +216,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(bool replaceInvalidAcronym):this(Version.LUCENE_24, STOP_WORDS_SET)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -221,6 +232,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.IO.TextReader stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -235,6 +247,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.IO.FileInfo stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -250,6 +263,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.String[] stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopwords))
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -264,6 +278,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
+        [Obsolete("Remove in 3.X and make true the only valid value")]
 		public StandardAnalyzer(System.Collections.Hashtable stopwords, bool replaceInvalidAcronym):this(Version.LUCENE_24, stopwords)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
@@ -340,6 +355,7 @@ namespace Lucene.Net.Analysis.Standard
 		
 		/// <deprecated> Use {@link #tokenStream} instead 
 		/// </deprecated>
+        [Obsolete("Use TokenStream instead")]
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			if (overridesTokenStreamMethod)
@@ -384,6 +400,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </returns>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public virtual bool IsReplaceInvalidAcronym()
 		{
 			return replaceInvalidAcronym;
@@ -396,6 +413,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <deprecated> This will be removed (hardwired to true) in 3.0
 		/// </deprecated>
+        [Obsolete("This will be removed (hardwired to true) in 3.0")]
 		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;

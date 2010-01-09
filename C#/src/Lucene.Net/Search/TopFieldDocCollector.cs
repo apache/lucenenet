@@ -26,13 +26,14 @@ namespace Lucene.Net.Search
 	/// documents, returning them as a {@link TopFieldDocs}.  This is used by {@link
 	/// IndexSearcher} to implement {@link TopFieldDocs}-based search.
 	/// 
-	/// <p>This may be extended, overriding the collect method to, e.g.,
+	/// <p/>This may be extended, overriding the collect method to, e.g.,
 	/// conditionally invoke <code>super()</code> in order to filter which
 	/// documents are collected.
 	/// 
 	/// </summary>
 	/// <deprecated> Please use {@link TopFieldCollector} instead.
 	/// </deprecated>
+    [Obsolete("Please use TopFieldCollector instead.")]
 	public class TopFieldDocCollector:TopDocCollector
 	{
 		

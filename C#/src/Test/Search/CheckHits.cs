@@ -68,10 +68,10 @@ namespace Lucene.Net.Search
 		/// <summary> Tests that a query matches the an expected set of documents using a
 		/// HitCollector.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Note that when using the HitCollector API, documents will be collected
 		/// if they "match" regardless of what their score is.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <param name="query">the query to test
 		/// </param>
@@ -146,10 +146,10 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Tests that a query matches the an expected set of documents using Hits.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Note that when using the Hits API, documents will only be returned
 		/// if they have a positive normalized score.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <param name="query">the query to test
 		/// </param>
@@ -458,6 +458,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #Search(Query, Collector)} instead. 
 			/// </deprecated>
+            [Obsolete("use Search(Query, Collector) instead. ")]
 			public override void  Search(Query query, HitCollector results)
 			{
 				Search(query, new HitCollectorWrapper(results));
@@ -469,6 +470,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #Search(Query, Filter, Collector)} instead. 
 			/// </deprecated>
+            [Obsolete("use Search(Query, Filter, Collector) instead. ")]
 			public override void  Search(Query query, Filter filter, HitCollector results)
 			{
 				Search(query, filter, new HitCollectorWrapper(results));

@@ -51,6 +51,7 @@ namespace Lucene.Net.QueryParsers
 		/// </deprecated>
 		/// <seealso cref="getEndColumn">
 		/// </seealso>
+        [Obsolete]
 		int GetColumn();
 		
 		/// <summary> Returns the line number of the character last read.</summary>
@@ -58,6 +59,7 @@ namespace Lucene.Net.QueryParsers
 		/// </deprecated>
 		/// <seealso cref="getEndLine">
 		/// </seealso>
+        [Obsolete]
 		int GetLine();
 		
 		/// <summary> Returns the column number of the last character for current token (being

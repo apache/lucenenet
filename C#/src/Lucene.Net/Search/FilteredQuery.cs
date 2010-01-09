@@ -26,11 +26,11 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A query that applies a filter to the results of another query.
 	/// 
-	/// <p>Note: the bits are retrieved from the filter each time this
+	/// <p/>Note: the bits are retrieved from the filter each time this
 	/// query is used in a search - use a CachingWrapperFilter to avoid
 	/// regenerating the bits every time.
 	/// 
-	/// <p>Created: Apr 20, 2004 8:58:29 AM
+	/// <p/>Created: Apr 20, 2004 8:58:29 AM
 	/// 
 	/// </summary>
 	/// <since>   1.4
@@ -93,6 +93,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #NextDoc()} instead. 
 				/// </deprecated>
+                [Obsolete("use NextDoc() instead. ")]
 				public override bool Next()
 				{
 					return NextDoc() != NO_MORE_DOCS;
@@ -106,6 +107,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #DocID()} instead. 
 				/// </deprecated>
+                [Obsolete("use DocID() instead.")]
 				public override int Doc()
 				{
 					return scorer.Doc();
@@ -117,6 +119,7 @@ namespace Lucene.Net.Search
 				
 				/// <deprecated> use {@link #Advance(int)} instead. 
 				/// </deprecated>
+                [Obsolete("use Advance(int) instead.")]
 				public override bool SkipTo(int i)
 				{
 					return Advance(i) != NO_MORE_DOCS;

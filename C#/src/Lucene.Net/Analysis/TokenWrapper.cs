@@ -34,6 +34,7 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	/// <deprecated> Will be removed, when old TokenStream API is removed.
 	/// </deprecated>
+    [Obsolete("Will be removed, when old TokenStream API is removed.")]
 	[Serializable]
 	public sealed class TokenWrapper:AttributeImpl, System.ICloneable, TermAttribute, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute
 	{

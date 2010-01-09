@@ -36,12 +36,12 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Score a candidate doc for all slop-valid position-combinations (matches) 
 		/// encountered while traversing/hopping the PhrasePositions.
-		/// <br> The score contribution of a match depends on the distance: 
-		/// <br> - highest score for distance=0 (exact match).
-		/// <br> - score gets lower as distance gets higher.
-		/// <br>Example: for query "a b"~2, a document "x a b a y" can be scored twice: 
+		/// <br/> The score contribution of a match depends on the distance: 
+		/// <br/> - highest score for distance=0 (exact match).
+		/// <br/> - score gets lower as distance gets higher.
+		/// <br/>Example: for query "a b"~2, a document "x a b a y" can be scored twice: 
 		/// once for "a b" (distance=0), and once for "b a" (distance=2).
-		/// <br>Possibly not all valid combinations are encountered, because for efficiency  
+		/// <br/>Possibly not all valid combinations are encountered, because for efficiency  
 		/// we always propagate the least PhrasePosition. This allows to base on 
 		/// PriorityQueue and move forward faster. 
 		/// As result, for example, document "a b c b a"
@@ -117,14 +117,14 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Init PhrasePositions in place.
 		/// There is a one time initialization for this scorer:
-		/// <br>- Put in repeats[] each pp that has another pp with same position in the doc.
-		/// <br>- Also mark each such pp by pp.repeats = true.
-		/// <br>Later can consult with repeats[] in termPositionsDiffer(pp), making that check efficient.
+		/// <br/>- Put in repeats[] each pp that has another pp with same position in the doc.
+		/// <br/>- Also mark each such pp by pp.repeats = true.
+		/// <br/>Later can consult with repeats[] in termPositionsDiffer(pp), making that check efficient.
 		/// In particular, this allows to score queries with no repetitions with no overhead due to this computation.
-		/// <br>- Example 1 - query with no repetitions: "ho my"~2
-		/// <br>- Example 2 - query with repetitions: "ho my my"~2
-		/// <br>- Example 3 - query with repetitions: "my ho my"~2
-		/// <br>Init per doc w/repeats in query, includes propagating some repeating pp's to avoid false phrase detection.  
+		/// <br/>- Example 1 - query with no repetitions: "ho my"~2
+		/// <br/>- Example 2 - query with repetitions: "ho my my"~2
+		/// <br/>- Example 3 - query with repetitions: "my ho my"~2
+		/// <br/>Init per doc w/repeats in query, includes propagating some repeating pp's to avoid false phrase detection.  
 		/// </summary>
 		/// <returns> end (max position), or -1 if any term ran out (i.e. done) 
 		/// </returns>

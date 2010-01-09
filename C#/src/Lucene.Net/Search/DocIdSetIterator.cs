@@ -43,6 +43,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #DocID()} instead.
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public virtual int Doc()
 		{
 			throw new System.NotSupportedException("Call docID() instead.");
@@ -51,11 +52,11 @@ namespace Lucene.Net.Search
 		/// <summary> Returns the following:
 		/// <ul>
 		/// <li>-1 or {@link #NO_MORE_DOCS} if {@link #NextDoc()} or
-		/// {@link #Advance(int)} were not called yet.
-		/// <li>{@link #NO_MORE_DOCS} if the iterator has exhausted.
-		/// <li>Otherwise it should return the doc ID it is currently on.
+		/// {@link #Advance(int)} were not called yet.</li>
+		/// <li>{@link #NO_MORE_DOCS} if the iterator has exhausted.</li>
+		/// <li>Otherwise it should return the doc ID it is currently on.</li>
 		/// </ul>
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> in 3.0, this method will become abstract.
 		/// 
 		/// </summary>
@@ -72,6 +73,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #NextDoc()} instead. This will be removed in 3.0
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. This will be removed in 3.0")]
 		public virtual bool Next()
 		{
 			throw new System.NotSupportedException("Call nextDoc() instead.");
@@ -83,6 +85,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> use {@link #Advance(int)} instead. This will be removed in 3.0
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead. This will be removed in 3.0")]
 		public virtual bool SkipTo(int target)
 		{
 			throw new System.NotSupportedException("Call advance() instead.");
@@ -90,7 +93,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Advances to the next document in the set and returns the doc it is
 		/// currently on, or {@link #NO_MORE_DOCS} if there are no more docs in the
-		/// set.<br>
+		/// set.<br/>
 		/// 
 		/// <b>NOTE:</b> in 3.0 this method will become abstract, following the removal
 		/// of {@link #Next()}. For backward compatibility it is implemented as:
@@ -115,7 +118,7 @@ namespace Lucene.Net.Search
 		/// <summary> Advances to the first beyond the current whose document number is greater
 		/// than or equal to <i>target</i>. Returns the current document number or
 		/// {@link #NO_MORE_DOCS} if there are no more docs in the set.
-		/// <p>
+		/// <p/>
 		/// Behaves as if written:
 		/// 
 		/// <pre>
@@ -128,18 +131,18 @@ namespace Lucene.Net.Search
 		/// </pre>
 		/// 
 		/// Some implementations are considerably more efficient than that.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> certain implemenations may return a different value (each
 		/// time) if called several times in a row with the same target.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> this method may be called with {@value #NO_MORE_DOCS} for
 		/// efficiency by some Scorers. If your implementation cannot efficiently
 		/// determine that it should exhaust, it is recommended that you check for that
 		/// value in each call to this method.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> after the iterator has exhausted you should not call this
 		/// method, as it may result in unpredicted behavior.
-		/// <p>
+		/// <p/>
 		/// <b>NOTE:</b> in 3.0 this method will become abstract, following the removal
 		/// of {@link #SkipTo(int)}.
 		/// 

@@ -25,10 +25,10 @@ namespace Lucene.Net.Store
 	/// multiple threads to read from the same file without
 	/// synchronizing.
 	/// 
-	/// <p>This class only uses FileChannel when reading; writing
+	/// <p/>This class only uses FileChannel when reading; writing
 	/// is achieved with {@link SimpleFSDirectory.SimpleFSIndexOutput}.
 	/// 
-	/// <p><b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug
+	/// <p/><b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug
 	/// in how FileChannel.read is implemented in Sun's JRE.
 	/// Inside of the implementation the position is apparently
 	/// synchronized.  See <a
@@ -87,6 +87,7 @@ namespace Lucene.Net.Store
 		// back compatibility so FSDirectory can instantiate via reflection
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		internal NIOFSDirectory()
 		{
 		}
@@ -117,6 +118,7 @@ namespace Lucene.Net.Store
 			
 			/// <deprecated> Please use ctor taking chunkSize 
 			/// </deprecated>
+            [Obsolete("Please use ctor taking chunkSize")]
 			public NIOFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, FSDirectory.DEFAULT_READ_CHUNK_SIZE)
 			{
 			}

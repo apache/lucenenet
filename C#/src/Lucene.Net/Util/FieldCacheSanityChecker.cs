@@ -27,8 +27,8 @@ namespace Lucene.Net.Util
 	
 	/// <summary> Provides methods for sanity checking that entries in the FieldCache 
 	/// are not wasteful or inconsistent.
-	/// </p>
-	/// <p>
+	/// <p/>
+	/// <p/>
 	/// Lucene 2.9 Introduced numerous enhancements into how the FieldCache 
 	/// is used by the low levels of Lucene searching (for Sorting and 
 	/// ValueSourceQueries) to improve both the speed for Sorting, as well 
@@ -40,12 +40,12 @@ namespace Lucene.Net.Util
 	/// Later.  This class provides an API for these applications (or their 
 	/// Unit tests) to check at run time if the FieldCache contains "insane" 
 	/// usages of the FieldCache.
-	/// </p>
-	/// <p>
+	/// <p/>
+	/// <p/>
 	/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced and 
 	/// experimental.  It may be removed or altered w/o warning in future releases 
 	/// of Lucene.
-	/// </p>
+	/// <p/>
 	/// </summary>
 	/// <seealso cref="FieldCache">
 	/// </seealso>
@@ -93,10 +93,10 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary> Tests a CacheEntry[] for indication of "insane" cache usage.
-		/// <p>
-		/// <B>NOTE:</b>FieldCache CreationPlaceholder objects are ignored.
+		/// <p/>
+		/// NOTE:FieldCache CreationPlaceholder objects are ignored.
 		/// (:TODO: is this a bad idea? are we masking a real problem?)
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public Insanity[] Check(CacheEntry[] cacheEntries)
 		{
@@ -418,19 +418,19 @@ namespace Lucene.Net.Util
 			/// </summary>
 			public static readonly InsanityType SUBREADER = new InsanityType("SUBREADER");
 			
-			/// <summary> <p>
+			/// <summary> <p/>
 			/// Indicates entries have the same reader+fieldname but 
 			/// different cached values.  This can happen if different datatypes, 
 			/// or parsers are used -- and while it's not necessarily a bug 
 			/// it's typically an indication of a possible problem.
-			/// </p>
-			/// <p>
-			/// <bPNOTE:</b> Only the reader, fieldname, and cached value are actually 
+			/// <p/>
+			/// <p/>
+			/// PNOTE: Only the reader, fieldname, and cached value are actually 
 			/// tested -- if two cache entries have different parsers or datatypes but 
 			/// the cached values are the same Object (== not just equal()) this method 
 			/// does not consider that a red flag.  This allows for subtle variations 
 			/// in the way a Parser is specified (null vs DEFAULT_LONG_PARSER, etc...)
-			/// </p>
+			/// <p/>
 			/// </summary>
 			public static readonly InsanityType VALUEMISMATCH = new InsanityType("VALUEMISMATCH");
 			

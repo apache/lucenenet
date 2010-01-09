@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	/// Integer, Float or String depending on the type of values
 	/// in the terms of each field.
 	/// 
-	/// <p>Created: Feb 11, 2004 1:23:38 PM
+	/// <p/>Created: Feb 11, 2004 1:23:38 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4

@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 		/// <summary>Get the minimum size for a segment to remain
 		/// un-merged.
 		/// </summary>
-		/// <seealso cref="setMinMergeDocs *">
+		/// <seealso cref="setMinMergeDocs">
 		/// </seealso>
 		public virtual int GetMinMergeDocs()
 		{

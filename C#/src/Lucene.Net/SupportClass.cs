@@ -1305,17 +1305,13 @@ public class SupportClass
         /// </summary>
         private void Clean()
         {
-            ArrayList keysToDelete = new ArrayList();
-            foreach (WeakKey wtk in base.Keys)
+            foreach (WeakKey wtk in ((Hashtable)base.Clone()).Keys)
             {
                 if (!wtk.IsAlive)
                 {
-                    keysToDelete.Add(wtk);
+                    Remove(wtk);
                 }
             }
-
-            foreach (WeakKey wtk in keysToDelete)
-                Remove(wtk);
         }
 
 
@@ -1330,7 +1326,9 @@ public class SupportClass
 
         public override IDictionaryEnumerator GetEnumerator()
         {
-            return new WeakDictionaryEnumerator(base.GetEnumerator());
+            Hashtable tmp = null;
+            tmp = (Hashtable)base.Clone();
+            return new WeakDictionaryEnumerator(tmp.GetEnumerator());
         }
 
         /// <summary>
@@ -1341,12 +1339,15 @@ public class SupportClass
             get
             {
                 ArrayList keys = new ArrayList(Count);
-                foreach (WeakKey key in base.Keys)
+                Hashtable tmpTable = (Hashtable)base.Clone();
+                
+                foreach (WeakKey key in tmpTable.Keys)
                 {
                     object realKey = key.Target;
                     if (realKey != null)
                         keys.Add(realKey);
                 }
+                
                 return keys;
             }
         }
