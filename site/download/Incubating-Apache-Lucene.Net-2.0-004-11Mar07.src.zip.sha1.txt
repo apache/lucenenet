@@ -1,2 +1,0 @@
-Incubating-Apache-Lucene.Net-2.0-004-11Mar07.src.zip: 
-2047 310C 11F0 330E 011A  6E2A 4E3D 2F74 A47E E9CC
