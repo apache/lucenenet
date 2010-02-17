@@ -945,7 +945,7 @@ namespace Lucene.Net._SupportClass
             {
                 LUCENENET_100_CreateIndex();
 
-                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38085));
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38087));
 
                 Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
                 System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
@@ -973,7 +973,7 @@ namespace Lucene.Net._SupportClass
         {
             try
             {
-                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38085/Searcher");
+                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38087/Searcher");
                 Lucene.Net.Search.MultiSearcher searcher = new Lucene.Net.Search.MultiSearcher(new Lucene.Net.Search.Searchable[] { s });
 
                 Lucene.Net.Search.Query q = new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field1", "moon"));
@@ -981,7 +981,7 @@ namespace Lucene.Net._SupportClass
                 Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
                 sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.INT));
 
-                Lucene.Net.Search.Hits h = searcher.Search(q, sort);
+                Lucene.Net.Search.TopDocs h = searcher.Search(q, null,100, sort);
             }
             catch (Exception ex)
             {

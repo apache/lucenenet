@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
 		
 		private void  SeekEnum(SegmentTermEnum enumerator, int indexOffset)
 		{
-			enumerator.Seek(indexPointers[indexOffset], (indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
+			enumerator.Seek(indexPointers[indexOffset], ((long)indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
 		}
 		
 		/// <summary>Returns the TermInfo for a Term in the set, or null. </summary>
@@ -270,30 +270,7 @@ namespace Lucene.Net.Index
 			}
 			return ti;
 		}
-		
-		/// <summary>Returns the nth term in the set. </summary>
-		internal Term Get(int position)
-		{
-			if (size == 0)
-				return null;
-			
-			SegmentTermEnum enumerator = GetThreadResources().termEnum;
-			if (enumerator.Term() != null && position >= enumerator.position && position < (enumerator.position + totalIndexInterval))
-				return ScanEnum(enumerator, position); // can avoid seek
-			
-			SeekEnum(enumerator, position / totalIndexInterval); // must seek
-			return ScanEnum(enumerator, position);
-		}
-		
-		private Term ScanEnum(SegmentTermEnum enumerator, int position)
-		{
-			while (enumerator.position < position)
-				if (!enumerator.Next())
-					return null;
-			
-			return enumerator.Term();
-		}
-		
+						
 		private void  EnsureIndexIsRead()
 		{
 			if (indexTerms == null)

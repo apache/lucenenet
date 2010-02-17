@@ -47,20 +47,8 @@ namespace Lucene.Net.Util
 			
 			private sealed class DefaultAttributeFactory:AttributeFactory
 			{
-				private static readonly System.Collections.Hashtable attClassImplMap = new System.Collections.Hashtable();
-
-                // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
-                /*
-                 * From Java docs:
-                 * This class implements the Map interface with a hash table, using 
-                 * reference-equality in place of object-equality when comparing keys 
-                 * (and values). In other words, in an IdentityHashMap, two keys k1 and k2 
-                 * are considered equal if and only if (k1==k2). (In normal Map 
-                 * implementations (like HashMap) two keys k1 and k2 are considered 
-                 * equal if and only if (k1==null ? k2==null : k1.equals(k2)).) 
-                 */
-                // Aroush-2.9}}
-				
+                private static readonly SupportClass.WeakHashTable attClassImplMap = new SupportClass.WeakHashTable();
+                
 				internal DefaultAttributeFactory()
 				{
 				}
@@ -72,12 +60,12 @@ namespace Lucene.Net.Util
 						return (AttributeImpl) System.Activator.CreateInstance(GetClassForInterface(attClass));
 					}
 					catch (System.UnauthorizedAccessException e)
-					{
-						throw new System.ArgumentException("Could not instantiate class " + attClass.FullName);
+                    {
+                        throw new System.ArgumentException("Could not instantiate implementing class for " + attClass.FullName);
 					}
 					catch (System.Exception e)
 					{
-						throw new System.ArgumentException("Could not instantiate class " + attClass.FullName);
+                        throw new System.ArgumentException("Could not instantiate implementing class for " + attClass.FullName);
 					}
 				}
 				
@@ -85,13 +73,14 @@ namespace Lucene.Net.Util
 				{
 					lock (attClassImplMap)
 					{
-						System.Type clazz = (System.Type) attClassImplMap[attClass];
+                        WeakReference refz = (WeakReference) attClassImplMap[attClass];
+                        System.Type clazz = (refz == null) ? null : ((System.Type) refz.Target);
 						if (clazz == null)
 						{
 							try
 							{
                                 string name = attClass.FullName + "Impl," + attClass.Assembly.FullName;
-								attClassImplMap.Add(attClass, clazz = System.Type.GetType(name, true));
+								attClassImplMap.Add(attClass, new WeakReference( clazz = System.Type.GetType(name, true))); //OK
 							}
 							catch (System.Exception e)
 							{
@@ -180,7 +169,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-		private static readonly System.Collections.Hashtable knownImplClasses = new System.Collections.Hashtable();
+		private static readonly SupportClass.WeakHashTable knownImplClasses = new SupportClass.WeakHashTable();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
         /*
@@ -206,6 +195,8 @@ namespace Lucene.Net.Util
 				foundInterfaces = (System.Collections.ArrayList) knownImplClasses[clazz];
 				if (foundInterfaces == null)
 				{
+                    // we have a strong reference to the class instance holding all interfaces in the list (parameter "att"),
+                    // so all WeakReferences are never evicted by GC
 					knownImplClasses.Add(clazz, foundInterfaces = new System.Collections.ArrayList());
 					// find all interfaces that this attribute instance implements
 					// and that extend the Attribute interface
@@ -218,7 +209,7 @@ namespace Lucene.Net.Util
 							System.Type curInterface = interfaces[i];
 							if (curInterface != typeof(Attribute) && typeof(Attribute).IsAssignableFrom(curInterface))
 							{
-								foundInterfaces.Add(curInterface);
+								foundInterfaces.Add(new WeakReference(curInterface));
 							}
 						}
 						actClazz = actClazz.BaseType;
@@ -230,7 +221,9 @@ namespace Lucene.Net.Util
 			// add all interfaces of this AttributeImpl to the maps
 			for (System.Collections.IEnumerator it = foundInterfaces.GetEnumerator(); it.MoveNext(); )
 			{
-				System.Type curInterface = (System.Type) it.Current;
+                WeakReference curInterfaceRef = (WeakReference)it.Current;
+				System.Type curInterface = (System.Type) curInterfaceRef.Target;
+                System.Diagnostics.Debug.Assert(curInterface != null,"We have a strong reference on the class holding the interfaces, so they should never get evicted");
 				// Attribute is a superclass of this interface
 				if (!attributes.ContainsKey(curInterface))
 				{
@@ -255,6 +248,14 @@ namespace Lucene.Net.Util
 		{
 			if (!attributes.ContainsKey(attClass))
 			{
+                if (!(attClass.IsInterface &&  typeof(Attribute).IsAssignableFrom(attClass))) 
+                {
+                    throw new ArgumentException(
+                        "AddAttribute() only accepts an interface that extends Attribute, but " +
+                        attClass.FullName + " does not fulfil this contract."
+                    );
+                }
+
 				AttributeImpl attImpl = this.factory.CreateAttributeInstance(attClass);
 				AddAttributeImpl(attImpl);
 				return attImpl;

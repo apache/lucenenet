@@ -671,13 +671,14 @@ namespace Lucene.Net.Search
             BooleanQuery other = (BooleanQuery)o;
             return (this.GetBoost() == other.GetBoost())
                     && this.clauses.Equals(other.clauses)
-                    && this.GetMinimumNumberShouldMatch() == other.GetMinimumNumberShouldMatch();
+                    && this.GetMinimumNumberShouldMatch() == other.GetMinimumNumberShouldMatch()
+                    && this.disableCoord == other.disableCoord;
 		}
 		
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + GetMinimumNumberShouldMatch();
+            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + GetMinimumNumberShouldMatch() + (disableCoord ? 17 : 0);
 		}
 	}
 }
