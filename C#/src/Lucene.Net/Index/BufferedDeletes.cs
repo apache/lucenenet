@@ -31,15 +31,30 @@ namespace Lucene.Net.Index
 	class BufferedDeletes
 	{
 		internal int numTerms;
-		internal System.Collections.Hashtable terms = new System.Collections.Hashtable();
+        internal System.Collections.IDictionary terms = null;
 		internal System.Collections.Hashtable queries = new System.Collections.Hashtable();
 		internal System.Collections.ArrayList docIDs = new System.Collections.ArrayList();
 		internal long bytesUsed;
+        internal  bool doTermSort;
+
+        public BufferedDeletes(bool doTermSort)
+        {
+            this.doTermSort = doTermSort;
+            if (doTermSort)
+            {
+                terms = new System.Collections.Generic.SortedDictionary<object, object>();
+            }
+            else
+            {
+                terms = new System.Collections.Hashtable();
+            }
+        }
+                
 		
 		// Number of documents a delete term applies to.
 		internal sealed class Num
 		{
-			private int num;
+			internal int num;
 			
 			internal Num(int num)
 			{
@@ -118,12 +133,19 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				
-				System.Collections.Hashtable newDeleteTerms;
+				System.Collections.IDictionary newDeleteTerms;
 				
 				// Remap delete-by-term
 				if (terms.Count > 0)
 				{
-					newDeleteTerms = new System.Collections.Hashtable();
+                    if (doTermSort)
+                    {
+                        newDeleteTerms = new System.Collections.Generic.SortedDictionary<object, object>();
+                    }
+                    else
+                    {
+                        newDeleteTerms = new System.Collections.Hashtable();
+                    }
 					System.Collections.IEnumerator iter = new System.Collections.Hashtable(terms).GetEnumerator();
 					while (iter.MoveNext())
 					{

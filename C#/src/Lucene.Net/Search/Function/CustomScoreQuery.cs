@@ -185,8 +185,8 @@ namespace Lucene.Net.Search.Function
 		/// The default computation herein is a multiplication of given scores:
 		/// <pre>
 		/// ModifiedScore = valSrcScore * valSrcScores[0] * valSrcScores[1] * ...
-		/// </pre>
-		/// 
+		/// </pre>        /// 
+        /// NOTE: the doc is relative to the current reader, last passed to <see cref="SetNextReader"/>
 		/// </summary>
 		/// <param name="doc">id of scored doc. 
 		/// </param>
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Function
 		/// <pre>
 		/// ModifiedScore = subQueryScore * valSrcScore
 		/// </pre>
-		/// 
+		/// NOTE: the doc is relative to the current reader, last passed to <see cref="SetNextReader"/>
 		/// </summary>
 		/// <param name="doc">id of scored doc. 
 		/// </param>
@@ -241,6 +241,15 @@ namespace Lucene.Net.Search.Function
 		{
 			return subQueryScore * valSrcScore;
 		}
+
+        /// <summary>
+        /// Called when the scoring switches to another reader.
+        /// </summary>
+        /// <param name="reader">The next IndexReader</param>
+        public virtual void SetNextReader(IndexReader reader)
+        {
+
+        }
 		
 		/// <summary> Explain the custom score.
 		/// Whenever overriding {@link #CustomScore(int, float, float[])}, 
@@ -486,6 +495,7 @@ namespace Lucene.Net.Search.Function
 				this.valSrcScorers = valSrcScorers;
 				this.reader = reader;
 				this.vScores = new float[valSrcScorers.Length];
+                this.Enclosing_Instance.SetNextReader(reader);
 			}
 			
 			/// <deprecated> use {@link #NextDoc()} instead. 

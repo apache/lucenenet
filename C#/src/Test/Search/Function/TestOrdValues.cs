@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Function
 	{
 		
 		/* @override constructor */
-		public TestOrdValues(System.String name):base(name)
+		public TestOrdValues(System.String name):base(name, false)
 		{
 		}
         public TestOrdValues()

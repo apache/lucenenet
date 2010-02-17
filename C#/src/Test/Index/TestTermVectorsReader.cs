@@ -190,6 +190,7 @@ namespace Lucene.Net.Index
 				else
 				{
 					TestToken testToken = Enclosing_Instance.tokens[tokenUpto++];
+                    ClearAttributes();
 					termAtt.SetTermBuffer(testToken.text);
 					offsetAtt.SetOffset(testToken.startOffset, testToken.endOffset);
 					if (tokenUpto > 1)

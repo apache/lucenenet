@@ -27,6 +27,9 @@ using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
 using TopDocs = Lucene.Net.Search.TopDocs;
 
+using Lucene.Net.Search;
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Search.Function
 {
 	
@@ -36,7 +39,7 @@ namespace Lucene.Net.Search.Function
 	{
 		
 		/* @override constructor */
-		public TestCustomScoreQuery(System.String name):base(name)
+		public TestCustomScoreQuery(System.String name):base(name, true)
 		{
 		}
         public TestCustomScoreQuery()
@@ -76,7 +79,7 @@ namespace Lucene.Net.Search.Function
 			// INT field can be parsed as float
 			DoTestCustomScore(INT_FIELD, FieldScoreQuery.Type.FLOAT, 1.0);
 			DoTestCustomScore(INT_FIELD, FieldScoreQuery.Type.FLOAT, 5.0);
-			// same values, but in flot format
+			// same values, but in float format
 			DoTestCustomScore(FLOAT_FIELD, FieldScoreQuery.Type.FLOAT, 1.0);
 			DoTestCustomScore(FLOAT_FIELD, FieldScoreQuery.Type.FLOAT, 6.0);
 		}
@@ -136,6 +139,8 @@ namespace Lucene.Net.Search.Function
 				if (valSrcScores.Length == 1)
 				{
 					return subQueryScore + valSrcScores[0];
+                    // confirm that skipping beyond the last doc, on the
+                    // previous reader, hits NO_MORE_DOCS
 				}
 				return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
 			}
@@ -160,6 +165,50 @@ namespace Lucene.Net.Search.Function
 				return exp2;
 			}
 		}
+
+        private class CustomExternalQuery : CustomScoreQuery 
+        {
+            private IndexReader reader;
+            private int[] values;
+
+            public override float CustomScore(int doc, float subScore, float valSrcScore) 
+            {
+                Assert.IsTrue(doc <= reader.MaxDoc());
+                return (float) values[doc];
+            }
+
+            public override void SetNextReader(IndexReader r)
+            {
+                reader = r;
+                values = FieldCache_Fields.DEFAULT.GetInts(r, INT_FIELD);
+            }
+
+            public CustomExternalQuery(Query q) : base(q)
+            {  }
+        }
+
+        [Test]
+        public void TestCustomExternalQuery() 
+        {
+            QueryParser qp = new QueryParser(TEXT_FIELD,anlzr); 
+            String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
+            Query q1 = qp.Parse(qtxt); 
+        
+            Query q = new CustomExternalQuery(q1);
+            Log(q);
+
+            IndexSearcher s = new IndexSearcher(dir);
+            TopDocs hits = s.Search(q, 1000);
+            Assert.AreEqual(N_DOCS, hits.totalHits);
+            for(int i=0;i<N_DOCS;i++) 
+            {
+                int doc = hits.scoreDocs[i].doc;
+                float score = hits.scoreDocs[i].score;
+                Assert.AreEqual(score, (float)1 + (4 * doc) % N_DOCS, 0.0001, "doc=" + doc);
+            }
+            s.Close();
+        }
+
 		
 		// Test that FieldScoreQuery returns docs with expected score.
 		private void  DoTestCustomScore(System.String field, FieldScoreQuery.Type tp, double dboost)

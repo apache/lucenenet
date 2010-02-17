@@ -232,6 +232,7 @@
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\AbstractAllTermDocs.cs" />
     <Compile Include="Index\AllTermDocs.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />

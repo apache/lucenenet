@@ -93,32 +93,13 @@ namespace Lucene.Net.Analysis
 			TeeSinkTokenFilter source = new TeeSinkTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer1.ToString())));
 			TokenStream sink1 = source.NewSinkTokenStream();
 			TokenStream sink2 = source.NewSinkTokenStream(theFilter);
-			int i = 0;
-			TermAttribute termAtt = (TermAttribute) source.GetAttribute(typeof(TermAttribute));
-			while (source.IncrementToken())
-			{
-				Assert.AreEqual(tokens1[i], termAtt.Term());
-				i++;
-			}
-			Assert.AreEqual(tokens1.Length, i);
-			
-			i = 0;
-			termAtt = (TermAttribute) sink1.GetAttribute(typeof(TermAttribute));
-			while (sink1.IncrementToken())
-			{
-				Assert.AreEqual(tokens1[i], termAtt.Term());
-				i++;
-			}
-			Assert.AreEqual(tokens1.Length, i);
-			
-			i = 0;
-			termAtt = (TermAttribute) sink2.GetAttribute(typeof(TermAttribute));
-			while (sink2.IncrementToken())
-			{
-				Assert.IsTrue(termAtt.Term().ToUpper().Equals("The".ToUpper()));
-				i++;
-			}
-			Assert.AreEqual(2, i, "there should be two times 'the' in the stream");
+
+            source.AddAttribute(typeof(CheckClearAttributesAttribute));
+            sink1.AddAttribute(typeof(CheckClearAttributesAttribute));
+            sink2.AddAttribute(typeof(CheckClearAttributesAttribute));
+    
+            AssertTokenStreamContents(source, tokens1);
+            AssertTokenStreamContents(sink1, tokens1);
 		}
 		
 		[Test]
@@ -129,54 +110,28 @@ namespace Lucene.Net.Analysis
 			TeeSinkTokenFilter.SinkTokenStream theDetector = tee1.NewSinkTokenStream(theFilter);
 			TokenStream source1 = new CachingTokenFilter(tee1);
 			
+             
+            tee1.AddAttribute(typeof(CheckClearAttributesAttribute));
+            dogDetector.AddAttribute(typeof(CheckClearAttributesAttribute));
+            theDetector.AddAttribute(typeof(CheckClearAttributesAttribute));
+
+
 			TeeSinkTokenFilter tee2 = new TeeSinkTokenFilter(new WhitespaceTokenizer(new System.IO.StringReader(buffer2.ToString())));
 			tee2.AddSinkTokenStream(dogDetector);
 			tee2.AddSinkTokenStream(theDetector);
 			TokenStream source2 = tee2;
-			
-			int i = 0;
-			TermAttribute termAtt = (TermAttribute) source1.GetAttribute(typeof(TermAttribute));
-			while (source1.IncrementToken())
-			{
-				Assert.AreEqual(tokens1[i], termAtt.Term());
-				i++;
-			}
-			Assert.AreEqual(tokens1.Length, i);
-			i = 0;
-			termAtt = (TermAttribute) source2.GetAttribute(typeof(TermAttribute));
-			while (source2.IncrementToken())
-			{
-				Assert.AreEqual(tokens2[i], termAtt.Term());
-				i++;
-			}
-			Assert.AreEqual(tokens2.Length, i);
-			i = 0;
-			termAtt = (TermAttribute) theDetector.GetAttribute(typeof(TermAttribute));
-			while (theDetector.IncrementToken())
-			{
-				Assert.IsTrue(termAtt.Term().ToUpper().Equals("The".ToUpper()), "'" + termAtt.Term() + "' is not equal to 'The'");
-				i++;
-			}
-			Assert.AreEqual(4, i, "there must be 4 times 'The' in the stream");
-			i = 0;
-			termAtt = (TermAttribute) dogDetector.GetAttribute(typeof(TermAttribute));
-			while (dogDetector.IncrementToken())
-			{
-				Assert.IsTrue(termAtt.Term().ToUpper().Equals("Dogs".ToUpper()), "'" + termAtt.Term() + "' is not equal to 'Dogs'");
-				i++;
-			}
-			Assert.AreEqual(2, i, "there must be 2 times 'Dog' in the stream");
-			
+
+            AssertTokenStreamContents(source1, tokens1);
+            AssertTokenStreamContents(source2, tokens2);
+
+            AssertTokenStreamContents(theDetector, new String[] { "The", "the", "The", "the" });
+            			
 			source1.Reset();
 			TokenStream lowerCasing = new LowerCaseFilter(source1);
-			i = 0;
-			termAtt = (TermAttribute) lowerCasing.GetAttribute(typeof(TermAttribute));
-			while (lowerCasing.IncrementToken())
-			{
-				Assert.AreEqual(tokens1[i].ToLower(), termAtt.Term());
-				i++;
-			}
-			Assert.AreEqual(i, tokens1.Length);
+            String[] lowerCaseTokens = new String[tokens1.Length];
+            for (int i = 0; i < tokens1.Length; i++)
+                lowerCaseTokens[i] = tokens1[i].ToLower();
+
 		}
 		
 		/// <summary> Not an explicit test, just useful to print out some info on performance
