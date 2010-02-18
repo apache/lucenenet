@@ -94,7 +94,7 @@ namespace Lucene.Net.Documents
 		/// <summary>The value of the field as a Reader, which can be used at index time to generate indexed tokens.</summary>
 		/// <seealso cref="StringValue()">
 		/// </seealso>
-		System.IO.StreamReader ReaderValue();
+		System.IO.TextReader ReaderValue();
 		
 		/// <summary>The value of the field in Binary, or null.</summary>
 		/// <seealso cref="StringValue()">
