@@ -104,6 +104,8 @@ namespace Lucene.Net.Search
 			Weight weight = query.CreateWeight(searcher);
 			float sum = weight.SumOfSquaredWeights();
 			float norm = GetSimilarity(searcher).QueryNorm(sum);
+            if (float.IsInfinity(norm) || float.IsNaN(norm))
+                norm = 1.0f;
 			weight.Normalize(norm);
 			return weight;
 		}
