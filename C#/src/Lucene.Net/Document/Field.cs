@@ -199,7 +199,7 @@ namespace Lucene.Net.Documents
 		/// binary value is used.  Exactly one of stringValue(),
 		/// readerValue(), and getBinaryValue() must be set. 
 		/// </summary>
-		public override System.IO.StreamReader ReaderValue()
+		public override System.IO.TextReader ReaderValue()
 		{
 			return fieldsData is System.IO.StreamReader?(System.IO.StreamReader) fieldsData:null;
 		}
