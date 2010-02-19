@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
             info.AddValue("field", field);
         }
 
-        protected Term(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        private Term(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
             text = (string)info.GetValue("text", typeof(string));
             field = StringHelper.Intern((string)info.GetValue("field", typeof(string)));

@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        protected NumericRangeQuery(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        private NumericRangeQuery(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
             precisionStep   = (int)info.GetValue("precisionStep", typeof(int));
             valSize         = (int)info.GetValue("valSize", typeof(int));
