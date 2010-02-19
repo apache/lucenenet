@@ -408,6 +408,11 @@ public class SupportClass
             if (obj is ThreadClass) return this.threadField.Equals( ((ThreadClass)obj).threadField  );
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return this.threadField.GetHashCode();
+        }
     }
 
     /// <summary>

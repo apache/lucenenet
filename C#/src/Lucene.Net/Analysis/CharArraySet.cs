@@ -415,7 +415,7 @@ namespace Lucene.Net.Analysis
 				throw new System.NotSupportedException();
 			}
 			
-			public bool AddAll(System.Collections.ICollection coll)
+			public override bool AddAll(System.Collections.ICollection coll)
 			{
 				throw new System.NotSupportedException();
 			}
@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>Removes all elements from the set </summary>
-        public virtual bool Clear()
+        public virtual new bool Clear()
         {
             throw new System.NotSupportedException();
         }
