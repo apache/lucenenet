@@ -1,26 +1,34 @@
 Apache Lucene.Net History
 -------------------------
 
+17Feb10:
+	- Release: Apache Lucene.Net 2.9.2 build 001 "Beta"
+	- Port: Lucene core and test code 
 
+	
+17Feb10:
+	- Release: Apache Lucene.Net 2.9.1 build 002 "Final"
+		
+	
 16Nov09:
 	- Release: Apache Lucene.Net 2.9.1 build 001 "Beta"
 
-
+	
 03Nov09:
 	- Release: Apache Lucene.Net 2.9.0 build 001 "Alpha"
 	- Port: Test code
 	- Note: Not all test are passing, this is just a port release
 
-
+	
 25Oct09:
 	- Release: Apache Lucene.Net 2.9.0 build 000 "Alpha"
 	- Port: Core Lucene code and demo code
 
-
+	
 19Aug09:
 	- Release: Apache Lucene.Net 2.4.0 build 002 "Final"
 
-
+	
 19Mar09:
    	- Release: Apache Lucene.Net.2.3.1 build 003 "Final"
 	- Fix: LUCENENET-106 (Lucene.NET is leaking memory)
@@ -57,7 +65,7 @@ Apache Lucene.Net History
 
 15Jul08:
 	- Release:  Apache Lucene.Net.2.3.1 build 002 "Beta"
-	- Port: Prted the "Test" code from Java to C#.
+	- Port: Ported the "Test" code from Java to C#.
 	- Fix: A number of issues in Lucene.Net Core code -- Thanks to Doug Sale
 	- Fix: A number of issues in Lucene.Net Test code -- Thanks to Doug Sale
 
