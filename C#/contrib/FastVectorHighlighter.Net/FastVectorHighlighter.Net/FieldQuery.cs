@@ -75,10 +75,20 @@ namespace Lucene.Net.Search.Vectorhighlight
                         flatten(clause.GetQuery(), flatQueries);
                 }
             }
+            else if (sourceQuery is DisjunctionMaxQuery)
+            {
+                DisjunctionMaxQuery dmq = (DisjunctionMaxQuery)sourceQuery;
+                System.Collections.IEnumerator en = dmq.Iterator();
+                while (en.MoveNext())
+                {
+                    Query query = (Query)en.Current;
+                    flatten(query, flatQueries);
+                }
+            }
             else if (sourceQuery is TermQuery)
             {
                 if (!flatQueries.ContainsKey(sourceQuery))
-                    flatQueries.Add(sourceQuery,sourceQuery);
+                    flatQueries.Add(sourceQuery, sourceQuery);
             }
             else if (sourceQuery is PhraseQuery)
             {
@@ -86,11 +96,11 @@ namespace Lucene.Net.Search.Vectorhighlight
                 {
                     PhraseQuery pq = (PhraseQuery)sourceQuery;
                     if (pq.GetTerms().Length > 1)
-                        flatQueries.Add(pq,pq);
+                        flatQueries.Add(pq, pq);
                     else if (pq.GetTerms().Length == 1)
                     {
                         Query q = new TermQuery(pq.GetTerms()[0]);
-                        flatQueries.Add(q,q);
+                        flatQueries.Add(q, q);
                     }
                 }
             }

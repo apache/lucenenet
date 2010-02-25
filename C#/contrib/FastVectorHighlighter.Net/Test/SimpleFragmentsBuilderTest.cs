@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             Assert.AreEqual("<b>c</b> <b>a</b> <b>a</b> b b", f[2]);
         }
 
-        
+
         private FieldFragList ffl(String queryValue, String indexValue)
         {
             Make1d1fIndex(indexValue);
@@ -147,7 +147,21 @@ namespace Lucene.Net.Search.Vectorhighlight
             writer.AddDocument(doc);
             writer.Close();
 
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir, true);
+        }
+
+        [Test]
+        public void Test1StrMV()
+        {
+            MakeIndexStrMV();
+
+            FieldQuery fq = new FieldQuery(Tq("defg"), true, true);
+            FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
+            FieldPhraseList fpl = new FieldPhraseList(stack, fq);
+            SimpleFragListBuilder sflb = new SimpleFragListBuilder();
+            FieldFragList ffl = sflb.CreateFieldFragList(fpl, 100);
+            SimpleFragmentsBuilder sfb = new SimpleFragmentsBuilder();
+            Assert.AreEqual("abc<b>defg</b>hijkl", sfb.CreateFragment(reader, 0, F, ffl));
         }
     }
 }

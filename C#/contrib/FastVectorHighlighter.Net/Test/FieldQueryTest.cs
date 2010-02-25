@@ -43,6 +43,16 @@ namespace Lucene.Net.Search.Vectorhighlight
         }
 
         [Test]
+        public void testFlattenDisjunctionMaxQuery()
+        {
+            Query query = Dmq(Tq("A"), Tq("B"), PqF("C", "D"));
+            FieldQuery fq = new FieldQuery(query, true, true);
+            HashSet<Query> flatQueries = new HashSet<Query>();
+            fq.flatten(query, flatQueries);
+            AssertCollectionQueries(flatQueries, Tq("A"), Tq("B"), PqF("C", "D"));
+        }
+
+        [Test]
         public void TestFlattenTermAndPhrase()
         {
             Query query = paW.Parse("A AND \"B C\"");
