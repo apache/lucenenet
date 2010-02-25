@@ -1,0 +1,3 @@
+
+Some internal fields/methods are made "public" to be able to use them in Test project. 
+Those fields/methods (starting with a lowercase char) are not intended to be used in your code.
