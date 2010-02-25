@@ -43,6 +43,7 @@ namespace Lucene.Net.Search.Vectorhighlight
         protected Directory dir;
         protected Analyzer analyzerW;
         protected Analyzer analyzerB;
+        protected Analyzer analyzerK;
         protected IndexReader reader;
         protected QueryParser paW;
         protected QueryParser paB;
@@ -64,11 +65,18 @@ namespace Lucene.Net.Search.Vectorhighlight
             "\nWhen you talk about processing speed, the"
           };
 
+        protected static String[] strMVValues = {
+            "abc",
+            "defg",
+            "hijkl"
+          };
+
         [SetUp]
         public void SetUp()
         {
             analyzerW = new WhitespaceAnalyzer();
             analyzerB = new BigramAnalyzer();
+            analyzerK = new KeywordAnalyzer();
             paW = new QueryParser(F, analyzerW);
             paB = new QueryParser(F, analyzerB);
             dir = new RAMDirectory();
@@ -145,6 +153,21 @@ namespace Lucene.Net.Search.Vectorhighlight
             }
             query.SetBoost(boost);
             query.SetSlop(slop);
+            return query;
+        }
+
+        protected Query Dmq(params Query[] queries)
+        {
+            return Dmq(0.0F, queries);
+        }
+
+        protected Query Dmq(float tieBreakerMultiplier, params Query[] queries)
+        {
+            DisjunctionMaxQuery query = new DisjunctionMaxQuery(tieBreakerMultiplier);
+            foreach (Query q in queries)
+            {
+                query.Add(q);
+            }
             return query;
         }
 
@@ -320,6 +343,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             Make1dmfIndex(analyzerB, values);
         }
 
+        // make 1 doc with multi valued field
         protected void Make1dmfIndex(Analyzer analyzer, params String[] values)
         {
             IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
@@ -329,7 +353,20 @@ namespace Lucene.Net.Search.Vectorhighlight
             writer.AddDocument(doc);
             writer.Close();
 
-            reader = IndexReader.Open(dir);
+            reader = IndexReader.Open(dir,true);
+        }
+
+        // make 1 doc with multi valued & not analyzed field
+        protected void Make1dmfIndexNA(String[] values)
+        {
+            IndexWriter writer = new IndexWriter(dir, analyzerK, true, IndexWriter.MaxFieldLength.LIMITED);
+            Document doc = new Document();
+            foreach (String value in values)
+                doc.Add(new Field(F, value, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            writer.AddDocument(doc);
+            writer.Close();
+
+            reader = IndexReader.Open(dir, true);
         }
 
         protected void MakeIndexShortMV()
@@ -395,6 +432,20 @@ namespace Lucene.Net.Search.Vectorhighlight
             //                                    ed 64
 
             Make1dmfIndexB(biMVValues);
+        }
+
+        protected void MakeIndexStrMV()
+        {
+            //  0123
+            // "abc"
+
+            //  34567
+            // "defg"
+
+            //     111
+            //  789012
+            // "hijkl"
+            Make1dmfIndexNA(strMVValues);
         }
     }
 }

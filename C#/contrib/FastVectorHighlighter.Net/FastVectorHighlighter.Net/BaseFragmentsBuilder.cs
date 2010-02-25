@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             List<WeightedFragInfo> fragInfos = GetWeightedFragInfoList(fieldFragList.fragInfos);
 
             List<String> fragments = new List<String>(maxNumFragments);
-            String[] values = GetFieldValues(reader, docId, fieldName);
+            Field[] values = GetFields(reader, docId, fieldName);
             if (values.Length == 0) return null;
             StringBuilder buffer = new StringBuilder();
             int[] nextValueIndex = { 0 };
@@ -88,12 +88,52 @@ namespace Lucene.Net.Search.Vectorhighlight
             return fragments.ToArray();
         }
 
+        [Obsolete]
         protected String[] GetFieldValues(IndexReader reader, int docId, String fieldName)
         {
             Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
             return doc.GetValues(fieldName); // according to Document class javadoc, this never returns null
         }
 
+        protected Field[] GetFields(IndexReader reader, int docId, String fieldName)
+        {
+            // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
+            Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
+            return doc.GetFields(fieldName); // according to Document class javadoc, this never returns null
+        }
+
+        [Obsolete]
+        protected String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
+        {
+            int s = fragInfo.startOffset;
+            return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
+        }
+
+        protected String MakeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo)
+        {
+            int s = fragInfo.startOffset;
+            return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
+        }
+
+        private String MakeFragment(WeightedFragInfo fragInfo, String src, int s)
+        {
+            StringBuilder fragment = new StringBuilder();
+            int srcIndex = 0;
+            foreach (SubInfo subInfo in fragInfo.subInfos)
+            {
+                foreach (Toffs to in subInfo.termsOffsets)
+                {
+                    fragment.Append(src.Substring(srcIndex, to.startOffset - s - srcIndex)).Append(GetPreTag(subInfo.seqnum))
+                      .Append(src.Substring(to.startOffset - s, to.endOffset - s - (to.startOffset - s))).Append(GetPostTag(subInfo.seqnum));
+                    srcIndex = to.endOffset - s;
+                }
+            }
+            fragment.Append(src.Substring(srcIndex));
+            return fragment.ToString();
+        }
+
+        /*
+        [Obsolete]
         protected String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
         {
             StringBuilder fragment = new StringBuilder();
@@ -112,7 +152,10 @@ namespace Lucene.Net.Search.Vectorhighlight
             fragment.Append(src.Substring(srcIndex));
             return fragment.ToString();
         }
+        */
 
+
+        [Obsolete]
         protected String GetFragmentSource(StringBuilder buffer, int[] index, String[] values, int startOffset, int endOffset)
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
@@ -123,6 +166,18 @@ namespace Lucene.Net.Search.Vectorhighlight
             }
             int eo = buffer.Length < endOffset ? buffer.Length : endOffset;
             return buffer.ToString().Substring(startOffset, eo - startOffset);
+        }
+
+        protected String GetFragmentSource(StringBuilder buffer, int[] index, Field[] values, int startOffset, int endOffset)
+        {
+            while (buffer.Length < endOffset && index[0] < values.Length)
+            {
+                if (index[0] > 0 && values[index[0]].IsTokenized() && values[index[0]].StringValue().Length > 0)
+                    buffer.Append(' ');
+                buffer.Append(values[index[0]++].StringValue());
+            }
+            int eo = buffer.Length < endOffset ? buffer.Length: endOffset;
+            return buffer.ToString().Substring(startOffset, eo - startOffset );
         }
 
         protected String GetPreTag(int num)
