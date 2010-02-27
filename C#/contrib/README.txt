@@ -10,6 +10,7 @@ WordNet.Net
 Similarity.Net
 Analyzers\BR
 Spatial.Net
+FastVectorHighlighter.Net
 
 
 Contributed code:
