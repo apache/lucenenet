@@ -20,13 +20,92 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Search
 {
-    class TermsFilter
+    /// <summary>
+    /// A filter that contains multiple terms.
+    /// </summary>
+    public class TermsFilter : Filter
     {
-        public TermsFilter()
+        /// <summary>
+        /// The set of terms for this filter.
+        /// </summary>
+        protected HashSet<Term> terms = new HashSet<Term>();
+
+        /// <summary>
+        /// Add a term to the set.
+        /// </summary>
+        /// <param name="term">The term to add.</param>
+        public void AddTerm(Term term)
         {
-            throw new NotImplementedException("Not implemented yet.");
+            terms.Add(term);
+        }
+
+        /// <summary>
+        /// Get the DocIdSet.
+        /// </summary>
+        /// <param name="reader">Applcible reader.</param>
+        /// <returns>The set.</returns>
+        public override DocIdSet GetDocIdSet(IndexReader reader)
+        {
+            OpenBitSet result = new OpenBitSet(reader.MaxDoc());
+            TermDocs td = reader.TermDocs();
+            try
+            {
+                foreach (Term t in this.terms)
+                {
+                    td.Seek(t);
+                    while (td.Next())
+                    {
+                        result.Set(td.Doc());
+                    }
+                }
+            }
+            finally
+            {
+                td.Close();
+            }
+
+            return result;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if ((obj == null) || !(obj is TermsFilter))
+            {
+                return false;
+            }
+            TermsFilter test = (TermsFilter)obj;
+            return (terms == test.terms || (terms != null && terms.Equals(test.terms)));
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 9;
+            foreach (Term t in this.terms)
+            {
+                hash = 31 * hash + t.GetHashCode();
+            }
+            return hash;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("(");
+            foreach (Term t in this.terms)
+            {
+                sb.AppendFormat(" {0}:{1}", t.Field(), t.Text());
+            }
+            sb.Append(" )");
+            return sb.ToString();
         }
     }
 }
