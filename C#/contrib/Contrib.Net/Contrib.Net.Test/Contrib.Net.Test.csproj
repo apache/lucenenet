@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Ext\Analysis.Ext.Test.cs" />			
+    <Compile Include="Analysis\Ext\Analysis.Ext.Test.cs" />			
     <Compile Include="Index\FieldEnumeratorTest.cs" />
     <Compile Include="Index\SegmentsGenCommitTest.cs" />
     <Compile Include="Index\TermVectorEnumeratorTest.cs" />
