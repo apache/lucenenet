@@ -204,11 +204,9 @@ namespace Lucene.Net.Search.Function
         class AnonymousCustomScoreProvider : CustomScoreProvider
         {
             CustomScoreQuery parent;
-            IndexReader reader;
             public AnonymousCustomScoreProvider(CustomScoreQuery parent, IndexReader reader) : base(reader)
             {
                 this.parent = parent;
-                this.reader = reader;
             }
             public override float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
             {
