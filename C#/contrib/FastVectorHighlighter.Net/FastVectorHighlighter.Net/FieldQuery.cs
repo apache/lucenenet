@@ -282,8 +282,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         public List<String> getTermSet(String field)
         {
-            if (!fieldMatch) return null;
-            return termSetMap.Get(field);
+            return termSetMap.Get(fieldMatch ? field : null);
         }
 
         /**
@@ -313,8 +312,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         private QueryPhraseMap GetRootMap(String fieldName)
         {
-            if (!fieldMatch) return null;
-            return rootMaps.Get(fieldName);
+            return rootMaps.Get(fieldMatch ? fieldName : null);
         }
 
         int NextTermOrPhraseNumber()
