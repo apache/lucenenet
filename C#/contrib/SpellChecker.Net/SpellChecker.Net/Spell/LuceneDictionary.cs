@@ -104,7 +104,7 @@ namespace SpellChecker.Net.Search.Spell
                     //  if the next word are in the field
                     actualTerm = termEnum.Term();
                     System.String fieldt = actualTerm.Field();
-                    if ((System.Object) fieldt != (System.Object) Enclosing_Instance.field)
+                    if ( fieldt != Enclosing_Instance.field)
                     {
                         actualTerm = null;
                         return false;
