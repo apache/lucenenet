@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             FieldTermStack ftl = new FieldTermStack(reader, 0, "f", fieldQuery);
             reader.Close();
         }
-                
+
         /// <summary>
         /// a constructor. 
         /// </summary>
@@ -66,6 +66,39 @@ namespace Lucene.Net.Search.Vectorhighlight
         /// <param name="docId">document id to be highlighted</param>
         /// <param name="fieldName">field of the document to be highlighted</param>
         /// <param name="fieldQuery">FieldQuery object</param>
+#if LUCENENET_350 //Lucene.Net specific code. See https://issues.apache.org/jira/browse/LUCENENET-350
+        public FieldTermStack(IndexReader reader, int docId, String fieldName, FieldQuery fieldQuery)
+        {
+            this.fieldName = fieldName;
+            
+            List<string> termSet = fieldQuery.getTermSet(fieldName);
+
+            // just return to make null snippet if un-matched fieldName specified when fieldMatch == true
+            if (termSet == null) return;
+
+            //TermFreqVector tfv = reader.GetTermFreqVector(docId, fieldName);
+            VectorHighlightMapper tfv = new VectorHighlightMapper(termSet);    
+            reader.GetTermFreqVector(docId, fieldName, tfv);
+            
+            if (tfv.Size()==0) return; // just return to make null snippets
+            
+            string[] terms = tfv.GetTerms();
+            foreach (String term in terms)
+            {
+                if (!termSet.Contains(term)) continue;
+                int index = tfv.IndexOf(term);
+                TermVectorOffsetInfo[] tvois = tfv.GetOffsets(index);
+                if (tvois == null) return; // just return to make null snippets
+                int[] poss = tfv.GetTermPositions(index);
+                if (poss == null) return; // just return to make null snippets
+                for (int i = 0; i < tvois.Length; i++)
+                    termList.AddLast(new TermInfo(term, tvois[i].GetStartOffset(), tvois[i].GetEndOffset(), poss[i]));
+            }
+            // sort by position
+            //Collections.sort(termList);
+            Sort(termList);
+        }
+#else   //Original Port
         public FieldTermStack(IndexReader reader, int docId, String fieldName, FieldQuery fieldQuery)
         {
             this.fieldName = fieldName;
@@ -102,6 +135,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             //Collections.sort(termList);
             Sort(termList);
         }
+#endif
 
         void Sort(LinkedList<TermInfo> linkList)
         {
