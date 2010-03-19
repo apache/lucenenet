@@ -736,14 +736,14 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return file.LastWriteTime.Millisecond;
+            return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public static long FileModified(System.IO.FileInfo directory, System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return file.LastWriteTime.Millisecond;
+            return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
 		/// <summary>Set the modified time of an existing file to now. </summary>
