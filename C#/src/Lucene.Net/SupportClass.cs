@@ -1165,22 +1165,33 @@ public class SupportClass
         /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
         /// value of the original object hashcode for fast comparison.
         /// </summary>
-        class WeakKey : WeakReference
+        class WeakKey 
         {
+            WeakReference reference;
             int hashCode;
 
             public WeakKey(object key)
-                : base(key)
             {
                 if (key == null)
                     throw new ArgumentNullException("key");
 
                 hashCode = key.GetHashCode();
+                reference = new WeakReference(key);
             }
 
             public override int GetHashCode()
             {
                 return hashCode;
+            }
+
+            public object Target
+            {
+                get { return reference.Target; }
+            }
+
+            public bool IsAlive
+            {
+                get { return reference.IsAlive; }
             }
         }
 
