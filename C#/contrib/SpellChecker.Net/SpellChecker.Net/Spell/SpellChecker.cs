@@ -63,7 +63,7 @@ namespace SpellChecker.Net.Search.Spell
             this.spellindex = spellindex;
         }
         /// <summary>  Set the accuracy 0 &lt; min &lt; 1; default 0.5</summary>
-        virtual public void SetAccuraty(float min)
+        virtual public void SetAccuracy(float min)
         {
             this.min = min;
         }
