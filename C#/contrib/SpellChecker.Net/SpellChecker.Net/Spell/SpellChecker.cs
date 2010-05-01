@@ -63,9 +63,9 @@ namespace SpellChecker.Net.Search.Spell
             this.spellindex = spellindex;
         }
         /// <summary>  Set the accuracy 0 &lt; min &lt; 1; default 0.5</summary>
-        virtual public void SetAccuracy(float min)
+        virtual public void SetAccuracy(float minScore)
         {
-            this.min = min;
+            this.minScore = minScore;
         }
 		
         /// <summary> Field name for each word in the ngram index.</summary>
@@ -81,7 +81,7 @@ namespace SpellChecker.Net.Search.Spell
 		
 		
         private IndexReader reader;
-        internal float min = 0.5f;
+        internal float minScore = 0.5f;  //LUCENENET-359 Spellchecker accuracy gets overwritten
 		
 		
         public SpellChecker(Directory gramIndex)
@@ -124,7 +124,7 @@ namespace SpellChecker.Net.Search.Spell
         /// </returns>
         public virtual System.String[] SuggestSimilar(System.String word, int num_sug, IndexReader ir, System.String field, bool morePopular)
         {
-			
+            float min = this.minScore;
             TRStringDistance sd = new TRStringDistance(word);
             int lengthWord = word.Length;
 			
