@@ -266,9 +266,9 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(map != null, "map is null and it shouldn't be");
 			Assert.IsTrue(map.Count == 4, "map Size: " + map.Count + " is not: " + 4);
             System.Collections.Generic.SortedDictionary<object, object> set_Renamed = (System.Collections.Generic.SortedDictionary<object, object>)map["termvector"];
-			for (System.Collections.IEnumerator iterator = set_Renamed.GetEnumerator(); iterator.MoveNext(); )
+            foreach (System.Collections.Generic.KeyValuePair<object, object> item in set_Renamed)
 			{
-                TermVectorEntry entry = (TermVectorEntry)((System.Collections.Generic.KeyValuePair<object, object>)iterator.Current).Key;
+                TermVectorEntry entry =  (TermVectorEntry)item.Key;
 				Assert.IsTrue(entry != null, "entry is null and it shouldn't be");
 				System.Console.Out.WriteLine("Entry: " + entry);
 			}
