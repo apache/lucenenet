@@ -827,6 +827,24 @@ namespace Lucene.Net._SupportClass
     {
         //-------------------------------------------
         [Test]
+        [Description("LUCENENET-183")]
+        public void Test_SegmentTermVector_IndexOf()
+        {
+            Lucene.Net.Store.RAMDirectory directory = new Lucene.Net.Store.RAMDirectory();
+            Lucene.Net.Analysis.Analyzer analyzer = new Lucene.Net.Analysis.WhitespaceAnalyzer();
+            Lucene.Net.Index.IndexWriter writer = new Lucene.Net.Index.IndexWriter(directory, analyzer, Lucene.Net.Index.IndexWriter.MaxFieldLength.LIMITED);
+            Lucene.Net.Documents.Document document = new Lucene.Net.Documents.Document();
+            document.Add(new Lucene.Net.Documents.Field("contents", new System.IO.StreamReader(new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes("a_ a0"))), Lucene.Net.Documents.Field.TermVector.WITH_OFFSETS));
+            writer.AddDocument(document);
+            Lucene.Net.Index.IndexReader reader = writer.GetReader();
+            Lucene.Net.Index.TermPositionVector tpv = reader.GetTermFreqVector(0, "contents") as Lucene.Net.Index.TermPositionVector;
+            //Console.WriteLine("tpv: " + tpv);
+            int index = tpv.IndexOf("a_");
+            Assert.AreEqual(index, 1, "See the issue: LUCENENET-183");
+        }
+
+        //-------------------------------------------
+        [Test]
         [Description("LUCENENET-170")]
         public void Test_Util_Parameter()
         {
