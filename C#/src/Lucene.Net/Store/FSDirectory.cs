@@ -171,8 +171,8 @@ namespace Lucene.Net.Store
 		/// the <code>open</code> methods that take a
 		/// <code>lockFactory</code> (for example, {@link #open(File, LockFactory)}).
 		/// </deprecated>
-        [Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
+        //[Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
+		//public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
