@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
 	{
 		
 		[ThreadStatic]
-		static System.Collections.Generic.Dictionary<object, object> slots;
+        static SupportClass.WeakHashTable slots;
 		
 		public /*protected internal*/ virtual System.Object InitialValue()
 		{
@@ -65,9 +65,9 @@ namespace Lucene.Net.Util
                 return value;
             }
 
-            if (slots.TryGetValue(this, out value))
+            if (slots.ContainsKey(this))
             {
-                return value;
+                return slots[this];
             }
             else
             {
@@ -79,8 +79,8 @@ namespace Lucene.Net.Util
 		
 		public virtual void  Set(System.Object object_Renamed)
 		{
-			if (slots == null)
-				slots = new System.Collections.Generic.Dictionary<object, object>();
+            if (slots == null)
+                slots = new SupportClass.WeakHashTable();
 
 			slots[this] = object_Renamed;	
 		}
