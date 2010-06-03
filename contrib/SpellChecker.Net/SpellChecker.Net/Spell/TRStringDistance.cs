@@ -16,12 +16,13 @@
  */
 
 using System;
+using SpellChecker.Net.Search.Spell;
 
 namespace SpellChecker.Net.Search.Spell
 {
 	
     /// <summary> Edit distance  class</summary>
-    sealed class TRStringDistance
+    public class TRStringDistance
     {
 		
         internal char[] sa;
