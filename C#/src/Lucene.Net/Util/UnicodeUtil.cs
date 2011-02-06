@@ -55,8 +55,8 @@ namespace Lucene.Net.Util
 	/// without always allocating a new byte[] as
 	/// String.getBytes("UTF-8") does.
 	/// 
-	/// <p><b>WARNING</b>: This API is a new and experimental and
-	/// may suddenly change. </p>
+	/// <p/><b>WARNING</b>: This API is a new and experimental and
+	/// may suddenly change. <p/>
 	/// </summary>
 	
 	sealed public class UnicodeUtil

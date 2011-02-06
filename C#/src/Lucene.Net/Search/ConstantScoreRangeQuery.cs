@@ -23,13 +23,13 @@ namespace Lucene.Net.Search
 	/// <summary> A range query that returns a constant score equal to its boost for
 	/// all documents in the exclusive range of terms.
 	/// 
-	/// <p>It does not have an upper bound on the number of clauses covered in the range.
+	/// <p/>It does not have an upper bound on the number of clauses covered in the range.
 	/// 
-	/// <p>This query matches the documents looking for terms that fall into the
+	/// <p/>This query matches the documents looking for terms that fall into the
 	/// supplied range according to {@link String#compareTo(String)}. It is not intended
 	/// for numerical ranges, use {@link NumericRangeQuery} instead.
 	/// 
-	/// <p>This query is hardwired to {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}.
+	/// <p/>This query is hardwired to {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}.
 	/// If you want to change this, use {@link TermRangeQuery} instead.
 	/// 
 	/// </summary>
@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 	/// </deprecated>
 	/// <version>  $Id: ConstantScoreRangeQuery.java 797694 2009-07-25 00:03:33Z mikemccand $
 	/// </version>
+    [Obsolete("Use TermRangeQuery for term ranges or NumericRangeQuery for numeric ranges instead. This class will be removed in Lucene 3.0.")]
 	[Serializable]
 	public class ConstantScoreRangeQuery:TermRangeQuery
 	{

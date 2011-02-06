@@ -29,20 +29,19 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Base class for all Lucene unit tests.  
-	/// <p>
+	/// <p/>
 	/// Currently the
 	/// only added functionality over JUnit's TestCase is
 	/// asserting that no unhandled exceptions occurred in
 	/// threads launched by ConcurrentMergeScheduler and asserting sane
 	/// FieldCache usage athe moment of tearDown.
-	/// </p>
-	/// <p>
+	/// <p/>
 	/// If you
 	/// override either <code>setUp()</code> or
 	/// <code>tearDown()</code> in your unit test, make sure you
 	/// call <code>super.setUp()</code> and
 	/// <code>super.tearDown()</code>
-	/// </p>
+	/// <p/>
 	/// </summary>
 	/// <seealso cref="assertSaneFieldCaches">
 	/// </seealso>
@@ -76,12 +75,12 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Forcible purges all cache entries from the FieldCache.
-		/// <p>
+		/// <p/>
 		/// This method will be called by tearDown to clean up FieldCache.DEFAULT.
 		/// If a (poorly written) test has some expectation that the FieldCache
 		/// will persist across test methods (ie: a static IndexReader) this 
 		/// method can be overridden to do nothing.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="FieldCache.PurgeAllCaches()">
 		/// </seealso>
@@ -92,7 +91,7 @@ namespace Lucene.Net.Util
 		
 		protected internal virtual System.String GetTestLabel()
 		{
-			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            return Lucene.Net.TestCase.GetFullName();
 		}
 		
 		[TearDown]
@@ -129,18 +128,17 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Asserts that FieldCacheSanityChecker does not detect any 
 		/// problems with FieldCache.DEFAULT.
-		/// <p>
+		/// <p/>
 		/// If any problems are found, they are logged to System.err 
 		/// (allong with the msg) when the Assertion is thrown.
-		/// </p>
-		/// <p>
+		/// <p/>
 		/// This method is called by tearDown after every test method, 
 		/// however IndexReaders scoped inside test methods may be garbage 
 		/// collected prior to this method being called, causing errors to 
 		/// be overlooked. Tests are encouraged to keep their IndexReaders 
 		/// scoped at the class level, or to explicitly call this method 
 		/// directly in the same scope as the IndexReader.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		/// <seealso cref="FieldCacheSanityChecker">
 		/// </seealso>

@@ -183,6 +183,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override int Doc()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -195,6 +196,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool Next()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -202,6 +204,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool SkipTo(int target)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -391,6 +394,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override int Doc()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -403,6 +407,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0. 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool Next()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -410,6 +415,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0. 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public override bool SkipTo(int target)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
@@ -525,6 +531,7 @@ namespace Lucene.Net.Search
 			
 			/// <deprecated> delete in 3.0 
 			/// </deprecated>
+            [Obsolete("delete in 3.0")]
 			public Scorer Scorer(IndexReader reader)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);

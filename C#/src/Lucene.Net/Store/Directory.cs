@@ -26,11 +26,11 @@ namespace Lucene.Net.Store
 	/// are created.  Once a file is created it may only be opened for read, or
 	/// deleted.  Random access is permitted both when reading and writing.
 	/// 
-	/// <p> Java's i/o APIs not used directly, but rather all i/o is
+	/// <p/> Java's i/o APIs not used directly, but rather all i/o is
 	/// through this API.  This permits things such as: <ul>
-	/// <li> implementation of RAM-based indices;
-	/// <li> implementation indices stored in a database, via JDBC;
-	/// <li> implementation of an index as a single file;
+	/// <li> implementation of RAM-based indices;</li>
+	/// <li> implementation indices stored in a database, via JDBC;</li>
+	/// <li> implementation of an index as a single file;</li>
 	/// </ul>
 	/// 
 	/// Directory locking is implemented by an instance of {@link
@@ -55,6 +55,7 @@ namespace Lucene.Net.Store
 		/// files.  Please use {@link #listAll} instead, which
 		/// does no filtering. 
 		/// </deprecated>
+        [Obsolete("For some Directory implementations (FSDirectory}, and its subclasses), this method silently filters its results to include only index files.  Please use ListAll instead, which does no filtering. ")]
 		public abstract System.String[] List();
 		
 		/// <summary>Returns an array of strings, one for each file in the
@@ -63,7 +64,7 @@ namespace Lucene.Net.Store
 		/// never return null (throws IOException instead).
 		/// 
 		/// Currently this method simply fallsback to {@link
-		/// #list} for Directory impls outside of Lucene's core &
+		/// #list} for Directory impls outside of Lucene's core &amp;
 		/// contrib, but in 3.0 that method will be removed and
 		/// this method will become abstract. 
 		/// </summary>
@@ -90,6 +91,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		public abstract void  RenameFile(System.String from, System.String to);
 		
 		/// <summary>Returns the length of a file in the directory. </summary>
@@ -190,12 +192,12 @@ namespace Lucene.Net.Store
 		/// If a file in src already exists in dest then the
 		/// one in dest will be blindly overwritten.
 		/// 
-		/// <p><b>NOTE:</b> the source directory cannot change
+		/// <p/><b>NOTE:</b> the source directory cannot change
 		/// while this method is running.  Otherwise the results
 		/// are undefined and you could easily hit a
 		/// FileNotFoundException.
 		/// 
-		/// <p><b>NOTE:</b> this method only copies files that look
+		/// <p/><b>NOTE:</b> this method only copies files that look
 		/// like index files (ie, have extensions matching the
 		/// known extensions of index files).
 		/// 

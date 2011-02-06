@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis
 	/// fields require different analysis techniques.  Use {@link #addAnalyzer}
 	/// to add a non-default analyzer on a field name basis.
 	/// 
-	/// <p>Example usage:
+	/// <p/>Example usage:
 	/// 
 	/// <pre>
 	/// PerFieldAnalyzerWrapper aWrapper =
@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis
 	/// aWrapper.addAnalyzer("lastname", new KeywordAnalyzer());
 	/// </pre>
 	/// 
-	/// <p>In this example, StandardAnalyzer will be used for all fields except "firstname"
+	/// <p/>In this example, StandardAnalyzer will be used for all fields except "firstname"
 	/// and "lastname", for which KeywordAnalyzer will be used.
 	/// 
-	/// <p>A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing
+	/// <p/>A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing
 	/// and query parsing.
 	/// </summary>
 	public class PerFieldAnalyzerWrapper:Analyzer

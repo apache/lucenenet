@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Payloads
 	/// to transform the cumulative effects of payload scores for a document.
 	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Payloads.PayloadTermQuery for more information">
+	/// <seealso cref="Lucene.Net.Search.Payloads.PayloadTermQuery"> for more information
 	/// 
 	/// <p/>
 	/// This class and its derivations are experimental and subject to change

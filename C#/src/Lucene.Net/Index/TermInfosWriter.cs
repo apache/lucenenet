@@ -23,8 +23,8 @@ using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	/// <summary>This stores a monotonically increasing set of <Term, TermInfo> pairs in a
+
+    /// <summary>This stores a monotonically increasing set of &lt;Term, TermInfo&gt; pairs in a
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
@@ -158,8 +158,8 @@ namespace Lucene.Net.Index
 			}
 			return utf16Result1.length - utf16Result2.length;
 		}
-		
-		/// <summary>Adds a new <<fieldNumber, termBytes>, TermInfo> pair to the set.
+
+        /// <summary>Adds a new &lt;fieldNumber, termBytes&gt;, TermInfo> pair to the set.
 		/// Term must be lexicographically greater than all previous Terms added.
 		/// TermInfo pointers must be positive and greater than all previous.
 		/// </summary>

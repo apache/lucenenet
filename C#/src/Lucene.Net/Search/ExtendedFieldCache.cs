@@ -28,9 +28,11 @@ namespace Lucene.Net.Search.ExtendedFieldCache_old
 	/// <deprecated> Use {@link FieldCache}, this will be removed in Lucene 3.0
 	/// 
 	/// </deprecated>
+    [Obsolete("Use FieldCache, this will be removed in Lucene 3.0")]
 	public struct ExtendedFieldCache_Fields{
 		/// <deprecated> Use {@link FieldCache#DEFAULT}; this will be removed in Lucene 3.0 
 		/// </deprecated>
+        [Obsolete("Use FieldCache.DEFAULT; this will be removed in Lucene 3.0 ")]
 		public readonly static ExtendedFieldCache EXT_DEFAULT;
 		static ExtendedFieldCache_Fields()
 		{
@@ -42,21 +44,25 @@ namespace Lucene.Net.Search.ExtendedFieldCache_old
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		new long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.LongParser parser);
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
 		/// </deprecated>
+        [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		new double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.DoubleParser parser);
 	}
 
 	/// <deprecated> Use {@link FieldCache.LongParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.LongParser, this will be removed in Lucene 3.0 ")]
 	public interface LongParser:Lucene.Net.Search.LongParser
 	{
 	}
 
 	/// <deprecated> Use {@link FieldCache.DoubleParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.DoubleParser, this will be removed in Lucene 3.0 ")]
 	public interface DoubleParser:Lucene.Net.Search.DoubleParser
 	{
 	}

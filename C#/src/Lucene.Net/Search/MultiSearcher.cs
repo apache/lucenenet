@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements search over a set of <code>Searchables</code>.
 	/// 
-	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
+	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
 	/// or {@link #Search(Query,Filter)} methods.
 	/// </summary>
 	public class MultiSearcher:Searcher

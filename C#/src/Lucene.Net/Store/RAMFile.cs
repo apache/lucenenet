@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 		private System.Collections.ArrayList buffers = new System.Collections.ArrayList();
 		internal long length;
 		internal RAMDirectory directory;
-		internal long sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
+		internal long sizeInBytes; 
 		
 		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
 		private long lastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
@@ -80,21 +80,22 @@ namespace Lucene.Net.Store
 		
 		internal byte[] AddBuffer(int size)
 		{
-			lock (this)
-			{
-				byte[] buffer = NewBuffer(size);
-				if (directory != null)
-					lock (directory)
-					{
-						// Ensure addition of buffer and adjustment to directory size are atomic wrt directory
-						buffers.Add(buffer);
-						directory.sizeInBytes += size;
-						sizeInBytes += size;
-					}
-				else
-					buffers.Add(buffer);
-				return buffer;
-			}
+            byte[] buffer = NewBuffer(size);
+            lock (this)
+            {
+                buffers.Add(buffer);
+                sizeInBytes += size;
+            }
+
+            if (directory != null)
+            {
+                lock (directory) //{{DIGY}} what if directory gets null in the mean time?
+                {
+                    directory.sizeInBytes += size;
+                }
+            }
+
+            return buffer;
 		}
 		
 		public /*internal*/ byte[] GetBuffer(int index)
@@ -125,13 +126,16 @@ namespace Lucene.Net.Store
 			return new byte[size];
 		}
 		
-		// Only valid if in a directory
+		
 		public /*internal*/ virtual long GetSizeInBytes()
 		{
-			lock (directory)
-			{
-				return sizeInBytes;
-			}
+            lock (this)
+            {
+                lock (directory)
+                {
+                    return sizeInBytes;
+                }
+            }
 		}
 
         public long length_ForNUnit

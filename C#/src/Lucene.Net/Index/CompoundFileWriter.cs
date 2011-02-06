@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	
 	
 	/// <summary> Combines multiple files into a single compound file.
-	/// The file format:<br>
+	/// The file format:<br/>
 	/// <ul>
 	/// <li>VInt fileCount</li>
 	/// <li>{Directory}

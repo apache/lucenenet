@@ -21,87 +21,22 @@ using BitVector = Lucene.Net.Util.BitVector;
 
 namespace Lucene.Net.Index
 {
-	
-	class AllTermDocs : TermDocs
+
+    class AllTermDocs : AbstractAllTermDocs
 	{
 		protected internal BitVector deletedDocs;
-		protected internal int maxDoc;
-		protected internal int doc = - 1;
-		
-		protected internal AllTermDocs(SegmentReader parent)
+				
+		protected internal AllTermDocs(SegmentReader parent) : base(parent.MaxDoc())
 		{
 			lock (parent)
 			{
 				this.deletedDocs = parent.deletedDocs;
 			}
-			this.maxDoc = parent.MaxDoc();
 		}
-		
-		public virtual void  Seek(Term term)
-		{
-			if (term == null)
-			{
-				doc = - 1;
-			}
-			else
-			{
-				throw new System.NotSupportedException();
-			}
-		}
-		
-		public virtual void  Seek(TermEnum termEnum)
-		{
-			throw new System.NotSupportedException();
-		}
-		
-		public virtual int Doc()
-		{
-			return doc;
-		}
-		
-		public virtual int Freq()
-		{
-			return 1;
-		}
-		
-		public virtual bool Next()
-		{
-			return SkipTo(doc + 1);
-		}
-		
-		public virtual int Read(int[] docs, int[] freqs)
-		{
-			int length = docs.Length;
-			int i = 0;
-			while (i < length && doc < maxDoc)
-			{
-				if (deletedDocs == null || !deletedDocs.Get(doc))
-				{
-					docs[i] = doc;
-					freqs[i] = 1;
-					++i;
-				}
-				doc++;
-			}
-			return i;
-		}
-		
-		public virtual bool SkipTo(int target)
-		{
-			doc = target;
-			while (doc < maxDoc)
-			{
-				if (deletedDocs == null || !deletedDocs.Get(doc))
-				{
-					return true;
-				}
-				doc++;
-			}
-			return false;
-		}
-		
-		public virtual void  Close()
-		{
-		}
+
+        public override bool IsDeleted(int doc)
+        {
+            return deletedDocs != null && deletedDocs.Get(doc);
+        }
 	}
 }

@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
 	
 	/// <summary> A Query that matches documents within an exclusive range of terms.
 	/// 
-	/// <p>This query matches the documents looking for terms that fall into the
+	/// <p/>This query matches the documents looking for terms that fall into the
 	/// supplied range according to {@link String#compareTo(String)}. It is not intended
 	/// for numerical ranges, use {@link NumericRangeQuery} instead.
 	/// 
-	/// <p>This query uses the {@link
+	/// <p/>This query uses the {@link
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
 	/// rewrite method.
 	/// </summary>
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 		/// <summary> Constructs a query selecting all terms greater/equal than <code>lowerTerm</code>
 		/// but less/equal than <code>upperTerm</code>. 
 		/// 
-		/// <p>
+		/// <p/>
 		/// If an endpoint is null, it is said 
 		/// to be "open". Either or both endpoints may be open.  Open endpoints may not 
 		/// be exclusive (you can't select all but the first or last term without 
@@ -75,16 +75,16 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Constructs a query selecting all terms greater/equal than
 		/// <code>lowerTerm</code> but less/equal than <code>upperTerm</code>.
-		/// <p>
+		/// <p/>
 		/// If an endpoint is null, it is said 
 		/// to be "open". Either or both endpoints may be open.  Open endpoints may not 
 		/// be exclusive (you can't select all but the first or last term without 
 		/// explicitly specifying the term to exclude.)
-		/// <p>
+		/// <p/>
 		/// If <code>collator</code> is not null, it will be used to decide whether
 		/// index terms are within the given range, rather than using the Unicode code
 		/// point order in which index terms are stored.
-		/// <p>
+		/// <p/>
 		/// <strong>WARNING:</strong> Using this constructor and supplying a non-null
 		/// value in the <code>collator</code> parameter will cause every single 
 		/// index Term in the Field referenced by lowerTerm and/or upperTerm to be

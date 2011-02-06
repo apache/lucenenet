@@ -39,11 +39,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>The scorerDocQueue contains all subscorers ordered by their current doc(),
 		/// with the minimum at the top.
-		/// <br>The scorerDocQueue is initialized the first time next() or skipTo() is called.
-		/// <br>An exhausted scorer is immediately removed from the scorerDocQueue.
-		/// <br>If less than the minimumNrMatchers scorers
+		/// <br/>The scorerDocQueue is initialized the first time next() or skipTo() is called.
+		/// <br/>An exhausted scorer is immediately removed from the scorerDocQueue.
+		/// <br/>If less than the minimumNrMatchers scorers
 		/// remain in the scorerDocQueue next() and skipTo() return false.
-		/// <p>
+		/// <p/>
 		/// After each to call to next() or skipTo()
 		/// <code>currentSumScore</code> is the total score of the current matching doc,
 		/// <code>nrMatchers</code> is the number of matching scorers,
@@ -64,10 +64,10 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="minimumNrMatchers">The positive minimum number of subscorers that should
 		/// match to match this query.
-		/// <br>When <code>minimumNrMatchers</code> is bigger than
+		/// <br/>When <code>minimumNrMatchers</code> is bigger than
 		/// the number of <code>subScorers</code>,
 		/// no matches will be produced.
-		/// <br>When minimumNrMatchers equals the number of subScorers,
+		/// <br/>When minimumNrMatchers equals the number of subScorers,
 		/// it more efficient to use <code>ConjunctionScorer</code>.
 		/// </param>
 		public DisjunctionSumScorer(System.Collections.IList subScorers, int minimumNrMatchers):base(null)
@@ -118,10 +118,11 @@ namespace Lucene.Net.Search
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
 		/// {@link HitCollector#Collect(int, float)}.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector) instead.")]
 		public override void  Score(HitCollector hc)
 		{
 			Score(new HitCollectorWrapper(hc));
@@ -129,7 +130,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		public override void  Score(Collector collector)
 		{
@@ -153,6 +154,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector hc, int max)
 		{
 			return Score(new HitCollectorWrapper(hc), max, DocID());
@@ -185,6 +187,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
@@ -203,19 +206,19 @@ namespace Lucene.Net.Search
 		/// top of the <code>scorerDocQueue</code>.
 		/// Repeat until at least the minimum number of subscorers match on the same
 		/// document and all subscorers are after that document or are exhausted.
-		/// <br>On entry the <code>scorerDocQueue</code> has at least <code>minimumNrMatchers</code>
+		/// <br/>On entry the <code>scorerDocQueue</code> has at least <code>minimumNrMatchers</code>
 		/// available. At least the scorer with the minimum document number will be advanced.
 		/// </summary>
 		/// <returns> true iff there is a match.
-		/// <br>In case there is a match, </code>currentDoc</code>, </code>currentSumScore</code>,
-		/// and </code>nrMatchers</code> describe the match.
+		/// <br/>In case there is a match, <code>currentDoc</code>, <code>currentSumScore</code>,
+		/// and <code>nrMatchers</code> describe the match.
 		/// 
 		/// TODO: Investigate whether it is possible to use skipTo() when
 		/// the minimum number of matchers is bigger than one, ie. try and use the
 		/// character of ConjunctionScorer for the minimum number of matchers.
 		/// Also delay calling score() on the sub scorers until the minimum number of
 		/// matchers is reached.
-		/// <br>For this, a Scorer array with minimumNrMatchers elements might
+		/// <br/>For this, a Scorer array with minimumNrMatchers elements might
 		/// hold Scorers at currentDoc that are temporarily popped from scorerQueue.
 		/// </returns>
 		protected internal virtual bool AdvanceAfterCurrent()
@@ -267,6 +270,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead. ")]
 		public override int Doc()
 		{
 			return currentDoc;
@@ -286,9 +290,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Skips to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// When this method is used the {@link #Explain(int)} method should not be
-		/// used. <br>
+		/// used. <br/>
 		/// The implementation uses the skipTo() method on the subscorers.
 		/// 
 		/// </summary>
@@ -298,15 +302,16 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Advance(int)} instead.
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return Advance(target) != NO_MORE_DOCS;
 		}
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
-		/// greater than or equal to a given target. <br>
+		/// greater than or equal to a given target. <br/>
 		/// When this method is used the {@link #Explain(int)} method should not be
-		/// used. <br>
+		/// used. <br/>
 		/// The implementation uses the skipTo() method on the subscorers.
 		/// 
 		/// </summary>

@@ -131,6 +131,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next(Token reusableToken)
 		{
 			return base.Next(reusableToken);
@@ -139,6 +140,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
 		/// not be overridden. Delegates to the backwards compatibility layer. 
 		/// </deprecated>
+        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
 		public override Token Next()
 		{
 			return base.Next();

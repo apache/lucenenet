@@ -179,6 +179,7 @@ namespace Lucene.Net.Search.Spans
 		/// </deprecated>
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
+        [Obsolete("use ExtractTerms instead")]
 		public override System.Collections.ICollection GetTerms()
 		{
 			return include.GetTerms();

@@ -232,6 +232,7 @@
     <Compile Include="Document\SetBasedFieldSelector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Index\AbstractAllTermDocs.cs" />
     <Compile Include="Index\AllTermDocs.cs" />
     <Compile Include="Index\BufferedDeletes.cs" />
     <Compile Include="Index\ByteBlockPool.cs" />
@@ -562,6 +563,7 @@
     </Compile>
     <Compile Include="Search\FilterManager.cs" />
     <Compile Include="Search\Function\ByteFieldSource.cs" />
+    <Compile Include="Search\Function\CustomScoreProvider.cs" />
     <Compile Include="Search\Function\CustomScoreQuery.cs" />
     <Compile Include="Search\Function\DocValues.cs" />
     <Compile Include="Search\Function\FieldCacheSource.cs" />

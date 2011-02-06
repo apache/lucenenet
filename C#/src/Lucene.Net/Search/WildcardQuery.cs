@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// a Wildcard term should not start with one of the wildcards <code>*</code> or
 	/// <code>?</code>.
 	/// 
-	/// <p>This query uses the {@link
+	/// <p/>This query uses the {@link
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
 	/// rewrite method.
 	/// 
@@ -56,6 +56,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns the pattern term.</summary>
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.MultiTermQuery.GetTerm()")]
 		public override Term GetTerm()
 		{
 			return term;

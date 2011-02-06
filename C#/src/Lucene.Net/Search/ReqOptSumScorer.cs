@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>A Scorer for queries with a required part and an optional part.
 	/// Delays skipTo() on the optional part until a score() is needed.
-	/// <br>
+	/// <br/>
 	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)}.
 	/// </summary>
 	class ReqOptSumScorer:Scorer
@@ -46,6 +46,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
 		{
 			return reqScorer.Next();
@@ -58,6 +59,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Advance(int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return reqScorer.SkipTo(target);
@@ -70,6 +72,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public override int Doc()
 		{
 			return reqScorer.Doc();

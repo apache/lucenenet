@@ -24,25 +24,25 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> A ranked list of documents, used to hold search results.
-	/// <p>
+	/// <p/>
 	/// <b>Caution:</b> Iterate only over the hits needed. Iterating over all hits is
 	/// generally not desirable and may be the source of performance issues. If you
 	/// need to iterate over many or all hits, consider using the search method that
 	/// takes a {@link HitCollector}.
-	/// </p>
-	/// <p>
+	/// <p/>
+	/// <p/>
 	/// <b>Note:</b> Deleting matching documents concurrently with traversing the
 	/// hits, might, when deleting hits that were not yet retrieved, decrease
 	/// {@link #Length()}. In such case,
 	/// {@link java.util.ConcurrentModificationException
 	/// ConcurrentModificationException} is thrown when accessing hit <code>n</code>
-	/// &ge; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
+	/// &gt; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
 	/// _at_start).
 	/// 
 	/// </summary>
 	/// <deprecated> see {@link Searcher#Search(Query, int)},
 	/// {@link Searcher#Search(Query, Filter, int)} and
-	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br>
+	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br/>
 	/// 
 	/// <pre>
 	/// TopDocs topDocs = searcher.Search(query, numHits);
@@ -54,6 +54,7 @@ namespace Lucene.Net.Search
 	/// ...
 	/// </pre>
 	/// </deprecated>
+    [Obsolete("see Searcher.Search(Query, int), Searcher.Search(Query, Filter, int) and Searcher.Search(Query, Filter, int, Sort)")]
 	public sealed class Hits
 	{
 		private Weight weight;
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the stored fields of the n<sup>th</sup> document in this set.
-		/// <p>Documents are cached, so that repeated requests for the same element may
+		/// <p/>Documents are cached, so that repeated requests for the same element may
 		/// return the same Document object.
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -219,12 +220,12 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Returns a {@link HitIterator} to navigate the Hits.  Each item returned
 		/// from {@link Iterator#next()} is a {@link Hit}.
-		/// <p>
+		/// <p/>
 		/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
 		/// hits is generally not desirable and may be the source of
 		/// performance issues. If you need to iterate over many or all hits, consider
 		/// using a search method that takes a {@link HitCollector}.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		public System.Collections.IEnumerator Iterator()
 		{

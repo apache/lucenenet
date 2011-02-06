@@ -5699,5 +5699,122 @@ namespace Lucene.Net.Index
 			w.Close();
 			d.Close();
 		}
+
+        [Test]
+        public void TestEmbeddedFFFF()
+        {
+
+            Directory d = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(d, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+            Document doc = new Document();
+            doc.Add(new Field("field", "a a\uffffb", Field.Store.NO, Field.Index.ANALYZED));
+            w.AddDocument(doc);
+            doc = new Document();
+            doc.Add(new Field("field", "a", Field.Store.NO, Field.Index.ANALYZED));
+            w.AddDocument(doc);
+            w.Close();
+
+            _TestUtil.CheckIndex(d);
+            d.Close();
+        }
+
+        [Test]
+        public void TestNoDocsIndex()
+        {
+            Directory dir = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+            writer.SetUseCompoundFile(false);
+            //ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            //writer.SetInfoStream(new PrintStream(bos));
+            writer.AddDocument(new Document());
+            writer.Close();
+
+            _TestUtil.CheckIndex(dir);
+            dir.Close();
+        }
+
+        class LUCENE_2095_Thread : SupportClass.ThreadClass
+        {
+            IndexWriter w = null;
+            Directory dir = null;
+            long endTime = 0;
+            System.Collections.IList failed = null;
+            int finalI = 0;
+
+            public LUCENE_2095_Thread(IndexWriter w, long endTime, Directory dir, System.Collections.IList failed, int finalI)
+            {
+                this.w = w;
+                this.dir = dir;
+                this.endTime = endTime;
+                this.failed = failed;
+                this.finalI = finalI;
+            }
+
+            override public void Run()
+            {
+                try
+                {
+                    Document doc = new Document();
+                    IndexReader r = IndexReader.Open(dir);
+                    Field f = new Field("f", "", Field.Store.NO, Field.Index.NOT_ANALYZED);
+                    doc.Add(f);
+                    int count = 0;
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime && failed.Count == 0)
+                    {
+                        for (int j = 0; j < 10; j++)
+                        {
+                            String s = finalI + "_" + (count++).ToString();
+                            f.SetValue(s);
+                            w.AddDocument(doc);
+                            w.Commit();
+                            IndexReader r2 = r.Reopen();
+                            Assert.IsTrue(r2 != r);
+                            r.Close();
+                            r = r2;
+                            Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s);
+                        }
+                    }
+                    r.Close();
+                }
+                catch (Exception t)
+                {
+                    lock (failed)
+                    {
+                        failed.Add(this);
+                    }
+                    throw t;
+                }
+            }
+        }
+
+        // LUCENE-2095: make sure with multiple threads commit
+        // doesn't return until all changes are in fact in the
+        // index
+        [Test]
+        public void TestCommitThreadSafety()
+        {
+            int NUM_THREADS = 5;
+            double RUN_SEC = 0.5;
+            Directory dir = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+            w.Commit();
+            System.Collections.IList failed = new System.Collections.ArrayList();
+            LUCENE_2095_Thread[] threads = new LUCENE_2095_Thread[NUM_THREADS];
+            long endTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + ((long)(RUN_SEC * 1000));
+            for (int i = 0; i < NUM_THREADS; i++)
+            {
+                int finalI = i;
+
+                threads[i] = new LUCENE_2095_Thread(w, endTime, dir, failed, finalI);
+                threads[i].Start();
+            }
+            for (int i = 0; i < NUM_THREADS; i++)
+            {
+                threads[i].Join();
+            }
+            w.Close();
+            dir.Close();
+            Assert.AreEqual(0, failed.Count);
+        }
 	}
 }

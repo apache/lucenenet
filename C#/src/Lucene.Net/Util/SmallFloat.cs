@@ -30,9 +30,9 @@ namespace Lucene.Net.Util
 	{
 		
 		/// <summary>Converts a 32 bit float to an 8 bit float.
-		/// <br>Values less than zero are all mapped to zero.
-		/// <br>Values are truncated (rounded down) to the nearest 8 bit value.
-		/// <br>Values between zero and the smallest representable value
+		/// <br/>Values less than zero are all mapped to zero.
+		/// <br/>Values are truncated (rounded down) to the nearest 8 bit value.
+		/// <br/>Values between zero and the smallest representable value
 		/// are rounded up.
 		/// 
 		/// </summary>
@@ -85,9 +85,9 @@ namespace Lucene.Net.Util
 		//
 		
 		/// <summary>floatToByte(b, mantissaBits=3, zeroExponent=15)
-		/// <br>smallest non-zero value = 5.820766E-10
-		/// <br>largest value = 7.5161928E9
-		/// <br>epsilon = 0.125
+		/// <br/>smallest non-zero value = 5.820766E-10
+		/// <br/>largest value = 7.5161928E9
+		/// <br/>epsilon = 0.125
 		/// </summary>
 		public static sbyte FloatToByte315(float f)
 		{
@@ -118,9 +118,9 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary>floatToByte(b, mantissaBits=5, zeroExponent=2)
-		/// <br>smallest nonzero value = 0.033203125
-		/// <br>largest value = 1984.0
-		/// <br>epsilon = 0.03125
+		/// <br/>smallest nonzero value = 0.033203125
+		/// <br/>largest value = 1984.0
+		/// <br/>epsilon = 0.03125
 		/// </summary>
 		public static sbyte FloatToByte52(float f)
 		{

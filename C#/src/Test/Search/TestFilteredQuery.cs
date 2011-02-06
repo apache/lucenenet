@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> FilteredQuery JUnit tests.
 	/// 
-	/// <p>Created: Apr 21, 2004 1:21:46 PM
+	/// <p/>Created: Apr 21, 2004 1:21:46 PM
 	/// 
 	/// 
 	/// </summary>

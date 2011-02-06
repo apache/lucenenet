@@ -27,6 +27,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
 	/// </deprecated>
+    [Obsolete("Use TopScoreDocCollector and TopDocs instead. Hits will be removed in Lucene 3.0.")]
 	public class HitIterator : System.Collections.IEnumerator
 	{
 		/// <summary> Returns a {@link Hit} instance representing the next hit in {@link Hits}.

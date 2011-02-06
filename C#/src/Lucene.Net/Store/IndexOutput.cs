@@ -136,6 +136,7 @@ namespace Lucene.Net.Store
 		/// <deprecated> -- please pre-convert to utf8 bytes
 		/// instead or use {@link #writeString}
 		/// </deprecated>
+        [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(System.String s, int start, int length)
 		{
 			int end = start + length;
@@ -169,6 +170,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <deprecated> -- please pre-convert to utf8 bytes instead or use {@link #writeString}
 		/// </deprecated>
+        [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(char[] s, int start, int length)
 		{
 			int end = start + length;
@@ -239,7 +241,7 @@ namespace Lucene.Net.Store
 		/// nothing (it's optional for a Directory to implement
 		/// it).  But, certain Directory implementations (for
 		/// </summary>
-		/// <seealso cref="FSDirectory) can use this to inform the">
+		/// <seealso cref="FSDirectory"> can use this to inform the
 		/// underlying IO system to pre-allocate the file to the
 		/// specified size.  If the length is longer than the
 		/// current file length, the bytes added to the file are

@@ -28,8 +28,8 @@ namespace Lucene.Net.Index
 	/// <summary> Information about a segment such as it's name, directory, and files related
 	/// to the segment.
 	/// 
-	/// * <p><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// * <p/><b>NOTE:</b> This API is new and still experimental
+	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	public sealed class SegmentInfo : System.ICloneable
 	{
@@ -410,8 +410,8 @@ namespace Lucene.Net.Index
 				return IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.DELETES_EXTENSION, delGen);
 			}
 		}
-		
-		/// <summary> Returns true if this field for this segment has saved a separate norms file (_<segment>_N.sX).
+
+        /// <summary> Returns true if this field for this segment has saved a separate norms file (_&lt;segment&gt;_N.sX).
 		/// 
 		/// </summary>
 		/// <param name="fieldNumber">the field index to check

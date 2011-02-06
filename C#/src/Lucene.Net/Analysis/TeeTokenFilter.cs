@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
 	/// d.add(new Field("f3", final3));
 	/// d.add(new Field("f4", final4));
 	/// </pre>
-	/// In this example, <code>sink1</code> and <code>sink2<code> will both get tokens from both
+	/// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
 	/// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
 	/// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
 	/// It is important, that tees are consumed before sinks (in the above example, the field names must be
@@ -61,6 +61,7 @@ namespace Lucene.Net.Analysis
 	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
 	/// 
 	/// </deprecated>
+    [Obsolete("Use TeeSinkTokenFilter instead")]
 	public class TeeTokenFilter:TokenFilter
 	{
 		internal SinkTokenizer sink;
@@ -69,7 +70,8 @@ namespace Lucene.Net.Analysis
 		{
 			this.sink = sink;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Analysis.TokenStream.Next(Lucene.Net.Analysis.Token)")]
 		public override Token Next(Token reusableToken)
 		{
 			System.Diagnostics.Debug.Assert(reusableToken != null);

@@ -96,6 +96,7 @@ namespace Lucene.Net.Search
 				{
 					if (i == TOKENS.Length)
 						return false;
+                    ClearAttributes();
 					termAtt.SetTermBuffer(TOKENS[i]);
 					offsetAtt.SetOffset(i, i);
 					posIncrAtt.SetPositionIncrement(INCREMENTS[i]);

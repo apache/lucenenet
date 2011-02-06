@@ -31,13 +31,13 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Test FieldScoreQuery search.
-	/// <p>
+	/// <p/>
 	/// Tests here create an index with a few documents, each having
 	/// an int value indexed  field and a float value indexed field.
 	/// The values of these fields are later used for scoring.
-	/// <p>
+	/// <p/>
 	/// The rank tests use Hits to verify that docs are ordered (by score) as expected.
-	/// <p>
+	/// <p/>
 	/// The exact score tests use TopDocs top to verify the exact score.  
 	/// </summary>
     [TestFixture]
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Function
 	{
 		
 		/* @override constructor */
-		public TestFieldScoreQuery(System.String name):base(name)
+		public TestFieldScoreQuery(System.String name):base(name, true)
 		{
 		}
         public TestFieldScoreQuery()
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Function
 			expectedArrayTypes[FieldScoreQuery.Type.FLOAT] = new float[0];
 			
 			IndexSearcher s = new IndexSearcher(dir);
-			System.Object innerArray = null;
+			System.Object[] innerArray = new Object[s.GetIndexReader().GetSequentialSubReaders().Length];
 			
 			bool warned = false; // print warning once.
 			for (int i = 0; i < 10; i++)
@@ -216,14 +216,14 @@ namespace Lucene.Net.Search.Function
 					{
 						if (i == 0)
 						{
-							innerArray = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
-							Log(i + ".  compare: " + innerArray.GetType() + " to " + expectedArrayTypes[tp].GetType());
-							Assert.AreEqual(innerArray.GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
+							innerArray[j] = q.valSrc_ForNUnit.GetValues(reader).GetInnerArray();
+							Log(i + ".  compare: " + innerArray[j].GetType() + " to " + expectedArrayTypes[tp].GetType());
+							Assert.AreEqual(innerArray[j].GetType(), expectedArrayTypes[tp].GetType(), "field values should be cached in the correct array type!");
 						}
 						else
 						{
-							Log(i + ".  compare: " + innerArray + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
-							Assert.AreSame(innerArray, q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
+							Log(i + ".  compare: " + innerArray[j] + " to " + q.valSrc_ForNUnit.GetValues(reader).GetInnerArray());
+							Assert.AreSame(innerArray[j], q.valSrc_ForNUnit.GetValues(reader).GetInnerArray(), "field values should be cached and reused!");
 						}
 					}
 					catch (System.NotSupportedException e)
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Function
 		
 		private System.String TestName()
 		{
-			return GetType().Name + "." + "getName()"; // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            return Lucene.Net.TestCase.GetFullName();
 		}
 	}
 }

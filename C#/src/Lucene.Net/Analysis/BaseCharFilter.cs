@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
 	/// {@link #addOffCorrectMap}, and then invoke the correct
 	/// method to correct an offset.
 	/// 
-	/// <p><b>NOTE</b>: This class is not particularly efficient.
+	/// <p/><b>NOTE</b>: This class is not particularly efficient.
 	/// For example, a new class instance is created for every
 	/// call to {@link #addOffCorrectMap}, which is then appended
 	/// to a private list.

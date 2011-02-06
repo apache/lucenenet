@@ -25,8 +25,8 @@ namespace Lucene.Net.Search
 	
 	/// <summary>An alternative to BooleanScorer that also allows a minimum number
 	/// of optional scorers that should match.
-	/// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
-	/// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
+	/// <br/>Implements skipTo(), and has no limitations on the numbers of added scorers.
+	/// <br/>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
 	/// </summary>
 	class BooleanScorer2:Scorer
 	{
@@ -245,6 +245,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #DocID()} instead. 
 			/// </deprecated>
+            [Obsolete("use DocID() instead. ")]
 			public override int Doc()
 			{
 				return scorer.Doc();
@@ -255,6 +256,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #NextDoc()} instead. 
 			/// </deprecated>
+            [Obsolete("use NextDoc() instead. ")]
 			public override bool Next()
 			{
 				return scorer.NextDoc() != NO_MORE_DOCS;
@@ -265,6 +267,7 @@ namespace Lucene.Net.Search
 			}
 			/// <deprecated> use {@link #Advance(int)} instead. 
 			/// </deprecated>
+            [Obsolete("use Advance(int) instead. ")]
 			public override bool SkipTo(int docNr)
 			{
 				return scorer.Advance(docNr) != NO_MORE_DOCS;
@@ -368,10 +371,11 @@ namespace Lucene.Net.Search
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
 		/// {@link HitCollector#Collect(int, float)}.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		/// <deprecated> use {@link #Score(Collector)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector) instead.")]
 		public override void  Score(HitCollector hc)
 		{
 			Score(new HitCollectorWrapper(hc));
@@ -379,7 +383,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
 		/// </param>
 		public override void  Score(Collector collector)
 		{
@@ -391,7 +395,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Expert: Collects matching documents in a range.
-		/// <br>Note that {@link #Next()} must be called once before this method is
+		/// <br/>Note that {@link #Next()} must be called once before this method is
 		/// called for the first time.
 		/// </summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
@@ -403,6 +407,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
 		/// </deprecated>
+        [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector hc, int max)
 		{
 			return Score(new HitCollectorWrapper(hc), max, DocID());
@@ -422,6 +427,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead. ")]
 		public override int Doc()
 		{
 			return countingSumScorer.Doc();
@@ -434,6 +440,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
@@ -453,6 +460,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Advance(int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead. ")]
 		public override bool SkipTo(int target)
 		{
 			return Advance(target) != NO_MORE_DOCS;

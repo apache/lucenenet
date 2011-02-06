@@ -41,11 +41,11 @@ namespace Lucene.Net.Search.Spans
 	
 	/// <summary> Tests basic search capabilities.
 	/// 
-	/// <p>Uses a collection of 1000 documents, each the english rendition of their
+	/// <p/>Uses a collection of 1000 documents, each the english rendition of their
 	/// document number.  For example, the document numbered 333 has text "three
 	/// hundred thirty three".
 	/// 
-	/// <p>Tests are each a single query, and its hits are checked to ensure that
+	/// <p/>Tests are each a single query, and its hits are checked to ensure that
 	/// all and only the correct documents are returned, thus providing end-to-end
 	/// testing of the indexing and search code.
 	/// 
@@ -358,8 +358,8 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		/// <summary>Skips to the first match beyond the current, whose document number is
-		/// greater than or equal to <i>target</i>. <p>Returns true iff there is such
-		/// a match.  <p>Behaves as if written: <pre>
+		/// greater than or equal to <i>target</i>. <p/>Returns true iff there is such
+		/// a match.  <p/>Behaves as if written: <pre>
 		/// boolean skipTo(int target) {
 		/// do {
 		/// if (!next())
