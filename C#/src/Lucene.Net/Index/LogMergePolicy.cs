@@ -20,22 +20,22 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary><p>This class implements a {@link MergePolicy} that tries
+	/// <summary><p/>This class implements a {@link MergePolicy} that tries
 	/// to merge segments into levels of exponentially
 	/// increasing size, where each level has fewer segments than
 	/// the value of the merge factor. Whenever extra segments
 	/// (beyond the merge factor upper bound) are encountered,
 	/// all segments within the level are merged. You can get or
 	/// set the merge factor using {@link #GetMergeFactor()} and
-	/// {@link #SetMergeFactor(int)} respectively.</p>
+	/// {@link #SetMergeFactor(int)} respectively.<p/>
 	/// 
-	/// <p>This class is abstract and requires a subclass to
+	/// <p/>This class is abstract and requires a subclass to
 	/// define the {@link #size} method which specifies how a
 	/// segment's size is determined.  {@link LogDocMergePolicy}
 	/// is one subclass that measures size by document count in
 	/// the segment.  {@link LogByteSizeMergePolicy} is another
 	/// subclass that measures size as the total byte size of the
-	/// file(s) for the segment.</p>
+	/// file(s) for the segment.<p/>
 	/// </summary>
 	
 	public abstract class LogMergePolicy:MergePolicy
@@ -85,9 +85,9 @@ namespace Lucene.Net.Index
 				writer.Message("LMP: " + message);
 		}
 		
-		/// <summary><p>Returns the number of segments that are merged at
+		/// <summary><p/>Returns the number of segments that are merged at
 		/// once and also controls the total number of segments
-		/// allowed to accumulate in the index.</p> 
+		/// allowed to accumulate in the index.<p/> 
 		/// </summary>
 		public virtual int GetMergeFactor()
 		{
@@ -100,8 +100,8 @@ namespace Lucene.Net.Index
 		/// faster, but indexing speed is slower.  With larger
 		/// values, more RAM is used during indexing, and while
 		/// searches on unoptimized indices are slower, indexing is
-		/// faster.  Thus larger values (> 10) are best for batch
-		/// index creation, and smaller values (< 10) for indices
+        /// faster.  Thus larger values (&gt; 10) are best for batch
+        /// index creation, and smaller values (&lt; 10) for indices
 		/// that are interactively maintained. 
 		/// </summary>
 		public virtual void  SetMergeFactor(int mergeFactor)
@@ -126,8 +126,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns true if newly flushed and newly merge segments</summary>
-		/// <seealso cref="">
-		/// #setUseCompoundFile 
+        /// <seealso cref="SetUseCompoundFile">
 		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
@@ -152,8 +151,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns true if newly flushed and newly merge doc
 		/// store segment files (term vectors and stored fields)
 		/// </summary>
-		/// <seealso cref="">
-		/// #setUseCompoundDocStore 
+        /// <seealso cref="SetUseCompoundDocStore ">
 		/// </seealso>
 		public virtual bool GetUseCompoundDocStore()
 		{
@@ -514,20 +512,20 @@ namespace Lucene.Net.Index
 			return spec;
 		}
 		
-		/// <summary><p>Determines the largest segment (measured by
+		/// <summary><p/>Determines the largest segment (measured by
 		/// document count) that may be merged with other segments.
 		/// Small values (e.g., less than 10,000) are best for
 		/// interactive indexing, as this limits the length of
 		/// pauses while indexing to a few seconds.  Larger values
 		/// are best for batched indexing and speedier
-		/// searches.</p>
+		/// searches.<p/>
 		/// 
-		/// <p>The default value is {@link Integer#MAX_VALUE}.</p>
+		/// <p/>The default value is {@link Integer#MAX_VALUE}.<p/>
 		/// 
-		/// <p>The default merge policy ({@link
+		/// <p/>The default merge policy ({@link
 		/// LogByteSizeMergePolicy}) also allows you to set this
 		/// limit by net size (in MB) of the segment, using {@link
-		/// LogByteSizeMergePolicy#setMaxMergeMB}.</p>
+		/// LogByteSizeMergePolicy#setMaxMergeMB}.<p/>
 		/// </summary>
 		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
 		{

@@ -22,13 +22,13 @@ namespace Lucene.Net.Store
 	
 	/// <summary> Expert: A Directory instance that switches files between
 	/// two other Directory instances.
-	/// <p>Files with the specified extensions are placed in the
+	/// <p/>Files with the specified extensions are placed in the
 	/// primary directory; others are placed in the secondary
 	/// directory.  The provided Set must not change once passed
 	/// to this class, and must allow multiple threads to call
-	/// contains at once.</p>
+	/// contains at once.<p/>
 	/// 
-	/// <p><b>NOTE</b>: this API is new and experimental and is
+	/// <p/><b>NOTE</b>: this API is new and experimental and is
 	/// subject to suddenly change in the next release.
 	/// </summary>
 	
@@ -85,7 +85,8 @@ namespace Lucene.Net.Store
 			Array.Copy(secondaryFiles, 0, files, primaryFiles.Length, secondaryFiles.Length);
 			return files;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			return ListAll();
@@ -134,7 +135,8 @@ namespace Lucene.Net.Store
 		{
 			GetDirectory(name).DeleteFile(name);
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.RenameFile(string, string)")]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			GetDirectory(from).RenameFile(from, to);

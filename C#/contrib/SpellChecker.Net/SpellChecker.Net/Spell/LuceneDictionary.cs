@@ -22,18 +22,11 @@ using Term = Lucene.Net.Index.Term;
 
 namespace SpellChecker.Net.Search.Spell
 {
-	
     /// <summary> Lucene Dictionary
     /// 
     /// </summary>
-    /// <author>  Nicolas Maisonneuve
-    /// </author>
     public class LuceneDictionary : Dictionary
     {
-        virtual public System.Collections.IEnumerator GetWordsIterator()
-        {
-            return new LuceneIterator(this);
-        }
         internal IndexReader reader;
         internal System.String field;
 		
@@ -42,88 +35,84 @@ namespace SpellChecker.Net.Search.Spell
             this.reader = reader;
             this.field = field;
         }
+
+        virtual public System.Collections.IEnumerator GetWordsIterator()
+        {
+            return new LuceneIterator(this);
+        }
+
+        public System.Collections.IEnumerator GetEnumerator()
+        {
+            return GetWordsIterator();
+        }
 		
 		
         internal sealed class LuceneIterator : System.Collections.IEnumerator
         {
-            private void  InitBlock(LuceneDictionary enclosingInstance)
+            private TermEnum termEnum;
+            private Term actualTerm;
+            private bool hasNextCalled;
+
+            private LuceneDictionary enclosingInstance;
+			
+            public LuceneIterator(LuceneDictionary enclosingInstance)
             {
                 this.enclosingInstance = enclosingInstance;
+                try
+                {
+                    termEnum = enclosingInstance.reader.Terms(new Term(enclosingInstance.field, ""));
+                }
+                catch (System.IO.IOException ex)
+                {
+                    System.Console.Error.WriteLine(ex.StackTrace);
+                }
             }
-            private LuceneDictionary enclosingInstance;
+
+            //next()
             public System.Object Current
             {
                 get
                 {
-                    if (!has_next_called)
+                    if (!hasNextCalled)
                     {
                         MoveNext();
                     }
-                    has_next_called = false;
+                    hasNextCalled = false;
                     return (actualTerm != null) ? actualTerm.Text() : null;
                 }
-				
-            }
-            public LuceneDictionary Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-				
-            }
-            private TermEnum termEnum;
-            private Term actualTerm;
-            private bool has_next_called;
-			
-            public LuceneIterator(LuceneDictionary enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-                try
-                {
-                    termEnum = Enclosing_Instance.reader.Terms(new Term(Enclosing_Instance.field, ""));
-                }
-                catch (System.IO.IOException ex)
-                {
-                    System.Console.Error.WriteLine(ex.StackTrace);
-                }
+
             }
 			
-			
+            //hasNext()
             public bool MoveNext()
             {
-                has_next_called = true;
-                try
+                hasNextCalled = true;
+                
+                actualTerm = termEnum.Term();
+
+                // if there are no words return false
+                if (actualTerm == null) return false;
+
+                System.String fieldt = actualTerm.Field();
+                termEnum.Next();
+
+                // if the next word doesn't have the same field return false
+                if (fieldt != enclosingInstance.field)
                 {
-                    // if there is still words
-                    if (!termEnum.Next())
-                    {
-                        actualTerm = null;
-                        return false;
-                    }
-                    //  if the next word are in the field
-                    actualTerm = termEnum.Term();
-                    System.String fieldt = actualTerm.Field();
-                    if ((System.Object) fieldt != (System.Object) Enclosing_Instance.field)
-                    {
-                        actualTerm = null;
-                        return false;
-                    }
-                    return true;
-                }
-                catch (System.IO.IOException ex)
-                {
-                    System.Console.Error.WriteLine(ex.StackTrace);
+                    actualTerm = null;
                     return false;
                 }
+                return true;
             }
-			
-            public void  Remove()
+
+            public void Remove()
             {
+                throw new NotImplementedException();
             }
-			
-            public void  Reset()
+
+            public void Reset()
             {
+                throw new NotImplementedException();
             }
         }
     }

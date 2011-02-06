@@ -76,7 +76,8 @@ namespace Lucene.Net.Search
 		{
 			return delegee.Coord(overlap, maxOverlap);
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.Similarity.ScorePayload(string, byte[], int, int)")]
 		public override float ScorePayload(System.String fieldName, byte[] payload, int offset, int length)
 		{
 			return delegee.ScorePayload(fieldName, payload, offset, length);

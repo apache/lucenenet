@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary>A Scorer for queries with a required subscorer
 	/// and an excluding (prohibited) sub DocIdSetIterator.
-	/// <br>
+	/// <br/>
 	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)},
 	/// and it uses the skipTo() on the given scorers.
 	/// </summary>
@@ -46,6 +46,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
 		{
 			return NextDoc() != NO_MORE_DOCS;
@@ -71,12 +72,12 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Advance to non excluded doc.
-		/// <br>On entry:
+		/// <br/>On entry:
 		/// <ul>
-		/// <li>reqScorer != null,
-		/// <li>exclScorer != null,
-		/// <li>reqScorer was advanced once via next() or skipTo()
-		/// and reqScorer.doc() may still be excluded.
+		/// <li>reqScorer != null, </li>
+		/// <li>exclScorer != null, </li>
+		/// <li>reqScorer was advanced once via next() or skipTo() 
+        /// and reqScorer.doc() may still be excluded.</li>
 		/// </ul>
 		/// Advances reqScorer a non excluded required doc, if any.
 		/// </summary>
@@ -113,6 +114,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public override int Doc()
 		{
 			return reqScorer.Doc(); // reqScorer may be null when next() or skipTo() already return false
@@ -135,6 +137,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Advance(int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return Advance(target) != NO_MORE_DOCS;

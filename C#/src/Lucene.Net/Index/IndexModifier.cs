@@ -26,20 +26,20 @@ using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> <p>[Note that as of <b>2.1</b>, all but one of the
+	/// <summary> <p/>[Note that as of <b>2.1</b>, all but one of the
 	/// methods in this class are available via {@link
 	/// IndexWriter}.  The one method that is not available is
-	/// {@link #DeleteDocument(int)}.]</p>
+	/// {@link #DeleteDocument(int)}.]<p/>
 	/// 
 	/// A class to modify an index, i.e. to delete and add documents. This
 	/// class hides {@link IndexReader} and {@link IndexWriter} so that you
 	/// do not need to care about implementation details such as that adding
 	/// documents is done via IndexWriter and deletion is done via IndexReader.
 	/// 
-	/// <p>Note that you cannot create more than one <code>IndexModifier</code> object
+	/// <p/>Note that you cannot create more than one <code>IndexModifier</code> object
 	/// on the same directory at the same time.
 	/// 
-	/// <p>Example usage:
+	/// <p/>Example usage:
 	/// 
 	/// <!-- ======================================================== -->
 	/// <!-- = Java Sourcecode to HTML automatically converted code = -->
@@ -51,18 +51,18 @@ namespace Lucene.Net.Index
 	/// <!-- start source code -->
 	/// <td nowrap="nowrap" valign="top" align="left">
 	/// <code>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Analyzer&nbsp;analyzer&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">StandardAnalyzer</font><font color="#000000">()</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;create&nbsp;an&nbsp;index&nbsp;in&nbsp;/tmp/index,&nbsp;overwriting&nbsp;an&nbsp;existing&nbsp;one:</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">IndexModifier&nbsp;indexModifier&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">IndexModifier</font><font color="#000000">(</font><font color="#2a00ff">&#34;/tmp/index&#34;</font><font color="#000000">,&nbsp;analyzer,&nbsp;</font><font color="#7f0055"><b>true</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Document&nbsp;doc&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Document</font><font color="#000000">()</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.NOT_ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;body&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;a&nbsp;simple&nbsp;test&#34;</font><font color="#000000">,&nbsp;Field.Store.YES,&nbsp;Field.Index.ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">indexModifier.addDocument</font><font color="#000000">(</font><font color="#000000">doc</font><font color="#000000">)</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>int&nbsp;</b></font><font color="#000000">deleted&nbsp;=&nbsp;indexModifier.delete</font><font color="#000000">(</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Term</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">))</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">System.out.println</font><font color="#000000">(</font><font color="#2a00ff">&#34;Deleted&nbsp;&#34;&nbsp;</font><font color="#000000">+&nbsp;deleted&nbsp;+&nbsp;</font><font color="#2a00ff">&#34;&nbsp;document&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">indexModifier.flush</font><font color="#000000">()</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">System.out.println</font><font color="#000000">(</font><font color="#000000">indexModifier.docCount</font><font color="#000000">()&nbsp;</font><font color="#000000">+&nbsp;</font><font color="#2a00ff">&#34;&nbsp;docs&nbsp;in&nbsp;index&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
-	/// <font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">indexModifier.close</font><font color="#000000">()</font><font color="#000000">;</font></code>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">Analyzer&#160;analyzer&#160;=&#160;</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">StandardAnalyzer</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#3f7f5f">//&#160;create&#160;an&#160;index&#160;in&#160;/tmp/index,&#160;overwriting&#160;an&#160;existing&#160;one:</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">IndexModifier&#160;indexModifier&#160;=&#160;</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">IndexModifier</font><font color="#000000">(</font><font color="#2a00ff">&#34;/tmp/index&#34;</font><font color="#000000">,&#160;analyzer,&#160;</font><font color="#7f0055"><b>true</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">Document&#160;doc&#160;=&#160;</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">Document</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&#160;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">,&#160;Field.Store.YES,&#160;Field.Index.NOT_ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">doc.add</font><font color="#000000">(</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">Field</font><font color="#000000">(</font><font color="#2a00ff">&#34;body&#34;</font><font color="#000000">,&#160;</font><font color="#2a00ff">&#34;a&#160;simple&#160;test&#34;</font><font color="#000000">,&#160;Field.Store.YES,&#160;Field.Index.ANALYZED</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">indexModifier.addDocument</font><font color="#000000">(</font><font color="#000000">doc</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#7f0055"><b>int&#160;</b></font><font color="#000000">deleted&#160;=&#160;indexModifier.delete</font><font color="#000000">(</font><font color="#7f0055"><b>new&#160;</b></font><font color="#000000">Term</font><font color="#000000">(</font><font color="#2a00ff">&#34;id&#34;</font><font color="#000000">,&#160;</font><font color="#2a00ff">&#34;1&#34;</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">System.out.println</font><font color="#000000">(</font><font color="#2a00ff">&#34;Deleted&#160;&#34;&#160;</font><font color="#000000">+&#160;deleted&#160;+&#160;</font><font color="#2a00ff">&#34;&#160;document&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">indexModifier.flush</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">System.out.println</font><font color="#000000">(</font><font color="#000000">indexModifier.docCount</font><font color="#000000">()&#160;</font><font color="#000000">+&#160;</font><font color="#2a00ff">&#34;&#160;docs&#160;in&#160;index&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+	/// <font color="#ffffff">&#160;&#160;&#160;&#160;</font><font color="#000000">indexModifier.close</font><font color="#000000">()</font><font color="#000000">;</font></code>
 	/// </td>
 	/// <!-- end source code -->
 	/// </tr>
@@ -71,16 +71,16 @@ namespace Lucene.Net.Index
 	/// <!-- =       END of automatically generated HTML code       = -->
 	/// <!-- ======================================================== -->
 	/// 
-	/// <p>Not all methods of IndexReader and IndexWriter are offered by this
+	/// <p/>Not all methods of IndexReader and IndexWriter are offered by this
 	/// class. If you need access to additional methods, either use those classes
 	/// directly or implement your own class that extends <code>IndexModifier</code>.
 	/// 
-	/// <p>Although an instance of this class can be used from more than one
+	/// <p/>Although an instance of this class can be used from more than one
 	/// thread, you will not get the best performance. You might want to use
 	/// IndexReader and IndexWriter directly for that (but you will need to
 	/// care about synchronization yourself then).
 	/// 
-	/// <p>While you can freely mix calls to add() and delete() using this class,
+	/// <p/>While you can freely mix calls to add() and delete() using this class,
 	/// you should batch you calls for best performance. For example, if you
 	/// want to update 20 documents, you should first delete all those documents,
 	/// then add all the new documents.
@@ -88,6 +88,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <deprecated> Please use {@link IndexWriter} instead.
 	/// </deprecated>
+    [Obsolete("Please use IndexWriter instead.")]
 	public class IndexModifier
 	{
 		private void  InitBlock()
@@ -427,7 +428,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> If non-null, information about merges and a message when
 		/// {@link #GetMaxFieldLength()} is reached will be printed to this.
-		/// <p>Example: <tt>index.setInfoStream(System.err);</tt>
+		/// <p/>Example: <tt>index.setInfoStream(System.err);</tt>
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetInfoStream(PrintStream)">
 		/// </seealso>
@@ -552,7 +553,7 @@ namespace Lucene.Net.Index
 		/// large value gives faster indexing.  At the same time, mergeFactor limits
 		/// the number of files open in a FSDirectory.
 		/// 
-		/// <p>The default value is 10.
+		/// <p/>The default value is 10.
 		/// 
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetMaxBufferedDocs(int)">
@@ -597,7 +598,7 @@ namespace Lucene.Net.Index
 		/// indices are slower, indexing is faster.  Thus larger values (&gt; 10) are best
 		/// for batch index creation, and smaller values (&lt; 10) for indices that are
 		/// interactively maintained.
-		/// <p>This must never be less than 2.  The default value is 10.
+		/// <p/>This must never be less than 2.  The default value is 10.
 		/// 
 		/// </summary>
 		/// <seealso cref="IndexWriter.SetMergeFactor(int)">

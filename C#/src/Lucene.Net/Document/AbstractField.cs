@@ -126,7 +126,7 @@ namespace Lucene.Net.Documents
 		/// multiplied into the score of all hits on this this field of this
 		/// document.
 		/// 
-		/// <p>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
+		/// <p/>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
 		/// used to compute the norm factor for the field.  By
@@ -154,9 +154,9 @@ namespace Lucene.Net.Documents
 		
 		/// <summary>Returns the boost factor for hits for this field.
 		/// 
-		/// <p>The default value is 1.0.
+		/// <p/>The default value is 1.0.
 		/// 
-		/// <p>Note: this value is not stored directly with the document in the index.
+		/// <p/>Note: this value is not stored directly with the document in the index.
 		/// Documents returned from {@link Lucene.Net.Index.IndexReader#Document(int)} and
 		/// {@link Lucene.Net.Search.Hits#Doc(int)} may thus not have the same value present as when
 		/// this field was indexed.
@@ -340,6 +340,7 @@ namespace Lucene.Net.Documents
 		
 		/// <deprecated> Renamed to {@link #getOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to GetOmitTermFreqAndPositions")]
 		public virtual bool GetOmitTf()
 		{
 			return omitTermFreqAndPositions;
@@ -364,6 +365,7 @@ namespace Lucene.Net.Documents
 		
 		/// <deprecated> Renamed to {@link #setOmitTermFreqAndPositions} 
 		/// </deprecated>
+        [Obsolete("Renamed to SetOmitTermFreqAndPositions")]
 		public virtual void  SetOmitTf(bool omitTermFreqAndPositions)
 		{
 			this.omitTermFreqAndPositions = omitTermFreqAndPositions;
@@ -374,7 +376,7 @@ namespace Lucene.Net.Documents
 		/// If set, omit term freq, positions and payloads from
 		/// postings for this field.
 		/// 
-		/// <p><b>NOTE</b>: While this option reduces storage space
+		/// <p/><b>NOTE</b>: While this option reduces storage space
 		/// required in the index, it also means any query
 		/// requiring positional information, such as {@link
 		/// PhraseQuery} or {@link SpanQuery} subclasses will
@@ -463,7 +465,7 @@ namespace Lucene.Net.Documents
 			return result.ToString();
 		}
 		public abstract Lucene.Net.Analysis.TokenStream TokenStreamValue();
-		public abstract System.IO.StreamReader ReaderValue();
+		public abstract System.IO.TextReader ReaderValue();
 		public abstract System.String StringValue();
 		public abstract byte[] BinaryValue();
 	}

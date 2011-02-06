@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Maintains caches of term values.
 	/// 
-	/// <p>Created: May 19, 2004 11:13:14 AM
+	/// <p/>Created: May 19, 2004 11:13:14 AM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -84,12 +84,12 @@ namespace Lucene.Net.Search
 	}
 	/// <summary> EXPERT: A unique Identifier/Description for each item in the FieldCache. 
 	/// Can be useful for logging/debugging.
-	/// <p>
+	/// <p/>
 	/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 	/// and experimental.  It may be removed or altered w/o warning in future 
 	/// releases 
 	/// of Lucene.
-	/// </p>
+	/// <p/>
 	/// </summary>
 	public abstract class CacheEntry
 	{
@@ -607,6 +607,7 @@ namespace Lucene.Net.Search
 		/// Especially, guessing does <b>not</b> work with the new
 		/// {@link NumericField} type.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		System.Object GetAuto(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
@@ -627,39 +628,40 @@ namespace Lucene.Net.Search
 		/// <deprecated> Please implement {@link
 		/// FieldComparatorSource} directly, instead.
 		/// </deprecated>
+        [Obsolete("Please implement FieldComparatorSource directly, instead.")]
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 		
 		/// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
 		/// currently in the FieldCache.
-		/// <p>
+		/// <p/>
 		/// NOTE: These CacheEntry objects maintain a strong refrence to the 
 		/// Cached Values.  Maintaining refrences to a CacheEntry the IndexReader 
 		/// associated with it has garbage collected will prevent the Value itself
 		/// from being garbage collected when the Cache drops the WeakRefrence.
-		/// </p>
-		/// <p>
+		/// <p/>
+		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 
 		/// of Lucene.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		CacheEntry[] GetCacheEntries();
 		
-		/// <summary> <p>
+		/// <summary> <p/>
 		/// EXPERT: Instructs the FieldCache to forcibly expunge all entries 
 		/// from the underlying caches.  This is intended only to be used for 
 		/// test methods as a way to ensure a known base state of the Cache 
 		/// (with out needing to rely on GC to free WeakReferences).  
 		/// It should not be relied on for "Cache maintenance" in general 
 		/// application code.
-		/// </p>
-		/// <p>
+		/// <p/>
+		/// <p/>
 		/// <b>EXPERIMENTAL API:</b> This API is considered extremely advanced 
 		/// and experimental.  It may be removed or altered w/o warning in future 
 		/// releases 
 		/// of Lucene.
-		/// </p>
+		/// <p/>
 		/// </summary>
 		void  PurgeAllCaches();
 		
@@ -722,6 +724,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <deprecated> Use {@link FieldCache.LongParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.LongParser, this will be removed in Lucene 3.0")]
 	public interface LongParser:Parser
 	{
 		/// <summary>Return an long representation of this field's value. </summary>
@@ -733,6 +736,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <deprecated> Use {@link FieldCache.DoubleParser}, this will be removed in Lucene 3.0 
 	/// </deprecated>
+    [Obsolete("Use FieldCache.DoubleParser, this will be removed in Lucene 3.0 ")]
 	public interface DoubleParser:Parser
 	{
 		/// <summary>Return an long representation of this field's value. </summary>

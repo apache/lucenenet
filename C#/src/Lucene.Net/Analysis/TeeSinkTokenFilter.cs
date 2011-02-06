@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis
 	/// ...
 	/// </pre>
 	/// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are ready.
-	/// <p>Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
+	/// <p/>Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
 	/// </summary>
 	public sealed class TeeSinkTokenFilter:TokenFilter
 	{

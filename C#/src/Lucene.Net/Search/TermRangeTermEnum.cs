@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
 	/// specified range parameters.
-	/// <p>
+	/// <p/>
 	/// Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
 	/// </summary>

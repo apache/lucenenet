@@ -141,10 +141,10 @@ namespace Lucene.Net.Index
 		
 		protected internal IndexReader in_Renamed;
 		
-		/// <summary> <p>Construct a FilterIndexReader based on the specified base reader.
+		/// <summary> <p/>Construct a FilterIndexReader based on the specified base reader.
 		/// Directory locking for delete, undeleteAll, and setNorm operations is
-		/// left to the base reader.</p>
-		/// <p>Note that base reader is closed if this FilterIndexReader is closed.</p>
+		/// left to the base reader.<p/>
+		/// <p/>Note that base reader is closed if this FilterIndexReader is closed.<p/>
 		/// </summary>
 		/// <param name="in">specified base reader.
 		/// </param>
@@ -284,6 +284,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated> 
 		/// </deprecated>
+        [Obsolete]
 		protected internal override void  DoCommit()
 		{
 			DoCommit(null);

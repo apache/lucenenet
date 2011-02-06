@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
 	/// specified wildcard filter term.
-	/// <p>
+	/// <p/>
 	/// Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
 	/// 
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		internal bool endEnum = false;
 		
 		/// <summary> Creates a new <code>WildcardTermEnum</code>.
-		/// <p>
+		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists.
 		/// </summary>

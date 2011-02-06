@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	/// <summary> A {@link Scorer} which wraps another scorer and caches the score of the
 	/// current document. Successive calls to {@link #Score()} will return the same
 	/// result and will not invoke the wrapped Scorer's score() method, unless the
-	/// current document has changed.<br>
+	/// current document has changed.<br/>
 	/// This class might be useful due to the changes done to the {@link Collector}
 	/// interface, in which the score is not computed for a document by default, only
 	/// if the collector requests it. Some collectors may need to use the score in
@@ -72,6 +72,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
+        [Obsolete("use DocID() instead.")]
 		public override int Doc()
 		{
 			return scorer.Doc();
@@ -84,6 +85,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #NextDoc()} instead. 
 		/// </deprecated>
+        [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
 		{
 			return scorer.Next();
@@ -101,6 +103,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #Advance(int)} instead. 
 		/// </deprecated>
+        [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
 		{
 			return scorer.SkipTo(target);

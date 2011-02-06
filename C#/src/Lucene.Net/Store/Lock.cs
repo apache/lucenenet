@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary>An interprocess mutex lock.
-	/// <p>Typical use might look like:<pre>
+	/// <p/>Typical use might look like:<pre>
 	/// new Lock.With(directory.makeLock("my.lock")) {
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>

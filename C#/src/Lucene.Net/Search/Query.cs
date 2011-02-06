@@ -23,23 +23,23 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>The abstract base class for queries.
-	/// <p>Instantiable subclasses are:
+	/// <p/>Instantiable subclasses are:
 	/// <ul>
-	/// <li> {@link TermQuery}
-	/// <li> {@link MultiTermQuery}
-	/// <li> {@link BooleanQuery}
-	/// <li> {@link WildcardQuery}
-	/// <li> {@link PhraseQuery}
-	/// <li> {@link PrefixQuery}
-	/// <li> {@link MultiPhraseQuery}
-	/// <li> {@link FuzzyQuery}
-	/// <li> {@link TermRangeQuery}
-	/// <li> {@link NumericRangeQuery}
-	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
+	/// <li> {@link TermQuery} </li>
+    /// <li> {@link MultiTermQuery} </li>
+    /// <li> {@link BooleanQuery} </li>
+    /// <li> {@link WildcardQuery} </li>
+    /// <li> {@link PhraseQuery} </li>
+    /// <li> {@link PrefixQuery} </li>
+    /// <li> {@link MultiPhraseQuery} </li>
+    /// <li> {@link FuzzyQuery} </li>
+    /// <li> {@link TermRangeQuery} </li>
+    /// <li> {@link NumericRangeQuery} </li>
+    /// <li> {@link Lucene.Net.Search.Spans.SpanQuery} </li>
 	/// </ul>
-	/// <p>A parser for queries is contained in:
+	/// <p/>A parser for queries is contained in:
 	/// <ul>
-	/// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser}
+    /// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser} </li>
 	/// </ul>
 	/// </summary>
 	[Serializable]
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
 		/// default field and omitted.
-		/// <p>The representation used is one that is supposed to be readable
+		/// <p/>The representation used is one that is supposed to be readable
 		/// by {@link Lucene.Net.QueryParsers.QueryParser QueryParser}. However,
 		/// there are the following limitations:
 		/// <ul>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Expert: Constructs an appropriate Weight implementation for this query.
 		/// 
-		/// <p>
+		/// <p/>
 		/// Only implemented by primitive queries, which re-write to themselves.
 		/// </summary>
 		public virtual Weight CreateWeight(Searcher searcher)
@@ -104,6 +104,8 @@ namespace Lucene.Net.Search
 			Weight weight = query.CreateWeight(searcher);
 			float sum = weight.SumOfSquaredWeights();
 			float norm = GetSimilarity(searcher).QueryNorm(sum);
+            if (float.IsInfinity(norm) || float.IsNaN(norm))
+                norm = 1.0f;
 			weight.Normalize(norm);
 			return weight;
 		}
@@ -194,7 +196,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
 		/// BooleanQuery.
 		/// 
-		/// <p>A utility for use by {@link #Combine(Query[])} implementations.
+		/// <p/>A utility for use by {@link #Combine(Query[])} implementations.
 		/// </summary>
 		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{

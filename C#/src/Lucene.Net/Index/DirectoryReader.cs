@@ -886,6 +886,7 @@ namespace Lucene.Net.Index
 		
 		/// <deprecated>  
 		/// </deprecated>
+        [Obsolete]
 		protected internal override void  DoCommit()
 		{
 			DoCommit(null);
@@ -1061,7 +1062,8 @@ namespace Lucene.Net.Index
 		{
 			return subReaders;
 		}
-		
+
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Index.IndexReader.SetDisableFakeNorms(bool)")]
 		public override void  SetDisableFakeNorms(bool disableFakeNorms)
 		{
 			base.SetDisableFakeNorms(disableFakeNorms);
@@ -1085,7 +1087,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Expert: return the IndexCommit that this reader has opened.
 		/// <p/>
-		/// <p><b>WARNING</b>: this API is new and experimental and may suddenly change.</p>
+		/// <p/><b>WARNING</b>: this API is new and experimental and may suddenly change.<p/>
 		/// </summary>
 		public override IndexCommit GetIndexCommit()
 		{

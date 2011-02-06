@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> </summary>
-		/// <seealso cref="IsIgnoringPositions() Same principal as {@link #IsIgnoringPositions()}, but applied to offsets.  false by default.">
+		/// <seealso cref="IsIgnoringPositions()"> Same principal as {@link #IsIgnoringPositions()}, but applied to offsets.  false by default.
 		/// </seealso>
 		/// <returns> false
 		/// </returns>

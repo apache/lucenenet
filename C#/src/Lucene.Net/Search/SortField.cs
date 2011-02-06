@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// <summary> Stores information about how to sort documents by terms in an individual
 	/// field.  Fields must be indexed in order to sort by them.
 	/// 
-	/// <p>Created: Feb 11, 2004 1:25:29 PM
+	/// <p/>Created: Feb 11, 2004 1:25:29 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 	/// <seealso cref="Sort">
 	/// </seealso>
 	[Serializable]
-	public class SortField
+	public class SortField: System.Runtime.Serialization.ISerializable
 	{
 		
 		/// <summary>Sort by document score (relevancy).  Sort values are Float and higher
@@ -61,6 +61,7 @@ namespace Lucene.Net.Search
 		/// Especially, guessing does <b>not</b> work with the new
 		/// {@link NumericField} type.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		public const int AUTO = 2;
 		
 		/// <summary>Sort using term values as Strings.  Sort values are String and lower
@@ -140,6 +141,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> Please specify the exact type instead.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type instead.")]
 		public SortField(System.String field)
 		{
 			InitFieldType(field, AUTO);
@@ -154,6 +156,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> Please specify the exact type instead.
 		/// </deprecated>
+        [Obsolete("Please specify the exact type instead.")]
 		public SortField(System.String field, bool reverse)
 		{
 			InitFieldType(field, AUTO);
@@ -278,6 +281,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator)
 		/// </deprecated>
+        [Obsolete("use SortField (String field, FieldComparatorSource comparator)")]
 		public SortField(System.String field, SortComparatorSource comparator)
 		{
 			InitFieldType(field, CUSTOM);
@@ -305,6 +309,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> use SortField (String field, FieldComparatorSource comparator, boolean reverse)
 		/// </deprecated>
+        [Obsolete("use SortField(String field, FieldComparatorSource comparator, boolean reverse)")]
 		public SortField(System.String field, SortComparatorSource comparator, bool reverse)
 		{
 			InitFieldType(field, CUSTOM);
@@ -391,6 +396,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> use {@link #GetComparatorSource()}
 		/// </deprecated>
+        [Obsolete("use GetComparatorSource()")]
 		public virtual SortComparatorSource GetFactory()
 		{
 			return factory;
@@ -409,6 +415,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <deprecated> will be removed in Lucene 3.0.
 		/// </deprecated>
+        [Obsolete("will be removed in Lucene 3.0.")]
 		public virtual void  SetUseLegacySearch(bool legacy)
 		{
 			this.useLegacy = legacy;
@@ -419,6 +426,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <deprecated> will be removed in Lucene 3.0.
 		/// </deprecated>
+        [Obsolete("will be removed in Lucene 3.0.")]
 		public virtual bool GetUseLegacySearch()
 		{
 			return this.useLegacy;
@@ -545,6 +553,53 @@ namespace Lucene.Net.Search
 			return hash;
 		}
 		
+        
+       //// field must be interned after reading from stream
+       // private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+       //  in.defaultReadObject();
+       //  if (field != null)
+       //    field = StringHelper.intern(field);
+       // }
+
+        /// <summary>
+        /// Lucene.Net specific. Needed for Serialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            //Should we add other fields as in NumericRangeQuery? {{DIGY}}
+
+            info.AddValue("type", type);
+            info.AddValue("useLegacy", useLegacy);
+            info.AddValue("reverse", reverse);
+            info.AddValue("locale", locale);
+            info.AddValue("comparatorSource", comparatorSource);
+            info.AddValue("factory", factory);
+            info.AddValue("parser", parser);
+                        
+            info.AddValue("field", field);
+        }
+
+        /// <summary>
+        /// Lucene.Net specific. Needed for deserialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected SortField(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            //Should we add other fields as in NumericRangeQuery? {{DIGY}}
+
+            type        = (int)info.GetValue("type", typeof(int));
+            useLegacy   = (bool)info.GetValue("useLegacy", typeof(bool));
+            reverse     = (bool)info.GetValue("reverse", typeof(bool));
+            locale      = (System.Globalization.CultureInfo)info.GetValue("locale", typeof(System.Globalization.CultureInfo));
+            comparatorSource = (FieldComparatorSource)info.GetValue("comparatorSource", typeof(FieldComparatorSource));
+            factory          = (SortComparatorSource)info.GetValue("factory", typeof(FieldComparatorSource));
+            parser           = (Parser)info.GetValue("parser", typeof(Parser));
+                        
+            field       = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+        }
 		
 		/// <summary>Returns the {@link FieldComparator} to use for
 		/// sorting.
@@ -630,6 +685,7 @@ namespace Lucene.Net.Search
 		/// <summary> Attempts to detect the given field type for an IndexReader.</summary>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		internal static int DetectFieldType(IndexReader reader, System.String fieldKey)
 		{
 			System.String field = StringHelper.Intern(fieldKey);

@@ -90,6 +90,7 @@ namespace Lucene.Net.Documents
 			
 			/// <deprecated> this has been renamed to {@link #ANALYZED} 
 			/// </deprecated>
+            [Obsolete("this has been renamed to ANALYZED")]
 			public static readonly Index TOKENIZED;
 			
 			/// <summary>Index the field's value without using an Analyzer, so it can be searched.
@@ -100,6 +101,7 @@ namespace Lucene.Net.Documents
 			
 			/// <deprecated> This has been renamed to {@link #NOT_ANALYZED} 
 			/// </deprecated>
+            [Obsolete("This has been renamed to NOT_ANALYZED")]
 			public static readonly Index UN_TOKENIZED;
 			
 			/// <summary>Expert: Index the field's value without an Analyzer,
@@ -122,6 +124,7 @@ namespace Lucene.Net.Documents
 			/// <deprecated> This has been renamed to
 			/// {@link #NOT_ANALYZED_NO_NORMS} 
 			/// </deprecated>
+            [Obsolete("This has been renamed to NOT_ANALYZED_NO_NORMS")]
 			public static readonly Index NO_NORMS;
 			
 			/// <summary>Expert: Index the tokens produced by running the
@@ -196,9 +199,9 @@ namespace Lucene.Net.Documents
 		/// binary value is used.  Exactly one of stringValue(),
 		/// readerValue(), and getBinaryValue() must be set. 
 		/// </summary>
-		public override System.IO.StreamReader ReaderValue()
+		public override System.IO.TextReader ReaderValue()
 		{
-			return fieldsData is System.IO.StreamReader?(System.IO.StreamReader) fieldsData:null;
+			return fieldsData is System.IO.TextReader?(System.IO.TextReader) fieldsData:null;
 		}
 		
 		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
@@ -212,6 +215,7 @@ namespace Lucene.Net.Documents
 		/// AbstractField#GetBinaryValue()} instead, which simply
 		/// returns the byte[].
 		/// </deprecated>
+        [Obsolete("This method must allocate a new byte[] if the AbstractField.GetBinaryOffset() is non-zero or AbstractField.GetBinaryLength() is not the full length of the byte[]. Please use AbstractField.GetBinaryValue() instead, which simply returns the byte[].")]
 		public override byte[] BinaryValue()
 		{
 			if (!isBinary)
@@ -234,17 +238,17 @@ namespace Lucene.Net.Documents
 		}
 		
 		
-		/// <summary><p>Expert: change the value of this field.  This can
+		/// <summary><p/>Expert: change the value of this field.  This can
 		/// be used during indexing to re-use a single Field
 		/// instance to improve indexing speed by avoiding GC cost
 		/// of new'ing and reclaiming Field instances.  Typically
 		/// a single {@link Document} instance is re-used as
-		/// well.  This helps most on small documents.</p>
+		/// well.  This helps most on small documents.<p/>
 		/// 
-		/// <p>Each Field instance should only be used once
+		/// <p/>Each Field instance should only be used once
 		/// within a single {@link Document} instance.  See <a
 		/// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
-		/// for details.</p> 
+		/// for details.<p/> 
 		/// </summary>
 		public void  SetValue(System.String value_Renamed)
 		{
@@ -256,7 +260,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-		public void  SetValue(System.IO.StreamReader value_Renamed)
+		public void  SetValue(System.IO.TextReader value_Renamed)
 		{
 			if (isBinary)
 			{
@@ -297,6 +301,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>.</summary>
 		/// <deprecated> use {@link #setTokenStream} 
 		/// </deprecated>
+        [Obsolete("use SetTokenStream ")]
 		public void  SetValue(TokenStream value_Renamed)
 		{
 			if (isBinary)
@@ -481,7 +486,7 @@ namespace Lucene.Net.Documents
 		/// <param name="reader">The reader with the content
 		/// </param>
 		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
-		public Field(System.String name, System.IO.StreamReader reader):this(name, reader, TermVector.NO)
+		public Field(System.String name, System.IO.TextReader reader):this(name, reader, TermVector.NO)
 		{
 		}
 		
@@ -498,7 +503,7 @@ namespace Lucene.Net.Documents
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
 		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
-		public Field(System.String name, System.IO.StreamReader reader, TermVector termVector)
+		public Field(System.String name, System.IO.TextReader reader, TermVector termVector)
 		{
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");

@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
 			ScoreDoc[] h = s.Search(q, null, 1000).scoreDocs;
 			if (expected != h.Length)
 			{
-				PrintHits("getName()", h, s);  // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+				PrintHits(Lucene.Net.TestCase.GetName(), h, s);  
 			}
 			Assert.AreEqual(expected, h.Length, "result count");
 			QueryUtils.Check(q, s);

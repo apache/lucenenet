@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -163,71 +164,27 @@ namespace Lucene.Net.Search
 		/// </summary>
 		protected internal class FilterCleaner : IThreadRunnable
 		{
-			private class AnonymousClassComparator : System.Collections.Generic.IComparer<object>
-			{
-				public AnonymousClassComparator(FilterCleaner enclosingInstance)
-				{
-					InitBlock(enclosingInstance);
-				}
-				private void  InitBlock(FilterCleaner enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private FilterCleaner enclosingInstance;
-				public FilterCleaner Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
-				public virtual int Compare(System.Object a, System.Object b)
-				{
-					if (a is System.Collections.DictionaryEntry && b is System.Collections.DictionaryEntry)
-					{
-						FilterItem fia = (FilterItem) ((System.Collections.DictionaryEntry) a).Value;
-						FilterItem fib = (FilterItem) ((System.Collections.DictionaryEntry) b).Value;
-						if (fia.timestamp == fib.timestamp)
-						{
-							return 0;
-						}
-						// smaller timestamp first
-						if (fia.timestamp < fib.timestamp)
-						{
-							return - 1;
-						}
-						// larger timestamp last
-						return 1;
-					}
-					else
-					{
-						throw new System.InvalidCastException("Objects are not Map.Entry");
-					}
-				}
-			}
-			private void  InitBlock(FilterManager enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private FilterManager enclosingInstance;
-			public FilterManager Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
+            private class FilterItemComparer : IComparer<FilterItem>
+            {
+                #region IComparer<FilterItem> Members
+
+                public int Compare(FilterItem x, FilterItem y)
+                {
+                    return x.timestamp.CompareTo(y.timestamp);
+                }
+
+                #endregion
+            }
 			
 			private bool running = true;
-            private System.Collections.Generic.SortedDictionary<object, object> sortedFilterItems;
+            private FilterManager manager;
+            private List<FilterItem> filterItems;
 			
 			public FilterCleaner(FilterManager enclosingInstance)
 			{
-				InitBlock(enclosingInstance);
-                sortedFilterItems = new System.Collections.Generic.SortedDictionary<object, object>(new AnonymousClassComparator(this));
-			}
+                this.manager = enclosingInstance;
+                filterItems = new List<FilterItem>();
+            }
 			
 			public virtual void  Run()
 			{
@@ -236,34 +193,32 @@ namespace Lucene.Net.Search
 					
 					// sort items from oldest to newest 
 					// we delete the oldest filters 
-					if (Enclosing_Instance.cache.Count > Enclosing_Instance.cacheCleanSize)
+                    if (this.manager.cache.Count > this.manager.cacheCleanSize)
 					{
 						// empty the temporary set
-						sortedFilterItems.Clear();
-						lock (Enclosing_Instance.cache.SyncRoot)
+						filterItems.Clear();
+                        lock (this.manager.cache.SyncRoot)
 						{
-                            System.Collections.IDictionaryEnumerator entries = Enclosing_Instance.cache.GetEnumerator();
-                            while (entries.MoveNext())
+                            foreach (FilterItem item in this.manager.cache.Values)
                             {
-                                sortedFilterItems.Add(entries.Entry.Key, entries.Entry.Value);
+                                filterItems.Add(item);
                             }
-                            System.Collections.IEnumerator it = sortedFilterItems.GetEnumerator();
-							int numToDelete = (int) ((Enclosing_Instance.cache.Count - Enclosing_Instance.cacheCleanSize) * 1.5);
-							int counter = 0;
+                            filterItems.Sort(new FilterItemComparer());
+
+                            int numToDelete = (int)((this.manager.cache.Count - this.manager.cacheCleanSize) * 1.5);
 							// loop over the set and delete all of the cache entries not used in a while
-							while (it.MoveNext() && counter++ < numToDelete)
-							{
-								System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-								Enclosing_Instance.cache.Remove(entry.Key);
-							}
+                            for(int i = 0; i < numToDelete; i++)
+                            {
+                                this.manager.cache.Remove(filterItems[i].filter.GetHashCode());
+                            }
 						}
 						// empty the set so we don't tie up the memory
-						sortedFilterItems.Clear();
+                        filterItems.Clear();
 					}
 					// take a nap
 					try
 					{
-						System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * Enclosing_Instance.cleanSleepTime));
+                        System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64)10000 * this.manager.cleanSleepTime));
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{

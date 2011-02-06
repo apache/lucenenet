@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	/// class. This class will be removed when {@link HitCollector} is
 	/// removed.
 	/// </deprecated>
+    [Obsolete("Please migrate custom HitCollectors to the new Collector class. This class will be removed when HitCollector is removed.")]
 	public class HitCollectorWrapper:Collector
 	{
 		private HitCollector collector;

@@ -10,10 +10,10 @@ Basic steps:
   4) Build the project from the Build menu
 
 For further information on Lucene, go to:
-  http://incubator.apache.org/lucene.net/
+  http://lucene.apache.org/lucene.net/
 
 Please join the Lucene-User mailing list by visiting this site:
-  http://incubator.apache.org/lucene.net/
+  http://lucene.apache.org/lucene.net/
 
 Please post suggestions, questions, corrections or additions to this
 document to the lucene-net-user mailing list.

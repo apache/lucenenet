@@ -44,69 +44,51 @@ namespace Lucene.Net.Util
 	public class CloseableThreadLocal
 	{
 		
-		private System.LocalDataStoreSlot t = System.Threading.Thread.AllocateDataSlot();
-		
-		private System.Collections.IDictionary hardRefs = new System.Collections.Hashtable();
+		[ThreadStatic]
+        static SupportClass.WeakHashTable slots;
 		
 		public /*protected internal*/ virtual System.Object InitialValue()
 		{
 			return null;
 		}
-		
-		public virtual System.Object Get()
-		{
-			System.WeakReference weakRef = (System.WeakReference) System.Threading.Thread.GetData(t);
-			if (weakRef == null || weakRef.Target==null)
-			{
-				System.Object iv = InitialValue();
-				if (iv != null)
-				{
-					Set(iv);
-					return iv;
-				}
-				else
-					return null;
-			}
-			else
-			{
-				return weakRef.Target;
-			}
-		}
+
+        public virtual System.Object Get()
+        {
+            object value;
+
+            if (slots == null)
+            {
+                value = InitialValue();
+                if (value != null)
+                    Set(value);
+
+                return value;
+            }
+
+            if (slots.ContainsKey(this))
+            {
+                return slots[this];
+            }
+            else
+            {
+                value = InitialValue();
+                slots[this] = value;
+                return value;
+            }
+        }
 		
 		public virtual void  Set(System.Object object_Renamed)
 		{
-			
-			System.Threading.Thread.SetData(this.t, new System.WeakReference(object_Renamed));
-			
-			lock (hardRefs.SyncRoot)
-			{
-				hardRefs[SupportClass.ThreadClass.Current()] = object_Renamed;
-				
-				// Purge dead threads
-                System.Collections.ArrayList tmp = new System.Collections.ArrayList();
-                System.Collections.IEnumerator it = hardRefs.GetEnumerator();
-				while (it.MoveNext())
-				{
-					SupportClass.ThreadClass t = (SupportClass.ThreadClass) ((System.Collections.DictionaryEntry) it.Current).Key;
-					if (!t.IsAlive)
-					{
-                        tmp.Add(t);
-					}
-				}
-                foreach (SupportClass.ThreadClass th in tmp)
-                {
-                    hardRefs.Remove(th);
-                }
-            }
+            if (slots == null)
+                slots = new SupportClass.WeakHashTable();
+
+			slots[this] = object_Renamed;	
 		}
 		
 		public virtual void  Close()
 		{
-			// Clear the hard refs; then, the only remaining refs to
-			// all values we were storing are weak (unless somewhere
-			// else is still using them) and so GC may reclaim them:
-			hardRefs = null;
-			t = null;
+            if(slots != null)
+                slots.Remove(this);
 		}
 	}
 }

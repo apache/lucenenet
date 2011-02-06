@@ -170,6 +170,7 @@ namespace Lucene.Net.Store
 		/// instead, and construct the string
 		/// from those utf8 bytes
 		/// </deprecated>
+        [Obsolete("-- please use ReadString or ReadBytes instead, and construct the string from those utf8 bytes")]
 		public virtual void  ReadChars(char[] buffer, int start, int length)
 		{
 			int end = start + length;
@@ -199,6 +200,7 @@ namespace Lucene.Net.Store
 		/// <deprecated> this method operates on old "modified utf8" encoded
 		/// strings
 		/// </deprecated>
+        [Obsolete("this method operates on old \"modified utf8\" encoded strings")]
 		public virtual void  SkipChars(int length)
 		{
 			for (int i = 0; i < length; i++)
@@ -242,10 +244,10 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Returns a clone of this stream.
 		/// 
-		/// <p>Clones of a stream access the same data, and are positioned at the same
+		/// <p/>Clones of a stream access the same data, and are positioned at the same
 		/// point as the stream they were cloned from.
 		/// 
-		/// <p>Expert: Subclasses must ensure that clones may be positioned at
+		/// <p/>Expert: Subclasses must ensure that clones may be positioned at
 		/// different points in the input from each other and from the stream they
 		/// were cloned from.
 		/// </summary>

@@ -25,13 +25,9 @@ namespace SpellChecker.Net.Search.Spell
 {
 	
     /// <summary> A simple interface representing a Dictionary</summary>
-    /// <author>  Nicolas Maisonneuve
-    /// </author>
-    /// <version>  1.0
-    /// </version>
     public interface Dictionary
     {
-        /// <summary> return all the words present in the dictionnary</summary>
+        /// <summary> return all the words present in the dictionary</summary>
         /// <returns> Iterator
         /// </returns>
         System.Collections.IEnumerator GetWordsIterator();

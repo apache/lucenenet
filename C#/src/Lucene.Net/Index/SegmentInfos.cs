@@ -30,8 +30,8 @@ namespace Lucene.Net.Index
 	/// <summary> A collection of segmentInfo objects with methods for operating on
 	/// those segments in relation to the file system.
 	/// 
-	/// <p><b>NOTE:</b> This API is new and still experimental
-	/// (subject to change suddenly in the next release)</p>
+	/// <p/><b>NOTE:</b> This API is new and still experimental
+	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	[Serializable]
 	public sealed class SegmentInfos:System.Collections.ArrayList
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
         private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
-		/// <seealso cref="setInfoStream.">
+		/// <seealso cref="setInfoStream">
 		/// </seealso>
 		private static System.IO.StreamWriter infoStream;
 		
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Writes & syncs to the Directory dir, taking care to
+		/// <summary>Writes &amp; syncs to the Directory dir, taking care to
 		/// remove the segments file on exception 
 		/// </summary>
 		public /*internal*/ void  Commit(Directory dir)

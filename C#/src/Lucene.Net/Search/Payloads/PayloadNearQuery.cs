@@ -46,8 +46,7 @@ namespace Lucene.Net.Search.Payloads
 	/// Payload scores are aggregated using a pluggable {@link PayloadFunction}.
 	/// 
 	/// </summary>
-	/// <seealso cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[], int,">
-	/// int)
+	/// <seealso cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[], int,int)">
 	/// </seealso>
 	[Serializable]
 	public class PayloadNearQuery:SpanNearQuery, System.ICloneable

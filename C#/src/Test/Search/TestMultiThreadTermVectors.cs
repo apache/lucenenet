@@ -172,7 +172,6 @@ namespace Lucene.Net.Search
 			return ;
 		}
 		
-		[Test]
 		private void  TestTermVectors()
 		{
 			// check:

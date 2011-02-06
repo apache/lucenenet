@@ -81,10 +81,6 @@ namespace Lucene.Net.Store
 					{
 						throw new System.SystemException("", e);
 					}
-					lock (ramDir)
-					{
-						Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
-					}
 				}
 			}
 		}
@@ -205,7 +201,7 @@ namespace Lucene.Net.Store
 			searcher.Close();
 		}
 		
-		private int numThreads = 50;
+		private int numThreads = 10;
 		private int docsPerThread = 40;
 		
         [Test]

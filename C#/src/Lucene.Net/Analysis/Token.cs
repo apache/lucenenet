@@ -35,31 +35,31 @@ namespace Lucene.Net.Analysis
 	/// <summary>A Token is an occurrence of a term from the text of a field.  It consists of
 	/// a term's text, the start and end offset of the term in the text of the field,
 	/// and a type string.
-	/// <p>
+	/// <p/>
 	/// The start and end offsets permit applications to re-associate a token with
 	/// its source text, e.g., to display highlighted query terms in a document
 	/// browser, or to show matching text fragments in a <abbr
 	/// title="KeyWord In Context">KWIC</abbr> display, etc.
-	/// <p>
+	/// <p/>
 	/// The type is a string, assigned by a lexical analyzer
 	/// (a.k.a. tokenizer), naming the lexical or syntactic class that the token
 	/// belongs to.  For example an end of sentence marker token might be implemented
 	/// with type "eos".  The default token type is "word".  
-	/// <p>
+	/// <p/>
 	/// A Token can optionally have metadata (a.k.a. Payload) in the form of a variable
 	/// length byte array. Use {@link TermPositions#GetPayloadLength()} and 
 	/// {@link TermPositions#GetPayload(byte[], int)} to retrieve the payloads from the index.
 	/// </summary>
-	/// <summary><br><br>
+	/// <summary><br/><br/>
 	/// </summary>
-	/// <summary><p><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
+	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
 	/// that are part of core Lucene and can be found in the {@code tokenattributes} subpackage.
 	/// Even though it is not necessary to use Token anymore, with the new TokenStream API it can
 	/// be used as convenience class that implements all {@link Attribute}s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
 	/// </summary>
-	/// <summary><br><br>
-	/// <p><b>NOTE:</b> As of 2.3, Token stores the term text
+	/// <summary><br/><br/>
+	/// <p/><b>NOTE:</b> As of 2.3, Token stores the term text
 	/// internally as a malleable char[] termBuffer instead of
 	/// String termText.  The indexing code and core tokenizers
 	/// have been changed to re-use a single Token instance, changing
@@ -69,9 +69,9 @@ namespace Lucene.Net.Analysis
 	/// String for every term.  The APIs that accept String
 	/// termText are still available but a warning about the
 	/// associated performance cost has been added (below).  The
-	/// {@link #TermText()} method has been deprecated.</p>
+	/// {@link #TermText()} method has been deprecated.<p/>
 	/// </summary>
-	/// <summary><p>Tokenizers and TokenFilters should try to re-use a Token instance when
+	/// <summary><p/>Tokenizers and TokenFilters should try to re-use a Token instance when
 	/// possible for best performance, by implementing the
 	/// {@link TokenStream#IncrementToken()} API.
 	/// Failing that, to create a new Token you should first use
@@ -86,8 +86,8 @@ namespace Lucene.Net.Analysis
 	/// or with {@link System#arraycopy(Object, int, Object, int, int)}, and finally call {@link #SetTermLength(int)} to
 	/// set the length of the term text.  See <a target="_top"
 	/// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
-	/// for details.</p>
-	/// <p>Typical Token reuse patterns:
+	/// for details.<p/>
+	/// <p/>Typical Token reuse patterns:
 	/// <ul>
 	/// <li> Copying text from a string (type is reset to {@link #DEFAULT_TYPE} if not
 	/// specified):<br/>
@@ -100,7 +100,6 @@ namespace Lucene.Net.Analysis
 	/// <pre>
 	/// return reusableToken.reinit(string, 0, string.length(), startOffset, endOffset[, type]);
 	/// </pre>
-	/// </li>
 	/// </li>
 	/// <li> Copying text from char[] buffer (type is reset to {@link #DEFAULT_TYPE}
 	/// if not specified):<br/>
@@ -129,7 +128,7 @@ namespace Lucene.Net.Analysis
 	/// source text, so be careful in adjusting them.</li>
 	/// <li>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</li>
 	/// </ul>
-	/// </p>
+	/// <p/>
 	/// </summary>
 	/// <seealso cref="Lucene.Net.Index.Payload">
 	/// </seealso>
@@ -144,6 +143,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> We will remove this when we remove the
 		/// deprecated APIs 
 		/// </deprecated>
+        [Obsolete("We will remove this when we remove the deprecated APIs")]
 		private System.String termText;
 		
 		/// <summary> Characters for the term text.</summary>
@@ -153,30 +153,35 @@ namespace Lucene.Net.Analysis
 		/// {@link #SetTermBuffer(String)}, or
 		/// {@link #SetTermBuffer(String, int, int)}
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: TermBuffer(), SetTermBuffer(char[], int, int), SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		internal char[] termBuffer;
 		
 		/// <summary> Length of term text in the buffer.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #TermLength()}, or @{link setTermLength(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: TermLength(), or setTermLength(int)")]
 		internal int termLength;
 		
 		/// <summary> Start in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #StartOffset()}, or @{link setStartOffset(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: StartOffset(), or SetStartOffset(int).")]
 		internal int startOffset;
 		
 		/// <summary> End in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #EndOffset()}, or @{link setEndOffset(int)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: EndOffset(), or SetEndOffset(int).")]
 		internal int endOffset;
 		
 		/// <summary> The lexical type of the token.</summary>
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #Type()}, or @{link setType(String)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: Type(), or SetType(String).")]
 		internal System.String type = DEFAULT_TYPE;
 		
 		private int flags;
@@ -184,11 +189,13 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #GetPayload()}, or @{link setPayload(Payload)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: GetPayload(), or SetPayload(Payload).")]
 		internal Payload payload;
 		
 		/// <deprecated> This will be made private. Instead, use:
 		/// {@link #GetPositionIncrement()}, or @{link setPositionIncrement(String)}.
 		/// </deprecated>
+        [Obsolete("This will be made private. Instead, use: GetPositionIncrement(), or SetPositionIncrement(String).")]
 		internal int positionIncrement = 1;
 		
 		/// <summary>Constructs a Token will null text. </summary>
@@ -196,7 +203,7 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary>Constructs a Token with null text and start & end
+		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -209,7 +216,7 @@ namespace Lucene.Net.Analysis
 			endOffset = end;
 		}
 		
-		/// <summary>Constructs a Token with null text and start & end
+		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets plus the Token type.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -225,7 +232,7 @@ namespace Lucene.Net.Analysis
 			type = typ;
 		}
 		
-		/// <summary> Constructs a Token with null text and start & end
+		/// <summary> Constructs a Token with null text and start &amp; end
 		/// offsets plus flags. NOTE: flags is EXPERIMENTAL.
 		/// </summary>
 		/// <param name="start">start offset in the source text
@@ -242,7 +249,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Constructs a Token with the given term text, and start
-		/// & end offsets.  The type defaults to "word."
+		/// &amp; end offsets.  The type defaults to "word."
 		/// <b>NOTE:</b> for better indexing speed you should
 		/// instead use the char[] termBuffer methods to set the
 		/// term text.
@@ -261,7 +268,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Constructs a Token with the given text, start and end
-		/// offsets, & type.  <b>NOTE:</b> for better indexing
+		/// offsets, &amp; type.  <b>NOTE:</b> for better indexing
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
@@ -282,7 +289,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>  Constructs a Token with the given text, start and end
-		/// offsets, & type.  <b>NOTE:</b> for better indexing
+		/// offsets, &amp; type.  <b>NOTE:</b> for better indexing
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
@@ -303,7 +310,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>  Constructs a Token with the given term buffer (offset
-		/// & length), start and end
+		/// &amp; length), start and end
 		/// offsets
 		/// </summary>
 		/// <param name="startTermBuffer">
@@ -327,23 +334,23 @@ namespace Lucene.Net.Analysis
 		/// relative to the previous Token in a {@link TokenStream}, used in phrase
 		/// searching.
 		/// 
-		/// <p>The default value is one.
+		/// <p/>The default value is one.
 		/// 
-		/// <p>Some common uses for this are:<ul>
+		/// <p/>Some common uses for this are:<ul>
 		/// 
 		/// <li>Set it to zero to put multiple terms in the same position.  This is
 		/// useful if, e.g., a word has multiple stems.  Searches for phrases
 		/// including either stem will match.  In this case, all but the first stem's
 		/// increment should be set to zero: the increment of the first instance
 		/// should be one.  Repeating a token with an increment of zero can also be
-		/// used to boost the scores of matches on that token.
+		/// used to boost the scores of matches on that token.</li>
 		/// 
 		/// <li>Set it to values greater than one to inhibit exact phrase matches.
 		/// If, for example, one does not want phrases to match across removed stop
 		/// words, then one could build a stop word filter that removes stop words and
 		/// also sets the increment to the number of stop words removed before each
 		/// non-stop word.  Then exact phrase queries will only match when the terms
-		/// occur with no intervening stop words.
+		/// occur with no intervening stop words.</li>
 		/// 
 		/// </ul>
 		/// </summary>
@@ -374,6 +381,7 @@ namespace Lucene.Net.Analysis
 		/// {@link #SetTermBuffer(String)} or
 		/// {@link #SetTermBuffer(String, int, int)}.
 		/// </deprecated>
+        [Obsolete("Use SetTermBuffer(char[], int, int) or SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		public virtual void  SetTermText(System.String text)
 		{
 			termText = text;
@@ -636,9 +644,9 @@ namespace Lucene.Net.Analysis
 			this.endOffset = offset;
 		}
 		
-		/// <summary>Set the starting and ending offset.</summary>
-		/// <seealso cref="StartOffset() and #endOffset()">
-		/// </seealso>
+		/// <summary>Set the starting and ending offset.
+		/// See StartOffset() and EndOffset()
+		/// </summary>
 		public virtual void  SetOffset(int startOffset, int endOffset)
 		{
 			this.startOffset = startOffset;
@@ -742,7 +750,7 @@ namespace Lucene.Net.Analysis
 			return t;
 		}
 		
-		/// <summary>Makes a clone, but replaces the term buffer &
+		/// <summary>Makes a clone, but replaces the term buffer &amp;
 		/// start/end offset in the process.  This is more
 		/// efficient than doing a full clone (and then calling
 		/// setTermBuffer) because it saves a wasted copy of the old

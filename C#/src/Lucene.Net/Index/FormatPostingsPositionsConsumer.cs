@@ -25,12 +25,12 @@ namespace Lucene.Net.Index
 	abstract class FormatPostingsPositionsConsumer
 	{
 		
-		/// <summary>Add a new position & payload.  If payloadLength > 0
+		/// <summary>Add a new position &amp; payload.  If payloadLength > 0
 		/// you must read those bytes from the IndexInput. 
 		/// </summary>
 		internal abstract void  AddPosition(int position, byte[] payload, int payloadOffset, int payloadLength);
 		
-		/// <summary>Called when we are done adding positions & payloads </summary>
+		/// <summary>Called when we are done adding positions &amp; payloads </summary>
 		internal abstract void  Finish();
 	}
 }

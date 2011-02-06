@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Query that matches documents containing terms with a specified prefix. A PrefixQuery
 	/// is built by QueryParser for input like <code>app*</code>.
 	/// 
-	/// <p>This query uses the {@link
+	/// <p/>This query uses the {@link
 	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
 	/// rewrite method. 
 	/// </summary>

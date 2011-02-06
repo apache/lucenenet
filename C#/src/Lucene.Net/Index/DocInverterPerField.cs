@@ -227,6 +227,10 @@ namespace Lucene.Net.Index
 						fieldState.offset += docState.analyzer.GetOffsetGap(field);
 					fieldState.boost *= field.GetBoost();
 				}
+                
+                // LUCENE-2387: don't hang onto the field, so GC can
+                // reclaim
+                fields[i] = null;
 			}
 			
 			consumer.Finish();

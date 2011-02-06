@@ -37,8 +37,8 @@ namespace Lucene.Net.Index
 	/// snapshot held when a writer is closed will "survive"
 	/// when the next writer is opened.
 	/// 
-	/// <p><b>WARNING</b>: This API is a new and experimental and
-	/// may suddenly change.</p> 
+	/// <p/><b>WARNING</b>: This API is a new and experimental and
+	/// may suddenly change.<p/> 
 	/// </summary>
 	
 	public class SnapshotDeletionPolicy : IndexDeletionPolicy

@@ -161,6 +161,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns an array of strings, one for each file in the directory. </summary>
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			System.String[] res = new System.String[entries.Count];
@@ -195,6 +196,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Not implemented</summary>
 		/// <throws>  UnsupportedOperationException  </throws>
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.RenameFile(string, string)")]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			throw new System.NotSupportedException();

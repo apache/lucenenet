@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// documents, returning them as a {@link TopDocs}.  This is used by {@link
 	/// IndexSearcher} to implement {@link TopDocs}-based search.
 	/// 
-	/// <p>This may be extended, overriding the collect method to, e.g.,
+	/// <p/>This may be extended, overriding the collect method to, e.g.,
 	/// conditionally invoke <code>super()</code> in order to filter which
 	/// documents are collected.
 	/// 
@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	/// instead, which has better performance.
 	/// 
 	/// </deprecated>
+    [Obsolete("Please use TopScoreDocCollector instead, which has better performance.")]
 	public class TopDocCollector:HitCollector
 	{
 		
@@ -56,6 +57,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> use TopDocCollector(hq) instead. numHits is not used by this
 		/// constructor. It will be removed in a future release.
 		/// </deprecated>
+        [Obsolete("use TopDocCollector(hq) instead. numHits is not used by this constructor. It will be removed in a future release.")]
 		internal TopDocCollector(int numHits, PriorityQueue hq)
 		{
 			this.hq = hq;

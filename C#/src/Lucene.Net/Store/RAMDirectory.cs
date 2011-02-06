@@ -49,9 +49,9 @@ namespace Lucene.Net.Store
 		/// <summary> Creates a new <code>RAMDirectory</code> instance from a different
 		/// <code>Directory</code> implementation.  This can be used to load
 		/// a disk-based index into memory.
-		/// <P>
+		/// <p/>
 		/// This should be used only with indices that can fit into memory.
-		/// <P>
+		/// <p/>
 		/// Note that the resulting <code>RAMDirectory</code> instance is fully
 		/// independent from the original <code>Directory</code> (it is a
 		/// complete copy).  Any subsequent changes to the
@@ -82,6 +82,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
 		/// </deprecated>
+        [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
@@ -96,6 +97,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
 		/// </deprecated>
+        [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
@@ -110,6 +112,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
 		public override System.String[] List()
 		{
 			lock (this)
@@ -236,7 +239,7 @@ namespace Lucene.Net.Store
 				{
 					fileMap.Remove(name);
 					file.directory = null;
-					sizeInBytes -= file.sizeInBytes; // updates to RAMFile.sizeInBytes synchronized on directory
+					sizeInBytes -= file.sizeInBytes; 
 				}
 				else
 					throw new System.IO.FileNotFoundException(name);
@@ -247,6 +250,7 @@ namespace Lucene.Net.Store
 		/// <throws>  FileNotFoundException if from does not exist </throws>
 		/// <deprecated>
 		/// </deprecated>
+        [Obsolete]
 		public override void  RenameFile(System.String from, System.String to)
 		{
 			lock (this)

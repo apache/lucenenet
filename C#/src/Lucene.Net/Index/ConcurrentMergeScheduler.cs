@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Get the max # simultaneous threads that may be</summary>
-		/// <seealso cref="setMaxThreadCount.">
+		/// <seealso cref="setMaxThreadCount">
 		/// </seealso>
 		public virtual int GetMaxThreadCount()
 		{

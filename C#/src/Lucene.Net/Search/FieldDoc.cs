@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	/// Integer, Float or String depending on the type of values
 	/// in the terms of each field.
 	/// 
-	/// <p>Created: Feb 11, 2004 1:23:38 PM
+	/// <p/>Created: Feb 11, 2004 1:23:38 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -85,5 +85,35 @@ namespace Lucene.Net.Search
 			sb.Append("]");
 			return base.ToString();
 		}
+
+        #region SERIALIZATION
+        internal object[] fieldsClone = null;
+
+        [System.Runtime.Serialization.OnSerializing]
+        void OnSerializing(System.Runtime.Serialization.StreamingContext context)
+        {
+            if (fields == null) return;
+
+            // Copy "fields" to "fieldsClone"
+            fieldsClone = new object[fields.Length];
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fieldsClone[i] = fields[i];
+            }
+        }
+
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
+        {
+            if (fieldsClone == null) return;
+
+            // Form "fields" from "fieldsClone"
+            fields = new IComparable[fieldsClone.Length];
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fields[i] = (IComparable)fieldsClone[i];
+            }
+        }
+        #endregion
 	}
 }

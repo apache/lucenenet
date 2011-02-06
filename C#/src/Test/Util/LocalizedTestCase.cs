@@ -23,11 +23,10 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Base test class for Lucene test classes that test Locale-sensitive behavior.
-	/// <p>
+	/// <p/>
 	/// This class will run tests under the default Locale, but then will also run
 	/// tests under all available JVM locales. This is helpful to ensure tests will
 	/// not fail under a different environment.
-	/// </p>
 	/// </summary>
 	public class LocalizedTestCase:LuceneTestCase
 	{
@@ -89,11 +88,11 @@ namespace Lucene.Net.Util
 			}
 			catch (System.Exception e)
 			{
-				System.Console.Out.WriteLine("Test failure of '" + "getName()" + "' occurred with the default Locale " + locale); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+                System.Console.Out.WriteLine("Test failure of '" + Lucene.Net.TestCase.GetName() + "' occurred with the default Locale " + locale); 
 				throw e;
 			}
-			
-			if (testWithDifferentLocales == null || testWithDifferentLocales.Contains("getName()")) // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+
+            if (testWithDifferentLocales == null || testWithDifferentLocales.Contains(Lucene.Net.TestCase.GetName())) 
 			{
 				// Do the test again under different Locales
 				System.Globalization.CultureInfo[] systemLocales = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.InstalledWin32Cultures);
@@ -106,7 +105,7 @@ namespace Lucene.Net.Util
 					}
 					catch (System.Exception e)
 					{
-						System.Console.Out.WriteLine("Test failure of '" + "getName()" + "' occurred under a different Locale " + locale); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+                        System.Console.Out.WriteLine("Test failure of '" + Lucene.Net.TestCase.GetName() + "' occurred under a different Locale " + locale); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
 						throw e;
 					}
 				}

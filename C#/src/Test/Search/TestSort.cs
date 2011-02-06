@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Unit tests for sorting code.
 	/// 
-	/// <p>Created: Feb 17, 2004 4:55:10 PM
+	/// <p/>Created: Feb 17, 2004 4:55:10 PM
 	/// 
 	/// </summary>
 	/// <since>   lucene 1.4
@@ -264,7 +264,9 @@ namespace Lucene.Net.Search
         private System.String[][] data = new System.String[][] { 
           //              tracer contents         int            float            string   custom   i18n               long                       double,                           'short',                    byte,                   'custom parser encoding'
           new string[]{   "A",   "x a",           "5",           "4f",            "c",     "A-3",   "p\u00EAche",      "10",                      "-4.0",                           "3",                        "126",                      "J"},//A, x
-          new string[]{   "B",   "y a",           "5",           "3.4028235E38",  "i",     "B-10",  "HAT",             "1000000000",              "40.0",                           "24",                       "1",                        "I"},//B, y
+        //{{See: LUCENENET-364}} Intentional diversion from Java (3.4028235E38 changed to 3.402823E38)
+          new string[]{   "B",   "y a",           "5",           "3.402823E38",   "i",     "B-10",  "HAT",             "1000000000",              "40.0",                           "24",                       "1",                        "I"},//B, y
+        //new string[]{   "B",   "y a",           "5",           "3.4028235E38",  "i",     "B-10",  "HAT",             "1000000000",              "40.0",                           "24",                       "1",                        "I"},//B, y
           new string[]{   "C",   "x a b c",       "2147483647",  "1.0",           "j",     "A-2",   "p\u00E9ch\u00E9", "99999999",                "40.00002343",                    "125",                      "15",                       "H"},//C, x
           new string[]{   "D",   "y a b c",       "-1",          "0.0f",          "a",     "C-0",   "HUT",             long.MaxValue.ToString(),  double.MinValue.ToString("E16"),  short.MinValue.ToString(),  sbyte.MinValue.ToString(),   "G"},//D, y
           new string[]{   "E",   "x a b c d",     "5",           "2f",            "h",     "B-8",   "peach",           long.MinValue.ToString(),  double.MaxValue.ToString("E16"),  short.MaxValue.ToString(),  sbyte.MaxValue.ToString(),   "F"},//E,x
@@ -549,32 +551,32 @@ namespace Lucene.Net.Search
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassIntParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " IntParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " IntParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassFloatParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " FloatParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " FloatParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassLongParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " LongParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " LongParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassDoubleParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " DoubleParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " DoubleParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassByteParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " ByteParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ByteParser"); 
 			fc.PurgeAllCaches();
 			
 			sort.SetSort(new SortField[]{new SortField("parser", new AnonymousClassShortParser(this)), SortField.FIELD_DOC});
 			AssertMatches(full, queryA, sort, "JIHGFEDCBA");
-			AssertSaneFieldCaches("getName()" + " ShortParser"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " ShortParser"); 
 			fc.PurgeAllCaches();
 		}
 		
@@ -1205,7 +1207,7 @@ namespace Lucene.Net.Search
 			
 			// up to this point, all of the searches should have "sane" 
 			// FieldCache behavior, and should have reused hte cache in several cases
-			AssertSaneFieldCaches("getName()" + " various"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " various"); 
 			// next we'll check Locale based (String[]) for 'string', so purge first
 			Lucene.Net.Search.FieldCache_Fields.DEFAULT.PurgeAllCaches();
 			
@@ -1217,8 +1219,8 @@ namespace Lucene.Net.Search
 			
 			sort.SetSort(new SortField[]{new SortField("string", new System.Globalization.CultureInfo("en-GB"))});
 			AssertMatches(multi, queryA, sort, "DJAIHGFEBC");
-			
-			AssertSaneFieldCaches("getName()" + " Locale.US + Locale.UK"); // {{Aroush-2.9}} String junit.framework.TestCase.getName()
+
+            AssertSaneFieldCaches(Lucene.Net.TestCase.GetName() + " Locale.US + Locale.UK"); 
 			Lucene.Net.Search.FieldCache_Fields.DEFAULT.PurgeAllCaches();
 		}
 		

@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
 		/// should be cached without copying it into a BitSet. The default is to return
 		/// <code>false</code>. If you have an own <code>DocIdSet</code> implementation
 		/// that does its iteration very effective and fast without doing disk I/O,
-		/// override this method and return <code>true</here>.
+		/// override this method and return true.
 		/// </summary>
 		public virtual bool IsCacheable()
 		{
