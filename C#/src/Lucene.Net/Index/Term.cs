@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	
 	[Serializable]
-	public sealed class Term : System.IComparable
+    public sealed class Term : System.IComparable, System.Runtime.Serialization.ISerializable
 	{
 		internal System.String field;
 		internal System.String text;
@@ -165,19 +165,17 @@ namespace Lucene.Net.Index
 //			field = StringHelper.Intern(field);
 //		}
 
-		public void  GetobjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			System.Type thisType = this.GetType();
-			System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
-			for (int i = 0 ; i < mi.Length; i++) 
-			{
-				info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
-			}
+        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            info.AddValue("text", text);
+            info.AddValue("field", field);
+        }
 
-            field = StringHelper.Intern(field);
-
-            System.Diagnostics.Debug.Fail("Port issue", "This needs checking; see ReadObject() for the non-ported Java version."); // {{Aroush-2.9}}
-		}
+        private Term(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            text = (string)info.GetValue("text", typeof(string));
+            field = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+        }
 
         public System.String text_ForNUnit
         {

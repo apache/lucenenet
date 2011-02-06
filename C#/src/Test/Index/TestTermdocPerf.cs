@@ -51,6 +51,7 @@ namespace Lucene.Net.Index
 			num--;
 			if (num >= 0)
 			{
+                ClearAttributes();
 				termAtt.SetTermBuffer(value_Renamed);
 				return true;
 			}

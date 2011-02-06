@@ -171,8 +171,8 @@ namespace Lucene.Net.Store
 		/// the <code>open</code> methods that take a
 		/// <code>lockFactory</code> (for example, {@link #open(File, LockFactory)}).
 		/// </deprecated>
-        [Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
+        //[Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
+		//public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
 		/// <summary>The default class which implements filesystem-based directories. </summary>
 		// deprecated
@@ -565,7 +565,9 @@ namespace Lucene.Net.Store
 			}
 			else
 			{
-				return new NIOFSDirectory(path, lockFactory);
+                //NIOFSDirectory is not implemented in Lucene.Net
+				//return new NIOFSDirectory(path, lockFactory);
+                return new SimpleFSDirectory(path, lockFactory);
 			}
         }
 		
@@ -736,14 +738,14 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return file.LastWriteTime.Millisecond;
+            return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public static long FileModified(System.IO.FileInfo directory, System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return file.LastWriteTime.Millisecond;
+            return (long)file.LastWriteTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds; //{{LUCENENET-353}}
 		}
 		
 		/// <summary>Set the modified time of an existing file to now. </summary>

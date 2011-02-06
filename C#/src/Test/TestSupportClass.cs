@@ -827,6 +827,24 @@ namespace Lucene.Net._SupportClass
     {
         //-------------------------------------------
         [Test]
+        [Description("LUCENENET-183")]
+        public void Test_SegmentTermVector_IndexOf()
+        {
+            Lucene.Net.Store.RAMDirectory directory = new Lucene.Net.Store.RAMDirectory();
+            Lucene.Net.Analysis.Analyzer analyzer = new Lucene.Net.Analysis.WhitespaceAnalyzer();
+            Lucene.Net.Index.IndexWriter writer = new Lucene.Net.Index.IndexWriter(directory, analyzer, Lucene.Net.Index.IndexWriter.MaxFieldLength.LIMITED);
+            Lucene.Net.Documents.Document document = new Lucene.Net.Documents.Document();
+            document.Add(new Lucene.Net.Documents.Field("contents", new System.IO.StreamReader(new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes("a_ a0"))), Lucene.Net.Documents.Field.TermVector.WITH_OFFSETS));
+            writer.AddDocument(document);
+            Lucene.Net.Index.IndexReader reader = writer.GetReader();
+            Lucene.Net.Index.TermPositionVector tpv = reader.GetTermFreqVector(0, "contents") as Lucene.Net.Index.TermPositionVector;
+            //Console.WriteLine("tpv: " + tpv);
+            int index = tpv.IndexOf("a_");
+            Assert.AreEqual(index, 1, "See the issue: LUCENENET-183");
+        }
+
+        //-------------------------------------------
+        [Test]
         [Description("LUCENENET-170")]
         public void Test_Util_Parameter()
         {
@@ -945,7 +963,7 @@ namespace Lucene.Net._SupportClass
             {
                 LUCENENET_100_CreateIndex();
 
-                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38085));
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38087));
 
                 Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
                 System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
@@ -973,7 +991,7 @@ namespace Lucene.Net._SupportClass
         {
             try
             {
-                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38085/Searcher");
+                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38087/Searcher");
                 Lucene.Net.Search.MultiSearcher searcher = new Lucene.Net.Search.MultiSearcher(new Lucene.Net.Search.Searchable[] { s });
 
                 Lucene.Net.Search.Query q = new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field1", "moon"));
@@ -981,7 +999,7 @@ namespace Lucene.Net._SupportClass
                 Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
                 sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.INT));
 
-                Lucene.Net.Search.Hits h = searcher.Search(q, sort);
+                Lucene.Net.Search.TopDocs h = searcher.Search(q, null,100, sort);
             }
             catch (Exception ex)
             {
@@ -1015,6 +1033,79 @@ namespace Lucene.Net._SupportClass
         }
 
         //-------------------------------------------
+    }
+
+    [TestFixture]
+    public class TestSerialization
+    {
+        Lucene.Net.Store.RAMDirectory dir = null;
+
+        [SetUp]
+        public void Setup()
+        {
+            dir = new Lucene.Net.Store.RAMDirectory();
+            Index();
+        }
+
+        void Index()
+        {
+            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.WhitespaceAnalyzer(), Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED);
+
+            Lucene.Net.Documents.Document doc = null;
+            Lucene.Net.Documents.Field f = null;
+
+            doc = new Lucene.Net.Documents.Document();
+            f = new Lucene.Net.Documents.Field("field", "a b c d", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED);
+            doc.Add(f);
+            wr.AddDocument(doc);
+
+            doc = new Lucene.Net.Documents.Document();
+            f = new Lucene.Net.Documents.Field("field", "a b a d", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED);
+            doc.Add(f);
+            wr.AddDocument(doc);
+
+            doc = new Lucene.Net.Documents.Document();
+            f = new Lucene.Net.Documents.Field("field", "a b e f", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED);
+            doc.Add(f);
+            wr.AddDocument(doc);
+            
+            doc = new Lucene.Net.Documents.Document();
+            f = new Lucene.Net.Documents.Field("field", "x y z", Lucene.Net.Documents.Field.Store.NO, Lucene.Net.Documents.Field.Index.ANALYZED);
+            doc.Add(f);
+            wr.AddDocument(doc);
+            
+            wr.Close();
+        }
+
+
+        [Test]
+        [Description("LUCENENET-338  (also see LUCENENET-170)")]
+        public void TestBooleanQuerySerialization()
+        {
+            Lucene.Net.Search.BooleanQuery lucQuery = new Lucene.Net.Search.BooleanQuery();
+
+            lucQuery.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field", "x")), Lucene.Net.Search.BooleanClause.Occur.MUST);
+            
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            bf.Serialize(ms, lucQuery);
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            Lucene.Net.Search.BooleanQuery lucQuery2 = (Lucene.Net.Search.BooleanQuery)bf.Deserialize(ms);
+            ms.Close();
+
+            Assert.AreEqual(lucQuery, lucQuery2, "Error in serialization");
+
+            Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
+
+            int hitCount = searcher.Search(lucQuery, 20).totalHits;
+            
+            searcher.Close();
+            searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
+
+            int hitCount2 = searcher.Search(lucQuery2, 20).totalHits;
+
+            Assert.AreEqual(hitCount, hitCount2,"Error in serialization - different hit counts");
+        }
     }
 
 }

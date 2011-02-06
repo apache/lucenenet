@@ -7,9 +7,11 @@ Highlighter.Net
 Snowball.Net
 SpellChecker.Net
 WordNet.Net
-Similarity.Net
+Similarity.Net(obsolete. Use Queries.Net)
 Analyzers\BR
 Spatial.Net
+FastVectorHighlighter.Net
+Queries.Net
 
 
 Contributed code:

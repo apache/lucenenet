@@ -408,6 +408,11 @@ public class SupportClass
             if (obj is ThreadClass) return this.threadField.Equals( ((ThreadClass)obj).threadField  );
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return this.threadField.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -1160,22 +1165,33 @@ public class SupportClass
         /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
         /// value of the original object hashcode for fast comparison.
         /// </summary>
-        class WeakKey : WeakReference
+        class WeakKey 
         {
+            WeakReference reference;
             int hashCode;
 
             public WeakKey(object key)
-                : base(key)
             {
                 if (key == null)
                     throw new ArgumentNullException("key");
 
                 hashCode = key.GetHashCode();
+                reference = new WeakReference(key);
             }
 
             public override int GetHashCode()
             {
                 return hashCode;
+            }
+
+            public object Target
+            {
+                get { return reference.Target; }
+            }
+
+            public bool IsAlive
+            {
+                get { return reference.IsAlive; }
             }
         }
 
@@ -2160,74 +2176,120 @@ public class SupportClass
 
         public class Inflater
         {
-            object inflaterInstance = null;
-            Type inflaterType;
+            delegate void SetInputDelegate(byte[] buffer);
+            delegate bool GetIsFinishedDelegate();
+            delegate int InflateDelegate(byte[] buffer);
+
+            SetInputDelegate setInputMethod;
+            GetIsFinishedDelegate getIsFinishedMethod;
+            InflateDelegate inflateMethod;
 
             internal Inflater(object inflaterInstance)
             {
-                this.inflaterInstance = inflaterInstance;
-                this.inflaterType = inflaterInstance.GetType();
+                Type type = inflaterInstance.GetType();
+
+                setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
+                    typeof(SetInputDelegate),
+                    inflaterInstance,
+                    type.GetMethod("SetInput", new Type[] { typeof(byte[]) }));
+
+                getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
+                    typeof(GetIsFinishedDelegate),
+                    inflaterInstance,
+                    type.GetMethod("get_IsFinished", Type.EmptyTypes));
+
+                inflateMethod = (InflateDelegate)Delegate.CreateDelegate(
+                    typeof(InflateDelegate),
+                    inflaterInstance,
+                    type.GetMethod("Inflate", new Type[] { typeof(byte[]) }));
             }
 
             public void SetInput(byte[] buffer)
             {
-                inflaterType.InvokeMember("SetInput", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, new object[] { buffer });
+                setInputMethod(buffer);
             }
 
             public bool IsFinished
             {
-                get
-                {
-                    return (bool)inflaterType.InvokeMember("get_IsFinished", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, null);
-                }
+                get { return getIsFinishedMethod(); }
             }
 
             public int Inflate(byte[] buffer)
             {
-                return (int)inflaterType.InvokeMember("Inflate", System.Reflection.BindingFlags.InvokeMethod, null, inflaterInstance, new object[] { buffer });                
+                return inflateMethod(buffer);
             }
         }
 
 
         public class Deflater 
         {
-            public const int BEST_COMPRESSION = 9;
+            delegate void SetLevelDelegate(int level);
+            delegate void SetInputDelegate(byte[] input, int offset, int count);
+            delegate void FinishDelegate();
+            delegate bool GetIsFinishedDelegate();
+            delegate int DeflateDelegate(byte[] output);
 
-            object deflaterInstance = null;
-            Type deflaterType;
+            SetLevelDelegate setLevelMethod;
+            SetInputDelegate setInputMethod;
+            FinishDelegate finishMethod;
+            GetIsFinishedDelegate getIsFinishedMethod;
+            DeflateDelegate deflateMethod;
+
+            public const int BEST_COMPRESSION = 9;
 
             internal Deflater(object deflaterInstance)
             {
-                this.deflaterInstance = deflaterInstance;
-                this.deflaterType = deflaterInstance.GetType();
+                Type type = deflaterInstance.GetType();
+
+                setLevelMethod = (SetLevelDelegate)Delegate.CreateDelegate(
+                    typeof(SetLevelDelegate),
+                    deflaterInstance,
+                    type.GetMethod("SetLevel", new Type[] { typeof(int) }));
+
+                setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
+                    typeof(SetInputDelegate),
+                    deflaterInstance,
+                    type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+
+                finishMethod = (FinishDelegate)Delegate.CreateDelegate(
+                    typeof(FinishDelegate),
+                    deflaterInstance,
+                    type.GetMethod("Finish", Type.EmptyTypes));
+
+                getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
+                    typeof(GetIsFinishedDelegate),
+                    deflaterInstance,
+                    type.GetMethod("get_IsFinished", Type.EmptyTypes));
+
+                deflateMethod = (DeflateDelegate)Delegate.CreateDelegate(
+                    typeof(DeflateDelegate),
+                    deflaterInstance,
+                    type.GetMethod("Deflate", new Type[] { typeof(byte[]) }));
             }
             
             public void SetLevel(int level)
             {
-                deflaterType.InvokeMember("SetLevel", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { level });
+                setLevelMethod(level);
             }
 
             public void SetInput(byte[] input, int offset, int count)
             {
-                deflaterType.InvokeMember("SetInput", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { input,offset,count });
+                setInputMethod(input, offset, count);
             }
 
             public void Finish()
             {
-                deflaterType.InvokeMember("Finish", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, null);
+                finishMethod();
             }
 
             public bool IsFinished
             {
-                get
-                {
-                    return (bool)deflaterType.InvokeMember("get_IsFinished", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, null); ;
-                }
+                get { return getIsFinishedMethod(); }
             }
 
             public int Deflate(byte[] output)
             {
-                return (int)deflaterType.InvokeMember("Deflate", System.Reflection.BindingFlags.InvokeMethod, null, deflaterInstance, new object[] { output });
+                return deflateMethod(output);
             }
         }
     }

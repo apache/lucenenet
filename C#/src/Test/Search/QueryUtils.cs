@@ -117,16 +117,17 @@ namespace Lucene.Net.Search
 		}
 		private class AnonymousClassCollector1:Collector
 		{
-			public AnonymousClassCollector1(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
+			public AnonymousClassCollector1(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff, IndexReader[] lastReader)
 			{
-				InitBlock(lastDoc, q, s, maxDiff);
+				InitBlock(lastDoc, q, s, maxDiff, lastReader);
 			}
-			private void  InitBlock(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff)
+			private void  InitBlock(int[] lastDoc, Lucene.Net.Search.Query q, Lucene.Net.Search.IndexSearcher s, float maxDiff, IndexReader[] lastReader)
 			{
 				this.lastDoc = lastDoc;
 				this.q = q;
 				this.s = s;
 				this.maxDiff = maxDiff;
+                this.lastReader = lastReader;
 			}
 			private int[] lastDoc;
 			private Lucene.Net.Search.Query q;
@@ -134,6 +135,8 @@ namespace Lucene.Net.Search
 			private float maxDiff;
 			private Scorer scorer;
 			private IndexReader reader;
+            private IndexReader[] lastReader;
+
 			public override void  SetScorer(Scorer scorer)
 			{
 				this.scorer = scorer;
@@ -164,9 +167,24 @@ namespace Lucene.Net.Search
 			}
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
-				this.reader = reader;
-				lastDoc[0] = - 1;
-			}
+		        // confirm that skipping beyond the last doc, on the
+                // previous reader, hits NO_MORE_DOCS
+                if (lastReader[0] != null) 
+                {
+                    IndexReader previousReader = lastReader[0];
+                    Weight w = q.Weight(new IndexSearcher(previousReader));
+                    Scorer scorer = w.Scorer(previousReader, true, false);
+                    if (scorer != null)
+                    {
+                        bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
+                        Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
+                    }
+                }
+
+                this.reader = lastReader[0] = reader;
+                lastDoc[0] = -1;
+            }
+
 			public override bool AcceptsDocsOutOfOrder()
 			{
 				return false;
@@ -421,23 +439,22 @@ namespace Lucene.Net.Search
 			//System.out.println("checkFirstSkipTo: "+q);
             float maxDiff = 1e-4f; //{{Lucene.Net-2.9.1}}Intentional diversion from Java Lucene
 			int[] lastDoc = new int[]{- 1};
-			s.Search(q, new AnonymousClassCollector1(lastDoc, q, s, maxDiff));
+            IndexReader[] lastReader = {null};
+
+			s.Search(q, new AnonymousClassCollector1(lastDoc, q, s, maxDiff, lastReader));
 			
-			System.Collections.IList readerList = new System.Collections.ArrayList();
-			ReaderUtil.GatherSubReaders(readerList, s.GetIndexReader());
-			IndexReader[] readers = (IndexReader[])(new System.Collections.ArrayList(readerList).ToArray(typeof(IndexReader)));
-			for (int i = 0; i < readers.Length; i++)
-			{
-				IndexReader reader = readers[i];
-				Weight w = q.Weight(s);
-				Scorer scorer = w.Scorer(reader, true, false);
-				
+			if(lastReader[0] != null)
+            {
+                // confirm that skipping beyond the last doc, on the
+                // previous reader, hits NO_MORE_DOCS
+                IndexReader previousReader = lastReader[0];
+                Weight w = q.Weight(new IndexSearcher(previousReader));
+                Scorer scorer = w.Scorer(previousReader, true, false);
+
 				if (scorer != null)
 				{
-					bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-					
-					if (more && lastDoc[0] != - 1)
-						Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
+					bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;					
+					Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
 				}
 			}
 		}

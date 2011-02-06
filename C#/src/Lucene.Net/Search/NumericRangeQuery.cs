@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// </since>
 	[Serializable]
-	public sealed class NumericRangeQuery:MultiTermQuery
+	public sealed class NumericRangeQuery:MultiTermQuery,System.Runtime.Serialization.ISerializable
 	{
 		
 		private NumericRangeQuery(System.String field, int precisionStep, int valSize, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -355,6 +355,48 @@ namespace Lucene.Net.Search
 				hash += (max.GetHashCode() ^ 0x733fa5fe);
 			return hash + (minInclusive.GetHashCode() ^ 0x14fa55fb) + (maxInclusive.GetHashCode() ^ 0x733fa5fe);
 		}
+
+         // field must be interned after reading from stream
+        //private void ReadObject(java.io.ObjectInputStream in) 
+        //{
+        //    in.defaultReadObject();
+        //    field = StringHelper.intern(field);
+        //}
+
+
+        /// <summary>
+        /// Lucene.Net specific. Needed for Serialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            info.AddValue("precisionStep", precisionStep);
+            info.AddValue("valSize", valSize);
+            info.AddValue("min", min);
+            info.AddValue("max", max);
+            info.AddValue("minInclusive", minInclusive);
+            info.AddValue("maxInclusive", maxInclusive);
+
+            info.AddValue("field", field);
+        }
+
+        /// <summary>
+        /// Lucene.Net specific. Needed for deserialization
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        private NumericRangeQuery(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            precisionStep   = (int)info.GetValue("precisionStep", typeof(int));
+            valSize         = (int)info.GetValue("valSize", typeof(int));
+            min             = (System.ValueType)info.GetValue("min", typeof(System.ValueType));
+            max             = (System.ValueType)info.GetValue("max", typeof(System.ValueType));
+            minInclusive    = (bool)info.GetValue("minInclusive", typeof(bool));
+            maxInclusive    = (bool)info.GetValue("maxInclusive", typeof(bool));
+            
+            field           = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+        }
 		
 		// members (package private, to be also fast accessible by NumericRangeTermEnum)
 		internal System.String field;

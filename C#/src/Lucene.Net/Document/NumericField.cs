@@ -230,7 +230,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns always <code>null</code> for numeric fields </summary>
-		public override System.IO.StreamReader ReaderValue()
+		public override System.IO.TextReader ReaderValue()
 		{
 			return null;
 		}

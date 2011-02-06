@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis
 	/// <p/>
 	/// This is an abstract class; subclasses must override {@link #IncrementToken()}
 	/// <p/>
-	/// NOTE: Subclasses overriding {@link #IncrementToken()} must call
+    /// NOTE: Subclasses overriding {@link #next(Token)} must call
 	/// {@link AttributeSource#ClearAttributes()} before setting attributes.
 	/// Subclasses overriding {@link #IncrementToken()} must call
 	/// {@link Token#Clear()} before setting Token attributes.
@@ -73,7 +73,13 @@ namespace Lucene.Net.Analysis
 		/// <summary>By default, closes the input Reader. </summary>
 		public override void  Close()
 		{
-			input.Close();
+            if (input != null) {
+                input.Close();
+                // LUCENE-2387: don't hold onto Reader after close, so
+                // GC can reclaim
+                input = null;
+            }
+
 		}
   
 		/// <summary>Return the corrected offset. If {@link #input} is a {@link CharStream} subclass

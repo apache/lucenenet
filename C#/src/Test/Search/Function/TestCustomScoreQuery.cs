@@ -27,6 +27,9 @@ using Query = Lucene.Net.Search.Query;
 using QueryUtils = Lucene.Net.Search.QueryUtils;
 using TopDocs = Lucene.Net.Search.TopDocs;
 
+using Lucene.Net.Search;
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Search.Function
 {
 	
@@ -36,7 +39,7 @@ namespace Lucene.Net.Search.Function
 	{
 		
 		/* @override constructor */
-		public TestCustomScoreQuery(System.String name):base(name)
+		public TestCustomScoreQuery(System.String name):base(name, true)
 		{
 		}
         public TestCustomScoreQuery()
@@ -76,7 +79,7 @@ namespace Lucene.Net.Search.Function
 			// INT field can be parsed as float
 			DoTestCustomScore(INT_FIELD, FieldScoreQuery.Type.FLOAT, 1.0);
 			DoTestCustomScore(INT_FIELD, FieldScoreQuery.Type.FLOAT, 5.0);
-			// same values, but in flot format
+			// same values, but in float format
 			DoTestCustomScore(FLOAT_FIELD, FieldScoreQuery.Type.FLOAT, 1.0);
 			DoTestCustomScore(FLOAT_FIELD, FieldScoreQuery.Type.FLOAT, 6.0);
 		}
@@ -94,23 +97,37 @@ namespace Lucene.Net.Search.Function
 			{
 				return "customAdd";
 			}
-			/*(non-Javadoc) @see Lucene.Net.Search.Function.CustomScoreQuery#customScore(int, float, float) */
-			public override float CustomScore(int doc, float subQueryScore, float valSrcScore)
-			{
-				return subQueryScore + valSrcScore;
-			}
-			/* (non-Javadoc)@see Lucene.Net.Search.Function.CustomScoreQuery#customExplain(int, Lucene.Net.Search.Explanation, Lucene.Net.Search.Explanation)*/
-			public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
-			{
-				float valSrcScore = valSrcExpl == null?0:valSrcExpl.GetValue();
-				Explanation exp = new Explanation(valSrcScore + subQueryExpl.GetValue(), "custom score: sum of:");
-				exp.AddDetail(subQueryExpl);
-				if (valSrcExpl != null)
-				{
-					exp.AddDetail(valSrcExpl);
-				}
-				return exp;
-			}
+            protected override CustomScoreProvider GetCustomScoreProvider(IndexReader reader)
+            {
+                return new AnonymousCustomScoreProvider(reader);
+            }
+
+            class AnonymousCustomScoreProvider : CustomScoreProvider
+            {
+                IndexReader reader;
+
+                public AnonymousCustomScoreProvider(IndexReader reader) : base(reader)
+                {
+                    this.reader = reader;
+                }
+
+                public override float CustomScore(int doc, float subQueryScore, float valSrcScore)
+                {
+                    return subQueryScore + valSrcScore;
+                }
+
+                public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
+                {
+                    float valSrcScore = valSrcExpl == null ? 0 : valSrcExpl.GetValue();
+                    Explanation exp = new Explanation(valSrcScore + subQueryExpl.GetValue(), "custom score: sum of:");
+                    exp.AddDetail(subQueryExpl);
+                    if (valSrcExpl != null)
+                    {
+                        exp.AddDetail(valSrcExpl);
+                    }
+                    return exp;
+                }
+            }
 		}
 		
 		// must have static class otherwise serialization tests fail
@@ -127,39 +144,109 @@ namespace Lucene.Net.Search.Function
 				return "customMulAdd";
 			}
 			/*(non-Javadoc) @see Lucene.Net.Search.Function.CustomScoreQuery#customScore(int, float, float) */
-			public override float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
-			{
-				if (valSrcScores.Length == 0)
-				{
-					return subQueryScore;
-				}
-				if (valSrcScores.Length == 1)
-				{
-					return subQueryScore + valSrcScores[0];
-				}
-				return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
-			}
-			/* (non-Javadoc)@see Lucene.Net.Search.Function.CustomScoreQuery#customExplain(int, Lucene.Net.Search.Explanation, Lucene.Net.Search.Explanation)*/
-			public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation[] valSrcExpls)
-			{
-				if (valSrcExpls.Length == 0)
-				{
-					return subQueryExpl;
-				}
-				Explanation exp = new Explanation(valSrcExpls[0].GetValue() + subQueryExpl.GetValue(), "sum of:");
-				exp.AddDetail(subQueryExpl);
-				exp.AddDetail(valSrcExpls[0]);
-				if (valSrcExpls.Length == 1)
-				{
-					exp.SetDescription("CustomMulAdd, sum of:");
-					return exp;
-				}
-				Explanation exp2 = new Explanation(valSrcExpls[1].GetValue() * exp.GetValue(), "custom score: product of:");
-				exp2.AddDetail(valSrcExpls[1]);
-				exp2.AddDetail(exp);
-				return exp2;
-			}
+            protected override CustomScoreProvider GetCustomScoreProvider(IndexReader reader)
+            {
+                return new AnonymousCustomScoreProvider(reader);
+            }
+
+            class AnonymousCustomScoreProvider : CustomScoreProvider
+            {
+                IndexReader reader;
+
+                public AnonymousCustomScoreProvider(IndexReader reader) : base(reader)
+                {
+                    this.reader = reader;
+                }
+
+                public override float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
+                {
+                    if (valSrcScores.Length == 0)
+                    {
+                        return subQueryScore;
+                    }
+                    if (valSrcScores.Length == 1)
+                    {
+                        return subQueryScore + valSrcScores[0];
+                        // confirm that skipping beyond the last doc, on the
+                        // previous reader, hits NO_MORE_DOCS
+                    }
+                    return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
+                }
+
+                public override Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation[] valSrcExpls)
+                {
+                    if (valSrcExpls.Length == 0)
+                    {
+                        return subQueryExpl;
+                    }
+                    Explanation exp = new Explanation(valSrcExpls[0].GetValue() + subQueryExpl.GetValue(), "sum of:");
+                    exp.AddDetail(subQueryExpl);
+                    exp.AddDetail(valSrcExpls[0]);
+                    if (valSrcExpls.Length == 1)
+                    {
+                        exp.SetDescription("CustomMulAdd, sum of:");
+                        return exp;
+                    }
+                    Explanation exp2 = new Explanation(valSrcExpls[1].GetValue() * exp.GetValue(), "custom score: product of:");
+                    exp2.AddDetail(valSrcExpls[1]);
+                    exp2.AddDetail(exp);
+                    return exp2;
+                }
+            }
 		}
+
+        private class CustomExternalQuery : CustomScoreQuery 
+        {
+            protected override CustomScoreProvider GetCustomScoreProvider(IndexReader reader) 
+            {
+                int[] values = FieldCache_Fields.DEFAULT.GetInts(reader, INT_FIELD);
+                return new AnonymousCustomScoreProvider(reader,values);
+            }
+            
+            class AnonymousCustomScoreProvider : CustomScoreProvider 
+            {
+                IndexReader reader;
+                int[] values = null;
+
+                public AnonymousCustomScoreProvider(IndexReader reader, int[] values) : base(reader)
+                {
+                    this.reader = reader;
+                    this.values = values;
+                }
+
+                public override float CustomScore(int doc, float subScore, float valSrcScore)
+                {
+                    Assert.IsTrue(doc <= reader.MaxDoc());
+                    return (float)values[doc];
+                }
+            }
+            
+            public CustomExternalQuery(Query q) : base(q)
+            {  }
+        }
+
+        [Test]
+        public void TestCustomExternalQuery() 
+        {
+            QueryParser qp = new QueryParser(TEXT_FIELD,anlzr); 
+            String qtxt = "first aid text"; // from the doc texts in FunctionQuerySetup.
+            Query q1 = qp.Parse(qtxt); 
+        
+            Query q = new CustomExternalQuery(q1);
+            Log(q);
+
+            IndexSearcher s = new IndexSearcher(dir);
+            TopDocs hits = s.Search(q, 1000);
+            Assert.AreEqual(N_DOCS, hits.totalHits);
+            for(int i=0;i<N_DOCS;i++) 
+            {
+                int doc = hits.scoreDocs[i].doc;
+                float score = hits.scoreDocs[i].score;
+                Assert.AreEqual(score, (float)1 + (4 * doc) % N_DOCS, 0.0001, "doc=" + doc);
+            }
+            s.Close();
+        }
+
 		
 		// Test that FieldScoreQuery returns docs with expected score.
 		private void  DoTestCustomScore(System.String field, FieldScoreQuery.Type tp, double dboost)

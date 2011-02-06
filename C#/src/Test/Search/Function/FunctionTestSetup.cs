@@ -57,9 +57,18 @@ namespace Lucene.Net.Search.Function
 		protected internal Analyzer anlzr;
 		
 		/* @override constructor */
-		public FunctionTestSetup(System.String name):base(name)
+		public FunctionTestSetup(System.String name):this(name, false)
 		{
 		}
+        
+        private bool doMultiSegment;
+
+        public FunctionTestSetup(String name, bool doMultiSegment) : base(name)
+        {
+            this.doMultiSegment = doMultiSegment;
+        }
+
+
         public FunctionTestSetup()
             : base()
         {
@@ -96,6 +105,10 @@ namespace Lucene.Net.Search.Function
 				AddDoc(iw, i);
 				done[i] = true;
 				i = (i + 4) % N_DOCS;
+                if (doMultiSegment && remaining % 3 == 0) 
+                {
+                    iw.Commit();
+                }
 				remaining--;
 			}
 			iw.Close();

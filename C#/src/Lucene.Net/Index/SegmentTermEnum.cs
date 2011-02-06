@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 			return clone;
 		}
 		
-		internal void  Seek(long pointer, int p, Term t, TermInfo ti)
+		internal void  Seek(long pointer, long p, Term t, TermInfo ti)
 		{
 			input.Seek(pointer);
 			position = p;

@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
 		public static readonly bool JAVA_1_3 = JAVA_VERSION.StartsWith("1.3.");
 		
 		/// <summary>The value of <tt>System.getProperty("os.name")</tt>. *</summary>
-		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS") ?? "Linux";
+		public static readonly System.String OS_NAME = GetEnvironmentVariable("OS","Windows_NT") ?? "Linux";
 		/// <summary>True iff running on Linux. </summary>
 		public static readonly bool LINUX = OS_NAME.StartsWith("Linux");
 		/// <summary>True iff running on Windows. </summary>
@@ -54,8 +54,8 @@ namespace Lucene.Net.Util
 		/// <summary>True iff running on SunOS. </summary>
 		public static readonly bool SUN_OS = OS_NAME.StartsWith("SunOS");
 		
-		public static readonly System.String OS_ARCH = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-		public static readonly System.String OS_VERSION = System.Environment.OSVersion.ToString();
+		public static readonly System.String OS_ARCH = GetEnvironmentVariable("PROCESSOR_ARCHITECTURE","x86");
+        public static readonly System.String OS_VERSION = GetEnvironmentVariable("OS_VERSION", "?");
 		public static readonly System.String JAVA_VENDOR = SupportClass.AppSettings.Get("java.vendor", "");
 		
 		// NOTE: this logic may not be correct; if you know of a
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
             return s.ToString();
         }
 
-		public static readonly System.String LUCENE_MAIN_VERSION = Ident("2.9.1");
+		public static readonly System.String LUCENE_MAIN_VERSION = Ident("2.9.2");
 		
 		public static System.String LUCENE_VERSION;
 		static Constants()
@@ -86,6 +86,23 @@ namespace Lucene.Net.Util
 
             LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-		}
-	}
+        }
+
+        #region MEDIUM-TRUST Support
+        static string GetEnvironmentVariable(string variable, string defaultValueOnSecurityException)
+        {
+            try
+            {
+                if (variable == "OS_VERSION") return System.Environment.OSVersion.ToString();
+
+                return System.Environment.GetEnvironmentVariable(variable);
+            }
+            catch (System.Security.SecurityException)
+            {
+                return defaultValueOnSecurityException;
+            }
+
+        }
+        #endregion
+    }
 }

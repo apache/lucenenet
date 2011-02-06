@@ -192,6 +192,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
+                    ClearAttributes();
 					termAtt.SetTermBuffer(tokens[index++]);
 					return true;
 				}

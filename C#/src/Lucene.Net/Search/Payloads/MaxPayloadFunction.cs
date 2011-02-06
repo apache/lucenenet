@@ -32,7 +32,14 @@ namespace Lucene.Net.Search.Payloads
 	{
 		public override float CurrentScore(int docId, System.String field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)
 		{
-			return System.Math.Max(currentPayloadScore, currentScore);
+            if (numPayloadsSeen == 0)
+            {
+                return currentPayloadScore;
+            }
+            else
+            {
+                return System.Math.Max(currentPayloadScore, currentScore);
+            }
 		}
 		
 		public override float DocScore(int docId, System.String field, int numPayloadsSeen, float payloadScore)

@@ -365,6 +365,8 @@ namespace Lucene.Net.Index
 		/// costly {@link #commit}.
 		/// <p/>
 		/// 
+        /// You must close the {@link IndexReader} returned by  this method once you are done using it.
+        /// 
 		/// <p/>
 		/// It's <i>near</i> real-time because there is no hard
 		/// guarantee on how quickly you can get a new reader after
@@ -385,10 +387,11 @@ namespace Lucene.Net.Index
 		/// deletes, etc.  This means additional resources (RAM,
 		/// file descriptors, CPU time) will be consumed.<p/>
 		/// 
-		/// <p/>For lower latency on reopening a reader, you may
-		/// want to call {@link #setMergedSegmentWarmer} to
+		/// <p/>For lower latency on reopening a reader, you should call {@link #setMergedSegmentWarmer} 
+        /// to call {@link #setMergedSegmentWarmer} to
 		/// pre-warm a newly merged segment before it's committed
-		/// to the index.<p/>
+		/// to the index. This is important for minimizing index-to-search 
+        /// delay after a large merge.
 		/// 
 		/// <p/>If an addIndexes* call is running in another thread,
 		/// then this reader will only search those segments from
@@ -441,13 +444,14 @@ namespace Lucene.Net.Index
 			// this method is called:
 			poolReaders = true;
 			
-			Flush(true, true, true);
+			Flush(true, true, false);
 			
 			// Prevent segmentInfos from changing while opening the
 			// reader; in theory we could do similar retry logic,
 			// just like we do when loading segments_N
 			lock (this)
 			{
+                ApplyDeletes();
 				return new ReadOnlyDirectoryReader(this, segmentInfos, termInfosIndexDivisor);
 			}
 		}
@@ -4737,10 +4741,15 @@ namespace Lucene.Net.Index
 			StartCommit(0, commitUserData);
 		}
 		
+        // Used only by commit, below; lock order is commitLock -> IW
+        private Object commitLock = new Object();
+
 		private void  Commit(long sizeInBytes)
 		{
-			StartCommit(sizeInBytes, null);
-			FinishCommit();
+            lock(commitLock) {
+                StartCommit(sizeInBytes, null);
+                FinishCommit();
+            }
 		}
 		
 		/// <summary> <p/>Commits all pending changes (added &amp; deleted
@@ -4792,20 +4801,31 @@ namespace Lucene.Net.Index
 		{
 			
 			EnsureOpen();
-			
-			if (infoStream != null)
-				Message("commit: start");
-			
-			if (autoCommit || pendingCommit == null)
-			{
-				if (infoStream != null)
-					Message("commit: now prepare");
-				PrepareCommit(commitUserData, true);
-			}
-			else if (infoStream != null)
-				Message("commit: already prepared");
-			
-			FinishCommit();
+
+            if (infoStream != null)
+            {
+                Message("commit: start");
+            }
+
+            lock (commitLock)
+            {
+                if (infoStream != null)
+                {
+                    Message("commit: enter lock");
+                }
+                if (autoCommit || pendingCommit == null)
+                {
+                    if (infoStream != null)
+                        Message("commit: now prepare");
+                    PrepareCommit(commitUserData, true);
+                }
+                else if (infoStream != null)
+                {
+                    Message("commit: already prepared");
+                }
+
+                FinishCommit();
+            }
 		}
 		
 		private void  FinishCommit()
@@ -5045,7 +5065,6 @@ namespace Lucene.Net.Index
 					
 					if (flushDeletes)
 					{
-						flushDeletesCount++;
 						ApplyDeletes();
 					}
 					
@@ -6048,6 +6067,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				System.Diagnostics.Debug.Assert(TestPoint("startApplyDeletes"));
+                flushDeletesCount++;
 				SegmentInfos rollback = (SegmentInfos) segmentInfos.Clone();
 				bool success = false;
 				bool changed;
@@ -6290,6 +6310,9 @@ namespace Lucene.Net.Index
 		{
 			
 			System.Diagnostics.Debug.Assert(TestPoint("startStartCommit"));
+
+            // TODO: as of LUCENE-2095, we can simplify this method,
+            // since only 1 thread can be in here at once
 			
 			if (hitOOM)
 			{

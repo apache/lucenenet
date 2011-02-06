@@ -497,7 +497,7 @@ namespace Similarity.Net
             if (fieldNames == null)
             {
                 // gather list of valid fields from lucene
-                System.Collections.ICollection fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
+                System.Collections.Generic.ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
                 System.Collections.IEnumerator e = fields.GetEnumerator();
                 fieldNames = new System.String[fields.Count];
                 int index = 0;
@@ -518,7 +518,7 @@ namespace Similarity.Net
             if (fieldNames == null)
             {
                 // gather list of valid fields from lucene
-                System.Collections.ICollection fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
+                System.Collections.Generic.ICollection<string> fields = ir.GetFieldNames(IndexReader.FieldOption.INDEXED);
                 System.Collections.IEnumerator e = fields.GetEnumerator();
                 fieldNames = new System.String[fields.Count];
                 int index = 0;
