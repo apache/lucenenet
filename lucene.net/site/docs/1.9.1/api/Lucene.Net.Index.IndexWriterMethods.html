@@ -1,0 +1,85 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>IndexWriter Methods</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Lucene.Net 1.9.1 Class Library</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">IndexWriter Methods</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>The methods of the <b>IndexWriter</b> class are listed below. For a complete list of <b>IndexWriter</b> class members, see the <a href="Lucene.Net.Index.IndexWriterMembers.html">IndexWriter Members</a> topic.</p>
+      <h4 class="dtH4">Public Instance Methods</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.AddDocument_overloads.html">AddDocument</a></td><td width="50%">Overloaded.  Adds a document to this index, using the provided analyzer instead of the value of {@link #GetAnalyzer()}. If the document contains more than {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are discarded. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.AddIndexes_overloads.html">AddIndexes</a></td><td width="50%">Overloaded. Merges the provided indexes into this index. After this completes, the index is optimized. 
+            The provided IndexReaders are not closed.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.Close.html">Close</a></td><td width="50%">Flushes all changes to an index and closes all associated files. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.DocCount.html">DocCount</a></td><td width="50%">Returns the number of documents currently in this index. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassEqualsTopic.htm">Equals</a> (inherited from <b>Object</b>)</td><td width="50%">
+        Determines whether the specified <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">Object</a> is equal to the current <b>Object</b>.
+      </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetAnalyzer.html">GetAnalyzer</a></td><td width="50%">Returns the analyzer used by this index. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetDirectory.html">GetDirectory</a></td><td width="50%">Returns the Directory used by this index. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetHashCodeTopic.htm">GetHashCode</a> (inherited from <b>Object</b>)</td><td width="50%">
+        Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
+      </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetInfoStream.html">GetInfoStream</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetMaxBufferedDocs.html">GetMaxBufferedDocs</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetMaxFieldLength.html">GetMaxFieldLength</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetMaxMergeDocs.html">GetMaxMergeDocs</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetMergeFactor.html">GetMergeFactor</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetSimilarity.html">GetSimilarity</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetTermIndexInterval.html">GetTermIndexInterval</a></td><td width="50%">Expert: Return the interval between indexed terms. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetTypeTopic.htm">GetType</a> (inherited from <b>Object</b>)</td><td width="50%">
+        Gets the <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemTypeClassTopic.htm">Type</a> of the current instance.
+      </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.GetUseCompoundFile.html">GetUseCompoundFile</a></td><td width="50%">Get the current setting of whether to use the compound file format. Note that this just returns the value you set with setUseCompoundFile(boolean) or the default. You cannot use this to query the status of an existing index. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.Optimize.html">Optimize</a></td><td width="50%">Merges all segments together into a single segment, optimizing an index for search. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetInfoStream.html">SetInfoStream</a></td><td width="50%">If non-null, information about merges and a message when maxFieldLength is reached will be printed to this. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetMaxBufferedDocs.html">SetMaxBufferedDocs</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetMaxFieldLength.html">SetMaxFieldLength</a></td><td width="50%"> The maximum number of terms that will be indexed for a single field in a document. This limits the amount of memory required for indexing, so that collections with very large files will not crash the indexing process by running out of memory. Note that this effectively truncates large documents, excluding from the index terms that occur further in the document. If you know your source documents are large, be sure to set this value high enough to accomodate the expected size. If you set it to Integer.MAX_VALUE, then the only limit is your memory, but you should anticipate an OutOfMemoryError. By default, no more than 10,000 terms will be indexed for a field. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetMaxMergeDocs.html">SetMaxMergeDocs</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetMergeFactor.html">SetMergeFactor</a></td><td width="50%"> </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetSimilarity.html">SetSimilarity</a></td><td width="50%">Expert: Set the Similarity implementation used by this IndexWriter. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetTermIndexInterval.html">SetTermIndexInterval</a></td><td width="50%">Expert: Set the interval between indexed terms. Large values cause less memory to be used by IndexReader, but slow random-access to terms. Small values cause more memory to be used by an IndexReader, and speed random-access to terms. This parameter determines the amount of computation required per query term, regardless of the number of documents that contain that term. In particular, it is the maximum number of other terms that must be scanned before a term is located and its frequency and position information may be processed. In a large index with user-entered query terms, query processing time is likely to be dominated not by term lookup but rather by the processing of frequency and positional data. In a small index or when many uncommon query terms are generated (e.g., by wildcard queries) term lookup may become a dominant cost. In particular, <pre class="code">numUniqueTerms/interval</pre> terms are read into memory by an IndexReader, and, on average, <pre class="code">interval/2</pre> terms must be scanned for each random term access. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.SetUseCompoundFile.html">SetUseCompoundFile</a></td><td width="50%">Setting to turn on usage of a compound file. When on, multiple files for each segment are merged into a single file once the segment creation is finished. This is done regardless of what directory is in use. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"></img><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassToStringTopic.htm">ToString</a> (inherited from <b>Object</b>)</td><td width="50%">
+        Returns a <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a> that represents the current <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">Object</a>.
+      </td></tr></table>
+      </div>
+      <h4 class="dtH4">Protected Instance Methods</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"></img><a href="Lucene.Net.Index.IndexWriter.Finalize.html">Finalize</a></td><td width="50%">Release the write lock, if needed. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"></img><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassMemberwiseCloneTopic.htm">MemberwiseClone</a> (inherited from <b>Object</b>)</td><td width="50%">
+        Creates a shallow copy of the current <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">Object</a>.
+      </td></tr></table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="Lucene.Net.Index.IndexWriter.html">IndexWriter Class</a> | <a href="Lucene.Net.Index.html">Lucene.Net.Index Namespace</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="IndexWriter class, methods">
+        </param>
+      </object>
+    </div>
+  </body>
+</html>

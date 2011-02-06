@@ -1,0 +1,76 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Lucene.Net.Analysis.RU</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Lucene.Net 1.4.3 Class Library</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Lucene.Net.Analysis.RU Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>
+        <a href="Lucene.Net.Analysis.RUHierarchy.html">Namespace hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianAnalyzer.html">RussianAnalyzer</a>
+            </td>
+            <td width="50%"> Analyzer for Russian language. Supports an external list of stopwords (words that will not be indexed at all). A default set of stopwords is used unless an alternative list is specified. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianCharsets.html">RussianCharsets</a>
+            </td>
+            <td width="50%"> RussianCharsets class contains encodings schemes (charsets) and toLowerCase() method implementation for russian characters in Unicode, KOI8 and CP1252. Each encoding scheme contains lowercase (positions 0-31) and uppercase (position 32-63) characters. One should be able to add other encoding schemes (like ISO-8859-5 or customized) by adding a new charset and adding logic to toLowerCase() method for that charset. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianLetterTokenizer.html">RussianLetterTokenizer</a>
+            </td>
+            <td width="50%"> A RussianLetterTokenizer is a tokenizer that extends LetterTokenizer by additionally looking up letters in a given "russian charset". The problem with LeterTokenizer is that it uses Character.isLetter() method, which doesn't know how to detect letters in encodings like CP1252 and KOI8 (well-known problems with 0xD7 and 0xF7 chars) </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianLowerCaseFilter.html">RussianLowerCaseFilter</a>
+            </td>
+            <td width="50%"> Normalizes token text to lower case, analyzing given ("russian") charset. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianStemFilter.html">RussianStemFilter</a>
+            </td>
+            <td width="50%"> A filter that stems Russian words. The implementation was inspired by GermanStemFilter. The input should be filtered by RussianLowerCaseFilter before passing it to RussianStemFilter , because RussianStemFilter only works with lowercase part of any "russian" charset. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Analysis.RU.RussianStemmer.html">RussianStemmer</a>
+            </td>
+            <td width="50%"> Russian stemming algorithm implementation (see http://snowball.sourceforge.net for detailed description). </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

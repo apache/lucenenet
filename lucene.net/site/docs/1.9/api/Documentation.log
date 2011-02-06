@@ -1,0 +1,18 @@
+Microsoft HTML Help Compiler 4.74.8702
+
+Compiling e:\Aroush.proj\temp\doc\ndoc_msdn_temp\Documentation.chm
+
+HHC4006: Warning: The file "Lucene.Net.Analysis.StopFilter.makeStopTable.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Index.Term.Text.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Search.DisjunctionSumScorer.NrMatchers.html" is already listed in the [FILES] section of the project file.
+HHC4006: Warning: The file "Lucene.Net.Store.InputStream.Length.html" is already listed in the [FILES] section of the project file.
+
+Compile time: 0 minutes, 17 seconds
+5,178	Topics
+17,901	Local links
+0	Internet links
+8	Graphics
+
+
+Created e:\Aroush.proj\temp\doc\ndoc_msdn_temp\Documentation.chm, 865,697 bytes
+Compression decreased file by 6,906,169 bytes.

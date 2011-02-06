@@ -1,0 +1,199 @@
+Building documentation...
+Initializing...
+Merging XML documentation...
+Building file mapping...
+Loading XSLT files...
+    namespace.xslt
+    namespacehierarchy.xslt
+    type.xslt
+    typehierarchy.xslt
+    allmembers.xslt
+    individualmembers.xslt
+    event.xslt
+    member.xslt
+    memberoverload.xslt
+    property.xslt
+    field.xslt
+    htmlcontents.xslt
+Generating HTML pages...
+Lucene.Net.Highlight.html
+Lucene.Net.HighlightHierarchy.html
+Lucene.Net.Highlight.DefaultEncoder.html
+Lucene.Net.Highlight.DefaultEncoderMembers.html
+Lucene.Net.Highlight.DefaultEncoderConstructor.html
+Lucene.Net.Highlight.DefaultEncoderMethods.html
+Lucene.Net.Highlight.DefaultEncoder.EncodeText.html
+Lucene.Net.Highlight.Encoder.html
+Lucene.Net.Highlight.EncoderMembers.html
+Lucene.Net.Highlight.EncoderMethods.html
+Lucene.Net.Highlight.Encoder.EncodeText.html
+Lucene.Net.Highlight.Formatter.html
+Lucene.Net.Highlight.FormatterMembers.html
+Lucene.Net.Highlight.FormatterMethods.html
+Lucene.Net.Highlight.Formatter.HighlightTerm.html
+Lucene.Net.Highlight.Fragmenter.html
+Lucene.Net.Highlight.FragmenterMembers.html
+Lucene.Net.Highlight.FragmenterMethods.html
+Lucene.Net.Highlight.Fragmenter.IsNewFragment.html
+Lucene.Net.Highlight.Fragmenter.Start.html
+Lucene.Net.Highlight.GradientFormatter.html
+Lucene.Net.Highlight.GradientFormatterMembers.html
+Lucene.Net.Highlight.GradientFormatterConstructor.html
+Lucene.Net.Highlight.GradientFormatterFields.html
+Lucene.Net.Highlight.GradientFormatter.highlightBackground.html
+Lucene.Net.Highlight.GradientFormatter.highlightForeground.html
+Lucene.Net.Highlight.GradientFormatterMethods.html
+Lucene.Net.Highlight.GradientFormatter.GetBackgroundColorString.html
+Lucene.Net.Highlight.GradientFormatter.GetForegroundColorString.html
+Lucene.Net.Highlight.GradientFormatter.HexToInt.html
+Lucene.Net.Highlight.GradientFormatter.HighlightTerm.html
+Lucene.Net.Highlight.Highlighter.html
+Lucene.Net.Highlight.HighlighterMembers.html
+Lucene.Net.Highlight.HighlighterConstructor.html
+Lucene.Net.Highlight.HighlighterConstructor1.html
+Lucene.Net.Highlight.HighlighterConstructor2.html
+Lucene.Net.Highlight.HighlighterConstructor3.html
+Lucene.Net.Highlight.HighlighterFields.html
+Lucene.Net.Highlight.Highlighter.DEFAULT_MAX_DOC_BYTES_TO_ANALYZE.html
+Lucene.Net.Highlight.HighlighterMethods.html
+Lucene.Net.Highlight.Highlighter.GetBestFragment_overloads.html
+Lucene.Net.Highlight.Highlighter.GetBestFragment_overload_1.html
+Lucene.Net.Highlight.Highlighter.GetBestFragment_overload_2.html
+Lucene.Net.Highlight.Highlighter.GetBestFragments_overloads.html
+Lucene.Net.Highlight.Highlighter.GetBestFragments_overload_1.html
+Lucene.Net.Highlight.Highlighter.GetBestFragments_overload_2.html
+Lucene.Net.Highlight.Highlighter.GetBestFragments_overload_3.html
+Lucene.Net.Highlight.Highlighter.GetBestFragments_overload_4.html
+Lucene.Net.Highlight.Highlighter.GetBestTextFragments.html
+Lucene.Net.Highlight.Highlighter.GetEncoder.html
+Lucene.Net.Highlight.Highlighter.GetFragmentScorer.html
+Lucene.Net.Highlight.Highlighter.GetMaxDocBytesToAnalyze.html
+Lucene.Net.Highlight.Highlighter.GetTextFragmenter.html
+Lucene.Net.Highlight.Highlighter.SetEncoder.html
+Lucene.Net.Highlight.Highlighter.SetFragmentScorer.html
+Lucene.Net.Highlight.Highlighter.SetMaxDocBytesToAnalyze.html
+Lucene.Net.Highlight.Highlighter.SetTextFragmenter.html
+Lucene.Net.Highlight.NullFragmenter.html
+Lucene.Net.Highlight.NullFragmenterMembers.html
+Lucene.Net.Highlight.NullFragmenterConstructor.html
+Lucene.Net.Highlight.NullFragmenterMethods.html
+Lucene.Net.Highlight.NullFragmenter.IsNewFragment.html
+Lucene.Net.Highlight.NullFragmenter.Start.html
+Lucene.Net.Highlight.QueryScorer.html
+Lucene.Net.Highlight.QueryScorerMembers.html
+Lucene.Net.Highlight.QueryScorerConstructor.html
+Lucene.Net.Highlight.QueryScorerConstructor1.html
+Lucene.Net.Highlight.QueryScorerConstructor2.html
+Lucene.Net.Highlight.QueryScorerConstructor3.html
+Lucene.Net.Highlight.QueryScorerConstructor4.html
+Lucene.Net.Highlight.QueryScorerMethods.html
+Lucene.Net.Highlight.QueryScorer.AllFragmentsProcessed.html
+Lucene.Net.Highlight.QueryScorer.GetFragmentScore.html
+Lucene.Net.Highlight.QueryScorer.GetMaxTermWeight.html
+Lucene.Net.Highlight.QueryScorer.GetTokenScore.html
+Lucene.Net.Highlight.QueryScorer.StartFragment.html
+Lucene.Net.Highlight.QueryTermExtractor.html
+Lucene.Net.Highlight.QueryTermExtractorMembers.html
+Lucene.Net.Highlight.QueryTermExtractorConstructor.html
+Lucene.Net.Highlight.QueryTermExtractorMethods.html
+Lucene.Net.Highlight.QueryTermExtractor.GetIdfWeightedTerms.html
+Lucene.Net.Highlight.QueryTermExtractor.GetTerms_overloads.html
+Lucene.Net.Highlight.QueryTermExtractor.GetTerms_overload_1.html
+Lucene.Net.Highlight.QueryTermExtractor.GetTerms_overload_3.html
+Lucene.Net.Highlight.QueryTermExtractor.GetTerms_overload_2.html
+Lucene.Net.Highlight.Scorer.html
+Lucene.Net.Highlight.ScorerMembers.html
+Lucene.Net.Highlight.ScorerMethods.html
+Lucene.Net.Highlight.Scorer.GetFragmentScore.html
+Lucene.Net.Highlight.Scorer.GetTokenScore.html
+Lucene.Net.Highlight.Scorer.StartFragment.html
+Lucene.Net.Highlight.SimpleFragmenter.html
+Lucene.Net.Highlight.SimpleFragmenterMembers.html
+Lucene.Net.Highlight.SimpleFragmenterConstructor.html
+Lucene.Net.Highlight.SimpleFragmenterConstructor1.html
+Lucene.Net.Highlight.SimpleFragmenterConstructor2.html
+Lucene.Net.Highlight.SimpleFragmenterMethods.html
+Lucene.Net.Highlight.SimpleFragmenter.GetFragmentSize.html
+Lucene.Net.Highlight.SimpleFragmenter.IsNewFragment.html
+Lucene.Net.Highlight.SimpleFragmenter.SetFragmentSize.html
+Lucene.Net.Highlight.SimpleFragmenter.Start.html
+Lucene.Net.Highlight.SimpleHTMLEncoder.html
+Lucene.Net.Highlight.SimpleHTMLEncoderMembers.html
+Lucene.Net.Highlight.SimpleHTMLEncoderConstructor.html
+Lucene.Net.Highlight.SimpleHTMLEncoderMethods.html
+Lucene.Net.Highlight.SimpleHTMLEncoder.EncodeText.html
+Lucene.Net.Highlight.SimpleHTMLEncoder.HtmlEncode.html
+Lucene.Net.Highlight.SimpleHTMLFormatter.html
+Lucene.Net.Highlight.SimpleHTMLFormatterMembers.html
+Lucene.Net.Highlight.SimpleHTMLFormatterConstructor.html
+Lucene.Net.Highlight.SimpleHTMLFormatterConstructor1.html
+Lucene.Net.Highlight.SimpleHTMLFormatterConstructor2.html
+Lucene.Net.Highlight.SimpleHTMLFormatterMethods.html
+Lucene.Net.Highlight.SimpleHTMLFormatter.HighlightTerm.html
+Lucene.Net.Highlight.SpanGradientFormatter.html
+Lucene.Net.Highlight.SpanGradientFormatterMembers.html
+Lucene.Net.Highlight.SpanGradientFormatterConstructor.html
+Lucene.Net.Highlight.SpanGradientFormatterMethods.html
+Lucene.Net.Highlight.SpanGradientFormatter.HighlightTerm.html
+Lucene.Net.Highlight.TextFragment.html
+Lucene.Net.Highlight.TextFragmentMembers.html
+Lucene.Net.Highlight.TextFragmentConstructor.html
+Lucene.Net.Highlight.TextFragmentMethods.html
+Lucene.Net.Highlight.TextFragment.Follows.html
+Lucene.Net.Highlight.TextFragment.GetFragNum.html
+Lucene.Net.Highlight.TextFragment.GetScore.html
+Lucene.Net.Highlight.TextFragment.Merge.html
+Lucene.Net.Highlight.TextFragment.ToString.html
+Lucene.Net.Highlight.TokenGroup.html
+Lucene.Net.Highlight.TokenGroupMembers.html
+Lucene.Net.Highlight.TokenGroupConstructor.html
+Lucene.Net.Highlight.TokenGroupMethods.html
+Lucene.Net.Highlight.TokenGroup.GetEndOffset.html
+Lucene.Net.Highlight.TokenGroup.GetNumTokens.html
+Lucene.Net.Highlight.TokenGroup.GetScore.html
+Lucene.Net.Highlight.TokenGroup.GetStartOffset.html
+Lucene.Net.Highlight.TokenGroup.GetToken.html
+Lucene.Net.Highlight.TokenGroup.GetTotalScore.html
+Lucene.Net.Highlight.TokenSources.html
+Lucene.Net.Highlight.TokenSourcesMembers.html
+Lucene.Net.Highlight.TokenSourcesConstructor.html
+Lucene.Net.Highlight.TokenSourcesMethods.html
+Lucene.Net.Highlight.TokenSources.GetAnyTokenStream.html
+Lucene.Net.Highlight.TokenSources.GetTokenStream_overloads.html
+Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_3.html
+Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_4.html
+Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_1.html
+Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_2.html
+Lucene.Net.Highlight.TokenSources.StoredTokenStream.html
+Lucene.Net.Highlight.TokenSources.StoredTokenStreamMembers.html
+Lucene.Net.Highlight.TokenSources.StoredTokenStreamMethods.html
+Lucene.Net.Highlight.TokenSources.StoredTokenStream.Next.html
+Lucene.Net.Highlight.WeightedTerm.html
+Lucene.Net.Highlight.WeightedTermMembers.html
+Lucene.Net.Highlight.WeightedTermConstructor.html
+Lucene.Net.Highlight.WeightedTermMethods.html
+Lucene.Net.Highlight.WeightedTerm.GetTerm.html
+Lucene.Net.Highlight.WeightedTerm.GetWeight.html
+Lucene.Net.Highlight.WeightedTerm.SetTerm.html
+Lucene.Net.Highlight.WeightedTerm.SetWeight.html
+Generating HTML content file...
+transform the HHC contents file into html
+Compiling HTML Help file...
+Compiling Html Help file
+Microsoft HTML Help Compiler 4.74.8702
+
+Compiling c:\temp\doc\ndoc_msdn_temp\API.chm
+
+
+Compile time: 0 minutes, 3 seconds
+162	Topics
+1,060	Local links
+0	Internet links
+6	Graphics
+
+
+Created c:\temp\doc\ndoc_msdn_temp\API.chm, 91,231 bytes
+Compression decreased file by 434,248 bytes.
+
+Html Help compile complete
+Done.

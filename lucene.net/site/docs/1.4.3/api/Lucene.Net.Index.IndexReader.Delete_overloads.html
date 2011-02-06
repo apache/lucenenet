@@ -1,0 +1,41 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Delete Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Lucene.Net 1.4.3 Class Library</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">IndexReader.Delete Method</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>Deletes all documents containing <pre class="code">term</pre>. This is useful if one uses a document Field to hold a unique ID string for the document. Then to delete such a document, one merely constructs a term with the appropriate Field and the unique ID string as its text and passes it to this method. Returns the number of documents deleted. </p>
+      <h4 class="dtH4">Overload List</h4>
+      <p>Deletes all documents containing <pre class="code">term</pre>. This is useful if one uses a document Field to hold a unique ID string for the document. Then to delete such a document, one merely constructs a term with the appropriate Field and the unique ID string as its text and passes it to this method. Returns the number of documents deleted. </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Index.IndexReader.Delete_overload_2.html">public int Delete(Term);</a>
+      </blockquote>
+      <p>Deletes the document numbered <pre class="code">docNum</pre>. Once a document is deleted it will not appear in TermDocs or TermPostitions enumerations. Attempts to read its Field with the {@link #document} method will result in an error. The presence of this document may still be reflected in the {@link #docFreq} statistic, though this will be corrected eventually as the index is further modified. </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Index.IndexReader.Delete_overload_1.html">public void Delete(int);</a>
+      </blockquote>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="Lucene.Net.Index.IndexReader.html">IndexReader Class</a> | <a href="Lucene.Net.Index.html">Lucene.Net.Index Namespace</a></p>
+    </div>
+  </body>
+</html>

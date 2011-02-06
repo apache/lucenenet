@@ -1,0 +1,777 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F04CA2F4-E182-46A8-B914-F46AF5319E83}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Lucene.Net</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Lucene.Net</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>Lucene.Net.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting">
+      <Name>System.Runtime.Remoting</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analysis\Analyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\CachingTokenFilter.cs" />
+    <Compile Include="Analysis\CharArraySet.cs" />
+    <Compile Include="Analysis\CharTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\ISOLatin1AccentFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\KeywordAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\KeywordTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\LengthFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\LetterTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\LowerCaseFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\LowerCaseTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\PerFieldAnalyzerWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\PorterStemFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\PorterStemmer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\SimpleAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\SinkTokenizer.cs" />
+    <Compile Include="Analysis\Standard\StandardAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardTokenizerImpl.cs" />
+    <Compile Include="Analysis\StopAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\StopFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\TeeTokenFilter.cs" />
+    <Compile Include="Analysis\Token.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\TokenFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Tokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\TokenStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\WhitespaceAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\WhitespaceTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\WordlistLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\AbstractField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\DateField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\DateTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\Document.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\Field.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\Fieldable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\FieldSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\FieldSelectorResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\LoadFirstFieldSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\MapFieldSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\NumberTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Document\SetBasedFieldSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\CheckIndex.cs" />
+    <Compile Include="Index\CompoundFileReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\CompoundFileWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\ConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\CorruptIndexException.cs" />
+    <Compile Include="Index\DefaultSkipListReader.cs" />
+    <Compile Include="Index\DefaultSkipListWriter.cs" />
+    <Compile Include="Index\DirectoryIndexReader.cs" />
+    <Compile Include="Index\DocumentsWriter.cs" />
+    <Compile Include="Index\FieldInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\FieldInfos.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\FieldReaderException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\FieldSortedTermVectorMapper.cs" />
+    <Compile Include="Index\FieldsReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\FieldsWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\FilterIndexReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexCommitPoint.cs" />
+    <Compile Include="Index\IndexDeletionPolicy.cs" />
+    <Compile Include="Index\IndexFileDeleter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexFileNameFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexFileNames.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexModifier.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\IndexWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\KeepOnlyLastCommitDeletionPolicy.cs" />
+    <Compile Include="Index\LogByteSizeMergePolicy.cs" />
+    <Compile Include="Index\LogDocMergePolicy.cs" />
+    <Compile Include="Index\LogMergePolicy.cs" />
+    <Compile Include="Index\MergePolicy.cs" />
+    <Compile Include="Index\MergeScheduler.cs" />
+    <Compile Include="Index\MultiLevelSkipListReader.cs" />
+    <Compile Include="Index\MultiLevelSkipListWriter.cs" />
+    <Compile Include="Index\MultipleTermPositions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\MultiReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\MultiSegmentReader.cs" />
+    <Compile Include="Index\ParallelReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\Payload.cs" />
+    <Compile Include="Index\PositionBasedTermVectorMapper.cs" />
+    <Compile Include="Index\SegmentInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentInfos.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentMergeInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentMergeQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentMerger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentTermDocs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentTermEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentTermPositions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentTermPositionVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SegmentTermVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\SerialMergeScheduler.cs" />
+    <Compile Include="Index\SnapshotDeletionPolicy.cs" />
+    <Compile Include="Index\SortedTermVectorMapper.cs" />
+    <Compile Include="Index\StaleReaderException.cs" />
+    <Compile Include="Index\Term.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermDocs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermFreqVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermInfosReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermInfosWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermPositions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermPositionVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermVectorEntry.cs" />
+    <Compile Include="Index\TermVectorEntryFreqSortedComparator.cs" />
+    <Compile Include="Index\TermVectorMapper.cs" />
+    <Compile Include="Index\TermVectorOffsetInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermVectorsReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Index\TermVectorsWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LucenePackage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\CharStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\FastCharStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\MultiFieldQueryParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\ParseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\QueryParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\QueryParserConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\QueryParserTokenManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\Token.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QueryParser\TokenMgrError.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\BooleanClause.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\BooleanQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\BooleanScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\BooleanScorer2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\CachingSpanFilter.cs" />
+    <Compile Include="Search\CachingWrapperFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ComplexExplanation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ConjunctionScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ConstantScoreQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ConstantScoreRangeQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\DefaultSimilarity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\DisjunctionMaxQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\DisjunctionMaxScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\DisjunctionSumScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ExactPhraseScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Explanation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ExtendedFieldCache.cs" />
+    <Compile Include="Search\ExtendedFieldCacheImpl.cs" />
+    <Compile Include="Search\FieldCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FieldCacheImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FieldDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FieldDocSortedHitQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FieldSortedHitQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FilteredQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FilteredTermEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FilterManager.cs" />
+    <Compile Include="Search\Function\ByteFieldSource.cs" />
+    <Compile Include="Search\Function\CustomScoreQuery.cs" />
+    <Compile Include="Search\Function\DocValues.cs" />
+    <Compile Include="Search\Function\FieldCacheSource.cs" />
+    <Compile Include="Search\Function\FieldScoreQuery.cs" />
+    <Compile Include="Search\Function\FloatFieldSource.cs" />
+    <Compile Include="Search\Function\IntFieldSource.cs" />
+    <Compile Include="Search\Function\OrdFieldSource.cs" />
+    <Compile Include="Search\Function\ReverseOrdFieldSource.cs" />
+    <Compile Include="Search\Function\ShortFieldSource.cs" />
+    <Compile Include="Search\Function\ValueSource.cs" />
+    <Compile Include="Search\Function\ValueSourceQuery.cs" />
+    <Compile Include="Search\FuzzyQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\FuzzyTermEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Hit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\HitCollector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\HitIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\HitQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Hits.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\IndexSearcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\MatchAllDocsQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\MultiPhraseQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\MultiSearcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\MultiTermQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\NonMatchingScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ParallelMultiSearcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Payload\BoostingTermQuery.cs" />
+    <Compile Include="Search\PhrasePositions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\PhraseQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\PhraseQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\PhraseScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\PrefixFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\PrefixQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Query.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\QueryFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\QueryTermVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\QueryWrapperFilter.cs" />
+    <Compile Include="Search\RangeFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\RangeQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\RemoteCachingWrapperFilter.cs" />
+    <Compile Include="Search\RemoteSearchable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ReqExclScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ReqOptSumScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ScoreDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\ScoreDocComparator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Scorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Searchable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Searcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Similarity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SimilarityDelegator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SloppyPhraseScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Sort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SortComparator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SortComparatorSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SortField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SpanFilter.cs" />
+    <Compile Include="Search\SpanFilterResult.cs" />
+    <Compile Include="Search\SpanQueryFilter.cs" />
+    <Compile Include="Search\Spans\NearSpansOrdered.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\NearSpansUnordered.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanFirstQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanNearQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanNotQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanOrQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\Spans.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanTermQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\SpanWeight.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Spans\TermSpans.cs" />
+    <Compile Include="Search\TermQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\TermScorer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\TopDocCollector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\TopDocs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\TopFieldDocCollector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\TopFieldDocs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\Weight.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\WildcardQuery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\WildcardTermEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharpZipLibAdapter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\AlreadyClosedException.cs" />
+    <Compile Include="Store\BufferedIndexInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\BufferedIndexOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\Directory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\FSDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\IndexInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\IndexOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\Lock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\LockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\LockObtainFailedException.cs" />
+    <Compile Include="Store\LockReleaseFailedException.cs" />
+    <Compile Include="Store\LockStressTest.cs" />
+    <Compile Include="Store\LockVerifyServer.cs" />
+    <Compile Include="Store\MMapDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\NativeFSLockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\NoLockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\RAMDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\RAMFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\RAMInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\RAMOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\SimpleFSLockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\SingleInstanceLockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\VerifyingLockFactory.cs" />
+    <Compile Include="SupportClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\BitVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Constants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Parameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\PriorityQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ScorerDocQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\SmallFloat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\StringHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ToStringUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="Analysis\Standard\StandardTokenizer.jj" />
+    <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
+    <None Include="Lucene.Net.Search.RemoteSearchable.config" />
+    <None Include="Lucene.Net.Search.TestSort.config" />
+    <None Include="QueryParser\QueryParser.jj" />
+    <Content Include="Analysis\Package.html" />
+    <Content Include="Analysis\Standard\Package.html" />
+    <Content Include="Document\Package.html" />
+    <Content Include="Index\Package.html" />
+    <Content Include="Lucene.Net.xml" />
+    <Content Include="Overview.html" />
+    <Content Include="Package.html" />
+    <Content Include="QueryParser\Package.html" />
+    <Content Include="Search\Function\Package.html" />
+    <Content Include="Search\Package.html" />
+    <Content Include="Search\Payload\Package.html" />
+    <Content Include="Search\Spans\Package.html" />
+    <Content Include="Store\Package.html" />
+    <Content Include="Util\Package.html" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

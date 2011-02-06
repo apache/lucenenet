@@ -1,0 +1,73 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>QueryParser.GetFuzzyQuery Method (String, String, Single)</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Lucene.Net 1.4.3 Class Library</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">QueryParser.GetFuzzyQuery Method (String, String, Single)</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Factory method for generating a query (similar to ({@link #getWildcardQuery}). Called when parser parses an input term token that has the fuzzy suffix (~floatNumber) appended. </p>
+      <div class="syntax">protected internal virtual <a href="Lucene.Net.Search.Query.html">Query</a> GetFuzzyQuery(<br />   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>field</i>,<br />   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>termStr</i>,<br />   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemSingleClassTopic.htm">float</a> <i>minSimilarity</i><br />);</div>
+      <h4 class="dtH4">Parameters</h4>
+      <dl>
+        <dt>
+          <i>field</i>
+        </dt>
+        <dd>Name of the field query will use. </dd>
+        <dt>
+          <i>termStr</i>
+        </dt>
+        <dd>Term token to use for building term for the query </dd>
+        <dt>
+          <i>minSimilarity</i>
+        </dt>
+        <dd>the minimum similarity required for a fuzzy match </dd>
+      </dl>
+      <h4 class="dtH4">Return Value</h4>
+      <p> Resulting {@link Query} built for the term </p>
+      <h4 class="dtH4">Exceptions</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Exception Type</th>
+            <th width="50%">Condition</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <b></b>
+            </td>
+            <td width="50%"> ParseException throw in overridden method to disallow </td>
+          </tr>
+        </table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="Lucene.Net.QueryParsers.QueryParser.html">QueryParser Class</a> | <a href="Lucene.Net.QueryParsers.html">Lucene.Net.QueryParsers Namespace</a> | <a href="Lucene.Net.QueryParsers.QueryParser.GetFuzzyQuery_overloads.html">QueryParser.GetFuzzyQuery Overload List</a></p>
+      <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+        <param name="Keyword" value="GetFuzzyQuery method">
+        </param>
+        <param name="Keyword" value="GetFuzzyQuery method, QueryParser class">
+        </param>
+        <param name="Keyword" value="QueryParser.GetFuzzyQuery method">
+        </param>
+      </object>
+    </div>
+  </body>
+</html>

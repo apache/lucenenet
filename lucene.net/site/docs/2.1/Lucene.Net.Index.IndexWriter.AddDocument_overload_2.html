@@ -1,0 +1,32 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>IndexWriter.AddDocument Method (Document)</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Apache Lucene.Net 2.1 Class Library API</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">IndexWriter.AddDocument Method (Document)</h1>
+      </div>
+    </div>
+    <div id="nstext"> Adds a document to this index. If the document contains more than {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are discarded. <p> Note that if an Exception is hit (for example disk full) then the index will be consistent, but this document may not have been added. Furthermore, it's possible the index will have one segment in non-compound format even when using compound files (when a merge has partially succeeded). </p>
+            
+            <p> This method periodically flushes pending documents to the Directory (every {@link #setMaxBufferedDocs}), and also periodically merges segments in the index (every {@link #setMergeFactor} flushes). When this occurs, the method will take more time to run (possibly a long time if the index is large), and will require free temporary space in the Directory to do the merging. </p>
+            
+            <p> The amount of free space required when a merge is triggered is up to 1X the size of all segments being merged, when no readers/searchers are open against the index, and up to 2X the size of all segments being merged when readers/searchers are open against the index (see {@link #Optimize()} for details). Most merges are small (merging the smallest segments together), but whenever a full merge occurs (all segments in the index, which is the worst case for temporary space usage) then the maximum free disk space required is the same as {@link #optimize}. </p>
+            <div class="syntax">public virtual <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemVoidClassTopic.htm">void</a> AddDocument(<br />   <a href="Lucene.Net.Documents.Document.html">Document</a> <i>doc</i><br />);</div><h4 class="dtH4">See Also</h4><p><a href="Lucene.Net.Index.IndexWriter.html">IndexWriter Class</a> | <a href="Lucene.Net.Index.html">Lucene.Net.Index Namespace</a> | <a href="Lucene.Net.Index.IndexWriter.AddDocument_overloads.html">IndexWriter.AddDocument Overload List</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="AddDocument method"></param><param name="Keyword" value="AddDocument method, IndexWriter class"></param><param name="Keyword" value="IndexWriter.AddDocument method"></param></object><hr /><div id="footer"><p></p><p>Generated from assembly Lucene.Net [2.1.0.1]</p></div></div>
+  </body>
+</html>

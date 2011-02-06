@@ -1,0 +1,249 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Lucene.Net</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+        <style type="text/css"> body { background: white; margin: 0.5in; font-family: arial,helvetica,sans-serif; }
+	.notice { border-color: black; border: 2px solid; margin: 0.25in; padding: 0.1in; }
+	.logo { float: right; }
+	</style>
+    </head>
+    <body style="font-family:tahoma;font-size:14px">
+		<div class="grouplogo">
+			<a href="http://lucene.apache.org/"><img class="logoImage" alt="Lucene" BORDER=0 src="images/lucene_green_150.gif" title="Apache Lucene"></a>
+		</div>
+		<div ALIGN=center><img border="none" src="images/lucene_net_green_460.GIF"></div>
+        <!-- <h1>Lucene.Net</h1> -->
+        <br><br><br>
+        <p>
+            <b>Lucene.Net</b> is a source code, class-per-class, API-per-API and algorithmatic 
+            port of the Java <a href="http://lucene.apache.org/java/">Lucene</a> search 
+            engine to the C# and .NET platform utilizing <A href="http://msdn.microsoft.com/netframework/">
+                Microsoft .NET Framework.</A>
+        </p>
+        
+        <p>
+            Lucene.Net sticks to the APIs and classes used in the original Java 
+            implementation of Lucene. The API names as well as class names are preserved 
+            with the intention of giving Lucene.Net the look and feel of the C# language 
+            and the .NET Framework. For example, the method <em>Hits.length()</em> in the 
+            Java implementation now reads <em>Hits.Length()</em> in the C# port.
+        </p>
+        <p>
+            In addition to the APIs and classes port to C#, the algorithm of Java Lucene is 
+            ported to C# Lucene. This means an index created with Java Lucene is 
+            back-and-forth compatible with the C# Lucene; both at reading, writing and 
+            updating. In fact a Lucene index can be concurrently searched and updated using 
+            Java Lucene and C# Lucene processes.
+        </p>
+        <h2>News</h2>
+        <ul>
+			<li>
+                10 May 2010 - "Tag" Released Lucene.Net 2.9.2 "final" build 001 on SVN.
+            </li>
+			<li>
+				8 March 2010 - Released Contrib.Net 2.9.2 on SVN
+			</li>
+			<li>
+				5 March 2010 - Released Queries.Net 2.9.2 on SVN
+			</li>
+		    <li>
+				25 Feburary 2010 - Released FastVectorHighlighter.Net 2.9.2 on SVN
+			</li>
+			<li>
+                17 Feburary 2010 - "Tag" Released Lucene.Net 2.9.1 "final" build 002 on SVN.
+            </li>
+			<li>
+                20 October 2009 - Apache Lucene.Net passed graduation vote as a subproject under Apache Lucene.
+            </li>
+			<li>
+                19 August 2009 - "Tag" Released Lucene.Net 2.4.0 "final" build 002 on SVN.
+            </li>
+			<li>
+                24 July 2009 - "Tag" Released Lucene.Net 2.3.2 "final" build 001 on SVN.
+            </li>
+			<li>
+                20 March 2009 - "Tag" Released Lucene.Net 2.3.1 "final" build 003 on SVN.
+            </li>
+            <li>
+                13 November 2008 - Accepted, Isik Yigit (aka: "DIGY") and Doug Sale as new committers.
+            </li>
+            <li>
+                10 December 2007 - "Tag" Released Lucene.Net 2.1 "final" build 003 on SVN.
+            </li>
+            <li>
+                23 April 2007 - Released Lucene.Net 2.0 "final" build 004 on SVN and as ZIP.
+            </li>
+            <li>
+                01 Feburary 2007 - Released WordNet.Net 2.0.0 build 001 on SVN and as ZIP.
+            </li>
+            <li>
+                29 January 2007 - Released SpellChecker.Net 2.0.0 build 001 on SVN and as ZIP.
+            </li>
+            <li>
+                08 January 2007 - Released Snowball.Net 2.0.0 "final" build 001 on SVN and as ZIP.
+            </li>
+            <li>
+                07 January 2007 - Released MSDN style Highlighter.Net 2.0 API documentation.
+            </li>
+            <li>
+                07 January 2007 - Released Highlighter.Net 2.0 "final" build 001 on SVN and as ZIP.
+            </li>
+            <li>
+                27 December 2006 - Released Lucene.Net 2.0 "final" build 003 on SVN and as ZIP.
+            </li>
+            <li>
+                27 December 2006 - Released MSDN style Lucene.Net 2.0 API documentation.
+            </li>
+            <li>
+                27 December 2006 - Released Highlighter.Net 2.0 "alpha" build 000 on SVN.
+            </li>
+            <li>
+                27 November 2006 - Released Lucene.Net 2.0 "beta" build 002 on SVN and as ZIP.
+            </li>
+            <li>
+                27 November 2006 - Re-released Lucene.Net 1.9.1 "final" build 004 on SVN and as ZIP.
+            </li>
+            <li>
+                11 October 2006 - Re-released Lucene.Net 1.9.1 "final" build 003 on SVN and as ZIP.
+            </li>
+            <li>
+                11 October 2006 - Re-released Lucene.Net 1.9.0 "final" build 007 on SVN and as ZIP.
+            </li>
+            <li>
+                29 September 2006 - Released Lucene.Net 1.9.1 "final" build 002 on SVN and ZIP.
+            </li>
+            <li>
+                29 September 2006 - Re-released Lucene.Net 1.9.0 "final" build 006 on SVN and as ZIP.
+            </li>
+            <li>
+                17 August 2006 - Released Lucene.Net 2.0 "alpha" build 001 on SVN.
+            </li>
+            <li>
+                13 July 2006 - Released Lucene.Net 1.9.1 "beta" build 001 on SVN and as ZIP.
+            </li>
+            <li>
+                09 July 2006 - Released Lucene.Net 1.9 "final" build 005 on SVN and as ZIP.
+            </li>
+            <li>
+                13 June 2006 - Released Lucene.Net 1.9 RC1 build 004 on SVN and as ZIP.
+            </li>
+            <li>
+                03 June 2006 - Released Lucene.Net 1.9 RC1 build 003 on SVN and as ZIP.
+            </li>
+            <li>
+                20 April 2006 - Added MSDN style Lucene.Net API 1.9 API documentation.
+            </li>
+            <li>
+                13 April 2006 - The project has moved into the Apache incubator and is now open 
+                for the public, a necessary step towards becoming part of the Lucene Project.
+            </li>
+            <li>
+                13 April 2006 - Lucene.Net is also referred to as <em>DotLucene</em>, <em>dotLucene</em>, 
+                and <em>Lucene.NET</em>. The project's official name is <b><em>Lucene.Net</em></b>.
+            </li>
+            <li>
+                13 April 2006 - Lucene.Net is still available at its old home on <a href="http://sourceforge.net/projects/dotlucene/">
+                    SourceForge.Net</a> but will no longer be maintained at SourceForge.Net.
+            </li>
+        </ul>
+        <h2>Downloads</h2>
+		<p>
+            Official binary releases can be found <a href="https://svn.apache.org/repos/asf/lucene/lucene.net/site/download">
+                here</a>.
+        </p>
+        <p>
+            Source code releases of the project are under SVN and can be accessed here: <a href="https://svn.apache.org/repos/asf/lucene/lucene.net/tags">
+				<br><font size=-1> 
+						<div style='padding-left:32px'>
+						 Lucene.Net.1.4.3.RC3.final <br>
+					     Lucene.Net.1.9.1 <br>
+					     Lucene.Net.1.9.RC1.final <br>
+					     Lucene.Net.2.0.0 <br>
+					     Lucene.Net.2.1.0 <br>
+					     Lucene.Net.2.3.1 <br>
+					     Lucene.Net.2.3.2 <br>
+					     Lucene.Net.2.4.0 <br>
+					     Lucene.Net.2.9.1 <br>
+					     Lucene.Net.2.9.2
+						</div>
+					</font>
+				</a>
+        </p>
+		 <p>
+            Current development version of Lucene.Net is in  
+            <a href="https://svn.apache.org/repos/asf/lucene/lucene.net/trunk/C%23/">
+                trunk</a>.
+        </p>
+        <h2>Documentation</h2>
+        <p>
+            There is an MSDN style <a href="http://lucene.apache.org/lucene.net/docs/">API 
+                documentation</a> generated via <a href="http://ndoc.sourceforge.net/">NDoc</a>
+            tool.
+        </p>
+        <h2>Development</h2>
+        <p>
+            The Lucene.Net project always welcomes new contributors. The project operates 
+            via its version control system, mailing lists, and issue tracker.
+        </p>
+        <h2>Active Committers</h2>
+        <p onselectstart="return false">
+            George Aroush <a href="mailto:george @ aroush.net">george @ aroush.net</a> <br>
+			Işık YİĞİT (DIGY) <a href="mailto:digydigy @ gmail.com">digydigy @ gmail.com</a> <br>
+            Doug Sale <a href="mailto:dsale @ myspace-inc.com">dsale @ myspace-inc.com</a> <br>
+            Michael Garski <a href="mailto:mgarski @ myspace-inc.com">mgarski @ myspace-inc.com</a> <br>
+        </p>
+        <h2>Version Control</h2>
+        <p>
+            Grab the current development version of Lucene.Net from its Subversion 
+            repository at <a href="https://svn.apache.org/repos/asf/lucene/lucene.net/trunk">
+                trunk</a>.
+        </p>
+        <h2>Mailing Lists</h2>
+        <p>
+            For development, discussion about the project occurs on its mailing list, <a href="mailto:lucene-net-dev @ lucene.apache.org">
+                lucene-net-dev @ lucene.apache.org</a>, to subscribe, send a message to <a href="mailto:lucene-net-dev-subscribe @ lucene.apache.org">
+                lucene-net-dev-subscribe @ lucene.apache.org</a>.
+        </p>
+        <p>
+            For general usage, discussion about the project occurs on its mailing list, <a href="mailto:lucene-net-user @ lucene.apache.org">
+                lucene-net-user @ lucene.apache.org</a>, to subscribe, send a message to <a href="mailto:lucene-net-user-subscribe @ lucene.apache.org">
+                lucene-net-user-subscribe @ lucene.apache.org</a>.
+        </p>
+        <p>
+            Commit notifications are sent to <a href="mailto:lucene-net-commits @ lucene.apache.org">
+                lucene-net-commits @ lucene.apache.org</a>, to subscribe send a message to <a href="mailto:lucene-net-commits-subscribe @ lucene.apache.org">
+                lucene-net-commits-subscribe @ lucene.apache.org</a>.
+        </p>
+        <p>
+            Archives of the lists are available at:
+        </p>
+		2006-2009
+        <ul>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/">http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/</a></li>
+        </ul>
+		2010-
+        <ul>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/">http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/">http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/</a>
+            <li>
+                <a href="http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/">http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/</a></li>
+        </ul>
+        <h2>Issue Tracking</h2>
+        <p>
+            Lucene.Net uses the ASF Jira installation for issue tracking. You can view open 
+            issues, create new ones, and see what issues we've fixed via the web interface 
+            at <a href="http://issues.apache.org/jira/browse/LUCENENET">http://issues.apache.org/jira/browse/LUCENENET</a>.
+        </p>
+        <p>
+            Note that to create a new issue or comment on an existing one you'll have to <a href="http://issues.apache.org/jira/secure/Signup!default.jspa">
+                sign up for an account</a>.
+        </p>
+    </body>
+</html>

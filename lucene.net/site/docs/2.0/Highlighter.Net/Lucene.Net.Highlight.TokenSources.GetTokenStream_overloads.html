@@ -1,0 +1,50 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>GetTokenStream Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Highlighter.Net 2.0.0</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">TokenSources.GetTokenStream Method</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>
+      </p>
+      <h4 class="dtH4">Overload List</h4>
+      <p> </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_3.html">public static TokenStream GetTokenStream(IndexReader,int,string);</a>
+      </blockquote>
+      <p> </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_4.html">public static TokenStream GetTokenStream(IndexReader,int,string,Analyzer);</a>
+      </blockquote>
+      <p> </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_1.html">public static TokenStream GetTokenStream(TermPositionVector);</a>
+      </blockquote>
+      <p> Low level api. Returns a token stream or null if no offset info available in index. This can be used to feed the highlighter with a pre-parsed token stream In my tests the speeds to recreate 1000 token streams using this method are: - with TermVector offset only data stored - 420 milliseconds - with TermVector offset AND position data stored - 271 milliseconds (nb timings for TermVector with position data are based on a tokenizer with contiguous positions - no overlaps or gaps) The cost of not using TermPositionVector to store pre-parsed content and using an analyzer to re-parse the original content: - reanalyzing the original content - 980 milliseconds The re-analyze timings will typically vary depending on - 1) The complexity of the analyzer code (timings above were using a stemmer/lowercaser/stopword combo) 2) The number of other fields (Lucene reads ALL fields off the disk when accessing just one document field - can cost dear!) 3) Use of compression on field storage - could be faster cos of compression (less disk IO) or slower (more CPU burn) depending on the content. </p>
+      <blockquote class="dtBlock">
+        <a href="Lucene.Net.Highlight.TokenSources.GetTokenStream_overload_2.html">public static TokenStream GetTokenStream(TermPositionVector,bool);</a>
+      </blockquote>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="Lucene.Net.Highlight.TokenSources.html">TokenSources Class</a> | <a href="Lucene.Net.Highlight.html">Lucene.Net.Highlight Namespace</a></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,355 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Lucene.Net.Search</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">Lucene.Net 1.4.3 Class Library</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Lucene.Net.Search Namespace</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>
+        <a href="Lucene.Net.SearchHierarchy.html">Namespace hierarchy</a>
+      </p>
+      <h3 class="dtH3">Classes</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Class</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.AnonymousClassScoreDocComparator.html">AnonymousClassScoreDocComparator</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.AnonymousClassScoreDocComparator1.html">AnonymousClassScoreDocComparator1</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.BooleanClause.html">BooleanClause</a>
+            </td>
+            <td width="50%">A clause in a BooleanQuery. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.BooleanQuery.html">BooleanQuery</a>
+            </td>
+            <td width="50%">A Query that matches documents matching boolean combinations of other queries, typically {@link TermQuery}s or {@link PhraseQuery}s. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.BooleanQuery.TooManyClauses.html">BooleanQuery.TooManyClauses</a>
+            </td>
+            <td width="50%">Thrown when an attempt is made to add more than {@link #GetMaxClauseCount()} clauses. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.CachingWrapperFilter.html">CachingWrapperFilter</a>
+            </td>
+            <td width="50%"> Wraps another filters result and caches it. The caching behavior is like {@link QueryFilter}. The purpose is to allow filters to simply filter, and then wrap with this class to add caching, keeping the two concerns decoupled yet composable. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.DateFilter.html">DateFilter</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.DefaultSimilarity.html">DefaultSimilarity</a>
+            </td>
+            <td width="50%">Expert: Default scoring implementation. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Explanation.html">Explanation</a>
+            </td>
+            <td width="50%">Expert: Describes the score computation for document and query. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FieldDoc.html">FieldDoc</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Filter.html">Filter</a>
+            </td>
+            <td width="50%">Abstract base class providing a mechanism to restrict searches to a subset of an index. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FilteredQuery.html">FilteredQuery</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FilteredTermEnum.html">FilteredTermEnum</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FuzzyQuery.html">FuzzyQuery</a>
+            </td>
+            <td width="50%">Implements the fuzzy search query. The similiarity measurement is based on the Levenshtein (edit distance) algorithm. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FuzzyTermEnum.html">FuzzyTermEnum</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.HitCollector.html">HitCollector</a>
+            </td>
+            <td width="50%">Lower-level search API.</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Hits.html">Hits</a>
+            </td>
+            <td width="50%">A ranked list of documents, used to hold search results. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.IndexSearcher.html">IndexSearcher</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.MultiSearcher.html">MultiSearcher</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.MultiTermQuery.html">MultiTermQuery</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.ParallelMultiSearcher.html">ParallelMultiSearcher</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.PhrasePrefixQuery.html">PhrasePrefixQuery</a>
+            </td>
+            <td width="50%"> PhrasePrefixQuery is a generalized version of PhraseQuery, with an added method {@link #Add(Term[])}. To use this class, to search for the phrase "Microsoft app*" first use add(Term) on the term "Microsoft", then find all terms that has "app" as prefix using IndexReader.terms(Term), and use PhrasePrefixQuery.add(Term[] terms) to add them to the query. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.PhraseQuery.html">PhraseQuery</a>
+            </td>
+            <td width="50%">A Query that matches documents containing a particular sequence of terms. This may be combined with other terms with a {@link BooleanQuery}. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.PrefixQuery.html">PrefixQuery</a>
+            </td>
+            <td width="50%">A Query that matches documents containing terms with a specified prefix. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Query.html">Query</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.QueryFilter.html">QueryFilter</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.QueryTermVector.html">QueryTermVector</a>
+            </td>
+            <td width="50%"> 
+            
+            
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.RangeQuery.html">RangeQuery</a>
+            </td>
+            <td width="50%"> A Query that matches documents within an exclusive range. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.RemoteSearchable.html">RemoteSearchable</a>
+            </td>
+            <td width="50%">A remote searchable implementation. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.ScoreDoc.html">ScoreDoc</a>
+            </td>
+            <td width="50%">Expert: Returned by low-level search implementations.</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Scorer.html">Scorer</a>
+            </td>
+            <td width="50%">Expert: Implements scoring for a class of queries. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Searcher.html">Searcher</a>
+            </td>
+            <td width="50%">An abstract base class for search implementations. Implements some common utility methods. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Similarity.html">Similarity</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Sort.html">Sort</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.SortComparator.html">SortComparator</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.SortField.html">SortField</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.StringIndex.html">StringIndex</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.TermQuery.html">TermQuery</a>
+            </td>
+            <td width="50%">A Query that matches documents containing a term. This may be combined with other terms with a {@link BooleanQuery}. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.TopDocs.html">TopDocs</a>
+            </td>
+            <td width="50%">Expert: Returned by low-level search implementations.</td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.TopFieldDocs.html">TopFieldDocs</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.WildcardQuery.html">WildcardQuery</a>
+            </td>
+            <td width="50%">Implements the wildcard search query. Supported wildcards are <pre class="code">*</pre>, which matches any character sequence (including the empty one), and <pre class="code">?</pre>, which matches any single character. Note this query can be slow, as it needs to iterate over all terms. In order to prevent extremely slow WildcardQueries, a Wildcard term must not start with one of the wildcards <pre class="code">*</pre> or <pre class="code">?</pre>. </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.WildcardTermEnum.html">WildcardTermEnum</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Interfaces</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Interface</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FieldCache.html">FieldCache</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.ScoreDocComparator.html">ScoreDocComparator</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Searchable.html">Searchable</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.SortComparatorSource.html">SortComparatorSource</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.Weight.html">Weight</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+        </table>
+      </div>
+      <h3 class="dtH3">Structures</h3>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+          <tr valign="top">
+            <th width="50%">Structure</th>
+            <th width="50%">Description</th>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.FieldCache_Fields.html">FieldCache_Fields</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+          <tr valign="top">
+            <td width="50%">
+              <a href="Lucene.Net.Search.ScoreDocComparator_Fields.html">ScoreDocComparator_Fields</a>
+            </td>
+            <td width="50%"> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
