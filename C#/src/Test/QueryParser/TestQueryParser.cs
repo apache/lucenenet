@@ -142,6 +142,7 @@ namespace Lucene.Net.QueryParsers
 				if (inPhrase)
 				{
 					inPhrase = false;
+                    ClearAttributes();
 					termAtt.SetTermBuffer("phrase2");
 					offsetAtt.SetOffset(savedStart, savedEnd);
 					return true;

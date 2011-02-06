@@ -276,6 +276,7 @@ namespace Lucene.Net.Search
 						return false;
 					else
 					{
+                        ClearAttributes();
 						done = true;
 						if (count == 1)
 						{

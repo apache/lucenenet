@@ -235,11 +235,11 @@ namespace Lucene.Net.Index
 		
 		// Deletes done after the last flush; these are discarded
 		// on abort
-		private BufferedDeletes deletesInRAM = new BufferedDeletes();
+		private BufferedDeletes deletesInRAM = new BufferedDeletes(false);
 		
 		// Deletes done before the last flush; these are still
 		// kept on abort
-		private BufferedDeletes deletesFlushed = new BufferedDeletes();
+		private BufferedDeletes deletesFlushed = new BufferedDeletes(true);
 		
 		// The max number of delete terms that can be buffered before
 		// they must be flushed to disk.
@@ -742,7 +742,8 @@ namespace Lucene.Net.Index
 					
 					if (infoStream != null)
 					{
-						long newSegmentSize = SegmentSize(flushState.segmentName);
+                        SegmentInfo si = new SegmentInfo(flushState.segmentName, flushState.numDocs, directory);
+                        long newSegmentSize = si.SizeInBytes();
                         System.String message = System.String.Format(nf, "  oldRAMSize={0:d} newFlushedSize={1:d} docs/MB={2:f} new/old={3:%}",
                             new System.Object[] { numBytesUsed, newSegmentSize, (numDocsInRAM / (newSegmentSize / 1024.0 / 1024.0)), (100.0 * newSegmentSize / numBytesUsed) });
 						Message(message);
@@ -1055,12 +1056,12 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				return deletesInRAM.numTerms;
+				return deletesInRAM.numTerms; 
 			}
 		}
 		
 		// for testing
-		internal System.Collections.Hashtable GetBufferedDeleteTerms()
+		internal System.Collections.IDictionary GetBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -1239,6 +1240,19 @@ namespace Lucene.Net.Index
 				return any;
 			}
 		}
+
+        // used only by assert
+        private Term lastDeleteTerm;
+
+        // used only by assert
+        private bool CheckDeleteTerm(Term term) 
+        {
+            if (term != null) {
+                System.Diagnostics.Debug.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, "lastTerm=" + lastDeleteTerm + " vs term=" + term);
+            }
+            lastDeleteTerm = term;
+            return true;
+        }
 		
 		// Apply buffered delete terms, queries and docIDs to the
 		// provided reader
@@ -1250,8 +1264,11 @@ namespace Lucene.Net.Index
 				int docEnd = docIDStart + reader.MaxDoc();
 				bool any = false;
 				
+                System.Diagnostics.Debug.Assert(CheckDeleteTerm(null));
+
 				// Delete by term
-				System.Collections.IEnumerator iter = new System.Collections.Hashtable(deletesFlushed.terms).GetEnumerator();
+                //System.Collections.IEnumerator iter = new System.Collections.Hashtable(deletesFlushed.terms).GetEnumerator();
+				System.Collections.IEnumerator iter = deletesFlushed.terms.GetEnumerator();
 				TermDocs docs = reader.TermDocs();
 				try
 				{
@@ -1259,7 +1276,9 @@ namespace Lucene.Net.Index
 					{
 						System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
 						Term term = (Term) entry.Key;
-						
+						// LUCENE-2086: we should be iterating a TreeMap,
+                        // here, so terms better be in order:
+                        System.Diagnostics.Debug.Assert(CheckDeleteTerm(term));
 						docs.Seek(term);
 						int limit = ((BufferedDeletes.Num) entry.Value).GetNum();
 						while (docs.Next())
@@ -1471,22 +1490,6 @@ namespace Lucene.Net.Index
 		internal long numBytesUsed;
 		
 		internal System.Globalization.NumberFormatInfo nf = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
-		
-		// TODO FI: this is not flexible -- we can't hardwire
-		// extensions in here:
-		private long SegmentSize(System.String segmentName)
-		{
-			// Used only when infoStream != null
-			System.Diagnostics.Debug.Assert(infoStream != null);
-			
-			long size = directory.FileLength(segmentName + ".tii") + directory.FileLength(segmentName + ".tis") + directory.FileLength(segmentName + ".frq") + directory.FileLength(segmentName + ".prx");
-			
-			System.String normFileName = segmentName + ".nrm";
-			if (directory.FileExists(normFileName))
-				size += directory.FileLength(normFileName);
-			
-			return size;
-		}
 		
 		// Coarse estimates used to measure RAM usage of buffered deletes
 		internal const int OBJECT_HEADER_BYTES = 8;

@@ -28,6 +28,7 @@ using Term = Lucene.Net.Index.Term;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Search
 {
@@ -37,62 +38,94 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestFilteredSearch:LuceneTestCase
 	{
-				
+
+        public TestFilteredSearch(): base("")
+        {
+        }
+
 		private const System.String FIELD = "category";
 		
 		[Test]
 		public virtual void  TestFilteredSearch_Renamed()
 		{
-			RAMDirectory directory = new RAMDirectory();
-			int[] filterBits = new int[]{1, 36};
-			Filter filter = new SimpleDocIdSetFilter(filterBits);
-			
-			
-			try
-			{
-				IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				for (int i = 0; i < 60; i++)
-				{
-					//Simple docs
-					Document doc = new Document();
-					doc.Add(new Field(FIELD, System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED));
-					writer.AddDocument(doc);
-				}
-				writer.Close();
-				
-				BooleanQuery booleanQuery = new BooleanQuery();
-				booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur.SHOULD);
-				
-				
-				IndexSearcher indexSearcher = new IndexSearcher(directory);
-				ScoreDoc[] hits = indexSearcher.Search(booleanQuery, filter, 1000).scoreDocs;
-				Assert.AreEqual(1, hits.Length, "Number of matched documents");
-			}
-			catch (System.IO.IOException e)
-			{
-				Assert.Fail(e.Message);
-			}
+            bool enforceSingleSegment = true;
+            RAMDirectory directory = new RAMDirectory();
+            int[] filterBits = { 1, 36 };
+            SimpleDocIdSetFilter filter = new SimpleDocIdSetFilter(filterBits);
+            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            SearchFiltered(writer, directory, filter, enforceSingleSegment);
+            // run the test on more than one segment
+            enforceSingleSegment = false;
+            // reset - it is stateful
+            filter.Reset();
+            writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            // we index 60 docs - this will create 6 segments
+            writer.SetMaxBufferedDocs(10);
+            SearchFiltered(writer, directory, filter, enforceSingleSegment);
 		}
+
+
+        public void SearchFiltered(IndexWriter writer, Directory directory, Filter filter, bool optimize)
+        {
+            try
+            {
+                for (int i = 0; i < 60; i++)
+                {//Simple docs
+                    Document doc = new Document();
+                    doc.Add(new Field(FIELD, i.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                    writer.AddDocument(doc);
+                }
+                if (optimize)
+                    writer.Optimize();
+                writer.Close();
+
+                BooleanQuery booleanQuery = new BooleanQuery();
+                booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur.SHOULD);
+
+
+                IndexSearcher indexSearcher = new IndexSearcher(directory);
+                ScoreDoc[] hits = indexSearcher.Search(booleanQuery, filter, 1000).scoreDocs;
+                Assert.AreEqual(1, hits.Length, "Number of matched documents");
+
+            }
+            catch (System.IO.IOException e)
+            {
+                Assert.Fail(e.Message);
+            }
+
+        }
 		
-		
-		[Serializable]
-		public sealed class SimpleDocIdSetFilter:Filter
-		{
-			private OpenBitSet bits;
-			
-			public SimpleDocIdSetFilter(int[] docs)
-			{
-				bits = new OpenBitSet();
-				for (int i = 0; i < docs.Length; i++)
-				{
-					bits.Set(docs[i]);
-				}
-			}
-			
-			public override DocIdSet GetDocIdSet(IndexReader reader)
-			{
-				return bits;
-			}
-		}
+
+        [Serializable]
+        public sealed class SimpleDocIdSetFilter : Filter
+        {
+            private int docBase;
+            private int[] docs;
+            private int index;
+            public SimpleDocIdSetFilter(int[] docs)
+            {
+                this.docs = docs;
+            }
+            public override DocIdSet GetDocIdSet(IndexReader reader)
+            {
+                OpenBitSet set = new OpenBitSet();
+                int limit = docBase + reader.MaxDoc();
+                for (; index < docs.Length; index++)
+                {
+                    int docId = docs[index];
+                    if (docId > limit)
+                        break;
+                    set.Set(docId - docBase);
+                }
+                docBase = limit;
+                return set.IsEmpty() ? null : set;
+            }
+
+            public void Reset()
+            {
+                index = 0;
+                docBase = 0;
+            }
+        }
 	}
 }

@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 			/// binary value, or TokenStream value is used.  Exactly one of stringValue(), 
 			/// readerValue(), binaryValue(), and tokenStreamValue() must be set. 
 			/// </summary>
-			public override System.IO.StreamReader ReaderValue()
+			public override System.IO.TextReader ReaderValue()
 			{
 				Enclosing_Instance.EnsureOpen();
 				return null;
@@ -734,7 +734,7 @@ namespace Lucene.Net.Index
 				return (System.String) this.fieldsData;
 			}
 			
-			public override System.IO.StreamReader ReaderValue()
+			public override System.IO.TextReader ReaderValue()
 			{
 				// not needed for merge
 				return null;

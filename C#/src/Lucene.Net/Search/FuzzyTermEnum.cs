@@ -222,88 +222,87 @@ namespace Lucene.Net.Search
 		/// <returns> the similarity,  0.0 or less indicates that it matches less than the required
 		/// threshold and 1.0 indicates that the text and target are identical
 		/// </returns>
-		private float Similarity(System.String target)
-		{
-			lock (this)
-			{
-				int m = target.Length;
-				int n = text.Length;
-				if (n == 0)
-				{
-					//we don't have anything to compare.  That means if we just add
-					//the letters for m we get the new word
-					return prefix.Length == 0?0.0f:1.0f - ((float) m / prefix.Length);
-				}
-				if (m == 0)
-				{
-					return prefix.Length == 0?0.0f:1.0f - ((float) n / prefix.Length);
-				}
-				
-				int maxDistance = GetMaxDistance(m);
-				
-				if (maxDistance < System.Math.Abs(m - n))
-				{
-					//just adding the characters of m to n or vice-versa results in
-					//too many edits
-					//for example "pre" length is 3 and "prefixes" length is 8.  We can see that
-					//given this optimal circumstance, the edit distance cannot be less than 5.
-					//which is 8-3 or more precisesly Math.abs(3-8).
-					//if our maximum edit distance is 4, then we can discard this word
-					//without looking at it.
-					return 0.0f;
-				}
-				
-				//let's make sure we have enough room in our array to do the distance calculations.
-				if (d[0].Length <= m)
-				{
-					GrowDistanceArray(m);
-				}
-				
-				// init matrix d
-				for (int i = 0; i <= n; i++)
-					d[i][0] = i;
-				for (int j = 0; j <= m; j++)
-					d[0][j] = j;
-				
-				// start computing edit distance
-				for (int i = 1; i <= n; i++)
-				{
-					int bestPossibleEditDistance = m;
-					char s_i = text[i - 1];
-					for (int j = 1; j <= m; j++)
-					{
-						if (s_i != target[j - 1])
-						{
-							d[i][j] = Min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1;
-						}
-						else
-						{
-							d[i][j] = Min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1]);
-						}
-						bestPossibleEditDistance = System.Math.Min(bestPossibleEditDistance, d[i][j]);
-					}
-					
-					//After calculating row i, the best possible edit distance
-					//can be found by found by finding the smallest value in a given column.
-					//If the bestPossibleEditDistance is greater than the max distance, abort.
-					
-					if (i > maxDistance && bestPossibleEditDistance > maxDistance)
-					{
-						//equal is okay, but not greater
-						//the closest the target can be to the text is just too far away.
-						//this target is leaving the party early.
-						return 0.0f;
-					}
-				}
-				
-				// this will return less than 0.0 when the edit distance is
-				// greater than the number of characters in the shorter word.
-				// but this was the formula that was previously used in FuzzyTermEnum,
-				// so it has not been changed (even though minimumSimilarity must be
-				// greater than 0.0)
-				return 1.0f - ((float) d[n][m] / (float) (prefix.Length + System.Math.Min(n, m)));
-			}
-		}
+        private float Similarity(System.String target)
+        {
+
+            int m = target.Length;
+            int n = text.Length;
+            if (n == 0)
+            {
+                //we don't have anything to compare.  That means if we just add
+                //the letters for m we get the new word
+                return prefix.Length == 0 ? 0.0f : 1.0f - ((float)m / prefix.Length);
+            }
+            if (m == 0)
+            {
+                return prefix.Length == 0 ? 0.0f : 1.0f - ((float)n / prefix.Length);
+            }
+
+            int maxDistance = GetMaxDistance(m);
+
+            if (maxDistance < System.Math.Abs(m - n))
+            {
+                //just adding the characters of m to n or vice-versa results in
+                //too many edits
+                //for example "pre" length is 3 and "prefixes" length is 8.  We can see that
+                //given this optimal circumstance, the edit distance cannot be less than 5.
+                //which is 8-3 or more precisesly Math.abs(3-8).
+                //if our maximum edit distance is 4, then we can discard this word
+                //without looking at it.
+                return 0.0f;
+            }
+
+            //let's make sure we have enough room in our array to do the distance calculations.
+            if (d[0].Length <= m)
+            {
+                GrowDistanceArray(m);
+            }
+
+            // init matrix d
+            for (int i = 0; i <= n; i++)
+                d[i][0] = i;
+            for (int j = 0; j <= m; j++)
+                d[0][j] = j;
+
+            // start computing edit distance
+            for (int i = 1; i <= n; i++)
+            {
+                int bestPossibleEditDistance = m;
+                char s_i = text[i - 1];
+                for (int j = 1; j <= m; j++)
+                {
+                    if (s_i != target[j - 1])
+                    {
+                        d[i][j] = Min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1;
+                    }
+                    else
+                    {
+                        d[i][j] = Min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1]);
+                    }
+                    bestPossibleEditDistance = System.Math.Min(bestPossibleEditDistance, d[i][j]);
+                }
+
+                //After calculating row i, the best possible edit distance
+                //can be found by found by finding the smallest value in a given column.
+                //If the bestPossibleEditDistance is greater than the max distance, abort.
+
+                if (i > maxDistance && bestPossibleEditDistance > maxDistance)
+                {
+                    //equal is okay, but not greater
+                    //the closest the target can be to the text is just too far away.
+                    //this target is leaving the party early.
+                    return 0.0f;
+                }
+            }
+
+            // this will return less than 0.0 when the edit distance is
+            // greater than the number of characters in the shorter word.
+            // but this was the formula that was previously used in FuzzyTermEnum,
+            // so it has not been changed (even though minimumSimilarity must be
+            // greater than 0.0)
+            return 1.0f - ((float)d[n][m] / (float)(prefix.Length + System.Math.Min(n, m)));
+
+        }
 		
 		/// <summary> Grow the second dimension of the array, so that we can calculate the
 		/// Levenshtein difference.

@@ -239,7 +239,7 @@ namespace Lucene.Net.Store
 				{
 					fileMap.Remove(name);
 					file.directory = null;
-					sizeInBytes -= file.sizeInBytes; // updates to RAMFile.sizeInBytes synchronized on directory
+					sizeInBytes -= file.sizeInBytes; 
 				}
 				else
 					throw new System.IO.FileNotFoundException(name);

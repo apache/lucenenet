@@ -1084,5 +1084,37 @@ namespace Lucene.Net.Index
 			r.Close();
 			dir.Close();
 		}
+
+        [Test]
+        public void TestDeletesNumDocs()
+        {
+            Directory dir = new MockRAMDirectory();
+            IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(),
+                                                       IndexWriter.MaxFieldLength.LIMITED);
+            Document doc = new Document();
+            doc.Add(new Field("field", "a b c", Field.Store.NO, Field.Index.ANALYZED));
+            Field id = new Field("id", "", Field.Store.NO, Field.Index.NOT_ANALYZED);
+            doc.Add(id);
+            id.SetValue("0");
+            w.AddDocument(doc);
+            id.SetValue("1");
+            w.AddDocument(doc);
+            IndexReader r = w.GetReader();
+            Assert.AreEqual(2, r.NumDocs());
+            r.Close();
+
+            w.DeleteDocuments(new Term("id", "0"));
+            r = w.GetReader();
+            Assert.AreEqual(1, r.NumDocs());
+            r.Close();
+
+            w.DeleteDocuments(new Term("id", "1"));
+            r = w.GetReader();
+            Assert.AreEqual(0, r.NumDocs());
+            r.Close();
+
+            w.Close();
+            dir.Close();
+        }
 	}
 }

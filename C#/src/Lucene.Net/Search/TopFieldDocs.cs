@@ -20,17 +20,9 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Expert: Returned by low-level sorted search implementations.
-	/// 
-	/// <p/>Created: Feb 12, 2004 8:58:46 AM 
-	/// 
+	/// <summary>
+	/// Represents hits returned by {@link Searcher#search(Query,Filter,int,Sort)}.
 	/// </summary>
-	/// <since>   lucene 1.4
-	/// </since>
-	/// <version>  $Id: TopFieldDocs.java 747745 2009-02-25 11:02:57Z mikemccand $
-	/// </version>
-	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
-	/// </seealso>
 	[Serializable]
 	public class TopFieldDocs:TopDocs
 	{

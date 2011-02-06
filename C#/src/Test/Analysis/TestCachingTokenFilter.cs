@@ -70,6 +70,7 @@ namespace Lucene.Net.Analysis
 				}
 				else
 				{
+                    ClearAttributes();
 					termAtt.SetTermBuffer(Enclosing_Instance.tokens[index++]);
 					offsetAtt.SetOffset(0, 0);
 					return true;

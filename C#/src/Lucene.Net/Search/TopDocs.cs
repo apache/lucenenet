@@ -20,22 +20,23 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Expert: Returned by low-level search implementations.</summary>
-	/// <seealso cref="Searcher.Search(Query,Filter,int)">
-	/// </seealso>
+	/// <summary> Represents hits returned by {@link
+    /// * Searcher#search(Query,Filter,int)} and {@link
+    /// * Searcher#search(Query,int)
+    /// </summary>
 	[Serializable]
 	public class TopDocs
 	{
-		/// <summary>Expert: The total number of hits for the query.</summary>
+		/// <summary>The total number of hits for the query.</summary>
 		/// <seealso cref="Hits.Length()">
 		/// </seealso>
 		public int totalHits;
-		/// <summary>Expert: The top hits for the query. </summary>
+		/// <summary>The top hits for the query. </summary>
 		public ScoreDoc[] scoreDocs;
-		/// <summary>Expert: Stores the maximum score value encountered, needed for normalizing. </summary>
+		/// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
 		private float maxScore;
 		
-		/// <summary> Expert: Returns the maximum score value encountered. Note that in case
+		/// <summary>Returns the maximum score value encountered. Note that in case
 		/// scores are not tracked, this returns {@link Float#NaN}.
 		/// </summary>
 		public virtual float GetMaxScore()
@@ -43,18 +44,18 @@ namespace Lucene.Net.Search
 			return maxScore;
 		}
 		
-		/// <summary>Expert: Sets the maximum score value encountered. </summary>
+		/// <summary>Sets the maximum score value encountered. </summary>
 		public virtual void  SetMaxScore(float maxScore)
 		{
 			this.maxScore = maxScore;
 		}
 		
-		/// <summary>Expert: Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
+		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
 		internal TopDocs(int totalHits, ScoreDoc[] scoreDocs):this(totalHits, scoreDocs, System.Single.NaN)
 		{
 		}
 		
-		/// <summary>Expert: Constructs a TopDocs.</summary>
+		/// <summary></summary>
 		public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
 		{
 			this.totalHits = totalHits;

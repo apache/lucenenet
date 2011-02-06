@@ -199,9 +199,9 @@ namespace Lucene.Net.Documents
 		/// binary value is used.  Exactly one of stringValue(),
 		/// readerValue(), and getBinaryValue() must be set. 
 		/// </summary>
-		public override System.IO.StreamReader ReaderValue()
+		public override System.IO.TextReader ReaderValue()
 		{
-			return fieldsData is System.IO.StreamReader?(System.IO.StreamReader) fieldsData:null;
+			return fieldsData is System.IO.TextReader?(System.IO.TextReader) fieldsData:null;
 		}
 		
 		/// <summary>The value of the field in Binary, or null.  If null, the Reader value,
@@ -260,7 +260,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>. </summary>
-		public void  SetValue(System.IO.StreamReader value_Renamed)
+		public void  SetValue(System.IO.TextReader value_Renamed)
 		{
 			if (isBinary)
 			{
@@ -486,7 +486,7 @@ namespace Lucene.Net.Documents
 		/// <param name="reader">The reader with the content
 		/// </param>
 		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
-		public Field(System.String name, System.IO.StreamReader reader):this(name, reader, TermVector.NO)
+		public Field(System.String name, System.IO.TextReader reader):this(name, reader, TermVector.NO)
 		{
 		}
 		
@@ -503,7 +503,7 @@ namespace Lucene.Net.Documents
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
 		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
-		public Field(System.String name, System.IO.StreamReader reader, TermVector termVector)
+		public Field(System.String name, System.IO.TextReader reader, TermVector termVector)
 		{
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");

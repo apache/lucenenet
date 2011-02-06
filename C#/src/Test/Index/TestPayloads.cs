@@ -635,6 +635,7 @@ namespace Lucene.Net.Index
 				if (!first)
 					return false;
 				first = false;
+                ClearAttributes();
 				termAtt.SetTermBuffer(term);
 				payloadAtt.SetPayload(new Payload(payload));
 				return true;
