@@ -23,7 +23,7 @@ using System.Collections;
  * Based on GermanStemFilter
  *
  */
-namespace Lucene.Net.Analysis.Br
+namespace Lucene.Net.Analysis.BR
 {
 
     public sealed class BrazilianStemFilter : TokenFilter
