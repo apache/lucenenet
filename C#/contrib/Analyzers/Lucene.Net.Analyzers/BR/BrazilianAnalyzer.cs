@@ -27,7 +27,7 @@ using System.IO;
  * not be stemmed, but indexed).
  *
  */
-namespace Lucene.Net.Analysis.Br
+namespace Lucene.Net.Analysis.BR
 {
     public sealed class BrazilianAnalyzer : Analyzer
     {
