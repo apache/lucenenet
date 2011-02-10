@@ -18,7 +18,7 @@
 /**
  * A stemmer for Brazilian words.
  */
-namespace Lucene.Net.Analysis.Br
+namespace Lucene.Net.Analysis.BR
 {
 
     public class BrazilianStemmer
