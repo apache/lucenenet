@@ -1,0 +1,174 @@
+Title: Apache Lucene.Net
+
+# Overview
+
+Lucene.Net is a port of the Lucene search engine library, written in C# and 
+targeted at .NET runtime users.
+
+Lucene.Net has three primary goals:
+
+First, it will maintain the existing line-by-line port from Java to C#, fully 
+automating and commoditizing the process such that the project can easily 
+synchronize with the Java Lucene release schedule. 
+
+Second, it will be a high-performance C# search engine library. 
+
+Third, it will maximize its usability and power when used within the .NET 
+runtime. To that end, it will present a highly idiomatic, carefully tailored 
+API that takes advantage of many of the special features of the .NET runtime.
+
+You can find the Lucene parent project at: [http://lucene.apache.org/][1]
+
+In January 2011, Lucene.Net was [proposed][2] as a candidate for entry into the 
+[Apache Incubator][3] with the purpose restarting the project with a new set 
+of goals and committers. Prior to that, Lucene.Net had been developed as a 
+subproject of Lucene.  Lucene.Net's incubation status is tracked at 
+[http://incubator.apache.org/projects/lucene.net][4].
+
+---
+
+# Releases
+
+## Binary
+
+The latest stable binary release is: [Lucene.Net 2.0][5]
+
+### Previous Builds
+
+Previous builds are available here: [Lucene.Net Binary Release Archives][6]
+
+## Source
+
+The latest source code release is: [Lucene.Net 2.9.2][7]
+
+### Previous Builds
+
+Previous builds are available here: [Lucene.Net Source Code Release Archives][8]
+
+### Bleeding Edge
+
+If you like to live dangerously you can try working with the 'bleeding edge' trunk revision. 
+
+*NOTE: This is not an official release and may not work as expected. Use at your own risk! *
+
+Bleeding edge is available here: [Lucene.Net Source Trunk Revision][9]
+
+---
+
+# Mailing lists
+
+After downloading the latest release, you'll probably have some questions. The best way to get access to the Lucene.Net community is through the mailing lists. Here you can get answers for your questions, contribute to the code, or just hang out and absorb our general awesomeness.
+
+-   If you use Lucene.Net, please [subscribe][10] to the [Lucene.Net users mailing list][11]
+    (lucene-net-user at incubator dot apache dot org). 
+-   If you'd like to contribute to Lucene.Net or follow updates to Lucene.Net's issue 
+    tracker, please [subscribe][12] to the [Lucene.Net developers mailing list][13] (lucene-net-dev at incubator dot apache dot org).
+-   If you'd like to follow each change made to Lucene.Net's source repository,
+    [subscribe][14] to the [Lucene.Net commits mailing list][15] (lucene-net-commits at
+    incubator dot apache dot org).
+
+## Mailing List Archives
+
+Archives are available here:
+*2006-2009*
+-   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user][16]
+-   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev][17]
+-   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits][18]
+*2010-Current* 
+-   [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user][11]
+-   [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev][13]
+-   [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits][15]
+---
+
+
+# Issue Tracker
+
+You might find a bug (sorry!), or have an idea for a new feature (no problem!), or have a code patch to contribute (thanks!). All Lucene.Net issues are [tracked][19] using Apache JIRA. If you aren't sure whether something is a bug, post a question on the Lucene.Net user mailing list.  
+
+Note that to create a new issue or comment on an existing one you'll have to [sign up for an account][20].
+---
+
+# Development 
+
+Lucene.Net is an on-going project that is under active development. Below you'll find resources such as our roadmap, instructions on how to build the source, coding guidlines, and much more.
+
+## Source Repository
+
+Anonymous SVN URL: [https://svn.apache.org/repos/asf/incubator/lucene.net/trunk][9]
+
+## Committers
+
+If you have a question about the source, it's best to the use development mailing list to ask your question. However, if you need to contact one of the committers directly they are listed here (alphabetically):
+
+-   Chris Currens <currens.chris AT gmail DOT com>
+-   DIGY <digydigy AT gmail DOT com>
+-   Michael Herndon <mherndon AT wickedsoftware DOT net>
+-   Prescott Nasser <prescott.nasser AT hotmail DOT com>
+-   Scott Lombard <lombardenator AT gmail DOT com>
+-   Sergey Mirvoda <sergey AT mirvoda DOT com>
+-   Troy Howard <thoward37 AT gmail DOT com>
+
+## Roadmap 
+
+### Next Scheduled Binary Release
+-   Lucene.Net 2.9.2 (Anticipated Release Date: 02/28/2011)
+
+### Backlog
+-   Full automated port using Sharpen (2nd quarter 2011)
+
+    Our current process of porting is a manual one involving a lot of man hours, and isn't repeatable by the general public. We'd like to see that change, and so we're working on creating build scripts which will automate the entire process of porting from Java to .NET using various tools like Sharpen to accomplish this. Ideally, an end user could grab the latest souce code release, then, using the build script and following the instructions provided, convert the equivalent Java Lucene release to .NET source, and then compile that source to create a binary build. This is a lofty goal, but the closer we can get to this, the better. This will be an ongoing project, but we hope to get our first release of this out sometime in the 2nd quarter of 2011.
+
+-   Lucene.Net 3.0.2 (2nd quarter 2011)
+
+    This release will match the API and functionality of the [Lucene 3.0.2][25] release. 
+
+-   Lucene.Net .NET Idiomatic API (2nd/3rd quarter 2011)
+    
+    This project is focused on developing an API that is idiomatic to .NET code. This is a departure from our previous philosophy of only doing a direct API port from the Java code. We're very interesting in your opinion about how this should be designed, so please join the mailing lists and let us know what you'd like to see in this API! 
+
+-   Lucene.Net .NET Optimized Implementation (3rd/4th quarter 2011)
+    
+    This project is focused on refactoring the implementation of the code to be highly optimized for the .NET runtime. The original port was a line-by-line port of the Java code, and was done in a manner consistent with Java development for the JVM. There are subtle, but important differences between the JVM and the .NET CLR, and we hope that by refactoring the implementations, we'll be able to improve overall performance, but at least make the code more sensible as native C# code!
+
+
+## Build Instructions and Coding Guidelines 
+
+*TODO: Please come back later for more details. *
+
+Basic instruction are simply download the source, the latest copy of Visual Studio (the free Express version will be fine), open the solution and click 'Build'. If that doesn't work for you, send a message to the development mailing list! 
+
+---
+
+*Disclaimer*
+
+Apache Lucene.Net™ is an effort undergoing incubation at The Apache Software
+Foundation (ASF), sponsored by the [Apache Incubator][3].  Incubation is
+required of all newly accepted projects until a further review indicates that
+the infrastructure, communications, and decision making process have
+stabilized in a manner consistent with other successful ASF projects. While
+incubation status is not necessarily a reflection of the completeness or
+stability of the code, it does indicate that the project has yet to be fully
+endorsed by the ASF.
+
+
+  [1]: http://lucene.apache.org/
+  [2]: http://wiki.apache.org/incubator/Lucene.Net%20Proposal
+  [3]: http://incubator.apache.org/
+  [4]: http://incubator.apache.org/projects/lucene.net
+  [5]: https://svn.apache.org/repos/asf/incubator/lucene.net/site/download/Incubating-Apache-Lucene.Net-2.0-004-11Mar07.bin.zip
+  [6]: https://svn.apache.org/repos/asf/incubator/lucene.net/site/download/archive
+  [7]: https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_9_2
+  [8]: https://svn.apache.org/repos/asf/incubator/lucene.net/tags
+  [9]: https://svn.apache.org/repos/asf/incubator/lucene.net/trunk
+  [10]: mailto:lucene-net-user-subscribe@lucene.apache.org
+  [11]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user
+  [12]: mailto:lucene-net-dev-subscribe@lucene.apache.org
+  [13]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev
+  [14]: mailto:lucene-net-commits-subscribe@lucene.apache.org
+  [15]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits
+  [16]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user
+  [17]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev
+  [18]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits
+  [19]: http://issues.apache.org/jira/browse/LUCENENET
+  [20]: http://issues.apache.org/jira/secure/Signup!default.jspa
+  [21]: http://lucene.apache.org/java/3_0_2
