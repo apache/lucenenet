@@ -1,6 +1,7 @@
 Title: Apache Lucene.Net
 
-# Overview
+# Apache Lucene.Net
+## Overview
 
 Lucene.Net is a port of the Lucene search engine library, written in C# and 
 targeted at .NET runtime users.
@@ -27,25 +28,26 @@ subproject of Lucene.  Lucene.Net's incubation status is tracked at
 
 ---
 
-# Releases
+## Releases
 
-## Binary
+### Binary
 
 The latest binary release is: [Lucene.Net 2.0][5]
 
-### Previous Builds
+#### Previous Builds
 
 Previous builds are available here: [Lucene.Net Binary Release Archives][6]
 
-## Source
+
+### Source
 
 The latest source code release is: [Lucene.Net 2.9.2][7]
 
-### Previous Builds
+#### Previous Builds
 
 Previous builds are available here: [Lucene.Net Source Code Release Archives][8]
 
-### Bleeding Edge
+#### Bleeding Edge
 
 If you like to live dangerously you can try working with the 'bleeding edge' trunk revision. 
 
@@ -55,7 +57,7 @@ Bleeding edge is available here: [Lucene.Net Source Trunk Revision][9]
 
 ---
 
-# Mailing lists
+## Mailing lists
 
 After downloading the latest release, you'll probably have some questions. The best way to get access to the Lucene.Net community is through the mailing lists. Here you can get answers for your questions, contribute to the code, or just hang out and absorb our general awesomeness.
 
@@ -67,17 +69,9 @@ After downloading the latest release, you'll probably have some questions. The b
     [subscribe][14] to the [Lucene.Net commits mailing list][15] (lucene-net-commits at
     incubator dot apache dot org).
 
-## Mailing List Archives
+### Mailing List Archives
 
 Archives are available here:
-
-*2006-2009*
-
--   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user][16]
--   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev][17]
--   [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits][18]
-
-*2010-Current* 
 
 -   [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user][11]
 -   [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev][13]
@@ -86,7 +80,7 @@ Archives are available here:
 ---
 
 
-# Issue Tracker
+## Issue Tracker
 
 You might find a bug (sorry!), or have an idea for a new feature (no problem!), or have a code patch to contribute (thanks!). All Lucene.Net issues are [tracked][19] using Apache JIRA. If you aren't sure whether something is a bug, post a question on the Lucene.Net user mailing list.
 
@@ -94,15 +88,15 @@ Note that to create a new issue or comment on an existing one you'll have to [si
 
 ---
 
-# Development 
+## Development 
 
 Lucene.Net is an on-going project that is under active development. Below you'll find resources such as our roadmap, instructions on how to build the source, coding guidlines, and much more.
 
-## Source Repository
+### Source Repository
 
 Anonymous SVN URL: [https://svn.apache.org/repos/asf/incubator/lucene.net/trunk][9]
 
-## Committers
+### Committers
 
 If you have a question about the source, it's best to use the development mailing list to ask your question. However, if you need to contact one of the committers directly they are listed here (alphabetically):
 
@@ -114,12 +108,12 @@ If you have a question about the source, it's best to use the development mailin
 -   Sergey Mirvoda (sergey AT mirvoda DOT com)
 -   Troy Howard (thoward37 AT gmail DOT com)
 
-## Roadmap 
+### Roadmap 
 
-### Next Scheduled Binary Release
+#### Next Scheduled Binary Release
 -   **Lucene.Net 2.9.2 (Anticipated Release Date: 02/28/2011)**
 
-### Backlog
+#### Backlog
 -   **Full automated port using Sharpen (2nd quarter 2011)**
 
     Our current process of porting is a manual one involving a lot of man hours, and isn't repeatable by the general public. We'd like to see that change, and so we're working on creating build scripts which will automate the entire process of porting from Java to .NET using various tools like Sharpen to accomplish this. Ideally, an end user could grab the latest souce code release, then, using the build script and following the instructions provided, convert the equivalent Java Lucene release to .NET source, and then compile that source to create a binary build. This is a lofty goal, but the closer we can get to this, the better. This will be an ongoing project, but we hope to get our first release of this out sometime in the 2nd quarter of 2011.
@@ -137,15 +131,15 @@ If you have a question about the source, it's best to use the development mailin
     This project is focused on refactoring the implementation of the code to be highly optimized for the .NET runtime. The original port was a line-by-line port of the Java code, and was done in a manner consistent with Java development for the JVM. There are subtle, but important differences between the JVM and the .NET CLR, and we hope that by refactoring the implementations, we'll be able to improve overall performance, but at least make the code more sensible as native C# code!
 
 
-## Build Instructions and Coding Guidelines 
+### Build Instructions and Coding Guidelines 
 
-*TODO: Please come back later for more details. *
+*TODO: Please come back later for more details.*
 
 Basic instruction are simply download the source, the latest copy of Visual Studio (the free Express version will be fine), open the solution and click 'Build'. If that doesn't work for you, send a message to the development mailing list! 
 
 ---
 
-*Disclaimer*
+## Disclaimer
 
 Apache Lucene.Net™ is an effort undergoing incubation at The Apache Software
 Foundation (ASF), sponsored by the [Apache Incubator][3].  Incubation is
