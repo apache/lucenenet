@@ -8,15 +8,17 @@ targeted at .NET runtime users.
 
 Lucene.Net has three primary goals:
 
-First, it will maintain the existing line-by-line port from Java to C#, fully 
-automating and commoditizing the process such that the project can easily 
-synchronize with the Java Lucene release schedule. 
-
-Second, it will be a high-performance C# search engine library. 
-
-Third, it will maximize its usability and power when used within the .NET 
-runtime. To that end, it will present a highly idiomatic, carefully tailored 
-API that takes advantage of many of the special features of the .NET runtime.
+ 1. Maintain the existing line-by-line port from Java to
+    C#, fully  automating and commoditizing the process such that the
+    project can easily  synchronize with the Java Lucene release
+    schedule. 
+    
+ 2. High-performance C# search engine library. 
+    
+ 3. Maximize usability and power when used within the
+    .NET runtime. To that end, it will present a highly idiomatic,
+    carefully tailored API that takes advantage of many of the special
+    features of the .NET runtime.
 
 You can find the Lucene parent project at: [http://lucene.apache.org/][1]
 
