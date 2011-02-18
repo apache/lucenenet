@@ -12,9 +12,7 @@ Lucene.Net has three primary goals:
     C#, fully  automating and commoditizing the process such that the
     project can easily  synchronize with the Java Lucene release
     schedule. 
-    
  2. High-performance C# search engine library. 
-    
  3. Maximize usability and power when used within the
     .NET runtime. To that end, it will present a highly idiomatic,
     carefully tailored API that takes advantage of many of the special
