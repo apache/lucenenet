@@ -1,6 +1,4 @@
-Lucene Snowball README file
-
-$Id: README.txt 150870 2002-12-23 22:50:28Z cutting $
+Lucene.Net Snowball.Net README file
 
 INTRODUCTION
 
@@ -9,8 +7,8 @@ together with classes integrating them with the Lucene search engine.
 
 More documentation is provided in the 'docs' subdirectory.
 
-For more information on Lucene, see:
-  http://jakarta.apache.org/lucene
+For more information on Lucene.Net, see:
+  http://incubator.apache.org/lucene.net/
 
 For more information on Snowball, see:
   http://snowball.tartarus.org/

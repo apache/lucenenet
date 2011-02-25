@@ -26,8 +26,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Spatial.Net")]
-[assembly: AssemblyCopyright("Copyright 2009 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2009 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Spatial")]
 [assembly: AssemblyCulture("")]
 

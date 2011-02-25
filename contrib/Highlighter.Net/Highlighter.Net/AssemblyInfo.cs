@@ -28,8 +28,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Highligther.Net")]
-[assembly: AssemblyCopyright("Copyright 2007 - 2008 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2007 - 2008 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Highlight")]
 [assembly: AssemblyCulture("")]
 

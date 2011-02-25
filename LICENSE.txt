@@ -203,10 +203,10 @@
 
 
 
-Some code in src/java/org/apache/lucene/util/UnicodeUtil.java was
-derived from unicode conversion examples available at
-http://www.unicode.org/Public/PROGRAMS/CVTUTF.  Here is the copyright
-from those sources:
+Some code in src/Lucene.Net/Util/UnicodeUtil.cs was derived from unicode 
+conversion examples available at http://www.unicode.org/Public/PROGRAMS/CVTUTF.
+
+Here is the copyright from those sources:
 
 /*
  * Copyright 2001-2004 Unicode, Inc.
@@ -231,10 +231,10 @@ from those sources:
  */
 
 
-Some code in src/java/org/apache/lucene/util/ArrayUtil.java was
-derived from Python 2.4.2 sources available at
-http://www.python.org. Full license is here:
+Some code in src/Lucene.Net/Util/ArrayUtil.cs was derived from Python 2.4.2 
+sources available at http://www.python.org. 
+
+Full license is here:
 
   http://www.python.org/download/releases/2.4.2/license/
-
 

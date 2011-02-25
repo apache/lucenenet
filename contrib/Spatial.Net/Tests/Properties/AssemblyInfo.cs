@@ -21,13 +21,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Apache Lucene.Net (Spitial Tests)")]
+[assembly: AssemblyTitle("Apache Lucene.Net (Spatial Tests)")]
 [assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Spitial Tests")]
-[assembly: AssemblyCopyright("Copyright 2009 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2009 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
