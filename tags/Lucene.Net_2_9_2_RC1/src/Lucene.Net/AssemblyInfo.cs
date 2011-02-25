@@ -24,12 +24,12 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("Apache Lucene.Net")]
-[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
+[assembly: AssemblyDescription("The Apache Lucene.Net library is a high performance C# search engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2009 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2009 The Apache Software Foundation")]
+[assembly: AssemblyProduct("Apache Lucene.Net")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
