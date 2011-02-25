@@ -16,6 +16,9 @@ Please join the Apache Lucene.Net-User mailing list by sending a message to:
 
 FILES
 
+build/* 
+  Visual Studio solution files
+
 src/Lucene.Net
   The Lucene source code.
 
@@ -32,4 +35,4 @@ contrib/*
 DOCUMENTATION
 
 MSDN style API documentation for Apache Lucene.Net exists.  Those can be found at this site:
-  http://incubator.apache.org/lucene.net/docs/2.4.1/
+  http://lucene.apache.org/lucene.net/docs/2.4.0/
