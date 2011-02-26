@@ -1,5 +1,5 @@
 Lucene Change Log
-$Id$
+$Id: CHANGES.txt 941000 2010-05-04 18:55:53Z mikemccand $
 
 ======================= Release 2.9.2 2010-02-26 =======================
 
@@ -47,6 +47,10 @@ Bug fixes
  * LUCENE-2270: Queries consisting of all zero-boost clauses
    (for example, text:foo^0) sorted incorrectly and produced
    invalid docids. (yonik)
+
+ * LUCENE-2422: Don't reuse byte[] in IndexInput/Output -- it gains
+   little performance, and ties up possibly large amounts of memory
+   for apps that index large docs.  (Ross Woolf via Mike McCandless)
 
 API Changes
 
