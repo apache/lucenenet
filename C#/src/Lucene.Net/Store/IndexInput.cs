@@ -27,8 +27,6 @@ namespace Lucene.Net.Store
 	/// </seealso>
 	public abstract class IndexInput : System.ICloneable
 	{
-		private byte[] bytes; // used by readString()
-		private char[] chars; // used by readModifiedUTF8String()
 		private bool preUTF8Strings; // true if we are reading old (modified UTF8) string format
 		
 		/// <summary>Reads and returns a single byte.</summary>
@@ -138,10 +136,7 @@ namespace Lucene.Net.Store
 			if (preUTF8Strings)
 				return ReadModifiedUTF8String();
 			int length = ReadVInt();
-			if (bytes == null || length > bytes.Length)
-			{
-				bytes = new byte[(int) (length * 1.25)];
-			}
+            byte[] bytes = new byte[length];
 			ReadBytes(bytes, 0, length);
             return System.Text.Encoding.UTF8.GetString(bytes, 0, length);
 		}
@@ -149,8 +144,7 @@ namespace Lucene.Net.Store
 		private System.String ReadModifiedUTF8String()
 		{
 			int length = ReadVInt();
-			if (chars == null || length > chars.Length)
-				chars = new char[length];
+            char[] chars = new char[length];
 			ReadChars(chars, 0, length);
 			return new System.String(chars, 0, length);
 		}
@@ -261,9 +255,6 @@ namespace Lucene.Net.Store
 			catch (System.Exception e)
 			{
 			}
-			
-			clone.bytes = null;
-			clone.chars = null;
 			
 			return clone;
 		}

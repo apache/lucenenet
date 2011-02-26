@@ -32,8 +32,6 @@ namespace Lucene.Net.Store
 	public abstract class IndexOutput
 	{
 		
-		private UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
-		
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
 		/// </seealso>
@@ -119,6 +117,7 @@ namespace Lucene.Net.Store
 		/// </seealso>
 		public virtual void  WriteString(System.String s)
 		{
+			UnicodeUtil.UTF8Result utf8Result = new UnicodeUtil.UTF8Result();
 			UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
 			WriteVInt(utf8Result.length);
 			WriteBytes(utf8Result.result, 0, utf8Result.length);
