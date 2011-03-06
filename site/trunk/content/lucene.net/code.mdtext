@@ -1,0 +1,16 @@
+Latest Release - Lucene.Net 2.9.2
+
+
+These are official releases that are stable and should be relatively free of bugs:
+	Binary
+	Source
+	
+Cutting Edge
+This is the latest and greatest, we do our best to keep it stable, but occasionally 
+it won't build correctly. Newer features will likely not work as intended, 
+and even older features might be broken temporarily
+
+Archives
+2.9.1 Source Binary
+2.9.0 Source Binary
+2.4.0 Source Binary
