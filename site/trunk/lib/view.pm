@@ -51,6 +51,13 @@ sub basic {
     return ($rendered, 'html', \%args);
 }
 
+sub html {
+	my %args = @_;
+    my $filepath = "content$args{path}";
+    read_text_file($filepath, \%args);
+    return ($filepath, 'html', \%args);
+}
+
 # A view which generates a sitemap.
 
 sub sitemap {
