@@ -1,0 +1,15 @@
+* {
+	color: #000 !important;
+}
+
+body {
+	background: #fff !important;
+}
+
+#tabs, #footer, #search, #repo-menu {
+	display: none;
+}
+
+.noprint {
+	display: none;
+}

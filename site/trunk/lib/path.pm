@@ -10,8 +10,7 @@ use warnings;
 
 our @patterns = (
     [ qr!^/.*\.html$!, basic => {} ],
-	[ qr!^/index\.mdtext$!, basic => { template => "basic.html"} ],
-    [ qr!\.mdtext$!, basic => { template => "subpage.html" } ],
+	[ qr!\.mdtext$!, basic => { template => "subpage.html" } ],
     [ qr!^/sitemap\.html$!, sitemap => {} ],
 );
 
