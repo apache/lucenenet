@@ -55,6 +55,7 @@ sub html {
 	my %args = @_;
     my $filepath = "content$args{path}";
     read_text_file($filepath, \%args);
+	$args{path} =~ s/\.mdtext$/\.html/;
     return ($filepath, 'html', \%args);
 }
 
