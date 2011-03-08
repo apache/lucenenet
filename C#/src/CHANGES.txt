@@ -1,6 +1,14 @@
-Lucene Change Log
-$Id: CHANGES.txt 941000 2010-05-04 18:55:53Z mikemccand $
+﻿
+=================== 2.9.4 trunk (not yet released) =====================
 
+Bug fixes
+
+ * LUCENENET-355  [LUCENE-2387]: Don't hang onto Fieldables from the last doc indexed,
+   in IndexWriter, nor the Reader in Tokenizer after close is
+   called. (digy) [Ruben Laguna, Uwe Schindler, Mike McCandless]
+
+
+Change Log Copied from Lucene 
 ======================= Release 2.9.2 2010-02-26 =======================
 
 Bug fixes
