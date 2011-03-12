@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexOutput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java 691694 2008-09-03 17:34:29Z mikemccand $
+    /// <version>  $Id: RAMOutputStream.java 941125 2010-05-05 00:44:15Z mikemccand $
 	/// </version>
 	
 	public class RAMOutputStream:IndexOutput
@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
 		{
 		}
 		
-		public /*internal*/ RAMOutputStream(RAMFile f)
+		public RAMOutputStream(RAMFile f)
 		{
 			file = f;
 			
@@ -75,19 +75,14 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary>Resets this to an empty buffer. </summary>
+		/// <summary>Resets this to an empty file. </summary>
 		public virtual void  Reset()
-		{
-			try
-			{
-				Seek(0);
-			}
-			catch (System.IO.IOException e)
-			{
-				// should never happen
-				throw new System.SystemException(e.ToString());
-			}
-			
+        {
+            currentBuffer = null;
+            currentBufferIndex = -1;
+            bufferPosition = 0;
+            bufferStart = 0;
+            bufferLength = 0;
 			file.SetLength(0);
 		}
 		
