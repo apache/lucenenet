@@ -19,15 +19,16 @@ using System;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-using Directory = Lucene.Net.Store.Directory;
-using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-using Constants = Lucene.Net.Util.Constants;
 using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 using Query = Lucene.Net.Search.Query;
 using Scorer = Lucene.Net.Search.Scorer;
 using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+using Directory = Lucene.Net.Store.Directory;
+using RAMFile = Lucene.Net.Store.RAMFile;
+using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+using Constants = Lucene.Net.Util.Constants;
 
 namespace Lucene.Net.Index
 {
@@ -104,7 +105,7 @@ namespace Lucene.Net.Index
 		{
 			
 			internal override DocConsumer GetChain(DocumentsWriter documentsWriter)
-			{
+            {
 				/*
 				This is the current indexing chain:
 				
@@ -145,7 +146,8 @@ namespace Lucene.Net.Index
 			freeLevel = (long) (IndexWriter.DEFAULT_RAM_BUFFER_SIZE_MB * 1024 * 1024 * 0.95);
 			maxBufferedDocs = IndexWriter.DEFAULT_MAX_BUFFERED_DOCS;
 			skipDocWriter = new SkipDocWriter();
-			byteBlockAllocator = new ByteBlockAllocator(this);
+			byteBlockAllocator = new ByteBlockAllocator(this, BYTE_BLOCK_SIZE);
+            perDocAllocator = new ByteBlockAllocator(this, PER_DOC_BLOCK_SIZE);
 			waitQueue = new WaitQueue(this);
 		}
 		
@@ -220,6 +222,59 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+        //Create and return a new DocWriterBuffer.
+        internal PerDocBuffer newPerDocBuffer() 
+        {
+            return new PerDocBuffer(perDocAllocator);
+        }
+
+        /// <summary>RAMFile buffer for DocWriters.</summary>
+        internal class PerDocBuffer:RAMFile 
+        {
+            public PerDocBuffer(ByteBlockAllocator perDocAllocator)
+			{
+				InitBlock(perDocAllocator);
+			}
+            private void InitBlock(ByteBlockAllocator perDocAllocator)
+			{
+                this.perDocAllocator = perDocAllocator;
+			}
+            private ByteBlockAllocator perDocAllocator;
+
+            /// <summary>
+            ///  Allocate bytes used from shared pool.
+            /// </summary>
+            /// <param name="size">Size of new buffer.  Fixed at <see cref="PER_DOC_BLOCK_SIZE"/>.</param>
+            /// <returns></returns>
+            protected internal byte[] newBuffer(int size) 
+            {
+                System.Diagnostics.Debug.Assert(size == PER_DOC_BLOCK_SIZE);
+                return perDocAllocator.GetByteBlock(false);
+            }
+    
+            //Recycle the bytes used.
+            internal void recycle() 
+            {
+                lock(this)
+                {
+                    if (buffers.Count > 0)
+                    {
+                        SetLength(0);
+
+                        // Recycle the blocks
+                        int blockCount = buffers.Count;
+                        byte[][] blocks = new byte[blockCount][];
+                        buffers.CopyTo(blocks);
+                        perDocAllocator.RecycleByteBlocks(blocks, 0, blockCount);
+                        buffers.Clear();
+                        sizeInBytes = 0;
+
+                        System.Diagnostics.Debug.Assert(NumBuffers() == 0);
+                    }
+                }
+            }
+        }
+
 		/// <summary> The IndexingChain must define the {@link #GetChain(DocumentsWriter)} method
 		/// which returns the DocConsumer that the DocumentsWriter calls to process the
 		/// documents. 
@@ -486,7 +541,7 @@ namespace Lucene.Net.Index
 		internal void  Message(System.String message)
 		{
 			if (infoStream != null)
-				writer.Message("DW: " + message);
+                writer.Message("DW: " + message);
 		}
 
         internal System.Collections.Generic.IList<string> openFiles = new System.Collections.Generic.List<string>();
@@ -1530,13 +1585,14 @@ namespace Lucene.Net.Index
 		
 		internal class ByteBlockAllocator:ByteBlockPool.Allocator
 		{
-			public ByteBlockAllocator(DocumentsWriter enclosingInstance)
+            public ByteBlockAllocator(DocumentsWriter enclosingInstance, int blockSize)
 			{
-				InitBlock(enclosingInstance);
+				InitBlock(enclosingInstance, blockSize);
 			}
-			private void  InitBlock(DocumentsWriter enclosingInstance)
+            private void InitBlock(DocumentsWriter enclosingInstance, int blockSize)
 			{
 				this.enclosingInstance = enclosingInstance;
+                this.blockSize = blockSize;
 			}
 			private DocumentsWriter enclosingInstance;
 			public DocumentsWriter Enclosing_Instance
@@ -1545,11 +1601,12 @@ namespace Lucene.Net.Index
 				{
 					return enclosingInstance;
 				}
-				
 			}
-			
+
+            int blockSize;
+
 			internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
-			
+
 			/* Allocate another byte[] from the shared pool */
 			public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
 			{
@@ -1565,8 +1622,8 @@ namespace Lucene.Net.Index
 						// things that don't track allocations (term
 						// vectors) and things that do (freq/prox
 						// postings).
-						Enclosing_Instance.numBytesAlloc += Lucene.Net.Index.DocumentsWriter.BYTE_BLOCK_SIZE;
-						b = new byte[Lucene.Net.Index.DocumentsWriter.BYTE_BLOCK_SIZE];
+                        Enclosing_Instance.numBytesAlloc += blockSize;
+                        b = new byte[blockSize];
 					}
 					else
 					{
@@ -1576,7 +1633,7 @@ namespace Lucene.Net.Index
 						b = (byte[]) tempObject;
 					}
 					if (trackAllocations)
-						Enclosing_Instance.numBytesUsed += Lucene.Net.Index.DocumentsWriter.BYTE_BLOCK_SIZE;
+                        Enclosing_Instance.numBytesUsed += blockSize;
 					System.Diagnostics.Debug.Assert(Enclosing_Instance.numBytesUsed <= Enclosing_Instance.numBytesAlloc);
 					return b;
 				}
@@ -1656,13 +1713,20 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				for (int i = start; i < end; i++)
-					freeIntBlocks.Add(blocks[i]);
+                for (int i = start; i < end; i++)
+                {
+                    freeIntBlocks.Add(blocks[i]);
+                }
 			}
 		}
 		
 		internal ByteBlockAllocator byteBlockAllocator;
-		
+
+        internal const int PER_DOC_BLOCK_SIZE = 1024;
+
+        internal ByteBlockAllocator perDocAllocator;
+
+
 		/* Initial chunk size of the shared char[] blocks used to
 		store term text */
 		internal const int CHAR_BLOCK_SHIFT = 14;
@@ -1708,7 +1772,9 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				for (int i = 0; i < numBlocks; i++)
+				{
 					freeCharBlocks.Add(blocks[i]);
+				}
 			}
 		}
 		
@@ -1716,18 +1782,20 @@ namespace Lucene.Net.Index
 		{
 			return System.String.Format(nf, "{0:f}", new System.Object[] { (v / 1024F / 1024F) });
 		}
-		
-		/* We have three pools of RAM: Postings, byte blocks
-		* (holds freq/prox posting data) and char blocks (holds
-		* characters in the term).  Different docs require
-		* varying amount of storage from these three classes.
-		* For example, docs with many unique single-occurrence
-		* short terms will use up the Postings RAM and hardly any
-		* of the other two.  Whereas docs with very large terms
-		* will use alot of char blocks RAM and relatively less of
-		* the other two.  This method just frees allocations from
-		* the pools once we are over-budget, which balances the
-		* pools to match the current docs. */
+
+        /* We have four pools of RAM: Postings, byte blocks
+         * (holds freq/prox posting data), char blocks (holds
+         * characters in the term) and per-doc buffers (stored fields/term vectors).  
+         * Different docs require varying amount of storage from 
+         * these four classes.
+         * 
+         * For example, docs with many unique single-occurrence
+         * short terms will use up the Postings RAM and hardly any
+         * of the other two.  Whereas docs with very large terms
+         * will use alot of char blocks RAM and relatively less of
+         * the other two.  This method just frees allocations from
+         * the pools once we are over-budget, which balances the
+         * pools to match the current docs. */
 		internal void  BalanceRAM()
 		{
 			
@@ -1740,7 +1808,14 @@ namespace Lucene.Net.Index
 			{
 				
 				if (infoStream != null)
-					Message("  RAM: now balance allocations: usedMB=" + ToMB(numBytesUsed) + " vs trigger=" + ToMB(flushTrigger) + " allocMB=" + ToMB(numBytesAlloc) + " deletesMB=" + ToMB(deletesRAMUsed) + " vs trigger=" + ToMB(freeTrigger) + " byteBlockFree=" + ToMB(byteBlockAllocator.freeByteBlocks.Count * BYTE_BLOCK_SIZE) + " charBlockFree=" + ToMB(freeCharBlocks.Count * CHAR_BLOCK_SIZE * CHAR_NUM_BYTE));
+                    Message("  RAM: now balance allocations: usedMB=" + ToMB(numBytesUsed) + 
+                        " vs trigger=" + ToMB(flushTrigger) + 
+                        " allocMB=" + ToMB(numBytesAlloc) + 
+                        " deletesMB=" + ToMB(deletesRAMUsed) + 
+                        " vs trigger=" + ToMB(freeTrigger) + 
+                        " byteBlockFree=" + ToMB(byteBlockAllocator.freeByteBlocks.Count * BYTE_BLOCK_SIZE) + 
+                        " perDocFree=" + ToMB(perDocAllocator.freeByteBlocks.Count * PER_DOC_BLOCK_SIZE) + 
+                        " charBlockFree=" + ToMB(freeCharBlocks.Count * CHAR_BLOCK_SIZE * CHAR_NUM_BYTE));
 				
 				long startBytesAlloc = numBytesAlloc + deletesRAMUsed;
 				
@@ -1757,7 +1832,11 @@ namespace Lucene.Net.Index
 					
 					lock (this)
 					{
-						if (0 == byteBlockAllocator.freeByteBlocks.Count && 0 == freeCharBlocks.Count && 0 == freeIntBlocks.Count && !any)
+                        if (0 == perDocAllocator.freeByteBlocks.Count 
+                            && 0 == byteBlockAllocator.freeByteBlocks.Count 
+                            && 0 == freeCharBlocks.Count 
+                            && 0 == freeIntBlocks.Count
+                            && !any) 
 						{
 							// Nothing else to free -- must flush now.
 							bufferIsFull = numBytesUsed + deletesRAMUsed > flushTrigger;
@@ -1772,26 +1851,41 @@ namespace Lucene.Net.Index
 							break;
 						}
 						
-						if ((0 == iter % 4) && byteBlockAllocator.freeByteBlocks.Count > 0)
+						if ((0 == iter % 5) && byteBlockAllocator.freeByteBlocks.Count > 0)
 						{
 							byteBlockAllocator.freeByteBlocks.RemoveAt(byteBlockAllocator.freeByteBlocks.Count - 1);
 							numBytesAlloc -= BYTE_BLOCK_SIZE;
 						}
 						
-						if ((1 == iter % 4) && freeCharBlocks.Count > 0)
+						if ((1 == iter % 5) && freeCharBlocks.Count > 0)
 						{
 							freeCharBlocks.RemoveAt(freeCharBlocks.Count - 1);
 							numBytesAlloc -= CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
 						}
 						
-						if ((2 == iter % 4) && freeIntBlocks.Count > 0)
+						if ((2 == iter % 5) && freeIntBlocks.Count > 0)
 						{
 							freeIntBlocks.RemoveAt(freeIntBlocks.Count - 1);
 							numBytesAlloc -= INT_BLOCK_SIZE * INT_NUM_BYTE;
 						}
+                        
+                        if ((3 == iter % 5) && perDocAllocator.freeByteBlocks.Count > 0) 
+                        {
+                            // Remove upwards of 32 blocks (each block is 1K)
+                            for (int i = 0; i < 32; ++i) 
+                            {
+                                perDocAllocator.freeByteBlocks.RemoveAt (perDocAllocator.freeByteBlocks.Count - 1);
+                                numBytesAlloc -= PER_DOC_BLOCK_SIZE;
+                                if (perDocAllocator.freeByteBlocks.Count == 0) 
+                                {
+                                    break;
+                                }
+                            }
+                        }
+        
 					}
 					
-					if ((3 == iter % 4) && any)
+					if ((4 == iter % 5) && any)
 					// Ask consumer to free any recycled state
 						any = consumer.FreeRAM();
 					

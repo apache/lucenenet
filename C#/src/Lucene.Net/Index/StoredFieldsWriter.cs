@@ -222,6 +222,8 @@ namespace Lucene.Net.Index
 			private void  InitBlock(StoredFieldsWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
+                buffer = enclosingInstance.docWriter.newPerDocBuffer();
+                fdt = new RAMOutputStream(buffer);
 			}
 			private StoredFieldsWriter enclosingInstance;
 			public StoredFieldsWriter Enclosing_Instance
@@ -233,14 +235,14 @@ namespace Lucene.Net.Index
 				
 			}
 			
-			// TODO: use something more memory efficient; for small
-			// docs the 1024 buffer size of RAMOutputStream wastes alot
-			internal RAMOutputStream fdt = new RAMOutputStream();
+			internal DocumentsWriter.PerDocBuffer buffer;
+			internal RAMOutputStream fdt;
 			internal int numStoredFields;
 			
 			internal void  Reset()
 			{
 				fdt.Reset();
+				buffer.recycle();
 				numStoredFields = 0;
 			}
 			
@@ -252,7 +254,7 @@ namespace Lucene.Net.Index
 			
 			public override long SizeInBytes()
 			{
-				return fdt.SizeInBytes();
+				return buffer.GetSizeInBytes();
 			}
 			
 			public override void  Finish()
