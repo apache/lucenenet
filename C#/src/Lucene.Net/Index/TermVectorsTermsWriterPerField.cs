@@ -81,8 +81,8 @@ namespace Lucene.Net.Index
 					perThread.doc = termsWriter.GetPerDoc();
 					perThread.doc.docID = docState.docID;
 					System.Diagnostics.Debug.Assert(perThread.doc.numVectorFields == 0);
-					System.Diagnostics.Debug.Assert(0 == perThread.doc.tvf.Length());
-					System.Diagnostics.Debug.Assert(0 == perThread.doc.tvf.GetFilePointer());
+					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.Length());
+                    System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.GetFilePointer());
 				}
 				else
 				{
@@ -125,8 +125,8 @@ namespace Lucene.Net.Index
 			
 			if (numPostings > maxNumPostings)
 				maxNumPostings = numPostings;
-			
-			IndexOutput tvf = perThread.doc.tvf;
+
+            IndexOutput tvf = perThread.doc.perDocTvf;
 			
 			// This is called once, after inverting all occurences
 			// of a given field in the doc.  At this point we flush
