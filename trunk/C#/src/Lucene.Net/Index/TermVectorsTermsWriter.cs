@@ -231,8 +231,8 @@ namespace Lucene.Net.Index
 						tvd.WriteVLong(pos - lastPos);
 						lastPos = pos;
 					}
-					perDoc.tvf.WriteTo(tvf);
-					perDoc.tvf.Reset();
+					perDoc.perDocTvf.WriteTo(tvf);
+					perDoc.perDocTvf.Reset();
 					perDoc.numVectorFields = 0;
 				}
 				
@@ -308,6 +308,8 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TermVectorsTermsWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
+                this.buffer = enclosingInstance.docWriter.newPerDocBuffer();
+                this.perDocTvf = new RAMOutputStream(this.buffer);
 			}
 			private TermVectorsTermsWriter enclosingInstance;
 			public TermVectorsTermsWriter Enclosing_Instance
@@ -319,9 +321,9 @@ namespace Lucene.Net.Index
 				
 			}
 			
-			// TODO: use something more memory efficient; for small
-			// docs the 1024 buffer size of RAMOutputStream wastes alot
-			internal RAMOutputStream tvf = new RAMOutputStream();
+			internal DocumentsWriter.PerDocBuffer buffer;
+			internal RAMOutputStream perDocTvf;
+
 			internal int numVectorFields;
 			
 			internal int[] fieldNumbers = new int[1];
@@ -329,7 +331,8 @@ namespace Lucene.Net.Index
 			
 			internal void  Reset()
 			{
-				tvf.Reset();
+				perDocTvf.Reset();
+				buffer.recycle();
 				numVectorFields = 0;
 			}
 			
@@ -347,13 +350,13 @@ namespace Lucene.Net.Index
 					fieldPointers = ArrayUtil.Grow(fieldPointers);
 				}
 				fieldNumbers[numVectorFields] = fieldNumber;
-				fieldPointers[numVectorFields] = tvf.GetFilePointer();
+				fieldPointers[numVectorFields] = perDocTvf.GetFilePointer();
 				numVectorFields++;
 			}
 			
 			public override long SizeInBytes()
 			{
-				return tvf.SizeInBytes();
+				return buffer.GetSizeInBytes();
 			}
 			
 			public override void  Finish()

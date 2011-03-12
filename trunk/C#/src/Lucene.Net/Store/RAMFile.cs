@@ -19,23 +19,24 @@ using System;
 
 namespace Lucene.Net.Store
 {
-	
+
+    /** For Lucene internal use */
 	[Serializable]
 	public class RAMFile
 	{
 		
 		private const long serialVersionUID = 1L;
 		
-		private System.Collections.ArrayList buffers = new System.Collections.ArrayList();
+		protected System.Collections.ArrayList buffers = new System.Collections.ArrayList();
 		internal long length;
 		internal RAMDirectory directory;
-		internal long sizeInBytes; 
+		protected internal long sizeInBytes; 
 		
 		// This is publicly modifiable via Directory.touchFile(), so direct access not supported
 		private long lastModified = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 		
 		// File used as buffer, in no RAMDirectory
-		public /*internal*/ RAMFile()
+        protected internal RAMFile()
 		{
 		}
 		
@@ -45,15 +46,15 @@ namespace Lucene.Net.Store
 		}
 		
 		// For non-stream access from thread that might be concurrent with writing
-		public /*internal*/ virtual long GetLength()
+		public virtual long GetLength()
 		{
 			lock (this)
 			{
 				return length;
 			}
 		}
-		
-		public /*internal*/ virtual void  SetLength(long length)
+
+        public /*internal*/ virtual void SetLength(long length)
 		{
 			lock (this)
 			{
@@ -62,7 +63,7 @@ namespace Lucene.Net.Store
 		}
 		
 		// For non-stream access from thread that might be concurrent with writing
-		internal virtual long GetLastModified()
+		public virtual long GetLastModified()
 		{
 			lock (this)
 			{
@@ -70,7 +71,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		internal virtual void  SetLastModified(long lastModified)
+		protected internal virtual void  SetLastModified(long lastModified)
 		{
 			lock (this)
 			{
@@ -78,7 +79,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		internal byte[] AddBuffer(int size)
+		protected internal byte[] AddBuffer(int size)
 		{
             byte[] buffer = NewBuffer(size);
             lock (this)
@@ -97,16 +98,16 @@ namespace Lucene.Net.Store
 
             return buffer;
 		}
-		
-		public /*internal*/ byte[] GetBuffer(int index)
+
+        public /*internal*/ byte[] GetBuffer(int index)
 		{
 			lock (this)
 			{
 				return (byte[]) buffers[index];
 			}
 		}
-		
-		public /*internal*/ int NumBuffers()
+
+        public /*internal*/ int NumBuffers()
 		{
 			lock (this)
 			{
@@ -127,14 +128,11 @@ namespace Lucene.Net.Store
 		}
 		
 		
-		public /*internal*/ virtual long GetSizeInBytes()
+		public virtual long GetSizeInBytes()
 		{
             lock (this)
             {
-                lock (directory)
-                {
-                    return sizeInBytes;
-                }
+                return sizeInBytes;
             }
 		}
 
