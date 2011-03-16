@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 			}
 			sb.Length -= 2; // discard last ", "
 			sb.Append("]");
-			return base.ToString();
+			return sb.ToString();
 		}
 
         #region SERIALIZATION

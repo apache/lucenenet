@@ -194,6 +194,7 @@ namespace Lucene.Net.Search
 			NUMERIC_UTILS_DOUBLE_PARSER = new AnonymousClassDoubleParser1();
 		}
 	}
+    
 	[Serializable]
 	class AnonymousClassByteParser : ByteParser
 	{
@@ -664,6 +665,15 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// </summary>
 		void  PurgeAllCaches();
+
+        /// <summary>
+        /// Expert: drops all cache entries associated with this
+        /// reader.  NOTE: this reader must precisely match the
+        /// reader that the cache entry is keyed on. If you pass a
+        /// top-level reader, it usually will have no effect as
+        /// Lucene now caches at the segment reader level.
+        /// </summary>
+        void Purge(IndexReader r);
 		
 		/// <summary> If non-null, FieldCacheImpl will warn whenever
 		/// entries are created that are not sane according to

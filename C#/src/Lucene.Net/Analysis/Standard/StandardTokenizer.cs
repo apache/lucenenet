@@ -314,21 +314,11 @@ namespace Lucene.Net.Analysis.Standard
 			return base.Next();
 		}
 		
-		/*
-		* (non-Javadoc)
-		*
-		* @see Lucene.Net.Analysis.TokenStream#reset()
-		*/
-		public override void  Reset()
-		{
-			base.Reset();
-			scanner.Yyreset(input);
-		}
-		
+				
 		public override void  Reset(System.IO.TextReader reader)
 		{
 			base.Reset(reader);
-			Reset();
+			scanner.Reset(reader);
 		}
 		
 		/// <summary> Prior to https://issues.apache.org/jira/browse/LUCENE-1068, StandardTokenizer mischaracterized as acronyms tokens like www.abc.com

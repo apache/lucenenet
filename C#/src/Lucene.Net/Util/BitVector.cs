@@ -40,26 +40,30 @@ namespace Lucene.Net.Util
 		
 		private byte[] bits;
 		private int size;
-		private int count = - 1;
+		private int count;
 		
 		/// <summary>Constructs a vector capable of holding <code>n</code> bits. </summary>
 		public BitVector(int n)
 		{
 			size = n;
 			bits = new byte[(size >> 3) + 1];
+            count = 0;
 		}
 		
 		internal BitVector(byte[] bits, int size)
 		{
 			this.bits = bits;
 			this.size = size;
+            count = -1;
 		}
 		
 		public System.Object Clone()
 		{
 			byte[] copyBits = new byte[bits.Length];
 			Array.Copy(bits, 0, copyBits, 0, bits.Length);
-			return new BitVector(copyBits, size);
+            BitVector clone = new BitVector(copyBits, size);
+            clone.count = count;
+            return clone;
 		}
 		
 		/// <summary>Sets the value of <code>bit</code> to one. </summary>
@@ -141,6 +145,18 @@ namespace Lucene.Net.Util
 			}
 			return count;
 		}
+
+        /// <summary>
+        /// For testing 
+        /// </summary>
+        public int GetRecomputedCount()
+        {
+            int c = 0;
+            int end = bits.Length;
+            for (int i = 0; i < end; i++)
+                c += BYTE_COUNTS[bits[i] & 0xFF];	  // sum bits per byte
+            return c;
+        }
 		
 		private static readonly byte[] BYTE_COUNTS = new byte[]{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
 		

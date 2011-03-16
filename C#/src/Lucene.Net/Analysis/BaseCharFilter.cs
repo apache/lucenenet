@@ -16,88 +16,82 @@
  */
 
 using System;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
-	
-	/// <summary> Base utility class for implementing a {@link CharFilter}.
-	/// You subclass this, and then record mappings by calling
-	/// {@link #addOffCorrectMap}, and then invoke the correct
-	/// method to correct an offset.
-	/// 
-	/// <p/><b>NOTE</b>: This class is not particularly efficient.
-	/// For example, a new class instance is created for every
-	/// call to {@link #addOffCorrectMap}, which is then appended
-	/// to a private list.
-	/// </summary>
-	public abstract class BaseCharFilter:CharFilter
-	{
-		
-		//private List<OffCorrectMap> pcmList;
-		private System.Collections.IList pcmList;
-		
-		public BaseCharFilter(CharStream in_Renamed):base(in_Renamed)
-		{
-		}
-		
-		/// <summary>Retrieve the corrected offset.  Note that this method
-		/// is slow, if you correct positions far before the most
-		/// recently added position, as it's a simple linear
-		/// search backwards through all offset corrections added
-		/// by {@link #addOffCorrectMap}.
-		/// </summary>
-		public /*protected internal*/ override int Correct(int currentOff)
-		{
-			if (pcmList == null || (pcmList.Count == 0))
-			{
-				return currentOff;
-			}
-			for (int i = pcmList.Count - 1; i >= 0; i--)
-			{
-				if (currentOff >= ((OffCorrectMap) pcmList[i]).off)
-				{
-					return currentOff + ((OffCorrectMap) pcmList[i]).cumulativeDiff;
-				}
-			}
-			return currentOff;
-		}
-		
-		protected internal virtual int GetLastCumulativeDiff()
-		{
-			return pcmList == null || (pcmList.Count == 0)?0:((OffCorrectMap) pcmList[pcmList.Count - 1]).cumulativeDiff;
-		}
-		
-		protected internal virtual void  AddOffCorrectMap(int off, int cumulativeDiff)
-		{
-			if (pcmList == null)
-			{
-				pcmList = new System.Collections.ArrayList();
-			}
-			pcmList.Add(new OffCorrectMap(off, cumulativeDiff));
-		}
-		
-		internal class OffCorrectMap
-		{
-			
-			internal int off;
-			internal int cumulativeDiff;
-			
-			internal OffCorrectMap(int off, int cumulativeDiff)
-			{
-				this.off = off;
-				this.cumulativeDiff = cumulativeDiff;
-			}
-			
-			public override System.String ToString()
-			{
-				System.Text.StringBuilder sb = new System.Text.StringBuilder();
-				sb.Append('(');
-				sb.Append(off);
-				sb.Append(',');
-				sb.Append(cumulativeDiff);
-				sb.Append(')');
-				return sb.ToString();
-			}
-		}
-	}
+
+    /// <summary>
+    /// * Base utility class for implementing a {@link CharFilter}.
+    /// * You subclass this, and then record mappings by calling
+    /// * {@link #addOffCorrectMap}, and then invoke the correct
+    /// * method to correct an offset.
+    /// </summary>
+    public abstract class BaseCharFilter : CharFilter
+    {
+
+        private int[] offsets;
+        private int[] diffs;
+        private int size = 0;
+
+        public BaseCharFilter(CharStream @in) : base(@in)
+        {
+        }
+
+        /** Retrieve the corrected offset. */
+        //@Override
+        public override int Correct(int currentOff)
+        {
+            if (offsets == null || currentOff < offsets[0])
+            {
+                return currentOff;
+            }
+
+            int hi = size - 1;
+            if (currentOff >= offsets[hi])
+                return currentOff + diffs[hi];
+
+            int lo = 0;
+            int mid = -1;
+
+            while (hi >= lo)
+            {
+                mid = SupportClass.Number.URShift(lo + hi, 1);
+                if (currentOff < offsets[mid])
+                    hi = mid - 1;
+                else if (currentOff > offsets[mid])
+                    lo = mid + 1;
+                else
+                    return currentOff + diffs[mid];
+            }
+
+            if (currentOff < offsets[mid])
+                return mid == 0 ? currentOff : currentOff + diffs[mid - 1];
+            else
+                return currentOff + diffs[mid];
+        }
+
+        protected int GetLastCumulativeDiff()
+        {
+            return offsets == null ?
+              0 : diffs[size - 1];
+        }
+
+        protected void AddOffCorrectMap(int off, int cumulativeDiff)
+        {
+            if (offsets == null)
+            {
+                offsets = new int[64];
+                diffs = new int[64];
+            }
+            else if (size == offsets.Length)
+            {
+                offsets = ArrayUtil.Grow(offsets);
+                diffs = ArrayUtil.Grow(diffs);
+            }
+
+            offsets[size] = off;
+            diffs[size++] = cumulativeDiff;
+        }
+    }
 }

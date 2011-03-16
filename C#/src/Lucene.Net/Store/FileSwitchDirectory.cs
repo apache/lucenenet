@@ -78,12 +78,10 @@ namespace Lucene.Net.Store
 		
 		public override System.String[] ListAll()
 		{
-			System.String[] primaryFiles = primaryDir.ListAll();
-			System.String[] secondaryFiles = secondaryDir.ListAll();
-			System.String[] files = new System.String[primaryFiles.Length + secondaryFiles.Length];
-			Array.Copy(primaryFiles, 0, files, 0, primaryFiles.Length);
-			Array.Copy(secondaryFiles, 0, files, primaryFiles.Length, secondaryFiles.Length);
-			return files;
+            System.Collections.Generic.List<string> files = new System.Collections.Generic.List<string>();
+            files.AddRange(primaryDir.ListAll());
+            files.AddRange(secondaryDir.ListAll());
+            return files.ToArray();
 		}
 
         [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]

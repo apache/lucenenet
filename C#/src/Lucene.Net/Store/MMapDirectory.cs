@@ -317,6 +317,8 @@ namespace Lucene.Net.Store
 			
 			public override System.Object Clone()
 			{
+                if (buffer == null)
+                    throw new AlreadyClosedException("MMapIndexInput already closed");
 				MMapIndexInput clone = (MMapIndexInput) base.Clone();
 				clone.isClone = true;
 				// clone.buffer = buffer.duplicate();   // {{Aroush-1.9}}

@@ -57,12 +57,20 @@ namespace Lucene.Net.Index
 		/// <seealso cref="setMaxMergeDocs">
 		/// </seealso>
 		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
+
+        /// <summary> Default noCFSRatio.  If a merge's size is >= 10% of
+        ///  the index, then we disable compound file for it.
+        ///  @see #setNoCFSRatio 
+        ///  </summary>
+        public static double DEFAULT_NO_CFS_RATIO = 0.1;
 		
 		private int mergeFactor = DEFAULT_MERGE_FACTOR;
 		
 		internal long minMergeSize;
 		internal long maxMergeSize;
 		internal int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
+
+        protected double noCFSRatio = DEFAULT_NO_CFS_RATIO;
 		
 		/* TODO 3.0: change this default to true */
 		protected internal bool calibrateSizeByDeletes = false;
@@ -78,6 +86,27 @@ namespace Lucene.Net.Index
 		{
 			return writer != null && writer.Verbose();
 		}
+
+
+        /** @see #setNoCFSRatio */
+        public double GetNoCFSRatio()
+        {
+            return noCFSRatio;
+        }
+
+        /** If a merged segment will be more than this percentage
+         *  of the total size of the index, leave the segment as
+         *  non-compound file even if compound file is enabled.
+         *  Set to 1.0 to always use CFS regardless of merge
+         *  size. */
+        public void SetNoCFSRatio(double noCFSRatio)
+        {
+            if (noCFSRatio < 0.0 || noCFSRatio > 1.0)
+            {
+                throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + noCFSRatio);
+            }
+            this.noCFSRatio = noCFSRatio;
+        }
 		
 		private void  Message(System.String message)
 		{
@@ -233,7 +262,8 @@ namespace Lucene.Net.Index
 		private bool IsOptimized(SegmentInfo info)
 		{
 			bool hasDeletions = writer.NumDeletedDocs(info) > 0;
-			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.GetDirectory() && info.GetUseCompoundFile() == useCompoundFile;
+			return !hasDeletions && !info.HasSeparateNorms() && info.dir == writer.GetDirectory() &&
+                (info.GetUseCompoundFile() == useCompoundFile || noCFSRatio < 1.0);
 		}
 		
 		/// <summary>Returns the merges necessary to optimize the index.
@@ -277,7 +307,7 @@ namespace Lucene.Net.Index
 					// mergeFactor) to potentially be run concurrently:
 					while (last - maxNumSegments + 1 >= mergeFactor)
 					{
-						spec.Add(new OneMerge(infos.Range(last - mergeFactor, last), useCompoundFile));
+                        spec.Add(MakeOneMerge(infos, infos.Range(last - mergeFactor, last)));
 						last -= mergeFactor;
 					}
 					
@@ -291,7 +321,7 @@ namespace Lucene.Net.Index
 							// Since we must optimize down to 1 segment, the
 							// choice is simple:
 							if (last > 1 || !IsOptimized(infos.Info(0)))
-								spec.Add(new OneMerge(infos.Range(0, last), useCompoundFile));
+                                spec.Add(MakeOneMerge(infos, infos.Range(0, last)));
 						}
 						else if (last > maxNumSegments)
 						{
@@ -322,8 +352,8 @@ namespace Lucene.Net.Index
 									bestSize = sumSize;
 								}
 							}
-							
-							spec.Add(new OneMerge(infos.Range(bestStart, bestStart + finalMergeSize), useCompoundFile));
+
+                            spec.Add(MakeOneMerge(infos, infos.Range(bestStart, bestStart + finalMergeSize)));
 						}
 					}
 				}
@@ -365,7 +395,7 @@ namespace Lucene.Net.Index
 						// deletions, so force a merge now:
 						if (Verbose())
 							Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
-						spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, i), useCompoundFile));
+                        spec.Add(MakeOneMerge(segmentInfos, segmentInfos.Range(firstSegmentWithDeletions, i)));
 						firstSegmentWithDeletions = i;
 					}
 				}
@@ -376,7 +406,7 @@ namespace Lucene.Net.Index
 					// mergeFactor segments
 					if (Verbose())
 						Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
-					spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, i), useCompoundFile));
+                    spec.Add(MakeOneMerge(segmentInfos, segmentInfos.Range(firstSegmentWithDeletions, i)));
 					firstSegmentWithDeletions = - 1;
 				}
 			}
@@ -385,7 +415,7 @@ namespace Lucene.Net.Index
 			{
 				if (Verbose())
 					Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
-				spec.Add(new OneMerge(segmentInfos.Range(firstSegmentWithDeletions, numSegments), useCompoundFile));
+                spec.Add(MakeOneMerge(segmentInfos, segmentInfos.Range(firstSegmentWithDeletions, numSegments)));
 			}
 			
 			return spec;
@@ -497,7 +527,7 @@ namespace Lucene.Net.Index
 							spec = new MergeSpecification();
 						if (Verbose())
 							Message("    " + start + " to " + end + ": add this merge");
-						spec.Add(new OneMerge(infos.Range(start, end), useCompoundFile));
+                        spec.Add(MakeOneMerge(infos, infos.Range(start, end)));
 					}
 					else if (Verbose())
 						Message("    " + start + " to " + end + ": contains segment over maxMergeSize or maxMergeDocs; skipping");
@@ -511,6 +541,36 @@ namespace Lucene.Net.Index
 			
 			return spec;
 		}
+        
+        protected OneMerge MakeOneMerge(SegmentInfos infos, SegmentInfos infosToMerge)
+        {
+            bool doCFS;
+            if (!useCompoundFile)
+            {
+                doCFS = false;
+            }
+            else if (noCFSRatio == 1.0)
+            {
+                doCFS = true;
+            }
+            else
+            {
+                long totSize = 0;
+                for (int i = 0; i < infos.Count; i++)
+                {
+                    totSize += Size(infos.Info(i));
+                }
+                long mergeSize = 0;
+                for (int i = 0; i < infosToMerge.Count; i++)
+                {
+                    mergeSize += Size(infosToMerge.Info(i));
+                }
+
+                doCFS = mergeSize <= noCFSRatio * totSize;
+            }
+
+            return new OneMerge(infosToMerge, doCFS);
+        }
 		
 		/// <summary><p/>Determines the largest segment (measured by
 		/// document count) that may be merged with other segments.

@@ -187,6 +187,11 @@ namespace Lucene.Net.Store
 		{
 			return this.ToString();
 		}
+
+        public override string ToString()
+        {
+            return base.ToString() + " lockFactory=" + GetLockFactory();
+        }
 		
 		/// <summary> Copy contents of a directory src to a directory dest.
 		/// If a file in src already exists in dest then the

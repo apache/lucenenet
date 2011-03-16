@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
 			private void  InitBlock(StoredFieldsWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-                buffer = enclosingInstance.docWriter.newPerDocBuffer();
+                buffer = enclosingInstance.docWriter.NewPerDocBuffer();
                 fdt = new RAMOutputStream(buffer);
 			}
 			private StoredFieldsWriter enclosingInstance;
@@ -234,15 +234,15 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			internal DocumentsWriter.PerDocBuffer buffer;
-			internal RAMOutputStream fdt;
+
+            internal DocumentsWriter.PerDocBuffer buffer ;
+            internal RAMOutputStream fdt;
 			internal int numStoredFields;
 			
 			internal void  Reset()
 			{
 				fdt.Reset();
-				buffer.recycle();
+                buffer.Recycle();
 				numStoredFields = 0;
 			}
 			
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 			
 			public override long SizeInBytes()
 			{
-				return buffer.GetSizeInBytes();
+                return buffer.GetSizeInBytes();
 			}
 			
 			public override void  Finish()

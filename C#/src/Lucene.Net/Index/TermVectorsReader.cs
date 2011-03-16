@@ -76,46 +76,53 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				if (d.FileExists(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION))
-				{
-					tvx = d.OpenInput(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION, readBufferSize);
-					format = CheckValidFormat(tvx);
-					tvd = d.OpenInput(segment + "." + IndexFileNames.VECTORS_DOCUMENTS_EXTENSION, readBufferSize);
-					int tvdFormat = CheckValidFormat(tvd);
-					tvf = d.OpenInput(segment + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION, readBufferSize);
-					int tvfFormat = CheckValidFormat(tvf);
-					
-					System.Diagnostics.Debug.Assert(format == tvdFormat);
-					System.Diagnostics.Debug.Assert(format == tvfFormat);
-					
-					if (format >= FORMAT_VERSION2)
-					{
-						System.Diagnostics.Debug.Assert((tvx.Length() - FORMAT_SIZE) % 16 == 0);
-						numTotalDocs = (int) (tvx.Length() >> 4);
-					}
-					else
-					{
-						System.Diagnostics.Debug.Assert((tvx.Length() - FORMAT_SIZE) % 8 == 0);
-						numTotalDocs = (int) (tvx.Length() >> 3);
-					}
-					
-					if (- 1 == docStoreOffset)
-					{
-						this.docStoreOffset = 0;
-						this.size = numTotalDocs;
-						System.Diagnostics.Debug.Assert(size == 0 || numTotalDocs == size);
-					}
-					else
-					{
-						this.docStoreOffset = docStoreOffset;
-						this.size = size;
-						// Verify the file is long enough to hold all of our
-						// docs
-						System.Diagnostics.Debug.Assert(numTotalDocs >= size + docStoreOffset, "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
-					}
-				}
-				else
-					format = 0;
+                if (d.FileExists(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION))
+                {
+                    tvx = d.OpenInput(segment + "." + IndexFileNames.VECTORS_INDEX_EXTENSION, readBufferSize);
+                    format = CheckValidFormat(tvx);
+                    tvd = d.OpenInput(segment + "." + IndexFileNames.VECTORS_DOCUMENTS_EXTENSION, readBufferSize);
+                    int tvdFormat = CheckValidFormat(tvd);
+                    tvf = d.OpenInput(segment + "." + IndexFileNames.VECTORS_FIELDS_EXTENSION, readBufferSize);
+                    int tvfFormat = CheckValidFormat(tvf);
+
+                    System.Diagnostics.Debug.Assert(format == tvdFormat);
+                    System.Diagnostics.Debug.Assert(format == tvfFormat);
+
+                    if (format >= FORMAT_VERSION2)
+                    {
+                        System.Diagnostics.Debug.Assert((tvx.Length() - FORMAT_SIZE) % 16 == 0);
+                        numTotalDocs = (int)(tvx.Length() >> 4);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert((tvx.Length() - FORMAT_SIZE) % 8 == 0);
+                        numTotalDocs = (int)(tvx.Length() >> 3);
+                    }
+
+                    if (-1 == docStoreOffset)
+                    {
+                        this.docStoreOffset = 0;
+                        this.size = numTotalDocs;
+                        System.Diagnostics.Debug.Assert(size == 0 || numTotalDocs == size);
+                    }
+                    else
+                    {
+                        this.docStoreOffset = docStoreOffset;
+                        this.size = size;
+                        // Verify the file is long enough to hold all of our
+                        // docs
+                        System.Diagnostics.Debug.Assert(numTotalDocs >= size + docStoreOffset, "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    }
+                }
+                else
+                {
+                    // If all documents flushed in a segment had hit
+                    // non-aborting exceptions, it's possible that
+                    // FieldInfos.hasVectors returns true yet the term
+                    // vector files don't exist.
+                    format = 0;
+                }
+
 				
 				this.fieldInfos = fieldInfos;
 				success = true;

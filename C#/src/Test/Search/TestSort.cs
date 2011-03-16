@@ -1281,5 +1281,24 @@ namespace Lucene.Net.Search
 				}
 			}
 		}
+
+        [Test]
+        public void TestLUCENE2142()
+        {
+            RAMDirectory indexStore = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(indexStore, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+            for (int i = 0; i < 5; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new Field("string", "a" + i, Field.Store.NO, Field.Index.NOT_ANALYZED));
+                doc.Add(new Field("string", "b" + i, Field.Store.NO, Field.Index.NOT_ANALYZED));
+                writer.AddDocument(doc);
+            }
+            writer.Optimize(); // enforce one segment to have a higher unique term count in all cases
+            writer.Close();
+            sort.SetSort(new SortField[]{new SortField("string", SortField.STRING),SortField.FIELD_DOC });
+            // this should not throw AIOOBE or RuntimeEx
+            new IndexSearcher(indexStore, true).Search(new MatchAllDocsQuery(), null, 500, sort);
+        }
 	}
 }

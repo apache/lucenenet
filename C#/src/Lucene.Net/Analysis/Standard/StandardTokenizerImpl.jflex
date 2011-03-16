@@ -65,6 +65,17 @@ public final int yychar()
 }
 
 /**
+ * Resets the Tokenizer to a new Reader.
+ */
+final void reset(java.io.Reader r) {
+  // reset to default buffer size, if buffer has grown
+  if (zzBuffer.length > ZZ_BUFFERSIZE) {
+    zzBuffer = new char[ZZ_BUFFERSIZE];
+  }
+  yyreset(r);
+}
+
+/**
  * Fills Lucene token with the current token text.
  */
 final void getText(Token t) {
