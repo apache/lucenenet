@@ -668,8 +668,11 @@ namespace Lucene.Net.Index
 				while (it.MoveNext())
 				{
 					System.String fieldName = (System.String) it.Current;
-					reader.Norms(fieldName, b, 0);
-					++status.totFields;
+                    if (reader.HasNorms(fieldName))
+                    {
+                        reader.Norms(fieldName, b, 0);
+                        ++status.totFields;
+                    }
 				}
 				
 				Msg("OK [" + status.totFields + " fields]");

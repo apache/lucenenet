@@ -47,7 +47,12 @@ namespace Lucene.Net.Store
 	/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
 	/// JRE bug</a> this is a poor choice for Windows, but
 	/// on all other platforms this is the preferred
-	/// choice.</li>
+	/// choice. Applications using {@link Thread#interrupt()} or
+    /// <code>Future#cancel(boolean)</code> (on Java 1.5) should use
+    /// {@link SimpleFSDirectory} instead. See {@link NIOFSDirectory} java doc
+    /// for details.
+    ///        
+    ///        
 	/// 
 	/// <li> {@link MMapDirectory} uses memory-mapped IO when
 	/// reading. This is a good choice if you have plenty
@@ -73,6 +78,11 @@ namespace Lucene.Net.Store
 	/// an important limitation to be aware of. This class supplies a
 	/// (possibly dangerous) workaround mentioned in the bug report,
 	/// which may fail on non-Sun JVMs.</li>
+    ///       
+    /// Applications using {@link Thread#interrupt()} or
+    /// <code>Future#cancel(boolean)</code> (on Java 1.5) should use
+    /// {@link SimpleFSDirectory} instead. See {@link MMapDirectory}
+    /// java doc for details.
 	/// </ul>
 	/// 
 	/// Unfortunately, because of system peculiarities, there is
@@ -945,7 +955,7 @@ namespace Lucene.Net.Store
 		/// <summary>For debug output. </summary>
 		public override System.String ToString()
 		{
-			return this.GetType().FullName + "@" + directory;
+            return this.GetType().FullName + "@" + directory + " lockFactory=" + GetLockFactory();
 		}
 		
 		/// <summary> Default read chunk size.  This is a conditional

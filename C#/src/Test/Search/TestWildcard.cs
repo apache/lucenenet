@@ -116,6 +116,27 @@ namespace Lucene.Net.Search
 			AssertMatches(searcher, new WildcardQuery(new Term("body", "*tal*")), 2);
 		}
 		
+
+        /**
+         * LUCENE-2620
+         */
+        [Test]
+        public void TestLotsOfAsterisks()
+        {
+            RAMDirectory indexStore = GetIndexStore("body", new String[] { "metal", "metals" });
+            IndexSearcher searcher = new IndexSearcher(indexStore, true);
+            System.Text.StringBuilder term = new System.Text.StringBuilder();
+            term.Append("m");
+            for (int i = 0; i < 512; i++)
+                term.Append("*");
+            term.Append("tal");
+            Query query3 = new WildcardQuery(new Term("body", term.ToString()));
+
+            AssertMatches(searcher, query3, 1);
+            searcher.Close();
+            indexStore.Close();
+        }
+
 		/// <summary> Tests Wildcard queries with a question mark.
 		/// 
 		/// </summary>

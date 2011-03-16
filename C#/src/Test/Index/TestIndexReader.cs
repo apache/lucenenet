@@ -1101,7 +1101,7 @@ namespace Lucene.Net.Index
 					System.String[] startFiles = dir.ListAll();
 					SegmentInfos infos = new SegmentInfos();
 					infos.Read(dir);
-					new IndexFileDeleter(dir, new KeepOnlyLastCommitDeletionPolicy(), infos, null, null);
+					new IndexFileDeleter(dir, new KeepOnlyLastCommitDeletionPolicy(), infos, null, null,null);
 					System.String[] endFiles = dir.ListAll();
 					
 					System.Array.Sort(startFiles);

@@ -39,9 +39,7 @@ namespace Lucene.Net.Index
 		internal int bytesPerPosting;
 		internal int postingsFreeChunk;
 		internal DocumentsWriter docWriter;
-		
-		private TermsHash primaryTermsHash;
-		
+						
 		private RawPostingList[] postingsFreeList = new RawPostingList[1];
 		private int postingsFreeCount;
 		private int postingsAllocCount;
@@ -78,25 +76,35 @@ namespace Lucene.Net.Index
 			this.fieldInfos = fieldInfos;
 			consumer.SetFieldInfos(fieldInfos);
 		}
-		
+
+        // NOTE: do not make this sync'd; it's not necessary (DW
+        // ensures all other threads are idle), and it leads to
+        // deadlock
 		public override void  Abort()
 		{
-			lock (this)
-			{
-				consumer.Abort();
-				if (nextTermsHash != null)
-					nextTermsHash.Abort();
-			}
+			consumer.Abort();
+			if (nextTermsHash != null)
+				nextTermsHash.Abort();
 		}
 		
 		internal void  ShrinkFreePostings(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
 		{
 			
 			System.Diagnostics.Debug.Assert(postingsFreeCount == postingsAllocCount, "Thread.currentThread().getName()" + ": postingsFreeCount=" + postingsFreeCount + " postingsAllocCount=" + postingsAllocCount + " consumer=" + consumer);
-			
-			int newSize = ArrayUtil.GetShrinkSize(postingsFreeList.Length, postingsAllocCount);
+
+            int newSize = 1;
 			if (newSize != postingsFreeList.Length)
 			{
+                if (postingsFreeCount > newSize)
+                {
+                    if (trackAllocations)
+                    {
+                        docWriter.BytesAllocated(-(postingsFreeCount - newSize) * bytesPerPosting);
+                    }
+                    postingsFreeCount = newSize;
+                    postingsAllocCount = newSize;
+                }
+
 				RawPostingList[] newArray = new RawPostingList[newSize];
 				Array.Copy(postingsFreeList, 0, newArray, 0, postingsFreeCount);
 				postingsFreeList = newArray;
@@ -172,36 +180,42 @@ namespace Lucene.Net.Index
 		
 		public override bool FreeRAM()
 		{
-			lock (this)
-			{
+			if (!trackAllocations)
+				return false;
 				
-				if (!trackAllocations)
-					return false;
-				
-				bool any;
-				int numToFree;
-				if (postingsFreeCount >= postingsFreeChunk)
-					numToFree = postingsFreeChunk;
-				else
-					numToFree = postingsFreeCount;
-				any = numToFree > 0;
-				if (any)
-				{
+			bool any;
+			long bytesFreed = 0;
+            lock (this)
+            {
+                int numToFree;
+                if (postingsFreeCount >= postingsFreeChunk)
+                    numToFree = postingsFreeChunk;
+                else
+                    numToFree = postingsFreeCount;
+                any = numToFree > 0;
+                if (any)
+                {
                     for (int i = postingsFreeCount - numToFree; i < postingsFreeCount; i++)
                     {
                         postingsFreeList[i] = null;
                     }
-					postingsFreeCount -= numToFree;
-					postingsAllocCount -= numToFree;
-					docWriter.BytesAllocated((- numToFree) * bytesPerPosting);
-					any = true;
-				}
-				
-				if (nextTermsHash != null)
-					any |= nextTermsHash.FreeRAM();
-				
-				return any;
+                    //Arrays.fill(postingsFreeList, postingsFreeCount - numToFree, postingsFreeCount, null);
+                    postingsFreeCount -= numToFree;
+                    postingsAllocCount -= numToFree;
+                    bytesFreed = -numToFree * bytesPerPosting;
+                    any = true;
+                }
+            }
+
+			if (any)
+			{
+                docWriter.BytesAllocated(bytesFreed);
 			}
+				
+			if (nextTermsHash != null)
+				any |= nextTermsHash.FreeRAM();
+				
+			return any;
 		}
 		
 		public void  RecyclePostings(RawPostingList[] postings, int numPostings)

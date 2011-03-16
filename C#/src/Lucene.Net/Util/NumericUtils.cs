@@ -387,8 +387,10 @@ namespace Lucene.Net.Util
 				bool hasUpper = (maxBound & mask) != mask;
 				long nextMinBound = (hasLower?(minBound + diff):minBound) & ~ mask;
 				long nextMaxBound = (hasUpper?(maxBound - diff):maxBound) & ~ mask;
-				
-				if (shift + precisionStep >= valSize || nextMinBound > nextMaxBound)
+				bool lowerWrapped = nextMinBound < minBound,
+                     upperWrapped = nextMaxBound > maxBound;
+      
+                if (shift+precisionStep>=valSize || nextMinBound>nextMaxBound || lowerWrapped || upperWrapped) 
 				{
 					// We are in the lowest precision or the next precision is not available.
 					AddRange(builder, valSize, minBound, maxBound, shift);

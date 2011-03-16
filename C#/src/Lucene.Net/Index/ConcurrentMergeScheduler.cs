@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 		protected internal System.Collections.IList mergeThreads = new System.Collections.ArrayList();
 		
 		// Max number of threads allowed to be merging at once
-		private int maxThreadCount = 3;
+		private int maxThreadCount = 1;
 		
 		protected internal Directory dir;
 		
@@ -173,16 +173,30 @@ namespace Lucene.Net.Index
 		
 		private int MergeThreadCount()
 		{
-			lock (this)
-			{
-				int count = 0;
-				int numThreads = mergeThreads.Count;
-				for (int i = 0; i < numThreads; i++)
-					if (((MergeThread) mergeThreads[i]).IsAlive)
-						count++;
-				return count;
-			}
+            return MergeThreadCount(false);
 		}
+
+        private int MergeThreadCount(bool excludeDone)
+        {
+            lock (this)
+            {
+                int count = 0;
+                int numThreads = mergeThreads.Count;
+                for (int i = 0; i < numThreads; i++)
+                {
+                    MergeThread t = (MergeThread)mergeThreads[i];
+                    if (t.IsAlive)
+                    {
+                        MergePolicy.OneMerge runningMerge = t.GetRunningMerge();
+                        if (!excludeDone || (runningMerge != null && !runningMerge.mergeDone))
+                        {
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            }
+        }
 		
 		public override void  Merge(IndexWriter writer)
 		{
@@ -236,7 +250,7 @@ namespace Lucene.Net.Index
 					lock (this)
 					{
 						MergeThread merger;
-						while (MergeThreadCount() >= maxThreadCount)
+						while (MergeThreadCount(true) >= maxThreadCount)
 						{
 							if (Verbose())
 								Message("    too many merge threads running; stalling...");
@@ -256,8 +270,7 @@ namespace Lucene.Net.Index
 						if (Verbose())
 							Message("  consider merge " + merge.SegString(dir));
 						
-						System.Diagnostics.Debug.Assert(MergeThreadCount() < maxThreadCount);
-						
+												
 						// OK to spawn a new merge thread to handle this
 						// merge:
 						merger = GetMergeThread(writer, merge);

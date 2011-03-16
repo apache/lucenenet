@@ -52,60 +52,6 @@ namespace Lucene.Net.Store
 	
 	public class NativeFSLockFactory:FSLockFactory
 	{
-		
-		private volatile bool tested = false;
-		
-		// Simple test to verify locking system is "working".  On
-		// NFS, if it's misconfigured, you can hit long (35
-		// second) timeouts which cause Lock.obtain to take far
-		// too long (it assumes the obtain() call takes zero
-		// time). 
-		private void  AcquireTestLock()
-		{
-			lock (this)
-			{
-				if (tested)
-					return ;
-				tested = true;
-				
-				// Ensure that lockDir exists and is a directory.
-				bool tmpBool;
-				if (System.IO.File.Exists(lockDir.FullName))
-					tmpBool = true;
-				else
-					tmpBool = System.IO.Directory.Exists(lockDir.FullName);
-				if (!tmpBool)
-				{
-					try
-                    {
-                        System.IO.Directory.CreateDirectory(lockDir.FullName);
-                    }
-                    catch
-                    {
-						throw new System.SystemException("Cannot create directory: " + lockDir.FullName);
-                    }
-				}
-				else if (!System.IO.Directory.Exists(lockDir.FullName))
-				{
-					throw new System.SystemException("Found regular file where directory expected: " + lockDir.FullName);
-				}
-				
-				System.String randomLockName = "lucene-" + System.Convert.ToString(new System.Random().Next(), 16) + "-test.lock";
-				
-				Lock l = MakeLock(randomLockName);
-				try
-				{
-					l.Obtain();
-					l.Release();
-				}
-				catch (System.IO.IOException e)
-				{
-					System.SystemException e2 = new System.SystemException("Failed to acquire random test lock; please verify filesystem for lock directory '" + lockDir + "' supports locking", e);
-					throw e2;
-				}
-			}
-		}
-		
 		/// <summary> Create a NativeFSLockFactory instance, with null (unset)
 		/// lock directory. When you pass this factory to a {@link FSDirectory}
 		/// subclass, the lock directory is automatically set to the
@@ -152,7 +98,6 @@ namespace Lucene.Net.Store
 		{
 			lock (this)
 			{
-				AcquireTestLock();
 				if (lockPrefix != null)
 					lockName = lockPrefix + "-" + lockName;
 				return new NativeFSLock(lockDir, lockName);
@@ -441,7 +386,31 @@ namespace Lucene.Net.Store
 					if (!tmpBool)
 						throw new LockReleaseFailedException("failed to delete " + path);
 				}
-			}
+                /* From Java 2.9.4 {{DIGY}}
+                      // LUCENE-2421: we don't care anymore if the file cannot be deleted
+                      // because it's held up by another process (e.g. AntiVirus). NativeFSLock
+                      // does not depend on the existence/absence of the lock file
+                      path.delete();
+                    } else {
+                      // if we don't hold the lock, and somebody still called release(), for
+                      // example as a result of calling IndexWriter.unlock(), we should attempt
+                      // to obtain the lock and release it. If the obtain fails, it means the
+                      // lock cannot be released, and we should throw a proper exception rather
+                      // than silently failing/not doing anything.
+                      boolean obtained = false;
+                      try {
+                        if (!(obtained = obtain())) {
+                          throw new LockReleaseFailedException(
+                              "Cannot forcefully unlock a NativeFSLock which is held by another indexer component: "
+                                  + path);
+                        }
+                      } finally {
+                        if (obtained) {
+                          release();
+                        }
+                      }
+                */
+            }
 		}
 		
 		public override bool IsLocked()

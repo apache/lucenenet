@@ -258,6 +258,19 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			return yychar;
 		}
+
+        /**
+        * Resets the Tokenizer to a new Reader.
+        */
+        internal void Reset(System.IO.TextReader r)
+        {
+            // reset to default buffer size, if buffer has grown
+            if (zzBuffer.Length > ZZ_BUFFERSIZE)
+            {
+                zzBuffer = new char[ZZ_BUFFERSIZE];
+            }
+            Yyreset(r);
+        }
 		
 		/// <summary> Fills Lucene token with the current token text.</summary>
 		internal void  GetText(Token t)

@@ -933,17 +933,22 @@ namespace Lucene.Net.Util
 			
 			return true;
 		}
+
+        public override int GetHashCode()
+        {
+            // Start with a zero hash and use a mix that results in zero if the input is zero.
+            // This effectively truncates trailing zeros without an explicit check.
+            long h = 0;
+            for (int i = bits.Length; --i >= 0; )
+            {
+                h ^= bits[i];
+                h = (h << 1) | (SupportClass.Number.URShift(h, 63)); // rotate left
+            }
+            // fold leftmost bits into right and add a constant to prevent
+            // empty sets from returning 0, which is too common.
+            return (int)(((h >> 32) ^ h) + 0x98761234);
+        }
+
 		
-		
-		public override int GetHashCode()
-		{
-			long h = 0x98761234; // something non-zero for length==0
-			for (int i = bits.Length; --i >= 0; )
-			{
-				h ^= bits[i];
-				h = (h << 1) | ((long) ((ulong) h >> 63)); // rotate left
-			}
-			return (int) ((h >> 32) ^ h); // fold leftmost bits into right
-		}
 	}
 }

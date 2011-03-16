@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
 			
 			if (useCompoundFile)
 			{
-				System.Collections.IList filesToDelete = merger.CreateCompoundFile(merged + ".cfs");
+				System.Collections.Generic.ICollection<string> filesToDelete = merger.CreateCompoundFile(merged + ".cfs");
 				for (System.Collections.IEnumerator iter = filesToDelete.GetEnumerator(); iter.MoveNext(); )
 				{
 					si1.dir.DeleteFile((System.String) iter.Current);

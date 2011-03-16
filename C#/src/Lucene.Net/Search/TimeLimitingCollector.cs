@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
 			{
 				return timeElapsed;
 			}
-			/// <summary>Returns last doc that was collected when the search time exceeded. </summary>
+            /// <summary>Returns last doc(absolute doc id) that was collected when the search time exceeded. </summary>
 			public virtual int GetLastDocCollected()
 			{
 				return lastDocCollected;
@@ -136,6 +136,8 @@ namespace Lucene.Net.Search
 		private long t0;
 		private long timeout;
 		private Collector collector;
+
+        private int docBase;
 		
 		/// <summary> Create a TimeLimitedCollector wrapper over another {@link Collector} with a specified timeout.</summary>
 		/// <param name="collector">the wrapped {@link Collector}
@@ -217,7 +219,7 @@ namespace Lucene.Net.Search
 					collector.Collect(doc);
 				}
 				//System.out.println(this+"  failing on:  "+doc+"  "+(time-t0));
-				throw new TimeExceededException(timeout - t0, time - t0, doc);
+                throw new TimeExceededException(timeout - t0, time - t0, docBase + doc);
 			}
 			//System.out.println(this+"  collecting: "+doc+"  "+(time-t0));
 			collector.Collect(doc);
@@ -226,6 +228,7 @@ namespace Lucene.Net.Search
 		public override void  SetNextReader(IndexReader reader, int base_Renamed)
 		{
 			collector.SetNextReader(reader, base_Renamed);
+            this.docBase = base_Renamed;
 		}
 		
 		public override void  SetScorer(Scorer scorer)

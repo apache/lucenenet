@@ -505,8 +505,16 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static long ReadCurrentVersion(Directory directory)
 		{
-			
-			return (long) ((System.Int64) new AnonymousClassFindSegmentsFile1(directory).Run());
+            // Fully read the segments file: this ensures that it's
+            // completely written so that if
+            // IndexWriter.prepareCommit has been called (but not
+            // yet commit), then the reader will still see itself as
+            // current:
+            SegmentInfos sis = new SegmentInfos();
+            sis.Read(directory);
+            return sis.version;
+			//return (long) ((System.Int64) new AnonymousClassFindSegmentsFile1(directory).Run());
+            //DIGY: AnonymousClassFindSegmentsFile1 can safely be deleted
 		}
 		
 		/// <summary> Returns userData from latest segments file</summary>
@@ -677,7 +685,7 @@ namespace Lucene.Net.Index
 						
 						// Method 2: open segments.gen and read its
 						// contents.  Then we take the larger of the two
-						// gen's.  This way, if either approach is hitting
+						// gens.  This way, if either approach is hitting
 						// a stale cache (NFS) we have a better chance of
 						// getting the right generation.
 						long genB = - 1;
@@ -814,10 +822,8 @@ namespace Lucene.Net.Index
 					try
 					{
 						System.Object v = DoBody(segmentFileName);
-						if (exc != null)
-						{
-							Lucene.Net.Index.SegmentInfos.Message("success on " + segmentFileName);
-						}
+						Lucene.Net.Index.SegmentInfos.Message("success on " + segmentFileName);
+						
 						return v;
 					}
 					catch (System.IO.IOException err)

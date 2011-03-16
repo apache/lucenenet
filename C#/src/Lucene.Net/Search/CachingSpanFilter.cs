@@ -33,15 +33,45 @@ namespace Lucene.Net.Search
 		
 		/// <summary> A transient Filter cache.</summary>
 		[NonSerialized]
-		protected internal System.Collections.IDictionary cache;
-		
-		/// <param name="filter">Filter to cache results of
+        internal CachingWrapperFilter.FilterCache cache;
+
+        /// <summary>
+        /// New deletions always result in a cache miss, by default
+        /// ({@link CachingWrapperFilter.DeletesMode#RECACHE}.
+        /// <param name="filter">Filter to cache results of
 		/// </param>
-		public CachingSpanFilter(SpanFilter filter)
+        /// </summary>
+        public CachingSpanFilter(SpanFilter filter): this(filter, CachingWrapperFilter.DeletesMode.RECACHE)
 		{
-			this.filter = filter;
+			
 		}
-		
+
+        /**
+        * @param filter Filter to cache results of
+        * @param deletesMode See {@link CachingWrapperFilter.DeletesMode}
+        */
+        public CachingSpanFilter(SpanFilter filter, CachingWrapperFilter.DeletesMode deletesMode)
+        {
+            this.filter = filter;
+            if (deletesMode == CachingWrapperFilter.DeletesMode.DYNAMIC)
+            {
+                throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
+            }
+            this.cache = new AnonymousFilterCache(deletesMode);
+        }
+
+        class AnonymousFilterCache : CachingWrapperFilter.FilterCache
+        {
+            public AnonymousFilterCache(CachingWrapperFilter.DeletesMode deletesMode) : base(deletesMode)
+            {
+            }
+
+            protected override object MergeDeletes(IndexReader reader, object docIdSet)
+            {
+                throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
+            }
+        }
+
 		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
 		/// </deprecated>
         [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
@@ -56,26 +86,26 @@ namespace Lucene.Net.Search
 			SpanFilterResult result = GetCachedResult(reader);
 			return result != null?result.GetDocIdSet():null;
 		}
-		
+
+        // for testing
+        public int hitCount, missCount;
+
 		private SpanFilterResult GetCachedResult(IndexReader reader)
 		{
-			SpanFilterResult result = null;
-			if (cache == null)
-			{
-                cache = new SupportClass.WeakHashTable();
-			}
-			
-			lock (cache.SyncRoot)
-			{
-				// check cache
-				result = (SpanFilterResult) cache[reader];
-				if (result == null)
-				{
-					result = filter.BitSpans(reader);
-					cache[reader] = result;
-				}
-			}
-			return result;
+            object coreKey = reader.GetFieldCacheKey();
+            object delCoreKey = reader.HasDeletions() ? reader.GetDeletesCacheKey() : coreKey;
+
+            SpanFilterResult result = (SpanFilterResult) cache.Get(reader, coreKey, delCoreKey);
+            if (result != null) {
+                hitCount++;
+                return result;
+            }
+
+            missCount++;
+            result = filter.BitSpans(reader);
+
+            cache.Put(coreKey, delCoreKey, result);
+            return result;
 		}
 		
 		

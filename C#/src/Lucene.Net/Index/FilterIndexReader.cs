@@ -298,6 +298,10 @@ namespace Lucene.Net.Index
 		protected internal override void  DoClose()
 		{
 			in_Renamed.Close();
+            // NOTE: only needed in case someone had asked for
+            // FieldCache for top-level reader (which is generally
+            // not a good idea):
+            Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
 		}
 
 
@@ -335,5 +339,25 @@ namespace Lucene.Net.Index
             System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this FilterIndexReader.Clone()"); // {{Aroush-2.9}}
 			return null;
 		}
+
+        /// <summary>
+        /// If the subclass of FilteredIndexReader modifies the
+        /// contents of the FieldCache, you must override this
+        /// method to provide a different key */
+        ///</summary>
+        public override object GetFieldCacheKey() 
+        {
+            return in_Renamed.GetFieldCacheKey();
+        }
+
+        /// <summary>
+        /// If the subclass of FilteredIndexReader modifies the
+        /// deleted docs, you must override this method to provide
+        /// a different key */
+        /// </summary>
+        public override object GetDeletesCacheKey() 
+        {
+            return in_Renamed.GetDeletesCacheKey();
+        }
 	}
 }

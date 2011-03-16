@@ -304,7 +304,8 @@ namespace Lucene.Net.Index
 		private bool autoCommit = true; // false if we should commit only on close
 		
 		private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
-		
+        private int optimizeMaxNumSegments;
+
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
@@ -340,6 +341,8 @@ namespace Lucene.Net.Index
 		private SupportClass.ThreadClass writeThread; // non-null if any thread holds write lock
 		internal ReaderPool readerPool;
 		private int upgradeCount;
+
+        private int readerTermsIndexDivisor = IndexReader.DEFAULT_TERMS_INDEX_DIVISOR;
 		
 		// This is a "write once" variable (like the organic dye
 		// on a DVD-R that may or may not be heated by a laser and
@@ -414,7 +417,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public virtual IndexReader GetReader()
 		{
-			return GetReader(IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
+            return GetReader(readerTermsIndexDivisor);
 		}
 		
 		/// <summary>Expert: like {@link #getReader}, except you can
@@ -434,6 +437,8 @@ namespace Lucene.Net.Index
 		/// </param>
 		public virtual IndexReader GetReader(int termInfosIndexDivisor)
 		{
+            EnsureOpen();
+
 			if (infoStream != null)
 			{
 				Message("flush at getReader");
@@ -444,16 +449,17 @@ namespace Lucene.Net.Index
 			// this method is called:
 			poolReaders = true;
 			
-			Flush(true, true, false);
-			
 			// Prevent segmentInfos from changing while opening the
 			// reader; in theory we could do similar retry logic,
 			// just like we do when loading segments_N
+            IndexReader r;
 			lock (this)
 			{
-                ApplyDeletes();
-				return new ReadOnlyDirectoryReader(this, segmentInfos, termInfosIndexDivisor);
+                Flush(false, true, true);
+                r = new ReadOnlyDirectoryReader(this, segmentInfos, termInfosIndexDivisor);
 			}
+            MaybeMerge();
+            return r;
 		}
 		
 		/// <summary>Holds shared SegmentReader instances. IndexWriter uses
@@ -568,46 +574,44 @@ namespace Lucene.Net.Index
 				{
 					
 					bool pooled = readerMap.Contains(sr.GetSegmentInfo());
-					
-					System.Diagnostics.Debug.Assert(!pooled | readerMap[sr.GetSegmentInfo()] == sr);
-					
-					// Drop caller's ref
+
+                    System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.GetSegmentInfo()] == sr);
+
+                    // Drop caller's ref; for an external reader (not
+                    // pooled), this decRef will close it
 					sr.DecRef();
 					
 					if (pooled && (drop || (!Enclosing_Instance.poolReaders && sr.GetRefCount() == 1)))
 					{
-						
-						// We are the last ref to this reader; since we're
-						// not pooling readers, we release it:
-						readerMap.Remove(sr.GetSegmentInfo());
+
+                        // We invoke deleter.checkpoint below, so we must be
+                        // sync'd on IW if there are changes:
 						
 						// TODO: java 5
 						// assert !sr.hasChanges || Thread.holdsLock(IndexWriter.this);
+
+                        // Discard (don't save) changes when we are dropping
+                        // the reader; this is used only on the sub-readers
+                        // after a successful merge.
+                        sr.hasChanges &= !drop;
+
+                        bool hasChanges = sr.hasChanges;
 						
 						// Drop our ref -- this will commit any pending
 						// changes to the dir
-						bool success = false;
-						try
-						{
-							sr.Close();
-							success = true;
-						}
-						finally
-						{
-							if (!success && sr.hasChanges)
-							{
-								// Abandon the changes & retry closing:
-								sr.hasChanges = false;
-								try
-								{
-									sr.Close();
-								}
-								catch (System.Exception ignore)
-								{
-									// Keep throwing original exception
-								}
-							}
-						}
+                        sr.Close();
+
+                        // We are the last ref to this reader; since we're
+                        // not pooling readers, we release it:
+                        readerMap.Remove(sr.GetSegmentInfo());
+
+                        if (hasChanges)
+                        {
+                            // Must checkpoint w/ deleter, because this
+                            // segment reader will have created new _X_N.del
+                            // file.
+                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
+                        }
 					}
 				}
 			}
@@ -628,23 +632,14 @@ namespace Lucene.Net.Index
 						if (sr.hasChanges)
 						{
 							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
-							sr.StartCommit();
-							bool success = false;
-							try
-							{
-								sr.DoCommit(null);
-								success = true;
-							}
-							finally
-							{
-								if (!success)
-								{
-									sr.RollbackCommit();
-								}
-							}
+							sr.DoCommit(null);
+                            // Must checkpoint w/ deleter, because this
+                            // segment reader will have created new _X_N.del
+                            // file.
+                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
 						}
-						
-						readerMap.Remove(iter.Current);
+
+                        readerMap.Remove(iter.Current); // iter.remove(); DIGY
 						
 						// NOTE: it is allowed that this decRef does not
 						// actually close the SR; this can happen when a
@@ -670,20 +665,11 @@ namespace Lucene.Net.Index
 						if (sr.hasChanges)
 						{
 							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
-							sr.StartCommit();
-							bool success = false;
-							try
-							{
-								sr.DoCommit(null);
-								success = true;
-							}
-							finally
-							{
-								if (!success)
-								{
-									sr.RollbackCommit();
-								}
-							}
+							sr.DoCommit(null);
+                            // Must checkpoint w/ deleter, because this
+                            // segment reader will have created new _X_N.del
+                            // file.
+                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
 						}
 					}
 				}
@@ -723,7 +709,7 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-					return Get(info, doOpenStores, BufferedIndexInput.BUFFER_SIZE, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
+                    return Get(info, doOpenStores, BufferedIndexInput.BUFFER_SIZE, enclosingInstance.readerTermsIndexDivisor);
 				}
 			}
 			/// <summary> Obtain a SegmentReader from the readerPool.  The reader
@@ -758,7 +744,11 @@ namespace Lucene.Net.Index
 						// synchronized
 						// Returns a ref, which we xfer to readerMap:
 						sr = SegmentReader.Get(info, readBufferSize, doOpenStores, termsIndexDivisor);
-						readerMap[info] = sr;
+                        if (info.dir == enclosingInstance.directory)
+                        {
+                            // Only pool if reader is not external
+                            readerMap[info]=sr;
+                        }
 					}
 					else
 					{
@@ -779,7 +769,11 @@ namespace Lucene.Net.Index
 					}
 					
 					// Return a ref to our caller
-					sr.IncRef();
+                    if (info.dir == enclosingInstance.directory)
+                    {
+                        // Only incRef if we pooled (reader is not external)
+                        sr.IncRef();
+                    }
 					return sr;
 				}
 			}
@@ -932,7 +926,7 @@ namespace Lucene.Net.Index
 		public virtual void  Message(System.String message)
 		{
 			if (infoStream != null)
-				infoStream.WriteLine("IW " + messageID + " [" + SupportClass.ThreadClass.Current().Name + "]: " + message);
+                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		private void  SetMessageID(System.IO.StreamWriter infoStream)
@@ -1830,7 +1824,8 @@ namespace Lucene.Net.Index
 				throw new LockObtainFailedException("Index locked for write: " + writeLock);
 			}
 			this.writeLock = writeLock; // save it
-			
+
+            bool success = false;
 			try
 			{
 				if (create)
@@ -1902,7 +1897,7 @@ namespace Lucene.Net.Index
 				
 				// Default deleter (for backwards compatibility) is
 				// KeepOnlyLastCommitDeleter:
-				deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, infoStream, docWriter);
+				deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, infoStream, docWriter,synced);
 				
 				if (deleter.startingCommitDeleted)
 				// Deletion policy deleted the "head" commit point.
@@ -1918,12 +1913,27 @@ namespace Lucene.Net.Index
 					Message("init: create=" + create);
 					MessageState();
 				}
+
+                success = true;
 			}
-			catch (System.IO.IOException e)
+			finally
 			{
-				this.writeLock.Release();
-				this.writeLock = null;
-				throw e;
+                if (!success)
+                {
+                    if (infoStream != null)
+                    {
+                        Message("init: hit exception on init; releasing write lock");
+                    }
+                    try
+                    {
+                        writeLock.Release();
+                    }
+                    catch (Exception t)
+                    {
+                        // don't mask the original exception
+                    }
+                    writeLock = null;
+                }
 			}
 		}
 		
@@ -2072,6 +2082,32 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			return maxFieldLength;
 		}
+
+        /** Sets the termsIndexDivisor passed to any readers that
+        *  IndexWriter opens, for example when applying deletes
+        *  or creating a near-real-time reader in {@link
+        *  IndexWriter#getReader}.  Default value is {@link
+        *  IndexReader#DEFAULT_TERMS_INDEX_DIVISOR}. */
+        public void SetReaderTermsIndexDivisor(int divisor)
+        {
+            EnsureOpen();
+            if (divisor <= 0)
+            {
+                throw new System.ArgumentException("divisor must be >= 1 (got " + divisor + ")");
+            }
+            readerTermsIndexDivisor = divisor;
+            if (infoStream != null)
+            {
+                Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
+            }
+        }
+
+        /** @see #setReaderTermsIndexDivisor */
+        public int GetReaderTermsIndexDivisor()
+        {
+            EnsureOpen();
+            return readerTermsIndexDivisor;
+        }
 		
 		/// <summary>Determines the minimal number of documents required
 		/// before the buffered in-memory documents are flushed as
@@ -2596,9 +2632,17 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
+                if (infoStream != null)
+                {
+                    Message("flushDocStores segment=" + docWriter.GetDocStoreSegment());
+                }
+
 				bool useCompoundDocStore = false;
-				
+                if (infoStream != null)
+                {
+                    Message("closeDocStores segment=" + docWriter.GetDocStoreSegment());
+                }
+
 				System.String docStoreSegment;
 				
 				bool success = false;
@@ -2614,7 +2658,12 @@ namespace Lucene.Net.Index
 						Message("hit exception closing doc store segment");
 					}
 				}
-				
+
+                if (infoStream != null)
+                {
+                    Message("flushDocStores files=" + docWriter.ClosedFiles());
+                }
+
 				useCompoundDocStore = mergePolicy.UseCompoundDocStore(segmentInfos);
 				
 				if (useCompoundDocStore && docStoreSegment != null && docWriter.ClosedFiles().Count != 0)
@@ -3151,9 +3200,10 @@ namespace Lucene.Net.Index
 		/// <p/>See http://www.gossamer-threads.com/lists/lucene/java-dev/47895 for more discussion. <p/>
 		/// 
 		/// <p/>Note that optimize requires 2X the index size free
-		/// space in your Directory.  For example, if your index
+		/// space in your Directory (3X if you're using compound
+        /// file format).  For example, if your index
 		/// size is 10 MB then you need 20 MB free for optimize to
-		/// complete.<p/>
+        /// complete (30 MB if you're using compound fiel format).<p/>
 		/// 
 		/// <p/>If some but not all readers re-open while an
 		/// optimize is underway, this will cause > 2X temporary
@@ -3258,6 +3308,7 @@ namespace Lucene.Net.Index
 			{
 				ResetMergeExceptions();
 				segmentsToOptimize = new System.Collections.Hashtable();
+                optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
 					SupportClass.CollectionsHelper.AddIfNotContains(segmentsToOptimize, segmentInfos.Info(i));
@@ -3498,9 +3549,11 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				System.Diagnostics.Debug.Assert(!optimize || maxNumSegmentsOptimize > 0);
-				
-				if (stopMerges)
-					return ;
+
+                if (stopMerges)
+                {
+                    return;
+                }
 				
 				// Do not start new merges if we've hit OOME
 				if (hitOOM)
@@ -3829,6 +3882,11 @@ namespace Lucene.Net.Index
 		{
 			
 			bool success = false;
+
+            if (infoStream != null)
+            {
+                Message("rollback");
+            }
 			
 			docWriter.PauseAllThreads();
 			
@@ -4600,9 +4658,11 @@ namespace Lucene.Net.Index
 						}
 						finally
 						{
-							
-							deleter.DecRef(files);
-							
+                            lock (this)
+                            {
+                                deleter.DecRef(files);
+                            }
+														
 							if (!success)
 							{
 								if (infoStream != null)
@@ -4630,10 +4690,12 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-		
-		// This is called after pending added and deleted
-		// documents have been flushed to the Directory but before
-		// the change is committed (new segments_N file written).
+
+        ///<summary>
+        /// A hook for extending classes to execute operations after pending added and
+        /// deleted documents have been flushed to the Directory but before the change
+        /// is committed (new segments_N file written).
+        ///</summary>   
 		protected  virtual void  DoAfterFlush()
 		{
 		}
@@ -4664,6 +4726,14 @@ namespace Lucene.Net.Index
 			
 			Flush(true, false, true);
 		}
+
+        ///<summary>
+        /// A hook for extending classes to execute operations before pending added and
+        /// deleted documents are flushed to the Directory.
+        ///</summary>
+        protected virtual void DoBeforeFlush() 
+        {
+        }
 		
 		/// <summary>Expert: prepare for commit.
 		/// 
@@ -4855,11 +4925,15 @@ namespace Lucene.Net.Index
 						System.Threading.Monitor.PulseAll(this);
 					}
 				}
-				else if (infoStream != null)
-					Message("commit: pendingCommit == null; skip");
-				
-				if (infoStream != null)
-					Message("commit: done");
+                else if (infoStream != null)
+                {
+                    Message("commit: pendingCommit == null; skip");
+                }
+
+                if (infoStream != null)
+                {
+                    Message("commit: done");
+                }
 			}
 		}
 		
@@ -4896,6 +4970,10 @@ namespace Lucene.Net.Index
 				}
 				finally
 				{
+                    if (docWriter.DoBalanceRAM())
+                    {
+                        docWriter.BalanceRAM();
+                    }
 					docWriter.ClearFlushPending();
 				}
 			}
@@ -4917,6 +4995,8 @@ namespace Lucene.Net.Index
 				EnsureOpen(false);
 				
 				System.Diagnostics.Debug.Assert(TestPoint("startDoFlush"));
+
+                DoBeforeFlush();
 				
 				flushCount++;
 				
@@ -4934,6 +5014,10 @@ namespace Lucene.Net.Index
 				// Make sure no threads are actively adding a document.
 				// Returns true if docWriter is currently aborting, in
 				// which case we skip flushing this segment
+                if (infoStream != null)
+                {
+                    Message("flush: now pause all indexing threads");
+                }
 				if (docWriter.PauseAllThreads())
 				{
 					docWriter.ResumeAllThreads();
@@ -5001,6 +5085,10 @@ namespace Lucene.Net.Index
 						try
 						{
 							flushedDocCount = docWriter.Flush(flushDocStores);
+                            if (infoStream != null)
+                            {
+                                Message("flushedFiles=" + docWriter.GetFlushedFiles());
+                            }
 							success = true;
 						}
 						finally
@@ -5226,7 +5314,7 @@ namespace Lucene.Net.Index
 				
 				System.Diagnostics.Debug.Assert(mergeReader.NumDeletedDocs() == delCount);
 				
-				mergeReader.hasChanges = delCount >= 0;
+				mergeReader.hasChanges = delCount > 0;
 			}
 		}
 		
@@ -5259,7 +5347,6 @@ namespace Lucene.Net.Index
 					if (infoStream != null)
 						Message("commitMerge: skipping merge " + merge.SegString(directory) + ": it was aborted");
 					
-					deleter.Refresh(merge.info.name);
 					return false;
 				}
 				
@@ -5267,32 +5354,20 @@ namespace Lucene.Net.Index
 				
 				CommitMergedDeletes(merge, mergedReader);
 				docWriter.RemapDeletes(segmentInfos, merger.GetDocMaps(), merger.GetDelCounts(), merge, mergedDocCount);
-				
-				// Simple optimization: if the doc store we are using
-				// has been closed and is in now compound format (but
-				// wasn't when we started), then we will switch to the
-				// compound format as well:
-				System.String mergeDocStoreSegment = merge.info.GetDocStoreSegment();
-				if (mergeDocStoreSegment != null && !merge.info.GetDocStoreIsCompoundFile())
-				{
-					int size = segmentInfos.Count;
-					for (int i = 0; i < size; i++)
-					{
-						SegmentInfo info = segmentInfos.Info(i);
-						System.String docStoreSegment = info.GetDocStoreSegment();
-						if (docStoreSegment != null && docStoreSegment.Equals(mergeDocStoreSegment) && info.GetDocStoreIsCompoundFile())
-						{
-							merge.info.SetDocStoreIsCompoundFile(true);
-							break;
-						}
-					}
-				}
+
+                // If the doc store we are using has been closed and
+                // is in now compound format (but wasn't when we
+                // started), then we will switch to the compound
+                // format as well:
+                SetMergeDocStoreIsCompoundFile(merge);
 				
 				merge.info.SetHasProx(merger.HasProx());
 				
 				((System.Collections.IList) ((System.Collections.ArrayList) segmentInfos).GetRange(start, start + merge.segments.Count - start)).Clear();
 				System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
 				segmentInfos.Insert(start, merge.info);
+
+                CloseMergeReaders(merge, false);
 				
 				// Must note the change to segmentInfos so any commits
 				// in-flight don't lose it:
@@ -5302,19 +5377,13 @@ namespace Lucene.Net.Index
 				// them so that they don't bother writing them to
 				// disk, updating SegmentInfo, etc.:
 				readerPool.Clear(merge.segments);
-				
-				if (merge.optimize)
+
+                if (merge.optimize)
+                {
+                    // cascade the optimize:
                     segmentsToOptimize[merge.info] = merge.info;
+                }
 				return true;
-			}
-		}
-		
-		private void  DecrefMergeSegments(MergePolicy.OneMerge merge)
-		{
-			lock (this)
-			{
-				System.Diagnostics.Debug.Assert(merge.increfDone);
-				merge.increfDone = false;
 			}
 		}
 		
@@ -5444,12 +5513,23 @@ namespace Lucene.Net.Index
 				for (int i = 0; i < count; i++)
 				{
 					SegmentInfo info = merge.segments.Info(i);
-					if (mergingSegments.Contains(info))
-						return false;
-					if (segmentInfos.IndexOf(info) == - 1)
-						return false;
-					if (info.dir != directory)
-						isExternal = true;
+                    if (mergingSegments.Contains(info))
+                    {
+                        return false;
+                    }
+                    if (segmentInfos.IndexOf(info) == -1)
+                    {
+                        return false;
+                    }
+                    if (info.dir != directory)
+                    {
+                        isExternal = true;
+                    }
+                    if (segmentsToOptimize.Contains(info))
+                    {
+                        merge.optimize = true;
+                        merge.maxNumSegmentsOptimize = optimizeMaxNumSegments;
+                    }
 				}
 				
 				EnsureContiguousMerge(merge);
@@ -5591,7 +5671,15 @@ namespace Lucene.Net.Index
 						doFlushDocStore = true;
 					}
 				}
-				
+
+                // if a mergedSegmentWarmer is installed, we must merge
+                // the doc stores because we will open a full
+                // SegmentReader on the merged segment:
+                if (!mergeDocStores && mergedSegmentWarmer != null && currentDocStoreSegment != null && lastDocStoreSegment != null && lastDocStoreSegment.Equals(currentDocStoreSegment))
+                {
+                    mergeDocStores = true;
+                }
+
 				int docStoreOffset;
 				System.String docStoreSegment2;
 				bool docStoreIsCompoundFile;
@@ -5624,8 +5712,6 @@ namespace Lucene.Net.Index
 						Message("now flush at merge");
 					DoFlush(true, false);
 				}
-				
-				merge.increfDone = true;
 				
 				merge.mergeDocStores = mergeDocStores;
 				
@@ -5736,9 +5822,6 @@ namespace Lucene.Net.Index
 				// on merges to finish.
 				System.Threading.Monitor.PulseAll(this);
 				
-				if (merge.increfDone)
-					DecrefMergeSegments(merge);
-				
 				// It's possible we are called twice, eg if there was an
 				// exception inside mergeInit
 				if (merge.registerDone)
@@ -5756,6 +5839,92 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+        private void SetMergeDocStoreIsCompoundFile(MergePolicy.OneMerge merge)
+        {
+            lock (this)
+            {
+                string mergeDocStoreSegment = merge.info.GetDocStoreSegment();
+                if (mergeDocStoreSegment != null && !merge.info.GetDocStoreIsCompoundFile())
+                {
+                    int size = segmentInfos.Count;
+                    for (int i = 0; i < size; i++)
+                    {
+                        SegmentInfo info = segmentInfos.Info(i);
+                        string docStoreSegment = info.GetDocStoreSegment();
+                        if (docStoreSegment != null &&
+                            docStoreSegment.Equals(mergeDocStoreSegment) &&
+                            info.GetDocStoreIsCompoundFile())
+                        {
+                            merge.info.SetDocStoreIsCompoundFile(true);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CloseMergeReaders(MergePolicy.OneMerge merge, bool suppressExceptions)
+        {
+            lock (this)
+            {
+                int numSegments = merge.segments.Count;
+                if (suppressExceptions)
+                {
+                    // Suppress any new exceptions so we throw the
+                    // original cause
+                    for (int i = 0; i < numSegments; i++)
+                    {
+                        if (merge.readers[i] != null)
+                        {
+                            try
+                            {
+                                readerPool.Release(merge.readers[i], false);
+                            }
+                            catch (Exception t)
+                            {
+                            }
+                            merge.readers[i] = null;
+                        }
+
+                        if (merge.readersClone[i] != null)
+                        {
+                            try
+                            {
+                                merge.readersClone[i].Close();
+                            }
+                            catch (Exception t)
+                            {
+                            }
+                            // This was a private clone and we had the
+                            // only reference
+                            System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0); //: "refCount should be 0 but is " + merge.readersClone[i].getRefCount();
+                            merge.readersClone[i] = null;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < numSegments; i++)
+                    {
+                        if (merge.readers[i] != null)
+                        {
+                            readerPool.Release(merge.readers[i], true);
+                            merge.readers[i] = null;
+                        }
+
+                        if (merge.readersClone[i] != null)
+                        {
+                            merge.readersClone[i].Close();
+                            // This was a private clone and we had the only reference
+                            System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0);
+                            merge.readersClone[i] = null;
+                        }
+                    }
+                }
+            }
+        }
+
+
 		/// <summary>Does the actual (time-consuming) work of the merge,
 		/// but without holding synchronized lock on IndexWriter
 		/// instance 
@@ -5786,250 +5955,229 @@ namespace Lucene.Net.Index
 
             System.Collections.Hashtable dss = new System.Collections.Hashtable();
 			
+            String currentDocStoreSegment;
+            lock(this) {
+                currentDocStoreSegment = docWriter.GetDocStoreSegment();
+            }
+            bool currentDSSMerged = false;
+
 			// This is try/finally to make sure merger's readers are
 			// closed:
 			bool success = false;
-			try
-			{
-				int totDocCount = 0;
-				
-				for (int i = 0; i < numSegments; i++)
-				{
-					
-					SegmentInfo info = sourceSegments.Info(i);
-					
-					// Hold onto the "live" reader; we will use this to
-					// commit merged deletes
-					SegmentReader reader = merge.readers[i] = readerPool.Get(info, merge.mergeDocStores, MERGE_READ_BUFFER_SIZE, - 1);
-					
-					// We clone the segment readers because other
-					// deletes may come in while we're merging so we
-					// need readers that will not change
-					SegmentReader clone = merge.readersClone[i] = (SegmentReader) reader.Clone(true);
-					merger.Add(clone);
-					
-					if (clone.HasDeletions())
-					{
-						mergeDocStores = true;
-					}
-					
-					if (info.GetDocStoreOffset() != - 1)
-					{
-                        dss[info.GetDocStoreSegment()] = info.GetDocStoreSegment();
-					}
-					
-					totDocCount += clone.NumDocs();
-				}
-				
-				if (infoStream != null)
-				{
-					Message("merge: total " + totDocCount + " docs");
-				}
-				
-				merge.CheckAborted(directory);
-				
-				// If deletions have arrived and it has now become
-				// necessary to merge doc stores, go and open them:
-				if (mergeDocStores && !merge.mergeDocStores)
-				{
-					merge.mergeDocStores = true;
-					lock (this)
-					{
-                        String key = docWriter.GetDocStoreSegment();
-						if (key!=null && dss.Contains(key))
-						{
-							if (infoStream != null)
-								Message("now flush at mergeMiddle");
-							DoFlush(true, false);
-						}
-					}
-					
-					for (int i = 0; i < numSegments; i++)
-					{
-						merge.readersClone[i].OpenDocStores();
-					}
-					
-					// Clear DSS
-					lock (this)
-					{
-						merge.info.SetDocStore(- 1, null, false);
-					}
-				}
-				
-				// This is where all the work happens:
-				mergedDocCount = merge.info.docCount = merger.Merge(merge.mergeDocStores);
-				
-				System.Diagnostics.Debug.Assert(mergedDocCount == totDocCount);
-				
-				// TODO: in the non-realtime case, we may want to only
-				// keep deletes (it's costly to open entire reader
-				// when we just need deletes)
-				
-				SegmentReader mergedReader = readerPool.Get(merge.info, false, BufferedIndexInput.BUFFER_SIZE, - 1);
-				try
-				{
-					if (poolReaders && mergedSegmentWarmer != null)
-					{
-						mergedSegmentWarmer.Warm(mergedReader);
-					}
-					if (!CommitMerge(merge, merger, mergedDocCount, mergedReader))
-					// commitMerge will return false if this merge was aborted
-						return 0;
-				}
-				finally
-				{
-					lock (this)
-					{
-						readerPool.Release(mergedReader);
-					}
-				}
-				
-				success = true;
-			}
-			finally
-			{
-				lock (this)
-				{
-					if (!success)
-					{
-						// Suppress any new exceptions so we throw the
-						// original cause
-						for (int i = 0; i < numSegments; i++)
-						{
-							if (merge.readers[i] != null)
-							{
-								try
-								{
-									readerPool.Release(merge.readers[i], true);
-								}
-								catch (System.Exception t)
-								{
-								}
-							}
-							
-							if (merge.readersClone[i] != null)
-							{
-								try
-								{
-									merge.readersClone[i].Close();
-								}
-								catch (System.Exception t)
-								{
-								}
-								// This was a private clone and we had the only reference
-								System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0);
-							}
-						}
-					}
-					else
-					{
-						for (int i = 0; i < numSegments; i++)
-						{
-							if (merge.readers[i] != null)
-							{
-								readerPool.Release(merge.readers[i], true);
-							}
-							
-							if (merge.readersClone[i] != null)
-							{
-								merge.readersClone[i].Close();
-								// This was a private clone and we had the only reference
-								System.Diagnostics.Debug.Assert(merge.readersClone[i].GetRefCount() == 0);
-							}
-						}
-					}
-				}
-			}
-			
-			// Must checkpoint before decrefing so any newly
-			// referenced files in the new merge.info are incref'd
-			// first:
-			lock (this)
-			{
-				deleter.Checkpoint(segmentInfos, false);
-			}
-			DecrefMergeSegments(merge);
-			
-			if (merge.useCompoundFile)
-			{
-				
-				// Maybe force a sync here to allow reclaiming of the
-				// disk space used by the segments we just merged:
-				if (autoCommit && DoCommitBeforeMergeCFS(merge))
-				{
-					long size;
-					lock (this)
-					{
-						size = merge.info.SizeInBytes();
-					}
-					Commit(size);
-				}
-				
-				success = false;
-				System.String compoundFileName = mergedName + "." + IndexFileNames.COMPOUND_FILE_EXTENSION;
-				
-				try
-				{
-					merger.CreateCompoundFile(compoundFileName);
-					success = true;
-				}
-				catch (System.IO.IOException ioe)
-				{
-					lock (this)
-					{
-						if (merge.IsAborted())
-						{
-							// This can happen if rollback or close(false)
-							// is called -- fall through to logic below to
-							// remove the partially created CFS:
-							success = true;
-						}
-						else
-							HandleMergeException(ioe, merge);
-					}
-				}
-				catch (System.Exception t)
-				{
-					HandleMergeException(t, merge);
-				}
-				finally
-				{
-					if (!success)
-					{
-						if (infoStream != null)
-							Message("hit exception creating compound file during merge");
-						lock (this)
-						{
-							deleter.DeleteFile(compoundFileName);
-						}
-					}
-				}
-				
-				if (merge.IsAborted())
-				{
-					if (infoStream != null)
-						Message("abort merge after building CFS");
-					deleter.DeleteFile(compoundFileName);
-					return 0;
-				}
-				
-				lock (this)
-				{
-					if (segmentInfos.IndexOf(merge.info) == - 1 || merge.IsAborted())
-					{
-						// Our segment (committed in non-compound
-						// format) got merged away while we were
-						// building the compound format.
-						deleter.DeleteFile(compoundFileName);
-					}
-					else
-					{
-						merge.info.SetUseCompoundFile(true);
-						Checkpoint();
-					}
-				}
-			}
-			
+            try
+            {
+                int totDocCount = 0;
+
+                for (int i = 0; i < numSegments; i++)
+                {
+
+                    SegmentInfo info = sourceSegments.Info(i);
+
+                    // Hold onto the "live" reader; we will use this to
+                    // commit merged deletes
+                    SegmentReader reader = merge.readers[i] = readerPool.Get(info, merge.mergeDocStores, MERGE_READ_BUFFER_SIZE, -1);
+
+                    // We clone the segment readers because other
+                    // deletes may come in while we're merging so we
+                    // need readers that will not change
+                    SegmentReader clone = merge.readersClone[i] = (SegmentReader)reader.Clone(true);
+                    merger.Add(clone);
+
+                    if (clone.HasDeletions())
+                    {
+                        mergeDocStores = true;
+                    }
+
+                    if (info.GetDocStoreOffset() != -1 && currentDocStoreSegment != null)
+                    {
+                        currentDSSMerged |= currentDocStoreSegment.Equals(info.GetDocStoreSegment());
+                    }
+
+                    totDocCount += clone.NumDocs();
+                }
+
+                if (infoStream != null)
+                {
+                    Message("merge: total " + totDocCount + " docs");
+                }
+
+                merge.CheckAborted(directory);
+
+                // If deletions have arrived and it has now become
+                // necessary to merge doc stores, go and open them:
+                if (mergeDocStores && !merge.mergeDocStores)
+                {
+                    merge.mergeDocStores = true;
+                    lock (this)
+                    {
+                        if (currentDSSMerged)
+                        {
+                            if (infoStream != null)
+                            {
+                                Message("now flush at mergeMiddle");
+                            }
+                            DoFlush(true, false);
+                        }
+                    }
+
+                    for (int i = 0; i < numSegments; i++)
+                    {
+                        merge.readersClone[i].OpenDocStores();
+                    }
+
+                    // Clear DSS
+                    merge.info.SetDocStore(-1, null, false);
+
+                }
+
+                // This is where all the work happens:
+                mergedDocCount = merge.info.docCount = merger.Merge(merge.mergeDocStores);
+
+                System.Diagnostics.Debug.Assert(mergedDocCount == totDocCount);
+                /////////////////////////////////////// start DIGY
+
+                if (merge.useCompoundFile)
+                {
+
+                    success = false;
+                    string compoundFileName = IndexFileNames.SegmentFileName(mergedName, IndexFileNames.COMPOUND_FILE_EXTENSION);
+
+                    try
+                    {
+                        if (infoStream != null)
+                        {
+                            Message("create compound file " + compoundFileName);
+                        }
+                        merger.CreateCompoundFile(compoundFileName);
+                        success = true;
+                    }
+                    catch (System.IO.IOException ioe)
+                    {
+                        lock (this)
+                        {
+                            if (merge.IsAborted())
+                            {
+                                // This can happen if rollback or close(false)
+                                // is called -- fall through to logic below to
+                                // remove the partially created CFS:
+                            }
+                            else
+                            {
+                                HandleMergeException(ioe, merge);
+                            }
+                        }
+                    }
+                    catch (Exception t)
+                    {
+                        HandleMergeException(t, merge);
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            if (infoStream != null)
+                            {
+                                Message("hit exception creating compound file during merge");
+                            }
+
+                            lock (this)
+                            {
+                                deleter.DeleteFile(compoundFileName);
+                                deleter.DeleteNewFiles(merger.GetMergedFiles());
+                            }
+                        }
+                    }
+
+                    success = false;
+
+                    lock (this)
+                    {
+
+                        // delete new non cfs files directly: they were never
+                        // registered with IFD
+                        deleter.DeleteNewFiles(merger.GetMergedFiles());
+
+                        if (merge.IsAborted())
+                        {
+                            if (infoStream != null)
+                            {
+                                Message("abort merge after building CFS");
+                            }
+                            deleter.DeleteFile(compoundFileName);
+                            return 0;
+                        }
+                    }
+
+                    merge.info.SetUseCompoundFile(true);
+                }
+
+                int termsIndexDivisor;
+                bool loadDocStores;
+
+                // if the merged segment warmer was not installed when
+                // this merge was started, causing us to not force
+                // the docStores to close, we can't warm it now
+                bool canWarm = merge.info.GetDocStoreSegment() == null || currentDocStoreSegment == null || !merge.info.GetDocStoreSegment().Equals(currentDocStoreSegment);
+
+                if (poolReaders && mergedSegmentWarmer != null && canWarm)
+                {
+                    // Load terms index & doc stores so the segment
+                    // warmer can run searches, load documents/term
+                    // vectors
+                    termsIndexDivisor = readerTermsIndexDivisor;
+                    loadDocStores = true;
+                }
+                else
+                {
+                    termsIndexDivisor = -1;
+                    loadDocStores = false;
+                }
+
+                // TODO: in the non-realtime case, we may want to only
+                // keep deletes (it's costly to open entire reader
+                // when we just need deletes)
+
+                SegmentReader mergedReader = readerPool.Get(merge.info, loadDocStores, BufferedIndexInput.BUFFER_SIZE, termsIndexDivisor);
+                try
+                {
+                    if (poolReaders && mergedSegmentWarmer != null)
+                    {
+                        mergedSegmentWarmer.Warm(mergedReader);
+                    }
+                    if (!CommitMerge(merge, merger, mergedDocCount, mergedReader))
+                    {
+                        // commitMerge will return false if this merge was aborted
+                        return 0;
+                    }
+                }
+                finally
+                {
+                    lock (this)
+                    {
+                        readerPool.Release(mergedReader);
+                    }
+                }
+
+                success = true;
+            }
+            finally
+            {
+                // Readers are already closed in commitMerge if we didn't hit
+                // an exc:
+                if (!success)
+                {
+                    CloseMergeReaders(merge, true);
+                }
+            }
+
+            merge.mergeDone = true;
+
+            lock (mergeScheduler)
+            {
+                System.Threading.Monitor.PulseAll(mergeScheduler); 
+            }
+
+			///////////////////////////////////////////////////////// end DIGY
 			// Force a sync after commiting the merge.  Once this
 			// sync completes then all index files referenced by the
 			// current segmentInfos are on stable storage so if the
@@ -6068,7 +6216,7 @@ namespace Lucene.Net.Index
 			{
 				System.Diagnostics.Debug.Assert(TestPoint("startApplyDeletes"));
                 flushDeletesCount++;
-				SegmentInfos rollback = (SegmentInfos) segmentInfos.Clone();
+				
 				bool success = false;
 				bool changed;
 				try
@@ -6078,28 +6226,10 @@ namespace Lucene.Net.Index
 				}
 				finally
 				{
-					if (!success)
-					{
-						if (infoStream != null)
-							Message("hit exception flushing deletes");
-						
-						// Carefully remove any partially written .del
-						// files
-						int size = rollback.Count;
-						for (int i = 0; i < size; i++)
-						{
-							System.String newDelFileName = segmentInfos.Info(i).GetDelFileName();
-							System.String delFileName = rollback.Info(i).GetDelFileName();
-							if (newDelFileName != null && !newDelFileName.Equals(delFileName))
-								deleter.DeleteFile(newDelFileName);
-						}
-						
-						// Fully replace the segmentInfos since flushed
-						// deletes could have changed any of the
-						// SegmentInfo instances:
-						segmentInfos.Clear();
-						segmentInfos.AddRange(rollback);
-					}
+                    if (!success && infoStream != null)
+                    {
+                        Message("hit exception flushing deletes");
+                    }
 				}
 				
 				if (changed)
@@ -6129,7 +6259,7 @@ namespace Lucene.Net.Index
 		// utility routines for tests
 		public /*internal*/ virtual SegmentInfo NewestSegment()
 		{
-			return segmentInfos.Info(segmentInfos.Count - 1);
+            return segmentInfos.Count > 0 ? segmentInfos.Info(segmentInfos.Count - 1) : null;
 		}
 		
 		public virtual System.String SegString()
@@ -6355,6 +6485,7 @@ namespace Lucene.Net.Index
 					{
 						
 						System.Diagnostics.Debug.Assert(lastCommitChangeCount <= changeCount);
+                        myChangeCount = changeCount;
 						
 						if (changeCount == lastCommitChangeCount)
 						{
@@ -6372,7 +6503,27 @@ namespace Lucene.Net.Index
 						if (infoStream != null)
 							Message("startCommit index=" + SegString(segmentInfos) + " changeCount=" + changeCount);
 						
-						readerPool.Commit();
+						// It's possible another flush (that did not close
+                        // the open do stores) snuck in after the flush we
+                        // just did, so we remove any tail segments
+                        // referencing the open doc store from the
+                        // SegmentInfos we are about to sync (the main
+                        // SegmentInfos will keep them):
+                        toSync = (SegmentInfos) segmentInfos.Clone();
+                        string dss = docWriter.GetDocStoreSegment();
+                        if (dss != null)
+                        {
+                            while (true)
+                            {
+                                String dss2 = toSync.Info(toSync.Count - 1).GetDocStoreSegment();
+                                if (dss2 == null || !dss2.Equals(dss))
+                                {
+                                    break;
+                                }
+                                toSync.Remove(toSync.Count - 1);
+                                changeCount++;
+                            }
+                        }
 						
 						toSync = (SegmentInfos) segmentInfos.Clone();
 						
@@ -6380,13 +6531,18 @@ namespace Lucene.Net.Index
 							toSync.SetUserData(commitUserData);
 						
 						deleter.IncRef(toSync, false);
-						myChangeCount = changeCount;
-						
+												
 						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
 							System.String fileName = it.Current;
 							System.Diagnostics.Debug.Assert(directory.FileExists(fileName), "file " + fileName + " does not exist");
+                            // If this trips it means we are missing a call to
+                            // .checkpoint somewhere, because by the time we
+                            // are called, deleter should know about every
+                            // file referenced by the current head
+                            // segmentInfos:
+                            System.Diagnostics.Debug.Assert(deleter.Exists(fileName));
 						}
 					}
 					finally
@@ -6724,11 +6880,17 @@ namespace Lucene.Net.Index
 					// if any structural changes (new segments), we are
 					// stale
 					return false;
-				}
-				else
-				{
-					return !docWriter.AnyChanges();
-				}
+                }
+                else if (infos.GetGeneration() != segmentInfos.GetGeneration())
+                {
+                    // if any commit took place since we were opened, we
+                    // are stale
+                    return false;
+                }
+                else
+                {
+                    return !docWriter.AnyChanges();
+                }
 			}
 		}
 		
