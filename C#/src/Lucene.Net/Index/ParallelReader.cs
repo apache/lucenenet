@@ -534,6 +534,8 @@ namespace Lucene.Net.Index
 					}
 				}
 			}
+
+            Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
 		}
 
         public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)

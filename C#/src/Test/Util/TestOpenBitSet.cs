@@ -376,5 +376,18 @@ namespace Lucene.Net.Util
 				Assert.AreEqual(i, BitUtil.Ntz3(num));
 			}
 		}
+
+        [Test]
+        public void TestHashCodeEquals()
+        {
+            OpenBitSet bs1 = new OpenBitSet(200);
+            OpenBitSet bs2 = new OpenBitSet(64);
+            bs1.Set(3);
+            bs2.Set(3);
+            Assert.AreEqual(bs1, bs2);
+            Assert.AreEqual(bs1.GetHashCode(), bs2.GetHashCode());
+        }
 	}
+
+    
 }

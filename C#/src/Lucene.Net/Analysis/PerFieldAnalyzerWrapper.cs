@@ -127,6 +127,15 @@ namespace Lucene.Net.Analysis
 				analyzer = defaultAnalyzer;
 			return analyzer.GetPositionIncrementGap(fieldName);
 		}
+
+        /// <summary> Return the offsetGap from the analyzer assigned to field </summary>
+        public override int GetOffsetGap(Lucene.Net.Documents.Fieldable field)
+        {
+            Analyzer analyzer = (Analyzer)analyzerMap[field.Name()];
+            if (analyzer == null)
+                analyzer = defaultAnalyzer;
+            return analyzer.GetOffsetGap(field);
+        }
 		
 		public override System.String ToString()
 		{

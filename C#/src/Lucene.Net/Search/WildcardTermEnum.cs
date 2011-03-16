@@ -175,8 +175,9 @@ namespace Lucene.Net.Search
 				//
 				if (pattern[p] == WILDCARD_STRING)
 				{
-					// Look at the character beyond the '*'.
-					++p;
+                    // Look at the character beyond the '*' characters.
+                    while (p < pattern.Length && pattern[p] == WILDCARD_STRING)
+                        ++p;
 					// Examine the string, starting at the last character.
 					for (int i = string_Renamed.Length; i >= s; --i)
 					{

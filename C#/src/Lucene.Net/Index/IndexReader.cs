@@ -1774,6 +1774,14 @@ namespace Lucene.Net.Index
 		{
 			return this;
 		}
+
+        /** Expert.  Warning: this returns null if the reader has
+          *  no deletions 
+          */
+        public virtual object GetDeletesCacheKey()
+        {
+            return this;
+        }
 		
 		/// <summary>Returns the number of unique terms (across all fields)
 		/// in this reader.

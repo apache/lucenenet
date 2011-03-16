@@ -62,7 +62,13 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
+                // NOTE: it's possible that all documents seen in this segment
+                // hit non-aborting exceptions, in which case we will
+                // not have yet init'd the TermVectorsWriter.  This is
+                // actually OK (unlike in the stored fields case)
+                // because, although IieldInfos.hasVectors() will return
+                // true, the TermVectorsReader gracefully handles
+                // non-existence of the term vectors files.
 				if (tvx != null)
 				{
 					
@@ -231,15 +237,14 @@ namespace Lucene.Net.Index
 						tvd.WriteVLong(pos - lastPos);
 						lastPos = pos;
 					}
-					perDoc.perDocTvf.WriteTo(tvf);
-					perDoc.perDocTvf.Reset();
+                    perDoc.perDocTvf.WriteTo(tvf);
 					perDoc.numVectorFields = 0;
 				}
 				
 				System.Diagnostics.Debug.Assert(lastDocID == perDoc.docID + docWriter.GetDocStoreOffset());
 				
 				lastDocID++;
-				
+                perDoc.Reset();
 				Free(perDoc);
 				System.Diagnostics.Debug.Assert(docWriter.writer.TestPoint("TermVectorsTermsWriter.finishDocument end"));
 			}
@@ -308,8 +313,8 @@ namespace Lucene.Net.Index
 			private void  InitBlock(TermVectorsTermsWriter enclosingInstance)
 			{
 				this.enclosingInstance = enclosingInstance;
-                this.buffer = enclosingInstance.docWriter.newPerDocBuffer();
-                this.perDocTvf = new RAMOutputStream(this.buffer);
+                buffer = enclosingInstance.docWriter.NewPerDocBuffer();
+                perDocTvf = new RAMOutputStream(buffer);
 			}
 			private TermVectorsTermsWriter enclosingInstance;
 			public TermVectorsTermsWriter Enclosing_Instance
@@ -322,8 +327,7 @@ namespace Lucene.Net.Index
 			}
 			
 			internal DocumentsWriter.PerDocBuffer buffer;
-			internal RAMOutputStream perDocTvf;
-
+            internal RAMOutputStream perDocTvf;
 			internal int numVectorFields;
 			
 			internal int[] fieldNumbers = new int[1];
@@ -331,8 +335,8 @@ namespace Lucene.Net.Index
 			
 			internal void  Reset()
 			{
-				perDocTvf.Reset();
-				buffer.recycle();
+                perDocTvf.Reset();
+                buffer.Recycle();
 				numVectorFields = 0;
 			}
 			
@@ -350,13 +354,13 @@ namespace Lucene.Net.Index
 					fieldPointers = ArrayUtil.Grow(fieldPointers);
 				}
 				fieldNumbers[numVectorFields] = fieldNumber;
-				fieldPointers[numVectorFields] = perDocTvf.GetFilePointer();
+                fieldPointers[numVectorFields] = perDocTvf.GetFilePointer();
 				numVectorFields++;
 			}
 			
 			public override long SizeInBytes()
 			{
-				return buffer.GetSizeInBytes();
+                return buffer.GetSizeInBytes();
 			}
 			
 			public override void  Finish()
