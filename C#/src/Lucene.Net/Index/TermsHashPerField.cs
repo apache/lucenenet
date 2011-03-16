@@ -80,14 +80,8 @@ namespace Lucene.Net.Index
 		internal void  ShrinkHash(int targetSize)
 		{
 			System.Diagnostics.Debug.Assert(postingsCompacted || numPostings == 0);
-			
-			// Cannot use ArrayUtil.shrink because we require power
-			// of 2:
-			int newSize = postingsHash.Length;
-			while (newSize >= 8 && newSize / 4 > targetSize)
-			{
-				newSize /= 2;
-			}
+
+            int newSize = 4;
 			
 			if (newSize != postingsHash.Length)
 			{
@@ -96,6 +90,7 @@ namespace Lucene.Net.Index
 				postingsHashHalfSize = newSize / 2;
 				postingsHashMask = newSize - 1;
 			}
+            System.Array.Clear(postingsHash,0,postingsHash.Length);
 		}
 		
 		public void  Reset()

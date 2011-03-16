@@ -39,6 +39,12 @@ namespace Lucene.Net.Index
 		
 		// Changed strings to UTF8
 		internal const int FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1;
+                 
+        // Lucene 3.0: Removal of compressed fields: This is only to provide compatibility with 3.0-created indexes
+        // new segments always use the FORMAT_CURRENT. As the index format did not change in 3.0, only
+        // new stored field files that no longer support compression are marked as such to optimize merging.
+        // But 2.9 can still read them.
+        internal static int FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS = 2;
 		
 		// NOTE: if you introduce a new format, make it 1 higher
 		// than the current one, and always change this if you

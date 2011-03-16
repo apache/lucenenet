@@ -65,23 +65,14 @@ namespace Lucene.Net.Index
 		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
 		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
 		/// </summary>
-		public virtual void  Delete()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
-		
-		public virtual bool IsDeleted()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
+        public abstract void Delete();
+
+        public abstract bool IsDeleted();
 		
 		/// <summary> Returns true if this commit is an optimized index.</summary>
-		public virtual bool IsOptimized()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
-		
-		/// <summary> Two IndexCommits are equal if both their Directory and versions are equal.</summary>
+        public abstract bool IsOptimized();
+
+        /// <summary> Two IndexCommits are equal if both their Directory and versions are equal.</summary>
 		public  override bool Equals(System.Object other)
 		{
 			if (other is IndexCommit)
@@ -95,25 +86,19 @@ namespace Lucene.Net.Index
 		
 		public override int GetHashCode()
 		{
-			return GetDirectory().GetHashCode() + GetSegmentsFileName().GetHashCode();
+			return (int)(GetDirectory().GetHashCode() + GetVersion());
 		}
 		
 		/// <summary>Returns the version for this IndexCommit.  This is the
 		/// same value that {@link IndexReader#getVersion} would
 		/// return if it were opened on this commit. 
 		/// </summary>
-		public virtual long GetVersion()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
+        public abstract long GetVersion();
 		
 		/// <summary>Returns the generation (the _N in segments_N) for this
 		/// IndexCommit 
 		/// </summary>
-		public virtual long GetGeneration()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
+        public abstract long GetGeneration();
 		
 		/// <summary>Convenience method that returns the last modified time
 		/// of the segments_N file corresponding to this index
@@ -129,9 +114,6 @@ namespace Lucene.Net.Index
 		/// IndexWriter#Commit(Map)} for this commit.  Map is
 		/// String -> String. 
 		/// </summary>
-        public virtual System.Collections.Generic.IDictionary<string, string> GetUserData()
-		{
-			throw new System.NotSupportedException("This IndexCommit does not support this method.");
-		}
+        public abstract System.Collections.Generic.IDictionary<string, string> GetUserData();
 	}
 }

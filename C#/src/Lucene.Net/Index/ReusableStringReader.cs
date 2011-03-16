@@ -50,6 +50,7 @@ namespace Lucene.Net.Index
             }
             else if (0 == left)
             {
+                s = null;
                 return 0;
             }
             else

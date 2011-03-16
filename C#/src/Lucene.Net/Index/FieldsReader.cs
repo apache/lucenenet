@@ -117,7 +117,9 @@ namespace Lucene.Net.Index
 				else
 					format = firstInt;
 				
-				if (format > FieldsWriter.FORMAT_CURRENT)
+				if (format > FieldsWriter.FORMAT_CURRENT
+                    /* extra support for Lucene 3.0 indexes: */ && format != FieldsWriter.FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS
+                    )
 					throw new CorruptIndexException("Incompatible format version: " + format + " expected " + FieldsWriter.FORMAT_CURRENT + " or lower");
 				
 				if (format > FieldsWriter.FORMAT)

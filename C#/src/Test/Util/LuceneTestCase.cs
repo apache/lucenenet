@@ -48,7 +48,15 @@ namespace Lucene.Net.Util
 	[Serializable]
 	public abstract class LuceneTestCase
 	{
-		
+		public static  System.IO.FileInfo TEMP_DIR;
+        static LuceneTestCase()
+        {
+            String s = System.Environment.GetEnvironmentVariable("TEMP");
+            if (s == null)
+                throw new  Exception("To run tests, you need to define system property 'temp'");
+            TEMP_DIR = new System.IO.FileInfo(s);
+        }
+
 		[NonSerialized]
 		private bool savedAPISetting = false;
         bool allowDocsOutOfOrder = true;

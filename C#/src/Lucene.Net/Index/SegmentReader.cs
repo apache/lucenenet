@@ -62,6 +62,7 @@ namespace Lucene.Net.Index
 		private bool rollbackHasChanges = false;
 		private bool rollbackDeletedDocsDirty = false;
 		private bool rollbackNormsDirty = false;
+        private SegmentInfo rollbackSegmentInfo;
 		private int rollbackPendingDeleteCount;
 		
 		// optionally used for the .nrm file shared by multiple norms
@@ -93,14 +94,16 @@ namespace Lucene.Net.Index
 			internal Directory cfsDir;
 			internal int readBufferSize;
 			internal int termsIndexDivisor;
+
+            internal SegmentReader origInstance;
 			
 			internal TermInfosReader tis;
 			internal FieldsReader fieldsReaderOrig;
 			internal TermVectorsReader termVectorsReaderOrig;
 			internal CompoundFileReader cfsReader;
 			internal CompoundFileReader storeCFSReader;
-			
-			internal CoreReaders(Directory dir, SegmentInfo si, int readBufferSize, int termsIndexDivisor)
+
+            internal CoreReaders(SegmentReader origInstance, Directory dir, SegmentInfo si, int readBufferSize, int termsIndexDivisor)
 			{
 				segment = si.name;
 				this.readBufferSize = readBufferSize;
@@ -153,6 +156,13 @@ namespace Lucene.Net.Index
 						DecRef();
 					}
 				}
+
+
+                // Must assign this at the end -- if we hit an
+                // exception above core, we don't want to attempt to
+                // purge the FieldCache (will hit NPE because core is
+                // not assigned yet).
+                this.origInstance = origInstance;
 			}
 			
 			internal TermVectorsReader GetTermVectorsReaderOrig()
@@ -294,6 +304,12 @@ namespace Lucene.Net.Index
 						{
 							storeCFSReader.Close();
 						}
+
+                        // Force FieldCache to evict our entries at this point
+                        if (origInstance != null)
+                        {
+                            Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(origInstance);
+                        }
 					}
 				}
 			}
@@ -721,14 +737,32 @@ namespace Lucene.Net.Index
 				
 				// NOTE: norms are re-written in regular directory, not cfs
 				si.AdvanceNormGen(this.number);
-				IndexOutput out_Renamed = Enclosing_Instance.Directory().CreateOutput(si.GetNormFileName(this.number));
+				string normFileName = si.GetNormFileName(this.number);
+                IndexOutput @out = enclosingInstance.Directory().CreateOutput(normFileName);
+                bool success = false;
 				try
 				{
-					out_Renamed.WriteBytes(bytes, Enclosing_Instance.MaxDoc());
+					try {
+                        @out.WriteBytes(bytes, enclosingInstance.MaxDoc());
+                    } finally {
+                        @out.Close();
+                    }
+                    success = true;
 				}
 				finally
 				{
-					out_Renamed.Close();
+                    if (!success)
+                    {
+                        try
+                        {
+                            enclosingInstance.Directory().DeleteFile(normFileName);
+                        }
+                        catch (Exception t)
+                        {
+                            // suppress this so we keep throwing the
+                            // original exception
+                        }
+                    }
 				}
 				this.dirty = false;
 			}
@@ -794,7 +828,7 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				instance.core = new CoreReaders(dir, si, readBufferSize, termInfosIndexDivisor);
+				instance.core = new CoreReaders(instance, dir, si, readBufferSize, termInfosIndexDivisor);
 				if (doOpenStores)
 				{
 					instance.core.OpenDocStores(si);
@@ -823,6 +857,21 @@ namespace Lucene.Net.Index
 		{
 			core.OpenDocStores(si);
 		}
+
+        private bool CheckDeletedCounts()
+        {
+            int recomputedCount = deletedDocs.GetRecomputedCount();
+
+            System.Diagnostics.Debug.Assert(deletedDocs.Count() == recomputedCount, "deleted count=" + deletedDocs.Count() + " vs recomputed count=" + recomputedCount);
+
+            System.Diagnostics.Debug.Assert(si.GetDelCount() == recomputedCount, "delete count mismatch: info=" + si.GetDelCount() + " vs BitVector=" + recomputedCount);
+
+            // Verify # deletes does not exceed maxDoc for this
+            // segment:
+            System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc(), "delete count mismatch: " + recomputedCount + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
+
+            return true;
+        }
 		
 		private void  LoadDeletedDocs()
 		{
@@ -831,14 +880,8 @@ namespace Lucene.Net.Index
 			{
 				deletedDocs = new BitVector(Directory(), si.GetDelFileName());
 				deletedDocsRef = new Ref();
-				
-				System.Diagnostics.Debug.Assert(si.GetDelCount() == deletedDocs.Count(), 
-					"delete count mismatch: info=" + si.GetDelCount() + " vs BitVector=" + deletedDocs.Count());
-				
-				// Verify # deletes does not exceed maxDoc for this
-				// segment:
-				System.Diagnostics.Debug.Assert(si.GetDelCount() <= MaxDoc(), 
-					"delete count mismatch: " + deletedDocs.Count() + ") exceeds max doc (" + MaxDoc() + ") for segment  + si.name");
+
+                System.Diagnostics.Debug.Assert(CheckDeletedCounts());
 			}
 			else 
 				System.Diagnostics.Debug.Assert(si.GetDelCount() == 0);
@@ -1019,48 +1062,86 @@ namespace Lucene.Net.Index
 		}
 
         protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
-		{
-			if (hasChanges)
-			{
-				if (deletedDocsDirty)
-				{
-					// re-write deleted
-					si.AdvanceDelGen();
-					
-					// We can write directly to the actual name (vs to a
-					// .tmp & renaming it) because the file is not live
-					// until segments file is written:
-					deletedDocs.Write(Directory(), si.GetDelFileName());
-					
-					si.SetDelCount(si.GetDelCount() + pendingDeleteCount);
-					pendingDeleteCount = 0;
-					System.Diagnostics.Debug.Assert(deletedDocs.Count() == si.GetDelCount(), "delete count mismatch during commit: info=" + si.GetDelCount() + " vs BitVector=" + deletedDocs.Count());
-				}
-				else
-				{
-					System.Diagnostics.Debug.Assert(pendingDeleteCount == 0);
-				}
-				
-				if (normsDirty)
-				{
-					// re-write norms
-					si.SetNumFields(core.fieldInfos.Size());
-					System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-					while (it.MoveNext())
-					{
-						Norm norm = (Norm) it.Current;
-						if (norm.dirty)
-						{
-							norm.ReWrite(si);
-						}
-					}
-				}
-				deletedDocsDirty = false;
-				normsDirty = false;
-				hasChanges = false;
-			}
-		}
-		
+        {
+            if (hasChanges)
+            {
+                StartCommit();
+                bool success = false;
+                try
+                {
+                    CommitChanges(commitUserData);
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        RollbackCommit();
+                    }
+                }
+            }
+        }
+
+        private void CommitChanges(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        {
+            if (deletedDocsDirty)
+            {               // re-write deleted
+                si.AdvanceDelGen();
+
+                // We can write directly to the actual name (vs to a
+                // .tmp & renaming it) because the file is not live
+                // until segments file is written:
+                string delFileName = si.GetDelFileName();
+                bool success = false;
+                try
+                {
+                    deletedDocs.Write(Directory(), delFileName);
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        try
+                        {
+                            Directory().DeleteFile(delFileName);
+                        }
+                        catch (Exception t)
+                        {
+                            // suppress this so we keep throwing the
+                            // original exception
+                        }
+                    }
+                }
+
+                si.SetDelCount(si.GetDelCount() + pendingDeleteCount);
+                pendingDeleteCount = 0;
+                System.Diagnostics.Debug.Assert(deletedDocs.Count() == si.GetDelCount(), "delete count mismatch during commit: info=" + si.GetDelCount() + " vs BitVector=" + deletedDocs.Count());
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(pendingDeleteCount == 0);
+            }
+
+            if (normsDirty)
+            {               // re-write norms
+                si.SetNumFields(core.fieldInfos.Size());
+                System.Collections.IEnumerator it = norms.Values.GetEnumerator();
+                while (it.MoveNext())
+                {
+                    Norm norm = (Norm)it.Current;
+                    if (norm.dirty)
+                    {
+                        norm.ReWrite(si);
+                    }
+                }
+            }
+
+            deletedDocsDirty = false;
+            normsDirty = false;
+            hasChanges = false;
+        }
+        
 		internal virtual FieldsReader GetFieldsReader()
 		{
 			return (FieldsReader) fieldsReaderLocal.Get();
@@ -1603,6 +1684,7 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  StartCommit()
 		{
+            rollbackSegmentInfo = (SegmentInfo)si.Clone();
 			rollbackHasChanges = hasChanges;
 			rollbackDeletedDocsDirty = deletedDocsDirty;
 			rollbackNormsDirty = normsDirty;
@@ -1617,6 +1699,7 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  RollbackCommit()
 		{
+            si.Reset(rollbackSegmentInfo);
 			hasChanges = rollbackHasChanges;
 			deletedDocsDirty = rollbackDeletedDocsDirty;
 			normsDirty = rollbackNormsDirty;
@@ -1646,7 +1729,13 @@ namespace Lucene.Net.Index
 		{
 			return core.freqStream;
 		}
-		
+
+		public override object GetDeletesCacheKey() 
+        {
+            return deletedDocs;
+        }
+
+
 		public override long GetUniqueTermCount()
 		{
 			return core.GetTermsReader().Size();

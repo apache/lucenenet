@@ -1663,7 +1663,7 @@ namespace Lucene.Net.Index
 			IndexReader r = IndexReader.Open(dir);
 			Assert.AreEqual(0, r.NumDocs());
 			Assert.AreEqual(4, r.MaxDoc());
-			
+                        
 			System.Collections.IEnumerator it = IndexReader.ListCommits(dir).GetEnumerator();
 			while (it.MoveNext())
 			{

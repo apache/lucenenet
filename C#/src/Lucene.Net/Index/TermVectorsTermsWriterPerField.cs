@@ -82,18 +82,18 @@ namespace Lucene.Net.Index
 					perThread.doc.docID = docState.docID;
 					System.Diagnostics.Debug.Assert(perThread.doc.numVectorFields == 0);
 					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.Length());
-                    System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.GetFilePointer());
+					System.Diagnostics.Debug.Assert(0 == perThread.doc.perDocTvf.GetFilePointer());
 				}
-				else
-				{
-					System.Diagnostics.Debug.Assert(perThread.doc.docID == docState.docID);
-					
-					if (termsHashPerField.numPostings != 0)
-					// Only necessary if previous doc hit a
-					// non-aborting exception while writing vectors in
-					// this field:
-						termsHashPerField.Reset();
-				}
+
+                System.Diagnostics.Debug.Assert(perThread.doc.docID == docState.docID);
+                if (termsHashPerField.numPostings != 0)
+                {
+                    // Only necessary if previous doc hit a
+                    // non-aborting exception while writing vectors in
+                    // this field:
+                    termsHashPerField.Reset();
+                    perThread.termsHashPerThread.Reset(false);
+                }
 			}
 			
 			// TODO: only if needed for performance
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 		/// <summary>Called once per field per document if term vectors
 		/// are enabled, to write the vectors to
 		/// RAMOutputStream, which is then quickly flushed to
-		/// * the real term vectors files in the Directory. 
+		/// the real term vectors files in the Directory. 
 		/// </summary>
 		internal override void  Finish()
 		{
@@ -125,8 +125,8 @@ namespace Lucene.Net.Index
 			
 			if (numPostings > maxNumPostings)
 				maxNumPostings = numPostings;
-
-            IndexOutput tvf = perThread.doc.perDocTvf;
+			
+			IndexOutput tvf = perThread.doc.perDocTvf;
 			
 			// This is called once, after inverting all occurences
 			// of a given field in the doc.  At this point we flush
@@ -206,6 +206,12 @@ namespace Lucene.Net.Index
 			}
 			
 			termsHashPerField.Reset();
+
+            // NOTE: we clear, per-field, at the thread level,
+            // because term vectors fully write themselves on each
+            // field; this saves RAM (eg if large doc has two large
+            // fields w/ term vectors on) because we recycle/reuse
+            // all RAM after each field:
 			perThread.termsHashPerThread.Reset(false);
 		}
 		
