@@ -27,17 +27,18 @@ namespace Lucene.Net.Util
 	{
 		private class AnonymousClassLongRangeBuilder:NumericUtils.LongRangeBuilder
 		{
-			public AnonymousClassLongRangeBuilder(long lower, long upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, TestNumericUtils enclosingInstance)
+			public AnonymousClassLongRangeBuilder(long lower, long upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts,TestNumericUtils enclosingInstance)
 			{
-				InitBlock(lower, upper, useBitSet, bits, neededBounds, enclosingInstance);
+				InitBlock(lower, upper, useBitSet, bits, neededBounds, neededShifts, enclosingInstance);
 			}
-			private void  InitBlock(long lower, long upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, TestNumericUtils enclosingInstance)
+			private void  InitBlock(long lower, long upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts,TestNumericUtils enclosingInstance)
 			{
 				this.lower = lower;
 				this.upper = upper;
 				this.useBitSet = useBitSet;
 				this.bits = bits;
 				this.neededBounds = neededBounds;
+                this.neededShifts = neededShifts;
 				this.enclosingInstance = enclosingInstance;
 			}
 			private long lower;
@@ -45,6 +46,7 @@ namespace Lucene.Net.Util
 			private bool useBitSet;
 			private Lucene.Net.Util.OpenBitSet bits;
 			private System.Collections.IEnumerator neededBounds;
+            private System.Collections.IEnumerator neededShifts;
 			private TestNumericUtils enclosingInstance;
 			public TestNumericUtils Enclosing_Instance
 			{
@@ -62,11 +64,16 @@ namespace Lucene.Net.Util
 					for (long l = min; l <= max; l++)
 					{
 						Assert.IsFalse(bits.GetAndSet(l - lower), "ranges should not overlap");
+                        // extra exit condition to prevent overflow on MAX_VALUE
+                        if (l == max) break;
 					}
+                if (neededBounds == null || neededShifts == null) return;
 				// make unsigned longs for easier display and understanding
 				min ^= unchecked((long) 0x8000000000000000L);
 				max ^= unchecked((long) 0x8000000000000000L);
 				//System.out.println("new Long(0x"+Long.toHexString(min>>>shift)+"L),new Long(0x"+Long.toHexString(max>>>shift)+"L),");
+                neededShifts.MoveNext();
+                Assert.AreEqual(((Int32)neededShifts.Current), shift, "shift");
                 neededBounds.MoveNext();
 				Assert.AreEqual((long) neededBounds.Current, SupportClass.Number.URShift(min, shift), "inner min bound");
                 neededBounds.MoveNext();
@@ -75,17 +82,18 @@ namespace Lucene.Net.Util
 		}
 		private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
 		{
-			public AnonymousClassIntRangeBuilder(int lower, int upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, TestNumericUtils enclosingInstance)
+			public AnonymousClassIntRangeBuilder(int lower, int upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts,TestNumericUtils enclosingInstance)
 			{
-				InitBlock(lower, upper, useBitSet, bits, neededBounds, enclosingInstance);
+                InitBlock(lower, upper, useBitSet, bits, neededBounds, neededShifts,enclosingInstance);
 			}
-			private void  InitBlock(int lower, int upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, TestNumericUtils enclosingInstance)
+			private void  InitBlock(int lower, int upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts,TestNumericUtils enclosingInstance)
 			{
 				this.lower = lower;
 				this.upper = upper;
 				this.useBitSet = useBitSet;
 				this.bits = bits;
 				this.neededBounds = neededBounds;
+                this.neededShifts = neededShifts;
 				this.enclosingInstance = enclosingInstance;
 			}
 			private int lower;
@@ -93,6 +101,7 @@ namespace Lucene.Net.Util
 			private bool useBitSet;
 			private Lucene.Net.Util.OpenBitSet bits;
 			private System.Collections.IEnumerator neededBounds;
+            private System.Collections.IEnumerator neededShifts;
 			private TestNumericUtils enclosingInstance;
 			public TestNumericUtils Enclosing_Instance
 			{
@@ -110,10 +119,15 @@ namespace Lucene.Net.Util
 					for (int i = min; i <= max; i++)
 					{
 						Assert.IsFalse(bits.GetAndSet(i - lower), "ranges should not overlap");
+                        // extra exit condition to prevent overflow on MAX_VALUE
+                        if (i == max) break;
 					}
+                if (neededBounds == null) return;
 				// make unsigned ints for easier display and understanding
 				min ^= unchecked((int) 0x80000000);
 				max ^= unchecked((int) 0x80000000);
+                neededShifts.MoveNext();
+                Assert.AreEqual(((int)neededShifts.Current), shift,"shift");
 				//System.out.println("new Integer(0x"+Integer.toHexString(min>>>shift)+"),new Integer(0x"+Integer.toHexString(max>>>shift)+"),");
                 neededBounds.MoveNext();
 				Assert.AreEqual(((System.Int32) neededBounds.Current), SupportClass.Number.URShift(min, shift), "inner min bound");
@@ -291,11 +305,11 @@ namespace Lucene.Net.Util
 		// INFO: Tests for trieCodeLong()/trieCodeInt() not needed because implicitely tested by range filter tests
 		
 		/// <summary>Note: The neededBounds iterator must be unsigned (easier understanding what's happening) </summary>
-		protected internal virtual void  AssertLongRangeSplit(long lower, long upper, int precisionStep, bool useBitSet, System.Collections.IEnumerator neededBounds)
+		internal virtual void  AssertLongRangeSplit(long lower, long upper, int precisionStep, bool useBitSet, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts)
 		{
 			OpenBitSet bits = useBitSet?new OpenBitSet(upper - lower + 1):null;
 			
-			NumericUtils.SplitLongRange(new AnonymousClassLongRangeBuilder(lower, upper, useBitSet, bits, neededBounds, this), precisionStep, lower, upper);
+			NumericUtils.SplitLongRange(new AnonymousClassLongRangeBuilder(lower, upper, useBitSet, bits, neededBounds,neededShifts,this), precisionStep, lower, upper);
 			
 			if (useBitSet)
 			{
@@ -305,44 +319,166 @@ namespace Lucene.Net.Util
 			}
 		}
 		
+         /** LUCENE-2541: NumericRangeQuery errors with endpoints near long min and max values */
         [Test]
-		public virtual void  TestSplitLongRange()
+        public void TestLongExtremeValues()
+        {
+            // upper end extremes
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 1, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 2, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 4, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 6, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 8, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MaxValue, long.MaxValue, 64, true,
+                new ulong[] { 0xffffffffffffffffL, 0xffffffffffffffffL }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+            
+            AssertLongRangeSplit(long.MaxValue - 0xfL, long.MaxValue, 4, true,
+                new ulong[] { 0xfffffffffffffffL, 0xfffffffffffffffL }.GetEnumerator(),
+                new int[] { 4 }.GetEnumerator());
+            AssertLongRangeSplit(long.MaxValue - 0x10L, long.MaxValue, 4, true,
+                new ulong[] { 0xffffffffffffffefL, 0xffffffffffffffefL, 0xfffffffffffffffL, 0xfffffffffffffffL }.GetEnumerator(),
+                new int[] { 0, 4 }.GetEnumerator());
+
+            // lower end extremes
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 1, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 2, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 4, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 6, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 8, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue, 64, true,
+                new long[] { 0x0000000000000000L, 0x0000000000000000L }.GetEnumerator(),
+                new int[] { 0 }.GetEnumerator());
+
+
+            AssertLongRangeSplit(long.MinValue, long.MinValue + 0xfL, 4, true,
+                new long[] { 0x000000000000000L, 0x000000000000000L }.GetEnumerator(),
+                new int[] { 4 }.GetEnumerator());
+            AssertLongRangeSplit(long.MinValue, long.MinValue + 0x10L, 4, true,
+                new long[] { 0x0000000000000010L, 0x0000000000000010L, 0x000000000000000L, 0x000000000000000L }.GetEnumerator(),
+                new int[] { 0, 4 }.GetEnumerator());
+        }
+
+        [Test]
+        public void TestRandomSplit()
+        {
+            Random random = new Random();
+            for (int i = 0; i < 100; i++)
+            {
+                ExecuteOneRandomSplit(random);
+            }
+        }
+
+        private void ExecuteOneRandomSplit(Random random)
+        {
+            long lower = RandomLong(random);
+            long len = (long)random.Next(16384 * 1024); // not too large bitsets, else OOME!
+            while (lower + len < lower)
+            { // overflow
+                lower >>= 1;
+            }
+            AssertLongRangeSplit(lower, lower + len, random.Next(64) + 1, true, null, null);
+        }
+
+        private long RandomLong(Random random)
+        {
+            long val;
+            switch (random.Next(4))
+            {
+                case 0:
+                    val = 1L << (random.Next(63)); //  patterns like 0x000000100000 (-1 yields patterns like 0x0000fff)
+                    break;
+                case 1:
+                    val = -1L << (random.Next(63)); // patterns like 0xfffff00000
+                    break;
+                default:
+                    val = random.Next();
+                    break;
+            }
+
+            val += random.Next(5) - 2;
+
+            if (random.Next(2) == 1)
+            {
+                if (random.Next(2) == 1) val += random.Next(100) - 50;
+                if (random.Next(2) == 1) val = ~val;
+                if (random.Next(2) == 1) val = val << 1;
+                if (random.Next(2) == 1) val = SupportClass.Number.URShift(val, 1);
+            }
+
+            return val;
+        }
+
+
+        [Test]
+		public void  TestSplitLongRange()
 		{
 			// a hard-coded "standard" range
-			AssertLongRangeSplit(- 5000L, 9500L, 4, true, new System.Collections.ArrayList(new System.Int64[]{0x7fffffffffffec78L, 0x7fffffffffffec7fL, unchecked((long) (0x8000000000002510L)), unchecked((long) (0x800000000000251cL)), 0x7fffffffffffec8L, 0x7fffffffffffecfL, 0x800000000000250L, 0x800000000000250L, 0x7fffffffffffedL, 0x7fffffffffffefL, 0x80000000000020L, 0x80000000000024L, 0x7ffffffffffffL, 0x8000000000001L}).GetEnumerator());
+			AssertLongRangeSplit(- 5000L, 9500L, 4, true, new System.Collections.ArrayList(new System.Int64[]{0x7fffffffffffec78L, 0x7fffffffffffec7fL, unchecked((long) (0x8000000000002510L)), unchecked((long) (0x800000000000251cL)), 0x7fffffffffffec8L, 0x7fffffffffffecfL, 0x800000000000250L, 0x800000000000250L, 0x7fffffffffffedL, 0x7fffffffffffefL, 0x80000000000020L, 0x80000000000024L, 0x7ffffffffffffL, 0x8000000000001L}).GetEnumerator(),new int[]{0,0,4,4,8,8,12}.GetEnumerator());
 			
 			// the same with no range splitting
-			AssertLongRangeSplit(- 5000L, 9500L, 64, true, new System.Collections.ArrayList(new System.Int64[]{0x7fffffffffffec78L, unchecked((long) (0x800000000000251cL))}).GetEnumerator());
+            AssertLongRangeSplit(-5000L, 9500L, 64, true, new System.Collections.ArrayList(new System.Int64[] { 0x7fffffffffffec78L, unchecked((long)(0x800000000000251cL)) }).GetEnumerator(), new int[] { 0 }.GetEnumerator());
 			
 			// this tests optimized range splitting, if one of the inner bounds
 			// is also the bound of the next lower precision, it should be used completely
-			AssertLongRangeSplit(0L, 1024L + 63L, 4, true, new System.Collections.ArrayList(new System.Int64[]{0x800000000000040L, 0x800000000000043L, 0x80000000000000L, 0x80000000000003L}).GetEnumerator());
+            AssertLongRangeSplit(0L, 1024L + 63L, 4, true, new System.Collections.ArrayList(new System.Int64[] { 0x800000000000040L, 0x800000000000043L, 0x80000000000000L, 0x80000000000003L }).GetEnumerator(), new int[] {4,8}.GetEnumerator());
 			
 			// the full long range should only consist of a lowest precision range; no bitset testing here, as too much memory needed :-)
-			AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 8, false, new System.Collections.ArrayList(new System.Int64[]{0x00L, 0xffL}).GetEnumerator());
+            AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 8, false, new System.Collections.ArrayList(new System.Int64[] { 0x00L, 0xffL }).GetEnumerator(), new int[] {56}.GetEnumerator());
 			
 			// the same with precisionStep=4
-			AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 4, false, new System.Collections.ArrayList(new System.Int64[]{0x0L, 0xfL}).GetEnumerator());
+            AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 4, false, new System.Collections.ArrayList(new System.Int64[] { 0x0L, 0xfL }).GetEnumerator(), new int[] {60}.GetEnumerator());
 			
 			// the same with precisionStep=2
-			AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 2, false, new System.Collections.ArrayList(new System.Int64[]{0x0L, 0x3L}).GetEnumerator());
+            AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 2, false, new System.Collections.ArrayList(new System.Int64[] { 0x0L, 0x3L }).GetEnumerator(), new int[] {62}.GetEnumerator());
 			
 			// the same with precisionStep=1
-			AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 1, false, new System.Collections.ArrayList(new System.Int64[]{0x0L, 0x1L}).GetEnumerator());
+            AssertLongRangeSplit(System.Int64.MinValue, System.Int64.MaxValue, 1, false, new System.Collections.ArrayList(new System.Int64[] { 0x0L, 0x1L }).GetEnumerator(), new int[] {63}.GetEnumerator());
 			
 			// a inverse range should produce no sub-ranges
-			AssertLongRangeSplit(9500L, - 5000L, 4, false, ((System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList())).GetEnumerator());
+            AssertLongRangeSplit(9500L, -5000L, 4, false, ((System.Collections.IList)System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList())).GetEnumerator(), new int[] { }.GetEnumerator());
 			
 			// a 0-length range should reproduce the range itsself
-			AssertLongRangeSplit(9500L, 9500L, 4, false, new System.Collections.ArrayList(new System.Int64[]{unchecked((long) (0x800000000000251cL)), unchecked((long) (0x800000000000251cL))}).GetEnumerator());
+            AssertLongRangeSplit(9500L, 9500L, 4, false, new System.Collections.ArrayList(new System.Int64[] { unchecked((long)(0x800000000000251cL)), unchecked((long)(0x800000000000251cL)) }).GetEnumerator(), new int[] {0}.GetEnumerator());
 		}
 		
+
 		/// <summary>Note: The neededBounds iterator must be unsigned (easier understanding what's happening) </summary>
-		protected internal virtual void  AssertIntRangeSplit(int lower, int upper, int precisionStep, bool useBitSet, System.Collections.IEnumerator neededBounds)
+		protected internal virtual void  AssertIntRangeSplit(int lower, int upper, int precisionStep, bool useBitSet, System.Collections.IEnumerator neededBounds,System.Collections.IEnumerator neededShifts)
 		{
 			OpenBitSet bits = useBitSet?new OpenBitSet(upper - lower + 1):null;
-			
-			NumericUtils.SplitIntRange(new AnonymousClassIntRangeBuilder(lower, upper, useBitSet, bits, neededBounds, this), precisionStep, lower, upper);
+
+            NumericUtils.SplitIntRange(new AnonymousClassIntRangeBuilder(lower, upper, useBitSet, bits, neededBounds, neededShifts,this), precisionStep, lower, upper);
 			
 			if (useBitSet)
 			{
@@ -356,32 +492,32 @@ namespace Lucene.Net.Util
 		public virtual void  TestSplitIntRange()
 		{
 			// a hard-coded "standard" range
-			AssertIntRangeSplit(- 5000, 9500, 4, true, new System.Collections.ArrayList(new System.Int32[]{0x7fffec78, 0x7fffec7f, unchecked((System.Int32) 0x80002510), unchecked((System.Int32) 0x8000251c), 0x7fffec8, 0x7fffecf, 0x8000250, 0x8000250, 0x7fffed, 0x7fffef, 0x800020, 0x800024, 0x7ffff, 0x80001}).GetEnumerator());
+			AssertIntRangeSplit(- 5000, 9500, 4, true, new System.Collections.ArrayList(new System.Int32[]{0x7fffec78, 0x7fffec7f, unchecked((System.Int32) 0x80002510), unchecked((System.Int32) 0x8000251c), 0x7fffec8, 0x7fffecf, 0x8000250, 0x8000250, 0x7fffed, 0x7fffef, 0x800020, 0x800024, 0x7ffff, 0x80001}).GetEnumerator(),new int[]{0,0,4,4,8,8,12}.GetEnumerator());
 			
 			// the same with no range splitting
-			AssertIntRangeSplit(- 5000, 9500, 32, true, new System.Collections.ArrayList(new System.Int32[]{0x7fffec78, unchecked((System.Int32) 0x8000251c)}).GetEnumerator());
+            AssertIntRangeSplit(-5000, 9500, 32, true, new System.Collections.ArrayList(new System.Int32[] { 0x7fffec78, unchecked((System.Int32)0x8000251c) }).GetEnumerator(), new int[] { 0}.GetEnumerator());
 			
 			// this tests optimized range splitting, if one of the inner bounds
 			// is also the bound of the next lower precision, it should be used completely
-			AssertIntRangeSplit(0, 1024 + 63, 4, true, new System.Collections.ArrayList(new System.Int32[]{0x8000040, 0x8000043, 0x800000, 0x800003}).GetEnumerator());
+            AssertIntRangeSplit(0, 1024 + 63, 4, true, new System.Collections.ArrayList(new System.Int32[] { 0x8000040, 0x8000043, 0x800000, 0x800003 }).GetEnumerator(), new int[] {4,8 }.GetEnumerator());
 			
 			// the full int range should only consist of a lowest precision range; no bitset testing here, as too much memory needed :-)
-			AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 8, false, new System.Collections.ArrayList(new System.Int32[]{0x00, 0xff}).GetEnumerator());
+            AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 8, false, new System.Collections.ArrayList(new System.Int32[] { 0x00, 0xff }).GetEnumerator(), new int[] { 24}.GetEnumerator());
 			
 			// the same with precisionStep=4
-			AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 4, false, new System.Collections.ArrayList(new System.Int32[]{0x0, 0xf}).GetEnumerator());
+            AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 4, false, new System.Collections.ArrayList(new System.Int32[] { 0x0, 0xf }).GetEnumerator(), new int[] { 28}.GetEnumerator());
 			
 			// the same with precisionStep=2
-			AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 2, false, new System.Collections.ArrayList(new System.Int32[]{0x0, 0x3}).GetEnumerator());
+            AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 2, false, new System.Collections.ArrayList(new System.Int32[] { 0x0, 0x3 }).GetEnumerator(), new int[] {30 }.GetEnumerator());
 			
 			// the same with precisionStep=1
-			AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 1, false, new System.Collections.ArrayList(new System.Int32[]{0x0, 0x1}).GetEnumerator());
+            AssertIntRangeSplit(System.Int32.MinValue, System.Int32.MaxValue, 1, false, new System.Collections.ArrayList(new System.Int32[] { 0x0, 0x1 }).GetEnumerator(), new int[] {31 }.GetEnumerator());
 			
 			// a inverse range should produce no sub-ranges
-			AssertIntRangeSplit(9500, - 5000, 4, false, ((System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList())).GetEnumerator());
+            AssertIntRangeSplit(9500, -5000, 4, false, ((System.Collections.IList)System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList())).GetEnumerator(), new int[] { }.GetEnumerator());
 			
 			// a 0-length range should reproduce the range itsself
-			AssertIntRangeSplit(9500, 9500, 4, false, new System.Collections.ArrayList(new System.Int32[]{unchecked((System.Int32) 0x8000251c), unchecked((System.Int32) 0x8000251c)}).GetEnumerator());
+            AssertIntRangeSplit(9500, 9500, 4, false, new System.Collections.ArrayList(new System.Int32[] { unchecked((System.Int32)0x8000251c), unchecked((System.Int32)0x8000251c) }).GetEnumerator(), new int[] {0 }.GetEnumerator());
 		}
 	}
 }

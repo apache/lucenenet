@@ -115,8 +115,8 @@ namespace Lucene.Net.Index
 			CreateIndex(dirName, true);
 			RmDir(dirName);
 		}
-		
-		internal System.String[] oldNames = new System.String[]{"19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs", "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs", "24.cfs", "24.nocfs"};
+
+        internal System.String[] oldNames = new System.String[]{"19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs", "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs", "24.cfs", "24.nocfs","30.cfs","30.nocfs"};
 		
 		[Test]
 		public virtual void  TestOptimizeOldIndex()

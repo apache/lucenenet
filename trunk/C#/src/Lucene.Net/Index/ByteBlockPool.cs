@@ -33,6 +33,7 @@
 * hit a non-zero byte. */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -47,6 +48,8 @@ namespace Lucene.Net.Index
 		public /*internal*/ abstract class Allocator
 		{
 			public /*internal*/ abstract void  RecycleByteBlocks(byte[][] blocks, int start, int end);
+            //abstract void recycleByteBlocks(List blocks); DIGY
+            public /*internal*/ abstract void RecycleByteBlocks(System.Collections.ArrayList blocks);
 			public /*internal*/ abstract byte[] GetByteBlock(bool trackAllocations);
 		}
 		

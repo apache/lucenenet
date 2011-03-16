@@ -74,7 +74,6 @@ namespace Lucene.Net.Index
 			internal SegmentInfo info; // used by IndexWriter
 			internal bool mergeDocStores; // used by IndexWriter
 			internal bool optimize; // used by IndexWriter
-			internal bool increfDone; // used by IndexWriter
 			internal bool registerDone; // used by IndexWriter
 			internal long mergeGen; // used by IndexWriter
 			internal bool isExternal; // used by IndexWriter
@@ -85,6 +84,8 @@ namespace Lucene.Net.Index
 			internal bool useCompoundFile;
 			internal bool aborted;
 			internal System.Exception error;
+
+            internal volatile bool mergeDone;     // used by IndexWriter
 			
 			public OneMerge(SegmentInfos segments, bool useCompoundFile)
 			{

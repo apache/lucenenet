@@ -29,41 +29,51 @@ namespace Lucene.Net.Index
 	[TestFixture]
 	public class TestByteSlices:LuceneTestCase
 	{
-		
-		private class ByteBlockAllocator:ByteBlockPool.Allocator
-		{
-			internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
-			
-			/* Allocate another byte[] from the shared pool */
-			public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
-			{
-				lock (this)
-				{
-					int size = freeByteBlocks.Count;
-					byte[] b;
-					if (0 == size)
-						b = new byte[DocumentsWriter.BYTE_BLOCK_SIZE_ForNUnit];
-					else
-					{
-						System.Object tempObject;
-						tempObject = freeByteBlocks[size - 1];
-						freeByteBlocks.RemoveAt(size - 1);
-						b = (byte[]) tempObject;
-					}
-					return b;
-				}
-			}
-			
-			/* Return a byte[] to the pool */
-			public /*internal*/ override void  RecycleByteBlocks(byte[][] blocks, int start, int end)
-			{
-				lock (this)
-				{
-					for (int i = start; i < end; i++)
-						freeByteBlocks.Add(blocks[i]);
-				}
-			}
-		}
+
+        private class ByteBlockAllocator : ByteBlockPool.Allocator
+        {
+            internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
+
+            /* Allocate another byte[] from the shared pool */
+            public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
+            {
+                lock (this)
+                {
+                    int size = freeByteBlocks.Count;
+                    byte[] b;
+                    if (0 == size)
+                        b = new byte[DocumentsWriter.BYTE_BLOCK_SIZE_ForNUnit];
+                    else
+                    {
+                        System.Object tempObject;
+                        tempObject = freeByteBlocks[size - 1];
+                        freeByteBlocks.RemoveAt(size - 1);
+                        b = (byte[])tempObject;
+                    }
+                    return b;
+                }
+            }
+
+            /* Return a byte[] to the pool */
+            public /*internal*/ override void RecycleByteBlocks(byte[][] blocks, int start, int end)
+            {
+                lock (this)
+                {
+                    for (int i = start; i < end; i++)
+                        freeByteBlocks.Add(blocks[i]);
+                }
+            }
+
+            public override void RecycleByteBlocks(System.Collections.ArrayList blocks)
+            {
+                lock (this)
+                {
+                    int size = blocks.Count;
+                    for (int i = 0; i < size; i++)
+                        freeByteBlocks.Add((byte[])blocks[i]);
+                }
+            }
+        }
 		
 		[Test]
 		public virtual void  TestBasic()

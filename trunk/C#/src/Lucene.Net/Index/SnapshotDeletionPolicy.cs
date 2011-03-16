@@ -86,6 +86,10 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
+                if (lastCommit == null)
+                {
+                    throw new System.SystemException("no index commits to snapshot !");
+                }
 				if (snapshot == null)
 					snapshot = lastCommit.GetSegmentsFileName();
 				else
@@ -127,6 +131,12 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.cp = cp;
 			}
+
+            public override string ToString()
+            {
+                return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp + ")";
+            }
+
 			public override System.String GetSegmentsFileName()
 			{
 				return cp.GetSegmentsFileName();
@@ -165,6 +175,11 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetUserData();
 			}
+
+            public override bool IsOptimized()
+            {
+                return cp.IsOptimized();
+            }
 		}
 		
 		private System.Collections.IList WrapCommits(System.Collections.IList commits)

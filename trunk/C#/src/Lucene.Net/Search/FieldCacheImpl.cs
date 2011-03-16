@@ -70,6 +70,14 @@ namespace Lucene.Net.Search
 		{
 			Init();
 		}
+
+        public void Purge(IndexReader r)
+        {
+            foreach (Cache c in caches.Values)
+            {
+                c.Purge(r);
+            }
+        }
 		
 		public virtual CacheEntry[] GetCacheEntries()
 		{
@@ -205,6 +213,16 @@ namespace Lucene.Net.Search
             internal System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
+
+            /** Remove this reader from the cache, if present. */
+            public void Purge(IndexReader r)
+            {
+                object readerKey = r.GetFieldCacheKey();
+                lock (readerCache)
+                {
+                    readerCache.Remove(readerKey);
+                }
+            }
 			
 			public virtual System.Object Get(IndexReader reader, Entry key)
 			{
@@ -863,15 +881,9 @@ namespace Lucene.Net.Search
 					do 
 					{
 						Term term = termEnum.Term();
-						if (term == null || (System.Object) term.Field() != (System.Object) field)
-							break;
+                        if (term == null || term.Field() != field || t >= mterms.Length) break;
 						
 						// store term text
-						// we expect that there is at most one term per document
-						if (t >= mterms.Length)
-							//throw new System.SystemException("there are more terms than " + "documents in field \"" + field + "\", but it's impossible to sort on " + "tokenized fields");
-                            //LUCENENET-388
-                            throw new System.IO.IOException("there are more terms than " + "documents in field \"" + field + "\", but it's impossible to sort on " + "tokenized fields");
 						mterms[t] = term.Text();
 						
 						termDocs.Seek(termEnum);

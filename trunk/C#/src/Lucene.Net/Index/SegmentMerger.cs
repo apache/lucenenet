@@ -253,12 +253,10 @@ namespace Lucene.Net.Index
 				((IndexReader) iter.Current).Close();
 			}
 		}
-		
-		public /*internal*/ System.Collections.IList CreateCompoundFile(System.String fileName)
+
+        public /*internal*/ System.Collections.Generic.ICollection<string> GetMergedFiles()
 		{
-			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
-			
-			System.Collections.IList files = new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + 1);
+            System.Collections.Generic.IDictionary<string,string> fileSet = new System.Collections.Generic.Dictionary<string,string>();
 			
 			// Basic files
 			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)
@@ -269,7 +267,7 @@ namespace Lucene.Net.Index
 					continue;
 				
 				if (mergeDocStores || (!ext.Equals(IndexFileNames.FIELDS_EXTENSION) && !ext.Equals(IndexFileNames.FIELDS_INDEX_EXTENSION)))
-					files.Add(segment + "." + ext);
+                    fileSet[segment + "." + ext] = segment + "." + ext;
 			}
 			
 			// Fieldable norm files
@@ -278,7 +276,7 @@ namespace Lucene.Net.Index
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed && !fi.omitNorms)
 				{
-					files.Add(segment + "." + IndexFileNames.NORMS_EXTENSION);
+                    fileSet[segment + "." + IndexFileNames.NORMS_EXTENSION]=segment + "." + IndexFileNames.NORMS_EXTENSION;
 					break;
 				}
 			}
@@ -288,10 +286,18 @@ namespace Lucene.Net.Index
 			{
 				for (int i = 0; i < IndexFileNames.VECTOR_EXTENSIONS.Length; i++)
 				{
-					files.Add(segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i]);
+                    fileSet[segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i]] = segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i];
 				}
 			}
-			
+
+            return fileSet.Keys;
+        }
+
+        public /*internal*/ System.Collections.Generic.ICollection<string> CreateCompoundFile(System.String fileName)
+        {
+            System.Collections.Generic.ICollection<string> files = GetMergedFiles();
+            CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
+
 			// Now merge all added files
 			System.Collections.IEnumerator it = files.GetEnumerator();
 			while (it.MoveNext())
@@ -301,8 +307,8 @@ namespace Lucene.Net.Index
 			
 			// Perform the merge
 			cfsWriter.Close();
-			
-			return files;
+
+            return files;
 		}
 
         private void AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)

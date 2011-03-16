@@ -99,6 +99,9 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		
 		internal bool startingCommitDeleted;
+        private SegmentInfos lastSegmentInfos;
+
+        private System.Collections.Generic.Dictionary<string, string> synced;
 		
 		/// <summary>Change to true to see details of reference counts when
 		/// infoStream != null 
@@ -116,7 +119,7 @@ namespace Lucene.Net.Index
 		
 		private void  Message(System.String message)
 		{
-			infoStream.WriteLine("IFD [" + SupportClass.ThreadClass.Current().Name + "]: " + message);
+            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		/// <summary> Initialize the deleter: find all previous commits in
@@ -126,11 +129,12 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, System.IO.StreamWriter infoStream, DocumentsWriter docWriter)
+        public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, System.IO.StreamWriter infoStream, DocumentsWriter docWriter, System.Collections.Generic.Dictionary<string, string> synced)
 		{
 			
 			this.docWriter = docWriter;
 			this.infoStream = infoStream;
+            this.synced = synced;
 			
 			if (infoStream != null)
 			{
@@ -166,42 +170,58 @@ namespace Lucene.Net.Index
 						// This is a commit (segments or segments_N), and
 						// it's valid (<= the max gen).  Load it, then
 						// incref all files it refers to:
-						if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen)
-						{
-							if (infoStream != null)
-							{
-								Message("init: load commit \"" + fileName + "\"");
-							}
-							SegmentInfos sis = new SegmentInfos();
-							try
-							{
-								sis.Read(directory, fileName);
-							}
-							catch (System.IO.FileNotFoundException e)
-							{
-								// LUCENE-948: on NFS (and maybe others), if
-								// you have writers switching back and forth
-								// between machines, it's very likely that the
-								// dir listing will be stale and will claim a
-								// file segments_X exists when in fact it
-								// doesn't.  So, we catch this and handle it
-								// as if the file does not exist
-								if (infoStream != null)
-								{
-									Message("init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
-								}
-								sis = null;
-							}
-							if (sis != null)
-							{
-								CommitPoint commitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
-								if (sis.GetGeneration() == segmentInfos.GetGeneration())
-								{
-									currentCommitPoint = commitPoint;
-								}
-								commits.Add(commitPoint);
-								IncRef(sis, true);
-							}
+                        if (infoStream != null)
+                        {
+                            Message("init: load commit \"" + fileName + "\"");
+                        }
+                        SegmentInfos sis = new SegmentInfos();
+                        try
+                        {
+                            sis.Read(directory, fileName);
+                        }
+                        catch (System.IO.FileNotFoundException e)
+                        {
+                            // LUCENE-948: on NFS (and maybe others), if
+                            // you have writers switching back and forth
+                            // between machines, it's very likely that the
+                            // dir listing will be stale and will claim a
+                            // file segments_X exists when in fact it
+                            // doesn't.  So, we catch this and handle it
+                            // as if the file does not exist
+                            if (infoStream != null)
+                            {
+                                Message("init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
+                            }
+                            sis = null;
+                        }
+                        catch (System.IO.IOException e)
+                        {
+                            if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen)
+                            {
+                                throw e;
+                            }
+                            else
+                            {
+                                // Most likely we are opening an index that
+                                // has an aborted "future" commit, so suppress
+                                // exc in this case
+                                sis = null;
+                            }
+                        }
+                        if (sis != null)
+                        {
+                            CommitPoint commitPoint = new CommitPoint(this,commitsToDelete, directory, sis);
+                            if (sis.GetGeneration() == segmentInfos.GetGeneration())
+                            {
+                                currentCommitPoint = commitPoint;
+                            }
+                            commits.Add(commitPoint);
+                            IncRef(sis, true);
+
+                            if (lastSegmentInfos == null || sis.GetGeneration() > lastSegmentInfos.GetGeneration())
+                            {
+                                lastSegmentInfos = sis;
+                            }
 						}
 					}
 				}
@@ -265,6 +285,11 @@ namespace Lucene.Net.Index
 			
 			DeleteCommits();
 		}
+
+        public SegmentInfos GetLastSegmentInfos()
+        {
+            return lastSegmentInfos;
+        }
 		
 		/// <summary> Remove the CommitPoints in the commitsToDelete List by
 		/// DecRef'ing all files from each SegmentInfos.
@@ -545,6 +570,13 @@ namespace Lucene.Net.Index
 				// commit points nor by the in-memory SegmentInfos:
 				DeleteFile(fileName);
 				refCounts.Remove(fileName);
+
+                if (synced != null) {
+                    lock(synced) 
+                    {
+                      synced.Remove(fileName);
+                    }
+                }
 			}
 		}
 		
@@ -556,6 +588,18 @@ namespace Lucene.Net.Index
 				DecRef(it.Current);
 			}
 		}
+
+        public bool Exists(String fileName)
+        {
+            if (!refCounts.ContainsKey(fileName))
+            {
+                return false;
+            }
+            else
+            {
+                return GetRefCount(fileName).count > 0;
+            }
+        }
 		
 		private RefCount GetRefCount(System.String fileName)
 		{
@@ -588,8 +632,14 @@ namespace Lucene.Net.Index
 			while (it.MoveNext())
 			{
 				System.String fileName = (System.String) it.Current;
-				if (!refCounts.ContainsKey(fileName))
-					DeleteFile(fileName);
+                if (!refCounts.ContainsKey(fileName))
+                {
+                    if (infoStream != null)
+                    {
+                        Message("delete new file \"" + fileName + "\"");
+                    }
+                    DeleteFile(fileName);
+                }
 			}
 		}
 		
@@ -711,7 +761,12 @@ namespace Lucene.Net.Index
 				
 				System.Diagnostics.Debug.Assert(!segmentInfos.HasExternalSegments(directory));
 			}
-			
+
+            public override string ToString()
+            {
+                return "IndexFileDeleter.CommitPoint(" + segmentsFileName + ")";
+            }
+
 			public override bool IsOptimized()
 			{
 				return isOptimized;

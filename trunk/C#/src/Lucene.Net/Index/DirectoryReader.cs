@@ -98,14 +98,18 @@ namespace Lucene.Net.Index
 		private int termInfosIndexDivisor;
 		
 		private bool rollbackHasChanges;
-		private SegmentInfos rollbackSegmentInfos;
-		
+				
 		private SegmentReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
 		private System.Collections.IDictionary normsCache = new System.Collections.Hashtable();
 		private int maxDoc = 0;
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
+        
+        // Max version in index as of when we opened; this can be
+        // > our current segmentInfos version in case we were
+        // opened on a past IndexCommit:
+        private long maxIndexVersion;
 		
 		internal static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
 		{
@@ -170,7 +174,7 @@ namespace Lucene.Net.Index
 		{
 			this.directory = writer.GetDirectory();
 			this.readOnly = true;
-			this.segmentInfos = infos;
+			segmentInfos = infos;
 			segmentInfosStart = (SegmentInfos) infos.Clone();
 			this.termInfosIndexDivisor = termInfosIndexDivisor;
 			if (!readOnly)
@@ -193,7 +197,7 @@ namespace Lucene.Net.Index
 				bool success = false;
 				try
 				{
-					SegmentInfo info = infos.Info(upto);
+					SegmentInfo info = infos.Info(i);
 					if (info.dir == dir)
 					{
 						readers[upto++] = writer.readerPool.GetReadOnlyClone(info, true, termInfosIndexDivisor);
@@ -407,6 +411,11 @@ namespace Lucene.Net.Index
 					hasDeletions = true;
 			}
 			starts[subReaders.Length] = maxDoc;
+
+            if (!readOnly)
+            {
+                maxIndexVersion = SegmentInfos.ReadCurrentVersion(directory);
+            }
 		}
 		
 		public override System.Object Clone()
@@ -451,139 +460,163 @@ namespace Lucene.Net.Index
 		
 		public override IndexReader Reopen()
 		{
-			lock (this)
-			{
-				// Preserve current readOnly
-				return DoReopen(readOnly, null);
-			}
+	        // Preserve current readOnly
+			return DoReopen(readOnly, null);
 		}
 		
 		public override IndexReader Reopen(bool openReadOnly)
 		{
-			lock (this)
-			{
-				return DoReopen(openReadOnly, null);
-			}
+			return DoReopen(openReadOnly, null);
 		}
 		
 		public override IndexReader Reopen(IndexCommit commit)
 		{
-			lock (this)
-			{
-				return DoReopen(true, commit);
-			}
+			return DoReopen(true, commit);
 		}
-		
-		private IndexReader DoReopen(bool openReadOnly, IndexCommit commit)
-		{
-			lock (this)
-			{
-				EnsureOpen();
-				
-				System.Diagnostics.Debug.Assert(commit == null || openReadOnly);
-				
-				// If we were obtained by writer.getReader(), re-ask the
-				// writer to get a new reader.
-				if (writer != null)
-				{
-					System.Diagnostics.Debug.Assert(readOnly);
-					
-					if (!openReadOnly)
-					{
-						throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() can only be reopened with openReadOnly=true (got false)");
-					}
-					
-					if (commit != null)
-					{
-						throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() cannot currently accept a commit");
-					}
-					
-					if (!writer.IsOpen(true))
-					{
-						throw new AlreadyClosedException("cannot reopen: the IndexWriter this reader was obtained from is now closed");
-					}
-					
-					// TODO: right now we *always* make a new reader; in
-					// the future we could have write make some effort to
-					// detect that no changes have occurred
-					IndexReader reader = writer.GetReader();
-					reader.SetDisableFakeNorms(GetDisableFakeNorms());
-					return reader;
-				}
-				
-				if (commit == null)
-				{
-					if (hasChanges)
-					{
-						// We have changes, which means we are not readOnly:
-						System.Diagnostics.Debug.Assert(readOnly == false);
-						// and we hold the write lock:
-						System.Diagnostics.Debug.Assert(writeLock != null);
-						// so no other writer holds the write lock, which
-						// means no changes could have been done to the index:
-						System.Diagnostics.Debug.Assert(IsCurrent());
-						
-						if (openReadOnly)
-						{
-							return (IndexReader) Clone(openReadOnly);
-						}
-						else
-						{
-							return this;
-						}
-					}
-					else if (IsCurrent())
-					{
-						if (openReadOnly != readOnly)
-						{
-							// Just fallback to clone
-							return (IndexReader) Clone(openReadOnly);
-						}
-						else
-						{
-							return this;
-						}
-					}
-				}
-				else
-				{
-					if (directory != commit.GetDirectory())
-						throw new System.IO.IOException("the specified commit does not match the specified Directory");
-					if (segmentInfos != null && commit.GetSegmentsFileName().Equals(segmentInfos.GetCurrentSegmentFileName()))
-					{
-						if (readOnly != openReadOnly)
-						{
-							// Just fallback to clone
-							return (IndexReader) Clone(openReadOnly);
-						}
-						else
-						{
-							return this;
-						}
-					}
-				}
-				
-				return (IndexReader) new AnonymousClassFindSegmentsFile1(openReadOnly, this, directory).Run(commit);
-			}
-		}
-		
-		private DirectoryReader DoReopen(SegmentInfos infos, bool doClone, bool openReadOnly)
-		{
-			lock (this)
-			{
-				DirectoryReader reader;
-				if (openReadOnly)
-				{
-					reader = new ReadOnlyDirectoryReader(directory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
-				}
-				else
-				{
-					reader = new DirectoryReader(directory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
-				}
-				reader.SetDisableFakeNorms(GetDisableFakeNorms());
-				return reader;
-			}
-		}
+
+        private IndexReader DoReopenFromWriter(bool openReadOnly, IndexCommit commit)
+        {
+            System.Diagnostics.Debug.Assert(readOnly);
+
+            if (!openReadOnly)
+            {
+                throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() can only be reopened with openReadOnly=true (got false)");
+            }
+
+            if (commit != null)
+            {
+                throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() cannot currently accept a commit");
+            }
+
+            // TODO: right now we *always* make a new reader; in
+            // the future we could have write make some effort to
+            // detect that no changes have occurred
+            return writer.GetReader();
+        }
+
+        private IndexReader DoReopen(bool openReadOnly, IndexCommit commit)
+        {
+            EnsureOpen();
+
+            System.Diagnostics.Debug.Assert(commit == null || openReadOnly);
+
+            // If we were obtained by writer.getReader(), re-ask the
+            // writer to get a new reader.
+            if (writer != null)
+            {
+                return DoReopenFromWriter(openReadOnly, commit);
+            }
+            else
+            {
+                return DoReopenNoWriter(openReadOnly, commit);
+            }
+        }
+                
+        private IndexReader DoReopenNoWriter(bool openReadOnly, IndexCommit commit)
+        {
+            lock (this)
+            {
+                if (commit == null)
+                {
+                    if (hasChanges)
+                    {
+                        // We have changes, which means we are not readOnly:
+                        System.Diagnostics.Debug.Assert(readOnly == false);
+                        // and we hold the write lock:
+                        System.Diagnostics.Debug.Assert(writeLock != null);
+                        // so no other writer holds the write lock, which
+                        // means no changes could have been done to the index:
+                        System.Diagnostics.Debug.Assert(IsCurrent());
+
+                        if (openReadOnly)
+                        {
+                            return (IndexReader)Clone(openReadOnly);
+                        }
+                        else
+                        {
+                            return this;
+                        }
+                    }
+                    else if (IsCurrent())
+                    {
+                        if (openReadOnly != readOnly)
+                        {
+                            // Just fallback to clone
+                            return (IndexReader)Clone(openReadOnly);
+                        }
+                        else
+                        {
+                            return this;
+                        }
+                    }
+                }
+                else
+                {
+                    if (directory != commit.GetDirectory())
+                        throw new System.IO.IOException("the specified commit does not match the specified Directory");
+                    if (segmentInfos != null && commit.GetSegmentsFileName().Equals(segmentInfos.GetCurrentSegmentFileName()))
+                    {
+                        if (readOnly != openReadOnly)
+                        {
+                            // Just fallback to clone
+                            return (IndexReader)Clone(openReadOnly);
+                        }
+                        else
+                        {
+                            return this;
+                        }
+                    }
+                }
+
+                return (IndexReader)new AnonymousFindSegmentsFile(directory, openReadOnly, this).Run();
+                //DIGY
+                //return (IndexReader) new SegmentInfos.FindSegmentsFile(directory) {
+                //  protected Object doBody(String segmentFileName) throws CorruptIndexException, IOException {
+                //    SegmentInfos infos = new SegmentInfos();
+                //    infos.read(directory, segmentFileName);
+                //    return doReopen(infos, false, openReadOnly);
+                //  }
+                //}.run(commit);
+            }
+        }
+
+        class AnonymousFindSegmentsFile : SegmentInfos.FindSegmentsFile
+        {
+            DirectoryReader enclosingInstance;
+            bool openReadOnly;
+            public AnonymousFindSegmentsFile(Directory dir,bool openReadOnly,DirectoryReader dirReader) : base(dir)
+            {
+                this.openReadOnly = openReadOnly;
+                enclosingInstance = dirReader;
+            }
+
+            public override object DoBody(string segmentFileName)
+            {
+                SegmentInfos infos = new SegmentInfos();
+                infos.Read(directory, segmentFileName);
+                return enclosingInstance.DoReopen(infos, false, openReadOnly);
+            }
+        }
+
+        private DirectoryReader DoReopen(SegmentInfos infos, bool doClone, bool openReadOnly)
+        {
+            lock (this)
+            {
+                DirectoryReader reader;
+                if (openReadOnly)
+                {
+                    reader = new ReadOnlyDirectoryReader(directory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
+                }
+                else
+                {
+                    reader = new DirectoryReader(directory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
+                }
+                reader.SetDisableFakeNorms(GetDisableFakeNorms());
+                return reader;
+            }
+        }
+
+
 		
 		/// <summary>Version number when this IndexReader was opened. </summary>
 		public override long GetVersion()
@@ -632,19 +665,18 @@ namespace Lucene.Net.Index
 		
 		public override int NumDocs()
 		{
-			lock (this)
+			// Don't call ensureOpen() here (it could affect performance)
+            // NOTE: multiple threads may wind up init'ing
+            // numDocs... but that's harmless
+			if (numDocs == - 1)
 			{
-				// Don't call ensureOpen() here (it could affect performance)
-				if (numDocs == - 1)
-				{
-					// check cache
-					int n = 0; // cache miss--recompute
-					for (int i = 0; i < subReaders.Length; i++)
-						n += subReaders[i].NumDocs(); // sum from readers
-					numDocs = n;
-				}
-				return numDocs;
+				// check cache
+				int n = 0; // cache miss--recompute
+				for (int i = 0; i < subReaders.Length; i++)
+					n += subReaders[i].NumDocs(); // sum from readers
+				numDocs = n;
 			}
+			return numDocs;
 		}
 		
 		public override int MaxDoc()
@@ -871,9 +903,10 @@ namespace Lucene.Net.Index
 					}
 					this.writeLock = writeLock;
 					
-					// we have to check whether index has changed since this reader was opened.
-					// if so, this reader is no longer valid for deletion
-					if (SegmentInfos.ReadCurrentVersion(directory) > segmentInfos.GetVersion())
+                    // we have to check whether index has changed since this reader was opened.
+                    // if so, this reader is no longer valid for
+                    // deletion
+                    if (SegmentInfos.ReadCurrentVersion(directory) > maxIndexVersion)
 					{
 						stale = true;
 						this.writeLock.Release();
@@ -906,8 +939,10 @@ namespace Lucene.Net.Index
 				segmentInfos.SetUserData(commitUserData);
 				// Default deleter (for backwards compatibility) is
 				// KeepOnlyLastCommitDeleter:
-				IndexFileDeleter deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null);
-				
+				IndexFileDeleter deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, null, null, synced);
+
+                segmentInfos.UpdateGeneration(deleter.GetLastSegmentInfos());
+
 				// Checkpoint the state we are about to change, in
 				// case we have to roll back:
 				StartCommit();
@@ -956,6 +991,8 @@ namespace Lucene.Net.Index
 				// files due to this commit:
 				deleter.Checkpoint(segmentInfos, true);
 				deleter.Close();
+
+                maxIndexVersion = segmentInfos.GetVersion();
 				
 				if (writeLock != null)
 				{
@@ -969,7 +1006,6 @@ namespace Lucene.Net.Index
 		internal virtual void  StartCommit()
 		{
 			rollbackHasChanges = hasChanges;
-			rollbackSegmentInfos = (SegmentInfos) segmentInfos.Clone();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				subReaders[i].StartCommit();
@@ -978,20 +1014,11 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  RollbackCommit()
 		{
-			hasChanges = rollbackHasChanges;
-			for (int i = 0; i < segmentInfos.Count; i++)
-			{
-				// Rollback each segmentInfo.  Because the
-				// SegmentReader holds a reference to the
-				// SegmentInfo we can't [easily] just replace
-				// segmentInfos, so we reset it in place instead:
-				segmentInfos.Info(i).Reset(rollbackSegmentInfos.Info(i));
-			}
-			rollbackSegmentInfos = null;
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				subReaders[i].RollbackCommit();
-			}
+            hasChanges = rollbackHasChanges;
+            for (int i = 0; i < subReaders.Length; i++)
+            {
+                subReaders[i].RollbackCommit();
+            }
 		}
 
         public override System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
@@ -1033,6 +1060,12 @@ namespace Lucene.Net.Index
 							ioe = e;
 					}
 				}
+
+                // NOTE: only needed in case someone had asked for
+                // FieldCache for top-level reader (which is generally
+                // not a good idea):
+                Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
+
 				// throw the first exception
 				if (ioe != null)
 					throw ioe;
@@ -1163,7 +1196,11 @@ namespace Lucene.Net.Index
 				generation = infos.GetGeneration();
 				isOptimized = infos.Count == 1 && !infos.Info(0).HasDeletions();
 			}
-			
+            public override string ToString()
+            {
+                return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
+            }
+
 			public override bool IsOptimized()
 			{
 				return isOptimized;
@@ -1203,6 +1240,11 @@ namespace Lucene.Net.Index
 			{
 				return userData;
 			}
+
+            public override void Delete()
+            {
+                throw new System.NotSupportedException("This IndexCommit does not support deletions");
+            }
 		}
 		
 		internal class MultiTermEnum:TermEnum

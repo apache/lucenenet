@@ -185,7 +185,8 @@ namespace Lucene.Net.Search
 			{
 				throw new System.ArgumentException("nDocs must be > 0");
 			}
-			
+            nDocs = Math.Min(nDocs, reader.MaxDoc());
+
 			TopScoreDocCollector collector = TopScoreDocCollector.create(nDocs, !weight.ScoresDocsOutOfOrder());
 			Search(weight, filter, collector);
 			return collector.TopDocs();
@@ -209,7 +210,8 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
 		{
-			
+            nDocs = Math.Min(nDocs, reader.MaxDoc());
+
 			SortField[] fields = sort.fields;
 			bool legacy = false;
 			for (int i = 0; i < fields.Length; i++)
