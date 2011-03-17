@@ -22,6 +22,7 @@ using NUnit.Framework;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
 using Document = Lucene.Net.Documents.Document;
+using TermVector = Lucene.Net.Documents.Field.TermVector;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
@@ -34,8 +35,18 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestIndexWriterExceptions:LuceneTestCase
 	{
-		
+        Random random;
 		private const bool DEBUG = false;
+
+        static TermVector[] tvSettings = new TermVector[] { 
+            TermVector.NO, TermVector.YES, TermVector.WITH_OFFSETS, 
+            TermVector.WITH_POSITIONS, TermVector.WITH_POSITIONS_OFFSETS 
+        };
+
+        private TermVector RandomTVSetting(Random random)
+        {
+            return tvSettings[random.Next(tvSettings.Length)];
+        }
 		
 		private class IndexerThread:SupportClass.ThreadClass
 		{
@@ -69,18 +80,18 @@ namespace Lucene.Net.Index
 			{
 				
 				Document doc = new Document();
-				
-				doc.Add(new Field("content1", "aaa bbb ccc ddd", Field.Store.YES, Field.Index.ANALYZED));
-				doc.Add(new Field("content6", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.Add(new Field("content2", "aaa bbb ccc ddd", Field.Store.YES, Field.Index.NOT_ANALYZED));
+
+                doc.Add(new Field("content1", "aaa bbb ccc ddd", Field.Store.YES, Field.Index.ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
+                doc.Add(new Field("content6", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
+                doc.Add(new Field("content2", "aaa bbb ccc ddd", Field.Store.YES, Field.Index.NOT_ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
 				doc.Add(new Field("content3", "aaa bbb ccc ddd", Field.Store.YES, Field.Index.NO));
-				
-				doc.Add(new Field("content4", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.ANALYZED));
-				doc.Add(new Field("content5", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.NOT_ANALYZED));
-				
-				doc.Add(new Field("content7", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.NOT_ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				
-				Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED);
+
+                doc.Add(new Field("content4", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
+                doc.Add(new Field("content5", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.NOT_ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
+
+                doc.Add(new Field("content7", "aaa bbb ccc ddd", Field.Store.NO, Field.Index.NOT_ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random)));
+
+                Field idField = new Field("id", "", Field.Store.YES, Field.Index.NOT_ANALYZED, enclosingInstance.RandomTVSetting(enclosingInstance.random));
 				doc.Add(idField);
 				
 				long stopTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 3000;
@@ -99,7 +110,7 @@ namespace Lucene.Net.Index
 					{
 						if (Lucene.Net.Index.TestIndexWriterExceptions.DEBUG)
 						{
-							System.Console.Out.WriteLine("EXC: ");
+							System.Console.Out.WriteLine(SupportClass.ThreadClass.CurrentThread().Name + ": EXC: ");
 							System.Console.Out.WriteLine(re.StackTrace);
 						}
 						try
@@ -185,7 +196,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestRandomExceptions()
 		{
 			MockRAMDirectory dir = new MockRAMDirectory();
-			
+            random = new Random((int)(DateTime.Now.Ticks&0x7fffffff));
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
 			//writer.setMaxBufferedDocs(10);
@@ -233,7 +244,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestRandomExceptionsThreads()
 		{
-			
+            random = new Random((int)(DateTime.Now.Ticks & 0x7fffffff));
 			MockRAMDirectory dir = new MockRAMDirectory();
 			MockIndexWriter writer = new MockIndexWriter(this, dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
