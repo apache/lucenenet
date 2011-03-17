@@ -1921,7 +1921,7 @@ namespace Lucene.Net.Index
                             // Remove upwards of 32 blocks (each block is 1K)
                             for (int i = 0; i < 32; ++i)
                             {
-                                perDocAllocator.freeByteBlocks.Remove(perDocAllocator.freeByteBlocks.Count - 1);
+                                perDocAllocator.freeByteBlocks.RemoveAt(perDocAllocator.freeByteBlocks.Count - 1);
                                 numBytesAlloc -= PER_DOC_BLOCK_SIZE;
                                 if (perDocAllocator.freeByteBlocks.Count == 0)
                                 {
