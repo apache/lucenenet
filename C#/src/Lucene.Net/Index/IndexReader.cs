@@ -1503,7 +1503,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        protected internal void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
