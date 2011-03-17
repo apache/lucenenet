@@ -426,10 +426,8 @@ namespace Lucene.Net.Index
 					lock (Enclosing_Instance)
 					{
 						System.Threading.Monitor.PulseAll(Enclosing_Instance);
-						System.Boolean tempBoolean;
-						tempBoolean = Enclosing_Instance.mergeThreads.Contains(this);
 						Enclosing_Instance.mergeThreads.Remove(this);
-						bool removed = tempBoolean;
+                        bool removed = !Enclosing_Instance.mergeThreads.Contains(this);
 						System.Diagnostics.Debug.Assert(removed);
 					}
 				}

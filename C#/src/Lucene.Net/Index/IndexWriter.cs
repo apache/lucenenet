@@ -639,7 +639,7 @@ namespace Lucene.Net.Index
                             enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
 						}
 
-                        readerMap.Remove(iter.Current); // iter.remove(); DIGY
+                        readerMap.Remove(ent.Key); 
 						
 						// NOTE: it is allowed that this decRef does not
 						// actually close the SR; this can happen when a
