@@ -98,7 +98,7 @@ namespace Lucene.Net.Store
             preventDoubleWrite = value;
         }
 
-        public void Sync(String name)
+        public override void Sync(String name)
         {
             lock (this)
             {
@@ -124,7 +124,8 @@ namespace Lucene.Net.Store
                 int count = 0;
                 while (it.MoveNext())
                 {
-                    String name = (String)it.Current;
+
+                    string name = (string)((System.Collections.DictionaryEntry)it.Current).Key;
                     RAMFile file = (RAMFile)fileMap[name];
                     if (count % 3 == 0)
                     {
