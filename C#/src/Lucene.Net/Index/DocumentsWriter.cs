@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
             /**
             * Allocate bytes used from shared pool.
             */
-            protected byte[] newBuffer(int size)
+            public override byte[] NewBuffer(int size)
             {
                 System.Diagnostics.Debug.Assert(size == PER_DOC_BLOCK_SIZE);
                 return enclosingInstance.perDocAllocator.GetByteBlock(false);
