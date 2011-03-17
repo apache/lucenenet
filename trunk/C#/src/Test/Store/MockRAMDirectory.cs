@@ -265,7 +265,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public IndexOutput CreateOutput(String name)
+        public override IndexOutput CreateOutput(String name)
         {
             lock (this)
             {
@@ -300,7 +300,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public IndexInput OpenInput(String name)
+        public override IndexInput OpenInput(String name)
         {
             lock (this)
             {
@@ -355,7 +355,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public void Close()
+        public override void Close()
         {
             lock (this)
             {
