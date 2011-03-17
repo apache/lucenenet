@@ -2097,5 +2097,27 @@ namespace Lucene.Net.Index
 			r2.Close();
 			dir.Close();
 		}
+
+        // LUCENE-2046
+        [Test]
+        public void TestPrepareCommitIsCurrent()
+        {
+            Directory dir = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+            Document doc = new Document();
+            writer.AddDocument(doc);
+            IndexReader r = IndexReader.Open(dir, true);
+            Assert.IsTrue(r.IsCurrent());
+            writer.AddDocument(doc);
+            writer.PrepareCommit();
+            Assert.IsTrue(r.IsCurrent());
+            IndexReader r2 = r.Reopen();
+            Assert.IsTrue(r == r2);
+            writer.Commit();
+            Assert.IsFalse(r.IsCurrent());
+            writer.Close();
+            r.Close();
+            dir.Close();
+        }
 	}
 }
