@@ -5863,9 +5863,8 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < trace.FrameCount; i++)
                 {
                     System.Diagnostics.StackFrame sf = trace.GetFrame(i);
-                    string ss1 = sf.GetFileName();
-                    string ss2 = sf.GetMethod().Name;
-                    if ("Lucene.Net.Index.SegmentMerger".Equals(sf.GetType().Name) && "MergeTerms".Equals(sf.GetMethod().Name) && !didFail1)
+                    string className = sf.GetMethod().DeclaringType.Namespace + "." + sf.GetMethod().DeclaringType.Name;
+                    if ("Lucene.Net.Index.SegmentMerger".Equals(className) && "MergeTerms".Equals(sf.GetMethod().Name) && !didFail1)
                     {
                         didFail1 = true;
                         throw new System.IO.IOException("fake disk full during mergeTerms");
