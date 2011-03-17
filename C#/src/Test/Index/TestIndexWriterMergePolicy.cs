@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
 		
 		private void  CheckInvariants(IndexWriter writer)
 		{
-			_TestUtil.SyncConcurrentMerges(writer);
+            writer.WaitForMerges();
 			int maxBufferedDocs = writer.GetMaxBufferedDocs();
 			int mergeFactor = writer.GetMergeFactor();
 			int maxMergeDocs = writer.GetMaxMergeDocs();
@@ -276,28 +276,6 @@ namespace Lucene.Net.Index
 			{
 				Assert.IsTrue(numSegments < mergeFactor);
 			}
-			
-			System.String[] files = writer.GetDirectory().ListAll();
-			int segmentCfsCount = 0;
-			for (int i = 0; i < files.Length; i++)
-			{
-				if (files[i].EndsWith(".cfs"))
-				{
-					segmentCfsCount++;
-				}
-			}
-			Assert.AreEqual(segmentCount, segmentCfsCount);
 		}
-		
-		/*
-		private void printSegmentDocCounts(IndexWriter writer) {
-		int segmentCount = writer.getSegmentCount();
-		System.out.println("" + segmentCount + " segments total");
-		for (int i = 0; i < segmentCount; i++) {
-		System.out.println("  segment " + i + " has " + writer.getDocCount(i)
-		+ " docs");
-		}
-		}
-		*/
 	}
 }

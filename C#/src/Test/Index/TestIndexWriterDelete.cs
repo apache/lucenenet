@@ -699,8 +699,11 @@ namespace Lucene.Net.Index
 						
 						// If the close() succeeded, make sure there are
 						// no unreferenced files.
-						if (success)
-							TestIndexWriter.AssertNoUnreferencedFiles(dir, "after writer.close");
+                        if (success)
+                        {
+                            Lucene.Net.Util._TestUtil.CheckIndex(dir);
+                            TestIndexWriter.AssertNoUnreferencedFiles(dir, "after writer.close");
+                        }
 						
 						// Finally, verify index is not corrupt, and, if
 						// we succeeded, we see all docs changed, and if

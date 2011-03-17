@@ -33,8 +33,8 @@ namespace Lucene.Net.Store
 		
 		private const long serialVersionUID = 1L;
 		
-		internal System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
-		internal long sizeInBytes = 0;
+		internal protected System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
+		internal protected long sizeInBytes = 0;
 		
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
