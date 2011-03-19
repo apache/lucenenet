@@ -32,6 +32,7 @@ management in path.pm.
 use strict;
 use warnings;
 use Carp;
+use Switch;
 use Dotiac::DTL;
 use Dotiac::DTL::Addon::markup;
 use ASF::Util qw( read_text_file );
@@ -97,7 +98,7 @@ sub sitemap {
 
 
 sub _tagline {
-	$file = "faq.mdtext"; # pop(split m!/!, shift);
+	my $file = "faq.mdtext"; # pop(split m!/!, shift);
      
 	switch ($file) {
 		case "code.mdtext"	{ return "<h1>Grab the Code</h1><h2>Binaries, Source, Archives, whatever you need...</h2>" }
