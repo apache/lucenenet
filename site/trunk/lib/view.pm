@@ -36,6 +36,7 @@ use Switch;
 use Dotiac::DTL;
 use Dotiac::DTL::Addon::markup;
 use ASF::Util qw( read_text_file );
+use File::Basename;
 
 BEGIN { push @Dotiac::DTL::TEMPLATE_DIRS, "templates"; }
 
@@ -98,7 +99,7 @@ sub sitemap {
 
 
 sub _tagline {
-	my $file = "roadmap.mdtext"; # pop(split m!/!, shift);
+	my $file = basename($_); #"roadmap.mdtext"; # pop(split m!/!, shift);
      
 	switch ($file) {
 		case "code.mdtext"	{ return "<h1>Grab the Code</h1><h2>Binaries, Source, Archives, whatever you need...</h2>" }
