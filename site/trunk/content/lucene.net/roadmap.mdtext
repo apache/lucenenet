@@ -1,5 +1,5 @@
 Lucene.Net Roadmap
-========================
+-------------------
 
 There will be at least four main areas of work to address in the
 upcoming months:
@@ -10,7 +10,6 @@ upcoming months:
 - The Future: New API and Lucene 3.X
 
 We will be working on these areas simultaneously.
-
 
 Project Maintenance
 ---------------------
