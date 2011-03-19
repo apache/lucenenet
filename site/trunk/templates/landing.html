@@ -49,10 +49,10 @@
 
 				<div class="column" style="width:325px;height:200px">
 					<ul class="first calltoaction">
-						<li><a href="#panel1">Grab the Code</a></li>
-						<li><a href="#panel2">Join the Conversation</a></li>
-						<li><a href="#panel3">Check out our Roadmap</a></li>
-						<li><a href="#panel4">Frequently Asked Questions</a></li>
+						<li><a data="#panel1" href="code.html">Grab the Code</a></li>
+						<li><a data="#panel2" href="conversation.html">Join the Conversation</a></li>
+						<li><a data="#panel3" href="roadmap.html" >Check out our Roadmap</a></li>
+						<li><a data="#panel4" href="faq.html">Frequently Asked Questions</a></li>
 					</ul>
 				</div>
 				
@@ -155,7 +155,7 @@
 				$('.calltoactionpanel').hide();
 				
 				//show panel
-				var panel = $(this).attr("href");
+				var panel = $(this).attr("data");
 				$(panel).show();
 			});
 			
