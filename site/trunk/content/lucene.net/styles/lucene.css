@@ -41,3 +41,6 @@
     border-radius: 3px;
     text-shadow: 1px 1px #fff3c2;
 }
+
+#content h2 { padding-top: 10px; margin-top: 10px }
+#content h3 { }
