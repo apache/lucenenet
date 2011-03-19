@@ -101,6 +101,7 @@ sub sitemap {
 sub _tagline {
     # This causes problems when updating via the website - becuase $_ is null, whatever page that is updated loses it's specfic tagline
 	# and gets the generic tagline.
+	# Updating this file regenerates all tag lines
     my $file = ""; 
 	if ($_) {        			
 	    $file = basename($_);
