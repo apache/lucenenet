@@ -99,8 +99,11 @@ sub sitemap {
 
 
 sub _tagline {
-	my $file = basename($_); #"roadmap.mdtext"; # pop(split m!/!, shift);
-     
+    my $file = ""; #for some reason when updating .mdtext files $_ is empty..
+	if ($_) { 
+	    $file = basename($_); #
+    }
+	
 	switch ($file) {
 		case "code.mdtext"	{ return "<h1>Grab the Code</h1><h2>Binaries, Source, Archives, whatever you need...</h2>" }
 		case "conversation.mdtext"	{ return "<h1>Join the Conversation</h1><h2>Tell us how we are doing and help guide our future</h2>" }
