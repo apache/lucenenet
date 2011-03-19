@@ -99,9 +99,11 @@ sub sitemap {
 
 
 sub _tagline {
-    my $file = ""; #for some reason when updating .mdtext files $_ is empty..
-	if ($_) { 
-	    $file = basename($_); #
+    # This causes problems when updating via the website - becuase $_ is null, whatever page that is updated loses it's specfic tagline
+	# and gets the generic tagline.
+    my $file = ""; 
+	if ($_) {        			
+	    $file = basename($_);
     }
 	
 	switch ($file) {
