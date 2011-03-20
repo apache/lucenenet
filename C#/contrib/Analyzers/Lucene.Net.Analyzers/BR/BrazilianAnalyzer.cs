@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.BR
          */
         public BrazilianAnalyzer(FileInfo stopwords)
         {
-            stoptable = WordlistLoader.GetWordSet(stopwords);
+            stoptable = WordlistLoader.GetWordtable(stopwords);
         }
 
         /**
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.BR
          */
         public void SetStemExclusionTable(FileInfo exclusionlist)
         {
-            excltable = WordlistLoader.GetWordSet(exclusionlist);
+            excltable = WordlistLoader.GetWordtable(exclusionlist);
         }
 
         /**
