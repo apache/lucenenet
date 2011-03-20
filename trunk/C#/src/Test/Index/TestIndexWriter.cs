@@ -2401,7 +2401,7 @@ namespace Lucene.Net.Index
                             break;
                         for (int i = 0; i < merge.segments_ForNUnit.Count; i++)
                             ; // {{}} assert merge.segments.Info(i).docCount < 20;
-                        writer.Merge(merge);
+                        writer.Merge_ForNUnit(merge);
                     }
                 }
             }
