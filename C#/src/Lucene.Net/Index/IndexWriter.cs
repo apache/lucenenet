@@ -5423,11 +5423,14 @@ namespace Lucene.Net.Index
 				throw new System.SystemException(null, t);
 		}
 		
+		public void Merge_ForNUnit(MergePolicy.OneMerge merge)
+        {
+            Merge(merge);
+        }
 		/// <summary> Merges the indicated segments, replacing them in the stack with a
 		/// single segment.
 		/// </summary>
-		
-		public /*internal*/ void  Merge(MergePolicy.OneMerge merge)
+		internal void  Merge(MergePolicy.OneMerge merge)
 		{
 			
 			bool success = false;
