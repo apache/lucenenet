@@ -328,6 +328,7 @@
     <Compile Include="Search\TestBooleanPrefixQuery.cs" />
     <Compile Include="Search\TestBooleanQuery.cs" />
     <Compile Include="Search\TestBooleanScorer.cs" />
+	<Compile Include="Search\TestCachingSpanFilter.cs" />
     <Compile Include="Search\TestCachingWrapperFilter.cs" />
     <Compile Include="Search\TestComplexExplanations.cs" />
     <Compile Include="Search\TestComplexExplanationsOfNonMatches.cs" />
