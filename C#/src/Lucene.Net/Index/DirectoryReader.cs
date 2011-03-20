@@ -568,15 +568,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                return (IndexReader)new AnonymousFindSegmentsFile(directory, openReadOnly, this).Run();
-                //DIGY
-                //return (IndexReader) new SegmentInfos.FindSegmentsFile(directory) {
-                //  protected Object doBody(String segmentFileName) throws CorruptIndexException, IOException {
-                //    SegmentInfos infos = new SegmentInfos();
-                //    infos.read(directory, segmentFileName);
-                //    return doReopen(infos, false, openReadOnly);
-                //  }
-                //}.run(commit);
+                return (IndexReader)new AnonymousFindSegmentsFile(directory, openReadOnly, this).Run(commit);
             }
         }
 
