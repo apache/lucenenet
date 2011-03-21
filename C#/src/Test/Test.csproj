@@ -202,6 +202,10 @@
     <Compile Include="Index\TestIndexReaderCloneNorms.cs" />
     <Compile Include="Index\TestIndexReaderReopen.cs" />
     <Compile Include="Index\TestIndexWriter.cs" />
+	<Compile Include="Index\TestSnapshotDeletionPolicy.cs" />
+	<Compile Include="Index\TestIsCurrent.cs" />
+	<Compile Include="Index\TestNewestSegment.cs" />
+	<Compile Include="Index\TestRollback.cs" />
     <Compile Include="Index\TestIndexWriterDelete.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -426,7 +430,6 @@
     <Compile Include="TestSearchForDuplicates.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestSnapshotDeletionPolicy.cs" />
     <Compile Include="TestSupportClass.cs" />
     <Compile Include="Util\ArrayUtilTest.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
