@@ -955,6 +955,7 @@ namespace Lucene.Net._SupportClass
 
 
         //-------------------------------------------
+        int ANYPORT = 38487;
         [Test]
         [Description("LUCENENET-100")]
         public void Test_Search_FieldDoc()
@@ -963,7 +964,7 @@ namespace Lucene.Net._SupportClass
             {
                 LUCENENET_100_CreateIndex();
 
-                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(38087));
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(ANYPORT));
 
                 Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
                 System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
@@ -977,9 +978,8 @@ namespace Lucene.Net._SupportClass
 
             //Wait Client to finish
             while (LUCENENET_100_testFinished == false) System.Threading.Thread.Sleep(10);
-
+                        
             if (LUCENENET_100_Exception != null) throw LUCENENET_100_Exception;
-
         }
 
         Lucene.Net.Store.RAMDirectory LUCENENET_100_Dir = new Lucene.Net.Store.RAMDirectory();
@@ -991,7 +991,7 @@ namespace Lucene.Net._SupportClass
         {
             try
             {
-                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:38087/Searcher");
+                Lucene.Net.Search.Searchable s = (Lucene.Net.Search.Searchable)Activator.GetObject(typeof(Lucene.Net.Search.Searchable), @"tcp://localhost:" + ANYPORT  + "/Searcher");
                 Lucene.Net.Search.MultiSearcher searcher = new Lucene.Net.Search.MultiSearcher(new Lucene.Net.Search.Searchable[] { s });
 
                 Lucene.Net.Search.Query q = new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("field1", "moon"));
