@@ -386,30 +386,6 @@ namespace Lucene.Net.Store
 					if (!tmpBool)
 						throw new LockReleaseFailedException("failed to delete " + path);
 				}
-                /* From Java 2.9.4 {{DIGY}}
-                      // LUCENE-2421: we don't care anymore if the file cannot be deleted
-                      // because it's held up by another process (e.g. AntiVirus). NativeFSLock
-                      // does not depend on the existence/absence of the lock file
-                      path.delete();
-                    } else {
-                      // if we don't hold the lock, and somebody still called release(), for
-                      // example as a result of calling IndexWriter.unlock(), we should attempt
-                      // to obtain the lock and release it. If the obtain fails, it means the
-                      // lock cannot be released, and we should throw a proper exception rather
-                      // than silently failing/not doing anything.
-                      boolean obtained = false;
-                      try {
-                        if (!(obtained = obtain())) {
-                          throw new LockReleaseFailedException(
-                              "Cannot forcefully unlock a NativeFSLock which is held by another indexer component: "
-                                  + path);
-                        }
-                      } finally {
-                        if (obtained) {
-                          release();
-                        }
-                      }
-                */
             }
 		}
 		
