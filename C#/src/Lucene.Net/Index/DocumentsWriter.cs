@@ -831,7 +831,6 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        //ICollection or IDictionary? DIGY
         internal System.Collections.ICollection GetFlushedFiles()
         {
             return flushState.flushedFiles;
