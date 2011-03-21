@@ -6037,7 +6037,6 @@ namespace Lucene.Net.Index
                 mergedDocCount = merge.info.docCount = merger.Merge(merge.mergeDocStores);
 
                 System.Diagnostics.Debug.Assert(mergedDocCount == totDocCount);
-                /////////////////////////////////////// start DIGY
 
                 if (merge.useCompoundFile)
                 {
@@ -6180,7 +6179,6 @@ namespace Lucene.Net.Index
                 System.Threading.Monitor.PulseAll(mergeScheduler); 
             }
 
-			///////////////////////////////////////////////////////// end DIGY
 			// Force a sync after commiting the merge.  Once this
 			// sync completes then all index files referenced by the
 			// current segmentInfos are on stable storage so if the
