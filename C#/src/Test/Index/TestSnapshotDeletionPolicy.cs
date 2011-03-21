@@ -37,7 +37,7 @@ using TestIndexWriter = Lucene.Net.Index.TestIndexWriter;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 using _TestUtil = Lucene.Net.Util._TestUtil;
 
-namespace Lucene.Net
+namespace Lucene.Net.Index
 {
 	
 	//
@@ -279,5 +279,22 @@ namespace Lucene.Net
 				input.Close();
 			}
 		}
+
+        [Test]
+        public void TestNoCommits()
+        {
+            // Tests that if there were no commits when snapshot() is called, then
+            // IllegalStateException is thrown rather than NPE.
+            SnapshotDeletionPolicy sdp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+            try
+            {
+                sdp.Snapshot();
+                Assert.Fail("expected exception not hit");
+            }
+            catch (System.SystemException ise)
+            {
+                // expected
+            }
+        }
 	}
 }
