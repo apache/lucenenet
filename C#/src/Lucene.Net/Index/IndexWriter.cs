@@ -6505,6 +6505,8 @@ namespace Lucene.Net.Index
 						
 						if (infoStream != null)
 							Message("startCommit index=" + SegString(segmentInfos) + " changeCount=" + changeCount);
+
+                        readerPool.Commit();
 						
 						// It's possible another flush (that did not close
                         // the open do stores) snuck in after the flush we
@@ -6527,8 +6529,6 @@ namespace Lucene.Net.Index
                                 changeCount++;
                             }
                         }
-						
-						toSync = (SegmentInfos) segmentInfos.Clone();
 						
 						if (commitUserData != null)
 							toSync.SetUserData(commitUserData);
