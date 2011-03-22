@@ -180,7 +180,7 @@ namespace Lucene.Net.Documents
 			Query query = new TermQuery(new Term("keyword", "test1"));
 			
 			// ensure that queries return expected results without DateFilter first
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			DoAssert(searcher.Doc(hits[0].doc), true);
@@ -256,7 +256,7 @@ namespace Lucene.Net.Documents
 			Query query = new TermQuery(new Term("keyword", "test"));
 			
 			// ensure that queries return expected results without DateFilter first
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			int result = 0;
 			for (int i = 0; i < 3; i++)

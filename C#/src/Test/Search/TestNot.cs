@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 			QueryParser parser = new QueryParser("field", new SimpleAnalyzer());
 			Query query = parser.Parse("a NOT b");
 			//System.out.println(query);
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 		}
 	}

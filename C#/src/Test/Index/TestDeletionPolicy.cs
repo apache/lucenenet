@@ -707,7 +707,7 @@ namespace Lucene.Net.Index
 					reader.DeleteDocument(3 * i + 1);
 					reader.SetNorm(4 * i + 1, "content", 2.0F);
 					IndexSearcher searcher = new IndexSearcher(reader);
-					ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+					ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 					Assert.AreEqual(16 * (1 + i), hits.Length);
 					// this is a commit when autoCommit=false:
 					reader.Close();
@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
 					Assert.AreEqual(2 * (N + 2) - 1, policy.numOnCommit);
 				
 				IndexSearcher searcher2 = new IndexSearcher(dir);
-				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(176, hits2.Length);
 				
 				// Simplistic check: just verify only the past N segments_N's still
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
 						if (!autoCommit)
 						{
 							searcher2 = new IndexSearcher(reader);
-							hits2 = searcher2.Search(query, null, 1000).scoreDocs;
+							hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 							if (i > 1)
 							{
 								if (i % 2 == 0)
@@ -827,7 +827,7 @@ namespace Lucene.Net.Index
 					reader.DeleteDocument(3);
 					reader.SetNorm(5, "content", 2.0F);
 					IndexSearcher searcher = new IndexSearcher(reader);
-					ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+					ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 					Assert.AreEqual(16, hits.Length);
 					// this is a commit when autoCommit=false:
 					reader.Close();
@@ -844,7 +844,7 @@ namespace Lucene.Net.Index
 					Assert.AreEqual(3 * (N + 1), policy.numOnCommit);
 				
 				IndexSearcher searcher2 = new IndexSearcher(dir);
-				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(0, hits2.Length);
 				
 				// Simplistic check: just verify only the past N segments_N's still
@@ -866,7 +866,7 @@ namespace Lucene.Net.Index
 						if (!autoCommit)
 						{
 							searcher2 = new IndexSearcher(reader);
-							hits2 = searcher2.Search(query, null, 1000).scoreDocs;
+							hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 							Assert.AreEqual(expectedCount, hits2.Length);
 							searcher2.Close();
 							if (expectedCount == 0)

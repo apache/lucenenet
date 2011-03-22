@@ -1160,7 +1160,7 @@ namespace Lucene.Net.Index
 					ScoreDoc[] hits = null;
 					try
 					{
-						hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+						hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
 					}
 					catch (System.IO.IOException e)
 					{

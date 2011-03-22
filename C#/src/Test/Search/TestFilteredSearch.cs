@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 
 
                 IndexSearcher indexSearcher = new IndexSearcher(directory);
-                ScoreDoc[] hits = indexSearcher.Search(booleanQuery, filter, 1000).scoreDocs;
+                ScoreDoc[] hits = indexSearcher.Search(booleanQuery, filter, 1000).ScoreDocs;
                 Assert.AreEqual(1, hits.Length, "Number of matched documents");
 
             }

@@ -180,15 +180,15 @@ namespace Lucene.Net.Search.Payloads
 			BoostingTermQuery query = new BoostingTermQuery(new Term("field", "seventy"));
 			TopDocs hits = searcher.Search(query, null, 100);
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-			Assert.IsTrue(hits.totalHits == 100, "hits Size: " + hits.totalHits + " is not: " + 100);
+			Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
 			
 			//they should all have the exact same score, because they all contain seventy once, and we set
 			//all the other similarity factors to be 1
 			
 			Assert.IsTrue(hits.GetMaxScore() == 1, hits.GetMaxScore() + " does not equal: " + 1);
-			for (int i = 0; i < hits.scoreDocs.Length; i++)
+			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
-				ScoreDoc doc = hits.scoreDocs[i];
+				ScoreDoc doc = hits.ScoreDocs[i];
 				Assert.IsTrue(doc.score == 1, doc.score + " does not equal: " + 1);
 			}
 			CheckHits.CheckExplanations(query, PayloadHelper.FIELD, searcher, true);
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Payloads
 			BoostingTermQuery query = new BoostingTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"));
 			TopDocs hits = searcher.Search(query, null, 100);
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-			Assert.IsTrue(hits.totalHits == 100, "hits Size: " + hits.totalHits + " is not: " + 100);
+			Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
 			
 			//they should all have the exact same score, because they all contain seventy once, and we set
 			//all the other similarity factors to be 1
@@ -218,9 +218,9 @@ namespace Lucene.Net.Search.Payloads
 			//there should be exactly 10 items that score a 3, all the rest should score a 2
 			//The 10 items are: 70 + i*100 where i in [0-9]
 			int numTens = 0;
-			for (int i = 0; i < hits.scoreDocs.Length; i++)
+			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
-				ScoreDoc doc = hits.scoreDocs[i];
+				ScoreDoc doc = hits.ScoreDocs[i];
 				if (doc.doc % 10 == 0)
 				{
 					numTens++;
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Payloads
 			BoostingTermQuery query = new BoostingTermQuery(new Term(PayloadHelper.FIELD, "junk"));
 			TopDocs hits = searcher.Search(query, null, 100);
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-			Assert.IsTrue(hits.totalHits == 0, "hits Size: " + hits.totalHits + " is not: " + 0);
+			Assert.IsTrue(hits.TotalHits == 0, "hits Size: " + hits.TotalHits + " is not: " + 0);
 		}
 		
 		[Test]
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search.Payloads
 			query.Add(c2);
 			TopDocs hits = searcher.Search(query, null, 100);
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-			Assert.IsTrue(hits.totalHits == 1, "hits Size: " + hits.totalHits + " is not: " + 1);
+			Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
 			int[] results = new int[1];
 			results[0] = 0; //hits.scoreDocs[0].doc;
 			CheckHits.CheckHitCollector(query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);

@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 		private void  MatchHits(Searcher searcher, Sort sort)
 		{
 			// make a query without sorting first
-			ScoreDoc[] hitsByRank = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hitsByRank = searcher.Search(query, null, 1000).ScoreDocs;
 			CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
 			System.Collections.IDictionary resultMap = new System.Collections.SortedList();
 			// store hits in TreeMap - TreeMap does not allow duplicates; existing entries are silently overwritten
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 			}
 			
 			// now make a query using the sort criteria
-			ScoreDoc[] resultSort = searcher.Search(query, null, 1000, sort).scoreDocs;
+			ScoreDoc[] resultSort = searcher.Search(query, null, 1000, sort).ScoreDocs;
 			CheckHits(resultSort, "Sort by custom criteria: "); // check for duplicates
 			
 			// besides the sorting both sets of hits must be identical
