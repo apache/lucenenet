@@ -314,14 +314,14 @@ namespace Lucene.Net.Store
 				dir.tweakBufferSizes();
 				
 				IndexSearcher searcher = new IndexSearcher(reader);
-				ScoreDoc[] hits = searcher.Search(new TermQuery(bbb), null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(new TermQuery(bbb), null, 1000).ScoreDocs;
 				dir.tweakBufferSizes();
 				Assert.AreEqual(35, hits.Length);
 				dir.tweakBufferSizes();
-				hits = searcher.Search(new TermQuery(new Term("id", "33")), null, 1000).scoreDocs;
+				hits = searcher.Search(new TermQuery(new Term("id", "33")), null, 1000).ScoreDocs;
 				dir.tweakBufferSizes();
 				Assert.AreEqual(1, hits.Length);
-				hits = searcher.Search(new TermQuery(aaa), null, 1000).scoreDocs;
+				hits = searcher.Search(new TermQuery(aaa), null, 1000).ScoreDocs;
 				dir.tweakBufferSizes();
 				Assert.AreEqual(35, hits.Length);
 				searcher.Close();

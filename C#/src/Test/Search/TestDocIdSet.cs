@@ -235,12 +235,12 @@ namespace Lucene.Net.Search
 			
 			// First verify the document is searchable.
 			IndexSearcher searcher = new IndexSearcher(dir, true);
-			Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).totalHits);
+			Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 			
 			// Now search w/ a Filter which returns a null DocIdSet
 			Filter f = new AnonymousClassFilter(this);
 			
-			Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).totalHits);
+			Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
 			searcher.Close();
 		}
 	}

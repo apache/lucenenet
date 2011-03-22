@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 			Query query = new TermQuery(new Term("field", "seventy"));
 			try
 			{
-				ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(100, hits.Length);
 				
 				for (int i = 0; i < hits.Length; i++)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 			Query query = new TermQuery(new Term("field", "zero"));
 			try
 			{
-				ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(1, hits.Length);
 				
 				for (int i = 0; i < hits.Length; i++)
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
 			Query query = new TermQuery(new Term("field", "fifty"));
 			try
 			{
-				ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(100, hits.Length);
 				
 				for (int i = 0; i < hits.Length; i++)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search
 					//System.out.println("--------");
 				}
 				Query query = new TermQuery(new Term("field", "chocolate"));
-				ScoreDoc[] hits = knownSearcher.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits = knownSearcher.Search(query, null, 1000).ScoreDocs;
 				//doc 3 should be the first hit b/c it is the shortest match
 				Assert.IsTrue(hits.Length == 3);
 				float score = hits[0].score;
@@ -407,7 +407,7 @@ namespace Lucene.Net.Search
 			searcher = new IndexSearcher(directory);
 			
 			Query query = new TermQuery(new Term("field", "hundred"));
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(10, hits.Length);
 			for (int i = 0; i < hits.Length; i++)
 			{
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search
 			searcher = new IndexSearcher(directory);
 			
 			Query query = new TermQuery(new Term("field", "one"));
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			TermFreqVector[] vector = searcher.reader_ForNUnit.GetTermFreqVectors(hits[0].doc);

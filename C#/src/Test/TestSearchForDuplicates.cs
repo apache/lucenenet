@@ -113,7 +113,7 @@ namespace Lucene.Net
 			Query query = parser.Parse(HIGH_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
-			ScoreDoc[] hits = searcher.Search(query, null, MAX_DOCS).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, MAX_DOCS).ScoreDocs;
 			PrintHits(out_Renamed, hits, searcher);
 			CheckHits(hits, MAX_DOCS, searcher);
 			
@@ -128,7 +128,7 @@ namespace Lucene.Net
 			query = parser.Parse(HIGH_PRIORITY + " OR " + MED_PRIORITY);
 			out_Renamed.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
 			
-			hits = searcher.Search(query, null, MAX_DOCS).scoreDocs;
+			hits = searcher.Search(query, null, MAX_DOCS).ScoreDocs;
 			PrintHits(out_Renamed, hits, searcher);
 			CheckHits(hits, MAX_DOCS, searcher);
 			

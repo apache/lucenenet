@@ -238,8 +238,8 @@ namespace Lucene.Net.Index
 		
 		private void  QueryTest(Query query)
 		{
-			ScoreDoc[] parallelHits = parallel.Search(query, null, 1000).scoreDocs;
-			ScoreDoc[] singleHits = single.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] parallelHits = parallel.Search(query, null, 1000).ScoreDocs;
+			ScoreDoc[] singleHits = single.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(parallelHits.Length, singleHits.Length);
 			for (int i = 0; i < parallelHits.Length; i++)
 			{

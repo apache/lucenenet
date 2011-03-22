@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 		private int Search(Query q)
 		{
 			QueryUtils.Check(q, searcher);
-			return searcher.Search(q, null, 1000).totalHits;
+			return searcher.Search(q, null, 1000).TotalHits;
 		}
 		
 		[Test]
