@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 					
 					searcher.Search(new MatchAllDocsQuery(), tdc);
 					
-					ScoreDoc[] sd = tdc.TopDocs().scoreDocs;
+					ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 					Assert.AreEqual(3, sd.Length);
 					for (int j = 0; j < sd.Length; j++)
 					{

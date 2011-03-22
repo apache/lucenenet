@@ -30,24 +30,46 @@ namespace Lucene.Net.Search
 		/// <summary>The total number of hits for the query.</summary>
 		/// <seealso cref="Hits.Length()">
 		/// </seealso>
+        [Obsolete("For backward compatibility. Use TotalHits instead")]
 		public int totalHits;
 		/// <summary>The top hits for the query. </summary>
+        [Obsolete("For backward compatibility. Use ScoreDocs instead")]
 		public ScoreDoc[] scoreDocs;
 		/// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
+        [Obsolete("For backward compatibility. Use MaxScore instead")]
 		private float maxScore;
-		
+
+        public int TotalHits
+        {
+            get { return totalHits; }
+            set { totalHits = value; }
+        }
+
+        public ScoreDoc[] ScoreDocs
+        {
+            get { return scoreDocs; }
+            set { scoreDocs = value; }
+        }
+
+        public float MaxScore
+        {
+            get { return maxScore; }
+            set { maxScore = value; }
+        }
+
+
 		/// <summary>Returns the maximum score value encountered. Note that in case
 		/// scores are not tracked, this returns {@link Float#NaN}.
 		/// </summary>
 		public virtual float GetMaxScore()
 		{
-			return maxScore;
+			return MaxScore;
 		}
 		
 		/// <summary>Sets the maximum score value encountered. </summary>
 		public virtual void  SetMaxScore(float maxScore)
 		{
-			this.maxScore = maxScore;
+			this.MaxScore = maxScore;
 		}
 		
 		/// <summary>Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
@@ -58,9 +80,9 @@ namespace Lucene.Net.Search
 		/// <summary></summary>
 		public TopDocs(int totalHits, ScoreDoc[] scoreDocs, float maxScore)
 		{
-			this.totalHits = totalHits;
-			this.scoreDocs = scoreDocs;
-			this.maxScore = maxScore;
+			this.TotalHits = totalHits;
+			this.ScoreDocs = scoreDocs;
+			this.MaxScore = maxScore;
 		}
 	}
 }

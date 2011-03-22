@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 			
 			IndexSearcher searcher = new IndexSearcher(dir, true);
 			TopDocs hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.totalHits);
+			Assert.AreEqual(1, hits.TotalHits);
 			
 			// should not throw exception with complex primitive query
 			BooleanQuery booleanQuery = new BooleanQuery();
@@ -64,14 +64,14 @@ namespace Lucene.Net.Search
 			qwf = new QueryWrapperFilter(termQuery);
 			
 			hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.totalHits);
+			Assert.AreEqual(1, hits.TotalHits);
 			
 			// should not throw exception with non primitive Query (doesn't implement
 			// Query#createWeight)
 			qwf = new QueryWrapperFilter(new FuzzyQuery(new Term("field", "valu")));
 			
 			hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
-			Assert.AreEqual(1, hits.totalHits);
+			Assert.AreEqual(1, hits.TotalHits);
 		}
 	}
 }

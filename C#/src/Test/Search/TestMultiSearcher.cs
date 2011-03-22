@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
 			// creating the multiSearcher
 			Searcher mSearcher = GetMultiSearcherInstance(searchers);
 			// performing the search
-			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = mSearcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits.Length);
 			
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 			// creating the mulitSearcher
 			MultiSearcher mSearcher2 = GetMultiSearcherInstance(searchers2);
 			// performing the same search
-			ScoreDoc[] hits2 = mSearcher2.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits2 = mSearcher2.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(4, hits2.Length);
 			
@@ -198,12 +198,12 @@ namespace Lucene.Net.Search
 			
 			// test the subSearcher() method:
 			Query subSearcherQuery = parser.Parse("id:doc1");
-			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).scoreDocs;
+			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits2.Length);
 			Assert.AreEqual(0, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[0]
 			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[1].doc)); // hit from searchers2[1]
 			subSearcherQuery = parser.Parse("id:doc2");
-			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).scoreDocs;
+			hits2 = mSearcher2.Search(subSearcherQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits2.Length);
 			Assert.AreEqual(1, mSearcher2.SubSearcher(hits2[0].doc)); // hit from searchers2[1]
 			mSearcher2.Close();
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search
 			// creating the mulitSearcher
 			Searcher mSearcher3 = GetMultiSearcherInstance(searchers3);
 			// performing the same search
-			ScoreDoc[] hits3 = mSearcher3.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits3 = mSearcher3.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(3, hits3.Length);
 			
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 			
 			MultiSearcher searcher = GetMultiSearcherInstance(new Searcher[]{indexSearcher1, indexSearcher2});
 			Assert.IsTrue(searcher != null, "searcher is null and it shouldn't be");
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 			Assert.IsTrue(hits.Length == 2, hits.Length + " does not equal: " + 2);
 			Document document = searcher.Doc(hits[0].doc);
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search
 			indexSearcher1 = new IndexSearcher(ramDirectory1);
 			indexSearcher1.SetDefaultFieldSortScoring(true, true);
 			
-			hits = indexSearcher1.Search(query, null, 1000).scoreDocs;
+			hits = indexSearcher1.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(2, hits.Length, message);
 			
@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
 			
 			Searcher searcher = GetMultiSearcherInstance(new Searcher[]{indexSearcher1, indexSearcher2});
 			
-			hits = searcher.Search(query, null, 1000).scoreDocs;
+			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(2, hits.Length, message);
 			
@@ -400,7 +400,7 @@ namespace Lucene.Net.Search
 			
 			
 			// Adding a Sort.RELEVANCE object should not change anything
-			hits = searcher.Search(query, null, 1000, Sort.RELEVANCE).scoreDocs;
+			hits = searcher.Search(query, null, 1000, Sort.RELEVANCE).ScoreDocs;
 			
 			Assert.AreEqual(2, hits.Length, message);
 			

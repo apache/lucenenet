@@ -542,7 +542,7 @@ namespace Lucene.Net.Index
 		private int GetHitCount(Directory dir, Term term)
 		{
 			IndexSearcher searcher = new IndexSearcher(dir);
-			int hitCount = searcher.Search(new TermQuery(term), null, 1000).totalHits;
+			int hitCount = searcher.Search(new TermQuery(term), null, 1000).TotalHits;
 			searcher.Close();
 			return hitCount;
 		}
@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
 						ScoreDoc[] hits = null;
 						try
 						{
-							hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+							hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
 						}
 						catch (System.IO.IOException e)
 						{

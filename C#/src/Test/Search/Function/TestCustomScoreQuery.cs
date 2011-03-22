@@ -237,11 +237,11 @@ namespace Lucene.Net.Search.Function
 
             IndexSearcher s = new IndexSearcher(dir);
             TopDocs hits = s.Search(q, 1000);
-            Assert.AreEqual(N_DOCS, hits.totalHits);
+            Assert.AreEqual(N_DOCS, hits.TotalHits);
             for(int i=0;i<N_DOCS;i++) 
             {
-                int doc = hits.scoreDocs[i].doc;
-                float score = hits.scoreDocs[i].score;
+                int doc = hits.ScoreDocs[i].doc;
+                float score = hits.ScoreDocs[i].score;
                 Assert.AreEqual(score, (float)1 + (4 * doc) % N_DOCS, 0.0001, "doc=" + doc);
             }
             s.Close();
@@ -358,9 +358,9 @@ namespace Lucene.Net.Search.Function
 		private System.Collections.Hashtable TopDocsToMap(TopDocs td)
 		{
 			System.Collections.Hashtable h = new System.Collections.Hashtable();
-			for (int i = 0; i < td.totalHits; i++)
+			for (int i = 0; i < td.TotalHits; i++)
 			{
-				h[(System.Int32) td.scoreDocs[i].doc] = (float) td.scoreDocs[i].score;
+				h[(System.Int32) td.ScoreDocs[i].doc] = (float) td.ScoreDocs[i].score;
 			}
 			return h;
 		}

@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.Spans
 			
 			TopDocs topDocs = is_Renamed.Search(snq, 1);
 			System.Collections.Hashtable payloadSet = new System.Collections.Hashtable();
-			for (int i = 0; i < topDocs.scoreDocs.Length; i++)
+			for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 			{
 				while (spans.Next())
 				{
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search.Spans
 			
 			TopDocs topDocs = is_Renamed.Search(snq, 1);
 			System.Collections.Hashtable payloadSet = new System.Collections.Hashtable();
-			for (int i = 0; i < topDocs.scoreDocs.Length; i++)
+			for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 			{
 				while (spans.Next())
 				{
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search.Spans
 			
 			TopDocs topDocs = is_Renamed.Search(snq, 1);
 			System.Collections.Hashtable payloadSet = new System.Collections.Hashtable();
-			for (int i = 0; i < topDocs.scoreDocs.Length; i++)
+			for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 			{
 				while (spans.Next())
 				{

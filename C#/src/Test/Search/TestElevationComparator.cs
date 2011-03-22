@@ -78,23 +78,23 @@ namespace Lucene.Net.Search
 			searcher.Search(newq, null, topCollector);
 			
 			TopDocs topDocs = topCollector.TopDocs(0, 10);
-			int nDocsReturned = topDocs.scoreDocs.Length;
+			int nDocsReturned = topDocs.ScoreDocs.Length;
 			
 			Assert.AreEqual(4, nDocsReturned);
 			
 			// 0 & 3 were elevated
-			Assert.AreEqual(0, topDocs.scoreDocs[0].doc);
-			Assert.AreEqual(3, topDocs.scoreDocs[1].doc);
+			Assert.AreEqual(0, topDocs.ScoreDocs[0].doc);
+			Assert.AreEqual(3, topDocs.ScoreDocs[1].doc);
 			
 			if (reversed)
 			{
-				Assert.AreEqual(2, topDocs.scoreDocs[2].doc);
-				Assert.AreEqual(1, topDocs.scoreDocs[3].doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[2].doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[3].doc);
 			}
 			else
 			{
-				Assert.AreEqual(1, topDocs.scoreDocs[2].doc);
-				Assert.AreEqual(2, topDocs.scoreDocs[3].doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[2].doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[3].doc);
 			}
 			
 			/*

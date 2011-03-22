@@ -108,11 +108,11 @@ namespace Lucene.Net.Search
 			{
 				Query query1 = MakeQuery(queryText);
 				BooleanQuery.SetAllowDocsOutOfOrder(true);
-				ScoreDoc[] hits1 = searcher.Search(query1, null, 1000).scoreDocs;
+				ScoreDoc[] hits1 = searcher.Search(query1, null, 1000).ScoreDocs;
 				
 				Query query2 = MakeQuery(queryText); // there should be no need to parse again...
 				BooleanQuery.SetAllowDocsOutOfOrder(false);
-				ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).scoreDocs;
+				ScoreDoc[] hits2 = searcher.Search(query2, null, 1000).ScoreDocs;
 				
 				CheckHits.CheckHitsQuery(query2, hits1, hits2, expDocNrs);
 			}
@@ -231,10 +231,10 @@ namespace Lucene.Net.Search
 					
 					QueryUtils.Check(q1, searcher);
 					
-					ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).scoreDocs;
+					ScoreDoc[] hits1 = searcher.Search(q1, null, 1000, sort).ScoreDocs;
 					
 					BooleanQuery.SetAllowDocsOutOfOrder(true);
-					ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).scoreDocs;
+					ScoreDoc[] hits2 = searcher.Search(q1, null, 1000, sort).ScoreDocs;
 					tot += hits2.Length;
 					CheckHits.CheckEqual(q1, hits1, hits2);
 				}

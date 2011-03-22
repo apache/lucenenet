@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 			
 			// Execute the search and process the search results.
 			System.String[] actualOrder = new System.String[5];
-			ScoreDoc[] hits = searcher.Search(query, null, 1000, sort).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000, sort).ScoreDocs;
 			for (int i = 0; i < hits.Length; i++)
 			{
 				Document document = searcher.Doc(hits[i].doc);

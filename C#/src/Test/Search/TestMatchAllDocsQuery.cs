@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 			
 			// assert with norms scoring turned off
 			
-			hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).scoreDocs;
+			hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "one");
 			Assert.AreEqual(ir.Document(hits[1].doc).Get("key"), "two");
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 			// assert with norms scoring turned on
 			
 			MatchAllDocsQuery normsQuery = new MatchAllDocsQuery("key");
-			hits = is_Renamed.Search(normsQuery, null, 1000).scoreDocs;
+			hits = is_Renamed.Search(normsQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			
 			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "three four");
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 			// change norm & retest
 			ir.SetNorm(0, "key", 400f);
 			normsQuery = new MatchAllDocsQuery("key");
-			hits = is_Renamed.Search(normsQuery, null, 1000).scoreDocs;
+			hits = is_Renamed.Search(normsQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			
 			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "one");
@@ -99,30 +99,30 @@ namespace Lucene.Net.Search
 			BooleanQuery bq = new BooleanQuery();
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-			hits = is_Renamed.Search(bq, null, 1000).scoreDocs;
+			hits = is_Renamed.Search(bq, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			
 			bq = new BooleanQuery();
 			bq.Add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
 			bq.Add(new TermQuery(new Term("key", "three")), BooleanClause.Occur.MUST);
-			hits = is_Renamed.Search(bq, null, 1000).scoreDocs;
+			hits = is_Renamed.Search(bq, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			// delete a document:
 			is_Renamed.GetIndexReader().DeleteDocument(0);
-			hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).scoreDocs;
+			hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			
 			// test parsable toString()
 			QueryParser qp = new QueryParser("key", analyzer);
-			hits = is_Renamed.Search(qp.Parse(new MatchAllDocsQuery().ToString()), null, 1000).scoreDocs;
+			hits = is_Renamed.Search(qp.Parse(new MatchAllDocsQuery().ToString()), null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			
 			// test parsable toString() with non default boost
 			Query maq = new MatchAllDocsQuery();
 			maq.SetBoost(2.3f);
 			Query pq = qp.Parse(maq.ToString());
-			hits = is_Renamed.Search(pq, null, 1000).scoreDocs;
+			hits = is_Renamed.Search(pq, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, hits.Length);
 			
 			is_Renamed.Close();

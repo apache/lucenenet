@@ -121,8 +121,8 @@ namespace Lucene.Net.Search
 			int n = min * 2; // double # retrieved
 			TopDocs topDocs = (sort == null)?searcher.Search(weight, filter, n):searcher.Search(weight, filter, n, sort);
 			
-			length = topDocs.totalHits;
-			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+			length = topDocs.TotalHits;
+			ScoreDoc[] scoreDocs = topDocs.ScoreDocs;
 			
 			float scoreNorm = 1.0f;
 			

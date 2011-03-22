@@ -69,7 +69,7 @@ namespace Lucene.Net
 			// Parse a simple query that searches for "text":
 			QueryParser parser = new QueryParser("fieldname", analyzer);
 			Query query = parser.Parse("text");
-			ScoreDoc[] hits = isearcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = isearcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			// Iterate through the results:
 			for (int i = 0; i < hits.Length; i++)

@@ -88,9 +88,9 @@ namespace Lucene.Net.Search
 			Assert.AreEqual("body:\"strawberry (piccadilly pie pizza)\"", query2.ToString());
 			
 			ScoreDoc[] result;
-			result = searcher.Search(query1, null, 1000).scoreDocs;
+			result = searcher.Search(query1, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, result.Length);
-			result = searcher.Search(query2, null, 1000).scoreDocs;
+			result = searcher.Search(query2, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, result.Length);
 			
 			// search for "blue* pizza":
@@ -109,13 +109,13 @@ namespace Lucene.Net.Search
 			query3.Add((Term[]) termsWithPrefix.ToArray(typeof(Term)));
 			query3.Add(new Term("body", "pizza"));
 			
-			result = searcher.Search(query3, null, 1000).scoreDocs;
+			result = searcher.Search(query3, null, 1000).ScoreDocs;
 			Assert.AreEqual(2, result.Length); // blueberry pizza, bluebird pizza
 			Assert.AreEqual("body:\"(blueberry bluebird) pizza\"", query3.ToString());
 			
 			// test slop:
 			query3.SetSlop(1);
-			result = searcher.Search(query3, null, 1000).scoreDocs;
+			result = searcher.Search(query3, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, result.Length); // blueberry pizza, bluebird pizza, bluebird foobar pizza
 			
 			MultiPhraseQuery query4 = new MultiPhraseQuery();
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
 			q.Add(trouble, BooleanClause.Occur.MUST);
 			
 			// exception will be thrown here without fix
-			ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 			
 			Assert.AreEqual(2, hits.Length, "Wrong number of hits");
 			searcher.Close();
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 			q.Add(trouble, BooleanClause.Occur.MUST);
 			
 			// exception will be thrown here without fix for #35626:
-			ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length, "Wrong number of hits");
 			searcher.Close();
 		}

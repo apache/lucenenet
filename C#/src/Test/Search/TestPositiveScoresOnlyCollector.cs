@@ -117,8 +117,8 @@ namespace Lucene.Net.Search
 				c.Collect(0);
 			}
 			TopDocs td = tdc.TopDocs();
-			ScoreDoc[] sd = td.scoreDocs;
-			Assert.AreEqual(numPositiveScores, td.totalHits);
+			ScoreDoc[] sd = td.ScoreDocs;
+			Assert.AreEqual(numPositiveScores, td.TotalHits);
 			for (int i = 0; i < sd.Length; i++)
 			{
 				Assert.IsTrue(sd[i].score > 0, "only positive scores should return: " + sd[i].score);
