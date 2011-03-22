@@ -111,8 +111,8 @@ namespace Lucene.Net.Search
 				System.Console.Out.WriteLine("Query: " + queryStr);
 			QueryParser queryParser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
 			Query query = queryParser.Parse(queryStr);
-			ScoreDoc[] multiSearcherHits = multiSearcher.Search(query, null, 1000).scoreDocs;
-			ScoreDoc[] singleSearcherHits = singleSearcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] multiSearcherHits = multiSearcher.Search(query, null, 1000).ScoreDocs;
+			ScoreDoc[] singleSearcherHits = singleSearcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(multiSearcherHits.Length, singleSearcherHits.Length);
 			for (int i = 0; i < multiSearcherHits.Length; i++)
 			{

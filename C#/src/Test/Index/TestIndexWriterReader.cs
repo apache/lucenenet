@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
 			// reader should remain usable even after IndexWriter is closed:
 			Assert.AreEqual(100, r.NumDocs());
 			Query q = new TermQuery(new Term("indexname", "test"));
-			Assert.AreEqual(100, new IndexSearcher(r).Search(q, 10).totalHits);
+			Assert.AreEqual(100, new IndexSearcher(r).Search(q, 10).TotalHits);
 			
 			try
 			{
@@ -986,7 +986,7 @@ namespace Lucene.Net.Index
 					r = r2;
 				}
 				Query q = new TermQuery(new Term("indexname", "test"));
-				int count = new IndexSearcher(r).Search(q, 10).totalHits;
+				int count = new IndexSearcher(r).Search(q, 10).TotalHits;
 				Assert.IsTrue(count >= lastCount);
 				lastCount = count;
 			}
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Index
 					r = r2;
 				}
 				Query q = new TermQuery(new Term("indexname", "test"));
-				sum += new IndexSearcher(r).Search(q, 10).totalHits;
+				sum += new IndexSearcher(r).Search(q, 10).TotalHits;
 			}
 			
 			for (int i = 0; i < NUM_THREAD; i++)
@@ -1126,7 +1126,7 @@ namespace Lucene.Net.Index
             {
                 IndexSearcher s = new IndexSearcher(r);
                 Lucene.Net.Search.TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
-                Assert.AreEqual(20, hits.totalHits);
+                Assert.AreEqual(20, hits.TotalHits);
             }
         }
 

@@ -907,7 +907,7 @@ namespace Lucene.Net._SupportClass
             Lucene.Net.Search.TopDocs topDocs = s.Search(q, 100);
             s.Close();
 
-            Assert.AreEqual(topDocs.totalHits, 2, "See the issue: LUCENENET-174");
+            Assert.AreEqual(topDocs.TotalHits, 2, "See the issue: LUCENENET-174");
         }
 
 
@@ -1097,12 +1097,12 @@ namespace Lucene.Net._SupportClass
 
             Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
 
-            int hitCount = searcher.Search(lucQuery, 20).totalHits;
+            int hitCount = searcher.Search(lucQuery, 20).TotalHits;
             
             searcher.Close();
             searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
 
-            int hitCount2 = searcher.Search(lucQuery2, 20).totalHits;
+            int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
 
             Assert.AreEqual(hitCount, hitCount2,"Error in serialization - different hit counts");
         }

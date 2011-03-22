@@ -3588,12 +3588,17 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
+
+        public virtual MergePolicy.OneMerge GetNextMerge_forNUnit()
+        {
+            return GetNextMerge();
+        }
 		
 		/// <summary>Expert: the {@link MergeScheduler} calls this method
 		/// to retrieve the next merge requested by the
 		/// MergePolicy 
 		/// </summary>
-		public /*internal*/ virtual MergePolicy.OneMerge GetNextMerge()
+		internal virtual MergePolicy.OneMerge GetNextMerge()
 		{
 			lock (this)
 			{

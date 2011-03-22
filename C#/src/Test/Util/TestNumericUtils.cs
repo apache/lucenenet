@@ -75,11 +75,26 @@ namespace Lucene.Net.Util
                 neededShifts.MoveNext();
                 Assert.AreEqual(((Int32)neededShifts.Current), shift, "shift");
                 neededBounds.MoveNext();
-				Assert.AreEqual((long) neededBounds.Current, SupportClass.Number.URShift(min, shift), "inner min bound");
+                try
+                {
+                    Assert.AreEqual(neededBounds.Current, (ulong)SupportClass.Number.URShift(min, shift), "inner min bound");
+                }
+                catch (OverflowException)
+                {
+                    Assert.AreEqual((long)neededBounds.Current, SupportClass.Number.URShift(min, shift), "inner min bound");
+                }
                 neededBounds.MoveNext();
-				Assert.AreEqual((long) neededBounds.Current, SupportClass.Number.URShift(max, shift), "inner max bound");
+                try
+                {
+                    Assert.AreEqual(neededBounds.Current, (ulong)SupportClass.Number.URShift(max, shift), "inner max bound");
+                }
+                catch (OverflowException)
+                {
+                    Assert.AreEqual((long)neededBounds.Current, SupportClass.Number.URShift(max, shift), "inner max bound");
+                }
             }
 		}
+
 		private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
 		{
 			public AnonymousClassIntRangeBuilder(int lower, int upper, bool useBitSet, Lucene.Net.Util.OpenBitSet bits, System.Collections.IEnumerator neededBounds, System.Collections.IEnumerator neededShifts,TestNumericUtils enclosingInstance)

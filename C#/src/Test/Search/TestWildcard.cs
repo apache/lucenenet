@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
 		
 		private void  AssertMatches(IndexSearcher searcher, Query q, int expectedMatches)
 		{
-			ScoreDoc[] result = searcher.Search(q, null, 1000).scoreDocs;
+			ScoreDoc[] result = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(expectedMatches, result.Length);
 		}
 		
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
 				{
 					System.Console.Out.WriteLine("matchAll: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 				}
-				ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 				Assert.AreEqual(docs.Length, hits.Length);
 			}
 			
@@ -241,7 +241,7 @@ namespace Lucene.Net.Search
 				{
 					System.Console.Out.WriteLine("matchNone: qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 				}
-				ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+				ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 				Assert.AreEqual(0, hits.Length);
 			}
 			
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
 						System.Console.Out.WriteLine("match 1 prefix: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 					}
 					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
-					ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
 					Assert.AreEqual(i, hits[0].doc);
 				}
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search
 						System.Console.Out.WriteLine("match 1 wild: doc=" + docs[i] + " qtxt=" + qtxt + " q=" + q + " " + q.GetType().FullName);
 					}
 					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
-					ScoreDoc[] hits = searcher.Search(q, null, 1000).scoreDocs;
+					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
 					Assert.AreEqual(i, hits[0].doc);
 				}

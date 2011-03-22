@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 			// PhraseQuery w/ no terms added returns a null scorer
 			PhraseQuery pq = new PhraseQuery();
 			q.Add(pq, BooleanClause.Occur.SHOULD);
-			Assert.AreEqual(1, s.Search(q, 10).totalHits);
+			Assert.AreEqual(1, s.Search(q, 10).TotalHits);
 			
 			// A required clause which returns null scorer should return null scorer to
 			// IndexSearcher.
@@ -97,12 +97,12 @@ namespace Lucene.Net.Search
 			pq = new PhraseQuery();
 			q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur.SHOULD);
 			q.Add(pq, BooleanClause.Occur.MUST);
-			Assert.AreEqual(0, s.Search(q, 10).totalHits);
+			Assert.AreEqual(0, s.Search(q, 10).TotalHits);
 			
 			DisjunctionMaxQuery dmq = new DisjunctionMaxQuery(1.0f);
 			dmq.Add(new TermQuery(new Term("field", "a")));
 			dmq.Add(pq);
-			Assert.AreEqual(1, s.Search(dmq, 10).totalHits);
+			Assert.AreEqual(1, s.Search(dmq, 10).TotalHits);
 			
 			r.Close();
 			w.Close();

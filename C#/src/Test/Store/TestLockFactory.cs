@@ -592,7 +592,7 @@ namespace Lucene.Net.Store
 						ScoreDoc[] hits = null;
 						try
 						{
-							hits = searcher.Search(query, null, 1000).scoreDocs;
+							hits = searcher.Search(query, null, 1000).ScoreDocs;
 						}
 						catch (System.IO.IOException e)
 						{

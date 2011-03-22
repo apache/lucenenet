@@ -441,10 +441,10 @@ namespace Lucene.Net.Search
 		
 		private void  Compare(TopDocs oldHits, TopDocs newHits)
 		{
-			Assert.AreEqual(oldHits.totalHits, newHits.totalHits);
-			Assert.AreEqual(oldHits.scoreDocs.Length, newHits.scoreDocs.Length);
-			ScoreDoc[] oldDocs = oldHits.scoreDocs;
-			ScoreDoc[] newDocs = newHits.scoreDocs;
+			Assert.AreEqual(oldHits.TotalHits, newHits.TotalHits);
+			Assert.AreEqual(oldHits.ScoreDocs.Length, newHits.ScoreDocs.Length);
+			ScoreDoc[] oldDocs = oldHits.ScoreDocs;
+			ScoreDoc[] newDocs = newHits.ScoreDocs;
 			
 			for (int i = 0; i < oldDocs.Length; i++)
 			{

@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(57, reader.DocFreq(searchTerm), "first docFreq");
 
             IndexSearcher searcher = new IndexSearcher(reader);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(57, hits.Length, "first number of hits");
             searcher.Close();
             reader.Close();
@@ -815,7 +815,7 @@ namespace Lucene.Net.Index
                         searcher = new IndexSearcher(reader);
                         try
                         {
-                            hits = searcher.Search(new TermQuery(searchTerm), null, END_COUNT).scoreDocs;
+                            hits = searcher.Search(new TermQuery(searchTerm), null, END_COUNT).ScoreDocs;
                         }
                         catch (System.IO.IOException e)
                         {
@@ -1527,7 +1527,7 @@ namespace Lucene.Net.Index
 
             Term searchTerm = new Term("content", "aaa");
             IndexSearcher searcher = new IndexSearcher(dir);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "first number of hits");
             searcher.Close();
 
@@ -1541,7 +1541,7 @@ namespace Lucene.Net.Index
                     AddDoc(writer);
                 }
                 searcher = new IndexSearcher(dir);
-                hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+                hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
                 Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
                 searcher.Close();
                 Assert.IsTrue(reader.IsCurrent(), "reader should have still been current");
@@ -1552,7 +1552,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(reader.IsCurrent(), "reader should not be current now");
 
             searcher = new IndexSearcher(dir);
-            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(47, hits.Length, "reader did not see changes after writer was closed");
             searcher.Close();
         }
@@ -1580,7 +1580,7 @@ namespace Lucene.Net.Index
 
             Term searchTerm = new Term("content", "aaa");
             IndexSearcher searcher = new IndexSearcher(dir);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "first number of hits");
             searcher.Close();
 
@@ -1594,7 +1594,7 @@ namespace Lucene.Net.Index
             writer.DeleteDocuments(searchTerm);
 
             searcher = new IndexSearcher(dir);
-            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
             searcher.Close();
 
@@ -1604,7 +1604,7 @@ namespace Lucene.Net.Index
             AssertNoUnreferencedFiles(dir, "unreferenced files remain after abort()");
 
             searcher = new IndexSearcher(dir);
-            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(14, hits.Length, "saw changes after writer.abort");
             searcher.Close();
 
@@ -1624,14 +1624,14 @@ namespace Lucene.Net.Index
                     AddDoc(writer);
                 }
                 searcher = new IndexSearcher(dir);
-                hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+                hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
                 Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer with autoCommit disabled");
                 searcher.Close();
             }
 
             writer.Close();
             searcher = new IndexSearcher(dir);
-            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(218, hits.Length, "didn't see changes after close");
             searcher.Close();
 
@@ -2025,7 +2025,7 @@ namespace Lucene.Net.Index
             writer.Close();
 
             IndexSearcher searcher = new IndexSearcher(dir);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field", "aaa")), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field", "aaa")), null, 1000).ScoreDocs;
             Assert.AreEqual(300, hits.Length);
             searcher.Close();
 
@@ -2055,7 +2055,7 @@ namespace Lucene.Net.Index
             Term searchTerm = new Term("field", "aaa");
 
             IndexSearcher searcher = new IndexSearcher(dir);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(10, hits.Length);
             searcher.Close();
 
@@ -2075,7 +2075,7 @@ namespace Lucene.Net.Index
             }
             writer.Close();
             searcher = new IndexSearcher(dir);
-            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(27, hits.Length);
             searcher.Close();
 
@@ -2136,7 +2136,7 @@ namespace Lucene.Net.Index
             writer.Close();
             Term searchTerm = new Term("content", "aaa");
             IndexSearcher searcher = new IndexSearcher(dir);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).scoreDocs;
+            ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
             Assert.AreEqual(100, hits.Length, "did not get right number of hits");
             writer.Close();
 
@@ -2396,7 +2396,7 @@ namespace Lucene.Net.Index
 
                     while (true)
                     {
-                        MergePolicy.OneMerge merge = writer.GetNextMerge();
+                        MergePolicy.OneMerge merge = writer.GetNextMerge_forNUnit();
                         if (merge == null)
                             break;
                         for (int i = 0; i < merge.segments_ForNUnit.Count; i++)
@@ -4383,11 +4383,11 @@ namespace Lucene.Net.Index
             pq.Add(new Term("field", "a"));
             pq.Add(new Term("field", "b"));
             pq.Add(new Term("field", "c"));
-            ScoreDoc[] hits = s.Search(pq, null, 1000).scoreDocs;
+            ScoreDoc[] hits = s.Search(pq, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
 
             Query q = new SpanTermQuery(new Term("field", "a"));
-            hits = s.Search(q, null, 1000).scoreDocs;
+            hits = s.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             TermPositions tps = s.GetIndexReader().TermPositions(new Term("field", "a"));
             Assert.IsTrue(tps.Next());

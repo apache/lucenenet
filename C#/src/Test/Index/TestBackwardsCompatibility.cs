@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 					Assert.AreEqual(7, i);
 			}
 			
-			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			
 			// First document should be #21 since it's norm was
 			// increased:
@@ -251,11 +251,11 @@ namespace Lucene.Net.Index
 			if (!oldName.StartsWith("19.") && !oldName.StartsWith("20.") && !oldName.StartsWith("21.") && !oldName.StartsWith("22."))
 			{
 				// Test on indices >= 2.3
-				hits = searcher.Search(new TermQuery(new Term("utf8", "\u0000")), null, 1000).scoreDocs;
+				hits = searcher.Search(new TermQuery(new Term("utf8", "\u0000")), null, 1000).ScoreDocs;
 				Assert.AreEqual(34, hits.Length);
-				hits = searcher.Search(new TermQuery(new Term("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne")), null, 1000).scoreDocs;
+				hits = searcher.Search(new TermQuery(new Term("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne")), null, 1000).ScoreDocs;
 				Assert.AreEqual(34, hits.Length);
-				hits = searcher.Search(new TermQuery(new Term("utf8", "ab\ud917\udc17cd")), null, 1000).scoreDocs;
+				hits = searcher.Search(new TermQuery(new Term("utf8", "ab\ud917\udc17cd")), null, 1000).ScoreDocs;
 				Assert.AreEqual(34, hits.Length);
 			}
 			
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
 			
 			// make sure searching sees right # hits
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Document d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
 			TestHits(hits, 44, searcher.GetIndexReader());
@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
 			
 			// make sure they "took":
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Assert.AreEqual(43, hits.Length, "wrong number of hits");
 			d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Assert.AreEqual(43, hits.Length, "wrong number of hits");
 			d = searcher.Doc(hits[0].doc);
 			TestHits(hits, 43, searcher.GetIndexReader());
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
 			
 			// make sure searching sees right # hits
 			IndexSearcher searcher = new IndexSearcher(dir);
-			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Assert.AreEqual(34, hits.Length, "wrong number of hits");
 			Document d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("21", d.Get("id"), "wrong first document");
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
 			
 			// make sure they "took":
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Assert.AreEqual(33, hits.Length, "wrong number of hits");
 			d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			searcher = new IndexSearcher(dir);
-			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
 			Assert.AreEqual(33, hits.Length, "wrong number of hits");
 			d = searcher.Doc(hits[0].doc);
 			Assert.AreEqual("22", d.Get("id"), "wrong first document");
