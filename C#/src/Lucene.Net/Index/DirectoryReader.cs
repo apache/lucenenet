@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
             return writer.GetReader();
         }
 
-        private IndexReader DoReopen(bool openReadOnly, IndexCommit commit)
+        internal virtual IndexReader DoReopen(bool openReadOnly, IndexCommit commit)
         {
             EnsureOpen();
 
@@ -576,8 +576,10 @@ namespace Lucene.Net.Index
         {
             DirectoryReader enclosingInstance;
             bool openReadOnly;
-            public AnonymousFindSegmentsFile(Directory dir,bool openReadOnly,DirectoryReader dirReader) : base(dir)
+            Directory dir;
+            public AnonymousFindSegmentsFile(Directory directory, bool openReadOnly, DirectoryReader dirReader) : base(directory)
             {
+                this.dir = directory;
                 this.openReadOnly = openReadOnly;
                 enclosingInstance = dirReader;
             }
@@ -585,7 +587,7 @@ namespace Lucene.Net.Index
             public override object DoBody(string segmentFileName)
             {
                 SegmentInfos infos = new SegmentInfos();
-                infos.Read(directory, segmentFileName);
+                infos.Read(this.dir, segmentFileName);
                 return enclosingInstance.DoReopen(infos, false, openReadOnly);
             }
         }
