@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
 			QueryParser queryParser = new QueryParser("description", analyzer);
 			Query query = queryParser.Parse("partnum:Q36 AND SPACE");
 			
-			ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual("+partnum:Q36 +space", query.ToString("description"), "Q36 kept as-is");
 			Assert.AreEqual(1, hits.Length, "doc found!");
 		}

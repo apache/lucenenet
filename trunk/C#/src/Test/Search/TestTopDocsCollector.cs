@@ -140,33 +140,33 @@ namespace Lucene.Net.Search
 			TopDocsCollector tdc = doSearch(numResults);
 			
 			// start < 0
-			Assert.AreEqual(0, tdc.TopDocs(- 1).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(- 1).ScoreDocs.Length);
 			
 			// start > pq.size()
-			Assert.AreEqual(0, tdc.TopDocs(numResults + 1).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(numResults + 1).ScoreDocs.Length);
 			
 			// start == pq.size()
-			Assert.AreEqual(0, tdc.TopDocs(numResults).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(numResults).ScoreDocs.Length);
 			
 			// howMany < 0
-			Assert.AreEqual(0, tdc.TopDocs(0, - 1).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(0, - 1).ScoreDocs.Length);
 			
 			// howMany == 0
-			Assert.AreEqual(0, tdc.TopDocs(0, 0).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(0, 0).ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestZeroResults()
 		{
 			TopDocsCollector tdc = new MyTopsDocCollector(5);
-			Assert.AreEqual(0, tdc.TopDocs(0, 1).scoreDocs.Length);
+			Assert.AreEqual(0, tdc.TopDocs(0, 1).ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestFirstResultsPage()
 		{
 			TopDocsCollector tdc = doSearch(15);
-			Assert.AreEqual(10, tdc.TopDocs(0, 10).scoreDocs.Length);
+			Assert.AreEqual(10, tdc.TopDocs(0, 10).ScoreDocs.Length);
 		}
 		
         [Test]
@@ -174,22 +174,22 @@ namespace Lucene.Net.Search
 		{
 			TopDocsCollector tdc = doSearch(15);
 			// ask for more results than are available
-			Assert.AreEqual(5, tdc.TopDocs(10, 10).scoreDocs.Length);
+			Assert.AreEqual(5, tdc.TopDocs(10, 10).ScoreDocs.Length);
 			
 			// ask for 5 results (exactly what there should be
 			tdc = doSearch(15);
-			Assert.AreEqual(5, tdc.TopDocs(10, 5).scoreDocs.Length);
+			Assert.AreEqual(5, tdc.TopDocs(10, 5).ScoreDocs.Length);
 			
 			// ask for less results than there are
 			tdc = doSearch(15);
-			Assert.AreEqual(4, tdc.TopDocs(10, 4).scoreDocs.Length);
+			Assert.AreEqual(4, tdc.TopDocs(10, 4).ScoreDocs.Length);
 		}
 		
         [Test]
 		public virtual void  TestGetAllResults()
 		{
 			TopDocsCollector tdc = doSearch(15);
-			Assert.AreEqual(15, tdc.TopDocs().scoreDocs.Length);
+			Assert.AreEqual(15, tdc.TopDocs().ScoreDocs.Length);
 		}
 		
         [Test]
@@ -197,11 +197,11 @@ namespace Lucene.Net.Search
 		{
 			TopDocsCollector tdc = doSearch(15);
 			// should bring all results
-			Assert.AreEqual(15, tdc.TopDocs(0).scoreDocs.Length);
+			Assert.AreEqual(15, tdc.TopDocs(0).ScoreDocs.Length);
 			
 			tdc = doSearch(15);
 			// get the last 5 only.
-			Assert.AreEqual(5, tdc.TopDocs(10).scoreDocs.Length);
+			Assert.AreEqual(5, tdc.TopDocs(10).ScoreDocs.Length);
 		}
 		
         [Test]
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestResultsOrder()
 		{
 			TopDocsCollector tdc = doSearch(15);
-			ScoreDoc[] sd = tdc.TopDocs().scoreDocs;
+			ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 			
 			Assert.AreEqual(MAX_SCORE, sd[0].score, 0f);
 			for (int i = 1; i < sd.Length; i++)

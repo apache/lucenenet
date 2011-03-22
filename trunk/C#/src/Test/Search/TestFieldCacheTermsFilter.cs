@@ -62,18 +62,18 @@ namespace Lucene.Net.Search
 			
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			terms.Add("5");
-			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).scoreDocs;
+			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
 			Assert.AreEqual(0, results.Length, "Must match nothing");
 			
 			terms = new System.Collections.ArrayList();
 			terms.Add("10");
-            results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[])terms.ToArray(typeof(System.String))), numDocs).scoreDocs;
+            results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[])terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
 			Assert.AreEqual(1, results.Length, "Must match 1");
 			
 			terms = new System.Collections.ArrayList();
 			terms.Add("10");
 			terms.Add("20");
-			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).scoreDocs;
+			results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, (System.String[]) terms.ToArray(typeof(System.String))), numDocs).ScoreDocs;
 			Assert.AreEqual(2, results.Length, "Must match 2");
 			
 			reader.Close();

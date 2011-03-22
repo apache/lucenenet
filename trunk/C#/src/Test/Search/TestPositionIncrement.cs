@@ -154,40 +154,40 @@ namespace Lucene.Net.Search
 			q = new PhraseQuery();
 			q.Add(new Term("field", "1"));
 			q.Add(new Term("field", "2"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// same as previous, just specify positions explicitely.
 			q = new PhraseQuery();
 			q.Add(new Term("field", "1"), 0);
 			q.Add(new Term("field", "2"), 1);
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// specifying correct positions should find the phrase.
 			q = new PhraseQuery();
 			q.Add(new Term("field", "1"), 0);
 			q.Add(new Term("field", "2"), 2);
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "2"));
 			q.Add(new Term("field", "3"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "3"));
 			q.Add(new Term("field", "4"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// phrase query would find it when correct positions are specified. 
 			q = new PhraseQuery();
 			q.Add(new Term("field", "3"), 0);
 			q.Add(new Term("field", "4"), 0);
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			// phrase query should fail for non existing searched term 
@@ -195,68 +195,68 @@ namespace Lucene.Net.Search
 			q = new PhraseQuery();
 			q.Add(new Term("field", "3"), 0);
 			q.Add(new Term("field", "9"), 0);
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// multi-phrase query should succed for non existing searched term
 			// because there exist another searched terms in the same searched position. 
 			MultiPhraseQuery mq = new MultiPhraseQuery();
 			mq.Add(new Term[]{new Term("field", "3"), new Term("field", "9")}, 0);
-			hits = searcher.Search(mq, null, 1000).scoreDocs;
+			hits = searcher.Search(mq, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "2"));
 			q.Add(new Term("field", "4"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "3"));
 			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "4"));
 			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
 			q = new PhraseQuery();
 			q.Add(new Term("field", "2"));
 			q.Add(new Term("field", "5"));
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// should not find "1 2" because there is a gap of 1 in the index
 			QueryParser qp = new QueryParser("field", new StopWhitespaceAnalyzer(false));
 			q = (PhraseQuery) qp.Parse("\"1 2\"");
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// omitted stop word cannot help because stop filter swallows the increments. 
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// query parser alone won't help, because stop filter swallows the increments. 
 			qp.SetEnablePositionIncrements(true);
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// stop filter alone won't help, because query parser swallows the increments. 
 			qp.SetEnablePositionIncrements(false);
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(0, hits.Length);
 			
 			// when both qp qnd stopFilter propagate increments, we should find the doc.
 			qp = new QueryParser("field", new StopWhitespaceAnalyzer(true));
 			qp.SetEnablePositionIncrements(true);
 			q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-			hits = searcher.Search(q, null, 1000).scoreDocs;
+			hits = searcher.Search(q, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 		}
 		

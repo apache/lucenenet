@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 				query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
 				
 				IndexSearcher indexSearcher = new IndexSearcher(directory);
-				ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).scoreDocs;
+				ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(2, hits.Length, "Number of matched documents");
 			}
 			catch (System.IO.IOException e)

@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
 			IndexSearcher searcher = new IndexSearcher(ramDir);
 			TopDocs td = searcher.Search(query, null, 10);
 			//System.out.println("slop: "+slop+"  query: "+query+"  doc: "+doc+"  Expecting number of hits: "+expectedNumResults+" maxScore="+td.getMaxScore());
-			Assert.AreEqual(expectedNumResults, td.totalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
+			Assert.AreEqual(expectedNumResults, td.TotalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
 			
 			//QueryUtils.check(query,searcher);
 			
