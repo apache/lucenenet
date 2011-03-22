@@ -173,7 +173,10 @@ namespace Lucene.Net.Index
 		
 		private int MergeThreadCount()
 		{
-            return MergeThreadCount(false);
+            lock (this)
+            {
+                return MergeThreadCount(false);
+            }
 		}
 
         private int MergeThreadCount(bool excludeDone)
