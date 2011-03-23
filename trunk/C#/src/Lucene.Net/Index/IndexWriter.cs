@@ -6528,7 +6528,7 @@ namespace Lucene.Net.Index
                                 {
                                     break;
                                 }
-                                toSync.Remove(toSync.Count - 1);
+                                toSync.RemoveAt(toSync.Count - 1);
                                 changeCount++;
                             }
                         }
