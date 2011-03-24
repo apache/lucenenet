@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
 		
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
-		private System.Collections.Generic.List<MergePolicy.OneMerge> pendingMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
+        private System.Collections.Generic.LinkedList<MergePolicy.OneMerge> pendingMerges = new System.Collections.Generic.LinkedList<MergePolicy.OneMerge>();
 		private System.Collections.Generic.List<MergePolicy.OneMerge> runningMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
 		private System.Collections.IList mergeExceptions = new System.Collections.ArrayList();
 		private long mergeGen;
@@ -3393,20 +3393,16 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-                for (int i = 0; i < pendingMerges.Count; i++)
+                System.Collections.Generic.LinkedList<MergePolicy.OneMerge>.Enumerator it =  pendingMerges.GetEnumerator();
+                while (it.MoveNext())
                 {
-                    if (pendingMerges[i].optimize)
-                    {
-                        return true;
-                    }
+                    if (it.Current.optimize) return true;
                 }
 
-                for (int i = 0; i < runningMerges.Count; i++)
+                System.Collections.Generic.List<MergePolicy.OneMerge>.Enumerator it2 = runningMerges.GetEnumerator();
+                while (it2.MoveNext())
                 {
-                    if (runningMerges[i].optimize)
-                    {
-                        return true;
-                    }
+                    if (it2.Current.optimize) return true;
                 }
 				
 				return false;
@@ -3606,13 +3602,11 @@ namespace Lucene.Net.Index
 					return null;
 				else
 				{
-					// Advance the merge from pending to running
-					System.Object tempObject;
-					tempObject = pendingMerges[0];
-					pendingMerges.RemoveAt(0);
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) tempObject;
-					runningMerges.Add(merge);
-					return merge;
+                    // Advance the merge from pending to running
+                    MergePolicy.OneMerge merge = (MergePolicy.OneMerge)pendingMerges.First.Value;
+                    pendingMerges.RemoveFirst();
+                    runningMerges.Add(merge);
+                    return merge;
 				}
 			}
 		}
@@ -5542,7 +5536,7 @@ namespace Lucene.Net.Index
 				
 				EnsureContiguousMerge(merge);
 				
-				pendingMerges.Add(merge);
+				pendingMerges.AddLast(merge);
 				
 				if (infoStream != null)
 					Message("add merge to pendingMerges: " + merge.SegString(directory) + " [total " + pendingMerges.Count + " pending]");
@@ -5554,8 +5548,11 @@ namespace Lucene.Net.Index
 				// is running (while synchronized) to avoid race
 				// condition where two conflicting merges from different
 				// threads, start
-				for (int i = 0; i < count; i++)
-					mergingSegments[merge.segments.Info(i)] = merge.segments.Info(i);
+                for (int i = 0; i < count; i++)
+                {
+                    SegmentInfo si = merge.segments.Info(i);
+                    mergingSegments[si] = si;
+                }
 				
 				// Merge is now registered
 				merge.registerDone = true;
