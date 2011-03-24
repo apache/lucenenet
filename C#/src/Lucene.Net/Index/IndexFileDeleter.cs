@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
 		/* Files that we tried to delete but failed (likely
 		* because they are open and we are running on Windows),
 		* so we will retry them again later: */
-		private System.Collections.IList deletable;
+		private System.Collections.Generic.IList<string> deletable;
 		
 		/* Reference count for all files in the index.  
 		* Counts how many existing commits reference a file.
@@ -407,7 +407,7 @@ namespace Lucene.Net.Index
 		{
 			if (deletable != null)
 			{
-				System.Collections.IList oldDeletable = deletable;
+				System.Collections.Generic.IList<string> oldDeletable = deletable;
 				deletable = null;
 				int size = oldDeletable.Count;
 				for (int i = 0; i < size; i++)
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
 					{
 						Message("delete pending file " + oldDeletable[i]);
 					}
-					DeleteFile((System.String) oldDeletable[i]);
+					DeleteFile(oldDeletable[i]);
 				}
 			}
 		}
@@ -539,21 +539,10 @@ namespace Lucene.Net.Index
 		
 		internal void  DecRef(System.Collections.Generic.ICollection<string> files)
 		{
-            if (files is System.Collections.Hashtable)
+            System.Collections.Generic.IEnumerator<string> it = files.GetEnumerator();
+            while (it.MoveNext())
             {
-				System.Collections.IEnumerator it = files.GetEnumerator();
-				while (it.MoveNext())
-				{
-				    DecRef((System.String) ((System.Collections.DictionaryEntry) it.Current).Key);
-			    }
-            }
-            else
-            {
-                System.Collections.IEnumerator it = files.GetEnumerator();
-                while (it.MoveNext())
-                {
-                    DecRef((System.String) it.Current);
-                }
+                DecRef(it.Current);
             }
 		}
 		
@@ -672,7 +661,7 @@ namespace Lucene.Net.Index
 					}
 					if (deletable == null)
 					{
-						deletable = new System.Collections.ArrayList();
+                        deletable = new System.Collections.Generic.List<string>();
 					}
 					deletable.Add(fileName); // add to deletable
 				}
