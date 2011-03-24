@@ -273,17 +273,17 @@ namespace Lucene.Net.Index
 			for (int i = infos.Count - 1; i >= 0; i--)
 			{
 				// find SegmentReader for this segment
-                if (!segmentReaders.Contains(infos.Info(i).name))
-				{
-					// this is a new segment, no old SegmentReader can be reused
-					newReaders[i] = null;
-				}
-				else
-				{
-                    System.Int32 oldReaderIndex = (System.Int32) segmentReaders[infos.Info(i).name];
-					// there is an old reader for this segment - we'll try to reopen it
-					newReaders[i] = oldReaders[oldReaderIndex];
-				}
+                int? oldReaderIndex = (int?)segmentReaders[infos.Info(i).name];
+                if (oldReaderIndex.HasValue == false)
+                {
+                    // this is a new segment, no old SegmentReader can be reused
+                    newReaders[i] = null;
+                }
+                else
+                {
+                    // there is an old reader for this segment - we'll try to reopen it
+                    newReaders[i] = oldReaders[oldReaderIndex.Value];
+                }
 				
 				bool success = false;
 				try
@@ -371,26 +371,22 @@ namespace Lucene.Net.Index
 					
 					for (int i = 0; i < subReaders.Length; i++)
 					{
-                        bool exist = segmentReaders.Contains(subReaders[i].GetSegmentName());
-                        int oldReaderIndex = -1;
-                        if (exist)
+                        int? oldReaderIndex = (int?)segmentReaders[subReaders[i].GetSegmentName()];
+
+                        // this SegmentReader was not re-opened, we can copy all of its norms 
+                        if (oldReaderIndex.HasValue &&
+                             (oldReaders[oldReaderIndex.Value] == subReaders[i]
+                               || oldReaders[oldReaderIndex.Value].norms[field] == subReaders[i].norms[field]))
                         {
-                            oldReaderIndex = (System.Int32)segmentReaders[subReaders[i].GetSegmentName()];
+                            // we don't have to synchronize here: either this constructor is called from a SegmentReader,
+                            // in which case no old norms cache is present, or it is called from MultiReader.reopen(),
+                            // which is synchronized
+                            Array.Copy(oldBytes, oldStarts[oldReaderIndex.Value], bytes, starts[i], starts[i + 1] - starts[i]);
                         }
-                        
-						
-						// this SegmentReader was not re-opened, we can copy all of its norms 
-                        if (exist && (oldReaders[oldReaderIndex] == subReaders[i] || oldReaders[oldReaderIndex].norms[field] == subReaders[i].norms[field]))
-						{
-							// we don't have to synchronize here: either this constructor is called from a SegmentReader,
-							// in which case no old norms cache is present, or it is called from MultiReader.reopen(),
-							// which is synchronized
-							Array.Copy(oldBytes, oldStarts[oldReaderIndex], bytes, starts[i], starts[i + 1] - starts[i]);
-						}
-						else
-						{
-							subReaders[i].Norms(field, bytes, starts[i]);
-						}
+                        else
+                        {
+                            subReaders[i].Norms(field, bytes, starts[i]);
+                        }
 					}
 					
 					normsCache[field] = bytes; // update cache
@@ -420,14 +416,17 @@ namespace Lucene.Net.Index
 		
 		public override System.Object Clone()
 		{
-			try
-			{
-				return Clone(readOnly); // Preserve current readOnly
-			}
-			catch (System.Exception ex)
-			{
-				throw new System.SystemException(ex.Message, ex);
-			}
+            lock (this)
+            {
+                try
+                {
+                    return Clone(readOnly); // Preserve current readOnly
+                }
+                catch (System.Exception ex)
+                {
+                    throw new System.SystemException(ex.Message, ex);
+                }
+            }
 		}
 		
 		public override IndexReader Clone(bool openReadOnly)
@@ -797,7 +796,7 @@ namespace Lucene.Net.Index
 				if (bytes == null && !HasNorms(field))
 				{
                     byte val = DefaultSimilarity.EncodeNorm(1.0f);
-			        for (int index = (offset > 0) ? offset-- : offset; index < result.Length; index++)
+			        for (int index = offset; index < result.Length; index++)
 				        result.SetValue(val, index);
 				}
 				else if (bytes != null)
@@ -954,8 +953,8 @@ namespace Lucene.Net.Index
                         {
                             System.Diagnostics.Debug.Assert(directory.FileExists(fileName));
 							directory.Sync(fileName);
-                            synced.Add(fileName,fileName);
-                        }
+                            synced[fileName]=fileName;
+                        }   
                     }
 					
 					segmentInfos.Commit(directory);
