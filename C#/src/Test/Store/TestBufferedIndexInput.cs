@@ -386,6 +386,14 @@ namespace Lucene.Net.Store
 			{
 				dir.Close();
 			}
+
+            /// <summary>
+            /// .NET
+            /// </summary>
+            public override void Dispose()
+            {
+                Close();
+            }
 			
 			public override void  DeleteFile(System.String name)
 			{

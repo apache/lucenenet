@@ -152,6 +152,14 @@ namespace Lucene.Net.Search
 			if (closeReader)
 				reader.Close();
 		}
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
 		
 		// inherit javadoc
 		public override int DocFreq(Term term)

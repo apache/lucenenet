@@ -936,6 +936,14 @@ namespace Lucene.Net.Store
 			}
 		}
 
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
+
         [System.Obsolete("A DirectoryInfo is more appropriate, however this is here for backwards compatibility. This will be removed in the 3.0 release")]
 		public virtual System.IO.FileInfo GetFile()
 		{

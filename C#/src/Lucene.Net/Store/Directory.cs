@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
 	/// 
 	/// </summary>
 	[Serializable]
-	public abstract class Directory
+	public abstract class Directory : System.IDisposable
 	{
 		protected internal volatile bool isOpen = true;
 		
@@ -150,6 +150,8 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Closes the store. </summary>
 		public abstract void  Close();
+
+        public abstract void Dispose();
 		
 		/// <summary> Set the LockFactory that this Directory instance should
 		/// use for its locking implementation.  Each * instance of
