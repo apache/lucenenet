@@ -19,6 +19,13 @@ using System;
 using System.Collections;
 using System.Threading;
 
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Util;
+using Lucene.Net.Store;
+
 using NUnit.Framework;
 
 
@@ -951,6 +958,43 @@ namespace Lucene.Net._SupportClass
             {
                 return char.IsLetterOrDigit(c);
             }
+        }
+
+        [Test]
+        [Description("LUCENENET-374")]
+        public void Test_IndexReader_IsCurrent()
+        {
+            RAMDirectory ramDir = new RAMDirectory();
+            IndexWriter writer = new IndexWriter(ramDir, new KeywordAnalyzer(), true, new IndexWriter.MaxFieldLength(1000));
+            Field field = new Field("TEST", "mytest", Field.Store.YES, Field.Index.ANALYZED);
+            Document doc = new Document();
+            doc.Add(field);
+            writer.AddDocument(doc);
+
+            IndexReader reader = writer.GetReader();
+
+            writer.DeleteDocuments(new Lucene.Net.Index.Term("TEST", "mytest"));
+
+            Assert.IsFalse(reader.IsCurrent());
+
+            int resCount1 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits; 
+            Assert.AreEqual(1, resCount1);
+
+            writer.Commit();
+
+            Assert.IsFalse(reader.IsCurrent());
+
+            int resCount2 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits;
+            Assert.AreEqual(1, resCount2, "Reopen not invoked yet, resultCount must still be 1.");
+
+            reader = reader.Reopen();
+            Assert.IsTrue(reader.IsCurrent());
+
+            int resCount3 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")), 100).TotalHits;
+            Assert.AreEqual(0, resCount3, "After reopen, resultCount must be 0.");
+
+            reader.Close();
+            writer.Close();
         }
 
 
