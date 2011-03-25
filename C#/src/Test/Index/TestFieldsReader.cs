@@ -415,6 +415,11 @@ namespace Lucene.Net.Index
 			{
 				fsDir.Close();
 			}
+
+            public override void Dispose()
+            {
+                this.Close();
+            }
 		}
 		
 		private class FaultyIndexInput:BufferedIndexInput, System.ICloneable

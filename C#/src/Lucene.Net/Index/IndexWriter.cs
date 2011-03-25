@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
 	* referenced by the "front" of the index). For this, IndexFileDeleter 
 	* keeps track of the last non commit checkpoint.
 	*/
-	public class IndexWriter
+	public class IndexWriter : System.IDisposable
 	{
 		private void  InitBlock()
 		{
@@ -2471,6 +2471,14 @@ namespace Lucene.Net.Index
 		{
 			Close(true);
 		}
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public virtual void Dispose()
+        {
+            Close();
+        }
 		
 		/// <summary> Closes the index with or without waiting for currently
 		/// running merges to finish.  This is only meaningful when
