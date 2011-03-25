@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	/// Note that you can only access hits from a Searcher as long as it is not yet
 	/// closed, otherwise an IOException will be thrown.
 	/// </summary>
-	public abstract class Searcher : System.MarshalByRefObject, Searchable
+	public abstract class Searcher : System.MarshalByRefObject, Searchable, System.IDisposable
 	{
 		public Searcher()
 		{
@@ -283,6 +283,7 @@ namespace Lucene.Net.Search
 		}
 		abstract public void  Search(Weight weight, Filter filter, Collector results);
 		abstract public void  Close();
+        abstract public void Dispose();
 		abstract public int DocFreq(Term term);
 		abstract public int MaxDoc();
 		abstract public TopDocs Search(Weight weight, Filter filter, int n);

@@ -133,6 +133,14 @@ namespace Lucene.Net.Search
 			{
 				throw new System.NotSupportedException();
 			}
+
+            /// <summary>
+            /// .NET
+            /// </summary>
+            public override void Dispose()
+            {
+                Close();
+            }
 			
 			public override Document Doc(int i)
 			{
@@ -200,7 +208,15 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < searchables.Length; i++)
 				searchables[i].Close();
 		}
-		
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
+
 		public override int DocFreq(Term term)
 		{
 			int docFreq = 0;
