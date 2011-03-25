@@ -75,6 +75,14 @@ namespace Lucene.Net.Store
 				doClose = false;
 			}
 		}
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
 		
 		public override System.String[] ListAll()
 		{

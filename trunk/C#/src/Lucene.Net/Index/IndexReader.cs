@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <version>  $Id: IndexReader.java 826049 2009-10-16 19:28:55Z mikemccand $
 	/// </version>
-	public abstract class IndexReader : System.ICloneable
+	public abstract class IndexReader : System.ICloneable, System.IDisposable
 	{
 		private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
 		{
@@ -1548,6 +1548,14 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public void Dispose()
+        {
+            Close();
+        }
 		
 		/// <summary>Implements close. </summary>
 		protected internal abstract void  DoClose();
