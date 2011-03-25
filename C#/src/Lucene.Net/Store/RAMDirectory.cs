@@ -309,6 +309,14 @@ namespace Lucene.Net.Store
 			fileMap = null;
 		}
 
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
+
         public System.Collections.Hashtable fileMap_ForNUnit
         {
             get { return fileMap; }

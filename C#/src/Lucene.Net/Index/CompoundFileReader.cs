@@ -135,6 +135,14 @@ namespace Lucene.Net.Index
 				stream = null;
 			}
 		}
+
+        /// <summary>
+        /// .NET
+        /// </summary>
+        public override void Dispose()
+        {
+            Close();
+        }
 		
 		public override IndexInput OpenInput(System.String id)
 		{
