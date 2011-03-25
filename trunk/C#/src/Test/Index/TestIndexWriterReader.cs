@@ -979,16 +979,16 @@ namespace Lucene.Net.Index
 			int lastCount = 0;
 			while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
 			{
-				IndexReader r2 = r.Reopen();
-				if (r2 != r)
-				{
-					r.Close();
-					r = r2;
-				}
-				Query q = new TermQuery(new Term("indexname", "test"));
-				int count = new IndexSearcher(r).Search(q, 10).TotalHits;
-				Assert.IsTrue(count >= lastCount);
-				lastCount = count;
+                IndexReader r2 = r.Reopen();
+                if (r2 != r)
+                {
+                    r.Close();
+                    r = r2;
+                }
+                Query q = new TermQuery(new Term("indexname", "test"));
+                int count = new IndexSearcher(r).Search(q, 10).TotalHits;
+                Assert.IsTrue(count >= lastCount);
+                lastCount = count;
 			}
 			
 			for (int i = 0; i < NUM_THREAD; i++)
@@ -1005,6 +1005,70 @@ namespace Lucene.Net.Index
 			
 			dir1.Close();
 		}
+
+
+        // Stress test GetReader during addIndexes. Similar to the test above. But this one uses writer.GetReader()
+        // instead of reader.Reopen(). (only for Lucene.Net)
+        [Test]
+        public virtual void TestDuringAddIndexes_LuceneNet()
+        {
+            MockRAMDirectory dir1 = new MockRAMDirectory();
+            IndexWriter writer = new IndexWriter(dir1, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+            writer.SetInfoStream(infoStream);
+            writer.SetMergeFactor(2);
+
+            // create the index
+            CreateIndexNoClose(false, "test", writer);
+            writer.Commit();
+
+            Directory[] dirs = new Directory[10];
+            for (int i = 0; i < 10; i++)
+            {
+                dirs[i] = new MockRAMDirectory(dir1);
+            }
+
+            IndexReader r = writer.GetReader();
+
+            int NUM_THREAD = 5;
+            float SECONDS = 3;
+
+            long endTime = (long)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
+            System.Collections.IList excs = (System.Collections.IList)System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
+
+            SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREAD];
+            for (int i = 0; i < NUM_THREAD; i++)
+            {
+                threads[i] = new AnonymousClassThread(endTime, writer, dirs, excs, this);
+                threads[i].IsBackground = true;
+                threads[i].Start();
+            }
+
+            int lastCount = 0;
+            while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
+            {
+                using (IndexReader r2 = writer.GetReader())
+                {
+                    Query q = new TermQuery(new Term("indexname", "test"));
+                    int count = new IndexSearcher(r2).Search(q, 10).TotalHits;
+                    Assert.IsTrue(count >= lastCount);
+                    lastCount = count;
+                }
+            }
+
+            for (int i = 0; i < NUM_THREAD; i++)
+            {
+                threads[i].Join();
+            }
+
+            Assert.AreEqual(0, excs.Count);
+            r.Close();
+            Assert.AreEqual(0, dir1.GetOpenDeletedFiles().Count);
+            writer.Close();
+
+            _TestUtil.CheckIndex(dir1);
+
+            dir1.Close();
+        }
 		
 		// Stress test reopen during add/delete
 		[Test]
