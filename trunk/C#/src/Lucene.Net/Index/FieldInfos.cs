@@ -115,15 +115,18 @@ namespace Lucene.Net.Index
 		/// <summary> Returns a deep clone of this FieldInfos instance.</summary>
 		public System.Object Clone()
 		{
-			FieldInfos fis = new FieldInfos();
-			int numField = byNumber.Count;
-			for (int i = 0; i < numField; i++)
-			{
-				FieldInfo fi = (FieldInfo) ((FieldInfo) byNumber[i]).Clone();
-				fis.byNumber.Add(fi);
-				fis.byName[fi.name] = fi;
-			}
-			return fis;
+            lock (this)
+            {
+                FieldInfos fis = new FieldInfos();
+                int numField = byNumber.Count;
+                for (int i = 0; i < numField; i++)
+                {
+                    FieldInfo fi = (FieldInfo)((FieldInfo)byNumber[i]).Clone();
+                    fis.byNumber.Add(fi);
+                    fis.byName[fi.name] = fi;
+                }
+                return fis;
+            }
 		}
 		
 		/// <summary>Adds field info for a Document. </summary>
