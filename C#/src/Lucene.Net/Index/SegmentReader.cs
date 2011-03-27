@@ -911,14 +911,17 @@ namespace Lucene.Net.Index
 		
 		public override System.Object Clone()
 		{
-			try
-			{
-				return Clone(readOnly); // Preserve current readOnly
-			}
-			catch (System.Exception ex)
-			{
-				throw new System.SystemException(ex.Message, ex);
-			}
+            lock (this)
+            {
+                try
+                {
+                    return Clone(readOnly); // Preserve current readOnly
+                }
+                catch (System.Exception ex)
+                {
+                    throw new System.SystemException(ex.Message, ex);
+                }
+            }
 		}
 		
 		public override IndexReader Clone(bool openReadOnly)
