@@ -11,8 +11,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
 [assembly: AssemblyProduct("Lucene.Net.Test")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2009 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2009 The Apache Software Foundation")]
+[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
