@@ -699,7 +699,7 @@ public class SupportClass
         public static long ToInt64(System.String s)
         {
             long number = 0;
-            int factor;
+            long factor;
 
             // handle negative number
             if (s.StartsWith("-"))
