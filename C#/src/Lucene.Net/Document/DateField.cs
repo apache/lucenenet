@@ -123,12 +123,16 @@ namespace Lucene.Net.Documents
 		/// <summary>Converts a string-encoded date into a millisecond time. </summary>
 		public static long StringToTime(System.String s)
 		{
-            return System.Convert.ToInt64(s, SupportClass.Character.MAX_RADIX);
+            return SupportClass.Number.Parse(s, SupportClass.Number.MAX_RADIX);
 		}
 		/// <summary>Converts a string-encoded date into a Date object. </summary>
-		public static System.DateTime StringToDate(System.String s)
-		{
-			return new System.DateTime(StringToTime(s));
-		}
+        public static System.DateTime StringToDate(System.String s)
+        {
+            long ticks = StringToTime(s) * TimeSpan.TicksPerMillisecond;
+            System.DateTime date = new System.DateTime(1970, 1, 1);
+            date = date.AddTicks(ticks);
+            date = date.Add(TimeZone.CurrentTimeZone.GetUtcOffset(date));
+            return date;
+        }
 	}
 }
