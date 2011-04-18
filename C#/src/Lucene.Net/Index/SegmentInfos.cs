@@ -62,44 +62,6 @@ namespace Lucene.Net.Index
 				return null;
 			}
 		}
-		private class AnonymousClassFindSegmentsFile1:FindSegmentsFile
-		{
-			internal AnonymousClassFindSegmentsFile1(Lucene.Net.Store.Directory Param1):base(Param1)
-			{
-			}
-			public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-			{
-				
-				IndexInput input = directory.OpenInput(segmentFileName);
-				
-				int format = 0;
-				long version = 0;
-				try
-				{
-					format = input.ReadInt();
-					if (format < 0)
-					{
-						if (format < Lucene.Net.Index.SegmentInfos.CURRENT_FORMAT)
-							throw new CorruptIndexException("Unknown format version: " + format);
-						version = input.ReadLong(); // read version
-					}
-				}
-				finally
-				{
-					input.Close();
-				}
-				
-				if (format < 0)
-					return (long) version;
-				
-				// We cannot be sure about the format of the file.
-				// Therefore we have to read the whole file and cannot simply seek to the version entry.
-				SegmentInfos sis = new SegmentInfos();
-				sis.Read(directory, segmentFileName);
-				return (long) sis.GetVersion();
-			}
-		}
-		
 		/// <summary>The file format version, a negative number. </summary>
 		/* Works since counter, the old 1st entry, is always >= 0 */
 		public const int FORMAT = - 1;
