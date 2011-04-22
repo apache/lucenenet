@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "..\..\..\src\core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.WordNet.SynExpand", "..\..\..\src\contrib\WordNet\SynExpand\Contrib.WordNet.SynExpand.csproj", "{1407C9BA-337C-4C6C-B065-68328D3871B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.WordNet.SynLookup", "..\..\..\src\contrib\WordNet\SynLookup\Contrib.WordNet.SynLookup.csproj", "{2CA12E3F-76E1-4FA6-9E87-37079A7B7C69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.WordNet.Syns2Index", "..\..\..\src\contrib\WordNet\Syns2Index\Contrib.WordNet.Syns2Index.csproj", "{7563D4D9-AE91-42BA-A270-1D264660F6DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D4AD9BE-1FFB-41AB-9943-25737971BF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1407C9BA-337C-4C6C-B065-68328D3871B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1407C9BA-337C-4C6C-B065-68328D3871B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1407C9BA-337C-4C6C-B065-68328D3871B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1407C9BA-337C-4C6C-B065-68328D3871B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CA12E3F-76E1-4FA6-9E87-37079A7B7C69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CA12E3F-76E1-4FA6-9E87-37079A7B7C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CA12E3F-76E1-4FA6-9E87-37079A7B7C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CA12E3F-76E1-4FA6-9E87-37079A7B7C69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7563D4D9-AE91-42BA-A270-1D264660F6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7563D4D9-AE91-42BA-A270-1D264660F6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7563D4D9-AE91-42BA-A270-1D264660F6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7563D4D9-AE91-42BA-A270-1D264660F6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
