@@ -1050,26 +1050,27 @@ namespace Lucene.Net._SupportClass
 
 
         //-------------------------------------------
-        int ANYPORT = 38487;
+        int ANYPORT = 0;
         [Test]
         [Description("LUCENENET-100")]
         public void Test_Search_FieldDoc()
         {
+            ANYPORT = new Random((int)(DateTime.Now.Ticks & 0x7fffffff)).Next(50000) + 10000;
+            LUCENENET_100_CreateIndex();
+
             try
             {
-                LUCENENET_100_CreateIndex();
-
-                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(ANYPORT));
-
-                Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
-                System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
-
-                LUCENENET_100_ClientSearch();
+                System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Tcp.TcpChannel(ANYPORT),false);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
+            Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(LUCENENET_100_Dir);
+            System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
+
+            LUCENENET_100_ClientSearch();
 
             //Wait Client to finish
             while (LUCENENET_100_testFinished == false) System.Threading.Thread.Sleep(10);
@@ -1095,6 +1096,7 @@ namespace Lucene.Net._SupportClass
                 sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.INT));
 
                 Lucene.Net.Search.TopDocs h = searcher.Search(q, null,100, sort);
+                if (h.ScoreDocs.Length != 2) LUCENENET_100_Exception = new Exception("Test_Search_FieldDoc Error. ");
             }
             catch (Exception ex)
             {
