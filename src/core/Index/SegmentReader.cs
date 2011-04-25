@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -462,7 +463,7 @@ namespace Lucene.Net.Index
 		/// is independent of reader references (i.e. incRef, decRef).
 		/// </summary>
 		
-		public /*internal*/ sealed class Norm : System.ICloneable
+		public /*internal*/ sealed class Norm : System.ICloneable<Norm>
 		{
 			private void  InitBlock(SegmentReader enclosingInstance)
 			{
@@ -685,7 +686,7 @@ namespace Lucene.Net.Index
 			
 			// Returns a copy of this Norm instance that shares
 			// IndexInput & bytes with the original one
-			public System.Object Clone()
+			public Norm Clone()
 			{
                 lock (this) //LUCENENET-375
                 {
@@ -767,8 +768,8 @@ namespace Lucene.Net.Index
 				this.dirty = false;
 			}
 		}
-		
-		internal System.Collections.IDictionary norms = new System.Collections.Hashtable();
+
+        internal SupportClass.Dictionary<string, Norm> norms = new SupportClass.Dictionary<string, Norm>();
 		
 		/// <summary>The class which implements SegmentReader. </summary>
 		// @deprecated (LUCENE-1677)
@@ -1020,7 +1021,7 @@ namespace Lucene.Net.Index
 					}
 					
 					clone.SetDisableFakeNorms(GetDisableFakeNorms());
-					clone.norms = new System.Collections.Hashtable();
+                    clone.norms = new SupportClass.Dictionary<string, Norm>();
 					
 					// Clone norms
 					for (int i = 0; i < fieldNormsChanged.Length; i++)
@@ -1030,7 +1031,7 @@ namespace Lucene.Net.Index
 						if (doClone || !fieldNormsChanged[i])
 						{
 							System.String curField = core.fieldInfos.FieldInfo(i).name;
-							Norm norm = (Norm) this.norms[curField];
+							Norm norm = this.norms[curField];
 							if (norm != null)
 								clone.norms[curField] = norm.Clone();
 						}
@@ -1064,7 +1065,7 @@ namespace Lucene.Net.Index
 			DoCommit(null);
 		}
 
-        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
         {
             if (hasChanges)
             {
@@ -1085,7 +1086,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void CommitChanges(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        private void CommitChanges(IDictionary<string, string> commitUserData)
         {
             if (deletedDocsDirty)
             {               // re-write deleted
@@ -1129,10 +1130,8 @@ namespace Lucene.Net.Index
             if (normsDirty)
             {               // re-write norms
                 si.SetNumFields(core.fieldInfos.Size());
-                System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-                while (it.MoveNext())
+                foreach (Norm norm in norms.Values)
                 {
-                    Norm norm = (Norm)it.Current;
                     if (norm.dirty)
                     {
                         norm.ReWrite(si);
@@ -1161,12 +1160,12 @@ namespace Lucene.Net.Index
 				// null so if an app hangs on to us we still free most ram
 				deletedDocs = null;
 			}
+
+            foreach (Norm norm in norms.Values)
+            {
+                norm.DecRef();
+            }
 			
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				((Norm) it.Current).DecRef();
-			}
 			if (core != null)
 			{
 				core.DecRef();
@@ -1237,7 +1236,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal virtual System.Collections.Generic.IList<string> Files()
+		internal virtual IList<string> Files()
 		{
 			return si.Files();
 		}
@@ -1324,11 +1323,11 @@ namespace Lucene.Net.Index
 		
 		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
-        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
+        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
 			EnsureOpen();
 
-            System.Collections.Generic.IDictionary<string, string> fieldSet = new System.Collections.Generic.Dictionary<string, string>();
+            IDictionary<string, string> fieldSet = new Dictionary<string, string>();
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
@@ -1386,7 +1385,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				EnsureOpen();
-				return norms.Contains(field);
+				return norms.ContainsKey(field);
 			}
 		}
 		
@@ -1415,7 +1414,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				Norm norm = (Norm) norms[field];
+                Norm norm = norms[field];
 				if (norm == null)
 					return null; // not indexed, or norms not stored
 				return norm.Bytes();
@@ -1437,7 +1436,7 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoSetNorm(int doc, System.String field, byte value_Renamed)
 		{
-			Norm norm = (Norm) norms[field];
+			Norm norm = norms[field];
 			if (norm == null)
 			// not an indexed field
 				return ;
@@ -1453,7 +1452,7 @@ namespace Lucene.Net.Index
 			{
 				
 				EnsureOpen();
-				Norm norm = (Norm) norms[field];
+                Norm norm = norms[field];
 				if (norm == null)
 				{
                     for (int i = offset; i < bytes.Length; i++)
@@ -1475,7 +1474,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < core.fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = core.fieldInfos.FieldInfo(i);
-				if (norms.Contains(fi.name))
+				if (norms.ContainsKey(fi.name))
 				{
 					// in case this SegmentReader is being re-opened, we might be able to
 					// reuse some norm instances and skip loading them here
@@ -1546,22 +1545,20 @@ namespace Lucene.Net.Index
 			{
 				return false;
 			}
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				Norm norm = (Norm) it.Current;
-				if (norm.refCount > 0)
-				{
-					return false;
-				}
-			}
+            foreach (Norm norm in norms.Values)
+            {
+                if (norm.refCount > 0)
+                {
+                    return false;
+                }
+            }
 			return true;
 		}
 		
 		// for testing only
 		public /*internal*/ virtual bool NormsClosed(System.String field)
 		{
-			Norm norm = (Norm) norms[field];
+			Norm norm = norms[field];
 			return norm.refCount == 0;
 		}
 		
@@ -1692,12 +1689,10 @@ namespace Lucene.Net.Index
 			rollbackDeletedDocsDirty = deletedDocsDirty;
 			rollbackNormsDirty = normsDirty;
 			rollbackPendingDeleteCount = pendingDeleteCount;
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				Norm norm = (Norm) it.Current;
-				norm.rollbackDirty = norm.dirty;
-			}
+            foreach (Norm norm in norms.Values)
+            {
+                norm.rollbackDirty = norm.dirty;
+            }
 		}
 		
 		internal virtual void  RollbackCommit()
@@ -1707,12 +1702,10 @@ namespace Lucene.Net.Index
 			deletedDocsDirty = rollbackDeletedDocsDirty;
 			normsDirty = rollbackNormsDirty;
 			pendingDeleteCount = rollbackPendingDeleteCount;
-			System.Collections.IEnumerator it = norms.Values.GetEnumerator();
-			while (it.MoveNext())
-			{
-				Norm norm = (Norm) it.Current;
-				norm.dirty = norm.rollbackDirty;
-			}
+            foreach (Norm norm in norms.Values)
+            {
+                norm.dirty = norm.rollbackDirty;
+            }
 		}
 		
 		/// <summary>Returns the directory this index resides in. </summary>

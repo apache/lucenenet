@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 using Term = Lucene.Net.Index.Term;
@@ -713,7 +714,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> see {@link #idfExplain(Collection, Searcher)}
 		/// </deprecated>
         [Obsolete("see IdfExplain(Collection, Searcher)")]
-		public virtual float Idf(System.Collections.ICollection terms, Searcher searcher)
+		public virtual float Idf(IList<Lucene.Net.Index.Term> terms, Searcher searcher)
 		{
 			float idf = 0.0f;
 			System.Collections.IEnumerator i = terms.GetEnumerator();
@@ -740,7 +741,7 @@ namespace Lucene.Net.Search
 		/// for each term.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public virtual IDFExplanation idfExplain(System.Collections.ICollection terms, Searcher searcher)
+		public virtual IDFExplanation idfExplain(IList<Lucene.Net.Index.Term> terms, Searcher searcher)
 		{
 			if (SupportedMethods.overridesCollectionIDF)
 			{
@@ -881,15 +882,22 @@ namespace Lucene.Net.Search
 			
 			private static bool IsMethodOverridden(System.Type clazz, System.String name, System.Type[] params_Renamed)
 			{
-				try
-				{
-					return clazz.GetMethod(name, (params_Renamed == null)?new System.Type[0]:(System.Type[]) params_Renamed).DeclaringType != typeof(Similarity);
-				}
-				catch (System.MethodAccessException e)
-				{
-					// should not happen
-					throw new System.SystemException(e.Message, e);
-				}
+                try
+                {
+                    System.Reflection.MemberInfo mi = clazz.GetMethod(name, params_Renamed);
+                    if (mi == null) throw new SystemException("Can not find method \"" + name + "\"");
+                    return mi.DeclaringType != typeof(Similarity);
+                    //return clazz.GetMethod(name, (params_Renamed == null) ? new System.Type[0] : (System.Type[])params_Renamed).DeclaringType != typeof(Similarity);
+                }
+                catch (System.MethodAccessException e)
+                {
+                    // should not happen
+                    throw new System.SystemException(e.Message, e);
+                }
+                catch (Exception ex)
+                {
+                    throw new SystemException(ex.Message);
+                }
 			}
 			/// <deprecated> Remove this when old API is removed! 
 			/// </deprecated>
@@ -899,7 +907,7 @@ namespace Lucene.Net.Search
 			/// <deprecated> Remove this when old API is removed! 
 			/// </deprecated>
             [Obsolete("Remove this when old API is removed! ")]
-			private static readonly System.Type[] C_IDF_METHOD_PARAMS = new System.Type[]{typeof(System.Collections.ICollection), typeof(Searcher)};
+			private static readonly System.Type[] C_IDF_METHOD_PARAMS = new System.Type[]{typeof(System.Collections.Generic.IList<Term>), typeof(Searcher)};
 		}
 		
 		/// <deprecated> Remove this when old API is removed! 

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -25,18 +26,18 @@ namespace Lucene.Net.Util
     {
 		
 		// TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-		private System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> theMap;
+		private IDictionary<T, Dictionary<V, V>> theMap;
 		
 		/// <param name="m">the backing store for this object
 		/// </param>
-		public MapOfSets(System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> m)
+		public MapOfSets(IDictionary<T, Dictionary<V, V>> m)
 		{
 			theMap = m;
 		}
 		
 		/// <returns> direct access to the map backing this object.
 		/// </returns>
-		public virtual System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> GetMap()
+		public virtual IDictionary<T, Dictionary<V, V>> GetMap()
 		{
 			return theMap;
 		}
@@ -49,10 +50,10 @@ namespace Lucene.Net.Util
 		public virtual int Put(T key, V val)
 		{
             // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-            System.Collections.Generic.Dictionary<V, V> theSet;
+            Dictionary<V, V> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
-                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theSet = new Dictionary<V, V>(23);
                 theMap[key] = theSet;
             }
             if (!theSet.ContainsKey(val))
@@ -67,13 +68,13 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.
 		/// </returns>
-		public virtual int PutAll(T key, System.Collections.Generic.Dictionary<V, V> vals)
+		public virtual int PutAll(T key, Dictionary<V, V> vals)
 		{
             // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-            System.Collections.Generic.Dictionary<V, V> theSet;
+            Dictionary<V, V> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
-                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theSet = new Dictionary<V, V>(23);
                 theMap[key] = theSet;
             }
             foreach(V item in vals.Keys)

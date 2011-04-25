@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 			pr.Add(IndexReader.Open(dir2));
 			
 			Document doc11 = pr.Document(0, new MapFieldSelector(new System.String[]{"f1"}));
-			Document doc24 = pr.Document(1, new MapFieldSelector(new System.Collections.ArrayList(new System.String[]{"f4"})));
+			Document doc24 = pr.Document(1, new MapFieldSelector(new System.Collections.Generic.List<string>(new System.String[]{"f4"})));
 			Document doc223 = pr.Document(1, new MapFieldSelector(new System.String[]{"f2", "f3"}));
 			
 			Assert.AreEqual(1, doc11.GetFields().Count);

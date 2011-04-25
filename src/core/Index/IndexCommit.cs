@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 		public abstract System.String GetSegmentsFileName();
 		
 		/// <summary> Returns all index files referenced by this commit point.</summary>
-		public abstract System.Collections.Generic.ICollection<string> GetFileNames();
+		public abstract ICollection<string> GetFileNames();
 		
 		/// <summary> Returns the {@link Directory} for the index.</summary>
 		public abstract Directory GetDirectory();
@@ -114,6 +115,6 @@ namespace Lucene.Net.Index
 		/// IndexWriter#Commit(Map)} for this commit.  Map is
 		/// String -> String. 
 		/// </summary>
-        public abstract System.Collections.Generic.IDictionary<string, string> GetUserData();
+        public abstract IDictionary<string, string> GetUserData();
 	}
 }

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search.Spans
 		private int matchDoc = - 1;
 		private int matchStart = - 1;
 		private int matchEnd = - 1;
-		private System.Collections.Generic.List<byte[]> matchPayload;
+		private List<byte[]> matchPayload;
 		
 		private Spans[] subSpansByDoc;
 		private System.Collections.IComparer spanDocComparator;
@@ -110,7 +111,7 @@ namespace Lucene.Net.Search.Spans
 			allowedSlop = spanNearQuery.GetSlop();
 			SpanQuery[] clauses = spanNearQuery.GetClauses();
 			subSpans = new Spans[clauses.Length];
-			matchPayload = new System.Collections.Generic.List<byte[]>();
+			matchPayload = new List<byte[]>();
 			subSpansByDoc = new Spans[clauses.Length];
 			for (int i = 0; i < clauses.Length; i++)
 			{
@@ -145,7 +146,7 @@ namespace Lucene.Net.Search.Spans
 		
 		// TODO: Remove warning after API has been finalized
 		// TODO: Would be nice to be able to lazy load payloads
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+		public override ICollection<byte[]> GetPayload()
 		{
 			return matchPayload;
 		}
@@ -323,10 +324,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			matchStart = subSpans[subSpans.Length - 1].Start();
 			matchEnd = subSpans[subSpans.Length - 1].End();
-            System.Collections.Generic.Dictionary<byte[], byte[]> possibleMatchPayloads = new System.Collections.Generic.Dictionary<byte[], byte[]>();
+            Dictionary<byte[], byte[]> possibleMatchPayloads = new Dictionary<byte[], byte[]>();
 			if (subSpans[subSpans.Length - 1].IsPayloadAvailable())
 			{
-                System.Collections.Generic.ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
+                ICollection<byte[]> payload = subSpans[subSpans.Length - 1].GetPayload();
                 foreach(byte[] pl in payload)
                 {
                     if (!possibleMatchPayloads.ContainsKey(pl))
@@ -336,7 +337,7 @@ namespace Lucene.Net.Search.Spans
                 }
 			}
 			
-			System.Collections.Generic.List<byte[]> possiblePayload = null;
+			List<byte[]> possiblePayload = null;
 			
 			int matchSlop = 0;
 			int lastStart = matchStart;
@@ -346,8 +347,8 @@ namespace Lucene.Net.Search.Spans
 				Spans prevSpans = subSpans[i];
 				if (collectPayloads && prevSpans.IsPayloadAvailable())
 				{
-					System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
-					possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
+					ICollection<byte[]> payload = prevSpans.GetPayload();
+					possiblePayload = new List<byte[]>(payload.Count);
 					possiblePayload.AddRange(payload);
 				}
 				
@@ -382,8 +383,8 @@ namespace Lucene.Net.Search.Spans
 							prevEnd = ppEnd;
 							if (collectPayloads && prevSpans.IsPayloadAvailable())
 							{
-								System.Collections.Generic.ICollection<byte[]> payload = prevSpans.GetPayload();
-								possiblePayload = new System.Collections.Generic.List<byte[]>(payload.Count);
+								ICollection<byte[]> payload = prevSpans.GetPayload();
+								possiblePayload = new List<byte[]>(payload.Count);
 								possiblePayload.AddRange(payload);
 							}
 						}

@@ -1544,8 +1544,8 @@ namespace Lucene.Net.Index
 			System.Collections.Generic.ICollection<string> fieldsNames1 = index1.GetFieldNames(FieldOption.ALL);
 			System.Collections.Generic.ICollection<string> fieldsNames2 = index1.GetFieldNames(FieldOption.ALL);
 
-            System.Collections.ICollection fields1 = null;
-            System.Collections.ICollection fields2 = null;
+            System.Collections.Generic.IList<Fieldable> fields1 = null;
+            System.Collections.Generic.IList<Fieldable> fields2 = null;
 
             Assert.AreEqual(fieldsNames1.Count, fieldsNames2.Count, "IndexReaders have different numbers of fields.");
             System.Collections.IEnumerator it1 = fieldsNames1.GetEnumerator();

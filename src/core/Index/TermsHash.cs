@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
@@ -120,48 +121,44 @@ namespace Lucene.Net.Index
 					nextTermsHash.CloseDocStore(state);
 			}
 		}
-		
-		internal override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        internal override void Flush(SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{
-				System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
-				System.Collections.IDictionary nextThreadsAndFields;
+                SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>>();
+				SupportClass.Dictionary<InvertedDocConsumerPerThread,IList<InvertedDocConsumerPerField>> nextThreadsAndFields;
 				
 				if (nextTermsHash != null)
 				{
-					nextThreadsAndFields = new System.Collections.Hashtable();
+                    nextThreadsAndFields = new SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
 				}
 				else
 					nextThreadsAndFields = null;
 
-                System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-				while (it.MoveNext())
-				{
-					
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-					
+                foreach (KeyValuePair<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> entry in threadsAndFields)
+                {
 					TermsHashPerThread perThread = (TermsHashPerThread) entry.Key;
+
+                    IList<InvertedDocConsumerPerField> fields = entry.Value;
 					
-					System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-					
-					System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-                    System.Collections.Hashtable childFields = new System.Collections.Hashtable();
-					System.Collections.Hashtable nextChildFields;
+					IEnumerator<InvertedDocConsumerPerField> fieldsIt = fields.GetEnumerator();
+                    List<TermsHashConsumerPerField> childFields = new List<TermsHashConsumerPerField>();
+					List<InvertedDocConsumerPerField> nextChildFields;
 					
 					if (nextTermsHash != null)
 					{
-                        nextChildFields = new System.Collections.Hashtable();
+                        nextChildFields = new List<InvertedDocConsumerPerField>();
 					}
 					else
 						nextChildFields = null;
 					
 					while (fieldsIt.MoveNext())
 					{
-						TermsHashPerField perField = (TermsHashPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
-						childFields[perField.consumer] = perField.consumer;
+						TermsHashPerField perField = (TermsHashPerField) fieldsIt.Current;
+                        childFields.Add(perField.consumer);
 						if (nextTermsHash != null)
-							nextChildFields[perField.nextPerField] = perField.nextPerField;
+							nextChildFields.Add(perField.nextPerField);
 					}
 					
 					childThreadsAndFields[perThread.consumer] = childFields;

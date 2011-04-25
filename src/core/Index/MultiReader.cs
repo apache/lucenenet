@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -441,7 +442,7 @@ namespace Lucene.Net.Index
 			DoCommit(null);
 		}
 
-        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
 		{
 			for (int i = 0; i < subReaders.Length; i++)
 				subReaders[i].Commit(commitUserData);
@@ -470,7 +471,7 @@ namespace Lucene.Net.Index
             Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
 		}
 
-        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
+        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return DirectoryReader.GetFieldNames(fieldNames, this.subReaders);

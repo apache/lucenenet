@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -109,7 +110,7 @@ namespace Lucene.Net.Index
 			if (reader.NumDocs() != numDocs)
 				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs());
 			
-			System.Collections.Generic.ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
 			System.Collections.IEnumerator i = fields.GetEnumerator();
 			while (i.MoveNext())
@@ -512,7 +513,7 @@ namespace Lucene.Net.Index
 			DoCommit(null);
 		}
 
-        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
 		{
 			for (int i = 0; i < readers.Count; i++)
 				((IndexReader) readers[i]).Commit(commitUserData);
@@ -538,14 +539,14 @@ namespace Lucene.Net.Index
             Lucene.Net.Search.FieldCache_Fields.DEFAULT.Purge(this);
 		}
 
-        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
+        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
-            System.Collections.Generic.List<string> fieldSet = new System.Collections.Generic.List<string>();
+            List<string> fieldSet = new List<string>();
 			for (int i = 0; i < readers.Count; i++)
 			{
 				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.Generic.ICollection<string> names = reader.GetFieldNames(fieldNames);
+				ICollection<string> names = reader.GetFieldNames(fieldNames);
                 fieldSet.AddRange(names);
 			}
 			return fieldSet;

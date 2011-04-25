@@ -394,15 +394,17 @@ namespace Lucene.Net.Search
 			Query rewrittenQuery = Rewrite(original);
 			
 			// step 2
-			System.Collections.Hashtable terms = new System.Collections.Hashtable();
+            SupportClass.Set<Lucene.Net.Index.Term> terms = new SupportClass.Set<Term>();
 			rewrittenQuery.ExtractTerms(terms);
 			
 			// step3
 			Term[] allTermsArray = new Term[terms.Count];
             int index = 0;
-            System.Collections.IEnumerator e = terms.Keys.GetEnumerator();
-            while (e.MoveNext())
-                allTermsArray[index++] = e.Current as Term;
+            foreach (Term t in terms)
+            {
+                allTermsArray[index++] = t;
+            }
+            
             int[] aggregatedDfs = new int[terms.Count];
 			for (int i = 0; i < searchables.Length; i++)
 			{

@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 				if (!reader.IsDeleted(i))
 				{
 					Document d = reader.Document(i);
-					System.Collections.IList fields = d.GetFields();
+                    System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> fields = d.GetFields();
 					if (!oldName.StartsWith("19.") && !oldName.StartsWith("20.") && !oldName.StartsWith("21.") && !oldName.StartsWith("22."))
 					{
 						

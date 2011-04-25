@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
 			{
 				return 2.0f;
 			}
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
+			public override float Idf(System.Collections.Generic.IList<Term> terms, Searcher searcher)
 			{
 				return 1.0f;
 			}

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
@@ -45,36 +46,29 @@ namespace Lucene.Net.Index
 			consumer.SetFieldInfos(fieldInfos);
 			endConsumer.SetFieldInfos(fieldInfos);
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
-			System.Collections.IDictionary endChildThreadsAndFields = new System.Collections.Hashtable();
-			
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
-			{
-				
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
-				DocInverterPerThread perThread = (DocInverterPerThread) entry.Key;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-				System.Collections.Hashtable childFields = new System.Collections.Hashtable();
-				System.Collections.Hashtable endChildFields = new System.Collections.Hashtable();
-				while (fieldsIt.MoveNext())
-				{
-					DocInverterPerField perField = (DocInverterPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
-					childFields[perField.consumer] = perField.consumer;
-					endChildFields[perField.endConsumer] = perField.endConsumer;
-				}
-				
-				childThreadsAndFields[perThread.consumer] = childFields;
-				endChildThreadsAndFields[perThread.endConsumer] = endChildFields;
-			}
+
+            SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
+            SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> endChildThreadsAndFields = new SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>>();
+
+            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
+            {
+                DocInverterPerThread perThread = (DocInverterPerThread)entry.Key;
+                                
+                List<InvertedDocConsumerPerField> childFields = new List<InvertedDocConsumerPerField>();
+                List<InvertedDocEndConsumerPerField> endChildFields = new List<InvertedDocEndConsumerPerField>();
+                foreach (DocFieldConsumerPerField field in entry.Value)
+                {
+                    DocInverterPerField perField = (DocInverterPerField)field;
+                    childFields.Add(perField.consumer);
+                    endChildFields.Add(perField.endConsumer);
+                }
+
+                childThreadsAndFields[perThread.consumer] = childFields;
+                endChildThreadsAndFields[perThread.endConsumer] = endChildFields;
+            }
 			
 			consumer.Flush(childThreadsAndFields, state);
 			endConsumer.Flush(endChildThreadsAndFields, state);

@@ -136,8 +136,8 @@ namespace Lucene.Net.Search
 			{
 				// beware of deleted docs in the future
 				Document doc = ir.Document(rand.Next(ir.MaxDoc()), new AnonymousClassFieldSelector(this));
-				
-				System.Collections.IList fields = doc.GetFields();
+
+                System.Collections.Generic.IList<Fieldable> fields = doc.GetFields();
 				for (int i = 0; i < fields.Count; i++)
 				{
 					Fieldable f = (Fieldable) fields[i];

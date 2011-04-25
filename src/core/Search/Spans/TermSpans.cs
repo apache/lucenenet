@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
@@ -96,11 +97,11 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		// TODO: Remove warning after API has been finalized
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+		public override ICollection<byte[]> GetPayload()
 		{
 			byte[] bytes = new byte[positions.GetPayloadLength()];
 			bytes = positions.GetPayload(bytes, 0);
-            System.Collections.Generic.List<byte[]> val = new System.Collections.Generic.List<byte[]>();
+            List<byte[]> val = new List<byte[]>();
             val.Add(bytes);
             return val;
 		}

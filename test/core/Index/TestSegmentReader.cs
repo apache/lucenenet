@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 			//There are 2 unstored fields on the document that are not preserved across writing
 			Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(testDoc) - DocHelper.unstored.Count);
 			
-			System.Collections.IList fields = result.GetFields();
+			System.Collections.Generic.IList<Fieldable> fields = result.GetFields();
 			for (System.Collections.IEnumerator iter = fields.GetEnumerator(); iter.MoveNext(); )
 			{
 				Fieldable field = (Fieldable) iter.Current;

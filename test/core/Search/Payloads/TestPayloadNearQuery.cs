@@ -320,7 +320,7 @@ namespace Lucene.Net.Search.Payloads
 				return 1;
 			}
 			// idf used for phrase queries
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
+			public override float Idf(System.Collections.Generic.IList<Term> terms, Searcher searcher)
 			{
 				return 1;
 			}

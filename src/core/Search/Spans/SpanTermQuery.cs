@@ -59,9 +59,9 @@ namespace Lucene.Net.Search.Spans
 			terms.Add(term);
 			return terms;
 		}
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, term);
+            terms.Add(term);
 		}
 		
 		public override System.String ToString(System.String field)

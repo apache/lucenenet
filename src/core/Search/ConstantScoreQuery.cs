@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 			return this;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			// OK to not add any terms when used for MultiSearcher,
 			// but may not be OK for highlighting

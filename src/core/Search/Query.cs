@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void  ExtractTerms(System.Collections.Hashtable terms)
+		public virtual void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();

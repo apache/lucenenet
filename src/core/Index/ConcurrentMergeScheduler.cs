@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -36,8 +37,8 @@ namespace Lucene.Net.Index
 	{
 		
 		private int mergeThreadPriority = - 1;
-		
-		protected internal System.Collections.IList mergeThreads = new System.Collections.ArrayList();
+
+        protected internal IList<MergeThread> mergeThreads = new List<MergeThread>();
 		
 		// Max number of threads allowed to be merging at once
 		private int maxThreadCount = 1;
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
 					if (Verbose())
 					{
 						for (int i = 0; i < count; i++)
-							Message("    " + i + ": " + ((MergeThread) mergeThreads[i]));
+							Message("    " + i + ": " + mergeThreads[i]);
 					}
 					
 					try
@@ -187,7 +188,7 @@ namespace Lucene.Net.Index
                 int numThreads = mergeThreads.Count;
                 for (int i = 0; i < numThreads; i++)
                 {
-                    MergeThread t = (MergeThread)mergeThreads[i];
+                    MergeThread t = mergeThreads[i];
                     if (t.IsAlive)
                     {
                         MergePolicy.OneMerge runningMerge = t.GetRunningMerge();

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
@@ -155,7 +156,7 @@ namespace Lucene.Net.Search.Spans
 				return spans.End();
 			}
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+			public override ICollection<byte[]> GetPayload()
 			{
 				return spans.GetPayload();
 			}
@@ -318,15 +319,15 @@ namespace Lucene.Net.Search.Spans
 		/// <returns> Collection of <code>byte[]</code> payloads
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+		public override ICollection<byte[]> GetPayload()
 		{
             //mgarski: faking out another HashSet<T>...
-			System.Collections.Generic.Dictionary<byte[], byte[]> matchPayload = new System.Collections.Generic.Dictionary<byte[], byte[]>(); 
+			Dictionary<byte[], byte[]> matchPayload = new Dictionary<byte[], byte[]>(); 
 			for (SpansCell cell = first; cell != null; cell = cell.next)
 			{
 				if (cell.IsPayloadAvailable())
 				{
-                    System.Collections.Generic.ICollection<byte[]> cellPayload = cell.GetPayload();
+                    ICollection<byte[]> cellPayload = cell.GetPayload();
                     foreach (byte[] val in cellPayload)
                     {
                         if (!matchPayload.ContainsKey(val))

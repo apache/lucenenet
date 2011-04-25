@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -254,9 +255,9 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        public /*internal*/ System.Collections.Generic.ICollection<string> GetMergedFiles()
+        public /*internal*/ ICollection<string> GetMergedFiles()
 		{
-            System.Collections.Generic.IDictionary<string,string> fileSet = new System.Collections.Generic.Dictionary<string,string>();
+            IDictionary<string,string> fileSet = new Dictionary<string,string>();
 			
 			// Basic files
 			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)
@@ -293,9 +294,9 @@ namespace Lucene.Net.Index
             return fileSet.Keys;
         }
 
-        public /*internal*/ System.Collections.Generic.ICollection<string> CreateCompoundFile(System.String fileName)
+        public /*internal*/ ICollection<string> CreateCompoundFile(System.String fileName)
         {
-            System.Collections.Generic.ICollection<string> files = GetMergedFiles();
+            ICollection<string> files = GetMergedFiles();
             CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
 
 			// Now merge all added files
@@ -311,9 +312,9 @@ namespace Lucene.Net.Index
             return files;
 		}
 
-        private void AddIndexed(IndexReader reader, FieldInfos fInfos, System.Collections.Generic.ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
+        private void AddIndexed(IndexReader reader, FieldInfos fInfos, ICollection<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
 		{
-			System.Collections.Generic.IEnumerator<string> i = names.GetEnumerator();
+			IEnumerator<string> i = names.GetEnumerator();
 			while (i.MoveNext())
 			{
                 System.String field = i.Current;

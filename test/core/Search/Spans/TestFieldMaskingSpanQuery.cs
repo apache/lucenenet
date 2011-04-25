@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 			
-			System.Collections.Hashtable set_Renamed = new System.Collections.Hashtable();
+			SupportClass.Set<Term> set_Renamed = new SupportClass.Set<Term>();
 			qr.ExtractTerms(set_Renamed);
 			Assert.AreEqual(2, set_Renamed.Count);
 		}
