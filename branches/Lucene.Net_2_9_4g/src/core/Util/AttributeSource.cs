@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using TokenStream = Lucene.Net.Analysis.TokenStream;
 
@@ -138,7 +139,7 @@ namespace Lucene.Net.Util
 		/// Note that this return value is different from Java in that it enumerates over the values
 		/// and not the keys
 		/// </summary>
-		public virtual System.Collections.Generic.IEnumerable<Type> GetAttributeClassesIterator()
+		public virtual IEnumerable<Type> GetAttributeClassesIterator()
 		{
             foreach (SupportClass.AttributeImplItem item in this.attributes)
             {
@@ -151,7 +152,7 @@ namespace Lucene.Net.Util
 		/// if one instance implements more than one Attribute interface.
 		/// Signature for Java 1.5: <code>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</code>
 		/// </summary>
-		public virtual System.Collections.Generic.IEnumerable<AttributeImpl> GetAttributeImplsIterator()
+		public virtual IEnumerable<AttributeImpl> GetAttributeImplsIterator()
 		{
 			if (HasAttributes())
 			{
@@ -335,7 +336,7 @@ namespace Lucene.Net.Util
 		{
 			currentState = new State();
 			State c = currentState;
-            System.Collections.Generic.IEnumerator<SupportClass.AttributeImplItem> it = attributeImpls.GetEnumerator();
+            IEnumerator<SupportClass.AttributeImplItem> it = attributeImpls.GetEnumerator();
 			if (it.MoveNext())
 				c.attribute = it.Current.Value;
 			while (it.MoveNext())

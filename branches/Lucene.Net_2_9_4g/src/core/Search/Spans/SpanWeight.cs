@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Spans
 		protected internal float queryNorm;
 		protected internal float queryWeight;
 		
-		protected internal System.Collections.Hashtable terms;
+		protected internal SupportClass.Set<Lucene.Net.Index.Term> terms;
 		protected internal SpanQuery query;
 		private IDFExplanation idfExp;
 		
@@ -42,9 +42,9 @@ namespace Lucene.Net.Search.Spans
 		{
 			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-			terms = new System.Collections.Hashtable();
+            terms = new SupportClass.Set<Lucene.Net.Index.Term>();
 			query.ExtractTerms(terms);
-			idfExp = similarity.idfExplain(new System.Collections.ArrayList(terms.Values), searcher);
+			idfExp = similarity.idfExplain(terms.ToArray(), searcher);
 			idf = idfExp.GetIdf();
 		}
 		

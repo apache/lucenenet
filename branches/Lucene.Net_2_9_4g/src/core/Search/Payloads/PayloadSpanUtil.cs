@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Payloads
 				if (spans.IsPayloadAvailable())
 				{
 					//ICollection<byte[]> payload = spans.GetPayload();
-                    System.Collections.Generic.ICollection<byte[]> payload = spans.GetPayload();
+                    ICollection<byte[]> payload = spans.GetPayload();
 					//IEnumerator<byte[]> it = payload.GetEnumerator();
                     foreach (byte[] bytes in payload)
                     {

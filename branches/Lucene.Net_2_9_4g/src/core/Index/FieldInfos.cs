@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using Fieldable = Lucene.Net.Documents.Fieldable;
@@ -33,7 +34,7 @@ namespace Lucene.Net.Index
 	/// be adding documents at a time, with no other reader or writer threads
 	/// accessing this object.
 	/// </summary>
-	public sealed class FieldInfos : System.ICloneable
+	public sealed class FieldInfos : System.ICloneable<FieldInfos>
 	{
 		
 		// Used internally (ie not written to *.fnm files) for pre-2.9 files
@@ -51,9 +52,9 @@ namespace Lucene.Net.Index
 		internal const byte OMIT_NORMS = (byte) (0x10);
 		internal const byte STORE_PAYLOADS = (byte) (0x20);
 		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (byte) (0x40);
-		
-		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
-		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
+
+        private List<FieldInfo> byNumber = new List<FieldInfo>();
+        private SupportClass.Dictionary<string, FieldInfo> byName = new SupportClass.Dictionary<string, FieldInfo>();
 		private int format;
 		
 		public /*internal*/ FieldInfos()
@@ -113,7 +114,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns a deep clone of this FieldInfos instance.</summary>
-		public System.Object Clone()
+		public FieldInfos Clone()
 		{
             lock (this)
             {
@@ -121,7 +122,7 @@ namespace Lucene.Net.Index
                 int numField = byNumber.Count;
                 for (int i = 0; i < numField; i++)
                 {
-                    FieldInfo fi = (FieldInfo)((FieldInfo)byNumber[i]).Clone();
+                    FieldInfo fi = byNumber[i].Clone();
                     fis.byNumber.Add(fi);
                     fis.byName[fi.name] = fi;
                 }
@@ -134,7 +135,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.IList fields = doc.GetFields();
+				IList<Fieldable> fields = doc.GetFields();
 				System.Collections.IEnumerator fieldIterator = fields.GetEnumerator();
 				while (fieldIterator.MoveNext())
 				{
@@ -192,7 +193,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <seealso cref="Add(String, boolean)">
 		/// </seealso>
-        public void Add(System.Collections.Generic.ICollection<string> names, bool isIndexed)
+        public void Add(ICollection<string> names, bool isIndexed)
 		{
 			lock (this)
 			{
@@ -345,7 +346,7 @@ namespace Lucene.Net.Index
 		
 		public FieldInfo FieldInfo(System.String fieldName)
 		{
-			return (FieldInfo) byName[fieldName];
+			return byName[fieldName];
 		}
 		
 		/// <summary> Return the fieldName identified by its number.

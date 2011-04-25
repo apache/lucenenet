@@ -26,13 +26,13 @@ namespace Lucene.Net.Documents
 	[Serializable]
 	public class MapFieldSelector : FieldSelector
 	{
-		
-		internal System.Collections.IDictionary fieldSelections;
+
+        internal SupportClass.Dictionary<string, FieldSelectorResult> fieldSelections;
 		
 		/// <summary>Create a a MapFieldSelector</summary>
 		/// <param name="fieldSelections">maps from field names (String) to {@link FieldSelectorResult}s
 		/// </param>
-		public MapFieldSelector(System.Collections.IDictionary fieldSelections)
+        public MapFieldSelector(SupportClass.Dictionary<string, FieldSelectorResult> fieldSelections)
 		{
 			this.fieldSelections = fieldSelections;
 		}
@@ -40,9 +40,9 @@ namespace Lucene.Net.Documents
 		/// <summary>Create a a MapFieldSelector</summary>
 		/// <param name="fields">fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
 		/// </param>
-		public MapFieldSelector(System.Collections.IList fields)
+		public MapFieldSelector(System.Collections.Generic.IList<string> fields)
 		{
-			fieldSelections = new System.Collections.Hashtable(fields.Count * 5 / 3);
+			fieldSelections = new SupportClass.Dictionary<string, FieldSelectorResult>(fields.Count * 5 / 3);
 			for (int i = 0; i < fields.Count; i++)
 				fieldSelections[fields[i]] = FieldSelectorResult.LOAD;
 		}
@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		public MapFieldSelector(System.String[] fields)
 		{
-			fieldSelections = new System.Collections.Hashtable(fields.Length * 5 / 3);
+            fieldSelections = new SupportClass.Dictionary<string, FieldSelectorResult>(fields.Length * 5 / 3);
 			for (int i = 0; i < fields.Length; i++)
 				fieldSelections[fields[i]] = FieldSelectorResult.LOAD;
 		}

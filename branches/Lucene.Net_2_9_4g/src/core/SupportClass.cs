@@ -1406,6 +1406,68 @@ public class SupportClass
     }
     #endregion
 
+    public class Dictionary<K, V> : System.Collections.Generic.Dictionary<K, V>
+    {
+        public Dictionary() : base()
+        {
+        }
+
+        public Dictionary(System.Collections.Generic.Dictionary<K, V> dict) : base(dict)
+        {
+        }
+
+        public Dictionary(int capacity) : base(capacity)
+        {
+        }
+
+        public new V this[K key]
+        {
+            set
+            {
+                base[key] = value;
+            }
+            get
+            {
+                V val = default(V);
+                base.TryGetValue(key, out val);
+                return val;
+            }
+        }
+    }
+
+    [Serializable]
+    public class Set<T> : System.Collections.Generic.List<T>
+    {
+        System.Collections.Generic.HashSet<T> _Set = new System.Collections.Generic.HashSet<T>();
+        
+        public new void Add(T item)
+        {
+            if (_Set.Contains(item)) return;
+            _Set.Add(item);
+            base.Add(item);
+        }
+
+        public void Add(SupportClass.Set<T> items)
+        {
+            foreach(T item in items)
+            {
+                if(_Set.Contains(item)) continue;
+                _Set.Add(item);
+                base.Add(item);
+            }
+        }
+
+        public void Add(System.Collections.Generic.IList<T> items)
+        {
+            foreach (T item in items)
+            {
+                if (_Set.Contains(item)) continue;
+                _Set.Add(item);
+                base.Add(item);
+            }
+        }
+    }
+
     public class Cryptography
     {
         static public bool FIPSCompliant = false;
@@ -1524,6 +1586,17 @@ public class SupportClass
             return false;
         }
 
+
+        public static System.String CollectionToString<T>(System.Collections.Generic.IList<T> c)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for(int i=0;i<c.Count;i++)
+            {
+                sb.Append(c[i].ToString());
+                if (i != c.Count - 1) sb.Append(", ");
+            }
+            return sb.ToString();
+        }
 
         public static System.String CollectionToString(System.Collections.Generic.IDictionary<string, string> c)
         {
@@ -1645,6 +1718,13 @@ public class SupportClass
                     throw new System.InvalidCastException(e.Message);
                 }
             }
+        }
+
+        public static void Sort<T1>(System.Collections.Generic.IList<T1> list,System.Collections.Generic.IComparer<T1> Comparator)
+        {
+            if(list.IsReadOnly) throw new System.NotSupportedException();
+            if (Comparator == null) ((System.Collections.Generic.List<T1>)list).Sort();
+            else ((System.Collections.Generic.List<T1>)list).Sort(Comparator);
         }
 
         /// <summary>
@@ -2303,3 +2383,12 @@ public class SupportClass
 #endif
     }
 }
+
+namespace System
+{
+    public interface ICloneable<T>
+    {
+        T Clone();
+    }
+}
+

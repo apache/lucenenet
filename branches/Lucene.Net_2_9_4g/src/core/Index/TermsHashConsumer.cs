@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Index
 		internal abstract int BytesPerPosting();
 		internal abstract void  CreatePostings(RawPostingList[] postings, int start, int count);
 		public abstract TermsHashConsumerPerThread AddThread(TermsHashPerThread perThread);
-		public abstract void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state);
+        public abstract void Flush(SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state);
 		public abstract void  Abort();
 		internal abstract void  CloseDocStore(SegmentWriteState state);
 		

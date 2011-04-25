@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -325,8 +326,8 @@ namespace Lucene.Net.Index
 		
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
-        private System.Collections.Generic.LinkedList<MergePolicy.OneMerge> pendingMerges = new System.Collections.Generic.LinkedList<MergePolicy.OneMerge>();
-		private System.Collections.Generic.List<MergePolicy.OneMerge> runningMerges = new System.Collections.Generic.List<MergePolicy.OneMerge>();
+        private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
+		private List<MergePolicy.OneMerge> runningMerges = new List<MergePolicy.OneMerge>();
 		private System.Collections.IList mergeExceptions = new System.Collections.ArrayList();
 		private long mergeGen;
 		private bool stopMerges;
@@ -2930,7 +2931,7 @@ namespace Lucene.Net.Index
 							// never incref'd, then we clean them up here
 							if (docWriter != null)
 							{
-                                System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
+                                ICollection<string> files = docWriter.AbortedFiles();
 								if (files != null)
 									deleter.DeleteNewFiles(files);
 							}
@@ -3108,7 +3109,7 @@ namespace Lucene.Net.Index
 						{
 							// If docWriter has some aborted files that were
 							// never incref'd, then we clean them up here
-                            System.Collections.Generic.ICollection<string> files = docWriter.AbortedFiles();
+                            ICollection<string> files = docWriter.AbortedFiles();
 							if (files != null)
 								deleter.DeleteNewFiles(files);
 						}
@@ -3401,13 +3402,13 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-                System.Collections.Generic.LinkedList<MergePolicy.OneMerge>.Enumerator it =  pendingMerges.GetEnumerator();
+                LinkedList<MergePolicy.OneMerge>.Enumerator it =  pendingMerges.GetEnumerator();
                 while (it.MoveNext())
                 {
                     if (it.Current.optimize) return true;
                 }
 
-                System.Collections.Generic.List<MergePolicy.OneMerge>.Enumerator it2 = runningMerges.GetEnumerator();
+                List<MergePolicy.OneMerge>.Enumerator it2 = runningMerges.GetEnumerator();
                 while (it2.MoveNext())
                 {
                     if (it2.Current.optimize) return true;
@@ -3630,7 +3631,7 @@ namespace Lucene.Net.Index
 					return null;
 				else
 				{
-                    System.Collections.Generic.IEnumerator<MergePolicy.OneMerge> it = pendingMerges.GetEnumerator();
+                    IEnumerator<MergePolicy.OneMerge> it = pendingMerges.GetEnumerator();
 					while (it.MoveNext())
 					{
                         MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
@@ -4260,7 +4261,7 @@ namespace Lucene.Net.Index
 		
 		private void  NoDupDirs(Directory[] dirs)
 		{
-            System.Collections.Generic.Dictionary<Directory, Directory> dups = new System.Collections.Generic.Dictionary<Directory, Directory>();
+            Dictionary<Directory, Directory> dups = new Dictionary<Directory, Directory>();
 			for (int i = 0; i < dirs.Length; i++)
 			{
                 if (dups.ContainsKey(dirs[i]))
@@ -4631,7 +4632,7 @@ namespace Lucene.Net.Index
 				if (mergePolicy is LogMergePolicy && GetUseCompoundFile())
 				{
 					
-					System.Collections.Generic.IList<string> files = null;
+					IList<string> files = null;
 					
 					lock (this)
 					{
@@ -4791,12 +4792,12 @@ namespace Lucene.Net.Index
 		/// index to commit.  Therefore it's best to use this
 		/// feature only when autoCommit is false.
 		/// </param>
-        public void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void PrepareCommit(IDictionary<string, string> commitUserData)
 		{
 			PrepareCommit(commitUserData, false);
 		}
 
-        private void PrepareCommit(System.Collections.Generic.IDictionary<string, string> commitUserData, bool internal_Renamed)
+        private void PrepareCommit(IDictionary<string, string> commitUserData, bool internal_Renamed)
 		{
 			
 			if (hitOOM)
@@ -4874,7 +4875,7 @@ namespace Lucene.Net.Index
 		/// you should immediately close the writer.  See <a
 		/// href="#OOME">above</a> for details.<p/>
 		/// </summary>
-        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Commit(IDictionary<string, string> commitUserData)
 		{
 			
 			EnsureOpen();
@@ -5370,7 +5371,7 @@ namespace Lucene.Net.Index
 				
 				merge.info.SetHasProx(merger.HasProx());
 				
-				((System.Collections.IList) ((System.Collections.ArrayList) segmentInfos).GetRange(start, start + merge.segments.Count - start)).Clear();
+                segmentInfos.GetRange(start, start + merge.segments.Count - start).Clear();
 				System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
 				segmentInfos.Insert(start, merge.info);
 
@@ -5734,7 +5735,7 @@ namespace Lucene.Net.Index
 				merge.info = new SegmentInfo(NewSegmentName(), 0, directory, false, true, docStoreOffset, docStoreSegment2, docStoreIsCompoundFile, false);
 
 
-                System.Collections.Generic.IDictionary<string, string> details = new System.Collections.Generic.Dictionary<string, string>();
+                IDictionary<string, string> details = new Dictionary<string, string>();
 				details["optimize"] = merge.optimize + "";
 				details["mergeFactor"] = end + "";
 				details["mergeDocStores"] = mergeDocStores + "";
@@ -5753,9 +5754,9 @@ namespace Lucene.Net.Index
 			SetDiagnostics(info, source, null);
 		}
 
-        private void SetDiagnostics(SegmentInfo info, System.String source, System.Collections.Generic.IDictionary<string, string> details)
+        private void SetDiagnostics(SegmentInfo info, System.String source, IDictionary<string, string> details)
 		{
-            System.Collections.Generic.IDictionary<string, string> diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+            IDictionary<string, string> diagnostics = new Dictionary<string,string>();
 			diagnostics["source"] = source;
 			diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
 			diagnostics["os"] = Constants.OS_NAME + "";
@@ -6303,12 +6304,12 @@ namespace Lucene.Net.Index
 		}
 		
 		// Files that have been sync'd already
-        private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
+        private Dictionary<string, string> synced = new Dictionary<string, string>();
 		
 		// Files that are now being sync'd
         private System.Collections.Hashtable syncing = new System.Collections.Hashtable();
 		
-		private bool StartSync(System.String fileName, System.Collections.Generic.ICollection<System.String> pending)
+		private bool StartSync(System.String fileName, ICollection<System.String> pending)
 		{
 			lock (synced)
 			{
@@ -6343,11 +6344,11 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Blocks until all files in syncing are sync'd </summary>
-		private bool WaitForAllSynced(System.Collections.Generic.ICollection<System.String> syncing)
+		private bool WaitForAllSynced(ICollection<System.String> syncing)
 		{
 			lock (synced)
 			{
-				System.Collections.Generic.IEnumerator<System.String> it = syncing.GetEnumerator();
+				IEnumerator<System.String> it = syncing.GetEnumerator();
 				while (it.MoveNext())
 				{
 					System.String fileName = (System.String) it.Current;
@@ -6447,7 +6448,7 @@ namespace Lucene.Net.Index
 		/// prepare a new segments_N file but do not fully commit
 		/// it. 
 		/// </summary>
-        private void StartCommit(long sizeInBytes, System.Collections.Generic.IDictionary<string, string> commitUserData)
+        private void StartCommit(long sizeInBytes, IDictionary<string, string> commitUserData)
 		{
 			
 			System.Diagnostics.Debug.Assert(TestPoint("startStartCommit"));
@@ -6543,7 +6544,7 @@ namespace Lucene.Net.Index
 						
 						deleter.IncRef(toSync, false);
 												
-						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
+						IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
 							System.String fileName = it.Current;
@@ -6573,9 +6574,9 @@ namespace Lucene.Net.Index
 					while (true)
 					{
 						
-						System.Collections.Generic.ICollection<System.String> pending = new System.Collections.Generic.List<System.String>();
+						ICollection<System.String> pending = new List<System.String>();
 						
-						System.Collections.Generic.IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
+						IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
 						while (it.MoveNext())
 						{
 							System.String fileName = it.Current;

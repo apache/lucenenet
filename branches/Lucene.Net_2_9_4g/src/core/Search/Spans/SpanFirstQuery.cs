@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -85,9 +86,9 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+			public override ICollection<byte[]> GetPayload()
 			{
-				System.Collections.Generic.ICollection<byte[]> result = null;
+				ICollection<byte[]> result = null;
 				if (spans.IsPayloadAvailable())
 				{
 					result = spans.GetPayload();
@@ -165,7 +166,7 @@ namespace Lucene.Net.Search.Spans
 			return spanFirstQuery;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			match.ExtractTerms(terms);
 		}

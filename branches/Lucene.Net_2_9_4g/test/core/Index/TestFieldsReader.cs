@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
 			Document doc = reader.Doc(0, fieldSelector);
 			Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
 			int count = 0;
-			System.Collections.IList l = doc.GetFields();
+            System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> l = doc.GetFields();
 			for (System.Collections.IEnumerator iter = l.GetEnumerator(); iter.MoveNext(); )
 			{
 				Field field = (Field) iter.Current;

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -51,8 +52,8 @@ namespace Lucene.Net.Index
 		
 		public override void  Flush(System.Collections.ICollection threads, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary childThreadsAndFields = new System.Collections.Hashtable();
+
+            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
 			System.Collections.IEnumerator it = threads.GetEnumerator();
 			while (it.MoveNext())
 			{

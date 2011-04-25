@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
             this.doTermSort = doTermSort;
             if (doTermSort)
             {
-                terms = new System.Collections.Generic.SortedDictionary<object, object>();
+                terms = new SortedDictionary<object, object>();
             }
             else
             {
@@ -140,7 +141,7 @@ namespace Lucene.Net.Index
 				{
                     if (doTermSort)
                     {
-                        newDeleteTerms = new System.Collections.Generic.SortedDictionary<object, object>();
+                        newDeleteTerms = new SortedDictionary<object, object>();
                     }
                     else
                     {

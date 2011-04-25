@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Index
 		/// <summary>Called when DocumentsWriter decides to create a new
 		/// segment 
 		/// </summary>
-		public abstract void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state);
+        public abstract void Flush(SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state);
 		
 		/// <summary>Called when DocumentsWriter decides to close the doc
 		/// stores 

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -260,9 +261,9 @@ namespace Lucene.Net.Store
 		}
 		
 		// returns Map<String, String>
-		public virtual System.Collections.Generic.IDictionary<string,string> ReadStringStringMap()
+		public virtual IDictionary<string,string> ReadStringStringMap()
 		{
-            System.Collections.Generic.Dictionary<string, string> map = new System.Collections.Generic.Dictionary<string, string>();
+            Dictionary<string, string> map = new Dictionary<string, string>();
 			int count = ReadInt();
 			for (int i = 0; i < count; i++)
 			{

@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
             foreach (SpanQuery clause in clauses)
             {

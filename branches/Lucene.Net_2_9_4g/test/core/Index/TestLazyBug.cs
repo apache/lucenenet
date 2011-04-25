@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 				Document d = reader.Document(docs[i], SELECTOR);
 				d.Get(MAGIC_FIELD);
 				
-				System.Collections.IList fields = d.GetFields();
+				System.Collections.Generic.IList<Fieldable> fields = d.GetFields();
 				for (System.Collections.IEnumerator fi = fields.GetEnumerator(); fi.MoveNext(); )
 				{
 					Fieldable f = null;

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
@@ -57,8 +58,8 @@ namespace Lucene.Net.Index
 			for (int i = start; i < end; i++)
 				postings[i] = new PostingList();
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{
@@ -82,17 +83,14 @@ namespace Lucene.Net.Index
 					tvf.Flush();
 				}
 
-                System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-				while (it.MoveNext())
-				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-					System.Collections.IEnumerator it2 = ((System.Collections.ICollection) entry.Value).GetEnumerator();
-					while (it2.MoveNext())
-					{
-						TermVectorsTermsWriterPerField perField = (TermVectorsTermsWriterPerField) ((System.Collections.DictionaryEntry) it2.Current).Key;
-						perField.termsHashPerField.Reset();
-						perField.ShrinkHash();
-					}
+                foreach(KeyValuePair<TermsHashConsumerPerThread,IList<TermsHashConsumerPerField>> entry in threadsAndFields) {
+                    foreach (TermsHashConsumerPerField field in entry.Value ) 
+                    {
+                        TermVectorsTermsWriterPerField perField = (TermVectorsTermsWriterPerField) field;
+                        perField.termsHashPerField.Reset();
+                        perField.ShrinkHash();
+                    }
+					
 					
 					TermVectorsTermsWriterPerThread perThread = (TermVectorsTermsWriterPerThread) entry.Key;
 					perThread.termsHashPerThread.Reset(true);

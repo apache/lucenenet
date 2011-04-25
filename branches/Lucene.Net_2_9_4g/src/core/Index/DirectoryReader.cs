@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
 		internal IndexWriter writer;
 		
 		private IndexDeletionPolicy deletionPolicy;
-        private System.Collections.Generic.Dictionary<string, string> synced = new System.Collections.Generic.Dictionary<string, string>();
+        private Dictionary<string, string> synced = new Dictionary<string, string>();
 		private Lock writeLock;
 		private SegmentInfos segmentInfos;
 		private SegmentInfos segmentInfosStart;
@@ -925,7 +926,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        protected internal override void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
 		{
 			if (hasChanges)
 			{
@@ -1014,7 +1015,7 @@ namespace Lucene.Net.Index
             }
 		}
 
-        public override System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
+        public override IDictionary<string, string> GetCommitUserData()
 		{
 			EnsureOpen();
 			return segmentInfos.GetUserData();
@@ -1065,20 +1066,20 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        public override System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
+        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
 			EnsureOpen();
 			return GetFieldNames(fieldNames, this.subReaders);
 		}
 
-        internal static System.Collections.Generic.ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
+        internal static ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
 		{
 			// maintain a unique set of field names
-            System.Collections.Generic.Dictionary<string,string> fieldSet = new System.Collections.Generic.Dictionary<string,string>();
+            Dictionary<string,string> fieldSet = new Dictionary<string,string>();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-                System.Collections.Generic.ICollection<string> names = reader.GetFieldNames(fieldNames);
+                ICollection<string> names = reader.GetFieldNames(fieldNames);
 				SupportClass.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
 			}
 			return fieldSet.Keys;
@@ -1172,12 +1173,12 @@ namespace Lucene.Net.Index
 		private sealed class ReaderCommit:IndexCommit
 		{
 			private System.String segmentsFileName;
-			internal System.Collections.Generic.ICollection<string> files;
+			internal ICollection<string> files;
 			internal Directory dir;
 			internal long generation;
 			internal long version;
 			internal bool isOptimized;
-            internal System.Collections.Generic.IDictionary<string, string> userData;
+            internal IDictionary<string, string> userData;
 			
 			internal ReaderCommit(SegmentInfos infos, Directory dir)
 			{
@@ -1204,7 +1205,7 @@ namespace Lucene.Net.Index
 				return segmentsFileName;
 			}
 
-            public override System.Collections.Generic.ICollection<string> GetFileNames()
+            public override ICollection<string> GetFileNames()
 			{
 				return files;
 			}
@@ -1229,7 +1230,7 @@ namespace Lucene.Net.Index
 				return false;
 			}
 
-            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
+            public override IDictionary<string, string> GetUserData()
 			{
 				return userData;
 			}

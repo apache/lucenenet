@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -846,7 +847,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="GetCommitUserData()">
 		/// </seealso>
-        public static System.Collections.Generic.IDictionary<string, string> GetCommitUserData(Directory directory)
+        public static IDictionary<string, string> GetCommitUserData(Directory directory)
 		{
 			return SegmentInfos.ReadCurrentUserData(directory);
 		}
@@ -889,7 +890,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <seealso cref="GetCommitUserData(Directory)">
 		/// </seealso>
-        public virtual System.Collections.Generic.IDictionary<string, string> GetCommitUserData()
+        public virtual IDictionary<string, string> GetCommitUserData()
 		{
 			throw new System.NotSupportedException("This reader does not support this method.");
 		}
@@ -1470,7 +1471,7 @@ namespace Lucene.Net.Index
 		/// IndexReader#getCommitUserData}.
 		/// </param>
 		/// <throws>  IOException </throws>
-        public void Flush(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Flush(IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1503,7 +1504,7 @@ namespace Lucene.Net.Index
 		/// (transactional semantics).
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        public void Commit(IDictionary<string, string> commitUserData)
 		{
 			lock (this)
 			{
@@ -1525,7 +1526,7 @@ namespace Lucene.Net.Index
 		/// <summary>Implements commit.  NOTE: subclasses should override
 		/// this.  In 3.0 this will become an abstract method. 
 		/// </summary>
-        protected internal virtual void DoCommit(System.Collections.Generic.IDictionary<string, string> commitUserData)
+        protected internal virtual void DoCommit(IDictionary<string, string> commitUserData)
 		{
 			// Default impl discards commitUserData; all Lucene
 			// subclasses override this (do not discard it).
@@ -1570,7 +1571,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <seealso cref="IndexReader.FieldOption">
 		/// </seealso>
-		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
+		public abstract ICollection<string> GetFieldNames(FieldOption fldOption);
 		
 		/// <summary> Returns <code>true</code> iff the index in the named directory is
 		/// currently locked.

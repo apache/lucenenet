@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using AbstractField = Lucene.Net.Documents.AbstractField;
 using Document = Lucene.Net.Documents.Document;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Index
 			public bool partial;
 			
 			/// <summary>Holds the userData of the last commit in the index </summary>
-            public System.Collections.Generic.IDictionary<string, string> userData;
+            public IDictionary<string, string> userData;
 			
 			/// <summary>Holds the status of each segment in the index.
 			/// See {@link #segmentInfos}.
@@ -186,7 +187,7 @@ namespace Lucene.Net.Index
 				/// debugging details that IndexWriter records into
 				/// each segment it creates 
 				/// </summary>
-                public System.Collections.Generic.IDictionary<string, string> diagnostics;
+                public IDictionary<string, string> diagnostics;
 				
 				/// <summary>Status for testing of field norms (null if field norms could not be tested). </summary>
 				public FieldNormStatus fieldNormStatus;
@@ -510,7 +511,7 @@ namespace Lucene.Net.Index
 					segInfoStat.numFiles = info.Files().Count;
 					Msg(System.String.Format(nf, "    size (MB)={0:f}", new System.Object[] { (info.SizeInBytes() / (1024.0 * 1024.0)) }));
 					segInfoStat.sizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
-                    System.Collections.Generic.IDictionary<string, string> diagnostics = info.GetDiagnostics();
+                    IDictionary<string, string> diagnostics = info.GetDiagnostics();
 					segInfoStat.diagnostics = diagnostics;
 					if (diagnostics.Count > 0)
 					{
@@ -580,7 +581,7 @@ namespace Lucene.Net.Index
 					{
 						infoStream.Write("    test: fields..............");
 					}
-                    System.Collections.Generic.ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+                    ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 					Msg("OK [" + fieldNames.Count + " fields]");
 					segInfoStat.numFields = fieldNames.Count;
 					
@@ -637,7 +638,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Keeper
-				result.newSegments.Add(info.Clone());
+                result.newSegments.Add((SegmentInfo)info.Clone());
 			}
 			
 			if (0 == result.numBadSegments)
@@ -652,7 +653,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Test field norms.</summary>
-        private Status.FieldNormStatus TestFieldNorms(System.Collections.Generic.ICollection<string> fieldNames, SegmentReader reader)
+        private Status.FieldNormStatus TestFieldNorms(ICollection<string> fieldNames, SegmentReader reader)
 		{
 			Status.FieldNormStatus status = new Status.FieldNormStatus();
 			

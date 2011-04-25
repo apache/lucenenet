@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using MultipleTermPositions = Lucene.Net.Index.MultipleTermPositions;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Search
 	public class MultiPhraseQuery:Query
 	{
 		private System.String field;
-		private System.Collections.ArrayList termArrays = new System.Collections.ArrayList();
+        private List<Term[]> termArrays = new List<Term[]>();
 		private System.Collections.ArrayList positions = new System.Collections.ArrayList();
 		
 		private int slop = 0;
@@ -128,14 +129,14 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
 			{
 				Term[] arr = (Term[]) iter.Current;
 				for (int i = 0; i < arr.Length; i++)
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(terms, arr[i]);
+                    terms.Add(arr[i]);
 				}
 			}
 		}

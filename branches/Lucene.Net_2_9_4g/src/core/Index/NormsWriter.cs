@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Similarity = Lucene.Net.Search.Similarity;
@@ -57,35 +58,32 @@ namespace Lucene.Net.Index
 		/// <summary>Produce _X.nrm if any document had a field with norms
 		/// not disabled 
 		/// </summary>
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+        public override void Flush(SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary byField = new System.Collections.Hashtable();
+
+            SupportClass.Dictionary<FieldInfo, IList<NormsWriterPerField>> byField = new SupportClass.Dictionary<FieldInfo, IList<NormsWriterPerField>>();
 			
 			// Typically, each thread will have encountered the same
 			// field.  So first we collate by field, ie, all
 			// per-thread field instances that correspond to the
 			// same FieldInfo
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
-			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-                System.Collections.ArrayList fieldsToRemove = new System.Collections.ArrayList();
+			foreach(KeyValuePair<InvertedDocEndConsumerPerThread,IList<InvertedDocEndConsumerPerField>> entry in threadsAndFields) {
+
+                IList<InvertedDocEndConsumerPerField> fields = entry.Value;
+                IEnumerator<InvertedDocEndConsumerPerField> fieldsIt = fields.GetEnumerator();
+                List<NormsWriterPerField> fieldsToRemove = new List<NormsWriterPerField>();
 				
 				while (fieldsIt.MoveNext())
 				{
-					NormsWriterPerField perField = (NormsWriterPerField) ((System.Collections.DictionaryEntry) fieldsIt.Current).Key;
+                    NormsWriterPerField perField = (NormsWriterPerField)fieldsIt.Current;
 					
 					if (perField.upto > 0)
 					{
 						// It has some norms
-						System.Collections.IList l = (System.Collections.IList) byField[perField.fieldInfo];
+                        IList<NormsWriterPerField> l = byField[perField.fieldInfo];
 						if (l == null)
 						{
-							l = new System.Collections.ArrayList();
+                            l = new List<NormsWriterPerField>();
 							byField[perField.fieldInfo] = l;
 						}
 						l.Add(perField);
@@ -98,7 +96,7 @@ namespace Lucene.Net.Index
 					}
 				}
 
-                System.Collections.Hashtable fieldsHT = (System.Collections.Hashtable)fields;
+                var fieldsHT = fields;
                 for (int i = 0; i < fieldsToRemove.Count; i++)
                 {
                     fieldsHT.Remove(fieldsToRemove[i]);    

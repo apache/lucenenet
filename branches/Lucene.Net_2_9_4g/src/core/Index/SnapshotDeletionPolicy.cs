@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetSegmentsFileName();
 			}
-            public override System.Collections.Generic.ICollection<string> GetFileNames()
+            public override ICollection<string> GetFileNames()
 			{
 				return cp.GetFileNames();
 			}
@@ -171,7 +172,7 @@ namespace Lucene.Net.Index
 			{
 				return cp.GetGeneration();
 			}
-            public override System.Collections.Generic.IDictionary<string, string> GetUserData()
+            public override IDictionary<string, string> GetUserData()
 			{
 				return cp.GetUserData();
 			}

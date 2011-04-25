@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
@@ -138,9 +139,9 @@ namespace Lucene.Net.Search.Spans
 			}
 			
 			// TODO: Remove warning after API has been finalized
-			public override System.Collections.Generic.ICollection<byte[]> GetPayload()
+			public override ICollection<byte[]> GetPayload()
 			{
-				System.Collections.Generic.ICollection<byte[]> result = null;
+				ICollection<byte[]> result = null;
 				Spans theTop = Top();
 				if (theTop != null && theTop.IsPayloadAvailable())
 				{
@@ -215,7 +216,7 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			System.Collections.IEnumerator i = clauses.GetEnumerator();
 			while (i.MoveNext())

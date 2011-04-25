@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
@@ -48,12 +49,12 @@ namespace Lucene.Net.Index
 			one.SetFieldInfos(fieldInfos);
 			two.SetFieldInfos(fieldInfos);
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
-			
-			System.Collections.IDictionary oneThreadsAndFields = new System.Collections.Hashtable();
-			System.Collections.IDictionary twoThreadsAndFields = new System.Collections.Hashtable();
+
+            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> oneThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
+            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> twoThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
 			
 			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
 			while (it.MoveNext())
@@ -66,20 +67,18 @@ namespace Lucene.Net.Index
 				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
 				
 				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-				System.Collections.Hashtable oneFields = new System.Collections.Hashtable();
-				System.Collections.Hashtable twoFields = new System.Collections.Hashtable();
-				while (fieldsIt.MoveNext())
-				{
-					DocFieldConsumersPerField perField = (DocFieldConsumersPerField) fieldsIt.Current;
-					SupportClass.CollectionsHelper.AddIfNotContains(oneFields, perField.one);
-					SupportClass.CollectionsHelper.AddIfNotContains(twoFields, perField.two);
-				}
-				
+                IList<DocFieldConsumerPerField> oneFields = new List<DocFieldConsumerPerField>();
+                IList<DocFieldConsumerPerField> twoFields = new List<DocFieldConsumerPerField>();
+                foreach (DocFieldConsumersPerField perField in fields)
+                {
+                    oneFields.Add(perField.one);
+                    twoFields.Add(perField.two);
+                }
+                				
 				oneThreadsAndFields[perThread.one] = oneFields;
 				twoThreadsAndFields[perThread.two] = twoFields;
 			}
-			
-			
+						
 			one.Flush(oneThreadsAndFields, state);
 			two.Flush(twoThreadsAndFields, state);
 		}

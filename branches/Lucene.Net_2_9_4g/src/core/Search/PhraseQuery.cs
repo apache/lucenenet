@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search
 	public class PhraseQuery:Query
 	{
 		private System.String field;
-        private SupportClass.EquatableList<Term> terms = new SupportClass.EquatableList<Term>(4);
+        private List<Term> terms = new List<Term>();
         private SupportClass.EquatableList<int> positions = new SupportClass.EquatableList<int>(4);
 		private int maxPosition = 0;
 		private int slop = 0;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search
 		{
 			if (terms.Count == 0)
 				field = term.Field();
-			else if ((System.Object) term.Field() != (System.Object) field)
+			else if (term.Field() != field)
 			{
 				throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
 			}
@@ -147,7 +148,7 @@ namespace Lucene.Net.Search
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
-				idfExp = similarity.idfExplain(Enclosing_Instance.terms, searcher);
+				idfExp = similarity.idfExplain(Enclosing_Instance.terms.ToArray(), searcher);
 				idf = idfExp.GetIdf();
 			}
 			
@@ -185,6 +186,7 @@ namespace Lucene.Net.Search
 					return null;
 				
 				TermPositions[] tps = new TermPositions[Enclosing_Instance.terms.Count];
+
 				for (int i = 0; i < Enclosing_Instance.terms.Count; i++)
 				{
 					TermPositions p = reader.TermPositions((Term) Enclosing_Instance.terms[i]);
@@ -290,9 +292,10 @@ namespace Lucene.Net.Search
 		
 		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(java.util.Set)">
 		/// </seealso>
-		public override void  ExtractTerms(System.Collections.Hashtable queryTerms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> queryTerms)
 		{
-			SupportClass.CollectionsHelper.AddAllIfNotContains(queryTerms, terms);
+            queryTerms.Add(terms);
+			//SupportClass.CollectionsHelper.AddAllIfNotContains(queryTerms, terms);
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

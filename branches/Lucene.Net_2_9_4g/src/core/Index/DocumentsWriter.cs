@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Document = Lucene.Net.Documents.Document;
@@ -532,11 +533,11 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private System.Collections.Generic.ICollection<string> abortedFiles; // List of files that were written before last abort()
+		private ICollection<string> abortedFiles; // List of files that were written before last abort()
 		
 		private SegmentWriteState flushState;
 
-        internal System.Collections.Generic.ICollection<string> AbortedFiles()
+        internal ICollection<string> AbortedFiles()
 		{
 			return abortedFiles;
 		}
@@ -547,12 +548,12 @@ namespace Lucene.Net.Index
 				writer.Message("DW: " + message);
 		}
 
-        internal System.Collections.Generic.IList<string> openFiles = new System.Collections.Generic.List<string>();
-        internal System.Collections.Generic.IList<string> closedFiles = new System.Collections.Generic.List<string>();
+        internal IList<string> openFiles = new List<string>();
+        internal IList<string> closedFiles = new List<string>();
 		
 		/* Returns Collection of files in use by this instance,
 		* including any flushed segments. */
-		internal System.Collections.Generic.IList<string> OpenFiles()
+		internal IList<string> OpenFiles()
 		{
 			lock (this)
 			{
@@ -562,7 +563,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal System.Collections.Generic.IList<string> ClosedFiles()
+		internal IList<string> ClosedFiles()
 		{
             lock (this)
             {

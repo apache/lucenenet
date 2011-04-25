@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -66,8 +67,8 @@ namespace Lucene.Net.Index
 		
 		private Directory directory;
 		private System.String fileName;
-        private System.Collections.Hashtable ids;
-		private System.Collections.ArrayList entries;
+        private Dictionary<string,string> ids;
+		private List<FileEntry> entries;
 		private bool merged = false;
 		private SegmentMerger.CheckAbort checkAbort;
 		
@@ -88,8 +89,8 @@ namespace Lucene.Net.Index
 			this.checkAbort = checkAbort;
 			directory = dir;
 			fileName = name;
-            ids = new System.Collections.Hashtable();
-			entries = new System.Collections.ArrayList();
+            ids = new Dictionary<string, string>();
+            entries = new List<FileEntry>();
 		}
 		
 		/// <summary>Returns the directory of the compound file. </summary>
@@ -165,11 +166,11 @@ namespace Lucene.Net.Index
 				// Write the directory with all offsets at 0.
 				// Remember the positions of directory entries so that we can
 				// adjust the offsets later
-				System.Collections.IEnumerator it = entries.GetEnumerator();
+				IEnumerator<FileEntry> it = entries.GetEnumerator();
 				long totalSize = 0;
 				while (it.MoveNext())
 				{
-					FileEntry fe = (FileEntry) it.Current;
+					FileEntry fe = it.Current;
 					fe.directoryOffset = os.GetFilePointer();
 					os.WriteLong(0); // for now
 					os.WriteString(fe.file);
@@ -191,7 +192,7 @@ namespace Lucene.Net.Index
 				it = entries.GetEnumerator();
 				while (it.MoveNext())
 				{
-					FileEntry fe = (FileEntry) it.Current;
+					FileEntry fe = it.Current;
 					fe.dataOffset = os.GetFilePointer();
 					CopyFile(fe, os, buffer);
 				}
@@ -200,7 +201,7 @@ namespace Lucene.Net.Index
 				it = entries.GetEnumerator();
 				while (it.MoveNext())
 				{
-					FileEntry fe = (FileEntry) it.Current;
+					FileEntry fe = it.Current;
 					os.Seek(fe.directoryOffset);
 					os.WriteLong(fe.dataOffset);
 				}

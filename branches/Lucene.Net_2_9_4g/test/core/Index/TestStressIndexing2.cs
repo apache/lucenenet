@@ -33,13 +33,13 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestStressIndexing2:LuceneTestCase
 	{
-		internal class AnonymousClassComparator : System.Collections.IComparer
+		internal class AnonymousClassComparator : System.Collections.Generic.IComparer<Fieldable>
 		{
-			public virtual int Compare(System.Object o1, System.Object o2)
-			{
-				return String.CompareOrdinal(((Fieldable) o1).Name(), ((Fieldable) o2).Name());
-			}
-		}
+            public int Compare(Fieldable x, Fieldable y)
+            {
+                return String.CompareOrdinal(x.Name(),y.Name());
+            }
+        }
 		internal static int maxFields = 4;
 		internal static int bigFieldSize = 10;
 		internal static bool sameFieldOrder = false;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 		
 		internal static Term idTerm = new Term("id", "");
 		internal IndexingThread[] threads;
-		internal static System.Collections.IComparer fieldNameComparator;
+		internal static System.Collections.Generic.IComparer<Fieldable> fieldNameComparator;
 		
 		// This test avoids using any extra synchronization in the multiple
 		// indexing threads to test that IndexWriter does correctly synchronize
@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
 			while (iter.MoveNext())
 			{
 				Document d = (Document) iter.Current;
-				System.Collections.ArrayList fields = new System.Collections.ArrayList();
+                System.Collections.Generic.List<Fieldable> fields = new System.Collections.Generic.List<Fieldable>();
 				fields.AddRange(d.GetFields());
 				// put fields in same order each time
                 //{{Lucene.Net-2.9.1}} No, don't change the order of the fields
@@ -475,8 +475,8 @@ namespace Lucene.Net.Index
 		
 		public static void  VerifyEquals(Document d1, Document d2)
 		{
-			System.Collections.IList ff1 = d1.GetFields();
-			System.Collections.IList ff2 = d2.GetFields();
+            System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> ff1 = d1.GetFields();
+            System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> ff2 = d2.GetFields();
 			
 			SupportClass.CollectionsHelper.Sort(ff1, fieldNameComparator);
 			SupportClass.CollectionsHelper.Sort(ff2, fieldNameComparator);
@@ -672,8 +672,8 @@ namespace Lucene.Net.Index
 			public virtual void  IndexDoc()
 			{
 				Document d = new Document();
-				
-				System.Collections.ArrayList fields = new System.Collections.ArrayList();
+
+                System.Collections.Generic.IList<Fieldable> fields = new System.Collections.Generic.List<Fieldable>();
 				System.String idString = GetIdString();
 				Field idField = new Field(Lucene.Net.Index.TestStressIndexing2.idTerm.Field(), idString, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
 				fields.Add(idField);

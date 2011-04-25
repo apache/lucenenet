@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Function
 		}
 		
 		/*(non-Javadoc) @see Lucene.Net.Search.Query#extractTerms(java.util.Set) */
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
 			// no terms involved here
 		}

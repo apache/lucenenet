@@ -176,9 +176,9 @@ namespace Lucene.Net.Search
 			return new TermWeight(this, searcher);
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, GetTerm());
+            terms.Add(GetTerm());
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

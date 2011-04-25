@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 		public abstract void  Abort();
 		
 		/// <summary>Flush a new segment </summary>
-		internal abstract void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state);
+		internal abstract void  Flush(SupportClass.Dictionary<InvertedDocConsumerPerThread,System.Collections.Generic.IList<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state);
 		
 		/// <summary>Close doc stores </summary>
 		internal abstract void  CloseDocStore(SegmentWriteState state);

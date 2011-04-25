@@ -224,10 +224,10 @@ namespace Lucene.Net.Index
 			{
 				return 2.0f;
 			}
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
-			{
-				return 1.0f;
-			}
+            public override float Idf(System.Collections.Generic.IList<Term> terms, Searcher searcher)
+            {
+                return 1.0f;
+            }
 			public override float Idf(int docFreq, int numDocs)
 			{
 				return 1.0f;

@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	public sealed class FieldInfo : System.ICloneable
+	public sealed class FieldInfo : System.ICloneable<FieldInfo>
 	{
 		internal System.String name;
 		internal bool isIndexed;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public System.Object Clone()
+		public FieldInfo Clone()
 		{
 			return new FieldInfo(name, isIndexed, number, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
 		}

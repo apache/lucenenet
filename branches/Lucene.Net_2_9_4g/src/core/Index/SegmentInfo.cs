@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
 		// and true for newly created merged segments (both
 		// compound and non compound).
 		
-		private System.Collections.Generic.IList<string> files; // cached list of files that this segment uses
+		private IList<string> files; // cached list of files that this segment uses
 		// in the Directory
 		
 		internal long sizeInBytes = - 1; // total byte size of all of our files (computed on demand)
@@ -86,7 +87,7 @@ namespace Lucene.Net.Index
 		
 		private bool hasProx; // True if this segment has any fields with omitTermFreqAndPositions==false
 
-        private System.Collections.Generic.IDictionary<string, string> diagnostics;
+        private IDictionary<string, string> diagnostics;
 		
 		public override System.String ToString()
 		{
@@ -152,13 +153,13 @@ namespace Lucene.Net.Index
 		}
 		
 		// must be Map<String, String>
-        internal void SetDiagnostics(System.Collections.Generic.IDictionary<string, string> diagnostics)
+        internal void SetDiagnostics(IDictionary<string, string> diagnostics)
 		{
 			this.diagnostics = diagnostics;
 		}
 		
 		// returns Map<String, String>
-        public System.Collections.Generic.IDictionary<string, string> GetDiagnostics()
+        public IDictionary<string, string> GetDiagnostics()
 		{
 			return diagnostics;
 		}
@@ -242,7 +243,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+					diagnostics = new Dictionary<string,string>();
 				}
 			}
 			else
@@ -257,7 +258,7 @@ namespace Lucene.Net.Index
 				docStoreSegment = null;
 				delCount = - 1;
 				hasProx = true;
-				diagnostics = new System.Collections.Generic.Dictionary<string,string>();
+				diagnostics = new Dictionary<string,string>();
 			}
 		}
 		
@@ -294,7 +295,7 @@ namespace Lucene.Net.Index
 		{
 			if (sizeInBytes == - 1)
 			{
-				System.Collections.Generic.IList<string> files = Files();
+				IList<string> files = Files();
 				int size = files.Count;
 				sizeInBytes = 0;
 				for (int i = 0; i < size; i++)
@@ -370,7 +371,7 @@ namespace Lucene.Net.Index
 			si.hasSingleNormFile = hasSingleNormFile;
             if (this.diagnostics != null)
             {
-                si.diagnostics = new System.Collections.Generic.Dictionary<string, string>();
+                si.diagnostics = new Dictionary<string, string>();
                 foreach (string o in diagnostics.Keys)
                 {
                     si.diagnostics.Add(o,diagnostics[o]);
@@ -386,7 +387,7 @@ namespace Lucene.Net.Index
 			si.docStoreIsCompoundFile = docStoreIsCompoundFile;
             if (this.files != null)
             {
-                si.files = new System.Collections.Generic.List<string>();
+                si.files = new List<string>();
                 foreach (string file in files)
                 {
                     si.files.Add(file);
@@ -690,7 +691,7 @@ namespace Lucene.Net.Index
 			return hasProx;
 		}
 		
-		private void  AddIfExists(System.Collections.Generic.IList<string> files, System.String fileName)
+		private void  AddIfExists(IList<string> files, System.String fileName)
 		{
 			if (dir.FileExists(fileName))
 				files.Add(fileName);
@@ -702,7 +703,7 @@ namespace Lucene.Net.Index
 		* modify it.
 		*/
 		
-		public System.Collections.Generic.IList<string> Files()
+		public IList<string> Files()
 		{
 			
 			if (files != null)
@@ -711,7 +712,7 @@ namespace Lucene.Net.Index
 				return files;
 			}
 
-            files = new System.Collections.Generic.List<string>();
+            files = new List<string>();
 			
 			bool useCompoundFile = GetUseCompoundFile();
 			
