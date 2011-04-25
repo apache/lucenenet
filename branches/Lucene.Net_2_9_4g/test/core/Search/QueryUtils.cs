@@ -311,7 +311,23 @@ namespace Lucene.Net.Search
 			
 			// we can't put deleted docs before the nested reader, because
 			// it will throw off the docIds
-			IndexReader[] readers = new IndexReader[]{edge < 0?r:IndexReader.Open(MakeEmptyIndex(0)), IndexReader.Open(MakeEmptyIndex(0)), new MultiReader(new IndexReader[]{IndexReader.Open(MakeEmptyIndex(edge < 0?4:0)), IndexReader.Open(MakeEmptyIndex(0)), 0 == edge?r:IndexReader.Open(MakeEmptyIndex(0))}), IndexReader.Open(MakeEmptyIndex(0 < edge?0:7)), IndexReader.Open(MakeEmptyIndex(0)), new MultiReader(new IndexReader[]{IndexReader.Open(MakeEmptyIndex(0 < edge?0:5)), IndexReader.Open(MakeEmptyIndex(0)), 0 < edge?r:IndexReader.Open(MakeEmptyIndex(0))})};
+            IndexReader[] readers = new IndexReader[] {
+                edge < 0 ? r : IndexReader.Open(MakeEmptyIndex(0), true),
+                IndexReader.Open(MakeEmptyIndex(0), true),
+                new MultiReader(new IndexReader[] {
+                    IndexReader.Open(MakeEmptyIndex(edge < 0 ? 4 : 0), true),
+                    IndexReader.Open(MakeEmptyIndex(0), true),
+                    0 == edge ? r : IndexReader.Open(MakeEmptyIndex(0), true)
+                }),
+                IndexReader.Open(MakeEmptyIndex(0 < edge ? 0 : 7), true),
+                IndexReader.Open(MakeEmptyIndex(0), true),
+                new MultiReader(new IndexReader[] {
+                    IndexReader.Open(MakeEmptyIndex(0 < edge ? 0 : 5), true),
+                    IndexReader.Open(MakeEmptyIndex(0), true),
+                    0 < edge ? r : IndexReader.Open(MakeEmptyIndex(0), true)
+                })
+            };
+
 			IndexSearcher out_Renamed = new IndexSearcher(new MultiReader(readers));
 			out_Renamed.SetSimilarity(s.GetSimilarity());
 			return out_Renamed;

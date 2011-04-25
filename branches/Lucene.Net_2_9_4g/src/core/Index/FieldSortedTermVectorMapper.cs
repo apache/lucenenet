@@ -27,20 +27,20 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class FieldSortedTermVectorMapper:TermVectorMapper
 	{
-		private System.Collections.IDictionary fieldToTerms = new System.Collections.Hashtable();
-		private SortedDictionary<object, object> currentSet;
+        private SupportClass.Dictionary<string, SortedSet<TermVectorEntry>> fieldToTerms = new SupportClass.Dictionary<string, SortedSet<TermVectorEntry>>();
+        private SortedSet<TermVectorEntry> currentSet;
 		private System.String currentField;
-		private IComparer<object> comparator;
+        private IComparer<TermVectorEntry> comparator;
 		
 		/// <summary> </summary>
 		/// <param name="comparator">A Comparator for sorting {@link TermVectorEntry}s
 		/// </param>
-		public FieldSortedTermVectorMapper(IComparer<object> comparator):this(false, false, comparator)
+        public FieldSortedTermVectorMapper(IComparer<TermVectorEntry> comparator) : this(false, false, comparator)
 		{
 		}
-		
-		
-		public FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<object> comparator):base(ignoringPositions, ignoringOffsets)
+
+
+        public FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<TermVectorEntry> comparator) : base(ignoringPositions, ignoringOffsets)
 		{
 			this.comparator = comparator;
 		}
@@ -48,12 +48,12 @@ namespace Lucene.Net.Index
 		public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{
 			TermVectorEntry entry = new TermVectorEntry(currentField, term, frequency, offsets, positions);
-			currentSet.Add(entry, entry);
+			currentSet.Add(entry);
 		}
 		
 		public override void  SetExpectations(System.String field, int numTerms, bool storeOffsets, bool storePositions)
 		{
-			currentSet = new SortedDictionary<object, object>(comparator);
+            currentSet = new SortedSet<TermVectorEntry>(comparator);
 			currentField = field;
 			fieldToTerms[field] = currentSet;
 		}
@@ -63,13 +63,13 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> A map between field names and {@link java.util.SortedSet}s per field.  SortedSet entries are {@link TermVectorEntry}
 		/// </returns>
-		public virtual System.Collections.IDictionary GetFieldToTerms()
+        public virtual IDictionary<string, SortedSet<TermVectorEntry>> GetFieldToTerms()
 		{
 			return fieldToTerms;
 		}
-		
-		
-		public virtual IComparer<object> GetComparator()
+
+
+        public virtual IComparer<TermVectorEntry> GetComparator()
 		{
 			return comparator;
 		}
