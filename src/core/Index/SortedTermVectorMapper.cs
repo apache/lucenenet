@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	{
 
 
-        private SortedDictionary<System.Object, System.Object> currentSet;
+        private SortedSet<TermVectorEntry> currentSet;
 		private System.Collections.IDictionary termToTVE = new System.Collections.Hashtable();
 		private bool storeOffsets;
 		private bool storePositions;
@@ -43,14 +43,14 @@ namespace Lucene.Net.Index
 		/// <summary> </summary>
 		/// <param name="comparator">A Comparator for sorting {@link TermVectorEntry}s
 		/// </param>
-		public SortedTermVectorMapper(IComparer<System.Object> comparator):this(false, false, comparator)
+		public SortedTermVectorMapper(IComparer<TermVectorEntry> comparator):this(false, false, comparator)
 		{
 		}
 		
 		
-		public SortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<System.Object> comparator):base(ignoringPositions, ignoringOffsets)
+		public SortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, IComparer<TermVectorEntry> comparator):base(ignoringPositions, ignoringOffsets)
 		{
-            currentSet = new SortedDictionary<System.Object, System.Object>(comparator);
+            currentSet = new SortedSet<TermVectorEntry>(comparator);
 		}
 		
 		/// <summary> </summary>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 			{
 				entry = new TermVectorEntry(ALL, term, frequency, storeOffsets == true?offsets:null, storePositions == true?positions:null);
 				termToTVE[term] = entry;
-				currentSet.Add(entry, entry);
+				currentSet.Add(entry);
 			}
 			else
 			{
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> The SortedSet of {@link TermVectorEntry}.
 		/// </returns>
-        public virtual SortedDictionary<Object, Object> GetTermVectorEntrySet()
+        public virtual SortedSet<TermVectorEntry> GetTermVectorEntrySet()
 		{
 			return currentSet;
 		}
