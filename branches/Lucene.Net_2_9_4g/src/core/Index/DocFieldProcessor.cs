@@ -49,18 +49,16 @@ namespace Lucene.Net.Index
 			consumer.CloseDocStore(state);
 			fieldsWriter.CloseDocStore(state);
 		}
-		
-		public override void  Flush(System.Collections.ICollection threads, SegmentWriteState state)
+
+        public override void Flush(IDictionary<DocConsumerPerThread, DocConsumerPerThread> threads, SegmentWriteState state)
 		{
 
             SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
-			System.Collections.IEnumerator it = threads.GetEnumerator();
-			while (it.MoveNext())
-			{
-				DocFieldProcessorPerThread perThread = (DocFieldProcessorPerThread) ((System.Collections.DictionaryEntry) it.Current).Key;
-				childThreadsAndFields[perThread.consumer] = perThread.Fields();
-				perThread.TrimFields(state);
-			}
+            foreach (DocFieldProcessorPerThread perThread in threads.Keys)
+            {
+                childThreadsAndFields[perThread.consumer] = perThread.Fields();
+                perThread.TrimFields(state);
+            }
 			fieldsWriter.Flush(state);
 			consumer.Flush(childThreadsAndFields, state);
 			

@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
 		private long lastCommitChangeCount; // last changeCount that was committed
 		
 		private SegmentInfos rollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-		private System.Collections.Hashtable rollbackSegments;
+        private SupportClass.Dictionary<SegmentInfo, int> rollbackSegments;
 		
 		internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
 		internal volatile uint pendingCommitChangeCount;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
-        private System.Collections.Hashtable segmentsToOptimize = new System.Collections.Hashtable(); // used by optimize to note those needing optimization
+        private SupportClass.Set<SegmentInfo> segmentsToOptimize = new SupportClass.Set<SegmentInfo>(); // used by optimize to note those needing optimization
 		
 		private Lock writeLock;
 		
@@ -1944,10 +1944,10 @@ namespace Lucene.Net.Index
 			{
 				rollbackSegmentInfos = (SegmentInfos) infos.Clone();
 				System.Diagnostics.Debug.Assert(!rollbackSegmentInfos.HasExternalSegments(directory));
-				rollbackSegments = new System.Collections.Hashtable();
+                rollbackSegments = new SupportClass.Dictionary<SegmentInfo, int>();
 				int size = rollbackSegmentInfos.Count;
 				for (int i = 0; i < size; i++)
-					rollbackSegments[rollbackSegmentInfos.Info(i)] = (System.Int32) i;
+					rollbackSegments[rollbackSegmentInfos.Info(i)] = i;
 			}
 		}
 		
@@ -3316,11 +3316,11 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				ResetMergeExceptions();
-				segmentsToOptimize = new System.Collections.Hashtable();
+                segmentsToOptimize = new SupportClass.Set<SegmentInfo>();
                 optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
-					SupportClass.CollectionsHelper.AddIfNotContains(segmentsToOptimize, segmentInfos.Info(i));
+					segmentsToOptimize.Add(segmentInfos.Info(i));
 				
 				// Now mark all pending & running merges as optimize
 				// merge:
@@ -5389,7 +5389,7 @@ namespace Lucene.Net.Index
                 if (merge.optimize)
                 {
                     // cascade the optimize:
-                    segmentsToOptimize[merge.info] = merge.info;
+                    segmentsToOptimize.Add(merge.info);
                 }
 				return true;
 			}
@@ -5805,7 +5805,7 @@ namespace Lucene.Net.Index
                     bool exist = rollbackSegments.ContainsKey(info);
                     if (exist)
 					{
-						int loc = (System.Int32) rollbackSegments[info];
+						int loc = rollbackSegments[info];
 						SegmentInfo oldInfo = rollbackSegmentInfos.Info(loc);
 						if (oldInfo.GetUseCompoundFile() != info.GetUseCompoundFile())
 							freeableBytes += info.SizeInBytes();

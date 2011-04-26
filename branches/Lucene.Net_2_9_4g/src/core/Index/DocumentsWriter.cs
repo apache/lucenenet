@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 		// than this they share ThreadStates
 		private const int MAX_THREAD_STATE = 5;
 		private DocumentsWriterThreadState[] threadStates = new DocumentsWriterThreadState[0];
-		private System.Collections.Hashtable threadBindings = new System.Collections.Hashtable();
+        private SupportClass.Dictionary<SupportClass.ThreadClass, DocumentsWriterThreadState> threadBindings = new SupportClass.Dictionary<SupportClass.ThreadClass, DocumentsWriterThreadState>();
 		
 		private int pauseThreads; // Non-zero when we need all threads to
 		// pause (eg to flush)
@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
 						flushState.numDocsInStore = 0;
 					}
 					
-					System.Collections.Hashtable threads = new System.Collections.Hashtable();
+					IDictionary<DocConsumerPerThread,DocConsumerPerThread> threads = new SupportClass.Dictionary<DocConsumerPerThread,DocConsumerPerThread>();
 					for (int i = 0; i < threadStates.Length; i++)
 						threads[threadStates[i].consumer] = threadStates[i].consumer;
 					consumer.Flush(threads, flushState);
@@ -927,7 +927,7 @@ namespace Lucene.Net.Index
 				// First, find a thread state.  If this thread already
 				// has affinity to a specific ThreadState, use that one
 				// again.
-				DocumentsWriterThreadState state = (DocumentsWriterThreadState) threadBindings[SupportClass.ThreadClass.Current()];
+				DocumentsWriterThreadState state = threadBindings[SupportClass.ThreadClass.Current()];
 				if (state == null)
 				{
 					
