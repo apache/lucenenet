@@ -16,36 +16,37 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Cache
 {
 	
 	
 	/// <summary> Base class for cache implementations.</summary>
-	public abstract class Cache
+	public abstract class Cache<K,V>
 	{
 		
 		/// <summary> Simple Cache wrapper that synchronizes all
 		/// calls that access the cache. 
 		/// </summary>
-		internal class SynchronizedCache_Renamed_Class:Cache
+		internal class SynchronizedCache_Renamed_Class<K,V>:Cache<K,V>
 		{
 			internal System.Object mutex;
-			internal Cache cache;
+			internal Cache<K,V> cache;
 			
-			internal SynchronizedCache_Renamed_Class(Cache cache)
+			internal SynchronizedCache_Renamed_Class(Cache<K,V> cache)
 			{
 				this.cache = cache;
 				this.mutex = this;
 			}
-			
-			internal SynchronizedCache_Renamed_Class(Cache cache, System.Object mutex)
+
+            internal SynchronizedCache_Renamed_Class(Cache<K, V> cache, System.Object mutex)
 			{
 				this.cache = cache;
 				this.mutex = mutex;
 			}
 			
-			public override void  Put(System.Object key, System.Object value_Renamed)
+			public override void  Put(K key, V value_Renamed)
 			{
 				lock (mutex)
 				{
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override System.Object Get(System.Object key)
+			public override V Get(K key)
 			{
 				lock (mutex)
 				{
@@ -61,7 +62,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override bool ContainsKey(System.Object key)
+			public override bool ContainsKey(K key)
 			{
 				lock (mutex)
 				{
@@ -76,8 +77,8 @@ namespace Lucene.Net.Util.Cache
 					cache.Close();
 				}
 			}
-			
-			internal override Cache GetSynchronizedCache()
+
+            internal override Cache<K, V> GetSynchronizedCache()
 			{
 				return this;
 			}
@@ -87,7 +88,7 @@ namespace Lucene.Net.Util.Cache
 		/// In order to guarantee thread-safety, all access to the backed cache must
 		/// be accomplished through the returned cache.
 		/// </summary>
-		public static Cache SynchronizedCache(Cache cache)
+        public static Cache<K, V> SynchronizedCache(Cache<K, V> cache)
 		{
 			return cache.GetSynchronizedCache();
 		}
@@ -98,19 +99,19 @@ namespace Lucene.Net.Util.Cache
 		/// e. g. subclasses of {@link SynchronizedCache} or this
 		/// in case this cache is already synchronized.
 		/// </summary>
-		internal virtual Cache GetSynchronizedCache()
+        internal virtual Cache<K, V> GetSynchronizedCache()
 		{
-			return new SynchronizedCache_Renamed_Class(this);
+			return new SynchronizedCache_Renamed_Class<K,V>(this);
 		}
 		
 		/// <summary> Puts a (key, value)-pair into the cache. </summary>
-		public abstract void  Put(System.Object key, System.Object value_Renamed);
+		public abstract void  Put(K key, V value_Renamed);
 		
 		/// <summary> Returns the value for the given key. </summary>
-		public abstract System.Object Get(System.Object key);
+		public abstract V Get(K key);
 		
 		/// <summary> Returns whether the given key is in this cache. </summary>
-		public abstract bool ContainsKey(System.Object key);
+		public abstract bool ContainsKey(K key);
 		
 		/// <summary> Closes the cache.</summary>
 		public abstract void  Close();

@@ -1567,6 +1567,12 @@ public class SupportClass
             _Set.Clear();
             base.Clear();
         }
+
+        public new void Remove(T item)
+        {
+            _Set.Remove(item);
+            base.Remove(item);
+        }
     }
 
     public class Cryptography

@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
 		
 		// Holds all SegmentInfo instances currently involved in
 		// merges
-        private System.Collections.Hashtable mergingSegments = new System.Collections.Hashtable();
+        private SupportClass.Set<SegmentInfo> mergingSegments = new SupportClass.Set<SegmentInfo>();
 		
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
@@ -490,8 +490,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			private System.Collections.IDictionary readerMap = new System.Collections.Hashtable();
+
+            private SupportClass.Dictionary<SegmentInfo, SegmentReader> readerMap = new SupportClass.Dictionary<SegmentInfo, SegmentReader>();
 			
 			/// <summary>Forcefully clear changes for the specifed segments,
 			/// and remove from the pool.   This is called on succesful merge. 
@@ -502,12 +502,10 @@ namespace Lucene.Net.Index
 				{
 					if (infos == null)
 					{
-                        System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-						while (iter.MoveNext())
-						{
-							System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-							((SegmentReader) ent.Value).hasChanges = false;
-						}
+                        foreach (SegmentReader sr in readerMap.Values)
+                        {
+                            sr.hasChanges = false;
+                        }
 					}
 					else
 					{
@@ -515,9 +513,9 @@ namespace Lucene.Net.Index
 						for (int i = 0; i < numSegments; i++)
 						{
 							SegmentInfo info = infos.Info(i);
-							if (readerMap.Contains(info))
+							if (readerMap.ContainsKey(info))
 							{
-								((SegmentReader) readerMap[info]).hasChanges = false;
+								readerMap[info].hasChanges = false;
 							}
 						}
 					}
@@ -574,7 +572,7 @@ namespace Lucene.Net.Index
 				lock (this)
 				{
 					
-					bool pooled = readerMap.Contains(sr.GetSegmentInfo());
+					bool pooled = readerMap.ContainsKey(sr.GetSegmentInfo());
 
                     System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.GetSegmentInfo()] == sr);
 
@@ -624,30 +622,27 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-                    System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-					while (iter.MoveNext())
-					{
-						System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-						
-						SegmentReader sr = (SegmentReader) ent.Value;
-						if (sr.hasChanges)
-						{
-							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
-							sr.DoCommit(null);
+                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new SupportClass.Dictionary<SegmentInfo, SegmentReader>(readerMap))
+                    {
+                        SegmentReader sr = ent.Value;
+                        if (sr.hasChanges)
+                        {
+                            System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
+                            sr.DoCommit(null);
                             // Must checkpoint w/ deleter, because this
                             // segment reader will have created new _X_N.del
                             // file.
                             enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-						}
+                        }
 
-                        readerMap.Remove(ent.Key); 
-						
-						// NOTE: it is allowed that this decRef does not
-						// actually close the SR; this can happen when a
-						// near real-time reader is kept open after the
-						// IndexWriter instance is closed
-						sr.DecRef();
-					}
+                        readerMap.Remove(ent.Key);
+
+                        // NOTE: it is allowed that this decRef does not
+                        // actually close the SR; this can happen when a
+                        // near real-time reader is kept open after the
+                        // IndexWriter instance is closed
+                        sr.DecRef();
+                    }
 				}
 			}
 			
@@ -657,22 +652,19 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-                    System.Collections.IEnumerator iter = new System.Collections.Hashtable(readerMap).GetEnumerator();
-					while (iter.MoveNext())
-					{
-						System.Collections.DictionaryEntry ent = (System.Collections.DictionaryEntry) iter.Current;
-						
-						SegmentReader sr = (SegmentReader) ent.Value;
-						if (sr.hasChanges)
-						{
-							System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
-							sr.DoCommit(null);
+                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new SupportClass.Dictionary<SegmentInfo, SegmentReader>(readerMap))
+                    {
+                        SegmentReader sr = ent.Value;
+                        if (sr.hasChanges)
+                        {
+                            System.Diagnostics.Debug.Assert(InfoIsLive(sr.GetSegmentInfo()));
+                            sr.DoCommit(null);
                             // Must checkpoint w/ deleter, because this
                             // segment reader will have created new _X_N.del
                             // file.
                             enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-						}
-					}
+                        }
+                    }
 				}
 			}
 			
@@ -738,7 +730,7 @@ namespace Lucene.Net.Index
 						readBufferSize = BufferedIndexInput.BUFFER_SIZE;
 					}
 					
-					SegmentReader sr = (SegmentReader) readerMap[info];
+					SegmentReader sr = readerMap[info];
 					if (sr == null)
 					{
 						// TODO: we may want to avoid doing this while
@@ -784,7 +776,7 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-					SegmentReader sr = (SegmentReader) readerMap[info];
+					SegmentReader sr = readerMap[info];
 					if (sr != null)
 					{
 						sr.IncRef();
@@ -5560,7 +5552,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < count; i++)
                 {
                     SegmentInfo si = merge.segments.Info(i);
-                    mergingSegments[si] = si;
+                    mergingSegments.Add(si);
                 }
 				
 				// Merge is now registered
@@ -5745,7 +5737,7 @@ namespace Lucene.Net.Index
 				// this prevents it from getting selected for a merge
 				// after our merge is done but while we are building the
 				// CFS:
-                mergingSegments[merge.info] = merge.info;
+                mergingSegments.Add(merge.info);
 			}
 		}
 		
@@ -5966,9 +5958,7 @@ namespace Lucene.Net.Index
 			merge.readersClone = new SegmentReader[numSegments];
 			
 			bool mergeDocStores = false;
-
-            System.Collections.Hashtable dss = new System.Collections.Hashtable();
-			
+                        			
             String currentDocStoreSegment;
             lock(this) {
                 currentDocStoreSegment = docWriter.GetDocStoreSegment();
@@ -6307,7 +6297,7 @@ namespace Lucene.Net.Index
         private Dictionary<string, string> synced = new Dictionary<string, string>();
 		
 		// Files that are now being sync'd
-        private System.Collections.Hashtable syncing = new System.Collections.Hashtable();
+        private SupportClass.Set<string> syncing = new SupportClass.Set<string>();
 		
 		private bool StartSync(System.String fileName, ICollection<System.String> pending)
 		{
@@ -6317,7 +6307,7 @@ namespace Lucene.Net.Index
 				{
 					if (!syncing.Contains(fileName))
 					{
-						syncing[fileName] = fileName;
+						syncing.Add(fileName);
 						return true;
 					}
 					else
@@ -6335,7 +6325,7 @@ namespace Lucene.Net.Index
 		{
 			lock (synced)
 			{
-				System.Diagnostics.Debug.Assert(syncing.ContainsKey(fileName));
+				System.Diagnostics.Debug.Assert(syncing.Contains(fileName));
 				syncing.Remove(fileName);
 				if (success)
                     synced[fileName] = fileName;

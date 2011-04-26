@@ -864,7 +864,7 @@ namespace Lucene.Net._SupportClass
         [Test]
         public void Test()
         {
-            Lucene.Net.Util.Cache.SimpleLRUCache cache = new Lucene.Net.Util.Cache.SimpleLRUCache(3);
+            Lucene.Net.Util.Cache.SimpleLRUCache<string,string> cache = new Lucene.Net.Util.Cache.SimpleLRUCache<string,string>(3);
             cache.Put("a", "a");
             cache.Put("b", "b");
             cache.Put("c", "c");
