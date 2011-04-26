@@ -1817,7 +1817,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        public System.Collections.IDictionary norms_ForNUnit
+        public IDictionary<string, Norm> norms_ForNUnit
         {
             get { return norms; }
         }

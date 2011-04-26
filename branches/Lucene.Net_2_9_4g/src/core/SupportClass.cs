@@ -1406,35 +1406,127 @@ public class SupportClass
     }
     #endregion
 
-    public class Dictionary<K, V> : System.Collections.Generic.Dictionary<K, V>
+    public class Dictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
     {
-        public Dictionary() : base()
+        System.Collections.Generic.IDictionary<K, V> _Dict = null;
+
+        public Dictionary()
         {
+            _Dict = new System.Collections.Generic.Dictionary<K, V>();
         }
 
-        public Dictionary(System.Collections.Generic.Dictionary<K, V> dict) : base(dict)
+        public Dictionary(bool sortedDictionary)
         {
+            _Dict = new System.Collections.Generic.SortedDictionary<K, V>();
         }
 
-        public Dictionary(int capacity) : base(capacity)
+        public Dictionary(int capacity)
         {
+            _Dict = new System.Collections.Generic.Dictionary<K, V>(capacity);
         }
 
-        public new V this[K key]
+        public Dictionary(System.Collections.Generic.IDictionary<K,V> dict)
         {
-            set
-            {
-                base[key] = value;
-            }
+            _Dict = new System.Collections.Generic.Dictionary<K, V>(dict);
+        }
+
+        public Dictionary(Dictionary<K, V> dict)
+        {
+            _Dict = new System.Collections.Generic.Dictionary<K, V>(dict);
+        }
+
+
+
+        public void Add(K key, V value)
+        {
+            _Dict.Add(key, value);
+        }
+
+        public bool ContainsKey(K key)
+        {
+            return _Dict.ContainsKey(key);
+        }
+
+        public System.Collections.Generic.ICollection<K> Keys
+        {
+            get { return _Dict.Keys; }
+        }
+
+        public bool Remove(K key)
+        {
+            return _Dict.Remove(key);
+        }
+
+        public bool TryGetValue(K key, out V value)
+        {
+            return _Dict.TryGetValue(key, out value);
+        }
+
+        public System.Collections.Generic.ICollection<V> Values
+        {
+            get { return _Dict.Values; }
+        }
+
+        public V this[K key]
+        {
             get
             {
                 V val = default(V);
-                base.TryGetValue(key, out val);
+                _Dict.TryGetValue(key, out val);
                 return val;
             }
+            set
+            {
+                _Dict[key] = value;
+            }
+        }
+
+        public void Add(System.Collections.Generic.KeyValuePair<K, V> item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            _Dict.Clear();
+        }
+
+        public bool Contains(System.Collections.Generic.KeyValuePair<K, V> item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CopyTo(System.Collections.Generic.KeyValuePair<K, V>[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Count
+        {
+            get { return _Dict.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(System.Collections.Generic.KeyValuePair<K, V> item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<K, V>> GetEnumerator()
+        {
+            return _Dict.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
-
+    
     [Serializable]
     public class Set<T> : System.Collections.Generic.List<T>
     {

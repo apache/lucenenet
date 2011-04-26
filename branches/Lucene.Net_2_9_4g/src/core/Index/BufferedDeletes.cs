@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 
+using Lucene.Net.Search;
+
 namespace Lucene.Net.Index
 {
 	
@@ -32,9 +34,9 @@ namespace Lucene.Net.Index
 	class BufferedDeletes
 	{
 		internal int numTerms;
-        internal System.Collections.IDictionary terms = null;
-		internal System.Collections.Hashtable queries = new System.Collections.Hashtable();
-		internal System.Collections.ArrayList docIDs = new System.Collections.ArrayList();
+        internal IDictionary<Term, Num> terms = null;
+        internal SupportClass.Dictionary<Query, int> queries = new SupportClass.Dictionary<Query, int>();
+        internal List<int> docIDs = new List<int>();
 		internal long bytesUsed;
         internal  bool doTermSort;
 
@@ -43,15 +45,14 @@ namespace Lucene.Net.Index
             this.doTermSort = doTermSort;
             if (doTermSort)
             {
-                terms = new SortedDictionary<object, object>();
+                terms = new SupportClass.Dictionary<Term, Num>(true);
             }
             else
             {
-                terms = new System.Collections.Hashtable();
+                terms = new SupportClass.Dictionary<Term, Num>();
             }
         }
-                
-		
+
 		// Number of documents a delete term applies to.
 		internal sealed class Num
 		{
@@ -93,17 +94,17 @@ namespace Lucene.Net.Index
 		{
 			numTerms += in_Renamed.numTerms;
 			bytesUsed += in_Renamed.bytesUsed;
-
-			System.Collections.ArrayList keys = new System.Collections.ArrayList(in_Renamed.terms.Keys);
-			System.Collections.ArrayList values = new System.Collections.ArrayList(in_Renamed.terms.Values);
-			for (int i=0; i < keys.Count; i++)
-				terms[keys[i]] = values[i];
-
-			keys = new System.Collections.ArrayList(in_Renamed.queries.Keys);
-			values = new System.Collections.ArrayList(in_Renamed.queries.Values);
-			for (int i=0; i < keys.Count; i++)
-				queries[keys[i]] = values[i];
-
+                        
+            foreach(KeyValuePair<Term,Num> kv in in_Renamed.terms)
+            {
+                terms[kv.Key] = in_Renamed.terms[kv.Key];
+            }
+			
+			foreach (KeyValuePair<Query, int> kv in in_Renamed.queries)
+            {
+                queries[kv.Key] = in_Renamed.queries[kv.Key];
+            }
+			
 			docIDs.AddRange(in_Renamed.docIDs);
 			in_Renamed.Clear();
 		}
@@ -133,60 +134,56 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				
-				System.Collections.IDictionary newDeleteTerms;
+
+                System.Collections.Generic.IDictionary<Term, Num> newDeleteTerms;
 				
 				// Remap delete-by-term
 				if (terms.Count > 0)
 				{
                     if (doTermSort)
                     {
-                        newDeleteTerms = new SortedDictionary<object, object>();
+                        newDeleteTerms = new SupportClass.Dictionary<Term, Num>(true);
                     }
                     else
                     {
-                        newDeleteTerms = new System.Collections.Hashtable();
+                        newDeleteTerms = new SupportClass.Dictionary<Term, Num>();
                     }
-					System.Collections.IEnumerator iter = new System.Collections.Hashtable(terms).GetEnumerator();
-					while (iter.MoveNext())
-					{
-						System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
-						Num num = (Num) entry.Value;
-						newDeleteTerms[entry.Key] = new Num(mapper.Remap(num.GetNum()));
-					}
+                    foreach (KeyValuePair<Term, Num> entry in terms)
+                    {
+                        Num num = entry.Value;
+                        newDeleteTerms[entry.Key] = new Num(mapper.Remap(num.GetNum()));
+                    }
 				}
 				else
 					newDeleteTerms = null;
 				
 				// Remap delete-by-docID
-				System.Collections.ArrayList newDeleteDocIDs;
+				List<int> newDeleteDocIDs;
 				
 				if (docIDs.Count > 0)
 				{
-					newDeleteDocIDs = new System.Collections.ArrayList(docIDs.Count);
-					System.Collections.IEnumerator iter = docIDs.GetEnumerator();
+					newDeleteDocIDs = new List<int>(docIDs.Count);
+					System.Collections.Generic.IEnumerator<int> iter = docIDs.GetEnumerator();
 					while (iter.MoveNext())
 					{
-						System.Int32 num = (System.Int32) iter.Current;
-						newDeleteDocIDs.Add((System.Int32) mapper.Remap(num));
+						int num = iter.Current;
+						newDeleteDocIDs.Add(mapper.Remap(num));
 					}
 				}
 				else
 					newDeleteDocIDs = null;
 				
 				// Remap delete-by-query
-				System.Collections.Hashtable newDeleteQueries;
+                SupportClass.Dictionary<Query, int> newDeleteQueries;
 				
 				if (queries.Count > 0)
 				{
-					newDeleteQueries = new System.Collections.Hashtable(queries.Count);
-					System.Collections.IEnumerator iter = new System.Collections.Hashtable(queries).GetEnumerator();
-					while (iter.MoveNext())
-					{
-						System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
-						System.Int32 num = (System.Int32) entry.Value;
-						newDeleteQueries[entry.Key] = (System.Int32) mapper.Remap(num);
-					}
+                    newDeleteQueries = new SupportClass.Dictionary<Query, int>(queries.Count);
+                    foreach(KeyValuePair<Query,int> entry in queries)
+                    {
+                        int num = entry.Value;
+                        newDeleteQueries[entry.Key] = mapper.Remap(num);
+                    }
 				}
 				else
 					newDeleteQueries = null;
