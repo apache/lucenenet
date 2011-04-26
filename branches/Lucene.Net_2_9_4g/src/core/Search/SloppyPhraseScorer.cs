@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 			{
 				checkedRepeats = true;
 				// check for repeats
-				System.Collections.Hashtable m = null;
+				SupportClass.Dictionary<PhrasePositions, Object> m = null;
 				for (PhrasePositions pp = first; pp != null; pp = pp.next)
 				{
 					int tpPos = pp.position + pp.offset;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
 						{
 							if (m == null)
 							{
-								m = new System.Collections.Hashtable();
+                                m = new SupportClass.Dictionary<PhrasePositions, object>();
 							}
 							pp.repeats = true;
 							pp2.repeats = true;
@@ -179,7 +179,8 @@ namespace Lucene.Net.Search
 				}
 				if (m != null)
 				{
-					repeats = (PhrasePositions[])(new System.Collections.ArrayList(m.Keys).ToArray(typeof(PhrasePositions)));
+                    repeats = new PhrasePositions[m.Keys.Count];
+                    m.Keys.CopyTo(repeats,0);
 				}
 			}
 			

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Analysis
 	public class PerFieldAnalyzerWrapper:Analyzer
 	{
 		private Analyzer defaultAnalyzer;
-		private System.Collections.IDictionary analyzerMap = new System.Collections.Hashtable();
+        private SupportClass.Dictionary<String, Analyzer> analyzerMap = new SupportClass.Dictionary<string, Analyzer>();
 		
 		
 		/// <summary> Constructs with default analyzer.
@@ -65,16 +66,12 @@ namespace Lucene.Net.Analysis
 		/// <param name="fieldAnalyzers">a Map (String field name to the Analyzer) to be 
 		/// used for those fields 
 		/// </param>
-		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, System.Collections.IDictionary fieldAnalyzers)
+		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string,Analyzer> fieldAnalyzers)
 		{
 			this.defaultAnalyzer = defaultAnalyzer;
 			if (fieldAnalyzers != null)
 			{
-				System.Collections.ArrayList keys = new System.Collections.ArrayList(fieldAnalyzers.Keys);
-				System.Collections.ArrayList values = new System.Collections.ArrayList(fieldAnalyzers.Values);
-
-				for (int i=0; i < keys.Count; i++)
-					analyzerMap[keys[i]] = values[i];
+                analyzerMap.Add(fieldAnalyzers);
 			}
 			SetOverridesTokenStreamMethod(typeof(PerFieldAnalyzerWrapper));
 		}
