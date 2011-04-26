@@ -308,9 +308,9 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(document.GetFields().Count == 2, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 2);
 			//Should be one document from each directory
 			//they both have two fields, contents and other
-			System.Collections.Hashtable ftl = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(ftl, "other");
-			SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, (System.Collections.Hashtable) new System.Collections.Hashtable());
+            SupportClass.Set<string> ftl = new SupportClass.Set<string>();
+			ftl.Add("other");
+            SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, new SupportClass.Set<string>());
 			document = searcher.Doc(hits[0].doc, fs);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 1, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 1);
@@ -319,8 +319,8 @@ namespace Lucene.Net.Search
 			value_Renamed = document.Get("other");
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			ftl.Clear();
-			SupportClass.CollectionsHelper.AddIfNotContains(ftl, "contents");
-			fs = new SetBasedFieldSelector(ftl, (System.Collections.Hashtable) new System.Collections.Hashtable());
+			ftl.Add("contents");
+            fs = new SetBasedFieldSelector(ftl, new SupportClass.Set<string>());
 			document = searcher.Doc(hits[1].doc, fs);
 			value_Renamed = document.Get("contents");
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
