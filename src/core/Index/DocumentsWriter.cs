@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Index
 		}
 		
 		// for testing
-		internal System.Collections.IDictionary GetBufferedDeleteTerms()
+		internal System.Collections.Generic.IDictionary<Term,BufferedDeletes.Num> GetBufferedDeleteTerms()
 		{
 			lock (this)
 			{
@@ -1342,20 +1342,17 @@ namespace Lucene.Net.Index
                 System.Diagnostics.Debug.Assert(CheckDeleteTerm(null));
 
 				// Delete by term
-                //System.Collections.IEnumerator iter = new System.Collections.Hashtable(deletesFlushed.terms).GetEnumerator();
-				System.Collections.IEnumerator iter = deletesFlushed.terms.GetEnumerator();
 				TermDocs docs = reader.TermDocs();
 				try
 				{
-					while (iter.MoveNext())
+                    foreach(KeyValuePair<Term,BufferedDeletes.Num> entry in deletesFlushed.terms)
 					{
-						System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
-						Term term = (Term) entry.Key;
+						Term term = entry.Key;
 						// LUCENE-2086: we should be iterating a TreeMap,
                         // here, so terms better be in order:
                         System.Diagnostics.Debug.Assert(CheckDeleteTerm(term));
 						docs.Seek(term);
-						int limit = ((BufferedDeletes.Num) entry.Value).GetNum();
+						int limit = entry.Value.GetNum();
 						while (docs.Next())
 						{
 							int docID = docs.Doc();
@@ -1372,10 +1369,8 @@ namespace Lucene.Net.Index
 				}
 				
 				// Delete by docID
-				iter = deletesFlushed.docIDs.GetEnumerator();
-				while (iter.MoveNext())
+                foreach(int docID in deletesFlushed.docIDs)
 				{
-					int docID = ((System.Int32) iter.Current);
 					if (docID >= docIDStart && docID < docEnd)
 					{
 						reader.DeleteDocument(docID - docIDStart);
@@ -1385,12 +1380,10 @@ namespace Lucene.Net.Index
 				
 				// Delete by query
 				IndexSearcher searcher = new IndexSearcher(reader);
-				iter = new System.Collections.Hashtable(deletesFlushed.queries).GetEnumerator();
-				while (iter.MoveNext())
+                foreach(KeyValuePair<Query,int> entry in new SupportClass.Dictionary<Query,int>(deletesFlushed.queries))
 				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iter.Current;
-					Query query = (Query) entry.Key;
-					int limit = ((System.Int32) entry.Value);
+					Query query = entry.Key;
+					int limit = entry.Value;
 					Weight weight = query.Weight(searcher);
 					Scorer scorer = weight.Scorer(reader, true, false);
 					if (scorer != null)
@@ -1418,7 +1411,9 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				BufferedDeletes.Num num = (BufferedDeletes.Num) deletesInRAM.terms[term];
+				//BufferedDeletes.Num num = deletesInRAM.terms[term];
+                //BufferedDeletes.Num num =  ((SupportClass.Dictionary<Term,BufferedDeletes.Num>) deletesInRAM.terms)[term];
+                BufferedDeletes.Num num = deletesInRAM.terms[term];
 				int docIDUpto = flushedDocCount + docCount;
 				if (num == null)
 					deletesInRAM.terms[term] = new BufferedDeletes.Num(docIDUpto);

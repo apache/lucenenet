@@ -87,8 +87,8 @@ namespace Lucene.Net.Index
 			if (nextTermsHash != null)
 				nextTermsHash.Abort();
 		}
-		
-		internal void  ShrinkFreePostings(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        internal void ShrinkFreePostings(IDictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			
 			System.Diagnostics.Debug.Assert(postingsFreeCount == postingsAllocCount, "Thread.currentThread().getName()" + ": postingsFreeCount=" + postingsFreeCount + " postingsAllocCount=" + postingsAllocCount + " consumer=" + consumer);

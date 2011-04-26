@@ -55,16 +55,12 @@ namespace Lucene.Net.Index
 
             SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> oneThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
             SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> twoThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
-			
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
-			{
+
+            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
+            {
+            	DocFieldConsumersPerThread perThread = (DocFieldConsumersPerThread) entry.Key;
 				
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
-				DocFieldConsumersPerThread perThread = (DocFieldConsumersPerThread) entry.Key;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
+				IList<DocFieldConsumerPerField> fields = entry.Value;
 				
 				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
                 IList<DocFieldConsumerPerField> oneFields = new List<DocFieldConsumerPerField>();
