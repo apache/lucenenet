@@ -29,21 +29,21 @@ namespace Lucene.Net.Index
 	{
 		
 		private static IndexFileNameFilter singleton = new IndexFileNameFilter();
-        private System.Collections.Hashtable extensions;
-        private System.Collections.Hashtable extensionsInCFS;
+        private SupportClass.Set<string> extensions;
+        private SupportClass.Set<string> extensionsInCFS;
 		
 		// Prevent instantiation.
 		private IndexFileNameFilter()
 		{
-            extensions = new System.Collections.Hashtable();
+            extensions = new SupportClass.Set<string>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
-				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i], IndexFileNames.INDEX_EXTENSIONS[i]);
+				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i]);
 			}
-            extensionsInCFS = new System.Collections.Hashtable();
+            extensionsInCFS = new SupportClass.Set<string>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE.Length; i++)
 			{
-				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i], IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
+				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);
 			}
 		}
 		

@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
 		/// <param name="segmentsToOptimize">contains the specific SegmentInfo instances that must be merged
 		/// away. This may be a subset of all SegmentInfos.
 		/// </param>
-		public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, int maxSegmentCount, System.Collections.Hashtable segmentsToOptimize);
+        public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, int maxSegmentCount, SupportClass.Set<SegmentInfo> segmentsToOptimize);
 		
 		/// <summary> Determine what set of merge operations is necessary in order to expunge all
 		/// deletes from the index.

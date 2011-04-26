@@ -236,8 +236,8 @@ namespace Lucene.Net.Index
 				return byteSize;
 			}
 		}
-		
-		private bool IsOptimized(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+
+        private bool IsOptimized(SegmentInfos infos, int maxNumSegments, SupportClass.Set<SegmentInfo> segmentsToOptimize)
 		{
 			int numSegments = infos.Count;
 			int numToOptimize = 0;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
 		/// (mergeFactor at a time) so the {@link MergeScheduler}
 		/// in use may make use of concurrency. 
 		/// </summary>
-		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+        public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, SupportClass.Set<SegmentInfo> segmentsToOptimize)
 		{
 			MergeSpecification spec;
 			

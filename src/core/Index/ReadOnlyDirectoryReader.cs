@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -28,7 +29,7 @@ namespace Lucene.Net.Index
 		{
 		}
 		
-		internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, System.Collections.IDictionary oldNormsCache, bool doClone, int termInfosIndexDivisor):base(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor)
+		internal ReadOnlyDirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, IDictionary<string,byte[]> oldNormsCache, bool doClone, int termInfosIndexDivisor):base(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor)
 		{
 		}
 		

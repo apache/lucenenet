@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 		private System.String fileName;
 		
 		private IndexInput stream;
-		private System.Collections.Hashtable entries = new System.Collections.Hashtable();
+        private SupportClass.Dictionary<string, FileEntry> entries = new SupportClass.Dictionary<string, FileEntry>();
 		
 		
 		public CompoundFileReader(Directory dir, System.String name):this(dir, name, BufferedIndexInput.BUFFER_SIZE)
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 				if (stream == null)
 					throw new System.IO.IOException("Stream closed");
 				
-				FileEntry entry = (FileEntry) entries[id];
+				FileEntry entry = entries[id];
 				if (entry == null)
 					throw new System.IO.IOException("No sub-file with id " + id + " found");
 				
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if the file does not exist  </throws>
 		public override long FileLength(System.String name)
 		{
-			FileEntry e = (FileEntry) entries[name];
+			FileEntry e = entries[name];
 			if (e == null)
 				throw new System.IO.IOException("File " + name + " does not exist");
 			return e.length;

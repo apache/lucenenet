@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 				
 		private SegmentReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
-		private System.Collections.IDictionary normsCache = new System.Collections.Hashtable();
+        private IDictionary<string, byte[]> normsCache = new SupportClass.Dictionary<string, byte[]>();
 		private int maxDoc = 0;
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>This constructor is only used for {@link #Reopen()} </summary>
-		internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, System.Collections.IDictionary oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
+		internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, IDictionary<string,byte[]> oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
 		{
 			this.directory = directory;
 			this.readOnly = readOnly;
@@ -254,14 +254,14 @@ namespace Lucene.Net.Index
 			
 			// we put the old SegmentReaders in a map, that allows us
 			// to lookup a reader using its segment name
-			System.Collections.IDictionary segmentReaders = new System.Collections.Hashtable();
+			IDictionary<string,int?> segmentReaders = new SupportClass.Dictionary<string,int?>();
 			
 			if (oldReaders != null)
 			{
 				// create a Map SegmentName->SegmentReader
 				for (int i = 0; i < oldReaders.Length; i++)
 				{
-					segmentReaders[oldReaders[i].GetSegmentName()] = (System.Int32) i;
+					segmentReaders[oldReaders[i].GetSegmentName()] = i;
 				}
 			}
 			
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
 			for (int i = infos.Count - 1; i >= 0; i--)
 			{
 				// find SegmentReader for this segment
-                int? oldReaderIndex = (int?)segmentReaders[infos.Info(i).name];
+                int? oldReaderIndex = segmentReaders[infos.Info(i).name];
                 if (oldReaderIndex.HasValue == false)
                 {
                     // this is a new segment, no old SegmentReader can be reused
@@ -356,23 +356,21 @@ namespace Lucene.Net.Index
 			// try to copy unchanged norms from the old normsCache to the new one
 			if (oldNormsCache != null)
 			{
-				System.Collections.IEnumerator it = new System.Collections.Hashtable(oldNormsCache).GetEnumerator();
-				while (it.MoveNext())
-				{
-					System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-					System.String field = (System.String) entry.Key;
+                foreach (KeyValuePair<string, byte[]> entry in oldNormsCache)
+                {
+					System.String field = entry.Key;
 					if (!HasNorms(field))
 					{
 						continue;
 					}
 					
-					byte[] oldBytes = (byte[]) entry.Value;
+					byte[] oldBytes = entry.Value;
 					
 					byte[] bytes = new byte[MaxDoc()];
 					
 					for (int i = 0; i < subReaders.Length; i++)
 					{
-                        int? oldReaderIndex = (int?)segmentReaders[subReaders[i].GetSegmentName()];
+                        int? oldReaderIndex = segmentReaders[subReaders[i].GetSegmentName()];
 
                         // this SegmentReader was not re-opened, we can copy all of its norms 
                         if (oldReaderIndex.HasValue &&
@@ -818,7 +816,7 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
 		{
-			lock (normsCache.SyncRoot)
+			lock (normsCache)
 			{
 				normsCache.Remove(field); // clear cache      
 			}

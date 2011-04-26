@@ -1409,7 +1409,7 @@ public class SupportClass
     public class Dictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
     {
         System.Collections.Generic.IDictionary<K, V> _Dict = null;
-
+        
         public Dictionary()
         {
             _Dict = new System.Collections.Generic.Dictionary<K, V>();
@@ -1434,8 +1434,6 @@ public class SupportClass
         {
             _Dict = new System.Collections.Generic.Dictionary<K, V>(dict);
         }
-
-
 
         public void Add(K key, V value)
         {
@@ -1557,6 +1555,17 @@ public class SupportClass
                 _Set.Add(item);
                 base.Add(item);
             }
+        }
+
+        public new bool Contains(T item)
+        {
+            return _Set.Contains(item);
+        }
+
+        public new void Clear()
+        {
+            _Set.Clear();
+            base.Clear();
         }
     }
 
