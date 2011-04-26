@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Cache
 {
@@ -24,25 +25,25 @@ namespace Lucene.Net.Util.Cache
 	/// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
 	/// if needed.
 	/// </summary>
-	public class SimpleMapCache:Cache
+    public class SimpleMapCache<K, V> : Cache<K, V>
 	{
-		internal System.Collections.IDictionary map;
+        internal SupportClass.Dictionary<K, V> map;
 		
-		public SimpleMapCache():this(new System.Collections.Hashtable())
+		public SimpleMapCache():this(new SupportClass.Dictionary<K,V>())
 		{
 		}
-		
-		public SimpleMapCache(System.Collections.IDictionary map)
+
+        public SimpleMapCache(SupportClass.Dictionary<K, V> map)
 		{
 			this.map = map;
 		}
 		
-		public override System.Object Get(System.Object key)
+		public override V Get(K key)
 		{
 			return map[key];
 		}
 		
-		public override void  Put(System.Object key, System.Object value_Renamed)
+		public override void  Put(K key, V value_Renamed)
 		{
 			map[key] = value_Renamed;
 		}
@@ -52,34 +53,34 @@ namespace Lucene.Net.Util.Cache
 			// NOOP
 		}
 		
-		public override bool ContainsKey(System.Object key)
+		public override bool ContainsKey(K key)
 		{
-			return map.Contains(key);
+			return map.ContainsKey(key);
 		}
 		
 		/// <summary> Returns a Set containing all keys in this cache.</summary>
-		public virtual System.Collections.ICollection KeySet()
+		public virtual ICollection<K> KeySet()
 		{
 			return map.Keys;
 		}
 		
-		internal override Cache GetSynchronizedCache()
+		internal override Cache<K,V> GetSynchronizedCache()
 		{
-			return new SynchronizedSimpleMapCache(this);
+			return new SynchronizedSimpleMapCache<K,V>(this);
 		}
 		
-		private class SynchronizedSimpleMapCache:SimpleMapCache
+		private class SynchronizedSimpleMapCache<K,V>:SimpleMapCache<K,V>
 		{
 			internal System.Object mutex;
-			internal SimpleMapCache cache;
+			internal SimpleMapCache<K,V> cache;
 			
-			internal SynchronizedSimpleMapCache(SimpleMapCache cache)
+			internal SynchronizedSimpleMapCache(SimpleMapCache<K,V> cache)
 			{
 				this.cache = cache;
 				this.mutex = this;
 			}
 			
-			public override void  Put(System.Object key, System.Object value_Renamed)
+			public override void  Put(K key, V value_Renamed)
 			{
 				lock (mutex)
 				{
@@ -87,7 +88,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override System.Object Get(System.Object key)
+			public override V Get(K key)
 			{
 				lock (mutex)
 				{
@@ -95,7 +96,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override bool ContainsKey(System.Object key)
+			public override bool ContainsKey(K key)
 			{
 				lock (mutex)
 				{
@@ -111,7 +112,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			public override System.Collections.ICollection KeySet()
+			public override ICollection<K> KeySet()
 			{
 				lock (mutex)
 				{
@@ -119,7 +120,7 @@ namespace Lucene.Net.Util.Cache
 				}
 			}
 			
-			internal override Cache GetSynchronizedCache()
+			internal override Cache<K,V> GetSynchronizedCache()
 			{
 				return this;
 			}

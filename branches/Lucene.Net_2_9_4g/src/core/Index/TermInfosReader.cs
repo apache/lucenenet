@@ -19,7 +19,7 @@ using System;
 
 using Directory = Lucene.Net.Store.Directory;
 using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
-using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache;
+using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache<Lucene.Net.Index.Term,Lucene.Net.Index.TermInfo>;
 
 namespace Lucene.Net.Index
 {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 			internal SegmentTermEnum termEnum;
 			
 			// Used for caching the least recently looked-up Terms
-			internal Lucene.Net.Util.Cache.Cache termInfoCache;
+            internal Lucene.Net.Util.Cache.Cache<Term, TermInfo> termInfoCache;
 		}
 		
 		internal TermInfosReader(Directory dir, System.String seg, FieldInfos fis, int readBufferSize, int indexDivisor)
@@ -208,13 +208,13 @@ namespace Lucene.Net.Index
 			
 			TermInfo ti;
 			ThreadResources resources = GetThreadResources();
-			Lucene.Net.Util.Cache.Cache cache = null;
+			Lucene.Net.Util.Cache.Cache<Term,TermInfo> cache = null;
 			
 			if (useCache)
 			{
 				cache = resources.termInfoCache;
 				// check the cache first if the term was recently looked up
-				ti = (TermInfo) cache.Get(term);
+				ti = cache.Get(term);
 				if (ti != null)
 				{
 					return ti;

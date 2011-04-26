@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 		protected internal const long DEFAULT_CACHE_SLEEP_TIME = 1000 * 60 * 10;
 		
 		/// <summary>The cache itself </summary>
-		protected internal System.Collections.IDictionary cache;
+		protected internal IDictionary<int,FilterItem> cache;
 		/// <summary>Maximum allowed cache size </summary>
 		protected internal int cacheCleanSize;
 		/// <summary>Cache cleaning frequency </summary>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		/// <summary> Sets up the FilterManager singleton.</summary>
 		protected internal FilterManager()
 		{
-			cache = new System.Collections.Hashtable();
+			cache = new SupportClass.Dictionary<int,FilterItem>();
 			cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
 			cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
 			
@@ -104,16 +104,16 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual Filter GetFilter(Filter filter)
 		{
-			lock (cache.SyncRoot)
+			lock (cache)
 			{
 				FilterItem fi = null;
-				fi = (FilterItem) cache[(System.Int32) filter.GetHashCode()];
+				fi = cache[filter.GetHashCode()];
 				if (fi != null)
 				{
 					fi.timestamp = System.DateTime.Now.Ticks;
 					return fi.filter;
 				}
-				cache[(System.Int32) filter.GetHashCode()] = new FilterItem(this, filter);
+				cache[filter.GetHashCode()] = new FilterItem(this, filter);
 				return filter;
 			}
 		}
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 					{
 						// empty the temporary set
 						filterItems.Clear();
-                        lock (this.manager.cache.SyncRoot)
+                        lock (this.manager.cache)
 						{
                             foreach (FilterItem item in this.manager.cache.Values)
                             {
