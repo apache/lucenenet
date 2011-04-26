@@ -150,16 +150,16 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-			System.Collections.Hashtable loadFieldNames = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(loadFieldNames, DocHelper.TEXT_FIELD_1_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(loadFieldNames, DocHelper.TEXT_FIELD_UTF1_KEY);
-			System.Collections.Hashtable lazyFieldNames = new System.Collections.Hashtable();
+            SupportClass.Set<string> loadFieldNames = new SupportClass.Set<string>();
+			loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
+			loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
+            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
 			//new String[]{DocHelper.LARGE_LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_BINARY_KEY};
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LARGE_LAZY_FIELD_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LAZY_FIELD_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LAZY_FIELD_BINARY_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.TEXT_FIELD_UTF2_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.COMPRESSED_TEXT_FIELD_2_KEY);
+			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
+            lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
+            lazyFieldNames.Add(DocHelper.LAZY_FIELD_BINARY_KEY);
+            lazyFieldNames.Add(DocHelper.TEXT_FIELD_UTF2_KEY);
+            lazyFieldNames.Add(DocHelper.COMPRESSED_TEXT_FIELD_2_KEY);
 			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(loadFieldNames, lazyFieldNames);
 			Document doc = reader.Doc(0, fieldSelector);
 			Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
@@ -210,15 +210,15 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-			System.Collections.Hashtable loadFieldNames = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(loadFieldNames, DocHelper.TEXT_FIELD_1_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(loadFieldNames, DocHelper.TEXT_FIELD_UTF1_KEY);
-			System.Collections.Hashtable lazyFieldNames = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LARGE_LAZY_FIELD_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LAZY_FIELD_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LAZY_FIELD_BINARY_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.TEXT_FIELD_UTF2_KEY);
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.COMPRESSED_TEXT_FIELD_2_KEY);
+            SupportClass.Set<string> loadFieldNames = new SupportClass.Set<string>();
+			loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
+			loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
+            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
+			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
+            lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
+            lazyFieldNames.Add(DocHelper.LAZY_FIELD_BINARY_KEY);
+            lazyFieldNames.Add(DocHelper.TEXT_FIELD_UTF2_KEY);
+            lazyFieldNames.Add(DocHelper.COMPRESSED_TEXT_FIELD_2_KEY);
 			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(loadFieldNames, lazyFieldNames);
 			Document doc = reader.Doc(0, fieldSelector);
 			Assert.IsTrue(doc != null, "doc is null and it shouldn't be");
@@ -288,9 +288,9 @@ namespace Lucene.Net.Index
 			long lazyTime = 0;
 			long regularTime = 0;
 			int length = 50;
-			System.Collections.Hashtable lazyFieldNames = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFieldNames, DocHelper.LARGE_LAZY_FIELD_KEY);
-			SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(new System.Collections.Hashtable(), lazyFieldNames);
+            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
+			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
+            SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(new SupportClass.Set<string>(), lazyFieldNames);
 			
 			for (int i = 0; i < length; i++)
 			{

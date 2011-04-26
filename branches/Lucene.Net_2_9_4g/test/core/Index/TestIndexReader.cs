@@ -392,9 +392,9 @@ namespace Lucene.Net.Index
 			{
 				Assert.AreEqual(bin[i], data1[i + b1.GetBinaryOffset()]);
 			}
-			System.Collections.Hashtable lazyFields = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(lazyFields, "bin1");
-			FieldSelector sel = new SetBasedFieldSelector(new System.Collections.Hashtable(), lazyFields);
+            SupportClass.Set<string> lazyFields = new SupportClass.Set<string>();
+			lazyFields.Add("bin1");
+            FieldSelector sel = new SetBasedFieldSelector(new SupportClass.Set<string>(), lazyFields);
 			doc = reader.Document(reader.MaxDoc() - 1, sel);
 			Fieldable[] fieldables = doc.GetFieldables("bin1");
 			Assert.IsNotNull(fieldables);
