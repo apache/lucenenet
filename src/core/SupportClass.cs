@@ -1479,6 +1479,14 @@ public class SupportClass
             }
         }
 
+        public void Add(System.Collections.Generic.IDictionary<K, V> items)
+        {
+            foreach (K key in items.Keys)
+            {
+                _Dict.Add(key, items[key]);
+            }
+        }
+
         public void Add(System.Collections.Generic.KeyValuePair<K, V> item)
         {
             throw new NotImplementedException();

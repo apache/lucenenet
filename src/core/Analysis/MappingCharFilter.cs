@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
 				int firstChar = NextChar();
 				if (firstChar == - 1)
 					return - 1;
-				NormalizeCharMap nm = normMap.submap != null?(NormalizeCharMap) normMap.submap[CharacterCache.ValueOf((char) firstChar)]:null;
+				NormalizeCharMap nm = normMap.submap != null?normMap.submap[CharacterCache.ValueOf((char) firstChar)]:null;
 				if (nm == null)
 					return firstChar;
 				NormalizeCharMap result = Match(nm);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis
 				int chr = NextChar();
 				if (chr != - 1)
 				{
-					NormalizeCharMap subMap = (NormalizeCharMap) map.submap[CharacterCache.ValueOf((char) chr)];
+					NormalizeCharMap subMap = map.submap[CharacterCache.ValueOf((char) chr)];
 					if (subMap != null)
 					{
 						result = Match(subMap);
