@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	/// * <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
-	public sealed class SegmentInfo : System.ICloneable
+	public sealed class SegmentInfo : System.ICloneable,IEquatable<SegmentInfo>
 	{
 		
 		internal const int NO = - 1; // e.g. no norms; no deletes;
@@ -875,10 +875,15 @@ namespace Lucene.Net.Index
 			}
 			return other.dir == dir && other.name.Equals(name);
 		}
+
+        public bool Equals(SegmentInfo other)
+        {
+            return other.dir == dir && other.name.Equals(name);
+        }
 		
 		public override int GetHashCode()
 		{
 			return dir.GetHashCode() + name.GetHashCode();
 		}
-	}
+    }
 }
