@@ -27,7 +27,7 @@ namespace Lucene.Net.Documents
 	/// </summary>
 	//Replace with an enumerated type in 1.5
 	[Serializable]
-	public sealed class FieldSelectorResult
+	public sealed class FieldSelectorResult : IEquatable<FieldSelectorResult>
 	{
 		
 		/// <summary> Load this {@link Field} every time the {@link Document} is loaded, reading in the data as it is encountered.
@@ -96,22 +96,25 @@ namespace Lucene.Net.Documents
 		
 		public  override bool Equals(System.Object o)
 		{
-			if (this == o)
-				return true;
-			if (o == null || GetType() != o.GetType())
-				return false;
-			
-			FieldSelectorResult that = (FieldSelectorResult) o;
-			
-			if (id != that.id)
-				return false;
-			
-			return true;
+            return Equals(o as FieldSelectorResult);
 		}
+
+        public bool Equals(FieldSelectorResult other)
+        {
+            if (this == other)
+                return true;
+            if (other == null || GetType() != other.GetType())
+                return false;
+
+            if (id != other.id)
+                return false;
+
+            return true;
+        }
 		
 		public override int GetHashCode()
 		{
 			return id;
 		}
-	}
+    }
 }

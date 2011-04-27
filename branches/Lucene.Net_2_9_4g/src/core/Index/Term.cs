@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	
 	[Serializable]
-    public sealed class Term : System.IComparable, System.Runtime.Serialization.ISerializable
+    public sealed class Term : System.IComparable, System.Runtime.Serialization.ISerializable,IEquatable<Term>
 	{
 		internal System.String field;
 		internal System.String text;
@@ -94,29 +94,34 @@ namespace Lucene.Net.Index
 		//@Override
 		public  override bool Equals(System.Object obj)
 		{
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (GetType() != obj.GetType())
-				return false;
-			Term other = (Term) obj;
-			if (field == null)
-			{
-				if (other.field != null)
-					return false;
-			}
-			else if (!field.Equals(other.field))
-				return false;
-			if (text == null)
-			{
-				if (other.text != null)
-					return false;
-			}
-			else if (!text.Equals(other.text))
-				return false;
-			return true;
+			return Equals(obj as Term);
 		}
+
+        public bool Equals(Term other)
+        {
+            if (this == other)
+                return true;
+            if (other == null)
+                return false;
+            if (GetType() != other.GetType())
+                return false;
+
+            if (field == null)
+            {
+                if (other.field != null)
+                    return false;
+            }
+            else if (!field.Equals(other.field))
+                return false;
+            if (text == null)
+            {
+                if (other.text != null)
+                    return false;
+            }
+            else if (!text.Equals(other.text))
+                return false;
+            return true;
+        }
 		
 		//@Override
 		public override int GetHashCode()
@@ -181,5 +186,5 @@ namespace Lucene.Net.Index
         {
             get { return text; }
         }
-	}
+    }
 }
