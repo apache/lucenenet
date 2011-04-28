@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -25,8 +26,8 @@ namespace Lucene.Net.Store
 	{
 		
 		private const long serialVersionUID = 1L;
-		
-		protected System.Collections.ArrayList buffers = new System.Collections.ArrayList();
+
+        protected List<byte[]> buffers = new List<byte[]>();
 		internal long length;
 		internal RAMDirectory directory;
 		internal long sizeInBytes; 

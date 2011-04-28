@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -53,9 +54,9 @@ namespace Lucene.Net.Search.Spans
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
         [Obsolete("use extractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
+        public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
+            List<Lucene.Net.Index.Term> terms = new List<Term>();
 			terms.Add(term);
 			return terms;
 		}

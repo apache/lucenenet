@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search.Spans
 			/// <deprecated> delete in 3.0. 
 			/// </deprecated>
             [Obsolete("delete in 3.0")]
-			public override System.Collections.ICollection GetTerms()
+            public override IList<Lucene.Net.Index.Term> GetTerms()
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}

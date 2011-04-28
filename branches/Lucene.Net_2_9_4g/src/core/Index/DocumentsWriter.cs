@@ -1620,7 +1620,7 @@ namespace Lucene.Net.Index
 			}
 
             int blockSize;
-			internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
+            internal List<byte[]> freeByteBlocks = new List<byte[]>();
             
 			/* Allocate another byte[] from the shared pool */
 			public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
@@ -1671,7 +1671,7 @@ namespace Lucene.Net.Index
 				}
 			}
 
-            public /*internal*/ override void RecycleByteBlocks(System.Collections.ArrayList blocks)
+            public /*internal*/ override void RecycleByteBlocks(IList<byte[]> blocks)
             {
                 lock (Enclosing_Instance)
                 {

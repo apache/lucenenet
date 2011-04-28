@@ -1886,7 +1886,7 @@ namespace Lucene.Net.Index
 			writer.AddDocument(CreateDocument("a"));
 			writer.Close();
 			
-			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			IList<IndexCommit> commits = IndexReader.ListCommits(dir);
 			System.Collections.IEnumerator it = commits.GetEnumerator();
 			while (it.MoveNext())
 			{
