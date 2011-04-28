@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	/// * <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
-	public sealed class SegmentInfo : System.ICloneable,IEquatable<SegmentInfo>
+	public sealed class SegmentInfo : IEquatable<SegmentInfo>
 	{
 		
 		internal const int NO = - 1; // e.g. no norms; no deletes;
@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
 			ClearFiles();
 		}
 		
-		public System.Object Clone()
+		public SegmentInfo Clone()
 		{
 			SegmentInfo si = new SegmentInfo(name, docCount, dir);
 			si.isCompoundFile = isCompoundFile;

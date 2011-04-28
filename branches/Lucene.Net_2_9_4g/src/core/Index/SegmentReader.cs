@@ -1684,7 +1684,7 @@ namespace Lucene.Net.Index
 		
 		internal virtual void  StartCommit()
 		{
-            rollbackSegmentInfo = (SegmentInfo)si.Clone();
+            rollbackSegmentInfo = si.Clone();
 			rollbackHasChanges = hasChanges;
 			rollbackDeletedDocsDirty = deletedDocsDirty;
 			rollbackNormsDirty = normsDirty;
