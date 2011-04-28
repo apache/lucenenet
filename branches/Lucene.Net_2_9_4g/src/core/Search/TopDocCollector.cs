@@ -17,7 +17,7 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 		protected internal int totalHits;
 		
 		/// <summary>The priority queue which holds the top-scoring documents. </summary>
-		protected internal PriorityQueue hq;
+		protected internal PriorityQueue<ScoreDoc> hq;
 		
 		/// <summary>Construct to collect a given number of hits.</summary>
 		/// <param name="numHits">the maximum number of hits to collect
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 		/// constructor. It will be removed in a future release.
 		/// </deprecated>
         [Obsolete("use TopDocCollector(hq) instead. numHits is not used by this constructor. It will be removed in a future release.")]
-		internal TopDocCollector(int numHits, PriorityQueue hq)
+		internal TopDocCollector(int numHits, PriorityQueue<ScoreDoc> hq)
 		{
 			this.hq = hq;
 		}
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		/// <summary>Constructor to collect the top-scoring documents by using the given PQ.</summary>
 		/// <param name="hq">the PQ to use by this instance.
 		/// </param>
-		protected internal TopDocCollector(PriorityQueue hq)
+		protected internal TopDocCollector(PriorityQueue<ScoreDoc> hq)
 		{
 			this.hq = hq;
 		}

@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     /// collector will not properly collect hits with such
     /// scores.
 	/// </summary>
-	public abstract class TopScoreDocCollector:TopDocsCollector
+	public abstract class TopScoreDocCollector:TopDocsCollector<ScoreDoc>
 	{
 		
 		// Assumes docs are scored in order.
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 		/// <code>numHits</code>, and fill the array with sentinel
 		/// objects.
 		/// </summary>
-		public static TopScoreDocCollector create(int numHits, bool docsScoredInOrder)
+		public static TopScoreDocCollector Create(int numHits, bool docsScoredInOrder)
 		{
 			
 			if (docsScoredInOrder)

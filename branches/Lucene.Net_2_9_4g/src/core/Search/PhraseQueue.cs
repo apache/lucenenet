@@ -17,22 +17,20 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
 	
-	sealed class PhraseQueue:PriorityQueue
+	sealed class PhraseQueue:PriorityQueue<PhrasePositions>
 	{
 		internal PhraseQueue(int size)
 		{
 			Initialize(size);
 		}
-		
-		public override bool LessThan(System.Object o1, System.Object o2)
+
+        public override bool LessThan(PhrasePositions pp1, PhrasePositions pp2)
 		{
-			PhrasePositions pp1 = (PhrasePositions) o1;
-			PhrasePositions pp2 = (PhrasePositions) o2;
 			if (pp1.doc == pp2.doc)
 				if (pp1.position == pp2.position)
 				// same doc and pp.position, so decide by actual term positions. 

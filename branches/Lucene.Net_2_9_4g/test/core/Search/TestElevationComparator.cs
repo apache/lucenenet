@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 			
 			Sort sort = new Sort(new SortField[]{new SortField("id", new ElevationComparatorSource(priority), false), new SortField(null, SortField.SCORE, reversed)});
 			
-			TopDocsCollector topCollector = TopFieldCollector.create(sort, 50, false, true, true, true);
+			TopFieldCollector topCollector = TopFieldCollector.Create(sort, 50, false, true, true, true);
 			searcher.Search(newq, null, topCollector);
 			
 			TopDocs topDocs = topCollector.TopDocs(0, 10);

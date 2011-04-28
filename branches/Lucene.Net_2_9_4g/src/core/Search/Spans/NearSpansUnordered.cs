@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -32,8 +32,8 @@ namespace Lucene.Net.Search.Spans
 	public class NearSpansUnordered:Spans
 	{
 		private SpanNearQuery query;
-		
-		private System.Collections.IList ordered = new System.Collections.ArrayList(); // spans in query order
+
+        private List<SpansCell> ordered = new List<SpansCell>(); // spans in query order
 		private Spans[] subSpans;
 		private int slop; // from query
 		
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Spans
 		private bool more = true; // true iff not done
 		private bool firstTime = true; // true before first next()
 		
-		private class CellQueue:PriorityQueue
+		private class CellQueue:PriorityQueue<SpansCell>
 		{
 			private void  InitBlock(NearSpansUnordered enclosingInstance)
 			{
@@ -68,11 +68,9 @@ namespace Lucene.Net.Search.Spans
 				InitBlock(enclosingInstance);
 				Initialize(size);
 			}
-			
-			public override bool LessThan(System.Object o1, System.Object o2)
-			{
-				SpansCell spans1 = (SpansCell) o1;
-				SpansCell spans2 = (SpansCell) o2;
+
+            public override bool LessThan(SpansCell spans1, SpansCell spans2)
+            {
 				if (spans1.Doc() == spans2.Doc())
 				{
 					return NearSpansOrdered.DocSpansOrdered(spans1, spans2);
@@ -365,7 +363,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			for (int i = 0; more && i < ordered.Count; i++)
 			{
-				SpansCell cell = (SpansCell) ordered[i];
+				SpansCell cell = ordered[i];
 				if (next)
 					more = cell.Next(); // move to first entry
 				if (more)

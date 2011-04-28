@@ -17,7 +17,7 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// Extending classes can override {@link #TopDocs(int, int)} and
 	/// {@link #GetTotalHits()} in order to provide their own implementation.
 	/// </summary>
-	public abstract class TopDocsCollector:Collector
+	public abstract class TopDocsCollector<T>:Collector //where T : ScoreDoc //DIGY
 	{
 		
 		// This is used in case topDocs() is called with illegal parameters, or there
@@ -41,12 +41,12 @@ namespace Lucene.Net.Search
 		/// HitQueue for example aggregates the top scoring documents, while other PQ
 		/// implementations may hold documents sorted by other criteria.
 		/// </summary>
-		protected internal PriorityQueue pq;
+		protected internal PriorityQueue<T> pq;
 		
 		/// <summary>The total number of documents that the collector encountered. </summary>
 		protected internal int totalHits;
 		
-		protected internal TopDocsCollector(PriorityQueue pq)
+		protected internal TopDocsCollector(PriorityQueue<T> pq)
 		{
 			this.pq = pq;
 		}
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 		{
 			for (int i = howMany - 1; i >= 0; i--)
 			{
-				results[i] = (ScoreDoc) pq.Pop();
+				results[i] = pq.Pop() as ScoreDoc; 
 			}
 		}
 		

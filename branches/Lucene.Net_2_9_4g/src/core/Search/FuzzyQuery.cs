@@ -19,7 +19,7 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		protected internal class ScoreTermQueue:PriorityQueue
+		protected internal class ScoreTermQueue:PriorityQueue<ScoreTerm>
 		{
 			
 			public ScoreTermQueue(int size)
@@ -230,10 +230,8 @@ namespace Lucene.Net.Search
 			/* (non-Javadoc)
 			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
 			*/
-			public override bool LessThan(System.Object a, System.Object b)
+            public override bool LessThan(ScoreTerm termA, ScoreTerm termB)
 			{
-				ScoreTerm termA = (ScoreTerm) a;
-				ScoreTerm termB = (ScoreTerm) b;
 				if (termA.score == termB.score)
 					return termA.term.CompareTo(termB.term) > 0;
 				else

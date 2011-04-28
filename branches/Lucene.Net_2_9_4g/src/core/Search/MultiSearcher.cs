@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
 					// merge scoreDocs into hq
 					ScoreDoc scoreDoc = scoreDocs[j];
 					scoreDoc.doc += starts[i]; // convert doc
-					if (!hq.Insert(scoreDoc))
+					if (!hq.Insert((FieldDoc)scoreDoc))
 						break; // no more scores > minScore
 				}
 			}

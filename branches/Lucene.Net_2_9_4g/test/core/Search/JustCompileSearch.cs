@@ -25,7 +25,7 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermPositions = Lucene.Net.Index.TermPositions;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -485,10 +485,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		internal sealed class JustCompileTopDocsCollector:TopDocsCollector
+		internal sealed class JustCompileTopDocsCollector:TopDocsCollector<ScoreDoc>
 		{
 			
-			internal JustCompileTopDocsCollector(PriorityQueue pq):base(pq)
+			internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq):base(pq)
 			{
 			}
 			

@@ -1002,7 +1002,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, false, false, false, true);
+				TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, false, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1023,7 +1023,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, false, false, true);
+				TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, false, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
+				TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, true, false, true);
 				
 				full.Search(q, tdc);
 				
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.Search
 			for (int i = 0; i < sort.Length; i++)
 			{
 				Query q = new MatchAllDocsQuery();
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
 				
 				full.Search(q, tdc);
 				
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Search
 				{
 					for (int j = 0; j < tfcOptions.Length; j++)
 					{
-						TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
+                        TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 						
 						Assert.IsTrue(tdc.GetType().FullName.EndsWith("+" + actualTFCClasses[j]));
 						
@@ -1139,7 +1139,7 @@ namespace Lucene.Net.Search
 			Sort[] sort = new Sort[]{new Sort(SortField.FIELD_DOC), new Sort()};
 			for (int i = 0; i < sort.Length; i++)
 			{
-				TopDocsCollector tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+                TopFieldCollector tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
 				TopDocs td = tdc.TopDocs();
 				Assert.AreEqual(0, td.TotalHits);
 				Assert.IsTrue(System.Single.IsNaN(td.GetMaxScore()));
