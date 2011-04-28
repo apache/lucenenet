@@ -638,7 +638,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Keeper
-                result.newSegments.Add((SegmentInfo)info.Clone());
+                result.newSegments.Add(info.Clone());
 			}
 			
 			if (0 == result.numBadSegments)

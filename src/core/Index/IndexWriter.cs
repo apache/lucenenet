@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
 					int idx = Enclosing_Instance.segmentInfos.IndexOf(info);
 					if (idx != - 1)
 					{
-						info = (SegmentInfo) Enclosing_Instance.segmentInfos[idx];
+						info = Enclosing_Instance.segmentInfos[idx];
 					}
 					return info;
 				}
@@ -5363,7 +5363,7 @@ namespace Lucene.Net.Index
 				
 				merge.info.SetHasProx(merger.HasProx());
 				
-                segmentInfos.GetRange(start, start + merge.segments.Count - start).Clear();
+                segmentInfos.RemoveRange(start, start + merge.segments.Count - start);
 				System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
 				segmentInfos.Insert(start, merge.info);
 

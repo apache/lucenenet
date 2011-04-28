@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	[Serializable]
-	public sealed class SegmentInfos:System.Collections.ArrayList
+	public sealed class SegmentInfos: List<SegmentInfo> 
 	{
 		private class AnonymousClassFindSegmentsFile:FindSegmentsFile
 		{
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 		
 		public SegmentInfo Info(int i)
 		{
-			return (SegmentInfo) this[i];
+			return this[i];
 		}
 		
 		/// <summary> Get the generation (N) of the current segments_N file
@@ -433,12 +433,12 @@ namespace Lucene.Net.Index
 		/// SegmentInfo.
 		/// </summary>
 		
-		public override System.Object Clone()
+		public SegmentInfos Clone()
 		{
             SegmentInfos sis = new SegmentInfos();
             for (int i = 0; i < this.Count; i++)
             {
-                sis.Add(((SegmentInfo) this[i]).Clone());
+                sis.Add(this[i].Clone());
             }
             sis.counter = this.counter;
             sis.generation = this.generation;
@@ -851,7 +851,7 @@ namespace Lucene.Net.Index
 		public SegmentInfos Range(int first, int last)
 		{
 			SegmentInfos infos = new SegmentInfos();
-			infos.AddRange((System.Collections.IList) ((System.Collections.ArrayList) this).GetRange(first, last - first));
+			infos.AddRange(this.GetRange(first, last - first));
 			return infos;
 		}
 		
