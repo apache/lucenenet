@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Spans
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
+		public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
 			return include.GetTerms();
 		}

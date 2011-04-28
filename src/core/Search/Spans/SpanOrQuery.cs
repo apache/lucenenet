@@ -56,15 +56,15 @@ namespace Lucene.Net.Search.Spans
 			private bool InitSpanQueue(int target)
 			{
 				queue = new SpanQueue(enclosingInstance, Enclosing_Instance.clauses.Count);
-				System.Collections.IEnumerator i = Enclosing_Instance.clauses.GetEnumerator();
-				while (i.MoveNext())
-				{
-					Spans spans = ((SpanQuery) i.Current).GetSpans(reader);
-					if (((target == - 1) && spans.Next()) || ((target != - 1) && spans.SkipTo(target)))
-					{
-						queue.Put(spans);
-					}
-				}
+                foreach (SpanQuery i in Enclosing_Instance.clauses)
+                {
+                    Spans spans = i.GetSpans(reader);
+                    if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
+                    {
+                        queue.Put(spans);
+                    }
+                }
+
 				return queue.Size() != 0;
 			}
 			
@@ -204,15 +204,13 @@ namespace Lucene.Net.Search.Spans
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
+		public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
-			{
-				SpanQuery clause = (SpanQuery) i.Current;
-				terms.AddRange(clause.GetTerms());
-			}
+            List<Lucene.Net.Index.Term> terms = new List<Index.Term>();
+            foreach (SpanQuery clause in clauses)
+            {
+                terms.AddRange(clause.GetTerms());
+            }
 			return terms;
 		}
 		

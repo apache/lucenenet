@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
 			// System.out.println("Attempting to rollback to "+id);
 			System.String ids = "-" + id;
 			IndexCommit last = null;
-			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			IList<IndexCommit> commits = IndexReader.ListCommits(dir);
 			for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 			{
 				IndexCommit commit = (IndexCommit) iterator.Current;

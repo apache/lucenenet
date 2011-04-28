@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -31,7 +32,7 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	public class SpanNearQuery:SpanQuery, System.ICloneable
 	{
-		protected internal System.Collections.ArrayList clauses;
+        protected internal List<SpanQuery> clauses;
 		protected internal int slop;
 		protected internal bool inOrder;
 		
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			// copy clauses array into an ArrayList
-			this.clauses = new System.Collections.ArrayList(clauses.Length);
+            this.clauses = new List<SpanQuery>(clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
 				SpanQuery clause = clauses[i];
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Return the clauses whose spans are matched. </summary>
 		public virtual SpanQuery[] GetClauses()
 		{
-			return (SpanQuery[]) clauses.ToArray(typeof(SpanQuery));
+			return clauses.ToArray();
 		}
 		
 		/// <summary>Return the maximum number of intervening unmatched positions permitted.</summary>
@@ -100,9 +101,9 @@ namespace Lucene.Net.Search.Spans
 		/// <seealso cref="ExtractTerms(Set)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
+        public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
+            List<Lucene.Net.Index.Term> terms = new List<Index.Term>();
 			System.Collections.IEnumerator i = clauses.GetEnumerator();
 			while (i.MoveNext())
 			{

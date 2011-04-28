@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
 
         private class ByteBlockAllocator : ByteBlockPool.Allocator
         {
-            internal System.Collections.ArrayList freeByteBlocks = new System.Collections.ArrayList();
+            internal List<byte[]> freeByteBlocks = new List<byte[]>();
 
             /* Allocate another byte[] from the shared pool */
             public /*internal*/ override byte[] GetByteBlock(bool trackAllocations)
@@ -45,10 +46,10 @@ namespace Lucene.Net.Index
                         b = new byte[DocumentsWriter.BYTE_BLOCK_SIZE_ForNUnit];
                     else
                     {
-                        System.Object tempObject;
+                        byte[] tempObject;
                         tempObject = freeByteBlocks[size - 1];
                         freeByteBlocks.RemoveAt(size - 1);
-                        b = (byte[])tempObject;
+                        b = tempObject;
                     }
                     return b;
                 }
@@ -64,13 +65,13 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override void RecycleByteBlocks(System.Collections.ArrayList blocks)
+            public override void RecycleByteBlocks(IList<byte[]> blocks)
             {
                 lock (this)
                 {
                     int size = blocks.Count;
                     for (int i = 0; i < size; i++)
-                        freeByteBlocks.Add((byte[])blocks[i]);
+                        freeByteBlocks.Add(blocks[i]);
                 }
             }
         }

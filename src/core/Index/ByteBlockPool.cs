@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 		public /*internal*/ abstract class Allocator
 		{
 			public /*internal*/ abstract void  RecycleByteBlocks(byte[][] blocks, int start, int end);
-            public /*internal*/ abstract void RecycleByteBlocks(System.Collections.ArrayList blocks);
+            public /*internal*/ abstract void RecycleByteBlocks(IList<byte[]> blocks);
 			public /*internal*/ abstract byte[] GetByteBlock(bool trackAllocations);
 		}
 		

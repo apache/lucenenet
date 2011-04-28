@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search.Spans
 		/// <deprecated> use {@link #ExtractTerms(Set)} instead. 
 		/// </deprecated>
         [Obsolete("use ExtractTerms(Hashtable) instead.")]
-		public override System.Collections.ICollection GetTerms()
+        public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
 			return maskedQuery.GetTerms();
 		}

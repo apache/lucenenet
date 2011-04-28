@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -392,7 +393,7 @@ namespace Lucene.Net.Index
 					Assert.AreEqual(2, policy.numOnCommit);
 				
 				// Test listCommits
-				System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+                IList<IndexCommit> commits = IndexReader.ListCommits(dir);
 				if (!autoCommit)
 				// 1 from opening writer + 2 from closing writer
 					Assert.AreEqual(3, commits.Count);
@@ -462,7 +463,7 @@ namespace Lucene.Net.Index
 			}
 			writer.Close();
 			
-			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			IList<IndexCommit> commits = IndexReader.ListCommits(dir);
 			Assert.AreEqual(6, commits.Count);
 			IndexCommit lastCommit = null;
 			System.Collections.IEnumerator it = commits.GetEnumerator();

@@ -1121,11 +1121,11 @@ namespace Lucene.Net.Index
 		
 		/// <seealso cref="Lucene.Net.Index.IndexReader.listCommits">
 		/// </seealso>
-		public static new System.Collections.ICollection ListCommits(Directory dir)
+		public static new IList<IndexCommit> ListCommits(Directory dir)
 		{
 			System.String[] files = dir.ListAll();
-			
-			System.Collections.ArrayList commits = new System.Collections.ArrayList();
+
+            List<IndexCommit> commits = new List<IndexCommit>();
 			
 			SegmentInfos latest = new SegmentInfos();
 			latest.Read(dir);

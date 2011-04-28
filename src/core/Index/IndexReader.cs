@@ -1749,7 +1749,7 @@ namespace Lucene.Net.Index
 		/// progress while this method is running, that commit
 		/// may or may not be returned array.  
 		/// </summary>
-		public static System.Collections.ICollection ListCommits(Directory dir)
+		public static IList<IndexCommit> ListCommits(Directory dir)
 		{
 			return DirectoryReader.ListCommits(dir);
 		}

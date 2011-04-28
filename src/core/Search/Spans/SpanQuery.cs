@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Search.Spans
 		/// <seealso cref="Query.ExtractTerms(Set)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
-		public abstract System.Collections.ICollection GetTerms();
+		public abstract IList<Lucene.Net.Index.Term> GetTerms();
 		
 		public override Weight CreateWeight(Searcher searcher)
 		{
