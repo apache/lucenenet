@@ -18,7 +18,7 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 
 namespace Lucene.Net.Search
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 	/// <p/><b>NOTE:</b> This API is experimental and might change in
 	/// incompatible ways in the next release.<p/>
 	/// </summary>
-	public abstract class TopFieldCollector:TopDocsCollector
+	public abstract class TopFieldCollector:TopDocsCollector<Entry>
 	{
 		
 		// TODO: one optimization we could do is to pre-fill
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 			{
 				// bottom.score is already set to Float.NaN in add().
 				bottom.docID = docBase + doc;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 			{
 				bottom.docID = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
 			{
 				bottom.docID = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
 			{
 				// bottom.score is already set to Float.NaN in add().
 				bottom.docID = docBase + doc;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search
 			{
 				bottom.docID = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -781,7 +781,7 @@ namespace Lucene.Net.Search
 			{
 				bottom.docID = docBase + doc;
 				bottom.score = score;
-				bottom = (Entry) pq.UpdateTop();
+				bottom = pq.UpdateTop();
 			}
 			
 			public override void  Collect(int doc)
@@ -970,7 +970,7 @@ namespace Lucene.Net.Search
 		// internal versions. If someone will define a constructor with any other
 		// visibility, then anyone will be able to extend the class, which is not what
 		// we want.
-		private TopFieldCollector(PriorityQueue pq, int numHits, bool fillFields):base(pq)
+		private TopFieldCollector(PriorityQueue<Entry> pq, int numHits, bool fillFields):base(pq)
 		{
 			this.numHits = numHits;
 			this.fillFields = fillFields;
@@ -1012,7 +1012,7 @@ namespace Lucene.Net.Search
 		/// the sort criteria.
 		/// </returns>
 		/// <throws>  IOException </throws>
-		public static TopFieldCollector create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+		public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
 		{
 			if (sort.fields.Length == 0)
 			{
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Search
 		
 		internal void  Add(int slot, int doc, float score)
 		{
-			bottom = (Entry) pq.Add(new Entry(slot, docBase + doc, score));
+			bottom = pq.Add(new Entry(slot, docBase + doc, score));
 			queueFull = totalHits == numHits;
 		}
 		
@@ -1113,7 +1113,7 @@ namespace Lucene.Net.Search
 			{
 				for (int i = howMany - 1; i >= 0; i--)
 				{
-					Entry entry = (Entry) pq.Pop();
+					Entry entry = pq.Pop();
 					results[i] = new FieldDoc(entry.docID, entry.score);
 				}
 			}

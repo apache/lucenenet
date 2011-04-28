@@ -16,8 +16,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -29,29 +30,27 @@ namespace Lucene.Net.Index
 	public class MultipleTermPositions : TermPositions
 	{
 		
-		private sealed class TermPositionsQueue:PriorityQueue
+		private sealed class TermPositionsQueue:PriorityQueue<TermPositions>
 		{
-			internal TermPositionsQueue(System.Collections.IList termPositions)
+			internal TermPositionsQueue(IList<TermPositions> termPositions)
 			{
 				Initialize(termPositions.Count);
-				
-				System.Collections.IEnumerator i = termPositions.GetEnumerator();
-				while (i.MoveNext())
-				{
-					TermPositions tp = (TermPositions) i.Current;
-					if (tp.Next())
-						Put(tp);
-				}
+
+                foreach (TermPositions tp in termPositions)
+                {
+                    if (tp.Next())
+                        Put(tp);
+                }
 			}
 			
 			internal TermPositions Peek()
 			{
 				return (TermPositions) Top();
 			}
-			
-			public override bool LessThan(System.Object a, System.Object b)
+
+            public override bool LessThan(TermPositions a, TermPositions b)
 			{
-				return ((TermPositions) a).Doc() < ((TermPositions) b).Doc();
+				return a.Doc() < b.Doc();
 			}
 		}
 		
@@ -120,7 +119,7 @@ namespace Lucene.Net.Index
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{
-			System.Collections.IList termPositions = new System.Collections.ArrayList();
+            IList<TermPositions> termPositions = new List<TermPositions>();
 			
 			for (int i = 0; i < terms.Length; i++)
 				termPositions.Add(indexReader.TermPositions(terms[i]));

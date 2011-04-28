@@ -19,7 +19,7 @@ using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
 		private int nDocs;
 		private TopDocs docs;
 		private int i;
-		private PriorityQueue hq;
+        private PriorityQueue<ScoreDoc> hq;
 		private int[] starts;
 		private System.IO.IOException ioe;
 		private Sort sort;
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
 			this.weight = weight;
 			this.filter = filter;
 			this.nDocs = nDocs;
-			this.hq = hq;
+            this.hq = hq;
 			this.i = i;
 			this.starts = starts;
 		}
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
 			this.weight = weight;
 			this.filter = filter;
 			this.nDocs = nDocs;
-			this.hq = hq;
+            this.hq = hq;
 			this.i = i;
 			this.starts = starts;
 			this.sort = sort;
@@ -303,13 +303,14 @@ namespace Lucene.Net.Search
 							for (int j2 = 0; j2 < docs.ScoreDocs.Length; j2++)
 							{
 								FieldDoc fd = (FieldDoc) docs.ScoreDocs[j2];
-								fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]);
+                                //DIGY?? No unit test for the line below
+								fd.fields[j] = (System.Int32) (((System.Int32) fd.fields[j]) + starts[i]); 
 							}
 							break;
 						}
 					}
 					
-					((FieldDocSortedHitQueue) hq).SetFields(docsFields.fields);
+					((FieldDocSortedHitQueue)hq).SetFields(docsFields.fields);
 				}
 				ScoreDoc[] scoreDocs = docs.ScoreDocs;
 				for (int j = 0; j < scoreDocs.Length; j++)

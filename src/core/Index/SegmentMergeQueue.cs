@@ -17,22 +17,20 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
 	
-	sealed class SegmentMergeQueue:PriorityQueue
+	sealed class SegmentMergeQueue:PriorityQueue<SegmentMergeInfo>
 	{
 		internal SegmentMergeQueue(int size)
 		{
 			Initialize(size);
 		}
-		
-		public override bool LessThan(System.Object a, System.Object b)
+
+        public override bool LessThan(SegmentMergeInfo stiA, SegmentMergeInfo stiB)
 		{
-			SegmentMergeInfo stiA = (SegmentMergeInfo) a;
-			SegmentMergeInfo stiB = (SegmentMergeInfo) b;
 			int comparison = stiA.term.CompareTo(stiB.term);
 			if (comparison == 0)
 				return stiA.base_Renamed < stiB.base_Renamed;

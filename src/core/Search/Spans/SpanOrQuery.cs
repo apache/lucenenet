@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 using Query = Lucene.Net.Search.Query;
 
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		
 		
-		private class SpanQueue:PriorityQueue
+		private class SpanQueue:PriorityQueue<Spans>
 		{
 			private void  InitBlock(SpanOrQuery enclosingInstance)
 			{
@@ -331,11 +331,9 @@ namespace Lucene.Net.Search.Spans
 				InitBlock(enclosingInstance);
 				Initialize(size);
 			}
-			
-			public override bool LessThan(System.Object o1, System.Object o2)
+
+            public override bool LessThan(Spans spans1, Spans spans2)
 			{
-				Spans spans1 = (Spans) o1;
-				Spans spans2 = (Spans) o2;
 				if (spans1.Doc() == spans2.Doc())
 				{
 					if (spans1.Start() == spans2.Start())

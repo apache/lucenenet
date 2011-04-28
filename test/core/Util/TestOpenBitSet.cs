@@ -324,9 +324,9 @@ namespace Lucene.Net.Util
 		public virtual void  TestBig()
 		{
 			// uncomment to run a bigger test (~2 minutes).
-			// rand = newRandom();
-			// doRandomSets(2000,200000, 1);
-			// doRandomSets(2000,200000, 2);
+            //rand = NewRandom();
+            //DoRandomSets(2000,200000, 1);
+            //DoRandomSets(2000,200000, 2);
 		}
 		
 		[Test]

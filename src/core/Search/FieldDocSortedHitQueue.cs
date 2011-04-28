@@ -17,7 +17,7 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	/// </since>
 	/// <version>  $Id: FieldDocSortedHitQueue.java 695514 2008-09-15 15:42:11Z otis $
 	/// </version>
-	class FieldDocSortedHitQueue:PriorityQueue
+	class FieldDocSortedHitQueue:PriorityQueue<ScoreDoc>
 	{
 		
 		// this cannot contain AUTO fields - any AUTO fields should
@@ -114,10 +114,11 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 		/// </returns>
-		public override bool LessThan(System.Object a, System.Object b)
+        public override bool LessThan(ScoreDoc docA1, ScoreDoc docB1)
 		{
-			FieldDoc docA = (FieldDoc) a;
-			FieldDoc docB = (FieldDoc) b;
+
+            FieldDoc docA = (FieldDoc)docA1;
+            FieldDoc docB = (FieldDoc)docB1;
 			int n = fields.Length;
 			int c = 0;
 			for (int i = 0; i < n && c == 0; ++i)

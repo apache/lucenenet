@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 			}
 			
 			Scorer s = new SimpleScorer();
-			TopDocsCollector tdc = TopScoreDocCollector.create(scores.Length, true);
+            TopScoreDocCollector tdc = TopScoreDocCollector.Create(scores.Length, true);
 			Collector c = new PositiveScoresOnlyCollector(tdc);
 			c.SetScorer(s);
 			while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

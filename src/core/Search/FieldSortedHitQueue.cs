@@ -18,7 +18,7 @@
 using System;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	/// <deprecated> see {@link FieldValueHitQueue}
 	/// </deprecated>
     [Obsolete("see FieldValueHitQueue")]
-	public class FieldSortedHitQueue:PriorityQueue
+	public class FieldSortedHitQueue:PriorityQueue<ScoreDoc>
 	{
 		internal class AnonymousClassCache:FieldCacheImpl.Cache
 		{
@@ -462,17 +462,17 @@ namespace Lucene.Net.Search
 		// keeps track of the score isn't accidentally bypassed.  
 		// inherit javadoc
         [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Util.PriorityQueue.Insert(object)")]
-		public override bool Insert(System.Object fdoc)
-		{
-			return Insert((FieldDoc) fdoc);
+        public override bool Insert(ScoreDoc fdoc)
+        {
+			return Insert(fdoc);
 		}
 		
 		// This overrides PriorityQueue.insertWithOverflow() so that
 		// updateMaxScore(FieldDoc) that keeps track of the score isn't accidentally
 		// bypassed.
-		public override System.Object InsertWithOverflow(System.Object element)
+		public override ScoreDoc InsertWithOverflow(ScoreDoc element)
 		{
-			UpdateMaxScore((FieldDoc) element);
+			UpdateMaxScore((FieldDoc)element);
 			return base.InsertWithOverflow(element);
 		}
 		
@@ -483,11 +483,8 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 		/// </returns>
-		public override bool LessThan(System.Object a, System.Object b)
+        public override bool LessThan(ScoreDoc docA, ScoreDoc docB)
 		{
-			ScoreDoc docA = (ScoreDoc) a;
-			ScoreDoc docB = (ScoreDoc) b;
-			
 			// run comparators
 			int n = comparators.Length;
 			int c = 0;

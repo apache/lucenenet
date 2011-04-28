@@ -17,7 +17,7 @@
 
 using System;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -43,10 +43,10 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <seealso cref="FieldCache">
 	/// </seealso>
-	public abstract class FieldValueHitQueue:PriorityQueue
+	public abstract class FieldValueHitQueue:PriorityQueue<FieldValueHitQueue.Entry>
 	{
 		
-		internal sealed class Entry
+		public sealed class Entry
 		{
 			internal int slot;
 			internal int docID;
@@ -100,11 +100,8 @@ namespace Lucene.Net.Search
 			/// </param>
 			/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
 			/// </returns>
-			public override bool LessThan(System.Object a, System.Object b)
+            public override bool LessThan(Entry hitA, Entry hitB)
 			{
-				Entry hitA = (Entry) a;
-				Entry hitB = (Entry) b;
-				
 				System.Diagnostics.Debug.Assert(hitA != hitB);
 				System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
 				
@@ -142,12 +139,9 @@ namespace Lucene.Net.Search
 				
 				Initialize(size);
 			}
-			
-			public override bool LessThan(System.Object a, System.Object b)
-			{
-				Entry hitA = (Entry) a;
-				Entry hitB = (Entry) b;
-				
+
+            public override bool LessThan(Entry hitA, Entry hitB)
+            {
 				System.Diagnostics.Debug.Assert(hitA != hitB);
 				System.Diagnostics.Debug.Assert(hitA.slot != hitB.slot);
 				
@@ -226,8 +220,8 @@ namespace Lucene.Net.Search
 		protected internal SortField[] fields;
 		protected internal FieldComparator[] comparators;
 		protected internal int[] reverseMul;
-		
-		public abstract override bool LessThan(System.Object a, System.Object b);
+
+        public abstract override bool LessThan(Entry a, Entry b);
 		
 		/// <summary> Given a queue Entry, creates a corresponding FieldDoc
 		/// that contains the values used to sort the given document.
