@@ -86,13 +86,13 @@ namespace Lucene.Net.Index
 			/// <summary>Empty unless you passed specific segments list to check as optional 3rd argument.</summary>
 			/// <seealso cref="CheckIndex.CheckIndex(List)">
 			/// </seealso>
-			public System.Collections.IList segmentsChecked = new System.Collections.ArrayList();
+            public IList<string> segmentsChecked = new List<string>();
 			
 			/// <summary>True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
 			public bool toolOutOfDate;
 			
 			/// <summary>List of {@link SegmentInfoStatus} instances, detailing status of each segment. </summary>
-			public System.Collections.IList segmentInfos = new System.Collections.ArrayList();
+            public IList<SegmentInfoStatus> segmentInfos = new List<SegmentInfoStatus>();
 			
 			/// <summary>Directory index is in. </summary>
 			public Directory dir;
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
 		/// <deprecated> Please instantiate a CheckIndex and then use {@link #CheckIndex(List)} instead 
 		/// </deprecated>
         [Obsolete("Please instantiate a CheckIndex and then use CheckIndex(List) instead")]
-		public static bool Check(Directory dir, bool doFix, System.Collections.IList onlySegments)
+		public static bool Check(Directory dir, bool doFix, IList<string> onlySegments)
 		{
 			CheckIndex checker = new CheckIndex(dir);
 			Status status = checker.CheckIndex_Renamed_Method(onlySegments);
@@ -351,7 +351,7 @@ namespace Lucene.Net.Index
 		/// you only call this when the index is not opened by any
 		/// writer. 
 		/// </param>
-		public virtual Status CheckIndex_Renamed_Method(System.Collections.IList onlySegments)
+		public virtual Status CheckIndex_Renamed_Method(IList<string> onlySegments)
 		{
             System.Globalization.NumberFormatInfo nf = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
 			SegmentInfos sis = new SegmentInfos();
@@ -467,10 +467,9 @@ namespace Lucene.Net.Index
 						infoStream.Write(" " + it.Current);
 					}
 				}
-                System.Collections.IEnumerator e = onlySegments.GetEnumerator();
-                while (e.MoveNext() == true)
+                foreach (string seg in onlySegments)
                 {
-                    result.segmentsChecked.Add(e.Current);
+                    result.segmentsChecked.Add(seg);
                 }
                 Msg(":");
 			}
@@ -483,7 +482,7 @@ namespace Lucene.Net.Index
 			}
 			
 			
-			result.newSegments = (SegmentInfos) sis.Clone();
+			result.newSegments = sis.Clone();
 			result.newSegments.Clear();
 			
 			for (int i = 0; i < numSegments; i++)
@@ -944,7 +943,7 @@ namespace Lucene.Net.Index
 		{
 			
 			bool doFix = false;
-			System.Collections.IList onlySegments = new System.Collections.ArrayList();
+			IList<string> onlySegments = new List<string>();
 			System.String indexPath = null;
 			int i = 0;
 			while (i < args.Length)
