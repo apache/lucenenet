@@ -124,10 +124,11 @@ namespace Lucene.Net.QueryParsers
 		{
 			jjmatchedKind = kind;
 			jjmatchedPos = pos;
-			
-			int ret = input_stream.ReadChar();
-            if (ret != -1) curChar = (char)ret;
-			else
+			try
+			{
+				curChar = input_stream.ReadChar();
+			}
+			catch (System.IO.IOException e)
 			{
 				return pos + 1;
 			}
@@ -623,10 +624,11 @@ namespace Lucene.Net.QueryParsers
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 36 - (jjnewStateCnt = startsAt)))
 					return curPos;
-
-                int ret = input_stream.ReadChar();
-                if (ret != -1) curChar = (char)ret;
-                else
+				try
+				{
+					curChar = input_stream.ReadChar();
+				}
+				catch (System.IO.IOException e)
 				{
 					return curPos;
 				}
@@ -672,9 +674,11 @@ namespace Lucene.Net.QueryParsers
 		}
 		private int JjMoveStringLiteralDfa1_1(long active0)
 		{
-            int ret = input_stream.ReadChar();
-            if (ret != -1) curChar = (char)ret;
-            else
+			try
+			{
+				curChar = input_stream.ReadChar();
+			}
+			catch (System.IO.IOException e)
 			{
 				JjStopStringLiteralDfa_1(0, active0);
 				return 1;
@@ -697,10 +701,11 @@ namespace Lucene.Net.QueryParsers
 		{
 			jjmatchedKind = kind;
 			jjmatchedPos = pos;
-
-            int ret = input_stream.ReadChar();
-            if (ret != -1) curChar = (char)ret;
-            else
+			try
+			{
+				curChar = input_stream.ReadChar();
+			}
+			catch (System.IO.IOException e)
 			{
 				return pos + 1;
 			}
@@ -861,10 +866,11 @@ namespace Lucene.Net.QueryParsers
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
 					return curPos;
-
-                int ret = input_stream.ReadChar();
-                if (ret != -1) curChar = (char)ret;
-                else
+				try
+				{
+					curChar = input_stream.ReadChar();
+				}
+				catch (System.IO.IOException e)
 				{
 					return curPos;
 				}
@@ -961,10 +967,11 @@ namespace Lucene.Net.QueryParsers
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
 					return curPos;
-
-                int ret = input_stream.ReadChar();
-                if (ret != -1) curChar = (char)ret;
-                else
+				try
+				{
+					curChar = input_stream.ReadChar();
+				}
+				catch (System.IO.IOException e)
 				{
 					return curPos;
 				}
@@ -1010,9 +1017,11 @@ namespace Lucene.Net.QueryParsers
 		}
 		private int JjMoveStringLiteralDfa1_2(long active0)
 		{
-            int ret = input_stream.ReadChar();
-            if (ret != -1) curChar = (char)ret;
-            else
+			try
+			{
+				curChar = input_stream.ReadChar();
+			}
+			catch (System.IO.IOException e)
 			{
 				JjStopStringLiteralDfa_2(0, active0);
 				return 1;
@@ -1035,10 +1044,11 @@ namespace Lucene.Net.QueryParsers
 		{
 			jjmatchedKind = kind;
 			jjmatchedPos = pos;
-
-            int ret = input_stream.ReadChar();
-            if (ret != -1) curChar = (char)ret;
-            else
+			try
+			{
+				curChar = input_stream.ReadChar();
+			}
+			catch (System.IO.IOException e)
 			{
 				return pos + 1;
 			}
@@ -1199,10 +1209,11 @@ namespace Lucene.Net.QueryParsers
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
 					return curPos;
-
-                int ret = input_stream.ReadChar();
-                if (ret != -1) curChar = (char)ret;
-                else
+				try
+				{
+					curChar = input_stream.ReadChar();
+				}
+				catch (System.IO.IOException e)
 				{
 					return curPos;
 				}
@@ -1354,9 +1365,11 @@ namespace Lucene.Net.QueryParsers
 			
 			for (; ; )
 			{
-                int ret = input_stream.BeginToken();
-                if (ret != -1) curChar = (char)ret;
-                else
+				try
+				{
+					curChar = input_stream.BeginToken();
+				}
+				catch (System.IO.IOException e)
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();
@@ -1412,9 +1425,12 @@ namespace Lucene.Net.QueryParsers
 				int error_column = input_stream.GetEndColumn();
 				System.String error_after = null;
 				bool EOFSeen = false;
-				
-				if(input_stream.ReadChar()==-1) 
-                {
+				try
+				{
+					input_stream.ReadChar(); input_stream.Backup(1);
+				}
+				catch (System.IO.IOException e1)
+				{
 					EOFSeen = true;
 					error_after = curPos <= 1?"":input_stream.GetImage();
 					if (curChar == '\n' || curChar == '\r')
@@ -1425,9 +1441,6 @@ namespace Lucene.Net.QueryParsers
 					else
 						error_column++;
 				}
-                else
-                    input_stream.Backup(1);
-
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);

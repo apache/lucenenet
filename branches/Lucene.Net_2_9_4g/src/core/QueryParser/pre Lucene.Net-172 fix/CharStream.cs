@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers
 		/// of selecting the input is the responsibility of the class
 		/// implementing this interface.  Can throw any java.io.IOException.
 		/// </summary>
-		int ReadChar();
+		char ReadChar();
 		
 		/// <summary> Returns the column position of the character last read.</summary>
 		/// <deprecated>
@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers
 		/// All characters must remain in the buffer between two successive calls
 		/// to this method to implement backup correctly.
 		/// </summary>
-		int BeginToken();
+		char BeginToken();
 		
 		/// <summary> Returns a string made up of characters from the marked token beginning
 		/// to the current buffer position. Implementations have the choice of returning
