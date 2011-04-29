@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 		* default delete policy (KeepOnlyLastCommitDeletionPolicy).
 		* Other policies may leave commit points live for longer
 		* in which case this list would be longer than 1: */
-        private List<CommitPoint> commits = new List<CommitPoint>();
+        private List<IndexCommit> commits = new List<IndexCommit>();
 		
 		/* Holds files we had incref'd from the previous
 		* non-commit checkpoint: */
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
 				int writeTo = 0;
 				while (readFrom < size)
 				{
-					CommitPoint commit = commits[readFrom];
+					CommitPoint commit = (CommitPoint)commits[readFrom];
 					if (!commit.deleted)
 					{
 						if (writeTo != readFrom)

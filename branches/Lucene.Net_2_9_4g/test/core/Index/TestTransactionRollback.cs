@@ -175,12 +175,12 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.rollbackPoint = rollbackPoint;
 			}
-			
-			public virtual void  OnCommit(System.Collections.IList commits)
+
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 			}
-			
-			public virtual void  OnInit(System.Collections.IList commits)
+
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				for (System.Collections.IEnumerator iterator = commits.GetEnumerator(); iterator.MoveNext(); )
 				{
@@ -232,12 +232,12 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			public virtual void  OnCommit(System.Collections.IList commits)
+
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 			}
-			
-			public virtual void  OnInit(System.Collections.IList commits)
+
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				((IndexCommit) commits[commits.Count - 1]).Delete();
 			}
@@ -277,10 +277,10 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 			}
-			public virtual void  OnInit(System.Collections.IList commits)
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 			}
 		}

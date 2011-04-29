@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
 		/// {@link IndexCommit point-in-time commits},
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
-		void  OnInit(System.Collections.IList commits);
+        void OnInit(IList<IndexCommit> commits);
 		
 		/// <summary> <p/>This is called each time the writer completed a commit.
 		/// This gives the policy a chance to remove old commit points
@@ -97,6 +98,6 @@ namespace Lucene.Net.Index
 		/// <param name="commits">List of {@link IndexCommit},
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
-		void  OnCommit(System.Collections.IList commits);
+        void OnCommit(IList<IndexCommit> commits);
 	}
 }

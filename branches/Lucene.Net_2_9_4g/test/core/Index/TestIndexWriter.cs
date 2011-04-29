@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -5924,10 +5925,10 @@ namespace Lucene.Net.Index
 
         private class NoDeletionPolicy : IndexDeletionPolicy
         {
-            public void OnCommit(System.Collections.IList commits)
+            public void OnCommit(IList<IndexCommit> commits)
             {
             }
-            public void OnInit(System.Collections.IList commits)
+            public void OnInit(IList<IndexCommit> commits)
             {
             }
         }
