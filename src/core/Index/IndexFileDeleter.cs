@@ -78,21 +78,21 @@ namespace Lucene.Net.Index
 		/* Reference count for all files in the index.  
 		* Counts how many existing commits reference a file.
 		* Maps String to RefCount (class below) instances: */
-		private Dictionary<System.String, RefCount> refCounts = new Dictionary<System.String, RefCount>();
+		private Dictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
 		
 		/* Holds all commits (segments_N) currently in the index.
 		* This will have just 1 commit if you are using the
 		* default delete policy (KeepOnlyLastCommitDeletionPolicy).
 		* Other policies may leave commit points live for longer
 		* in which case this list would be longer than 1: */
-		private System.Collections.ArrayList commits = new System.Collections.ArrayList();
+        private List<CommitPoint> commits = new List<CommitPoint>();
 		
 		/* Holds files we had incref'd from the previous
 		* non-commit checkpoint: */
         private IList<string> lastFiles = new List<string>();
 		
 		/* Commits that the IndexDeletionPolicy have decided to delete: */
-		private System.Collections.ArrayList commitsToDelete = new System.Collections.ArrayList();
+        private List<CommitPoint> commitsToDelete = new List<CommitPoint>();
 		
 		private System.IO.StreamWriter infoStream;
 		private Directory directory;
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
 				// the now-deleted commits:
 				for (int i = 0; i < size; i++)
 				{
-					CommitPoint commit = (CommitPoint) commitsToDelete[i];
+					CommitPoint commit = commitsToDelete[i];
 					if (infoStream != null)
 					{
 						Message("deleteCommits: now decRef commit \"" + commit.GetSegmentsFileName() + "\"");
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
 				int writeTo = 0;
 				while (readFrom < size)
 				{
-					CommitPoint commit = (CommitPoint) commits[readFrom];
+					CommitPoint commit = commits[readFrom];
 					if (!commit.deleted)
 					{
 						if (writeTo != readFrom)

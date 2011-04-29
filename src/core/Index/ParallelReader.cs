@@ -46,12 +46,12 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class ParallelReader:IndexReader, System.ICloneable
 	{
-		private System.Collections.ArrayList readers = new System.Collections.ArrayList();
-		private System.Collections.IList decrefOnClose = new System.Collections.ArrayList(); // remember which subreaders to decRef on close
+        private List<IndexReader> readers = new List<IndexReader>();
+        private List<bool> decrefOnClose = new List<bool>(); // remember which subreaders to decRef on close
 		internal bool incRefReaders = false;
 		private System.Collections.SortedList fieldToReader = new System.Collections.SortedList();
-		private System.Collections.IDictionary readerToFields = new System.Collections.Hashtable();
-		private System.Collections.IList storedFieldReaders = new System.Collections.ArrayList();
+        private SupportClass.Dictionary<IndexReader, ICollection<String>> readerToFields = new SupportClass.Dictionary<IndexReader, ICollection<string>>();
+        private List<IndexReader> storedFieldReaders = new List<IndexReader>();
 		
 		private int maxDoc;
 		private int numDocs;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
 			EnsureOpen();
 			
 			bool reopened = false;
-			System.Collections.IList newReaders = new System.Collections.ArrayList();
+            List<IndexReader> newReaders = new List<IndexReader>();
 			
 			bool success = false;
 			
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 			{
 				for (int i = 0; i < readers.Count; i++)
 				{
-					IndexReader oldReader = (IndexReader) readers[i];
+					IndexReader oldReader = readers[i];
 					IndexReader newReader = null;
 					if (doClone)
 					{
@@ -227,12 +227,12 @@ namespace Lucene.Net.Index
 			
 			if (reopened)
 			{
-				System.Collections.IList newDecrefOnClose = new System.Collections.ArrayList();
+                List<bool> newDecrefOnClose = new List<bool>();
 				ParallelReader pr = new ParallelReader();
 				for (int i = 0; i < readers.Count; i++)
 				{
-					IndexReader oldReader = (IndexReader) readers[i];
-					IndexReader newReader = (IndexReader) newReaders[i];
+					IndexReader oldReader = readers[i];
+					IndexReader newReader = newReaders[i];
 					if (newReader == oldReader)
 					{
 						newDecrefOnClose.Add(true);
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).DeleteDocument(n);
+				readers[i].DeleteDocument(n);
 			}
 			hasDeletions = true;
 		}
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).UndeleteAll();
+				readers[i].UndeleteAll();
 			}
 			hasDeletions = false;
 		}
@@ -312,20 +312,19 @@ namespace Lucene.Net.Index
 			Document result = new Document();
 			for (int i = 0; i < storedFieldReaders.Count; i++)
 			{
-				IndexReader reader = (IndexReader) storedFieldReaders[i];
+				IndexReader reader = storedFieldReaders[i];
 				
 				bool include = (fieldSelector == null);
 				if (!include)
 				{
-					System.Collections.IEnumerator it = ((System.Collections.ICollection) readerToFields[reader]).GetEnumerator();
-					while (it.MoveNext())
-					{
-						if (fieldSelector.Accept((System.String) it.Current) != FieldSelectorResult.NO_LOAD)
-						{
-							include = true;
-							break;
-						}
-					}
+                    foreach (string x in readerToFields[reader])
+                    {
+                        if (fieldSelector.Accept(x) != FieldSelectorResult.NO_LOAD)
+                        {
+                            include = true;
+                            break;
+                        }
+                    }
 				}
 				if (include)
 				{
@@ -466,7 +465,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				if (!((IndexReader) readers[i]).IsCurrent())
+				if (!readers[i].IsCurrent())
 				{
 					return false;
 				}
@@ -481,7 +480,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				if (!((IndexReader) readers[i]).IsOptimized())
+				if (!readers[i].IsOptimized())
 				{
 					return false;
 				}
@@ -502,7 +501,7 @@ namespace Lucene.Net.Index
 		// for testing
 		public /*internal*/ virtual IndexReader[] GetSubReaders()
 		{
-			return (IndexReader[]) readers.ToArray(typeof(IndexReader));
+			return readers.ToArray();
 		}
 		
 		/// <deprecated> 
@@ -516,7 +515,7 @@ namespace Lucene.Net.Index
         protected internal override void DoCommit(IDictionary<string, string> commitUserData)
 		{
 			for (int i = 0; i < readers.Count; i++)
-				((IndexReader) readers[i]).Commit(commitUserData);
+				readers[i].Commit(commitUserData);
 		}
 		
 		protected internal override void  DoClose()
@@ -545,7 +544,7 @@ namespace Lucene.Net.Index
             List<string> fieldSet = new List<string>();
 			for (int i = 0; i < readers.Count; i++)
 			{
-				IndexReader reader = ((IndexReader) readers[i]);
+				IndexReader reader = readers[i];
 				ICollection<string> names = reader.GetFieldNames(fieldNames);
                 fieldSet.AddRange(names);
 			}
@@ -693,7 +692,7 @@ namespace Lucene.Net.Index
 			{
 				InitBlock(enclosingInstance);
 				if (term == null)
-					termDocs = (Enclosing_Instance.readers.Count == 0)?null:((IndexReader) Enclosing_Instance.readers[0]).TermDocs(null);
+					termDocs = (Enclosing_Instance.readers.Count == 0)?null:Enclosing_Instance.readers[0].TermDocs(null);
 				else
 					Seek(term);
 			}
