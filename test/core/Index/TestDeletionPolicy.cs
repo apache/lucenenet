@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 	[TestFixture]
 	public class TestDeletionPolicy:LuceneTestCase
 	{
-		private void  VerifyCommitOrder(System.Collections.IList commits)
+        private void VerifyCommitOrder(IList<IndexCommit> commits)
 		{
 			IndexCommit firstCommit = ((IndexCommit) commits[0]);
 			long last = SegmentInfos.GenerationFromSegmentsFileName(firstCommit.GetSegmentsFileName());
@@ -87,12 +87,12 @@ namespace Lucene.Net.Index
 			internal int numOnInit;
 			internal int numOnCommit;
 			internal Directory dir;
-			public virtual void  OnInit(System.Collections.IList commits)
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
 				IndexReader r = IndexReader.Open(dir);
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 			}
 			internal int numOnInit;
 			internal int numOnCommit;
-			public virtual void  OnInit(System.Collections.IList commits)
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 					Assert.IsTrue(commit.IsDeleted());
 				}
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				int size = commits.Count;
@@ -179,29 +179,29 @@ namespace Lucene.Net.Index
 				InitBlock(enclosingInstance);
 				this.numToKeep = numToKeep;
 			}
-			
-			public virtual void  OnInit(System.Collections.IList commits)
+
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 				// do no deletions on init
 				DoDeletes(commits, false);
 			}
-			
-			public virtual void  OnCommit(System.Collections.IList commits)
+
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				DoDeletes(commits, true);
 			}
-			
-			private void  DoDeletes(System.Collections.IList commits, bool isCommit)
+
+            private void DoDeletes(IList<IndexCommit> commits, bool isCommit)
 			{
 				
 				// Assert that we really are only called for each new
 				// commit:
 				if (isCommit)
 				{
-					System.String fileName = ((IndexCommit) commits[commits.Count - 1]).GetSegmentsFileName();
+					System.String fileName = commits[commits.Count - 1].GetSegmentsFileName();
 					if (seen.Contains(fileName))
 					{
 						throw new System.SystemException("onCommit was called twice on the same commit point: " + fileName);
@@ -248,14 +248,14 @@ namespace Lucene.Net.Index
 				this.dir = dir;
 				this.expirationTimeSeconds = seconds;
 			}
-			
-			public virtual void  OnInit(System.Collections.IList commits)
+
+            public virtual void OnInit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				OnCommit(commits);
 			}
-			
-			public virtual void  OnCommit(System.Collections.IList commits)
+
+            public virtual void OnCommit(IList<IndexCommit> commits)
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				

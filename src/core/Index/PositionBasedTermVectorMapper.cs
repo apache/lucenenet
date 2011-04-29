@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -132,7 +133,7 @@ namespace Lucene.Net.Index
 			/// <summary> Note, there may be multiple terms at the same position</summary>
 			/// <returns> A List of Strings
 			/// </returns>
-			virtual public System.Collections.IList Terms
+			virtual public IList<string> Terms
 			{
 				get
 				{
@@ -143,7 +144,7 @@ namespace Lucene.Net.Index
 			/// <summary> Parallel list (to {@link #getTerms()}) of TermVectorOffsetInfo objects.  There may be multiple entries since there may be multiple terms at a position</summary>
 			/// <returns> A List of TermVectorOffsetInfo objects, if offsets are store.
 			/// </returns>
-			virtual public System.Collections.IList Offsets
+			virtual public IList<TermVectorOffsetInfo> Offsets
 			{
 				get
 				{
@@ -153,18 +154,18 @@ namespace Lucene.Net.Index
 			}
 			private int position;
 			//a list of Strings
-			private System.Collections.IList terms;
+            private IList<string> terms;
 			//A list of TermVectorOffsetInfo
-			private System.Collections.IList offsets;
+            private IList<TermVectorOffsetInfo> offsets;
 			
 			
 			public TVPositionInfo(int position, bool storeOffsets)
 			{
 				this.position = position;
-				terms = new System.Collections.ArrayList();
+				terms = new List<string>();
 				if (storeOffsets)
 				{
-					offsets = new System.Collections.ArrayList();
+					offsets = new List<TermVectorOffsetInfo>();
 				}
 			}
 			

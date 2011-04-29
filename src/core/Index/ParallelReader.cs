@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
 		public override TermFreqVector[] GetTermFreqVectors(int n)
 		{
 			EnsureOpen();
-			System.Collections.ArrayList results = new System.Collections.ArrayList();
+            List<TermFreqVector> results = new List<TermFreqVector>();
             System.Collections.IEnumerator i = new System.Collections.Hashtable(fieldToReader).GetEnumerator();
 			while (i.MoveNext())
 			{
@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
 				if (vector != null)
 					results.Add(vector);
 			}
-			return (TermFreqVector[]) results.ToArray(typeof(TermFreqVector));
+			return results.ToArray();
 		}
 		
 		public override TermFreqVector GetTermFreqVector(int n, System.String field)

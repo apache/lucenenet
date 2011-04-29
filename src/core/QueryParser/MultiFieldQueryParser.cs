@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using BooleanClause = Lucene.Net.Search.BooleanClause;
@@ -191,7 +192,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (field == null)
 			{
-				System.Collections.IList clauses = new System.Collections.ArrayList();
+                IList<BooleanClause> clauses = new List<BooleanClause>();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					Query q = base.GetFieldQuery(fields[i], queryText);
@@ -244,7 +245,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (field == null)
 			{
-				System.Collections.IList clauses = new System.Collections.ArrayList();
+                IList<BooleanClause> clauses = new List<BooleanClause>();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetFuzzyQuery(fields[i], termStr, minSimilarity), BooleanClause.Occur.SHOULD));
@@ -258,7 +259,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (field == null)
 			{
-				System.Collections.IList clauses = new System.Collections.ArrayList();
+                IList<BooleanClause> clauses = new List<BooleanClause>();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
@@ -272,7 +273,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (field == null)
 			{
-				System.Collections.IList clauses = new System.Collections.ArrayList();
+                IList<BooleanClause> clauses = new List<BooleanClause>();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetWildcardQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
@@ -287,7 +288,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			if (field == null)
 			{
-				System.Collections.IList clauses = new System.Collections.ArrayList();
+                IList<BooleanClause> clauses = new List<BooleanClause>();
 				for (int i = 0; i < fields.Length; i++)
 				{
 					clauses.Add(new BooleanClause(GetRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));

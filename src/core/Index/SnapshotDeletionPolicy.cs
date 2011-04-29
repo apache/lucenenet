@@ -53,22 +53,22 @@ namespace Lucene.Net.Index
 		{
 			this.primary = primary;
 		}
-		
-		public virtual void  OnInit(System.Collections.IList commits)
+
+        public virtual void OnInit(IList<IndexCommit> commits)
 		{
 			lock (this)
 			{
 				primary.OnInit(WrapCommits(commits));
-				lastCommit = (IndexCommit) commits[commits.Count - 1];
+				lastCommit = commits[commits.Count - 1];
 			}
 		}
-		
-		public virtual void  OnCommit(System.Collections.IList commits)
+
+        public virtual void OnCommit(IList<IndexCommit> commits)
 		{
 			lock (this)
 			{
 				primary.OnCommit(WrapCommits(commits));
-				lastCommit = (IndexCommit) commits[commits.Count - 1];
+				lastCommit = commits[commits.Count - 1];
 			}
 		}
 		
@@ -182,11 +182,11 @@ namespace Lucene.Net.Index
                 return cp.IsOptimized();
             }
 		}
-		
-		private System.Collections.IList WrapCommits(System.Collections.IList commits)
+
+        private IList<IndexCommit> WrapCommits(IList<IndexCommit> commits)
 		{
 			int count = commits.Count;
-			System.Collections.IList myCommits = new System.Collections.ArrayList(count);
+            IList<IndexCommit> myCommits = new List<IndexCommit>(count);
 			for (int i = 0; i < count; i++)
 				myCommits.Add(new MyCommitPoint(this, (IndexCommit) commits[i]));
 			return myCommits;
