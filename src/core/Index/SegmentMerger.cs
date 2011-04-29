@@ -128,8 +128,8 @@ namespace Lucene.Net.Index
 		private Directory directory;
 		private System.String segment;
 		private int termIndexInterval;
-		
-		private System.Collections.IList readers = new System.Collections.ArrayList();
+
+        private List<IndexReader> readers = new List<IndexReader>();
 		private FieldInfos fieldInfos;
 		
 		private int mergedDocs;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		internal IndexReader SegmentReader(int i)
 		{
-			return (IndexReader) readers[i];
+			return readers[i];
 		}
 		
 		/// <summary> Merges the readers specified by the {@link #add} method into the directory passed to the constructor</summary>
@@ -249,10 +249,10 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public /*internal*/ void  CloseReaders()
 		{
-			for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
-			{
-				((IndexReader) iter.Current).Close();
-			}
+            foreach (IndexReader reader in readers)
+            {
+                reader.Close();
+            }
 		}
 
         public /*internal*/ ICollection<string> GetMergedFiles()
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
 			// stored fields:
 			for (int i = 0; i < numReaders; i++)
 			{
-				IndexReader reader = (IndexReader) readers[i];
+				IndexReader reader = readers[i];
 				if (reader is SegmentReader)
 				{
 					SegmentReader segmentReader = (SegmentReader) reader;
@@ -387,9 +387,8 @@ namespace Lucene.Net.Index
 				fieldInfos = new FieldInfos(); // merge field names
 			}
 			
-			for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
-			{
-				IndexReader reader = (IndexReader) iter.Current;
+            foreach(IndexReader reader in readers)
+            {
 				if (reader is SegmentReader)
 				{
 					SegmentReader segmentReader = (SegmentReader) reader;
@@ -432,9 +431,8 @@ namespace Lucene.Net.Index
 				try
 				{
 					int idx = 0;
-					for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
-					{
-						IndexReader reader = (IndexReader) iter.Current;
+                    foreach(IndexReader reader in readers)
+                    {
 						SegmentReader matchingSegmentReader = matchingSegmentReaders[idx++];
 						FieldsReader matchingFieldsReader = null;
 						if (matchingSegmentReader != null)
@@ -476,10 +474,10 @@ namespace Lucene.Net.Index
 			// just sum numDocs() of each segment to get total docCount
 			else
 			{
-				for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
-				{
-					docCount += ((IndexReader) iter.Current).NumDocs();
-				}
+                foreach (IndexReader reader in readers)
+                {
+                    docCount += reader.NumDocs();
+                }
 			}
 			
 			return docCount;
@@ -582,7 +580,7 @@ namespace Lucene.Net.Index
 			try
 			{
 				int idx = 0;
-				for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
+                foreach(IndexReader reader in readers)
 				{
 					SegmentReader matchingSegmentReader = matchingSegmentReaders[idx++];
 					TermVectorsReader matchingVectorsReader = null;
@@ -596,7 +594,7 @@ namespace Lucene.Net.Index
 							matchingVectorsReader = vectorsReader;
 						}
 					}
-					IndexReader reader = (IndexReader) iter.Current;
+					
 					if (reader.HasDeletions())
 					{
 						CopyVectorsWithDeletions(termVectorsWriter, matchingVectorsReader, reader);
@@ -739,7 +737,7 @@ namespace Lucene.Net.Index
 			int readerCount = readers.Count;
 			for (int i = 0; i < readerCount; i++)
 			{
-				IndexReader reader = (IndexReader) readers[i];
+				IndexReader reader = readers[i];
 				TermEnum termEnum = reader.Terms();
 				SegmentMergeInfo smi = new SegmentMergeInfo(base_Renamed, termEnum, reader);
 				int[] docMap = smi.GetDocMap();
@@ -899,9 +897,8 @@ namespace Lucene.Net.Index
 							output = directory.CreateOutput(segment + "." + IndexFileNames.NORMS_EXTENSION);
 							output.WriteBytes(NORMS_HEADER, NORMS_HEADER.Length);
 						}
-						for (System.Collections.IEnumerator iter = readers.GetEnumerator(); iter.MoveNext(); )
+                        foreach(IndexReader reader in readers)
 						{
-							IndexReader reader = (IndexReader) iter.Current;
 							int maxDoc = reader.MaxDoc();
 							if (normBuffer == null || normBuffer.Length < maxDoc)
 							{

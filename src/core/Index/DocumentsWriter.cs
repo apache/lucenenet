@@ -1687,8 +1687,8 @@ namespace Lucene.Net.Index
 		internal const int INT_BLOCK_SHIFT = 13;
 		internal static readonly int INT_BLOCK_SIZE = 1 << INT_BLOCK_SHIFT;
 		internal static readonly int INT_BLOCK_MASK = INT_BLOCK_SIZE - 1;
-		
-		private System.Collections.ArrayList freeIntBlocks = new System.Collections.ArrayList();
+
+        private List<int[]> freeIntBlocks = new List<int[]>();
 		
 		/* Allocate another int[] from the shared pool */
 		internal int[] GetIntBlock(bool trackAllocations)
@@ -1769,8 +1769,8 @@ namespace Lucene.Net.Index
 		internal static readonly int CHAR_BLOCK_MASK = CHAR_BLOCK_SIZE - 1;
 		
 		internal static readonly int MAX_TERM_LENGTH = CHAR_BLOCK_SIZE - 1;
-		
-		private System.Collections.ArrayList freeCharBlocks = new System.Collections.ArrayList();
+
+        private List<char[]> freeCharBlocks = new List<char[]>();
 		
 		/* Allocate another char[] from the shared pool */
 		internal char[] GetCharBlock()

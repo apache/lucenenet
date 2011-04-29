@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
         private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
 		private List<MergePolicy.OneMerge> runningMerges = new List<MergePolicy.OneMerge>();
-		private System.Collections.IList mergeExceptions = new System.Collections.ArrayList();
+        private List<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
 		private long mergeGen;
 		private bool stopMerges;
 		
@@ -3354,7 +3354,7 @@ namespace Lucene.Net.Index
 							int size = mergeExceptions.Count;
 							for (int i = 0; i < size; i++)
 							{
-								MergePolicy.OneMerge merge = (MergePolicy.OneMerge) mergeExceptions[0];
+								MergePolicy.OneMerge merge = mergeExceptions[0];
 								if (merge.optimize)
 								{
                                     System.IO.IOException err;
@@ -4246,7 +4246,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				mergeExceptions = new System.Collections.ArrayList();
+                mergeExceptions = new List<MergePolicy.OneMerge>();
 				mergeGen++;
 			}
 		}
@@ -5758,8 +5758,6 @@ namespace Lucene.Net.Index
 			diagnostics["java.vendor"] = Constants.JAVA_VENDOR + "";
 			if (details != null)
 			{
-				//System.Collections.ArrayList keys = new System.Collections.ArrayList(details.Keys);
-				//System.Collections.ArrayList values = new System.Collections.ArrayList(details.Values);
                 foreach (string key in details.Keys)
                 {
                     diagnostics[key] = details[key];

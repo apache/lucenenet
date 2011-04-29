@@ -479,13 +479,13 @@ namespace Lucene.Net.Index
 			{
 				throw new System.SystemException("setTestMode() was not called; often this is because your test case's setUp method fails to call super.setUp in LuceneTestCase");
 			}
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				int count = allInstances.Count;
 				// Make sure all outstanding threads are done so we see
 				// any exceptions they may produce:
 				for (int i = 0; i < count; i++)
-					((ConcurrentMergeScheduler) allInstances[i]).Sync();
+					allInstances[i].Sync();
 				bool v = anyExceptions;
 				anyExceptions = false;
 				return v;
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
 		
 		public static void  ClearUnhandledExceptions()
 		{
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				anyExceptions = false;
 			}
@@ -503,7 +503,7 @@ namespace Lucene.Net.Index
 		/// <summary>Used for testing </summary>
 		private void  AddMyself()
 		{
-			lock (allInstances.SyncRoot)
+			lock (allInstances)
 			{
 				int size = allInstances.Count;
 				int upto = 0;
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 					// may spawn new threads
 						allInstances[upto++] = other;
 				}
-				((System.Collections.IList) ((System.Collections.ArrayList) allInstances).GetRange(upto, allInstances.Count - upto)).Clear();
+                allInstances.RemoveRange(upto, allInstances.Count - upto);
 				allInstances.Add(this);
 			}
 		}
@@ -535,10 +535,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Used for testing </summary>
-		private static System.Collections.IList allInstances;
+        private static List<ConcurrentMergeScheduler> allInstances;
 		public static void  SetTestMode()
 		{
-			allInstances = new System.Collections.ArrayList();
+            allInstances = new List<ConcurrentMergeScheduler>();
 		}
 	}
 }
