@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -23,37 +24,11 @@ namespace Lucene.Net.Search
 	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
 	class ConjunctionScorer:Scorer
 	{
-		private class AnonymousClassComparator : System.Collections.IComparer
-		{
-			public AnonymousClassComparator(ConjunctionScorer enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(ConjunctionScorer enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private ConjunctionScorer enclosingInstance;
-			public ConjunctionScorer Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			// sort the array
-			public virtual int Compare(System.Object o1, System.Object o2)
-			{
-				return ((Scorer) o1).DocID() - ((Scorer) o2).DocID();
-			}
-		}
-		
 		private Scorer[] scorers;
 		private float coord;
 		private int lastDoc = - 1;
-		
-		public ConjunctionScorer(Similarity similarity, System.Collections.ICollection scorers):this(similarity, (Scorer[]) new System.Collections.ArrayList(scorers).ToArray(typeof(Scorer)))
+
+        public ConjunctionScorer(Similarity similarity, List<Scorer> scorers) : this(similarity, scorers.ToArray())
 		{
 		}
 		
@@ -78,7 +53,7 @@ namespace Lucene.Net.Search
 			// it will already start off sorted (all scorers on same doc).
 			
 			// note that this comparator is not consistent with equals!
-			System.Array.Sort(scorers, new AnonymousClassComparator(this));
+            Array.Sort<Scorer>(scorers,(x,y)=>x.DocID() - y.DocID()); 
 			
 			// NOTE: doNext() must be called before the re-sorting of the array later on.
 			// The reason is this: assume there are 5 scorers, whose first docs are 1,
