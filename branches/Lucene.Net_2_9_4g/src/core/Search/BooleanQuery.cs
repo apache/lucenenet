@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -210,7 +211,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the set of clauses in this query. </summary>
 		public virtual BooleanClause[] GetClauses()
 		{
-			return (BooleanClause[]) clauses.ToArray();
+			return clauses.ToArray();
 		}
 		
 		/// <summary>Returns the list of clauses in this query. </summary>
@@ -243,16 +244,16 @@ namespace Lucene.Net.Search
 			}
 			/// <summary>The Similarity implementation. </summary>
 			protected internal Similarity similarity;
-			protected internal System.Collections.ArrayList weights;
+			protected internal List<Weight> weights;
 			
 			public BooleanWeight(BooleanQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
-				weights = new System.Collections.ArrayList(Enclosing_Instance.clauses.Count);
+				weights = new List<Weight>(Enclosing_Instance.clauses.Count);
 				for (int i = 0; i < Enclosing_Instance.clauses.Count; i++)
 				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					BooleanClause c = Enclosing_Instance.clauses[i];
 					weights.Add(c.GetQuery().CreateWeight(searcher));
 				}
 			}
@@ -271,8 +272,8 @@ namespace Lucene.Net.Search
 				float sum = 0.0f;
 				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
-					Weight w = (Weight) weights[i];
+					BooleanClause c = Enclosing_Instance.clauses[i];
+					Weight w = weights[i];
 					// call sumOfSquaredWeights for all clauses in case of side effects
 					float s = w.SumOfSquaredWeights(); // sum sub weights
 					if (!c.IsProhibited())
@@ -289,9 +290,8 @@ namespace Lucene.Net.Search
 			public override void  Normalize(float norm)
 			{
 				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
-				for (System.Collections.IEnumerator iter = weights.GetEnumerator(); iter.MoveNext(); )
-				{
-					Weight w = (Weight) iter.Current;
+                foreach(Weight w in weights)
+                {
 					// normalize all clauses, (even if prohibited in case of side affects)
 					w.Normalize(norm);
 				}
@@ -440,9 +440,8 @@ namespace Lucene.Net.Search
 			public override bool ScoresDocsOutOfOrder()
 			{
 				int numProhibited = 0;
-				for (System.Collections.IEnumerator cIter = Enclosing_Instance.clauses.GetEnumerator(); cIter.MoveNext(); )
-				{
-					BooleanClause c = (BooleanClause) cIter.Current;
+                foreach(BooleanClause c in Enclosing_Instance.clauses)
+                {
 					if (c.IsRequired())
 					{
 						return false; // BS2 (in-order) will be used by scorer()
@@ -544,7 +543,7 @@ namespace Lucene.Net.Search
 			if (minNrShouldMatch == 0 && clauses.Count == 1)
 			{
 				// optimize 1-clause queries
-				BooleanClause c = (BooleanClause) clauses[0];
+				BooleanClause c = clauses[0];
 				if (!c.IsProhibited())
 				{
 					// just return clause
@@ -567,7 +566,7 @@ namespace Lucene.Net.Search
 			BooleanQuery clone = null; // recursively rewrite
 			for (int i = 0; i < clauses.Count; i++)
 			{
-				BooleanClause c = (BooleanClause) clauses[i];
+				BooleanClause c = clauses[i];
 				Query query = c.GetQuery().Rewrite(reader);
 				if (query != c.GetQuery())
 				{
@@ -588,9 +587,8 @@ namespace Lucene.Net.Search
 		// inherit javadoc
 		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
-			for (System.Collections.IEnumerator i = clauses.GetEnumerator(); i.MoveNext(); )
-			{
-				BooleanClause clause = (BooleanClause) i.Current;
+            foreach(BooleanClause clause in clauses)
+            {
 				clause.GetQuery().ExtractTerms(terms);
 			}
 		}
@@ -614,7 +612,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < clauses.Count; i++)
 			{
-				BooleanClause c = (BooleanClause) clauses[i];
+				BooleanClause c = clauses[i];
 				if (c.IsProhibited())
 					buffer.Append("-");
 				else if (c.IsRequired())

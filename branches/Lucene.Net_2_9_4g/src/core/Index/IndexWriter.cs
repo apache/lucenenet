@@ -3436,7 +3436,7 @@ namespace Lucene.Net.Index
 				{
 					int numMerges = spec.merges.Count;
 					for (int i = 0; i < numMerges; i++)
-						RegisterMerge((MergePolicy.OneMerge) spec.merges[i]);
+						RegisterMerge(spec.merges[i]);
 				}
 			}
 			
@@ -3462,7 +3462,7 @@ namespace Lucene.Net.Index
 						running = false;
 						for (int i = 0; i < numMerges; i++)
 						{
-							MergePolicy.OneMerge merge = (MergePolicy.OneMerge) spec.merges[i];
+							MergePolicy.OneMerge merge = spec.merges[i];
 							if (pendingMerges.Contains(merge) || runningMerges.Contains(merge))
 								running = true;
 							System.Exception t = merge.GetException();
@@ -3568,7 +3568,7 @@ namespace Lucene.Net.Index
 						int numMerges = spec.merges.Count;
 						for (int i = 0; i < numMerges; i++)
 						{
-							MergePolicy.OneMerge merge = ((MergePolicy.OneMerge) spec.merges[i]);
+							MergePolicy.OneMerge merge = spec.merges[i];
 							merge.optimize = true;
 							merge.maxNumSegmentsOptimize = maxNumSegmentsOptimize;
 						}
@@ -3581,7 +3581,7 @@ namespace Lucene.Net.Index
 				{
 					int numMerges = spec.merges.Count;
 					for (int i = 0; i < numMerges; i++)
-						RegisterMerge((MergePolicy.OneMerge) spec.merges[i]);
+						RegisterMerge(spec.merges[i]);
 				}
 			}
 		}
