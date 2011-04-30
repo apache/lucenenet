@@ -47,34 +47,6 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class NearSpansOrdered:Spans
 	{
-		internal class AnonymousClassComparator : System.Collections.IComparer
-		{
-			public AnonymousClassComparator(NearSpansOrdered enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(NearSpansOrdered enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private NearSpansOrdered enclosingInstance;
-			public NearSpansOrdered Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public virtual int Compare(System.Object o1, System.Object o2)
-			{
-				return ((Spans) o1).Doc() - ((Spans) o2).Doc();
-			}
-		}
-		private void  InitBlock()
-		{
-			spanDocComparator = new AnonymousClassComparator(this);
-		}
 		private int allowedSlop;
 		private bool firstTime = true;
 		private bool more = false;
@@ -91,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 		private List<byte[]> matchPayload;
 		
 		private Spans[] subSpansByDoc;
-		private System.Collections.IComparer spanDocComparator;
+        private Comparison<Spans> spanDocComparator = (s1, s2) => s1.Doc() - s2.Doc();
 		
 		private SpanNearQuery query;
 		private bool collectPayloads = true;
@@ -102,7 +74,6 @@ namespace Lucene.Net.Search.Spans
 		
 		public NearSpansOrdered(SpanNearQuery spanNearQuery, IndexReader reader, bool collectPayloads)
 		{
-			InitBlock();
 			if (spanNearQuery.GetClauses().Length < 2)
 			{
 				throw new System.ArgumentException("Less than 2 clauses: " + spanNearQuery);
@@ -236,7 +207,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Advance the subSpans to the same document </summary>
 		private bool ToSameDoc()
 		{
-			System.Array.Sort(subSpansByDoc, spanDocComparator);
+			Array.Sort<Spans>(subSpansByDoc, spanDocComparator);
 			int firstIndex = 0;
 			int maxDoc = subSpansByDoc[subSpansByDoc.Length - 1].Doc();
 			while (subSpansByDoc[firstIndex].Doc() != maxDoc)

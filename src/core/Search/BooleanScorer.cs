@@ -260,9 +260,8 @@ namespace Lucene.Net.Search
 			
 			if (optionalScorers != null && optionalScorers.Count > 0)
 			{
-				for (System.Collections.IEnumerator si = optionalScorers.GetEnumerator(); si.MoveNext(); )
-				{
-					Scorer scorer = (Scorer) si.Current;
+                foreach(Scorer scorer in optionalScorers)
+                {
 					maxCoord++;
 					if (scorer.NextDoc() != NO_MORE_DOCS)
 					{
@@ -273,9 +272,8 @@ namespace Lucene.Net.Search
 			
 			if (prohibitedScorers != null && prohibitedScorers.Count > 0)
 			{
-				for (System.Collections.IEnumerator si = prohibitedScorers.GetEnumerator(); si.MoveNext(); )
-				{
-					Scorer scorer = (Scorer) si.Current;
+                foreach(Scorer scorer in prohibitedScorers)
+                {
 					int mask = nextMask;
 					nextMask = nextMask << 1;
 					prohibitedMask |= mask; // update prohibited mask

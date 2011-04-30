@@ -1685,7 +1685,7 @@ namespace Lucene.Net.Index
 				cfr = new CompoundFileReader(dir, filename);
 				
 				System.String[] files = cfr.List();
-				System.Array.Sort(files); // sort the array of filename so that the output is more readable
+				System.Array.Sort<string>(files); // sort the array of filename so that the output is more readable
 				
 				for (int i = 0; i < files.Length; ++i)
 				{

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using ScorerDocQueue = Lucene.Net.Util.ScorerDocQueue;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search
 		private int nrScorers;
 		
 		/// <summary>The subscorers. </summary>
-		protected internal System.Collections.IList subScorers;
+		protected internal IList<Scorer> subScorers;
 		
 		/// <summary>The minimum number of scorers that should match. </summary>
 		private int minimumNrMatchers;
@@ -70,7 +71,7 @@ namespace Lucene.Net.Search
 		/// <br/>When minimumNrMatchers equals the number of subScorers,
 		/// it more efficient to use <code>ConjunctionScorer</code>.
 		/// </param>
-		public DisjunctionSumScorer(System.Collections.IList subScorers, int minimumNrMatchers):base(null)
+        public DisjunctionSumScorer(IList<Scorer> subScorers, int minimumNrMatchers) : base(null)
 		{
 			
 			nrScorers = subScorers.Count;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search
 		/// <summary>Construct a <code>DisjunctionScorer</code>, using one as the minimum number
 		/// of matching subscorers.
 		/// </summary>
-		public DisjunctionSumScorer(System.Collections.IList subScorers):this(subScorers, 1)
+        public DisjunctionSumScorer(IList<Scorer> subScorers) : this(subScorers, 1)
 		{
 		}
 		
@@ -102,11 +103,9 @@ namespace Lucene.Net.Search
 		/// </summary>
 		private void  InitScorerDocQueue()
 		{
-			System.Collections.IEnumerator si = subScorers.GetEnumerator();
 			scorerDocQueue = new ScorerDocQueue(nrScorers);
-			while (si.MoveNext())
-			{
-				Scorer se = (Scorer) si.Current;
+            foreach(Scorer se in subScorers)
+            {
 				if (se.NextDoc() != NO_MORE_DOCS)
 				{
 					// doc() method will be used in scorerDocQueue.
@@ -352,12 +351,11 @@ namespace Lucene.Net.Search
 		public override Explanation Explain(int doc)
 		{
 			Explanation res = new Explanation();
-			System.Collections.IEnumerator ssi = subScorers.GetEnumerator();
 			float sumScore = 0.0f;
 			int nrMatches = 0;
-			while (ssi.MoveNext())
-			{
-				Explanation es = ((Scorer) ssi.Current).Explain(doc);
+            foreach(Scorer s in subScorers)
+            {
+				Explanation es = s.Explain(doc);
 				if (es.GetValue() > 0.0f)
 				{
 					// indicates match

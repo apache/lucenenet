@@ -382,9 +382,9 @@ namespace Lucene.Net.Search
 			
 			public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
 			{
-				System.Collections.IList required = new System.Collections.ArrayList();
-				System.Collections.IList prohibited = new System.Collections.ArrayList();
-				System.Collections.IList optional = new System.Collections.ArrayList();
+                List<Scorer> required = new List<Scorer>();
+                List<Scorer> prohibited = new List<Scorer>();
+                List<Scorer> optional = new List<Scorer>();
 				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
 				{
                     cIter.MoveNext();

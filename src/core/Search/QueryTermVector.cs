@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
@@ -82,11 +83,11 @@ namespace Lucene.Net.Search
 		{
 			if (queryTerms != null)
 			{
-				System.Array.Sort(queryTerms);
-				System.Collections.IDictionary tmpSet = new System.Collections.Hashtable(queryTerms.Length);
+				System.Array.Sort<string>(queryTerms);
+                SupportClass.Dictionary<string, int?> tmpSet = new SupportClass.Dictionary<string, int?>(queryTerms.Length); 
 				//filter out duplicates
-				System.Collections.ArrayList tmpList = new System.Collections.ArrayList(queryTerms.Length);
-				System.Collections.ArrayList tmpFreqs = new System.Collections.ArrayList(queryTerms.Length);
+                List<String> tmpList = new List<String>(queryTerms.Length);
+                List<int> tmpFreqs = new List<int>(queryTerms.Length);
 				int j = 0;
 				for (int i = 0; i < queryTerms.Length; i++)
 				{
@@ -94,18 +95,18 @@ namespace Lucene.Net.Search
 					System.Object temp_position = tmpSet[term];
 					if (temp_position == null)
 					{
-						tmpSet[term] = (System.Int32) j++;
+						tmpSet[term] = j++;
 						tmpList.Add(term);
 						tmpFreqs.Add(1);
 					}
 					else
 					{
-                        System.Int32 position = (System.Int32) tmpSet[term];
-						System.Int32 integer = (System.Int32) tmpFreqs[position];
-						tmpFreqs[position] = (System.Int32) (integer + 1);
+                        int? position = tmpSet[term];
+						int integer = tmpFreqs[position.Value];
+						tmpFreqs[position.Value] = (integer + 1);
 					}
 				}
-                terms = (System.String[]) tmpList.ToArray(typeof(System.String));
+                terms = tmpList.ToArray();
 				//termFreqs = (int[])tmpFreqs.toArray(termFreqs);
 				termFreqs = new int[tmpFreqs.Count];
 				int i2 = 0;

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal AnonymousClassDisjunctionSumScorer(BooleanScorer2 enclosingInstance, System.Collections.IList Param1, int Param2):base(Param1, Param2)
+			internal AnonymousClassDisjunctionSumScorer(BooleanScorer2 enclosingInstance, IList<Scorer> Param1, int Param2):base(Param1, Param2)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -85,7 +86,7 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity Param1, System.Collections.ICollection Param2):base(Param1, Param2)
+            internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity Param1, List<Scorer> Param2) : base(Param1, Param2)
 			{
 				InitBlock(requiredNrMatchers, enclosingInstance);
 			}
@@ -112,10 +113,10 @@ namespace Lucene.Net.Search
 				return lastDocScore;
 			}
 		}
-		
-		private System.Collections.IList requiredScorers;
-		private System.Collections.IList optionalScorers;
-		private System.Collections.IList prohibitedScorers;
+
+        private List<Scorer> requiredScorers;
+        private List<Scorer> optionalScorers;
+        private List<Scorer> prohibitedScorers;
 		
 		private class Coordinator
 		{
@@ -181,7 +182,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="optional">the list of optional scorers.
 		/// </param>
-		public BooleanScorer2(Similarity similarity, int minNrShouldMatch, System.Collections.IList required, System.Collections.IList prohibited, System.Collections.IList optional):base(similarity)
+        public BooleanScorer2(Similarity similarity, int minNrShouldMatch, List<Scorer> required, List<Scorer> prohibited, List<Scorer> optional) : base(similarity)
 		{
 			if (minNrShouldMatch < 0)
 			{
@@ -281,16 +282,16 @@ namespace Lucene.Net.Search
 				return scorer.Explain(docNr);
 			}
 		}
-		
-		private Scorer CountingDisjunctionSumScorer(System.Collections.IList scorers, int minNrShouldMatch)
+
+        private Scorer CountingDisjunctionSumScorer(IList<Scorer> scorers, int minNrShouldMatch)
 		{
 			// each scorer from the list counted as a single matcher
 			return new AnonymousClassDisjunctionSumScorer(this, scorers, minNrShouldMatch);
 		}
 		
 		private static readonly Similarity defaultSimilarity;
-		
-		private Scorer CountingConjunctionSumScorer(System.Collections.IList requiredScorers)
+
+        private Scorer CountingConjunctionSumScorer(List<Scorer> requiredScorers)
 		{
 			// each scorer from the list counted as a single matcher
 			int requiredNrMatchers = requiredScorers.Count;
@@ -325,7 +326,7 @@ namespace Lucene.Net.Search
 			if (optionalScorers.Count > nrOptRequired)
 				requiredCountingSumScorer = CountingDisjunctionSumScorer(optionalScorers, nrOptRequired);
 			else if (optionalScorers.Count == 1)
-				requiredCountingSumScorer = new SingleMatchScorer(this, (Scorer) optionalScorers[0]);
+				requiredCountingSumScorer = new SingleMatchScorer(this, optionalScorers[0]);
 			else
 				requiredCountingSumScorer = CountingConjunctionSumScorer(optionalScorers);
 			return AddProhibitedScorers(requiredCountingSumScorer);
@@ -337,14 +338,14 @@ namespace Lucene.Net.Search
 			if (optionalScorers.Count == minNrShouldMatch)
 			{
 				// all optional scorers also required.
-				System.Collections.ArrayList allReq = new System.Collections.ArrayList(requiredScorers);
+                List<Scorer> allReq = new List<Scorer>(requiredScorers);
 				allReq.AddRange(optionalScorers);
 				return AddProhibitedScorers(CountingConjunctionSumScorer(allReq));
 			}
 			else
 			{
 				// optionalScorers.size() > minNrShouldMatch, and at least one required scorer
-				Scorer requiredCountingSumScorer = requiredScorers.Count == 1?new SingleMatchScorer(this, (Scorer) requiredScorers[0]):CountingConjunctionSumScorer(requiredScorers);
+				Scorer requiredCountingSumScorer = requiredScorers.Count == 1?new SingleMatchScorer(this, requiredScorers[0]):CountingConjunctionSumScorer(requiredScorers);
 				if (minNrShouldMatch > 0)
 				{
 					// use a required disjunction scorer over the optional scorers
@@ -353,7 +354,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// minNrShouldMatch == 0
-					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):CountingDisjunctionSumScorer(optionalScorers, 1));
+					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1?new SingleMatchScorer(this, optionalScorers[0]):CountingDisjunctionSumScorer(optionalScorers, 1));
 				}
 			}
 		}
@@ -365,7 +366,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
 		{
-			return (prohibitedScorers.Count == 0)?requiredCountingSumScorer:new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1)?(Scorer) prohibitedScorers[0]:new DisjunctionSumScorer(prohibitedScorers)));
+			return (prohibitedScorers.Count == 0)?requiredCountingSumScorer:new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1)?prohibitedScorers[0]:new DisjunctionSumScorer(prohibitedScorers)));
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
