@@ -743,7 +743,7 @@ namespace Lucene.Net.QueryParsers
 						// phrase query:
 						MultiPhraseQuery mpq = NewMultiPhraseQuery();
 						mpq.SetSlop(phraseSlop);
-						System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
+                        List<Term> multiTerms = new List<Index.Term>();
 						int position = - 1;
 						for (int i = 0; i < numTokens; i++)
 						{
@@ -768,11 +768,11 @@ namespace Lucene.Net.QueryParsers
 							{
 								if (enablePositionIncrements)
 								{
-                                    mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)), position);
+                                    mpq.Add(multiTerms.ToArray(), position);
 								}
 								else
 								{
-                                    mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)));
+                                    mpq.Add(multiTerms.ToArray());
 								}
 								multiTerms.Clear();
 							}
@@ -781,11 +781,11 @@ namespace Lucene.Net.QueryParsers
 						}
 						if (enablePositionIncrements)
 						{
-                            mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)), position);
+                            mpq.Add(multiTerms.ToArray(), position);
 						}
 						else
 						{
-                            mpq.Add((Term[]) multiTerms.ToArray(typeof(Term)));
+                            mpq.Add(multiTerms.ToArray());
 						}
 						return mpq;
 					}

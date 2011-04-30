@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NumericField = Lucene.Net.Documents.NumericField;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search
 	class FieldCacheImpl : ExtendedFieldCache_old.ExtendedFieldCache
 	{
 		
-		private System.Collections.IDictionary caches;
+		private SupportClass.Dictionary<Type,Cache> caches;
 		internal FieldCacheImpl()
 		{
 			Init();
@@ -51,14 +52,14 @@ namespace Lucene.Net.Search
 		{
 			lock (this)
 			{
-                System.Collections.Hashtable caches2 = new System.Collections.Hashtable(7);
-                caches2[System.Type.GetType("System.SByte")] = new ByteCache(this);
-                caches2[System.Type.GetType("System.Int16")] = new ShortCache(this);
-                caches2[System.Type.GetType("System.Int32")] = new IntCache(this);
-                caches2[System.Type.GetType("System.Single")] = new FloatCache(this);
-                caches2[System.Type.GetType("System.Int64")] = new LongCache(this);
-                caches2[System.Type.GetType("System.Double")] = new DoubleCache(this);
-                caches2[typeof(System.String)] = new StringCache(this);
+                SupportClass.Dictionary<Type, Cache> caches2 = new SupportClass.Dictionary<Type, Cache>();
+                caches2[typeof(sbyte)] = new ByteCache(this);
+                caches2[typeof(short)] = new ShortCache(this);
+                caches2[typeof(int)] = new IntCache(this);
+                caches2[typeof(float)] = new FloatCache(this);
+                caches2[typeof(long)] = new LongCache(this);
+                caches2[typeof(double)] = new DoubleCache(this);
+                caches2[typeof(string)] = new StringCache(this);
                 caches2[typeof(StringIndex)] = new StringIndexCache(this);
                 caches2[typeof(System.IComparable)] = new CustomCache(this);
                 caches2[typeof(System.Object)] = new AutoCache(this);
@@ -81,12 +82,10 @@ namespace Lucene.Net.Search
 		
 		public virtual CacheEntry[] GetCacheEntries()
 		{
-			System.Collections.IList result = new System.Collections.ArrayList(17);
-			System.Collections.IEnumerator outerKeys = caches.Keys.GetEnumerator();
-			while (outerKeys.MoveNext())
+            List<CacheEntry> result = new List<CacheEntry>();
+            foreach(Type cacheType in caches.Keys)
 			{
-				System.Type cacheType = (System.Type) outerKeys.Current;
-				Cache cache = (Cache) caches[cacheType];
+				Cache cache = caches[cacheType];
 				System.Collections.IEnumerator innerKeys = cache.readerCache.Keys.GetEnumerator();
 				while (innerKeys.MoveNext())
 				{
@@ -107,7 +106,7 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			return (CacheEntry[]) new System.Collections.ArrayList(result).ToArray(typeof(CacheEntry));
+			return result.ToArray();
 		}
 		
 		private sealed class CacheEntryImpl:CacheEntry
@@ -391,7 +390,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual sbyte[] GetBytes(IndexReader reader, System.String field, ByteParser parser)
 		{
-			return (sbyte[]) ((Cache) caches[System.Type.GetType("System.SByte")]).Get(reader, new Entry(field, parser));
+			return (sbyte[]) caches[typeof(sbyte)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class ByteCache:Cache
@@ -449,7 +448,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual short[] GetShorts(IndexReader reader, System.String field, ShortParser parser)
 		{
-			return (short[]) ((Cache) caches[System.Type.GetType("System.Int16")]).Get(reader, new Entry(field, parser));
+			return (short[]) caches[typeof(short)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class ShortCache:Cache
@@ -508,7 +507,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual int[] GetInts(IndexReader reader, System.String field, IntParser parser)
 		{
-			return (int[]) ((Cache) caches[System.Type.GetType("System.Int32")]).Get(reader, new Entry(field, parser));
+			return (int[]) caches[typeof(int)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class IntCache:Cache
@@ -582,7 +581,7 @@ namespace Lucene.Net.Search
 		public virtual float[] GetFloats(IndexReader reader, System.String field, FloatParser parser)
 		{
 			
-			return (float[]) ((Cache) caches[System.Type.GetType("System.Single")]).Get(reader, new Entry(field, parser));
+			return (float[]) caches[typeof(float)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class FloatCache:Cache
@@ -654,7 +653,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.LongParser parser)
 		{
-			return (long[]) ((Cache) caches[System.Type.GetType("System.Int64")]).Get(reader, new Entry(field, parser));
+			return (long[]) caches[typeof(long)].Get(reader, new Entry(field, parser));
 		}
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
@@ -662,7 +661,7 @@ namespace Lucene.Net.Search
         [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		public virtual long[] GetLongs(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.LongParser parser)
 		{
-			return (long[]) ((Cache) caches[System.Type.GetType("System.Int64")]).Get(reader, new Entry(field, parser));
+			return (long[]) caches[typeof(long)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class LongCache:Cache
@@ -734,7 +733,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.DoubleParser parser)
 		{
-			return (double[]) ((Cache) caches[System.Type.GetType("System.Double")]).Get(reader, new Entry(field, parser));
+			return (double[]) caches[typeof(double)].Get(reader, new Entry(field, parser));
 		}
 		
 		/// <deprecated> Will be removed in 3.0, this is for binary compatibility only 
@@ -742,7 +741,7 @@ namespace Lucene.Net.Search
         [Obsolete("Will be removed in 3.0, this is for binary compatibility only ")]
 		public virtual double[] GetDoubles(IndexReader reader, System.String field, Lucene.Net.Search.ExtendedFieldCache_old.DoubleParser parser)
 		{
-			return (double[]) ((Cache) caches[System.Type.GetType("System.Double")]).Get(reader, new Entry(field, parser));
+			return (double[]) caches[typeof(double)].Get(reader, new Entry(field, parser));
 		}
 		
 		internal sealed class DoubleCache:Cache
@@ -806,9 +805,9 @@ namespace Lucene.Net.Search
 		
 		
 		// inherit javadocs
-		public virtual System.String[] GetStrings(IndexReader reader, System.String field)
+		public virtual string[] GetStrings(IndexReader reader, System.String field)
 		{
-			return (System.String[]) ((Cache) caches[typeof(System.String)]).Get(reader, new Entry(field, (Parser) null));
+			return (string[]) caches[typeof(string)].Get(reader, new Entry(field, (Parser) null));
 		}
 		
 		internal sealed class StringCache:Cache
@@ -852,7 +851,7 @@ namespace Lucene.Net.Search
 		// inherit javadocs
 		public virtual StringIndex GetStringIndex(IndexReader reader, System.String field)
 		{
-			return (StringIndex) ((Cache) caches[typeof(StringIndex)]).Get(reader, new Entry(field, (Parser) null));
+			return (StringIndex) caches[typeof(StringIndex)].Get(reader, new Entry(field, (Parser) null));
 		}
 		
 		internal sealed class StringIndexCache:Cache
@@ -935,9 +934,9 @@ namespace Lucene.Net.Search
 		/// </summary>
 		
 		// inherit javadocs
-		public virtual System.Object GetAuto(IndexReader reader, System.String field)
+		public virtual object GetAuto(IndexReader reader, System.String field)
 		{
-			return ((Cache) caches[typeof(System.Object)]).Get(reader, new Entry(field, (Parser) null));
+			return caches[typeof(object)].Get(reader, new Entry(field, (Parser) null));
 		}
 		
 		/// <deprecated> Please specify the exact type, instead.
@@ -1012,7 +1011,7 @@ namespace Lucene.Net.Search
         [Obsolete]
 		public virtual System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator)
 		{
-			return (System.IComparable[]) ((Cache) caches[typeof(System.IComparable)]).Get(reader, new Entry(field, comparator));
+			return (System.IComparable[]) caches[typeof(System.IComparable)].Get(reader, new Entry(field, comparator));
 		}
 		
 		/// <deprecated> 

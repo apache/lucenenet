@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Directory = Lucene.Net.Store.Directory;
 
@@ -183,8 +184,8 @@ namespace Lucene.Net.Index
 		{
 			
 			/// <summary> The subset of segments to be included in the primitive merge.</summary>
-			
-			public System.Collections.IList merges = new System.Collections.ArrayList();
+
+            public IList<OneMerge> merges = new List<OneMerge>();
 			
 			public virtual void  Add(OneMerge merge)
 			{
@@ -197,7 +198,7 @@ namespace Lucene.Net.Index
 				b.Append("MergeSpec:\n");
 				int count = merges.Count;
 				for (int i = 0; i < count; i++)
-					b.Append("  ").Append(1 + i).Append(": ").Append(((OneMerge) merges[i]).SegString(dir));
+					b.Append("  ").Append(1 + i).Append(": ").Append(merges[i].SegString(dir));
 				return b.ToString();
 			}
 		}
