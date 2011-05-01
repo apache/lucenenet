@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -118,10 +119,10 @@ namespace Lucene.Net.Search
 		{
 			reader = r;
 			this.closeReader = closeReader;
-			
-			System.Collections.IList subReadersList = new System.Collections.ArrayList();
+
+            List<IndexReader> subReadersList = new List<IndexReader>();
 			GatherSubReaders(subReadersList, reader);
-            subReaders = (IndexReader[])new System.Collections.ArrayList(subReadersList).ToArray(typeof(IndexReader));
+            subReaders = subReadersList.ToArray();
 			docStarts = new int[subReaders.Length];
 			int maxDoc = 0;
 			for (int i = 0; i < subReaders.Length; i++)
@@ -130,8 +131,8 @@ namespace Lucene.Net.Search
 				maxDoc += subReaders[i].MaxDoc();
 			}
 		}
-		
-		protected internal virtual void  GatherSubReaders(System.Collections.IList allSubReaders, IndexReader r)
+
+        protected internal virtual void GatherSubReaders(IList<IndexReader> allSubReaders, IndexReader r)
 		{
 			ReaderUtil.GatherSubReaders(allSubReaders, r);
 		}

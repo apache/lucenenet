@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
@@ -285,7 +286,7 @@ namespace Lucene.Net.Search
 				// exhaust the enum before hitting either of the
 				// cutoffs, we use ConstantBooleanQueryRewrite; else,
 				// ConstantFilterRewrite:
-				System.Collections.ArrayList pendingTerms = new System.Collections.ArrayList();
+				IList<Term> pendingTerms = new List<Term>();
 				int docCountCutoff = (int) ((docCountPercent / 100.0) * reader.MaxDoc());
 				int termCountLimit = System.Math.Min(BooleanQuery.GetMaxClauseCount(), termCountCutoff);
 				int docVisitCount = 0;
@@ -318,11 +319,10 @@ namespace Lucene.Net.Search
 							// Enumeration is done, and we hit a small
 							// enough number of terms & docs -- just make a
 							// BooleanQuery, now
-							System.Collections.IEnumerator it = pendingTerms.GetEnumerator();
 							BooleanQuery bq = new BooleanQuery(true);
-							while (it.MoveNext())
+                            foreach(Term term in pendingTerms)
 							{
-								TermQuery tq = new TermQuery((Term) it.Current);
+								TermQuery tq = new TermQuery(term);
 								bq.Add(tq, BooleanClause.Occur.SHOULD);
 							}
 							// Strip scores

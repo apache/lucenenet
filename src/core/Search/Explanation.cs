@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -26,7 +27,7 @@ namespace Lucene.Net.Search
 	{
 		private float value_Renamed; // the value of this node
 		private System.String description; // what it represents
-		private System.Collections.ArrayList details; // sub-explanations
+		private List<Explanation> details; // sub-explanations
 		
 		public Explanation()
 		{
@@ -88,14 +89,14 @@ namespace Lucene.Net.Search
 		{
 			if (details == null)
 				return null;
-			return (Explanation[]) details.ToArray(typeof(Explanation));
+			return details.ToArray();
 		}
 		
 		/// <summary>Adds a sub-node to this explanation node. </summary>
 		public virtual void  AddDetail(Explanation detail)
 		{
-			if (details == null)
-				details = new System.Collections.ArrayList();
+            if (details == null)
+                details = new List<Explanation>();
 			details.Add(detail);
 		}
 		

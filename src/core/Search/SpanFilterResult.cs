@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search
 		private System.Collections.BitArray bits;
 		
 		private DocIdSet docIdSet;
-		private System.Collections.IList positions; //Spans spans;
+        private List<PositionInfo> positions; //Spans spans;
 		
 		/// <summary> </summary>
 		/// <param name="bits">The bits for the Filter
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search
 		/// <deprecated> Use {@link #SpanFilterResult(DocIdSet, List)} instead
 		/// </deprecated>
         [Obsolete("Use SpanFilterResult(DocIdSet, List) instead")]
-		public SpanFilterResult(System.Collections.BitArray bits, System.Collections.IList positions)
+        public SpanFilterResult(System.Collections.BitArray bits, List<PositionInfo> positions)
 		{
 			this.bits = bits;
 			this.positions = positions;
@@ -57,7 +58,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="positions">A List of {@link Lucene.Net.Search.SpanFilterResult.PositionInfo} objects
 		/// </param>
-		public SpanFilterResult(DocIdSet docIdSet, System.Collections.IList positions)
+        public SpanFilterResult(DocIdSet docIdSet, List<PositionInfo> positions)
 		{
 			this.docIdSet = docIdSet;
 			this.positions = positions;
@@ -90,13 +91,13 @@ namespace Lucene.Net.Search
 		public class PositionInfo
 		{
 			private int doc;
-			private System.Collections.IList positions;
+            private List<StartEnd> positions;
 			
 			
 			public PositionInfo(int doc)
 			{
 				this.doc = doc;
-				positions = new System.Collections.ArrayList();
+                positions = new List<StartEnd>();
 			}
 			
 			public virtual void  AddPosition(int start, int end)
@@ -112,7 +113,7 @@ namespace Lucene.Net.Search
 			/// <summary> </summary>
 			/// <returns> A List of {@link Lucene.Net.Search.SpanFilterResult.StartEnd} objects
 			/// </returns>
-			public virtual System.Collections.IList GetPositions()
+            public virtual IList<StartEnd> GetPositions()
 			{
 				return positions;
 			}

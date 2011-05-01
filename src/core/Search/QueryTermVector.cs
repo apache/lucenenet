@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 				TokenStream stream = analyzer.TokenStream("", new System.IO.StringReader(queryString));
 				if (stream != null)
 				{
-					System.Collections.ArrayList terms = new System.Collections.ArrayList();
+                    List<string> terms = new List<string>();
 					try
 					{
 						bool hasMoreTokens = false;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 							terms.Add(termAtt.Term());
 							hasMoreTokens = stream.IncrementToken();
 						}
-						ProcessTerms((System.String[]) terms.ToArray(typeof(System.String)));
+						ProcessTerms(terms.ToArray());
 					}
 					catch (System.IO.IOException e)
 					{

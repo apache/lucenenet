@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using OpenBitSet = Lucene.Net.Util.OpenBitSet;
@@ -67,7 +68,7 @@ namespace Lucene.Net.Search
 			
 			OpenBitSet bits = new OpenBitSet(reader.MaxDoc());
 			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(reader);
-			System.Collections.IList tmp = new System.Collections.ArrayList(20);
+            List<SpanFilterResult.PositionInfo> tmp = new List<SpanFilterResult.PositionInfo>(20);
 			int currentDoc = - 1;
 			SpanFilterResult.PositionInfo currentInfo = null;
 			while (spans.Next())

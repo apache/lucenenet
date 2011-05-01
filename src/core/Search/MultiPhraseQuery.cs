@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 	{
 		private System.String field;
         private List<Term[]> termArrays = new List<Term[]>();
-		private System.Collections.ArrayList positions = new System.Collections.ArrayList();
+        private List<int> positions = new List<int>();
 		
 		private int slop = 0;
 		
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 		{
 			int position = 0;
 			if (positions.Count > 0)
-				position = ((System.Int32) positions[positions.Count - 1]) + 1;
+				position = positions[positions.Count - 1] + 1;
 			
 			Add(terms, position);
 		}
@@ -108,15 +108,16 @@ namespace Lucene.Net.Search
 			}
 			
 			termArrays.Add(terms);
-			positions.Add((System.Int32) position);
+			positions.Add(position);
 		}
 
         /// <summary> Returns a List&lt;Term[]&gt; of the terms in the multiphrase.
 		/// Do not modify the List or its contents.
 		/// </summary>
-		public virtual System.Collections.IList GetTermArrays()
+		public virtual List<Term[]> GetTermArrays()
 		{
-			return (System.Collections.IList) System.Collections.ArrayList.ReadOnly(new System.Collections.ArrayList(termArrays));
+			return new List<Term[]>(termArrays);
+            //return Collections.unmodifiableList(termArrays); DIGY JAVA
 		}
 		
 		/// <summary> Returns the relative positions of terms in this phrase.</summary>
@@ -124,7 +125,7 @@ namespace Lucene.Net.Search
 		{
 			int[] result = new int[positions.Count];
 			for (int i = 0; i < positions.Count; i++)
-				result[i] = ((System.Int32) positions[i]);
+				result[i] = positions[i];
 			return result;
 		}
 		
@@ -408,7 +409,7 @@ namespace Lucene.Net.Search
             }
             for (int i = 0; i < this.positions.Count; i++)
             {
-                if (!((int)this.positions[i] == (int)other.positions[i]))
+                if (!(this.positions[i] == other.positions[i]))
                 {
                     return false;
                 }
