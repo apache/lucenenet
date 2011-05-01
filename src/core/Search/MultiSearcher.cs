@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Document = Lucene.Net.Documents.Document;
 using FieldSelector = Lucene.Net.Documents.FieldSelector;
@@ -81,10 +82,10 @@ namespace Lucene.Net.Search
 		/// </summary>
 		private class CachedDfSource:Searcher
 		{
-			private System.Collections.IDictionary dfMap; // Map from Terms to corresponding doc freqs
+            private IDictionary<Term, int> dfMap; // Map from Terms to corresponding doc freqs
 			private int maxDoc; // document count
-			
-			public CachedDfSource(System.Collections.IDictionary dfMap, int maxDoc, Similarity similarity)
+
+            public CachedDfSource(IDictionary<Term, int> dfMap, int maxDoc, Similarity similarity)
 			{
 				this.dfMap = dfMap;
 				this.maxDoc = maxDoc;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Search
 				int df;
 				try
 				{
-					df = ((System.Int32) dfMap[term]);
+					df = dfMap[term];
 				}
 				catch (System.NullReferenceException e)
 				{
@@ -414,11 +415,11 @@ namespace Lucene.Net.Search
 					aggregatedDfs[j] += dfs[j];
 				}
 			}
-			
-			System.Collections.Hashtable dfMap = new System.Collections.Hashtable();
+
+            IDictionary<Term, int> dfMap = new SupportClass.Dictionary<Term, int>();
 			for (int i = 0; i < allTermsArray.Length; i++)
 			{
-				dfMap[allTermsArray[i]] = (System.Int32) aggregatedDfs[i];
+				dfMap[allTermsArray[i]] = aggregatedDfs[i];
 			}
 			
 			// step4

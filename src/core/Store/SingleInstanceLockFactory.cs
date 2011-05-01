@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
 	public class SingleInstanceLockFactory:LockFactory
 	{
 
-        private System.Collections.Hashtable locks = new System.Collections.Hashtable();
+        private SupportClass.Set<string> locks = new SupportClass.Set<string>();
 		
 		public override Lock MakeLock(System.String lockName)
 		{
@@ -61,9 +61,9 @@ namespace Lucene.Net.Store
 	{
 		
 		internal System.String lockName;
-		private System.Collections.Hashtable locks;
-		
-		public SingleInstanceLock(System.Collections.Hashtable locks, System.String lockName)
+        private SupportClass.Set<string> locks;
+
+        public SingleInstanceLock(SupportClass.Set<string> locks, System.String lockName)
 		{
 			this.locks = locks;
 			this.lockName = lockName;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
 			{
                 if (locks.Contains(lockName) == false)
                 {
-                    locks.Add(lockName, lockName);
+                    locks.Add(lockName);
                     return true;
                 }
 

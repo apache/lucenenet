@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Spans
 		
 		/// <deprecated> use {@link #ExtractTerms(Set)} instead. 
 		/// </deprecated>
-        [Obsolete("use ExtractTerms(Hashtable) instead.")]
+        [Obsolete("use ExtractTerms instead.")]
         public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
 			return maskedQuery.GetTerms();

@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
-            System.Collections.Hashtable uniques = new System.Collections.Hashtable();
+            SupportClass.Set<Query> uniques = new SupportClass.Set<Query>();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				Query query = queries[i];
@@ -155,26 +155,26 @@ namespace Lucene.Net.Search
 				{
 					for (int j = 0; j < clauses.Length; j++)
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(uniques, clauses[j].GetQuery());
+						uniques.Add(clauses[j].GetQuery());
 					}
 				}
 				else
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(uniques, query);
+					uniques.Add(query);
 				}
 			}
 			// optimization: if we have just one query, just return it
 			if (uniques.Count == 1)
 			{
-                foreach (object key in uniques.Keys)
+                foreach (Query key in uniques)
                 {
                     return (Query) key;
                 }
 			}
 			BooleanQuery result = new BooleanQuery(true);
-            foreach (object key in uniques.Keys)
+            foreach (Query key in uniques)
             {
-                result.Add((Query) key, BooleanClause.Occur.SHOULD);
+                result.Add(key, BooleanClause.Occur.SHOULD);
             }
 			return result;
 		}
@@ -200,22 +200,21 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{
-            System.Collections.Hashtable allClauses = new System.Collections.Hashtable();
+            SupportClass.Set<BooleanClause> allClauses = new SupportClass.Set<BooleanClause>();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				BooleanClause[] clauses = queries[i].GetClauses();
 				for (int j = 0; j < clauses.Length; j++)
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(allClauses, clauses[j]);
+					allClauses.Add(clauses[j]);
 				}
 			}
 			
 			bool coordDisabled = queries.Length == 0?false:queries[0].IsCoordDisabled();
 			BooleanQuery result = new BooleanQuery(coordDisabled);
-			System.Collections.IEnumerator i2 = allClauses.GetEnumerator();
-			while (i2.MoveNext())
+            foreach(BooleanClause bc in allClauses)
 			{
-				result.Add((BooleanClause) i2.Current);
+				result.Add(bc);
 			}
 			return result;
 		}

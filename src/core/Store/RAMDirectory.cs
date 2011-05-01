@@ -32,8 +32,8 @@ namespace Lucene.Net.Store
 	{
 		
 		private const long serialVersionUID = 1L;
-		
-		internal protected System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
+
+        internal protected SupportClass.Dictionary<string, RAMFile> fileMap = new SupportClass.Dictionary<string, RAMFile>();
 		internal protected long sizeInBytes = 0;
 		
 		// *****
@@ -126,13 +126,11 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				System.Collections.ICollection fileNames = fileMap.Keys;
-				System.String[] result = new System.String[fileNames.Count];
+				System.String[] result = new System.String[fileMap.Count];
 				int i = 0;
-				System.Collections.IEnumerator it = fileNames.GetEnumerator();
-				while (it.MoveNext())
+                foreach(string key in fileMap.Keys)
 				{
-					result[i++] = ((System.String) it.Current);
+					result[i++] = key;
 				}
 				return result;
 			}
@@ -315,11 +313,6 @@ namespace Lucene.Net.Store
         public override void Dispose()
         {
             Close();
-        }
-
-        public System.Collections.Hashtable fileMap_ForNUnit
-        {
-            get { return fileMap; }
         }
 
         public long sizeInBytes_ForNUnitTest

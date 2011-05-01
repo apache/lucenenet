@@ -5955,11 +5955,11 @@ namespace Lucene.Net.Index
 
             // open "first" with IndexWriter
             IndexCommit commit = null;
-            System.Collections.IEnumerator it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach (IndexCommit c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                string tag = null;
+                if(c.GetUserData().ContainsKey("tag"))
+                    tag = c.GetUserData()["tag"];
                 if ("first".Equals(tag))
                 {
                     commit = c;
@@ -5981,11 +5981,11 @@ namespace Lucene.Net.Index
 
             // make sure "second" commit is still there
             commit = null;
-            it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach (IndexCommit c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                string tag = null;
+                if (c.GetUserData().ContainsKey("tag"))
+                    tag = c.GetUserData()["tag"];
                 if ("second".Equals(tag))
                 {
                     commit = c;
@@ -6010,11 +6010,11 @@ namespace Lucene.Net.Index
 
             // make sure "third" commit is still there
             commit = null;
-            it = IndexReader.ListCommits(dir).GetEnumerator();
-            while (it.MoveNext())
+            foreach (IndexCommit c in IndexReader.ListCommits(dir))
             {
-                IndexCommit c = (IndexCommit)it.Current;
-                string tag = (String)c.GetUserData()["tag"];
+                string tag = null;
+                if (c.GetUserData().ContainsKey("tag"))
+                    tag = c.GetUserData()["tag"];
                 if ("third".Equals(tag))
                 {
                     commit = c;

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -36,10 +37,10 @@ namespace Lucene.Net.Store
 	{
 		private Directory secondaryDir;
 		private Directory primaryDir;
-		private System.Collections.Hashtable primaryExtensions;
+        private IList<String> primaryExtensions;
 		private bool doClose;
-		
-		public FileSwitchDirectory(System.Collections.Hashtable primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
+
+        public FileSwitchDirectory(IList<String> primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
 		{
 			this.primaryExtensions = primaryExtensions;
 			this.primaryDir = primaryDir;
