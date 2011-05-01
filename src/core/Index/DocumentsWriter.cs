@@ -832,7 +832,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        internal System.Collections.ICollection GetFlushedFiles()
+        internal IList<string> GetFlushedFiles()
         {
             return flushState.flushedFiles;
         }
@@ -842,10 +842,9 @@ namespace Lucene.Net.Index
 		{
 			
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
-			System.Collections.IEnumerator it = flushState.flushedFiles.GetEnumerator();
-			while (it.MoveNext())
+            foreach(string s in flushState.flushedFiles)
 			{
-				cfsWriter.AddFile((System.String) ((System.Collections.DictionaryEntry) it.Current).Key);
+				cfsWriter.AddFile(s);
 			}
 			
 			// Perform the merge

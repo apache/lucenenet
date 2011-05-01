@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -81,20 +82,19 @@ namespace Lucene.Net.Index
 				System.String token = tokens[i];
 				mapper.Map(token, 1, null, thePositions[i]);
 			}
-			System.Collections.IDictionary map = mapper.GetFieldToTerms();
+            SupportClass.Dictionary<String, SupportClass.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo>> map = mapper.GetFieldToTerms();
 			Assert.IsTrue(map != null, "map is null and it shouldn't be");
 			Assert.IsTrue(map.Count == 1, "map Size: " + map.Count + " is not: " + 1);
-			System.Collections.IDictionary positions = (System.Collections.IDictionary) map["test"];
+            SupportClass.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo> positions = map["test"];
 			Assert.IsTrue(positions != null, "thePositions is null and it shouldn't be");
 			
 			Assert.IsTrue(positions.Count == numPositions, "thePositions Size: " + positions.Count + " is not: " + numPositions);
 			System.Collections.BitArray bits = new System.Collections.BitArray((numPositions % 64 == 0?numPositions / 64:numPositions / 64 + 1) * 64);
-			for (System.Collections.IEnumerator iterator = positions.GetEnumerator(); iterator.MoveNext(); )
-			{
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) iterator.Current;
-				PositionBasedTermVectorMapper.TVPositionInfo info = (PositionBasedTermVectorMapper.TVPositionInfo) entry.Value;
+            foreach(KeyValuePair<int, PositionBasedTermVectorMapper.TVPositionInfo> entry in positions)
+            {
+				PositionBasedTermVectorMapper.TVPositionInfo info = entry.Value;
 				Assert.IsTrue(info != null, "info is null and it shouldn't be");
-				int pos = ((System.Int32) entry.Key);
+				int pos = entry.Key;
 				bits.Set(pos, true);
 				Assert.IsTrue(info.Position == pos, info.Position + " does not equal: " + pos);
 				Assert.IsTrue(info.Offsets != null, "info.getOffsets() is null and it shouldn't be");

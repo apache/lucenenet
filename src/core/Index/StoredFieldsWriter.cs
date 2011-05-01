@@ -106,8 +106,8 @@ namespace Lucene.Net.Index
 					fieldsWriter = null;
 					lastDocID = 0;
 					System.Diagnostics.Debug.Assert(state.docStoreSegmentName != null);
-                    SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
-                    SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
+                    state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
+                    state.flushedFiles.Add(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);
 					
 					state.docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_EXTENSION);
 					state.docWriter.RemoveOpenFile(state.docStoreSegmentName + "." + IndexFileNames.FIELDS_INDEX_EXTENSION);

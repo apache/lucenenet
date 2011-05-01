@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 			// FieldInfo.storePayload.
 			System.String fileName = state.SegmentFileName(IndexFileNames.FIELD_INFOS_EXTENSION);
 			fieldInfos.Write(state.directory, fileName);
-			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, fileName);
+            state.flushedFiles.Add(fileName);
 		}
 		
 		public override void  Abort()
