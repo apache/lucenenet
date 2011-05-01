@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
 			}
 			
 			System.String normsFileName = state.segmentName + "." + IndexFileNames.NORMS_EXTENSION;
-			state.flushedFiles[normsFileName] = normsFileName;
+			state.flushedFiles.Add(normsFileName);
 			IndexOutput normsOut = state.directory.CreateOutput(normsFileName);
 			
 			try

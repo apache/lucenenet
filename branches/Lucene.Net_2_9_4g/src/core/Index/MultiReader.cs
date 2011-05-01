@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 		protected internal IndexReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
 		private bool[] decrefOnClose; // remember which subreaders to decRef on close
-		private System.Collections.IDictionary normsCache = new System.Collections.Hashtable();
+        private IDictionary<string, byte[]> normsCache = new SupportClass.Dictionary<string, byte[]>();
 		private int maxDoc = 0;
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				EnsureOpen();
-				byte[] bytes = (byte[]) normsCache[field];
+				byte[] bytes = normsCache[field];
 				if (bytes != null)
 					return bytes; // cache hit
 				if (!HasNorms(field))
@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				EnsureOpen();
-				byte[] bytes = (byte[]) normsCache[field];
+				byte[] bytes = normsCache[field];
 				for (int i = 0; i < subReaders.Length; i++)
 				// read from segments
 					subReaders[i].Norms(field, result, offset + starts[i]);
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
 		{
-			lock (normsCache.SyncRoot)
+			lock (normsCache)
 			{
 				normsCache.Remove(field); // clear cache
 			}
