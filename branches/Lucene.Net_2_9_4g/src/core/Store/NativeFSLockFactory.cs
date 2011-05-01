@@ -168,7 +168,7 @@ namespace Lucene.Net.Store
 		* one JVM (each with their own NativeFSLockFactory
 		* instance) have set the same lock dir and lock prefix.
 		*/
-		private static System.Collections.Hashtable LOCK_HELD = new System.Collections.Hashtable();
+        private static SupportClass.Set<string> LOCK_HELD = new SupportClass.Set<string>();
 
 		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName):this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)
@@ -245,7 +245,7 @@ namespace Lucene.Net.Store
 							// thread trying to obtain this lock, so we own
 							// the only instance of a channel against this
 							// file:
-                            LOCK_HELD.Add(canonicalPath, canonicalPath);
+                            LOCK_HELD.Add(canonicalPath);
 							markedHeld = true;
 						}
 					}

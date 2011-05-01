@@ -1406,6 +1406,7 @@ public class SupportClass
     }
     #endregion
 
+    [Serializable]
     public class Dictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
     {
         System.Collections.Generic.IDictionary<K, V> _Dict = null;

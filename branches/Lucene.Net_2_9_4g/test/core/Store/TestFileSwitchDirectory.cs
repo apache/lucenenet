@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -36,9 +37,9 @@ namespace Lucene.Net.Store
         [Test]
 		public virtual void  TestBasic()
 		{
-			System.Collections.Hashtable fileExtensions = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdt");
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdx");
+            IList<String> fileExtensions = new SupportClass.Set<string>();
+			fileExtensions.Add("fdt");
+			fileExtensions.Add("fdx");
 			
 			Directory primaryDir = new MockRAMDirectory();
 			RAMDirectory secondaryDir = new MockRAMDirectory();
