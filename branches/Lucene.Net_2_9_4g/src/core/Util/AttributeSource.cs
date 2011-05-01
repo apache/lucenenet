@@ -190,15 +190,15 @@ namespace Lucene.Net.Util
 			System.Type clazz = att.GetType();
 			if (attributeImpls.Contains(clazz))
 				return ;
-			System.Collections.ArrayList foundInterfaces;
+            List<WeakReference> foundInterfaces;
 			lock (knownImplClasses)
 			{
-				foundInterfaces = (System.Collections.ArrayList) knownImplClasses[clazz];
+                foundInterfaces = (List<WeakReference>)knownImplClasses[clazz];
 				if (foundInterfaces == null)
 				{
                     // we have a strong reference to the class instance holding all interfaces in the list (parameter "att"),
                     // so all WeakReferences are never evicted by GC
-					knownImplClasses.Add(clazz, foundInterfaces = new System.Collections.ArrayList());
+                    knownImplClasses.Add(clazz, foundInterfaces = new List<WeakReference>());
 					// find all interfaces that this attribute instance implements
 					// and that extend the Attribute interface
 					System.Type actClazz = clazz;
@@ -220,9 +220,8 @@ namespace Lucene.Net.Util
 			}
 			
 			// add all interfaces of this AttributeImpl to the maps
-			for (System.Collections.IEnumerator it = foundInterfaces.GetEnumerator(); it.MoveNext(); )
+            foreach(WeakReference curInterfaceRef in foundInterfaces)
 			{
-                WeakReference curInterfaceRef = (WeakReference)it.Current;
 				System.Type curInterface = (System.Type) curInterfaceRef.Target;
                 System.Diagnostics.Debug.Assert(curInterface != null,"We have a strong reference on the class holding the interfaces, so they should never get evicted");
 				// Attribute is a superclass of this interface

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
 using NumericField = Lucene.Net.Documents.NumericField;
@@ -440,8 +441,8 @@ namespace Lucene.Net.Search
 				//@Override
 				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
 				{
-					Enclosing_Instance.rangeBounds.Add(minPrefixCoded);
-					Enclosing_Instance.rangeBounds.Add(maxPrefixCoded);
+					Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
+					Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
 			private class AnonymousClassIntRangeBuilder:NumericUtils.IntRangeBuilder
@@ -466,8 +467,8 @@ namespace Lucene.Net.Search
 				//@Override
 				public override void  AddRange(System.String minPrefixCoded, System.String maxPrefixCoded)
 				{
-					Enclosing_Instance.rangeBounds.Add(minPrefixCoded);
-					Enclosing_Instance.rangeBounds.Add(maxPrefixCoded);
+					Enclosing_Instance.rangeBounds.AddLast(minPrefixCoded);
+					Enclosing_Instance.rangeBounds.AddLast(maxPrefixCoded);
 				}
 			}
 			private void  InitBlock(NumericRangeQuery enclosingInstance)
@@ -485,7 +486,7 @@ namespace Lucene.Net.Search
 			}
 			
 			private IndexReader reader;
-			private System.Collections.ArrayList rangeBounds = new System.Collections.ArrayList();
+            private LinkedList<string> rangeBounds = new LinkedList<string>();
 			private System.String currentUpperBound = null;
 			
 			internal NumericRangeTermEnum(NumericRangeQuery enclosingInstance, IndexReader reader)
@@ -639,14 +640,14 @@ namespace Lucene.Net.Search
 					actualEnum.Close();
 					actualEnum = null;
 				}
-				System.Object tempObject;
-				tempObject = rangeBounds[0];
-				rangeBounds.RemoveAt(0);
-				System.String lowerBound = (System.String) tempObject;
-				System.Object tempObject2;
-				tempObject2 = rangeBounds[0];
-				rangeBounds.RemoveAt(0);
-				this.currentUpperBound = ((System.String) tempObject2);
+				string tempObject;
+				tempObject = rangeBounds.First.Value;
+				rangeBounds.RemoveFirst();
+				string lowerBound = tempObject;
+				string tempObject2;
+				tempObject2 = rangeBounds.First.Value;
+				rangeBounds.RemoveFirst();
+				this.currentUpperBound = tempObject2;
 				// this call recursively uses next(), if no valid term in
 				// next enum found.
 				// if this behavior is changed/modified in the superclass,
