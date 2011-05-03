@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// </since>
 	[Serializable]
-	public sealed class NumericRangeQuery:MultiTermQuery,System.Runtime.Serialization.ISerializable
+	public sealed class NumericRangeQuery:MultiTermQuery
 	{
 		
 		private NumericRangeQuery(System.String field, int precisionStep, int valSize, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -365,38 +365,10 @@ namespace Lucene.Net.Search
         //}
 
 
-        /// <summary>
-        /// Lucene.Net specific. Needed for Serialization
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            info.AddValue("precisionStep", precisionStep);
-            info.AddValue("valSize", valSize);
-            info.AddValue("min", min);
-            info.AddValue("max", max);
-            info.AddValue("minInclusive", minInclusive);
-            info.AddValue("maxInclusive", maxInclusive);
-
-            info.AddValue("field", field);
-        }
-
-        /// <summary>
-        /// Lucene.Net specific. Needed for deserialization
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        private NumericRangeQuery(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            precisionStep   = (int)info.GetValue("precisionStep", typeof(int));
-            valSize         = (int)info.GetValue("valSize", typeof(int));
-            min             = (System.ValueType)info.GetValue("min", typeof(System.ValueType));
-            max             = (System.ValueType)info.GetValue("max", typeof(System.ValueType));
-            minInclusive    = (bool)info.GetValue("minInclusive", typeof(bool));
-            maxInclusive    = (bool)info.GetValue("maxInclusive", typeof(bool));
-            
-            field           = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+            field = StringHelper.Intern(field);
         }
 		
 		// members (package private, to be also fast accessible by NumericRangeTermEnum)

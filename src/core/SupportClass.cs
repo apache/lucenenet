@@ -478,29 +478,29 @@ public class SupportClass
 
 			fileStream.Flush();
 
-			if (OS.IsWindows)
-			{
-				if (!FlushFileBuffers(fileStream.Handle))
-					throw new System.IO.IOException();
-			}
-			else if (OS.IsUnix)
-			{
-				if (fsync(fileStream.Handle) != IntPtr.Zero)
-				throw new System.IO.IOException();
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+            //if (OS.IsWindows)
+            //{
+            //    if (!FlushFileBuffers(fileStream.Handle))
+            //        throw new System.IO.IOException();
+            //}
+            //else if (OS.IsUnix)
+            //{
+            //    if (fsync(fileStream.Handle) != IntPtr.Zero)
+            //    throw new System.IO.IOException();
+            //}
+            //else
+            //{
+            //    throw new NotImplementedException();
+            //}
 		}
 
 #pragma warning restore 618
 
-		[System.Runtime.InteropServices.DllImport("libc")]
-		extern static IntPtr fsync(IntPtr fd);
+        //[System.Runtime.InteropServices.DllImport("libc")]
+        //extern static IntPtr fsync(IntPtr fd);
 
-		[System.Runtime.InteropServices.DllImport("kernel32.dll")]
-		extern static bool FlushFileBuffers(IntPtr hFile);
+        //[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        //extern static bool FlushFileBuffers(IntPtr hFile);
     }
 
     /// <summary>
