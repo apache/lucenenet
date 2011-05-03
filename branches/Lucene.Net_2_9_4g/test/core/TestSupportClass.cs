@@ -881,6 +881,7 @@ namespace Lucene.Net._SupportClass
     }
 
     [TestFixture]
+    [Serializable]
     public class TestOldPatches
     {
         //-------------------------------------------

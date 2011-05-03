@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	
 	[Serializable]
-    public sealed class Term : System.IComparable, System.Runtime.Serialization.ISerializable,IEquatable<Term>
+    public sealed class Term : System.IComparable, IEquatable<Term>
 	{
 		internal System.String field;
 		internal System.String text;
@@ -170,16 +170,10 @@ namespace Lucene.Net.Index
 //			field = StringHelper.Intern(field);
 //		}
 
-        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            info.AddValue("text", text);
-            info.AddValue("field", field);
-        }
-
-        private Term(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            text = (string)info.GetValue("text", typeof(string));
-            field = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+            field = StringHelper.Intern(field);
         }
 
         public System.String text_ForNUnit
