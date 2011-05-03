@@ -288,6 +288,7 @@
     </Compile>
     <Compile Include="Messages\MessagesTestBundle.cs" />
     <Compile Include="Messages\TestNLS.cs" />
+    <Compile Include="PartiallyTrustedAppDomain.cs" />
     <Compile Include="QueryParser\TestMultiAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
