@@ -1206,6 +1206,85 @@ namespace Lucene.Net._SupportClass
         }
     }
 
+    [TestFixture]
+    [Serializable]
+    public class TestMediumTrust
+    {
+        [Test]
+        public void Test_Index_Term()
+        {
+            //invoke any method
+            Assert.AreEqual("field:text",Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(Lucene.Net.Index.Term), "ToString", new object[] { "field", "text" }, null));
+        }
+
+
+
+        [Test]
+        public void Test_Search_NumericRangeQuery()
+        {
+            //invoking this static method is enough
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "CreateNumericRangeQuery", null, null);
+        }
+
+        public NumericRangeQuery CreateNumericRangeQuery()
+        {
+            return NumericRangeQuery.NewIntRange("field", 0, 10, true, true);
+        }
+
+
+
+        [Test]
+        public void Test_Search_SortField()
+        {
+            //invoke any method
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(Lucene.Net.Search.SortField), "GetUseLegacySearch", new object[]{"field"}, null);
+        }
+
+
+
+        [Test]
+        public void Test_Util_Parameter()
+        {
+            //invoke any method
+            Assert.AreEqual("sometext", Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(PARAM), "ToString", new object[] { "sometext" }, null));
+        }
+        
+        [Serializable]
+        public class PARAM : Lucene.Net.Util.Parameter
+        {
+            public PARAM(string field) : base(field)
+            {
+            }
+        }
+
+        [Test]
+        public void TestThisTest()
+        {
+            try
+            {
+                Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestDummyClass), "DummyMethod", null, null);
+                Assert.Fail("This call must fail");
+            }
+            catch(TypeLoadException)
+            {
+            }
+        }
+
+        public class TestDummyClass: System.Runtime.Serialization.IObjectReference
+        {
+            public void DummyMethod()
+            {
+            }
+
+            public object GetRealObject(System.Runtime.Serialization.StreamingContext context)
+            {
+                return this;
+            }
+        }
+
+        
+    }
+
 }
 
 

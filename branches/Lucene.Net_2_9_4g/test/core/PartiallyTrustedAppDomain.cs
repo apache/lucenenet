@@ -38,7 +38,7 @@ namespace Lucene.Net.Test
         /// <param name="methodName">method to invoke</param>
         /// <param name="constructorArgs">constructor's parameters</param>
         /// <param name="methodArgs">method's parameters</param>
-        public static void Run(Type clazz, string methodName, object[] constructorArgs, object[] methodArgs)
+        public static object Run(Type clazz, string methodName, object[] constructorArgs, object[] methodArgs)
         {
             try
             {
@@ -49,8 +49,8 @@ namespace Lucene.Net.Test
                 permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
 
                 AppDomain appDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
-
-                object p = appDomain.CreateInstanceAndUnwrap(
+                                
+                object obj = appDomain.CreateInstanceAndUnwrap(
                     clazz.Assembly.FullName,
                     clazz.FullName,
                     false,
@@ -59,7 +59,9 @@ namespace Lucene.Net.Test
                     constructorArgs,
                     System.Globalization.CultureInfo.CurrentCulture,
                     null);
-                p.GetType().InvokeMember(methodName, BindingFlags.InvokeMethod, null, p, methodArgs);
+                
+                object ret =  clazz.InvokeMember(methodName, BindingFlags.InvokeMethod, null, obj, methodArgs);
+                return ret;
             }
             catch (TypeLoadException tlex)
             {
