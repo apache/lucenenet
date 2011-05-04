@@ -41,6 +41,7 @@ namespace Lucene.Net.Test
         /// <param name="methodArgs">method's parameters</param>
         public static object Run(Type clazz, string methodName, object[] constructorArgs, object[] methodArgs)
         {
+            AppDomain appDomain = null;
             try
             {
                 AppDomainSetup setup = new AppDomainSetup { ApplicationBase = Environment.CurrentDirectory };
@@ -48,10 +49,10 @@ namespace Lucene.Net.Test
                 PermissionSet permissions = new PermissionSet(null);
                 permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
                 permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
-                permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, TEMPDIR ));
+                permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, TEMPDIR));
 
-                AppDomain appDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
-                                
+                appDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
+
                 object obj = appDomain.CreateInstanceAndUnwrap(
                     clazz.Assembly.FullName,
                     clazz.FullName,
@@ -61,30 +62,27 @@ namespace Lucene.Net.Test
                     constructorArgs,
                     System.Globalization.CultureInfo.CurrentCulture,
                     null);
-                
-                object ret =  clazz.InvokeMember(
-                    methodName, 
+
+                object ret = clazz.InvokeMember(
+                    methodName,
                     BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                    null, 
-                    obj, 
+                    null,
+                    obj,
                     methodArgs);
+
                 return ret;
-            }
-            catch (TypeLoadException tlex)
-            {
-                throw tlex;
             }
             catch (TargetInvocationException tiex)
             {
                 throw tiex.InnerException;
             }
-            catch (SecurityException secex)
-            {
-                throw secex;
-            }
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                if(appDomain!=null) AppDomain.Unload(appDomain);
             }
         }
     }
