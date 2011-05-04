@@ -31,6 +31,7 @@ namespace Lucene.Net.Test
 {
     public class PartiallyTrustedAppDomain
     {
+        public static string TEMPDIR = @"c:\temp\testindex";
         /// <summary>
         /// 
         /// </summary>
@@ -47,6 +48,7 @@ namespace Lucene.Net.Test
                 PermissionSet permissions = new PermissionSet(null);
                 permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
                 permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
+                permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, TEMPDIR ));
 
                 AppDomain appDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
                                 
