@@ -1208,87 +1208,71 @@ namespace Lucene.Net._SupportClass
 
     [TestFixture]
     [Serializable]
-    public class TestMediumTrust
+    public class TestMediumTrust 
     {
-        [Test]
-        public void TestIndexAndSearch()
+        public class TestMethodContainer : MarshalByRefObject
         {
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "TestIndexAndSearch2", null, null);
-        }
-                
-        void TestIndexAndSearch2()
-        {
-            Lucene.Net.Store.Directory dir = Lucene.Net.Store.FSDirectory.Open(new System.IO.DirectoryInfo(Lucene.Net.Test.PartiallyTrustedAppDomain.TEMPDIR));
-
-            Lucene.Net.Index.IndexWriter w = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), true);
-            Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("field1", "dark side of the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
-            Lucene.Net.Documents.Field f2 = new Lucene.Net.Documents.Field("field2", "123", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
-            Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
-            d.Add(f1);
-            d.Add(f2);
-            w.AddDocument(d);
-
-            f1 = new Lucene.Net.Documents.Field("field1", "Fly me to the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
-            f2 = new Lucene.Net.Documents.Field("field2", "456", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
-            d = new Lucene.Net.Documents.Document();
-            d.Add(f1);
-            d.Add(f2);
-            w.AddDocument(d);
-
-            w.Close();
-
-            Lucene.Net.Search.IndexSearcher searcher = new IndexSearcher(dir, true);
-
-            Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
-            sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.STRING));
-            Lucene.Net.Search.Query q = new Lucene.Net.QueryParsers.QueryParser("field1", new Lucene.Net.Analysis.Standard.StandardAnalyzer()).Parse("moon");
-            TopDocs td = searcher.Search(q, null, 100, sort);
-            int resCount = td.ScoreDocs.Length;
-
-            searcher.Close();
-        }
-
-        [Test]
-        public void Test_Index_Term()
-        {
-            //invoke any method
-            Assert.AreEqual("field:text",Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(Lucene.Net.Index.Term), "ToString", new object[] { "field", "text" }, null));
-        }
-
-
-
-        [Test]
-        public void Test_Search_NumericRangeQuery()
-        {
-            //invoking this static method is enough
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "CreateNumericRangeQuery", null, null);
-        }
-
-        public NumericRangeQuery CreateNumericRangeQuery()
-        {
-            return NumericRangeQuery.NewIntRange("field", 0, 10, true, true);
-        }
-
-
-
-        [Test]
-        public void Test_Search_SortField()
-        {
-            //invoke any method
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(Lucene.Net.Search.SortField), "GetUseLegacySearch", new object[]{"field"}, null);
-        }
-
-        [Test]
-        public void Test_AlreadyClosedException()
-        {
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "Test_AlreadyClosedException2", null, null);
-        }
-
-        void  Test_AlreadyClosedException2()
-        {
-            try
+            void TestIndexAndSearch()
             {
-                AlreadyClosedException ace =  new AlreadyClosedException("Test");
+                Lucene.Net.Store.Directory dir = Lucene.Net.Store.FSDirectory.Open(new System.IO.DirectoryInfo(Lucene.Net.Test.PartiallyTrustedAppDomain.TEMPDIR));
+
+                Lucene.Net.Index.IndexWriter w = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), true);
+                Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("field1", "dark side of the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+                Lucene.Net.Documents.Field f2 = new Lucene.Net.Documents.Field("field2", "123", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+                Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+                d.Add(f1);
+                d.Add(f2);
+                w.AddDocument(d);
+
+                f1 = new Lucene.Net.Documents.Field("field1", "Fly me to the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+                f2 = new Lucene.Net.Documents.Field("field2", "456", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+                d = new Lucene.Net.Documents.Document();
+                d.Add(f1);
+                d.Add(f2);
+                w.AddDocument(d);
+
+                w.Close();
+
+                Lucene.Net.Search.IndexSearcher searcher = new IndexSearcher(dir, true);
+
+                Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
+                sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.STRING));
+                Lucene.Net.Search.Query q = new Lucene.Net.QueryParsers.QueryParser("field1", new Lucene.Net.Analysis.Standard.StandardAnalyzer()).Parse("moon");
+                TopDocs td = searcher.Search(q, null, 100, sort);
+                int resCount = td.ScoreDocs.Length;
+
+                searcher.Close();
+            }
+
+            void Test_Index_Term()
+            {
+                string s = new Lucene.Net.Index.Term("field", "Text").ToString();
+            }
+
+            void Test_Search_NumericRangeQuery()
+            {
+               Lucene.Net.Search.Query q =  NumericRangeQuery.NewIntRange("field", 0, 10, true, true);
+            }
+
+            void Test_Search_SortField()
+            {
+                bool b = new Lucene.Net.Search.SortField("field").GetUseLegacySearch();
+            }
+
+            void Test_AlreadyClosedException()
+            {
+                try
+                {
+                    throw new AlreadyClosedException("test");
+                }
+                catch (AlreadyClosedException)
+                {
+                }
+            }
+
+            void Test_AlreadyClosedException_Serialization()
+            {
+                AlreadyClosedException ace = new AlreadyClosedException("Test");
                 System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 bf.Serialize(ms, ace);
@@ -1296,36 +1280,101 @@ namespace Lucene.Net._SupportClass
                 AlreadyClosedException ace2 = (AlreadyClosedException)bf.Deserialize(ms);
                 throw ace2;
             }
-            catch (AlreadyClosedException)
+                        
+            void Test_Util_Parameter()
             {
+                string s = new PARAM("field").ToString();
             }
+            
+            [Serializable]
+            public class PARAM : Lucene.Net.Util.Parameter
+            {
+                public PARAM(string field) : base(field)
+                {
+                }
+            }
+
+
+            string MethodToFail()
+            {
+                return System.Environment.GetEnvironmentVariable("TEMP");
+            }
+
+            
         }
+
+        [Test]
+        public void TestIndexAndSearch()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "TestIndexAndSearch", null, null);
+        }
+                
+        
+
+        [Test]
+        public void Test_Index_Term()
+        {
+
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Index_Term", null, null);
+        }
+
+
+
+        [Test]
+        public void Test_Search_NumericRangeQuery()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Search_NumericRangeQuery", null, null);
+        }
+
+        
+
+        [Test]
+        public void Test_Search_SortField()
+        {
+            //invoke any method
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Search_SortField", null, null);
+        }
+
+        [Test]
+        public void Test_AlreadyClosedException()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_AlreadyClosedException", null, null);
+        }
+
+        [Test]
+        public void Test_AlreadyClosedException_Serialization()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_AlreadyClosedException_Serialization", null, null);
+        }
+
+        
 
 
         [Test]
         public void Test_Util_Parameter()
         {
             //invoke any method
-            Assert.AreEqual("sometext", Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(PARAM), "ToString", new object[] { "sometext" }, null));
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Util_Parameter", null, null);
         }
         
-        [Serializable]
-        public class PARAM : Lucene.Net.Util.Parameter
-        {
-            public PARAM(string field) : base(field)
-            {
-            }
-        }
-
         [Test]
         public void TestThisTest()
         {
             try
             {
                 Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestDummyClass), "DummyMethod", null, null);
-                Assert.Fail("This call must fail");
+                Assert.Fail("This call must fail-1");
             }
             catch(TypeLoadException)
+            {
+            }
+
+            try
+            {
+                Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "MethodToFail", null, null);
+                Assert.Fail("This call must fail-2");
+            }
+            catch (System.Security.SecurityException)
             {
             }
         }
