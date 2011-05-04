@@ -60,7 +60,12 @@ namespace Lucene.Net.Test
                     System.Globalization.CultureInfo.CurrentCulture,
                     null);
                 
-                object ret =  clazz.InvokeMember(methodName, BindingFlags.InvokeMethod, null, obj, methodArgs);
+                object ret =  clazz.InvokeMember(
+                    methodName, 
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                    null, 
+                    obj, 
+                    methodArgs);
                 return ret;
             }
             catch (TypeLoadException tlex)
