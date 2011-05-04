@@ -18,6 +18,7 @@
 
 using System;
 using System.IO;
+using System.Dynamic;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
@@ -29,45 +30,59 @@ using System.Text;
 
 namespace Lucene.Net.Test
 {
-    public class PartiallyTrustedAppDomain
+    public class PartiallyTrustedAppDomain<T> : DynamicObject, IDisposable where T : MarshalByRefObject
     {
-        public static string TEMPDIR = @"c:\temp\testindex";
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="clazz">class to create</param>
-        /// <param name="methodName">method to invoke</param>
-        /// <param name="constructorArgs">constructor's parameters</param>
-        /// <param name="methodArgs">method's parameters</param>
-        public static object Run(Type clazz, string methodName, object[] constructorArgs, object[] methodArgs)
+        string      _TempDir;
+        AppDomain   _AppDomain;
+        Type        _ClassType;
+        object      _RealObject;
+
+        public PartiallyTrustedAppDomain()
         {
-            AppDomain appDomain = null;
-            try
-            {
-                AppDomainSetup setup = new AppDomainSetup { ApplicationBase = Environment.CurrentDirectory };
+            Init(null);
+        }
 
-                PermissionSet permissions = new PermissionSet(null);
-                permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-                permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
-                permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, TEMPDIR));
+        public PartiallyTrustedAppDomain(params object[] constructorArgs)
+        {
+            Init(constructorArgs);
+        }
 
-                appDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
 
-                object obj = appDomain.CreateInstanceAndUnwrap(
-                    clazz.Assembly.FullName,
-                    clazz.FullName,
+        void Init(object[] constructorArgs)
+        {
+            _TempDir = System.Environment.GetEnvironmentVariable("TEMP");
+
+            _ClassType = typeof(T);
+
+            AppDomainSetup setup = new AppDomainSetup { ApplicationBase = Environment.CurrentDirectory };
+
+            PermissionSet permissions = new PermissionSet(null);
+            permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
+            permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, TempDir));
+
+            _AppDomain = AppDomain.CreateDomain("PartiallyTrustedAppDomain", null, setup, permissions);
+
+            _RealObject = _AppDomain.CreateInstanceAndUnwrap(
+                    _ClassType.Assembly.FullName,
+                    _ClassType.FullName,
                     false,
                     BindingFlags.CreateInstance,
                     null,
                     constructorArgs,
                     System.Globalization.CultureInfo.CurrentCulture,
                     null);
+        }
 
-                object ret = clazz.InvokeMember(
+        object Run(string methodName, object[] constructorArgs, object[] methodArgs)
+        {
+            try
+            {
+                object ret = _ClassType.InvokeMember(
                     methodName,
                     BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                     null,
-                    obj,
+                    _RealObject,
                     methodArgs);
 
                 return ret;
@@ -76,14 +91,30 @@ namespace Lucene.Net.Test
             {
                 throw tiex.InnerException;
             }
-            catch (Exception ex)
+        }
+
+        public string TempDir
+        {
+            get { return _TempDir; }
+        }
+
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        {
+            try
             {
-                throw ex;
+                result = Run(binder.Name, null, args);
+                return true;
             }
-            finally
+            catch (MissingMethodException)
             {
-                if(appDomain!=null) AppDomain.Unload(appDomain);
+                result = null;
+                return false;
             }
+        }
+
+        public void Dispose()
+        {
+            if (_AppDomain != null) AppDomain.Unload(_AppDomain);
         }
     }
 }

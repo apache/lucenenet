@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Dynamic;
 using System.Threading;
 
 using Lucene.Net.Index;
@@ -1207,39 +1208,59 @@ namespace Lucene.Net._SupportClass
     }
 
     [TestFixture]
-    [Serializable]
     public class TestMediumTrust 
     {
+        dynamic _PartiallyTrustedClass;
+
+        public TestMediumTrust()
+        {
+            _PartiallyTrustedClass = new Lucene.Net.Test.PartiallyTrustedAppDomain<TestMethodsContainer>(); 
+        }
+        
+        [TestFixtureTearDown]
+        public void TestFixtureTearDown()
+        {
+            _PartiallyTrustedClass.Dispose();
+        }
+
+
         [Test]
         public void TestIndexAndSearch()
         {
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "TestIndexAndSearch", null, null);
+            string tempIndexDir = System.IO.Path.Combine(_PartiallyTrustedClass.TempDir, "testindex");
+            try
+            {
+                _PartiallyTrustedClass.TestIndexAndSearch(tempIndexDir);
+            }
+            finally
+            {
+                if(System.IO.Directory.Exists(tempIndexDir))
+                    System.IO.Directory.Delete(tempIndexDir,true);
+            }
         }
 
         [Test]
         public void Test_Index_Term()
         {
-
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Index_Term", null, null);
+            _PartiallyTrustedClass.Test_Index_Term();
         }
 
         [Test]
         public void Test_Search_NumericRangeQuery()
         {
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Search_NumericRangeQuery", null, null);
+            _PartiallyTrustedClass.Test_Search_NumericRangeQuery();
         }
         
         [Test]
         public void Test_Search_SortField()
         {
-            //invoke any method
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Search_SortField", null, null);
+            _PartiallyTrustedClass.Test_Search_SortField();
         }
 
         [Test]
         public void Test_AlreadyClosedException()
         {
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_AlreadyClosedException", null, null);
+            _PartiallyTrustedClass.Test_AlreadyClosedException();
         }
 
         [Test]
@@ -1247,7 +1268,7 @@ namespace Lucene.Net._SupportClass
         {
             try
             {
-                Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_AlreadyClosedException_Serialization", null, null);
+                _PartiallyTrustedClass.Test_AlreadyClosedException_Serialization();
             }
             catch (System.Security.SecurityException)
             {
@@ -1258,8 +1279,7 @@ namespace Lucene.Net._SupportClass
         [Test]
         public void Test_Util_Parameter()
         {
-            //invoke any method
-            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "Test_Util_Parameter", null, null);
+            _PartiallyTrustedClass.Test_Util_Parameter();
         }
         
         [Test]
@@ -1267,16 +1287,7 @@ namespace Lucene.Net._SupportClass
         {
             try
             {
-                Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(DummyClass), "DummyMethod", null, null);
-                Assert.Fail("This call must fail-1");
-            }
-            catch(TypeLoadException)
-            {
-            }
-
-            try
-            {
-                Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(TestMethodContainer), "MethodToFail", null, null);
+                _PartiallyTrustedClass.MethodToFail();
                 Assert.Fail("This call must fail-2");
             }
             catch (System.Security.SecurityException)
@@ -1285,24 +1296,11 @@ namespace Lucene.Net._SupportClass
         }
 
 
-        public class DummyClass: System.Runtime.Serialization.IObjectReference
+        public class TestMethodsContainer : MarshalByRefObject
         {
-            public void DummyMethod()
+            void TestIndexAndSearch(string tempDir)
             {
-            }
-
-            public object GetRealObject(System.Runtime.Serialization.StreamingContext context)
-            {
-                return this;
-            }
-        }
-
-
-        public class TestMethodContainer : MarshalByRefObject
-        {
-            void TestIndexAndSearch()
-            {
-                Lucene.Net.Store.Directory dir = Lucene.Net.Store.FSDirectory.Open(new System.IO.DirectoryInfo(Lucene.Net.Test.PartiallyTrustedAppDomain.TEMPDIR));
+                Lucene.Net.Store.Directory dir = Lucene.Net.Store.FSDirectory.Open(new System.IO.DirectoryInfo(tempDir));
 
                 Lucene.Net.Index.IndexWriter w = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), true);
                 Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("field1", "dark side of the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
@@ -1376,13 +1374,11 @@ namespace Lucene.Net._SupportClass
             [Serializable]
             public class PARAM : Lucene.Net.Util.Parameter
             {
-                public PARAM(string field)
-                    : base(field)
+                public PARAM(string field) : base(field)
                 {
                 }
             }
-
-
+            
             string MethodToFail()
             {
                 return System.Environment.GetEnvironmentVariable("TEMP");
