@@ -1240,6 +1240,28 @@ namespace Lucene.Net._SupportClass
             Lucene.Net.Test.PartiallyTrustedAppDomain.Run(typeof(Lucene.Net.Search.SortField), "GetUseLegacySearch", new object[]{"field"}, null);
         }
 
+        [Test]
+        public void Test_AlreadyClosedException()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "Test_AlreadyClosedException2", null, null);
+        }
+
+        void  Test_AlreadyClosedException2()
+        {
+            try
+            {
+                AlreadyClosedException ace =  new AlreadyClosedException("Test");
+                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+                bf.Serialize(ms, ace);
+                ms.Seek(0, System.IO.SeekOrigin.Begin);
+                AlreadyClosedException ace2 = (AlreadyClosedException)bf.Deserialize(ms);
+                throw ace2;
+            }
+            catch (AlreadyClosedException)
+            {
+            }
+        }
 
 
         [Test]
