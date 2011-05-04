@@ -1211,6 +1211,44 @@ namespace Lucene.Net._SupportClass
     public class TestMediumTrust
     {
         [Test]
+        public void TestIndexAndSearch()
+        {
+            Lucene.Net.Test.PartiallyTrustedAppDomain.Run(this.GetType(), "TestIndexAndSearch2", null, null);
+        }
+                
+        void TestIndexAndSearch2()
+        {
+            Lucene.Net.Store.Directory dir = Lucene.Net.Store.FSDirectory.Open(new System.IO.DirectoryInfo(Lucene.Net.Test.PartiallyTrustedAppDomain.TEMPDIR));
+
+            Lucene.Net.Index.IndexWriter w = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.Standard.StandardAnalyzer(), true);
+            Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("field1", "dark side of the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+            Lucene.Net.Documents.Field f2 = new Lucene.Net.Documents.Field("field2", "123", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+            Lucene.Net.Documents.Document d = new Lucene.Net.Documents.Document();
+            d.Add(f1);
+            d.Add(f2);
+            w.AddDocument(d);
+
+            f1 = new Lucene.Net.Documents.Field("field1", "Fly me to the moon", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.TOKENIZED);
+            f2 = new Lucene.Net.Documents.Field("field2", "456", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.UN_TOKENIZED);
+            d = new Lucene.Net.Documents.Document();
+            d.Add(f1);
+            d.Add(f2);
+            w.AddDocument(d);
+
+            w.Close();
+
+            Lucene.Net.Search.IndexSearcher searcher = new IndexSearcher(dir, true);
+
+            Lucene.Net.Search.Sort sort = new Lucene.Net.Search.Sort();
+            sort.SetSort(new Lucene.Net.Search.SortField("field2", Lucene.Net.Search.SortField.STRING));
+            Lucene.Net.Search.Query q = new Lucene.Net.QueryParsers.QueryParser("field1", new Lucene.Net.Analysis.Standard.StandardAnalyzer()).Parse("moon");
+            TopDocs td = searcher.Search(q, null, 100, sort);
+            int resCount = td.ScoreDocs.Length;
+
+            searcher.Close();
+        }
+
+        [Test]
         public void Test_Index_Term()
         {
             //invoke any method
