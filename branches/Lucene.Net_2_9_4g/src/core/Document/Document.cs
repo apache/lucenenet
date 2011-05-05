@@ -43,58 +43,6 @@ namespace Lucene.Net.Documents
 	[Serializable]
 	public sealed class Document
 	{
-		private class AnonymousClassEnumeration : System.Collections.IEnumerator
-		{
-			public AnonymousClassEnumeration(Document enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(Document enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-				iter = Enclosing_Instance.fields.GetEnumerator();
-			}
-			private System.Object tempAuxObj;
-			public bool MoveNext()
-			{
-				bool result = HasMoreElements();
-				if (result)
-				{
-					tempAuxObj = NextElement();
-				}
-				return result;
-			}
-			public void  Reset()
-			{
-				tempAuxObj = null;
-			}
-			public System.Object Current
-			{
-				get
-				{
-					return tempAuxObj;
-				}
-				
-			}
-			private Document enclosingInstance;
-			public Document Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal System.Collections.IEnumerator iter;
-			public bool HasMoreElements()
-			{
-				return iter.MoveNext();
-			}
-			public System.Object NextElement()
-			{
-				return iter.Current;
-			}
-		}
         internal IList<Fieldable> fields = new List<Fieldable>();
 		private float boost = 1.0f;
 		
@@ -248,9 +196,9 @@ namespace Lucene.Net.Documents
 		/// <deprecated> use {@link #GetFields()} instead
 		/// </deprecated>
         [Obsolete("Use GetFields() instead")]
-		public System.Collections.IEnumerator Fields()
+		public IEnumerator<Fieldable> Fields()
 		{
-			return new AnonymousClassEnumeration(this);
+			return fields.GetEnumerator();
 		}
 		
 		/// <summary>Returns a List of all the fields in a document.

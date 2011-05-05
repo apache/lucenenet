@@ -81,10 +81,10 @@ namespace Lucene.Net.Index
 			pr.Add(IndexReader.Open(dir2));
             System.Collections.Generic.ICollection<string> fieldNames = pr.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.AreEqual(4, fieldNames.Count);
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f1"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f3"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "f4"));
+			Assert.IsTrue(fieldNames.Contains("f1"));
+			Assert.IsTrue(fieldNames.Contains("f2"));
+			Assert.IsTrue(fieldNames.Contains("f3"));
+			Assert.IsTrue(fieldNames.Contains("f4"));
 		}
 		
 		[Test]

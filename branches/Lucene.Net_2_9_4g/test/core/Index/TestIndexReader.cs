@@ -157,10 +157,10 @@ namespace Lucene.Net.Index
 			// set up reader
 			IndexReader reader = IndexReader.Open(d);
 			System.Collections.Generic.ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unstored"));
+			Assert.IsTrue(fieldNames.Contains("keyword"));
+			Assert.IsTrue(fieldNames.Contains("text"));
+			Assert.IsTrue(fieldNames.Contains("unindexed"));
+			Assert.IsTrue(fieldNames.Contains("unstored"));
 			reader.Close();
 			// add more documents
 			writer = new IndexWriter(d, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
@@ -185,57 +185,57 @@ namespace Lucene.Net.Index
 			reader = IndexReader.Open(d);
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			Assert.AreEqual(13, fieldNames.Count); // the following fields
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unstored"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unstored2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvnot"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "termvector"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvposition"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvoffset"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvpositionoffset"));
+			Assert.IsTrue(fieldNames.Contains("keyword"));
+			Assert.IsTrue(fieldNames.Contains("text"));
+			Assert.IsTrue(fieldNames.Contains("unindexed"));
+			Assert.IsTrue(fieldNames.Contains("unstored"));
+			Assert.IsTrue(fieldNames.Contains("keyword2"));
+			Assert.IsTrue(fieldNames.Contains("text2"));
+			Assert.IsTrue(fieldNames.Contains("unindexed2"));
+			Assert.IsTrue(fieldNames.Contains("unstored2"));
+			Assert.IsTrue(fieldNames.Contains("tvnot"));
+			Assert.IsTrue(fieldNames.Contains("termvector"));
+			Assert.IsTrue(fieldNames.Contains("tvposition"));
+			Assert.IsTrue(fieldNames.Contains("tvoffset"));
+			Assert.IsTrue(fieldNames.Contains("tvpositionoffset"));
 			
 			// verify that only indexed fields were returned
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.INDEXED);
 			Assert.AreEqual(11, fieldNames.Count); // 6 original + the 5 termvector fields 
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unstored"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "keyword2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "text2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unstored2"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvnot"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "termvector"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvposition"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvoffset"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvpositionoffset"));
+			Assert.IsTrue(fieldNames.Contains("keyword"));
+			Assert.IsTrue(fieldNames.Contains("text"));
+			Assert.IsTrue(fieldNames.Contains("unstored"));
+			Assert.IsTrue(fieldNames.Contains("keyword2"));
+			Assert.IsTrue(fieldNames.Contains("text2"));
+			Assert.IsTrue(fieldNames.Contains("unstored2"));
+			Assert.IsTrue(fieldNames.Contains("tvnot"));
+			Assert.IsTrue(fieldNames.Contains("termvector"));
+			Assert.IsTrue(fieldNames.Contains("tvposition"));
+			Assert.IsTrue(fieldNames.Contains("tvoffset"));
+			Assert.IsTrue(fieldNames.Contains("tvpositionoffset"));
 			
 			// verify that only unindexed fields were returned
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED);
 			Assert.AreEqual(2, fieldNames.Count); // the following fields
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed"));
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "unindexed2"));
+			Assert.IsTrue(fieldNames.Contains("unindexed"));
+			Assert.IsTrue(fieldNames.Contains("unindexed2"));
 			
 			// verify index term vector fields  
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR);
 			Assert.AreEqual(1, fieldNames.Count); // 1 field has term vector only
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "termvector"));
+			Assert.IsTrue(fieldNames.Contains("termvector"));
 			
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION);
 			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvposition"));
+			Assert.IsTrue(fieldNames.Contains("tvposition"));
 			
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET);
 			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvoffset"));
+			Assert.IsTrue(fieldNames.Contains("tvoffset"));
 			
 			fieldNames = reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET);
 			Assert.AreEqual(1, fieldNames.Count); // 4 fields are indexed with term vectors
-			Assert.IsTrue(SupportClass.CollectionsHelper.Contains(fieldNames, "tvpositionoffset"));
+			Assert.IsTrue(fieldNames.Contains("tvpositionoffset"));
 			reader.Close();
 			d.Close();
 		}
