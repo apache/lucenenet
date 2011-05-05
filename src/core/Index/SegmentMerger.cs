@@ -300,10 +300,9 @@ namespace Lucene.Net.Index
             CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName, checkAbort);
 
 			// Now merge all added files
-			System.Collections.IEnumerator it = files.GetEnumerator();
-			while (it.MoveNext())
+            foreach(string file in files)
 			{
-				cfsWriter.AddFile((System.String) it.Current);
+				cfsWriter.AddFile(file);
 			}
 			
 			// Perform the merge
