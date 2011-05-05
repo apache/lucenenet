@@ -618,10 +618,8 @@ namespace Lucene.Net.Index
 		/// </summary>
         internal void DeleteNewFiles(ICollection<string> files)
 		{
-			System.Collections.IEnumerator it = files.GetEnumerator();
-			while (it.MoveNext())
+            foreach(string fileName in files)
 			{
-				System.String fileName = (System.String) it.Current;
                 if (!refCounts.ContainsKey(fileName))
                 {
                     if (infoStream != null)

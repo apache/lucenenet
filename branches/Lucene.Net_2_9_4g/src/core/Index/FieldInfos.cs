@@ -136,10 +136,8 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				IList<Fieldable> fields = doc.GetFields();
-				System.Collections.IEnumerator fieldIterator = fields.GetEnumerator();
-				while (fieldIterator.MoveNext())
-				{
-					Fieldable field = (Fieldable) fieldIterator.Current;
+                foreach (Fieldable field in fields)
+                { 
 					Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms(), false, field.GetOmitTf());
 				}
 			}
@@ -171,14 +169,13 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="storeOffsetWithTermVector">true if offsets should be stored
 		/// </param>
-		public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
+		public void  AddIndexed(IList<string> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
 		{
 			lock (this)
 			{
-				System.Collections.IEnumerator i = names.GetEnumerator();
-				while (i.MoveNext())
+                foreach(string name in names)
 				{
-					Add((System.String) i.Current, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
+					Add(name, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
 				}
 			}
 		}
@@ -197,10 +194,9 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Collections.IEnumerator i = names.GetEnumerator();
-				while (i.MoveNext())
+                foreach(string name  in names)
 				{
-					Add((System.String) i.Current, isIndexed);
+					Add(name, isIndexed);
 				}
 			}
 		}

@@ -2684,10 +2684,9 @@ namespace Lucene.Net.Index
 					try
 					{
 						CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, compoundFileName);
-						System.Collections.IEnumerator it = docWriter.ClosedFiles().GetEnumerator();
-						while (it.MoveNext())
+                        foreach(string cf in docWriter.ClosedFiles())
 						{
-							cfsWriter.AddFile((System.String) it.Current);
+							cfsWriter.AddFile(cf);
 						}
 						
 						// Perform the merge
@@ -3316,18 +3315,14 @@ namespace Lucene.Net.Index
 				
 				// Now mark all pending & running merges as optimize
 				// merge:
-				System.Collections.IEnumerator it = pendingMerges.GetEnumerator();
-				while (it.MoveNext())
+                foreach(MergePolicy.OneMerge merge in pendingMerges)
 				{
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 					merge.optimize = true;
 					merge.maxNumSegmentsOptimize = maxNumSegments;
 				}
-				
-				it = runningMerges.GetEnumerator();
-				while (it.MoveNext())
+
+                foreach (MergePolicy.OneMerge merge in runningMerges)
 				{
-					MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 					merge.optimize = true;
 					merge.maxNumSegmentsOptimize = maxNumSegments;
 				}
@@ -4027,21 +4022,17 @@ namespace Lucene.Net.Index
 					stopMerges = true;
 					
 					// Abort all pending & running merges:
-					System.Collections.IEnumerator it = pendingMerges.GetEnumerator();
-					while (it.MoveNext())
+                    foreach(MergePolicy.OneMerge merge in pendingMerges)
 					{
-						MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 						if (infoStream != null)
 							Message("now abort pending merge " + merge.SegString(directory));
 						merge.Abort();
 						MergeFinish(merge);
 					}
 					pendingMerges.Clear();
-					
-					it = runningMerges.GetEnumerator();
-					while (it.MoveNext())
+
+                    foreach (MergePolicy.OneMerge merge in runningMerges)
 					{
-						MergePolicy.OneMerge merge = (MergePolicy.OneMerge) it.Current;
 						if (infoStream != null)
 							Message("now abort running merge " + merge.SegString(directory));
 						merge.Abort();

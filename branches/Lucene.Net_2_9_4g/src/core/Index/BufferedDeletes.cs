@@ -163,10 +163,8 @@ namespace Lucene.Net.Index
 				if (docIDs.Count > 0)
 				{
 					newDeleteDocIDs = new List<int>(docIDs.Count);
-					System.Collections.Generic.IEnumerator<int> iter = docIDs.GetEnumerator();
-					while (iter.MoveNext())
+                    foreach(int num in docIDs)
 					{
-						int num = iter.Current;
 						newDeleteDocIDs.Add(mapper.Remap(num));
 					}
 				}
