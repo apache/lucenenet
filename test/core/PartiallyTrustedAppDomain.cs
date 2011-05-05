@@ -74,7 +74,7 @@ namespace Lucene.Net.Test
                     null);
         }
 
-        object Run(string methodName, object[] constructorArgs, object[] methodArgs)
+        object Run(string methodName, object[] methodArgs)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Test
         {
             try
             {
-                result = Run(binder.Name, null, args);
+                result = Run(binder.Name, args);
                 return true;
             }
             catch (MissingMethodException)
