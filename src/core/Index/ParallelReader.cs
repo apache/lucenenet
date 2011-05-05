@@ -112,11 +112,9 @@ namespace Lucene.Net.Index
 			
 			ICollection<string> fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 			readerToFields[reader] = fields;
-			System.Collections.IEnumerator i = fields.GetEnumerator();
-			while (i.MoveNext())
+            foreach(string field in fields)
 			{
 				// update fieldToReader map
-				System.String field = (System.String) i.Current;
 				if (fieldToReader[field] == null)
 					fieldToReader[field] = reader;
 			}
@@ -328,10 +326,9 @@ namespace Lucene.Net.Index
 				}
 				if (include)
 				{
-					System.Collections.IEnumerator fieldIterator = reader.Document(n, fieldSelector).GetFields().GetEnumerator();
-					while (fieldIterator.MoveNext())
+                    foreach(Fieldable f in reader.Document(n, fieldSelector).GetFields())
 					{
-						result.Add((Fieldable) fieldIterator.Current);
+						result.Add(f);
 					}
 				}
 			}

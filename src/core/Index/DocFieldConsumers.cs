@@ -61,8 +61,8 @@ namespace Lucene.Net.Index
             	DocFieldConsumersPerThread perThread = (DocFieldConsumersPerThread) entry.Key;
 				
 				IList<DocFieldConsumerPerField> fields = entry.Value;
-				
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
+
+                //IEnumerator<DocFieldConsumerPerField> fieldsIt = fields.GetEnumerator();
                 IList<DocFieldConsumerPerField> oneFields = new List<DocFieldConsumerPerField>();
                 IList<DocFieldConsumerPerField> twoFields = new List<DocFieldConsumerPerField>();
                 foreach (DocFieldConsumersPerField perField in fields)
