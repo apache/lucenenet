@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 
@@ -32,8 +33,8 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public class CachingTokenFilter:TokenFilter
 	{
-		private System.Collections.IList cache = null;
-		private System.Collections.IEnumerator iterator = null;
+        private IList<AttributeSource.State> cache = null;
+		private IEnumerator<AttributeSource.State> iterator = null;
 		private AttributeSource.State finalState;
 		
 		public CachingTokenFilter(TokenStream input):base(input)
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis
 			if (cache == null)
 			{
 				// fill cache lazily
-				cache = new System.Collections.ArrayList();
+                cache = new List<AttributeSource.State>();
 				FillCache();
 				iterator = cache.GetEnumerator();
 			}
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis
 				return false;
 			}
 			// Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
-			RestoreState((AttributeSource.State) iterator.Current);
+			RestoreState(iterator.Current);
 			return true;
 		}
 		
