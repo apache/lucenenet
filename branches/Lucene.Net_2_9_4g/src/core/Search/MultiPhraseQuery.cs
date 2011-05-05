@@ -132,9 +132,8 @@ namespace Lucene.Net.Search
 		// inherit javadoc
 		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
 		{
-			for (System.Collections.IEnumerator iter = termArrays.GetEnumerator(); iter.MoveNext(); )
+            foreach(Term[] arr in termArrays)
 			{
-				Term[] arr = (Term[]) iter.Current;
 				for (int i = 0; i < arr.Length; i++)
 				{
                     terms.Add(arr[i]);
@@ -171,10 +170,8 @@ namespace Lucene.Net.Search
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
 				// compute idf
-				System.Collections.IEnumerator i = Enclosing_Instance.termArrays.GetEnumerator();
-				while (i.MoveNext())
-				{
-					Term[] terms = (Term[]) i.Current;
+                foreach(Term[] terms in Enclosing_Instance.termArrays)
+                {
 					for (int j = 0; j < terms.Length; j++)
 					{
 						idf += Enclosing_Instance.GetSimilarity(searcher).Idf(terms[j], searcher);
@@ -320,7 +317,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
-		public override System.String ToString(System.String f)
+		public override string ToString(string f)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			if (!field.Equals(f))
@@ -330,9 +327,8 @@ namespace Lucene.Net.Search
 			}
 			
 			buffer.Append("\"");
-			System.Collections.IEnumerator i = termArrays.GetEnumerator();
             bool first = true;
-			while (i.MoveNext())
+            foreach(Term[] terms in termArrays)
 			{
                 if (first)
                 {
@@ -343,7 +339,6 @@ namespace Lucene.Net.Search
                     buffer.Append(" ");
                 }
 
-				Term[] terms = (Term[]) i.Current;
 				if (terms.Length > 1)
 				{
 					buffer.Append("(");
@@ -432,10 +427,8 @@ namespace Lucene.Net.Search
 		private int TermArraysHashCode()
 		{
 			int hashCode = 1;
-			System.Collections.IEnumerator iterator = termArrays.GetEnumerator();
-			while (iterator.MoveNext())
+            foreach(Term[] termArray in termArrays)
 			{
-				Term[] termArray = (Term[]) iterator.Current;
 				hashCode = 31 * hashCode + (termArray == null?0:ArraysHashCode(termArray));
 			}
 			return hashCode;
@@ -457,20 +450,24 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
+        /*
+         * DIGY: Unreferenced code.
+         * 
 		// Breakout calculation of the termArrays equals
-		private bool TermArraysEquals(System.Collections.IList termArrays1, System.Collections.IList termArrays2)
+        private bool TermArraysEquals(IList<Term[]> termArrays1, IList<Term[]> termArrays2)
 		{
 			if (termArrays1.Count != termArrays2.Count)
 			{
 				return false;
 			}
-			System.Collections.IEnumerator iterator1 = termArrays1.GetEnumerator();
-			System.Collections.IEnumerator iterator2 = termArrays2.GetEnumerator();
+			IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator();
+            IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator();
 			while (iterator1.MoveNext())
 			{
-				Term[] termArray1 = (Term[]) iterator1.Current;
-				Term[] termArray2 = (Term[]) iterator2.Current;
-				if (!(termArray1 == null ? termArray2 == null : TermEquals(termArray1, termArray2)))
+                iterator2.MoveNext();
+				Term[] termArray1 = iterator1.Current;
+				Term[] termArray2 = iterator2.Current;
+				if (!TermEquals(termArray1, termArray2))
 				{
 					return false;
 				}
@@ -478,28 +475,20 @@ namespace Lucene.Net.Search
 			return true;
 		}
 
-        public static bool TermEquals(System.Array array1, System.Array array2)
+        public static bool TermEquals(Term[] array1, Term[] array2)
         {
-            bool result = false;
-            if ((array1 == null) && (array2 == null))
-                result = true;
-            else if ((array1 != null) && (array2 != null))
+            if (array1 == null && array2 == null) return true;
+            if (array1 == null || array2 == null) return false;
+            if (array1.Length != array2.Length)  return false;
+            for (int index = 0; index < array1.Length; index++)
             {
-                if (array1.Length == array2.Length)
+                if (!(array1[index].Equals(array2[index])))
                 {
-                    int length = array1.Length;
-                    result = true;
-                    for (int index = 0; index < length; index++)
-                    {
-                        if (!(array1.GetValue(index).Equals(array2.GetValue(index))))
-                        {
-                            result = false;
-                            break;
-                        }
-                    }
+                    return false;
                 }
             }
-            return result;
+            return true;
         }
+        */
 	}
 }
