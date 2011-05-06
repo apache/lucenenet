@@ -1,0 +1,15 @@
+* Generics (not completed yet)
+	java's collections return null when an item does not exist in the collection whereas .NET throws exception.
+		-->SupportClass.Dictionary
+	java's Set can be accessed with indexer( myset[0] )
+		-->SupportClass.Set
+
+* IEquatable<T> (not completed yet)
+
+* "foreach" instead of "GetEnumerator/MoveNext" (not completed yet)
+
+* IDisposable for classes that implement "Close" method
+
+* LUCENENET-172 (fix for unexceptional exceptions ecountered in FastCharStream)
+
+* LUCENENET-413 (Medium trust security issue) &  test cases to run in partially trusted AppDomain

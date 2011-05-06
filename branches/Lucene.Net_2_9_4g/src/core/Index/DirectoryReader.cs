@@ -57,34 +57,35 @@ namespace Lucene.Net.Index
 					return new DirectoryReader(directory, infos, deletionPolicy, false, termInfosIndexDivisor);
 			}
 		}
-		private class AnonymousClassFindSegmentsFile1:SegmentInfos.FindSegmentsFile
-		{
-			private void  InitBlock(bool openReadOnly, DirectoryReader enclosingInstance)
-			{
-				this.openReadOnly = openReadOnly;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private bool openReadOnly;
-			private DirectoryReader enclosingInstance;
-			public DirectoryReader Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
+        //DIGY: not used anymore
+        //private class AnonymousClassFindSegmentsFile1:SegmentInfos.FindSegmentsFile
+        //{
+        //    private void  InitBlock(bool openReadOnly, DirectoryReader enclosingInstance)
+        //    {
+        //        this.openReadOnly = openReadOnly;
+        //        this.enclosingInstance = enclosingInstance;
+        //    }
+        //    private bool openReadOnly;
+        //    private DirectoryReader enclosingInstance;
+        //    public DirectoryReader Enclosing_Instance
+        //    {
+        //        get
+        //        {
+        //            return enclosingInstance;
+        //        }
 				
-			}
-			internal AnonymousClassFindSegmentsFile1(bool openReadOnly, DirectoryReader enclosingInstance, Lucene.Net.Store.Directory Param1):base(Param1)
-			{
-				InitBlock(openReadOnly, enclosingInstance);
-			}
-			public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-			{
-				SegmentInfos infos = new SegmentInfos();
-				infos.Read(directory, segmentFileName);
-				return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
-			}
-		}
+        //    }
+        //    internal AnonymousClassFindSegmentsFile1(bool openReadOnly, DirectoryReader enclosingInstance, Lucene.Net.Store.Directory Param1):base(Param1)
+        //    {
+        //        InitBlock(openReadOnly, enclosingInstance);
+        //    }
+        //    public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
+        //    {
+        //        SegmentInfos infos = new SegmentInfos();
+        //        infos.Read(directory, segmentFileName);
+        //        return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
+        //    }
+        //}
 		protected internal Directory directory;
 		protected internal bool readOnly;
 		
