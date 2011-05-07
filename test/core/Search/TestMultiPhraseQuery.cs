@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -177,7 +178,7 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhrasePrefixWithBooleanQuery()
 		{
 			RAMDirectory indexStore = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new System.Collections.Hashtable(0)), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(indexStore, new StandardAnalyzer(new List<string>(0)), true, IndexWriter.MaxFieldLength.LIMITED);
 			Add("This is a test", "object", writer);
 			Add("a note", "note", writer);
 			writer.Close();

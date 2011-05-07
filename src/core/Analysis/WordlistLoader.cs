@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -39,9 +40,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the file's words
 		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.FileInfo wordfile)
+		public static List<string> GetWordSet(System.IO.FileInfo wordfile)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            List<string> result = new List<string>();
 			System.IO.StreamReader reader = null;
 			try
 			{
@@ -68,9 +69,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the file's words
 		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.FileInfo wordfile, System.String comment)
+        public static List<string> GetWordSet(System.IO.FileInfo wordfile, System.String comment)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            List<string> result = new List<string>();
 			System.IO.StreamReader reader = null;
 			try
 			{
@@ -96,16 +97,16 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-		public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader)
+		public static List<string> GetWordSet(System.IO.TextReader reader)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            List<string> result = new List<string>();
 			System.IO.TextReader br = null;
 			try
 			{
 				System.String word = null;
 				while ((word = reader.ReadLine()) != null)
 				{
-					Support.CollectionsHelper.Add(result, word.Trim());
+					result.Add(word.Trim());
 				}
 			}
 			finally
@@ -128,9 +129,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A HashSet with the reader's words
 		/// </returns>
-        public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader, System.String comment)
+        public static List<string> GetWordSet(System.IO.TextReader reader, System.String comment)
 		{
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            List<string> result = new List<string>();
 			System.IO.StreamReader br = null;
 			try
 			{
@@ -139,7 +140,7 @@ namespace Lucene.Net.Analysis
 				{
 					if (word.StartsWith(comment) == false)
 					{
-						Support.CollectionsHelper.Add(result, word.Trim());
+						result.Add(word.Trim());
 					}
 				}
 			}
@@ -161,11 +162,11 @@ namespace Lucene.Net.Analysis
 		/// <returns> stem dictionary that overrules the stemming algorithm
 		/// </returns>
 		/// <throws>  IOException  </throws>
-		public static System.Collections.Hashtable GetStemDict(System.IO.FileInfo wordstemfile)
+		public static Dictionary<string,string> GetStemDict(System.IO.FileInfo wordstemfile)
 		{
 			if (wordstemfile == null)
 				throw new System.NullReferenceException("wordstemfile may not be null");
-			System.Collections.Hashtable result = new System.Collections.Hashtable();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 			System.IO.StreamReader br = null;
 			System.IO.StreamReader fr = null;
 			try

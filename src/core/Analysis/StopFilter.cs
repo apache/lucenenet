@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
@@ -114,7 +115,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead
 		/// </deprecated>
         [Obsolete("Use StopFilter(bool, TokenStream, Set, bool) instead")]
-		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
+		public StopFilter(TokenStream input, List<string> stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
 		{
 		}
 		
@@ -137,7 +138,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <param name="ignoreCase">-Ignore case when stopping.
 		/// </param>
-		public StopFilter(bool enablePositionIncrements, TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase):base(input)
+        public StopFilter(bool enablePositionIncrements, TokenStream input, List<string> stopWords, bool ignoreCase) : base(input)
 		{
 			if (stopWords is CharArraySet)
 			{
@@ -161,7 +162,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead
 		/// </deprecated>
         [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead")]
-		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
+        public StopFilter(TokenStream in_Renamed, List<string> stopWords) : this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
 		{
 		}
 		
@@ -177,7 +178,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <seealso cref="MakeStopSet(java.lang.String[])">
 		/// </seealso>
-		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.Collections.Hashtable stopWords):this(enablePositionIncrements, in_Renamed, stopWords, false)
+        public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, List<string> stopWords) : this(enablePositionIncrements, in_Renamed, stopWords, false)
 		{
 		}
 		
@@ -195,7 +196,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
-		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
+		public static List<string> MakeStopSet(System.String[] stopWords)
 		{
 			return MakeStopSet(stopWords, false);
 		}
@@ -208,7 +209,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
-		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords)
+        public static List<string> MakeStopSet(List<string> stopWords)
 		{
 			return MakeStopSet(stopWords, false);
 		}
@@ -220,10 +221,10 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> a Set containing the words
 		/// </returns>
-		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords, bool ignoreCase)
+        public static List<string> MakeStopSet(System.String[] stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
-			stopSet.AddAll(new System.Collections.ArrayList(stopWords));
+			stopSet.AddAll(stopWords);
 			return stopSet;
 		}
 		
@@ -234,10 +235,10 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A Set containing the words
 		/// </returns>
-		public static System.Collections.Hashtable MakeStopSet(System.Collections.IList stopWords, bool ignoreCase)
+        public static List<string> MakeStopSet(List<string> stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
-			stopSet.AddAll(stopWords);
+			stopSet.AddAll(stopWords.ToArray());
 			return stopSet;
 		}
 		

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -70,10 +71,10 @@ namespace Lucene.Net.Analysis
         [Test]
 		public virtual void  TestStopList()
 		{
-			System.Collections.Hashtable stopWordsSet = new System.Collections.Hashtable();
-			stopWordsSet.Add("good", "good");
-			stopWordsSet.Add("test", "test");
-			stopWordsSet.Add("analyzer", "analyzer");
+			List<string> stopWordsSet = new List<string>();
+			stopWordsSet.Add("good");
+			stopWordsSet.Add("test");
+			stopWordsSet.Add("analyzer");
 			StopAnalyzer newStop = new StopAnalyzer(stopWordsSet);
 			System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer");
 			TokenStream stream = newStop.TokenStream("test", reader);
@@ -96,10 +97,10 @@ namespace Lucene.Net.Analysis
 			StopFilter.SetEnablePositionIncrementsDefault(true);
 			try
 			{
-				System.Collections.Hashtable stopWordsSet = new System.Collections.Hashtable();
-				stopWordsSet.Add("good", "good");
-				stopWordsSet.Add("test", "test");
-				stopWordsSet.Add("analyzer", "analyzer");
+                List<string> stopWordsSet = new List<string>();
+				stopWordsSet.Add("good");
+				stopWordsSet.Add("test");
+				stopWordsSet.Add("analyzer");
 				StopAnalyzer newStop = new StopAnalyzer(stopWordsSet);
 				System.IO.StringReader reader = new System.IO.StringReader("This is a good test of the english stop analyzer with positions");
 				int[] expectedIncr = new int[]{1, 1, 1, 3, 1, 1, 1, 2, 1};

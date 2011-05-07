@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using Version = Lucene.Net.Util.Version;
 
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis
 	
 	public sealed class StopAnalyzer:Analyzer
 	{
-		private System.Collections.Hashtable stopWords;
+		private List<string> stopWords;
 		// @deprecated
         [Obsolete]
 		private bool useDefaultStopPositionIncrement;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>An unmodifiable set containing some common English words that are not usually useful
 		/// for searching.
 		/// </summary>
-		public static System.Collections.Hashtable ENGLISH_STOP_WORDS_SET;
+		public static List<string> ENGLISH_STOP_WORDS_SET;
 		
 		/// <summary>Builds an analyzer which removes words in
 		/// ENGLISH_STOP_WORDS.
@@ -96,7 +97,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
         [Obsolete("Use StopAnalyzer(Version, Set) instead")]
-		public StopAnalyzer(System.Collections.Hashtable stopWords)
+        public StopAnalyzer(List<string> stopWords)
 		{
 			this.stopWords = stopWords;
 			useDefaultStopPositionIncrement = true;
@@ -104,7 +105,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
-		public StopAnalyzer(Version matchVersion, System.Collections.Hashtable stopWords)
+        public StopAnalyzer(Version matchVersion, List<string> stopWords)
 		{
 			this.stopWords = stopWords;
 			useDefaultStopPositionIncrement = false;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
         [Obsolete("Use StopAnalyzer(Version, Set) instead")]
-		public StopAnalyzer(System.Collections.Hashtable stopWords, bool enablePositionIncrements)
+        public StopAnalyzer(List<string> stopWords, bool enablePositionIncrements)
 		{
 			this.stopWords = stopWords;
 			this.enablePositionIncrements = enablePositionIncrements;
@@ -311,7 +312,7 @@ namespace Lucene.Net.Analysis
 			{
 				System.String[] stopWords = new System.String[]{"a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
 				CharArraySet stopSet = new CharArraySet(stopWords.Length, false);
-				stopSet.AddAll(new System.Collections.ArrayList(stopWords));
+				stopSet.AddAll(stopWords);
 				ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
 			}
 		}

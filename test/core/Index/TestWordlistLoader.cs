@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -33,9 +34,9 @@ namespace Lucene.Net.Index
 		public virtual void  TestWordlistLoading()
 		{
 			System.String s = "ONE\n  two \nthree";
-			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
+            List<string> wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
 			CheckSet(wordSet1);
-			System.Collections.Hashtable wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
+            List<string> wordSet2 = WordlistLoader.GetWordSet(new System.IO.StringReader(s));
 			CheckSet(wordSet2);
 		}
 		
@@ -43,14 +44,14 @@ namespace Lucene.Net.Index
 		public virtual void  TestComments()
 		{
 			System.String s = "ONE\n  two \nthree\n#comment";
-			System.Collections.Hashtable wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s), "#");
+            List<string> wordSet1 = WordlistLoader.GetWordSet(new System.IO.StringReader(s), "#");
 			CheckSet(wordSet1);
 			Assert.IsFalse(wordSet1.Contains("#comment"));
 			Assert.IsFalse(wordSet1.Contains("comment"));
 		}
-		
-		
-		private void  CheckSet(System.Collections.Hashtable wordset)
+
+
+        private void CheckSet(List<string> wordset)
 		{
 			Assert.AreEqual(3, wordset.Count);
 			Assert.IsTrue(wordset.Contains("ONE")); // case is not modified
