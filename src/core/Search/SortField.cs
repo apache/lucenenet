@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
 	/// <seealso cref="Sort">
 	/// </seealso>
 	[Serializable]
-	public class SortField: System.Runtime.Serialization.ISerializable
+	public class SortField
 	{
 		
 		/// <summary>Sort by document score (relevancy).  Sort values are Float and higher
@@ -561,44 +561,10 @@ namespace Lucene.Net.Search
        //    field = StringHelper.intern(field);
        // }
 
-        /// <summary>
-        /// Lucene.Net specific. Needed for Serialization
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            //Should we add other fields as in NumericRangeQuery? {{DIGY}}
-
-            info.AddValue("type", type);
-            info.AddValue("useLegacy", useLegacy);
-            info.AddValue("reverse", reverse);
-            info.AddValue("locale", locale);
-            info.AddValue("comparatorSource", comparatorSource);
-            info.AddValue("factory", factory);
-            info.AddValue("parser", parser);
-                        
-            info.AddValue("field", field);
-        }
-
-        /// <summary>
-        /// Lucene.Net specific. Needed for deserialization
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        protected SortField(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            //Should we add other fields as in NumericRangeQuery? {{DIGY}}
-
-            type        = (int)info.GetValue("type", typeof(int));
-            useLegacy   = (bool)info.GetValue("useLegacy", typeof(bool));
-            reverse     = (bool)info.GetValue("reverse", typeof(bool));
-            locale      = (System.Globalization.CultureInfo)info.GetValue("locale", typeof(System.Globalization.CultureInfo));
-            comparatorSource = (FieldComparatorSource)info.GetValue("comparatorSource", typeof(FieldComparatorSource));
-            factory          = (SortComparatorSource)info.GetValue("factory", typeof(FieldComparatorSource));
-            parser           = (Parser)info.GetValue("parser", typeof(Parser));
-                        
-            field       = StringHelper.Intern((string)info.GetValue("field", typeof(string)));
+            field = StringHelper.Intern(field);
         }
 		
 		/// <summary>Returns the {@link FieldComparator} to use for
