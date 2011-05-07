@@ -527,6 +527,7 @@
     <Compile Include="Search\ConstantScoreRangeQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Regex\CSharpRegexCapabilities.cs" />
     <Compile Include="Search\DefaultSimilarity.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -619,6 +620,8 @@
     <Compile Include="Search\IndexSearcher.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Regex\IRegexCapabilities.cs" />
+    <Compile Include="Search\Regex\IRegexQueryCapable.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -681,6 +684,8 @@
     <Compile Include="Search\RangeQuery.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\Regex\RegexQuery.cs" />
+    <Compile Include="Search\Regex\RegexTermEnum.cs" />
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -727,6 +732,7 @@
     <Compile Include="Search\SpanFilter.cs" />
     <Compile Include="Search\SpanFilterResult.cs" />
     <Compile Include="Search\SpanQueryFilter.cs" />
+    <Compile Include="Search\Regex\SpanRegexQuery.cs" />
     <Compile Include="Search\Spans\FieldMaskingSpanQuery.cs" />
     <Compile Include="Search\Spans\NearSpansOrdered.cs">
       <SubType>Code</SubType>
