@@ -110,9 +110,8 @@ namespace Lucene.Net.Search
 				//termFreqs = (int[])tmpFreqs.toArray(termFreqs);
 				termFreqs = new int[tmpFreqs.Count];
 				int i2 = 0;
-				for (System.Collections.IEnumerator iter = tmpFreqs.GetEnumerator(); iter.MoveNext(); )
+                foreach(int integer in tmpFreqs)
 				{
-					System.Int32 integer = (System.Int32) iter.Current;
 					termFreqs[i2++] = integer;
 				}
 			}
