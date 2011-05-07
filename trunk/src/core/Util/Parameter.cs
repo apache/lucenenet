@@ -16,15 +16,16 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
 	
 	/// <summary> A serializable Enum class.</summary>
 	[Serializable]
-    public abstract class Parameter : System.Runtime.Serialization.IObjectReference
+    public abstract class Parameter 
 	{
-		internal static System.Collections.IDictionary allParameters = new System.Collections.Hashtable();
+        internal static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
 		
 		private System.String name;
 		
@@ -37,20 +38,20 @@ namespace Lucene.Net.Util
 		{
 			// typesafe enum pattern, no public constructor
 			this.name = name;
-			System.String key = MakeKey(name);
+			string key = MakeKey(name);
 			
-			if (allParameters.Contains(key))
+			if (allParameters.ContainsKey(key))
 				throw new System.ArgumentException("Parameter name " + key + " already used!");
 			
 			allParameters[key] = this;
 		}
 		
-		private System.String MakeKey(System.String name)
+		private string MakeKey(System.String name)
 		{
 			return GetType() + " " + name;
 		}
 		
-		public override System.String ToString()
+		public override string ToString()
 		{
 			return name;
 		}
@@ -62,20 +63,20 @@ namespace Lucene.Net.Util
 		/// <returns> a reference to Parameter as resolved in the local VM
 		/// </returns>
 		/// <throws>  ObjectStreamException </throws>
-		protected internal virtual System.Object ReadResolve()
-		{
-			System.Object par = allParameters[MakeKey(name)];
+        //protected internal virtual System.Object ReadResolve()
+        //{
+        //    System.Object par = allParameters[MakeKey(name)];
 			
-			if (par == null)
-				throw new System.IO.IOException("Unknown parameter value: " + name);
+        //    if (par == null)
+        //        throw new System.IO.IOException("Unknown parameter value: " + name);
 			
-			return par;
-		}
+        //    return par;
+        //}
 
-        // "ReadResolve"s equivalent for .NET
-        public Object GetRealObject(System.Runtime.Serialization.StreamingContext context)
+        public override bool Equals(object obj)
         {
-            return ReadResolve();
+            if (obj.GetType() != this.GetType()) return false;
+            return this.name.Equals((obj as Parameter).name);
         }
 	}
 }
