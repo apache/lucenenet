@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 
                     if (cache == null)
                     {
-                        cache = new SupportClass.WeakHashTable();
+                        cache = new Support.WeakHashTable();
                     }
 
                     if (deletesMode == DeletesMode.IGNORE)

@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
 			
 			while (hi >= lo)
 			{
-				int mid = SupportClass.Number.URShift((lo + hi), 1);
+				int mid = Support.Number.URShift((lo + hi), 1);
 				int delta = term.CompareTo(indexTerms[mid]);
 				if (delta < 0)
 					hi = mid - 1;

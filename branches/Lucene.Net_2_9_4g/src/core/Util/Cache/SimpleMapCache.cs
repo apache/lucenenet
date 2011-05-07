@@ -27,13 +27,13 @@ namespace Lucene.Net.Util.Cache
 	/// </summary>
     public class SimpleMapCache<K, V> : Cache<K, V>
 	{
-        internal SupportClass.Dictionary<K, V> map;
+        internal Support.Dictionary<K, V> map;
 		
-		public SimpleMapCache():this(new SupportClass.Dictionary<K,V>())
+		public SimpleMapCache():this(new Support.Dictionary<K,V>())
 		{
 		}
 
-        public SimpleMapCache(SupportClass.Dictionary<K, V> map)
+        public SimpleMapCache(Support.Dictionary<K, V> map)
 		{
 			this.map = map;
 		}

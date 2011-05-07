@@ -47,13 +47,13 @@ namespace Lucene.Net.Index
 			endConsumer.SetFieldInfos(fieldInfos);
 		}
 
-        public override void Flush(SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        public override void Flush(Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 
-            SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
-            SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> endChildThreadsAndFields = new SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>>();
+            Support.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> childThreadsAndFields = new Support.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
+            Support.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> endChildThreadsAndFields = new Support.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>>();
 
-            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
+            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
             {
                 DocInverterPerThread perThread = (DocInverterPerThread)entry.Key;
                                 

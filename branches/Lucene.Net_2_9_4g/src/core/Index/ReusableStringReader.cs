@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         {
             if (left > len)
             {
-                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
+                Support.TextSupport.GetCharsFromString(s, upto, upto + len, c, off);
                 upto += len;
                 left -= len;
                 return len;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                SupportClass.TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
+                Support.TextSupport.GetCharsFromString(s, upto, upto + left, c, off);
                 int r = left;
                 left = 0;
                 upto = s.Length;

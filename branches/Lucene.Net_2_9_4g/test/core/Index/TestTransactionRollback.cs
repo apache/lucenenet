@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			r.Close();
-			Assert.AreEqual(0, SupportClass.BitSetSupport.Cardinality(expecteds), "Should have 0 docs remaining ");
+			Assert.AreEqual(0, Support.BitSetSupport.Cardinality(expecteds), "Should have 0 docs remaining ");
 		}
 		
 		/*

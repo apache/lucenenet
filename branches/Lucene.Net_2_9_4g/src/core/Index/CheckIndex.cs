@@ -445,7 +445,7 @@ namespace Lucene.Net.Index
 			System.String userDataString;
 			if (sis.GetUserData().Count > 0)
 			{
-				userDataString = " userData=" + SupportClass.CollectionsHelper.CollectionToString(sis.GetUserData());
+				userDataString = " userData=" + Support.CollectionsHelper.CollectionToString(sis.GetUserData());
 			}
 			else
 			{
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
 					segInfoStat.diagnostics = diagnostics;
 					if (diagnostics.Count > 0)
 					{
-						Msg("    diagnostics = " + SupportClass.CollectionsHelper.CollectionToString(diagnostics));
+						Msg("    diagnostics = " + Support.CollectionsHelper.CollectionToString(diagnostics));
 					}
 					
 					int docStoreOffset = info.GetDocStoreOffset();

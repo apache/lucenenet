@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 		
 		private bool greedy;
 		
-		private sealed class TimerThread:SupportClass.ThreadClass
+		private sealed class TimerThread:Support.ThreadClass
 		{
 			
 			// NOTE: we can avoid explicit synchronization here for several reasons:
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}

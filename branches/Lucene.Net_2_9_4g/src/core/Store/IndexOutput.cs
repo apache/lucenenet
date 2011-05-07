@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Support.Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}
@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Support.Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					WriteByte((byte) (0xE0 | (SupportClass.Number.URShift(code, 12))));
+					WriteByte((byte) (0xE0 | (Support.Number.URShift(code, 12))));
 					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
 					WriteByte((byte) (0x80 | (code & 0x3F)));
 				}
@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					WriteByte((byte) (0xE0 | (SupportClass.Number.URShift(code, 12))));
+					WriteByte((byte) (0xE0 | (Support.Number.URShift(code, 12))));
 					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
 					WriteByte((byte) (0x80 | (code & 0x3F)));
 				}

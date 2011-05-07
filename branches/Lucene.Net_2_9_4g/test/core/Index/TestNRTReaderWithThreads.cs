@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 			mainDir.Close();
 		}
 		
-		public class RunThread:SupportClass.ThreadClass
+		public class RunThread:Support.ThreadClass
 		{
 			private void  InitBlock(TestNRTReaderWithThreads enclosingInstance)
 			{

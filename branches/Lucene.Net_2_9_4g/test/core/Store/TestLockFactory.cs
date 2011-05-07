@@ -237,25 +237,25 @@ namespace Lucene.Net.Store
 			{
 				
 				// NoLockFactory:
-				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.NoLockFactory");
+				Support.AppSettings.Set(prpName, "Lucene.Net.Store.NoLockFactory");
 				IndexWriter writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// SingleInstanceLockFactory:
-				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.SingleInstanceLockFactory");
+				Support.AppSettings.Set(prpName, "Lucene.Net.Store.SingleInstanceLockFactory");
 				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// NativeFSLockFactory:
-				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.NativeFSLockFactory");
+				Support.AppSettings.Set(prpName, "Lucene.Net.Store.NativeFSLockFactory");
 				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(NativeFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
 				
 				// SimpleFSLockFactory:
-				SupportClass.AppSettings.Set(prpName, "Lucene.Net.Store.SimpleFSLockFactory");
+				Support.AppSettings.Set(prpName, "Lucene.Net.Store.SimpleFSLockFactory");
 				writer = new IndexWriter(indexDirName, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 				Assert.IsTrue(typeof(SimpleFSLockFactory).IsInstanceOfType(writer.GetDirectory().GetLockFactory()), "FSDirectory did not use correct LockFactory: got " + writer.GetDirectory().GetLockFactory());
 				writer.Close();
@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
 			finally
 			{
 				// Put back to the correct default for subsequent tests:
-				SupportClass.AppSettings.Set("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
+				Support.AppSettings.Set("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
 			}
 			
 			// Cleanup
@@ -397,7 +397,7 @@ namespace Lucene.Net.Store
 		public virtual void  TestNativeFSLockFactory()
 		{
 			
-			NativeFSLockFactory f = new NativeFSLockFactory(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
+			NativeFSLockFactory f = new NativeFSLockFactory(Support.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
 			f.SetLockPrefix("test");
 			Lock l = f.MakeLock("commit");
@@ -457,7 +457,7 @@ namespace Lucene.Net.Store
 			_TestUtil.RmDir(dirName);
 		}
 		
-		private class WriterThread:SupportClass.ThreadClass
+		private class WriterThread:Support.ThreadClass
 		{
 			private void  InitBlock(TestLockFactory enclosingInstance)
 			{
@@ -546,7 +546,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		private class SearcherThread:SupportClass.ThreadClass
+		private class SearcherThread:Support.ThreadClass
 		{
 			private void  InitBlock(TestLockFactory enclosingInstance)
 			{

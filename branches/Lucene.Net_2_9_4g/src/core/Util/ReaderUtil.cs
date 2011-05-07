@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
 			int hi = size - 1; // for first element less than n, return its index
 			while (hi >= lo)
 			{
-				int mid = SupportClass.Number.URShift((lo + hi), 1);
+				int mid = Support.Number.URShift((lo + hi), 1);
 				int midValue = docStarts[mid];
 				if (n < midValue)
 					hi = mid - 1;

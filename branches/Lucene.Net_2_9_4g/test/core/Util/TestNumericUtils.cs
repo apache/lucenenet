@@ -77,20 +77,20 @@ namespace Lucene.Net.Util
                 neededBounds.MoveNext();
                 try
                 {
-                    Assert.AreEqual(neededBounds.Current, (ulong)SupportClass.Number.URShift(min, shift), "inner min bound");
+                    Assert.AreEqual(neededBounds.Current, (ulong)Support.Number.URShift(min, shift), "inner min bound");
                 }
                 catch (OverflowException)
                 {
-                    Assert.AreEqual((long)neededBounds.Current, SupportClass.Number.URShift(min, shift), "inner min bound");
+                    Assert.AreEqual((long)neededBounds.Current, Support.Number.URShift(min, shift), "inner min bound");
                 }
                 neededBounds.MoveNext();
                 try
                 {
-                    Assert.AreEqual(neededBounds.Current, (ulong)SupportClass.Number.URShift(max, shift), "inner max bound");
+                    Assert.AreEqual(neededBounds.Current, (ulong)Support.Number.URShift(max, shift), "inner max bound");
                 }
                 catch (OverflowException)
                 {
-                    Assert.AreEqual((long)neededBounds.Current, SupportClass.Number.URShift(max, shift), "inner max bound");
+                    Assert.AreEqual((long)neededBounds.Current, Support.Number.URShift(max, shift), "inner max bound");
                 }
             }
 		}
@@ -145,9 +145,9 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(((int)neededShifts.Current), shift,"shift");
 				//System.out.println("new Integer(0x"+Integer.toHexString(min>>>shift)+"),new Integer(0x"+Integer.toHexString(max>>>shift)+"),");
                 neededBounds.MoveNext();
-				Assert.AreEqual(((System.Int32) neededBounds.Current), SupportClass.Number.URShift(min, shift), "inner min bound");
+				Assert.AreEqual(((System.Int32) neededBounds.Current), Support.Number.URShift(min, shift), "inner min bound");
                 neededBounds.MoveNext();
-				Assert.AreEqual(((System.Int32) neededBounds.Current), SupportClass.Number.URShift(max, shift), "inner max bound");
+				Assert.AreEqual(((System.Int32) neededBounds.Current), Support.Number.URShift(max, shift), "inner max bound");
 			}
 		}
 		
@@ -448,7 +448,7 @@ namespace Lucene.Net.Util
                 if (random.Next(2) == 1) val += random.Next(100) - 50;
                 if (random.Next(2) == 1) val = ~val;
                 if (random.Next(2) == 1) val = val << 1;
-                if (random.Next(2) == 1) val = SupportClass.Number.URShift(val, 1);
+                if (random.Next(2) == 1) val = Support.Number.URShift(val, 1);
             }
 
             return val;

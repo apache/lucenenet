@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Spans
 			return spanFirstQuery;
 		}
 		
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
 			match.ExtractTerms(terms);
 		}
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Spans
 		public override int GetHashCode()
 		{
 			int h = match.GetHashCode();
-			h ^= ((h << 8) | (SupportClass.Number.URShift(h, 25))); // reversible
+			h ^= ((h << 8) | (Support.Number.URShift(h, 25))); // reversible
 			h ^= System.Convert.ToInt32(GetBoost()) ^ end;
 			return h;
 		}

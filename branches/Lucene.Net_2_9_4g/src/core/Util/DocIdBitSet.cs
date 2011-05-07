@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
 			public override int NextDoc()
 			{
 				// (docId + 1) on next line requires -1 initial value for docNr:
-				int d = SupportClass.BitSetSupport.NextSetBit(bitSet, docId + 1);
+				int d = Support.BitSetSupport.NextSetBit(bitSet, docId + 1);
 				// -1 returned by BitSet.nextSetBit() when exhausted
 				docId = d == - 1?NO_MORE_DOCS:d;
 				return docId;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
 			
 			public override int Advance(int target)
 			{
-				int d = SupportClass.BitSetSupport.NextSetBit(bitSet, target);
+				int d = Support.BitSetSupport.NextSetBit(bitSet, target);
 				// -1 returned by BitSet.nextSetBit() when exhausted
 				docId = d == - 1?NO_MORE_DOCS:d;
 				return docId;

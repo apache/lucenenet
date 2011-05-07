@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis
 	public class PerFieldAnalyzerWrapper:Analyzer
 	{
 		private Analyzer defaultAnalyzer;
-        private SupportClass.Dictionary<String, Analyzer> analyzerMap = new SupportClass.Dictionary<string, Analyzer>();
+        private Support.Dictionary<String, Analyzer> analyzerMap = new Support.Dictionary<string, Analyzer>();
 		
 		
 		/// <summary> Constructs with default analyzer.

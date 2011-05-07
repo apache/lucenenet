@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 		public override void  SetUp()
 		{
 			base.SetUp();
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testIndex"));
 			_TestUtil.RmDir(file);
 			// use a simple FSDir here, to be sure to have SimpleFSInputs
 			dir = new SimpleFSDirectory(file, null);

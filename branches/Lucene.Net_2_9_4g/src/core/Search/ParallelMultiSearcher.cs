@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					Support.ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
 				System.IO.IOException ioe = msta[i].GetIOException();
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					Support.ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
 				System.IO.IOException ioe = msta[i].GetIOException();
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary> A thread subclass for searching a single searchable </summary>
-	class MultiSearcherThread:SupportClass.ThreadClass
+	class MultiSearcherThread:Support.ThreadClass
 	{
 		
 		private Searchable searchable;

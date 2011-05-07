@@ -953,7 +953,7 @@ namespace Lucene.Net.Search
 			
 			while (low <= high)
 			{
-				int mid = SupportClass.Number.URShift((low + high), 1);
+				int mid = Support.Number.URShift((low + high), 1);
 				System.String midVal = a[mid];
 				int cmp;
 				if (midVal != null)

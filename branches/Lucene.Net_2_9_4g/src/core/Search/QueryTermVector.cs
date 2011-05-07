@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 			if (queryTerms != null)
 			{
 				System.Array.Sort<string>(queryTerms);
-                SupportClass.Dictionary<string, int?> tmpSet = new SupportClass.Dictionary<string, int?>(queryTerms.Length); 
+                Support.Dictionary<string, int?> tmpSet = new Support.Dictionary<string, int?>(queryTerms.Length); 
 				//filter out duplicates
                 List<String> tmpList = new List<String>(queryTerms.Length);
                 List<int> tmpFreqs = new List<int>(queryTerms.Length);

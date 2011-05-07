@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
 			
 			private sealed class DefaultAttributeFactory:AttributeFactory
 			{
-                private static readonly SupportClass.WeakHashTable attClassImplMap = new SupportClass.WeakHashTable();
+                private static readonly Support.WeakHashTable attClassImplMap = new Support.WeakHashTable();
                 
 				internal DefaultAttributeFactory()
 				{
@@ -96,8 +96,8 @@ namespace Lucene.Net.Util
 		
 		// These two maps must always be in sync!!!
 		// So they are private, final and read-only from the outside (read-only iterators)
-		private SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem> attributes;
-		private SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem> attributeImpls;
+		private Support.GeneralKeyedCollection<Type, Support.AttributeImplItem> attributes;
+		private Support.GeneralKeyedCollection<Type, Support.AttributeImplItem> attributeImpls;
 		
 		private AttributeFactory factory;
 		
@@ -121,8 +121,8 @@ namespace Lucene.Net.Util
 		/// <summary> An AttributeSource using the supplied {@link AttributeFactory} for creating new {@link Attribute} instances.</summary>
 		public AttributeSource(AttributeFactory factory)
 		{
-            this.attributes = new SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem>(delegate(SupportClass.AttributeImplItem att) { return att.Key; });
-            this.attributeImpls = new SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem>(delegate(SupportClass.AttributeImplItem att) { return att.Key; });
+            this.attributes = new Support.GeneralKeyedCollection<Type, Support.AttributeImplItem>(delegate(Support.AttributeImplItem att) { return att.Key; });
+            this.attributeImpls = new Support.GeneralKeyedCollection<Type, Support.AttributeImplItem>(delegate(Support.AttributeImplItem att) { return att.Key; });
 			this.factory = factory;
 		}
 		
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public virtual IEnumerable<Type> GetAttributeClassesIterator()
 		{
-            foreach (SupportClass.AttributeImplItem item in this.attributes)
+            foreach (Support.AttributeImplItem item in this.attributes)
             {
                 yield return item.Key;
             }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-		private static readonly SupportClass.WeakHashTable knownImplClasses = new SupportClass.WeakHashTable();
+		private static readonly Support.WeakHashTable knownImplClasses = new Support.WeakHashTable();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
         /*
@@ -229,10 +229,10 @@ namespace Lucene.Net.Util
 				{
 					// invalidate state to force recomputation in captureState()
 					this.currentState = null;
-                    attributes.Add(new SupportClass.AttributeImplItem(curInterface, att));
+                    attributes.Add(new Support.AttributeImplItem(curInterface, att));
                     if (!attributeImpls.ContainsKey(clazz))
                     {
-                        attributeImpls.Add(new SupportClass.AttributeImplItem(clazz, att));
+                        attributeImpls.Add(new Support.AttributeImplItem(clazz, att));
                     }
 				}
 			}
@@ -335,7 +335,7 @@ namespace Lucene.Net.Util
 		{
 			currentState = new State();
 			State c = currentState;
-            IEnumerator<SupportClass.AttributeImplItem> it = attributeImpls.GetEnumerator();
+            IEnumerator<Support.AttributeImplItem> it = attributeImpls.GetEnumerator();
 			if (it.MoveNext())
 				c.attribute = it.Current.Value;
 			while (it.MoveNext())
@@ -524,14 +524,14 @@ namespace Lucene.Net.Util
 				for (State state = currentState; state != null; state = state.next)
 				{
 					AttributeImpl impl = (AttributeImpl) state.attribute.Clone();
-                    clone.attributeImpls.Add(new SupportClass.AttributeImplItem(impl.GetType(), impl));
+                    clone.attributeImpls.Add(new Support.AttributeImplItem(impl.GetType(), impl));
 				}
 			}
 			
 			// now the interfaces
-            foreach (SupportClass.AttributeImplItem att in this.attributes)
+            foreach (Support.AttributeImplItem att in this.attributes)
 			{
-                clone.attributes.Add(new SupportClass.AttributeImplItem(att.Key, clone.attributeImpls[att.Value.GetType()].Value));
+                clone.attributes.Add(new Support.AttributeImplItem(att.Key, clone.attributeImpls[att.Value.GetType()].Value));
 			}
 			
 			return clone;

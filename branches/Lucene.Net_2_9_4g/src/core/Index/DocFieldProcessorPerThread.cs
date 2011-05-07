@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
 				return ;
 			}
 			
-			int mid = SupportClass.Number.URShift((lo + hi), 1);
+			int mid = Support.Number.URShift((lo + hi), 1);
 			
 			if (String.CompareOrdinal(array[lo].fieldInfo.name, array[mid].fieldInfo.name) > 0)
 			{

@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
             foreach(Term[] arr in termArrays)
 			{
@@ -388,7 +388,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < this.termArrays.Count; i++)
             {
-                if (!SupportClass.Compare.CompareTermArrays((Term[])this.termArrays[i], (Term[])other.termArrays[i]))
+                if (!Support.Compare.CompareTermArrays((Term[])this.termArrays[i], (Term[])other.termArrays[i]))
                 {
                     return false;
                 }

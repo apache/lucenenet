@@ -405,7 +405,7 @@ namespace Lucene.Net.Store
 		{
 			if (directory.Exists)
  			{
- 				System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter()); // clear old files
+ 				System.String[] files = Support.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter()); // clear old files
  				if (files == null)
  					throw new System.IO.IOException("cannot read directory " + directory.FullName + ": list() returned null");
  				for (int i = 0; i < files.Length; i++)
@@ -608,7 +608,7 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					System.String lockClassName = SupportClass.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
+					System.String lockClassName = Support.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
 					
 					if (lockClassName != null && !lockClassName.Equals(""))
 					{
@@ -721,7 +721,7 @@ namespace Lucene.Net.Store
 		public override System.String[] List()
 		{
 			EnsureOpen();
-			return SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
+			return Support.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
 		}
 		
 		/// <summary>Lists all files (not subdirectories) in the
@@ -838,7 +838,7 @@ namespace Lucene.Net.Store
 					try
 					{
                         file = new System.IO.FileStream(fullFile.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                        SupportClass.FileSupport.Sync(file);
+                        Support.FileSupport.Sync(file);
                         success = true;
 					}
 					finally
@@ -860,7 +860,7 @@ namespace Lucene.Net.Store
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
                         throw new System.SystemException(ie.ToString(), ie);
 					}
 				}
@@ -1075,7 +1075,7 @@ namespace Lucene.Net.Store
 			{
 				try
 				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(SimpleFSDirectory).FullName);
+					System.String name = Support.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(SimpleFSDirectory).FullName);
 					if (typeof(FSDirectory).FullName.Equals(name))
 					{
 						// FSDirectory will be abstract, so we replace it by the correct class
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Store
 			{
 				try
 				{
-					DIGESTER = SupportClass.Cryptography.GetHashAlgorithm();
+					DIGESTER = Support.Cryptography.GetHashAlgorithm();
 				}
 				catch (System.Exception e)
 				{

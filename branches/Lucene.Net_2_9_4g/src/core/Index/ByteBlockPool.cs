@@ -152,9 +152,9 @@ namespace Lucene.Net.Index
 			buffer[newUpto + 2] = slice[upto - 1];
 			
 			// Write forwarding address at end of last slice:
-			slice[upto - 3] = (byte) (SupportClass.Number.URShift(offset, 24));
-			slice[upto - 2] = (byte) (SupportClass.Number.URShift(offset, 16));
-			slice[upto - 1] = (byte) (SupportClass.Number.URShift(offset, 8));
+			slice[upto - 3] = (byte) (Support.Number.URShift(offset, 24));
+			slice[upto - 2] = (byte) (Support.Number.URShift(offset, 16));
+			slice[upto - 1] = (byte) (Support.Number.URShift(offset, 8));
 			slice[upto] = (byte) offset;
 			
 			// Write new level:

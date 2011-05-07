@@ -17,3 +17,5 @@
 * LUCENENET-330 Search.Regex Minimal Port
 
 * LUCENENET-371 Unit test for Search.Regex port
+
+* LUCENENET-266 Refactoring SupportClass

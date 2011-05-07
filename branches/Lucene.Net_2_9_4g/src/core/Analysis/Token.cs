@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis
 			termText = null;
 			int length = buffer.Length;
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
+			Support.TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
 			termLength = length;
 		}
 		
@@ -465,7 +465,7 @@ namespace Lucene.Net.Analysis
 			System.Diagnostics.Debug.Assert(offset + length <= buffer.Length);
 			termText = null;
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
+			Support.TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
 			termLength = length;
 		}
 		
@@ -507,7 +507,7 @@ namespace Lucene.Net.Analysis
 					int ttLen = termText.Length;
 					newSize = newSize < ttLen?ttLen:newSize;
 					termBuffer = new char[ArrayUtil.GetNextSize(newSize)];
-					SupportClass.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
+					Support.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
 					termText = null;
 				}
 				else
@@ -573,7 +573,7 @@ namespace Lucene.Net.Analysis
 						length = MIN_BUFFER_SIZE;
 					termBuffer = new char[ArrayUtil.GetNextSize(length)];
 					termLength = termText.Length;
-					SupportClass.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
+					Support.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
 					termText = null;
 				}
 			}

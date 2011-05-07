@@ -114,7 +114,7 @@ namespace Lucene.Net.Store
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					Support.ThreadClass.Current().Interrupt();
 					throw new System.IO.IOException(e.ToString());
 				}
 				locked = Obtain();

@@ -29,18 +29,18 @@ namespace Lucene.Net.Index
 	{
 		
 		private static IndexFileNameFilter singleton = new IndexFileNameFilter();
-        private SupportClass.Set<string> extensions;
-        private SupportClass.Set<string> extensionsInCFS;
+        private Support.Set<string> extensions;
+        private Support.Set<string> extensionsInCFS;
 		
 		// Prevent instantiation.
 		private IndexFileNameFilter()
 		{
-            extensions = new SupportClass.Set<string>();
+            extensions = new Support.Set<string>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
 				extensions.Add(IndexFileNames.INDEX_EXTENSIONS[i]);
 			}
-            extensionsInCFS = new SupportClass.Set<string>();
+            extensionsInCFS = new Support.Set<string>();
 			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE.Length; i++)
 			{
 				extensionsInCFS.Add(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE[i]);

@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 		private System.String fileName;
 		
 		private IndexInput stream;
-        private SupportClass.Dictionary<string, FileEntry> entries = new SupportClass.Dictionary<string, FileEntry>();
+        private Support.Dictionary<string, FileEntry> entries = new Support.Dictionary<string, FileEntry>();
 		
 		
 		public CompoundFileReader(Directory dir, System.String name):this(dir, name, BufferedIndexInput.BUFFER_SIZE)

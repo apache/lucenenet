@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
 	{
 		
 		[ThreadStatic]
-        static SupportClass.WeakHashTable slots;
+        static Support.WeakHashTable slots;
 		
 		public /*protected internal*/ virtual System.Object InitialValue()
 		{
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
 		public virtual void  Set(System.Object object_Renamed)
 		{
             if (slots == null)
-                slots = new SupportClass.WeakHashTable();
+                slots = new Support.WeakHashTable();
 
 			slots[this] = object_Renamed;	
 		}

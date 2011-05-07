@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis
 
             while (hi >= lo)
             {
-                mid = SupportClass.Number.URShift(lo + hi, 1);
+                mid = Support.Number.URShift(lo + hi, 1);
                 if (currentOff < offsets[mid])
                     hi = mid - 1;
                 else if (currentOff > offsets[mid])

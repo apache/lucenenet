@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Spans
 				return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size() > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
 			}
 		}
-		private SupportClass.EquatableList<SpanQuery> clauses;
+		private Support.EquatableList<SpanQuery> clauses;
 		private System.String field;
 		
 		/// <summary>Construct a SpanOrQuery merging the provided clauses. </summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			
 			// copy clauses array into an ArrayList
-			this.clauses = new SupportClass.EquatableList<SpanQuery>(clauses.Length);
+			this.clauses = new Support.EquatableList<SpanQuery>(clauses.Length);
 			for (int i = 0; i < clauses.Length; i++)
 			{
 				SpanQuery clause = clauses[i];
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
 			System.Collections.IEnumerator i = clauses.GetEnumerator();
 			while (i.MoveNext())
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Spans
 		public override int GetHashCode()
 		{
 			int h = clauses.GetHashCode();
-			h ^= ((h << 10) | (SupportClass.Number.URShift(h, 23)));
+			h ^= ((h << 10) | (Support.Number.URShift(h, 23)));
 			h ^= System.Convert.ToInt32(GetBoost());
 			return h;
 		}

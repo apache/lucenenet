@@ -164,9 +164,9 @@ namespace Lucene.Net.Index
 			
 			System.Collections.Hashtable dif = DifFiles(files, files2);
 			
-			if (!SupportClass.CollectionsHelper.Equals(files, files2))
+			if (!Support.CollectionsHelper.Equals(files, files2))
 			{
-				Assert.Fail("IndexFileDeleter failed to delete unreferenced extra files: should have deleted " + (filesPre.Length - files.Length) + " files but only deleted " + (filesPre.Length - files2.Length) + "; expected files:\n    " + AsString(files) + "\n  actual files:\n    " + AsString(files2) + "\ndif: " + SupportClass.CollectionsHelper.CollectionToString(dif));
+				Assert.Fail("IndexFileDeleter failed to delete unreferenced extra files: should have deleted " + (filesPre.Length - files.Length) + " files but only deleted " + (filesPre.Length - files2.Length) + "; expected files:\n    " + AsString(files) + "\n  actual files:\n    " + AsString(files2) + "\ndif: " + Support.CollectionsHelper.CollectionToString(dif));
 			}
 		}
 		
@@ -177,11 +177,11 @@ namespace Lucene.Net.Index
 			System.Collections.Hashtable extra = new System.Collections.Hashtable();
 			for (int x = 0; x < files1.Length; x++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(set1, files1[x]);
+				Support.CollectionsHelper.AddIfNotContains(set1, files1[x]);
 			}
 			for (int x = 0; x < files2.Length; x++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(set2, files2[x]);
+				Support.CollectionsHelper.AddIfNotContains(set2, files2[x]);
 			}
 			System.Collections.IEnumerator i1 = set1.GetEnumerator();
 			while (i1.MoveNext())
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
 				System.Object o = i1.Current;
 				if (!set2.Contains(o))
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(extra, o);
+					Support.CollectionsHelper.AddIfNotContains(extra, o);
 				}
 			}
 			System.Collections.IEnumerator i2 = set2.GetEnumerator();
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 				System.Object o = i2.Current;
 				if (!set1.Contains(o))
 				{
-					SupportClass.CollectionsHelper.AddIfNotContains(extra, o);
+					Support.CollectionsHelper.AddIfNotContains(extra, o);
 				}
 			}
 			return extra;

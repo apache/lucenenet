@@ -166,11 +166,11 @@ namespace Lucene.Net.Util
 		public SortedVIntList(System.Collections.BitArray bits)
 		{
 			SortedVIntListBuilder builder = new SortedVIntListBuilder(this);
-			int nextInt = SupportClass.BitSetSupport.NextSetBit(bits, 0);
+			int nextInt = Support.BitSetSupport.NextSetBit(bits, 0);
 			while (nextInt != - 1)
 			{
 				builder.AddInt(nextInt);
-				nextInt = SupportClass.BitSetSupport.NextSetBit(bits, nextInt + 1);
+				nextInt = Support.BitSetSupport.NextSetBit(bits, nextInt + 1);
 			}
 			builder.Done();
 		}
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util
 				{
 					// The high bit of the next byte needs to be set.
 					Enclosing_Instance.bytes[Enclosing_Instance.lastBytePos++] = (sbyte) ((diff & Lucene.Net.Util.SortedVIntList.VB1) | ~ Lucene.Net.Util.SortedVIntList.VB1);
-					diff = SupportClass.Number.URShift(diff, Lucene.Net.Util.SortedVIntList.BIT_SHIFT);
+					diff = Support.Number.URShift(diff, Lucene.Net.Util.SortedVIntList.BIT_SHIFT);
 				}
 				Enclosing_Instance.bytes[Enclosing_Instance.lastBytePos++] = (sbyte) diff; // Last byte, high bit not set.
 				Enclosing_Instance.size++;

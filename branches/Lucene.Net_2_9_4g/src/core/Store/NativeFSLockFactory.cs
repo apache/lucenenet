@@ -168,7 +168,7 @@ namespace Lucene.Net.Store
 		* one JVM (each with their own NativeFSLockFactory
 		* instance) have set the same lock dir and lock prefix.
 		*/
-        private static SupportClass.Set<string> LOCK_HELD = new SupportClass.Set<string>();
+        private static Support.Set<string> LOCK_HELD = new Support.Set<string>();
 
 		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
 		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName):this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)

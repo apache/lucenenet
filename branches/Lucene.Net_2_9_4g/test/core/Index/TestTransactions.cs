@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		abstract public class TimedThread:SupportClass.ThreadClass
+		abstract public class TimedThread:Support.ThreadClass
 		{
 			internal bool failed;
 			private static int RUN_TIME_SEC = 6;
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 				}
 				catch (System.Exception e)
 				{
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current() + ": exc");
+					System.Console.Out.WriteLine(Support.ThreadClass.Current() + ": exc");
 					System.Console.Out.WriteLine(e.StackTrace);
 					failed = true;
 				}

@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 			BooleanQuery.maxClauseCount = maxClauseCount;
 		}
 		
-		private SupportClass.EquatableList<BooleanClause> clauses = new SupportClass.EquatableList<BooleanClause>();
+		private Support.EquatableList<BooleanClause> clauses = new Support.EquatableList<BooleanClause>();
 		private bool disableCoord;
 		
 		/// <summary>Constructs an empty boolean query. </summary>
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
             foreach(BooleanClause clause in clauses)
             {
@@ -596,7 +596,7 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			BooleanQuery clone = (BooleanQuery) base.Clone();
-			clone.clauses = (SupportClass.EquatableList<BooleanClause>) this.clauses.Clone();
+			clone.clauses = (Support.EquatableList<BooleanClause>) this.clauses.Clone();
 			return clone;
 		}
 		

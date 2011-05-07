@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
 			Query rewrittenQuery = Rewrite(original);
 			
 			// step 2
-            SupportClass.Set<Lucene.Net.Index.Term> terms = new SupportClass.Set<Term>();
+            Support.Set<Lucene.Net.Index.Term> terms = new Support.Set<Term>();
 			rewrittenQuery.ExtractTerms(terms);
 			
 			// step3
@@ -416,7 +416,7 @@ namespace Lucene.Net.Search
 				}
 			}
 
-            IDictionary<Term, int> dfMap = new SupportClass.Dictionary<Term, int>();
+            IDictionary<Term, int> dfMap = new Support.Dictionary<Term, int>();
 			for (int i = 0; i < allTermsArray.Length; i++)
 			{
 				dfMap[allTermsArray[i]] = aggregatedDfs[i];

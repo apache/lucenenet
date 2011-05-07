@@ -769,7 +769,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        internal SupportClass.Dictionary<string, Norm> norms = new SupportClass.Dictionary<string, Norm>();
+        internal Support.Dictionary<string, Norm> norms = new Support.Dictionary<string, Norm>();
 		
 		/// <summary>The class which implements SegmentReader. </summary>
 		// @deprecated (LUCENE-1677)
@@ -1021,7 +1021,7 @@ namespace Lucene.Net.Index
 					}
 					
 					clone.SetDisableFakeNorms(GetDisableFakeNorms());
-                    clone.norms = new SupportClass.Dictionary<string, Norm>();
+                    clone.norms = new Support.Dictionary<string, Norm>();
 					
 					// Clone norms
 					for (int i = 0; i < fieldNormsChanged.Length; i++)
@@ -1774,7 +1774,7 @@ namespace Lucene.Net.Index
 			{
 				try
 				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
+					System.String name = Support.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
 					IMPL = System.Type.GetType(name);
 				}
 				catch (System.Security.SecurityException se)
@@ -1796,7 +1796,7 @@ namespace Lucene.Net.Index
 			{
 				try
 				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.ReadOnlySegmentReader.class", typeof(ReadOnlySegmentReader).FullName);
+					System.String name = Support.AppSettings.Get("Lucene.Net.ReadOnlySegmentReader.class", typeof(ReadOnlySegmentReader).FullName);
 					READONLY_IMPL = System.Type.GetType(name);
 				}
 				catch (System.Security.SecurityException se)

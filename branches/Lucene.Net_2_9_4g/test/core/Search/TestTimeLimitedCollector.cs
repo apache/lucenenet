@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestTimeLimitedCollector:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:Support.ThreadClass
 		{
 			public AnonymousClassThread(bool withTimeout, System.Collections.BitArray success, int num, TestTimeLimitedCollector enclosingInstance)
 			{
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search
 		
 		private void  DoTestMultiThreads(bool withTimeout)
 		{
-			SupportClass.ThreadClass[] threadArray = new SupportClass.ThreadClass[N_THREADS];
+			Support.ThreadClass[] threadArray = new Support.ThreadClass[N_THREADS];
 			System.Collections.BitArray success = new System.Collections.BitArray((N_THREADS % 64 == 0?N_THREADS / 64:N_THREADS / 64 + 1) * 64);
 			for (int i = 0; i < threadArray.Length; ++i)
 			{
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
 			{
 				threadArray[i].Join();
 			}
-			Assert.AreEqual(N_THREADS, SupportClass.BitSetSupport.Cardinality(success), "some threads failed!");
+			Assert.AreEqual(N_THREADS, Support.BitSetSupport.Cardinality(success), "some threads failed!");
 		}
 		
 		// counting hit collector that can slow down at collect().
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException("", ie);
 					}
 				}
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 			
 			public virtual int HitCount()
 			{
-				return SupportClass.BitSetSupport.Cardinality(bits);
+				return Support.BitSetSupport.Cardinality(bits);
 			}
 			
 			public virtual int GetLastDocCollected()

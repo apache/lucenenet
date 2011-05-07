@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 	{
 		
 		private IndexReader reader = null;
-		private SupportClass.ThreadClass t = null;
+		private Support.ThreadClass t = null;
 		
 		private int runsToDo = 100;
 		internal long timeElapsed = 0;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 		{
 			this.reader = reader;
 			timeElapsed = 0;
-			t = new SupportClass.ThreadClass(new System.Threading.ThreadStart(this.Run));
+			t = new Support.ThreadClass(new System.Threading.ThreadStart(this.Run));
 			t.Start();
 		}
 		

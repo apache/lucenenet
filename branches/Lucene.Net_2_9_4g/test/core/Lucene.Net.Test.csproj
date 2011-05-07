@@ -434,6 +434,19 @@
     <Compile Include="Store\_TestHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\TestIDisposable.cs" />
+    <Compile Include="Support\TestLRUCache.cs" />
+    <Compile Include="Support\TestMediumTrust.cs" />
+    <Compile Include="Support\TestOldPatches.cs" />
+    <Compile Include="Support\TestOSClass.cs" />
+    <Compile Include="Support\TestSerialization.cs" />
+    <Compile Include="Support\TestThreadClass.cs" />
+    <Compile Include="Support\TestWeakHashTable.cs" />
+    <Compile Include="Support\TestWeakHashTableBehavior.cs" />
+    <Compile Include="Support\TestWeakHashTableMultiThreadAccess.cs" />
+    <Compile Include="Support\SupportTestCases.cs" />
+    <Compile Include="Support\TestWeakHashTablePerformance.cs" />
     <Compile Include="TestDemo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -447,7 +460,7 @@
     <Compile Include="TestSearchForDuplicates.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestSupportClass.cs" />
+    <Compile Include="Support\TestSupportClass.cs" />
     <Compile Include="Util\ArrayUtilTest.cs" />
     <Compile Include="Util\Cache\TestSimpleLRUCache.cs" />
     <Compile Include="Util\English.cs">

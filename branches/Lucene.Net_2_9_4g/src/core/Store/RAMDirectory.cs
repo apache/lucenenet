@@ -33,7 +33,7 @@ namespace Lucene.Net.Store
 		
 		private const long serialVersionUID = 1L;
 
-        internal protected SupportClass.Dictionary<string, RAMFile> fileMap = new SupportClass.Dictionary<string, RAMFile>();
+        internal protected Support.Dictionary<string, RAMFile> fileMap = new Support.Dictionary<string, RAMFile>();
 		internal protected long sizeInBytes = 0;
 		
 		// *****
@@ -187,7 +187,7 @@ namespace Lucene.Net.Store
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					Support.ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
 				ts2 = System.DateTime.Now.Ticks;

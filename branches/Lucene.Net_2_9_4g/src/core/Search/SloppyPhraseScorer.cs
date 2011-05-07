@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 			{
 				checkedRepeats = true;
 				// check for repeats
-				SupportClass.Dictionary<PhrasePositions, Object> m = null;
+				Support.Dictionary<PhrasePositions, Object> m = null;
 				for (PhrasePositions pp = first; pp != null; pp = pp.next)
 				{
 					int tpPos = pp.position + pp.offset;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
 						{
 							if (m == null)
 							{
-                                m = new SupportClass.Dictionary<PhrasePositions, object>();
+                                m = new Support.Dictionary<PhrasePositions, object>();
 							}
 							pp.repeats = true;
 							pp2.repeats = true;

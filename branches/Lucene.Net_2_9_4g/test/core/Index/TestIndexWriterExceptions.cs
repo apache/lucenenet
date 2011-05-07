@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
             return tvSettings[random.Next(tvSettings.Length)];
         }
 		
-		private class IndexerThread:SupportClass.ThreadClass
+		private class IndexerThread:Support.ThreadClass
 		{
 			private void  InitBlock(TestIndexWriterExceptions enclosingInstance)
 			{
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 					{
 						if (Lucene.Net.Index.TestIndexWriterExceptions.DEBUG)
 						{
-							System.Console.Out.WriteLine(SupportClass.ThreadClass.CurrentThread().Name + ": EXC: ");
+							System.Console.Out.WriteLine(Support.ThreadClass.CurrentThread().Name + ": EXC: ");
 							System.Console.Out.WriteLine(re.StackTrace);
 						}
 						try
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 						}
 						catch (System.IO.IOException ioe)
 						{
-							System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception1");
+							System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": unexpected exception1");
 							System.Console.Out.WriteLine(ioe.StackTrace);
 							failure = ioe;
 							break;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Exception t)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception2");
+						System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": unexpected exception2");
 						System.Console.Out.WriteLine(t.StackTrace);
 						failure = t;
 						break;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Exception t)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": unexpected exception3");
+						System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": unexpected exception3");
 						System.Console.Out.WriteLine(t.StackTrace);
 						failure = t;
 						break;
@@ -183,10 +183,10 @@ namespace Lucene.Net.Index
 				{
 					if (Lucene.Net.Index.TestIndexWriterExceptions.DEBUG)
 					{
-						System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": NOW FAIL: " + name);
+						System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": NOW FAIL: " + name);
 						//new Throwable().printStackTrace(System.out);
 					}
-					throw new System.SystemException(SupportClass.ThreadClass.Current().Name + ": intentionally failing at " + name);
+					throw new System.SystemException(Support.ThreadClass.Current().Name + ": intentionally failing at " + name);
 				}
 				return true;
 			}

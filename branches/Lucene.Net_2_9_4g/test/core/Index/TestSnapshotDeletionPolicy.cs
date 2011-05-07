@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestSnapshotDeletionPolicy:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:Support.ThreadClass
 		{
 			public AnonymousClassThread(long stopTime, Lucene.Net.Index.IndexWriter writer, TestSnapshotDeletionPolicy enclosingInstance)
 			{
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException("", ie);
 					}
 				}
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
         [Test]
 		public virtual void  TestSnapshotDeletionPolicy_Renamed()
 		{
-			System.IO.FileInfo dir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), INDEX_PATH));
+			System.IO.FileInfo dir = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), INDEX_PATH));
 			try
 			{
 				// Sometimes past test leaves the dir
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 			// Force frequent commits
 			writer.SetMaxBufferedDocs(2);
 			
-			SupportClass.ThreadClass t = new AnonymousClassThread(stopTime, writer, this);
+			Support.ThreadClass t = new AnonymousClassThread(stopTime, writer, this);
 			
 			t.Start();
 			

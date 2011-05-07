@@ -867,9 +867,33 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\VerifyingLockFactory.cs" />
-    <Compile Include="SupportClass.cs">
+    <Compile Include="Support\AppSettings.cs" />
+    <Compile Include="Support\AttributeImplItem.cs" />
+    <Compile Include="Support\BitSetSupport.cs" />
+    <Compile Include="Support\BuildType.cs" />
+    <Compile Include="Support\Character.cs" />
+    <Compile Include="Support\Checksum.cs" />
+    <Compile Include="Support\CollectionsHelper.cs" />
+    <Compile Include="Support\Compare.cs" />
+    <Compile Include="Support\CRC32.cs" />
+    <Compile Include="Support\Cryptography.cs" />
+    <Compile Include="Support\Dictionary.cs" />
+    <Compile Include="Support\Double.cs" />
+    <Compile Include="Support\EquatableList.cs" />
+    <Compile Include="Support\FileSupport.cs" />
+    <Compile Include="Support\GeneralKeyedCollection.cs" />
+    <Compile Include="Support\IThreadRunnable.cs" />
+    <Compile Include="Support\Number.cs" />
+    <Compile Include="Support\Os.cs" />
+    <Compile Include="Support\Set.cs" />
+    <Compile Include="Support\SharpZipLib.cs" />
+    <Compile Include="Support\Single.cs" />
+    <Compile Include="Support\ICloneable.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\TextSupport.cs" />
+    <Compile Include="Support\ThreadClass.cs" />
+    <Compile Include="Support\WeakHashTable.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Attribute.cs" />
     <Compile Include="Util\AttributeImpl.cs" />

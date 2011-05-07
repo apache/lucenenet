@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 			{
 			}
 			
-			dir = FSDirectory.Open(new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
+			dir = FSDirectory.Open(new System.IO.FileInfo(Support.AppSettings.Get("tempDir", System.IO.Path.GetTempPath())));
 			dir.Close();
 			try
 			{
@@ -61,7 +61,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDirectInstantiation()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(SupportClass.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
+			System.IO.FileInfo path = new System.IO.FileInfo(Support.AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));
 			
 			int sz = 2;
 			Directory[] dirs = new Directory[sz];
@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestDontCreate()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "doesnotexist"));
+			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "doesnotexist"));
 			try
 			{
 				bool tmpBool;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestCopySubdir()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testsubdir"));
+			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testsubdir"));
 			try
 			{
 				System.IO.Directory.CreateDirectory(path.FullName);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Store
 		[Test]
 		public virtual void  TestNotDirectory()
 		{
-			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testnotdir"));
+			System.IO.FileInfo path = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testnotdir"));
 			Directory fsDir = new SimpleFSDirectory(path, null);
 			try
 			{

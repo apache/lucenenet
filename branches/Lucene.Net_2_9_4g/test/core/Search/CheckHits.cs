@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable ignore = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
+				Support.CollectionsHelper.AddIfNotContains(ignore, (System.Int32) results[i]);
 			}
 			
 			int maxDoc = searcher.MaxDoc();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
 			System.Collections.Hashtable correct = new System.Collections.Hashtable();
 			for (int i = 0; i < results.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(correct, (System.Int32) results[i]);
+				Support.CollectionsHelper.AddIfNotContains(correct, (System.Int32) results[i]);
 			}
 			System.Collections.Hashtable actual = new System.Collections.Hashtable();
 			Collector c = new SetCollector(actual);
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
 			}
 			public override void  Collect(int doc)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(bag, (System.Int32)(doc + base_Renamed));
+				Support.CollectionsHelper.AddIfNotContains(bag, (System.Int32)(doc + base_Renamed));
 			}
 			public override void  SetNextReader(IndexReader reader, int docBase)
 			{
@@ -175,14 +175,14 @@ namespace Lucene.Net.Search
 			System.Collections.ArrayList correct = new System.Collections.ArrayList();
 			for (int i = 0; i < results.Length; i++)
 			{
-                SupportClass.CollectionsHelper.AddIfNotContains(correct, results[i]);
+                Support.CollectionsHelper.AddIfNotContains(correct, results[i]);
 			}
             correct.Sort();
 			
 			System.Collections.ArrayList actual = new System.Collections.ArrayList();
 			for (int i = 0; i < hits.Length; i++)
 			{
-				SupportClass.CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
+				Support.CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
 			}
             actual.Sort();
 			
@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
 							int k2 = descr.IndexOf(" ", k1);
 							try
 							{
-                                x = SupportClass.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
+                                x = Support.Single.Parse(descr.Substring(k1, (k2) - (k1)).Trim());
 								if (descr.Substring(k2).Trim().Equals("times others of:"))
 								{
 									maxTimesOthers = true;

@@ -167,7 +167,7 @@ namespace Lucene.Net.Demo.Html
 				pipeIn = new System.IO.StreamReader(pipeInStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
 				pipeOut = new System.IO.StreamWriter(pipeOutStream.BaseStream, System.Text.Encoding.GetEncoding("UTF-16BE"));
 				
-				SupportClass.ThreadClass thread = new ParserThread(this);
+				Support.ThreadClass thread = new ParserThread(this);
 				thread.Start(); // start parsing
 			}
 			

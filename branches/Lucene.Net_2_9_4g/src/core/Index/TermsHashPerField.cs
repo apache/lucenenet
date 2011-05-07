@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 				return ;
 			}
 			
-			int mid = SupportClass.Number.URShift((lo + hi), 1);
+			int mid = Support.Number.URShift((lo + hi), 1);
 			
 			if (ComparePostings(postings[lo], postings[mid]) > 0)
 			{
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte(stream, (byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Support.Number.URShift(i, 7);
 			}
 			WriteByte(stream, (byte) i);
 		}

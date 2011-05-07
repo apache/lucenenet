@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 			public virtual void  Collect(int doc, float score)
 			{
 				
-				pos = SupportClass.BitSetSupport.NextSetBit(answer, pos + 1);
+				pos = Support.BitSetSupport.NextSetBit(answer, pos + 1);
 				if (pos != doc + docBase)
 				{
 					throw new System.SystemException("Expected doc " + pos + " but got " + doc + docBase);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
 				ret += hc.GetSum();
 				
 				if (validate)
-					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(Support.BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
 				nMatches += hc.GetCount();
 				ret += hc.GetSum();
 				if (validate)
-					Assert.AreEqual(SupportClass.BitSetSupport.Cardinality(result), hc.GetCount());
+					Assert.AreEqual(Support.BitSetSupport.Cardinality(result), hc.GetCount());
 				// System.out.println(hc.getCount());
 			}
 			System.Console.Out.WriteLine("Average number of matches=" + (nMatches / iter));
@@ -290,9 +290,9 @@ namespace Lucene.Net.Search
 					// don't pick same clause twice
 					tnum = r.Next(termsInIndex);
 					if (termflag.Get(tnum))
-						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
+						tnum = Support.BitSetSupport.NextClearBit(termflag, tnum);
 					if (tnum < 0 || tnum >= termsInIndex)
-						tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
+						tnum = Support.BitSetSupport.NextClearBit(termflag, 0);
 					termflag.Set(tnum, true);
 					Query tq = new TermQuery(terms[tnum]);
 					bq.Add(tq, BooleanClause.Occur.MUST);
@@ -329,9 +329,9 @@ namespace Lucene.Net.Search
 						// don't pick same clause twice
 						tnum = r.Next(termsInIndex);
 						if (termflag.Get(tnum))
-							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, tnum);
+							tnum = Support.BitSetSupport.NextClearBit(termflag, tnum);
 						if (tnum < 0 || tnum >= 25)
-							tnum = SupportClass.BitSetSupport.NextClearBit(termflag, 0);
+							tnum = Support.BitSetSupport.NextClearBit(termflag, 0);
 						termflag.Set(tnum, true);
 						Query tq = new TermQuery(terms[tnum]);
 						bq.Add(tq, BooleanClause.Occur.MUST);

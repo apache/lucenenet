@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 			}
 			else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
 			{
-				return SupportClass.Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
+				return Support.Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
 			}
 			else
 			{
@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
 		{
 			if (infoStream != null)
 			{
-				infoStream.WriteLine("SIS [" + SupportClass.ThreadClass.Current().Name + "]: " + message);
+				infoStream.WriteLine("SIS [" + Support.ThreadClass.Current().Name + "]: " + message);
 			}
 		}
 		
@@ -704,7 +704,7 @@ namespace Lucene.Net.Index
 							{
 								// In 3.0 we will change this to throw
 								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
+								Support.ThreadClass.Current().Interrupt();
 								throw new System.SystemException(ie.Message, ie);
 							}
 						}
@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
 				SegmentInfo info = Info(i);
 				if (info.dir == dir)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
+					Support.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
 				}
 			}
 			return files.Keys;

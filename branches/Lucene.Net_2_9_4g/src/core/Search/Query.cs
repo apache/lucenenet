@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
-            SupportClass.Set<Query> uniques = new SupportClass.Set<Query>();
+            Support.Set<Query> uniques = new Support.Set<Query>();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				Query query = queries[i];
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public virtual void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
 			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{
-            SupportClass.Set<BooleanClause> allClauses = new SupportClass.Set<BooleanClause>();
+            Support.Set<BooleanClause> allClauses = new Support.Set<BooleanClause>();
 			for (int i = 0; i < queries.Length; i++)
 			{
 				BooleanClause[] clauses = queries[i].GetClauses();

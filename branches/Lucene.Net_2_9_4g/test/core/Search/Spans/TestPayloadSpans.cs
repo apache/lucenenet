@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spans
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						Support.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.Spans
 					int cnt = 0;
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						Support.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Spans
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						Support.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -555,10 +555,10 @@ namespace Lucene.Net.Search.Spans
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
 				pos = 0;
-				SupportClass.CollectionsHelper.AddIfNotContains(entities, "xx");
-				SupportClass.CollectionsHelper.AddIfNotContains(entities, "one");
-				SupportClass.CollectionsHelper.AddIfNotContains(nopayload, "nopayload");
-				SupportClass.CollectionsHelper.AddIfNotContains(nopayload, "np");
+				Support.CollectionsHelper.AddIfNotContains(entities, "xx");
+				Support.CollectionsHelper.AddIfNotContains(entities, "one");
+				Support.CollectionsHelper.AddIfNotContains(nopayload, "nopayload");
+				Support.CollectionsHelper.AddIfNotContains(nopayload, "np");
 				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
 				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
 				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));

@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
 			GetQuery().ExtractTerms(terms);
 		}

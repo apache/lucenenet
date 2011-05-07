@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 				docID += code;
 			else
 			{
-				docID += SupportClass.Number.URShift(code, 1);
+				docID += Support.Number.URShift(code, 1);
 				if ((code & 1) != 0)
 					termFreq = 1;
 				else

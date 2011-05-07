@@ -1272,7 +1272,7 @@ namespace Lucene.Net.QueryParsers
 				if (codePointMultiplier > 0)
 				{
 					codePoint += HexToInt(curChar) * codePointMultiplier;
-					codePointMultiplier = SupportClass.Number.URShift(codePointMultiplier, 4);
+					codePointMultiplier = Support.Number.URShift(codePointMultiplier, 4);
 					if (codePointMultiplier == 0)
 					{
 						output[length++] = (char) codePoint;
@@ -1620,7 +1620,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				float f = (float) 1.0;
 				try
 				{
-					f = (float) SupportClass.Single.Parse(boost.image);
+					f = (float) Support.Single.Parse(boost.image);
 					q.SetBoost(f);
 				}
 				catch (System.Exception ignored)
@@ -1737,7 +1737,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 						float fms = fuzzyMinSim;
 						try
 						{
-							fms = (float) SupportClass.Single.Parse(fuzzySlop.image.Substring(1));
+							fms = (float) Support.Single.Parse(fuzzySlop.image.Substring(1));
 						}
 						catch (System.Exception ignored)
 						{
@@ -1943,7 +1943,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 					{
 						try
 						{
-							s = (int) SupportClass.Single.Parse(fuzzySlop.image.Substring(1));
+							s = (int) Support.Single.Parse(fuzzySlop.image.Substring(1));
 						}
 						catch (System.Exception ignored)
 						{
@@ -1963,7 +1963,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 				float f = (float) 1.0;
 				try
 				{
-					f = (float) SupportClass.Single.Parse(boost.image);
+					f = (float) Support.Single.Parse(boost.image);
 				}
 				catch (System.Exception ignored)
 				{

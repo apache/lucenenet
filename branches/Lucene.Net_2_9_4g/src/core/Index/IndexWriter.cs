@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
 		private long lastCommitChangeCount; // last changeCount that was committed
 		
 		private SegmentInfos rollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-        private SupportClass.Dictionary<SegmentInfo, int> rollbackSegments;
+        private Support.Dictionary<SegmentInfo, int> rollbackSegments;
 		
 		internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
 		internal volatile uint pendingCommitChangeCount;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
 		private DocumentsWriter docWriter;
 		private IndexFileDeleter deleter;
 
-        private SupportClass.Set<SegmentInfo> segmentsToOptimize = new SupportClass.Set<SegmentInfo>(); // used by optimize to note those needing optimization
+        private Support.Set<SegmentInfo> segmentsToOptimize = new Support.Set<SegmentInfo>(); // used by optimize to note those needing optimization
 		
 		private Lock writeLock;
 		
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
 		
 		// Holds all SegmentInfo instances currently involved in
 		// merges
-        private SupportClass.Set<SegmentInfo> mergingSegments = new SupportClass.Set<SegmentInfo>();
+        private Support.Set<SegmentInfo> mergingSegments = new Support.Set<SegmentInfo>();
 		
 		private MergePolicy mergePolicy;
 		private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
 		// Used to only allow one addIndexes to proceed at once
 		// TODO: use ReadWriteLock once we are on 5.0
 		private int readCount; // count of how many threads are holding read lock
-		private SupportClass.ThreadClass writeThread; // non-null if any thread holds write lock
+		private Support.ThreadClass writeThread; // non-null if any thread holds write lock
 		internal ReaderPool readerPool;
 		private int upgradeCount;
 
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
 				
 			}
 
-            private SupportClass.Dictionary<SegmentInfo, SegmentReader> readerMap = new SupportClass.Dictionary<SegmentInfo, SegmentReader>();
+            private Support.Dictionary<SegmentInfo, SegmentReader> readerMap = new Support.Dictionary<SegmentInfo, SegmentReader>();
 			
 			/// <summary>Forcefully clear changes for the specifed segments,
 			/// and remove from the pool.   This is called on succesful merge. 
@@ -622,7 +622,7 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new SupportClass.Dictionary<SegmentInfo, SegmentReader>(readerMap))
+                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new Support.Dictionary<SegmentInfo, SegmentReader>(readerMap))
                     {
                         SegmentReader sr = ent.Value;
                         if (sr.hasChanges)
@@ -652,7 +652,7 @@ namespace Lucene.Net.Index
 			{
 				lock (this)
 				{
-                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new SupportClass.Dictionary<SegmentInfo, SegmentReader>(readerMap))
+                    foreach (KeyValuePair<SegmentInfo, SegmentReader> ent in new Support.Dictionary<SegmentInfo, SegmentReader>(readerMap))
                     {
                         SegmentReader sr = ent.Value;
                         if (sr.hasChanges)
@@ -817,14 +817,14 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Diagnostics.Debug.Assert(writeThread != SupportClass.ThreadClass.Current());
+				System.Diagnostics.Debug.Assert(writeThread != Support.ThreadClass.Current());
 				while (writeThread != null || readCount > 0)
 					DoWait();
 				
 				// We could have been closed while we were waiting:
 				EnsureOpen();
 				
-				writeThread = SupportClass.ThreadClass.Current();
+				writeThread = Support.ThreadClass.Current();
 			}
 		}
 		
@@ -832,7 +832,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				System.Diagnostics.Debug.Assert(SupportClass.ThreadClass.Current() == writeThread);
+				System.Diagnostics.Debug.Assert(Support.ThreadClass.Current() == writeThread);
 				writeThread = null;
 				System.Threading.Monitor.PulseAll(this);
 			}
@@ -842,7 +842,7 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-				SupportClass.ThreadClass current = SupportClass.ThreadClass.Current();
+				Support.ThreadClass current = Support.ThreadClass.Current();
 				while (writeThread != null && writeThread != current)
 					DoWait();
 				
@@ -864,7 +864,7 @@ namespace Lucene.Net.Index
 					DoWait();
 				}
 				
-				writeThread = SupportClass.ThreadClass.Current();
+				writeThread = Support.ThreadClass.Current();
 				readCount--;
 				upgradeCount--;
 			}
@@ -919,7 +919,7 @@ namespace Lucene.Net.Index
 		public virtual void  Message(System.String message)
 		{
 			if (infoStream != null)
-                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
+                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + Support.ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		private void  SetMessageID(System.IO.StreamWriter infoStream)
@@ -1846,7 +1846,7 @@ namespace Lucene.Net.Index
 						// commit if there is no segments file in this dir
 						// already.
 						segmentInfos.Commit(directory);
-						SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+						Support.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
 					}
 					else
 					{
@@ -1878,7 +1878,7 @@ namespace Lucene.Net.Index
 					
 					// We assume that this segments_N was previously
 					// properly sync'd:
-					SupportClass.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
+					Support.CollectionsHelper.AddAllIfNotContains(synced, segmentInfos.Files(directory, true));
 				}
 				
 				this.autoCommit = autoCommit;
@@ -1936,7 +1936,7 @@ namespace Lucene.Net.Index
 			{
 				rollbackSegmentInfos = (SegmentInfos) infos.Clone();
 				System.Diagnostics.Debug.Assert(!rollbackSegmentInfos.HasExternalSegments(directory));
-                rollbackSegments = new SupportClass.Dictionary<SegmentInfo, int>();
+                rollbackSegments = new Support.Dictionary<SegmentInfo, int>();
 				int size = rollbackSegmentInfos.Count;
 				for (int i = 0; i < size; i++)
 					rollbackSegments[rollbackSegmentInfos.Info(i)] = i;
@@ -3179,7 +3179,7 @@ namespace Lucene.Net.Index
 				// name that was previously returned which can cause
 				// problems at least with ConcurrentMergeScheduler.
 				changeCount++;
-				return "_" + SupportClass.Number.ToString(segmentInfos.counter++);
+				return "_" + Support.Number.ToString(segmentInfos.counter++);
 			}
 		}
 		
@@ -3307,7 +3307,7 @@ namespace Lucene.Net.Index
 			lock (this)
 			{
 				ResetMergeExceptions();
-                segmentsToOptimize = new SupportClass.Set<SegmentInfo>();
+                segmentsToOptimize = new Support.Set<SegmentInfo>();
                 optimizeMaxNumSegments = maxNumSegments;
 				int numSegments = segmentInfos.Count;
 				for (int i = 0; i < numSegments; i++)
@@ -6286,7 +6286,7 @@ namespace Lucene.Net.Index
         private Dictionary<string, string> synced = new Dictionary<string, string>();
 		
 		// Files that are now being sync'd
-        private SupportClass.Set<string> syncing = new SupportClass.Set<string>();
+        private Support.Set<string> syncing = new Support.Set<string>();
 		
 		private bool StartSync(System.String fileName, ICollection<System.String> pending)
 		{
@@ -6346,7 +6346,7 @@ namespace Lucene.Net.Index
 							{
 								// In 3.0 we will change this to throw
 								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
+								Support.ThreadClass.Current().Interrupt();
 								throw new System.SystemException(ie.Message, ie);
 							}
 					}
@@ -6390,7 +6390,7 @@ namespace Lucene.Net.Index
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}
@@ -6415,7 +6415,7 @@ namespace Lucene.Net.Index
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					Support.ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
 			}

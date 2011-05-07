@@ -173,14 +173,14 @@ namespace Lucene.Net.Util
 			int nChars = (31 - shift) / 7 + 1, len = nChars + 1;
 			buffer[0] = (char) (SHIFT_START_INT + shift);
 			int sortableBits = val ^ unchecked((int) 0x80000000);
-			sortableBits = SupportClass.Number.URShift(sortableBits, shift);
+			sortableBits = Support.Number.URShift(sortableBits, shift);
 			while (nChars >= 1)
 			{
 				// Store 7 bits per character for good efficiency when UTF-8 encoding.
 				// The whole number is right-justified so that lucene can prefix-encode
 				// the terms more efficiently.
 				buffer[nChars--] = (char) (sortableBits & 0x7f);
-				sortableBits = SupportClass.Number.URShift(sortableBits, 7);
+				sortableBits = Support.Number.URShift(sortableBits, 7);
 			}
 			return len;
 		}
