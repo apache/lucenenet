@@ -230,12 +230,16 @@ namespace Lucene.Net.Support
             return GetHashCode(this);
         }
 
+#if __MonoCS__
+        public static int GetHashCode<T>(System.Collections.Generic.IEnumerable<T> source)
+#else
         /// <summary>Gets the hash code for the list.</summary>
-        /// <param name="source">The <see cref="IEnumerable{T}"/>
+        /// <param name="source">The <see cref="IEnumerable<T>"/>
         /// implementation which will have all the contents hashed.</param>
         /// <returns>The hash code value.</returns>
         public static int GetHashCode(System.Collections.Generic.IEnumerable<T> source)
-        {
+#endif 
+         {
             // If source is null, then return 0.
             if (source == null) return 0;
 
