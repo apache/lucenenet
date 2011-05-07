@@ -216,10 +216,8 @@ namespace Lucene.Net.Search.Spans
 		
 		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
+            foreach(SpanQuery clause in clauses)
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
 				clause.ExtractTerms(terms);
 			}
 		}
@@ -268,12 +266,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanOr([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
             int j = 0;
-			while (i.MoveNext())
+            foreach (SpanQuery clause in clauses)
 			{
                 j++;
-				SpanQuery clause = (SpanQuery) i.Current;
 				buffer.Append(clause.ToString(field));
                 if (j < clauses.Count)
                 {

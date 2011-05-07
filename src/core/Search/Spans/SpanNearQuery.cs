@@ -104,10 +104,8 @@ namespace Lucene.Net.Search.Spans
         public override IList<Lucene.Net.Index.Term> GetTerms()
 		{
             List<Lucene.Net.Index.Term> terms = new List<Index.Term>();
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
-			{
-				SpanQuery clause = (SpanQuery) i.Current;
+            foreach(SpanQuery clause in clauses)
+            {
 				terms.AddRange(clause.GetTerms());
 			}
 			return terms;
@@ -126,11 +124,9 @@ namespace Lucene.Net.Search.Spans
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("spanNear([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
+            foreach(SpanQuery clause in clauses)
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
-				buffer.Append(clause.ToString(field));
+    			buffer.Append(clause.ToString(field));
                 buffer.Append(", ");
 			}
             if (clauses.Count > 0) buffer.Length -= 2;
@@ -212,12 +208,12 @@ namespace Lucene.Net.Search.Spans
 				return false;
 			if (clauses.Count != spanNearQuery.clauses.Count)
 				return false;
-            System.Collections.IEnumerator iter1 = clauses.GetEnumerator();
-            System.Collections.IEnumerator iter2 = spanNearQuery.clauses.GetEnumerator();
+            IEnumerator<SpanQuery> iter1 = clauses.GetEnumerator();
+            IEnumerator<SpanQuery> iter2 = spanNearQuery.clauses.GetEnumerator();
             while (iter1.MoveNext() && iter2.MoveNext())
             {
-                SpanQuery item1 = (SpanQuery)iter1.Current;
-                SpanQuery item2 = (SpanQuery)iter2.Current;
+                SpanQuery item1 = iter1.Current;
+                SpanQuery item2 = iter2.Current;
                 if (!item1.Equals(item2))
                     return false;
             }
