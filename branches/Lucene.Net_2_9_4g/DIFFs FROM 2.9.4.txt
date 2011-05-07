@@ -12,7 +12,7 @@
 
 * LUCENENET-172 (fix for unexceptional exceptions ecountered in FastCharStream)
 
-* LUCENENET-330 Search.Regex Minimal Port
+* LUCENENET-330 Search.Regex Minimal Port 
 
 * LUCENENET-371 Unit test for Search.Regex port
 

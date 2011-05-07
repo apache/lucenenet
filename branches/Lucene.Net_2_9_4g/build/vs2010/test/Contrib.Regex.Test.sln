@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "..\..\..\src\core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Regex", "..\..\..\src\contrib\Regex\Contrib.Regex.csproj", "{481CF6E3-52AF-4621-9DEB-022122079AF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Test", "..\..\..\test\core\Lucene.Net.Test.csproj", "{AAF68BCF-F781-45FC-98B3-2B9CEE411E01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Regex.Test", "..\..\..\test\contrib\Regex\Contrib.Regex.Test.csproj", "{F1875552-0E59-46AA-976E-6183733FD2AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Common", "..\..\..\src\demo\Demo.Common\Demo.Common.csproj", "{F04CA2F4-E182-46A8-B914-F46AF5319E83}"
+EndProject
+
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1875552-0E59-46AA-976E-6183733FD2AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1875552-0E59-46AA-976E-6183733FD2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1875552-0E59-46AA-976E-6183733FD2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1875552-0E59-46AA-976E-6183733FD2AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
