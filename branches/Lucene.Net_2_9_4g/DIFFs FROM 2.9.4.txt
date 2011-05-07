@@ -12,8 +12,6 @@
 
 * LUCENENET-172 (fix for unexceptional exceptions ecountered in FastCharStream)
 
-* LUCENENET-413 (Medium trust security issue) &  test cases to run in partially trusted AppDomain
-
 * LUCENENET-330 Search.Regex Minimal Port
 
 * LUCENENET-371 Unit test for Search.Regex port
