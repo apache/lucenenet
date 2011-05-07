@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Regex
         private int GetRegexQueryHitsCount(string sRegex)
         {
             RegexQuery query = new RegexQuery(NewTerm(sRegex));
-            return _searcher.Search(query, 5).totalHits;
+            return _searcher.Search(query, 5).TotalHits;
         }
 
         [Test]

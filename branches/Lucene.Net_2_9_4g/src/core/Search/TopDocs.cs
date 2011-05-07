@@ -30,14 +30,11 @@ namespace Lucene.Net.Search
 		/// <summary>The total number of hits for the query.</summary>
 		/// <seealso cref="Hits.Length()">
 		/// </seealso>
-        [Obsolete("For backward compatibility. Use TotalHits instead")]
-		public int totalHits;
+		int totalHits;
 		/// <summary>The top hits for the query. </summary>
-        [Obsolete("For backward compatibility. Use ScoreDocs instead")]
-		public ScoreDoc[] scoreDocs;
+		ScoreDoc[] scoreDocs;
 		/// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
-        [Obsolete("For backward compatibility. Use MaxScore instead")]
-		private float maxScore;
+		float maxScore;
 
         public int TotalHits
         {
