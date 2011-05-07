@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
 
 		public static readonly System.String LUCENE_MAIN_VERSION = Ident("2.9.4");
 		
-		public static System.String LUCENE_VERSION;
+		public static System.String LUCENE_VERSION="8.8.8.8";
 		static Constants()
 		{
             if (IntPtr.Size == 8)
@@ -84,7 +84,13 @@ namespace Lucene.Net.Util
                 JRE_IS_64BIT = false;// 32 bit machine
             }
 
-            LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            try
+            {
+                LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+            catch (System.Security.SecurityException) //Ignore in medium trust.
+            {
+            }
 
         }
 
