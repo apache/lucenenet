@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -505,7 +506,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual void  TestNPESpanQuery()
 		{
 			Directory dir = new MockRAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(new System.Collections.Hashtable(0)), IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(new List<string>(0)), IndexWriter.MaxFieldLength.LIMITED);
 			
 			// Add documents
 			AddDoc(writer, "1", "the big dogs went running to the market");

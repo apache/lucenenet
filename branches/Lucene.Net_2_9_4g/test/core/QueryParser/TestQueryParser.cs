@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -882,8 +883,8 @@ namespace Lucene.Net.QueryParsers
 		[Test]
 		public virtual void  TestBoost()
 		{
-			System.Collections.Hashtable stopWords = new System.Collections.Hashtable(1);
-			Support.CollectionsHelper.AddIfNotContains(stopWords, "on");
+            List<string> stopWords = new List<string>(1);
+			stopWords.Add("on");
 			StandardAnalyzer oneStopAnalyzer = new StandardAnalyzer(stopWords);
 			QueryParser qp = new QueryParser("field", oneStopAnalyzer);
 			Query q = qp.Parse("on^1.0");

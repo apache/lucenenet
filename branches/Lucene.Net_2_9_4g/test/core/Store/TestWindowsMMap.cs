@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -77,7 +78,7 @@ namespace Lucene.Net.Store
 			
 			// plan to add a set of useful stopwords, consider changing some of the
 			// interior filters.
-			StandardAnalyzer analyzer = new StandardAnalyzer(new System.Collections.Hashtable());
+			StandardAnalyzer analyzer = new StandardAnalyzer(new List<string>());
 			// TODO: something about lock timeouts and leftover locks.
 			IndexWriter writer = new IndexWriter(storeDirectory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			IndexSearcher searcher = new IndexSearcher(storePathname);

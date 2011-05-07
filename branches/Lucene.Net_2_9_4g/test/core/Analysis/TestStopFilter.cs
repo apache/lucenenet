@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -66,7 +67,7 @@ namespace Lucene.Net.Analysis
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("Now is The Time");
 			System.String[] stopWords = new System.String[]{"is", "the", "Time"};
-			System.Collections.Hashtable stopSet = StopFilter.MakeStopSet(stopWords);
+            List<string> stopSet = StopFilter.MakeStopSet(stopWords);
 			TokenStream stream = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
 			TermAttribute termAtt = (TermAttribute) stream.GetAttribute(typeof(TermAttribute));
 			Assert.IsTrue(stream.IncrementToken());
@@ -93,7 +94,7 @@ namespace Lucene.Net.Analysis
 			System.String[] stopWords = (System.String[]) a.ToArray();
 			for (int i = 0; i < a.Count; i++)
 				Log("Stop: " + stopWords[i]);
-			System.Collections.Hashtable stopSet = StopFilter.MakeStopSet(stopWords);
+            List<string> stopSet = StopFilter.MakeStopSet(stopWords);
 			// with increments
 			System.IO.StringReader reader = new System.IO.StringReader(sb.ToString());
 			StopFilter stpf = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet);
@@ -122,8 +123,8 @@ namespace Lucene.Net.Analysis
 			System.String[] stopWords1 = (System.String[]) a1.ToArray();
 			for (int i = 0; i < a1.Count; i++)
 				Log("Stop1: " + stopWords1[i]);
-			System.Collections.Hashtable stopSet0 = StopFilter.MakeStopSet(stopWords0);
-			System.Collections.Hashtable stopSet1 = StopFilter.MakeStopSet(stopWords1);
+            List<string> stopSet0 = StopFilter.MakeStopSet(stopWords0);
+            List<string> stopSet1 = StopFilter.MakeStopSet(stopWords1);
 			reader = new System.IO.StringReader(sb.ToString());
 			StopFilter stpf0 = new StopFilter(false, new WhitespaceTokenizer(reader), stopSet0); // first part of the set
 			stpf0.SetEnablePositionIncrements(true);

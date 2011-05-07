@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+
 namespace Lucene.Net.Analysis
 {
 	
@@ -29,9 +31,9 @@ namespace Lucene.Net.Analysis
 	/// to a String first.
 	/// </summary>
 	
-	public class CharArraySet:System.Collections.Hashtable
+	public class CharArraySet : List<string> //:System.Collections.Hashtable
 	{
-		public override int Count
+		public new int Count
 		{
 			get
 			{
@@ -72,7 +74,22 @@ namespace Lucene.Net.Analysis
 			this.ignoreCase = ignoreCase;
 			this.count = count;
 		}
-		
+
+        public bool Contains(object o)
+        {
+            if (o is char[])
+            {
+                char[] text = (char[])o;
+                return Contains(text, 0, text.Length);
+            }
+            return Contains(o.ToString());
+        }
+
+        public virtual bool Contains(char[] text)
+        {
+            return Contains(text, 0, text.Length);
+        }
+
 		/// <summary>true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
 		/// are in the set 
 		/// </summary>
@@ -127,7 +144,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Add this String into the set </summary>
-		public virtual bool Add(System.String text)
+		public new virtual bool Add(System.String text)
 		{
 			return Add(text.ToCharArray());
 		}
@@ -271,16 +288,6 @@ namespace Lucene.Net.Analysis
 			return count == 0;
 		}
 		
-		public override bool Contains(System.Object o)
-		{
-			if (o is char[])
-			{
-				char[] text = (char[]) o;
-				return Contains(text, 0, text.Length);
-			}
-			return Contains(o.ToString());
-		}
-		
 		public virtual bool Add(System.Object o)
 		{
 			if (o is char[])
@@ -288,9 +295,9 @@ namespace Lucene.Net.Analysis
 				return Add((char[]) o);
 			}
 
-            if (o is System.Collections.Hashtable)
+            if (o is List<string>)
             {
-                foreach (string word in ((System.Collections.Hashtable)o).Keys)
+                foreach (string word in o as List<string>)
                 {
                     Add(word);
                 }
@@ -410,12 +417,7 @@ namespace Lucene.Net.Analysis
 			{
 			}
 			
-			public override bool Add(System.Object o)
-			{
-				throw new System.NotSupportedException();
-			}
-			
-			public override bool AddAll(System.Collections.ICollection coll)
+			public override bool AddAll(string[] coll)
 			{
 				throw new System.NotSupportedException();
 			}
@@ -432,14 +434,11 @@ namespace Lucene.Net.Analysis
 		}
 
         /// <summary>Adds all of the elements in the specified collection to this collection </summary>
-        public virtual bool AddAll(System.Collections.ICollection items)
+        public virtual bool AddAll(string[] items)
         {
             bool added = false;
-            System.Collections.IEnumerator iter = items.GetEnumerator();
-            System.Object item;
-            while (iter.MoveNext())
+            foreach(string item in items)
             {
-                item = iter.Current;
                 added = Add(item);
             }
             return added;

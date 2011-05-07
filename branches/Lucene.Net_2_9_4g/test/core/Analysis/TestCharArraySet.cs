@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis
 			
 			try
 			{
-				set_Renamed.AddAll(new System.Collections.ArrayList(new System.String[] { NOT_IN_SET }));
+				set_Renamed.AddAll(new System.String[] { NOT_IN_SET });
 				Assert.Fail("Modified unmodifiable set");
 			}
 			catch (System.NotSupportedException e)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestUnmodifiableSet()
 		{
 			CharArraySet set_Renamed = new CharArraySet(10, true);
-			set_Renamed.AddAll(new System.Collections.ArrayList(TEST_STOP_WORDS));
+			set_Renamed.AddAll(TEST_STOP_WORDS);
 			int size = set_Renamed.Count;
 			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
 			Assert.AreEqual(size, set_Renamed.Count, "Set size changed due to UnmodifiableSet call");
