@@ -88,15 +88,15 @@ namespace Lucene.Net.Search.Payloads
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("payloadNear([");
-			System.Collections.IEnumerator i = clauses.GetEnumerator();
-			while (i.MoveNext())
+            int j = 0;
+            foreach (SpanQuery clause in clauses)
 			{
-				SpanQuery clause = (SpanQuery) i.Current;
+                j++;
 				buffer.Append(clause.ToString(field));
-				if (i.MoveNext())
-				{
-					buffer.Append(", ");
-				}
+                if (j < clauses.Count)
+                {
+                    buffer.Append(", ");
+                }
 			}
 			buffer.Append("], ");
 			buffer.Append(slop);

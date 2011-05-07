@@ -146,5 +146,17 @@ namespace Lucene.Net.Support
         {
             throw new NotImplementedException();
         }
+
+        public K FirstKey
+        {
+            get
+            {
+                foreach (K k in _Dict.Keys)
+                {
+                    return k;
+                }
+                return default(K);
+            }
+        }
     }
 }
