@@ -124,11 +124,10 @@ namespace Lucene.Net.Search.Payloads
 			}
 			else if (query is DisjunctionMaxQuery)
 			{
-				
-				for (System.Collections.IEnumerator iterator = ((DisjunctionMaxQuery) query).Iterator(); iterator.MoveNext(); )
-				{
-					QueryToSpanQuery((Query) iterator.Current, payloads);
-				}
+                for (IEnumerator<Query> iterator = ((DisjunctionMaxQuery) query).Iterator(); iterator.MoveNext(); )
+                {
+                    QueryToSpanQuery(iterator.Current, payloads);
+                }
 			}
 			else if (query is MultiPhraseQuery)
 			{

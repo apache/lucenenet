@@ -717,10 +717,9 @@ namespace Lucene.Net.Search
 		public virtual float Idf(IList<Lucene.Net.Index.Term> terms, Searcher searcher)
 		{
 			float idf = 0.0f;
-			System.Collections.IEnumerator i = terms.GetEnumerator();
-			while (i.MoveNext())
+            foreach(Term term in terms)
 			{
-				idf += Idf((Term) i.Current, searcher);
+				idf += Idf(term, searcher);
 			}
 			return idf;
 		}

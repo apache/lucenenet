@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 		}
 
         /// <summary>An Iterator&lt;Query&gt; over the disjuncts </summary>
-		public virtual System.Collections.IEnumerator Iterator()
+		public virtual IEnumerator<Query> Iterator()
 		{
 			return disjuncts.GetEnumerator();
 		}
@@ -266,10 +266,10 @@ namespace Lucene.Net.Search
 		// inherit javadoc
 		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
-			for (System.Collections.IEnumerator iter = disjuncts.GetEnumerator(); iter.MoveNext(); )
-			{
-				((Query) iter.Current).ExtractTerms(terms);
-			}
+            foreach (Query q in disjuncts)
+            {
+                q.ExtractTerms(terms);
+            }
 		}
 		
 		/// <summary>Prettyprint us.</summary>

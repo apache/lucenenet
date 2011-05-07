@@ -459,12 +459,11 @@ namespace Lucene.Net.Index
 				result.partial = true;
 				if (infoStream != null)
 					infoStream.Write("\nChecking only these segments:");
-				System.Collections.IEnumerator it = onlySegments.GetEnumerator();
-				while (it.MoveNext())
+                foreach(string s in onlySegments)
 				{
 					if (infoStream != null)
 					{
-						infoStream.Write(" " + it.Current);
+						infoStream.Write(" " + s);
 					}
 				}
                 foreach (string seg in onlySegments)
@@ -663,11 +662,9 @@ namespace Lucene.Net.Index
 				{
 					infoStream.Write("    test: field norms.........");
 				}
-				System.Collections.IEnumerator it = fieldNames.GetEnumerator();
 				byte[] b = new byte[reader.MaxDoc()];
-				while (it.MoveNext())
+                foreach(string fieldName in fieldNames)
 				{
-					System.String fieldName = (System.String) it.Current;
                     if (reader.HasNorms(fieldName))
                     {
                         reader.Norms(fieldName, b, 0);
