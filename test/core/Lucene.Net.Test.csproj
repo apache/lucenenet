@@ -386,6 +386,7 @@
     <Compile Include="Search\TestPrefixQuery.cs" />
     <Compile Include="Search\TestQueryTermVector.cs" />
     <Compile Include="Search\TestQueryWrapperFilter.cs" />
+    <Compile Include="Search\Regex\TestRegexpQuery.cs" />
     <Compile Include="Search\TestScoreCachingWrappingScorer.cs" />
     <Compile Include="Search\TestScorerPerf.cs" />
     <Compile Include="Search\TestSearchHitsWithDeletions.cs" />
