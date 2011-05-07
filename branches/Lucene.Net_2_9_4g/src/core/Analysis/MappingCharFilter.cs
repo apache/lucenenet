@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Analysis
 		
 		private NormalizeCharMap normMap;
 		//private LinkedList<Character> buffer;
-		private System.Collections.ArrayList buffer;
+        private LinkedList<char> buffer; //JAVA: private LinkedList<Character> buffer;
 		private System.String replacement;
 		private int charPointer;
 		private int nextCharCounter;
@@ -88,10 +89,10 @@ namespace Lucene.Net.Analysis
 			nextCharCounter++;
 			if (buffer != null && !(buffer.Count == 0))
 			{
-				System.Object tempObject;
-				tempObject = buffer[0];
-				buffer.RemoveAt(0);
-				return ((System.Char) tempObject);
+				char tempObject;
+				tempObject = buffer.First.Value;
+                buffer.RemoveFirst();
+				return (tempObject);
 			}
 			return input.Read();
 		}
@@ -101,18 +102,18 @@ namespace Lucene.Net.Analysis
 			nextCharCounter--;
 			if (buffer == null)
 			{
-				buffer = new System.Collections.ArrayList();
+                buffer = new LinkedList<char>();
 			}
-			buffer.Insert(0, (char) c);
+			buffer.AddFirst((char)c);
 		}
 		
 		private void  PushLastChar(int c)
 		{
 			if (buffer == null)
 			{
-				buffer = new System.Collections.ArrayList();
+                buffer = new LinkedList<char>();
 			}
-			buffer.Insert(buffer.Count, (char) c);
+			buffer.AddLast((char)c);
 		}
 		
 		private NormalizeCharMap Match(NormalizeCharMap map)
