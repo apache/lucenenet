@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Spans
 			return terms;
 		}
 		
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
             foreach (SpanQuery clause in clauses)
             {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search.Spans
 			// Mix bits before folding in things like boost, since it could cancel the
 			// last element of clauses.  This particular mix also serves to
 			// differentiate SpanNearQuery hashcodes from others.
-			result ^= ((result << 14) | (SupportClass.Number.URShift(result, 19))); // reversible
+			result ^= ((result << 14) | (Support.Number.URShift(result, 19))); // reversible
 			result += System.Convert.ToInt32(GetBoost());
 			result += slop;
 			result ^= (inOrder ? (long) 0x99AFD3BD : 0);

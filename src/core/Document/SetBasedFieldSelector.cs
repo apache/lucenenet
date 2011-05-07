@@ -27,8 +27,8 @@ namespace Lucene.Net.Documents
 	public class SetBasedFieldSelector : FieldSelector
 	{
 		
-		private SupportClass.Set<string> fieldsToLoad;
-        private SupportClass.Set<string> lazyFieldsToLoad;
+		private Support.Set<string> fieldsToLoad;
+        private Support.Set<string> lazyFieldsToLoad;
 		
 		
 		
@@ -39,7 +39,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="lazyFieldsToLoad">A Set of {@link String} field names to load lazily.  May be empty, but not null  
 		/// </param>
-        public SetBasedFieldSelector(SupportClass.Set<string> fieldsToLoad, SupportClass.Set<string> lazyFieldsToLoad)
+        public SetBasedFieldSelector(Support.Set<string> fieldsToLoad, Support.Set<string> lazyFieldsToLoad)
 		{
 			this.fieldsToLoad = fieldsToLoad;
 			this.lazyFieldsToLoad = lazyFieldsToLoad;

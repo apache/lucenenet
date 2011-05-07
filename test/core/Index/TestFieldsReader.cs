@@ -150,10 +150,10 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-            SupportClass.Set<string> loadFieldNames = new SupportClass.Set<string>();
+            Support.Set<string> loadFieldNames = new Support.Set<string>();
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
-            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
+            Support.Set<string> lazyFieldNames = new Support.Set<string>();
 			//new String[]{DocHelper.LARGE_LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_KEY, DocHelper.LAZY_FIELD_BINARY_KEY};
 			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
             lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
@@ -210,10 +210,10 @@ namespace Lucene.Net.Index
 			FieldsReader reader = new FieldsReader(dir, TEST_SEGMENT_NAME, fieldInfos);
 			Assert.IsTrue(reader != null);
 			Assert.IsTrue(reader.Size() == 1);
-            SupportClass.Set<string> loadFieldNames = new SupportClass.Set<string>();
+            Support.Set<string> loadFieldNames = new Support.Set<string>();
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_1_KEY);
 			loadFieldNames.Add(DocHelper.TEXT_FIELD_UTF1_KEY);
-            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
+            Support.Set<string> lazyFieldNames = new Support.Set<string>();
 			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
             lazyFieldNames.Add(DocHelper.LAZY_FIELD_KEY);
             lazyFieldNames.Add(DocHelper.LAZY_FIELD_BINARY_KEY);
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestLazyPerformance()
 		{
-			System.String tmpIODir = SupportClass.AppSettings.Get("tempDir", "");
+			System.String tmpIODir = Support.AppSettings.Get("tempDir", "");
 			System.String userName = System.Environment.UserName;
 			System.String path = tmpIODir + System.IO.Path.DirectorySeparatorChar.ToString() + "lazyDir" + userName;
 			System.IO.FileInfo file = new System.IO.FileInfo(path);
@@ -288,9 +288,9 @@ namespace Lucene.Net.Index
 			long lazyTime = 0;
 			long regularTime = 0;
 			int length = 50;
-            SupportClass.Set<string> lazyFieldNames = new SupportClass.Set<string>();
+            Support.Set<string> lazyFieldNames = new Support.Set<string>();
 			lazyFieldNames.Add(DocHelper.LARGE_LAZY_FIELD_KEY);
-            SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(new SupportClass.Set<string>(), lazyFieldNames);
+            SetBasedFieldSelector fieldSelector = new SetBasedFieldSelector(new Support.Set<string>(), lazyFieldNames);
 			
 			for (int i = 0; i < length; i++)
 			{
@@ -356,9 +356,9 @@ namespace Lucene.Net.Index
 		
 		private void  AssertSizeEquals(int size, byte[] sizebytes)
 		{
-			Assert.AreEqual((byte) (SupportClass.Number.URShift(size, 24)), sizebytes[0]);
-			Assert.AreEqual((byte) (SupportClass.Number.URShift(size, 16)), sizebytes[1]);
-			Assert.AreEqual((byte) (SupportClass.Number.URShift(size, 8)), sizebytes[2]);
+			Assert.AreEqual((byte) (Support.Number.URShift(size, 24)), sizebytes[0]);
+			Assert.AreEqual((byte) (Support.Number.URShift(size, 16)), sizebytes[1]);
+			Assert.AreEqual((byte) (Support.Number.URShift(size, 8)), sizebytes[2]);
 			Assert.AreEqual((byte) size, sizebytes[3]);
 		}
 		

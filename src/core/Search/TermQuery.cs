@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
 			return new TermWeight(this, searcher);
 		}
 		
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
             terms.Add(GetTerm());
 		}

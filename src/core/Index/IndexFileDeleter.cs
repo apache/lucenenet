@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 		
 		private void  Message(System.String message)
 		{
-            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + SupportClass.ThreadClass.Current().Name + "]: " + message);
+            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + Support.ThreadClass.Current().Name + "]: " + message);
 		}
 		
 		/// <summary> Initialize the deleter: find all previous commits in

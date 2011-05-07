@@ -27,11 +27,11 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class PositionBasedTermVectorMapper:TermVectorMapper
 	{
-		private SupportClass.Dictionary<String, SupportClass.Dictionary<int,TVPositionInfo>> fieldToTerms;
+		private Support.Dictionary<String, Support.Dictionary<int,TVPositionInfo>> fieldToTerms;
 		
 		private System.String currentField;
 		/// <summary> A Map of Integer and TVPositionInfo</summary>
-		private SupportClass.Dictionary<int,TVPositionInfo> currentPositions;
+		private Support.Dictionary<int,TVPositionInfo> currentPositions;
 		private bool storeOffsets;
 		
 		
@@ -99,10 +99,10 @@ namespace Lucene.Net.Index
 			{
 				//ignoring offsets
 			}
-            fieldToTerms = new SupportClass.Dictionary<string, SupportClass.Dictionary<int, TVPositionInfo>>(numTerms);
+            fieldToTerms = new Support.Dictionary<string, Support.Dictionary<int, TVPositionInfo>>(numTerms);
 			this.storeOffsets = storeOffsets;
 			currentField = field;
-            currentPositions = new SupportClass.Dictionary<int, TVPositionInfo>();
+            currentPositions = new Support.Dictionary<int, TVPositionInfo>();
 			fieldToTerms[currentField] = currentPositions;
 		}
 		
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <returns> A map between field names and a Map.  The sub-Map key is the position as the integer, the value is {@link Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo}.
 		/// </returns>
-        public virtual SupportClass.Dictionary<String, SupportClass.Dictionary<int, TVPositionInfo>> GetFieldToTerms()
+        public virtual Support.Dictionary<String, Support.Dictionary<int, TVPositionInfo>> GetFieldToTerms()
 		{
 			return fieldToTerms;
 		}

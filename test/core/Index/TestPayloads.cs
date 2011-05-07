@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestPayloads:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:Support.ThreadClass
 		{
 			public AnonymousClassThread(int numDocs, System.String field, Lucene.Net.Index.TestPayloads.ByteArrayPool pool, Lucene.Net.Index.IndexWriter writer, TestPayloads enclosingInstance)
 			{
@@ -561,7 +561,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
 			System.String field = "test";
 			
-			SupportClass.ThreadClass[] ingesters = new SupportClass.ThreadClass[numThreads];
+			Support.ThreadClass[] ingesters = new Support.ThreadClass[numThreads];
 			for (int i = 0; i < numThreads; i++)
 			{
 				ingesters[i] = new AnonymousClassThread(numDocs, field, pool, writer, this);

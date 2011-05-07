@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestThreadedOptimize:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:Support.ThreadClass
 		{
 			public AnonymousClassThread(Lucene.Net.Index.IndexWriter writerFinal, int iFinal, int iterFinal, TestThreadedOptimize enclosingInstance)
 			{
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 				catch (System.Exception t)
 				{
 					Enclosing_Instance.setFailed();
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": hit exception");
+					System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": hit exception");
 					System.Console.Out.WriteLine(t.StackTrace);
 				}
 			}
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 				
 				int docCount = writer.DocCount();
 				
-				SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREADS];
+				Support.ThreadClass[] threads = new Support.ThreadClass[NUM_THREADS];
 				
 				for (int i = 0; i < NUM_THREADS; i++)
 				{
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 			runTest(directory, true, new ConcurrentMergeScheduler());
 			directory.Close();
 			
-			System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
+			System.String tempDir = Support.AppSettings.Get("tempDir", "");
 			if (tempDir == null)
 				throw new System.IO.IOException("tempDir undefined, cannot run test");
 			

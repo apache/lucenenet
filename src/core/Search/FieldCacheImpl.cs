@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 	class FieldCacheImpl : ExtendedFieldCache_old.ExtendedFieldCache
 	{
 		
-		private SupportClass.Dictionary<Type,Cache> caches;
+		private Support.Dictionary<Type,Cache> caches;
 		internal FieldCacheImpl()
 		{
 			Init();
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 		{
 			lock (this)
 			{
-                SupportClass.Dictionary<Type, Cache> caches2 = new SupportClass.Dictionary<Type, Cache>();
+                Support.Dictionary<Type, Cache> caches2 = new Support.Dictionary<Type, Cache>();
                 caches2[typeof(sbyte)] = new ByteCache(this);
                 caches2[typeof(short)] = new ShortCache(this);
                 caches2[typeof(int)] = new IntCache(this);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
 			
 			internal FieldCache wrapper;
 
-            internal System.Collections.IDictionary readerCache = new SupportClass.WeakHashTable();
+            internal System.Collections.IDictionary readerCache = new Support.WeakHashTable();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
 
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search
 							{
 								try
 								{
-                                    SupportClass.Single.Parse(termtext);
+                                    Support.Single.Parse(termtext);
 									ret = wrapper.GetFloats(reader, field);
 								}
 								catch (System.FormatException nfe3)

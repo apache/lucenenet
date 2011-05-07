@@ -26,12 +26,12 @@ namespace Lucene.Net.Store
 	public class ChecksumIndexInput:IndexInput
 	{
 		internal IndexInput main;
-		internal SupportClass.Checksum digest;
+		internal Support.Checksum digest;
 		
 		public ChecksumIndexInput(IndexInput main)
 		{
 			this.main = main;
-            digest = new SupportClass.CRC32();
+            digest = new Support.CRC32();
 		}
 		
 		public override byte ReadByte()

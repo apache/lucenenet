@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
 				System.String word = null;
 				while ((word = reader.ReadLine()) != null)
 				{
-					SupportClass.CollectionsHelper.Add(result, word.Trim());
+					Support.CollectionsHelper.Add(result, word.Trim());
 				}
 			}
 			finally
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis
 				{
 					if (word.StartsWith(comment) == false)
 					{
-						SupportClass.CollectionsHelper.Add(result, word.Trim());
+						Support.CollectionsHelper.Add(result, word.Trim());
 					}
 				}
 			}

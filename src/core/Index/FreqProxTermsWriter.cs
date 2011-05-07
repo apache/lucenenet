@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 		// under the same FieldInfo together, up into TermsHash*.
 		// Other writers would presumably share alot of this...
 
-        public override void Flush(SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        public override void Flush(Support.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			
 			// Gather all FieldData's that have postings, across all

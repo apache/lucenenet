@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 		internal const byte OMIT_TERM_FREQ_AND_POSITIONS = (byte) (0x40);
 
         private List<FieldInfo> byNumber = new List<FieldInfo>();
-        private SupportClass.Dictionary<string, FieldInfo> byName = new SupportClass.Dictionary<string, FieldInfo>();
+        private Support.Dictionary<string, FieldInfo> byName = new Support.Dictionary<string, FieldInfo>();
 		private int format;
 		
 		public /*internal*/ FieldInfos()

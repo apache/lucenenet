@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 				postings[i] = new PostingList();
 		}
 
-        public override void Flush(SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        public override void Flush(Support.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{

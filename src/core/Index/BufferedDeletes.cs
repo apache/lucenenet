@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	{
 		internal int numTerms;
         internal IDictionary<Term, Num> terms = null;
-        internal SupportClass.Dictionary<Query, int> queries = new SupportClass.Dictionary<Query, int>();
+        internal Support.Dictionary<Query, int> queries = new Support.Dictionary<Query, int>();
         internal List<int> docIDs = new List<int>();
 		internal long bytesUsed;
         internal  bool doTermSort;
@@ -45,11 +45,11 @@ namespace Lucene.Net.Index
             this.doTermSort = doTermSort;
             if (doTermSort)
             {
-                terms = new SupportClass.Dictionary<Term, Num>(true);
+                terms = new Support.Dictionary<Term, Num>(true);
             }
             else
             {
-                terms = new SupportClass.Dictionary<Term, Num>();
+                terms = new Support.Dictionary<Term, Num>();
             }
         }
 
@@ -142,11 +142,11 @@ namespace Lucene.Net.Index
 				{
                     if (doTermSort)
                     {
-                        newDeleteTerms = new SupportClass.Dictionary<Term, Num>(true);
+                        newDeleteTerms = new Support.Dictionary<Term, Num>(true);
                     }
                     else
                     {
-                        newDeleteTerms = new SupportClass.Dictionary<Term, Num>();
+                        newDeleteTerms = new Support.Dictionary<Term, Num>();
                     }
                     foreach (KeyValuePair<Term, Num> entry in terms)
                     {
@@ -172,11 +172,11 @@ namespace Lucene.Net.Index
 					newDeleteDocIDs = null;
 				
 				// Remap delete-by-query
-                SupportClass.Dictionary<Query, int> newDeleteQueries;
+                Support.Dictionary<Query, int> newDeleteQueries;
 				
 				if (queries.Count > 0)
 				{
-                    newDeleteQueries = new SupportClass.Dictionary<Query, int>(queries.Count);
+                    newDeleteQueries = new Support.Dictionary<Query, int>(queries.Count);
                     foreach(KeyValuePair<Query,int> entry in queries)
                     {
                         int num = entry.Value;

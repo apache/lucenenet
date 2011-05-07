@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 				{
 					payloadLength[level] = skipStream.ReadVInt();
 				}
-				delta = SupportClass.Number.URShift(delta, 1);
+				delta = Support.Number.URShift(delta, 1);
 			}
 			else
 			{

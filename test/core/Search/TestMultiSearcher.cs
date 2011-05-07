@@ -308,9 +308,9 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(document.GetFields().Count == 2, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 2);
 			//Should be one document from each directory
 			//they both have two fields, contents and other
-            SupportClass.Set<string> ftl = new SupportClass.Set<string>();
+            Support.Set<string> ftl = new Support.Set<string>();
 			ftl.Add("other");
-            SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, new SupportClass.Set<string>());
+            SetBasedFieldSelector fs = new SetBasedFieldSelector(ftl, new Support.Set<string>());
 			document = searcher.Doc(hits[0].doc, fs);
 			Assert.IsTrue(document != null, "document is null and it shouldn't be");
 			Assert.IsTrue(document.GetFields().Count == 1, "document.getFields() Size: " + document.GetFields().Count + " is not: " + 1);
@@ -320,7 +320,7 @@ namespace Lucene.Net.Search
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");
 			ftl.Clear();
 			ftl.Add("contents");
-            fs = new SetBasedFieldSelector(ftl, new SupportClass.Set<string>());
+            fs = new SetBasedFieldSelector(ftl, new Support.Set<string>());
 			document = searcher.Doc(hits[1].doc, fs);
 			value_Renamed = document.Get("contents");
 			Assert.IsTrue(value_Renamed != null, "value is null and it shouldn't be");

@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 		
 		private void  RmDir(System.IO.FileInfo dir)
 		{
-			System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
+			System.IO.FileInfo[] files = Support.FileSupport.GetFiles(dir);
 			for (int i = 0; i < files.Length; i++)
 			{
 				bool tmpBool;
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
 		}
 	}
 	
-	class IndexThread:SupportClass.ThreadClass
+	class IndexThread:Support.ThreadClass
 	{
 		
 		private const int TEST_SECONDS = 3; // how many seconds to run each test 
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
 						}
 						catch (System.Threading.ThreadInterruptedException ie)
 						{
-							SupportClass.ThreadClass.Current().Interrupt();
+							Support.ThreadClass.Current().Interrupt();
 							throw new System.SystemException("", ie);
 						}
 					}

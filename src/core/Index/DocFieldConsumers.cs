@@ -50,13 +50,13 @@ namespace Lucene.Net.Index
 			two.SetFieldInfos(fieldInfos);
 		}
 
-        public override void Flush(SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        public override void Flush(Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 
-            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> oneThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
-            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> twoThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
+            Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> oneThreadsAndFields = new Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
+            Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> twoThreadsAndFields = new Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
 
-            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
+            foreach (KeyValuePair<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> entry in new Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>(threadsAndFields))
             {
             	DocFieldConsumersPerThread perThread = (DocFieldConsumersPerThread) entry.Key;
 				

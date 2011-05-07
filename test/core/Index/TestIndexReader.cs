@@ -392,9 +392,9 @@ namespace Lucene.Net.Index
 			{
 				Assert.AreEqual(bin[i], data1[i + b1.GetBinaryOffset()]);
 			}
-            SupportClass.Set<string> lazyFields = new SupportClass.Set<string>();
+            Support.Set<string> lazyFields = new Support.Set<string>();
 			lazyFields.Add("bin1");
-            FieldSelector sel = new SetBasedFieldSelector(new SupportClass.Set<string>(), lazyFields);
+            FieldSelector sel = new SetBasedFieldSelector(new Support.Set<string>(), lazyFields);
 			doc = reader.Document(reader.MaxDoc() - 1, sel);
 			Fieldable[] fieldables = doc.GetFieldables("bin1");
 			Assert.IsNotNull(fieldables);
@@ -557,7 +557,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestWritingNorms()
 		{
-			System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
+			System.String tempDir = Support.AppSettings.Get("tempDir", "");
 			if (tempDir == null)
 				throw new System.IO.IOException("tempDir undefined, cannot run test");
 			
@@ -761,14 +761,14 @@ namespace Lucene.Net.Index
 		
 		private Directory GetDirectory()
 		{
-			return FSDirectory.Open(new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex")));
+			return FSDirectory.Open(new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testIndex")));
 		}
 		
 		[Test]
 		public virtual void  TestFilesOpenClose()
 		{
 			// Create initial data set
-			System.IO.FileInfo dirFile = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
+			System.IO.FileInfo dirFile = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testIndex"));
 			Directory dir = GetDirectory();
 			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			AddDoc(writer, "test");
@@ -800,7 +800,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestLastModified()
 		{
 			Assert.IsFalse(IndexReader.IndexExists("there_is_no_such_index"));
-			System.IO.FileInfo fileDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "testIndex"));
+			System.IO.FileInfo fileDir = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testIndex"));
 			for (int i = 0; i < 2; i++)
 			{
 				try
@@ -1111,7 +1111,7 @@ namespace Lucene.Net.Index
 					//  System.out.println("  startFiles: " + i + ": " + startFiles[i]);
 					//}
 					
-					if (!SupportClass.CollectionsHelper.Equals(startFiles, endFiles))
+					if (!Support.CollectionsHelper.Equals(startFiles, endFiles))
 					{
 						System.String successStr;
 						if (success)
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestOpenReaderAfterDelete()
 		{
-			System.IO.FileInfo dirFile = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "deletetest"));
+			System.IO.FileInfo dirFile = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "deletetest"));
 			Directory dir = FSDirectory.Open(dirFile);
 			try
 			{
@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Index
 		}
 		private void  RmDir(System.IO.FileInfo dir)
 		{
-			System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
+			System.IO.FileInfo[] files = Support.FileSupport.GetFiles(dir);
 			for (int i = 0; i < files.Length; i++)
 			{
 				bool tmpBool;

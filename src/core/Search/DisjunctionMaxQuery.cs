@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 	{
 		
 		/* The subqueries */
-		private SupportClass.EquatableList<Query> disjuncts = new SupportClass.EquatableList<Query>();
+		private Support.EquatableList<Query> disjuncts = new Support.EquatableList<Query>();
 		
 		/* Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking. */
 		private float tieBreakerMultiplier = 0.0f;
@@ -259,12 +259,12 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
-            clone.disjuncts = (SupportClass.EquatableList<Query>) this.disjuncts.Clone();
+            clone.disjuncts = (Support.EquatableList<Query>) this.disjuncts.Clone();
 			return clone;
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> terms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
 		{
 			for (System.Collections.IEnumerator iter = disjuncts.GetEnumerator(); iter.MoveNext(); )
 			{

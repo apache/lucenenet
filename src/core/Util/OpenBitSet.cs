@@ -942,7 +942,7 @@ namespace Lucene.Net.Util
             for (int i = bits.Length; --i >= 0; )
             {
                 h ^= bits[i];
-                h = (h << 1) | (SupportClass.Number.URShift(h, 63)); // rotate left
+                h = (h << 1) | (Support.Number.URShift(h, 63)); // rotate left
             }
             // fold leftmost bits into right and add a constant to prevent
             // empty sets from returning 0, which is too common.

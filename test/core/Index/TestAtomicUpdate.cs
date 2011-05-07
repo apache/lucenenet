@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		abstract public class TimedThread:SupportClass.ThreadClass
+		abstract public class TimedThread:Support.ThreadClass
 		{
 			internal bool failed;
 			internal int count;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.Exception e)
                 {
-                    System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": exc");
+                    System.Console.Out.WriteLine(Support.ThreadClass.Current().Name + ": exc");
                     System.Console.Out.WriteLine(e.StackTrace);
                     failed = true;
                 }

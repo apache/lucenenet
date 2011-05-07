@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 			// TODO in Java 1.5: switch to Arrays.hashCode().  The 
 			// Java 1.4 workaround below calculates the same hashCode
 			// as Java 1.5's new Arrays.hashCode()
-			return 0x45aaf665 + SupportClass.EquatableList<SortField>.GetHashCode(fields);
+			return 0x45aaf665 + Support.EquatableList<SortField>.GetHashCode(fields);
 		}
 		static Sort()
 		{

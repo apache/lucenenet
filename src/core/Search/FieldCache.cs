@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 			
 			while (low <= high)
 			{
-				int mid = SupportClass.Number.URShift((low + high), 1);
+				int mid = Support.Number.URShift((low + high), 1);
 				int cmp = String.CompareOrdinal(lookup[mid], key);
 				
 				if (cmp < 0)
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
 		{
             try
             {
-                return SupportClass.Single.Parse(value_Renamed);
+                return Support.Single.Parse(value_Renamed);
             }
             catch (System.OverflowException)
             {
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 	{
 		public virtual double ParseDouble(System.String value_Renamed)
 		{
-			return SupportClass.Double.Parse(value_Renamed);
+			return Support.Double.Parse(value_Renamed);
 		}
 		protected internal virtual System.Object ReadResolve()
 		{

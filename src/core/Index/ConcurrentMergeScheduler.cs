@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 				{
 					// Default to slightly higher priority than our
 					// calling thread
-					mergeThreadPriority = 1 + (System.Int32) SupportClass.ThreadClass.Current().Priority;
+					mergeThreadPriority = 1 + (System.Int32) Support.ThreadClass.Current().Priority;
 					if (mergeThreadPriority > (int) System.Threading.ThreadPriority.Highest)
 						mergeThreadPriority = (int) System.Threading.ThreadPriority.Highest;
 				}
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
 							{
 								// In 3.0 we will change this to throw
 								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
+								Support.ThreadClass.Current().Interrupt();
 								throw new System.SystemException(ie.Message, ie);
 							}
 						}
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public /*protected internal*/ class MergeThread:SupportClass.ThreadClass
+		public /*protected internal*/ class MergeThread:Support.ThreadClass
 		{
 			private void  InitBlock(ConcurrentMergeScheduler enclosingInstance)
 			{
@@ -463,7 +463,7 @@ namespace Lucene.Net.Index
 			}
 			catch (System.Threading.ThreadInterruptedException ie)
 			{
-				SupportClass.ThreadClass.Current().Interrupt();
+				Support.ThreadClass.Current().Interrupt();
 				// In 3.0 this will throw InterruptedException
 				throw new System.SystemException(ie.Message, ie);
 			}

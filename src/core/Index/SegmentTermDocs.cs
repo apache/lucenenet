@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					doc += Support.Number.URShift(docCode, 1); // shift off low bit
 					if ((docCode & 1) != 0)
 					// if low bit is set
 						freq = 1;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 				{
 					// manually inlined call to next() for speed
 					int docCode = freqStream.ReadVInt();
-					doc += SupportClass.Number.URShift(docCode, 1); // shift off low bit
+					doc += Support.Number.URShift(docCode, 1); // shift off low bit
 					if ((docCode & 1) != 0)
 					// if low bit is set
 						freq = 1;

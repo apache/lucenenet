@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Spans
 			
 			QueryUtils.CheckEqual(q, qr);
 			
-			SupportClass.Set<Term> set_Renamed = new SupportClass.Set<Term>();
+			Support.Set<Term> set_Renamed = new Support.Set<Term>();
 			qr.ExtractTerms(set_Renamed);
 			Assert.AreEqual(2, set_Renamed.Count);
 		}

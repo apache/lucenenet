@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 				
 		private SegmentReader[] subReaders;
 		private int[] starts; // 1st docno for each segment
-        private IDictionary<string, byte[]> normsCache = new SupportClass.Dictionary<string, byte[]>();
+        private IDictionary<string, byte[]> normsCache = new Support.Dictionary<string, byte[]>();
 		private int maxDoc = 0;
 		private int numDocs = - 1;
 		private bool hasDeletions = false;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, sis.Files(directory, true));
+				Support.CollectionsHelper.AddAllIfNotContains(synced, sis.Files(directory, true));
 			}
 			
 			// To reduce the chance of hitting FileNotFound
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
+				Support.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
 			}
 			
 			// IndexWriter synchronizes externally before calling
@@ -250,12 +250,12 @@ namespace Lucene.Net.Index
 			{
 				// We assume that this segments_N was previously
 				// properly sync'd:
-				SupportClass.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
+				Support.CollectionsHelper.AddAllIfNotContains(synced, infos.Files(directory, true));
 			}
 			
 			// we put the old SegmentReaders in a map, that allows us
 			// to lookup a reader using its segment name
-			IDictionary<string,int?> segmentReaders = new SupportClass.Dictionary<string,int?>();
+			IDictionary<string,int?> segmentReaders = new Support.Dictionary<string,int?>();
 			
 			if (oldReaders != null)
 			{
@@ -730,7 +730,7 @@ namespace Lucene.Net.Index
 			
 			while (hi >= lo)
 			{
-				int mid = SupportClass.Number.URShift((lo + hi), 1);
+				int mid = Support.Number.URShift((lo + hi), 1);
 				int midValue = starts[mid];
 				if (n < midValue)
 					hi = mid - 1;
@@ -1079,7 +1079,7 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = subReaders[i];
                 ICollection<string> names = reader.GetFieldNames(fieldNames);
-				SupportClass.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
+				Support.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
 			}
 			return fieldSet.Keys;
 		}

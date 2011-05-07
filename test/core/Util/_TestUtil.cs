@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 				tmpBool = System.IO.Directory.Exists(dir.FullName);
 			if (tmpBool)
 			{
-				System.IO.FileInfo[] files = SupportClass.FileSupport.GetFiles(dir);
+				System.IO.FileInfo[] files = Support.FileSupport.GetFiles(dir);
 				for (int i = 0; i < files.Length; i++)
 				{
 					bool tmpBool2;

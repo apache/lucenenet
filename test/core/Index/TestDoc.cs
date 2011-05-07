@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 		public override void  SetUp()
 		{
 			base.SetUp();
-			workDir = new System.IO.FileInfo(System.IO.Path.Combine(SupportClass.AppSettings.Get("tempDir", ""), "TestDoc"));
+			workDir = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "TestDoc"));
 			System.IO.Directory.CreateDirectory(workDir.FullName);
 			
 			indexDir = new System.IO.FileInfo(System.IO.Path.Combine(workDir.FullName, "testIndex"));

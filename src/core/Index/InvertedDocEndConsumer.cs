@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	abstract class InvertedDocEndConsumer
 	{
 		public abstract InvertedDocEndConsumerPerThread AddThread(DocInverterPerThread docInverterPerThread);
-        public abstract void Flush(SupportClass.Dictionary<InvertedDocEndConsumerPerThread, System.Collections.Generic.IList<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state);
+        public abstract void Flush(Support.Dictionary<InvertedDocEndConsumerPerThread, System.Collections.Generic.IList<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state);
 		internal abstract void  CloseDocStore(SegmentWriteState state);
 		public abstract void  Abort();
 		internal abstract void  SetFieldInfos(FieldInfos fieldInfos);

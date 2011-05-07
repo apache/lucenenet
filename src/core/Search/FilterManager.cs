@@ -66,12 +66,12 @@ namespace Lucene.Net.Search
 		/// <summary> Sets up the FilterManager singleton.</summary>
 		protected internal FilterManager()
 		{
-			cache = new SupportClass.Dictionary<int,FilterItem>();
+			cache = new Support.Dictionary<int,FilterItem>();
 			cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
 			cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
 			
 			filterCleaner = new FilterCleaner(this);
-			SupportClass.ThreadClass fcThread = new SupportClass.ThreadClass(new System.Threading.ThreadStart(filterCleaner.Run));
+			Support.ThreadClass fcThread = new Support.ThreadClass(new System.Threading.ThreadStart(filterCleaner.Run));
 			// setto be a Daemon so it doesn't have to be stopped
 			fcThread.IsBackground = true;
 			fcThread.Start();
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}

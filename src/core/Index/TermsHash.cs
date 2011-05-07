@@ -122,16 +122,16 @@ namespace Lucene.Net.Index
 			}
 		}
 
-        internal override void Flush(SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        internal override void Flush(Support.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 			lock (this)
 			{
-                SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>>();
-				SupportClass.Dictionary<InvertedDocConsumerPerThread,IList<InvertedDocConsumerPerField>> nextThreadsAndFields;
+                Support.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>> childThreadsAndFields = new Support.Dictionary<TermsHashConsumerPerThread, IList<TermsHashConsumerPerField>>();
+				Support.Dictionary<InvertedDocConsumerPerThread,IList<InvertedDocConsumerPerField>> nextThreadsAndFields;
 				
 				if (nextTermsHash != null)
 				{
-                    nextThreadsAndFields = new SupportClass.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
+                    nextThreadsAndFields = new Support.Dictionary<InvertedDocConsumerPerThread, IList<InvertedDocConsumerPerField>>();
 				}
 				else
 					nextThreadsAndFields = null;

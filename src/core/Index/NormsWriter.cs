@@ -58,10 +58,10 @@ namespace Lucene.Net.Index
 		/// <summary>Produce _X.nrm if any document had a field with norms
 		/// not disabled 
 		/// </summary>
-        public override void Flush(SupportClass.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state)
+        public override void Flush(Support.Dictionary<InvertedDocEndConsumerPerThread, IList<InvertedDocEndConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
 
-            SupportClass.Dictionary<FieldInfo, IList<NormsWriterPerField>> byField = new SupportClass.Dictionary<FieldInfo, IList<NormsWriterPerField>>();
+            Support.Dictionary<FieldInfo, IList<NormsWriterPerField>> byField = new Support.Dictionary<FieldInfo, IList<NormsWriterPerField>>();
 			
 			// Typically, each thread will have encountered the same
 			// field.  So first we collate by field, ie, all

@@ -422,7 +422,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			// Default to true (fixed the bug), unless the system prop is set
 			{
-				System.String v = SupportClass.AppSettings.Get("Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym", "true");
+				System.String v = Support.AppSettings.Get("Lucene.Net.Analysis.Standard.StandardAnalyzer.replaceInvalidAcronym", "true");
 				if (v == null || v.Equals("true"))
 					defaultReplaceInvalidAcronym = true;
 				else

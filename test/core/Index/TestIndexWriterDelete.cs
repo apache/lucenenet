@@ -922,7 +922,7 @@ namespace Lucene.Net.Index
 				new IndexFileDeleter(dir, new KeepOnlyLastCommitDeletionPolicy(), infos, null, null,null);
 				System.String[] endFiles = dir.ListAll();
 				
-				if (!SupportClass.CollectionsHelper.CompareStringArrays(startFiles, endFiles))
+				if (!Support.CollectionsHelper.CompareStringArrays(startFiles, endFiles))
 				{
 					Assert.Fail("docswriter abort() failed to delete unreferenced files:\n  before delete:\n    " + ArrayToString(startFiles) + "\n  after delete:\n    " + ArrayToString(endFiles));
 				}

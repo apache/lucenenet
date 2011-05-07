@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 		internal System.String failure = null;
 		
 		
-		internal class Thr:SupportClass.ThreadClass
+		internal class Thr:Support.ThreadClass
 		{
 			[Serializable]
 			private class AnonymousClassFieldSelector : FieldSelector

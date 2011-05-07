@@ -82,10 +82,10 @@ namespace Lucene.Net.Index
 				System.String token = tokens[i];
 				mapper.Map(token, 1, null, thePositions[i]);
 			}
-            SupportClass.Dictionary<String, SupportClass.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo>> map = mapper.GetFieldToTerms();
+            Support.Dictionary<String, Support.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo>> map = mapper.GetFieldToTerms();
 			Assert.IsTrue(map != null, "map is null and it shouldn't be");
 			Assert.IsTrue(map.Count == 1, "map Size: " + map.Count + " is not: " + 1);
-            SupportClass.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo> positions = map["test"];
+            Support.Dictionary<int, PositionBasedTermVectorMapper.TVPositionInfo> positions = map["test"];
 			Assert.IsTrue(positions != null, "thePositions is null and it shouldn't be");
 			
 			Assert.IsTrue(positions.Count == numPositions, "thePositions Size: " + positions.Count + " is not: " + numPositions);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 					Assert.IsTrue(info.Offsets.Count == 1, "info.getOffsets() Size: " + info.Offsets.Count + " is not: " + 1);
 				}
 			}
-			Assert.IsTrue(SupportClass.BitSetSupport.Cardinality(bits) == numPositions, "Bits are not all on");
+			Assert.IsTrue(Support.BitSetSupport.Cardinality(bits) == numPositions, "Bits are not all on");
 		}
     }
 }

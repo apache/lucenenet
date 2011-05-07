@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 	{
 		private System.String field;
         private List<Term> terms = new List<Term>();
-        private SupportClass.EquatableList<int> positions = new SupportClass.EquatableList<int>(4);
+        private Support.EquatableList<int> positions = new Support.EquatableList<int>(4);
 		private int maxPosition = 0;
 		private int slop = 0;
 		
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
 		
 		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(java.util.Set)">
 		/// </seealso>
-		public override void  ExtractTerms(SupportClass.Set<Lucene.Net.Index.Term> queryTerms)
+		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> queryTerms)
 		{
             queryTerms.Add(terms);
 			//SupportClass.CollectionsHelper.AddAllIfNotContains(queryTerms, terms);

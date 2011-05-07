@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
         [Test]
 		public virtual void  TestBasic()
 		{
-            IList<String> fileExtensions = new SupportClass.Set<string>();
+            IList<String> fileExtensions = new Support.Set<string>();
 			fileExtensions.Add("fdt");
 			fileExtensions.Add("fdx");
 			

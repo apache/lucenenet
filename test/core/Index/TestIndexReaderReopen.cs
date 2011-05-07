@@ -396,8 +396,8 @@ namespace Lucene.Net.Index
 					{
 						// refresh reader synchronized
 						ReaderCouple c = (Enclosing_Instance.RefreshReader(r, test, index, true));
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, c.newReader);
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, c.refreshedReader);
+						Support.CollectionsHelper.AddIfNotContains(readersToClose, c.newReader);
+						Support.CollectionsHelper.AddIfNotContains(readersToClose, c.refreshedReader);
 						readers.Add(c);
 						// prevent too many readers
 						break;
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
 						{
 							refreshed.Close();
 						}
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, refreshed);
+						Support.CollectionsHelper.AddIfNotContains(readersToClose, refreshed);
 					}
 					lock (this)
 					{
@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Index
 					IndexReader refreshed = reader.Reopen();
 					if (refreshed != reader)
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(readersToClose, reader);
+						Support.CollectionsHelper.AddIfNotContains(readersToClose, reader);
 					}
 					reader = refreshed;
 				}
@@ -1201,7 +1201,7 @@ namespace Lucene.Net.Index
 			public abstract void  Run();
 		}
 		
-		private class ReaderThread:SupportClass.ThreadClass
+		private class ReaderThread:Support.ThreadClass
 		{
 			private ReaderThreadTask task;
 			internal /*private*/ System.Exception error;

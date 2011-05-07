@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
 	public class SingleInstanceLockFactory:LockFactory
 	{
 
-        private SupportClass.Set<string> locks = new SupportClass.Set<string>();
+        private Support.Set<string> locks = new Support.Set<string>();
 		
 		public override Lock MakeLock(System.String lockName)
 		{
@@ -61,9 +61,9 @@ namespace Lucene.Net.Store
 	{
 		
 		internal System.String lockName;
-        private SupportClass.Set<string> locks;
+        private Support.Set<string> locks;
 
-        public SingleInstanceLock(SupportClass.Set<string> locks, System.String lockName)
+        public SingleInstanceLock(Support.Set<string> locks, System.String lockName)
 		{
 			this.locks = locks;
 			this.lockName = lockName;

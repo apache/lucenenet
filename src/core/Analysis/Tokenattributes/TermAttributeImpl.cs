@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		{
 			int length = buffer.Length;
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
+			Support.TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
 			termLength = length;
 		}
 		
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 			System.Diagnostics.Debug.Assert(offset <= buffer.Length);
 			System.Diagnostics.Debug.Assert(offset + length <= buffer.Length);
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
+			Support.TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
 			termLength = length;
 		}
 		

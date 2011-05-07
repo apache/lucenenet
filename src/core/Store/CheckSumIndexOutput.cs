@@ -17,8 +17,8 @@
 
 using System;
 
-using Checksum = SupportClass.Checksum;
-using CRC32 = SupportClass.CRC32;
+using Checksum = Lucene.Net.Support.Checksum;
+using CRC32 = Lucene.Net.Support.CRC32;
 
 namespace Lucene.Net.Store
 {

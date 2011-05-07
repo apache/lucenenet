@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         public override void Flush(IDictionary<DocConsumerPerThread, DocConsumerPerThread> threads, SegmentWriteState state)
 		{
 
-            SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> childThreadsAndFields = new SupportClass.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
+            Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>> childThreadsAndFields = new Support.Dictionary<DocFieldConsumerPerThread, IList<DocFieldConsumerPerField>>();
             foreach (DocFieldProcessorPerThread perThread in threads.Keys)
             {
                 childThreadsAndFields[perThread.consumer] = perThread.Fields();

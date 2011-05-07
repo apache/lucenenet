@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	{
 		
 		//Map<Character, NormalizeMap> submap;
-		internal SupportClass.Dictionary<char, NormalizeCharMap> submap;
+		internal Support.Dictionary<char, NormalizeCharMap> submap;
 		internal System.String normStr;
 		internal int diff;
 		
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
 				char c = singleMatch[i];
 				if (currMap.submap == null)
 				{
-                    currMap.submap = new SupportClass.Dictionary<char, NormalizeCharMap>(1);
+                    currMap.submap = new Support.Dictionary<char, NormalizeCharMap>(1);
 				}
 				NormalizeCharMap map = currMap.submap[CharacterCache.ValueOf(c)];
 				if (map == null)

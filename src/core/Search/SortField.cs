@@ -671,7 +671,7 @@ namespace Lucene.Net.Search
                     int tmpI32; long tmpI64; float tmpF;
                     if      (System.Int32.TryParse(termtext, out tmpI32))       ret = SortField.INT;
                     else if (System.Int64.TryParse(termtext, out tmpI64))       ret = SortField.LONG;
-                    else if (SupportClass.Single.TryParse(termtext, out tmpF))  ret = SortField.FLOAT;
+                    else if (Support.Single.TryParse(termtext, out tmpF))  ret = SortField.FLOAT;
                     else ret = SortField.STRING;
 				}
 				else

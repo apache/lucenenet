@@ -236,12 +236,12 @@ namespace Lucene.Net.Util
 		{
 			int i = size;
 			HeapedScorerDoc node = heap[i]; // save bottom node
-			int j = SupportClass.Number.URShift(i, 1);
+			int j = Support.Number.URShift(i, 1);
 			while ((j > 0) && (node.doc < heap[j].doc))
 			{
 				heap[i] = heap[j]; // shift parents down
 				i = j;
-				j = SupportClass.Number.URShift(j, 1);
+				j = Support.Number.URShift(j, 1);
 			}
 			heap[i] = node; // install saved node
 			topHSD = heap[1];

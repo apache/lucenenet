@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
 				IndexingThread th = threads[i];
 				lock (th)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(docs, th.docs);
+					Support.CollectionsHelper.AddAllIfNotContains(docs, th.docs);
 				}
 			}
 			
@@ -478,13 +478,13 @@ namespace Lucene.Net.Index
             System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> ff1 = d1.GetFields();
             System.Collections.Generic.IList<Lucene.Net.Documents.Fieldable> ff2 = d2.GetFields();
 			
-			SupportClass.CollectionsHelper.Sort(ff1, fieldNameComparator);
-			SupportClass.CollectionsHelper.Sort(ff2, fieldNameComparator);
+			Support.CollectionsHelper.Sort(ff1, fieldNameComparator);
+			Support.CollectionsHelper.Sort(ff2, fieldNameComparator);
 			
 			if (ff1.Count != ff2.Count)
 			{
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-				System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+				System.Console.Out.WriteLine(Support.CollectionsHelper.CollectionToString(ff1));
+				System.Console.Out.WriteLine(Support.CollectionsHelper.CollectionToString(ff2));
 				Assert.AreEqual(ff1.Count, ff2.Count);
 			}
 			
@@ -505,8 +505,8 @@ namespace Lucene.Net.Index
 					if (!s1.Equals(s2))
 					{
 						// print out whole doc on error
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff1));
-						System.Console.Out.WriteLine(SupportClass.CollectionsHelper.CollectionToString(ff2));
+						System.Console.Out.WriteLine(Support.CollectionsHelper.CollectionToString(ff1));
+						System.Console.Out.WriteLine(Support.CollectionsHelper.CollectionToString(ff2));
 						Assert.AreEqual(s1, s2);
 					}
 				}
@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal class IndexingThread:SupportClass.ThreadClass
+		internal class IndexingThread:Support.ThreadClass
 		{
 			internal IndexWriter w;
 			internal int base_Renamed;
@@ -658,7 +658,7 @@ namespace Lucene.Net.Index
 			public virtual System.String GetUTF8String(int nTokens)
 			{
 				int upto = 0;
-				SupportClass.CollectionsHelper.Fill(buffer, (char) 0);
+				Support.CollectionsHelper.Fill(buffer, (char) 0);
 				for (int i = 0; i < nTokens; i++)
 					upto = AddUTF8Token(upto);
 				return new System.String(buffer, 0, upto);
@@ -726,7 +726,7 @@ namespace Lucene.Net.Index
 				
 				if (Lucene.Net.Index.TestStressIndexing2.sameFieldOrder)
 				{
-					SupportClass.CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
+					Support.CollectionsHelper.Sort(fields, Lucene.Net.Index.TestStressIndexing2.fieldNameComparator);
 				}
 				else
 				{

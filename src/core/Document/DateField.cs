@@ -68,7 +68,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		// make date strings long enough to last a millenium
-        private static int DATE_LEN = SupportClass.Number.ToString(1000L * 365 * 24 * 60 * 60 * 1000, SupportClass.Number.MAX_RADIX).Length;
+        private static int DATE_LEN = Support.Number.ToString(1000L * 365 * 24 * 60 * 60 * 1000, Support.Number.MAX_RADIX).Length;
 
 		public static System.String MIN_DATE_STRING()
 		{
@@ -78,7 +78,7 @@ namespace Lucene.Net.Documents
 		public static System.String MAX_DATE_STRING()
 		{
 			char[] buffer = new char[DATE_LEN];
-            char c = SupportClass.Character.ForDigit(SupportClass.Character.MAX_RADIX - 1, SupportClass.Character.MAX_RADIX);
+            char c = Support.Character.ForDigit(Support.Character.MAX_RADIX - 1, Support.Character.MAX_RADIX);
 			for (int i = 0; i < DATE_LEN; i++)
 				buffer[i] = c;
 			return new System.String(buffer);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Documents
 			if (time < 0)
 				throw new System.SystemException("time '" + time + "' is too early, must be >= 0");
 
-            System.String s = SupportClass.Number.ToString(time, SupportClass.Character.MAX_RADIX);
+            System.String s = Support.Number.ToString(time, Support.Character.MAX_RADIX);
 			
 			if (s.Length > DATE_LEN)
 				throw new System.SystemException("time '" + time + "' is too late, length of string " + "representation must be <= " + DATE_LEN);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Converts a string-encoded date into a millisecond time. </summary>
 		public static long StringToTime(System.String s)
 		{
-            return SupportClass.Number.Parse(s, SupportClass.Number.MAX_RADIX);
+            return Support.Number.Parse(s, Support.Number.MAX_RADIX);
 		}
 		/// <summary>Converts a string-encoded date into a Date object. </summary>
         public static System.DateTime StringToDate(System.String s)

@@ -300,13 +300,13 @@ namespace Lucene.Net.Util
 			// Special case -- return empty vector is start == end
 			if (end == start)
 				return new BitVector(0);
-			byte[] bits = new byte[(SupportClass.Number.URShift((end - start - 1), 3)) + 1];
-			int s = SupportClass.Number.URShift(start, 3);
+			byte[] bits = new byte[(Support.Number.URShift((end - start - 1), 3)) + 1];
+			int s = Support.Number.URShift(start, 3);
 			for (int i = 0; i < bits.Length; i++)
 			{
 				int cur = 0xFF & this.bits[i + s];
 				int next = i + s + 1 >= this.bits.Length?0:0xFF & this.bits[i + s + 1];
-				bits[i] = (byte) ((SupportClass.Number.URShift(cur, (start & 7))) | ((next << (8 - (start & 7)))));
+				bits[i] = (byte) ((Support.Number.URShift(cur, (start & 7))) | ((next << (8 - (start & 7)))));
 			}
 			int bitsToClear = (bits.Length * 8 - (end - start)) % 8;
 			bits[bits.Length - 1] &= (byte) (~ (0xFF << (8 - bitsToClear)));

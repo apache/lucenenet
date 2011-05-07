@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 		// than this they share ThreadStates
 		private const int MAX_THREAD_STATE = 5;
 		private DocumentsWriterThreadState[] threadStates = new DocumentsWriterThreadState[0];
-        private SupportClass.Dictionary<SupportClass.ThreadClass, DocumentsWriterThreadState> threadBindings = new SupportClass.Dictionary<SupportClass.ThreadClass, DocumentsWriterThreadState>();
+        private Support.Dictionary<Support.ThreadClass, DocumentsWriterThreadState> threadBindings = new Support.Dictionary<Support.ThreadClass, DocumentsWriterThreadState>();
 		
 		private int pauseThreads; // Non-zero when we need all threads to
 		// pause (eg to flush)
@@ -716,7 +716,7 @@ namespace Lucene.Net.Index
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}
@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
 						flushState.numDocsInStore = 0;
 					}
 					
-					IDictionary<DocConsumerPerThread,DocConsumerPerThread> threads = new SupportClass.Dictionary<DocConsumerPerThread,DocConsumerPerThread>();
+					IDictionary<DocConsumerPerThread,DocConsumerPerThread> threads = new Support.Dictionary<DocConsumerPerThread,DocConsumerPerThread>();
 					for (int i = 0; i < threadStates.Length; i++)
 						threads[threadStates[i].consumer] = threadStates[i].consumer;
 					consumer.Flush(threads, flushState);
@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
 				// First, find a thread state.  If this thread already
 				// has affinity to a specific ThreadState, use that one
 				// again.
-				DocumentsWriterThreadState state = threadBindings[SupportClass.ThreadClass.Current()];
+				DocumentsWriterThreadState state = threadBindings[Support.ThreadClass.Current()];
 				if (state == null)
 				{
 					
@@ -953,7 +953,7 @@ namespace Lucene.Net.Index
 						state = newArray[threadStates.Length] = new DocumentsWriterThreadState(this);
 						threadStates = newArray;
 					}
-					threadBindings[SupportClass.ThreadClass.Current()] = state;
+					threadBindings[Support.ThreadClass.Current()] = state;
 				}
 				
 				// Next, wait until my thread state is idle (in case
@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Index
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}
@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Index
 				
 				// Delete by query
 				IndexSearcher searcher = new IndexSearcher(reader);
-                foreach(KeyValuePair<Query,int> entry in new SupportClass.Dictionary<Query,int>(deletesFlushed.queries))
+                foreach(KeyValuePair<Query,int> entry in new Support.Dictionary<Query,int>(deletesFlushed.queries))
 				{
 					Query query = entry.Key;
 					int limit = entry.Value;
@@ -1527,7 +1527,7 @@ namespace Lucene.Net.Index
 					{
 						// In 3.0 we will change this to throw
 						// InterruptedException instead
-						SupportClass.ThreadClass.Current().Interrupt();
+						Support.ThreadClass.Current().Interrupt();
 						throw new System.SystemException(ie.Message, ie);
 					}
 				}

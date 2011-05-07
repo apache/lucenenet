@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 			this.numDocs = numDocs;
 			this.numDocsInStore = numDocsInStore;
 			this.termIndexInterval = termIndexInterval;
-            flushedFiles = new SupportClass.Set<string>();
+            flushedFiles = new Support.Set<string>();
 		}
 		
 		public virtual System.String SegmentFileName(System.String ext)
