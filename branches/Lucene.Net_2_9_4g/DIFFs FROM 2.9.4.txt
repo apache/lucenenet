@@ -14,6 +14,7 @@
 
 * LUCENENET-266 Refactoring SupportClass
 
+* LUCENENET-361 Workaround for a Mono C# compiler issue
 
 CONTRIB:
 
