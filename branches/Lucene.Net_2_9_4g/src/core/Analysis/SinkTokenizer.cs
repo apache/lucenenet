@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -36,24 +37,24 @@ namespace Lucene.Net.Analysis
     [Obsolete("Use TeeSinkTokenFilter instead")]
 	public class SinkTokenizer:Tokenizer
 	{
-		protected internal System.Collections.IList lst = new System.Collections.ArrayList();
-		protected internal System.Collections.IEnumerator iter;
+        protected internal List<Token> lst = new List<Token>();
+		protected internal IEnumerator<Token> iter;
 		
-		public SinkTokenizer(System.Collections.IList input)
+		public SinkTokenizer(List<Token> input)
 		{
 			this.lst = input;
-			if (this.lst == null)
-				this.lst = new System.Collections.ArrayList();
+            if (this.lst == null)
+                this.lst = new List<Token>();
 		}
 		
 		public SinkTokenizer()
 		{
-			this.lst = new System.Collections.ArrayList();
+            this.lst = new List<Token>();
 		}
 		
 		public SinkTokenizer(int initCap)
 		{
-			this.lst = new System.Collections.ArrayList(initCap);
+            this.lst = new List<Token>(initCap);
 		}
 		
 		/// <summary> Get the tokens in the internal List.
@@ -85,7 +86,7 @@ namespace Lucene.Net.Analysis
 			// Since this TokenStream can be reset we have to maintain the tokens as immutable
 			if (iter.MoveNext())
 			{
-				Token nextToken = (Token) iter.Current;
+				Token nextToken = iter.Current;
 				return (Token) nextToken.Clone();
 			}
 			return null;

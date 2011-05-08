@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
 	/// to a String first.
 	/// </summary>
 	
-	public class CharArraySet : List<string> //:System.Collections.Hashtable
+	public class CharArraySet : List<string> 
 	{
 		public new int Count
 		{

@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Remove this when old API is removed! 
 		/// </deprecated>
         [Obsolete("Remove this when old API is removed! ")]
-		private static readonly System.Collections.Hashtable knownMethodSupport = new System.Collections.Hashtable();
+        private static readonly Support.Dictionary<Type, MethodSupport> knownMethodSupport = new Support.Dictionary<Type, MethodSupport>();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
         /*
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis
 			MethodSupport supportedMethods;
 			lock (knownMethodSupport)
 			{
-				supportedMethods = (MethodSupport) knownMethodSupport[clazz];
+				supportedMethods = knownMethodSupport[clazz];
 				if (supportedMethods == null)
 				{
 					knownMethodSupport.Add(clazz, supportedMethods = new MethodSupport(clazz));

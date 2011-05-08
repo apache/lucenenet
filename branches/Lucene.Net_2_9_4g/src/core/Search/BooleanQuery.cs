@@ -307,12 +307,12 @@ namespace Lucene.Net.Search
 				float sum = 0.0f;
 				bool fail = false;
 				int shouldMatchCount = 0;
-				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
+                IEnumerator<BooleanClause> cIter = Enclosing_Instance.clauses.GetEnumerator();
+                foreach(Weight w in weights)
 				{
                     cIter.MoveNext();
 
-                    Weight w = (Weight)wIter.Current;
-					BooleanClause c = (BooleanClause) cIter.Current;
+					BooleanClause c = cIter.Current;
 					if (w.Scorer(reader, true, true) == null)
 					{
 						continue;
@@ -385,12 +385,12 @@ namespace Lucene.Net.Search
                 List<Scorer> required = new List<Scorer>();
                 List<Scorer> prohibited = new List<Scorer>();
                 List<Scorer> optional = new List<Scorer>();
-				for (System.Collections.IEnumerator wIter = weights.GetEnumerator(), cIter = Enclosing_Instance.clauses.GetEnumerator(); wIter.MoveNext(); )
+                IEnumerator<BooleanClause> cIter = Enclosing_Instance.clauses.GetEnumerator();
+                foreach(Weight w in weights)
 				{
                     cIter.MoveNext();
 
-					Weight w = (Weight) wIter.Current;
-					BooleanClause c = (BooleanClause) cIter.Current;
+					BooleanClause c = cIter.Current;
 					Scorer subScorer = w.Scorer(reader, true, false);
 					if (subScorer == null)
 					{

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 
 
         private SortedSet<TermVectorEntry> currentSet;
-		private System.Collections.IDictionary termToTVE = new System.Collections.Hashtable();
+		private Support.Dictionary<string,TermVectorEntry> termToTVE = new Support.Dictionary<string,TermVectorEntry>();
 		private bool storeOffsets;
 		private bool storePositions;
 		/// <summary> Stand-in name for the field in {@link TermVectorEntry}.</summary>
@@ -63,9 +63,9 @@ namespace Lucene.Net.Index
 		/// <param name="positions">Position information, may be null
 		/// </param>
 		//We need to combine any previous mentions of the term
-		public override void  Map(System.String term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
+		public override void  Map(string term, int frequency, TermVectorOffsetInfo[] offsets, int[] positions)
 		{
-			TermVectorEntry entry = (TermVectorEntry) termToTVE[term];
+			TermVectorEntry entry = termToTVE[term];
 			if (entry == null)
 			{
 				entry = new TermVectorEntry(ALL, term, frequency, storeOffsets == true?offsets:null, storePositions == true?positions:null);
