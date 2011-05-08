@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis
 				return true;
 			}
 		}
-		private System.Collections.IList sinks = new System.Collections.ArrayList();
+        private List<WeakReference> sinks = new List<WeakReference>();
 		
 		/// <summary> Instantiates a new TeeSinkTokenFilter.</summary>
 		public TeeSinkTokenFilter(TokenStream input):base(input)
@@ -135,9 +136,9 @@ namespace Lucene.Net.Analysis
 			{
 				// capture state lazily - maybe no SinkFilter accepts this state
 				AttributeSource.State state = null;
-				for (System.Collections.IEnumerator it = sinks.GetEnumerator(); it.MoveNext(); )
+                foreach(WeakReference wr in sinks)
 				{
-					SinkTokenStream sink = (SinkTokenStream) ((System.WeakReference) it.Current).Target;
+					SinkTokenStream sink = (SinkTokenStream) wr.Target;
 					if (sink != null)
 					{
 						if (sink.Accept(this))
@@ -160,9 +161,9 @@ namespace Lucene.Net.Analysis
 		{
 			base.End();
 			AttributeSource.State finalState = CaptureState();
-			for (System.Collections.IEnumerator it = sinks.GetEnumerator(); it.MoveNext(); )
+            foreach(WeakReference wr in sinks)
 			{
-				SinkTokenStream sink = (SinkTokenStream) ((System.WeakReference) it.Current).Target;
+				SinkTokenStream sink = (SinkTokenStream) wr.Target;
 				if (sink != null)
 				{
 					sink.SetFinalState(finalState);
@@ -189,9 +190,9 @@ namespace Lucene.Net.Analysis
 		
 		public sealed class SinkTokenStream:TokenStream
 		{
-			private System.Collections.IList cachedStates = new System.Collections.ArrayList();
+            private List<AttributeSource.State> cachedStates = new List<State>();
 			private AttributeSource.State finalState;
-			private System.Collections.IEnumerator it = null;
+			private IEnumerator<AttributeSource.State> it = null;
 			private SinkFilter filter;
 			
 			internal SinkTokenStream(AttributeSource source, SinkFilter filter):base(source)

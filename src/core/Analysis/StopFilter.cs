@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead.
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead.")]
+        [Obsolete("Use StopFilter(bool, TokenStream, List<string>) instead.")]
 		public StopFilter(bool enablePositionIncrements, TokenStream input, System.String[] stopWords):this(enablePositionIncrements, input, stopWords, false)
 		{
 		}
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead.
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable, bool) instead.")]
+        [Obsolete("Use StopFilter(bool, TokenStream, List<string>, bool) instead.")]
 		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):base(in_Renamed)
 		{
 			this.stopWords = (CharArraySet) MakeStopSet(stopWords, ignoreCase);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, Hashtable) instead")]
+        [Obsolete("Use StopFilter(bool, TokenStream, List<string>) instead")]
         public StopFilter(TokenStream in_Renamed, List<string> stopWords) : this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
 		{
 		}

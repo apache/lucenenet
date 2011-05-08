@@ -41,7 +41,7 @@ namespace Lucene.Net.Support
                     object[] o2 = mi.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true);
                     if (o2 == null || o2.Length == 0) continue;
 
-                    if (type.FullName.StartsWith("Lucene.Net._SupportClass"))
+                    if (type.FullName.StartsWith("Lucene.Net.Support"))
                     {
                         countSupport++;
                     }

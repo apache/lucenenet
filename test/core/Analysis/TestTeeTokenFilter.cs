@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis
 				}
 				
 			}
-			internal AnonymousClassSinkTokenizer(TestTeeTokenFilter enclosingInstance, System.Collections.IList Param1):base(Param1)
+			internal AnonymousClassSinkTokenizer(TestTeeTokenFilter enclosingInstance, List<Token> Param1):base(Param1)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis
 				}
 				
 			}
-			internal AnonymousClassSinkTokenizer1(TestTeeTokenFilter enclosingInstance, System.Collections.IList Param1):base(Param1)
+			internal AnonymousClassSinkTokenizer1(TestTeeTokenFilter enclosingInstance, List<Token> Param1):base(Param1)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -100,7 +101,7 @@ namespace Lucene.Net.Analysis
 				}
 				
 			}
-			internal AnonymousClassSinkTokenizer2(TestTeeTokenFilter enclosingInstance, System.Collections.IList Param1):base(Param1)
+			internal AnonymousClassSinkTokenizer2(TestTeeTokenFilter enclosingInstance, List<Token> Param1):base(Param1)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -367,7 +368,7 @@ namespace Lucene.Net.Analysis
 			{
 				InitBlock(enclosingInstance);
 				modCount = mc;
-				lst = new System.Collections.ArrayList(numToks % mc);
+				lst = new List<Token>(numToks % mc);
 			}
 			
 			public override void  Add(Token t)
