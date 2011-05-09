@@ -58,6 +58,10 @@ namespace Lucene.Net.Index
 		private IndexOutput indexStream;
 		
 		private bool doClose;
+
+        //DIGY
+        //To avoid to call "System.Text.Encoding.GetEncoding("UTF-8")" repeatedly
+        private System.Text.Encoding defaultEncoding = System.Text.Encoding.GetEncoding("UTF-8"); 
 		
 		internal FieldsWriter(Directory d, System.String segment, FieldInfos fn)
 		{
@@ -270,7 +274,7 @@ namespace Lucene.Net.Index
 					}
 					else
 					{
-						byte[] x = System.Text.Encoding.GetEncoding("UTF-8").GetBytes(field.StringValue());
+						byte[] x = defaultEncoding.GetBytes(field.StringValue());
 						data = CompressionTools.Compress(x, 0, x.Length);
 					}
 					len = data.Length;
