@@ -61,6 +61,10 @@ namespace Lucene.Net.Index
 		
 		private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
 		private bool isOriginal = false;
+
+        //DIGY
+        //To avoid to call "System.Text.Encoding.GetEncoding("UTF-8")" repeatedly
+        private System.Text.Encoding defaultEncoding = System.Text.Encoding.GetEncoding("UTF-8"); 
 		
 		/// <summary>Returns a cloned FieldsReader that shares open
 		/// IndexInputs with the original one.  It is the caller's
@@ -434,7 +438,7 @@ namespace Lucene.Net.Index
 					
 					byte[] b = new byte[toRead];
 					fieldsStream.ReadBytes(b, 0, b.Length);
-					f = new Field(fi.name, false, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
+                    f = new Field(fi.name, false, defaultEncoding.GetString(Uncompress(b)), store, index, termVector);
 					f.SetOmitTermFreqAndPositions(fi.omitTermFreqAndPositions);
 					f.SetOmitNorms(fi.omitNorms);
 				}
@@ -612,7 +616,7 @@ namespace Lucene.Net.Index
 							{
 								byte[] b = new byte[toRead];
 								localFieldsStream.ReadBytes(b, 0, b.Length);
-								fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(Enclosing_Instance.Uncompress(b));
+                                fieldsData = Enclosing_Instance.defaultEncoding.GetString(Enclosing_Instance.Uncompress(b));
 							}
 							else
 							{
@@ -620,7 +624,7 @@ namespace Lucene.Net.Index
 								{
 									byte[] bytes = new byte[toRead];
 									localFieldsStream.ReadBytes(bytes, 0, toRead);
-									fieldsData = System.Text.Encoding.GetEncoding("UTF-8").GetString(bytes);
+                                    fieldsData = Enclosing_Instance.defaultEncoding.GetString(bytes);
 								}
 								else
 								{

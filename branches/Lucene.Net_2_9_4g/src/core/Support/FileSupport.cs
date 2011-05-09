@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Support
                                                           Lucene.Net.Index.IndexFileNameFilter indexFileNameFilter)
         {
             System.IO.DirectoryInfo dInfo = new System.IO.DirectoryInfo(fullName);
-            System.Collections.ArrayList list = new System.Collections.ArrayList();
+            List<string> list = new List<string>();
             foreach (System.IO.FileInfo fInfo in dInfo.GetFiles())
             {
                 if (indexFileNameFilter.Accept(fInfo, fInfo.Name) == true)
@@ -61,9 +62,7 @@ namespace Lucene.Net.Support
                     list.Add(fInfo.Name);
                 }
             }
-            System.String[] retFiles = new System.String[list.Count];
-            list.CopyTo(retFiles);
-            return retFiles;
+            return list.ToArray();
         }
 
         // Disable the obsolete warning since we must use FileStream.Handle
