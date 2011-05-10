@@ -1100,7 +1100,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Calculate hash code of SegmentInfos
         /// </summary>
-        /// <returns>hash code as in java version of ArrayList</returns>
+        /// <returns>hash code as in java version of List<SegmentInfo></returns>
         public override int GetHashCode()
         {
             int h = 1;

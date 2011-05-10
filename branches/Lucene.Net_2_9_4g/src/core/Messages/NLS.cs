@@ -61,8 +61,8 @@ namespace Lucene.Net.Messages
 				return null;
 			}
 		}
-		
-		private static System.Collections.IDictionary bundles = new System.Collections.Hashtable(0);
+
+        private static Support.Dictionary<string, Type> bundles = new Support.Dictionary<string, Type>(0);
 		
 		protected internal NLS()
 		{
@@ -115,7 +115,7 @@ namespace Lucene.Net.Messages
 			try
 			{
 				Load(clazz);
-				if (!bundles.Contains(bundleName))
+				if (!bundles.ContainsKey(bundleName))
 					bundles[bundleName] = clazz;
 			}
 			catch (System.Exception e)
@@ -130,9 +130,9 @@ namespace Lucene.Net.Messages
 			
 			// slow resource checking
 			// need to loop thru all registered resource bundles
-			for (System.Collections.IEnumerator it = bundles.Keys.GetEnumerator(); it.MoveNext(); )
+            foreach(string key in bundles.Keys)
 			{
-				System.Type clazz = (System.Type) bundles[(System.String) it.Current];
+				System.Type clazz = bundles[key];
 				System.Threading.Thread.CurrentThread.CurrentUICulture = locale;
                 System.Resources.ResourceManager resourceBundle = System.Resources.ResourceManager.CreateFileBasedResourceManager(clazz.Name, "Messages", null); //{{Lucene.Net-2.9.1}} Can we make resourceDir "Messages" more general?
 				if (resourceBundle != null)
