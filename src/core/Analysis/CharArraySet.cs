@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis
         /// <summary>The Iterator&lt;String&gt; for this set.  Strings are constructed on the fly, so
 		/// use <code>nextCharArray</code> for more efficient access. 
 		/// </summary>
-		public class CharArraySetIterator : System.Collections.IEnumerator
+		internal class CharArraySetIterator : IEnumerator<string>
 		{
 			private void  InitBlock(CharArraySet enclosingInstance)
 			{
@@ -342,7 +342,7 @@ namespace Lucene.Net.Analysis
             /// <summary>Returns the next String, as a Set&lt;String&gt; would...
 			/// use nextCharArray() for better efficiency. 
 			/// </summary>
-			public virtual System.Object Current
+            System.Object System.Collections.IEnumerator.Current
 			{
 				get
 				{
@@ -350,6 +350,15 @@ namespace Lucene.Net.Analysis
 				}
 				
 			}
+
+            public string Current
+            {
+                get
+                {
+                    return new String(NextCharArray());
+                }
+            }
+
 			public CharArraySet Enclosing_Instance
 			{
 				get
@@ -396,10 +405,14 @@ namespace Lucene.Net.Analysis
 			{
                 System.Diagnostics.Debug.Fail("Port issue:", "Need to implement this call, CharArraySetIterator.Reset()");  // {{Aroush-2.9
 			}
+
+            public void Dispose()
+            {
+            }
 		}
-		
-		
-		public new System.Collections.IEnumerator GetEnumerator()
+
+
+        public new IEnumerator<string> GetEnumerator()
 		{
 			return new CharArraySetIterator(this);
 		}

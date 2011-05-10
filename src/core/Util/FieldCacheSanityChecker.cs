@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
                 if (seen.ContainsKey(rf))
                     continue;
 
-                System.Collections.IList kids = GetAllDecendentReaderKeys(rf.readerKey);
+                List<object> kids = GetAllDecendentReaderKeys(rf.readerKey);
 				for (int i = 0; i < kids.Count; i++)
 				{
 					ReaderField kid = new ReaderField(kids[i], rf.fieldName);
@@ -280,9 +280,9 @@ namespace Lucene.Net.Util
 		/// the hierarchy of subReaders building up a list of the objects 
 		/// returned by obj.getFieldCacheKey()
 		/// </summary>
-		private System.Collections.IList GetAllDecendentReaderKeys(System.Object seed)
+		private List<object> GetAllDecendentReaderKeys(System.Object seed)
 		{
-			System.Collections.IList all = new System.Collections.ArrayList(17); // will grow as we iter
+            List<object> all = new List<object>(17); // will grow as we iter
 			all.Add(seed);
 			for (int i = 0; i < all.Count; i++)
 			{
@@ -296,8 +296,9 @@ namespace Lucene.Net.Util
 					}
 				}
 			}
+            
 			// need to skip the first, because it was the seed
-			return (System.Collections.IList) ((System.Collections.ArrayList) all).GetRange(1, all.Count - 1);
+            return all.GetRange(1, all.Count - 1); 
 		}
 		
 		/// <summary> Simple pair object for using "readerKey + fieldName" a Map key</summary>
