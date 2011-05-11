@@ -23,9 +23,8 @@ namespace Lucene.Net.Store
 	/// <summary>Base implementation class for buffered {@link IndexInput}. </summary>
 	public abstract class BufferedIndexInput:IndexInput, System.ICloneable
 	{
-		
-		/// <summary>Default buffer size </summary>
-		public const int BUFFER_SIZE = 1024;
+        /// <summary>Default buffer size </summary>
+        public const int BUFFER_SIZE = 1024 * 4; // public const int BUFFER_SIZE = 1024;  //DIGY:  Java version is 1K, but 4K gives better results.
 		
 		private int bufferSize = BUFFER_SIZE;
 		
