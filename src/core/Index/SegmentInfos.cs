@@ -37,32 +37,6 @@ namespace Lucene.Net.Index
 	[Serializable]
 	public sealed class SegmentInfos: List<SegmentInfo> 
 	{
-		private class AnonymousClassFindSegmentsFile:FindSegmentsFile
-		{
-			private void  InitBlock(SegmentInfos enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SegmentInfos enclosingInstance;
-			public SegmentInfos Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassFindSegmentsFile(SegmentInfos enclosingInstance, Lucene.Net.Store.Directory Param1):base(Param1)
-			{
-				InitBlock(enclosingInstance);
-			}
-			
-			public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-			{
-				Enclosing_Instance.Read(directory, segmentFileName);
-				return null;
-			}
-		}
 		/// <summary>The file format version, a negative number. </summary>
 		/* Works since counter, the old 1st entry, is always >= 0 */
 		public const int FORMAT = - 1;
@@ -358,8 +332,13 @@ namespace Lucene.Net.Index
 		{
 			
 			generation = lastGeneration = - 1;
-			
-			new AnonymousClassFindSegmentsFile(this, directory).Run();
+
+            new SegmentInfos.FindSegmentsFile(directory, 
+                (segmentFileName) =>
+                {
+                    Read(directory, segmentFileName);
+                    return null;
+                }).Run();
 		}
 		
 		// Only non-null after prepareCommit has been called and
@@ -476,8 +455,6 @@ namespace Lucene.Net.Index
             SegmentInfos sis = new SegmentInfos();
             sis.Read(directory);
             return sis.version;
-			//return (long) ((System.Int64) new AnonymousClassFindSegmentsFile1(directory).Run());
-            //DIGY: AnonymousClassFindSegmentsFile1 can safely be deleted
 		}
 		
 		/// <summary> Returns userData from latest segments file</summary>
@@ -576,14 +553,14 @@ namespace Lucene.Net.Index
 		/// time, etc., it could have been deleted due to a writer
 		/// commit finishing.
 		/// </summary>
-		public abstract class FindSegmentsFile
+		internal class FindSegmentsFile
 		{
-			
 			internal Directory directory;
-			
-			public FindSegmentsFile(Directory directory)
+            
+			public FindSegmentsFile(Directory directory,Func<string,object> doBody)
 			{
 				this.directory = directory;
+                this.DoBody = doBody;
 			}
 			
 			public System.Object Run()
@@ -834,13 +811,15 @@ namespace Lucene.Net.Index
 					}
 				}
 			}
-			
-			/// <summary> Subclass must implement this.  The assumption is an
-			/// IOException will be thrown if something goes wrong
-			/// during the processing that could have been caused by
-			/// a writer committing.
-			/// </summary>
-			public /*internal*/ abstract System.Object DoBody(System.String segmentFileName);
+
+            /// <summary> Subclass must implement this.  The assumption is an
+            /// IOException will be thrown if something goes wrong
+            /// during the processing that could have been caused by
+            /// a writer committing.
+            /// DIGY:
+            /// .NET: "DoBody" is converted to delegate to remove these ugly "AnonymousXXXX:FindSegmentsFile"s 
+            /// </summary>
+            Func<string, object> DoBody;
 		}
 		
 		/// <summary> Returns a new SegmentInfos containg the SegmentInfo
