@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="tieBreakerMultiplier">  the weight to give to each matching non-maximum disjunct
 		/// </param>
-		public DisjunctionMaxQuery(System.Collections.ICollection disjuncts, float tieBreakerMultiplier)
+		public DisjunctionMaxQuery(IList<Query> disjuncts, float tieBreakerMultiplier)
 		{
 			this.tieBreakerMultiplier = tieBreakerMultiplier;
 			Add(disjuncts);
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 		/// <summary>Add a collection of disjuncts to this disjunction
 		/// via Iterable
 		/// </summary>
-		public virtual void  Add(System.Collections.ICollection disjuncts)
+        public virtual void Add(IList<Query> disjuncts)
 		{
 			this.disjuncts.AddRange(disjuncts);
 		}

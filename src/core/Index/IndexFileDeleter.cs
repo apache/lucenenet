@@ -728,13 +728,13 @@ namespace Lucene.Net.Index
 			internal System.String segmentsFileName;
 			internal bool deleted;
 			internal Directory directory;
-			internal System.Collections.ICollection commitsToDelete;
+			internal IList<CommitPoint> commitsToDelete;
 			internal long version;
 			internal long generation;
 			internal bool isOptimized;
             internal IDictionary<string, string> userData;
-			
-			public CommitPoint(IndexFileDeleter enclosingInstance, System.Collections.ICollection commitsToDelete, Directory directory, SegmentInfos segmentInfos)
+
+            public CommitPoint(IndexFileDeleter enclosingInstance, IList<CommitPoint> commitsToDelete, Directory directory, SegmentInfos segmentInfos)
 			{
 				InitBlock(enclosingInstance);
 				this.directory = directory;
