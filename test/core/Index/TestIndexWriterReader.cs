@@ -40,102 +40,6 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestIndexWriterReader:LuceneTestCase
 	{
-		private class AnonymousClassThread:Support.ThreadClass
-		{
-			public AnonymousClassThread(long endTime, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.Directory[] dirs, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
-			{
-				InitBlock(endTime, writer, dirs, excs, enclosingInstance);
-			}
-			private void  InitBlock(long endTime, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.Directory[] dirs, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
-			{
-				this.endTime = endTime;
-				this.writer = writer;
-				this.dirs = dirs;
-				this.excs = excs;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private long endTime;
-			private Lucene.Net.Index.IndexWriter writer;
-			private Lucene.Net.Store.Directory[] dirs;
-			private System.Collections.IList excs;
-			private TestIndexWriterReader enclosingInstance;
-			public TestIndexWriterReader Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			override public void  Run()
-			{
-				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
-				{
-					try
-					{
-						writer.AddIndexesNoOptimize(dirs);
-					}
-					catch (System.Exception t)
-					{
-						excs.Add(t);
-						throw new System.SystemException("", t);
-					}
-				}
-			}
-		}
-		private class AnonymousClassThread1:Support.ThreadClass
-		{
-			public AnonymousClassThread1(long endTime, Lucene.Net.Index.IndexWriter writer, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
-			{
-				InitBlock(endTime, writer, excs, enclosingInstance);
-			}
-			private void  InitBlock(long endTime, Lucene.Net.Index.IndexWriter writer, System.Collections.IList excs, TestIndexWriterReader enclosingInstance)
-			{
-				this.endTime = endTime;
-				this.writer = writer;
-				this.excs = excs;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private long endTime;
-			private Lucene.Net.Index.IndexWriter writer;
-			private System.Collections.IList excs;
-			private TestIndexWriterReader enclosingInstance;
-			public TestIndexWriterReader Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			override public void  Run()
-			{
-				int count = 0;
-				System.Random r = new System.Random();
-				while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
-				{
-					try
-					{
-						for (int docUpto = 0; docUpto < 10; docUpto++)
-						{
-							writer.AddDocument(Lucene.Net.Index.TestIndexWriterReader.CreateDocument(10 * count + docUpto, "test", 4));
-						}
-						count++;
-						int limit = count * 10;
-						for (int delUpto = 0; delUpto < 5; delUpto++)
-						{
-							int x = r.Next(limit);
-							writer.DeleteDocuments(new Term("field3", "b" + x));
-						}
-					}
-					catch (System.Exception t)
-					{
-						excs.Add(t);
-						throw new System.SystemException("", t);
-					}
-				}
-			}
-		}
 		internal static System.IO.StreamWriter infoStream;
 		
 		public class HeavyAtomicInt
@@ -967,14 +871,28 @@ namespace Lucene.Net.Index
 			
 			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
-			
-			Support.ThreadClass[] threads = new Support.ThreadClass[NUM_THREAD];
-			for (int i = 0; i < NUM_THREAD; i++)
-			{
-				threads[i] = new AnonymousClassThread(endTime, writer, dirs, excs, this);
-				threads[i].IsBackground = true;
-				threads[i].Start();
-			}
+
+            System.Threading.Thread[] threads = new System.Threading.Thread[NUM_THREAD];
+            for (int i = 0; i < NUM_THREAD; i++)
+            {
+                threads[i] = new System.Threading.Thread(() =>
+                {
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
+                    {
+                        try
+                        {
+                            writer.AddIndexesNoOptimize(dirs);
+                        }
+                        catch (System.Exception t)
+                        {
+                            excs.Add(t);
+                            throw new System.SystemException("", t);
+                        }
+                    }
+                });
+                threads[i].IsBackground = true;
+                threads[i].Start();
+            }
 			
 			int lastCount = 0;
 			while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
@@ -1034,11 +952,25 @@ namespace Lucene.Net.Index
 
             long endTime = (long)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
             System.Collections.IList excs = (System.Collections.IList)System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
-
-            Support.ThreadClass[] threads = new Support.ThreadClass[NUM_THREAD];
+            
+            System.Threading.Thread[] threads = new System.Threading.Thread[NUM_THREAD];
             for (int i = 0; i < NUM_THREAD; i++)
             {
-                threads[i] = new AnonymousClassThread(endTime, writer, dirs, excs, this);
+                threads[i] = new System.Threading.Thread(() =>
+                {
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
+                    {
+                        try
+                        {
+                            writer.AddIndexesNoOptimize(dirs);
+                        }
+                        catch (System.Exception t)
+                        {
+                            excs.Add(t);
+                            throw new System.SystemException("", t);
+                        }
+                    }
+                });
                 threads[i].IsBackground = true;
                 threads[i].Start();
             }
@@ -1091,10 +1023,36 @@ namespace Lucene.Net.Index
 			long endTime = (long) ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + 1000.0 * SECONDS);
 			System.Collections.IList excs = (System.Collections.IList) System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(new System.Collections.ArrayList()));
 			
-			Support.ThreadClass[] threads = new Support.ThreadClass[NUM_THREAD];
+			System.Threading.Thread[] threads = new System.Threading.Thread[NUM_THREAD];
 			for (int i = 0; i < NUM_THREAD; i++)
 			{
-				threads[i] = new AnonymousClassThread1(endTime, writer, excs, this);
+                threads[i] = new System.Threading.Thread(() =>
+                {
+                    int count = 0;
+                    System.Random rnd = new System.Random();
+                    while ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) < endTime)
+                    {
+                        try
+                        {
+                            for (int docUpto = 0; docUpto < 10; docUpto++)
+                            {
+                                writer.AddDocument(Lucene.Net.Index.TestIndexWriterReader.CreateDocument(10 * count + docUpto, "test", 4));
+                            }
+                            count++;
+                            int limit = count * 10;
+                            for (int delUpto = 0; delUpto < 5; delUpto++)
+                            {
+                                int x = rnd.Next(limit);
+                                writer.DeleteDocuments(new Term("field3", "b" + x));
+                            }
+                        }
+                        catch (System.Exception t)
+                        {
+                            excs.Add(t);
+                            throw new System.SystemException("", t);
+                        }
+                    }
+                });
 				threads[i].IsBackground = true;
 				threads[i].Start();
 			}
