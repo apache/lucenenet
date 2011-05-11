@@ -32,60 +32,6 @@ namespace Lucene.Net.Index
 	/// <summary> An IndexReader which reads indexes with multiple segments.</summary>
 	public class DirectoryReader:IndexReader, System.ICloneable
 	{
-		/*new*/ private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
-		{
-			private void  InitBlock(bool readOnly, Lucene.Net.Index.IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor)
-			{
-				this.readOnly = readOnly;
-				this.deletionPolicy = deletionPolicy;
-				this.termInfosIndexDivisor = termInfosIndexDivisor;
-			}
-			private bool readOnly;
-			private Lucene.Net.Index.IndexDeletionPolicy deletionPolicy;
-			private int termInfosIndexDivisor;
-			internal AnonymousClassFindSegmentsFile(bool readOnly, Lucene.Net.Index.IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor, Lucene.Net.Store.Directory Param1):base(Param1)
-			{
-				InitBlock(readOnly, deletionPolicy, termInfosIndexDivisor);
-			}
-			public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-			{
-				SegmentInfos infos = new SegmentInfos();
-				infos.Read(directory, segmentFileName);
-				if (readOnly)
-					return new ReadOnlyDirectoryReader(directory, infos, deletionPolicy, termInfosIndexDivisor);
-				else
-					return new DirectoryReader(directory, infos, deletionPolicy, false, termInfosIndexDivisor);
-			}
-		}
-        //DIGY: not used anymore
-        //private class AnonymousClassFindSegmentsFile1:SegmentInfos.FindSegmentsFile
-        //{
-        //    private void  InitBlock(bool openReadOnly, DirectoryReader enclosingInstance)
-        //    {
-        //        this.openReadOnly = openReadOnly;
-        //        this.enclosingInstance = enclosingInstance;
-        //    }
-        //    private bool openReadOnly;
-        //    private DirectoryReader enclosingInstance;
-        //    public DirectoryReader Enclosing_Instance
-        //    {
-        //        get
-        //        {
-        //            return enclosingInstance;
-        //        }
-				
-        //    }
-        //    internal AnonymousClassFindSegmentsFile1(bool openReadOnly, DirectoryReader enclosingInstance, Lucene.Net.Store.Directory Param1):base(Param1)
-        //    {
-        //        InitBlock(openReadOnly, enclosingInstance);
-        //    }
-        //    public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-        //    {
-        //        SegmentInfos infos = new SegmentInfos();
-        //        infos.Read(directory, segmentFileName);
-        //        return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
-        //    }
-        //}
 		protected internal Directory directory;
 		protected internal bool readOnly;
 		
@@ -112,12 +58,21 @@ namespace Lucene.Net.Index
         // > our current segmentInfos version in case we were
         // opened on a past IndexCommit:
         private long maxIndexVersion;
-		
-		internal static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
-		{
-			return (IndexReader) new AnonymousClassFindSegmentsFile(readOnly, deletionPolicy, termInfosIndexDivisor, directory).Run(commit);
-		}
-		
+
+        internal static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
+        {
+            return (IndexReader)new SegmentInfos.FindSegmentsFile(directory,
+                (segmentFileName) =>
+                {
+                    SegmentInfos infos = new SegmentInfos();
+                    infos.Read(directory, segmentFileName);
+                    if (readOnly)
+                        return new ReadOnlyDirectoryReader(directory, infos, deletionPolicy, termInfosIndexDivisor);
+                    else
+                        return new DirectoryReader(directory, infos, deletionPolicy, false, termInfosIndexDivisor);
+                }).Run(commit);
+        }
+        		
 		/// <summary>Construct reading the named set of readers. </summary>
 		internal DirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
 		{
@@ -567,27 +522,13 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                return (IndexReader)new AnonymousFindSegmentsFile(directory, openReadOnly, this).Run(commit);
-            }
-        }
-
-        class AnonymousFindSegmentsFile : SegmentInfos.FindSegmentsFile
-        {
-            DirectoryReader enclosingInstance;
-            bool openReadOnly;
-            Directory dir;
-            public AnonymousFindSegmentsFile(Directory directory, bool openReadOnly, DirectoryReader dirReader) : base(directory)
-            {
-                this.dir = directory;
-                this.openReadOnly = openReadOnly;
-                enclosingInstance = dirReader;
-            }
-
-            public override object DoBody(string segmentFileName)
-            {
-                SegmentInfos infos = new SegmentInfos();
-                infos.Read(this.dir, segmentFileName);
-                return enclosingInstance.DoReopen(infos, false, openReadOnly);
+                return (IndexReader)new SegmentInfos.FindSegmentsFile(directory, 
+                    (segmentFileName) =>
+                    {
+                        SegmentInfos infos = new SegmentInfos();
+                        infos.Read(directory, segmentFileName);
+                        return DoReopen(infos, false, openReadOnly);
+                    }).Run(commit);
             }
         }
 

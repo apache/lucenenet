@@ -927,7 +927,7 @@ namespace Lucene.Net.Index
                 //There isn't any pending files to be deleted after "writer.Close()". 
                 //But, since lucene.java's test case is designed that way
                 //and I might be wrong, I will add a warning
-                Assert.Inconclusive("", 0, dir1.GetOpenDeletedFiles().Count);
+                Assert.Inconclusive("Is this really a bug?", 0, dir1.GetOpenDeletedFiles().Count);
             }
 			writer.Close();
 			

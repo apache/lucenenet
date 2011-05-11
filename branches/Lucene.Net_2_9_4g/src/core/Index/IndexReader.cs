@@ -69,23 +69,6 @@ namespace Lucene.Net.Index
 	/// </version>
 	public abstract class IndexReader : System.ICloneable, System.IDisposable
 	{
-		private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
-		{
-			private void  InitBlock(Lucene.Net.Store.Directory directory2)
-			{
-				this.directory2 = directory2;
-			}
-			private Lucene.Net.Store.Directory directory2;
-			internal AnonymousClassFindSegmentsFile(Lucene.Net.Store.Directory directory2, Lucene.Net.Store.Directory Param1):base(Param1)
-			{
-				InitBlock(directory2);
-			}
-			public override System.Object DoBody(System.String segmentFileName)
-			{
-				return (long) directory2.FileModified(segmentFileName);
-			}
-		}
-		
 		/// <summary> Constants describing field properties, for example used for
 		/// {@link IndexReader#GetFieldNames(FieldOption)}.
 		/// </summary>
@@ -763,7 +746,11 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public static long LastModified(Directory directory2)
 		{
-			return (long) ((System.Int64) new AnonymousClassFindSegmentsFile(directory2, directory2).Run());
+            return (long)new SegmentInfos.FindSegmentsFile(directory2, 
+                (segmentFileName) =>
+                {
+                    return directory2.FileModified(segmentFileName);
+                }).Run();
 		}
 		
 		/// <summary> Reads version number from segments files. The version number is
