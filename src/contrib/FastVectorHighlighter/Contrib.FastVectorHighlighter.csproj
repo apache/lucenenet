@@ -40,6 +40,7 @@
     <DefineConstants>TRACE;DEBUG;LUCENENET_350</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\contrib\FastVectorHighlighter\Debug\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -48,7 +49,7 @@
     <DefineConstants>TRACE;LUCENENET_350</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\doc\contrib\FastVectorHighlighter\Lucene.Net.Contrib.FastVectorHighlighter.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\bin\contrib\FastVectorHighlighter\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
