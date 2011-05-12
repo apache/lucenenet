@@ -36,14 +36,18 @@ namespace Lucene.Net.Search.Vectorhighlight
             "<b style=\"background:yellow\">", "<b style=\"background:lawngreen\">", "<b style=\"background:aquamarine\">",
             "<b style=\"background:magenta\">", "<b style=\"background:palegreen\">", "<b style=\"background:coral\">",
             "<b style=\"background:wheat\">", "<b style=\"background:khaki\">", "<b style=\"background:lime\">",
-            "<b style=\"background:deepskyblue\">"
+            "<b style=\"background:deepskyblue\">", "<b style=\"background:deeppink\">", "<b style=\"background:salmon\">",
+            "<b style=\"background:peachpuff\">", "<b style=\"background:violet\">", "<b style=\"background:mediumpurple\">",
+            "<b style=\"background:palegoldenrod\">", "<b style=\"background:darkkhaki\">", "<b style=\"background:springgreen\">",
+            "<b style=\"background:turquoise\">", "<b style=\"background:powderblue\">"
         };
 
         public static String[] COLORED_POST_TAGS = { "</b>" };
 
-        protected BaseFragmentsBuilder() : this(new String[] { "<b>" }, new String[] { "</b>" })
+        protected BaseFragmentsBuilder()
+            : this(new String[] { "<b>" }, new String[] { "</b>" })
         {
-            
+
         }
 
         protected BaseFragmentsBuilder(String[] preTags, String[] postTags)
@@ -160,9 +164,10 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                if (index[0] > 0 && values[index[0]].Length > 0)
+                buffer.Append(values[index[0]]);
+                if (values[index[0]].Length > 0 && index[0] + 1 < values.Length)
                     buffer.Append(' ');
-                buffer.Append(values[index[0]++]);
+                index[0]++;
             }
             int eo = buffer.Length < endOffset ? buffer.Length : endOffset;
             return buffer.ToString().Substring(startOffset, eo - startOffset);
@@ -172,22 +177,25 @@ namespace Lucene.Net.Search.Vectorhighlight
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
-                if (index[0] > 0 && values[index[0]].IsTokenized() && values[index[0]].StringValue().Length > 0)
+                buffer.Append(values[index[0]].StringValue());
+                if (values[index[0]].IsTokenized() && values[index[0]].StringValue().Length > 0 && index[0] + 1 < values.Length)
                     buffer.Append(' ');
-                buffer.Append(values[index[0]++].StringValue());
+                index[0]++;
             }
-            int eo = buffer.Length < endOffset ? buffer.Length: endOffset;
-            return buffer.ToString().Substring(startOffset, eo - startOffset );
+            int eo = buffer.Length < endOffset ? buffer.Length : endOffset;
+            return buffer.ToString().Substring(startOffset, eo - startOffset);
         }
 
         protected String GetPreTag(int num)
         {
-            return preTags.Length > num ? preTags[num] : preTags[0];
+            int n = num % preTags.Length;
+            return preTags[n];
         }
 
         protected String GetPostTag(int num)
         {
-            return postTags.Length > num ? postTags[num] : postTags[0];
+            int n = num % postTags.Length;
+            return postTags[n];
         }
     }
 }
