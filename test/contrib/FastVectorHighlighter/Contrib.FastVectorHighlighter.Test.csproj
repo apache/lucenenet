@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Search.Vectorhighlight</RootNamespace>
-    <AssemblyName>Lucene.Net.Contrib.FastVectorHighlighter.Test</AssemblyName>
+    <AssemblyName>Lucene.Net.FastVectorHighlighter.Test</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
