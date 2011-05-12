@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	public class PhraseQuery:Query
 	{
 		private System.String field;
-        private List<Term> terms = new List<Term>();
+        private Support.EquatableList<Term> terms = new Support.EquatableList<Term>();
         private Support.EquatableList<int> positions = new Support.EquatableList<int>(4);
 		private int maxPosition = 0;
 		private int slop = 0;
