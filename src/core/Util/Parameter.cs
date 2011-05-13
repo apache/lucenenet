@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     public abstract class Parameter 
 	{
         internal static Dictionary<string, Parameter> allParameters = new Dictionary<string, Parameter>();
-		
+                
 		private System.String name;
 		
 		private Parameter()
@@ -39,9 +39,10 @@ namespace Lucene.Net.Util
 			// typesafe enum pattern, no public constructor
 			this.name = name;
 			string key = MakeKey(name);
-			
-			if (allParameters.ContainsKey(key))
-				throw new System.ArgumentException("Parameter name " + key + " already used!");
+
+            if (allParameters.ContainsKey(key))
+                return;
+			//	throw new System.ArgumentException("Parameter name " + key + " already used!");
 			
 			allParameters[key] = this;
 		}
@@ -72,6 +73,17 @@ namespace Lucene.Net.Util
 			
         //    return par;
         //}
+
+
+        public static bool operator==(Parameter p1,Parameter p2)
+        {
+            return p1.Equals(p2);
+        }
+
+        public static bool operator !=(Parameter p1, Parameter p2)
+        {
+            return !p1.Equals(p2);
+        }
 
         public override bool Equals(object obj)
         {
