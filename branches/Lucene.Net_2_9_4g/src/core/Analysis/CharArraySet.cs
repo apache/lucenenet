@@ -31,19 +31,9 @@ namespace Lucene.Net.Analysis
 	/// to a String first.
 	/// </summary>
 	
-	public class CharArraySet : List<string> 
+	public class CharArraySet : Support.Set<string>
 	{
-		public new int Count
-		{
-			get
-			{
-				return count;
-			}
-			
-		}
 		private const int INIT_SIZE = 8;
-		private char[][] entries;
-		private int count;
 		private bool ignoreCase;
 		
 		/// <summary>Create set with enough capacity to hold startSize
@@ -55,25 +45,22 @@ namespace Lucene.Net.Analysis
 			int size = INIT_SIZE;
 			while (startSize + (startSize >> 2) > size)
 				size <<= 1;
-			entries = new char[size][];
+            base.Capacity = size;
 		}
 		
 		/// <summary>Create set from a Collection of char[] or String </summary>
-		public CharArraySet(System.Collections.ICollection c, bool ignoreCase):this(c.Count, ignoreCase)
+		public CharArraySet(IList<string> c, bool ignoreCase):this(c.Count, ignoreCase)
 		{
-			System.Collections.IEnumerator e = c.GetEnumerator();
-			while (e.MoveNext())
-			{
-				Add(e.Current);
-			}
+            foreach (string s in c)
+            {
+                if(ignoreCase)
+                    base.Add(s.ToLower());
+                else
+                    base.Add(c);
+            }
+            
 		}
-		/// <summary>Create set from entries </summary>
-		private CharArraySet(char[][] entries, bool ignoreCase, int count)
-		{
-			this.entries = entries;
-			this.ignoreCase = ignoreCase;
-			this.count = count;
-		}
+		
 
         public bool Contains(object o)
         {
@@ -95,384 +82,77 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		public virtual bool Contains(char[] text, int off, int len)
 		{
-			return entries[GetSlot(text, off, len)] != null;
+            if(ignoreCase)
+                return base.Contains(new string(text, off, len).ToLower());
+            else
+                return base.Contains(new string(text, off, len));
 		}
-		
-		/// <summary>true if the <code>System.String</code> is in the set </summary>
-		public virtual bool Contains(System.String cs)
-		{
-			return entries[GetSlot(cs)] != null;
-		}
-		
-		private int GetSlot(char[] text, int off, int len)
-		{
-			int code = GetHashCode(text, off, len);
-			int pos = code & (entries.Length - 1);
-			char[] text2 = entries[pos];
-			if (text2 != null && !Equals(text, off, len, text2))
-			{
-				int inc = ((code >> 8) + code) | 1;
-				do 
-				{
-					code += inc;
-					pos = code & (entries.Length - 1);
-					text2 = entries[pos];
-				}
-				while (text2 != null && !Equals(text, off, len, text2));
-			}
-			return pos;
-		}
-		
-		/// <summary>Returns true if the String is in the set </summary>
-		private int GetSlot(System.String text)
-		{
-			int code = GetHashCode(text);
-			int pos = code & (entries.Length - 1);
-			char[] text2 = entries[pos];
-			if (text2 != null && !Equals(text, text2))
-			{
-				int inc = ((code >> 8) + code) | 1;
-				do 
-				{
-					code += inc;
-					pos = code & (entries.Length - 1);
-					text2 = entries[pos];
-				}
-				while (text2 != null && !Equals(text, text2));
-			}
-			return pos;
-		}
-		
-		/// <summary>Add this String into the set </summary>
-		public new virtual bool Add(System.String text)
-		{
-			return Add(text.ToCharArray());
-		}
-		
+
+        public new bool Contains(string s)
+        {
+            if(ignoreCase)
+                return base.Contains(s.ToLower());
+            else
+                return base.Contains(s);
+        }
+			
+			
 		/// <summary>Add this char[] directly to the set.
 		/// If ignoreCase is true for this Set, the text array will be directly modified.
 		/// The user should never modify this text array after calling this method.
 		/// </summary>
-		public virtual bool Add(char[] text)
+		public virtual void Add(char[] text)
 		{
-			if (ignoreCase)
-				for (int i = 0; i < text.Length; i++)
-					text[i] = System.Char.ToLower(text[i]);
-			int slot = GetSlot(text, 0, text.Length);
-			if (entries[slot] != null)
-				return false;
-			entries[slot] = text;
-			count++;
-			
-			if (count + (count >> 2) > entries.Length)
-			{
-				Rehash();
-			}
-			
-			return true;
+            if (ignoreCase)
+                base.Add(text.ToString().ToLower());
+            else
+                base.Add(text.ToString());
 		}
+
+        public override void Add(string s)
+        {
+
+            if (ignoreCase)
+                base.Add(s.ToLower());
+            else
+                base.Add(s);
+        }
+
+        public void AddAll(List<string> c)
+        {
+            foreach (string s in c)
+            {
+                Add(s);
+            }
+        }
+
+        public void AddAll(string[] c)
+        {
+            foreach (string s in c)
+            {
+                Add(s);
+            }
+        }
 		
-		private bool Equals(char[] text1, int off, int len, char[] text2)
-		{
-			if (len != text2.Length)
-				return false;
-			if (ignoreCase)
-			{
-				for (int i = 0; i < len; i++)
-				{
-					if (System.Char.ToLower(text1[off + i]) != text2[i])
-						return false;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < len; i++)
-				{
-					if (text1[off + i] != text2[i])
-						return false;
-				}
-			}
-			return true;
-		}
-		
-		private bool Equals(System.String text1, char[] text2)
-		{
-			int len = text1.Length;
-			if (len != text2.Length)
-				return false;
-			if (ignoreCase)
-			{
-				for (int i = 0; i < len; i++)
-				{
-					if (System.Char.ToLower(text1[i]) != text2[i])
-						return false;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < len; i++)
-				{
-					if (text1[i] != text2[i])
-						return false;
-				}
-			}
-			return true;
-		}
-		
-		private void  Rehash()
-		{
-			int newSize = 2 * entries.Length;
-			char[][] oldEntries = entries;
-			entries = new char[newSize][];
-			
-			for (int i = 0; i < oldEntries.Length; i++)
-			{
-				char[] text = oldEntries[i];
-				if (text != null)
-				{
-					// todo: could be faster... no need to compare strings on collision
-					entries[GetSlot(text, 0, text.Length)] = text;
-				}
-			}
-		}
 
         private int GetHashCode(char[] text, int offset, int len)
 		{
-			int code = 0;
-			int stop = offset + len;
-			if (ignoreCase)
-			{
-				for (int i = offset; i < stop; i++)
-				{
-					code = code * 31 + System.Char.ToLower(text[i]);
-				}
-			}
-			else
-			{
-				for (int i = offset; i < stop; i++)
-				{
-					code = code * 31 + text[i];
-				}
-			}
-			return code;
+
+            return new string(text, offset, len).GetHashCode();
 		}
 		
 		private int GetHashCode(System.String text)
 		{
-			int code = 0;
-			int len = text.Length;
-			if (ignoreCase)
-			{
-				for (int i = 0; i < len; i++)
-				{
-					code = code * 31 + System.Char.ToLower(text[i]);
-				}
-			}
-			else
-			{
-				for (int i = 0; i < len; i++)
-				{
-					code = code * 31 + text[i];
-				}
-			}
-			return code;
+            return text.GetHashCode();
 		}
 		
-		public virtual int Size()
-		{
-			return count;
-		}
-		
-		public virtual bool IsEmpty()
-		{
-			return count == 0;
-		}
-		
-		public virtual bool Add(System.Object o)
-		{
-			if (o is char[])
-			{
-				return Add((char[]) o);
-			}
-
-            if (o is List<string>)
-            {
-                foreach (string word in o as List<string>)
-                {
-                    Add(word);
-                }
-                return true;
-            }
-
-			return Add(o.ToString());
-		}
-		
-		/// <summary> Returns an unmodifiable {@link CharArraySet}. This allows to provide
-		/// unmodifiable views of internal sets for "read-only" use.
-		/// 
-		/// </summary>
-		/// <param name="set">a set for which the unmodifiable set is returned.
-		/// </param>
-		/// <returns> an new unmodifiable {@link CharArraySet}.
-		/// </returns>
-		/// <throws>  NullPointerException </throws>
-		/// <summary>           if the given set is <code>null</code>.
-		/// </summary>
+        		
 		public static CharArraySet UnmodifiableSet(CharArraySet set_Renamed)
 		{
-			if (set_Renamed == null)
-				throw new System.NullReferenceException("Given set is null");
-			/*
-			* Instead of delegating calls to the given set copy the low-level values to
-			* the unmodifiable Subclass
-			*/
-			return new UnmodifiableCharArraySet(set_Renamed.entries, set_Renamed.ignoreCase, set_Renamed.count);
+            CharArraySet set = new CharArraySet(set_Renamed, true);
+            set.ReadOnly = true;
+            return set;
 		}
-
-        /// <summary>The Iterator&lt;String&gt; for this set.  Strings are constructed on the fly, so
-		/// use <code>nextCharArray</code> for more efficient access. 
-		/// </summary>
-		internal class CharArraySetIterator : IEnumerator<string>
-		{
-			private void  InitBlock(CharArraySet enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private CharArraySet enclosingInstance;
-            /// <summary>Returns the next String, as a Set&lt;String&gt; would...
-			/// use nextCharArray() for better efficiency. 
-			/// </summary>
-            System.Object System.Collections.IEnumerator.Current
-			{
-				get
-				{
-					return new System.String(NextCharArray());
-				}
-				
-			}
-
-            public string Current
-            {
-                get
-                {
-                    return new String(NextCharArray());
-                }
-            }
-
-			public CharArraySet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal int pos = - 1;
-			internal char[] next_Renamed_Field;
-			internal CharArraySetIterator(CharArraySet enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-				GoNext();
-			}
-			
-			private void  GoNext()
-			{
-				next_Renamed_Field = null;
-				pos++;
-				while (pos < Enclosing_Instance.entries.Length && (next_Renamed_Field = Enclosing_Instance.entries[pos]) == null)
-					pos++;
-			}
-			
-			public virtual bool MoveNext()
-			{
-				return next_Renamed_Field != null;
-			}
-			
-			/// <summary>do not modify the returned char[] </summary>
-			public virtual char[] NextCharArray()
-			{
-				char[] ret = next_Renamed_Field;
-				GoNext();
-				return ret;
-			}
-			
-			public virtual void  Remove()
-			{
-				throw new System.NotSupportedException();
-			}
-			
-			virtual public void  Reset()
-			{
-                System.Diagnostics.Debug.Fail("Port issue:", "Need to implement this call, CharArraySetIterator.Reset()");  // {{Aroush-2.9
-			}
-
-            public void Dispose()
-            {
-            }
-		}
-
-
-        public new IEnumerator<string> GetEnumerator()
-		{
-			return new CharArraySetIterator(this);
-		}
+}
 		
-		/// <summary> Efficient unmodifiable {@link CharArraySet}. This implementation does not
-		/// delegate calls to a give {@link CharArraySet} like
-		/// {@link Collections#UnmodifiableSet(java.util.Set)} does. Instead is passes
-		/// the internal representation of a {@link CharArraySet} to a super
-		/// constructor and overrides all mutators. 
-		/// </summary>
-		private sealed class UnmodifiableCharArraySet:CharArraySet
-		{
-			
-			internal UnmodifiableCharArraySet(char[][] entries, bool ignoreCase, int count):base(entries, ignoreCase, count)
-			{
-			}
-			
-			public override bool AddAll(string[] coll)
-			{
-				throw new System.NotSupportedException();
-			}
-			
-			public override bool Add(char[] text)
-			{
-				throw new System.NotSupportedException();
-			}
-			
-			public override bool Add(System.String text)
-			{
-				throw new System.NotSupportedException();
-			}
-		}
-
-        /// <summary>Adds all of the elements in the specified collection to this collection </summary>
-        public virtual bool AddAll(string[] items)
-        {
-            bool added = false;
-            foreach(string item in items)
-            {
-                added = Add(item);
-            }
-            return added;
-        }
-
-        /// <summary>Removes all elements from the set </summary>
-        public virtual new bool Clear()
-        {
-            throw new System.NotSupportedException();
-        }
-
-        /// <summary>Removes from this set all of its elements that are contained in the specified collection </summary>
-        public virtual bool RemoveAll(System.Collections.ICollection items)
-        {
-            throw new System.NotSupportedException();
-        }
-
-        /// <summary>Retains only the elements in this set that are contained in the specified collection </summary>
-        public bool RetainAll(System.Collections.ICollection coll)
-        {
-            throw new System.NotSupportedException();
-        }
-    }
 }

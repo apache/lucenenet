@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
 			System.Collections.IEnumerator it = StopAnalyzer.ENGLISH_STOP_WORDS_SET.GetEnumerator();
 			while (it.MoveNext())
 			{
-				inValidTokens.Add(it.Current, it.Current);
+				inValidTokens[it.Current]=it.Current;
 			}
 		}
 		

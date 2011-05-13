@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParsers
 		// the default date resolution
 		internal DateTools.Resolution dateResolution = null;
 		// maps field names to date resolutions
-		internal System.Collections.IDictionary fieldToDateResolution = null;
+		internal Support.Dictionary<String,DateTools.Resolution> fieldToDateResolution = null;
 		
 		// The collator to use when determining range inclusion,
 		// for use when constructing RangeQuerys.
@@ -483,7 +483,7 @@ namespace Lucene.Net.QueryParsers
 			if (fieldToDateResolution == null)
 			{
 				// lazily initialize HashMap
-				fieldToDateResolution = new System.Collections.Hashtable();
+                fieldToDateResolution = new Support.Dictionary<string, DateTools.Resolution>();
 			}
 			
 			fieldToDateResolution[fieldName] = dateResolution;
@@ -507,7 +507,7 @@ namespace Lucene.Net.QueryParsers
 				return this.dateResolution;
 			}
 			
-			DateTools.Resolution resolution = (DateTools.Resolution) fieldToDateResolution[fieldName];
+			DateTools.Resolution resolution = fieldToDateResolution[fieldName];
 			if (resolution == null)
 			{
 				// no date resolutions set for the given field; return default date resolution instead
