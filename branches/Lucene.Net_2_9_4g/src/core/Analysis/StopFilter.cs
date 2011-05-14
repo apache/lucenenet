@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead.
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, List<string>) instead.")]
+        [Obsolete("Use StopFilter(bool, TokenStream, ICollection<string>) instead.")]
 		public StopFilter(bool enablePositionIncrements, TokenStream input, System.String[] stopWords):this(enablePositionIncrements, input, stopWords, false)
 		{
 		}
@@ -86,8 +86,8 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead.
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, List<string>, bool) instead.")]
-		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, System.String[] stopWords, bool ignoreCase):base(in_Renamed)
+        [Obsolete("Use StopFilter(bool, TokenStream, ICollection<string>, bool) instead.")]
+		public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, string[] stopWords, bool ignoreCase):base(in_Renamed)
 		{
 			this.stopWords = (CharArraySet) MakeStopSet(stopWords, ignoreCase);
 			this.enablePositionIncrements = enablePositionIncrements;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set, boolean)} instead
 		/// </deprecated>
         [Obsolete("Use StopFilter(bool, TokenStream, Set, bool) instead")]
-		public StopFilter(TokenStream input, List<string> stopWords, bool ignoreCase):this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
+        public StopFilter(TokenStream input, ICollection<string> stopWords, bool ignoreCase) : this(ENABLE_POSITION_INCREMENTS_DEFAULT, input, stopWords, ignoreCase)
 		{
 		}
 		
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <param name="ignoreCase">-Ignore case when stopping.
 		/// </param>
-        public StopFilter(bool enablePositionIncrements, TokenStream input, List<string> stopWords, bool ignoreCase) : base(input)
+        public StopFilter(bool enablePositionIncrements, TokenStream input, ICollection<string> stopWords, bool ignoreCase) : base(input)
 		{
 			if (stopWords is CharArraySet)
 			{
@@ -161,8 +161,8 @@ namespace Lucene.Net.Analysis
 		/// </seealso>
 		/// <deprecated> Use {@link #StopFilter(boolean, TokenStream, Set)} instead
 		/// </deprecated>
-        [Obsolete("Use StopFilter(bool, TokenStream, List<string>) instead")]
-        public StopFilter(TokenStream in_Renamed, List<string> stopWords) : this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
+        [Obsolete("Use StopFilter(bool, TokenStream, ICollection<string>) instead")]
+        public StopFilter(TokenStream in_Renamed, ICollection<string> stopWords) : this(ENABLE_POSITION_INCREMENTS_DEFAULT, in_Renamed, stopWords, false)
 		{
 		}
 		
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <seealso cref="MakeStopSet(java.lang.String[])">
 		/// </seealso>
-        public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, List<string> stopWords) : this(enablePositionIncrements, in_Renamed, stopWords, false)
+        public StopFilter(bool enablePositionIncrements, TokenStream in_Renamed, ICollection<string> stopWords) : this(enablePositionIncrements, in_Renamed, stopWords, false)
 		{
 		}
 		
@@ -196,10 +196,11 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
-		public static List<string> MakeStopSet(System.String[] stopWords)
-		{
-			return MakeStopSet(stopWords, false);
-		}
+        /// DIGY needed?
+        //public static ICollection<string> MakeStopSet(string[] stopWords)
+        //{
+        //    return MakeStopSet(stopWords, false);
+        //}
 		
 		/// <summary> Builds a Set from an array of stop words,
 		/// appropriate for passing into the StopFilter constructor.
@@ -209,7 +210,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <seealso cref="MakeStopSet(java.lang.String[], boolean)"> passing false to ignoreCase
 		/// </seealso>
-        public static List<string> MakeStopSet(List<string> stopWords)
+        public static ICollection<string> MakeStopSet(ICollection<string> stopWords)
 		{
 			return MakeStopSet(stopWords, false);
 		}
@@ -221,10 +222,10 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> a Set containing the words
 		/// </returns>
-        public static List<string> MakeStopSet(System.String[] stopWords, bool ignoreCase)
+        public static ICollection<string> MakeStopSet(string[] stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Length, ignoreCase);
-			stopSet.AddAll(stopWords);
+			stopSet.Add(stopWords);
 			return stopSet;
 		}
 		
@@ -235,10 +236,10 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		/// <returns> A Set containing the words
 		/// </returns>
-        public static List<string> MakeStopSet(List<string> stopWords, bool ignoreCase)
+        public static ICollection<string> MakeStopSet(ICollection<string> stopWords, bool ignoreCase)
 		{
 			CharArraySet stopSet = new CharArraySet(stopWords.Count, ignoreCase);
-			stopSet.AddAll(stopWords.ToArray());
+			stopSet.Add(stopWords);
 			return stopSet;
 		}
 		

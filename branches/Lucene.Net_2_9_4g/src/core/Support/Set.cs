@@ -23,32 +23,13 @@ namespace Lucene.Net.Support
     public class Set<T> : System.Collections.Generic.List<T>
     {
         System.Collections.Generic.HashSet<T> _Set = new System.Collections.Generic.HashSet<T>();
-        bool _ReadOnly = false;
 
         public Set()
         {
         }
-                
-        public Set(bool readOnly)
-        {
-            this._ReadOnly = readOnly;
-        }
-
-        public bool ReadOnly
-        {
-            set
-            {
-                _ReadOnly = value;
-            }
-            get
-            {
-                return _ReadOnly;
-            }
-        }
-
+        
         public new virtual void Add(T item)
         {
-            if (_ReadOnly) throw new NotSupportedException();
             if (_Set.Contains(item)) return;
             _Set.Add(item);
             base.Add(item);
@@ -56,7 +37,6 @@ namespace Lucene.Net.Support
 
         public void Add(Support.Set<T> items)
         {
-            if (_ReadOnly) throw new NotSupportedException();
             foreach(T item in items)
             {
                 if(_Set.Contains(item)) continue;
@@ -67,7 +47,6 @@ namespace Lucene.Net.Support
 
         public void Add(System.Collections.Generic.IList<T> items)
         {
-            if (_ReadOnly) throw new NotSupportedException();
             foreach (T item in items)
             {
                 if (_Set.Contains(item)) continue;
@@ -83,36 +62,14 @@ namespace Lucene.Net.Support
 
         public new void Clear()
         {
-            if (_ReadOnly) throw new NotSupportedException();
             _Set.Clear();
             base.Clear();
         }
 
         public new void Remove(T item)
         {
-            if (_ReadOnly) throw new NotSupportedException();
             _Set.Remove(item);
             base.Remove(item);
-        }
-
-        public void RemoveAll(System.Collections.Generic.IList<T> list)
-        {
-            if (_ReadOnly) throw new NotSupportedException();
-        }
-
-        public void RetainAll(System.Collections.Generic.IList<T> list)
-        {
-            if (_ReadOnly) throw new NotSupportedException();
-        }
-
-        public void RemoveAll(System.Collections.ArrayList list)
-        {
-            if (_ReadOnly) throw new NotSupportedException();
-        }
-
-        public void RetainAll(System.Collections.ArrayList list)
-        {
-            if (_ReadOnly) throw new NotSupportedException();
         }
     }
 }
