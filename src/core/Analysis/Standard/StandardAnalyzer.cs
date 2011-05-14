@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// </version>
 	public class StandardAnalyzer : Analyzer
 	{
-		private List<string> stopSet;
+        private ICollection<string> stopSet;
 		
 		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
 		/// This is false by default to support backward compatibility.
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>An unmodifiable set containing some common English words that are usually not
 		/// useful for searching. 
 		/// </summary>
-		public static readonly List<string> STOP_WORDS_SET;
+		public static readonly ICollection<string> STOP_WORDS_SET;
 		
 		/// <summary>Builds an analyzer with the default stop words ({@link
 		/// #STOP_WORDS_SET}).
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// instead 
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
-		public StandardAnalyzer(List<string> stopWords):this(Version.LUCENE_24, stopWords)
+		public StandardAnalyzer(ICollection<string> stopWords):this(Version.LUCENE_24, stopWords)
 		{
 		}
 		
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </param>
 		/// <param name="stopWords">stop words 
 		/// </param>
-		public StandardAnalyzer(Version matchVersion, List<string> stopWords)
+        public StandardAnalyzer(Version matchVersion, ICollection<string> stopWords)
 		{
 			stopSet = stopWords;
 			Init(matchVersion);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)} instead 
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
-		public StandardAnalyzer(System.String[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
+		public StandardAnalyzer(string[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
 		{
 		}
 		

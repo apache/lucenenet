@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the set of terms in this phrase. </summary>
 		public virtual Term[] GetTerms()
 		{
-			return (Term[])terms.ToArray();
+			return terms.ToArray();
 		}
 		
 		/// <summary> Returns the relative positions of terms in this phrase.</summary>
