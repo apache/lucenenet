@@ -264,7 +264,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
             foreach (Query q in disjuncts)
             {

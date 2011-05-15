@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -113,7 +114,7 @@ namespace Lucene.Net.Search.Function
         }
 		
 		/*(non-Javadoc) @see Lucene.Net.Search.Query#extractTerms(java.util.Set) */
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			subQuery.ExtractTerms(terms);
 			for (int i = 0; i < valSrcQueries.Length; i++)

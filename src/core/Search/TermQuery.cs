@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
@@ -175,8 +176,8 @@ namespace Lucene.Net.Search
 		{
 			return new TermWeight(this, searcher);
 		}
-		
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
             terms.Add(GetTerm());
 		}

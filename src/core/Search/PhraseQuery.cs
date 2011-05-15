@@ -292,10 +292,12 @@ namespace Lucene.Net.Search
 		
 		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(java.util.Set)">
 		/// </seealso>
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> queryTerms)
+		public override void  ExtractTerms(ICollection<Lucene.Net.Index.Term> queryTerms)
 		{
-            queryTerms.Add(terms);
-			//SupportClass.CollectionsHelper.AddAllIfNotContains(queryTerms, terms);
+            foreach (Term term in terms)
+            {
+                queryTerms.Add(term);
+            }
 		}
 		
 		/// <summary>Prints a user-readable version of this query. </summary>

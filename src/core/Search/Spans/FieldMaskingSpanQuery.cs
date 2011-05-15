@@ -106,8 +106,8 @@ namespace Lucene.Net.Search.Spans
 		{
 			return maskedQuery.GetTerms();
 		}
-		
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			maskedQuery.ExtractTerms(terms);
 		}

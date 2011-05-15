@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -49,8 +50,8 @@ namespace Lucene.Net.Search
 		{
 			return this;
 		}
-		
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			// OK to not add any terms when used for MultiSearcher,
 			// but may not be OK for highlighting

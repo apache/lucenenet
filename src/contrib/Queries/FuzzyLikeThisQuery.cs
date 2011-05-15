@@ -342,7 +342,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ScoreTermQueue : PriorityQueue
+        private class ScoreTermQueue : PriorityQueue<ScoreTerm>
         {
             public ScoreTermQueue(int size)
             {
@@ -352,16 +352,13 @@ namespace Lucene.Net.Search
             /* (non-Javadoc)
              * @see org.apache.lucene.util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
              */
-            public override bool LessThan(Object a, Object b)
+            public override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                ScoreTerm termA = (ScoreTerm)a;
-                ScoreTerm termB = (ScoreTerm)b;
                 if (termA.score == termB.score)
                     return termA.term.CompareTo(termB.term) > 0;
                 else
                     return termA.score < termB.score;
             }
-
         }
 
         //overrides basic TermQuery to negate effects of IDF (idf is factored into boost of containing BooleanQuery)
