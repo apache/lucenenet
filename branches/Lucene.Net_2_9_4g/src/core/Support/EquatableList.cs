@@ -330,5 +330,16 @@ namespace Lucene.Net.Support
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < Count; i++)
+            {
+                sb.Append(this[i].ToString());
+                if (i != Count - 1) sb.Append(" , ");
+            }
+            return sb.ToString();
+        }
     }
 }

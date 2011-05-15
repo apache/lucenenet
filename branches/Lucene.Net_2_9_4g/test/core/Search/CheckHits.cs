@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -171,21 +172,19 @@ namespace Lucene.Net.Search
 			}
 			
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-			
-			System.Collections.ArrayList correct = new System.Collections.ArrayList();
+
+            SortedSet<int> correct = new SortedSet<int>();
 			for (int i = 0; i < results.Length; i++)
 			{
-                Support.CollectionsHelper.AddIfNotContains(correct, results[i]);
+                correct.Add(results[i]);
 			}
-            correct.Sort();
-			
-			System.Collections.ArrayList actual = new System.Collections.ArrayList();
+
+            SortedSet<int> actual = new SortedSet<int>();
 			for (int i = 0; i < hits.Length; i++)
 			{
-				Support.CollectionsHelper.AddIfNotContains(actual, hits[i].doc);
+				actual.Add(hits[i].doc);
 			}
-            actual.Sort();
-			
+            			
 			Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 			
 			QueryUtils.Check(query, searcher);

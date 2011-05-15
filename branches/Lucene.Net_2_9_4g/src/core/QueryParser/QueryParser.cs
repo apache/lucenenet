@@ -2218,8 +2218,8 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 			else
 				return (jj_ntk = jj_nt.kind);
 		}
-		
-		private System.Collections.IList jj_expentries = new System.Collections.ArrayList();
+
+        private List<int[]> jj_expentries = new List<int[]>();
 		private int[] jj_expentry;
 		private int jj_kind = - 1;
 		private int[] jj_lasttokens = new int[100];
@@ -2287,7 +2287,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 			int[][] exptokseq = new int[jj_expentries.Count][];
 			for (int i = 0; i < jj_expentries.Count; i++)
 			{
-				exptokseq[i] = (int[]) jj_expentries[i];
+				exptokseq[i] = jj_expentries[i];
 			}
 			return new ParseException(token, exptokseq, Lucene.Net.QueryParsers.QueryParserConstants.tokenImage);
 		}

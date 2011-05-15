@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 		
 		private System.IO.FileInfo workDir;
 		private System.IO.FileInfo indexDir;
-		private System.Collections.ArrayList files;
+		private List<System.IO.FileInfo> files;
 		
 		
 		/// <summary>Set the test case. This test case needs
@@ -67,8 +68,8 @@ namespace Lucene.Net.Index
 			
 			Directory directory = FSDirectory.Open(indexDir);
 			directory.Close();
-			
-			files = new System.Collections.ArrayList();
+
+            files = new List<System.IO.FileInfo>();
 			files.Add(CreateOutput("test.txt", "This is the first test file"));
 			
 			files.Add(CreateOutput("test2.txt", "This is the second test file"));

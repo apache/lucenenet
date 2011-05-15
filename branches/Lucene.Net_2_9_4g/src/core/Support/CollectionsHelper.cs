@@ -38,39 +38,6 @@ namespace Lucene.Net.Support
             }
         }
 
-        public static void AddIfNotContains(System.Collections.ArrayList hashtable, System.Object item)
-        {
-            if (hashtable.Contains(item) == false)
-            {
-                hashtable.Add(item);
-            }
-        }
-
-        public static void AddAll(System.Collections.Hashtable hashtable, System.Collections.ICollection items)
-        {
-            System.Collections.IEnumerator iter = items.GetEnumerator();
-            System.Object item;
-            while (iter.MoveNext())
-            {
-                item = iter.Current;
-                hashtable.Add(item, item);
-            }
-        }
-
-        public static void AddAllIfNotContains(System.Collections.Hashtable hashtable, System.Collections.ICollection items)
-        {
-            System.Collections.IEnumerator iter = items.GetEnumerator();
-            System.Object item;
-            while (iter.MoveNext())
-            {
-                item = iter.Current;
-                if (hashtable.Contains(item) == false)
-                {
-                    hashtable.Add(item, item);
-                }
-            }
-        }
-
         public static void AddAllIfNotContains(System.Collections.Generic.IDictionary<string,string> hashtable, System.Collections.Generic.ICollection<string> items)
         {
             foreach (string s in items)
@@ -81,15 +48,7 @@ namespace Lucene.Net.Support
                 }
             }
         }
-
-        public static void AddAll(System.Collections.Generic.IDictionary<string, string> hashtable, System.Collections.Generic.ICollection<string> items)
-        {
-            foreach (string s in items)
-            {
-                hashtable.Add(s, s);
-            }
-        }
-
+        
         public static System.String CollectionToString<T>(System.Collections.Generic.IList<T> c)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -171,67 +130,13 @@ namespace Lucene.Net.Support
             return s.ToString();
         }
 
-        /// <summary>
-        /// Compares two string arrays for equality.
-        /// </summary>
-        /// <param name="l1">First string array list to compare</param>
-        /// <param name="l2">Second string array list to compare</param>
-        /// <returns>true if the strings are equal in both arrays, false otherwise</returns>
-        public static bool CompareStringArrays(System.String[] l1, System.String[] l2)
-        {
-            if (l1.Length != l2.Length)
-                return false;
-            for (int i = 0; i < l1.Length; i++)
-            {
-                if (l1[i] != l2[i])
-                    return false;
-            }
-            return true;
-        }
-
-        
-
         public static void Sort<T1>(System.Collections.Generic.IList<T1> list, System.Collections.Generic.IComparer<T1> Comparator)
         {
             if (list.IsReadOnly) throw new System.NotSupportedException();
             if (Comparator == null) ((System.Collections.Generic.List<T1>)list).Sort();
             else ((System.Collections.Generic.List<T1>)list).Sort(Comparator);
         }
-
-        /// <summary>
-        /// Fills the array with an specific value from an specific index to an specific index.
-        /// </summary>
-        /// <param name="array">The array to be filled.</param>
-        /// <param name="fromindex">The first index to be filled.</param>
-        /// <param name="toindex">The last index to be filled.</param>
-        /// <param name="val">The value to fill the array with.</param>
-        public static void Fill(System.Array array, System.Int32 fromindex, System.Int32 toindex, System.Object val)
-        {
-            System.Object Temp_Object = val;
-            System.Type elementtype = array.GetType().GetElementType();
-            if (elementtype != val.GetType())
-                Temp_Object = System.Convert.ChangeType(val, elementtype);
-            if (array.Length == 0)
-                throw (new System.NullReferenceException());
-            if (fromindex > toindex)
-                throw (new System.ArgumentException());
-            if ((fromindex < 0) || ((System.Array)array).Length < toindex)
-                throw (new System.IndexOutOfRangeException());
-            for (int index = (fromindex > 0) ? fromindex-- : fromindex; index < toindex; index++)
-                array.SetValue(Temp_Object, index);
-        }
-
-
-        /// <summary>
-        /// Fills the array with an specific value.
-        /// </summary>
-        /// <param name="array">The array to be filled.</param>
-        /// <param name="val">The value to fill the array with.</param>
-        public static void Fill(System.Array array, System.Object val)
-        {
-            Fill(array, 0, array.Length, val);
-        }
-
+                
         /// <summary>
         /// Compares the entire members of one array whith the other one.
         /// </summary>
