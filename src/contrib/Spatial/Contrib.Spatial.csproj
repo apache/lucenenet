@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Spatial</RootNamespace>
-    <AssemblyName>Lucene.Net.Contrib.Spatial</AssemblyName>
+    <AssemblyName>Lucene.Net.Spatial</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
