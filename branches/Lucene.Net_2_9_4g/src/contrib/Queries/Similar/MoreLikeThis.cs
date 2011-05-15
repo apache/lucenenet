@@ -16,8 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
 
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermFreqVector = Lucene.Net.Index.TermFreqVector;
@@ -33,6 +33,8 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Lucene.Net.Analysis.Tokenattributes;
+
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Similar
 {
@@ -583,7 +585,7 @@ namespace Lucene.Net.Search.Similar
         }
 
         /// <summary> Create the More like query from a PriorityQueue</summary>
-        private Query CreateQuery(PriorityQueue q)
+        private Query CreateQuery(PriorityQueue<object[]> q)
         {
             BooleanQuery query = new BooleanQuery();
             System.Object cur;
@@ -630,7 +632,7 @@ namespace Lucene.Net.Search.Similar
         /// </summary>
         /// <param name="words">a map of words keyed on the word(String) with Int objects as the values.
         /// </param>
-        private PriorityQueue CreateQueue(System.Collections.IDictionary words)
+        private PriorityQueue<object[]> CreateQueue(IDictionary<string,Int> words)
         {
             // have collected all words in doc and their freqs
             int numDocs = ir.NumDocs();
@@ -775,9 +777,9 @@ namespace Lucene.Net.Search.Similar
         /// </summary>
         /// <param name="docNum">the id of the lucene document from which to find terms
         /// </param>
-        private PriorityQueue RetrieveTerms(int docNum)
+        private PriorityQueue<object[]> RetrieveTerms(int docNum)
         {
-            System.Collections.IDictionary termFreqMap = new System.Collections.Hashtable();
+            IDictionary<string,Int> termFreqMap = new Support.Dictionary<string,Int>();
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
@@ -810,7 +812,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         /// <param name="vector">List of terms and their frequencies for a doc/field
         /// </param>
-        private void AddTermFrequencies(System.Collections.IDictionary termFreqMap, TermFreqVector vector)
+        private void AddTermFrequencies(IDictionary<string,Int> termFreqMap, TermFreqVector vector)
         {
             System.String[] terms = vector.GetTerms();
             int[] freqs = vector.GetTermFrequencies();
@@ -843,7 +845,7 @@ namespace Lucene.Net.Search.Similar
         /// </param>
         /// <param name="fieldName">Used by analyzer for any special per-field analysis
         /// </param>
-        private void AddTermFrequencies(System.IO.TextReader r, System.Collections.IDictionary termFreqMap, System.String fieldName)
+        private void AddTermFrequencies(System.IO.TextReader r, IDictionary<string, Int> termFreqMap, System.String fieldName)
         {
             TokenStream ts = analyzer.TokenStream(fieldName, r);
 			int tokenCount=0;
@@ -923,9 +925,9 @@ namespace Lucene.Net.Search.Similar
         /// </returns>
         /// <seealso cref="#retrieveInterestingTerms">
         /// </seealso>
-        public PriorityQueue RetrieveTerms(System.IO.TextReader r)
+        public PriorityQueue<object[]> RetrieveTerms(System.IO.TextReader r)
         {
-            System.Collections.IDictionary words = new System.Collections.Hashtable();
+            IDictionary<string, Int> words = new Support.Dictionary<string, Int>();
             for (int i = 0; i < fieldNames.Length; i++)
             {
                 System.String fieldName = fieldNames[i];
@@ -938,7 +940,7 @@ namespace Lucene.Net.Search.Similar
         public System.String[] RetrieveInterestingTerms(int docNum)
         {
             System.Collections.ArrayList al = new System.Collections.ArrayList(maxQueryTerms);
-            PriorityQueue pq = RetrieveTerms(docNum);
+            PriorityQueue<object[]> pq = RetrieveTerms(docNum);
             System.Object cur;
             int lim = maxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -967,7 +969,7 @@ namespace Lucene.Net.Search.Similar
         public System.String[] RetrieveInterestingTerms(System.IO.TextReader r)
         {
             System.Collections.ArrayList al = new System.Collections.ArrayList(maxQueryTerms);
-            PriorityQueue pq = RetrieveTerms(r);
+            PriorityQueue<object[]> pq = RetrieveTerms(r);
             System.Object cur;
             int lim = maxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
@@ -982,17 +984,15 @@ namespace Lucene.Net.Search.Similar
         }
 
         /// <summary> PriorityQueue that orders words by score.</summary>
-        private class FreqQ : PriorityQueue
+        private class FreqQ : PriorityQueue<object[]>
         {
             internal FreqQ(int s)
             {
                 Initialize(s);
             }
 
-            override public bool LessThan(System.Object a, System.Object b)
+            public override bool LessThan(object[] aa, object[] bb)
             {
-                System.Object[] aa = (System.Object[])a;
-                System.Object[] bb = (System.Object[])b;
                 System.Single fa = (System.Single)aa[2];
                 System.Single fb = (System.Single)bb[2];
                 return (float)fa > (float)fb;

@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -298,7 +299,7 @@ namespace Lucene.Net.Search
 		}
 		
 		// inherit javadoc
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			GetQuery().ExtractTerms(terms);
 		}

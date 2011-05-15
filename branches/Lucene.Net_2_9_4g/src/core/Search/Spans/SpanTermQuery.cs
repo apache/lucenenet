@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Spans
 			terms.Add(term);
 			return terms;
 		}
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
             terms.Add(term);
 		}

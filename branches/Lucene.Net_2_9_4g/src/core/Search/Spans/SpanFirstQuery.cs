@@ -165,8 +165,8 @@ namespace Lucene.Net.Search.Spans
 			spanFirstQuery.SetBoost(GetBoost());
 			return spanFirstQuery;
 		}
-		
-		public override void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+
+        public override void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			match.ExtractTerms(terms);
 		}

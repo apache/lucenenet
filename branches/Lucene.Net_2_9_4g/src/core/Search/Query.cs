@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 using IndexReader = Lucene.Net.Index.IndexReader;
 
@@ -185,7 +186,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
-		public virtual void  ExtractTerms(Support.Set<Lucene.Net.Index.Term> terms)
+        public virtual void ExtractTerms(ICollection<Lucene.Net.Index.Term> terms)
 		{
 			// needs to be implemented by query subclasses
 			throw new System.NotSupportedException();
