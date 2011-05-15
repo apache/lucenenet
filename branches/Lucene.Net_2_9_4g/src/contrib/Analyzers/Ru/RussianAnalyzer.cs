@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Analysis.Ru
@@ -157,7 +158,7 @@ namespace Lucene.Net.Analysis.Ru
 		/// <summary>
 		/// Contains the stopwords used with the StopFilter.
 		/// </summary>
-		private Hashtable stoptable = new Hashtable();
+        private ICollection<string> stoptable = new List<string>();
 
 		/// <summary>
 		/// Charset for Russian letters.
@@ -224,7 +225,7 @@ namespace Lucene.Net.Analysis.Ru
 		/// </summary>
 		/// <param name="charset"></param>
 		/// <param name="stopwords"></param>
-		public RussianAnalyzer(char[] charset, Hashtable stopwords)
+        public RussianAnalyzer(char[] charset, ICollection<string> stopwords)
 		{
 			this.charset = charset;
 			stoptable = stopwords;

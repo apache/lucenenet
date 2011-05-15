@@ -16,6 +16,7 @@
  */
 
 using System.Collections;
+using System.Collections.Generic;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
@@ -60,12 +61,12 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Contains the stopwords used with the StopFilter.
          */
-        private Hashtable stoptable = new Hashtable();
+        private ICollection<string> stoptable = new List<string>();
 
         /**
          * Contains words that should be indexed but not stemmed.
          */
-        private Hashtable excltable = new Hashtable();
+        private ICollection<string> excltable = new List<string>();
 
         /**
          * Builds an analyzer with the default stop words ({@link #BRAZILIAN_STOP_WORDS}).
@@ -86,7 +87,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Builds an analyzer with the given stop words.
          */
-        public BrazilianAnalyzer(Hashtable stopwords)
+        public BrazilianAnalyzer(ICollection<string> stopwords)
         {
             stoptable = stopwords;
         }
@@ -109,7 +110,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Builds an exclusionlist from a Hashtable.
          */
-        public void SetStemExclusionTable(Hashtable exclusionlist)
+        public void SetStemExclusionTable(ICollection<string> exclusionlist)
         {
             excltable = exclusionlist;
         }

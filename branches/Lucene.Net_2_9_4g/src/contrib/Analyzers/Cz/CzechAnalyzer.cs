@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.De;
@@ -102,7 +103,7 @@ namespace Lucene.Net.Analysis.Cz
 		/// <summary>
 		/// Contains the stopwords used with the StopFilter.
 		/// </summary>
-		private Hashtable stoptable = new Hashtable();
+        private ICollection<string> stoptable = new List<string>();
 
 		/// <summary>
 		/// Builds an analyzer.
@@ -123,7 +124,7 @@ namespace Lucene.Net.Analysis.Cz
 		/// <summary>
 		/// Builds an analyzer with the given stop words.
 		/// </summary>
-		public CzechAnalyzer( Hashtable stopwords ) 
+        public CzechAnalyzer(ICollection<string> stopwords) 
 		{
 			stoptable = stopwords;
 		}
@@ -145,13 +146,13 @@ namespace Lucene.Net.Analysis.Cz
 		{
 			if ( wordfile == null ) 
 			{
-				stoptable = new Hashtable();
+				stoptable = new List<string>();
 				return;
 			}
 			try 
 			{
 				// clear any previous table (if present)
-				stoptable = new Hashtable();
+				stoptable = new List<string>();
 
 				StreamReader isr;
 				if (encoding == null)
@@ -162,7 +163,7 @@ namespace Lucene.Net.Analysis.Cz
 				String word;
 				while ( ( word = isr.ReadLine() ) != null ) 
 				{
-					stoptable[word] = word;
+					stoptable.Add(word);
 				}
 
 			} 
