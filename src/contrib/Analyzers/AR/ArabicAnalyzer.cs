@@ -17,6 +17,7 @@
 
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Util;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Contains the stopwords used with the StopFilter.
          */
-        private Hashtable stoptable = new Hashtable();
+        private ICollection<string> stoptable = new List<string>();
         /**
          * The comment character in the stopwords file.  All lines prefixed with this will be ignored  
          */
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.AR
                 while (!reader.EndOfStream)
                 {
                     string word = reader.ReadLine();
-                    stoptable.Add(word, word);
+                    stoptable.Add(word);
                 }
             }
         }
@@ -112,16 +113,16 @@ namespace Lucene.Net.Analysis.AR
          *
          * @deprecated Use {@link #ArabicAnalyzer(Version, Hashtable)} instead
          */
-        public ArabicAnalyzer(Hashtable stopwords) : this(Version.LUCENE_24, stopwords)
+        public ArabicAnalyzer(ICollection<string> stopwords) : this(Version.LUCENE_24, stopwords)
         {
         }
 
         /**
          * Builds an analyzer with the given stop words.
          */
-        public ArabicAnalyzer(Version matchVersion, Hashtable stopwords)
+        public ArabicAnalyzer(Version matchVersion, ICollection<string> stopwords)
         {
-            stoptable = new Hashtable(stopwords);
+            stoptable = new List<string>(stopwords);
             this.matchVersion = matchVersion;
         }
 

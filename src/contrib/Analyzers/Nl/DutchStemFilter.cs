@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Nl
 {
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// </summary>
 		private Token token = null;
 		private DutchStemmer stemmer = null;
-		private Hashtable exclusions = null;
+        private ICollection<string> exclusions = null;
     
 		public DutchStemFilter( TokenStream _in ) : base(_in)
 		{
@@ -86,7 +87,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// </summary>
 		/// <param name="_in"></param>
 		/// <param name="exclusiontable"></param>
-		public DutchStemFilter( TokenStream _in, Hashtable exclusiontable ): this(_in)
+        public DutchStemFilter(TokenStream _in, ICollection<string> exclusiontable) : this(_in)
 		{
 			exclusions = exclusiontable;
 		}
@@ -97,7 +98,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// <param name="_in"></param>
 		/// <param name="exclusiontable"></param>
 		/// <param name="stemdictionary">Dictionary of word stem pairs, that overrule the algorithm</param>
-		public DutchStemFilter( TokenStream _in, Hashtable exclusiontable , Hashtable stemdictionary): this(_in, exclusiontable)
+        public DutchStemFilter(TokenStream _in, ICollection<string> exclusiontable, Dictionary<string,string> stemdictionary) : this(_in, exclusiontable)
 		{
 			stemmer.SetStemDictionary(stemdictionary);
 		}
@@ -146,7 +147,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// Set an alternative exclusion list for this filter. 
 		/// </summary>
 		/// <param name="exclusiontable"></param>
-		public void SetExclusionTable( Hashtable exclusiontable )
+        public void SetExclusionTable(ICollection<string> exclusiontable)
 		{
 			exclusions = exclusiontable;
 		}
@@ -156,7 +157,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// so you can correct for a particular unwanted word-stem pair.
 		/// </summary>
 		/// <param name="dict"></param>
-		public void SetStemDictionary(Hashtable dict)
+		public void SetStemDictionary(Dictionary<string,string> dict)
 		{
 			if (stemmer != null)
 				stemmer.SetStemDictionary(dict);

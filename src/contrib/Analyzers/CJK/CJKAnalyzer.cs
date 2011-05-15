@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Analysis.CJK
@@ -91,7 +92,7 @@ namespace Lucene.Net.Analysis.CJK
 		/// <summary>
 		/// stop word list
 		/// </summary>
-		private Hashtable stopTable;
+        private ICollection<string> stopTable;
 
 		//~ Constructors -----------------------------------------------------------
 

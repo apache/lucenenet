@@ -17,6 +17,7 @@
 
 using Lucene.Net.Analysis;
 using System.Collections;
+using System.Collections.Generic;
 
 
 /**
@@ -33,7 +34,7 @@ namespace Lucene.Net.Analysis.BR
          * The actual token in the input stream.
          */
         private BrazilianStemmer stemmer = null;
-        private Hashtable exclusions = null;
+        private ICollection<string> exclusions = null;
 
         public BrazilianStemFilter(TokenStream input)
             : base(input)
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.BR
             stemmer = new BrazilianStemmer();
         }
 
-        public BrazilianStemFilter(TokenStream input, Hashtable exclusiontable)
+        public BrazilianStemFilter(TokenStream input, ICollection<string> exclusiontable)
             : this(input)
         {
             this.exclusions = exclusiontable;

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.De
 {
@@ -16,11 +17,11 @@ namespace Lucene.Net.Analysis.De
 		/// <param name="path">Path to the wordlist</param>
 		/// <param name="wordfile">Name of the wordlist</param>
 		/// <returns></returns>
-		public static Hashtable GetWordtable( String path, String wordfile ) 
+        public static ICollection<string> GetWordtable(String path, String wordfile) 
 		{
 			if ( path == null || wordfile == null ) 
 			{
-				return new Hashtable();
+				return new List<string>();
 			}
 			return GetWordtable(new FileInfo(path + "\\" + wordfile));
 		}
@@ -29,11 +30,11 @@ namespace Lucene.Net.Analysis.De
 		/// </summary>
 		/// <param name="wordfile">Complete path to the wordlist</param>
 		/// <returns></returns>
-		public static Hashtable GetWordtable( String wordfile ) 
+        public static ICollection<string> GetWordtable(String wordfile) 
 		{
 			if ( wordfile == null ) 
 			{
-				return new Hashtable();
+				return new List<string>();
 			}
 			return GetWordtable( new FileInfo( wordfile ) );
 		}
@@ -43,13 +44,14 @@ namespace Lucene.Net.Analysis.De
 		/// </summary>
 		/// <param name="wordfile">File containing the wordlist</param>
 		/// <returns></returns>
-		public static Hashtable GetWordtable( FileInfo wordfile ) 
+        public static ICollection<string> GetWordtable(FileInfo wordfile) 
 		{
 			if ( wordfile == null ) 
 			{
-				return new Hashtable();
+				return new List<string>();
 			}
-			Hashtable result = null;
+
+            ICollection<string> result = null;
 			try 
 			{
 				StreamReader lnr = new StreamReader(wordfile.FullName);
@@ -72,7 +74,7 @@ namespace Lucene.Net.Analysis.De
 				// On error, use an empty table
 			catch (IOException) 
 			{
-				result = new Hashtable();
+				result = new List<string>();
 			}
 			return result;
 		}
@@ -83,12 +85,12 @@ namespace Lucene.Net.Analysis.De
 		/// <param name="words">Word that where read</param>
 		/// <param name="length">Amount of words that where read into <tt>words</tt></param>
 		/// <returns></returns>
-		private static Hashtable MakeWordTable( String[] words, int length ) 
+        private static ICollection<string> MakeWordTable(String[] words, int length) 
 		{
-			Hashtable table = new Hashtable( length );
+			List<string> table = new List<string>( length );
 			for ( int i = 0; i < length; i++ ) 
 			{
-				table.Add(words[i], words[i]);
+				table.Add(words[i]);
 			}
 			return table;
 		}

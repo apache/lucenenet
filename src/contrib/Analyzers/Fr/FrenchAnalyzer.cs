@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.De;
@@ -108,12 +109,12 @@ namespace Lucene.Net.Analysis.Fr
 		/// <summary>
 		/// Contains the stopwords used with the StopFilter.
 		/// </summary>
-		private Hashtable stoptable = new Hashtable();
+        private ICollection<string> stoptable = new List<string>();
 
 		/// <summary>
 		/// Contains words that should be indexed but not stemmed.
 		/// </summary>
-		private Hashtable excltable = new Hashtable();
+        private ICollection<string> excltable = new List<string>();
 
 		/// <summary>
 		/// Builds an analyzer.
@@ -134,7 +135,7 @@ namespace Lucene.Net.Analysis.Fr
 		/// <summary>
 		/// Builds an analyzer with the given stop words.
 		/// </summary>
-		public FrenchAnalyzer( Hashtable stopwords ) 
+        public FrenchAnalyzer(ICollection<string> stopwords) 
 		{
 			stoptable = stopwords;
 		}
@@ -158,7 +159,7 @@ namespace Lucene.Net.Analysis.Fr
 		/// <summary>
 		/// Builds an exclusionlist from a Hashtable.
 		/// </summary>
-		public void SetStemExclusionTable( Hashtable exclusionlist ) 
+        public void SetStemExclusionTable(ICollection<string> exclusionlist) 
 		{
 			excltable = exclusionlist;
 		}

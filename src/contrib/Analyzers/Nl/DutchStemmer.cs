@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Nl
 {
@@ -75,7 +76,7 @@ namespace Lucene.Net.Analysis.Nl
 		/// </summary>
 		private StringBuilder sb = new StringBuilder();
 		private bool _removedE;
-		private Hashtable _stemDict;
+		private Dictionary<string,string> _stemDict;
 
 
 		private int _R1;
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Nl
 			term = term.ToLower();
 			if ( !IsStemmable( term ) )
 				return term;
-			if (_stemDict != null && _stemDict.Contains(term))
+			if (_stemDict != null && _stemDict.ContainsKey(term))
 				return _stemDict[term] as string;
 			// Reset the StringBuilder.
 			sb.Remove(0, sb.Length);
@@ -477,7 +478,7 @@ namespace Lucene.Net.Analysis.Nl
 			return false;
 		}
 
-		internal void SetStemDictionary(Hashtable dict)
+		internal void SetStemDictionary(Dictionary<string,string> dict)
 		{
 			_stemDict = dict;
 		}

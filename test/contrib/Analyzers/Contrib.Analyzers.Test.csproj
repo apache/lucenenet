@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
-    <AssemblyName>Lucene.Net.Contrib.Analyzers.Test</AssemblyName>
+    <AssemblyName>Lucene.Net.Analyzers.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -60,6 +60,10 @@
     <Compile Include="AR\TestArabicAnalyzer.cs" />
     <Compile Include="AR\TestArabicNormalizationFilter.cs" />
     <Compile Include="AR\TestArabicStemFilter.cs" />
+    <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
+    <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
+    <Compile Include="NGram\TestNGramTokenFilter.cs" />
+    <Compile Include="NGram\TestNGramTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

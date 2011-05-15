@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 using Lucene.Net.Analysis;
 
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.Fr
 		/// </summary>
 		private Token token = null;
 		private FrenchStemmer stemmer = null;
-		private Hashtable exclusions = null;
+        private ICollection<string> exclusions = null;
 
 		public FrenchStemFilter( TokenStream _in ) : base(_in)
 		{
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis.Fr
 		/// <summary>
 		/// Builds a FrenchStemFilter that uses an exclusiontable.
 		/// </summary>
-		public FrenchStemFilter( TokenStream _in, Hashtable exclusiontable ) : 	this( _in )
+        public FrenchStemFilter(TokenStream _in, ICollection<string> exclusiontable) : this(_in)
 		{
 			exclusions = exclusiontable;
 		}
@@ -135,7 +136,7 @@ namespace Lucene.Net.Analysis.Fr
 		/// <summary>
 		/// Set an alternative exclusion list for this filter.
 		/// </summary>
-		public void SetExclusionTable( Hashtable exclusiontable ) 
+        public void SetExclusionTable(ICollection<string> exclusiontable) 
 		{
 			exclusions = exclusiontable;
 		}
