@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 
             char[] chars = new char[DocumentsWriter.CHAR_BLOCK_SIZE_ForNUnit - 1];
-            Support.CollectionsHelper.Fill(chars, 'x');
+            for (int i = 0; i < chars.Length; i++) chars[i] = 'x';
             Document doc = new Document();
             System.String bigTerm = new System.String(chars);
 

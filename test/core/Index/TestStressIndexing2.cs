@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -150,13 +152,13 @@ namespace Lucene.Net.Index
 		
 		public class DocsAndWriter
 		{
-			internal System.Collections.IDictionary docs;
+			internal Dictionary<string,Document> docs;
 			internal IndexWriter writer;
 		}
 		
 		public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
 		{
-			System.Collections.Hashtable docs = new System.Collections.Hashtable();
+            Dictionary<string, Document> docs = new Dictionary<string, Document>();
 			IndexWriter w = new MockIndexWriter(this, dir, autoCommit, new WhitespaceAnalyzer(), true);
 			w.SetUseCompoundFile(false);
 			
@@ -200,7 +202,7 @@ namespace Lucene.Net.Index
 				IndexingThread th = threads[i];
 				lock (th)
 				{
-					Support.CollectionsHelper.AddAllIfNotContains(docs, th.docs);
+                    docs.Union(th.docs);
 				}
 			}
 			
@@ -252,10 +254,9 @@ namespace Lucene.Net.Index
 					IndexingThread th = threads[i];
 					lock (th)
 					{
-                        System.Collections.IEnumerator e = th.docs.Keys.GetEnumerator();
-                        while (e.MoveNext())
+                        foreach(string key in th.docs.Keys)
                         {
-                            docs[e.Current] = th.docs[e.Current];
+                            docs[key] = th.docs[key];
                         }
 					}
 				}
@@ -579,7 +580,7 @@ namespace Lucene.Net.Index
 			internal int base_Renamed;
 			internal int range;
 			internal int iterations;
-			internal System.Collections.IDictionary docs = new System.Collections.Hashtable(); // Map<String,Document>
+            internal Dictionary<string, Document> docs = new Dictionary<string, Document>(); // Map<String,Document>
 			internal System.Random r;
 			
 			public virtual int NextInt(int lim)
@@ -658,7 +659,7 @@ namespace Lucene.Net.Index
 			public virtual System.String GetUTF8String(int nTokens)
 			{
 				int upto = 0;
-				Support.CollectionsHelper.Fill(buffer, (char) 0);
+                for(int i=0;i<buffer.Length;i++) buffer[i]=(char) 0;
 				for (int i = 0; i < nTokens; i++)
 					upto = AddUTF8Token(upto);
 				return new System.String(buffer, 0, upto);
