@@ -16,13 +16,13 @@
  */
 
 using System;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace SpellChecker.Net.Search.Spell
 {
 	
 	
-    sealed class SuggestWordQueue : PriorityQueue
+    sealed class SuggestWordQueue : PriorityQueue<SuggestWord>
     {
 		
         internal SuggestWordQueue(int size)
@@ -30,10 +30,8 @@ namespace SpellChecker.Net.Search.Spell
             Initialize(size);
         }
 		
-        override public bool LessThan(System.Object a, System.Object b)
+        public override bool LessThan(SuggestWord wa, SuggestWord wb)
         {
-            SuggestWord wa = (SuggestWord) a;
-            SuggestWord wb = (SuggestWord) b;
             int val = wa.CompareTo(wb);
             return val < 0;
         }
