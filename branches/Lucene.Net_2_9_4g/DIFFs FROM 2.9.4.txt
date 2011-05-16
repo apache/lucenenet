@@ -8,15 +8,15 @@
 
 * "foreach" instead of "GetEnumerator/MoveNext" (not completed yet)
 
-* IDisposable for classes that implement "Close" method
-
 * LUCENENET-172 (fix for unexceptional exceptions ecountered in FastCharStream)
 
 * LUCENENET-266 Refactoring SupportClass
 
-* LUCENENET-361 Workaround for a Mono C# compiler issue
+* Obsolete Similarity.Net removed (Query.Net replaces it)
 
-CONTRIB:
+-------------------------------------------------------------------------------
 
-* LUCENENET-330 Search.Regex Minimal Port 
-* LUCENENET-371 Unit test for Search.Regex port
+A few API changes like:
+* StopAnalyzer(List<string> stopWords)
+* Query.ExtractTerms(ICollection<string>)
+* TopDocs.TotalHits, TopDocs.ScoreDocs
