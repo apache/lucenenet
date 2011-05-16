@@ -869,7 +869,7 @@ namespace Lucene.Net.Search.Highlight
 		* @see TestCase#setUp()
 		*/
 		[SetUp]
-        protected virtual void  SetUp()
+        public virtual void  SetUp()
 		{
 			ramDir = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(ramDir, new StandardAnalyzer(), true);

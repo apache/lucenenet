@@ -19,7 +19,7 @@ using System;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
 using Token = Lucene.Net.Analysis.Token;
 using TokenStream = Lucene.Net.Analysis.TokenStream;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Highlight
 {
@@ -508,21 +508,19 @@ namespace Lucene.Net.Highlight
 		}
 	}
 
-	class FragmentQueue : PriorityQueue
+	class FragmentQueue : PriorityQueue<TextFragment>
 	{
 		public FragmentQueue(int size)
 		{
 			Initialize(size);
 		}
 		
-		public override bool LessThan(System.Object a, System.Object b)
-		{
-			TextFragment fragA = (TextFragment) a;
-			TextFragment fragB = (TextFragment) b;
-			if (fragA.GetScore() == fragB.GetScore())
-				return fragA.fragNum > fragB.fragNum;
-			else
-				return fragA.GetScore() < fragB.GetScore();
-		}
-	}
+        public override bool LessThan(TextFragment fragA, TextFragment fragB)
+        {
+            if (fragA.GetScore() == fragB.GetScore())
+                return fragA.fragNum > fragB.fragNum;
+            else
+                return fragA.GetScore() < fragB.GetScore();
+        }
+    }
 }
