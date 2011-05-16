@@ -1,0 +1,3 @@
+There are failing test cases & porting problems since Lucene.Net 2.0.
+Try FastVectorHighlighter
+DIGY.
