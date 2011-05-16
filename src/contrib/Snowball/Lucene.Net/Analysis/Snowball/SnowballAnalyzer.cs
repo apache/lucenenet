@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using SF.Snowball.Ext;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Snowball
 	public class SnowballAnalyzer : Analyzer
 	{
 		private System.String name;
-		private System.Collections.Hashtable stopSet;
+		private ICollection<string> stopSet;
 		
 		/// <summary>Builds the named analyzer with no stop words. </summary>
 		public SnowballAnalyzer(System.String name)
