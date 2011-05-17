@@ -197,9 +197,9 @@ namespace Lucene.Net.Search
 
         class AnonymousFilter4 : Filter
         {
-            public override System.Collections.BitArray Bits(IndexReader reader)
+            public override DocIdSet GetDocIdSet(IndexReader reader)
             {
-                return new System.Collections.BitArray(100000); //DIGY
+                return new OpenBitSet();
             }
         }
 
