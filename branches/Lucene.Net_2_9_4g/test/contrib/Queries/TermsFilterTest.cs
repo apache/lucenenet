@@ -99,14 +99,14 @@ namespace Lucene.Net.Search
             Assert.AreEqual(2, bits.Cardinality(), "Must match 2");
         }
 
-        [Test]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void ExOnBits()
-        {
-            TermsFilter a = new TermsFilter();
-            a.AddTerm(new Term("field1", "a"));
-            a.AddTerm(new Term("field1", "b"));
-            BitArray b = a.Bits(null);
-        }
+        //[Test]
+        //[ExpectedException(typeof(NotSupportedException))]
+        //public void ExOnBits()
+        //{
+        //    TermsFilter a = new TermsFilter();
+        //    a.AddTerm(new Term("field1", "a"));
+        //    a.AddTerm(new Term("field1", "b"));
+        //    BitArray b = a.Bits(null);
+        //}
     }
 }

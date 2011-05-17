@@ -208,21 +208,21 @@ namespace Lucene.Net.Search
 		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
 		/// </deprecated>
 		//@Override
-        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			TermEnum enumerator = query.GetEnum(reader);
-			try
-			{
-				System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
-				new AnonymousClassTermGenerator(bitSet, this).Generate(query, reader, enumerator);
-				return bitSet;
-			}
-			finally
-			{
-				enumerator.Close();
-			}
-		}
+        //[Obsolete("Use GetDocIdSet(IndexReader) instead.")]
+        //public override System.Collections.BitArray Bits(IndexReader reader)
+        //{
+        //    TermEnum enumerator = query.GetEnum(reader);
+        //    try
+        //    {
+        //        System.Collections.BitArray bitSet = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
+        //        new AnonymousClassTermGenerator(bitSet, this).Generate(query, reader, enumerator);
+        //        return bitSet;
+        //    }
+        //    finally
+        //    {
+        //        enumerator.Close();
+        //    }
+        //}
 		
 		/// <summary> Returns a DocIdSet with documents that should be
 		/// permitted in search results.

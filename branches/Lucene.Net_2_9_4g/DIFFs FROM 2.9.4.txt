@@ -20,6 +20,8 @@
    - FilteredDocIdSet.Match
    - FilteredDocIdSetIterator.Match 
   changed from abstract method to Func<..>  to be able to remove weird AnonymousClassXXXX's
+  
+* Filter.Bits(Obsolete) removed.
 
 -------------------------------------------------------------------------------
 

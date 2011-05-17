@@ -230,17 +230,17 @@ namespace Lucene.Net.Search
             Assert.AreEqual("BooleanFilter( price:[030 TO 040] +( inStock:N ) -( price:030 ))", b.ToString());
         }
 
-        [Test]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void ExOnBits_Test()
-        {
-            BooleanFilter b = new BooleanFilter();
-            b.Add(new BooleanFilterClause(GetTermsFilter("inStock", "N", false), BooleanClause.Occur.MUST));
-            b.Add(new BooleanFilterClause(GetTermsFilter("price", "030", false), BooleanClause.Occur.MUST_NOT));
-            b.Add(new BooleanFilterClause(GetRangeFilter("price", "030", "040", false), BooleanClause.Occur.SHOULD));
+        //[Test]
+        //[ExpectedException(typeof(NotSupportedException))]
+        //public void ExOnBits_Test()
+        //{
+        //    BooleanFilter b = new BooleanFilter();
+        //    b.Add(new BooleanFilterClause(GetTermsFilter("inStock", "N", false), BooleanClause.Occur.MUST));
+        //    b.Add(new BooleanFilterClause(GetTermsFilter("price", "030", false), BooleanClause.Occur.MUST_NOT));
+        //    b.Add(new BooleanFilterClause(GetRangeFilter("price", "030", "040", false), BooleanClause.Occur.SHOULD));
 
-            BitArray bits = b.Bits(this.reader);
-        }
+        //    BitArray bits = b.Bits(this.reader);
+        //}
 
         #region helpers
 
@@ -254,19 +254,14 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
         }
 
-        private Filter GetOldBitSetFilter(Filter filter)
-        {
-            return new MockBooleanFilter(filter);
-        }
+        //private Filter GetOldBitSetFilter(Filter filter)
+        //{
+        //    return new MockBooleanFilter(filter);
+        //}
 
         private Filter GetRangeFilter(String field, String lowerPrice, String upperPrice, bool old)
         {
             Filter f = new TermRangeFilter(field, lowerPrice, upperPrice, true, true);
-            if (old)
-            {
-                return GetOldBitSetFilter(f);
-            }
-
             return f;
         }
 
@@ -274,10 +269,6 @@ namespace Lucene.Net.Search
         {
             TermsFilter tf = new TermsFilter();
             tf.AddTerm(new Term(field, text));
-            if (old)
-            {
-                return GetOldBitSetFilter(tf);
-            }
 
             return tf;
         }
@@ -294,28 +285,5 @@ namespace Lucene.Net.Search
         }
 
         #endregion
-    }
-
-    public class MockBooleanFilter : Filter
-    {
-        private Filter filter;
-
-        public MockBooleanFilter(Filter f)
-        {
-            this.filter = f;
-        }
-
-        [Obsolete]
-        public override BitArray Bits(IndexReader reader)
-        {
-            BitArray bits = new BitArray(reader.MaxDoc());
-            DocIdSetIterator it = filter.GetDocIdSet(reader).Iterator();
-            int doc = DocIdSetIterator.NO_MORE_DOCS;
-            while ((doc = it.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
-            {
-                bits.Set(doc, true);
-            }
-            return bits;
-        }
     }
 }
