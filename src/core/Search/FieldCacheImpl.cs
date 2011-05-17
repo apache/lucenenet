@@ -86,21 +86,19 @@ namespace Lucene.Net.Search
             foreach(Type cacheType in caches.Keys)
 			{
 				Cache cache = caches[cacheType];
-				System.Collections.IEnumerator innerKeys = cache.readerCache.Keys.GetEnumerator();
-				while (innerKeys.MoveNext())
+                foreach(object readerKey in cache.readerCache.Keys)
 				{
 					// we've now materialized a hard ref
-					System.Object readerKey = innerKeys.Current;
+					//System.Object readerKey = innerKeys.Current;
+
 					// innerKeys was backed by WeakHashMap, sanity check
 					// that it wasn't GCed before we made hard ref
-					if (null != readerKey && cache.readerCache.Contains(readerKey))
+					if (null != readerKey && cache.readerCache.ContainsKey(readerKey))
 					{
-						System.Collections.IDictionary innerCache = ((System.Collections.IDictionary) cache.readerCache[readerKey]);
-						System.Collections.IEnumerator entrySetIterator = new System.Collections.Hashtable(innerCache).GetEnumerator();
-						while (entrySetIterator.MoveNext())
+						IDictionary<Entry,object> innerCache = cache.readerCache[readerKey];
+                        foreach (KeyValuePair<Entry, object> mapEntry in innerCache)
 						{
-							System.Collections.DictionaryEntry mapEntry = (System.Collections.DictionaryEntry) entrySetIterator.Current;
-							Entry entry = (Entry) mapEntry.Key;
+							Entry entry =  mapEntry.Key;
 							result.Add(new CacheEntryImpl(readerKey, entry.field, cacheType, entry.type, entry.custom, entry.locale, mapEntry.Value));
 						}
 					}
@@ -209,7 +207,7 @@ namespace Lucene.Net.Search
 			
 			internal FieldCache wrapper;
 
-            internal System.Collections.IDictionary readerCache = new Support.WeakHashTable();
+            internal IDictionary<object,IDictionary<Entry,Object>> readerCache = new Support.WeakDictionary<object,IDictionary<Entry,Object>>();
 			
 			protected internal abstract System.Object CreateValue(IndexReader reader, Entry key);
 
@@ -225,15 +223,15 @@ namespace Lucene.Net.Search
 			
 			public virtual System.Object Get(IndexReader reader, Entry key)
 			{
-				System.Collections.IDictionary innerCache;
+                IDictionary<Entry, Object> innerCache;
 				System.Object value_Renamed;
 				System.Object readerKey = reader.GetFieldCacheKey();
-				lock (readerCache.SyncRoot)
+				lock (readerCache)
 				{
-					innerCache = (System.Collections.IDictionary) readerCache[readerKey];
+					innerCache = readerCache[readerKey];
 					if (innerCache == null)
 					{
-						innerCache = new System.Collections.Hashtable();
+                        innerCache = new Support.Dictionary<Entry, Object>();
 						readerCache[readerKey] = innerCache;
 						value_Renamed = null;
 					}
@@ -255,7 +253,7 @@ namespace Lucene.Net.Search
 						if (progress.value_Renamed == null)
 						{
 							progress.value_Renamed = CreateValue(reader, key);
-							lock (readerCache.SyncRoot)
+							lock (readerCache)
 							{
 								innerCache[key] = progress.value_Renamed;
 							}
