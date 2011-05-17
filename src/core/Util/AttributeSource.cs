@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
 			
 			private sealed class DefaultAttributeFactory:AttributeFactory
 			{
-                private static readonly Support.WeakHashTable attClassImplMap = new Support.WeakHashTable();
+                private static readonly Support.WeakDictionary<Type, WeakReference> attClassImplMap = new Support.WeakDictionary<Type, WeakReference>();
                 
 				internal DefaultAttributeFactory()
 				{
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
 				{
 					lock (attClassImplMap)
 					{
-                        WeakReference refz = (WeakReference) attClassImplMap[attClass];
+                        WeakReference refz = attClassImplMap[attClass];
                         System.Type clazz = (refz == null) ? null : ((System.Type) refz.Target);
 						if (clazz == null)
 						{
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-		private static readonly Support.WeakHashTable knownImplClasses = new Support.WeakHashTable();
+		private static readonly Support.WeakDictionary<Type,List<WeakReference>> knownImplClasses = new Support.WeakDictionary<Type,List<WeakReference>>();
 
         // {{Aroush-2.9 Port issue, need to mimic java's IdentityHashMap
         /*
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
             List<WeakReference> foundInterfaces;
 			lock (knownImplClasses)
 			{
-                foundInterfaces = (List<WeakReference>)knownImplClasses[clazz];
+                foundInterfaces = knownImplClasses[clazz];
 				if (foundInterfaces == null)
 				{
                     // we have a strong reference to the class instance holding all interfaces in the list (parameter "att"),
