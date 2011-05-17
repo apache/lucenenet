@@ -300,32 +300,6 @@ namespace Lucene.Net.Search
 			// still added here in case someone will add abstract methods in the future.
 		}
 		
-		internal sealed class JustCompileFilteredDocIdSet:FilteredDocIdSet
-		{
-			
-			public JustCompileFilteredDocIdSet(DocIdSet innerSet):base(innerSet)
-			{
-			}
-			
-			public /*protected internal*/ override bool Match(int docid)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-		}
-		
-		internal sealed class JustCompileFilteredDocIdSetIterator:FilteredDocIdSetIterator
-		{
-			
-			public JustCompileFilteredDocIdSetIterator(DocIdSetIterator innerIter):base(innerIter)
-			{
-			}
-			
-			public /*protected internal*/ override bool Match(int doc)
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-		}
-		
 		internal sealed class JustCompileFilteredTermEnum:FilteredTermEnum
 		{
 			
@@ -354,19 +328,6 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
 			}
 		}
-		
-		/*internal sealed class JustCompilePhraseScorer : Lucene.Net.Search.PhraseScorer    // {{Not needed for Lucene.Net}}
-		{
-			
-			internal JustCompilePhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, sbyte[] norms):base(weight, tps, offsets, similarity, norms)
-			{
-			}
-			
-			protected internal override float PhraseFreq()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-			}
-		}*/
 		
 		[Serializable]
 		internal sealed class JustCompileQuery:Query

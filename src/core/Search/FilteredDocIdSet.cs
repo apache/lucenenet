@@ -39,45 +39,17 @@ namespace Lucene.Net.Search
 	/// <seealso cref="DocIdSet">
 	/// </seealso>
 	
-	public abstract class FilteredDocIdSet:DocIdSet
+	public class FilteredDocIdSet:DocIdSet
 	{
-		private class AnonymousClassFilteredDocIdSetIterator:FilteredDocIdSetIterator
-		{
-			public AnonymousClassFilteredDocIdSetIterator(FilteredDocIdSet enclosingInstance) : base(null)
-			{
-                System.Diagnostics.Debug.Fail("Port issue:", "Lets see if we need this"); // {{Aroush-2.9}}
-				InitBlock(enclosingInstance);
-			}
-			private void InitBlock(FilteredDocIdSet enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private FilteredDocIdSet enclosingInstance;
-			public FilteredDocIdSet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassFilteredDocIdSetIterator(FilteredDocIdSet enclosingInstance, Lucene.Net.Search.DocIdSetIterator Param1):base(Param1)
-			{
-				InitBlock(enclosingInstance);
-			}
-			public /*protected internal*/ override bool Match(int docid)
-			{
-				return Enclosing_Instance.Match(docid);
-			}
-		}
 		private DocIdSet _innerSet;
 		
 		/// <summary> Constructor.</summary>
 		/// <param name="innerSet">Underlying DocIdSet
 		/// </param>
-		public FilteredDocIdSet(DocIdSet innerSet)
+		public FilteredDocIdSet(DocIdSet innerSet,Func<int,bool> match)
 		{
 			_innerSet = innerSet;
+            this.Match = match;
 		}
 		
 		/// <summary>This DocIdSet implementation is cacheable if the inner set is cacheable. </summary>
@@ -91,7 +63,8 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> true if input docid should be in the result set, false otherwise.
 		/// </returns>
-		public /*protected internal*/ abstract bool Match(int docid);
+		//public /*protected internal*/ abstract bool Match(int docid);
+        Func<int, bool> Match;
 		
 		/// <summary> Implementation of the contract to build a DocIdSetIterator.</summary>
 		/// <seealso cref="DocIdSetIterator">
@@ -101,7 +74,10 @@ namespace Lucene.Net.Search
 		// @Override
 		public override DocIdSetIterator Iterator()
 		{
-			return new AnonymousClassFilteredDocIdSetIterator(this, _innerSet.Iterator());
+            return new FilteredDocIdSetIterator(_innerSet.Iterator(), (docid) =>
+            {
+                return this.Match(docid);
+            });
 		}
 	}
 }

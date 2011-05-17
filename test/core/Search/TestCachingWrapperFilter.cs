@@ -41,23 +41,22 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, new KeywordAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             MockFilter filter = new MockFilter();
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // first time, nested filter is called
             cacher.GetDocIdSet(reader);
-            Assert.IsTrue(filter.WasCalled(), "first time");
+            Assert.IsTrue( filter.WasCalled(),"first time");
 
-            // make sure no exception if cache is holding the wrong bitset
-            cacher.Bits(reader);
+            // make sure no exception if cache is holding the wrong docIdSet
             cacher.GetDocIdSet(reader);
 
             // second time, nested filter should not be called
             filter.Clear();
             cacher.GetDocIdSet(reader);
-            Assert.IsFalse(filter.WasCalled(), "second time");
+            Assert.IsFalse(filter.WasCalled(),"second time" );
 
             reader.Close();
         }

@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// mechanism on an underlying DocIdSetIterator.  See {@link
 	/// FilteredDocIdSet}.
 	/// </summary>
-	public abstract class FilteredDocIdSetIterator:DocIdSetIterator
+	public class FilteredDocIdSetIterator:DocIdSetIterator
 	{
 		protected internal DocIdSetIterator _innerIter;
 		private int doc;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 		/// <summary> Constructor.</summary>
 		/// <param name="innerIter">Underlying DocIdSetIterator.
 		/// </param>
-		public FilteredDocIdSetIterator(DocIdSetIterator innerIter)
+        public FilteredDocIdSetIterator(DocIdSetIterator innerIter, Func<int, bool> match)
 		{
 			if (innerIter == null)
 			{
@@ -41,6 +41,7 @@ namespace Lucene.Net.Search
 			}
 			_innerIter = innerIter;
 			doc = - 1;
+            this.Match = match;
 		}
 		
 		/// <summary> Validation method to determine whether a docid should be in the result set.</summary>
@@ -50,7 +51,8 @@ namespace Lucene.Net.Search
 		/// </returns>
 		/// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)">
 		/// </seealso>
-		public abstract /*protected internal*/ bool Match(int doc);
+		//public abstract /*protected internal*/ bool Match(int doc);
+        Func<int, bool> Match;
 		
 		/// <deprecated> use {@link #DocID()} instead. 
 		/// </deprecated>
