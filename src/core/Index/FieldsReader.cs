@@ -23,8 +23,9 @@ using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using StringHelper = Lucene.Net.Util.StringHelper;
+
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -58,8 +59,8 @@ namespace Lucene.Net.Index
 		// The docID offset where our docs begin in the index
 		// file.  This will be 0 if we have our own private file.
 		private int docStoreOffset;
-		
-		private CloseableThreadLocal fieldsStreamTL = new CloseableThreadLocal();
+
+        private CloseableThreadLocal<IndexInput> fieldsStreamTL = new CloseableThreadLocal<IndexInput>();
 		private bool isOriginal = false;
 
         //DIGY
@@ -557,7 +558,7 @@ namespace Lucene.Net.Index
 			
 			private IndexInput GetFieldStream()
 			{
-				IndexInput localFieldsStream = (IndexInput) Enclosing_Instance.fieldsStreamTL.Get();
+				IndexInput localFieldsStream = Enclosing_Instance.fieldsStreamTL.Get();
 				if (localFieldsStream == null)
 				{
 					localFieldsStream = (IndexInput) Enclosing_Instance.cloneableFieldsStream.Clone();

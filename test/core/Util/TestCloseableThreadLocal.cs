@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 		public virtual void  TestInitValue()
 		{
 			InitValueThreadLocal tl = new InitValueThreadLocal(this);
-			System.String str = (System.String) tl.Get();
+			System.String str = tl.Get();
 			Assert.AreEqual(TEST_VALUE, str);
 		}
 		
@@ -40,8 +40,8 @@ namespace Lucene.Net.Util
 		{
 			// Tests that null can be set as a valid value (LUCENE-1805). This
 			// previously failed in get().
-			CloseableThreadLocal ctl = new CloseableThreadLocal();
-			ctl.Set((System.Object) null);
+			CloseableThreadLocal<object> ctl = new CloseableThreadLocal<object>();
+			ctl.Set(null);
 			Assert.IsNull(ctl.Get());
 		}
 		
@@ -50,31 +50,21 @@ namespace Lucene.Net.Util
 		{
 			// LUCENE-1805: make sure default get returns null,
 			// twice in a row
-			CloseableThreadLocal ctl = new CloseableThreadLocal();
+			CloseableThreadLocal<object> ctl = new CloseableThreadLocal<object>();
 			Assert.IsNull(ctl.Get());
 			Assert.IsNull(ctl.Get());
 		}
 		
-		public class InitValueThreadLocal:CloseableThreadLocal
+		public class InitValueThreadLocal:CloseableThreadLocal<string>
 		{
 			public InitValueThreadLocal(TestCloseableThreadLocal enclosingInstance)
 			{
-				InitBlock(enclosingInstance);
+                this.enclosingInstance = enclosingInstance;
 			}
-			private void  InitBlock(TestCloseableThreadLocal enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
+			
 			private TestCloseableThreadLocal enclosingInstance;
-			public TestCloseableThreadLocal Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public /*protected internal*/ override System.Object InitialValue()
+			
+			public override string InitialValue()
 			{
 				return Lucene.Net.Util.TestCloseableThreadLocal.TEST_VALUE;
 			}

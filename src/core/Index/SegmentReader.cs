@@ -25,8 +25,9 @@ using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using BitVector = Lucene.Net.Util.BitVector;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
+
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -50,9 +51,9 @@ namespace Lucene.Net.Index
 		
 		private SegmentInfo si;
 		private int readBufferSize;
-		
-		internal CloseableThreadLocal fieldsReaderLocal;
-		internal CloseableThreadLocal termVectorsLocal = new CloseableThreadLocal();
+
+        internal CloseableThreadLocal<FieldsReader> fieldsReaderLocal;
+        internal CloseableThreadLocal<TermVectorsReader> termVectorsLocal = new CloseableThreadLocal<TermVectorsReader>();
 		
 		internal BitVector deletedDocs = null;
 		internal Ref deletedDocsRef = null;
@@ -392,7 +393,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Sets the initial value </summary>
-		private class FieldsReaderLocal:CloseableThreadLocal
+        private class FieldsReaderLocal : CloseableThreadLocal<FieldsReader>
 		{
 			public FieldsReaderLocal(SegmentReader enclosingInstance)
 			{
@@ -411,9 +412,9 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public /*protected internal*/ override System.Object InitialValue()
+            public /*protected internal*/ override FieldsReader InitialValue()
 			{
-				return Enclosing_Instance.core.GetFieldsReaderOrig().Clone();
+                return (FieldsReader)Enclosing_Instance.core.GetFieldsReaderOrig().Clone();
 			}
 		}
 		
@@ -1146,7 +1147,7 @@ namespace Lucene.Net.Index
         
 		internal virtual FieldsReader GetFieldsReader()
 		{
-			return (FieldsReader) fieldsReaderLocal.Get();
+			return fieldsReaderLocal.Get();
 		}
 		
 		protected internal override void  DoClose()
@@ -1567,7 +1568,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		internal virtual TermVectorsReader GetTermVectorsReader()
 		{
-			TermVectorsReader tvReader = (TermVectorsReader) termVectorsLocal.Get();
+			TermVectorsReader tvReader = termVectorsLocal.Get();
 			if (tvReader == null)
 			{
 				TermVectorsReader orig = core.GetTermVectorsReaderOrig();

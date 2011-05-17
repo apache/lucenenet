@@ -41,20 +41,20 @@ namespace Lucene.Net.Util
 	/// reclaim space by objects stored in it. 
 	/// </summary>
 	
-	public class CloseableThreadLocal
+	public class CloseableThreadLocal<T>
 	{
 		
 		[ThreadStatic]
-        static Support.WeakHashTable slots;
+        static Support.WeakDictionary<CloseableThreadLocal<T>, T> slots;
 		
-		public /*protected internal*/ virtual System.Object InitialValue()
+		public virtual T InitialValue()
 		{
-			return null;
+			return default(T);
 		}
 
-        public virtual System.Object Get()
+        public virtual T Get()
         {
-            object value;
+            T value;
 
             if (slots == null)
             {
@@ -77,10 +77,10 @@ namespace Lucene.Net.Util
             }
         }
 		
-		public virtual void  Set(System.Object object_Renamed)
+		public virtual void  Set(T object_Renamed)
 		{
             if (slots == null)
-                slots = new Support.WeakHashTable();
+                slots = new Support.WeakDictionary<CloseableThreadLocal<T>, T>();
 
 			slots[this] = object_Renamed;	
 		}

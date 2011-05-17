@@ -18,8 +18,9 @@
 using System;
 
 using Directory = Lucene.Net.Store.Directory;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 using SimpleLRUCache = Lucene.Net.Util.Cache.SimpleLRUCache<Lucene.Net.Index.Term,Lucene.Net.Index.TermInfo>;
+
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -34,8 +35,8 @@ namespace Lucene.Net.Index
 		private Directory directory;
 		private System.String segment;
 		private FieldInfos fieldInfos;
-		
-		private CloseableThreadLocal threadResources = new CloseableThreadLocal();
+
+        private CloseableThreadLocal<ThreadResources> threadResources = new CloseableThreadLocal<ThreadResources>();
 		private SegmentTermEnum origEnum;
 		private long size;
 		
@@ -154,7 +155,7 @@ namespace Lucene.Net.Index
 		
 		private ThreadResources GetThreadResources()
 		{
-			ThreadResources resources = (ThreadResources) threadResources.Get();
+			ThreadResources resources = threadResources.Get();
 			if (resources == null)
 			{
 				resources = new ThreadResources();
