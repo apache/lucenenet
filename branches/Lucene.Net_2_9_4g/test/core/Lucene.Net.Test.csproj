@@ -441,6 +441,7 @@
     <Compile Include="Support\TestOSClass.cs" />
     <Compile Include="Support\TestSerialization.cs" />
     <Compile Include="Support\TestThreadClass.cs" />
+    <Compile Include="Support\TestWeakDictionary.cs" />
     <Compile Include="Support\TestWeakHashTable.cs" />
     <Compile Include="Support\TestWeakHashTableBehavior.cs" />
     <Compile Include="Support\TestWeakHashTableMultiThreadAccess.cs" />
