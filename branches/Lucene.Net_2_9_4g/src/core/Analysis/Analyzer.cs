@@ -19,7 +19,7 @@ using System;
 
 using Fieldable = Lucene.Net.Documents.Fieldable;
 using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis
 			return TokenStream(fieldName, reader);
 		}
 		
-		private CloseableThreadLocal tokenStreams = new CloseableThreadLocal();
+		private CloseableThreadLocal<object> tokenStreams = new CloseableThreadLocal<object>();
 		
 		/// <summary>Used by Analyzers that implement reusableTokenStream
 		/// to retrieve previously saved TokenStreams for re-use
