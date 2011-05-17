@@ -14,6 +14,13 @@
 
 * Obsolete Similarity.Net removed (Query.Net replaces it)
 
+*   
+   - SegmentInfos.FindSegmentsFile.DoBody 
+   - CachingWrapperFilter.FilterCache.MergeDeletes
+   - FilteredDocIdSet.Match
+   - FilteredDocIdSetIterator.Match 
+  changed from abstract method to Func<..>  to be able to remove weird AnonymousClassXXXX's
+
 -------------------------------------------------------------------------------
 
 A few API changes like:
