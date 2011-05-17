@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> A transient Filter cache.</summary>
 		[NonSerialized]
-        internal CachingWrapperFilter.FilterCache cache;
+        internal CachingWrapperFilter.FilterCache<SpanFilterResult> cache;
 
         /// <summary>
         /// New deletions always result in a cache miss, by default
@@ -57,19 +57,11 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
             }
-            this.cache = new AnonymousFilterCache(deletesMode);
-        }
-
-        class AnonymousFilterCache : CachingWrapperFilter.FilterCache
-        {
-            public AnonymousFilterCache(CachingWrapperFilter.DeletesMode deletesMode) : base(deletesMode)
-            {
-            }
-
-            protected override object MergeDeletes(IndexReader reader, object docIdSet)
-            {
-                throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
-            }
+            this.cache = new CachingWrapperFilter.FilterCache<SpanFilterResult>(deletesMode, 
+                (r, value) =>
+                {
+                    throw new System.ArgumentException("DeletesMode.DYNAMIC is not supported");
+                });
         }
 
 		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.

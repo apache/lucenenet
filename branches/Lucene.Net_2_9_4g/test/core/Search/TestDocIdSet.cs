@@ -133,32 +133,8 @@ namespace Lucene.Net.Search
 				return new AnonymousClassDocIdSetIterator(maxdoc, this);
 			}
 		}
-		private class AnonymousClassFilteredDocIdSet:FilteredDocIdSet
-		{
-			private void  InitBlock(TestDocIdSet enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private TestDocIdSet enclosingInstance;
-			public TestDocIdSet Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassFilteredDocIdSet(TestDocIdSet enclosingInstance, Lucene.Net.Search.DocIdSet Param1):base(Param1)
-			{
-				InitBlock(enclosingInstance);
-			}
-			// @Override
-			public /*protected internal*/ override bool Match(int docid)
-			{
-				return docid % 2 == 0; //validate only even docids
-			}
-		}
-		[Serializable]
+
+        [Serializable]
 		private class AnonymousClassFilter:Filter
 		{
 			public AnonymousClassFilter(TestDocIdSet enclosingInstance)
@@ -188,9 +164,12 @@ namespace Lucene.Net.Search
 		{
 			int maxdoc = 10;
 			DocIdSet innerSet = new AnonymousClassDocIdSet_Renamed_Class(maxdoc, this);
-			
-			
-			DocIdSet filteredSet = new AnonymousClassFilteredDocIdSet(this, innerSet);
+
+
+            DocIdSet filteredSet = new FilteredDocIdSet(innerSet, (docid) =>
+            {
+                return docid % 2 == 0; //validate only even docids
+            });
 			
 			DocIdSetIterator iter = filteredSet.Iterator();
 			System.Collections.ArrayList list = new System.Collections.ArrayList();

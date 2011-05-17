@@ -26,31 +26,17 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public abstract class DocIdSet
 	{
-		public class AnonymousClassDocIdSet:DocIdSet
+		internal class AnonymousDocIdSet:DocIdSet
 		{
-			public AnonymousClassDocIdSet()
+            private DocIdSetIterator iterator;
+
+			public AnonymousDocIdSet()
 			{
-				InitBlock();
+                iterator = new AnonymousDocIdSetIterator();
 			}
-			public class AnonymousClassDocIdSetIterator:DocIdSetIterator
+
+			class AnonymousDocIdSetIterator:DocIdSetIterator
 			{
-				public AnonymousClassDocIdSetIterator(AnonymousClassDocIdSet enclosingInstance)
-				{
-					InitBlock(enclosingInstance);
-				}
-				private void  InitBlock(AnonymousClassDocIdSet enclosingInstance)
-				{
-					this.enclosingInstance = enclosingInstance;
-				}
-				private AnonymousClassDocIdSet enclosingInstance;
-				public AnonymousClassDocIdSet Enclosing_Instance
-				{
-					get
-					{
-						return enclosingInstance;
-					}
-					
-				}
 				public override int Advance(int target)
 				{
 					return NO_MORE_DOCS;
@@ -64,13 +50,7 @@ namespace Lucene.Net.Search
 					return NO_MORE_DOCS;
 				}
 			}
-			private void  InitBlock()
-			{
-				iterator = new AnonymousClassDocIdSetIterator(this);
-			}
-			
-			private DocIdSetIterator iterator;
-			
+            
 			public override DocIdSetIterator Iterator()
 			{
 				return iterator;
@@ -105,7 +85,7 @@ namespace Lucene.Net.Search
 		}
 		static DocIdSet()
 		{
-			EMPTY_DOCIDSET = new AnonymousClassDocIdSet();
+			EMPTY_DOCIDSET = new AnonymousDocIdSet();
 		}
 	}
 }
