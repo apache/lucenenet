@@ -44,79 +44,15 @@ namespace Lucene.Net.Index
 	/// </seealso>
 	public sealed class SegmentMerger
 	{
-		private class AnonymousClassCheckAbort:CheckAbort
-		{
-			private void  InitBlock(SegmentMerger enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SegmentMerger enclosingInstance;
-			public SegmentMerger Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassCheckAbort(SegmentMerger enclosingInstance, Lucene.Net.Index.MergePolicy.OneMerge Param1, Lucene.Net.Store.Directory Param2):base(Param1, Param2)
-			{
-				InitBlock(enclosingInstance);
-			}
-			public override void  Work(double units)
-			{
-				// do nothing
-			}
-		}
-		private class AnonymousClassCheckAbort1:CheckAbort
-		{
-			private void  InitBlock(SegmentMerger enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SegmentMerger enclosingInstance;
-			public SegmentMerger Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			internal AnonymousClassCheckAbort1(SegmentMerger enclosingInstance, Lucene.Net.Index.MergePolicy.OneMerge Param1, Lucene.Net.Store.Directory Param2):base(Param1, Param2)
-			{
-				InitBlock(enclosingInstance);
-			}
-			public override void  Work(double units)
-			{
-				// do nothing
-			}
-		}
 		[Serializable]
 		private class AnonymousClassFieldSelector : FieldSelector
 		{
-			public AnonymousClassFieldSelector(SegmentMerger enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(SegmentMerger enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private SegmentMerger enclosingInstance;
-			public SegmentMerger Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
 			public FieldSelectorResult Accept(System.String fieldName)
 			{
 				return FieldSelectorResult.LOAD_FOR_MERGE;
 			}
 		}
+
 		private void  InitBlock()
 		{
 			termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
@@ -159,7 +95,7 @@ namespace Lucene.Net.Index
 			InitBlock();
 			directory = dir;
 			segment = name;
-			checkAbort = new AnonymousClassCheckAbort(this, null, null);
+            checkAbort = new CheckAbort(null, null, (d) => {/*Do nothing*/  });
 		}
 		
 		internal SegmentMerger(IndexWriter writer, System.String name, MergePolicy.OneMerge merge)
@@ -173,7 +109,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-				checkAbort = new AnonymousClassCheckAbort1(this, null, null);
+                checkAbort = new CheckAbort(null, null, (d) => {/*Do nothing*/ });
 			}
 			termIndexInterval = writer.GetTermIndexInterval();
 		}
@@ -422,7 +358,7 @@ namespace Lucene.Net.Index
 				
 				// for merging we don't want to compress/uncompress the data, so to tell the FieldsReader that we're
 				// in  merge mode, we use this FieldSelector
-				FieldSelector fieldSelectorMerge = new AnonymousClassFieldSelector(this);
+				FieldSelector fieldSelectorMerge = new AnonymousClassFieldSelector();
 				
 				// merge field values
 				FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
@@ -941,11 +877,23 @@ namespace Lucene.Net.Index
 			private double workCount;
 			private MergePolicy.OneMerge merge;
 			private Directory dir;
+
+            public Action<double> Work; //.NET
+
 			public CheckAbort(MergePolicy.OneMerge merge, Directory dir)
 			{
 				this.merge = merge;
 				this.dir = dir;
+                this.Work = Internal_Work;
 			}
+
+            //.NET
+            public CheckAbort(MergePolicy.OneMerge merge, Directory dir, Action<double> work)
+            {
+                this.merge = merge;
+                this.dir = dir;
+                this.Work = work;
+            }
 			
 			/// <summary> Records the fact that roughly units amount of work
 			/// have been done since this method was last called.
@@ -954,7 +902,9 @@ namespace Lucene.Net.Index
 			/// that the time in between calls to merge.checkAborted
 			/// is up to ~ 1 second.
 			/// </summary>
-			public virtual void  Work(double units)
+            /// DIGY: Clean AnonymousXXXX classes.
+            /// DIGY: Method "Work" is renamed to Internal_Work(below) & the new "Work" is declared as delegate
+			void  Internal_Work(double units)
 			{
 				workCount += units;
 				if (workCount >= 10000.0)
