@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
         [Obsolete("Use StopAnalyzer(Version, Set) instead")]
-        public StopAnalyzer(List<string> stopWords)
+        public StopAnalyzer(ICollection<string> stopWords)
 		{
 			this.stopWords = stopWords;
 			useDefaultStopPositionIncrement = true;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given set.</summary>
-        public StopAnalyzer(Version matchVersion, List<string> stopWords)
+        public StopAnalyzer(Version matchVersion, ICollection<string> stopWords)
 		{
 			this.stopWords = stopWords;
 			useDefaultStopPositionIncrement = false;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopAnalyzer(Version, Set)} instead
 		/// </deprecated>
         [Obsolete("Use StopAnalyzer(Version, Set) instead")]
-        public StopAnalyzer(List<string> stopWords, bool enablePositionIncrements)
+        public StopAnalyzer(ICollection<string> stopWords, bool enablePositionIncrements)
 		{
 			this.stopWords = stopWords;
 			this.enablePositionIncrements = enablePositionIncrements;
