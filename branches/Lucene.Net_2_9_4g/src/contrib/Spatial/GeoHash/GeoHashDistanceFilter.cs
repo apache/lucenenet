@@ -56,7 +56,35 @@ namespace Lucene.Net.Spatial.GeoHash
 
 		internal class GeoHashFilteredDocIdSet : FilteredDocIdSet
 		{
-			public GeoHashFilteredDocIdSet(DocIdSet innerSet, string[] geoHashValues, Dictionary<string, double> distanceLookupCache, double lat, double lng, int docBase, double distance, Dictionary<int, double> distances) : base(innerSet)
+			public GeoHashFilteredDocIdSet(DocIdSet innerSet, string[] geoHashValues, Dictionary<string, double> distanceLookupCache, double lat, double lng, int docBase, double distance, Dictionary<int, double> distances) 
+                : base(innerSet , (docid) => /* public override Match */
+			{
+				String geoHash = geoHashValues[docid];
+				double[] coords = GeoHashUtils.Decode(geoHash);
+				double x = coords[0];
+				double y = coords[1];
+
+				Double cachedDistance = distanceLookupCache[geoHash];
+				double d;
+
+				if (cachedDistance > 0)
+				{
+					d = cachedDistance;
+				}
+				else
+				{
+					d = DistanceUtils.GetInstance().GetDistanceMi(lat, lng, x, y);
+					distanceLookupCache[geoHash] = d;
+				}
+
+				if (d < distance)
+				{
+					distances[docid + docBase] = d;
+					return true;
+				}
+				
+				return false;
+			})
 			{
 				_geoHashValues = geoHashValues;
 				_distances = distances;
@@ -74,35 +102,6 @@ namespace Lucene.Net.Spatial.GeoHash
 			private readonly Dictionary<int, double> _distances;
 			private readonly Dictionary<string, double> _distanceLookupCache;
 			private readonly double _distance;
-
-			public override bool Match(int docid)
-			{
-				String geoHash = _geoHashValues[docid];
-				double[] coords = GeoHashUtils.Decode(geoHash);
-				double x = coords[0];
-				double y = coords[1];
-
-				Double cachedDistance = _distanceLookupCache[geoHash];
-				double d;
-
-				if (cachedDistance > 0)
-				{
-					d = cachedDistance;
-				}
-				else
-				{
-					d = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, x, y);
-					_distanceLookupCache[geoHash] = d;
-				}
-
-				if (d < _distance)
-				{
-					_distances[docid + _docBase] = d;
-					return true;
-				}
-				
-				return false;
-			}
 		}
 
 		public override bool Equals(object o)

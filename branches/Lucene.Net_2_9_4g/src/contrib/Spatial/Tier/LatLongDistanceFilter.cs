@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -59,7 +60,35 @@ namespace Lucene.Net.Spatial.Tier
 			private readonly Dictionary<int, double> _distances;
 
 			public LatLongFilteredDocIdSet(DocIdSet innerSet, double[] latIndex, double[] lngIndex, Dictionary<string, double> distanceLookupCache, double lat, double lng, double distance, int docBase, Dictionary<int, double> distances)
-				: base(innerSet)
+                : base(innerSet, (int docid) => /* public override Match */
+                {
+                    double x = latIndex[docid];
+                    double y = lngIndex[docid];
+
+                    string ck = x + "," + y;
+                    double cachedDistance = distanceLookupCache.ContainsKey(ck) ? distanceLookupCache[ck] : 0;
+
+                    double d;
+                    if (cachedDistance > 0)
+                    {
+                        d = cachedDistance;
+                    }
+                    else
+                    {
+                        d = DistanceUtils.GetInstance().GetDistanceMi(lat, lng, x, y);
+                        distanceLookupCache[ck] = d;
+                    }
+
+                    if (d < distance)
+                    {
+                        // Save distances, so they can be pulled for
+                        // sorting after filtering is done:
+                        distances[docid + docBase] = d;
+                        return true;
+                    }
+
+                    return false;
+                })
 			{
 				_latIndex = latIndex;
 				_distances = distances;
@@ -70,37 +99,6 @@ namespace Lucene.Net.Spatial.Tier
 				_distanceLookupCache = distanceLookupCache;
 				_lngIndex = lngIndex;
 			}
-
-			public override bool Match(int docid)
-			{
-				double x = _latIndex[docid];
-				double y = _lngIndex[docid];
-
-				string ck = x + "," + y;
-				double cachedDistance = _distanceLookupCache.ContainsKey(ck) ? _distanceLookupCache[ck] : 0;
-
-				double d;
-				if (cachedDistance > 0)
-				{
-					d = cachedDistance;
-				}
-				else
-				{
-					d = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, x, y);
-					_distanceLookupCache[ck] = d;
-				}
-
-				if (d < _distance)
-				{
-					// Save distances, so they can be pulled for
-					// sorting after filtering is done:
-					_distances[docid + _docBase] = d;
-					return true;
-				}
-
-				return false;
-			}
-
 		}
 
 		public override bool Equals(object o)
