@@ -57,7 +57,7 @@ namespace Lucene.Net.Spatial.GeoHash
 		internal class GeoHashFilteredDocIdSet : FilteredDocIdSet
 		{
 			public GeoHashFilteredDocIdSet(DocIdSet innerSet, string[] geoHashValues, Dictionary<string, double> distanceLookupCache, double lat, double lng, int docBase, double distance, Dictionary<int, double> distances) 
-                : base(innerSet , (docid) => /* public override Match */
+                : base(innerSet , (docid) => /* was: public override Match */
 			{
 				String geoHash = geoHashValues[docid];
 				double[] coords = GeoHashUtils.Decode(geoHash);

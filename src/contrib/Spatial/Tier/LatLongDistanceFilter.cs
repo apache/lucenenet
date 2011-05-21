@@ -60,7 +60,7 @@ namespace Lucene.Net.Spatial.Tier
 			private readonly Dictionary<int, double> _distances;
 
 			public LatLongFilteredDocIdSet(DocIdSet innerSet, double[] latIndex, double[] lngIndex, Dictionary<string, double> distanceLookupCache, double lat, double lng, double distance, int docBase, Dictionary<int, double> distances)
-                : base(innerSet, (int docid) => /* public override Match */
+                : base(innerSet, (int docid) => /* was: public override Match */
                 {
                     double x = latIndex[docid];
                     double y = lngIndex[docid];
