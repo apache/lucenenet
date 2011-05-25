@@ -21,7 +21,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <BuildAllSolution>$(MSBuildProjectDirectory)\..\vs2010\test\Contrib.All.Test.sln</BuildAllSolution>
-    <BuildSolution>$(MSBuildProjectDirectory)\..\vs2010\test\Lucene.Net.Test.sln</BuildSolution>
+    <BuildLuceneSolution>$(MSBuildProjectDirectory)\..\vs2010\test\Lucene.Net.Test.sln</BuildLuceneSolution>
   </PropertyGroup>
  
 
@@ -31,13 +31,14 @@
     <ContribFolder>contrib</ContribFolder>
     <DemoFolder>demo</DemoFolder>
   </PropertyGroup>
+
+  <ItemGroup>
+    <BinFiles Include="$(BinFolder)\$(CoreFolder)\$(Configuration)\*"/>
+    <BinFiles Include="$(BinFolder)\$(ContribFolder)\**\$(Configuration)\*.*"/>
+    <BinFiles Include="$(BinFolder)\$(DemoFolder)\**\$(Configuration)\*.*"/>
+  </ItemGroup>
   
   <Target Name="clean-all">
-    <ItemGroup>
-      <BinFiles Include="$(BinFolder)\$(CoreFolder)\$(Configuration)\*"/>
-      <BinFiles Include="$(BinFolder)\$(ContribFolder)\**\$(Configuration)\*.*"/>
-      <BinFiles Include="$(BinFolder)\$(DemoFolder)\**\$(Configuration)\*.*"/>
-    </ItemGroup>
     <Delete Files="@(BinFiles)" />
   </Target>
   
@@ -45,8 +46,8 @@
     <MSBuild Projects="$(BuildAllSolution)" ContinueOnError="false"  Properties="Configuration=$(Configuration)"/>
   </Target>
   
-  <Target Name="build">
-    <MSBuild Projects="$(BuildSolution)" ContinueOnError="false"  Properties="Configuration=$(Configuration)"/>
+  <Target Name="lucene">
+    <MSBuild Projects="$(BuildLuceneSolution)" ContinueOnError="false"  Properties="Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="all">
