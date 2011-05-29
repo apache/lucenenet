@@ -88,9 +88,9 @@ namespace Lucene.Net.Search
             SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, "category");
             SimpleFacetedSearch.Hits hits = sfs.Search(query);
 
-            Assert.AreEqual(4, hits.HitsPerGroup.Length);
+            Assert.AreEqual(4, hits.HitsPerFacet.Length);
 
-            foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
                 if (hpg.Name[0] == "politics")
                 {
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 
             Assert.AreEqual(4, hits.TotalHitCount);
 
-            foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
                 foreach (Document doc in hpg.Documents)
                 {
@@ -132,10 +132,10 @@ namespace Lucene.Net.Search
             SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "lang", "source", "category" });
             SimpleFacetedSearch.Hits hits = sfs.Search(query);
 
-            Assert.AreEqual(6, hits.HitsPerGroup.Length);
+            Assert.AreEqual(6, hits.HitsPerFacet.Length);
             int nohit = 0;
 
-            foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
                 if (hpg.Name[0] == "us" && hpg.Name[1] == "CCN" && hpg.Name[2] == "politics")
                 {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(2, nohit);
             Assert.AreEqual(4, hits.TotalHitCount);
 
-            foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
                 foreach (Document doc in hpg.Documents)
                 {
@@ -183,10 +183,10 @@ namespace Lucene.Net.Search
             SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, "category");
             SimpleFacetedSearch.Hits hits = sfs.Search(query);
 
-            Assert.AreEqual(4, hits.HitsPerGroup.Length);
-            Assert.AreEqual(0, hits.HitsPerGroup[0].HitCount);
-            Assert.AreEqual(0, hits.HitsPerGroup[1].HitCount);
-            Assert.AreEqual(0, hits.HitsPerGroup[2].HitCount);
+            Assert.AreEqual(4, hits.HitsPerFacet.Length);
+            Assert.AreEqual(0, hits.HitsPerFacet[0].HitCount);
+            Assert.AreEqual(0, hits.HitsPerFacet[1].HitCount);
+            Assert.AreEqual(0, hits.HitsPerFacet[2].HitCount);
         }
 
         [Test]
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
             SimpleFacetedSearch.Hits hits = sfs.Search(query);
 
             Assert.AreEqual(0, hits.TotalHitCount);
-            Assert.AreEqual(0, hits.HitsPerGroup.Length);
+            Assert.AreEqual(0, hits.HitsPerFacet.Length);
         }
 
         /// <summary>
@@ -224,17 +224,19 @@ namespace Lucene.Net.Search
             SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "source", "category" });
             SimpleFacetedSearch.Hits hits = sfs.Search(query, 10);
 
-            //If you need performance, don't invoke "TotalHitCount"
             long totalHits = hits.TotalHitCount;
-            foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
-                //If you need performance, don't invoke "HitCount"
                 long hitCountPerGroup = hpg.HitCount;
-                SimpleFacetedSearch.GroupName groupName = hpg.Name;
+                SimpleFacetedSearch.FacetName facetName = hpg.Name;
+                for (int i = 0; i < facetName.Length; i++)
+                {
+                    string part = facetName[i];
+                }
                 foreach (Document doc in hpg.Documents)
                 {
                     string text = doc.GetField("text").StringValue();
-                    System.Diagnostics.Debug.WriteLine(">>" + groupName + ": " + text);
+                    System.Diagnostics.Debug.WriteLine(">>" + facetName + ": " + text);
                 }
             }
         }
