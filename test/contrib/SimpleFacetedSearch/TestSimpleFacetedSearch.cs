@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Search
         IndexReader _Reader;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
 
             IndexWriter writer = new IndexWriter(_Dir, new StandardAnalyzer(), true);
@@ -210,6 +211,73 @@ namespace Lucene.Net.Search
 
             Assert.AreEqual(0, hits.TotalHitCount);
             Assert.AreEqual(0, hits.HitsPerFacet.Length);
+        }
+
+        int _errorCount = 0;
+        void MultiThreadedAccessThread(object o)
+        {
+            SimpleFacetedSearch sfs = (SimpleFacetedSearch)o;
+
+            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "text", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("block*");
+
+            for (int i = 0; i < 2000; i++)
+            {
+                SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                
+                if (6 != hits.HitsPerFacet.Length) _errorCount++;
+                
+                foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                {
+                    if (hpg.Name[0] == "us" && hpg.Name[1] == "CCN" && hpg.Name[2] == "politics")
+                    {
+                        if (1 != hpg.HitCount) _errorCount++;
+                    }
+                    else
+                    if (hpg.Name[0] == "en" && hpg.Name[1] == "BCC" && hpg.Name[2] == "tech")
+                    {
+                        if (1 != hpg.HitCount) _errorCount++;
+                    }
+                    else
+                    if (hpg.Name[0] == "us" && hpg.Name[1] == "CCN" && hpg.Name[2] == "sport")
+                    {
+                        if (1 != hpg.HitCount) _errorCount++;
+                    }
+                    else
+                    if (hpg.Name[0] == "en" && hpg.Name[1] == "CCN" && hpg.Name[2] == "tech")
+                    {
+                        if (1 != hpg.HitCount) _errorCount++;
+                    }
+                    else
+                    {
+                        if (0 != hpg.HitCount) _errorCount++;
+                    }
+
+                    if (4 != hits.TotalHitCount) _errorCount++;
+                }
+            }
+            
+        }
+
+        [Test]
+        public void TestMultiThreadedAccess()
+        {
+            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "text", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("block*");
+
+            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "lang", "source", "category" });
+            _errorCount = 0;
+
+            Thread[] t = new Thread[20];
+            for (int i = 0; i < t.Length; i++)
+            {
+                t[i] = new Thread(MultiThreadedAccessThread);
+                t[i].Start(sfs);
+            }
+            for (int i = 0; i < t.Length; i++)
+            {
+                t[i].Join();
+            }
+            
+            Assert.AreEqual(0, _errorCount);
         }
 
         /// <summary>
