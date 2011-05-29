@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -15,10 +15,33 @@
 # limitations under the License.
 
 TARGETS="all"
-echo "$1"
+BuildArea="all"
+Configuration="debug"
 if [ -n "$1" ] 
 		then 
 			TARGETS=$1
 fi
+if [ "$#" -gt "1" ]
+		then
+			TARGETS=${!#}
+fi
+if [ $# -eq 2 ]
+		then
+			BuildArea="$1"
+fi 
+if [ $# -eq 3 ]
+		then
+			BuildArea="$1"
+			Configuration="$2"
+fi
 
-MONO_IOMAP=case xbuild build.xml /t:$TARGETS
+echo "commands will target projects: $BuildArea"
+echo "commands will target the configuration: $Configuration"
+export $BuildArea
+export $Configuration
+
+ROOT=$(dirname $0)
+export NETFRAMEWORK="mono"
+export TEMP=$ROOT/tmp
+
+MONO_IOMAP=case xbuild $ROOT/build.xml /t:$TARGETS
