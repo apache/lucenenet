@@ -1,4 +1,5 @@
-SimpleFacetedSearch: Dynamic clustering of search results into categories according to values in given field(s).
+SimpleFacetedSearch: Dynamic clustering of search results into categories according to values in given field(s). 
+Its instances are tread-safe. So, the same instance can be shared among many threads like IndexReader.
 
 Sample Usage:
 
