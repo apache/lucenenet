@@ -7,16 +7,21 @@ Sample Usage:
 
     Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, field, analyzer).Parse(searchString);
     SimpleFacetedSearch.Hits hits = sfs.Search(query, 10);
-       
-    foreach (SimpleFacetedSearch.HitsPerGroup hpg in hits.HitsPerGroup)
+    
+	long totalHits = hits.TotalHitCount;
+	
+    foreach (SimpleFacetedSearch.HitsPerFacet hpf in hits.HitsPerFacet)
     {
-        SimpleFacetedSearch.GroupName name = hpg.Name;
-        foreach (Document doc in hpg.Documents)
+		long hitCountPerFacet = hpf.HitCount;
+        SimpleFacetedSearch.FacetName name = hpf.Name;
+		//name[0] 
+		//name[1]
+		//name.ToString()
+		
+        foreach (Document doc in hpf.Documents)
         {
              ........
         }
     }
 
 
-
-PS: Hits.TotalHitCount & HitsPerGroup.HitCount properties are costly operations. Try to avoid using them if possible.

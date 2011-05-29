@@ -24,10 +24,10 @@ namespace Lucene.Net.Search
 {
     public partial class SimpleFacetedSearch
     {
-        public class GroupName
+        public class FacetName
         {
             string[] _Names;
-            internal GroupName(string[] names)
+            internal FacetName(string[] names)
             {
                 this._Names = names;
             }

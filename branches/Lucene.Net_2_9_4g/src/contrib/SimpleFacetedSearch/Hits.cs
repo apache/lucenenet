@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
         public class Hits
         {
             long _TotalHitCount = -1;
-            HitsPerGroup[] _HitsPerGroup;
+            HitsPerFacet[] _HitsPerGroup;
 
             public long TotalHitCount
             {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public HitsPerGroup[] HitsPerGroup
+            public HitsPerFacet[] HitsPerFacet
             {
                 get { return _HitsPerGroup; }
                 internal set { _HitsPerGroup = value; }

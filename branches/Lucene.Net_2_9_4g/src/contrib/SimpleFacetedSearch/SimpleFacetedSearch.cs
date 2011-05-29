@@ -28,6 +28,7 @@ using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System.Threading;
 
 /*
  Suppose, we want a faceted search on fields f1 f2 f3, 
@@ -58,9 +59,11 @@ namespace Lucene.Net.Search
     public partial class SimpleFacetedSearch : IDisposable
     {
         public const int DefaultMaxDocPerGroup = 25;
+        public static int MAX_FACETS = 2048;
 
         IndexReader _Reader;
         List<KeyValuePair<List<string>, OpenBitSetDISI>> _Groups = new List<KeyValuePair<List<string>, OpenBitSetDISI>>();
+        Semaphore _Sync;
 
         public SimpleFacetedSearch(IndexReader reader, string groupByField) : this(reader, new string[] { groupByField })
         {
@@ -76,10 +79,13 @@ namespace Lucene.Net.Search
             //f1 = A, B
             //f2 = I, J
             //f3 = 1, 2, 3
+            int maxFacets = 1;
             List<List<string>> inputToCP = new List<List<string>>();
             foreach (string field in groupByFields)
             {
                 FieldValuesBitSets f = new FieldValuesBitSets(reader, field);
+                maxFacets *= f.FieldValueBitSetPair.Count;
+                if (maxFacets > MAX_FACETS) throw new Exception("Facet count exceeded " + MAX_FACETS);
                 fieldValuesBitSets.Add(f);
                 inputToCP.Add(f.FieldValueBitSetPair.Keys.ToList());
             }
@@ -114,22 +120,39 @@ namespace Lucene.Net.Search
             }
 
             //Now _Groups has 7 rows (as <List<string>, BitSet> pairs) 
+
+           if( _Groups.Count>0)  _Sync = new Semaphore(_Groups.Count, _Groups.Count);
         }
 
+        
         public Hits Search(Query query, int maxDocPerGroup = DefaultMaxDocPerGroup)
         {
-            List<HitsPerGroup> hitsPerGroup = new List<HitsPerGroup>();
+            List<HitsPerFacet> hitsPerGroup = new List<HitsPerFacet>();
 
             DocIdSet queryDocidSet = new CachingWrapperFilter(new QueryWrapperFilter(query)).GetDocIdSet(_Reader);
-
+                        
             for (int i = 0; i < _Groups.Count; i++)
             {
-                HitsPerGroup h = new HitsPerGroup(new GroupName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
+                HitsPerFacet h = new HitsPerFacet(new FacetName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
                 hitsPerGroup.Add(h);
+                _Sync.WaitOne();
+                ThreadPool.QueueUserWorkItem(
+                    hpf =>
+                    {
+                        ((HitsPerFacet)hpf).Calculate();
+                        _Sync.Release();
+                    },
+                    h
+                );
             }
 
+            for (int i = 0; i < _Groups.Count; i++)
+                _Sync.WaitOne();
+            
+            if (_Groups.Count > 0) _Sync.Release(_Groups.Count);
+                        
             Hits hits = new Hits();
-            hits.HitsPerGroup = hitsPerGroup.ToArray();
+            hits.HitsPerFacet = hitsPerGroup.ToArray();
 
             return hits;
         }
