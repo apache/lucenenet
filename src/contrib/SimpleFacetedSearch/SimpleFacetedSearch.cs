@@ -63,8 +63,7 @@ namespace Lucene.Net.Search
 
         IndexReader _Reader;
         List<KeyValuePair<List<string>, OpenBitSetDISI>> _Groups = new List<KeyValuePair<List<string>, OpenBitSetDISI>>();
-        Semaphore _Sync;
-
+        
         public SimpleFacetedSearch(IndexReader reader, string groupByField) : this(reader, new string[] { groupByField })
         {
         }
@@ -120,13 +119,14 @@ namespace Lucene.Net.Search
             }
 
             //Now _Groups has 7 rows (as <List<string>, BitSet> pairs) 
-
-           if( _Groups.Count>0)  _Sync = new Semaphore(_Groups.Count, _Groups.Count);
         }
 
         
         public Hits Search(Query query, int maxDocPerGroup = DefaultMaxDocPerGroup)
         {
+            Semaphore sync=null;
+            if (_Groups.Count > 0) sync = new Semaphore(_Groups.Count, _Groups.Count);
+
             List<HitsPerFacet> hitsPerGroup = new List<HitsPerFacet>();
 
             DocIdSet queryDocidSet = new CachingWrapperFilter(new QueryWrapperFilter(query)).GetDocIdSet(_Reader);
@@ -135,21 +135,21 @@ namespace Lucene.Net.Search
             {
                 HitsPerFacet h = new HitsPerFacet(new FacetName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
                 hitsPerGroup.Add(h);
-                _Sync.WaitOne();
+                sync.WaitOne();
                 ThreadPool.QueueUserWorkItem(
                     hpf =>
                     {
                         ((HitsPerFacet)hpf).Calculate();
-                        _Sync.Release();
+                        sync.Release();
                     },
                     h
                 );
             }
 
             for (int i = 0; i < _Groups.Count; i++)
-                _Sync.WaitOne();
+                sync.WaitOne();
             
-            if (_Groups.Count > 0) _Sync.Release(_Groups.Count);
+            if (_Groups.Count > 0) sync.Release(_Groups.Count);
                         
             Hits hits = new Hits();
             hits.HitsPerFacet = hitsPerGroup.ToArray();
