@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="FieldValuesBitSets.cs" />
-    <Compile Include="GroupName.cs" />
+    <Compile Include="FacetName.cs" />
     <Compile Include="Hits.cs" />
     <Compile Include="HitsPerGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

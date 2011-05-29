@@ -33,42 +33,48 @@ namespace Lucene.Net.Search
 {
     public partial class SimpleFacetedSearch
     {
-        public class HitsPerGroup : IEnumerable<Document>, IEnumerator<Document>
+        public class HitsPerFacet : IEnumerable<Document>, IEnumerator<Document>
         {
             IndexReader _Reader;
-            int _MaxDocPerGroup;
+            int _MaxDocPerFacet;
             int _ItemsReturned = 0;
             DocIdSetIterator _ResultIterator;
             OpenBitSetDISI _ResultBitSet;
             int _CurrentDocId;
+            DocIdSet _QueryDocidSet;
+            OpenBitSetDISI _GroupBitSet;
 
-            GroupName _GroupName;
+            FacetName _FacetName;
             long _HitCount = -1;
 
-            internal HitsPerGroup(GroupName group, IndexReader reader, DocIdSet queryDocidSet, OpenBitSetDISI groupBitSet, int maxDocPerGroup)
+            internal HitsPerFacet(FacetName facetName, IndexReader reader, DocIdSet queryDocidSet, OpenBitSetDISI groupBitSet, int maxDocPerFacet)
             {
-                this._GroupName = group;
+                this._FacetName = facetName;
                 this._Reader = reader;
-                this._MaxDocPerGroup = maxDocPerGroup;
-
-                _ResultBitSet = new OpenBitSetDISI(queryDocidSet.Iterator(), _Reader.MaxDoc());
-                _ResultBitSet.And(groupBitSet);
-
-                _ResultIterator = _ResultBitSet.Iterator();
+                this._MaxDocPerFacet = maxDocPerFacet;
+                this._QueryDocidSet = queryDocidSet;
+                this._GroupBitSet = groupBitSet;
+                
             }
 
-            public GroupName Name
+            internal void Calculate()
             {
-                get { return _GroupName; }
+                _ResultBitSet = new OpenBitSetDISI(_QueryDocidSet.Iterator(), _Reader.MaxDoc());
+                _ResultBitSet.And(_GroupBitSet);
+
+                _ResultIterator = _ResultBitSet.Iterator();
+
+                _HitCount = _ResultBitSet.Cardinality();
+            }
+
+            public FacetName Name
+            {
+                get { return _FacetName; }
             }
 
             public long HitCount
             {
-                get
-                {
-                    if (_HitCount == -1) _HitCount = _ResultBitSet.Cardinality();
-                    return _HitCount;
-                }
+                get{ return _HitCount; }
             }
 
             public Document Current
@@ -84,7 +90,7 @@ namespace Lucene.Net.Search
             public bool MoveNext()
             {
                 _CurrentDocId = _ResultIterator.NextDoc();
-                return _CurrentDocId != DocIdSetIterator.NO_MORE_DOCS && ++_ItemsReturned <= _MaxDocPerGroup;
+                return _CurrentDocId != DocIdSetIterator.NO_MORE_DOCS && ++_ItemsReturned <= _MaxDocPerFacet;
             }
 
             public IEnumerator<Document> GetEnumerator()
@@ -107,7 +113,7 @@ namespace Lucene.Net.Search
 
             }
 
-            public HitsPerGroup Documents
+            public HitsPerFacet Documents
             {
                 get { return this; }
             }
