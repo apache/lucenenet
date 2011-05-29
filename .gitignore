@@ -8,3 +8,5 @@ obj
 *.bak
 *.vs10x
 *.VisualState.xml
+*.userprefs
+*.pidb
