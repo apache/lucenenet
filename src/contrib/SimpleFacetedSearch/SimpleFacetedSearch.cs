@@ -29,6 +29,7 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Threading;
+using System.Threading.Tasks;
 
 /*
  Suppose, we want a faceted search on fields f1 f2 f3, 
@@ -120,37 +121,22 @@ namespace Lucene.Net.Search
 
             //Now _Groups has 7 rows (as <List<string>, BitSet> pairs) 
         }
-
         
         public Hits Search(Query query, int maxDocPerGroup = DefaultMaxDocPerGroup)
         {
-            Semaphore sync=null;
-            if (_Groups.Count > 0) sync = new Semaphore(_Groups.Count, _Groups.Count);
-
             List<HitsPerFacet> hitsPerGroup = new List<HitsPerFacet>();
 
             DocIdSet queryDocidSet = new CachingWrapperFilter(new QueryWrapperFilter(query)).GetDocIdSet(_Reader);
-                        
+            Action[] actions = new Action[_Groups.Count];           
             for (int i = 0; i < _Groups.Count; i++)
             {
                 HitsPerFacet h = new HitsPerFacet(new FacetName(_Groups[i].Key.ToArray()), _Reader, queryDocidSet, _Groups[i].Value, maxDocPerGroup);
                 hitsPerGroup.Add(h);
-                sync.WaitOne();
-                ThreadPool.QueueUserWorkItem(
-                    hpf =>
-                    {
-                        ((HitsPerFacet)hpf).Calculate();
-                        sync.Release();
-                    },
-                    h
-                );
+                actions[i] = () => h.Calculate();
             }
-
-            for (int i = 0; i < _Groups.Count; i++)
-                sync.WaitOne();
             
-            if (_Groups.Count > 0) sync.Release(_Groups.Count);
-                        
+            Parallel.Invoke(actions);
+            
             Hits hits = new Hits();
             hits.HitsPerFacet = hitsPerGroup.ToArray();
 

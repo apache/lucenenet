@@ -41,6 +41,7 @@ namespace Lucene.Net.Search
         }
 
         //CartesianProduct - LINQ
+        //http://blogs.msdn.com/b/ericlippert/archive/2010/06/28/computing-a-cartesian-product-with-linq.aspx
         static IEnumerable<IEnumerable<T>> CartesianProduct2<T>(this IEnumerable<IEnumerable<T>> sequences)
         {
             IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
