@@ -138,6 +138,10 @@ namespace Lucene.Net.Search
 
             foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
             {
+                //Test for [System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.]
+                var x = hits[hpg.Name];
+                var y = hits[hpg.Name.ToString()];
+
                 if (hpg.Name[0] == "us" && hpg.Name[1] == "CCN" && hpg.Name[2] == "politics")
                 {
                     Assert.AreEqual(1, hpg.HitCount);
