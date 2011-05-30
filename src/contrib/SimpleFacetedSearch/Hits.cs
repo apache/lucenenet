@@ -28,6 +28,17 @@ namespace Lucene.Net.Search
         {
             long _TotalHitCount = -1;
             HitsPerFacet[] _HitsPerGroup;
+            Dictionary<string, HitsPerFacet> _Indexer = new Dictionary<string, HitsPerFacet>();
+            
+            public HitsPerFacet this[string name]
+            {
+                get{ return _Indexer[name];}
+            }
+
+            public HitsPerFacet this[FacetName name]
+            {
+                get { return _Indexer[name.ToString()]; }
+            }
 
             public long TotalHitCount
             {
@@ -48,7 +59,14 @@ namespace Lucene.Net.Search
             public HitsPerFacet[] HitsPerFacet
             {
                 get { return _HitsPerGroup; }
-                internal set { _HitsPerGroup = value; }
+                internal set
+                {
+                    _HitsPerGroup = value;
+                    foreach (var h in _HitsPerGroup)
+                    {
+                        _Indexer.Add(h.Name.ToString(), h);
+                    }
+                }
             }
         }
     }
