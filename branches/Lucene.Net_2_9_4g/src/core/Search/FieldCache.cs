@@ -52,12 +52,12 @@ namespace Lucene.Net.Search
 				return 0;
 			
 			int low = 1;
-			int high = lookup.Length - 1;
+			int high = Lookup.Length - 1;
 			
 			while (low <= high)
 			{
 				int mid = Support.Number.URShift((low + high), 1);
-				int cmp = String.CompareOrdinal(lookup[mid], key);
+				int cmp = String.CompareOrdinal(Lookup[mid], key);
 				
 				if (cmp < 0)
 					low = mid + 1;
@@ -70,16 +70,16 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>All the term values, in natural order. </summary>
-		public System.String[] lookup;
+		public System.String[] Lookup;
 		
 		/// <summary>For each document, an index into the lookup array. </summary>
-		public int[] order;
+		public int[] Order;
 		
 		/// <summary>Creates one of these objects </summary>
 		public StringIndex(int[] values, System.String[] lookup)
 		{
-			this.order = values;
-			this.lookup = lookup;
+			this.Order = values;
+			this.Lookup = lookup;
 		}
 	}
 	/// <summary> EXPERT: A unique Identifier/Description for each item in the FieldCache. 

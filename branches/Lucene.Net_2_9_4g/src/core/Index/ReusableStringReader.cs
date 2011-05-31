@@ -69,22 +69,22 @@ namespace Lucene.Net.Index
 
         public override int Read()
         {
-            throw new NotImplementedException("This method is not implemented");
+            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
         }
 
         public override int ReadBlock(char[] buffer, int index, int count)
         {
-            throw new NotImplementedException("This method is not implemented");
+            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
         }
 
         public override string ReadLine()
         {
-            throw new NotImplementedException("This method is not implemented");
+            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
         }
 
         public override int Peek()
         {
-            throw new NotImplementedException("This method is not implemented");
+            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
         }
 
         public override string ReadToEnd()

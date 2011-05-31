@@ -323,8 +323,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = index.order[i.doc];
-				int fj = index.order[j.doc];
+				int fi = index.Order[i.doc];
+				int fj = index.Order[j.doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return index.lookup[index.order[i.doc]];
+				return index.Lookup[index.Order[i.doc]];
 			}
 			
 			public virtual int SortType()

@@ -130,8 +130,8 @@ namespace Lucene.Net.Search.Function
 		{
 			Lucene.Net.Search.StringIndex sindex = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
 			
-			int[] arr = sindex.order;
-			int end = sindex.lookup.Length;
+			int[] arr = sindex.Order;
+			int end = sindex.Lookup.Length;
 			
 			return new AnonymousClassDocValues(end, arr, this);
 		}
