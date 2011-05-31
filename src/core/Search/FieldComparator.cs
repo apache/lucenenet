@@ -821,8 +821,8 @@ namespace Lucene.Net.Search
 			{
 				StringIndex currentReaderValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
 				currentReaderGen++;
-				order = currentReaderValues.order;
-				lookup = currentReaderValues.lookup;
+				order = currentReaderValues.Order;
+				lookup = currentReaderValues.Lookup;
 				System.Diagnostics.Debug.Assert(lookup.Length > 0);
 				if (bottomSlot != - 1)
 				{

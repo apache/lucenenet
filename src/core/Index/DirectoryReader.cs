@@ -1020,7 +1020,7 @@ namespace Lucene.Net.Index
 			{
 				IndexReader reader = subReaders[i];
                 ICollection<string> names = reader.GetFieldNames(fieldNames);
-				Support.CollectionsHelper.AddAllIfNotContains(fieldSet, names);
+				Support.CollectionsHelper.AddAllIfNotContains(fieldSet, names); //DIGY fix:2.9.4g
 			}
 			return fieldSet.Keys;
 		}

@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 			{
 				InitBlock(enclosingInstance);
 				this.fcsi = fcsi;
-				openBitSet = new OpenBitSet(this.fcsi.lookup.Length);
+				openBitSet = new OpenBitSet(this.fcsi.Lookup.Length);
 				for (int i = 0; i < Enclosing_Instance.terms.Length; i++)
 				{
 					int termNumber = this.fcsi.BinarySearchLookup(Enclosing_Instance.terms[i]);
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
 				{
 					try
 					{
-						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.order[++doc]))
+						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.Order[++doc]))
 						{
 						}
 					}
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
 					try
 					{
 						doc = target;
-						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.order[doc]))
+						while (!Enclosing_Instance.openBitSet.FastGet(Enclosing_Instance.fcsi.Order[doc]))
 						{
 							doc++;
 						}

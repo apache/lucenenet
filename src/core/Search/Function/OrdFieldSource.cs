@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Function
 		/*(non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#getValues(Lucene.Net.Index.IndexReader) */
 		public override DocValues GetValues(IndexReader reader)
 		{
-			int[] arr = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field).order;
+			int[] arr = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field).Order;
 			return new AnonymousClassDocValues(arr, this);
 		}
 		

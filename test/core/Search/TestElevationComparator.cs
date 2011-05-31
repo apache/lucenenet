@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
 			
 			private int DocVal(int doc)
 			{
-				System.String id = idIndex.lookup[idIndex.order[doc]];
+				System.String id = idIndex.Lookup[idIndex.Order[doc]];
 				object prio = Enclosing_Instance.priority[id];
                 return prio == null ? 0 : (int)prio;
 			}
