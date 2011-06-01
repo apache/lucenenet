@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             //BitSet1: A AND I AND 1
             //BitSet2: A AND I AND 2 etc.
             //and remove impossible comb's (for ex, B J 3) from list.
-            foreach (var combinations in cp)
+            Parallel.ForEach(cp, combinations =>
             {
                 OpenBitSetDISI bitSet = new OpenBitSetDISI(_Reader.MaxDoc());
                 bitSet.Set(0, bitSet.Size());
@@ -115,9 +115,10 @@ namespace Lucene.Net.Search
                 //STEP 3
                 if (bitSet.Cardinality() > 0)
                 {
-                    _Groups.Add(new KeyValuePair<List<string>, OpenBitSetDISI>(comb, bitSet));
+                    lock(_Groups)
+                        _Groups.Add(new KeyValuePair<List<string>, OpenBitSetDISI>(comb, bitSet));
                 }
-            }
+            });
 
             //Now _Groups has 7 rows (as <List<string>, BitSet> pairs) 
         }
