@@ -65,6 +65,8 @@ namespace Lucene.Net.Search
                 _ResultIterator = _ResultBitSet.Iterator();
 
                 _HitCount = _ResultBitSet.Cardinality();
+
+                _ResultBitSet = null;
             }
 
             public FacetName Name
