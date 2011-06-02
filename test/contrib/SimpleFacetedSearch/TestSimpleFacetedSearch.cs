@@ -217,6 +217,22 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, hits.HitsPerFacet.Length);
         }
 
+        [Test]
+        public void Test7()
+        {
+            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "text", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("a");
+
+            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, "category");
+            SimpleFacetedSearch.Hits hits = sfs.Search(query);
+
+            Assert.AreEqual(0, hits.TotalHitCount, "Unexpected TotalHitCount");
+            foreach(var x in hits.HitsPerFacet.Where(h=>h.HitCount>0))
+            {
+                Assert.Fail("There must be no hit");
+            }
+            
+        }
+
         int _errorCount = 0;
         void MultiThreadedAccessThread(object o)
         {
