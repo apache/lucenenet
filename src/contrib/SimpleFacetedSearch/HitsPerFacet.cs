@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
             int _MaxDocPerFacet;
             int _ItemsReturned = 0;
             DocIdSetIterator _ResultIterator;
-            OpenBitSetDISI _ResultBitSet;
+            OpenBitSet _ResultBitSet;
             int _CurrentDocId;
             DocIdSet _QueryDocidSet;
             OpenBitSetDISI _GroupBitSet;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 
             internal void Calculate()
             {
-                _ResultBitSet = new OpenBitSetDISI(_QueryDocidSet.Iterator(), _Reader.MaxDoc());
+                _ResultBitSet = (OpenBitSet)((OpenBitSet)_QueryDocidSet).Clone(); 
                 _ResultBitSet.And(_GroupBitSet);
 
                 _ResultIterator = _ResultBitSet.Iterator();
