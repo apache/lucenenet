@@ -59,14 +59,23 @@ namespace Lucene.Net.Search
 
             internal void Calculate()
             {
-                _ResultBitSet = (OpenBitSet)((OpenBitSet)_QueryDocidSet).Clone(); 
-                _ResultBitSet.And(_GroupBitSet);
-
+                if (_QueryDocidSet == DocIdBitSet.EMPTY_DOCIDSET)
+                {
+                    _ResultBitSet = new OpenBitSet(0);
+                }
+                else
+                {
+                    _ResultBitSet = (OpenBitSet)((OpenBitSet)_QueryDocidSet).Clone();
+                    _ResultBitSet.And(_GroupBitSet);
+                }
+                
                 _ResultIterator = _ResultBitSet.Iterator();
 
                 _HitCount = _ResultBitSet.Cardinality();
 
                 _ResultBitSet = null;
+                _QueryDocidSet = null;
+                _GroupBitSet = null;
             }
 
             public FacetName Name
