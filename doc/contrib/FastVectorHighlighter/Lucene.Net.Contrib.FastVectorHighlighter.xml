@@ -1,9 +1,49 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Lucene.Net.Contrib.FastVectorHighlighter</name>
+        <name>Lucene.Net.FastVectorHighlighter</name>
     </assembly>
     <members>
+        <member name="T:Lucene.Net.Search.Vectorhighlight.FieldPhraseList">
+            <summary>
+            FieldPhraseList has a list of WeightedPhraseInfo that is used by FragListBuilder
+            to create a FieldFragList object.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldPhraseList.#ctor(Lucene.Net.Search.Vectorhighlight.FieldTermStack,Lucene.Net.Search.Vectorhighlight.FieldQuery)">
+            <summary>
+            a constructor. 
+            </summary>
+            <param name="fieldTermStack">FieldTermStack object</param>
+            <param name="fieldQuery">FieldQuery object</param>
+        </member>
+        <member name="T:Lucene.Net.Search.Vectorhighlight.FragListBuilder">
+            <summary>
+            
+            FragListBuilder is an interface for FieldFragList builder classes.
+            A FragListBuilder class can be plugged in to Highlighter.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FragListBuilder.CreateFieldFragList(Lucene.Net.Search.Vectorhighlight.FieldPhraseList,System.Int32)">
+            <summary>
+            create a FieldFragList. 
+            </summary>
+            <param name="fieldPhraseList">FieldPhraseList object</param>
+            <param name="fragCharSize">the length (number of chars) of a fragment</param>
+            <returns>the created FieldFragList object</returns>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldQuery.GetFieldTermMap(System.String,System.String)">
+            
+            @param fieldName
+            @param term
+            @return QueryPhraseMap
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldQuery.SearchPhrase(System.String,System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldTermStack.TermInfo})">
+            
+            @param fieldName
+            @param phraseCandidate
+            @return QueryPhraseMap
+        </member>
         <member name="T:Lucene.Net.Search.Vectorhighlight.FragmentsBuilder">
             <summary>
             FragmentsBuilder is an interface for fragments (snippets) builder classes.
@@ -31,17 +71,72 @@
             <param name="maxNumFragments">maximum number of fragments</param>
             <returns>created fragments or null when no fragments created. Size of the array can be less than maxNumFragments</returns>
         </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldQuery.GetFieldTermMap(System.String,System.String)">
-            
-            @param fieldName
-            @param term
-            @return QueryPhraseMap
+        <member name="T:Lucene.Net.Search.Vectorhighlight.SimpleFragListBuilder">
+            <summary>
+            A simple implementation of FragListBuilder.
+            </summary>
         </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldQuery.SearchPhrase(System.String,System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldTermStack.TermInfo})">
-            
-            @param fieldName
-            @param phraseCandidate
-            @return QueryPhraseMap
+        <member name="T:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder">
+            An implementation of FragmentsBuilder that outputs score-order fragments.
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.#ctor">
+            <summary>
+            a constructor.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.#ctor(System.String[],System.String[])">
+            <summary>
+            a constructor.
+            </summary>
+            <param name="preTags">array of pre-tags for markup terms</param>
+            <param name="postTags">array of post-tags for markup terms</param>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.GetWeightedFragInfoList(System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo})">
+            <summary>
+            Sort by score the list of WeightedFragInfo
+            </summary>
+        </member>
+        <member name="T:Lucene.Net.Search.Vectorhighlight.FieldFragList">
+            <summary>
+             FieldFragList has a list of "frag info" that is used by FragmentsBuilder class
+             to create fragments (snippets).
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldFragList.#ctor(System.Int32)">
+            <summary>
+            a constructor.
+            </summary>
+            <param name="fragCharSize">the length (number of chars) of a fragment</param>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldFragList.Add(System.Int32,System.Int32,System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo})">
+            <summary>
+            convert the list of WeightedPhraseInfo to WeightedFragInfo, then add it to the fragInfos 
+            </summary>
+            <param name="startOffset">start offset of the fragment</param>
+            <param name="endOffset">end offset of the fragment</param>
+            <param name="phraseInfoList">list of WeightedPhraseInfo objects</param>
+        </member>
+        <member name="T:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder">
+            <summary>
+            A simple implementation of FragmentsBuilder.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.#ctor">
+            <summary>
+            a constructor.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.#ctor(System.String[],System.String[])">
+            <summary>
+            a constructor.
+            </summary>
+            <param name="preTags">array of pre-tags for markup terms</param>
+            <param name="postTags">array of post-tags for markup terms</param>
+        </member>
+        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.GetWeightedFragInfoList(System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo})">
+            <summary>
+            do nothing. return the source list.
+            </summary>
         </member>
         <member name="T:Lucene.Net.Search.Vectorhighlight.FieldTermStack">
             <summary>
@@ -81,26 +176,6 @@
             to know whether the stack is empty 
             </summary>
             <returns>true if the stack is empty, false if not</returns>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder">
-            An implementation of FragmentsBuilder that outputs score-order fragments.
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.#ctor">
-            <summary>
-            a constructor.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.#ctor(System.String[],System.String[])">
-            <summary>
-            a constructor.
-            </summary>
-            <param name="preTags">array of pre-tags for markup terms</param>
-            <param name="postTags">array of post-tags for markup terms</param>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.ScoreOrderFragmentsBuilder.GetWeightedFragInfoList(System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo})">
-            <summary>
-            Sort by score the list of WeightedFragInfo
-            </summary>
         </member>
         <member name="M:Lucene.Net.Search.Vectorhighlight.FastVectorHighlighter.#ctor">
             <summary>
@@ -164,81 +239,6 @@
             return whether fieldMatch or not.
             </summary>
             <returns>return whether fieldMatch or not.</returns>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.FieldPhraseList">
-            <summary>
-            FieldPhraseList has a list of WeightedPhraseInfo that is used by FragListBuilder
-            to create a FieldFragList object.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldPhraseList.#ctor(Lucene.Net.Search.Vectorhighlight.FieldTermStack,Lucene.Net.Search.Vectorhighlight.FieldQuery)">
-            <summary>
-            a constructor. 
-            </summary>
-            <param name="fieldTermStack">FieldTermStack object</param>
-            <param name="fieldQuery">FieldQuery object</param>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.FieldFragList">
-            <summary>
-             FieldFragList has a list of "frag info" that is used by FragmentsBuilder class
-             to create fragments (snippets).
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldFragList.#ctor(System.Int32)">
-            <summary>
-            a constructor.
-            </summary>
-            <param name="fragCharSize">the length (number of chars) of a fragment</param>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FieldFragList.Add(System.Int32,System.Int32,System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldPhraseList.WeightedPhraseInfo})">
-            <summary>
-            convert the list of WeightedPhraseInfo to WeightedFragInfo, then add it to the fragInfos 
-            </summary>
-            <param name="startOffset">start offset of the fragment</param>
-            <param name="endOffset">end offset of the fragment</param>
-            <param name="phraseInfoList">list of WeightedPhraseInfo objects</param>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.FragListBuilder">
-            <summary>
-            
-            FragListBuilder is an interface for FieldFragList builder classes.
-            A FragListBuilder class can be plugged in to Highlighter.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.FragListBuilder.CreateFieldFragList(Lucene.Net.Search.Vectorhighlight.FieldPhraseList,System.Int32)">
-            <summary>
-            create a FieldFragList. 
-            </summary>
-            <param name="fieldPhraseList">FieldPhraseList object</param>
-            <param name="fragCharSize">the length (number of chars) of a fragment</param>
-            <returns>the created FieldFragList object</returns>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder">
-            <summary>
-            A simple implementation of FragmentsBuilder.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.#ctor">
-            <summary>
-            a constructor.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.#ctor(System.String[],System.String[])">
-            <summary>
-            a constructor.
-            </summary>
-            <param name="preTags">array of pre-tags for markup terms</param>
-            <param name="postTags">array of post-tags for markup terms</param>
-        </member>
-        <member name="M:Lucene.Net.Search.Vectorhighlight.SimpleFragmentsBuilder.GetWeightedFragInfoList(System.Collections.Generic.List{Lucene.Net.Search.Vectorhighlight.FieldFragList.WeightedFragInfo})">
-            <summary>
-            do nothing. return the source list.
-            </summary>
-        </member>
-        <member name="T:Lucene.Net.Search.Vectorhighlight.SimpleFragListBuilder">
-            <summary>
-            A simple implementation of FragListBuilder.
-            </summary>
         </member>
     </members>
 </doc>
