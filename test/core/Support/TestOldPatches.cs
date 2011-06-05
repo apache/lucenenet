@@ -131,7 +131,7 @@ namespace Lucene.Net.Support
             wr.Close();
         }
 
-        static string TEST_STRING = "Some Text and some more Text";
+        static string TEST_STRING = "First Line\nSecond Line";
 
         class TestAnalyzer : Lucene.Net.Analysis.Analyzer
         {
@@ -141,20 +141,23 @@ namespace Lucene.Net.Support
             }
         }
 
-        class TestTokenizer : Lucene.Net.Analysis.CharTokenizer
+        class TestTokenizer : Lucene.Net.Analysis.Tokenizer
         {
             public TestTokenizer(System.IO.TextReader Reader)
-                : base(Reader)
             {
                 //Caution: "Reader" is actually of type "ReusableStringReader" and some 
                 //methods (for ex. "ReadToEnd", "Peek",  "ReadLine") is not implemented. 
-                Assert.AreEqual(TEST_STRING, Reader.ReadToEnd(), "Issue LUCENENET-150: \"ReadToEnd\" method is not implemented");
+
+                Assert.AreEqual("ReusableStringReader", Reader.GetType().Name);
+                Assert.AreEqual("First Line", Reader.ReadLine(), "\"ReadLine\" method is not implemented");
+                Assert.AreEqual("Second Line",Reader.ReadToEnd(),"\"ReadToEnd\" method is not implemented");
             }
 
-            protected override bool IsTokenChar(char c)
+            public override Token Next()
             {
-                return char.IsLetterOrDigit(c);
+                return null;
             }
+            
         }
 
         [Test]
