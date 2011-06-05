@@ -69,28 +69,62 @@ namespace Lucene.Net.Index
 
         public override int Read()
         {
-            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
+            if (left > 0)
+            {
+                char ch = s[upto];
+                upto += 1;
+                left -= 1;
+                return (int)ch;
+            }
+            return -1;
         }
 
         public override int ReadBlock(char[] buffer, int index, int count)
         {
-            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
+            return Read(buffer, index, count);
         }
 
         public override string ReadLine()
         {
-            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
+            int i;
+            for (i = upto; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (c == '\r' || c == '\n')
+                {
+                    string result = s.Substring(upto, i - upto);
+                    upto = i + 1;
+                    left = s.Length - upto;
+                    if (c == '\r' && upto < s.Length && s[upto] == '\n')
+                    {
+                        upto++;
+                        left--;
+                    }
+                    return result;
+                }
+            }
+            if (i > upto)
+            {
+                return ReadToEnd();
+            }
+            return null;
         }
 
         public override int Peek()
         {
-            throw new NotImplementedException("ReusableStringReader: This method is not implemented");
+            if (left > 0)
+            {
+                return (int)s[upto];
+            }
+            return -1;
         }
 
         public override string ReadToEnd()
         {
+            string result = s.Substring(upto, left);
             left = 0;
-            return s;
+            upto = s.Length - 1;
+            return result;
         }
     }
 }
