@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "..\..\..\src\core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Core", "..\..\..\src\contrib\Core\Contrib.Core.csproj", "{FEF899EB-610C-4D3C-A556-A01F56F4AFE0}"
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Regex", "..\..\..\src\contrib\Regex\Contrib.Regex.csproj", "{A26BD3B7-DF90-43B4-99E2-6A617CDE1579}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFacetedSearch", "..\..\..\src\contrib\SimpleFacetedSearch\SimpleFacetedSearch.csproj", "{66772190-FB3F-48F5-8E05-0B302BACEA73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.IsolatedStorage", "..\..\..\src\contrib\IsolatedStorage\Contrib.IsolatedStorage.csproj", "{7AAC492D-1526-463A-8AAE-4433577E0950}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,10 @@ Global
 		{66772190-FB3F-48F5-8E05-0B302BACEA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66772190-FB3F-48F5-8E05-0B302BACEA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66772190-FB3F-48F5-8E05-0B302BACEA73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AAC492D-1526-463A-8AAE-4433577E0950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AAC492D-1526-463A-8AAE-4433577E0950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AAC492D-1526-463A-8AAE-4433577E0950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AAC492D-1526-463A-8AAE-4433577E0950}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
