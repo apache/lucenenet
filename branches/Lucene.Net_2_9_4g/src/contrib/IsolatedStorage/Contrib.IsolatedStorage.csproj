@@ -8,8 +8,8 @@
     <ProjectGuid>{7AAC492D-1526-463A-8AAE-4433577E0950}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IsolatedStorage</RootNamespace>
-    <AssemblyName>IsolatedStorage</AssemblyName>
+    <RootNamespace>Lucene.Net.Store</RootNamespace>
+    <AssemblyName>Lucene.Net.IsolatedStorage</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\bin\contrib\IsolatedStorage\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
