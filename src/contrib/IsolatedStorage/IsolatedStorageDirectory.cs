@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
         /// Create a new instance of the isolated store for this user, domain, and assembly
         /// </summary>
         /// <param name="path">Path within the store for the Lucene indexs</param>
-        protected internal IsolatedStorageDirectory(string path) : this(path, null)
+        public IsolatedStorageDirectory(string path) : this(path, null)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Lucene.Net.Store
         /// <param name="path">Path within the store for the Lucene indexs</param>
         /// <param name="lockFactory">Not Implimented</param>
         /// TODO: Impliment lockFactory
-        protected internal IsolatedStorageDirectory(string path, LockFactory lockFactory)
+        public IsolatedStorageDirectory(string path, LockFactory lockFactory)
         {
             IsoDirectory = IsolatedStorageFile.GetStore(IsolatedStorageScope.User |
                 IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
