@@ -43,9 +43,8 @@ namespace Lucene.Net.Store
         /// TODO: Impliment lockFactory
         public IsolatedStorageDirectory(string path, LockFactory lockFactory)
         {
-            IsoDirectory = IsolatedStorageFile.GetStore(IsolatedStorageScope.User |
-                IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
-
+            IsoDirectory = IsolatedStorageFile.GetUserStoreForApplication();
+            
             if (!IsoDirectory.DirectoryExists(path))
             {
                 throw new NoSuchDirectoryException(String.Format("{0} exists but is not a folder", path));
