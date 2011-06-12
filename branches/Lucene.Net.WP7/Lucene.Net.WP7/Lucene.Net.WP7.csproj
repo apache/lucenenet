@@ -1,0 +1,1391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DD4E1F42-5E5D-4A2A-B711-22D414EADC7D}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.WP7</RootNamespace>
+    <AssemblyName>Lucene.Net.WP7</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Analyzer.cs">
+      <Link>Analysis\Analyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\ASCIIFoldingFilter.cs">
+      <Link>Analysis\ASCIIFoldingFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\BaseCharFilter.cs">
+      <Link>Analysis\BaseCharFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CachingTokenFilter.cs">
+      <Link>Analysis\CachingTokenFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharacterCache.cs">
+      <Link>Analysis\CharacterCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharArraySet.cs">
+      <Link>Analysis\CharArraySet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharFilter.cs">
+      <Link>Analysis\CharFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharReader.cs">
+      <Link>Analysis\CharReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharStream.cs">
+      <Link>Analysis\CharStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\CharTokenizer.cs">
+      <Link>Analysis\CharTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\ISOLatin1AccentFilter.cs">
+      <Link>Analysis\ISOLatin1AccentFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\KeywordAnalyzer.cs">
+      <Link>Analysis\KeywordAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\KeywordTokenizer.cs">
+      <Link>Analysis\KeywordTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\LengthFilter.cs">
+      <Link>Analysis\LengthFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\LetterTokenizer.cs">
+      <Link>Analysis\LetterTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\LowerCaseFilter.cs">
+      <Link>Analysis\LowerCaseFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\LowerCaseTokenizer.cs">
+      <Link>Analysis\LowerCaseTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\MappingCharFilter.cs">
+      <Link>Analysis\MappingCharFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\NormalizeCharMap.cs">
+      <Link>Analysis\NormalizeCharMap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\NumericTokenStream.cs">
+      <Link>Analysis\NumericTokenStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\PerFieldAnalyzerWrapper.cs">
+      <Link>Analysis\PerFieldAnalyzerWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\PorterStemFilter.cs">
+      <Link>Analysis\PorterStemFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\PorterStemmer.cs">
+      <Link>Analysis\PorterStemmer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\SimpleAnalyzer.cs">
+      <Link>Analysis\SimpleAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\SinkTokenizer.cs">
+      <Link>Analysis\SinkTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Standard\StandardAnalyzer.cs">
+      <Link>Analysis\Standard\StandardAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Standard\StandardFilter.cs">
+      <Link>Analysis\Standard\StandardFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Standard\StandardTokenizer.cs">
+      <Link>Analysis\Standard\StandardTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Standard\StandardTokenizerImpl.cs">
+      <Link>Analysis\Standard\StandardTokenizerImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\StopAnalyzer.cs">
+      <Link>Analysis\StopAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\StopFilter.cs">
+      <Link>Analysis\StopFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\TeeSinkTokenFilter.cs">
+      <Link>Analysis\TeeSinkTokenFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\TeeTokenFilter.cs">
+      <Link>Analysis\TeeTokenFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Token.cs">
+      <Link>Analysis\Token.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\FlagsAttribute.cs">
+      <Link>Analysis\Tokenattributes\FlagsAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\FlagsAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\FlagsAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\OffsetAttribute.cs">
+      <Link>Analysis\Tokenattributes\OffsetAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\OffsetAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\OffsetAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\PayloadAttribute.cs">
+      <Link>Analysis\Tokenattributes\PayloadAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\PayloadAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\PayloadAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\PositionIncrementAttribute.cs">
+      <Link>Analysis\Tokenattributes\PositionIncrementAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\PositionIncrementAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\PositionIncrementAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\TermAttribute.cs">
+      <Link>Analysis\Tokenattributes\TermAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\TermAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\TermAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\TypeAttribute.cs">
+      <Link>Analysis\Tokenattributes\TypeAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenattributes\TypeAttributeImpl.cs">
+      <Link>Analysis\Tokenattributes\TypeAttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\TokenFilter.cs">
+      <Link>Analysis\TokenFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\Tokenizer.cs">
+      <Link>Analysis\Tokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\TokenStream.cs">
+      <Link>Analysis\TokenStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\TokenWrapper.cs">
+      <Link>Analysis\TokenWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\WhitespaceAnalyzer.cs">
+      <Link>Analysis\WhitespaceAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\WhitespaceTokenizer.cs">
+      <Link>Analysis\WhitespaceTokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Analysis\WordlistLoader.cs">
+      <Link>Analysis\WordlistLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\AbstractField.cs">
+      <Link>Document\AbstractField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\CompressionTools.cs">
+      <Link>Document\CompressionTools.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\DateField.cs">
+      <Link>Document\DateField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\DateTools.cs">
+      <Link>Document\DateTools.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\Document.cs">
+      <Link>Document\Document.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\Field.cs">
+      <Link>Document\Field.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\Fieldable.cs">
+      <Link>Document\Fieldable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\FieldSelector.cs">
+      <Link>Document\FieldSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\FieldSelectorResult.cs">
+      <Link>Document\FieldSelectorResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\LoadFirstFieldSelector.cs">
+      <Link>Document\LoadFirstFieldSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\MapFieldSelector.cs">
+      <Link>Document\MapFieldSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\NumberTools.cs">
+      <Link>Document\NumberTools.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\NumericField.cs">
+      <Link>Document\NumericField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Document\SetBasedFieldSelector.cs">
+      <Link>Document\SetBasedFieldSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\AbstractAllTermDocs.cs">
+      <Link>Index\AbstractAllTermDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\AllTermDocs.cs">
+      <Link>Index\AllTermDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\BufferedDeletes.cs">
+      <Link>Index\BufferedDeletes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ByteBlockPool.cs">
+      <Link>Index\ByteBlockPool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ByteSliceReader.cs">
+      <Link>Index\ByteSliceReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ByteSliceWriter.cs">
+      <Link>Index\ByteSliceWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\CharBlockPool.cs">
+      <Link>Index\CharBlockPool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\CheckIndex.cs">
+      <Link>Index\CheckIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\CompoundFileReader.cs">
+      <Link>Index\CompoundFileReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\CompoundFileWriter.cs">
+      <Link>Index\CompoundFileWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ConcurrentMergeScheduler.cs">
+      <Link>Index\ConcurrentMergeScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\CorruptIndexException.cs">
+      <Link>Index\CorruptIndexException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DefaultSkipListReader.cs">
+      <Link>Index\DefaultSkipListReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DefaultSkipListWriter.cs">
+      <Link>Index\DefaultSkipListWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DirectoryOwningReader.cs">
+      <Link>Index\DirectoryOwningReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DirectoryReader.cs">
+      <Link>Index\DirectoryReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocConsumer.cs">
+      <Link>Index\DocConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocConsumerPerThread.cs">
+      <Link>Index\DocConsumerPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumer.cs">
+      <Link>Index\DocFieldConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumerPerField.cs">
+      <Link>Index\DocFieldConsumerPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumerPerThread.cs">
+      <Link>Index\DocFieldConsumerPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumers.cs">
+      <Link>Index\DocFieldConsumers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumersPerField.cs">
+      <Link>Index\DocFieldConsumersPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldConsumersPerThread.cs">
+      <Link>Index\DocFieldConsumersPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldProcessor.cs">
+      <Link>Index\DocFieldProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldProcessorPerField.cs">
+      <Link>Index\DocFieldProcessorPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocFieldProcessorPerThread.cs">
+      <Link>Index\DocFieldProcessorPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocInverter.cs">
+      <Link>Index\DocInverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocInverterPerField.cs">
+      <Link>Index\DocInverterPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocInverterPerThread.cs">
+      <Link>Index\DocInverterPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocumentsWriter.cs">
+      <Link>Index\DocumentsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\DocumentsWriterThreadState.cs">
+      <Link>Index\DocumentsWriterThreadState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldInfo.cs">
+      <Link>Index\FieldInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldInfos.cs">
+      <Link>Index\FieldInfos.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldInvertState.cs">
+      <Link>Index\FieldInvertState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldReaderException.cs">
+      <Link>Index\FieldReaderException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldSortedTermVectorMapper.cs">
+      <Link>Index\FieldSortedTermVectorMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldsReader.cs">
+      <Link>Index\FieldsReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FieldsWriter.cs">
+      <Link>Index\FieldsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FilterIndexReader.cs">
+      <Link>Index\FilterIndexReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsDocsConsumer.cs">
+      <Link>Index\FormatPostingsDocsConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsDocsWriter.cs">
+      <Link>Index\FormatPostingsDocsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsFieldsConsumer.cs">
+      <Link>Index\FormatPostingsFieldsConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsFieldsWriter.cs">
+      <Link>Index\FormatPostingsFieldsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsPositionsConsumer.cs">
+      <Link>Index\FormatPostingsPositionsConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsPositionsWriter.cs">
+      <Link>Index\FormatPostingsPositionsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsTermsConsumer.cs">
+      <Link>Index\FormatPostingsTermsConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FormatPostingsTermsWriter.cs">
+      <Link>Index\FormatPostingsTermsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FreqProxFieldMergeState.cs">
+      <Link>Index\FreqProxFieldMergeState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FreqProxTermsWriter.cs">
+      <Link>Index\FreqProxTermsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FreqProxTermsWriterPerField.cs">
+      <Link>Index\FreqProxTermsWriterPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\FreqProxTermsWriterPerThread.cs">
+      <Link>Index\FreqProxTermsWriterPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexCommit.cs">
+      <Link>Index\IndexCommit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexCommitPoint.cs">
+      <Link>Index\IndexCommitPoint.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexDeletionPolicy.cs">
+      <Link>Index\IndexDeletionPolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexFileDeleter.cs">
+      <Link>Index\IndexFileDeleter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexFileNameFilter.cs">
+      <Link>Index\IndexFileNameFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexFileNames.cs">
+      <Link>Index\IndexFileNames.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexModifier.cs">
+      <Link>Index\IndexModifier.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexReader.cs">
+      <Link>Index\IndexReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IndexWriter.cs">
+      <Link>Index\IndexWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\IntBlockPool.cs">
+      <Link>Index\IntBlockPool.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocConsumer.cs">
+      <Link>Index\InvertedDocConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocConsumerPerField.cs">
+      <Link>Index\InvertedDocConsumerPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocConsumerPerThread.cs">
+      <Link>Index\InvertedDocConsumerPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocEndConsumer.cs">
+      <Link>Index\InvertedDocEndConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocEndConsumerPerField.cs">
+      <Link>Index\InvertedDocEndConsumerPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\InvertedDocEndConsumerPerThread.cs">
+      <Link>Index\InvertedDocEndConsumerPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\KeepOnlyLastCommitDeletionPolicy.cs">
+      <Link>Index\KeepOnlyLastCommitDeletionPolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\LogByteSizeMergePolicy.cs">
+      <Link>Index\LogByteSizeMergePolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\LogDocMergePolicy.cs">
+      <Link>Index\LogDocMergePolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\LogMergePolicy.cs">
+      <Link>Index\LogMergePolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MergeDocIDRemapper.cs">
+      <Link>Index\MergeDocIDRemapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MergePolicy.cs">
+      <Link>Index\MergePolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MergeScheduler.cs">
+      <Link>Index\MergeScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MultiLevelSkipListReader.cs">
+      <Link>Index\MultiLevelSkipListReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MultiLevelSkipListWriter.cs">
+      <Link>Index\MultiLevelSkipListWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MultipleTermPositions.cs">
+      <Link>Index\MultipleTermPositions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\MultiReader.cs">
+      <Link>Index\MultiReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\NormsWriter.cs">
+      <Link>Index\NormsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\NormsWriterPerField.cs">
+      <Link>Index\NormsWriterPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\NormsWriterPerThread.cs">
+      <Link>Index\NormsWriterPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ParallelReader.cs">
+      <Link>Index\ParallelReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\Payload.cs">
+      <Link>Index\Payload.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\PositionBasedTermVectorMapper.cs">
+      <Link>Index\PositionBasedTermVectorMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\RawPostingList.cs">
+      <Link>Index\RawPostingList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ReadOnlyDirectoryReader.cs">
+      <Link>Index\ReadOnlyDirectoryReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ReadOnlySegmentReader.cs">
+      <Link>Index\ReadOnlySegmentReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\ReusableStringReader.cs">
+      <Link>Index\ReusableStringReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentInfo.cs">
+      <Link>Index\SegmentInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentInfos.cs">
+      <Link>Index\SegmentInfos.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentMergeInfo.cs">
+      <Link>Index\SegmentMergeInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentMergeQueue.cs">
+      <Link>Index\SegmentMergeQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentMerger.cs">
+      <Link>Index\SegmentMerger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentReader.cs">
+      <Link>Index\SegmentReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentTermDocs.cs">
+      <Link>Index\SegmentTermDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentTermEnum.cs">
+      <Link>Index\SegmentTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentTermPositions.cs">
+      <Link>Index\SegmentTermPositions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentTermPositionVector.cs">
+      <Link>Index\SegmentTermPositionVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentTermVector.cs">
+      <Link>Index\SegmentTermVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SegmentWriteState.cs">
+      <Link>Index\SegmentWriteState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SerialMergeScheduler.cs">
+      <Link>Index\SerialMergeScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SnapshotDeletionPolicy.cs">
+      <Link>Index\SnapshotDeletionPolicy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\SortedTermVectorMapper.cs">
+      <Link>Index\SortedTermVectorMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\StaleReaderException.cs">
+      <Link>Index\StaleReaderException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\StoredFieldsWriter.cs">
+      <Link>Index\StoredFieldsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\StoredFieldsWriterPerThread.cs">
+      <Link>Index\StoredFieldsWriterPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\Term.cs">
+      <Link>Index\Term.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermBuffer.cs">
+      <Link>Index\TermBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermDocs.cs">
+      <Link>Index\TermDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermEnum.cs">
+      <Link>Index\TermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermFreqVector.cs">
+      <Link>Index\TermFreqVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermInfo.cs">
+      <Link>Index\TermInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermInfosReader.cs">
+      <Link>Index\TermInfosReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermInfosWriter.cs">
+      <Link>Index\TermInfosWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermPositions.cs">
+      <Link>Index\TermPositions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermPositionVector.cs">
+      <Link>Index\TermPositionVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHash.cs">
+      <Link>Index\TermsHash.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHashConsumer.cs">
+      <Link>Index\TermsHashConsumer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHashConsumerPerField.cs">
+      <Link>Index\TermsHashConsumerPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHashConsumerPerThread.cs">
+      <Link>Index\TermsHashConsumerPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHashPerField.cs">
+      <Link>Index\TermsHashPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermsHashPerThread.cs">
+      <Link>Index\TermsHashPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorEntry.cs">
+      <Link>Index\TermVectorEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorEntryFreqSortedComparator.cs">
+      <Link>Index\TermVectorEntryFreqSortedComparator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorMapper.cs">
+      <Link>Index\TermVectorMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorOffsetInfo.cs">
+      <Link>Index\TermVectorOffsetInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorsReader.cs">
+      <Link>Index\TermVectorsReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorsTermsWriter.cs">
+      <Link>Index\TermVectorsTermsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorsTermsWriterPerField.cs">
+      <Link>Index\TermVectorsTermsWriterPerField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorsTermsWriterPerThread.cs">
+      <Link>Index\TermVectorsTermsWriterPerThread.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Index\TermVectorsWriter.cs">
+      <Link>Index\TermVectorsWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\LucenePackage.cs">
+      <Link>LucenePackage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\LZOCompressor.cs">
+      <Link>LZOCompressor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Messages\Message.cs">
+      <Link>Messages\Message.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Messages\MessageImpl.cs">
+      <Link>Messages\MessageImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Messages\NLS.cs">
+      <Link>Messages\NLS.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Messages\NLSException.cs">
+      <Link>Messages\NLSException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\CharStream.cs">
+      <Link>QueryParser\CharStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\FastCharStream.cs">
+      <Link>QueryParser\FastCharStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\MultiFieldQueryParser.cs">
+      <Link>QueryParser\MultiFieldQueryParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\ParseException.cs">
+      <Link>QueryParser\ParseException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\QueryParser.cs">
+      <Link>QueryParser\QueryParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\QueryParserConstants.cs">
+      <Link>QueryParser\QueryParserConstants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\QueryParserTokenManager.cs">
+      <Link>QueryParser\QueryParserTokenManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\Token.cs">
+      <Link>QueryParser\Token.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\QueryParser\TokenMgrError.cs">
+      <Link>QueryParser\TokenMgrError.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\BooleanClause.cs">
+      <Link>Search\BooleanClause.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\BooleanQuery.cs">
+      <Link>Search\BooleanQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\BooleanScorer.cs">
+      <Link>Search\BooleanScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\BooleanScorer2.cs">
+      <Link>Search\BooleanScorer2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\CachingSpanFilter.cs">
+      <Link>Search\CachingSpanFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\CachingWrapperFilter.cs">
+      <Link>Search\CachingWrapperFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Collector.cs">
+      <Link>Search\Collector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ComplexExplanation.cs">
+      <Link>Search\ComplexExplanation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ConjunctionScorer.cs">
+      <Link>Search\ConjunctionScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ConstantScoreQuery.cs">
+      <Link>Search\ConstantScoreQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ConstantScoreRangeQuery.cs">
+      <Link>Search\ConstantScoreRangeQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DefaultSimilarity.cs">
+      <Link>Search\DefaultSimilarity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DisjunctionMaxQuery.cs">
+      <Link>Search\DisjunctionMaxQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DisjunctionMaxScorer.cs">
+      <Link>Search\DisjunctionMaxScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DisjunctionSumScorer.cs">
+      <Link>Search\DisjunctionSumScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DocIdSet.cs">
+      <Link>Search\DocIdSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\DocIdSetIterator.cs">
+      <Link>Search\DocIdSetIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ExactPhraseScorer.cs">
+      <Link>Search\ExactPhraseScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Explanation.cs">
+      <Link>Search\Explanation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ExtendedFieldCache.cs">
+      <Link>Search\ExtendedFieldCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldCache.cs">
+      <Link>Search\FieldCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldCacheImpl.cs">
+      <Link>Search\FieldCacheImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldCacheRangeFilter.cs">
+      <Link>Search\FieldCacheRangeFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldCacheTermsFilter.cs">
+      <Link>Search\FieldCacheTermsFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldComparator.cs">
+      <Link>Search\FieldComparator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldComparatorSource.cs">
+      <Link>Search\FieldComparatorSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldDoc.cs">
+      <Link>Search\FieldDoc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldDocSortedHitQueue.cs">
+      <Link>Search\FieldDocSortedHitQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldSortedHitQueue.cs">
+      <Link>Search\FieldSortedHitQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FieldValueHitQueue.cs">
+      <Link>Search\FieldValueHitQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Filter.cs">
+      <Link>Search\Filter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FilteredDocIdSet.cs">
+      <Link>Search\FilteredDocIdSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FilteredDocIdSetIterator.cs">
+      <Link>Search\FilteredDocIdSetIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FilteredQuery.cs">
+      <Link>Search\FilteredQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FilteredTermEnum.cs">
+      <Link>Search\FilteredTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FilterManager.cs">
+      <Link>Search\FilterManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\ByteFieldSource.cs">
+      <Link>Search\Functions\ByteFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\CustomScoreProvider.cs">
+      <Link>Search\Functions\CustomScoreProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\CustomScoreQuery.cs">
+      <Link>Search\Functions\CustomScoreQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\DocValues.cs">
+      <Link>Search\Functions\DocValues.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\FieldCacheSource.cs">
+      <Link>Search\Functions\FieldCacheSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\FieldScoreQuery.cs">
+      <Link>Search\Functions\FieldScoreQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\FloatFieldSource.cs">
+      <Link>Search\Functions\FloatFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\IntFieldSource.cs">
+      <Link>Search\Functions\IntFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\MultiValueSource.cs">
+      <Link>Search\Functions\MultiValueSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\OrdFieldSource.cs">
+      <Link>Search\Functions\OrdFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\ReverseOrdFieldSource.cs">
+      <Link>Search\Functions\ReverseOrdFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\ShortFieldSource.cs">
+      <Link>Search\Functions\ShortFieldSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\ValueSource.cs">
+      <Link>Search\Functions\ValueSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Function\ValueSourceQuery.cs">
+      <Link>Search\Functions\ValueSourceQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FuzzyQuery.cs">
+      <Link>Search\FuzzyQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\FuzzyTermEnum.cs">
+      <Link>Search\FuzzyTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Hit.cs">
+      <Link>Search\Hit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\HitCollector.cs">
+      <Link>Search\HitCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\HitCollectorWrapper.cs">
+      <Link>Search\HitCollectorWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\HitIterator.cs">
+      <Link>Search\HitIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\HitQueue.cs">
+      <Link>Search\HitQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Hits.cs">
+      <Link>Search\Hits.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\IndexSearcher.cs">
+      <Link>Search\IndexSearcher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\MatchAllDocsQuery.cs">
+      <Link>Search\MatchAllDocsQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\MultiPhraseQuery.cs">
+      <Link>Search\MultiPhraseQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\MultiSearcher.cs">
+      <Link>Search\MultiSearcher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\MultiTermQuery.cs">
+      <Link>Search\MultiTermQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\MultiTermQueryWrapperFilter.cs">
+      <Link>Search\MultiTermQueryWrapperFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\NumericRangeFilter.cs">
+      <Link>Search\NumericRangeFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\NumericRangeQuery.cs">
+      <Link>Search\NumericRangeQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ParallelMultiSearcher.cs">
+      <Link>Search\ParallelMultiSearcher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\AveragePayloadFunction.cs">
+      <Link>Search\Payloads\AveragePayloadFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\BoostingTermQuery.cs">
+      <Link>Search\Payloads\BoostingTermQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\MaxPayloadFunction.cs">
+      <Link>Search\Payloads\MaxPayloadFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\MinPayloadFunction.cs">
+      <Link>Search\Payloads\MinPayloadFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\PayloadFunction.cs">
+      <Link>Search\Payloads\PayloadFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\PayloadNearQuery.cs">
+      <Link>Search\Payloads\PayloadNearQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\PayloadSpanUtil.cs">
+      <Link>Search\Payloads\PayloadSpanUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Payloads\PayloadTermQuery.cs">
+      <Link>Search\Payloads\PayloadTermQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PhrasePositions.cs">
+      <Link>Search\PhrasePositions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PhraseQuery.cs">
+      <Link>Search\PhraseQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PhraseQueue.cs">
+      <Link>Search\PhraseQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PhraseScorer.cs">
+      <Link>Search\PhraseScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PositiveScoresOnlyCollector.cs">
+      <Link>Search\PositiveScoresOnlyCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PrefixFilter.cs">
+      <Link>Search\PrefixFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PrefixQuery.cs">
+      <Link>Search\PrefixQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\PrefixTermEnum.cs">
+      <Link>Search\PrefixTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Query.cs">
+      <Link>Search\Query.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\QueryFilter.cs">
+      <Link>Search\QueryFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\QueryTermVector.cs">
+      <Link>Search\QueryTermVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\QueryWrapperFilter.cs">
+      <Link>Search\QueryWrapperFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\RangeFilter.cs">
+      <Link>Search\RangeFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\RangeQuery.cs">
+      <Link>Search\RangeQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ReqExclScorer.cs">
+      <Link>Search\ReqExclScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ReqOptSumScorer.cs">
+      <Link>Search\ReqOptSumScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ScoreCachingWrappingScorer.cs">
+      <Link>Search\ScoreCachingWrappingScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ScoreDoc.cs">
+      <Link>Search\ScoreDoc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\ScoreDocComparator.cs">
+      <Link>Search\ScoreDocComparator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Scorer.cs">
+      <Link>Search\Scorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Searchable.cs">
+      <Link>Search\Searchable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Searcher.cs">
+      <Link>Search\Searcher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Similarity.cs">
+      <Link>Search\Similarity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SimilarityDelegator.cs">
+      <Link>Search\SimilarityDelegator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SloppyPhraseScorer.cs">
+      <Link>Search\SloppyPhraseScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Sort.cs">
+      <Link>Search\Sort.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SortComparator.cs">
+      <Link>Search\SortComparator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SortComparatorSource.cs">
+      <Link>Search\SortComparatorSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SortField.cs">
+      <Link>Search\SortField.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SpanFilter.cs">
+      <Link>Search\SpanFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SpanFilterResult.cs">
+      <Link>Search\SpanFilterResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\SpanQueryFilter.cs">
+      <Link>Search\SpanQueryFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\FieldMaskingSpanQuery.cs">
+      <Link>Search\Spans\FieldMaskingSpanQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\NearSpansOrdered.cs">
+      <Link>Search\Spans\NearSpansOrdered.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\NearSpansUnordered.cs">
+      <Link>Search\Spans\NearSpansUnordered.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanFirstQuery.cs">
+      <Link>Search\Spans\SpanFirstQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanNearQuery.cs">
+      <Link>Search\Spans\SpanNearQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanNotQuery.cs">
+      <Link>Search\Spans\SpanNotQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanOrQuery.cs">
+      <Link>Search\Spans\SpanOrQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanQuery.cs">
+      <Link>Search\Spans\SpanQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\Spans.cs">
+      <Link>Search\Spans\Spans.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanScorer.cs">
+      <Link>Search\Spans\SpanScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanTermQuery.cs">
+      <Link>Search\Spans\SpanTermQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\SpanWeight.cs">
+      <Link>Search\Spans\SpanWeight.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Spans\TermSpans.cs">
+      <Link>Search\Spans\TermSpans.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TermQuery.cs">
+      <Link>Search\TermQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TermRangeFilter.cs">
+      <Link>Search\TermRangeFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TermRangeQuery.cs">
+      <Link>Search\TermRangeQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TermRangeTermEnum.cs">
+      <Link>Search\TermRangeTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TermScorer.cs">
+      <Link>Search\TermScorer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TimeLimitedCollector.cs">
+      <Link>Search\TimeLimitedCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TimeLimitingCollector.cs">
+      <Link>Search\TimeLimitingCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopDocCollector.cs">
+      <Link>Search\TopDocCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopDocs.cs">
+      <Link>Search\TopDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopDocsCollector.cs">
+      <Link>Search\TopDocsCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopFieldCollector.cs">
+      <Link>Search\TopFieldCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopFieldDocCollector.cs">
+      <Link>Search\TopFieldDocCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopFieldDocs.cs">
+      <Link>Search\TopFieldDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\TopScoreDocCollector.cs">
+      <Link>Search\TopScoreDocCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\Weight.cs">
+      <Link>Search\Weight.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\WildcardQuery.cs">
+      <Link>Search\WildcardQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Search\WildcardTermEnum.cs">
+      <Link>Search\WildcardTermEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\AlreadyClosedException.cs">
+      <Link>Store\AlreadyClosedException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\BufferedIndexInput.cs">
+      <Link>Store\BufferedIndexInput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\BufferedIndexOutput.cs">
+      <Link>Store\BufferedIndexOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\CheckSumIndexInput.cs">
+      <Link>Store\CheckSumIndexInput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\CheckSumIndexOutput.cs">
+      <Link>Store\CheckSumIndexOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\Directory.cs">
+      <Link>Store\Directory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\FileSwitchDirectory.cs">
+      <Link>Store\FileSwitchDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\FSDirectory.cs">
+      <Link>Store\FSDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\FSLockFactory.cs">
+      <Link>Store\FSLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\IndexInput.cs">
+      <Link>Store\IndexInput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\IndexOutput.cs">
+      <Link>Store\IndexOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\Lock.cs">
+      <Link>Store\Lock.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\LockFactory.cs">
+      <Link>Store\LockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\LockObtainFailedException.cs">
+      <Link>Store\LockObtainFailedException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\LockReleaseFailedException.cs">
+      <Link>Store\LockReleaseFailedException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\LockStressTest.cs">
+      <Link>Store\LockStressTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\LockVerifyServer.cs">
+      <Link>Store\LockVerifyServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\MMapDirectory.cs">
+      <Link>Store\MMapDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\NativeFSLockFactory.cs">
+      <Link>Store\NativeFSLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\NIOFSDirectory.cs">
+      <Link>Store\NIOFSDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\NoLockFactory.cs">
+      <Link>Store\NoLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\NoSuchDirectoryException.cs">
+      <Link>Store\NoSuchDirectoryException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\RAMDirectory.cs">
+      <Link>Store\RAMDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\RAMFile.cs">
+      <Link>Store\RAMFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\RAMInputStream.cs">
+      <Link>Store\RAMInputStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\RAMOutputStream.cs">
+      <Link>Store\RAMOutputStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\SimpleFSDirectory.cs">
+      <Link>Store\SimpleFSDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\SimpleFSLockFactory.cs">
+      <Link>Store\SimpleFSLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\SingleInstanceLockFactory.cs">
+      <Link>Store\SingleInstanceLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Store\VerifyingLockFactory.cs">
+      <Link>Store\VerifyingLockFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\AppSettings.cs">
+      <Link>Support\AppSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\AttributeImplItem.cs">
+      <Link>Support\AttributeImplItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\BitSetSupport.cs">
+      <Link>Support\BitSetSupport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\BuildType.cs">
+      <Link>Support\BuildType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Character.cs">
+      <Link>Support\Character.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Checksum.cs">
+      <Link>Support\Checksum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\CollectionsHelper.cs">
+      <Link>Support\CollectionsHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Compare.cs">
+      <Link>Support\Compare.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\CRC32.cs">
+      <Link>Support\CRC32.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Cryptography.cs">
+      <Link>Support\Cryptography.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Dictionary.cs">
+      <Link>Support\Dictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Double.cs">
+      <Link>Support\Double.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\EquatableList.cs">
+      <Link>Support\EquatableList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\FileSupport.cs">
+      <Link>Support\FileSupport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\GeneralKeyedCollection.cs">
+      <Link>Support\GeneralKeyedCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\ICloneable.cs">
+      <Link>Support\ICloneable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\IThreadRunnable.cs">
+      <Link>Support\IThreadRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Number.cs">
+      <Link>Support\Number.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Os.cs">
+      <Link>Support\Os.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Set.cs">
+      <Link>Support\Set.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\SharpZipLib.cs">
+      <Link>Support\SharpZipLib.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\Single.cs">
+      <Link>Support\Single.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\TextSupport.cs">
+      <Link>Support\TextSupport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\ThreadClass.cs">
+      <Link>Support\ThreadClass.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\WeakDictionary.cs">
+      <Link>Support\WeakDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Support\WeakHashTable.cs">
+      <Link>Support\WeakHashTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\ArrayUtil.cs">
+      <Link>Util\ArrayUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Attribute.cs">
+      <Link>Util\Attribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\AttributeImpl.cs">
+      <Link>Util\AttributeImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\AttributeSource.cs">
+      <Link>Util\AttributeSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\AverageGuessMemoryModel.cs">
+      <Link>Util\AverageGuessMemoryModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\BitUtil.cs">
+      <Link>Util\BitUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\BitVector.cs">
+      <Link>Util\BitVector.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Cache\Cache.cs">
+      <Link>Util\Cache\Cache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Cache\SimpleLRUCache.cs">
+      <Link>Util\Cache\SimpleLRUCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Cache\SimpleMapCache.cs">
+      <Link>Util\Cache\SimpleMapCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\CloseableThreadLocal.cs">
+      <Link>Util\CloseableThreadLocal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Constants.cs">
+      <Link>Util\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\DocIdBitSet.cs">
+      <Link>Util\DocIdBitSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\FieldCacheSanityChecker.cs">
+      <Link>Util\FieldCacheSanityChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\IndexableBinaryStringTools.cs">
+      <Link>Util\IndexableBinaryStringTools.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\MapOfSets.cs">
+      <Link>Util\MapOfSets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\MemoryModel.cs">
+      <Link>Util\MemoryModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\NumericUtils.cs">
+      <Link>Util\NumericUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\OpenBitSet.cs">
+      <Link>Util\OpenBitSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\OpenBitSetDISI.cs">
+      <Link>Util\OpenBitSetDISI.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\OpenBitSetIterator.cs">
+      <Link>Util\OpenBitSetIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Parameter.cs">
+      <Link>Util\Parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\PriorityQueue.cs">
+      <Link>Util\PriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\RamUsageEstimator.cs">
+      <Link>Util\RamUsageEstimator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\ReaderUtil.cs">
+      <Link>Util\ReaderUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\ScorerDocQueue.cs">
+      <Link>Util\ScorerDocQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\SimpleStringInterner.cs">
+      <Link>Util\SimpleStringInterner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\SmallFloat.cs">
+      <Link>Util\SmallFloat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\SortedVIntList.cs">
+      <Link>Util\SortedVIntList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\SorterTemplate.cs">
+      <Link>Util\SorterTemplate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\StringHelper.cs">
+      <Link>Util\StringHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\StringInterner.cs">
+      <Link>Util\StringInterner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\ToStringUtils.cs">
+      <Link>Util\ToStringUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\UnicodeUtil.cs">
+      <Link>Util\UnicodeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lucene.Net_2_9_4g\src\core\Util\Version.cs">
+      <Link>Util\Version.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

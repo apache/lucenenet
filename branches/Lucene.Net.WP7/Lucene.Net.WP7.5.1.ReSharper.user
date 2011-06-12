@@ -1,0 +1,86 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Store/f:IndexInput.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Store?IndexInput.cs" caret="1168" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanNotQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanNotQuery.cs" caret="1222" fromTop="31" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanNearQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanNearQuery.cs" caret="1371" fromTop="23" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanFirstQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanFirstQuery.cs" caret="1218" fromTop="17" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:ParallelReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?ParallelReader.cs" caret="2174" fromTop="18" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:MultiReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?MultiReader.cs" caret="1545" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldInfos.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldInfos.cs" caret="1951" fromTop="26" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldInfo.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldInfo.cs" caret="0" fromTop="0" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:DirectoryReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?DirectoryReader.cs" caret="1441" fromTop="21" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:DirectoryOwningReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?DirectoryOwningReader.cs" caret="1413" fromTop="25" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:CompoundFileReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?CompoundFileReader.cs" caret="9122" fromTop="31" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:Query.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?Query.cs" caret="1789" fromTop="16" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:OffsetAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?OffsetAttributeImpl.cs" caret="1132" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:PositionIncrementAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?PositionIncrementAttributeImpl.cs" caret="2336" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:TypeAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?TypeAttributeImpl.cs" caret="1134" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:Payload.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?Payload.cs" caret="1505" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/f:TokenWrapper.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?TokenWrapper.cs" caret="1864" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Payloads/f:PayloadNearQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Payloads?PayloadNearQuery.cs" caret="2342" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:DisjunctionMaxQuery.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?DisjunctionMaxQuery.cs" caret="2355" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Util/f:AttributeSource.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Util?AttributeSource.cs" caret="12853" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Functions/f:CustomScoreQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Function?CustomScoreQuery.cs" caret="2195" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldsReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldsReader.cs" caret="1567" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:BooleanQuery.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?BooleanQuery.cs" caret="1372" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:PayloadAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?PayloadAttributeImpl.cs" caret="931" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:FlagsAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?FlagsAttributeImpl.cs" caret="1214" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:TermAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?TermAttributeImpl.cs" caret="1085" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Store/f:MMapDirectory.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Store?MMapDirectory.cs" caret="12513" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:SegmentReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?SegmentReader.cs" caret="12915" fromTop="7" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Support/f:EquatableList.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Support?EquatableList.cs" caret="1733" fromTop="21" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Store/f:AlreadyClosedException.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Store?AlreadyClosedException.cs" caret="1287" fromTop="5" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanNotQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanNotQuery.cs" caret="1222" fromTop="31" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanNearQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanNearQuery.cs" caret="1371" fromTop="23" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Spans/f:SpanFirstQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Spans?SpanFirstQuery.cs" caret="1218" fromTop="17" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:SegmentReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?SegmentReader.cs" caret="1589" fromTop="24" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:ParallelReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?ParallelReader.cs" caret="2174" fromTop="18" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:MultiReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?MultiReader.cs" caret="1545" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldInfos.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldInfos.cs" caret="1653" fromTop="16" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldInfo.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldInfo.cs" caret="0" fromTop="0" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:DirectoryReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?DirectoryReader.cs" caret="1441" fromTop="21" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:DirectoryOwningReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?DirectoryOwningReader.cs" caret="1413" fromTop="25" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:CompoundFileReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?CompoundFileReader.cs" caret="6988" fromTop="12" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:Query.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?Query.cs" caret="1789" fromTop="16" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:OffsetAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?OffsetAttributeImpl.cs" caret="1132" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:PositionIncrementAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?PositionIncrementAttributeImpl.cs" caret="2336" fromTop="15" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:TypeAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?TypeAttributeImpl.cs" caret="1134" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/f:TokenWrapper.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?TokenWrapper.cs" caret="1864" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:Payload.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?Payload.cs" caret="6366" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:DisjunctionMaxQuery.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?DisjunctionMaxQuery.cs" caret="12477" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Payloads/f:PayloadNearQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Payloads?PayloadNearQuery.cs" caret="2342" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Util/f:AttributeSource.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Util?AttributeSource.cs" caret="12853" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/d:Functions/f:CustomScoreQuery.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Search?Function?CustomScoreQuery.cs" caret="2195" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:FieldsReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?FieldsReader.cs" caret="1567" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Search/f:BooleanQuery.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Search?BooleanQuery.cs" caret="20783" fromTop="12" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:PayloadAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?PayloadAttributeImpl.cs" caret="2777" fromTop="0" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:FlagsAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?FlagsAttributeImpl.cs" caret="1214" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Analysis/d:Tokenattributes/f:TermAttributeImpl.cs/l:..?..?..?..?Lucene.Net_2_9_4g?src?core?Analysis?Tokenattributes?TermAttributeImpl.cs" caret="1085" fromTop="9" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Store/f:MMapDirectory.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Store?MMapDirectory.cs" caret="12513" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Index/f:SegmentReader.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Index?SegmentReader.cs" caret="13076" fromTop="11" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Support/f:EquatableList.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Support?EquatableList.cs" caret="1493" fromTop="10" />
+      <File id="DD4E1F42-5E5D-4A2A-B711-22D414EADC7D/d:Store/f:AlreadyClosedException.cs/l:..?..?..?Lucene.Net_2_9_4g?src?core?Store?AlreadyClosedException.cs" caret="1287" fromTop="5" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+</Configuration>
