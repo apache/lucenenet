@@ -877,6 +877,7 @@
     <Compile Include="Support\FileSupport.cs" />
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
+    <Compile Include="Support\MemoryMappedDirectory.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\Os.cs" />
     <Compile Include="Support\Set.cs" />
