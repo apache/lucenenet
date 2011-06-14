@@ -29,8 +29,8 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Store
 {
-	
-	[TestFixture]
+
+    //[TestFixture]  (https://issues.apache.org/jira/browse/LUCENENET-425)
 	public class TestWindowsMMap:LuceneTestCase
 	{
 		
@@ -69,8 +69,8 @@ namespace Lucene.Net.Store
 		}
 		
 		private static readonly System.String storePathname = new System.IO.FileInfo(System.IO.Path.Combine(Support.AppSettings.Get("tempDir", ""), "testLuceneMmap")).FullName;
-		
-		[Test]
+
+        //[Test] (https://issues.apache.org/jira/browse/LUCENENET-425)
 		public virtual void  TestMmapIndex()
 		{
 			FSDirectory storeDirectory;
