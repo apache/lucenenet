@@ -65,14 +65,14 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         public abstract List<WeightedFragInfo> GetWeightedFragInfoList(List<WeightedFragInfo> src);
 
-        public String CreateFragment(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList)
+        public virtual String CreateFragment(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList)
         {
             String[] fragments = CreateFragments(reader, docId, fieldName, fieldFragList, 1);
             if (fragments == null || fragments.Length == 0) return null;
             return fragments[0];
         }
 
-        public String[] CreateFragments(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList, int maxNumFragments)
+        public virtual String[] CreateFragments(IndexReader reader, int docId, String fieldName, FieldFragList fieldFragList, int maxNumFragments)
         {
             if (maxNumFragments < 0)
                 throw new ArgumentException("maxNumFragments(" + maxNumFragments + ") must be positive number.");
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 
 
         [Obsolete]
-        protected String GetFragmentSource(StringBuilder buffer, int[] index, String[] values, int startOffset, int endOffset)
+        protected virtual String GetFragmentSource(StringBuilder buffer, int[] index, String[] values, int startOffset, int endOffset)
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             return buffer.ToString().Substring(startOffset, eo - startOffset);
         }
 
-        protected String GetFragmentSource(StringBuilder buffer, int[] index, Field[] values, int startOffset, int endOffset)
+        protected virtual String GetFragmentSource(StringBuilder buffer, int[] index, Field[] values, int startOffset, int endOffset)
         {
             while (buffer.Length < endOffset && index[0] < values.Length)
             {
