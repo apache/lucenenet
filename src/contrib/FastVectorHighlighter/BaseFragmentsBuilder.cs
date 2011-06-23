@@ -93,13 +93,13 @@ namespace Lucene.Net.Search.Vectorhighlight
         }
 
         [Obsolete]
-        protected String[] GetFieldValues(IndexReader reader, int docId, String fieldName)
+        protected virtual String[] GetFieldValues(IndexReader reader, int docId, String fieldName)
         {
             Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
             return doc.GetValues(fieldName); // according to Document class javadoc, this never returns null
         }
 
-        protected Field[] GetFields(IndexReader reader, int docId, String fieldName)
+        protected virtual Field[] GetFields(IndexReader reader, int docId, String fieldName)
         {
             // according to javadoc, doc.getFields(fieldName) cannot be used with lazy loaded field???
             Document doc = reader.Document(docId, new MapFieldSelector(new String[] { fieldName }));
@@ -107,13 +107,13 @@ namespace Lucene.Net.Search.Vectorhighlight
         }
 
         [Obsolete]
-        protected String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
+        protected virtual String MakeFragment(StringBuilder buffer, int[] index, String[] values, WeightedFragInfo fragInfo)
         {
             int s = fragInfo.startOffset;
             return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
         }
 
-        protected String MakeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo)
+        protected virtual String MakeFragment(StringBuilder buffer, int[] index, Field[] values, WeightedFragInfo fragInfo)
         {
             int s = fragInfo.startOffset;
             return MakeFragment(fragInfo, GetFragmentSource(buffer, index, values, s, fragInfo.endOffset), s);
@@ -186,13 +186,13 @@ namespace Lucene.Net.Search.Vectorhighlight
             return buffer.ToString().Substring(startOffset, eo - startOffset);
         }
 
-        protected String GetPreTag(int num)
+        protected virtual String GetPreTag(int num)
         {
             int n = num % preTags.Length;
             return preTags[n];
         }
 
-        protected String GetPostTag(int num)
+        protected virtual String GetPostTag(int num)
         {
             int n = num % postTags.Length;
             return postTags[n];
