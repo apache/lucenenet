@@ -37,18 +37,29 @@ namespace Lucene.Net.Search.Vectorhighlight
         public LinkedList<WeightedPhraseInfo> phraseList = new LinkedList<WeightedPhraseInfo>();
         
         /// <summary>
+        /// create a FieldPhraseList that has no limit on the number of phrases to analyze
+        /// <param name="fieldQuery">FieldTermStack object</param>
+        /// <param name="fieldTermStack">FieldQuery object</param>
+        /// </summary>
+        public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery) : this(fieldTermStack, fieldQuery, Int32.MaxValue)
+        {
+        }
+  
+
+        /// <summary>
         /// a constructor. 
         /// </summary>
         /// <param name="fieldTermStack">FieldTermStack object</param>
         /// <param name="fieldQuery">FieldQuery object</param>
-        public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery)
+        /// <param name="phraseLimit">maximum size of phraseList</param>
+        public FieldPhraseList(FieldTermStack fieldTermStack, FieldQuery fieldQuery, int phraseLimit)
         {
             String field = fieldTermStack.GetFieldName();
 
             LinkedList<TermInfo> phraseCandidate = new LinkedList<TermInfo>();
             QueryPhraseMap currMap = null;
             QueryPhraseMap nextMap = null;
-            while (!fieldTermStack.IsEmpty())
+            while (!fieldTermStack.IsEmpty() && (phraseList.Count < phraseLimit) )
             {
 
                 phraseCandidate.Clear();
