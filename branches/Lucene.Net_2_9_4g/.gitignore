@@ -10,3 +10,4 @@ obj
 *.VisualState.xml
 *.userprefs
 *.pidb
+test-results
