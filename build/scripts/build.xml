@@ -78,14 +78,17 @@
 		TODO: fix this
 		<RemoveDir Directories="@(BuildFolders)" /> -->
 	</Target>
+
   
  	<Target Name="build">
 		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)" />
 	</Target>
   
+	
 	<Target Name="test">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
 		<Exec Command="$(Executable) %(NUnitFolder.FullPath)nunit-console.exe -nologo @(TestFiles)" />
 	</Target>
+
 
 </Project>

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -15,12 +16,15 @@
 # limitations under the License.
 
 TARGETS="all"
+
 BuildArea="all"
 Configuration="debug"
+
 if [ -n "$1" ] 
 		then 
 			TARGETS=$1
 fi
+
 if [ "$#" -gt "1" ]
 		then
 			TARGETS=${!#}
