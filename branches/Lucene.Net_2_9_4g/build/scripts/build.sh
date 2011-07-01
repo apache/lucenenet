@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 #!/bin/bash
 
+=======
+#!/bin/sh
+>>>>>>> LUCENENET-400 adding the code that excutes xbuild for mono using a shell script.  tweaking the build.xml to work for both msbuild & xbuild. expliciting naming the target 'lucene' for the lucene only build, instead being too generic and calling it 'build'
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -16,7 +20,6 @@
 # limitations under the License.
 
 TARGETS="all"
-
 BuildArea="all"
 Configuration="debug"
 
