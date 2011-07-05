@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Documents
 {
@@ -27,12 +28,12 @@ namespace Lucene.Net.Documents
 	public class MapFieldSelector : FieldSelector
 	{
 
-        internal Support.Dictionary<string, FieldSelectorResult> fieldSelections;
+        internal Dictionary<string, FieldSelectorResult> fieldSelections;
 		
 		/// <summary>Create a a MapFieldSelector</summary>
 		/// <param name="fieldSelections">maps from field names (String) to {@link FieldSelectorResult}s
 		/// </param>
-        public MapFieldSelector(Support.Dictionary<string, FieldSelectorResult> fieldSelections)
+        public MapFieldSelector(Dictionary<string, FieldSelectorResult> fieldSelections)
 		{
 			this.fieldSelections = fieldSelections;
 		}
@@ -42,7 +43,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		public MapFieldSelector(System.Collections.Generic.IList<string> fields)
 		{
-			fieldSelections = new Support.Dictionary<string, FieldSelectorResult>(fields.Count * 5 / 3);
+			fieldSelections = new Dictionary<string, FieldSelectorResult>(fields.Count * 5 / 3);
 			for (int i = 0; i < fields.Count; i++)
 				fieldSelections[fields[i]] = FieldSelectorResult.LOAD;
 		}
@@ -52,7 +53,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		public MapFieldSelector(System.String[] fields)
 		{
-            fieldSelections = new Support.Dictionary<string, FieldSelectorResult>(fields.Length * 5 / 3);
+            fieldSelections = new Dictionary<string, FieldSelectorResult>(fields.Length * 5 / 3);
 			for (int i = 0; i < fields.Length; i++)
 				fieldSelections[fields[i]] = FieldSelectorResult.LOAD;
 		}
@@ -64,8 +65,8 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public virtual FieldSelectorResult Accept(System.String field)
 		{
-			FieldSelectorResult selection = (FieldSelectorResult) fieldSelections[field];
-			return selection != null?selection:FieldSelectorResult.NO_LOAD;
+            FieldSelectorResult selection = FieldSelectorResult.NO_LOAD;
+            return fieldSelections.TryGetValue(field, out selection) != false ? selection : FieldSelectorResult.NO_LOAD;
 		}
 	}
 }
