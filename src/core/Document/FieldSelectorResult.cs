@@ -21,100 +21,66 @@ using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Documents
 {
-	/// <summary>  Provides information about what should be done with this Field 
-	/// 
-	/// 
-	/// </summary>
-	//Replace with an enumerated type in 1.5
-	[Serializable]
-	public sealed class FieldSelectorResult : IEquatable<FieldSelectorResult>
-	{
-		
-		/// <summary> Load this {@link Field} every time the {@link Document} is loaded, reading in the data as it is encountered.
-		/// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
-		/// <p/>
-		/// {@link Document#Add(Fieldable)} should be called by the Reader.
-		/// </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult LOAD = new FieldSelectorResult(0);
-		/// <summary> Lazily load this {@link Field}.  This means the {@link Field} is valid, but it may not actually contain its data until
-		/// invoked.  {@link Document#GetField(String)} SHOULD NOT BE USED.  {@link Document#GetFieldable(String)} is safe to use and should
-		/// return a valid instance of a {@link Fieldable}.
-		/// <p/>
-		/// {@link Document#Add(Fieldable)} should be called by the Reader.
-		/// </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult LAZY_LOAD = new FieldSelectorResult(1);
-		/// <summary> Do not load the {@link Field}.  {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should return null.
-		/// {@link Document#Add(Fieldable)} is not called.
-		/// <p/>
-		/// {@link Document#Add(Fieldable)} should not be called by the Reader.
-		/// </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult NO_LOAD = new FieldSelectorResult(2);
-		/// <summary> Load this field as in the {@link #LOAD} case, but immediately return from {@link Field} loading for the {@link Document}.  Thus, the
-		/// Document may not have its complete set of Fields.  {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should
-		/// both be valid for this {@link Field}
-		/// <p/>
-		/// {@link Document#Add(Fieldable)} should be called by the Reader.
-		/// </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult LOAD_AND_BREAK = new FieldSelectorResult(3);
-		/// <summary> Behaves much like {@link #LOAD} but does not uncompress any compressed data.  This is used for internal purposes.
-		/// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
-		/// <p/>
-		/// {@link Document#Add(Fieldable)} should be called by
-		/// the Reader.
-		/// </summary>
-		/// <deprecated> This is an internal option only, and is
-		/// no longer needed now that {@link CompressionTools}
-		/// is used for field compression.
-		/// </deprecated>
+    /// <summary>  Provides information about what should be done with this Field 
+    /// 
+    /// 
+    /// </summary>
+    //Replace with an enumerated type in 1.5
+    [Serializable]
+    public enum FieldSelectorResult
+    {
+
+        /// <summary> Load this {@link Field} every time the {@link Document} is loaded, reading in the data as it is encountered.
+        /// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
+        /// <p/>
+        /// {@link Document#Add(Fieldable)} should be called by the Reader.
+        /// </summary>
+        LOAD,
+
+        /// <summary> Lazily load this {@link Field}.  This means the {@link Field} is valid, but it may not actually contain its data until
+        /// invoked.  {@link Document#GetField(String)} SHOULD NOT BE USED.  {@link Document#GetFieldable(String)} is safe to use and should
+        /// return a valid instance of a {@link Fieldable}.
+        /// <p/>
+        /// {@link Document#Add(Fieldable)} should be called by the Reader.
+        /// </summary>
+        LAZY_LOAD,
+
+        /// <summary> Do not load the {@link Field}.  {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should return null.
+        /// {@link Document#Add(Fieldable)} is not called.
+        /// <p/>
+        /// {@link Document#Add(Fieldable)} should not be called by the Reader.
+        /// </summary>
+        NO_LOAD,
+
+        /// <summary> Load this field as in the {@link #LOAD} case, but immediately return from {@link Field} loading for the {@link Document}.  Thus, the
+        /// Document may not have its complete set of Fields.  {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should
+        /// both be valid for this {@link Field}
+        /// <p/>
+        /// {@link Document#Add(Fieldable)} should be called by the Reader.
+        /// </summary>
+        LOAD_AND_BREAK,
+
+        /// <summary>Expert:  Load the size of this {@link Field} rather than its value.
+        /// Size is measured as number of bytes required to store the field == bytes for a binary or any compressed value, and 2*chars for a String value.
+        /// The size is stored as a binary value, represented as an int in a byte[], with the higher order byte first in [0]
+        /// </summary>
+        SIZE,
+
+        /// <summary>Expert: Like {@link #SIZE} but immediately break from the field loading loop, i.e., stop loading further fields, after the size is loaded </summary>
+        SIZE_AND_BREAK,
+
+        /// <summary> Behaves much like {@link #LOAD} but does not uncompress any compressed data.  This is used for internal purposes.
+        /// {@link Document#GetField(String)} and {@link Document#GetFieldable(String)} should not return null.
+        /// <p/>
+        /// {@link Document#Add(Fieldable)} should be called by
+        /// the Reader.
+        /// </summary>
+        /// <deprecated> This is an internal option only, and is
+        /// no longer needed now that {@link CompressionTools}
+        /// is used for field compression.
+        /// </deprecated>
         [Obsolete("This is an internal option only, and is no longer needed now that CompressionTools is used for field compression.")]
-		[NonSerialized]
-		public static readonly FieldSelectorResult LOAD_FOR_MERGE = new FieldSelectorResult(4);
-		
-		/// <summary>Expert:  Load the size of this {@link Field} rather than its value.
-		/// Size is measured as number of bytes required to store the field == bytes for a binary or any compressed value, and 2*chars for a String value.
-		/// The size is stored as a binary value, represented as an int in a byte[], with the higher order byte first in [0]
-		/// </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult SIZE = new FieldSelectorResult(5);
-		
-		/// <summary>Expert: Like {@link #SIZE} but immediately break from the field loading loop, i.e., stop loading further fields, after the size is loaded </summary>
-		[NonSerialized]
-		public static readonly FieldSelectorResult SIZE_AND_BREAK = new FieldSelectorResult(6);
-		
-		
-		
-		private int id;
-		
-		private FieldSelectorResult(int id)
-		{
-			this.id = id;
-		}
-		
-		public  override bool Equals(System.Object o)
-		{
-            return Equals(o as FieldSelectorResult);
-		}
-
-        public bool Equals(FieldSelectorResult other)
-        {
-            if (this == other)
-                return true;
-            if (other == null || GetType() != other.GetType())
-                return false;
-
-            if (id != other.id)
-                return false;
-
-            return true;
-        }
-		
-		public override int GetHashCode()
-		{
-			return id;
-		}
+        LOAD_FOR_MERGE
     }
 }
+
