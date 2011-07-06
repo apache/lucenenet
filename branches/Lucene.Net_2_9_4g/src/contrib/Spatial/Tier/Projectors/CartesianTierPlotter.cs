@@ -22,14 +22,14 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 	public class CartesianTierPlotter
 	{
 		public const String DefaltFieldPrefix = "_tier_";
+        public static double EARTH_CIRC_MILES= 28892.0d;
 
 		private readonly int _tierLevel;
 		private int _tierLength;
 		private int _tierBoxes;
 		private readonly IProjector _projector;
 		private readonly string _fieldPrefix;
-		private const double Idd = 180d;
-
+		
 		public CartesianTierPlotter(int tierLevel, IProjector projector, string fieldPrefix)
 		{
 			_tierLevel = tierLevel;
@@ -72,20 +72,21 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 		public double GetTierBoxId(double latitude, double longitude)
 		{
 			double[] coords = _projector.Coords(latitude, longitude);
+            double[] ranges = _projector.Range();
 
-			double id = GetBoxId(coords[0]) + (GetBoxId(coords[1]) / TierVerticalPosDivider);
+            double id = GetBoxCoord(coords[0], ranges[0]) + (GetBoxCoord(coords[1], ranges[1]) / TierVerticalPosDivider);
 			return id;
 		}
 
-		private double GetBoxId(double coord)
+        private double GetBoxCoord(double coord, double range)
 		{
-			return Math.Floor(coord / (Idd / _tierLength));
+            return Math.Floor(coord * (this._tierLength / range));
 		}
 
-		private double GetBoxId(double coord, int tierLen)
-		{
-			return Math.Floor(coord / (Idd / tierLen));
-		}
+        //private double GetBoxId(double coord, int tierLen)
+        //{
+        //    return Math.Floor(coord / (Idd / tierLen));
+        //}
 
 		/// <summary>
 		/// Get the string name representing current tier _localTier&lt;tiedId&gt;
@@ -116,26 +117,41 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 		/// </summary>
 		/// <param name="miles">The miles.</param>
 		/// <returns></returns>
-		public int BestFit(double miles)
-		{
+        public int BestFit(double range)
+        {
+            double times = EARTH_CIRC_MILES / (2.0d * range);
 
-			//28,892 a rough circumference of the earth
-			const int circ = 28892;
+            int bestFit = (int)Math.Ceiling(Math.Log(times, 2));
 
-			double r = miles / 2.0;
+            if (bestFit > 15)
+            {
+                // 15 is the granularity of about 1 mile
+                // finer granularity isn't accurate with standard java math
+                return 15;
+            }
+            return bestFit;
+        }
+        //public int BestFit(double miles)
+        //{
 
-			double corner = r - Math.Sqrt(Math.Pow(r, 2) / 2.0d);
-			double times = circ / corner;
-			int bestFit = (int)Math.Ceiling(Log2(times)) + 1;
+        //    //28,892 a rough circumference of the earth
+        //    const int circ = 28892;
 
-			if (bestFit > 15)
-			{
-				// 15 is the granularity of about 1 mile
-				// finer granularity isn't accurate with standard java math
-				return 15;
-			}
-			return bestFit;
-		}
+        //    double r = miles / 2.0;
+
+        //    double corner = r - Math.Sqrt(Math.Pow(r, 2) / 2.0d);
+        //    double times = circ / corner;
+        //    int bestFit = (int)Math.Ceiling(Log2(times)) + 1;
+
+        //    if (bestFit > 15)
+        //    {
+        //        // 15 is the granularity of about 1 mile
+        //        // finer granularity isn't accurate with standard java math
+        //        return 15;
+        //    }
+        //    return bestFit;
+        //}
+       
 
 		/// <summary>
 		/// A log to the base 2 formula.
