@@ -17,6 +17,8 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -123,8 +125,22 @@ namespace Lucene.Net.Util
                 {
                     // we currently assume that the assembly's directory is root/bin/[Section]/[Build]
                     // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.  
-                    var assemblyLocation = AssemblyDirectory;
-                    s_projectRootDirectory = CombinePath(assemblyLocation, "..", "..", "..");
+                    string assemblyLocation = AssemblyDirectory;
+                    int index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar);
+                   
+                    int difference = assemblyLocation.Substring(index).Count(o => o == Path.DirectorySeparatorChar);
+
+                    var list = new List<string>();
+
+                    for (int i = 0; i < difference; i++)
+                        list.Add("..");
+
+                    var parameters = list.ToArray();
+
+                    s_projectRootDirectory = Path.GetFullPath(CombinePath(assemblyLocation, parameters));
+
+                    //TODO: remove
+                    Console.WriteLine(s_projectRootDirectory);
                 }
                 return s_projectRootDirectory;
             }
