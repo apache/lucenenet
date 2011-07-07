@@ -81,5 +81,10 @@ namespace Lucene.Net.Support
                 return false;
             }
         }
+
+        public System.Collections.Generic.IList<TItem> Values()
+        {
+            return base.Items;
+        }
     }
 }
