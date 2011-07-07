@@ -85,6 +85,7 @@
     <Compile Include="AR\TestArabicAnalyzer.cs" />
     <Compile Include="AR\TestArabicNormalizationFilter.cs" />
     <Compile Include="AR\TestArabicStemFilter.cs" />
+    <Compile Include="Filters\ChainedFilterTest.cs" />
     <Compile Include="Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
