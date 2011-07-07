@@ -712,19 +712,19 @@ namespace Lucene.Net.Index
 				return files;
 			}
 
-            files = new List<string>();
+            List<string> fileList = new List<string>();
 			
 			bool useCompoundFile = GetUseCompoundFile();
 			
 			if (useCompoundFile)
 			{
-				files.Add(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+                fileList.Add(name + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
 			}
 			else
 			{
 				System.String[] exts = IndexFileNames.NON_STORE_INDEX_EXTENSIONS;
 				for (int i = 0; i < exts.Length; i++)
-					AddIfExists(files, name + "." + exts[i]);
+                    AddIfExists(fileList, name + "." + exts[i]);
 			}
 			
 			if (docStoreOffset != - 1)
@@ -734,13 +734,13 @@ namespace Lucene.Net.Index
 				System.Diagnostics.Debug.Assert(docStoreSegment != null);
 				if (docStoreIsCompoundFile)
 				{
-					files.Add(docStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION);
+                    fileList.Add(docStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION);
 				}
 				else
 				{
 					System.String[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
 					for (int i = 0; i < exts.Length; i++)
-						AddIfExists(files, docStoreSegment + "." + exts[i]);
+                        AddIfExists(fileList, docStoreSegment + "." + exts[i]);
 				}
 			}
 			else if (!useCompoundFile)
@@ -749,13 +749,13 @@ namespace Lucene.Net.Index
 				// included in the compound file
 				System.String[] exts = IndexFileNames.STORE_INDEX_EXTENSIONS;
 				for (int i = 0; i < exts.Length; i++)
-					AddIfExists(files, name + "." + exts[i]);
+                    AddIfExists(fileList, name + "." + exts[i]);
 			}
 			
 			System.String delFileName = IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.DELETES_EXTENSION, delGen);
 			if (delFileName != null && (delGen >= YES || dir.FileExists(delFileName)))
 			{
-				files.Add(delFileName);
+                fileList.Add(delFileName);
 			}
 			
 			// Careful logic for norms files    
@@ -767,7 +767,7 @@ namespace Lucene.Net.Index
 					if (gen >= YES)
 					{
 						// Definitely a separate norm file, with generation:
-						files.Add(IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.SEPARATE_NORMS_EXTENSION + i, gen));
+                        fileList.Add(IndexFileNames.FileNameFromGeneration(name, "." + IndexFileNames.SEPARATE_NORMS_EXTENSION + i, gen));
 					}
 					else if (NO == gen)
 					{
@@ -778,7 +778,7 @@ namespace Lucene.Net.Index
 							System.String fileName = name + "." + IndexFileNames.PLAIN_NORMS_EXTENSION + i;
 							if (dir.FileExists(fileName))
 							{
-								files.Add(fileName);
+                                fileList.Add(fileName);
 							}
 						}
 					}
@@ -796,7 +796,7 @@ namespace Lucene.Net.Index
 						}
 						if (fileName != null && dir.FileExists(fileName))
 						{
-							files.Add(fileName);
+                            fileList.Add(fileName);
 						}
 					}
 				}
@@ -818,10 +818,12 @@ namespace Lucene.Net.Index
 					System.String fileName = allFiles[i];
 					if (filter.Accept(null, fileName) && fileName.Length > prefixLength && System.Char.IsDigit(fileName[prefixLength]) && fileName.StartsWith(prefix))
 					{
-						files.Add(fileName);
+                        fileList.Add(fileName);
 					}
 				}
 			}
+            //System.Diagnostics.Debug.Assert();
+            files = fileList;
 			return files;
 		}
 		
