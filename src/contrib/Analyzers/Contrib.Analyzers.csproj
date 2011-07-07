@@ -60,6 +60,7 @@
     <Compile Include="De\GermanStemFilter.cs" />
     <Compile Include="De\GermanStemmer.cs" />
     <Compile Include="De\WordlistLoader.cs" />
+    <Compile Include="Filters\ChainedFilter.cs" />
     <Compile Include="Fr\FrenchAnalyzer.cs" />
     <Compile Include="Fr\FrenchStemFilter.cs" />
     <Compile Include="Fr\FrenchStemmer.cs" />

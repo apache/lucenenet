@@ -59,6 +59,7 @@
     <Compile Include="AR\TestArabicAnalyzer.cs" />
     <Compile Include="AR\TestArabicNormalizationFilter.cs" />
     <Compile Include="AR\TestArabicStemFilter.cs" />
+    <Compile Include="Filters\ChainedFilterTest.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
     <Compile Include="NGram\TestNGramTokenFilter.cs" />
