@@ -68,13 +68,7 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public sealed class TeeSinkTokenFilter:TokenFilter
 	{
-		public class AnonymousClassSinkFilter:SinkFilter
-		{
-			public override bool Accept(AttributeSource source)
-			{
-				return true;
-			}
-		}
+
         private List<WeakReference> sinks = new List<WeakReference>();
 		
 		/// <summary> Instantiates a new TeeSinkTokenFilter.</summary>
@@ -171,15 +165,16 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		/// <summary> A filter that decides which {@link AttributeSource} states to store in the sink.</summary>
-		public abstract class SinkFilter
+		/// <summary> A filter that decides which <see cref="AttributeSource"/> states to store in the sink.</summary>
+		public class SinkFilter
 		{
-			/// <summary> Returns true, iff the current state of the passed-in {@link AttributeSource} shall be stored
+
+			/// <summary> Returns true, if the current state of the passed-in <see cref="AttributeSource"/> shall be stored
 			/// in the sink. 
 			/// </summary>
-			public abstract bool Accept(AttributeSource source);
+            public Func<AttributeSource, bool> Accept;
 			
-			/// <summary> Called by {@link SinkTokenStream#Reset()}. This method does nothing by default
+			/// <summary> Called by <see cref="SinkTokenStream.Reset"/>. This method does nothing by default
 			/// and can optionally be overridden.
 			/// </summary>
 			public void  Reset()
@@ -254,7 +249,8 @@ namespace Lucene.Net.Analysis
 		private static readonly SinkFilter ACCEPT_ALL_FILTER;
 		static TeeSinkTokenFilter()
 		{
-			ACCEPT_ALL_FILTER = new AnonymousClassSinkFilter();
+            ACCEPT_ALL_FILTER = new SinkFilter() 
+            { Accept = (a) => { return true; } };
 		}
 	}
 }

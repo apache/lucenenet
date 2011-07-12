@@ -33,22 +33,7 @@ namespace Lucene.Net.Analysis
     [TestFixture]
 	public class TestTeeSinkTokenFilter:BaseTokenStreamTestCase
 	{
-		public class AnonymousClassSinkFilter:TeeSinkTokenFilter.SinkFilter
-		{
-			public override bool Accept(AttributeSource a)
-			{
-				TermAttribute termAtt = (TermAttribute) a.GetAttribute(typeof(TermAttribute));
-				return termAtt.Term().ToUpper().Equals("The".ToUpper());
-			}
-		}
-		public class AnonymousClassSinkFilter1:TeeSinkTokenFilter.SinkFilter
-		{
-			public override bool Accept(AttributeSource a)
-			{
-				TermAttribute termAtt = (TermAttribute) a.GetAttribute(typeof(TermAttribute));
-				return termAtt.Term().ToUpper().Equals("Dogs".ToUpper());
-			}
-		}
+
 		protected internal System.Text.StringBuilder buffer1;
 		protected internal System.Text.StringBuilder buffer2;
 		protected internal System.String[] tokens1;
@@ -269,24 +254,42 @@ namespace Lucene.Net.Analysis
 			}
 			internal int count = 0;
 			internal int modCount;
-			
-			internal ModuloSinkFilter(TestTeeSinkTokenFilter enclosingInstance, int mc)
+
+            internal ModuloSinkFilter(TestTeeSinkTokenFilter enclosingInstance, int mc)
 			{
-				InitBlock(enclosingInstance);
+                Accept = (a) =>
+                {
+                    bool b = (a != null && count % modCount == 0);
+                    count++;
+                    return b;
+                };
+                InitBlock(enclosingInstance);
 				modCount = mc;
 			}
-			
-			public override bool Accept(AttributeSource a)
-			{
-				bool b = (a != null && count % modCount == 0);
-				count++;
-				return b;
-			}
+
 		}
 		static TestTeeSinkTokenFilter()
 		{
-			theFilter = new AnonymousClassSinkFilter();
-			dogFilter = new AnonymousClassSinkFilter1();
+		    theFilter = new TeeSinkTokenFilter.SinkFilter()
+		    {
+
+		        Accept = (a) =>
+		        {
+		            TermAttribute termAtt =
+		                (TermAttribute) a.GetAttribute(typeof (TermAttribute));
+		            return termAtt.Term().ToUpper().Equals("The".ToUpper());
+		        }
+		    };
+
+		    dogFilter = new TeeSinkTokenFilter.SinkFilter()
+		    {
+		        Accept = (a) =>
+		        {
+		            TermAttribute termAtt =
+		                (TermAttribute) a.GetAttribute(typeof (TermAttribute));
+		            return termAtt.Term().ToUpper().Equals("Dogs".ToUpper());
+		        }
+		    };
 		}
 	}
 }
