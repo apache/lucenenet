@@ -17,7 +17,6 @@
 
 using System;
 
-using LucenePackage = Lucene.Net.LucenePackage;
 
 namespace Lucene.Net.Util
 {

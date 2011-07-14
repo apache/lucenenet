@@ -465,9 +465,6 @@
     <Compile Include="Index\TermVectorsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LucenePackage.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\MessageImpl.cs" />
     <Compile Include="Messages\NLS.cs" />
