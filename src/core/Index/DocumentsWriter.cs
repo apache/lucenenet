@@ -101,40 +101,7 @@ namespace Lucene.Net.Index
 	
 	public sealed class DocumentsWriter
 	{
-		internal class AnonymousClassIndexingChain:IndexingChain
-		{
-			
-			internal override DocConsumer GetChain(DocumentsWriter documentsWriter)
-			{
-				/*
-				This is the current indexing chain:
-				
-				DocConsumer / DocConsumerPerThread
-				--> code: DocFieldProcessor / DocFieldProcessorPerThread
-				--> DocFieldConsumer / DocFieldConsumerPerThread / DocFieldConsumerPerField
-				--> code: DocFieldConsumers / DocFieldConsumersPerThread / DocFieldConsumersPerField
-				--> code: DocInverter / DocInverterPerThread / DocInverterPerField
-				--> InvertedDocConsumer / InvertedDocConsumerPerThread / InvertedDocConsumerPerField
-				--> code: TermsHash / TermsHashPerThread / TermsHashPerField
-				--> TermsHashConsumer / TermsHashConsumerPerThread / TermsHashConsumerPerField
-				--> code: FreqProxTermsWriter / FreqProxTermsWriterPerThread / FreqProxTermsWriterPerField
-				--> code: TermVectorsTermsWriter / TermVectorsTermsWriterPerThread / TermVectorsTermsWriterPerField
-				--> InvertedDocEndConsumer / InvertedDocConsumerPerThread / InvertedDocConsumerPerField
-				--> code: NormsWriter / NormsWriterPerThread / NormsWriterPerField
-				--> code: StoredFieldsWriter / StoredFieldsWriterPerThread / StoredFieldsWriterPerField
-				*/
-				
-				// Build up indexing chain:
-				
-				TermsHashConsumer termVectorsWriter = new TermVectorsTermsWriter(documentsWriter);
-				TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
-				
-				InvertedDocConsumer termsHash = new TermsHash(documentsWriter, true, freqProxWriter, new TermsHash(documentsWriter, false, termVectorsWriter, null));
-				NormsWriter normsWriter = new NormsWriter();
-				DocInverter docInverter = new DocInverter(termsHash, normsWriter);
-				return new DocFieldProcessor(documentsWriter, docInverter);
-			}
-		}
+		
 		private void  InitBlock()
 		{
 			maxFieldLength = IndexWriter.DEFAULT_MAX_FIELD_LENGTH;
@@ -279,13 +246,13 @@ namespace Lucene.Net.Index
             }
         }
 
-		/// <summary> The IndexingChain must define the {@link #GetChain(DocumentsWriter)} method
+        /// <summary> The IndexingChain must define the <see cref="GetChain(DocumentsWriter)"/> method
 		/// which returns the DocConsumer that the DocumentsWriter calls to process the
 		/// documents. 
 		/// </summary>
-		internal abstract class IndexingChain
+		internal class IndexingChain
 		{
-			internal abstract DocConsumer GetChain(DocumentsWriter documentsWriter);
+			internal Func<DocumentsWriter, DocConsumer> GetChain;
 		}
 		
 		internal static readonly IndexingChain DefaultIndexingChain;
@@ -2123,7 +2090,38 @@ namespace Lucene.Net.Index
 		}
 		static DocumentsWriter()
 		{
-			DefaultIndexingChain = new AnonymousClassIndexingChain();
+			DefaultIndexingChain = new IndexingChain()
+            { GetChain = (documentsWriter) =>
+			    {
+				    /*
+				    This is the current indexing chain:
+				
+				    DocConsumer / DocConsumerPerThread
+				    --> code: DocFieldProcessor / DocFieldProcessorPerThread
+				    --> DocFieldConsumer / DocFieldConsumerPerThread / DocFieldConsumerPerField
+				    --> code: DocFieldConsumers / DocFieldConsumersPerThread / DocFieldConsumersPerField
+				    --> code: DocInverter / DocInverterPerThread / DocInverterPerField
+				    --> InvertedDocConsumer / InvertedDocConsumerPerThread / InvertedDocConsumerPerField
+				    --> code: TermsHash / TermsHashPerThread / TermsHashPerField
+				    --> TermsHashConsumer / TermsHashConsumerPerThread / TermsHashConsumerPerField
+				    --> code: FreqProxTermsWriter / FreqProxTermsWriterPerThread / FreqProxTermsWriterPerField
+				    --> code: TermVectorsTermsWriter / TermVectorsTermsWriterPerThread / TermVectorsTermsWriterPerField
+				    --> InvertedDocEndConsumer / InvertedDocConsumerPerThread / InvertedDocConsumerPerField
+				    --> code: NormsWriter / NormsWriterPerThread / NormsWriterPerField
+				    --> code: StoredFieldsWriter / StoredFieldsWriterPerThread / StoredFieldsWriterPerField
+				    */
+				
+				    // Build up indexing chain:
+				
+				    TermsHashConsumer termVectorsWriter = new TermVectorsTermsWriter(documentsWriter);
+				    TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
+				
+				    InvertedDocConsumer termsHash = new TermsHash(documentsWriter, true, freqProxWriter, new TermsHash(documentsWriter, false, termVectorsWriter, null));
+				    NormsWriter normsWriter = new NormsWriter();
+				    DocInverter docInverter = new DocInverter(termsHash, normsWriter);
+				    return new DocFieldProcessor(documentsWriter, docInverter);
+			    }
+            };
 			POINTER_NUM_BYTE = Constants.JRE_IS_64BIT?8:4;
 		}
 

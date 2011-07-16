@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
 	/// It is also useful for doing things like entity extraction or proper noun analysis as
 	/// part of the analysis workflow and saving off those tokens for use in another field.
 	/// 
-	/// <pre>
+	/// <code>
 	/// TeeSinkTokenFilter source1 = new TeeSinkTokenFilter(new WhitespaceTokenizer(reader1));
 	/// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.newSinkTokenStream();
 	/// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.newSinkTokenStream();
@@ -46,13 +46,13 @@ namespace Lucene.Net.Analysis
 	/// d.add(new Field("f2", final2));
 	/// d.add(new Field("f3", final3));
 	/// d.add(new Field("f4", final4));
-	/// </pre>
+	/// </code>
 	/// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
 	/// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
 	/// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
 	/// It is important, that tees are consumed before sinks (in the above example, the field names must be
 	/// less the sink's field names). If you are not sure, which stream is consumed first, you can simply
-	/// add another sink and then pass all tokens to the sinks at once using {@link #consumeAllTokens}.
+	/// add another sink and then pass all tokens to the sinks at once using <seealso cref="ConsumeAllTokens"/>.
 	/// This TokenFilter is exhausted after this. In the above example, change
 	/// the example above to:
 	/// <pre>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis
 	/// ...
 	/// </pre>
 	/// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are ready.
-	/// <p/>Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
+	/// <p/>Info: The EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
 	/// </summary>
 	public sealed class TeeSinkTokenFilter:TokenFilter
 	{
@@ -76,25 +76,24 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary> Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream.</summary>
+		/// <summary> Returns a new <seealso cref="SinkTokenStream"/> that receives all tokens consumed by this stream.</summary>
 		public SinkTokenStream NewSinkTokenStream()
 		{
 			return NewSinkTokenStream(ACCEPT_ALL_FILTER);
 		}
-		
-		/// <summary> Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream
+
+        /// <summary> Returns a new <seealso cref="SinkTokenStream"/> that receives all tokens consumed by this stream
 		/// that pass the supplied filter.
 		/// </summary>
-		/// <seealso cref="SinkFilter">
-		/// </seealso>
+        /// <param name="filter"><seealso cref="SinkFilter"/></param> 
 		public SinkTokenStream NewSinkTokenStream(SinkFilter filter)
 		{
 			SinkTokenStream sink = new SinkTokenStream(this.CloneAttributes(), filter);
 			this.sinks.Add(new System.WeakReference(sink));
 			return sink;
 		}
-		
-		/// <summary> Adds a {@link SinkTokenStream} created by another <code>TeeSinkTokenFilter</code>
+
+        /// <summary> Adds a <seealso cref="SinkTokenStream"/> created by another <code>TeeSinkTokenFilter</code>
 		/// to this one. The supplied stream will also receive all consumed tokens.
 		/// This method can be used to pass tokens from two different tees to one sink.
 		/// </summary>
@@ -121,7 +120,7 @@ namespace Lucene.Net.Analysis
 		public void  ConsumeAllTokens()
 		{
 			while (IncrementToken())
-				;
+			{}
 		}
 		
 		public override bool IncrementToken()
@@ -249,8 +248,8 @@ namespace Lucene.Net.Analysis
 		private static readonly SinkFilter ACCEPT_ALL_FILTER;
 		static TeeSinkTokenFilter()
 		{
-            ACCEPT_ALL_FILTER = new SinkFilter() 
-            { Accept = (a) => { return true; } };
+            ACCEPT_ALL_FILTER = new SinkFilter 
+            { Accept = (a) => true};
 		}
 	}
 }
