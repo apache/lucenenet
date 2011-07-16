@@ -29,10 +29,18 @@ namespace Lucene.Net.Search
 		private System.String description; // what it represents
 		private List<Explanation> details; // sub-explanations
 		
+		///<summary>
+		/// Default Constructor
+		///</summary>
 		public Explanation()
 		{
 		}
 		
+		///<summary>
+		/// Class Constructor
+		///</summary>
+        ///<param name="value_Renamed">The value assigned to this explanation node.</param>
+        ///<param name="description">The description of this explanation node.</param>
 		public Explanation(float value_Renamed, System.String description)
 		{
 			this.value_Renamed = value_Renamed;
@@ -45,7 +53,7 @@ namespace Lucene.Net.Search
 		/// By default, an Explanation represents a "match" if the value is positive.
 		/// <p/>
 		/// </summary>
-		/// <seealso cref="getValue">
+		/// <seealso cref="GetValue">
 		/// </seealso>
 		public virtual bool IsMatch()
 		{
@@ -105,6 +113,11 @@ namespace Lucene.Net.Search
 		{
 			return ToString(0);
 		}
+		///<summary>
+        /// Render an explanation as text to a detail level. 
+		///</summary>
+		///<param name="depth"> Depth of detail</param>
+		///<returns></returns>
 		public /*protected internal*/ virtual System.String ToString(int depth)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -153,25 +166,28 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary> Small Util class used to pass both an idf factor as well as an
+		/// <summary> Small Utility class used to pass both an idf factor as well as an
 		/// explanation for that factor.
 		/// 
-		/// This class will likely be held on a {@link Weight}, so be aware 
+		/// This class will likely be held on a <see cref="Weight"/>, so be aware 
 		/// before storing any large or un-serializable fields.
 		/// 
 		/// </summary>
+		/// 
 		[Serializable]
-		public abstract class IDFExplanation
+		public class IDFExplanation
 		{
 			/// <returns> the idf factor
 			/// </returns>
-			public abstract float GetIdf();
+			[NonSerialized]
+			public Func<float> GetIdf;
 			/// <summary> This should be calculated lazily if possible.
 			/// 
 			/// </summary>
 			/// <returns> the explanation for the idf factor.
 			/// </returns>
-			public abstract System.String Explain();
+			[NonSerialized]
+			public Func<System.String> Explain;
 		}
 	}
 }
