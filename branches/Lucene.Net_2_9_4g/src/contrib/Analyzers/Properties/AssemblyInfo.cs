@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Contrib.Analyzers")]
+[assembly: AssemblyTitle("Lucene.Net.Analyzers")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net.Contrib.Analyzers")]
+[assembly: AssemblyProduct("Lucene.Net.Analyzers")]
 [assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.9.2.1")]
-[assembly: AssemblyFileVersion("2.9.2.1")]
+[assembly: AssemblyVersion("2.9.4.2")]
+[assembly: AssemblyFileVersion("2.9.4.2")]
