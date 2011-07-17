@@ -8,7 +8,7 @@
     <ProjectGuid>{4286E961-9143-4821-B46D-3D39D3736386}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
+    <RootNamespace>Lucene.Net.Analysis</RootNamespace>
     <AssemblyName>Lucene.Net.Analyzers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\contrib\Analyzers\Debug\</OutputPath>
+    <OutputPath>..\..\..\bin\contrib\Analyzers\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -60,10 +60,15 @@
     <Compile Include="De\GermanStemFilter.cs" />
     <Compile Include="De\GermanStemmer.cs" />
     <Compile Include="De\WordlistLoader.cs" />
-    <Compile Include="Filters\ChainedFilter.cs" />
+    <Compile Include="Miscellaneous\ChainedFilter.cs" />
     <Compile Include="Fr\FrenchAnalyzer.cs" />
     <Compile Include="Fr\FrenchStemFilter.cs" />
     <Compile Include="Fr\FrenchStemmer.cs" />
+    <Compile Include="Miscellaneous\EmptyTokenStream.cs" />
+    <Compile Include="Miscellaneous\InjectablePrefixAwareTokenFilter.cs" />
+    <Compile Include="Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
+    <Compile Include="Miscellaneous\PrefixAwareTokenStream.cs" />
+    <Compile Include="Miscellaneous\SingleTokenTokenStream.cs" />
     <Compile Include="NGram\EdgeNGramTokenFilter.cs" />
     <Compile Include="NGram\EdgeNGramTokenizer.cs" />
     <Compile Include="NGram\NGramTokenFilter.cs" />
@@ -72,6 +77,7 @@
     <Compile Include="Nl\DutchStemFilter.cs" />
     <Compile Include="Nl\DutchStemmer.cs" />
     <Compile Include="Nl\WordlistLoader.cs" />
+    <Compile Include="Payloads\PayloadHelper.cs" />
     <Compile Include="Ru\RussianAnalyzer.cs" />
     <Compile Include="Ru\RussianCharsets.cs" />
     <Compile Include="Ru\RussianLetterTokenizer.cs" />
@@ -79,6 +85,18 @@
     <Compile Include="Ru\RussianStemFilter.cs" />
     <Compile Include="Ru\RussianStemmer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shingle\Codec\OneDimensionalNonWeightedTokenSettingsCodec.cs" />
+    <Compile Include="Shingle\Codec\SimpleThreeDimensionalTokenSettingsCodec.cs" />
+    <Compile Include="Shingle\Codec\TokenSettingsCodec.cs" />
+    <Compile Include="Shingle\Codec\TwoDimensionalNonWeightedSynonymTokenSettingsCodec.cs" />
+    <Compile Include="Shingle\Matrix\Column.cs" />
+    <Compile Include="Shingle\Matrix\Matrix.cs" />
+    <Compile Include="Shingle\Matrix\MatrixPermutationIterator.cs" />
+    <Compile Include="Shingle\Matrix\Row.cs" />
+    <Compile Include="Shingle\ShingleAnalyzerWrapper.cs" />
+    <Compile Include="Shingle\ShingleFilter.cs" />
+    <Compile Include="Shingle\ShingleMatrixFilter.cs" />
+    <Compile Include="Shingle\TokenPositioner.cs" />
     <Compile Include="WordlistLoader.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +108,7 @@
       <Name>Lucene.Net</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

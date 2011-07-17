@@ -24,7 +24,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
     ///<summary>

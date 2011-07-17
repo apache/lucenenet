@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.AR
         {
             this.matchVersion = matchVersion;
 
-            using (StreamReader reader = new StreamReader(System.Reflection.Assembly.GetAssembly(this.GetType()).GetManifestResourceStream("Lucene.Net.Analyzers.AR." + DEFAULT_STOPWORD_FILE)))
+            using (StreamReader reader = new StreamReader(System.Reflection.Assembly.GetAssembly(this.GetType()).GetManifestResourceStream("Lucene.Net.Analysis.AR." + DEFAULT_STOPWORD_FILE)))
             {
                 while (!reader.EndOfStream)
                 {
