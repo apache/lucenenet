@@ -8,7 +8,7 @@
     <ProjectGuid>{67D27628-F1D5-4499-9818-B669731925C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
+    <RootNamespace>Lucene.Net.Analysis</RootNamespace>
     <AssemblyName>Lucene.Net.Analyzers.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -36,7 +36,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\contrib\Analyzers\Debug\</OutputPath>
+    <OutputPath>..\..\..\bin\contrib\Analyzers\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,12 +59,17 @@
     <Compile Include="AR\TestArabicAnalyzer.cs" />
     <Compile Include="AR\TestArabicNormalizationFilter.cs" />
     <Compile Include="AR\TestArabicStemFilter.cs" />
-    <Compile Include="Filters\ChainedFilterTest.cs" />
+    <Compile Include="Miscellaneous\ChainedFilterTest.cs" />
+    <Compile Include="Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
+    <Compile Include="Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenFilter.cs" />
     <Compile Include="NGram\TestEdgeNGramTokenizer.cs" />
     <Compile Include="NGram\TestNGramTokenFilter.cs" />
     <Compile Include="NGram\TestNGramTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shingle\ShingleAnalyzerWrapperTest.cs" />
+    <Compile Include="Shingle\ShingleFilterTest.cs" />
+    <Compile Include="Shingle\TestShingleMatrixFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\contrib\Analyzers\Contrib.Analyzers.csproj">
