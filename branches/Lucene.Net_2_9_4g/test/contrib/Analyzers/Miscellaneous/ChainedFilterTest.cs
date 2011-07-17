@@ -29,7 +29,7 @@ using Lucene.Net.Util;
 
 using NUnit.Framework;
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     public class ChainedFilterTest : Lucene.Net.TestCase
     {
