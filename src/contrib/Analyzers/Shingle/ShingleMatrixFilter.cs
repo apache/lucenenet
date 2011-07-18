@@ -136,7 +136,8 @@ namespace Lucene.Net.Analyzers.Shingle
         /// to get the same behaviour.
         /// </p>
         /// </summary>
-        private readonly HashSet<List<Token>> _shinglesSeen = new HashSet<List<Token>>(new ListComparer<Token>());
+        private readonly HashSet<SupportClass.EquatableList<Token>> _shinglesSeen =
+            new HashSet<SupportClass.EquatableList<Token>>(); 
 
         private readonly TermAttribute _termAtt;
         private readonly TypeAttribute _typeAtt;
@@ -382,7 +383,7 @@ namespace Lucene.Net.Analyzers.Shingle
 
                     var termLength = 0;
 
-                    var shingle = new List<Token>();
+                    var shingle = new SupportClass.EquatableList<Token>();
 
                     for (int i = 0; i < _currentShingleLength; i++)
                     {
