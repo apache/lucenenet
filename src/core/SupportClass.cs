@@ -24,11 +24,11 @@ using System.Collections;
 /// </summary>
 public interface IThreadRunnable
 {
-	/// <summary>
-	/// This method has to be implemented in order that starting of the thread causes the object's 
-	/// run method to be called in that separately executing thread.
-	/// </summary>
-	void Run();
+    /// <summary>
+    /// This method has to be implemented in order that starting of the thread causes the object's 
+    /// run method to be called in that separately executing thread.
+    /// </summary>
+    void Run();
 }
 
 /// <summary>
@@ -462,21 +462,21 @@ public class SupportClass
             return retFiles;
         }
 
-		// Disable the obsolete warning since we must use FileStream.Handle
-		// because Mono does not support FileSystem.SafeFileHandle at present.
+        // Disable the obsolete warning since we must use FileStream.Handle
+        // because Mono does not support FileSystem.SafeFileHandle at present.
 #pragma warning disable 618
 
-		/// <summary>
-		/// Flushes the specified file stream. Ensures that all buffered
-		/// data is actually written to the file system.
-		/// </summary>
-		/// <param name="fileStream">The file stream.</param>
-		public static void Sync(System.IO.FileStream fileStream)
-		{
-			if (fileStream == null)
-				throw new ArgumentNullException("fileStream");
+        /// <summary>
+        /// Flushes the specified file stream. Ensures that all buffered
+        /// data is actually written to the file system.
+        /// </summary>
+        /// <param name="fileStream">The file stream.</param>
+        public static void Sync(System.IO.FileStream fileStream)
+        {
+            if (fileStream == null)
+                throw new ArgumentNullException("fileStream");
 
-			fileStream.Flush();
+            fileStream.Flush();
 
             //if (OS.IsWindows)
             //{
@@ -492,7 +492,7 @@ public class SupportClass
             //{
             //    throw new NotImplementedException();
             //}
-		}
+        }
 
 #pragma warning restore 618
 
@@ -633,7 +633,7 @@ public class SupportClass
             long mult = 1;
 
             s = s.ToLower();
-			
+            
             for (int i = s.Length - 1; i >= 0; i--)
             {
                 int weight = digits.IndexOf(s[i]);
@@ -926,6 +926,16 @@ public class SupportClass
         {
             return f.ToString(format).Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
         }
+
+        public static int FloatToIntBits(float value)
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+        }
+
+        public static float IntBitsToFloat(int value)
+        {
+            return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+        }
     }
 
     /// <summary>
@@ -1151,8 +1161,8 @@ public class SupportClass
             return false;
         }
     }
-	
-	#region WEAKHASHTABLE
+    
+    #region WEAKHASHTABLE
     /// <summary>
     /// A Hashtable which holds weak references to its keys so they
     /// can be collected during GC. 
@@ -2116,42 +2126,42 @@ public class SupportClass
         internal Lucene.Net.Util.AttributeImpl Value;
     }
 
-	/// <summary>
-	/// Provides platform infos.
-	/// </summary>
-	public class OS
-	{
-		static bool isUnix;
-		static bool isWindows;
+    /// <summary>
+    /// Provides platform infos.
+    /// </summary>
+    public class OS
+    {
+        static bool isUnix;
+        static bool isWindows;
 
-		static OS()
-		{
-			PlatformID pid = Environment.OSVersion.Platform;
-			isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
+        static OS()
+        {
+            PlatformID pid = Environment.OSVersion.Platform;
+            isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
 
-			// we use integers instead of enum tags because "MacOS"
-			// requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
-			// 128 is mono's old platform tag for Unix.
-			int id = (int)pid;
-			isUnix = id == 4 || id == 6 || id == 128;
-		}
+            // we use integers instead of enum tags because "MacOS"
+            // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
+            // 128 is mono's old platform tag for Unix.
+            int id = (int)pid;
+            isUnix = id == 4 || id == 6 || id == 128;
+        }
 
-		/// <summary>
-		/// Whether we run under a Unix platform.
-		/// </summary>
-		public static bool IsUnix
-		{
-			get { return isUnix; }
-		}
+        /// <summary>
+        /// Whether we run under a Unix platform.
+        /// </summary>
+        public static bool IsUnix
+        {
+            get { return isUnix; }
+        }
 
-		/// <summary>
-		/// Whether we run under a supported Windows platform.
-		/// </summary>
-		public static bool IsWindows
-		{
-			get { return isWindows; }
-		}
-	}
+        /// <summary>
+        /// Whether we run under a supported Windows platform.
+        /// </summary>
+        public static bool IsWindows
+        {
+            get { return isWindows; }
+        }
+    }
 
     public class SharpZipLib
     {
