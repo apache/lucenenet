@@ -96,7 +96,6 @@
     <Compile Include="Shingle\Codec\SimpleThreeDimensionalTokenSettingsCodec.cs" />
     <Compile Include="Shingle\Codec\TokenSettingsCodec.cs" />
     <Compile Include="Shingle\Codec\TwoDimensionalNonWeightedSynonymTokenSettingsCodec.cs" />
-    <Compile Include="Util\FloatHelper.cs" />
     <Compile Include="WordlistLoader.cs" />
   </ItemGroup>
   <ItemGroup>
