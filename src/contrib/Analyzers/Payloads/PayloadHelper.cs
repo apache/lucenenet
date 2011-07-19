@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analyzers.Util;
-
 namespace Lucene.Net.Analyzers.Payloads
 {
     /// <summary>
@@ -31,7 +29,7 @@ namespace Lucene.Net.Analyzers.Payloads
 
         public static byte[] EncodeFloat(float payload, byte[] data, int offset)
         {
-            return EncodeInt(FloatHelper.FloatToIntBits(payload), data, offset);
+            return EncodeInt(SupportClass.Single.FloatToIntBits(payload), data, offset);
         }
 
         public static byte[] EncodeInt(int payload)
@@ -68,7 +66,7 @@ namespace Lucene.Net.Analyzers.Payloads
         /// <returns>The float that was encoded</returns>
         public static float DecodeFloat(byte[] bytes, int offset)
         {
-            return FloatHelper.IntBitsToFloat(DecodeInt(bytes, offset));
+            return SupportClass.Single.IntBitsToFloat(DecodeInt(bytes, offset));
         }
 
         public static int DecodeInt(byte[] bytes, int offset)

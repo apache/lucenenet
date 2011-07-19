@@ -24,7 +24,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Miscellaneous;
 using Lucene.Net.Analyzers.Shingle.Codec;
 using Lucene.Net.Analyzers.Shingle.Matrix;
-using Lucene.Net.Analyzers.Util;
 using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Shingle
