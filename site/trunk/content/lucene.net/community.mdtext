@@ -20,13 +20,16 @@ Commit notifications are sent to lucene-net-commits @ lucene.apache.org, to subs
 
 Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker: [Lucene.Net JIRA](http://https//issues.apache.org/jira/browse/LUCENENET)
 
-# Sponsors
-
-Special thanks to our Champion, Grant Ingersoll. As well as too our mentors Gianugo Rabellino, Stefan Bodewig, and Benson Margulies.
-
 </div>
 
 <div class="right">
+
+### Sponsors
+
+- Grant Ingersoll (Champion)
+- Guanugo Rabellino (Mentor)
+- Stefan Bodewig (Mentor)
+- Benson Margulies (Mentor)
 
 ### Committers
 	
