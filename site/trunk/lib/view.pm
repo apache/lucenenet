@@ -48,8 +48,7 @@ sub basic {
     read_text_file($filepath, \%args);
     $args{path} =~ s/\.mdtext$/\.html/;
     $args{breadcrumbs} = _breadcrumbs($args{path});
-	$args{tagline} = _tagline($args{path});
-    my $template_path = "templates/$args{template}";
+	my $template_path = "templates/$args{template}";
     my $rendered = Dotiac::DTL->new($template_path)->render(\%args);
     return ($rendered, 'html', \%args);
 }
@@ -98,22 +97,7 @@ sub sitemap {
 }
 
 
-sub _tagline {
-    # This causes problems when updating via the website - becuase $_ is null, whatever page that is updated loses it's specfic tagline
-	# and gets the generic tagline. Updating this file regenerates all tag lines
-    my $file = ""; 
-	if ($_) {        			
-	    $file = basename($_);
-    }
-	
-	switch ($file) {
-		case "code.mdtext"	{ return "<h1>Grab the Code</h1><h2>Binaries, Source, Archives, whatever you need...</h2>" }
-		case "conversation.mdtext"	{ return "<h1>Join the Conversation</h1><h2>Tell us how we are doing and help guide our future</h2>" }
-		case "roadmap.mdtext"	{ return "<h1>Roadmap</h1><h2>See where we are going</h2>" }
-		case "faq.mdtext"	{ return "<h1>Frequently Asked Questions</h1><h2>Everything you wanted to know but were afraid to ask</h2>" }
-		else		{ return "<h1>Lucene.Net</h1><h2></h2>" }
-	}  
-}
+
 
 sub _breadcrumbs {
     my @path = split m!/!, shift;

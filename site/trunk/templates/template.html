@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Apache Lucene.Net</title>
+	<link rel="stylesheet" type="text/css" href="styles/lucene.css" />
+</head>
+
+<body>
+
+	<div id="page">
+		<a href="index.html"><img src="images/lucene-medium.png" alt="Apache Lucene.Net Logo" /></a>
+		
+		<ul id="topnav">
+			<li><a href="http://www.apache.org/">Apache.org</a></li>
+			<li><a href="https://cwiki.apache.org/LUCENENET/">Wiki</a></li>
+			<li><a href="https://issues.apache.org/jira/browse/LUCENENET">Issue Tracker (JIRA)</a></li>
+			<li><a href="https://svn.apache.org/repos/asf/incubator/lucene.net/">Source</a></li>
+			<li><a href="http://lucene.apache.org/">Lucene Project</a></li>
+		</ul>
+		
+		<ul class="mainnav">
+			<li><a href="index.html">News</a></li>
+			<li><a href="download.html">Download</a></li>
+			<li><a href="started.html">Getting Started</a></li>
+			<li><a href="community.html">Community</a></li>
+		</ul>
+		
+		{% block content %} {{ content|markdown }} {% endblock %}
+		
+		<div id="footer">
+			<div class="left">
+				Apache Lucene.Net is an effort undergoing incubation at The Apache Software Foundation (ASF), 
+				sponsored by the <a href="http://incubator.apache.org">Apache Incubator</a>. Incubation is required of 
+				all newly accepted projects until a further review indicates that the infrastructure, communications, 
+				and decision making process have stabilized in a manner consistent with other successful ASF projects.
+				 While incubation status is not necessarily a reflection of the completeness or stability of the code, 
+				 it does indicate that the project has yet to be fully endorsed by the ASF.
+			</div>
+			<div class="right">
+				<a href="http://incubator.apache.org/"><img src="images/apache-incubator-logo.png" alt="apache incubator" /></a>
+			</div>
+			
+			<div class="clear">
+            	Copyright 2011 The Apache Software Foundation, Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. <br />
+				Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. All other marks mentioned may be trademarks or registered trademarks of their respective owners.
+			</div>
+		</div>
+		
+	</div>
+  
+</body>
+</html>

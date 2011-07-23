@@ -1,47 +1,22 @@
-.calltoaction {
-	width: 500px;
-}
-.calltoaction a {
-	display: block;
-	width: 240px;
-    height: 27.5px;
-	padding: 10px 0px 0px 10px;
-}
+#page { width:950px; margin: 0 auto; font: 12px Calibri; position:relative; } 
 
-.incubatorlogo {
-	width: 229px;
-	height: 57px;
-	background: url(../images/apacheincubator.png) no-repeat;
-}
+#topnav { margin:0; padding:0; position: absolute; top: 0px; right: 0px}
+#topnav li { display:inline; padding: 0; margin: 0}
+#topnav a:link, #topnav a:visited { padding: 3px 10px 3px 10px; float: left; width: auto;}
 
-.calltoaction a {
-	background: url(../images/calltoaction.png) 0 0 no-repeat;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    text-decoration: none;
-    color: #133362;
-    text-shadow: 1px 1px #fff3c2;
-}
+.mainnav { margin:0 0 5px 0; padding:0; float:left;width: 100%; background-color: #1764AA;}
+.mainnav li { display:inline; padding:0; margin:0 }
+.mainnav a:link , .mainnav a:visited { color: white; text-decoration: none; padding: 8px 30px 8px 10px; border-right: 2px solid white; float: left; width: auto;}
+.mainnav a:hover { background-color: white; color:black}
 
-.calltoaction  a:hover {
-	background: url(../images/calltoaction.png) 0 -37.5px no-repeat;
-}
+.left { width: 700px; float:left;}
+.right { width: 230px; float:right; }
 
-.calltoactionpanel {
-	background: url(../images/calltoactionpanel.png) no-repeat;
-	height: 185px;
-	width: 480px;
-	padding-top: 15px;
-	padding-left: 15px;
-	padding-right: 5px;
-	display:none;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    text-shadow: 1px 1px #fff3c2;
-}
+#footer { clear: both; border-top: 1px solid #1764AA; margin-top: 20px; padding: 5px 3px 5px 3px;}
 
-#content h2 { padding-top: 10px; margin-top: 10px }
-#content h3 { }
-#content p { margin-top:3px margin-bottom:3px }
+h1 { color: #1764AA; font: bold 16px; border-bottom: 1px solid #1764AA; }
+h2 { }
+h3 { font: 14px;}
+
+img { border: none; }
+.clear { clear: both;}
