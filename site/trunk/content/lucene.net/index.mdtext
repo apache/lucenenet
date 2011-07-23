@@ -1,55 +1,57 @@
 <div class="left">
-	<h3>
-		Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. 
-		Lucene.Net has three primary goals: 
-		<ol>
-			<li>Maintain the existing line-by-line port from Java to C#, fully automating and commoditizing the process 
-				such that the project can easily synchronize with the Java Lucene release schedule;</li>
-			<li>Maintaining the high-performance requirements excepted of a first class C# search engine library;</li>
-			<li>Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, 
-				carefully tailored API that takes advantage of many of the special features of the .NET runtime.</li>
-		</ol>				
-	</h3>
+	
+<h3>
+
+Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. 
+Lucene.Net has three primary goals: 
+
+1. Maintain the existing line-by-line port from Java to C#, fully automating and commoditizing the process such that the project can easily synchronize with the Java Lucene release schedule;
+2. Maintaining the high-performance requirements excepted of a first class C# search engine library;
+3. Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, carefully tailored API that takes advantage of many of the special features of the .NET runtime.
+
+</h3>
 			
-	<h1>News</h1>
+News
+=============
 	
-	<h2>May 02, 2010 - Lucene.Net 2.9.2 Released</h2>
+May 02, 2010 - Lucene.Net 2.9.2 Released
+----------------------------------------------
 	
-	We've just released the latest build of Lucene.Net 2.9.2, some of the new features include:
-	<ul>
-		<li>Feature 1</li>
-		<li>Feature 2</li>
-		<li>feature 3</li>
-	</ul>
+We've just released the latest build of Lucene.Net 2.9.2, some of the new features include:
+
+- Feature 1
+- Feature 2
+- Feature 3
 
 </div>
 		
 <div class="right">
 	
-	<h2>Who Uses Lucene.Net?</h2>
-	<h3>Open Source Initiatives</h3>
-	<ul>
-		<li><a href="http://ireaper.codeplex.com/">iReaper</a></li>
-		<li><a href="http://linqtolucene.codeplex.com/">Linq to Lucene</a></li>
-		<li><a href="http://lucandranet.codeplex.com/">Lucandra.NET</a></li>
-		<li><a href="http://www.mindtouch.com/">MindTouch</a></li>
-		<li><a href="http://orchard.codeplex.com/">Orchard</a></li>
-		<li><a href="http://ravendb.net/">RavenDB</a></li>
-		<li><a href="http://subtextproject.com/">SubText</a></li>
-		<li><a href="http://umbraco.codeplex.com">Umbraco</a></li>
-	</ul>
+Who Uses Lucene.Net?
+---------------------------
+
+<h3>Open Source Initiatives</h3>
 	
-	<h3>Commercial Products</h3>
-	<ul>
-		<li><a href="http://autodesk.com/">Autodesk</a></li>
-		<li><a href="http://www.topgear.com/">BBC UK Top Gear site</a></li>
-		<li><a href="http://www.epro.com/">Epro, Bluewire Technologies</a></li>
-		<li><a href="http://www.adenin.com/">IntelliEnterprise Intranet Suite</a></li>
-		<li><a href="http://www.koders.com/">Koders.com, Black Duck Software</a></li>
-		<li><a href="http://www.oxan.com">Oxford Analytica</a></li>
-		<li><a href="http://discover-e-legal.com/aboutparadigm.html">Paradigm</a></li>
-		<li><a href="http://datassimilate.com/PSindex.html">PowerSearch</a></li>
-	</ul>
+- <a href="http://ireaper.codeplex.com/">iReaper</a>
+- <a href="http://linqtolucene.codeplex.com/">Linq to Lucene</a>
+- <a href="http://lucandranet.codeplex.com/">Lucandra.NET</a>
+- <a href="http://www.mindtouch.com/">MindTouch</a>
+- <a href="http://orchard.codeplex.com/">Orchard</a>
+- <a href="http://ravendb.net/">RavenDB</a>
+- <a href="http://subtextproject.com/">SubText</a>
+- <a href="http://umbraco.codeplex.com">Umbraco</a>
 	
-	<h3>...any many more</h3>
+<h3>Commercial Products</h3>
+
+- <a href="http://autodesk.com/">Autodesk</a>
+- <a href="http://www.topgear.com/">BBC UK Top Gear site</a>
+- <a href="http://www.epro.com/">Epro, Bluewire Technologies</a>
+- <a href="http://www.adenin.com/">IntelliEnterprise Intranet Suite</a>
+- <a href="http://www.koders.com/">Koders.com, Black Duck Software</a>
+- <a href="http://www.oxan.com">Oxford Analytica</a>
+- <a href="http://discover-e-legal.com/aboutparadigm.html">Paradigm</a>
+- <a href="http://datassimilate.com/PSindex.html">PowerSearch</a>
+	
+<h3>...any many more</h3>
+	
 </div>
