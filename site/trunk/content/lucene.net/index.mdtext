@@ -10,12 +10,10 @@ Lucene.Net has three primary goals:
 3. Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, carefully tailored API that takes advantage of many of the special features of the .NET runtime.
 
 </h3>
-			
-News
-=============
-	
-May 02, 2010 - Lucene.Net 2.9.2 Released
-----------------------------------------------
+
+# News
+
+## May 02, 2010 - Lucene.Net 2.9.2 Released
 	
 We've just released the latest build of Lucene.Net 2.9.2, some of the new features include:
 
@@ -27,10 +25,9 @@ We've just released the latest build of Lucene.Net 2.9.2, some of the new featur
 		
 <div class="right">
 	
-Who Uses Lucene.Net?
----------------------------
+## Who Uses Lucene.Net?
 
-<h3>Open Source Initiatives</h3>
+### Open Source Initiatives
 	
 - <a href="http://ireaper.codeplex.com/">iReaper</a>
 - <a href="http://linqtolucene.codeplex.com/">Linq to Lucene</a>
@@ -41,7 +38,7 @@ Who Uses Lucene.Net?
 - <a href="http://subtextproject.com/">SubText</a>
 - <a href="http://umbraco.codeplex.com">Umbraco</a>
 	
-<h3>Commercial Products</h3>
+### Commercial Products
 
 - <a href="http://autodesk.com/">Autodesk</a>
 - <a href="http://www.topgear.com/">BBC UK Top Gear site</a>
@@ -52,6 +49,6 @@ Who Uses Lucene.Net?
 - <a href="http://discover-e-legal.com/aboutparadigm.html">Paradigm</a>
 - <a href="http://datassimilate.com/PSindex.html">PowerSearch</a>
 	
-<h3>...any many more</h3>
+### ...any many more
 	
 </div>
