@@ -9,13 +9,20 @@ Lucene.Net is a port of the Lucene search engine library, written in C# and targ
 
 # News
 
-## May 02, 2010 - Lucene.Net 2.9.2 Released
-	
-We've just released the latest build of Lucene.Net 2.9.2, some of the new features include:
+## July 23, 2011 - New Website
 
-- Feature 1
-- Feature 2
-- Feature 3
+With the close of the 99designs contest for a new logo that Jeff Atwood of SO fame gracious put on, we now have a new logo. With it we've built a slimmed down website that 
+hopefully allows users to find what they are looking for quickly without all the extra fluff.
+
+Stay tuned for the 2.9.4 release! 
+
+## May 02, 2011 - Lucene.Net 2.9.2 Released
+	
+It took us quite a while, but we finally got Lucene.Net 2.9.2 out the door. 
+
+- 2 API changes - Deprecated Version.LUCENE_CURRENT and added a new CustomScoreProvider class
+- Numerous test cases and optimizations
+- 11 bug fixes
 
 </div>
 		
