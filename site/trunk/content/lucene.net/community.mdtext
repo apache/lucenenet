@@ -8,7 +8,7 @@ For general usage, discussion about the project occurs on its mailing list, luce
 
 Commit notifications are sent to lucene-net-commits @ lucene.apache.org, to subscribe send a message to lucene-net-commits-subscribe @ lucene.apache.org. 
 
-## Archives of the lists are available at:
+## Archives
 
 *  Developers [2006-2009](http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/) - [2010-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/)
 *  Users [2006-2009](http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/) - [2010-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/)
@@ -24,4 +24,17 @@ Follow what we are working on, help us by submitting patches, or submit your own
 Special thanks to our Champion, Grant Ingersoll. As well as too our mentors Gianugo Rabellino, Stefan Bodewig, and Benson Margulies.
 
 </div>
-		
+
+<div class="right">
+
+### Committers
+	
+- Chris Currens 
+- DIGY 
+- Michael Herndon 
+- Prescott Nasser 
+- Scott Lombard 
+- Sergey Mirvoda 
+- Troy Howard 
+
+</div>		

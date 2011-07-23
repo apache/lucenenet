@@ -1,13 +1,27 @@
 <div class="left">
 	
-# Mailing Lists
+# Latest Release - Lucene.Net 2.9.2 - March 06, 2011
 
-# Issue Tracker (JIRA)
+These are the official releases that have been fully tested by the Lucene.Net community. The binary library can
+also easily be incorporated into your applications using the NuGet Package Manager.
 
-# Committers and Contributers
+- [Binary](http://http//www.apache.org/dist/incubator/lucene.net/binaries/)
+- [Source](http://www.apache.org/dist/incubator/lucene.net/source/)
 
-# Sponsors
+# Cutting Edge
 
+At the moment, we are preparing the 2.9.4 version for general release in our trunk, 
+and we also have an extensive effort underway to '.Net-ify' Lucene.Net under the 2.9.4g
+branch. 
+
+- [2.9.4 - Trunk](https://svn.apache.org/repos/asf/incubator/lucene.net/trunk/) - Nearly ready for release
+- [2.9.4g - .Net'ified](https://svn.apache.org/repos/asf/incubator/lucene.net/branches/Lucene.Net_2_9_4g/) - Continually evolving to provide a more standard .Net experience
+
+# Release Archives
+
+- [2.9.1 Source](https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_9_1/)
+- [2.4.0 Source](https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_4_0/)
+- [Older Releases](https://svn.apache.org/repos/asf/incubator/lucene.net/tags/)
 
 </div>
 		
