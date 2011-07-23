@@ -1,0 +1,47 @@
+.calltoaction {
+	width: 500px;
+}
+.calltoaction a {
+	display: block;
+	width: 240px;
+    height: 27.5px;
+	padding: 10px 0px 0px 10px;
+}
+
+.incubatorlogo {
+	width: 229px;
+	height: 57px;
+	background: url(../images/apacheincubator.png) no-repeat;
+}
+
+.calltoaction a {
+	background: url(../images/calltoaction.png) 0 0 no-repeat;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #133362;
+    text-shadow: 1px 1px #fff3c2;
+}
+
+.calltoaction  a:hover {
+	background: url(../images/calltoaction.png) 0 -37.5px no-repeat;
+}
+
+.calltoactionpanel {
+	background: url(../images/calltoactionpanel.png) no-repeat;
+	height: 185px;
+	width: 480px;
+	padding-top: 15px;
+	padding-left: 15px;
+	padding-right: 5px;
+	display:none;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    text-shadow: 1px 1px #fff3c2;
+}
+
+#content h2 { padding-top: 10px; margin-top: 10px }
+#content h3 { }
+#content p { margin-top:3px margin-bottom:3px }

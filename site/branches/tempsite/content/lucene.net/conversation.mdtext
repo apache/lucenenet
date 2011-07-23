@@ -1,0 +1,39 @@
+Mailing Lists
+--------------
+
+For development, discussion about the project occurs on its mailing list, lucene-net-dev @ lucene.apache.org, to subscribe, send a message to lucene-net-dev-subscribe @ lucene.apache.org. 
+
+For general usage, discussion about the project occurs on its mailing list, lucene-net-user @ lucene.apache.org, to subscribe, send a message to lucene-net-user-subscribe @ lucene.apache.org. 
+
+Commit notifications are sent to lucene-net-commits @ lucene.apache.org, to subscribe send a message to lucene-net-commits-subscribe @ lucene.apache.org. 
+
+**Archives of the lists are available at:**
+
+2006-2009 
+
+- [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/][2] 
+- [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/][3] 
+- [http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/][4] 
+
+2010-Present
+
+- [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/][5]
+- [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/][6] 
+- [http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/][7]
+
+
+Jira Issue Tracker
+-------------------
+
+Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker:
+
+- [Lucene.Net Jira][1]
+
+
+  [1]: http://https://issues.apache.org/jira/browse/LUCENENET
+  [2]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/
+  [3]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/
+  [4]: http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/
+  [5]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/ 
+  [6]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/
+  [7]: http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/ 

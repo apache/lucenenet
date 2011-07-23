@@ -1,0 +1,30 @@
+Latest Release - Lucene.Net 2.9.2 - March 06, 2011
+-----------------------------------
+
+These are official releases that are stable and should be relatively free of bugs:
+	
+ - [Binary][1]
+ - [Source][2]
+	
+**Cutting Edge**
+
+This is the latest and greatest, we do our best to keep it stable, but occasionally 
+it won't build correctly. Newer features will likely not work as intended, 
+and even older features might be broken temporarily
+
+ - [Trunk][3]
+
+Archives
+---------
+
+ - [2.9.1 Source][4] 
+ - [2.4.0 Source][5] 
+ - [Older files][6]
+
+
+  [1]: http://http://www.apache.org/dist/incubator/lucene.net/binaries/
+  [2]: http://www.apache.org/dist/incubator/lucene.net/source/
+  [3]: https://svn.apache.org/repos/asf/incubator/lucene.net/trunk/
+  [4]: https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_9_1/
+  [5]: https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_4_0/
+  [6]: https://svn.apache.org/repos/asf/incubator/lucene.net/tags/

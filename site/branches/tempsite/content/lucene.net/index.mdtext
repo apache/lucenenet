@@ -1,0 +1,21 @@
+<h2>Lucene.Net</h2>
+
+Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. Lucene.Net has three primary goals:
+
+  - Maintain the existing line-by-line port from Java to C#, fully automating and commoditizing the process such that the project can easily synchronize with the Java Lucene release schedule.
+  - High-performance C# search engine library.
+  - Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, carefully tailored API that takes advantage of many of the special features of the .NET runtime.
+
+<h2></h2>	
+<h2>Sponsors</h2>
+
+Special thanks to our Champion, Grant Ingersoll. As well as too our mentors Gianugo Rabellino, Stefan Bodewig, and Benson Margulies.
+
+<h2></h2>
+<h2>Incubation</h2>
+
+Apache Lucene.Net™ is an effort undergoing incubation at <a href="http://www.apache.org/">The Apache Software Foundation (ASF)</a>, 
+sponsored by the <a href="http://incubator.apache.org/">Apache Incubator</a>. Incubation is required of all newly accepted projects 
+until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner 
+consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or 
+stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.

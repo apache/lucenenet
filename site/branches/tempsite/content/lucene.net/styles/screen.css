@@ -1,0 +1,88 @@
+@font-face {
+	font-family: Inconsolata;
+	src: url(../fonts/Inconsolata.otf);
+}
+
+#api-doc {
+    overflow: hidden;
+    padding: 3px 0 20px 0;
+}
+
+#api-doc h1 {
+    margin-bottom: 22px !important;
+}
+
+#api-doc h3 {
+    width: auto !important;
+    margin: -1px 0 22px 0 !important;
+}
+
+#api-doc h4 {
+    color: #666666;
+    margin-bottom: 10px;
+}
+
+#api-doc p {
+    line-height: 160%;
+    padding: 0 0 19px 0;
+}
+
+#api-doc pre {
+    border-left: 4px solid #999999;
+    background: #666666;
+    color: #fff;
+    line-height: 150%;
+    padding: 19px 10px 10px;
+    margin-bottom: 22px;
+    font-face: "Inconsolata", "Monaco", "Nimbus Mono L", Courier, sans-serif;
+}
+
+#api-doc pre:hover {
+    background: #444444;
+    border-left: 4px solid #000000;
+}
+
+#api-doc p code {
+    font-face: "Inconsolata", "Monaco", "Nimbus Mono L", Courier, sans-serif !important;
+}
+
+.clear { /* generic container (i.e. div) for floating buttons */
+    overflow: hidden;
+    width: 100%;
+}
+
+a.button {
+    background: transparent url(../img/v2/bg_button_a.gif) no-repeat scroll top right;
+    color: #444444;
+    display: block;
+    float: right;
+    font: normal 12px arial, sans-serif;
+    height: 24px;
+    margin-right: 6px;
+    padding-right: 18px;
+    text-decoration: none;
+}
+
+a.button span {
+    background: transparent url(../img/v2/bg_button_span.gif) no-repeat;
+    display: block;
+    line-height: 14px;
+    letter-spacing: 1px;
+    padding: 5px 0 5px 18px;
+}
+
+a.button:active {
+    background-position: bottom right;
+    outline: none; /* hide dotted outline in Firefox */
+}
+
+a.button:active span {
+    background-position: bottom left;
+    padding: 6px 0 4px 18px; /* push text down 1px */
+}
+
+#api-doc h3.resource {
+    border-left: 4px solid #999999;
+    border-bottom: 0;
+    padding-left: 15px;
+}

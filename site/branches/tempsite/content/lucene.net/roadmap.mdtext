@@ -1,0 +1,149 @@
+Lucene.Net Roadmap
+-------------------
+
+There will be at least four main areas of work to address in the
+upcoming months:
+
+- Project Maintenance
+- Catching up with the backlog
+- Working on a new porting system
+- The Future: New API and Lucene 3.X
+
+We will be working on these areas simultaneously.
+
+Project Maintenance
+---------------------
+
+This includes the various aspects of transition from Lucene
+subproject to Incubator Podling, as well as updating the website
+and documenation.
+
+
+**Roadmap**
+
+* Website and branding Update (02/28/2011)
+  - LUCENENET-379 - Clean up Lucene.Net website
+    * NOTE: Should probably be split into a few separate issues:
+     * Update website to be Apache CMS based
+     * Update website to reflect current status and information
+     * New site layout
+     * New logo design
+
+* Documentation Update (03/28/2011)
+  - LUCENENET-382 - Create a wiki page for Lucene.Net
+    * NOTE: This should probably have more detailed tasks defined
+      and separately assigned / managed. This should focus on 2.9.2
+      level code, examples, etc, plus FAQ, Design, and other
+      similar documentation.
+
+
+Catching up with the Backlog
+--------------------------------
+
+This includes finalizing the 2.9.2 release, updating that to
+Lucene 2.9.4 compatibility and applying outstanding patches and
+bug fixes. This will put is slightly out of sync with Java Lucene
+because we'll have additional patches applied that the Java Lucene
+project does not have for our 2.9.4 release.
+
+
+**Roadmap**
+
+* Lucene.Net 2.9.2 Binary release (02/28/2011)
+  - LUCENENET-381 - Official release of Lucene.Net 2.9.2
+    * Build from existing tag, no new changes
+
+* Lucene.Net 2.9.4 Source/Binary release (03/28/2011)
+
+  *EASY STUFF*
+  - LUCENENET-389 - Signing the released assembly
+  - LUCENENET-377 - Upgrade solution to VS2010
+  - LUCENENET-361 - Workaround for a Mono C# compiler issue
+  - LUCENENET-266 - Putting support classes in separate files and
+    in a separate directory
+  - LUCENENET-337 - TokenAttribute for Selectively Including Tokens
+    in Length Norm
+  - LUCENENET-330 - Search.Regex minimal port
+  - LUCENENET-371 - Unit test for Search.Regex port
+  - LUCENENET-374 - IndexReader.IsCurrent returning false
+    positive in some cases
+  - LUCENENET-179 - SnowballFilter speed improvment
+
+  *HARDER STUFF*
+  - LUCENENET-??? Rollup changes from Lucene 2.9.3/2.9.4 releases
+  - LUCENENET-372 - NLS pack for Lucene.NET: BR, CJK, CN, CZ, DE,
+    FR, NL, RU analyzers
+    * NOTE: For v1.4 This code could be a starting point for a
+      2.9.2 compatible version
+  - LUCENENET-391 - Luke.Net for Lucene.Net
+    * NOTE: For v1.4 This code could be a starting point for a
+      2.9.2 compatible version
+  - LUCENENET-172 - This patch fixes the unexceptional exceptions
+    ecountered in FastCharStream and SupportClass
+    * NOTE: Evaluate concerns expressed by George A. for this patch
+  - LUCENENET-167 - Compact Framework & Silverlight Support
+    * NOTE: Evaluate required steps and impact this will have on
+      source code. Perhaps create a branch for CF/SilverLight.
+  - LUCENENET-378 - Objects with a Close method should support
+    IDisposable
+    * NOTE: Significant diversion from Java, involves a lot of
+    code-touch. Maybe take some ideas from and/or incorporate
+    changes from various CodeProject forks?
+
+
+Working on a New Porting System
+--------------------------------
+
+We've discussed that we'd like to fully automate this process and
+so far, the most obvious tool to use is Sharpen. This may involve
+forking Sharpen (or contributing back to that project if
+appropriate). We also discussed we'd like a to set up a CI server
+for this work (and other things).
+
+* Evaluate tooling (02/28/2011)
+  - LUCENENET-380 - Evaluate Sharpen as a port tool
+    * NOTE: We should conclusively complete the evaluation and if
+    we're ok with Sharpen, close this issue and move on to building
+    a production version of the Sharpen code.
+
+  - LUCENENET-??? - Evalute CI systems and build a proposal for
+    CI server setup
+
+* Create Production System, 2.9.2 compatible (03/28/2011)
+  - LUCENENET-??? - Create production version of automated port
+    scripts for 2.9.2 build
+    * NOTE: This will allow us to focus on the conversion process,
+      not the Lucene.Net code changes. This will be considered
+      complete when we are able to create a functionally equivalent
+      2.9.2 port using Sharpen. This can be measured using existing
+      unit tests, or by adding new ones as needed to cover
+      additional test cases.
+
+  - LUCENENET-??? - Create production CI system and integrate
+    2.9.2 automated port tasks
+
+* Create Production System, 2.9.4 compatible (04/25/2011)
+  - LUCENENET-??? - Production porting code for 2.9.4
+    * NOTE: This will be a good exercise to determine how easy
+      maintaining the porting code is across version changes.
+  - LUCENENET-??? - CI server: Integrate Sharpen 2.9.4 task
+
+
+
+The Future: New API and Lucene 3.X
+-----------------------------------
+
+We need to move out of the current 2.X world. This means a number
+of things, including Lucene 3.X compatibility, a new idiomatic .NET
+API, and incorporating changes and ideas presented in the various
+forks of Lucene.Net.
+
+* Discuss and Design (03/28/2011)
+  - LUCENENET-??? - Community discussion on how to proceed past
+    2.X and to create a plan for implementation
+
+* Implement next generation of Lucene.Net code (05/30/2011)
+  - LUCENENET-??? - Implement next gen code
+    * NOTE: Since design is still TBD, we can't say for sure what
+      we'll be doing here, but whatever it is, we should have a
+      release done by June.
