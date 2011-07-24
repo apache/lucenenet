@@ -25,12 +25,13 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Base class for all Lucene unit tests that use TokenStreams.  
-	/// <p/>
-	/// This class runs all tests twice, one time with {@link TokenStream#setOnlyUseNewAPI} <code>false</code>
-	/// and after that one time with <code>true</code>.
+	/// <summary> Base class for all Lucene.Net unit tests that use TokenStreams.  
+	/// <para>
+	/// This class runs all tests twice, one time with <see cref="TokenStream.setOnlyUseNewAPI" /> <c>false</c>
+	/// and after that one time with <c>true</c>.
+    /// </para>
 	/// </summary>
-	public abstract class BaseTokenStreamTestCase:LuceneTestCase
+	public abstract class BaseTokenStreamTestCase : LuceneTestCase
 	{
 		
 		private bool onlyUseNewAPI = false;
@@ -38,12 +39,14 @@ namespace Lucene.Net.Analysis
 		
 		public BaseTokenStreamTestCase():base()
 		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
+            // run all tests also with onlyUseNewAPI
+			this.testWithNewAPI = null; 
 		}
 		
 		public BaseTokenStreamTestCase(System.String name):base(name)
 		{
-			this.testWithNewAPI = null; // run all tests also with onlyUseNewAPI
+            // run all tests also with onlyUseNewAPI
+			this.testWithNewAPI = null; 
 		}
 		
 		public BaseTokenStreamTestCase(System.Collections.Hashtable testWithNewAPI):base()
@@ -61,23 +64,29 @@ namespace Lucene.Net.Analysis
 		public override void  SetUp()
 		{
 			base.SetUp();
-			TokenStream.SetOnlyUseNewAPI(onlyUseNewAPI);
-		}
+
+            // needed for this test.
+            #pragma warning disable 618
+                TokenStream.SetOnlyUseNewAPI(onlyUseNewAPI);
+            #pragma warning restore 618
+        }
 		
 		// @Override
 		public override void  RunBare()
 		{
-			// Do the test with onlyUseNewAPI=false (default)
+			// Test with onlyUseNewAPI=false (default)
 			try
 			{
 				onlyUseNewAPI = false;
-				// base.RunBare();  // {{Aroush-2.9}}
+				
+                // TODO: This needs to be notated why the test has this commented out. 
+                // base.RunBare();  // {{Aroush-2.9}}
                 System.Diagnostics.Debug.Fail("Port issue:", "base.RunBare()"); // {{Aroush-2.9}}
 			}
-			catch (System.Exception e)
+			catch
 			{
-				System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=false");
-				throw e;
+				Console.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=false");
+				throw;
 			}
 			
 			if (testWithNewAPI == null || testWithNewAPI.Contains(GetType()))
@@ -88,17 +97,17 @@ namespace Lucene.Net.Analysis
 					onlyUseNewAPI = true;
 					base.RunBare();
 				}
-				catch (System.Exception e)
+				catch
 				{
-					System.Console.Out.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=true");
-					throw e;
+					Console.WriteLine("Test failure of '" + GetType() + "' occurred with onlyUseNewAPI=true");
+                    throw;
 				}
 			}
 		}
 		
 		// some helpers to test Analyzers and TokenStreams:
 
-        public interface CheckClearAttributesAttribute : Lucene.Net.Util.Attribute
+        public interface CheckClearAttributesAttribute : Lucene.Net.Util.IAttribute
         {
                bool GetAndResetClearCalled();
         }
@@ -128,9 +137,14 @@ namespace Lucene.Net.Analysis
             //@Override
             public  override bool Equals(Object other) 
             {
+                if (other == null)
+                    throw new ArgumentNullException("other", "The argument 'other' must not be null.");
+
+                CheckClearAttributesAttributeImpl attributeImpl = (CheckClearAttributesAttributeImpl) other;
+
                 return (
-                other is CheckClearAttributesAttributeImpl &&
-                ((CheckClearAttributesAttributeImpl) other).clearCalled == this.clearCalled
+                    other is CheckClearAttributesAttributeImpl &&
+                    attributeImpl.clearCalled == this.clearCalled
                 );
             }
 
@@ -165,6 +179,7 @@ namespace Lucene.Net.Analysis
             }
     
             TypeAttribute typeAtt = null;
+            
             if (types != null)
             {
                 Assert.IsTrue(ts.HasAttribute(typeof(TypeAttribute)), "has no TypeAttribute");
@@ -172,6 +187,7 @@ namespace Lucene.Net.Analysis
             }
             
             PositionIncrementAttribute posIncrAtt = null;
+
             if (posIncrements != null)
             {
                 Assert.IsTrue(ts.HasAttribute(typeof(PositionIncrementAttribute)), "has no PositionIncrementAttribute");
@@ -179,33 +195,49 @@ namespace Lucene.Net.Analysis
             }
 
             ts.Reset();
+            
             for (int i = 0; i < output.Length; i++)
             {
                 // extra safety to enforce, that the state is not preserved and also assign bogus values
                 ts.ClearAttributes();
                 termAtt.SetTermBuffer("bogusTerm");
-                if (offsetAtt != null) offsetAtt.SetOffset(14584724, 24683243);
-                if (typeAtt != null) typeAtt.SetType("bogusType");
-                if (posIncrAtt != null) posIncrAtt.SetPositionIncrement(45987657);
+                
+                if (offsetAtt != null) 
+                    offsetAtt.SetOffset(14584724, 24683243);
+                
+                if (typeAtt != null) 
+                    typeAtt.SetType("bogusType");
+                
+                if (posIncrAtt != null) 
+                    posIncrAtt.SetPositionIncrement(45987657);
 
                 checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
+                
                 Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
                 Assert.IsTrue(checkClearAtt.GetAndResetClearCalled(), "clearAttributes() was not called correctly in TokenStream chain");
 
                 Assert.AreEqual(output[i], termAtt.Term(), "term " + i);
+                
                 if (startOffsets != null)
                     Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
+
                 if (endOffsets != null)
                     Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
+                
                 if (types != null)
                     Assert.AreEqual(types[i], typeAtt.Type(), "type " + i);
+                
                 if (posIncrements != null)
                     Assert.AreEqual(posIncrements[i], posIncrAtt.GetPositionIncrement(), "posIncrement " + i);
             }
+            
             Assert.IsFalse(ts.IncrementToken(), "end of stream");
+
             ts.End();
+
             if (finalOffset.HasValue)
                 Assert.AreEqual(finalOffset, offsetAtt.EndOffset(), "finalOffset ");
+
             ts.Close();
         }
 

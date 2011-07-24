@@ -27,13 +27,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
     [TestFixture]
-	public class TestSimpleAttributeImpls:LuceneTestCase
+    [Category(Categories.Unit)]
+	public class TestSimpleAttributeImpls 
 	{
 		
-		public TestSimpleAttributeImpls():base("")
-		{
-		}
-        
         [Test]
 		public virtual void  TestFlagsAttribute()
 		{
@@ -116,7 +113,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public virtual void  TestOffsetAttribute()
 		{
 			OffsetAttributeImpl att = new OffsetAttributeImpl();
-			Assert.AreEqual(0, att.StartOffset());
+			
+            Assert.AreEqual(0, att.StartOffset());
 			Assert.AreEqual(0, att.EndOffset());
 			
 			att.SetOffset(12, 34);
@@ -138,17 +136,22 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		public static AttributeImpl AssertCloneIsEqual(AttributeImpl att)
 		{
 			AttributeImpl clone = (AttributeImpl) att.Clone();
-			Assert.AreEqual(att, clone, "Clone must be equal");
+			
+            Assert.AreEqual(att, clone, "Clone must be equal");
 			Assert.AreEqual(att.GetHashCode(), clone.GetHashCode(), "Clone's hashcode must be equal");
-			return clone;
+			
+            return clone;
 		}
 		
 		public static AttributeImpl AssertCopyIsEqual(AttributeImpl att)
 		{
 			AttributeImpl copy = (AttributeImpl) System.Activator.CreateInstance(att.GetType());
-			att.CopyTo(copy);
+			
+            att.CopyTo(copy);
+
 			Assert.AreEqual(att, copy, "Copied instance must be equal");
 			Assert.AreEqual(att.GetHashCode(), copy.GetHashCode(), "Copied instance's hashcode must be equal");
+
 			return copy;
 		}
 	}

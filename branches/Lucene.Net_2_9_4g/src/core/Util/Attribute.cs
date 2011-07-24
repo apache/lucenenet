@@ -19,9 +19,18 @@ using System;
 
 namespace Lucene.Net.Util
 {
+    // This class might be better off as a base attribute to simplify the way the code queries
+    // for types that implement this interface.  Look at the AttributeSource.cs class. If there
+    // is a good reason to keep this as-is, please notate this in the comments and remove this one.
 	
-	/// <summary> Base interface for attributes.</summary>
-	public interface Attribute
+    // JAVA: src/java/org/apache/lucene/util/Attribute.java
+
+	/// <summary> 
+    /// The contract interface for attributes.
+    /// This interface is used as a way to query types that implement this interface and 
+    /// references to those types that do.
+    /// </summary>
+	public interface IAttribute
 	{
 	}
 }
