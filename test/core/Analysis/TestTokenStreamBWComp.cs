@@ -21,7 +21,7 @@ using NUnit.Framework;
 
 using Lucene.Net.Analysis.Tokenattributes;
 using Payload = Lucene.Net.Index.Payload;
-using Attribute = Lucene.Net.Util.Attribute;
+using Attribute = Lucene.Net.Util.IAttribute;
 using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 

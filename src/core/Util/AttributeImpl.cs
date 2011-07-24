@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	/// of usually streamed objects, e. g. a {@link Lucene.Net.Analysis.TokenStream}.
 	/// </summary>
 	[Serializable]
-	public abstract class AttributeImpl : System.ICloneable, Attribute
+	public abstract class AttributeImpl : System.ICloneable, IAttribute
 	{
 		/// <summary> Clears the values in this AttributeImpl and resets it to its 
 		/// default value. If this implementation implements more than one Attribute interface

@@ -26,7 +26,7 @@ using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 using Payload = Lucene.Net.Index.Payload;
 using TermPositions = Lucene.Net.Index.TermPositions;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-using Attribute = Lucene.Net.Util.Attribute;
+using Attribute = Lucene.Net.Util.IAttribute;
 using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 
 namespace Lucene.Net.Analysis

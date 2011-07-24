@@ -30,6 +30,11 @@ namespace Lucene.Net.Util
 	
 	public class _TestUtil
 	{
+
+        public static Version CurrentVersion
+        {
+            get { return Version.LUCENE_29; }
+        }
 		
 		/// <summary>Returns temp dir, containing String arg in its name;
 		/// does not create the directory. 

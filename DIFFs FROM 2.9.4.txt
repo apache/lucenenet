@@ -23,6 +23,11 @@
   
 * Filter.Bits(Obsolete) removed.
 
+* LUCENENET-438 JavaDoc are turned into XML Doc Comments
+* LUCENENET-439 fix exception re-throws
+* LUCENENET-435 fix up the test-suite for Lucene.Net Core lib. 
+* LUCENENET-436 fix up deprecated code. 
+
 -------------------------------------------------------------------------------
 
 A few API changes like:

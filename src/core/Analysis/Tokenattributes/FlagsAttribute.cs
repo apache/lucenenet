@@ -18,7 +18,7 @@
 using System;
 
 using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-using Attribute = Lucene.Net.Util.Attribute;
+using Attribute = Lucene.Net.Util.IAttribute;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {

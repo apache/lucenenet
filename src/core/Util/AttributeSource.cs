@@ -302,7 +302,7 @@ namespace Lucene.Net.Util
                         for (int i = 0; i < interfaces.Length; i++)
                         {
                             System.Type curInterface = interfaces[i];
-                            if (curInterface != typeof(Attribute) && typeof(Attribute).IsAssignableFrom(curInterface))
+                            if (curInterface != typeof(IAttribute) && typeof(IAttribute).IsAssignableFrom(curInterface))
                             {
                                 foundInterfaces.Add(new WeakReference(curInterface));
                             }
@@ -338,11 +338,11 @@ namespace Lucene.Net.Util
         /// new instance is created, added to this AttributeSource and returned. 
         /// Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T addAttribute(Class&lt;T&gt;)</code>
         /// </summary>
-        public virtual Attribute AddAttribute(System.Type attClass)
+        public virtual IAttribute AddAttribute(System.Type attClass)
         {
             if (!attributes.ContainsKey(attClass))
             {
-                if (!(attClass.IsInterface && typeof(Attribute).IsAssignableFrom(attClass)))
+                if (!(attClass.IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException(
                         "AddAttribute() only accepts an interface that extends Attribute, but " +
@@ -387,7 +387,7 @@ namespace Lucene.Net.Util
         /// available. If you want to only use the attribute, if it is available (to optimize
         /// consuming), use {@link #hasAttribute}.
         /// </summary>
-        public virtual Attribute GetAttribute(System.Type attClass)
+        public virtual IAttribute GetAttribute(System.Type attClass)
         {
             if (!this.attributes.ContainsKey(attClass))
             {
