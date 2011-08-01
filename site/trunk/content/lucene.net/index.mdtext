@@ -1,6 +1,6 @@
 <div class="left">
 	
-Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. Lucene.Net has three primary goals: 
+Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. The Lucene search library is based on an (inverted index)[http://lucene.sourceforge.net/talks/pisa/]. Lucene.Net has three primary goals: 
 
 1.  Maintain the existing line-by-line port from Java to C#, fully automating and commoditizing the process such that the project can easily synchronize with the Java Lucene release schedule;
 2.  Maintaining the high-performance requirements excepted of a first class C# search engine library;

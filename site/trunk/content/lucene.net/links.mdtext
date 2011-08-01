@@ -1,0 +1,24 @@
+<div class="left">
+	
+# Theoretical Underpinnings
+ 
+ 
+*  [Lucene - By Doug Cutting (2004)](http://lucene.sourceforge.net/talks/pisa/)
+*  [The Lucene Search Engine - By Doug Cutting (2000)](http://lucene.sourceforge.net/talks/inktomi/)
+ 
+ 
+# Lucene Java Resources (ideas are relevant to Lucene.Net) 
+
+*  [Lucene Java FAQ](http://wiki.apache.org/lucene-java/LuceneFAQ) - tons of general information on using Lucene, most relevant to Lucene.Net as well
+*  [Basics of Performance](http://wiki.apache.org/jakarta-lucene/BasicsOfPerformance) - a number of performance tweaks
+*  [Scores as Percentages](http://wiki.apache.org/lucene-java/ScoresAsPercentages) or why you shouldn't do that
+
+# Getting Started with Simone Chiaretta 
+
+1. [How to get started with Lucene.Net](http://codeclimber.net.nz/archive/2009/08/27/how-to-get-started-with-lucene.net.aspx)
+2. [The Main Concepts](http://codeclimber.net.nz/archive/2009/08/31/lucene.net-the-main-concepts.aspx)
+3. [Your First Application](http://codeclimber.net.nz/archive/2009/09/02/lucene.net-your-first-application.aspx)
+4. [Dissecting Storage Documents and Fields](http://codeclimber.net.nz/archive/2009/09/04/dissecting-lucene.net-storage-documents-and-fields.aspx)
+5. [Lucene - or how I stopped worrying and learned to love unstructured data](http://codeclimber.net.nz/archive/2009/09/08/lucene-or-how-i-stopped-worrying-and-learned-to.aspx)
+6. [How Subtext Lucene.Net index is structured](http://codeclimber.net.nz/archive/2009/09/10/how-subtext-lucene.net-index-is-structured.aspx)
+
