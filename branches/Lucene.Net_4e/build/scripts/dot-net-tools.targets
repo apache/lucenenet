@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	
+	<PropertyGroup>
+		<NUnitVersionFolder>NUnit.2.5.10.11092</NUnitVersionFolder>
+		<GallioVersionFolder>Gallio.3.2.750</GallioVersionFolder>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+    	<!--MSBuild 4.0 property-->
+    	<ProgramFiles32>$(MSBuildProgramFiles32)</ProgramFiles32>
+    	
+    	<!--Use OS env vars as a fallback-->
+    	<!-- 
+    	<ProgramFiles32 Condition=" '' == '$(ProgramFiles32)'">$(ProgramFiles%28x86%29)</ProgramFiles32>
+    	<ProgramFiles32 Condition=" '' == '$(ProgramFiles32)' ">$(ProgramFiles)</ProgramFiles32>-->
+	</PropertyGroup>
+	
+  	<ItemGroup>
+  		<NUnitFolder Include="$(PackagesFolder)\$(NUnitVersionFolder)\tools\" />
+  		<FxCopFolder Include="$(ProgramFiles32)\Microsoft Fxcop 10.0" />
+  		<NCoverFolder Include="$(ProgramFiles)\NCover" />
+  		<GallioFolder Include="$(PackagesFolder)\$(GallioVersionFolder)\tools\" />
+  		<FxCopCommands Include="@(RuleFiles-> '/file:%(rootdir)%(directory)%(filename)%(extension)')" />
+  		<SHFBFolder Include="$(ProgramFiles32)\EWSoftware\Sand Castle Help File Builder" />
+  		<SandCastleFolder Include="C:\Program Files (x86)\Sandcastle" />
+  		<CleanFiles Include="$(ArtifactsFolder)\ncover\*.*" />
+  		<CleanFiles Include="$(ArtifactsFolder)\html-test-reports\*.*" />
+  		<CleanFiles Include="$(ArtifactsFolder)\xml-test-reports\*.*" />
+  		<CleanFiles Include="$(ArtifactsFolder)\docs\*.*" />
+  	</ItemGroup>
+  	
+  
+ 
+	
+  	<Target Name="coverage" DependsOnTargets="build">
+  		<MakeDir Condition="!Exists('$(ArtifactsFolder)\ncover')" Directories="$(ArtifactsFolder)\ncover" />
+  		
+  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles)  /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"' /> 
+  		
+  		<!-- Notify user if code coverage tool is not found -->
+  		<Warning
+  			Condition="!Exists('%(NCoverFolder.FullPath)')"
+            Text="NCover is not installed under its expected location: %(NCoverFolder.FullPath)"
+            />
+  		<Warning
+  			Condition="!Exists('%(GallioFolder.FullPath)')"
+            Text="Gallio is not installed under its expected location: %(GallioFolder.FullPath)"
+             />
+  		
+  	</Target>
+  	
+  	
+  	<Target Name="test-report-xml"  DependsOnTargets="build">
+		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
+		
+		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
+		
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+	
+	
+	
+	
+	<Target Name="test-report-html"  DependsOnTargets="build">
+		<MakeDir 
+			Condition="!Exists('$(TEMP)')" 
+			Directories="$(TEMP)" />
+		
+		<Exec 
+			Condition="Exists('%(GallioFolder.FullPath)')" 
+			Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /nl /rd:$(ArtifactsFolder)\html-test-reports /rt:Html /rnf:test-reports" />
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+	
+	
+	
+	
+	<Target Name="document"  DependsOnTargets="build">
+		
+   		<MSBuild 
+   			Condition="Exists('%(SandCastleFolder.FullPath)')" 
+   			Projects="$(BuildFolder)\scripts\documentation.shfbproj"
+      		Properties="Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs" />
+
+		<!-- Notify user if Sand Castle is not found -->
+		<Warning
+			Condition="!Exists('%(SandCastleFolder.FullPath)')" 
+			Text="Sand Castle is not installed under its expected location: %(SandCastleFolder.FullPath)" />
+	</Target>
+  
+	
+	
+	
+	<Target Name="test" DependsOnTargets="build">
+		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
+		
+		<Exec Condition="Exists('%(GallioFolder.FullPath)') " Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /nl /rd:$(ArtifactsFolder)/tests " />
+		
+		<!-- Notify user if Gallio is not found -->
+		<Warning 
+			Condition="!Exists('%(GallioFolder.FullPath)')" 
+			Text="Gallio is not installed under its expected location: %(Gallio.FullPath)"  />
+		
+		<!-- Notify user if NUnit is not found -->
+		<Warning 
+			Condition="!Exists('%(NUnitFolder.FullPath)')" 
+			Text="NUnit is not installed under its expected location: %(NUnit.FullPath)"  />
+	</Target>
+	
+	<Target Name="rules" DependsOnTargets="build">
+		<Exec Condition="Exists('%(FxCopFolder.FullPath)')" Command='"%(FxCopFolder.FullPath)\FxCopCmd.exe" @(FxCopCommands) /project:$(RootFolder)build\scripts\rules.fxcop /out:$(ArtifactsFolder)\fxcop.xml ' />
+		
+		<!-- Notify user if fxcop is not found -->
+		<Warning 
+			Condition="!Exists('%(FxCopFolder.FullPath)')" 
+			Text="FxCop is not installed under its expected location: %(FxCopFolder.FullPath)" />
+		
+	</Target>
+</Project>
