@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.TestFramework", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj", "{756B5043-39EC-4C04-AC1F-AA959267DDC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Test", "test\Lucene.Net.Test\Lucene.Net.Test.csproj", "{1152BC40-6656-42C6-9FA2-4CA7E124CB87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.TestFramework.Test", "test\Lucene.Net.TestFramework.Test\Lucene.Net.TestFramework.Test.csproj", "{26D22898-1DDE-461E-A191-B33AFAC3343A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{756B5043-39EC-4C04-AC1F-AA959267DDC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{756B5043-39EC-4C04-AC1F-AA959267DDC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{756B5043-39EC-4C04-AC1F-AA959267DDC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{756B5043-39EC-4C04-AC1F-AA959267DDC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1152BC40-6656-42C6-9FA2-4CA7E124CB87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1152BC40-6656-42C6-9FA2-4CA7E124CB87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1152BC40-6656-42C6-9FA2-4CA7E124CB87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1152BC40-6656-42C6-9FA2-4CA7E124CB87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26D22898-1DDE-461E-A191-B33AFAC3343A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26D22898-1DDE-461E-A191-B33AFAC3343A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26D22898-1DDE-461E-A191-B33AFAC3343A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26D22898-1DDE-461E-A191-B33AFAC3343A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
