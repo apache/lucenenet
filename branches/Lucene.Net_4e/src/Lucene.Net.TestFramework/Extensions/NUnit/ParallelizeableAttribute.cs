@@ -17,5 +17,19 @@ namespace Lucene.Net.Extensions.NUnit
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
     public class ParallelizableAttribute : System.Attribute
     {
+        public TestScope Scope { get; set; }
+
+        public int Order { get; set; }
+
+        public ParallelizableAttribute()
+        {
+            
+        }
+
+
+        public ParallelizableAttribute(TestScope scope)
+        {
+            this.Scope = scope;
+        }
     }
 }

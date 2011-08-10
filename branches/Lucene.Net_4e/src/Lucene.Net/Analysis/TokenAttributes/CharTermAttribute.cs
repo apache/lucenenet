@@ -252,7 +252,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <param name="attributeBase">The attribute base.</param>
         public override void CopyTo(AttributeBase attributeBase)
         {
-            CharTermAttribute attribute = (CharTermAttribute)attributeBase;
+            ICharTermAttribute attribute = (ICharTermAttribute)attributeBase;
             attribute.CopyBuffer(this.Buffer, 0, this.termLength);
         }
 

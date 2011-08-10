@@ -84,12 +84,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </exception>
         public override void CopyTo(AttributeBase attributeBase)
         {
-            if (!(attributeBase is FlagsAttribute))
+            if (!(attributeBase is IFlagsAttribute))
                 throw new ArgumentException(
                     string.Format("attributeBase must be of type {0} in order to be copied", this.GetType().FullName), 
                     "attributeBase");
 
-            FlagsAttribute attribute = (FlagsAttribute)attributeBase;
+            IFlagsAttribute attribute = (IFlagsAttribute)attributeBase;
             attribute.Flags = this.Flags;
         }
 
