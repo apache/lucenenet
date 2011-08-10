@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="FlagsAttributeTest.cs" company="Apache">
+// <copyright company="Apache" file="OffsetAttributeTest.cs" >
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -21,100 +21,91 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
+#if NUNIT
+    using NUnit.Framework;
+    using Extensions.NUnit;
+#else
+    using Gallio.Framework;
+    using MbUnit.Framework;
+#endif
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-
     using Lucene.Net.Util;
 
-#if NUNIT
-    using NUnit.Framework;
-    using Extensions.NUnit;
-#else 
-    using Gallio.Framework;
-    using MbUnit.Framework;
-#endif
-  
-    
+
     [TestFixture]
     [Category(TestCategories.Unit)]
     [Parallelizable(TestScope.Descendants)]
-    public class FlagsAttributeTest
+    public class OffsetAttributeTest
     {
-        [Test]
-        public void Flags()
-        {
-            var attribute = new FlagsAttribute { Flags = 5 };
-            Assert.AreEqual(5, attribute.Flags);
-        }
 
         [Test]
-        public void Clear()
+        public void ClearOverride()
         {
-            var attribute = new FlagsAttribute { Flags = 5 };
-            Assert.AreEqual(5, attribute.Flags);
+            var attribute = new OffsetAttribute(3, 20);
+            Assert.AreEqual(3, attribute.OffsetStart);
+            Assert.AreEqual(20, attribute.OffsetEnd);
 
             attribute.Clear();
-            Assert.AreEqual(0, attribute.Flags);
+            
+            Assert.AreEqual(0, attribute.OffsetStart);
+            Assert.AreEqual(0, attribute.OffsetEnd);
         }
 
         [Test]
-        public void Clone()
+        public void CopyToOverride()
         {
-            var attribute = new FlagsAttribute { Flags = 5 };
-            Assert.AreEqual(5, attribute.Flags);
+            var attribute = new OffsetAttribute(3, 20);
+            var target = new OffsetAttributeLookalike();
 
-            var clone = attribute.Clone() as FlagsAttribute;
-            Assert.IsNotNull(clone);
-            Assert.AreEqual(5, clone.Flags);
-        }
+            Assert.AreEqual(0, target.OffsetStart);
+            Assert.AreEqual(0, target.OffsetEnd);
 
-        [Test]
-        public void CopyTo()
-        {
-            var attribute = new FlagsAttribute { Flags = 5 };
-            Assert.AreEqual(5, attribute.Flags);
+            attribute.CopyTo(target);
 
-            var copy = new FlagsAttribute();
-            attribute.CopyTo(copy);
-
-            Assert.AreEqual(5, copy.Flags);
-        }
-
-        [Test]
-        public void CopyTo_WithArgumentException()
-        {
-            var attribute = new FlagsAttribute { Flags = 5 };
-            Assert.AreEqual(5, attribute.Flags);
-
-            Assert.Throws<ArgumentException>(() => attribute.CopyTo(new NonFlagAttribute()));
+            Assert.AreEqual(3, target.OffsetStart);
+            Assert.AreEqual(20, target.OffsetEnd);
         }
 
         [Test]
         public void EqualsOverride()
         {
-            var attribute = new FlagsAttribute { Flags = 25 };
-            Assert.AreEqual(25, attribute.Flags);
+            var attribute = new OffsetAttribute(5, 30);
+            var equalAttribute = new OffsetAttribute(5, 30);
+            var notEqualAttribute = new OffsetAttribute();
+            const int wrongType = 45;
 
-            var y = new FlagsAttribute { Flags = 25 };
-
-            Assert.IsTrue(attribute.Equals(y));
+            Assert.IsTrue(attribute.Equals(equalAttribute));
+            Assert.IsFalse(attribute.Equals(notEqualAttribute));
+            Assert.IsFalse(attribute.Equals(wrongType));
         }
 
         [Test]
         public void GetHashCodeOverride()
         {
-            var attribute = new FlagsAttribute { Flags = 25 };
-            Assert.AreEqual(25, attribute.Flags);
+            var attribute = new OffsetAttribute(5, 30);
+            int code = 5;
+            code = (code * 31) + 30;
 
-            Assert.AreEqual(25, attribute.GetHashCode());
+            Assert.AreEqual(code, attribute.GetHashCode());
         }
 
         #region helpers
 
-        private class NonFlagAttribute : AttributeBase
+        internal  class OffsetAttributeLookalike : AttributeBase, IOffsetAttribute
         {
+
+            public int OffsetStart { get; set; }
+
+            public int OffsetEnd { get; set; }
+
+            public void SetOffset(int start, int end)
+            {
+                this.OffsetStart = start;
+                this.OffsetEnd = end;
+            }
 
             public override void Clear()
             {

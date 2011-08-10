@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="TokenStream.cs">
+// <copyright company="Apache" file="IPayloadAttribute.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,17 +19,24 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Lucene.Net.Index;
 
     /// <summary>
-    /// TODO: port
+    /// The payload of a <see cref="Token"/>.
     /// </summary>
-    public class TokenStream
+    /// <seealso cref="Index.Payload" />
+    public interface IPayloadAttribute
     {
+        /// <summary>
+        /// Gets or sets the payload.
+        /// </summary>
+        /// <value>The payload.</value>
+        Payload Payload { get; set; }
     }
 }

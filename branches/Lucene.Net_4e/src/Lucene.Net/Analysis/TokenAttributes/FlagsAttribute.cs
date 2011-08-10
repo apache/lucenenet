@@ -52,6 +52,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
     public class FlagsAttribute : AttributeBase, IFlagsAttribute
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FlagsAttribute"/> class.
+        /// </summary>
+        public FlagsAttribute()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FlagsAttribute"/> class.
+        /// </summary>
+        /// <param name="flags">The flags.</param>
+        public FlagsAttribute(int flags)
+        {
+            this.Flags = flags;
+        }
+
+        /// <summary>
         /// Gets or sets the flags.
         /// </summary>
         /// <value>The flags.</value>

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="TokenStream.cs">
+// <copyright company="Apache" file="ITypeAttribute.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,17 +19,17 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
-    /// TODO: port
+    /// A <see cref="Token"/>'s lexical type. The default value is 'word'.
     /// </summary>
-    public class TokenStream
+    public interface ITypeAttribute
     {
+        /// <summary>
+        /// Gets or sets the <see cref="Token"/>'s lexical type.
+        /// </summary>
+        /// <value>The type.</value>
+       string Type { get; set; }
     }
 }

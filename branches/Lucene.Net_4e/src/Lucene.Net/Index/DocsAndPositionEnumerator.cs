@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="TokenStream.cs">
+// <copyright company="Apache" file="DocsAndPositionEnumerator.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Index
 {
     using System;
     using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// TODO: port
     /// </summary>
-    public class TokenStream
+    public class DocsAndPositionEnumerator
     {
     }
 }

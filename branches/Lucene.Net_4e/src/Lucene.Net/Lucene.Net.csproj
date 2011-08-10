@@ -45,13 +45,26 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Token.cs" />
     <Compile Include="Analysis\TokenAttributes\CharTermAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\ICharTermAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\FlagsAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\IFlagsAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\IKeywordAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\IOffsetAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\IPayloadAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\IPositionIncrementAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\ITermToBytesRefAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\ITypeAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\KeywordAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\OffsetAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\PayloadAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\PositionIncrementAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\TypeAttribute.cs" />
     <Compile Include="Analysis\TokenStream.cs" />
+    <Compile Include="Index\DocsAndPositionEnumerator.cs" />
+    <Compile Include="Index\Payload.cs" />
+    <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\BaseDictionaryOfTKeyTValue.cs" />
     <Compile Include="Support\ICloneable.cs" />
@@ -64,6 +77,7 @@
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\AttributeBase.cs" />
     <Compile Include="Util\AttributeSource.cs" />
+    <Compile Include="Util\BytesRef.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
   </ItemGroup>

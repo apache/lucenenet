@@ -60,6 +60,11 @@
     <Compile Include="Analysis\TokenAttributes\CharTermAttributeTest.cs" />
     <Compile Include="Analysis\TokenAttributes\FlagsAttributeTest.cs" />
     <Compile Include="Analysis\TokenAttributes\KeywordAttributeTest.cs" />
+    <Compile Include="Analysis\TokenAttributes\OffsetAttributeTest.cs" />
+    <Compile Include="Analysis\TokenAttributes\PayloadAttributeTest.cs" />
+    <Compile Include="Analysis\TokenAttributes\PositionIncrementAttributeTest.cs" />
+    <Compile Include="Analysis\TokenAttributes\TypeAttributeTest.cs" />
+    <Compile Include="Index\PayloadTest.cs" />
     <Compile Include="Internal\AttributeExtensions.cs" />
     <Compile Include="Internal\ReferenceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
