@@ -43,6 +43,36 @@ namespace Lucene.Net.Util
     {
 
         [Test]
+        public void CreateHashCode_WithCharArray()
+        {
+            var array = "stash".ToCharArray();
+
+            var hash = array.CreateHashCode();
+
+            int code = 0;
+
+            for (int i = array.Length - 1; i >= 0; i--)
+                code = code * 31 + array[i];
+
+            Assert.AreEqual(code, hash);
+        }
+
+        [Test]
+        public void CreateHashCode_WithByteArray()
+        {
+            var array = new byte[] {0x01, 0x03, 0x05};
+
+            var hash = array.CreateHashCode();
+
+            int code = 0;
+
+            for (int i = array.Length - 1; i >= 0; i--)
+                code = code * 31 + array[i];
+
+            Assert.AreEqual(code, hash);
+        }
+
+        [Test]
         public void OversizeGrowthAlgorythm()
         {
             int currentSize = 0;
