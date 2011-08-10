@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="TokenStream.cs">
+// <copyright company="Apache" file="BytesRef.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Lucene.Net.Analysis
+namespace Lucene.Net.Util
 {
     using System;
     using System.Collections.Generic;
@@ -29,7 +29,16 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// TODO: port
     /// </summary>
-    public class TokenStream
+    public sealed class BytesRef : IComparable<BytesRef>
     {
+        /// <summary>
+        /// Compares this instance to the other <see cref="BytesRef"/> instance.
+        /// </summary>
+        /// <param name="other">The other.</param>
+        /// <returns>An instance of <see cref="Int32"/>.</returns>
+        public int CompareTo(BytesRef other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="KeywordAttribute.cs">
+// <copyright company="Apache" file="TypeAttribute.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -25,56 +25,66 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Lucene.Net.Util;
 
     /// <summary>
-    /// The attribute that can be used to make a token as a keyword. Keyword
-    /// aware <see cref="TokenStream"/>s can decide to modify a token
-    /// based on the return value of <see cref="IsKeyword"/>, if the token
-    /// is modified. Stemming filters for instance can use this attribute
-    /// to conditionally skip a term if <see cref="IsKeyword"/> returns <c>true</c>.
+    /// A <see cref="Token"/>'s lexical type. The default value is 'word'.
     /// </summary>
-    public class KeywordAttribute : Util.AttributeBase, IKeywordAttribute
+    public class TypeAttribute : AttributeBase, ITypeAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeywordAttribute"/> class.
+        /// The default type for the <see cref="Token"/>'s lexical type.
         /// </summary>
-        public KeywordAttribute()
-        {  
-        }
+        public const string DefaultType = "word";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeywordAttribute"/> class.
+        /// Initializes a new instance of the <see cref="TypeAttribute"/> class.
         /// </summary>
-        /// <param name="isKeyword">if set to <c>true</c> [is keyword].</param>
-        public KeywordAttribute(bool isKeyword)
+        public TypeAttribute() 
+            : this(DefaultType)
         {
-            this.IsKeyword = isKeyword;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is keyword.
+        /// Initializes a new instance of the <see cref="TypeAttribute"/> class.
         /// </summary>
-        /// <value>
-        ///    <c>true</c> if this instance is keyword; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsKeyword { get; set; }
+        /// <param name="type">The type.</param>
+        public TypeAttribute(string type)
+        {
+            this.Type = type;
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Token"/>'s lexical type.
+        /// </summary>
+        /// <value>The type.</value>
+        public string Type { get; set; }
 
         /// <summary>
         /// Clears the instance.
         /// </summary>
         public override void Clear()
         {
-            this.IsKeyword = false;
+            this.Type = DefaultType;
         }
 
         /// <summary>
-        /// Copies to the target attribute base.
+        /// Creates a clone of the object, generally shallow.
+        /// </summary>
+        /// <returns>an the clone of the current instance.</returns>
+        public override object Clone()
+        {
+            return new TypeAttribute() { Type = this.Type };
+        }
+
+        /// <summary>
+        /// Copies this instance to the specified target.
         /// </summary>
         /// <param name="attributeBase">The attribute base.</param>
-        public override void CopyTo(Util.AttributeBase attributeBase)
+        public override void CopyTo(AttributeBase attributeBase)
         {
-            IKeywordAttribute attr = (IKeywordAttribute)attributeBase;
-            attr.IsKeyword = this.IsKeyword;
+            ITypeAttribute attribute = (ITypeAttribute)attributeBase;
+            attribute.Type = this.Type;
         }
 
         /// <summary>
@@ -82,18 +92,16 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        ///    <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (this == obj)
+            if (obj == this)
                 return true;
 
-            if (this.GetType() != obj.GetType())
-                return false;
+            TypeAttribute attribute = obj as TypeAttribute;
 
-            KeywordAttribute y = obj as KeywordAttribute;
-            return y != null && this.IsKeyword == y.IsKeyword;
+            return attribute != null && attribute.Type.Equals(this.Type);
         }
 
         /// <summary>
@@ -104,7 +112,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </returns>
         public override int GetHashCode()
         {
-            return this.IsKeyword ? 31 : 37;
-        }
+            return this.Type.GetHashCode();
+        }       
     }
 }

@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="KeywordAttribute.cs">
+// <copyright company="Apache" file="PayloadAttribute.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,62 +19,71 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+
+
 namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using Lucene.Net.Index;
+    using Lucene.Net.Util;
 
     /// <summary>
-    /// The attribute that can be used to make a token as a keyword. Keyword
-    /// aware <see cref="TokenStream"/>s can decide to modify a token
-    /// based on the return value of <see cref="IsKeyword"/>, if the token
-    /// is modified. Stemming filters for instance can use this attribute
-    /// to conditionally skip a term if <see cref="IsKeyword"/> returns <c>true</c>.
+    /// The payload of a Token. 
     /// </summary>
-    public class KeywordAttribute : Util.AttributeBase, IKeywordAttribute
+    /// <seealso cref="Index.Payload"/>
+    public class PayloadAttribute : AttributeBase, IPayloadAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeywordAttribute"/> class.
+        /// Initializes a new instance of the <see cref="PayloadAttribute"/> class.
         /// </summary>
-        public KeywordAttribute()
-        {  
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KeywordAttribute"/> class.
-        /// </summary>
-        /// <param name="isKeyword">if set to <c>true</c> [is keyword].</param>
-        public KeywordAttribute(bool isKeyword)
+        public PayloadAttribute()
         {
-            this.IsKeyword = isKeyword;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is keyword.
+        /// Initializes a new instance of the <see cref="PayloadAttribute"/> class.
         /// </summary>
-        /// <value>
-        ///    <c>true</c> if this instance is keyword; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsKeyword { get; set; }
+        /// <param name="payload">The payload.</param>
+        public PayloadAttribute(Payload payload)
+        {
+            this.Payload = payload;
+        }
+
+        /// <summary>
+        /// Gets or sets the payload.
+        /// </summary>
+        /// <value>The payload.</value>
+        public Index.Payload Payload { get; set; }
 
         /// <summary>
         /// Clears the instance.
         /// </summary>
         public override void Clear()
         {
-            this.IsKeyword = false;
+            this.Payload = null;
         }
 
         /// <summary>
-        /// Copies to the target attribute base.
+        /// Creates a clone of the object, generally shallow.
+        /// </summary>
+        /// <returns>an the clone of the current instance.</returns>
+        public override object Clone()
+        {
+            PayloadAttribute clone = (PayloadAttribute)this.MemberwiseClone();
+            
+            if (this.Payload != null)
+                clone.Payload = (Payload)this.Payload.Clone();
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Copies this instance to the specified target.
         /// </summary>
         /// <param name="attributeBase">The attribute base.</param>
-        public override void CopyTo(Util.AttributeBase attributeBase)
+        public override void CopyTo(AttributeBase attributeBase)
         {
-            IKeywordAttribute attr = (IKeywordAttribute)attributeBase;
-            attr.IsKeyword = this.IsKeyword;
+            IPayloadAttribute attribute = (IPayloadAttribute)attributeBase;
+            attribute.Payload = this.Payload == null ? null : (Payload)this.Payload.Clone();
         }
 
         /// <summary>
@@ -89,11 +98,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (this == obj)
                 return true;
 
-            if (this.GetType() != obj.GetType())
+            PayloadAttribute attribute = obj as PayloadAttribute;
+
+            if (attribute == null)
                 return false;
 
-            KeywordAttribute y = obj as KeywordAttribute;
-            return y != null && this.IsKeyword == y.IsKeyword;
+            if (attribute.Payload == null || this.Payload == null)
+                return attribute.Payload == null && this.Payload == null;
+
+            return attribute.Payload.Equals(this.Payload);
         }
 
         /// <summary>
@@ -104,7 +117,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </returns>
         public override int GetHashCode()
         {
-            return this.IsKeyword ? 31 : 37;
+            return this.Payload == null ? 0 : this.Payload.GetHashCode();
         }
     }
 }

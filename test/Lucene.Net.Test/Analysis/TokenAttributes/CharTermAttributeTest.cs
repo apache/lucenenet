@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     [TestFixture]
     [Category(Categories.Unit)]
-    [Parallelizable]
+    [Parallelizable(TestScope.Descendants)]
     public class CharTermAttributeTest
     {
         /*

@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
         public abstract void Clear();
 
         /// <summary>
-        /// Copies to.
+        /// Copies this instance to the specified target.
         /// </summary>
         /// <param name="attributeBase">The attribute base.</param>
         public abstract void CopyTo(AttributeBase attributeBase);
