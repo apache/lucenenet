@@ -2,23 +2,25 @@
 	
 # Mailing Lists
 
-For development, discussion about the project occurs on its mailing list, lucene-net-dev @ lucene.apache.org, to subscribe, send a message to lucene-net-dev-subscribe @ lucene.apache.org. 
+<b>Development</b> - developer discussions about the project occurs on its mailing list, lucene-net-dev @ lucene.apache.org. To subscribe, send a message to lucene-net-dev-subscribe @ lucene.apache.org. 
 
-For general usage, discussion about the project occurs on its mailing list, lucene-net-user @ lucene.apache.org, to subscribe, send a message to lucene-net-user-subscribe @ lucene.apache.org. 
+<b>General usage</b> - user discussions about the project occurs on its mailing list, lucene-net-user @ lucene.apache.org. To subscribe, send a message to lucene-net-user-subscribe @ lucene.apache.org. 
 
-Commit notifications are sent to lucene-net-commits @ lucene.apache.org, to subscribe send a message to lucene-net-commits-subscribe @ lucene.apache.org. 
+<b>Commit notifications</b> - commit notifications are sent to lucene-net-commits @ lucene.apache.org. To subscribe, send a message to lucene-net-commits-subscribe @ lucene.apache.org. 
 
 ## Archives
 
-*  Developers [2006-2009](http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-dev/) - [2010-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/)
-*  Users [2006-2009](http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-user/) - [2010-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/)
-*  Committers [2006-2009](http://mail-archives.apache.org/mod_mbox/incubator-lucene-net-commits/) - [2010-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/)
+*  Developers [2006-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-dev/)
+*  Users [2006-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-user/)
+*  Committers [2006-Present](http://mail-archives.apache.org/mod_mbox/lucene-lucene-net-commits/)
 
 # Wiki
 
+Tutorials, Links, and other various bits of information can be found the  [Lucene.Net Wiki](https://cwiki.apache.org/LUCENENET/).
+
 # Issue Tracker (JIRA)
 
-Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker: [Lucene.Net JIRA](http://https//issues.apache.org/jira/browse/LUCENENET)
+Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker: [Lucene.Net JIRA](https://issues.apache.org/jira/browse/LUCENENET)
 
 </div>
 
