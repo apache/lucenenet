@@ -311,9 +311,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </returns>
         public override int GetHashCode()
         {
-            // TODO: implement ArrayUtil.HashCode();
             int code = this.termLength;
-            code = code * 31;
+            code = (code * 31) + this.Buffer.CreateHashCode();
             return code;
         }
 
@@ -322,7 +321,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         ///     Resizes the length of the internal buffer to the new value and preserves the
         ///     existing content.
         /// </summary>
-        /// <param name="length">The length to rebuffer to.</param>
+        /// <param name="length">The length to re-buffer to.</param>
         /// <returns>The <see cref="T:System.Char"/> array.</returns>
         public char[] ResizeBuffer(int length)
         {

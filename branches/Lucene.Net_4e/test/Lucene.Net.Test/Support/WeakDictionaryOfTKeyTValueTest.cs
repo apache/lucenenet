@@ -172,7 +172,8 @@ namespace Lucene.Net.Support
             var weakDictionary = new WeakDictionary<string, ReferenceType>(internalDictionary);
 
             bool success = weakDictionary.Contains(
-                                            new KeyValuePair<string, ReferenceType>("one",
+                                            new KeyValuePair<string, ReferenceType>(
+                                                "one",
                                                 internalDictionary["one"]));
 
             Assert.IsTrue(success, "Dictionary should have contained the key pair value.");

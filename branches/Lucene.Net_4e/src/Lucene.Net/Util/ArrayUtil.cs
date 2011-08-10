@@ -46,6 +46,52 @@ namespace Lucene.Net.Util
     public static class ArrayUtil
     {
         /// <summary>
+        /// Creates the hash code of chars in range start that is inclusive, till the end.
+        /// </summary>
+        /// <remarks>
+        ///     <note>This method is just called <c>hashCode()</c> in the java version.</note>
+        /// </remarks>
+        /// <param name="array">The array.</param>
+        /// <param name="start">The start which defaults to 0.</param>
+        /// <param name="end">The end which defaults to the length of the array.</param>
+        /// <returns>An instance of <see cref="Int32"/>.</returns>
+        public static int CreateHashCode(this char[] array, int start = 0, int end = -1)
+        {
+            if (end == -1)
+                end = array.Length;
+
+            int code = 0;
+            
+            for (int i = end - 1; i >= start; i--)
+                code = (code * 31) + array[i];
+            
+            return code;
+        }
+
+        /// <summary>
+        /// Creates the hash code of bytes in range start that is inclusive, till the end.
+        /// </summary>
+        /// <remarks>
+        ///     <note>This method is just called <c>hashCode()</c> in the java version.</note>
+        /// </remarks>
+        /// <param name="array">The array.</param>
+        /// <param name="start">The start which defaults to 0.</param>
+        /// <param name="end">The end which defaults to the length of the array.</param>
+        /// <returns>An instance of <see cref="Int32"/>.</returns>
+        public static int CreateHashCode(this byte[] array, int start = 0, int end = -1)
+        {
+            int code = 0;
+
+            if (end == -1)
+                end = array.Length;
+
+            for (int i = end - 1; i >= start; i--)
+                code = (code * 31) + array[i];
+
+            return code;
+        }
+
+        /// <summary>
         ///   Returns an array size that is greater or equal to the <paramref name="minimalTargetSize"/>.
         ///   This will generally over allocate exponentially to achieve amortized 
         ///   linear-time cost as the array grows.
