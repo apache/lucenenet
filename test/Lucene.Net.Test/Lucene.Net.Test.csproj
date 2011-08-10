@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Analysis\TokenAttributes\CharTermAttributeTest.cs" />
     <Compile Include="Analysis\TokenAttributes\FlagsAttributeTest.cs" />
+    <Compile Include="Analysis\TokenAttributes\KeywordAttributeTest.cs" />
     <Compile Include="Internal\AttributeExtensions.cs" />
     <Compile Include="Internal\ReferenceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,7 +84,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-   <Import Condition="Exists('..\..\packages\StyleCop.4.5\StyleCop.targets')" Project="..\..\packages\StyleCop.4.5\StyleCop.targets" />
+  <Import Condition="Exists('..\..\packages\StyleCop.4.5\StyleCop.targets')" Project="..\..\packages\StyleCop.4.5\StyleCop.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -49,6 +49,9 @@
     <Compile Include="Analysis\TokenAttributes\ICharTermAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\FlagsAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\IFlagsAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\IKeywordAttribute.cs" />
+    <Compile Include="Analysis\TokenAttributes\KeywordAttribute.cs" />
+    <Compile Include="Analysis\TokenStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\BaseDictionaryOfTKeyTValue.cs" />
     <Compile Include="Support\ICloneable.cs" />
