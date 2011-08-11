@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         while(attribute.IncrementToken())
     ///         {
     ///             int hash attribute.FillBytesRef();
-    ///             if(isInteresting(bytes)) 
+    ///             if (isInteresting(bytes)) 
     ///             {
     ///                 // do something with it.
     ///                 Use(new BytesRef(bytes));
