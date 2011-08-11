@@ -45,6 +45,7 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Analyzer.cs" />
     <Compile Include="Analysis\Token.cs" />
     <Compile Include="Analysis\TokenAttributes\CharTermAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\ICharTermAttribute.cs" />
@@ -69,6 +70,10 @@
     <Compile Include="Support\BaseDictionaryOfTKeyTValue.cs" />
     <Compile Include="Support\ICloneable.cs" />
     <Compile Include="Support\DictionaryExtensions.cs" />
+    <Compile Include="Support\ICloseable.cs" />
+    <Compile Include="Support\Threading\LocalDataStoreSlot.cs" />
+    <Compile Include="Support\Threading\ThreadData.cs" />
+    <Compile Include="Support\Threading\ThreadLocalOfT.cs" />
     <Compile Include="Support\WeakDictionaryOfTKeyTValue.cs" />
     <Compile Include="Support\WeakKeyComparerOfT.cs" />
     <Compile Include="Support\WeakKeyReferenceOfT.cs" />

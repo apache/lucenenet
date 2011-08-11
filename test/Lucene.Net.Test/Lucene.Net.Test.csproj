@@ -69,6 +69,8 @@
     <Compile Include="Internal\ReferenceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\DictionaryExtensionsTest.cs" />
+    <Compile Include="Support\ICloneable.cs" />
+    <Compile Include="Support\ThreadLocalTest.cs" />
     <Compile Include="Support\WeakDictionaryOfTKeyTValueTest.cs" />
     <Compile Include="Support\WeakReferenceOfTTest.cs" />
     <Compile Include="Util\ArrayUtilTest.cs" />
