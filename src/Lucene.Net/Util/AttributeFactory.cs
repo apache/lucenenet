@@ -22,8 +22,8 @@
 namespace Lucene.Net.Util
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Support;
-
 
     /// <summary>
     /// A contract for factories that create instances of <see cref="AttributeBase" />
@@ -58,6 +58,9 @@ namespace Lucene.Net.Util
         ///         removes the &quot;I&quot; from the interface name by using <c>type.Name.Substring(0)</c>.
         ///     </para>
         /// </remarks>
+        [SuppressMessage("Microsoft.Security", 
+            "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "Outside classes can not affect the DefaultAttributeFactory")]
         public static readonly AttributeFactory DefaultFactory = new DefaultAttributeFactory();
 
         /// <summary>
@@ -66,6 +69,9 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <typeparam name="T">The type of interface</typeparam>
         /// <returns>An instance of <see cref="AttributeBase"/>.</returns>
+        [SuppressMessage("Microsoft.Design", 
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification = "This is similar to Activator.Create<T>.")]
         public abstract AttributeBase CreateAttributeInstance<T>() where T : IAttribute;
 
         /// <summary>
@@ -90,7 +96,6 @@ namespace Lucene.Net.Util
 
             public override AttributeBase CreateAttributeInstance<T>()
             {
-                var implementationType = FetchClassForInterface(typeof(T));
                 return CreateAttributeInstance(typeof(T));
             }
 
@@ -113,16 +118,14 @@ namespace Lucene.Net.Util
 
                         try
                         {
-                            value = Type.GetType(string.Format("{0}.{1}", type.Namespace, typeName));
+                            value = Type.GetType("{0}.{1}".Inject(type.Namespace, typeName));
                         }
-                        catch (Exception ex)
+                        catch (TypeLoadException ex)
                         {
                             throw new ArgumentException(
-                                string.Format(
-                                    "The implementation '{0}' could not be found for attribute interface '{1}'",
-                                    typeName,
-                                    type.FullName), 
-                                    ex);
+                                "The implementation type '{0}' could not be found for attribute " +
+                                "interface '{1}'".Inject(typeName, type.FullName),
+                                ex);
                         }
 
                         map.Add(type, value);

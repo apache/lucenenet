@@ -144,7 +144,7 @@ namespace Lucene.Net.Support.Threading
         public void Dispose()
         {
             this.Dispose(true);
-            this.disposed = true;
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -158,6 +158,7 @@ namespace Lucene.Net.Support.Threading
                 this.Factory = null;
                 ThreadData.FreeLocalSlotData(this.slot.SlotId, this.slot.IsThreadLocal);
                 this.slot = null;
+                this.disposed = true;
             }
         }
 

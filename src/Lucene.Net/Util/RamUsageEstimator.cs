@@ -66,5 +66,18 @@ namespace Lucene.Net.Util
         /// The number of bytes for a char.
         /// </summary>
         public const int NumBytesChar = 2;
+
+        private string temp = string.Empty;
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return this.temp;
+        }
     }
 }

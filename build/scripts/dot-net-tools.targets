@@ -39,13 +39,16 @@
   		<FxCopFolder Include="$(ProgramFiles32)\Microsoft Fxcop 10.0" />
   		<NCoverFolder Include="$(ProgramFiles)\NCover" />
   		<GallioFolder Include="$(PackagesFolder)\$(GallioVersionFolder)\tools\" />
-  		<FxCopCommands Include="@(RuleFiles-> '/file:%(rootdir)%(directory)%(filename)%(extension)')" />
+  		<FxCopCommands Include="@(AnalysisFiles-> ' /file:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		<FxCopReferences Include="@(ReferenceFiles-> ' /reference:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
   		<SHFBFolder Include="$(ProgramFiles32)\EWSoftware\Sand Castle Help File Builder" />
   		<SandCastleFolder Include="C:\Program Files (x86)\Sandcastle" />
   		<CleanFiles Include="$(ArtifactsFolder)\ncover\*.*" />
   		<CleanFiles Include="$(ArtifactsFolder)\html-test-reports\*.*" />
   		<CleanFiles Include="$(ArtifactsFolder)\xml-test-reports\*.*" />
   		<CleanFiles Include="$(ArtifactsFolder)\docs\*.*" />
+  		<CoverageFiles Include="$(PackagesFolder)\PortableLibrary\*.*" />
+  		<ReleaseFiles Include="$(ArtifactsFolder)\docs\Lucene.Net.chm" />
   	</ItemGroup>
   	
   
@@ -71,7 +74,7 @@
   	
   	<Target Name="test-report-xml"  DependsOnTargets="build">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
-		
+		<Copy SourceFiles="@(Compile)" DestinationFolder="c:\foocopy\%(RecursiveDir)"></Copy>
 		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
 		
 		
@@ -113,7 +116,7 @@
 	
 	
 	<Target Name="document"  DependsOnTargets="build">
-		
+		<Copy SourceFiles="@(CoverageFiles)" DestinationFolder="$(BinFolder)\core\$(Configuration)" />
    		<MSBuild 
    			Condition="Exists('%(SandCastleFolder.FullPath)')" 
    			Projects="$(BuildFolder)\scripts\documentation.shfbproj"
@@ -145,7 +148,9 @@
 	</Target>
 	
 	<Target Name="rules" DependsOnTargets="build">
-		<Exec Condition="Exists('%(FxCopFolder.FullPath)')" Command='"%(FxCopFolder.FullPath)\FxCopCmd.exe" @(FxCopCommands) /project:$(RootFolder)build\scripts\rules.fxcop /out:$(ArtifactsFolder)\fxcop.xml ' />
+		<Exec Condition="Exists('%(FxCopFolder.FullPath)')" Command='"%(FxCopFolder.FullPath)\FxCopCmd.exe" @(FxCopCommands) @(FxCopReferences) /project:$(RootFolder)build\scripts\rules.fxcop /out:$(ArtifactsFolder)\fxcop.xml ' ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+		</Exec>
 		
 		<!-- Notify user if fxcop is not found -->
 		<Warning 

@@ -42,10 +42,19 @@ namespace Lucene.Net.Analysis
         {
             if (this.AssertSealed() == false)
                 throw new TypeLoadException(
-                    string.Format(
-                         "{0} can not be used. It must be sealed or at least seal" +
-                         " the TokenStream and ResuableTokenStream methods",
-                         this.GetType().Name));
+                    "{0} can not be used. It must be sealed or at least seal" +
+                    " the TokenStream and ResuableTokenStream methods"
+                    .Inject(this.GetType().Name));
+        }
+
+
+        /// <summary>
+        /// Gets the offset gap.
+        /// </summary>
+        /// <value>An instance of <see cref="Int32"/>.</value>
+        public virtual int OffsetGap
+        {
+            get { return 0; }
         }
 
 
@@ -61,10 +70,7 @@ namespace Lucene.Net.Analysis
             get
             {
                 if (this.disposed)
-                    throw new ObjectDisposedException(
-                        string.Format(
-                             "This analyzer '{0}' has already been disposed",
-                             this.GetType().FullName));
+                    throw new ObjectDisposedException(this.GetType().FullName);
 
                 if (!this.threadLocalTokenStream.IsValueCreated)
                     return null;
@@ -74,10 +80,7 @@ namespace Lucene.Net.Analysis
             set
             {
                 if (this.disposed)
-                    throw new ObjectDisposedException(
-                        string.Format(
-                             "This analyzer '{0}' has already been disposed",
-                             this.GetType().FullName));
+                    throw new ObjectDisposedException(this.GetType().FullName);
 
                 this.threadLocalTokenStream.Value = value;
             }
@@ -89,20 +92,11 @@ namespace Lucene.Net.Analysis
         public void Dispose()
         {
             this.Dispose(true);
-            this.disposed = true;
-            this.threadLocalTokenStream.Dispose();
-            this.threadLocalTokenStream = null;
+            GC.SuppressFinalize(this);
         }
 
 
-        /// <summary>
-        /// Gets the offset gap.
-        /// </summary>
-        /// <returns>An instance of <see cref="Int32"/>.</returns>
-        public virtual int GetOffsetGap()
-        {
-            return 0;
-        }
+       
 
         /// <summary>
         /// Gets the position increment gap.
@@ -144,14 +138,24 @@ namespace Lucene.Net.Analysis
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                this.disposed = true;
+                this.threadLocalTokenStream.Dispose();
+                this.threadLocalTokenStream = null;
+            }
         }
 
-        // this was ported from lucene, but I'm not convinced this is best way
-        // to handle this kind of design decision.
+        // AssertSealed was ported from java-lucene-core, but I'm not convinced 
+        // this is best way to handle this kind of design decision in .NET.
+
+        // It might be better to create an analysis tool or put these kind of
+        // assertions inside the testing framework.
+        // TODO: remove AssertSealed() / assertSealed.
         private bool AssertSealed()
         {
             Type type = this.GetType();
-
+            
             if (type.IsSealed || type.IsAbstract)
                 return true;
 

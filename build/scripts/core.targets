@@ -43,9 +43,21 @@
 		<!-- Assemblies To Test -->
 		<TestFiles Include="$(CoreBinFolder)\*.Test.dll" />
 		
-		<!-- Rules for code to follow -->
-		<AnalysisFiles Include="$(CoreBinFolder)\Lucene.Net.dll"   />
-		<AnalysisFiles Include="$(CoreBinFolder)\Lucene.Net.TestFramework.dll"   />
+		<!-- Files To Release -->
+		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.dll" />
+		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.XML" />
+		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.TestFramework.dll" />
+		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.TestFramework.XML" />
+	
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\System.Core.dll" />
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\mscorlib.dll" />
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\System.dll" />
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\System.Net.dll" />
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\System.Xml.dll" />
+		<ReferenceFiles Include="$(PackagesFolder)\PortableLibrary\mscorlib.dll" />
+			<!-- 
+		<AnalysisFiles Include="$(CoreBinFolder)\Lucene.Net.dll"   /> -->
+		
 		
 		<PathTargets Include="paths-lucene" />
 	</ItemGroup>

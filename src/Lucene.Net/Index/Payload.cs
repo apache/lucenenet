@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using Lucene.Net.Support;
@@ -43,6 +44,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public Payload()
         {
+            this.Data = new byte[] { };
         }
 
         /// <summary>
@@ -72,6 +74,9 @@ namespace Lucene.Net.Index
         /// Gets or sets the data.
         /// </summary>
         /// <value>The data.</value>
+        [SuppressMessage("Microsoft.Performance", 
+            "CA1819:PropertiesShouldNotReturnArrays", 
+            Justification = "Lucene code base uses byte[] through out.")]
         public byte[] Data
         {
             get
@@ -98,12 +103,11 @@ namespace Lucene.Net.Index
         {
             if (0 <= index && index < this.Length)
                 return this.Data[this.Offset + index];
-
-            throw new IndexOutOfRangeException(
-                string.Format(
-                    "The index must be greater than 0 and less than the length '{0}', The index was '{1}'",
-                    this.Length, 
-                    index));
+           
+            throw new ArgumentOutOfRangeException(
+                "index",
+                "The index must be greater than 0 and less than the length '{0}'. " +
+                "The index was '{1}'. ".Inject(this.Length, index));
         }
 
         /// <summary>
@@ -146,11 +150,13 @@ namespace Lucene.Net.Index
                 throw new ArgumentNullException("target");
 
             if (this.Length > target.Length + offset)
-                throw new IndexOutOfRangeException(
-                    string.Format(
-                        "The combined target length and offset '{0}' must be smaller the payload length '{1}' ",
-                        target.Length + offset,
-                        this.Length));
+            {
+                var message = "The combined target length and offset '{0}' must be smaller the payload length '{1}' "
+                    .Inject((target.Length + offset), this.Length);
+
+                throw new ArgumentOutOfRangeException("target", message);
+            }
+                
 
             Array.Copy(this.Data, this.Offset, target, offset, this.Length);
         }
@@ -167,10 +173,10 @@ namespace Lucene.Net.Index
             if (obj == this)
                 return true;
 
-            if (!(obj is Payload))
-                return false;
+            Payload payload = obj as Payload;
 
-            Payload payload = (Payload)obj;
+            if (payload == null)
+                return false;
 
             if (this.Length == payload.Length)
             { 
@@ -213,11 +219,10 @@ namespace Lucene.Net.Index
         {
             if (offset < 0 || (offset + length) > data.Length)
                 throw new ArgumentException(
-                    string.Format(
-                        "The offset must be 0 or greater and the offset and length " +
-                        "combined must be less that length of byte[]. The offset was '{0}' ",
-                        offset),
-                    "offset");
+                  "The offset must be 0 or greater and the offset and length " +
+                  "combined must be less that length of byte[]." +
+                  " The offset was '{0}'. ".Inject(offset), 
+                  "offset");
 
             this.data = data;
             this.Offset = offset;

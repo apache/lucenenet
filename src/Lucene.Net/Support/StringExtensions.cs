@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="TestingCategories.cs">
+// <copyright company="Apache" file="StringExtensions.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,18 +19,31 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Lucene.Net
+
+
+namespace Lucene.Net.Support
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
 
     /// <summary>
-    /// 
+    /// Extension methods for strings
     /// </summary>
-    public class TestCategories
+    internal static class StringExtensions
     {
-        public const string Unit = "Unit";
+        /// <summary>
+        /// Alias for string.Format that uses <see cref="CultureInfo.InvariantCulture"/>
+        /// for formatting strings.
+        /// </summary>
+        /// <param name="obj">The obj.</param>
+        /// <param name="args">The args.</param>
+        /// <returns>an instance of <see cref="string"/></returns>
+        public static string Inject(this string obj, params object[] args)
+        {
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, obj, args);            
+        }
     }
 }

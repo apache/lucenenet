@@ -22,8 +22,11 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
+    using System;
+    using System.Collections.Generic;
     using System.Text;
     using Util;
+
 
     /// <summary>
     /// The term text of a Token.
@@ -57,7 +60,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         ///     </para>
         /// </remarks>
         /// <value>The buffer.</value>
-        char[] Buffer { get; }
+        IEnumerable<char> Buffer { get; }
 
         /// <summary>
         /// Gets or sets the number of valid characters, the length of the term, in
@@ -151,8 +154,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// Resizes the buffer.
         /// </summary>
         /// <param name="length">The length.</param>
-        /// <returns>An instance of <see cref="T:System.Char[]"/>.</returns>
-        char[] ResizeBuffer(int length);
+        /// <returns>An instance of <see cref="IEnumerable{T}"/>.</returns>
+        IEnumerable<char> ResizeBuffer(int length);
 
 
         /// <summary>
