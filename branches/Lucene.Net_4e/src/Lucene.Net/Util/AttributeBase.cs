@@ -105,10 +105,9 @@ namespace Lucene.Net.Util
 
             if (foundInterfaces.Count > 1)
                 throw new NotSupportedException(
-                    string.Format(
-                        "{0} implements more than one attribute interface. " +
-                        "The default ReflectWith(IAttributeReflector) implementation can not handle this.", 
-                        type.FullName));
+                    "{0} implements more than one attribute interface. " +
+                    "The default ReflectWith(IAttributeReflector) implementation " +
+                    "can not handle this.".Inject(type.FullName));
 
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);

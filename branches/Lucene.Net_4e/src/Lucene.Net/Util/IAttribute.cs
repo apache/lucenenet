@@ -19,8 +19,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+
 namespace Lucene.Net.Util
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary> 
     /// The contract interface for attributes.  This interface is used as 
     /// a way to query types that extend or implement an interface that 
@@ -45,6 +48,8 @@ namespace Lucene.Net.Util
     ///         </para>
     ///     </note>
     /// </remarks>
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces",
+        Justification = "This interface services as a way to query all interfaces that inherit this one.")]
     public interface IAttribute
     {
     }

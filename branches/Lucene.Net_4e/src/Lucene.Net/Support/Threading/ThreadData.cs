@@ -151,8 +151,15 @@ namespace Lucene.Net.Support.Threading
         /// </summary>
         /// <param name="slot">The slot.</param>
         /// <param name="isThread">if set to <c>true</c> [is thread].</param>
+        /// <exception cref="NotImplementedException">
+        ///     Thrown when <paramref name="isThread"/> is true since the 
+        ///     storing data outside a thread context is currently not supported.
+        /// </exception>
         public static void FreeLocalSlotData(int slot, bool isThread)
         {
+            if (!isThread)
+                throw new NotImplementedException("FreeLocalSlotData currently only supports thread contexts");
+
             lock (slotsSyncRoot)
             {
                 object[] slots = null;

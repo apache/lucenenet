@@ -41,10 +41,6 @@
 		<PackagesFolder>$(RootFolder)\packages</PackagesFolder>
  	</PropertyGroup>
  	
- 		
-  	 		
-  	 	
-	
 	<!-- To Execute commands on mono like running nunit, it requires running through the program mono.exe -->
 	<PropertyGroup Condition="'$(NETFRAMEWORK)' == 'mono'">
 		<Executable>mono</Executable>
@@ -81,7 +77,21 @@
  		<Message Text="Project Files: @(ProjectFiles)" />
 		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)" />
 	</Target>
+	
+	<Target Name="copy-release">
+		<MakeDir Condition="!Exists('$(RootFolder)\bin')" Directories="$(RootFolder)\bin" />
+		<Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(RootFolder)\bin" />
+	</Target>
+	
+	<Target Name="nightly">
+		<CallTarget Targets="commit" />
+	</Target>
   
+	<Target Name="commit">
+		<CallTarget Targets="clean;build;test-report-html;rules;coverage;document;copy-release" />
+	</Target>
+	
+	
 	<Import Condition="'$(NETFRAMEWORK)' != 'mono'" Project="dot-net-tools.targets" />
 	<Import Condition="'$(NETFRAMEWORK)' == 'mono'" Project="mono-tools.targets" />
 </Project>

@@ -76,11 +76,11 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public void CopyTo_ThrowsIndexOutOfRangeException()
+        public void CopyTo_ThrowsArgumentOutOfRangeException()
         {
             var payload = new Payload(new byte[20]);
 
-            Assert.Throws<IndexOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
                 payload.CopyTo(new byte[4]);
             });
         }

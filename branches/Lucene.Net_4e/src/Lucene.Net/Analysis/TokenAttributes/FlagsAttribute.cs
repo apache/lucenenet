@@ -22,6 +22,7 @@
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     using System;
+    using Support;
     using Util;
 
     // DOCS: enhance FlagsAttribute summary
@@ -100,12 +101,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </exception>
         public override void CopyTo(AttributeBase attributeBase)
         {
-            if (!(attributeBase is IFlagsAttribute))
+            IFlagsAttribute attribute = attributeBase as IFlagsAttribute;
+            if (attribute == null)
                 throw new ArgumentException(
-                    string.Format("attributeBase must be of type {0} in order to be copied", this.GetType().FullName), 
+                    "The parameter 'attributeBase' must be of type {0} in order to be copied"
+                    .Inject(this.GetType().FullName), 
                     "attributeBase");
 
-            IFlagsAttribute attribute = (IFlagsAttribute)attributeBase;
             attribute.Flags = this.Flags;
         }
 
@@ -131,9 +133,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             if (this == obj)
                 return true;
-            
-            if (obj is FlagsAttribute)
-                return ((FlagsAttribute)obj).Flags == this.Flags;
+
+            FlagsAttribute attribute = obj as FlagsAttribute;
+            if (attribute != null)
+                return attribute.Flags == this.Flags;
 
             return false;
         }

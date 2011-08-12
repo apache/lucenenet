@@ -28,9 +28,56 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// TODO: port
+    /// this class has methods that are not valid to void FxCop.
     /// </summary>
     public sealed class BytesRef : IComparable<BytesRef>
     {
+        private byte[] reference = new byte[] { };
+
+        /// <summary>
+        /// Implements the operator !=.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(BytesRef x, BytesRef y)
+        {
+            return x.reference != y.reference;
+        }
+
+        /// <summary>
+        /// Implements the operator ==.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(BytesRef x, BytesRef y)
+        {
+            return x.reference == y.reference;
+        }
+
+        /// <summary>
+        /// Implements the operator &lt;.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator <(BytesRef x, BytesRef y)
+        {
+            return x.reference.Length < y.reference.Length;
+        }
+
+        /// <summary>
+        /// Implements the operator &gt;.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator >(BytesRef x, BytesRef y)
+        {
+            return x.reference.Length < y.reference.Length;
+        }
+
         /// <summary>
         /// Compares this instance to the other <see cref="BytesRef"/> instance.
         /// </summary>
@@ -39,6 +86,29 @@ namespace Lucene.Net.Util
         public int CompareTo(BytesRef other)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return this.reference.GetHashCode();
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            return this.reference.Equals(obj);
         }
     }
 }

@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\build\bin\core\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WMP;SILVERLIGHT_4;WMP_4</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;SILVERLIGHT;WMP;SILVERLIGHT_4;WMP_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\build\bin\core\Debug\Lucene.Net.XML</DocumentationFile>
@@ -31,12 +31,18 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Core">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
@@ -72,6 +78,7 @@
     <Compile Include="Support\DictionaryExtensions.cs" />
     <Compile Include="Support\ICloneableOfT.cs" />
     <Compile Include="Support\ICloseable.cs" />
+    <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Support\Threading\LocalDataStoreSlot.cs" />
     <Compile Include="Support\Threading\ThreadData.cs" />
     <Compile Include="Support\Threading\ThreadLocalOfT.cs" />
@@ -84,9 +91,13 @@
     <Compile Include="Util\AttributeBase.cs" />
     <Compile Include="Util\AttributeFactory.cs" />
     <Compile Include="Util\AttributeSource.cs" />
+    <Compile Include="Util\AttributeSourceState.cs" />
     <Compile Include="Util\BytesRef.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Condition="Exists('..\..\packages\StyleCop.4.5\StyleCop.targets')" Project="..\..\packages\StyleCop.4.5\StyleCop.targets" />

@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             for (int i = 0; i < 2000; i++)
             {
                 attribute.ResizeBuffer(i);
-                Assert.IsTrue(i <= attribute.Buffer.Length, "i is {0} and buffer length is {1}", i, attribute.Buffer.Length);
+                Assert.IsTrue(i <= ((char[])attribute.Buffer).Length, "i is {0} and buffer length is {1}", i, ((char[])attribute.Buffer).Length);
                 Assert.AreEqual("hello", attribute.ToString());
             }
         }

@@ -82,12 +82,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{756B5043-39EC-4C04-AC1F-AA959267DDC1}</Project>
+      <Project>{F8518746-08D2-44A0-AF67-D6F0FA74C5CA}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Lucene.Net\Lucene.Net.csproj">
       <Project>{07A5FF70-1EFE-4B0B-B338-5CA56C3A2826}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Test.Extensions\Lucene.Net.Test.Extensions.csproj">
+      <Project>{5307EF45-1332-4C15-8871-6AE67CA9B16C}</Project>
+      <Name>Lucene.Net.Test.Extensions</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

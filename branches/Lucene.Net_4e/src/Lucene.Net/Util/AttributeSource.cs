@@ -26,9 +26,11 @@ namespace Lucene.Net.Util
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Lucene.Net.Analysis;
     using Lucene.Net.Analysis.TokenAttributes;
     using Support;
+ 
 
 
     /// <summary>
@@ -68,7 +70,7 @@ namespace Lucene.Net.Util
         private readonly Dictionary<Type, AttributeBase> interfaceMap = new Dictionary<Type, AttributeBase>();
         private readonly Dictionary<Type, AttributeBase> attributeMap = new Dictionary<Type, AttributeBase>();
         
-        private State[] currentState;
+        private AttributeSourceState[] currentState;
 
 
         /// <summary>
@@ -103,7 +105,7 @@ namespace Lucene.Net.Util
         {
             this.attributeMap = new Dictionary<Type, AttributeBase>();
             this.interfaceMap = new Dictionary<Type, AttributeBase>();
-            this.currentState = new State[1];
+            this.currentState = new AttributeSourceState[1];
 
             this.Factory = factory;
         }
@@ -136,6 +138,8 @@ namespace Lucene.Net.Util
         ///     an instance of <see cref="LinkedList{T}"/> of <see cref="WeakReference{T}"/> of <see cref="Type"/>
         ///     that hold the known interfaces that inherit from <see cref="IAttribute"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypeMemberSignatures",
+            Justification = "I considered WeakReference<T> is needed.")]
         public static LinkedList<WeakReference<Type>> GetAttributeInterfaces(Type type)
         {
             lock (instanceLock)
@@ -228,9 +232,8 @@ namespace Lucene.Net.Util
 
                 if (!attributeType.IsSubclassOf(typeof(IAttribute)))
                     throw new ArgumentException(
-                        string.Format(
-                            "The interface type '{0}' is not a subclass of IAttribute.",
-                            attributeType.FullName));
+                        "The interface type '{0}' is not a subclass of IAttribute."
+                        .Inject(attributeType.FullName));
 
                 this.AddAttribute(instance = this.Factory.CreateAttributeInstance(attributeType));
             }
@@ -251,10 +254,10 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Captures the state.
         /// </summary>
-        /// <returns>An instance of <see cref="State"/>.</returns>
-        public State CaptureState()
+        /// <returns>An instance of <see cref="AttributeSourceState"/>.</returns>
+        public AttributeSourceState CaptureState()
         {
-            State state = this.GetCurrentState();
+            AttributeSourceState state = this.GetCurrentState();
             return state == null ? null : state.Clone();
         }
 
@@ -338,9 +341,9 @@ namespace Lucene.Net.Util
         public void CopyTo(AttributeSource source)
         {
             this.ForEachState((state) => {
-                var attribute = this.attributeMap[state.Attribute.GetType()];
+                var attribute = source.attributeMap[state.Attribute.GetType()];
                 if (attribute == null)
-                    throw new ArgumentException(this.CreateStateExceptionMessage(state));
+                    throw new ArgumentException(this.CreateStateExceptionMessage(state), "state");
 
                 state.Attribute.CopyTo(attribute);
             });
@@ -401,10 +404,9 @@ namespace Lucene.Net.Util
             AttributeBase value;
             if (!this.interfaceMap.TryGetValue(typeof(T), out value))
                 throw new ArgumentException(
-                    string.Format(
                     "The specified type '{0}' could not be found, try using " +
-                    "ContainsAttribute(Type) first.",
-                    typeof(T).FullName));
+                    "ContainsAttribute(Type) first."
+                    .Inject(typeof(T).FullName));
       
             object unbox = value;
             return (T)unbox;
@@ -415,10 +417,11 @@ namespace Lucene.Net.Util
         /// be a <see cref="Type"/> that implements <see cref="AttributeBase"/> 
         /// and <see cref="IAttribute"/>.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The <see cref="Type"/> of attribute to find.</param>
         /// <returns>
         /// An instance of <see cref="AttributeBase"/>.
         /// </returns>
+        //// getAttribute(Class<A> attClass)
         public AttributeBase FindAttribute(Type type)
         {
             AttributeBase value;
@@ -427,19 +430,15 @@ namespace Lucene.Net.Util
             {
                 if (!this.interfaceMap.TryGetValue(type, out value))
                     throw new ArgumentException(
-                        string.Format(
                         "The specified type '{0}' could not be found, try using " +
-                        "ContainsAttribute(Type) first.",
-                        type.FullName));
+                        "ContainsAttribute(Type) first.".Inject(type.FullName));
             } 
             else
             {
                 if (!this.attributeMap.TryGetValue(type, out value))
                     throw new ArgumentException(
-                        string.Format(
                         "The specified type '{0}' could not be found, try using " +
-                        "ContainsAttribute(Type) first.",
-                        type.FullName));
+                        "ContainsAttribute(Type) first.".Inject(type.FullName));
             }
 
            
@@ -453,6 +452,8 @@ namespace Lucene.Net.Util
         /// <returns>
         /// An instance of <see cref="IEnumerator{Type}"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
+            Justification = "Due to microsoft's bad design, developers expect the Get[Type]Enumerator name convention. ")]
         public IEnumerator<Type> GetAttributeTypesEnumerator()
         {
             return this.interfaceMap.Keys.GetEnumerator();
@@ -466,6 +467,8 @@ namespace Lucene.Net.Util
         /// <returns>
         /// An instance of <see cref="IEnumerator{AttributeBase}"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
+            Justification = "Due to microsoft's bad design, developers expect the Get[Type]Enumerator name convention. ")]
         public IEnumerator<AttributeBase> GetAttributeEnumerator()
         {
             return new AttributeEnumerator(this);
@@ -516,7 +519,7 @@ namespace Lucene.Net.Util
         ///     Thrown when a state contains ain attribute that is not found
         ///     within the current instance of <see cref="AttributeSource"/>
         /// </exception>
-        public void RestoreState(State state)
+        public void RestoreState(AttributeSourceState state)
         {
             if (state == null)
                 return;
@@ -537,20 +540,20 @@ namespace Lucene.Net.Util
         /// Enumerates over the stored states in the <see cref="AttributeSource"/>
         /// </summary>
         /// <param name="invoke">The action to invoke on each state.</param>
-        protected void ForEachState(Action<State> invoke)
+        protected void ForEachState(Action<AttributeSourceState> invoke)
         {
             for (var state = this.GetCurrentState(); state != null; state = state.Next)
                 invoke(state);
         }
 
-        private State GetCurrentState()
+        private AttributeSourceState GetCurrentState()
         {
-            State state = this.currentState[0];
+            AttributeSourceState state = this.currentState[0];
 
             if (state != null || !this.HasAttributes)
                 return state;
 
-            State current = state = this.currentState[0] = new State();
+            AttributeSourceState current = state = this.currentState[0] = new AttributeSourceState();
 
             var enumerator = this.attributeMap.Values.GetEnumerator();
             enumerator.MoveNext();
@@ -558,21 +561,19 @@ namespace Lucene.Net.Util
 
             while (enumerator.MoveNext())
             {
-                current = current.Next = new State();
+                current = current.Next = new AttributeSourceState();
                 current.Attribute = enumerator.Current;
             }
 
             return state;
         }
 
-        private string CreateStateExceptionMessage(State state)
+        private string CreateStateExceptionMessage(AttributeSourceState state)
         {
-            return string.Format(
+            return 
                 "The state contains an attribute of type '{0}' " +
-                "that is currently not found within this instance of '{1}#{2}'. ",
-                state.Attribute.GetType(), 
-                this.GetType().Name, 
-                this.GetHashCode());
+                "that is currently not found within this instance of '{1}#{2}'. "
+                .Inject(state.Attribute.GetType(), this.GetType().Name, this.GetHashCode());
         }
 
         /// <summary>
@@ -581,7 +582,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public sealed class AttributeEnumerator : IEnumerator<AttributeBase>
         {
-            private State state;
+            private AttributeSourceState state;
             private AttributeSource source;
 
             /// <summary>
@@ -663,44 +664,6 @@ namespace Lucene.Net.Util
                     throw new ObjectDisposedException(this.GetType().Name);
 
                 this.state = this.source.GetCurrentState();
-            }
-        }
-
-       
-        /// <summary>
-        /// The state of an attribute source.
-        /// </summary>
-        public sealed class State : ICloneable, ICloneable<State>
-        {
-            /// <summary>
-            /// Gets or sets the attribute.
-            /// </summary>
-            /// <value>The attribute.</value>
-            public AttributeBase Attribute { get; set; }
-            
-            /// <summary>
-            /// Gets or sets the next state.
-            /// </summary>
-            /// <value>The next.</value>
-            public State Next { get; set; }
-
-            /// <summary>
-            /// Fully clones this instance.
-            /// </summary>
-            /// <returns>an instance of the cloned <see cref="State"/>.</returns>
-            public State Clone()
-            {
-                State state = new State { Attribute = this.Attribute.Clone() };
-               
-                if (this.Next != null)
-                    state.Next = this.Next.Clone();
-
-                return state;
-            }
-
-            object ICloneable.Clone()
-            {
-                return this.Clone();
             }
         }
     }

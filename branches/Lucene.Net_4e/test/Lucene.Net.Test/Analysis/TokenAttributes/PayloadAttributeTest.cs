@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
           
             Assert.IsNotNull(clone.Payload);
-            Assert.AreEqual(attribute.Payload, clone.Payload);
+            Assert.IsTrue(attribute.Payload.Equals(clone.Payload));
         }
 
         [Test]
