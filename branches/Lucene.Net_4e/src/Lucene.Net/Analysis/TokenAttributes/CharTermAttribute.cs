@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// Creates a clone of the object, generally shallow.
         /// </summary>
         /// <returns>an the clone of the current instance.</returns>
-        public override object Clone()
+        public override AttributeBase Clone()
         {
             CharTermAttribute clone = (CharTermAttribute)this.MemberwiseClone();
 

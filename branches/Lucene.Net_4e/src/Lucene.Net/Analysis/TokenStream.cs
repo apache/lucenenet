@@ -25,11 +25,12 @@ namespace Lucene.Net.Analysis
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Lucene.Net.Util;
 
     /// <summary>
     /// TODO: port
     /// </summary>
-    public class TokenStream
+    public class TokenStream : AttributeSource 
     {
     }
 }

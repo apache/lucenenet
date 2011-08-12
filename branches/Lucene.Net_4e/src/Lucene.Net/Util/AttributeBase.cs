@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
     ///         </para>
     ///     </note>
     /// </remarks>
-    public abstract class AttributeBase : IAttribute, ICloneable
+    public abstract class AttributeBase : IAttribute, ICloneable, ICloneable<AttributeBase>
     {
         /// <summary>
         /// Clears the instance.
@@ -130,9 +130,18 @@ namespace Lucene.Net.Util
         /// Creates a clone of the object, generally shallow.
         /// </summary>
         /// <returns>an the clone of the current instance.</returns>
-        public virtual object Clone()
+        object ICloneable.Clone()
         {
-            var obj = this.MemberwiseClone();
+            return this.Clone();
+        }
+
+        /// <summary>
+        /// Creates a shallow clone of this instance by default. 
+        /// </summary>
+        /// <returns>an instance of <see cref="AttributeBase"/></returns>
+        public virtual AttributeBase Clone()
+        {
+            var obj = (AttributeBase)this.MemberwiseClone();
             return obj;
         }
     }
