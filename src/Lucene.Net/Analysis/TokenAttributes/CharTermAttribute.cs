@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             CharTermAttribute innerValue = value as CharTermAttribute;
 
-            char[] array =  innerValue == null ? value.Buffer.ToArray() : innerValue.buffer;
+            char[] array = (innerValue == null) ? value.Buffer.ToArray() : innerValue.buffer;
             
             Array.Copy(array, 0, this.InternalResizeBuffer(this.termLength + length), this.termLength, length);
             this.termLength += length;

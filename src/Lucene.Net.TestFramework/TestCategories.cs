@@ -31,6 +31,9 @@ namespace Lucene.Net
     /// </summary>
     public class TestCategories
     {
+        /// <summary>
+        /// Unit tests.
+        /// </summary>
         public const string Unit = "Unit";
     }
 }
