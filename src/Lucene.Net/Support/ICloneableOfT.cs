@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="ICloneable.cs">
+// <copyright company="Apache" file="ICloneableOfT.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -25,14 +25,17 @@ namespace Lucene.Net.Support
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using System.Collections.Concurrent;
 
     /// <summary>
-    /// 
+    /// Contract for clone an object
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The clone type</typeparam>
     public interface ICloneable<out T> : ICloneable
     {
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>returns a cloned instance of the specified type.</returns>
         new T Clone();
     }
 }
