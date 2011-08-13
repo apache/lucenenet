@@ -23,6 +23,7 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
+    using System.Diagnostics.CodeAnalysis;
     using Lucene.Net.Index;
     using Lucene.Net.Util;
 
@@ -54,6 +55,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         }
     ///     </code>
     /// </remarks>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public interface ITermToBytesRefAttribute
     {    
         /// <summary>

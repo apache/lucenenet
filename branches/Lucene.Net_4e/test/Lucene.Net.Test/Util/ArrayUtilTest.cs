@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
 
             while (currentSize != int.MaxValue)
             {
-                int nextSize = ArrayUtil.Oversize(1 + currentSize, RamUsageEstimator.NumBytesObjectRef);
+                int nextSize = ArrayUtil.Oversize(1 + currentSize, RamUsageEstimator.NumberOfBytesObjectRef);
                 
                 Assert.IsTrue(nextSize > currentSize);
                 
