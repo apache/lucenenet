@@ -21,15 +21,15 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using System.Diagnostics.CodeAnalysis;
     using Lucene.Net.Util;
 
     /// <summary>
     /// A <see cref="Token"/>'s lexical type. The default value is 'word'.
     /// </summary>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public class TypeAttribute : AttributeBase, ITypeAttribute
     {
         /// <summary>

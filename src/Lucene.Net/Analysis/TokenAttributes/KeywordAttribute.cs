@@ -21,10 +21,7 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// The attribute that can be used to make a token as a keyword. Keyword
@@ -33,6 +30,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// is modified. Stemming filters for instance can use this attribute
     /// to conditionally skip a term if <see cref="IsKeyword"/> returns <c>true</c>.
     /// </summary>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public class KeywordAttribute : Util.AttributeBase, IKeywordAttribute
     {
         /// <summary>

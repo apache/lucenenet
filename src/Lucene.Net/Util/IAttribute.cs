@@ -50,6 +50,9 @@ namespace Lucene.Net.Util
     /// </remarks>
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces",
         Justification = "This interface services as a way to query all interfaces that inherit this one.")]
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+           Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+           "its probably best to try to honor the correlating names when possible.")]
     public interface IAttribute
     {
     }

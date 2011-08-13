@@ -60,12 +60,12 @@ namespace Lucene.Net.Util
         /// The number of bytes for an object reference. This will either
         /// be 8 (64 bit) or 4 (32 bit).
         /// </summary>
-        public static readonly int NumBytesObjectRef = IntPtr.Size;
+        public static readonly int NumberOfBytesObjectRef = IntPtr.Size;
 
         /// <summary>
         /// The number of bytes for a char.
         /// </summary>
-        public const int NumBytesChar = 2;
+        public const int NumberOfBytesChar = 2;
 
         private string temp = string.Empty;
 

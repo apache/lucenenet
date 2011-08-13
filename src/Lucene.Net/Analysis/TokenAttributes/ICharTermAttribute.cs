@@ -22,8 +22,8 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using Util;
 
@@ -45,6 +45,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         </para>
     ///     </note>
     /// </remarks>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public interface ICharTermAttribute : IAttribute
     {
         /// <summary>

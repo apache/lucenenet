@@ -21,15 +21,14 @@
 
 namespace Lucene.Net.Analysis
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using System.Diagnostics.CodeAnalysis;
     using Lucene.Net.Util;
 
     /// <summary>
     /// TODO: port
     /// </summary>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The name is valid even if it does not derived from Stream.")]
     public class TokenStream : AttributeSource 
     {
     }

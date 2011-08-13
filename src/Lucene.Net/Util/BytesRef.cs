@@ -37,45 +37,45 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Implements the operator !=.
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="left">The x.</param>
+        /// <param name="right">The y.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(BytesRef x, BytesRef y)
+        public static bool operator !=(BytesRef left, BytesRef right)
         {
-            return x.reference != y.reference;
+            return left.reference != right.reference;
         }
 
         /// <summary>
         /// Implements the operator ==.
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="left">The x.</param>
+        /// <param name="right">The y.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(BytesRef x, BytesRef y)
+        public static bool operator ==(BytesRef left, BytesRef right)
         {
-            return x.reference == y.reference;
+            return left.reference == right.reference;
         }
 
         /// <summary>
         /// Implements the operator &lt;.
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="left">The x.</param>
+        /// <param name="right">The y.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator <(BytesRef x, BytesRef y)
+        public static bool operator <(BytesRef left, BytesRef right)
         {
-            return x.reference.Length < y.reference.Length;
+            return left.reference.Length < right.reference.Length;
         }
 
         /// <summary>
         /// Implements the operator &gt;.
         /// </summary>
-        /// <param name="x">The x.</param>
-        /// <param name="y">The y.</param>
+        /// <param name="left">The x.</param>
+        /// <param name="right">The y.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator >(BytesRef x, BytesRef y)
+        public static bool operator >(BytesRef left, BytesRef right)
         {
-            return x.reference.Length < y.reference.Length;
+            return left.reference.Length < right.reference.Length;
         }
 
         /// <summary>

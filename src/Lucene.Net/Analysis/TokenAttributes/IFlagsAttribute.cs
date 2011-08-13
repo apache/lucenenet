@@ -21,6 +21,7 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
+    using System.Diagnostics.CodeAnalysis;
     using Util;
 
     /// <summary>
@@ -40,12 +41,19 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         </para>
     ///     </note>
     /// </remarks>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
+    [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+        Justification = "Again, using the class name from java and its appropriate.")]
     public interface IFlagsAttribute : IAttribute
     {
         /// <summary>
         /// Gets or sets the flags.
         /// </summary>
         /// <value>The flags.</value>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+        Justification = "The name is appropriate.")]
         int Flags { get; set; }
     }
 }

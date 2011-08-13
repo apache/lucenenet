@@ -22,6 +22,7 @@
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Support;
     using Util;
 
@@ -50,6 +51,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         </para>
     ///     </note>
     /// </remarks>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
+    [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+    Justification = "Again, using the class name from java and its appropriate.")]
     public class FlagsAttribute : AttributeBase, IFlagsAttribute
     {
         /// <summary>
@@ -63,6 +69,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// Initializes a new instance of the <see cref="FlagsAttribute"/> class.
         /// </summary>
         /// <param name="flags">The flags.</param>
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+            Justification = "The variable name is appropriate.")]
         public FlagsAttribute(int flags)
         {
             this.Flags = flags;
@@ -72,6 +80,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// Gets or sets the flags.
         /// </summary>
         /// <value>The flags.</value>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+        Justification = "The name is appropriate.")]
         public int Flags { get; set; }
 
         /// <summary>

@@ -23,6 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using Support;
@@ -56,6 +57,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
     ///         all implement this interface.  C# does not have a known equivalent.
     ///     </para>
     /// </remarks>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public class CharTermAttribute : AttributeBase, ICharTermAttribute
     {
         private const int MinBufferSize = 10;
@@ -398,7 +402,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         private static char[] CreateBuffer(int length)
         {
-            return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NumBytesChar)];
+            return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NumberOfBytesChar)];
         }
 
         private CharTermAttribute AppendNull()

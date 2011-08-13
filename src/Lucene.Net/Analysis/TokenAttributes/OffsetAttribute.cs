@@ -21,15 +21,15 @@
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using System.Diagnostics.CodeAnalysis;
     using Lucene.Net.Util;
 
     /// <summary>
     /// The start and end character offset of a <see cref="Token"/>.
     /// </summary>
+    [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "The class was called Attribute in Java. It would be fun to call it Annotation. However, " +
+        "its probably best to try to honor the correlating names when possible.")]
     public class OffsetAttribute : AttributeBase, IOffsetAttribute
     {
         /// <summary>
@@ -130,12 +130,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>
         /// Sets the offset.
         /// </summary>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        public void SetOffset(int start, int end)
+        /// <param name="offsetStart">The start of the offset.</param>
+        /// <param name="offsetEnd">The end of the offset.</param>
+        public void SetOffset(int offsetStart, int offsetEnd)
         {
-            this.OffsetStart = start;
-            this.OffsetEnd = end;
+            this.OffsetStart = offsetStart;
+            this.OffsetEnd = offsetEnd;
         }
     }
 }
