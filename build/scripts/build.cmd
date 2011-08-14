@@ -18,6 +18,8 @@ GOTO LicenseEnd
 :LicenseEnd
 
 SET TARGETS ="all"
-IF %1 NEQ "" SET TARGETS=%1
+SET AREA = "all"
+IF [%1] NEQ [] SET TARGETS=%1
+IF [%2] NEQ [] SET AREA=%2
 
-%windir%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe build.xml /t:%TARGETS%  /nologo 
+%windir%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe build.targets /t:%TARGETS% /p:BuildArea=%AREA%  /nologo 

@@ -36,20 +36,23 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\contrib\FastVectorHighlighter\Debug\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\FastVectorHighlighter\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;LUCENENET_350</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\bin\contrib\FastVectorHighlighter\Debug\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\contrib\FastVectorHighlighter\</OutputPath>
+    <OutputPath>..\..\..\build\bin\contrib\FastVectorHighlighter\Release\</OutputPath>
     <DefineConstants>TRACE;LUCENENET_350</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\bin\contrib\FastVectorHighlighter\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
+    <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

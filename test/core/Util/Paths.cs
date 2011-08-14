@@ -126,7 +126,11 @@ namespace Lucene.Net.Util
                     // we currently assume that the assembly's directory is root/bin/[Section]/[Build]
                     // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.  
                     string assemblyLocation = AssemblyDirectory;
-                    int index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar);
+                    int index = -1;
+                    if(assemblyLocation.IndexOf("build") > -1)
+                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar);
+                    else 
+                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar);
                    
                     int difference = assemblyLocation.Substring(index).Count(o => o == Path.DirectorySeparatorChar);
 

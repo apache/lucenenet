@@ -85,7 +85,8 @@
   
 	<Target Name="test">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
-		<Exec Command="$(Executable) %(NUnitFolder.FullPath)nunit-console.exe -nologo @(TestFiles)" />
+		
+		<Exec Command="$(Executable) %(NUnitFolder.FullPath)nunit-console.exe -nologo @(TestFiles).FullPath" />
 	</Target>
 
 </Project>
