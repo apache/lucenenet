@@ -4115,6 +4115,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestExceptionsDuringCommit()
         {
+            Console.Write("TestingExceptionsDuringCommit");
             MockRAMDirectory dir = new MockRAMDirectory();
             FailOnlyInCommit failure = new FailOnlyInCommit();
             IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
@@ -4122,6 +4123,7 @@ namespace Lucene.Net.Index
             doc.Add(new Field("field", "a field", Field.Store.YES, Field.Index.ANALYZED));
             w.AddDocument(doc);
             dir.FailOn(failure);
+            
             try
             {
                 w.Close();
@@ -5597,7 +5599,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         IndexReader r = IndexReader.Open(dir);
-                        //System.out.println("doc count=" + r.numDocs());
+                        //System.out.println("doc count=" + r.numDocs());F
                         r.Close();
                     }
                     catch (System.Exception e)

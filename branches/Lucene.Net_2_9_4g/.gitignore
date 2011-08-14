@@ -11,3 +11,6 @@ obj
 *.userprefs
 *.pidb
 test-results
+build/artifacts
+build/bin
+_ReSharper*
