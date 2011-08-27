@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis
     ///     </para>
     /// </remarks>
     // REFACTOR: determine if this class should use IDisposable since it has a Close() method.
-	public abstract class Analyzer
+	public abstract class Analyzer : IDisposable
 	{
         private CloseableThreadLocal<object> tokenStreams = new CloseableThreadLocal<object>();
 
@@ -249,8 +249,13 @@ namespace Lucene.Net.Analysis
         /// </remarks>
 		public virtual void  Close()
 		{
-			tokenStreams.Close();
+			if(tokenStreams!=null) tokenStreams.Close();
 			tokenStreams = null;
 		}
+
+        public virtual void Dispose()
+        {
+            Close();
+        }
 	}
 }
