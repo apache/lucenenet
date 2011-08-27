@@ -54,6 +54,12 @@
     <DocumentationFile>..\..\..\build\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML</DocumentationFile>
     <NoWarn>618</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
@@ -74,6 +80,7 @@
     <Compile Include="VectorHighlightMapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Lucene.Net.snk" />
     <None Include="package.html" />
   </ItemGroup>
   <ItemGroup>

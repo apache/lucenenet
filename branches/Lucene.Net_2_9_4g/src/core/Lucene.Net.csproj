@@ -12,8 +12,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Lucene.Net</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -86,6 +85,9 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
@@ -940,6 +942,7 @@
     <None Include="Analysis\Standard\StandardTokenizerImpl.jflex" />
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
+    <None Include="Lucene.Net.snk" />
     <None Include="QueryParser\QueryParser.jj" />
     <Content Include="Analysis\Package.html" />
     <Content Include="Analysis\Standard\Package.html" />

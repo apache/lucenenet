@@ -33,6 +33,12 @@
     <NoWarn>618</NoWarn>
     <DocumentationFile>..\..\..\build\bin\contrib\Regex\Release\Lucene.Net.Search.Regex.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
@@ -50,6 +56,9 @@
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
