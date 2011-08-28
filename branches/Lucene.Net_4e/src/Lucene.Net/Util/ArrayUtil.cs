@@ -156,5 +156,74 @@ namespace Lucene.Net.Util
                     return newSize;
             }
         }
+
+        /// <summary>
+        /// Grows the specified <paramref name="source"/> by a minimum of 1.
+        /// </summary>
+        /// <typeparam name="T">The type of the array.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <returns>an <c>array</c> of <typeparamref name="T"/>. </returns>
+        public static T[] Grow<T>(T[] source)
+        {
+            return Grow(source, source.Length + 1);
+        }
+
+        /// <summary>
+        /// Grows the specified <paramref name="source"/> to the specified length.
+        /// </summary>
+        /// <typeparam name="T">The type of the array.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="length">The length.</param>
+        /// <param name="bytesPerElement">The bytes per element.</param>
+        /// <returns>
+        ///     a new array if the length of the <paramref name="source"/> was less than or equal
+        ///     to the specified <paramref name="length"/>, otherwise it returns the <paramref name="source"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+        /// <exception cref="ArgumentException">
+        ///     Thrown when <paramref name="length"/> is less than 0.
+        /// </exception>
+        public static T[] Grow<T>(T[] source, int length, int bytesPerElement = 1)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (length < 0)
+                throw new ArgumentException("length must be greater than or equal to 0");
+
+            if (source.Length >= length)
+                return source;
+
+            T[] destination = new T[Oversize(length, bytesPerElement)];
+            Array.Copy(source, 0, destination, 0, source.Length);
+
+            return destination;
+        }
+
+        /// <summary>
+        /// Grows the specified array by 1.
+        /// </summary>
+        /// <param name="source">The array.</param>
+        /// <returns>a <c>char[]</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+        public static char[] Grow(char[] source)
+        {
+            return Grow(source, source.Length + 1);
+        }
+
+        /// <summary>
+        /// Grows the specified array to the minimum length specified.
+        /// </summary>
+        /// <param name="source">The array.</param>
+        /// <param name="length">The length.</param>
+        /// <returns>an <c>char[]</c></returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+        /// <exception cref="ArgumentException">
+        ///     Thrown when <paramref name="length"/> is less than 0.
+        /// </exception>
+        public static char[] Grow(char[] source, int length)
+        {
+            return Grow(source, length, RamUsageEstimator.NumberOfBytesChar);
+        }
     }
 }
