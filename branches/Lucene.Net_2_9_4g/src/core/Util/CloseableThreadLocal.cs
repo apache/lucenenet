@@ -78,6 +78,16 @@ namespace Lucene.Net.Util
 
         public virtual void Set(T @object)
         {
+            //+-- For Debuging
+            if (Lucene.Net.Support.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
+            {
+                lock (Lucene.Net.Support.CloseableThreadLocalProfiler.Instances)
+                {
+                    Lucene.Net.Support.CloseableThreadLocalProfiler.Instances.Add(new WeakReference(@object));
+                }
+            }
+            //+--
+
             t.Set(new WeakReference(@object));
 
             lock (hardRefs)
