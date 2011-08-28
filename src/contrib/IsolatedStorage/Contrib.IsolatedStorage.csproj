@@ -35,8 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IsolatedStorageDirectory.cs" />
-    <Compile Include="IsolatedStorageInputStream.cs" />
-    <Compile Include="IsolatedStorageOutputStream.cs" />
+    <Compile Include="IsolatedStorageIndexInput.cs" />
+    <Compile Include="IsolatedStorageLock.cs" />
+    <Compile Include="IsolatedStorageIndexOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
