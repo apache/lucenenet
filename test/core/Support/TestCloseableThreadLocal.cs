@@ -67,7 +67,7 @@ namespace Lucene.Net.Support
                 if (o != null) aliveObjects++;
             }
 
-            Lucene.Net.Support.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler = true;
+            Lucene.Net.Support.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler = false;
 
             Assert.AreEqual(0, aliveObjects);
         }
