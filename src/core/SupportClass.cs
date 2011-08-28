@@ -2309,6 +2309,26 @@ public class SupportClass
         }
     }
 
+    /// <summary>
+    /// For Debuging purposes.
+    /// </summary>
+    public class CloseableThreadLocalProfiler
+    {
+        public static bool _EnableCloseableThreadLocalProfiler = false;
+        public static System.Collections.Generic.List<WeakReference> Instances = new System.Collections.Generic.List<WeakReference>();
+
+        public static bool EnableCloseableThreadLocalProfiler
+        {
+            get { return _EnableCloseableThreadLocalProfiler; }
+            set
+            {
+                _EnableCloseableThreadLocalProfiler = value;
+                lock (Instances)
+                    Instances.Clear();
+            }
+        }
+    }
+
     public class BuildType
     {
 #if DEBUG
