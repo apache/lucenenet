@@ -74,10 +74,17 @@
     <Compile Include="Index\TermsHashPerField.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\BaseDictionaryOfTKeyTValue.cs" />
+    <Compile Include="Support\CharArrayCharSequenceWrapper.cs" />
+    <Compile Include="Support\CharEnumerableCharSequenceWrapper.cs" />
+    <Compile Include="Support\CharListCharSequenceWrapper.cs" />
+    <Compile Include="Support\CharSequenceExtensions.cs" />
+    <Compile Include="Support\EnumerableExtensions.cs" />
+    <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICloneable.cs" />
     <Compile Include="Support\DictionaryExtensions.cs" />
     <Compile Include="Support\ICloneableOfT.cs" />
     <Compile Include="Support\ICloseable.cs" />
+    <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Support\Threading\LocalDataStoreSlot.cs" />
     <Compile Include="Support\Threading\ThreadData.cs" />
@@ -93,8 +100,10 @@
     <Compile Include="Util\AttributeSource.cs" />
     <Compile Include="Util\AttributeSourceState.cs" />
     <Compile Include="Util\BytesRef.cs" />
+    <Compile Include="Util\CharsRef.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
+    <Compile Include="Util\UnicodeUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.snk" />

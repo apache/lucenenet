@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="StringExtensions.cs">
+// <copyright company="Apache" file="ICharSequence.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,36 +19,49 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-
-
 namespace Lucene.Net.Support
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Text;
 
     /// <summary>
-    /// Extension methods for strings
+    /// TODO: Update summary.
     /// </summary>
-    internal static class StringExtensions
+    public interface ICharSequence
     {
         /// <summary>
-        /// Alias for string.Format that uses <see cref="CultureInfo.InvariantCulture"/>
-        /// for formatting strings.
+        /// Gets the length.
         /// </summary>
-        /// <param name="obj">The obj.</param>
-        /// <param name="args">The args.</param>
-        /// <returns>an instance of <see cref="string"/></returns>
-        public static string Inject(this string obj, params object[] args)
-        {
-            return string.Format(System.Globalization.CultureInfo.InvariantCulture, obj, args);            
-        }
+        /// <value>The length.</value>
+        int Length { get;  }
 
-        public static ICharSequence ToCharSequence(this string value)
-        {
-            return new StringCharSequenceWrapper(value);
-        }
+        /// <summary>
+        /// Finds the <see cref="char"/> at the specified index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>An instance of <see cref="Char"/>.</returns>
+        char CharAt(int index);
+
+
+        /// <summary>
+        /// Gets the subset sequence of characters from the current sequence.
+        /// </summary>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <returns>
+        /// An instance of <see cref="ICharSequence"/>.
+        /// </returns>
+        ICharSequence SubSequence(int start, int end);
+
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        string ToString();
     }
 }

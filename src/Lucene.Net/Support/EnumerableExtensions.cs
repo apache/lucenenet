@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright company="Apache" file="StringExtensions.cs">
+// <copyright company="Apache" file="EnumerableExtensions.cs">
 //
 //      Licensed to the Apache Software Foundation (ASF) under one or more
 //      contributor license agreements.  See the NOTICE file distributed with
@@ -19,36 +19,39 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-
-
 namespace Lucene.Net.Support
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Text;
 
     /// <summary>
-    /// Extension methods for strings
+    /// TODO: Update summary.
     /// </summary>
-    internal static class StringExtensions
+    public static class EnumerableExtensions
     {
         /// <summary>
-        /// Alias for string.Format that uses <see cref="CultureInfo.InvariantCulture"/>
-        /// for formatting strings.
+        /// Transforms the <see cref="IEnumerable{T}"/> into a <see cref="ICharSequence"/> object.
         /// </summary>
-        /// <param name="obj">The obj.</param>
-        /// <param name="args">The args.</param>
-        /// <returns>an instance of <see cref="string"/></returns>
-        public static string Inject(this string obj, params object[] args)
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>
+        /// An instance of <see cref="ICharSequence"/>.
+        /// </returns>
+        public static ICharSequence ToCharSequence(this IEnumerable<char> enumerable)
         {
-            return string.Format(System.Globalization.CultureInfo.InvariantCulture, obj, args);            
-        }
+            // TODO: uncomment when PCL System.String implements IEnumerable<char>
+            // if(enumerable is string)
+            //    return new StringCharSquenceWrapper((string)enumerable); */
+            char[] array = enumerable as char[];
+            if (array != null)
+                return new CharArrayCharSequenceWrapper(array);
 
-        public static ICharSequence ToCharSequence(this string value)
-        {
-            return new StringCharSequenceWrapper(value);
+            List<char> list = enumerable as List<char>;
+            if (list != null)
+                return new CharListCharSequenceWrapper(list);
+
+            return new CharEnumerableCharSequenceWrapper(enumerable);
         }
     }
 }
