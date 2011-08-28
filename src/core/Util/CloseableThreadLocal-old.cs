@@ -79,6 +79,16 @@ namespace Lucene.Net.Util
 		
 		public virtual void  Set(T object_Renamed)
 		{
+            //+-- For Debuging
+            if (Lucene.Net.Support.CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
+            {
+                lock (Lucene.Net.Support.CloseableThreadLocalProfiler.Instances)
+                {
+                    Lucene.Net.Support.CloseableThreadLocalProfiler.Instances.Add(new WeakReference(object_Renamed));
+                }
+            }
+            //+--
+
             if (slots == null)
                 slots = new Support.WeakDictionary<CloseableThreadLocal<T>, T>();
 

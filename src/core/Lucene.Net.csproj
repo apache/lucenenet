@@ -865,6 +865,7 @@
     <Compile Include="Support\BuildType.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Checksum.cs" />
+    <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="Support\CollectionsHelper.cs" />
     <Compile Include="Support\Compare.cs" />
     <Compile Include="Support\CRC32.cs" />
@@ -897,7 +898,9 @@
     <Compile Include="Util\BitVector.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\CloseableThreadLocal.cs" />
+    <Compile Include="Util\CloseableThreadLocal.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\Constants.cs">
       <SubType>Code</SubType>
     </Compile>

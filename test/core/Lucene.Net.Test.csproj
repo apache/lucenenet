@@ -418,6 +418,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\TestCloseableThreadLocal.cs" />
     <Compile Include="Support\TestIDisposable.cs" />
     <Compile Include="Support\TestLRUCache.cs" />
     <Compile Include="Support\TestMediumTrust.cs" />
