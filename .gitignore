@@ -8,3 +8,9 @@ obj
 *.bak
 *.vs10x
 *.VisualState.xml
+*.userprefs
+*.pidb
+test-results
+build/artifacts
+build/bin
+_ReSharper*
