@@ -52,6 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis\Analyzer.cs" />
+    <Compile Include="Analysis\CharReader.cs" />
+    <Compile Include="Analysis\CharStream.cs" />
     <Compile Include="Analysis\Token.cs" />
     <Compile Include="Analysis\TokenAttributes\CharTermAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\ICharTermAttribute.cs" />
