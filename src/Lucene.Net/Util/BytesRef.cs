@@ -31,7 +31,14 @@ namespace Lucene.Net.Util
     /// TODO: port
     /// Still missing methods that have to do with CharRef and ArrayUtil.Grow
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         This class might be transformed into a immutable value type depending on its use
+    ///         in the Lucene code base.
+    ///     </para>
+    /// </remarks>
     public sealed class BytesRef : IComparable<BytesRef>,
+        IEquatable<BytesRef>,
         ICloneable<BytesRef>
     {
         /// <summary>
@@ -217,7 +224,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="target">The target.</param>
         /// <returns>An instance of <see cref="Boolean"/>.</returns>
-        public bool BytesEqual(BytesRef target)
+        public bool Equals(BytesRef target)
         {
             if (this.Length != target.Length)
                 return false;
@@ -358,7 +365,7 @@ namespace Lucene.Net.Util
             if (bytesRef == null)
                 return false;
 
-            return this.BytesEqual(bytesRef);
+            return this.Equals(bytesRef);
         }
 
         /// <summary>
