@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis
 
     /// <summary>
     /// A <c>TokenFilter</c> is a <see cref="TokenStream"/> that wraps an inner <see cref="TokenStream"/> which
-    /// services the input source for the stream.
+    /// serves as the input source for the stream.
     /// </summary>
     public abstract class TokenFilter : TokenStream
     {
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Gets the inner token stream.
+        /// Gets the inner token stream which is the input source for this stream.
         /// </summary>
         /// <value>The token stream.</value>
         protected virtual TokenStream TokenStream
