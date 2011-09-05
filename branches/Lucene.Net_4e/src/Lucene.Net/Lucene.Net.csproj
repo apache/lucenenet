@@ -70,6 +70,7 @@
     <Compile Include="Analysis\TokenAttributes\PayloadAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\PositionIncrementAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\TypeAttribute.cs" />
+    <Compile Include="Analysis\Tokenizer.cs" />
     <Compile Include="Analysis\TokenStream.cs" />
     <Compile Include="Index\DocsAndPositionEnumerator.cs" />
     <Compile Include="Index\Payload.cs" />
