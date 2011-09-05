@@ -31,7 +31,13 @@ namespace Lucene.Net.Util
     /// This class represents a slice of a an existing <c>char[]</c>.
     /// The <see cref="Chars"/> property should never be null, default to <see cref="emptyArray"/> if necessary.
     /// </summary>
-    public class CharsRef : IComparable<CharsRef>, ICharSequence, ICloneable<CharsRef>, IEnumerable<char>
+    /// <remarks>
+    ///     <para>
+    ///         This class might be transformed into a immutable value type depending on its use
+    ///         in the Lucene code base.
+    ///     </para>
+    /// </remarks>
+    public class CharsRef : IComparable<CharsRef>, ICharSequence, ICloneable<CharsRef>, IEnumerable<char>, IEquatable<CharsRef>
     {
         private static readonly char[] emptyArray = new char[0];
         private static readonly UTF8Comparer comparer = new UTF8Comparer();
