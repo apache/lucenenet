@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		private int[] starts;
 		
 		/// <summary>Creates a searchable which searches <i>searchables</i>. </summary>
-		public ParallelMultiSearcher(Searchable[] searchables):base(searchables)
+		public ParallelMultiSearcher(params Searchable[] searchables):base(searchables)
 		{
 			this.searchables = searchables;
 			this.starts = GetStarts();
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
 		private int i;
 		private PriorityQueue hq;
 		private int[] starts;
-		private System.IO.IOException ioe;
+		private System.Exception ioe;
 		private Sort sort;
 		
 		public MultiSearcherThread(Searchable searchable, Weight weight, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
@@ -280,9 +280,9 @@ namespace Lucene.Net.Search
 				docs = (sort == null)?searchable.Search(weight, filter, nDocs):searchable.Search(weight, filter, nDocs, sort);
 			}
 			// Store the IOException for later use by the caller of this thread
-			catch (System.IO.IOException ioe)
+			catch (System.Exception e)
 			{
-				this.ioe = ioe;
+				this.ioe = e;
 			}
 			if (this.ioe == null)
 			{
@@ -339,7 +339,8 @@ namespace Lucene.Net.Search
 		
 		public virtual System.IO.IOException GetIOException()
 		{
-			return ioe;
+            if (ioe == null) return null;
+            return new System.IO.IOException(ioe.Message);
 		}
 	}
 }
