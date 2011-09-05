@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class Analyzer : IDisposable
     {
-        private ThreadLocal<TokenStream> threadLocalTokenStream;
+        private ThreadLocal<object> threadLocalTokenStream;
         private bool disposed = false;
 
         /// <summary>
@@ -59,13 +59,22 @@ namespace Lucene.Net.Analysis
 
 
         /// <summary>
-        /// Gets or sets the previous token stream.
+        /// Gets or sets the previous token stream or token stream storage object.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///     This can be used to store the previous token stream directly or it can 
+        ///     use a custom storage mechanism like <see cref="ReusableAnalyzerBase.TokenStreamComponents"/>.
+        ///     </para>
+        ///     <para>
+        ///     The property name deviates from the Java version because the name is misleading. 
+        ///     </para>
+        /// </remarks>
         /// <value>The previous token stream. Returns null if the value has not been set.</value>
         /// <exception cref="ObjectDisposedException">
         ///     Thrown when <see cref="Analyzer"/> is already disposed.
         /// </exception>
-        protected TokenStream PreviousTokenStream
+        protected object PreviousTokenStreamOrStorage
         {
             get
             {
@@ -109,24 +118,38 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Tokens the stream.
+        /// Creates a <see cref="TokenStream"/> using the specified <see cref="StreamReader"/>.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///     Subclasses that implement this method should always be able to handle null 
+        ///     values for the field name for backwards compatibility.
+        ///     </para>
+        /// </remarks>
         /// <param name="fieldName">Name of the field.</param>
         /// <param name="reader">The reader.</param>
         /// <returns>
         /// An instance of <see cref="TokenStream"/>.
         /// </returns>
-        public abstract TokenStream TokenStream(string fieldName, TextReader reader);
+        public abstract TokenStream TokenStream(string fieldName, StreamReader reader);
 
         /// <summary>
-        /// Reusable the token stream.
+        /// Finds or creates a <see cref="TokenStream"/> that is permits the <see cref="TokenStream"/>
+        /// to be re-used on the same thread.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///     Any Class that manages the current <see cref="Analyzer"/> and does not need to use more
+        ///     than one <see cref="TokenStream"/> at the same time should use this method for 
+        ///     better performance. 
+        ///     </para>
+        /// </remarks>
         /// <param name="fieldName">Name of the field.</param>
         /// <param name="reader">The reader.</param>
         /// <returns>
         /// An instance of <see cref="TokenStream"/>.
         /// </returns>
-        public TokenStream ReusableTokenStream(string fieldName, TextReader reader)
+        public virtual TokenStream ReusableTokenStream(string fieldName, StreamReader reader)
         {
             return this.TokenStream(fieldName, reader);
         }
