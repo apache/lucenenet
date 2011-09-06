@@ -280,7 +280,13 @@ namespace Lucene.Net.Analysis
 			}
 			return Contains(o.ToString());
 		}
-		
+
+        //LUCENENET-414 (https://issues.apache.org/jira/browse/LUCENENET-414)
+        public virtual bool Add(object key, object value)
+        {
+            return Add(key);
+        }
+
 		public virtual bool Add(System.Object o)
 		{
 			if (o is char[])
