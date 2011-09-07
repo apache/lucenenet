@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>Create set from a Collection of char[] or String </summary>
 		public CharArraySet(System.Collections.ICollection c, bool ignoreCase):this(c.Count, ignoreCase)
 		{
-			System.Collections.IEnumerator e = c.GetEnumerator();
+            System.Collections.IEnumerator e = c is CharArraySet ? ((CharArraySet)c).GetEnumerator() : c.GetEnumerator();
 			while (e.MoveNext())
 			{
 				Add(e.Current);
