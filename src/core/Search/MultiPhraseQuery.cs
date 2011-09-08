@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <seealso cref="PhraseQuery.add(Term)">
 		/// </seealso>
-		public virtual void  Add(Term[] terms)
+		public virtual void  Add(params Term[] terms)
 		{
 			int position = 0;
 			if (positions.Count > 0)

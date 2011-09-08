@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
 		private int maxDoc = 0;
 		
 		/// <summary>Creates a searcher which searches <i>searchers</i>. </summary>
-		public MultiSearcher(Searchable[] searchables)
+		public MultiSearcher(params Searchable[] searchables)
 		{
 			this.searchables = searchables;
 			

@@ -2977,7 +2977,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  DeleteDocuments(Term[] terms)
+		public virtual void  DeleteDocuments(params Term[] terms)
 		{
 			EnsureOpen();
 			try
@@ -3024,7 +3024,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  DeleteDocuments(Query[] queries)
+		public virtual void  DeleteDocuments(params Query[] queries)
 		{
 			EnsureOpen();
 			bool doFlush = docWriter.BufferDeleteQueries(queries);
@@ -4159,7 +4159,7 @@ namespace Lucene.Net.Index
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
         [Obsolete("Use {@link #addIndexesNoOptimize} instead,then separately call {@link #optimize} afterwards if you need to.")]
-		public virtual void  AddIndexes(Directory[] dirs)
+		public virtual void  AddIndexes(params Directory[] dirs)
 		{
 			
 			EnsureOpen();
@@ -4306,7 +4306,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  AddIndexesNoOptimize(Directory[] dirs)
+		public virtual void  AddIndexesNoOptimize(params Directory[] dirs)
 		{
 			
 			EnsureOpen();
@@ -4504,7 +4504,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		public virtual void  AddIndexes(IndexReader[] readers)
+		public virtual void  AddIndexes(params IndexReader[] readers)
 		{
 			
 			EnsureOpen();

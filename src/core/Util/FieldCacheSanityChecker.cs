@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <seealso cref="check">
 		/// </seealso>
-		public static Insanity[] CheckSanity(CacheEntry[] cacheEntries)
+		public static Insanity[] CheckSanity(params CacheEntry[] cacheEntries)
 		{
 			FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker();
 			// doesn't check for interned
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
 		/// (:TODO: is this a bad idea? are we masking a real problem?)
 		/// <p/>
 		/// </summary>
-		public Insanity[] Check(CacheEntry[] cacheEntries)
+		public Insanity[] Check(params CacheEntry[] cacheEntries)
 		{
 			if (null == cacheEntries || 0 == cacheEntries.Length)
 				return new Insanity[0];

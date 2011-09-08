@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Spans
 		private System.String field;
 		
 		/// <summary>Construct a SpanOrQuery merging the provided clauses. </summary>
-		public SpanOrQuery(SpanQuery[] clauses)
+		public SpanOrQuery(params SpanQuery[] clauses)
 		{
 			
 			// copy clauses array into an ArrayList

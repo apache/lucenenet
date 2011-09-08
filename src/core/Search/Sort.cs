@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 		/// #Sort(SortField[])}
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating SortFields and then use Sort(SortField[])")]
-		public Sort(System.String[] fields)
+		public Sort(params System.String[] fields)
 		{
 			SetSort(fields);
 		}
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Sorts in succession by the criteria in each SortField. </summary>
-		public Sort(SortField[] fields)
+		public Sort(params SortField[] fields)
 		{
 			SetSort(fields);
 		}
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
 		/// #SetSort(SortField[])} 
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortFields and then use SetSort(SortField[])")]
-		public virtual void  SetSort(System.String[] fieldnames)
+		public virtual void  SetSort(params System.String[] fieldnames)
 		{
 			int n = fieldnames.Length;
 			SortField[] nfields = new SortField[n];
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Sets the sort to the given criteria in succession. </summary>
-		public virtual void  SetSort(SortField[] fields)
+		public virtual void  SetSort(params SortField[] fields)
 		{
 			this.fields = fields;
 		}

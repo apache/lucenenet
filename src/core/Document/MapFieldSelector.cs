@@ -51,7 +51,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Create a a MapFieldSelector</summary>
 		/// <param name="fields">fields to LOAD.  All other fields are NO_LOAD.
 		/// </param>
-		public MapFieldSelector(System.String[] fields)
+		public MapFieldSelector(params System.String[] fields)
 		{
             fieldSelections = new Dictionary<string, FieldSelectorResult>(fields.Length * 5 / 3);
 			for (int i = 0; i < fields.Length; i++)

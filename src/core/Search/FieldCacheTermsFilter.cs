@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		private System.String field;
 		private System.String[] terms;
 		
-		public FieldCacheTermsFilter(System.String field, System.String[] terms)
+		public FieldCacheTermsFilter(System.String field, params System.String[] terms)
 		{
 			this.field = field;
 			this.terms = terms;

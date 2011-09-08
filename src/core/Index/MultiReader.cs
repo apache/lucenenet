@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
 		/// <param name="subReaders">set of (sub)readers
 		/// </param>
 		/// <throws>  IOException </throws>
-		public MultiReader(IndexReader[] subReaders)
+		public MultiReader(params IndexReader[] subReaders)
 		{
 			Initialize(subReaders, true);
 		}
