@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Function
 		/// {@link Lucene.Net.Search.Function.FieldScoreQuery FieldScoreQueries}.
 		/// This parameter is optional - it can be null or even an empty array.
 		/// </param>
-		public CustomScoreQuery(Query subQuery, ValueSourceQuery[] valSrcQueries)
+		public CustomScoreQuery(Query subQuery, params ValueSourceQuery[] valSrcQueries)
 		{
 			this.subQuery = subQuery;
 			this.valSrcQueries = valSrcQueries != null?valSrcQueries:new ValueSourceQuery[0];

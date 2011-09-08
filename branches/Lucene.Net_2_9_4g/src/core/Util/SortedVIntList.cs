@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <param name="sortedInts"> A sorted array of non negative integers.
 		/// </param>
-		public SortedVIntList(int[] sortedInts):this(sortedInts, sortedInts.Length)
+		public SortedVIntList(params int[] sortedInts):this(sortedInts, sortedInts.Length)
 		{
 		}
 		

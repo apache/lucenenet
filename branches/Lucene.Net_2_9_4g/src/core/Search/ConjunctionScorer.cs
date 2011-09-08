@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 		{
 		}
 		
-		public ConjunctionScorer(Similarity similarity, Scorer[] scorers):base(similarity)
+		public ConjunctionScorer(Similarity similarity, params Scorer[] scorers):base(similarity)
 		{
 			this.scorers = scorers;
 			coord = similarity.Coord(scorers.Length, scorers.Length);

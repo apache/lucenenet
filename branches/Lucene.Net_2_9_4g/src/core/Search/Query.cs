@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// <p/>A utility for use by {@link #Combine(Query[])} implementations.
 		/// </summary>
-		public static Query MergeBooleanQueries(BooleanQuery[] queries)
+		public static Query MergeBooleanQueries(params BooleanQuery[] queries)
 		{
             Support.Set<BooleanClause> allClauses = new Support.Set<BooleanClause>();
 			for (int i = 0; i < queries.Length; i++)
