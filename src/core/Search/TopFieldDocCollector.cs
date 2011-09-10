@@ -65,8 +65,8 @@ namespace Lucene.Net.Search
 					// comparators in the FieldSortedHitQueue.lessThan
 					// aren't in general congruent with "higher score
 					// wins"
-					reusableFD.score = score;
-					reusableFD.doc = doc;
+					reusableFD.Score = score;
+					reusableFD.Doc = doc;
 				}
 				reusableFD = (FieldDoc) hq.InsertWithOverflow(reusableFD);
 			}

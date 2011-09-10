@@ -162,12 +162,12 @@ namespace Lucene.Net.Spatial.Test
 			double lastDistance = 0;
 			for (int i = 0; i < results; i++)
 			{
-				Document d = _searcher.Doc(scoreDocs[i].doc);
+				Document d = _searcher.Doc(scoreDocs[i].Doc);
 
 				String name = d.Get("name");
 				double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
 				double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
-				Double geo_distance = distances[scoreDocs[i].doc];
+				Double geo_distance = distances[scoreDocs[i].Doc];
 
 				double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
 				double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);
@@ -297,12 +297,12 @@ namespace Lucene.Net.Spatial.Test
             double lastDistance = 0;
             for (int i = 0; i < results; i++)
             {
-                Document d = _searcher.Doc(scoreDocs[i].doc);
+                Document d = _searcher.Doc(scoreDocs[i].Doc);
 
                 String name = d.Get("name");
                 double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
                 double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
-                Double geo_distance = distances[scoreDocs[i].doc];
+                Double geo_distance = distances[scoreDocs[i].Doc];
 
                 double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
                 double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);

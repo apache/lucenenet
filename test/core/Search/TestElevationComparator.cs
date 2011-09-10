@@ -83,18 +83,18 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(4, nDocsReturned);
 			
 			// 0 & 3 were elevated
-			Assert.AreEqual(0, topDocs.ScoreDocs[0].doc);
-			Assert.AreEqual(3, topDocs.ScoreDocs[1].doc);
+			Assert.AreEqual(0, topDocs.ScoreDocs[0].Doc);
+			Assert.AreEqual(3, topDocs.ScoreDocs[1].Doc);
 			
 			if (reversed)
 			{
-				Assert.AreEqual(2, topDocs.ScoreDocs[2].doc);
-				Assert.AreEqual(1, topDocs.ScoreDocs[3].doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[2].Doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[3].Doc);
 			}
 			else
 			{
-				Assert.AreEqual(1, topDocs.ScoreDocs[2].doc);
-				Assert.AreEqual(2, topDocs.ScoreDocs[3].doc);
+				Assert.AreEqual(1, topDocs.ScoreDocs[2].Doc);
+				Assert.AreEqual(2, topDocs.ScoreDocs[3].Doc);
 			}
 			
 			/*

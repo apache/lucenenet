@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
 						ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc()))), null, 1000).ScoreDocs;
 						if (hits.Length > 0)
 						{
-							searcher.Doc(hits[0].doc);
+							searcher.Doc(hits[0].Doc);
 						}
 						
 						// r might have changed because this is not a 

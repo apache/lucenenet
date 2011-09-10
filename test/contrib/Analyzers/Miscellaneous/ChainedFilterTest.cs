@@ -119,13 +119,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
             TopDocs hits = searcher.Search(query, chain, 1000);
             numHits = hits.TotalHits;
             Assert.AreEqual(MAX / 2, numHits);
-            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
 
             chain = GetChainedFilter(new Filter[] { bobFilter }, new ChainedFilter.Logic[] { ChainedFilter.Logic.ANDNOT });
             hits = searcher.Search(query, chain, 1000);
             numHits = hits.TotalHits;
             Assert.AreEqual(MAX / 2, numHits);
-            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             Assert.AreEqual(MAX / 2, hits.TotalHits, "AND matches just bob");
-            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             Assert.AreEqual(MAX / 2, hits.TotalHits, "XOR matches sue");
-            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
 
         [Test]
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             TopDocs hits = searcher.Search(query, chain, 1000);
             Assert.AreEqual(MAX / 2, hits.TotalHits, "ANDNOT matches just bob");
-            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("bob", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
 
             chain = GetChainedFilter(
                 new Filter[] { bobFilter, bobFilter },
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             hits = searcher.Search(query, chain, 1000);
             Assert.AreEqual(MAX / 2, hits.TotalHits, "ANDNOT bob ANDNOT bob matches all sues");
-            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].doc).Get("owner"));
+            Assert.AreEqual("sue", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
 
         /*

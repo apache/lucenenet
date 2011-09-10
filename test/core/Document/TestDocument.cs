@@ -183,7 +183,7 @@ namespace Lucene.Net.Documents
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
 			
-			DoAssert(searcher.Doc(hits[0].doc), true);
+			DoAssert(searcher.Doc(hits[0].Doc), true);
 			searcher.Close();
 		}
 		
@@ -261,7 +261,7 @@ namespace Lucene.Net.Documents
 			int result = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				Document doc2 = searcher.Doc(hits[i].doc);
+				Document doc2 = searcher.Doc(hits[i].Doc);
 				Field f = doc2.GetField("id");
 				if (f.StringValue().Equals("id1"))
 					result |= 1;

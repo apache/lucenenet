@@ -128,12 +128,12 @@ namespace Lucene.Net.Search
 			Query filteredquery = new FilteredQuery(query, filter);
 			ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
 			hits = searcher.Search(filteredquery, null, 1000, new Sort("sorter")).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(1, hits[0].doc);
+			Assert.AreEqual(1, hits[0].Doc);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter);
 			hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length);
-			Assert.AreEqual(3, hits[0].doc);
+			Assert.AreEqual(3, hits[0].Doc);
 			QueryUtils.Check(filteredquery, searcher);
 			
 			filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < hits1.Length; i++)
 			{
-				Assert.AreEqual(hits1[i].score, hits2[i].score, 0.0000001f);
+				Assert.AreEqual(hits1[i].Score, hits2[i].Score, 0.0000001f);
 			}
 		}
 		

@@ -70,9 +70,9 @@ namespace Lucene.Net.Search
 			
 			hits = is_Renamed.Search(new MatchAllDocsQuery(), null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
-			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "one");
-			Assert.AreEqual(ir.Document(hits[1].doc).Get("key"), "two");
-			Assert.AreEqual(ir.Document(hits[2].doc).Get("key"), "three four");
+			Assert.AreEqual(ir.Document(hits[0].Doc).Get("key"), "one");
+			Assert.AreEqual(ir.Document(hits[1].Doc).Get("key"), "two");
+			Assert.AreEqual(ir.Document(hits[2].Doc).Get("key"), "three four");
 			
 			// assert with norms scoring turned on
 			
@@ -80,9 +80,9 @@ namespace Lucene.Net.Search
 			hits = is_Renamed.Search(normsQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			
-			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "three four");
-			Assert.AreEqual(ir.Document(hits[1].doc).Get("key"), "two");
-			Assert.AreEqual(ir.Document(hits[2].doc).Get("key"), "one");
+			Assert.AreEqual(ir.Document(hits[0].Doc).Get("key"), "three four");
+			Assert.AreEqual(ir.Document(hits[1].Doc).Get("key"), "two");
+			Assert.AreEqual(ir.Document(hits[2].Doc).Get("key"), "one");
 			
 			// change norm & retest
 			ir.SetNorm(0, "key", 400f);
@@ -90,9 +90,9 @@ namespace Lucene.Net.Search
 			hits = is_Renamed.Search(normsQuery, null, 1000).ScoreDocs;
 			Assert.AreEqual(3, hits.Length);
 			
-			Assert.AreEqual(ir.Document(hits[0].doc).Get("key"), "one");
-			Assert.AreEqual(ir.Document(hits[1].doc).Get("key"), "three four");
-			Assert.AreEqual(ir.Document(hits[2].doc).Get("key"), "two");
+			Assert.AreEqual(ir.Document(hits[0].Doc).Get("key"), "one");
+			Assert.AreEqual(ir.Document(hits[1].Doc).Get("key"), "three four");
+			Assert.AreEqual(ir.Document(hits[2].Doc).Get("key"), "two");
 			
 			// some artificial queries to trigger the use of skipTo():
 			

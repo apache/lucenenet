@@ -453,17 +453,17 @@ namespace Lucene.Net.Search
 					System.Diagnostics.Debug.Assert(newDocs[i] is FieldDoc);
 					FieldDoc oldHit = (FieldDoc) oldDocs[i];
 					FieldDoc newHit = (FieldDoc) newDocs[i];
-					Assert.AreEqual(oldHit.doc, newHit.doc, "hit " + i + " of " + oldDocs.Length + " differs: oldDoc=" + oldHit.doc + " vs newDoc=" + newHit.doc + " oldFields=" + _TestUtil.ArrayToString(oldHit.fields) + " newFields=" + _TestUtil.ArrayToString(newHit.fields));
+					Assert.AreEqual(oldHit.Doc, newHit.Doc, "hit " + i + " of " + oldDocs.Length + " differs: oldDoc=" + oldHit.Doc + " vs newDoc=" + newHit.Doc + " oldFields=" + _TestUtil.ArrayToString(oldHit.fields) + " newFields=" + _TestUtil.ArrayToString(newHit.fields));
 					
-					Assert.AreEqual(oldHit.score, newHit.score, 0.00001);
+					Assert.AreEqual(oldHit.Score, newHit.Score, 0.00001);
 					Assert.IsTrue(Support.CollectionsHelper.Equals(oldHit.fields, newHit.fields));
 				}
 				else
 				{
 					ScoreDoc oldHit = oldDocs[i];
 					ScoreDoc newHit = newDocs[i];
-					Assert.AreEqual(oldHit.doc, newHit.doc);
-					Assert.AreEqual(oldHit.score, newHit.score, 0.00001);
+					Assert.AreEqual(oldHit.Doc, newHit.Doc);
+					Assert.AreEqual(oldHit.Score, newHit.Score, 0.00001);
 				}
 			}
 		}

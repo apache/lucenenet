@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
 			{
 				System.Collections.BitArray bs = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
                 for (int i = 0; i < reader.MaxDoc(); i++) bs.Set(i, true);
-				bs.Set(docs1.ScoreDocs[0].doc, true);
+				bs.Set(docs1.ScoreDocs[0].Doc, true);
 				return new DocIdBitSet(bs);
 			}
 		}
@@ -489,7 +489,7 @@ namespace Lucene.Net.Search
 			bool fail = false;
 			for (int x = 0; x < n; ++x)
 			{
-				Document doc2 = searcher.Doc(result[x].doc);
+				Document doc2 = searcher.Doc(result[x].Doc);
 				System.String[] v = doc2.GetValues("tracer");
 				System.String[] v2 = doc2.GetValues("tracer2");
 				for (int j = 0; j < v.Length; ++j)
@@ -515,18 +515,18 @@ namespace Lucene.Net.Search
 							else if (cmp == 0)
 							{
 								// ensure docid is in order
-								if (result[x].doc < lastDocId)
+								if (result[x].Doc < lastDocId)
 								{
 									fail = true;
-									System.Console.Out.WriteLine("doc fail:" + result[x].doc + " > " + lastDocId);
+									System.Console.Out.WriteLine("doc fail:" + result[x].Doc + " > " + lastDocId);
 								}
 							}
 						}
 					}
 					last = v[j];
 					lastSub = v2[j];
-					lastDocId = result[x].doc;
-					buff.Append(v[j] + "(" + v2[j] + ")(" + result[x].doc + ") ");
+					lastDocId = result[x].Doc;
+					buff.Append(v[j] + "(" + v2[j] + ")(" + result[x].Doc + ") ");
 				}
 			}
 			if (fail)
@@ -986,7 +986,7 @@ namespace Lucene.Net.Search
 			
 			TopDocs docs2 = full.Search(queryE, filt, nDocs, sort);
 			
-			Assert.AreEqual(docs1.ScoreDocs[0].score, docs2.ScoreDocs[0].score, 1e-6);
+			Assert.AreEqual(docs1.ScoreDocs[0].Score, docs2.ScoreDocs[0].Score, 1e-6);
 		}
 		
 		[Test]
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Search
 				ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 				for (int j = 1; j < sd.Length; j++)
 				{
-					Assert.IsTrue(sd[j].doc != sd[j - 1].doc);
+					Assert.IsTrue(sd[j].Doc != sd[j - 1].Doc);
 				}
 			}
 		}
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Search
 				ScoreDoc[] sd = td.ScoreDocs;
 				for (int j = 0; j < sd.Length; j++)
 				{
-					Assert.IsTrue(System.Single.IsNaN(sd[j].score));
+					Assert.IsTrue(System.Single.IsNaN(sd[j].Score));
 				}
 				Assert.IsTrue(System.Single.IsNaN(td.GetMaxScore()));
 			}
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Search
 				ScoreDoc[] sd = td.ScoreDocs;
 				for (int j = 0; j < sd.Length; j++)
 				{
-					Assert.IsTrue(!System.Single.IsNaN(sd[j].score));
+					Assert.IsTrue(!System.Single.IsNaN(sd[j].Score));
 				}
 				Assert.IsTrue(System.Single.IsNaN(td.GetMaxScore()));
 			}
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Search
 				ScoreDoc[] sd = td.ScoreDocs;
 				for (int j = 0; j < sd.Length; j++)
 				{
-					Assert.IsTrue(!System.Single.IsNaN(sd[j].score));
+					Assert.IsTrue(!System.Single.IsNaN(sd[j].Score));
 				}
 				Assert.IsTrue(!System.Single.IsNaN(td.GetMaxScore()));
 			}
@@ -1235,7 +1235,7 @@ namespace Lucene.Net.Search
 			int n = result.Length;
 			for (int i = 0; i < n; ++i)
 			{
-				Document doc = searcher.Doc(result[i].doc);
+				Document doc = searcher.Doc(result[i].Doc);
 				System.String[] v = doc.GetValues("tracer");
 				for (int j = 0; j < v.Length; ++j)
 				{
@@ -1251,10 +1251,10 @@ namespace Lucene.Net.Search
 			int n = hits.Length;
 			for (int i = 0; i < n; ++i)
 			{
-				Document doc = searcher.Doc(hits[i].doc);
+				Document doc = searcher.Doc(hits[i].Doc);
 				System.String[] v = doc.GetValues("tracer");
 				Assert.AreEqual(v.Length, 1);
-				scoreMap[v[0]] = (float) hits[i].score;
+				scoreMap[v[0]] = (float) hits[i].Score;
 			}
 			return scoreMap;
 		}

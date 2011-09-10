@@ -116,13 +116,13 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(multiSearcherHits.Length, singleSearcherHits.Length);
 			for (int i = 0; i < multiSearcherHits.Length; i++)
 			{
-				Document docMulti = multiSearcher.Doc(multiSearcherHits[i].doc);
-				Document docSingle = singleSearcher.Doc(singleSearcherHits[i].doc);
+				Document docMulti = multiSearcher.Doc(multiSearcherHits[i].Doc);
+				Document docSingle = singleSearcher.Doc(singleSearcherHits[i].Doc);
 				if (verbose)
-					System.Console.Out.WriteLine("Multi:  " + docMulti.Get(FIELD_NAME) + " score=" + multiSearcherHits[i].score);
+					System.Console.Out.WriteLine("Multi:  " + docMulti.Get(FIELD_NAME) + " score=" + multiSearcherHits[i].Score);
 				if (verbose)
-					System.Console.Out.WriteLine("Single: " + docSingle.Get(FIELD_NAME) + " score=" + singleSearcherHits[i].score);
-				Assert.AreEqual(multiSearcherHits[i].score, singleSearcherHits[i].score, 0.001f);
+					System.Console.Out.WriteLine("Single: " + docSingle.Get(FIELD_NAME) + " score=" + singleSearcherHits[i].Score);
+				Assert.AreEqual(multiSearcherHits[i].Score, singleSearcherHits[i].Score, 0.001f);
 				Assert.AreEqual(docMulti.Get(FIELD_NAME), docSingle.Get(FIELD_NAME));
 			}
 			if (verbose)

@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 				for (int i1 = 0; i1 < hitDocs.Count && i2 < scoreDocs.Length; i1++)
 				{
 					int id1 = ((HitDoc) hitDocs[i1]).id;
-					int id2 = scoreDocs[i2].doc;
+					int id2 = scoreDocs[i2].Doc;
 					if (id1 == id2)
 					{
 						i2++;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
 			length += nDeletedHits;
 			for (int i = start; i < end; i++)
 			{
-				hitDocs.Add(new HitDoc(scoreDocs[i].score * scoreNorm, scoreDocs[i].doc));
+				hitDocs.Add(new HitDoc(scoreDocs[i].Score * scoreNorm, scoreDocs[i].Doc));
 			}
 			
 			nDeletions = nDels2;

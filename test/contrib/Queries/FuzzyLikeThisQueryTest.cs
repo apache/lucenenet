@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar not most rare variant");
         }
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar when using 2 words");
         }
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             TopDocs topDocs = searcher.Search(flt, 1);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsTrue((sd != null) && (sd.Length > 0), "score docs must match 1 doc");
-            Document doc = searcher.Doc(sd[0].doc);
+            Document doc = searcher.Doc(sd[0].Doc);
             Assert.AreEqual("2", doc.Get("id"), "Should match most similar when using 2 words");
         }
 

@@ -200,10 +200,10 @@ namespace Lucene.Net.Search
 			result = search.Search(Csrq("data", "1", "6", T, T), null, 1000).ScoreDocs;
 			int numHits = result.Length;
 			AssertEquals("wrong number of results", 6, numHits);
-			float score = result[0].score;
+			float score = result[0].Score;
 			for (int i = 1; i < numHits; i++)
 			{
-				AssertEquals("score for " + i + " was not the same", score, result[i].score);
+				AssertEquals("score for " + i + " was not the same", score, result[i].Score);
 			}
 			
 			result = search.Search(Csrq("data", "1", "6", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), null, 1000).ScoreDocs;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 			AssertEquals("wrong number of results", 6, numHits);
 			for (int i = 0; i < numHits; i++)
 			{
-				AssertEquals("score for " + i + " was not the same", score, result[i].score);
+				AssertEquals("score for " + i + " was not the same", score, result[i].Score);
 			}
 		}
 		
@@ -241,9 +241,9 @@ namespace Lucene.Net.Search
 			bq.Add(q2, BooleanClause.Occur.SHOULD);
 			
 			ScoreDoc[] hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits[0].doc);
-			Assert.AreEqual(0, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(1, hits[0].Doc);
+			Assert.AreEqual(0, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 			
 			q1 = Csrq("data", "A", "A", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE); // matches document #0
 			q1.SetBoost(.1f);
@@ -253,9 +253,9 @@ namespace Lucene.Net.Search
 			bq.Add(q2, BooleanClause.Occur.SHOULD);
 			
 			hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(1, hits[0].doc);
-			Assert.AreEqual(0, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(1, hits[0].Doc);
+			Assert.AreEqual(0, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 			
 			q1 = Csrq("data", "A", "A", T, T); // matches document #0
 			q1.SetBoost(10f);
@@ -265,9 +265,9 @@ namespace Lucene.Net.Search
 			bq.Add(q2, BooleanClause.Occur.SHOULD);
 			
 			hits = search.Search(bq, null, 1000).ScoreDocs;
-			Assert.AreEqual(0, hits[0].doc);
-			Assert.AreEqual(1, hits[1].doc);
-			Assert.IsTrue(hits[0].score > hits[1].score);
+			Assert.AreEqual(0, hits[0].Doc);
+			Assert.AreEqual(1, hits[1].Doc);
+			Assert.IsTrue(hits[0].Score > hits[1].Score);
 		}
 		
         [Test]
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
 			AssertEquals("wrong numebr of hits", numHits, actual.Length);
 			for (int i = 0; i < numHits; i++)
 			{
-				AssertEquals("mismatch in docid for hit#" + i, expected[i].doc, actual[i].doc);
+				AssertEquals("mismatch in docid for hit#" + i, expected[i].Doc, actual[i].Doc);
 			}
 		}
 		

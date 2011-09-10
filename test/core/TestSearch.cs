@@ -116,8 +116,8 @@ namespace Lucene.Net
 				out_Renamed.WriteLine(hits.Length + " total results");
 				for (int i = 0; i < hits.Length && i < 10; i++)
 				{
-					Document d = searcher.Doc(hits[i].doc);
-					out_Renamed.WriteLine(i + " " + hits[i].score + " " + d.Get("contents"));
+					Document d = searcher.Doc(hits[i].Doc);
+					out_Renamed.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
 				}
 			}
 			searcher.Close();

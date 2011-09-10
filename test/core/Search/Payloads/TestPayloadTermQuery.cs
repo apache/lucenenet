@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Payloads
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				Assert.IsTrue(doc.score == 1, doc.score + " does not equal: " + 1);
+				Assert.IsTrue(doc.Score == 1, doc.Score + " does not equal: " + 1);
 			}
 			CheckHits.CheckExplanations(query, PayloadHelper.FIELD, searcher, true);
 			Lucene.Net.Search.Spans.Spans spans = query.GetSpans(searcher.GetIndexReader());
@@ -244,14 +244,14 @@ namespace Lucene.Net.Search.Payloads
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				if (doc.doc % 10 == 0)
+				if (doc.Doc % 10 == 0)
 				{
 					numTens++;
-					Assert.IsTrue(doc.score == 4.0, doc.score + " does not equal: " + 4.0);
+					Assert.IsTrue(doc.Score == 4.0, doc.Score + " does not equal: " + 4.0);
 				}
 				else
 				{
-					Assert.IsTrue(doc.score == 2, doc.score + " does not equal: " + 2);
+					Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
 				}
 			}
 			Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);
@@ -292,14 +292,14 @@ namespace Lucene.Net.Search.Payloads
 			for (int i = 0; i < hits.ScoreDocs.Length; i++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[i];
-				if (doc.doc % 10 == 0)
+				if (doc.Doc % 10 == 0)
 				{
 					numTens++;
-					Assert.IsTrue(doc.score == 4.0, doc.score + " does not equal: " + 4.0);
+					Assert.IsTrue(doc.Score == 4.0, doc.Score + " does not equal: " + 4.0);
 				}
 				else
 				{
-					Assert.IsTrue(doc.score == 2, doc.score + " does not equal: " + 2);
+					Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
 				}
 			}
 			Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);

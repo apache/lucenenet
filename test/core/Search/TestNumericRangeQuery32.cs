@@ -96,9 +96,9 @@ namespace Lucene.Net.Search
 				ScoreDoc[] sd = topDocs.ScoreDocs;
 				Assert.IsNotNull(sd);
 				Assert.AreEqual(count, sd.Length, "Score doc count" + type);
-				Document doc = searcher.Doc(sd[0].doc);
+				Document doc = searcher.Doc(sd[0].Doc);
 				Assert.AreEqual(2 * distance + startOffset, System.Int32.Parse(doc.Get(field)), "First doc" + type);
-				doc = searcher.Doc(sd[sd.Length - 1].doc);
+				doc = searcher.Doc(sd[sd.Length - 1].Doc);
 				Assert.AreEqual((1 + count) * distance + startOffset, System.Int32.Parse(doc.Get(field)), "Last doc" + type);
 				if (i > 0)
 				{
@@ -169,9 +169,9 @@ namespace Lucene.Net.Search
 			ScoreDoc[] sd = topDocs.ScoreDocs;
 			Assert.IsNotNull(sd);
 			Assert.AreEqual(count, sd.Length, "Score doc count");
-			Document doc = searcher.Doc(sd[0].doc);
+			Document doc = searcher.Doc(sd[0].Doc);
 			Assert.AreEqual(startOffset, System.Int32.Parse(doc.Get(field)), "First doc");
-			doc = searcher.Doc(sd[sd.Length - 1].doc);
+			doc = searcher.Doc(sd[sd.Length - 1].Doc);
 			Assert.AreEqual((count - 1) * distance + startOffset, System.Int32.Parse(doc.Get(field)), "Last doc");
 		}
 		
@@ -206,9 +206,9 @@ namespace Lucene.Net.Search
 			ScoreDoc[] sd = topDocs.ScoreDocs;
 			Assert.IsNotNull(sd);
 			Assert.AreEqual(noDocs - count, sd.Length, "Score doc count");
-			Document doc = searcher.Doc(sd[0].doc);
+			Document doc = searcher.Doc(sd[0].Doc);
 			Assert.AreEqual(count * distance + startOffset, System.Int32.Parse(doc.Get(field)), "First doc");
-			doc = searcher.Doc(sd[sd.Length - 1].doc);
+			doc = searcher.Doc(sd[sd.Length - 1].Doc);
 			Assert.AreEqual((noDocs - 1) * distance + startOffset, System.Int32.Parse(doc.Get(field)), "Last doc");
 		}
 		
@@ -438,10 +438,10 @@ namespace Lucene.Net.Search
 					continue;
 				ScoreDoc[] sd = topDocs.ScoreDocs;
 				Assert.IsNotNull(sd);
-				int last = System.Int32.Parse(searcher.Doc(sd[0].doc).Get(field));
+				int last = System.Int32.Parse(searcher.Doc(sd[0].Doc).Get(field));
 				for (int j = 1; j < sd.Length; j++)
 				{
-					int act = System.Int32.Parse(searcher.Doc(sd[j].doc).Get(field));
+					int act = System.Int32.Parse(searcher.Doc(sd[j].Doc).Get(field));
 					Assert.IsTrue(last > act, "Docs should be sorted backwards");
 					last = act;
 				}

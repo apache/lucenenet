@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].Score;
 			
 			return new TopDocs(totalHits, scoreDocs, maxScore);
 		}
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search
 				{
 					// merge scoreDocs into hq
 					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc 
+					scoreDoc.Doc += starts[i]; // convert doc 
 					//it would be so nice if we had a thread-safe insert 
 					lock (hq)
 					{

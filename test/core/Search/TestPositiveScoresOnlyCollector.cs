@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(numPositiveScores, td.TotalHits);
 			for (int i = 0; i < sd.Length; i++)
 			{
-				Assert.IsTrue(sd[i].score > 0, "only positive scores should return: " + sd[i].score);
+				Assert.IsTrue(sd[i].Score > 0, "only positive scores should return: " + sd[i].Score);
 			}
 		}
 	}

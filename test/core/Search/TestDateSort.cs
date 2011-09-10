@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
 			ScoreDoc[] hits = searcher.Search(query, null, 1000, sort).ScoreDocs;
 			for (int i = 0; i < hits.Length; i++)
 			{
-				Document document = searcher.Doc(hits[i].doc);
+				Document document = searcher.Doc(hits[i].Doc);
 				System.String text = document.Get(TEXT_FIELD);
 				actualOrder[i] = text;
 			}

@@ -86,12 +86,12 @@ namespace Lucene.Net.Search
 				
 				public virtual int Compare(ScoreDoc i, ScoreDoc j)
 				{
-					return cachedValues[i.doc].CompareTo(cachedValues[j.doc]);
+					return cachedValues[i.Doc].CompareTo(cachedValues[j.Doc]);
 				}
 				
 				public virtual System.IComparable SortValue(ScoreDoc i)
 				{
-					return cachedValues[i.doc];
+					return cachedValues[i.Doc];
 				}
 				
 				public virtual int SortType()
