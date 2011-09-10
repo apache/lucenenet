@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 				float maxScore = System.Single.NaN;
 				if (start == 0)
 				{
-					maxScore = results[0].score;
+					maxScore = results[0].Score;
 				}
 				else
 				{
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 					{
 						pq.Pop();
 					}
-					maxScore = ((ScoreDoc) pq.Pop()).score;
+					maxScore = ((ScoreDoc) pq.Pop()).Score;
 				}
 				
 				return new TopDocs(totalHits, results, maxScore);
@@ -226,10 +226,10 @@ namespace Lucene.Net.Search
             TopDocsCollector<ScoreDoc> tdc = doSearch(15);
 			ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 			
-			Assert.AreEqual(MAX_SCORE, sd[0].score, 0f);
+			Assert.AreEqual(MAX_SCORE, sd[0].Score, 0f);
 			for (int i = 1; i < sd.Length; i++)
 			{
-				Assert.IsTrue(sd[i - 1].score >= sd[i].score);
+				Assert.IsTrue(sd[i - 1].Score >= sd[i].Score);
 			}
 		}
 	}

@@ -382,12 +382,12 @@ namespace Lucene.Net.Search
 			Assert.AreEqual(3, hits.Length);
 			// Make sure that those matches where the terms appear closer to
 			// each other get a higher score:
-			Assert.AreEqual(0.71, hits[0].score, 0.01);
-			Assert.AreEqual(0, hits[0].doc);
-			Assert.AreEqual(0.44, hits[1].score, 0.01);
-			Assert.AreEqual(1, hits[1].doc);
-			Assert.AreEqual(0.31, hits[2].score, 0.01);
-			Assert.AreEqual(2, hits[2].doc);
+			Assert.AreEqual(0.71, hits[0].Score, 0.01);
+			Assert.AreEqual(0, hits[0].Doc);
+			Assert.AreEqual(0.44, hits[1].Score, 0.01);
+			Assert.AreEqual(1, hits[1].Doc);
+			Assert.AreEqual(0.31, hits[2].Score, 0.01);
+			Assert.AreEqual(2, hits[2].Doc);
 			QueryUtils.Check(query, searcher);
 		}
 		
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "three"));
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "phrase found with exact phrase scorer");
-			float score0 = hits[0].score;
+			float score0 = hits[0].Score;
 			//System.out.println("(exact) field: two three: "+score0);
 			QueryUtils.Check(query, searcher);
 			
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search
 			query.SetSlop(2); // to use sloppy scorer 
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score1 = hits[0].score;
+			float score1 = hits[0].Score;
 			//System.out.println("(sloppy) field: two three: "+score1);
 			Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
 			QueryUtils.Check(query, searcher);
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("palindrome", "three"));
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score2 = hits[0].score;
+			float score2 = hits[0].Score;
 			//System.out.println("palindrome: two three: "+score2);
 			QueryUtils.Check(query, searcher);
 			
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("palindrome", "two"));
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score3 = hits[0].score;
+			float score3 = hits[0].Score;
 			//System.out.println("palindrome: three two: "+score3);
 			QueryUtils.Check(query, searcher);
 			
@@ -553,7 +553,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("field", "three"));
 			ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "phrase found with exact phrase scorer");
-			float score0 = hits[0].score;
+			float score0 = hits[0].Score;
 			//System.out.println("(exact) field: one two three: "+score0);
 			QueryUtils.Check(query, searcher);
 			
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
 			query.SetSlop(4); // to use sloppy scorer 
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score1 = hits[0].score;
+			float score1 = hits[0].Score;
 			//System.out.println("(sloppy) field: one two three: "+score1);
 			Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
 			QueryUtils.Check(query, searcher);
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("palindrome", "three"));
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score2 = hits[0].score;
+			float score2 = hits[0].Score;
 			//System.out.println("palindrome: one two three: "+score2);
 			QueryUtils.Check(query, searcher);
 			
@@ -589,7 +589,7 @@ namespace Lucene.Net.Search
 			query.Add(new Term("palindrome", "one"));
 			hits = searcher.Search(query, null, 1000).ScoreDocs;
 			Assert.AreEqual(1, hits.Length, "just sloppy enough");
-			float score3 = hits[0].score;
+			float score3 = hits[0].Score;
 			//System.out.println("palindrome: three two one: "+score3);
 			QueryUtils.Check(query, searcher);
 			

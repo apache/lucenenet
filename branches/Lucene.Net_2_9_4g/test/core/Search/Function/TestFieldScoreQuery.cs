@@ -97,9 +97,9 @@ namespace Lucene.Net.Search.Function
 			System.String prevID = "ID" + (N_DOCS + 1); // greater than all ids of docs in this test
 			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
-				Log(i + ".   score=" + h[i].score + "  -  " + resID);
-				Log(s.Explain(q, h[i].doc));
+				System.String resID = s.Doc(h[i].Doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].Score + "  -  " + resID);
+				Log(s.Explain(q, h[i].Doc));
 				Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
 				prevID = resID;
 			}
@@ -148,9 +148,9 @@ namespace Lucene.Net.Search.Function
 			ScoreDoc[] sd = td.ScoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
-				float score = sd[i].score;
-				Log(s.Explain(q, sd[i].doc));
-				System.String id = s.GetIndexReader().Document(sd[i].doc).Get(ID_FIELD);
+				float score = sd[i].Score;
+				Log(s.Explain(q, sd[i].Doc));
+				System.String id = s.GetIndexReader().Document(sd[i].Doc).Get(ID_FIELD);
 				float expectedScore = ExpectedFieldScore(id); // "ID7" --> 7.0
 				Assert.AreEqual(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA, "score of " + id + " shuould be " + expectedScore + " != " + score);
 			}

@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Payloads
 			for (int j = 0; j < hits.ScoreDocs.Length; j++)
 			{
 				ScoreDoc doc = hits.ScoreDocs[j];
-				Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+				Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 			}
 			for (int i = 1; i < 10; i++)
 			{
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.Payloads
 					ScoreDoc doc = hits.ScoreDocs[j];
 					//				System.out.println("Doc: " + doc.toString());
 					//				System.out.println("Explain: " + searcher.explain(query, doc.doc));
-					Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+					Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 				}
 			}
 		}
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Payloads
 			Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 			Assert.IsTrue(hits.TotalHits == 1, "there should only be one hit");
 			// should have score = 3 because adjacent terms have payloads of 2,4
-			Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+			Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		}
 		
         [Test]
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Payloads
 			ScoreDoc doc = hits.ScoreDocs[0];
 			//		System.out.println("Doc: " + doc.toString());
 			//		System.out.println("Explain: " + searcher.explain(query, doc.doc));
-			Assert.IsTrue(doc.score == 3, doc.score + " does not equal: " + 3);
+			Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		}
 		// must be static for weight serialization tests 
 		[Serializable]

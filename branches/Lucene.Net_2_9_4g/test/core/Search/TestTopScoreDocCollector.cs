@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(3, sd.Length);
 					for (int j = 0; j < sd.Length; j++)
 					{
-						Assert.AreEqual(j, sd[j].doc, "expected doc Id " + j + " found " + sd[j].doc);
+						Assert.AreEqual(j, sd[j].Doc, "expected doc Id " + j + " found " + sd[j].Doc);
 					}
 				}
 			}

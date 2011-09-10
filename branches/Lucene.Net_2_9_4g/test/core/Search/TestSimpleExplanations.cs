@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			Explanation explain = mSearcher.Explain(query, hits[0].doc);
+			Explanation explain = mSearcher.Explain(query, hits[0].Doc);
 			System.String exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("maxDocs=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("docFreq=3") > - 1, exp);
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(3, hits.Length);
 			
-			explain = mSearcher.Explain(query, hits[0].doc);
+			explain = mSearcher.Explain(query, hits[0].Doc);
 			exp = explain.ToString(0);
 			Assert.IsTrue(exp.IndexOf("1=3") > - 1, exp);
 			Assert.IsTrue(exp.IndexOf("2=3") > - 1, exp);

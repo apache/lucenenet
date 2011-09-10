@@ -240,8 +240,8 @@ namespace Lucene.Net.Search.Function
             Assert.AreEqual(N_DOCS, hits.TotalHits);
             for(int i=0;i<N_DOCS;i++) 
             {
-                int doc = hits.ScoreDocs[i].doc;
-                float score = hits.ScoreDocs[i].score;
+                int doc = hits.ScoreDocs[i].Doc;
+                float score = hits.ScoreDocs[i].Score;
                 Assert.AreEqual(score, (float)1 + (4 * doc) % N_DOCS, 0.0001, "doc=" + doc);
             }
             s.Close();
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Function
 			System.Collections.Hashtable h = new System.Collections.Hashtable();
 			for (int i = 0; i < td.TotalHits; i++)
 			{
-				h[(System.Int32) td.ScoreDocs[i].doc] = (float) td.ScoreDocs[i].score;
+				h[(System.Int32) td.ScoreDocs[i].Doc] = (float) td.ScoreDocs[i].Score;
 			}
 			return h;
 		}

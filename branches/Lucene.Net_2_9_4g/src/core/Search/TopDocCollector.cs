@@ -81,13 +81,13 @@ namespace Lucene.Net.Search
 				{
 					reusableSD = new ScoreDoc(doc, score);
 				}
-				else if (score >= reusableSD.score)
+				else if (score >= reusableSD.Score)
 				{
 					// reusableSD holds the last "rejected" entry, so, if
 					// this new score is not better than that, there's no
 					// need to try inserting it
-					reusableSD.doc = doc;
-					reusableSD.score = score;
+					reusableSD.Doc = doc;
+					reusableSD.Score = score;
 				}
 				else
 				{
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs[0].Score;
 			
 			return new TopDocs(totalHits, scoreDocs, maxScore);
 		}

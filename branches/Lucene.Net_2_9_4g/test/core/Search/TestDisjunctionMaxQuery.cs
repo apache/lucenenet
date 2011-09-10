@@ -190,10 +190,10 @@ namespace Lucene.Net.Search
 			{
 				Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
 				
-				float score = h[0].score;
+				float score = h[0].Score;
 				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
@@ -218,10 +218,10 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
-				float score = h[0].score;
+				float score = h[0].Score;
 				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
@@ -248,10 +248,10 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
-				float score = h[0].score;
+				float score = h[0].Score;
 				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
@@ -276,10 +276,10 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
-				Assert.AreEqual(s.Doc(h[0].doc).Get("id"), "d2", "wrong first");
-				float score0 = h[0].score;
-				float score1 = h[1].score;
-				float score2 = h[2].score;
+				Assert.AreEqual(s.Doc(h[0].Doc).Get("id"), "d2", "wrong first");
+				float score0 = h[0].Score;
+				float score1 = h[1].Score;
+				float score2 = h[2].Score;
 				Assert.IsTrue(score0 > score1, "d2 does not have better score then others: " + score0 + " >? " + score1);
 				Assert.AreEqual(score1, score2, SCORE_COMP_THRESH, "d4 and d1 don't have equal scores");
 			}
@@ -317,10 +317,10 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
-				float score = h[0].score;
+				float score = h[0].Score;
 				for (int i = 1; i < h.Length; i++)
 				{
-					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
 			}
 			catch (System.ApplicationException e)
@@ -356,14 +356,14 @@ namespace Lucene.Net.Search
 			try
 			{
 				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
-				float score = h[0].score;
+				float score = h[0].Score;
 				for (int i = 1; i < h.Length - 1; i++)
 				{
 					/* note: -1 */
-					Assert.AreEqual(score, h[i].score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
+					Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 				}
-				Assert.AreEqual("d1", s.Doc(h[h.Length - 1].doc).Get("id"), "wrong last");
-				float score1 = h[h.Length - 1].score;
+				Assert.AreEqual("d1", s.Doc(h[h.Length - 1].Doc).Get("id"), "wrong last");
+				float score1 = h[h.Length - 1].Score;
 				Assert.IsTrue(score > score1, "d1 does not have worse score then others: " + score + " >? " + score1);
 			}
 			catch (System.ApplicationException e)
@@ -401,15 +401,15 @@ namespace Lucene.Net.Search
 				
 				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 				
-				float score0 = h[0].score;
-				float score1 = h[1].score;
-				float score2 = h[2].score;
-				float score3 = h[3].score;
+				float score0 = h[0].Score;
+				float score1 = h[1].Score;
+				float score2 = h[2].Score;
+				float score3 = h[3].Score;
 				
-				System.String doc0 = s.Doc(h[0].doc).Get("id");
-				System.String doc1 = s.Doc(h[1].doc).Get("id");
-				System.String doc2 = s.Doc(h[2].doc).Get("id");
-				System.String doc3 = s.Doc(h[3].doc).Get("id");
+				System.String doc0 = s.Doc(h[0].Doc).Get("id");
+				System.String doc1 = s.Doc(h[1].Doc).Get("id");
+				System.String doc2 = s.Doc(h[2].Doc).Get("id");
+				System.String doc3 = s.Doc(h[3].Doc).Get("id");
 				
 				Assert.IsTrue(doc0.Equals("d2") || doc0.Equals("d4"), "doc0 should be d2 or d4: " + doc0);
 				Assert.IsTrue(doc1.Equals("d2") || doc1.Equals("d4"), "doc1 should be d2 or d4: " + doc0);
@@ -455,15 +455,15 @@ namespace Lucene.Net.Search
 				
 				Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 				
-				float score0 = h[0].score;
-				float score1 = h[1].score;
-				float score2 = h[2].score;
-				float score3 = h[3].score;
+				float score0 = h[0].Score;
+				float score1 = h[1].Score;
+				float score2 = h[2].Score;
+				float score3 = h[3].Score;
 				
-				System.String doc0 = s.Doc(h[0].doc).Get("id");
-				System.String doc1 = s.Doc(h[1].doc).Get("id");
-				System.String doc2 = s.Doc(h[2].doc).Get("id");
-				System.String doc3 = s.Doc(h[3].doc).Get("id");
+				System.String doc0 = s.Doc(h[0].Doc).Get("id");
+				System.String doc1 = s.Doc(h[1].Doc).Get("id");
+				System.String doc2 = s.Doc(h[2].Doc).Get("id");
+				System.String doc3 = s.Doc(h[3].Doc).Get("id");
 				
 				Assert.AreEqual("d4", doc0, "doc0 should be d4: ");
 				Assert.AreEqual("d3", doc1, "doc1 should be d3: ");
@@ -508,8 +508,8 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				Document d = searcher.Doc(h[i].doc);
-				float score = h[i].score;
+				Document d = searcher.Doc(h[i].Doc);
+				float score = h[i].Score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000000}" + score + " - " + d.Get("id"));
 			}
 		}

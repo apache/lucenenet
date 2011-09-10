@@ -89,9 +89,9 @@ namespace Lucene.Net.Search.Function
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				System.String resID = s.Doc(h[i].doc).Get(ID_FIELD);
-				Log(i + ".   score=" + h[i].score + "  -  " + resID);
-				Log(s.Explain(q, h[i].doc));
+				System.String resID = s.Doc(h[i].Doc).Get(ID_FIELD);
+				Log(i + ".   score=" + h[i].Score + "  -  " + resID);
+				Log(s.Explain(q, h[i].Doc));
 				if (inOrder)
 				{
 					Assert.IsTrue(String.CompareOrdinal(resID, prevID) < 0, "res id " + resID + " should be < prev res id " + prevID);
@@ -138,10 +138,10 @@ namespace Lucene.Net.Search.Function
 			ScoreDoc[] sd = td.ScoreDocs;
 			for (int i = 0; i < sd.Length; i++)
 			{
-				float score = sd[i].score;
-				System.String id = s.GetIndexReader().Document(sd[i].doc).Get(ID_FIELD);
+				float score = sd[i].Score;
+				System.String id = s.GetIndexReader().Document(sd[i].Doc).Get(ID_FIELD);
 				Log("-------- " + i + ". Explain doc " + id);
-				Log(s.Explain(q, sd[i].doc));
+				Log(s.Explain(q, sd[i].Doc));
 				float expectedScore = N_DOCS - i;
 				Assert.AreEqual(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA, "score of result " + i + " shuould be " + expectedScore + " != " + score);
 				System.String expectedId = inOrder?Id2String(N_DOCS - i):Id2String(i + 1); // reverse  ==> smaller values first 

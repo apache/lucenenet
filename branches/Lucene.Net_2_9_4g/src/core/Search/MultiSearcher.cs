@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
 				{
 					// merge scoreDocs into hq
 					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
+					scoreDoc.Doc += starts[i]; // convert doc
 					if (!hq.Insert(scoreDoc))
 						break; // no more scores > minScore
 				}
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
-			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].score;
+			float maxScore = (totalHits == 0)?System.Single.NegativeInfinity:scoreDocs2[0].Score;
 			
 			return new TopDocs(totalHits, scoreDocs2, maxScore);
 		}
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
 				{
 					// merge scoreDocs into hq
 					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
+					scoreDoc.Doc += starts[i]; // convert doc
 					if (!hq.Insert((FieldDoc)scoreDoc))
 						break; // no more scores > minScore
 				}

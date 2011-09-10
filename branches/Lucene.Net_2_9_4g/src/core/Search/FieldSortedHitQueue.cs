@@ -125,8 +125,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = fieldOrder[i.doc];
-				int fj = fieldOrder[j.doc];
+				int fi = fieldOrder[i.Doc];
+				int fj = fieldOrder[j.Doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (sbyte) fieldOrder[i.doc];
+				return (sbyte) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -158,8 +158,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = fieldOrder[i.doc];
-				int fj = fieldOrder[j.doc];
+				int fi = fieldOrder[i.Doc];
+				int fj = fieldOrder[j.Doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (short) fieldOrder[i.doc];
+				return (short) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -191,8 +191,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = fieldOrder[i.doc];
-				int fj = fieldOrder[j.doc];
+				int fi = fieldOrder[i.Doc];
+				int fj = fieldOrder[j.Doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (System.Int32) fieldOrder[i.doc];
+				return (System.Int32) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -224,8 +224,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				long li = fieldOrder[i.doc];
-				long lj = fieldOrder[j.doc];
+				long li = fieldOrder[i.Doc];
+				long lj = fieldOrder[j.Doc];
 				if (li < lj)
 					return - 1;
 				if (li > lj)
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (long) fieldOrder[i.doc];
+				return (long) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -257,8 +257,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				float fi = fieldOrder[i.doc];
-				float fj = fieldOrder[j.doc];
+				float fi = fieldOrder[i.Doc];
+				float fj = fieldOrder[j.Doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (float) fieldOrder[i.doc];
+				return (float) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -290,8 +290,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				double di = fieldOrder[i.doc];
-				double dj = fieldOrder[j.doc];
+				double di = fieldOrder[i.Doc];
+				double dj = fieldOrder[j.Doc];
 				if (di < dj)
 					return - 1;
 				if (di > dj)
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return (double) fieldOrder[i.doc];
+				return (double) fieldOrder[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -323,8 +323,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				int fi = index.Order[i.doc];
-				int fj = index.Order[j.doc];
+				int fi = index.Order[i.Doc];
+				int fj = index.Order[j.Doc];
 				if (fi < fj)
 					return - 1;
 				if (fi > fj)
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return index.Lookup[index.Order[i.doc]];
+				return index.Lookup[index.Order[i.Doc]];
 			}
 			
 			public virtual int SortType()
@@ -358,8 +358,8 @@ namespace Lucene.Net.Search
 			
 			public int Compare(ScoreDoc i, ScoreDoc j)
 			{
-				System.String is_Renamed = index[i.doc];
-				System.String js = index[j.doc];
+				System.String is_Renamed = index[i.Doc];
+				System.String js = index[j.Doc];
 				if ((System.Object) is_Renamed == (System.Object) js)
 				{
 					return 0;
@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
 			
 			public virtual System.IComparable SortValue(ScoreDoc i)
 			{
-				return index[i.doc];
+				return index[i.Doc];
 			}
 			
 			public virtual int SortType()
@@ -446,7 +446,7 @@ namespace Lucene.Net.Search
 		// Update maxscore.
 		private void  UpdateMaxScore(FieldDoc fdoc)
 		{
-			maxscore = System.Math.Max(maxscore, fdoc.score);
+			maxscore = System.Math.Max(maxscore, fdoc.Score);
 		}
 		
 		// The signature of this method takes a FieldDoc in order to avoid
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search
 			}
 			// avoid random sort order that could lead to duplicates (bug #31241):
 			if (c == 0)
-				return docA.doc > docB.doc;
+				return docA.Doc > docB.Doc;
 			return c > 0;
 		}
 		

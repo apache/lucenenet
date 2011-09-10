@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(PrefixQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
 					Assert.AreEqual(typeof(WildcardQuery), q.GetType());
 					ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 					Assert.AreEqual(1, hits.Length);
-					Assert.AreEqual(i, hits[0].doc);
+					Assert.AreEqual(i, hits[0].Doc);
 				}
 			}
 			

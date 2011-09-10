@@ -115,7 +115,7 @@ namespace Lucene.Net.Store
                         TopDocs hits = sfs.Search(q, 200);
                         for (int j = 0; j < hits.ScoreDocs.Length; j++)
                         {
-                            Document doc = reader.Document(hits.ScoreDocs[j].doc);
+                            Document doc = reader.Document(hits.ScoreDocs[j].Doc);
                             Fieldable f = doc.GetField("title");
                         }
                     }

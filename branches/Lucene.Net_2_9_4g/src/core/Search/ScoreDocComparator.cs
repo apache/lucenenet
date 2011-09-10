@@ -47,15 +47,15 @@ namespace Lucene.Net.Search
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
-			if (i.score > j.score)
+			if (i.Score > j.Score)
 				return - 1;
-			if (i.score < j.score)
+			if (i.Score < j.Score)
 				return 1;
 			return 0;
 		}
 		public virtual System.IComparable SortValue(ScoreDoc i)
 		{
-			return (float) i.score;
+			return (float) i.Score;
 		}
 		public virtual int SortType()
 		{
@@ -66,15 +66,15 @@ namespace Lucene.Net.Search
 	{
 		public virtual int Compare(ScoreDoc i, ScoreDoc j)
 		{
-			if (i.doc < j.doc)
+			if (i.Doc < j.Doc)
 				return - 1;
-			if (i.doc > j.doc)
+			if (i.Doc > j.Doc)
 				return 1;
 			return 0;
 		}
 		public virtual System.IComparable SortValue(ScoreDoc i)
 		{
-			return (System.Int32) i.doc;
+			return (System.Int32) i.Doc;
 		}
 		public virtual int SortType()
 		{

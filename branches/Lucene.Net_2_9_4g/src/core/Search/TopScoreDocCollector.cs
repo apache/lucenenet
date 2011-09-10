@@ -53,15 +53,15 @@ namespace Lucene.Net.Search
                 System.Diagnostics.Debug.Assert(!float.IsNaN(score));
 
 				totalHits++;
-				if (score <= pqTop.score)
+				if (score <= pqTop.Score)
 				{
 					// Since docs are returned in-order (i.e., increasing doc Id), a document
 					// with equal score to pqTop.score cannot compete since HitQueue favors
 					// documents with lower doc Ids. Therefore reject those docs too.
 					return ;
 				}
-				pqTop.doc = doc + docBase;
-				pqTop.score = score;
+				pqTop.Doc = doc + docBase;
+				pqTop.Score = score;
 				pqTop = (ScoreDoc) pq.UpdateTop();
 			}
 			
@@ -87,12 +87,12 @@ namespace Lucene.Net.Search
 
 				totalHits++;
 				doc += docBase;
-				if (score < pqTop.score || (score == pqTop.score && doc > pqTop.doc))
+				if (score < pqTop.Score || (score == pqTop.Score && doc > pqTop.Doc))
 				{
 					return ;
 				}
-				pqTop.doc = doc;
-				pqTop.score = score;
+				pqTop.Doc = doc;
+				pqTop.Score = score;
 				pqTop = (ScoreDoc) pq.UpdateTop();
 			}
 			
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 			float maxScore = System.Single.NaN;
 			if (start == 0)
 			{
-				maxScore = results[0].score;
+				maxScore = results[0].Score;
 			}
 			else
 			{
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
 				{
 					pq.Pop();
 				}
-				maxScore = ((ScoreDoc) pq.Pop()).score;
+				maxScore = ((ScoreDoc) pq.Pop()).Score;
 			}
 			
 			return new TopDocs(totalHits, results, maxScore);

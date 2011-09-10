@@ -263,7 +263,7 @@ namespace SpellChecker.Net.Search.Spell
                 for (int i = 0; i < stop; i++)
                 {
 
-                    sugWord.string_Renamed = indexSearcher.Doc(hits[i].doc).Get(F_WORD); // get orig word
+                    sugWord.string_Renamed = indexSearcher.Doc(hits[i].Doc).Get(F_WORD); // get orig word
 
                     // don't suggest a word for itself, that would be silly
                     if (sugWord.string_Renamed.Equals(word))

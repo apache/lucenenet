@@ -396,16 +396,16 @@ namespace Lucene.Net.Search
 				
 				for (int hit = 0; hit < top2.TotalHits; hit++)
 				{
-					int id = top2.ScoreDocs[hit].doc;
-					float score = top2.ScoreDocs[hit].score;
+					int id = top2.ScoreDocs[hit].Doc;
+					float score = top2.ScoreDocs[hit].Score;
 					bool found = false;
 					// find this doc in other hits
 					for (int other = 0; other < top1.TotalHits; other++)
 					{
-						if (top1.ScoreDocs[other].doc == id)
+						if (top1.ScoreDocs[other].Doc == id)
 						{
 							found = true;
-							float otherScore = top1.ScoreDocs[other].score;
+							float otherScore = top1.ScoreDocs[other].Score;
 							// check if scores match
 							if (System.Math.Abs(otherScore - score) > 1.0e-6f)
 							{
@@ -435,8 +435,8 @@ namespace Lucene.Net.Search
 			
 			for (int i = 0; i < h.Length; i++)
 			{
-				Document d = searcher.Doc(h[i].doc);
-				float score = h[i].score;
+				Document d = searcher.Doc(h[i].Doc);
+				float score = h[i].Score;
 				System.Console.Error.WriteLine("#" + i + ": {0.000000}" + score + " - " + d.Get("id") + " - " + d.Get("data"));
 			}
 		}
