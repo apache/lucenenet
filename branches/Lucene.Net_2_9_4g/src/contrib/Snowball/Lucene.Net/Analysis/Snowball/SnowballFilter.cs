@@ -37,7 +37,8 @@ namespace Lucene.Net.Analysis.Snowball
 		private static readonly System.Object[] EMPTY_ARGS = new System.Object[0];
 		
 		private SnowballProgram stemmer;
-		private System.Reflection.MethodInfo stemMethod;
+		private delegate bool StemMethodDelegate();
+        private StemMethodDelegate stemMethod;
 		
 		/// <summary>Construct the named stemming filter.
 		/// 
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis.Snowball
 				System.Type stemClass = System.Type.GetType("SF.Snowball.Ext." + name + "Stemmer");
 				stemmer = (SnowballProgram) System.Activator.CreateInstance(stemClass);
 				// why doesn't the SnowballProgram class have an (abstract?) stem method?
-				stemMethod = stemClass.GetMethod("Stem", (new System.Type[0] == null) ? new System.Type[0] : (System.Type[]) new System.Type[0]);
+				stemMethod = (StemMethodDelegate)Delegate.CreateDelegate(typeof(StemMethodDelegate),stemmer,stemClass.GetMethod("Stem", new Type[0])); 
 			}
 			catch (System.Exception e)
 			{
@@ -70,7 +71,7 @@ namespace Lucene.Net.Analysis.Snowball
 			stemmer.SetCurrent(token.TermText());
 			try
 			{
-				stemMethod.Invoke(stemmer, (System.Object[]) EMPTY_ARGS);
+                stemMethod(); 
 			}
 			catch (System.Exception e)
 			{
