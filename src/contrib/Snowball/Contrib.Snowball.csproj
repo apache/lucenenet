@@ -122,6 +122,7 @@
     <Compile Include="SF\Snowball\Ext\GermanStemmer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SF\Snowball\Ext\HungarianStemmer.cs" />
     <Compile Include="SF\Snowball\Ext\ItalianStemmer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -140,6 +141,7 @@
     <Compile Include="SF\Snowball\Ext\PortugueseStemmer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SF\Snowball\Ext\RomanianStemmer.cs" />
     <Compile Include="SF\Snowball\Ext\RussianStemmer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -149,6 +151,7 @@
     <Compile Include="SF\Snowball\Ext\SwedishStemmer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SF\Snowball\Ext\TurkishStemmer.cs" />
     <Compile Include="SF\Snowball\SnowballProgram.cs">
       <SubType>Code</SubType>
     </Compile>
