@@ -66,6 +66,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\build\bin\core\Release\</OutputPath>
@@ -429,6 +430,7 @@
     <Compile Include="Store\_TestHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SupportClassException.cs" />
     <Compile Include="TestDemo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -450,6 +452,7 @@
     </Compile>
     <Compile Include="Util\LocalizedTestCase.cs" />
     <Compile Include="Util\LuceneTestCase.cs" />
+    <Compile Include="Util\Paths.cs" />
     <Compile Include="Util\TestAttributeSource.cs" />
     <Compile Include="Util\TestBitVector.cs">
       <SubType>Code</SubType>
