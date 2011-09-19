@@ -68,5 +68,5 @@
     </Reference>
   </ItemGroup>
   <!-- Import the SHFB build targets -->
-  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+  <Import Project="shfb.targets" />
 </Project>

@@ -471,11 +471,12 @@ namespace Lucene.Net.Util
                     rightOffset = right.Offset,
                     end = leftOffset + Math.Min(left.Length, right.Length);
 
-                Action<int> normalize = (value) => {
+                Func<int, int> normalize = (value) => {
                      if (value >= 0xe000)
                          value -= 0x800;
                      else
                          value += 0x2000;
+                    return value;
                 };
                 
                 
@@ -489,8 +490,8 @@ namespace Lucene.Net.Util
                         //// fix up each value if both values are inside of or above the surrogate range. then compare.
                         if (leftChar >= 0xd800 && rightChar >= 0xd800)
                         {
-                            normalize(leftChar);
-                            normalize(rightChar);
+                            leftChar = normalize(leftChar);
+                            rightChar = normalize(rightChar);
                         }
 
                         return leftChar - rightChar;
