@@ -57,7 +57,7 @@ namespace SpellChecker.Net.Search.Spell
     /// </author>
     /// <version>  1.0
     /// </version>
-    public class SpellChecker
+    public class SpellChecker : IDisposable
     {
         /// <summary> Field name for each word in the ngram index.</summary>
         public const System.String F_WORD = "word";
@@ -589,7 +589,22 @@ namespace SpellChecker.Net.Search.Spell
 
         ~SpellChecker()
         {
-            this.Close();
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected void Dispose(bool disposeOfManagedResources)
+        {
+            if (disposeOfManagedResources)
+            {
+                if (!this.closed)
+                    this.Close();
+            }
         }
     }
 }
