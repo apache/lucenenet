@@ -2038,7 +2038,7 @@ label_1_brk: ;  // {{Aroush-2.9}} this lable maybe misplaced
 		/// <summary>Current token. </summary>
 		public Token token;
 		/// <summary>Next token. </summary>
-		public Token jj_nt;
+		private Token jj_nt;
 		private int jj_ntk;
 		private Token jj_scanpos, jj_lastpos;
 		private int jj_la;
