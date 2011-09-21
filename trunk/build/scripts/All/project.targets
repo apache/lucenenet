@@ -23,37 +23,22 @@
 			Lucene.Net, 
 			Lucene.Net.Test, 
 	-->
-	<PropertyGroup>
-		<CoreBinFolder>$(BinFolder)\core\$(Configuration)</CoreBinFolder>	
+	
+	<PropertyGroup  Condition="'$(Area)' == 'all'">
+		<ArtifactsFolder>$(BuildFolder)\artifacts\all</ArtifactsFolder>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<!-- Files To Build -->
-		<ProjectFiles Include="$(SourceFolder)\Core\*.csproj" />
+	<Import Project="../Core/project.targets"  />
+	<Import Project="../Analyzers/project.targets"  />
+	<Import Project="../Contrib-Core/project.targets"  />
+	<Import Project="../FastVectorHighlighter/project.targets"  />
+	<Import Project="../Highlighter/project.targets"  />
+	<Import Project="../Queries/project.targets"  />
+	<Import Project="../Regex/project.targets"  />
+	<Import Project="../Similarity/project.targets"  />
+	<Import Project="../SimpleFacetedSearch/project.targets"  />
+	<Import Project="../Snowball/project.targets"  />
+	<Import Project="../Spatial/project.targets"  />
+	<Import Project="../SpellChecker/project.targets"  />
 		
-		
-		<!-- Files to Clean -->
-		<CleanFiles Include="$(CoreBinFolder)\*.*" />
-		<CleanFiles Include="$(ArtifactsFolder)\*.*" />
-		
-		<!-- Assemblies To Test -->
-		<TestFiles Include="$(CoreBinFolder)\*.Test.dll" />
-		
-		<!-- Files To Release -->
-		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.dll" />
-		<ReleaseFiles Include="$(CoreBinFolder)\Lucene.Net.XML" />
-		<ReleaseFiles Include="$(CoreBinFolder)\ICSharpCode.SharpZipLib.dll" />
-	
-		<!-- Files to Analysis -->
-		<AnalysisFiles Include="$(CoreBinFolder)\Lucene.Net.dll" />
-		
-		
-		
-		<PathTargets Include="paths-lucene" />
-	</ItemGroup>
-	
-	<Target Name="paths-lucene" Condition="'$(BuildArea)' == 'lucene' or '$(BuildArea)' == 'all'">
-		<Message Text="Core Bin Folder: $(CoreBinFolder)" />
-	</Target>
 	
 </Project>
