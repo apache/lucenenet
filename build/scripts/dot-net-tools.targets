@@ -40,7 +40,9 @@
   		<NCoverFolder Include="$(ProgramFiles)\NCover" />
   		<GallioFolder Include="$(PackagesFolder)\$(GallioVersionFolder)\tools\" />
   		<FxCopCommands Include="@(AnalysisFiles-> ' /file:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		
   		<FxCopReferences Include="@(ReferenceFiles-> ' /reference:%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
+  		
   		<SHFBFolder Include="$(ProgramFiles32)\EWSoftware\Sand Castle Help File Builder" />
   		<SandCastleFolder Include="$(ProgramFiles32)\Sandcastle" />
   		<CleanFiles Include="$(ArtifactsFolder)\ncover\*.*" />
@@ -117,15 +119,12 @@
 	
 	<Target Name="document"  DependsOnTargets="build">
 		<Copy SourceFiles="@(CoverageFiles)" DestinationFolder="$(BinFolder)\core\$(Configuration)" />
-   		<MSBuild 
-   			Condition="'$(BuildArea)' == 'all' And Exists('%(SandCastleFolder.FullPath)')" 
-   			Projects="$(BuildFolder)\scripts\all.shfbproj"
-      		Properties="Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs" />
-      		
+   			
       	<MSBuild 
-   			Condition="'$(BuildArea)' == 'core' And Exists('%(SandCastleFolder.FullPath)')" 
-   			Projects="$(BuildFolder)\scripts\core-only.shfbproj"
-      		Properties="Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs" />
+   			Condition="Exists('%(SandCastleFolder.FullPath)') And '$(Configuration)' == 'Release'" 
+   			Projects="$(BuildFolder)\scripts\docs.shfbproj"
+   			Properties='Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs;area=
+   			$(Area)' />
 
 		<!-- Notify user if Sand Castle is not found -->
 		<Warning
