@@ -23,7 +23,7 @@
   	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)' == 'debug'">Debug</Configuration>
 		<Configuration Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'release'">Release</Configuration>
-		<BuildArea Condition="'$(BuildArea)' == ''">all</BuildArea>
+		<Area Condition="'$(Area)' == ''">all</Area>
 
 		<!-- This path is a bit redundant -->
 		<TempFolder>$(TEMP)</TempFolder>
@@ -33,7 +33,6 @@
 	 </PropertyGroup>
 	 
 	 <PropertyGroup>
-	 	<ArtifactsFolder>$(BuildFolder)\artifacts</ArtifactsFolder>
 	 	<BinFolder>$(BuildFolder)\bin</BinFolder>
 	 	<SourceFolder>$(RootFolder)src</SourceFolder>
 		<TestFolder>$(RootFolder)test</TestFolder>
@@ -48,10 +47,27 @@
 
 
 	
-	<Import Project="core.targets" />
-	<Import Project="contrib.targets" Condition="'$(BuildArea)' == 'all' or '$(BuildArea)' == 'contrib'" />
+	  <Import Project="All/project.targets" Condition="'$(Area)' == 'all'" />
+	  <Import Project="Analyzers/project.targets" Condition="'$(Area)' == 'analyzers'" />
+	  <Import Project="Contrib/project.targets" Condition="'$(Area)' == 'contrib'" />
+	  <Import Project="Contrib-Core/project.targets" Condition="'$(Area)' == 'contrib-core'" />
+	  <Import Project="Core/project.targets" Condition="'$(Area)' == 'core'" />
+	  <Import Project="FastVectorHighlighter/project.targets" Condition="'$(Area)' == 'fastvectorhighlighter'" />
+	  <Import Project="Highlighter/project.targets" Condition="'$(Area)' == 'highlighter'" />
+	  <Import Project="Queries/project.targets" Condition="'$(Area)' == 'queries'" />
+	  <Import Project="Regex/project.targets" Condition="'$(Area)' == 'regex'" />
+	  <Import Project="Similarity/project.targets" Condition="'$(Area)' == 'similarity'" />
+	  <Import Project="SimpleFacetedSearch/project.targets" Condition="'$(Area)' == 'simplefacetedsearch'" />
+	  <Import Project="Snowball/project.targets" Condition="'$(Area)' == 'snowball'" />
+	  <Import Project="Spatial/project.targets" Condition="'$(Area)' == 'spatial'" />
+	  <Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
 	
-	
+
+	<ItemGroup>
+		<CleanFiles Include="$(ArtifactsFolder)\*.*" />
+		<CleanFiles Include="$(RootFolder)\bin\*.*" />
+		<CleanFiles Include="$(LocalBuildFolder)\*.*" />
+	</ItemGroup>	
 	
 	<Target Name="paths">
 		<CallTarget Targets="@(PathsTarget)" />
@@ -73,7 +89,7 @@
  		<CallTarget Targets="paths" />
  		<Warning 
   	 		Condition="!Exists('$(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets')"
-  	 		Text="StyleCopy is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
+  	 		Text="StyleCop is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
  		<Message Text="Project Files: @(ProjectFiles)" />
 		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)" />
 	</Target>
