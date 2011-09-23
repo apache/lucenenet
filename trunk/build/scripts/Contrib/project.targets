@@ -23,10 +23,18 @@
 			Lucene.Net, 
 			Lucene.Net.Test, 
 	-->
-	
+	<PropertyGroup>
+		<ContribPackage>Lucene.Net.Contrib.nuspec</ContribPackage>	
+	</PropertyGroup>
 	<PropertyGroup  Condition="'$(Area)' == 'contrib'">
 		<ArtifactsFolder>$(BuildFolder)\artifacts\contrib</ArtifactsFolder>
 	</PropertyGroup>
+	<Target Name="package-contrib">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\Contrib\$(ContribPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
+	<ItemGroup>
+		<PackageTargets Include="package-contrib" />
+	</ItemGroup>
 	
 	<Import Project="../Analyzers/project.targets"  />
 	<Import Project="../Contrib-Core/project.targets"  />
@@ -34,7 +42,6 @@
 	<Import Project="../Highlighter/project.targets"  />
 	<Import Project="../Queries/project.targets"  />
 	<Import Project="../Regex/project.targets"  />
-	<Import Project="../Similarity/project.targets"  />
 	<Import Project="../SimpleFacetedSearch/project.targets"  />
 	<Import Project="../Snowball/project.targets"  />
 	<Import Project="../Spatial/project.targets"  />
