@@ -24,9 +24,21 @@
 			Lucene.Net.Test, 
 	-->
 	
+	<PropertyGroup>
+		<AllPackage>Lucene.Net.nuspec</AllPackage>	
+		<ContribPackage>Lucene.Net.Contrib.nuspec</ContribPackage>	
+	</PropertyGroup>
+	
 	<PropertyGroup  Condition="'$(Area)' == 'all'">
 		<ArtifactsFolder>$(BuildFolder)\artifacts\all</ArtifactsFolder>
 	</PropertyGroup>
+	<Target Name="package-contrib">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\Contrib\$(ContribPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
+	<Target Name="package-all">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\All\$(AllPackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
+	
 	<Import Project="../Core/project.targets"  />
 	<Import Project="../Analyzers/project.targets"  />
 	<Import Project="../Contrib-Core/project.targets"  />
@@ -34,11 +46,13 @@
 	<Import Project="../Highlighter/project.targets"  />
 	<Import Project="../Queries/project.targets"  />
 	<Import Project="../Regex/project.targets"  />
-	<Import Project="../Similarity/project.targets"  />
 	<Import Project="../SimpleFacetedSearch/project.targets"  />
 	<Import Project="../Snowball/project.targets"  />
 	<Import Project="../Spatial/project.targets"  />
 	<Import Project="../SpellChecker/project.targets"  />
 		
-	
+	<ItemGroup>
+		<PackageTargets Include="package-contrib" />
+		<PackageTargets Include="package-all" />
+	</ItemGroup>
 </Project>
