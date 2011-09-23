@@ -25,16 +25,21 @@
 	-->
 	<PropertyGroup>
 		<CoreFolder>$(BinFolder)\core\$(Configuration)</CoreFolder>
+		<CorePackage>Lucene.Net.Core.nuspec</CorePackage>
 	</PropertyGroup>
 	<PropertyGroup  Condition="'$(Area)' == 'core'">
 		<LocalBinFolder>$(BinFolder)\core\$(Configuration)</LocalBinFolder>
 		<ArtifactsFolder>$(BuildFolder)\artifacts\core</ArtifactsFolder>
 	</PropertyGroup>
-		
+	<Target Name="package-core">
+		<Exec Command="$(PackageManager) $(ScriptsFolder)\Core\$(CorePackage)  $(PackageManagerOptions) $(ArtifactsFolder)" />
+	</Target>
 	<ItemGroup>
 		<!-- Binaries To Copy in case we which to store all build items -->
 		<BuildItems Include="$(CoreFolder)\*.*" /> 
 		
+		<!-- Add To The List of Packages to Build -->
+		<PackageTargets Include="package-core" />
 		
 		<!-- Files To Build -->
 		<ProjectFiles Include="$(SourceFolder)\Core\*.csproj" />
