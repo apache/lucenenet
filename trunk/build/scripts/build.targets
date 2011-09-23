@@ -19,7 +19,7 @@
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	
-	
+	<Import Project="version.targets"  />
   	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)' == 'debug'">Debug</Configuration>
 		<Configuration Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'release'">Release</Configuration>
@@ -28,6 +28,7 @@
 		<!-- This path is a bit redundant -->
 		<TempFolder>$(TEMP)</TempFolder>
 		<BuildFolder>$(MSBuildProjectDirectory)\..</BuildFolder>
+		<ScriptsFolder>$(MSBuildProjectDirectory)</ScriptsFolder>
 		<RootFolder>$(MSBuildProjectDirectory)\..\..\</RootFolder>
 		<Executable></Executable>
 	 </PropertyGroup>
@@ -38,6 +39,10 @@
 		<TestFolder>$(RootFolder)test</TestFolder>
 		<LibFolder>$(RootFolder)lib</LibFolder>
 		<PackagesFolder>$(RootFolder)lib</PackagesFolder>
+ 	</PropertyGroup>
+ 	<PropertyGroup>
+ 		<PackageManager>$(LibFolder)\Nuget\NuGet.exe pack </PackageManager>
+ 		<PackageManagerOptions>-Version $(Version) -OutputDirectory</PackageManagerOptions>
  	</PropertyGroup>
  	
 	<!-- To Execute commands on mono like running nunit, it requires running through the program mono.exe -->

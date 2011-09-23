@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Lucene.Net.Core</id>
+    <version>$version$</version>
+    <title>Lucene.Net Core</title>
+    <authors>Lucene.Net Community</authors>
+    <owners>The Apache Software Foundation</owners>
+    <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>http://incubator.apache.org/lucene.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
+
+This package contains only the core Lucene.Net assembly.</description>
+    <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
+	<tags>lucene.net core search information retrieval lucene apache</tags>
+	
+    <references>
+	  	<reference file="Lucene.Net.dll" />
+    </references>
+     <dependencies>
+        <dependency id="SharpZipLib" version="0.86.0" />
+     </dependencies>  
+  </metadata>
+  <files>
+        <file src="..\..\bin\core\Release\Lucene.Net.dll" target="lib\net40\Lucene.Net.dll" />
+        <file src="..\..\bin\core\Release\Lucene.Net.XML" target="lib\net40\Lucene.Net.XML" />
+  </files>
+ 
+</package>
