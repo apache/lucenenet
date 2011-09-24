@@ -586,9 +586,12 @@ namespace Lucene.Net.Search.Highlight
 		
 		/// <summary> Demonstrates creation of an XHTML compliant doc using new encoding facilities.</summary>
 		/// <throws>  Exception </throws>
-		[Test]
+        // TODO: re-evaluate this tests
+		[Test][Ignore]
 		public virtual void  TestEncoding()
 		{
+
+           
             Assert.Fail("This test is failing because it has porting issues.");
 
             // {{Aroush-2.0.0}} Fix me
@@ -654,6 +657,7 @@ namespace Lucene.Net.Search.Highlight
 			searchers[1] = new IndexSearcher(ramDir2);
 			MultiSearcher multiSearcher = new MultiSearcher(searchers);
 			QueryParser parser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+            parser.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 			query = parser.Parse("multi*");
 			System.Console.Out.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
 			//at this point the multisearcher calls combine(query[])
@@ -837,7 +841,10 @@ namespace Lucene.Net.Search.Highlight
 		public virtual void  DoSearching(System.String queryString)
 		{
 			QueryParser parser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+            parser.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+
 			query = parser.Parse(queryString);
+           
 			DoSearching(query);
 		}
 		public virtual void  DoSearching(Query unReWrittenQuery)
