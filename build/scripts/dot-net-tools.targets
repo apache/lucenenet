@@ -50,7 +50,7 @@
   		
   		<CopyTargets Include="copy-doc" />
   		<CopyTargets Include="copy-packages" />
-  		
+  		<NCoverFiles Include="@(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ')" />
   		<ChmFiles Include="$(ArtifactsFolder)\docs\*.chm" />
   		<DocStyles Include="$(ArtifactsFolder)\docs\styles\*" />
   		<DocHtml Include="$(ArtifactsFolder)\docs\html\*" />
@@ -67,7 +67,7 @@
   	<Target Name="coverage" DependsOnTargets="build">
   		<MakeDir Condition="!Exists('$(ArtifactsFolder)\ncover')" Directories="$(ArtifactsFolder)\ncover" />
   		
-  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /rd:$(ArtifactsFolder) /rt:Xml  /rt:Html /rnf:test-report /hd:$(PackagesFolder)\$(NUnitVersionFolder) /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"'    /> 
+  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe  @(NCoverFiles) /rd:$(ArtifactsFolder) /rt:Xml  /rt:Html /rnf:test-report /hd:$(PackagesFolder)\$(NUnitVersionFolder) /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"'    /> 
   		
   		<!-- Notify user if code coverage tool is not found -->
   		<Warning
