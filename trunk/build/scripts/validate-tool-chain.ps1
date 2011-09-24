@@ -18,19 +18,19 @@
 #
 # NOTICE: This script could mess up your development box. Use with extreme 
 # caution. Better yet, test this on a non-production env vm before attempting
-# to use it on any box of importance.
+# to use it on any box you consider important.
 #
 #
-# This is essentially a devopts script for installing tools that needed for
+# This is essentially a devopts script for installing tools that are needed for
 # the Lucene.NEt build scripts to run CI on windows. 
 #
-# Its could use some refactoring and increase its functionality for version 
-# & error checking.
+# The script could use some refactoring and has the need to 
+# increase its functionality for version & better error checking.
 # 
-# But it beats having to remember where to download & install packages from. 
+# However it is a good alternative to having to remember where to 
+# certain download software packages from or what to execute after the install. 
 #
 # This could also be handy for setting up new dev machines on windows 8 previews. 
-#
 #
 # When Co-App is finally released and is considered stable, we could potentially 
 # replace this script with that. 
@@ -302,11 +302,3 @@ if($RequireNCover -eq $true)
 {
 	PromptForNCoverInstall
 }
-
-
-
-
-
-
-#$client.DownloadFile($WinSdk7_1Url, $WinSdk7_1FileName);
-
