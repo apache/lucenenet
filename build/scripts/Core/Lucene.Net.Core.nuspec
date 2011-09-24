@@ -37,9 +37,6 @@ This package contains only the core Lucene.Net assembly.</description>
     <references>
 	  	<reference file="Lucene.Net.dll" />
     </references>
-     <dependencies>
-        <dependency id="SharpZipLib" version="0.86.0" />
-     </dependencies>  
   </metadata>
   <files>
         <file src="..\..\bin\core\Release\Lucene.Net.dll" target="lib\net40\Lucene.Net.dll" />
