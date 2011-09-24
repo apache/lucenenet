@@ -46,13 +46,19 @@
   		
   		<SHFBFolder Include="$(ProgramFiles32)\EWSoftware\Sand Castle Help File Builder" />
   		<SandCastleFolder Include="$(ProgramFiles32)\Sandcastle" />
-  		<CleanFiles Include="$(ArtifactsFolder)\ncover\*.*" />
-  		<CleanFiles Include="$(ArtifactsFolder)\html-test-reports\*.*" />
-  		<CleanFiles Include="$(ArtifactsFolder)\xml-test-reports\*.*" />
-  		<CleanFiles Include="$(ArtifactsFolder)\docs\*.*" />
-  		<CoverageFiles Include="$(PackagesFolder)\PortableLibrary\*.*" />
-  		<CleanPackages Include="$(ArtifactsFolder)\*.nupkg" />
-  		<ReleaseFiles Include="$(ArtifactsFolder)\docs\Lucene.Net.chm" Condition="Exists('$(ArtifactsFolder)\docs\Lucene.Net.chm')" />
+  		
+  		
+  		<CopyTargets Include="copy-doc" />
+  		<CopyTargets Include="copy-packages" />
+  		
+  		<ChmFiles Include="$(ArtifactsFolder)\docs\*.chm" />
+  		<DocStyles Include="$(ArtifactsFolder)\docs\styles\*" />
+  		<DocHtml Include="$(ArtifactsFolder)\docs\html\*" />
+  		<DocIcons Include="$(ArtifactsFolder)\docs\icons\*" />
+  		<DocScripts Include="$(ArtifactsFolder)\docs\scripts\*" />
+  		<DocCore Include="$(ArtifactsFolder)\docs\*"
+  			Exclude="$(ArtifactsFolder)\docs\Web.Config; $(ArtifactsFolder)\docs\WebKI.xml; $(ArtifactsFolder)\docs\WebTOC.xml; $(ArtifactsFolder)\docs\SearchHelp.aspx; $(ArtifactsFolder)\docs\LoadIndexKeywords.aspx; $(ArtifactsFolder)\docs\Index.aspx; $(ArtifactsFolder)\docs\FillNode.aspx; $(ArtifactsFolder)\docs\LastBuild.log; $(ArtifactsFolder)\docs\*.chm" /> 
+  		<NugetPackages Include="$(ArtifactsFolder)\*.nupkg" />
   	</ItemGroup>
   	
   
@@ -61,7 +67,7 @@
   	<Target Name="coverage" DependsOnTargets="build">
   		<MakeDir Condition="!Exists('$(ArtifactsFolder)\ncover')" Directories="$(ArtifactsFolder)\ncover" />
   		
-  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles)  /hd:$(PackagesFolder)\$(NUnitVersionFolder)\tools\ /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"' /> 
+  		<Exec Command='%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /rd:$(ArtifactsFolder) /rt:Xml  /rt:Html /rnf:test-report /hd:$(PackagesFolder)\$(NUnitVersionFolder) /runner:ncover3 /runner-property:NCoverArguments="//html $(ArtifactsFolder)\ncover //at ncover3.trend"'    /> 
   		
   		<!-- Notify user if code coverage tool is not found -->
   		<Warning
@@ -72,7 +78,8 @@
   			Condition="!Exists('%(GallioFolder.FullPath)')"
             Text="Gallio is not installed under its expected location: %(GallioFolder.FullPath)"
              />
-  		
+  		 <Copy Condition="Exists('$(BuildFolder)/scripts/Coverage.xml')" SourceFiles="$(BuildFolder)/scripts/Coverage.xml" DestinationFolder="$(ArtifactsFolder)/ncover/Coverage.xml" /> 
+  		 <Delete Files="$(BuildFolder)/scripts/Coverage.xml" />
   	</Target>
   	
   	
@@ -128,14 +135,32 @@
    			Properties='Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs;area=
    			$(Area)' />
 
+		
+
 		<!-- Notify user if Sand Castle is not found -->
 		<Warning
 			Condition="!Exists('%(SandCastleFolder.FullPath)')" 
 			Text="Sand Castle is not installed under its expected location: %(SandCastleFolder.FullPath)" />
 	</Target>
   
+	<Target Name="copy-doc">
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs')" Directories="$(RootFolder)\bin\docs" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\styles')" Directories="$(RootFolder)\bin\docs\site\styles" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\scripts')" Directories="$(RootFolder)\bin\docs\site\scripts" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\icons')" Directories="$(RootFolder)\bin\docs\site\icons" />
+		<MakeDir Condition="!Exists('$(RootFolder)\bin\docs\site\html')" Directories="$(RootFolder)\bin\docs\site\html" />
+		
+		<Copy SourceFiles="@(DocStyles)"   	    DestinationFolder="$(RootFolder)\bin\docs\site\styles" />
+		<Copy SourceFiles="@(DocHtml)"          DestinationFolder="$(RootFolder)\bin\docs\site\html" />
+		<Copy SourceFiles="@(DocIcons)"         DestinationFolder="$(RootFolder)\bin\docs\site\icons" />
+		<Copy SourceFiles="@(DocScripts)"       DestinationFolder="$(RootFolder)\bin\docs\site\scripts" />
+		<Copy SourceFiles="@(DocCore)"          DestinationFolder="$(RootFolder)\bin\docs\site\" />
+		<Copy SourceFiles="@(ChmFiles)"         DestinationFolder="$(RootFolder)\bin\docs\" />
+	</Target>
 	
-	
+	<Target Name="copy-packages">
+		<Copy SourceFiles="@(NugetPackages)"    DestinationFolder="$(RootFolder)\bin\packages"/>
+	</Target>
 	
 	<Target Name="test" DependsOnTargets="build">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
