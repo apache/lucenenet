@@ -30,7 +30,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
 
-**This package installs the Lucene.Net.Core & Lucene.Net.Contrib packages.</description>
+**This package installs the Lucene.Net.Core &amp; Lucene.Net.Contrib packages.</description>
     <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
 	<tags>lucene.net core search information retrieval lucene apache</tags>
      <dependencies>

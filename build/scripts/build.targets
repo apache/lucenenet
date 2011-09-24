@@ -69,9 +69,8 @@
 	
 
 	<ItemGroup>
-		<CleanFiles Include="$(ArtifactsFolder)\*.*" />
-		<CleanFiles Include="$(RootFolder)\bin\*.*" />
-		<CleanFiles Include="$(LocalBuildFolder)\*.*" />
+		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
+		<CleanFiles Include="$(RootFolder)\bin\**\*" />
 	</ItemGroup>	
 	
 	<Target Name="paths">
@@ -102,18 +101,19 @@
 	<Target Name="copy-release">
 		<MakeDir Condition="!Exists('$(RootFolder)\bin')" Directories="$(RootFolder)\bin" />
 		<Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(RootFolder)\bin" />
+		<CallTarget Targets="@(CopyTargets)" />
 	</Target>
 	
 	<Target Name="simple">
-		<CallTarget Targets="build;copy-release" />
+		<CallTarget Targets="clean;build;test" />
 	</Target>
 	
 	<Target Name="nightly">
-		<CallTarget Targets="commit" />
+		<CallTarget Targets="clean;build;coverage;rules;package;document;copy-release" />
 	</Target>
   
 	<Target Name="commit">
-		<CallTarget Targets="clean;build;test-report-html;rules;coverage;document;copy-release" />
+		<CallTarget Targets="clean;build;coverage;rules;" />
 	</Target>
 	
 	
