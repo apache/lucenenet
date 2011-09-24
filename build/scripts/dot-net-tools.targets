@@ -86,7 +86,7 @@
   	<Target Name="test-report-xml"  DependsOnTargets="build">
 		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
 		<Copy SourceFiles="@(Compile)" DestinationFolder="c:\foocopy\%(RecursiveDir)"></Copy>
-		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe @(TestFiles) /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
+		<Exec Condition="Exists('%(GallioFolder.FullPath)')" Command="%(GallioFolder.FullPath)Gallio.Echo.exe@(TestFiles-> '%(rootdir)%(directory)%(filename)%(extension)', ' ') /hd:$(PackagesFolder)\$(NUnitVersionFolder) /nl /rd:$(ArtifactsFolder)\xml-test-reports /rt:Xml /rnf:test-reports" />
 		
 		
 		<!-- Notify user if Gallio is not found -->
