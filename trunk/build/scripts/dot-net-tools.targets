@@ -36,7 +36,7 @@
 	</PropertyGroup>
 	
   	<ItemGroup>
-  		<NUnitFolder Include="$(PackagesFolder)\$(NUnitVersionFolder)\tools\" />
+  		<NUnitFolder Include="$(PackagesFolder)\$(NUnitVersionFolder)" />
   		<FxCopFolder Include="$(ProgramFiles32)\Microsoft Fxcop 10.0" />
   		<NCoverFolder Include="$(ProgramFiles)\NCover" />
   		<GallioFolder Include="$(PackagesFolder)\$(GallioVersionFolder)\tools\" />
