@@ -70,7 +70,7 @@
 
 	<ItemGroup>
 		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
-		<CleanFiles Include="$(RootFolder)\bin\**\*" />
+		<CleanFiles Include="$(RootFolder)\bin\**\*"  Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
 	</ItemGroup>	
 	
 	<Target Name="paths">
