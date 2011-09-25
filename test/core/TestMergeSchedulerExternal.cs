@@ -145,7 +145,7 @@ namespace Lucene.Net
 			}
 		}
 		
-#if !DEBUG
+#if GALLIO
         // TODO: figure out why this fails in release mode when running in gallio.
         [Ignore]
 #endif

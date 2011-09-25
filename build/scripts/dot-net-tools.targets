@@ -27,7 +27,8 @@
 	<PropertyGroup>
     	<!--MSBuild 4.0 property-->
     	<ProgramFiles32>$(MSBuildProgramFiles32)</ProgramFiles32>
-    	
+    	<DefineConstants></DefineConstants>
+    	<ExternalConstants>GALLIO</ExternalConstants>
     	<!--Use OS env vars as a fallback-->
     	<!-- 
     	<ProgramFiles32 Condition=" '' == '$(ProgramFiles32)'">$(ProgramFiles%28x86%29)</ProgramFiles32>
