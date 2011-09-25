@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-#if !DEBUG
+#if GALLIO
         [Ignore]
         // TODO: figure out why this fails in gallio in release mode
 #endif 
