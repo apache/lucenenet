@@ -4111,7 +4111,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1214
-#if !DEBUG
+#if GALLIO
         [Ignore]
         // TODO: figure out why this fails with nunit & gallio in release mode
 #endif 
@@ -5936,7 +5936,7 @@ namespace Lucene.Net.Index
             }
         }
 
-#if !DEBUG
+#if GALLIO
         [Ignore]
         // TODO: figure out why this fails with nunit & gallio in release mode
 #endif 
