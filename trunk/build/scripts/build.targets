@@ -89,13 +89,14 @@
 	
   
  	<Target Name="build">
+ 		<Message Text="External Constants$(ExternalConstants)" />
  		<CallTarget Targets="artifacts" />
  		<CallTarget Targets="paths" />
  		<Warning 
   	 		Condition="!Exists('$(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets')"
   	 		Text="StyleCop is not installed at its expected location: $(MSBuildExtensionsPath32)\StyleCop\v4.5\StyleCop.targets" />
  		<Message Text="Project Files: @(ProjectFiles)" />
-		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)" />
+		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration);ExternalConstants=$(ExternalConstants)" />
 	</Target>
 	
 	<Target Name="copy-release">

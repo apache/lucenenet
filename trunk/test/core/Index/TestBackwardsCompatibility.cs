@@ -61,6 +61,8 @@ namespace Lucene.Net.Index
 		createIndex("index.nocfs", false);
 		}
 		*/
+
+
 		
 		/* Unzips dirName + ".zip" --> dirName, removing dirName
 		first */
