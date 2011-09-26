@@ -39,7 +39,7 @@
   	<ProgramFiles32>$(MSBuildProgramFiles32)</ProgramFiles32>
   </PropertyGroup>
   <PropertyGroup>
-  	<SHFBROOT Condition="'$(SHFBROOT)" == ''">$(Program32)\EWSoftware\Sandcastle Help File Builder</SHFBROOT>
+  	<SHFBROOT Condition="'$(SHFBROOT)' == ''">$(Program32)\EWSoftware\Sandcastle Help File Builder</SHFBROOT>
   </PropertyGroup>
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which
