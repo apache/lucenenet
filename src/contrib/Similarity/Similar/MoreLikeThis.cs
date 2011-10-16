@@ -769,7 +769,7 @@ namespace Similarity.Net
                     {
                         for (int j = 0; j < text.Length; j++)
                         {
-                            AddTermFrequencies(new System.IO.StreamReader(text[j]), termFreqMap, fieldName);
+                            AddTermFrequencies(new System.IO.StreamReader(new MemoryStream(System.Text.Encoding.ASCII.GetBytes(text[j]))), termFreqMap, fieldName);
                         }
                     }
                 }
