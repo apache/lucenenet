@@ -106,12 +106,17 @@
 	</Target>
 	
 	<Target Name="simple">
-		<CallTarget Targets="clean;build;test" />
+		<CallTarget Targets="clean;build;test-report-html;" />
+	</Target>
+
+	<Target Name="nightly">
+		<CallTarget Targets="clean;build;test-report-html;package;document;copy-release" />
 	</Target>
 	
+	<!-- 
 	<Target Name="nightly">
 		<CallTarget Targets="clean;build;coverage;rules;package;document;copy-release" />
-	</Target>
+	</Target> -->
   
 	<Target Name="commit">
 		<CallTarget Targets="clean;build;coverage;rules;" />
