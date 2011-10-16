@@ -110,7 +110,7 @@
 	</Target>
 
 	<Target Name="nightly">
-		<CallTarget Targets="clean;build;test-report-html;package;document;copy-release" />
+		<CallTarget Targets="clean;build;test-report-html;package;copy-release" />
 	</Target>
 	
 	<!-- 
