@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<!-- 
+		Core Projects Are:
+			Lucene.Net, 
+			Lucene.Net.Test, 
+	-->
+	<PropertyGroup>
+		<SnowballFolder>$(BinFolder)\contrib\Snowball\$(Configuration)</SnowballFolder>
+	</PropertyGroup>
+	<PropertyGroup  Condition="'$(Area)' == 'snowball'">
+		<LocalBinFolder>$(BinFolder)\contrib\Snowball\$(Configuration)</LocalBinFolder>
+		<ArtifactsFolder>$(BuildFolder)\artifacts\Snowball</ArtifactsFolder>
+	</PropertyGroup>
+		
+	<ItemGroup>
+		<!-- Binaries To Copy in case we which to store all build items -->
+		<BuildItems Include="$(SnowballFolder)\*.*" /> 
+		
+		
+		<!-- Files To Build -->
+		<ProjectFiles Include="$(SourceFolder)\Contrib\Snowball\*.csproj" />
+		<ProjectFiles Include="$(TestFolder)\Contrib\Snowball\*.csproj" />
+		
+		
+		<!-- Assemblies To Test -->
+		<TestFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.Test.dll" />
+		
+		<!-- Files To Release -->
+		<ReleaseFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.dll" />
+		<ReleaseFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.XML" />
+	
+		<!-- Files to Analysis -->
+		<AnalysisFiles Include="$(SnowballFolder)\Lucene.Net.Contrib.Snowball.dll" />	
+	</ItemGroup>
+</Project>
