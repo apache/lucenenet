@@ -1,0 +1,125 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:mshelp="http://msdn.microsoft.com/mshelp" xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8" /><META NAME="save" CONTENT="history" /><title>Similarity Class</title><meta name="Language" content="en-us" /><meta name="System.Keywords" content="Similarity class" /><meta name="System.Keywords" content="Lucene.Net.Search.Similarity class" /><meta name="System.Keywords" content="Similarity class, about Similarity class" /><meta name="Microsoft.Help.F1" content="Lucene.Net.Search.Similarity" /><meta name="Microsoft.Help.Id" content="T:Lucene.Net.Search.Similarity" /><meta name="Description" content="Expert: Scoring API. Subclasses implement search scoring. The score of query @@_SHFB_1 for document @@_SHFB_2 correlates to the cosine-distance or dot-product between document and query vectors in a Vector Space Model (VSM) of Information Retrieval." /><meta name="Microsoft.Help.ContentType" content="Reference" /><link rel="stylesheet" type="text/css" href="../styles/Presentation.css" /><link rel="stylesheet" type="text/css" href="ms-help://Hx/HxRuntime/HxLink.css" /><script type="text/javascript" src="../scripts/EventUtilities.js"> </script><script type="text/javascript" src="../scripts/SplitScreen.js"> </script><script type="text/javascript" src="../scripts/Dropdown.js"> </script><script type="text/javascript" src="../scripts/script_manifold.js"> </script><script type="text/javascript" src="../scripts/script_feedBack.js"> </script><script type="text/javascript" src="../scripts/CheckboxMenu.js"> </script><script type="text/javascript" src="../scripts/CommonUtilities.js"> </script><meta name="container" content="Lucene.Net.Search" /><meta name="file" content="cf113347-e96f-3c18-5b30-ccddb57ae08c" /><meta name="guid" content="cf113347-e96f-3c18-5b30-ccddb57ae08c" /><xml><MSHelp:Attr Name="AssetID" Value="T:Lucene.Net.Search.Similarity" /><MSHelp:TOCTitle Title="Similarity Class" /><MSHelp:RLTitle Title="Similarity Class (Lucene.Net.Search)" /><MSHelp:Keyword Index="A" Term="T:Lucene.Net.Search.Similarity" /><MSHelp:Keyword Index="A" Term="frlrfLuceneNetSearchSimilarityClassTopic" /><MSHelp:Keyword Index="K" Term="Similarity class" /><MSHelp:Keyword Index="K" Term="Lucene.Net.Search.Similarity class" /><MSHelp:Keyword Index="K" Term="Similarity class, about Similarity class" /><MSHelp:Keyword Index="F" Term="Lucene.Net.Search.Similarity" /><MSHelp:Attr Name="HelpPriority" Value="2" /><MSHelp:Attr Name="APIType" Value="Managed" /><MSHelp:Attr Name="APILocation" Value="Lucene.Net.dll" /><MSHelp:Attr Name="APIName" Value="Lucene.Net.Search.Similarity" /><MSHelp:Attr Name="DevLang" Value="CSharp" /><MSHelp:Attr Name="DevLang" Value="VB" /><MSHelp:Attr Name="Locale" Value="en-us" /><MSHelp:Attr Name="TopicType" Value="kbSyntax" /><MSHelp:Attr Name="TopicType" Value="apiref" /><MSHelp:Attr Name="Abstract" Value="Expert: Scoring API. Subclasses implement search scoring. The score of query @@_SHFB_1 for document @@_SHFB_2 correlates to the cosine-distance or dot-product between document and query vectors in ..." /><MSHelp:Attr Name="AssemblyVersion" Value="2.9.4.1" /></xml><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script></head><body><input type="hidden" id="userDataCache" class="userDataStyle" /><input type="hidden" id="hiddenScrollOffset" /><img id="collapseImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" alt="Collapse image" title="Collapse image" /><img id="expandImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" alt="Expand Image" title="Expand Image" /><img id="collapseAllImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" /><img id="expandAllImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" /><img id="dropDownImage" style="display:none; height:0; width:0;" src="../icons/dropdown.gif" /><img id="dropDownHoverImage" style="display:none; height:0; width:0;" src="../icons/dropdownHover.gif" /><img id="copyImage" style="display:none; height:0; width:0;" src="../icons/copycode.gif" alt="Copy image" title="Copy image" /><img id="copyHoverImage" style="display:none; height:0; width:0;" src="../icons/copycodeHighlight.gif" alt="CopyHover image" title="CopyHover image" /><div id="header"><table id="topTable" cellspacing="0" cellpadding="0"><tr><td><span onclick="ExpandCollapseAll(toggleAllImage)" style="cursor:default;" onkeypress="ExpandCollapseAll_CheckKey(toggleAllImage, event)" tabindex="0"><img ID="toggleAllImage" class="toggleAll" src="../icons/collapse_all.gif" /> <label id="collapseAllLabel" for="toggleAllImage" style="display: none;">Collapse All</label><label id="expandAllLabel" for="toggleAllImage" style="display: none;">Expand All</label> </span><span>    </span><span id="devlangsDropdown" class="filter" tabindex="0"><img id="devlangsDropdownImage" src="../icons/dropdown.gif" /> <label id="devlangsMenuAllLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: All </nobr></label><label id="devlangsMenuMultipleLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Multiple </nobr></label><label id="devlangsMenuCSharpLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: C# </nobr></label><label id="devlangsMenuVisualBasicLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual Basic </nobr></label><label id="devlangsMenuManagedCPlusPlusLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual C++ </nobr></label></span></td></tr></table><div id="devlangsMenu"><input id="CSharpCheckbox" type="checkbox" data="CSharp,cs,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="CSharpCheckbox">C#</label><br /><input id="VisualBasicCheckbox" type="checkbox" data="VisualBasic,vb,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="VisualBasicCheckbox">Visual Basic</label><br /><input id="ManagedCPlusPlusCheckbox" type="checkbox" data="ManagedCPlusPlus,cpp,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="ManagedCPlusPlusCheckbox">Visual C++</label><br /></div><table id="bottomTable" cellpadding="0" cellspacing="0"><tr id="headerTableRow1"><td align="left"><span id="runningHeaderText">Lucene.Net Class Libraries</span></td></tr><tr id="headerTableRow2"><td align="left"><span id="nsrTitle">Similarity Class</span></td></tr><tr id="headerTableRow3"><td align="left"><a href="b796d27c-1275-bf4f-9c04-f7ac28b32b0d.htm">Members</a> <a href="#seeAlsoToggle" onclick="OpenSection(seeAlsoToggle)">See Also</a> <span id="headfeedbackarea" class="feedbackhead"><a href="javascript:SubmitFeedback('','Lucene.Net Class Libraries','','','','%0\dYour%20feedback%20is%20used%20to%20improve%20the%20documentation%20and%20the%20product.%20Your%20e-mail%20address%20will%20not%20be%20used%20for%20any%20other%20purpose%20and%20is%20disposed%20of%20after%20the%20issue%20you%20report%20is%20resolved.%20%20While%20working%20to%20resolve%20the%20issue%20that%20you%20report,%20you%20may%20be%20contacted%20via%20e-mail%20to%20get%20further%20details%20or%20clarification%20on%20the%20feedback%20you%20sent.%20After%20the%20issue%20you%20report%20has%20been%20addressed,%20you%20may%20receive%20an%20e-mail%20to%20let%20you%20know%20that%20your%20feedback%20has%20been%20addressed.%0\A%0\d','Customer%20Feedback');">Send Feedback</a></span></td></tr></table><table id="gradientTable"><tr><td class="nsrBottom" background="../icons/gradient.gif" /></tr></table></div><div id="mainSection"><div id="mainBody"><div id="allHistory" class="saveHistory" onsave="saveAll()" onload="loadAll()" /><span style="color: DarkGray"></span><div class="summary">Expert: Scoring API.
+            <p />Subclasses implement search scoring.
+            
+            <p />The score of query <span id="cbc_1" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">q</pre></div></span> for document <span id="cbc_2" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">d</pre></div></span> correlates to the
+            cosine-distance or dot-product between document and query vectors in a
+            <a href="http://en.wikipedia.org/wiki/Vector_Space_Model">
+            Vector Space Model (VSM) of Information Retrieval</a>.
+            A document whose vector is closer to the query vector in that model is scored higher.
+            
+            The score is computed as follows:
+            
+            <p /><table cellpadding="1" cellspacing="0" border="1" align="center"><tr><td><table cellpadding="1" cellspacing="0" border="0" align="center"><tr><td valign="middle" align="right" rowspan="1">
+            score(q,d)   =  
+            coord(q,d)  · 
+            queryNorm(q)  · 
+            </td><td valign="bottom" align="center" rowspan="1">∑</td><td valign="middle" align="right" rowspan="1">(tf(t in d)  · 
+            idf(t)<sup>2</sup>  · 
+            t.getBoost() · 
+            norm(t,d))</td></tr><tr valigh="top"><td /><td align="center">t in q</td><td /></tr></table></td></tr></table><p /> where
+            <ol><li><b>tf(t in d)</b>
+            correlates to the term's <i>frequency</i>,
+            defined as the number of times term <i>t</i> appears in the currently scored document <i>d</i>.
+            Documents that have more occurrences of a given term receive a higher score.
+            The default computation for <i>tf(t in d)</i> in
+            {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) DefaultSimilarity} is:
+            
+            <br /> <br /><table cellpadding="2" cellspacing="2" border="0" align="center"><tr><td valign="middle" align="right" rowspan="1">
+            {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) tf(t in d)}   =  
+            </td><td valign="top" align="center" rowspan="1">
+            frequency<sup>½</sup></td></tr></table><br /> <br /></li><li><b>idf(t)</b> stands for Inverse Document Frequency. This value
+            correlates to the inverse of <i>docFreq</i>
+            (the number of documents in which the term <i>t</i> appears).
+            This means rarer terms give higher contribution to the total score.
+            The default computation for <i>idf(t)</i> in
+            {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) DefaultSimilarity} is:
+            
+            <br /> <br /><table cellpadding="2" cellspacing="2" border="0" align="center"><tr><td valign="middle" align="right">
+            {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) idf(t)}  =  
+            </td><td valign="middle" align="center">
+            1 + log (</td><td valign="middle" align="center"><table><tr><td align="center">numDocs</td></tr><tr><td align="center">–––––––––</td></tr><tr><td align="center">docFreq+1</td></tr></table></td><td valign="middle" align="center">)</td></tr></table><br /> <br /></li><li><b>coord(q,d)</b>
+            is a score factor based on how many of the query terms are found in the specified document.
+            Typically, a document that contains more of the query's terms will receive a higher score
+            than another document with fewer query terms.
+            This is a search time factor computed in
+            {@link #Coord(int, int) coord(q,d)}
+            by the Similarity in effect at search time.
+            <br /> <br /></li><li><b>
+            queryNorm(q)
+            </b>
+            is a normalizing factor used to make scores between queries comparable.
+            This factor does not affect document ranking (since all ranked documents are multiplied by the same factor),
+            but rather just attempts to make scores from different queries (or even different indexes) comparable.
+            This is a search time factor computed by the Similarity in effect at search time.
+            
+            The default computation in
+            {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) DefaultSimilarity}
+            is:
+            <br /> <br /><table cellpadding="1" cellspacing="0" border="0" align="center"><tr><td valign="middle" align="right" rowspan="1">
+            queryNorm(q)    =  
+            {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) queryNorm(sumOfSquaredWeights)}
+              =  
+            </td><td valign="middle" align="center" rowspan="1"><table><tr><td align="center">1</td></tr><tr><td align="center">
+            ––––––––––––––
+            </td></tr><tr><td align="center">sumOfSquaredWeights<sup>½</sup></td></tr></table></td></tr></table><br /> <br />
+            
+            The sum of squared weights (of the query terms) is
+            computed by the query {@link Lucene.Net.Search.Weight} object.
+            For example, a {@link Lucene.Net.Search.BooleanQuery boolean query}
+            computes this value as:
+            
+            <br /> <br /><table cellpadding="1" cellspacing="0" border="0" align="center"><tr><td valign="middle" align="right" rowspan="1">
+            {@link Lucene.Net.Search.Weight#SumOfSquaredWeights() sumOfSquaredWeights}   =  
+            {@link Lucene.Net.Search.Query#GetBoost() q.getBoost()} <sup>2</sup>
+             · 
+            </td><td valign="bottom" align="center" rowspan="1">∑</td><td valign="middle" align="right" rowspan="1">(idf(t)  · 
+            t.getBoost()) <sup>2</sup></td></tr><tr valigh="top"><td /><td align="center">t in q</td><td /></tr></table><br /> <br /></li><li><b>t.getBoost()</b>
+            is a search time boost of term <i>t</i> in the query <i>q</i> as
+            specified in the query text
+            (see query syntax),
+            or as set by application calls to
+            {@link Lucene.Net.Search.Query#SetBoost(float) setBoost()}.
+            Notice that there is really no direct API for accessing a boost of one term in a multi term query,
+            but rather multi terms are represented in a query as multi
+            {@link Lucene.Net.Search.TermQuery TermQuery} objects,
+            and so the boost of a term in the query is accessible by calling the sub-query
+            {@link Lucene.Net.Search.Query#GetBoost() getBoost()}.
+            <br /> <br /></li><li><b>norm(t,d)</b> encapsulates a few (indexing time) boost and length factors:
+            
+            <ul><li><b>Document boost</b> - set by calling
+            {@link Lucene.Net.Documents.Document#SetBoost(float) doc.setBoost()}
+            before adding the document to the index.
+            </li><li><b>Field boost</b> - set by calling
+            {@link Lucene.Net.Documents.Fieldable#SetBoost(float) field.setBoost()}
+            before adding the field to a document.
+            </li><li>{@link #LengthNorm(String, int) <b>lengthNorm</b>(field)} - computed
+            when the document is added to the index in accordance with the number of tokens
+            of this field in the document, so that shorter fields contribute more to the score.
+            LengthNorm is computed by the Similarity class in effect at indexing.
+            </li></ul><p />
+            When a document is added to the index, all the above factors are multiplied.
+            If the document has multiple fields with the same name, all their boosts are multiplied together:
+            
+            <br /> <br /><table cellpadding="1" cellspacing="0" border="0" align="center"><tr><td valign="middle" align="right" rowspan="1">
+            norm(t,d)   =  
+            {@link Lucene.Net.Documents.Document#GetBoost() doc.getBoost()}
+             · 
+            {@link #LengthNorm(String, int) lengthNorm(field)}
+             · 
+            </td><td valign="bottom" align="center" rowspan="1">∏</td><td valign="middle" align="right" rowspan="1">
+            {@link Lucene.Net.Documents.Fieldable#GetBoost() f.getBoost}()
+            </td></tr><tr valigh="top"><td /><td align="center">field <i><b>f</b></i> in <i>d</i> named as <i><b>t</b></i></td><td /></tr></table><br /> <br />
+            However the resulted <i>norm</i> value is {@link #EncodeNorm(float) encoded} as a single byte
+            before being stored.
+            At search time, the norm byte value is read from the index
+            {@link Lucene.Net.Store.Directory directory} and
+            {@link #DecodeNorm(byte) decoded} back to a float <i>norm</i> value.
+            This encoding/decoding, while reducing index size, comes with the price of
+            precision loss - it is not guaranteed that decode(encode(x)) = x.
+            For instance, decode(encode(0.89)) = 0.75.
+            Also notice that search time is too late to modify this <i>norm</i> part of scoring, e.g. by
+            using a different {@link Similarity} for search.
+            <br /> <br /></li></ol></div><p /><b>Namespace:</b> <a href="5715bafd-c3a8-9ed0-225c-3c4cececbdc0.htm">Lucene.Net.Search</a><br /><b>Assembly:</b> <span sdata="assembly">Lucene.Net</span> (in Lucene.Net.dll) Version: 2.9.4.1<h1 class="heading"><span onclick="ExpandCollapse(syntaxToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(syntaxToggle, event)" tabindex="0"><img id="syntaxToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />Syntax</span></h1><div id="syntaxSection" class="section" name="collapseableSection" style=""><div id="syntaxCodeBlocks" class="code"><span codeLanguage="CSharp"><table><tr><th>C#</th></tr><tr><td><pre xml:space="preserve">[<a href="http://msdn2.microsoft.com/en-us/library/bcfsa90a" target="_blank">SerializableAttribute</a>]
+<span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="identifier">Similarity</span></pre></td></tr></table></span><span codeLanguage="VisualBasicDeclaration"><table><tr><th>Visual Basic</th></tr><tr><td><pre xml:space="preserve">&lt;<a href="http://msdn2.microsoft.com/en-us/library/bcfsa90a" target="_blank">SerializableAttribute</a>&gt; _
+<span class="keyword">Public</span> <span class="keyword">MustInherit</span> <span class="keyword">Class</span> <span class="identifier">Similarity</span></pre></td></tr></table></span><span codeLanguage="ManagedCPlusPlus"><table><tr><th>Visual C++</th></tr><tr><td><pre xml:space="preserve">[<a href="http://msdn2.microsoft.com/en-us/library/bcfsa90a" target="_blank">SerializableAttribute</a>]
+<span class="keyword">public</span> <span class="keyword">ref class</span> <span class="identifier">Similarity</span> <span class="keyword">abstract</span></pre></td></tr></table></span></div></div><h1 class="heading"><span onclick="ExpandCollapse(familyToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(familyToggle, event)" tabindex="0"><img id="familyToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />Inheritance Hierarchy</span></h1><div id="familySection" class="section" name="collapseableSection" style=""><a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">System<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>Object</a><br />  <span class="selflink">Lucene.Net.Search<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>Similarity</span><br />    <a href="685571bd-e7ad-c241-6ec0-418010782d42.htm">Lucene.Net.Search<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>DefaultSimilarity</a><br />    <a href="59bcc1bf-3265-0fdd-867d-3e3366bb41ea.htm">Lucene.Net.Search<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>SimilarityDelegator</a><br /></div><h1 class="heading"><span onclick="ExpandCollapse(seeAlsoToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(seeAlsoToggle, event)" tabindex="0"><img id="seeAlsoToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />See Also</span></h1><div id="seeAlsoSection" class="section" name="collapseableSection" style=""><div class="seeAlsoStyle"><a href="b796d27c-1275-bf4f-9c04-f7ac28b32b0d.htm">Similarity Members</a></div><div class="seeAlsoStyle"><a href="5715bafd-c3a8-9ed0-225c-3c4cececbdc0.htm">Lucene.Net.Search Namespace</a></div><div class="seeAlsoStyle"><a href="ce100662-f989-7580-5c1d-27dc39186c71.htm">Similarity<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>SetDefault(Similarity)</a></div><div class="seeAlsoStyle"><a href="74dcab87-c8bb-8f21-54ba-b61f837ba78f.htm">IndexWriter<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>SetSimilarity(Similarity)</a></div><div class="seeAlsoStyle"><a href="e32c5d32-1c87-b1b7-fc6d-3e00b9bdfa5a.htm">Searcher<span class="languageSpecificText"><span class="cs">.</span><span class="vb">.</span><span class="cpp">::</span><span class="nu">.</span><span class="fs">.</span></span>SetSimilarity(Similarity)</a></div></div></div><div id="footer"><div class="footerLine"><img width="100%" height="3px" src="../icons/footer.gif" alt="Footer image" title="Footer image" /></div><A NAME="feedback"></A><span id="fb" class="feedbackcss"></span></div></div></body></html>
