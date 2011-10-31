@@ -769,7 +769,7 @@ namespace Similarity.Net
                     {
                         for (int j = 0; j < text.Length; j++)
                         {
-                            AddTermFrequencies(new System.IO.StreamReader(text[j]), termFreqMap, fieldName);
+                            AddTermFrequencies(new System.IO.StringReader(text[j]), termFreqMap, fieldName);
                         }
                     }
                 }
@@ -820,7 +820,7 @@ namespace Similarity.Net
         /// </param>
         /// <param name="fieldName">Used by analyzer for any special per-field analysis
         /// </param>
-        private void  AddTermFrequencies(System.IO.StreamReader r, System.Collections.IDictionary termFreqMap, System.String fieldName)
+        private void  AddTermFrequencies(System.IO.TextReader r, System.Collections.IDictionary termFreqMap, System.String fieldName)
         {
             TokenStream ts = analyzer.TokenStream(fieldName, r);
             Lucene.Net.Analysis.Token token;
