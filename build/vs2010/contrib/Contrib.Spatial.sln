@@ -1,4 +1,7 @@
-﻿#
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+#
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -17,10 +20,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-#
 
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "..\..\..\src\core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contrib.Spatial", "..\..\..\src\contrib\Spatial\Contrib.Spatial.csproj", "{35C347F4-24B2-4BE5-8117-A0E3001551CE}"
