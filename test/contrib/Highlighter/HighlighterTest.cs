@@ -66,61 +66,25 @@ namespace Lucene.Net.Search.Highlight
 	[TestFixture]
     public class HighlighterTest : Formatter
 	{
-        // {{Aroush-2.0.0}} Fix me
-        /*
-		private class AnonymousClassScorer : Scorer
+		private class AnonymousClassScorer : Lucene.Net.Highlight.Scorer
 		{
-			public AnonymousClassScorer(HighlighterTest enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-			private void  InitBlock(HighlighterTest enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-			private HighlighterTest enclosingInstance;
-			public HighlighterTest Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			public virtual void  StartFragment(TextFragment newFragment)
-			{
-			}
-			public virtual float GetTokenScore(Token token)
-			{
-				return 0;
-			}
-			public virtual float GetFragmentScore()
-			{
-				return 1;
-			}
-
-            public override bool SkipTo(int target)
+            public void StartFragment(TextFragment newFragment)
             {
-                return false;
             }
-            public override int Doc()
-            {
-                return -1;
-            }
-            public override Explanation Explain(int doc)
-            {
-                return null;
-            }
-            public override bool Next()
-            {
-                return false;
-            }
-            public override float Score()
+            public float GetTokenScore(Token token)
             {
                 return 0;
             }
-		}
-        */
+            public float GetFragmentScore()
+            {
+                return 1;
+            }
+            public TokenStream Init(TokenStream tokenStream)
+            {
+                return null;
+            }
+        }
+        
 
 		private class AnonymousClassTokenStream : TokenStream
 		{
@@ -589,37 +553,30 @@ namespace Lucene.Net.Search.Highlight
 		[Test]
 		public virtual void  TestEncoding()
 		{
-            Assert.Fail("This test is failing because it has porting issues.");
+            String rawDocContent = "\"Smith & sons' prices < 3 and >4\" claims article";
+            // run the highlighter on the raw content (scorer does not score any tokens
+            // for
+            // highlighting but scores a single fragment for selection
+            Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new AnonymousClassScorer());
+            highlighter.SetTextFragmenter(new SimpleFragmenter(2000));
+            TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, new System.IO.StringReader(rawDocContent));
 
-            // {{Aroush-2.0.0}} Fix me
-            /*
-			System.String rawDocContent = "\"Smith & sons' prices < 3 and >4\" claims article";
-			//run the highlighter on the raw content (scorer does not score any tokens for 
-			// highlighting but scores a single fragment for selection
-			Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new AnonymousClassScorer(this));
-			highlighter.SetTextFragmenter(new SimpleFragmenter(2000));
-			TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, new System.IO.StringReader(rawDocContent));
-			
-			System.String encodedSnippet = highlighter.GetBestFragments(tokenStream, rawDocContent, 1, "");
-			//An ugly bit of XML creation:
-			System.String xhtml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<!DOCTYPE html\n" + "PUBLIC \"//W3C//DTD XHTML 1.0 Transitional//EN\"\n" + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" + "<head>\n" + "<title>My Test HTML Document</title>\n" + "</head>\n" + "<body>\n" + "<h2>" + encodedSnippet + "</h2>\n" + "</body>\n" + "</html>";
-			//now an ugly built of XML parsing to test the snippet is encoded OK 
-			//UPGRADE_ISSUE: Class 'javax.xml.parsers.DocumentBuilderFactory' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javaxxmlparsersDocumentBuilderFactory_3"'
-			//UPGRADE_ISSUE: Method 'javax.xml.parsers.DocumentBuilderFactory.newInstance' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javaxxmlparsersDocumentBuilderFactory_3"'
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			System.Xml.XmlDocument db = new System.Xml.XmlDocument();
-			System.Xml.XmlDocument tempDocument;
-			tempDocument = (System.Xml.XmlDocument) db.Clone();
-			tempDocument.Load(new System.IO.MemoryStream(System.Text.UTF8Encoding.UTF8.GetBytes(xhtml)));
-			System.Xml.XmlDocument doc = tempDocument;
-			System.Xml.XmlElement root = (System.Xml.XmlElement) doc.DocumentElement;
-			System.Xml.XmlNodeList nodes = root.GetElementsByTagName("body");
-			System.Xml.XmlElement body = (System.Xml.XmlElement) nodes.Item(0);
-			nodes = body.GetElementsByTagName("h2");
-			System.Xml.XmlElement h2 = (System.Xml.XmlElement) nodes.Item(0);
-			System.String decodedSnippet = h2.FirstChild.Value;
-			Assert.AreEqual(rawDocContent, decodedSnippet, "XHTML Encoding should have worked:");
-            */
+            String encodedSnippet = highlighter.GetBestFragments(tokenStream, rawDocContent, 1, "");
+            // An ugly bit of XML creation:
+            String xhtml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n"
+                + "<head>\n" + "<title>My Test HTML Document</title>\n" + "</head>\n" + "<body>\n" + "<h2>"
+                + encodedSnippet + "</h2>\n" + "</body>\n" + "</html>";
+            // now an ugly built of XML parsing to test the snippet is encoded OK
+
+            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            doc.LoadXml(xhtml);
+            System.Xml.XmlNodeList nodes = doc.GetElementsByTagName("body");
+            System.Xml.XmlNode body = nodes[0];
+            nodes = body.ChildNodes;
+            System.Xml.XmlNode h2 = (System.Xml.XmlNode)nodes[0];
+            String decodedSnippet = h2.FirstChild.InnerText;
+            Assert.AreEqual(rawDocContent, decodedSnippet,"XHTML Encoding should have worked:");
 		}
 		
         [Test]
@@ -654,6 +611,7 @@ namespace Lucene.Net.Search.Highlight
 			searchers[1] = new IndexSearcher(ramDir2);
 			MultiSearcher multiSearcher = new MultiSearcher(searchers);
 			QueryParser parser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+            parser.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 			query = parser.Parse("multi*");
 			System.Console.Out.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
 			//at this point the multisearcher calls combine(query[])
@@ -837,6 +795,7 @@ namespace Lucene.Net.Search.Highlight
 		public virtual void  DoSearching(System.String queryString)
 		{
 			QueryParser parser = new QueryParser(FIELD_NAME, new StandardAnalyzer());
+            parser.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 			query = parser.Parse(queryString);
 			DoSearching(query);
 		}
