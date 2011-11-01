@@ -39,19 +39,19 @@ namespace Lucene.Net.Search
         public int TotalHits
         {
             get { return totalHits; }
-            set { totalHits = value; }
+            internal set { totalHits = value; }
         }
 
         public ScoreDoc[] ScoreDocs
         {
             get { return scoreDocs; }
-            set { scoreDocs = value; }
+            internal set { scoreDocs = value; }
         }
 
-        public float MaxScore
+        public virtual float MaxScore
         {
             get { return maxScore; }
-            set { maxScore = value; }
+            internal set { maxScore = value; }
         }
 
 

@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
 		/// method will be called and is not necessarily of the same type as
 		/// the other queries.
 		/// </summary>
-		public virtual Query Combine(Query[] queries)
+		public virtual Query Combine(params Query[] queries)
 		{
             Support.Set<Query> uniques = new Support.Set<Query>();
 			for (int i = 0; i < queries.Length; i++)

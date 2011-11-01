@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
 	/// length <code>maxSize+1</code>, in {@link #initialize}.
 	/// 
 	/// </summary>
-	public abstract class PriorityQueue<T>
+	public  abstract class PriorityQueue<T>
 	{
 		private int size;
 		private int maxSize;
