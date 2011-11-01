@@ -1,4 +1,7 @@
-﻿#
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+#
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -18,9 +21,6 @@
 # under the License.
 #
 #
-
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFacetedSearch.Test", "..\..\..\test\contrib\SimpleFacetedSearch\SimpleFacetedSearch.Test.csproj", "{D8CC9461-64E0-416E-BA6E-1DF6FA66CBF5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFacetedSearch", "..\..\..\src\contrib\SimpleFacetedSearch\SimpleFacetedSearch.csproj", "{66772190-FB3F-48F5-8E05-0B302BACEA73}"
