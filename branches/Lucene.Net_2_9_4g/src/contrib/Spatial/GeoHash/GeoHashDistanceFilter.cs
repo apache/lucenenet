@@ -64,7 +64,8 @@ namespace Lucene.Net.Spatial.GeoHash
 				double x = coords[0];
 				double y = coords[1];
 
-				Double cachedDistance = distanceLookupCache[geoHash];
+                Double cachedDistance = 0;
+                distanceLookupCache.TryGetValue(geoHash, out cachedDistance);
 				double d;
 
 				if (cachedDistance > 0)
