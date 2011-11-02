@@ -1,0 +1,152 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:mshelp="http://msdn.microsoft.com/mshelp" xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8" /><META NAME="save" CONTENT="history" /><title>Similarity Methods</title><meta name="Language" content="en-us" /><meta name="System.Keywords" content="Similarity class, methods" /><meta name="Microsoft.Help.Id" content="Methods.T:Lucene.Net.Search.Similarity" /><meta name="Microsoft.Help.ContentType" content="Reference" /><link rel="stylesheet" type="text/css" href="../styles/Presentation.css" /><link rel="stylesheet" type="text/css" href="ms-help://Hx/HxRuntime/HxLink.css" /><script type="text/javascript" src="../scripts/EventUtilities.js"> </script><script type="text/javascript" src="../scripts/SplitScreen.js"> </script><script type="text/javascript" src="../scripts/Dropdown.js"> </script><script type="text/javascript" src="../scripts/script_manifold.js"> </script><script type="text/javascript" src="../scripts/script_feedBack.js"> </script><script type="text/javascript" src="../scripts/CheckboxMenu.js"> </script><script type="text/javascript" src="../scripts/CommonUtilities.js"> </script><meta name="container" content="Lucene.Net.Search" /><meta name="file" content="76c0f809-056f-7a6d-77e9-cd23336cb85c" /><meta name="guid" content="76c0f809-056f-7a6d-77e9-cd23336cb85c" /><xml><MSHelp:Attr Name="AssetID" Value="Methods.T:Lucene.Net.Search.Similarity" /><MSHelp:TOCTitle Title="Similarity Methods" /><MSHelp:RLTitle Title="Similarity Methods (Lucene.Net.Search)" /><MSHelp:Keyword Index="A" Term="Methods.T:Lucene.Net.Search.Similarity" /><MSHelp:Keyword Index="A" Term="frlrfLuceneNetSearchSimilarityMethodsTopic" /><MSHelp:Keyword Index="K" Term="Similarity class, methods" /><MSHelp:Attr Name="DevLang" Value="CSharp" /><MSHelp:Attr Name="DevLang" Value="VB" /><MSHelp:Attr Name="Locale" Value="en-us" /><MSHelp:Attr Name="TopicType" Value="kbSyntax" /><MSHelp:Attr Name="TopicType" Value="apiref" /><MSHelp:Attr Name="AssemblyVersion" Value="2.9.4.1" /></xml><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script></head><body><input type="hidden" id="userDataCache" class="userDataStyle" /><input type="hidden" id="hiddenScrollOffset" /><img id="collapseImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" alt="Collapse image" title="Collapse image" /><img id="expandImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" alt="Expand Image" title="Expand Image" /><img id="collapseAllImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" /><img id="expandAllImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" /><img id="dropDownImage" style="display:none; height:0; width:0;" src="../icons/dropdown.gif" /><img id="dropDownHoverImage" style="display:none; height:0; width:0;" src="../icons/dropdownHover.gif" /><img id="copyImage" style="display:none; height:0; width:0;" src="../icons/copycode.gif" alt="Copy image" title="Copy image" /><img id="copyHoverImage" style="display:none; height:0; width:0;" src="../icons/copycodeHighlight.gif" alt="CopyHover image" title="CopyHover image" /><div id="header"><table id="topTable" cellspacing="0" cellpadding="0"><tr><td><span onclick="ExpandCollapseAll(toggleAllImage)" style="cursor:default;" onkeypress="ExpandCollapseAll_CheckKey(toggleAllImage, event)" tabindex="0"><img ID="toggleAllImage" class="toggleAll" src="../icons/collapse_all.gif" /> <label id="collapseAllLabel" for="toggleAllImage" style="display: none;">Collapse All</label><label id="expandAllLabel" for="toggleAllImage" style="display: none;">Expand All</label> </span><span>    </span><span id="devlangsDropdown" class="filter" tabindex="0"><img id="devlangsDropdownImage" src="../icons/dropdown.gif" /> <label id="devlangsMenuAllLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: All </nobr></label><label id="devlangsMenuMultipleLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Multiple </nobr></label><label id="devlangsMenuCSharpLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: C# </nobr></label><label id="devlangsMenuVisualBasicLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual Basic </nobr></label><label id="devlangsMenuManagedCPlusPlusLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual C++ </nobr></label></span><span>    </span><span id="memberOptionsDropdown" class="filter" tabindex="0"><img id="memberOptionsDropdownImage" src="../icons/dropdown.gif" /> <label id="memberOptionsMenuAllLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Show All </nobr></label><label id="memberOptionsMenuMultipleLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label><label id="memberOptionsMenuProtectedLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label><label id="memberOptionsMenuInheritedLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label></span></td></tr></table><div id="devlangsMenu"><input id="CSharpCheckbox" type="checkbox" data="CSharp,cs,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="CSharpCheckbox">C#</label><br /><input id="VisualBasicCheckbox" type="checkbox" data="VisualBasic,vb,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="VisualBasicCheckbox">Visual Basic</label><br /><input id="ManagedCPlusPlusCheckbox" type="checkbox" data="ManagedCPlusPlus,cpp,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="ManagedCPlusPlusCheckbox">Visual C++</label><br /></div><div id="memberOptionsMenu"><input id="ProtectedCheckbox" type="checkbox" data="Protected" value="on" onClick="SetMemberOptions(this, 'vis')" /><label class="checkboxLabel" for="ProtectedCheckbox">Include Protected Members</label><br /><input id="InheritedCheckbox" type="checkbox" data="Inherited" value="on" onClick="SetMemberOptions(this, 'decl')" /><label class="checkboxLabel" for="InheritedCheckbox">Include Inherited Members</label><br /></div><table id="bottomTable" cellpadding="0" cellspacing="0"><tr id="headerTableRow1"><td align="left"><span id="runningHeaderText">Lucene.Net Class Libraries</span></td></tr><tr id="headerTableRow2"><td align="left"><span id="nsrTitle">Similarity Methods</span></td></tr><tr id="headerTableRow3"><td align="left"><a href="cf113347-e96f-3c18-5b30-ccddb57ae08c.htm">Similarity Class</a> <a href="#seeAlsoToggle" onclick="OpenSection(seeAlsoToggle)">See Also</a> <span id="headfeedbackarea" class="feedbackhead"><a href="javascript:SubmitFeedback('','Lucene.Net Class Libraries','','','','%0\dYour%20feedback%20is%20used%20to%20improve%20the%20documentation%20and%20the%20product.%20Your%20e-mail%20address%20will%20not%20be%20used%20for%20any%20other%20purpose%20and%20is%20disposed%20of%20after%20the%20issue%20you%20report%20is%20resolved.%20%20While%20working%20to%20resolve%20the%20issue%20that%20you%20report,%20you%20may%20be%20contacted%20via%20e-mail%20to%20get%20further%20details%20or%20clarification%20on%20the%20feedback%20you%20sent.%20After%20the%20issue%20you%20report%20has%20been%20addressed,%20you%20may%20receive%20an%20e-mail%20to%20let%20you%20know%20that%20your%20feedback%20has%20been%20addressed.%0\A%0\d','Customer%20Feedback');">Send Feedback</a></span></td></tr></table><table id="gradientTable"><tr><td class="nsrBottom" background="../icons/gradient.gif" /></tr></table></div><div id="mainSection"><div id="mainBody"><div id="allHistory" class="saveHistory" onsave="saveAll()" onload="loadAll()" /><span style="color: DarkGray"></span><p>The <a href="cf113347-e96f-3c18-5b30-ccddb57ae08c.htm">Similarity</a> type exposes the following members.</p><h1 class="heading"><span onclick="ExpandCollapse(methodTableToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(methodTableToggle, event)" tabindex="0"><img id="methodTableToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />Methods</span></h1><div id="methodTableSection" class="section" name="collapseableSection" style=""><table id="memberList" class="members" frame="lhs" cellpadding="2"><col width="10%" /><tr><th class="iconColumn">
+               
+            </th><th class="nameColumn">Name</th><th class="descriptionColumn">Description</th></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="14300f11-cbe3-7d6e-4e98-3912270d4980.htm">ComputeNorm</a></td><td><div class="summary"> Compute the normalization value for a field, given the accumulated
+            state of term processing for this field (see {@link FieldInvertState}).
+            
+            <p />Implementations should calculate a float value based on the field
+            state and then return that value.
+            
+            <p />For backward compatibility this method by default calls
+            {@link #LengthNorm(String, int)} passing
+            {@link FieldInvertState#GetLength()} as the second argument, and
+            then multiplies this value by {@link FieldInvertState#GetBoost()}.<p /><p /><b>WARNING</b>: This API is new and experimental and may
+            suddenly change.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="b9e2973a-6945-72aa-4299-da7acb7e0268.htm">Coord</a></td><td><div class="summary">Computes a score factor based on the fraction of all query terms that a
+            document contains.  This value is multiplied into scores.
+            
+            <p />The presence of a large portion of the query terms indicates a better
+            match with the query, so implementations of this method usually return
+            larger values when the ratio between these parameters is large and smaller
+            values when the ratio between them is small.
+            
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="38fb4803-10fc-cdbb-1348-612f4f23dfff.htm">DecodeNorm</a></td><td><div class="summary">Decodes a normalization factor stored in an index.</div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="33907f38-e509-659a-ca03-619c148ffa01.htm">EncodeNorm</a></td><td><div class="summary">Encodes a normalization factor for storage in an index.
+            
+            <p />The encoding uses a three-bit mantissa, a five-bit exponent, and
+            the zero-exponent point at 15, thus
+            representing values from around 7x10^9 to 2x10^-9 with about one
+            significant decimal digit of accuracy.  Zero is also represented.
+            Negative numbers are rounded up to zero.  Values too large to represent
+            are rounded down to the largest representable value.  Positive values too
+            small to represent are rounded up to the smallest positive representable
+            value.
+            
+            </div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/bsc2ak47" target="_blank">Equals</a></td><td><div class="summary">Determines whether the specified <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> is equal to the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="protected;inherited;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/4k87zsw7" target="_blank">Finalize</a></td><td><div class="summary">Allows an <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> to attempt to free resources and perform other cleanup operations before the <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> is reclaimed by garbage collection.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="4b7c0cb0-d0c2-da28-8a94-7bd163db4fad.htm">GetDefault</a></td><td><div class="summary">Return the default Similarity implementation used by indexing and search
+            code.
+            
+            <p />This is initially an instance of {@link DefaultSimilarity}.
+            
+            </div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/zdee4b3y" target="_blank">GetHashCode</a></td><td><div class="summary">Serves as a hash function for a particular type. </div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="3b8e20d5-18a9-46a6-f302-a2e0c9a50408.htm">GetNormDecoder</a></td><td><div class="summary">Returns a table for decoding normalization bytes.</div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/dfwy45w9" target="_blank">GetType</a></td><td><div class="summary">Gets the <a href="http://msdn2.microsoft.com/en-us/library/42892f65" target="_blank">Type</a> of the current instance.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ba20a748-0bb9-ed5b-58b7-bd367a6d0203.htm">Idf(ICollection, Searcher)</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary">Computes a score factor for a phrase.
+            
+            <p />The default implementation sums the {@link #Idf(Term,Searcher)} factor
+            for each term in the phrase.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="410fa404-3495-ce90-175b-cee704aad82e.htm">Idf(Int32, Int32)</a></td><td><div class="summary">Computes a score factor based on a term's document frequency (the number
+            of documents which contain the term).  This value is multiplied by the
+            {@link #Tf(int)} factor for each term in the query and these products are
+            then summed to form the initial score for a document.
+            
+            <p />Terms that occur in fewer documents are better indicators of topic, so
+            implementations of this method usually return larger values for rare terms,
+            and smaller values for common terms.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2ad62284-f5f4-afff-8353-4d04dbf9cb74.htm">Idf(Term, Searcher)</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary">Computes a score factor for a simple term.
+            
+            <p />The default implementation is:<pre>
+            return idf(searcher.docFreq(term), searcher.maxDoc());
+            </pre>
+            
+            Note that {@link Searcher#MaxDoc()} is used instead of
+            {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is proportional to
+            {@link Searcher#DocFreq(Term)} , i.e., when one is inaccurate,
+            so is the other, and in the same direction.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ff1f84ef-1a3d-a63c-5810-c56677132d3c.htm">idfExplain</a></td><td><div class="summary"> Computes a score factor for a phrase.
+            
+            <p />
+            The default implementation sums the idf factor for
+            each term in the phrase.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="e7e3a1c1-4b94-5051-5fdb-e04456fa115c.htm">IdfExplain</a></td><td><div class="summary"> Computes a score factor for a simple term and returns an explanation
+            for that score factor.
+            
+            <p />
+            The default implementation uses:
+            
+            <pre>
+            idf(searcher.docFreq(term), searcher.maxDoc());
+            </pre>
+            
+            Note that {@link Searcher#MaxDoc()} is used instead of
+            {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is
+            proportional to {@link Searcher#DocFreq(Term)} , i.e., when one is
+            inaccurate, so is the other, and in the same direction.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="0aaa8507-9e42-a027-1cba-8a5d7d16aeae.htm">LengthNorm</a></td><td><div class="summary">Computes the normalization value for a field given the total number of
+            terms contained in a field.  These values, together with field boosts, are
+            stored in an index and multipled into scores for hits on each field by the
+            search code.
+            
+            <p />Matches in longer fields are less precise, so implementations of this
+            method usually return smaller values when <span id="cbc_1" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">numTokens</pre></div></span> is large,
+            and larger values when <span id="cbc_2" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">numTokens</pre></div></span> is small.
+            
+            <p />Note that the return values are computed under 
+            {@link Lucene.Net.Index.IndexWriter#AddDocument(Lucene.Net.Documents.Document)} 
+            and then stored using
+            {@link #EncodeNorm(float)}.  
+            Thus they have limited precision, and documents
+            must be re-indexed if this method is altered.
+            
+            </div></td></tr><tr data="protected;inherited;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/57ctke0a" target="_blank">MemberwiseClone</a></td><td><div class="summary">Creates a shallow copy of the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="61ea96d6-3abc-d096-3f63-07cd30c927c6.htm">QueryNorm</a></td><td><div class="summary">Computes the normalization value for a query given the sum of the squared
+            weights of each of the query terms.  This value is then multipled into the
+            weight of each query term.
+            
+            <p />This does not affect ranking, but rather just attempts to make scores
+            from different queries comparable.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="b6002056-4139-a968-b325-bb29c383ea82.htm">ScorePayload(String, <span class="languageSpecificText"><span class="cpp">array&lt;</span></span>Byte<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>, Int32, Int32)</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary"> Calculate a scoring factor based on the data in the payload.  Overriding implementations
+            are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
+            what is in the byte array.
+            <p />
+            The default implementation returns 1.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="3ac980f7-36b0-f727-a40e-ec47da182d01.htm">ScorePayload(Int32, String, Int32, Int32, <span class="languageSpecificText"><span class="cpp">array&lt;</span></span>Byte<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>, Int32, Int32)</a></td><td><div class="summary"> Calculate a scoring factor based on the data in the payload.  Overriding implementations
+            are responsible for interpreting what is in the payload.  Lucene makes no assumptions about
+            what is in the byte array.
+            <p />
+            The default implementation returns 1.
+            
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="ce100662-f989-7580-5c1d-27dc39186c71.htm">SetDefault</a></td><td><div class="summary">Set the default Similarity implementation used by indexing and search
+            code.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="bb6f6d1d-b92b-19f7-aac3-275540d6ced2.htm">SloppyFreq</a></td><td><div class="summary">Computes the amount of a sloppy phrase match, based on an edit distance.
+            This value is summed for each sloppy phrase match in a document to form
+            the frequency that is passed to {@link #Tf(float)}.
+            
+            <p />A phrase match with a small edit distance to a document passage more
+            closely matches the document, so implementations of this method usually
+            return larger values when the edit distance is small and smaller values
+            when it is large.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="db5197ea-6d7f-a6cf-0bae-b95b2e5dfff5.htm">Tf(Int32)</a></td><td><div class="summary">Computes a score factor based on a term or phrase's frequency in a
+            document.  This value is multiplied by the {@link #Idf(Term, Searcher)}
+            factor for each term in the query and these products are then summed to
+            form the initial score for a document.
+            
+            <p />Terms and phrases repeated in a document indicate the topic of the
+            document, so implementations of this method usually return larger values
+            when <span id="cbc_3" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">freq</pre></div></span> is large, and smaller values when <span id="cbc_4" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">freq</pre></div></span>
+            is small.
+            
+            <p />The default implementation calls {@link #Tf(float)}.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="6ea1125d-8619-2953-2699-639a4f33907d.htm">Tf(Single)</a></td><td><div class="summary">Computes a score factor based on a term or phrase's frequency in a
+            document.  This value is multiplied by the {@link #Idf(Term, Searcher)}
+            factor for each term in the query and these products are then summed to
+            form the initial score for a document.
+            
+            <p />Terms and phrases repeated in a document indicate the topic of the
+            document, so implementations of this method usually return larger values
+            when <span id="cbc_5" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">freq</pre></div></span> is large, and smaller values when <span id="cbc_6" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">freq</pre></div></span>
+            is small.
+            
+            </div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/7bxwbwt2" target="_blank">ToString</a></td><td><div class="summary">Returns a <a href="http://msdn2.microsoft.com/en-us/library/s1wwdcbf" target="_blank">String</a> that represents the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr></table></div><h1 class="heading"><span onclick="ExpandCollapse(seeAlsoToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(seeAlsoToggle, event)" tabindex="0"><img id="seeAlsoToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />See Also</span></h1><div id="seeAlsoSection" class="section" name="collapseableSection" style=""><div class="seeAlsoStyle"><a href="cf113347-e96f-3c18-5b30-ccddb57ae08c.htm">Similarity Class</a></div><div class="seeAlsoStyle"><a href="5715bafd-c3a8-9ed0-225c-3c4cececbdc0.htm">Lucene.Net.Search Namespace</a></div></div></div><div id="footer"><div class="footerLine"><img width="100%" height="3px" src="../icons/footer.gif" alt="Footer image" title="Footer image" /></div><A NAME="feedback"></A><span id="fb" class="feedbackcss"></span></div></div></body></html>

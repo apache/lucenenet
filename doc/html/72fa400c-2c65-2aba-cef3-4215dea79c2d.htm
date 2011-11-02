@@ -1,0 +1,567 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:mshelp="http://msdn.microsoft.com/mshelp" xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8" /><META NAME="save" CONTENT="history" /><title>IndexWriter Methods</title><meta name="Language" content="en-us" /><meta name="System.Keywords" content="IndexWriter class, methods" /><meta name="Microsoft.Help.Id" content="Methods.T:Lucene.Net.Index.IndexWriter" /><meta name="Microsoft.Help.ContentType" content="Reference" /><link rel="stylesheet" type="text/css" href="../styles/Presentation.css" /><link rel="stylesheet" type="text/css" href="ms-help://Hx/HxRuntime/HxLink.css" /><script type="text/javascript" src="../scripts/EventUtilities.js"> </script><script type="text/javascript" src="../scripts/SplitScreen.js"> </script><script type="text/javascript" src="../scripts/Dropdown.js"> </script><script type="text/javascript" src="../scripts/script_manifold.js"> </script><script type="text/javascript" src="../scripts/script_feedBack.js"> </script><script type="text/javascript" src="../scripts/CheckboxMenu.js"> </script><script type="text/javascript" src="../scripts/CommonUtilities.js"> </script><meta name="container" content="Lucene.Net.Index" /><meta name="file" content="72fa400c-2c65-2aba-cef3-4215dea79c2d" /><meta name="guid" content="72fa400c-2c65-2aba-cef3-4215dea79c2d" /><xml><MSHelp:Attr Name="AssetID" Value="Methods.T:Lucene.Net.Index.IndexWriter" /><MSHelp:TOCTitle Title="IndexWriter Methods" /><MSHelp:RLTitle Title="IndexWriter Methods (Lucene.Net.Index)" /><MSHelp:Keyword Index="A" Term="Methods.T:Lucene.Net.Index.IndexWriter" /><MSHelp:Keyword Index="A" Term="frlrfLuceneNetIndexIndexWriterMethodsTopic" /><MSHelp:Keyword Index="K" Term="IndexWriter class, methods" /><MSHelp:Attr Name="DevLang" Value="CSharp" /><MSHelp:Attr Name="DevLang" Value="VB" /><MSHelp:Attr Name="Locale" Value="en-us" /><MSHelp:Attr Name="TopicType" Value="kbSyntax" /><MSHelp:Attr Name="TopicType" Value="apiref" /><MSHelp:Attr Name="AssemblyVersion" Value="2.9.4.1" /></xml><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script></head><body><input type="hidden" id="userDataCache" class="userDataStyle" /><input type="hidden" id="hiddenScrollOffset" /><img id="collapseImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" alt="Collapse image" title="Collapse image" /><img id="expandImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" alt="Expand Image" title="Expand Image" /><img id="collapseAllImage" style="display:none; height:0; width:0;" src="../icons/collapse_all.gif" /><img id="expandAllImage" style="display:none; height:0; width:0;" src="../icons/expand_all.gif" /><img id="dropDownImage" style="display:none; height:0; width:0;" src="../icons/dropdown.gif" /><img id="dropDownHoverImage" style="display:none; height:0; width:0;" src="../icons/dropdownHover.gif" /><img id="copyImage" style="display:none; height:0; width:0;" src="../icons/copycode.gif" alt="Copy image" title="Copy image" /><img id="copyHoverImage" style="display:none; height:0; width:0;" src="../icons/copycodeHighlight.gif" alt="CopyHover image" title="CopyHover image" /><div id="header"><table id="topTable" cellspacing="0" cellpadding="0"><tr><td><span onclick="ExpandCollapseAll(toggleAllImage)" style="cursor:default;" onkeypress="ExpandCollapseAll_CheckKey(toggleAllImage, event)" tabindex="0"><img ID="toggleAllImage" class="toggleAll" src="../icons/collapse_all.gif" /> <label id="collapseAllLabel" for="toggleAllImage" style="display: none;">Collapse All</label><label id="expandAllLabel" for="toggleAllImage" style="display: none;">Expand All</label> </span><span>    </span><span id="devlangsDropdown" class="filter" tabindex="0"><img id="devlangsDropdownImage" src="../icons/dropdown.gif" /> <label id="devlangsMenuAllLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: All </nobr></label><label id="devlangsMenuMultipleLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Multiple </nobr></label><label id="devlangsMenuCSharpLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: C# </nobr></label><label id="devlangsMenuVisualBasicLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual Basic </nobr></label><label id="devlangsMenuManagedCPlusPlusLabel" for="devlangsDropdownImage" style="display: none;"><nobr>Code: Visual C++ </nobr></label></span><span>    </span><span id="memberOptionsDropdown" class="filter" tabindex="0"><img id="memberOptionsDropdownImage" src="../icons/dropdown.gif" /> <label id="memberOptionsMenuAllLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Show All </nobr></label><label id="memberOptionsMenuMultipleLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label><label id="memberOptionsMenuProtectedLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label><label id="memberOptionsMenuInheritedLabel" for="memberOptionsDropdownImage" style="display: none;"><nobr>Members: Filtered </nobr></label></span></td></tr></table><div id="devlangsMenu"><input id="CSharpCheckbox" type="checkbox" data="CSharp,cs,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="CSharpCheckbox">C#</label><br /><input id="VisualBasicCheckbox" type="checkbox" data="VisualBasic,vb,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="VisualBasicCheckbox">Visual Basic</label><br /><input id="ManagedCPlusPlusCheckbox" type="checkbox" data="ManagedCPlusPlus,cpp,'persist'" value="on" onClick="SetLanguage(this)" /><label class="checkboxLabel" for="ManagedCPlusPlusCheckbox">Visual C++</label><br /></div><div id="memberOptionsMenu"><input id="ProtectedCheckbox" type="checkbox" data="Protected" value="on" onClick="SetMemberOptions(this, 'vis')" /><label class="checkboxLabel" for="ProtectedCheckbox">Include Protected Members</label><br /><input id="InheritedCheckbox" type="checkbox" data="Inherited" value="on" onClick="SetMemberOptions(this, 'decl')" /><label class="checkboxLabel" for="InheritedCheckbox">Include Inherited Members</label><br /></div><table id="bottomTable" cellpadding="0" cellspacing="0"><tr id="headerTableRow1"><td align="left"><span id="runningHeaderText">Lucene.Net Class Libraries</span></td></tr><tr id="headerTableRow2"><td align="left"><span id="nsrTitle">IndexWriter Methods</span></td></tr><tr id="headerTableRow3"><td align="left"><a href="cfb56f63-f6d1-efdf-e1eb-54ef6f901cd1.htm">IndexWriter Class</a> <a href="#seeAlsoToggle" onclick="OpenSection(seeAlsoToggle)">See Also</a> <span id="headfeedbackarea" class="feedbackhead"><a href="javascript:SubmitFeedback('','Lucene.Net Class Libraries','','','','%0\dYour%20feedback%20is%20used%20to%20improve%20the%20documentation%20and%20the%20product.%20Your%20e-mail%20address%20will%20not%20be%20used%20for%20any%20other%20purpose%20and%20is%20disposed%20of%20after%20the%20issue%20you%20report%20is%20resolved.%20%20While%20working%20to%20resolve%20the%20issue%20that%20you%20report,%20you%20may%20be%20contacted%20via%20e-mail%20to%20get%20further%20details%20or%20clarification%20on%20the%20feedback%20you%20sent.%20After%20the%20issue%20you%20report%20has%20been%20addressed,%20you%20may%20receive%20an%20e-mail%20to%20let%20you%20know%20that%20your%20feedback%20has%20been%20addressed.%0\A%0\d','Customer%20Feedback');">Send Feedback</a></span></td></tr></table><table id="gradientTable"><tr><td class="nsrBottom" background="../icons/gradient.gif" /></tr></table></div><div id="mainSection"><div id="mainBody"><div id="allHistory" class="saveHistory" onsave="saveAll()" onload="loadAll()" /><span style="color: DarkGray"></span><p>The <a href="cfb56f63-f6d1-efdf-e1eb-54ef6f901cd1.htm">IndexWriter</a> type exposes the following members.</p><h1 class="heading"><span onclick="ExpandCollapse(methodTableToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(methodTableToggle, event)" tabindex="0"><img id="methodTableToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />Methods</span></h1><div id="methodTableSection" class="section" name="collapseableSection" style=""><table id="memberList" class="members" frame="lhs" cellpadding="2"><col width="10%" /><tr><th class="iconColumn">
+               
+            </th><th class="nameColumn">Name</th><th class="descriptionColumn">Description</th></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="5f59fe7b-1419-1835-5d01-f64af945c833.htm">Abort</a></td><td> <font color="red"><b>Obsolete. </b></font></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ebd80cb7-ad4e-e14a-2b56-f3c12cc72209.htm">AddDocument(Document)</a></td><td><div class="summary"> Adds a document to this index.  If the document contains more than
+            {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+            discarded.
+            
+            <p /> Note that if an Exception is hit (for example disk full)
+            then the index will be consistent, but this document
+            may not have been added.  Furthermore, it's possible
+            the index will have one segment in non-compound format
+            even when using compound files (when a merge has
+            partially succeeded).<p /><p /> This method periodically flushes pending documents
+            to the Directory (see <a href="#flush">above</a>), and
+            also periodically triggers segment merges in the index
+            according to the {@link MergePolicy} in use.<p /><p />Merges temporarily consume space in the
+            directory. The amount of space required is up to 1X the
+            size of all segments being merged, when no
+            readers/searchers are open against the index, and up to
+            2X the size of all segments being merged when
+            readers/searchers are open against the index (see
+            {@link #Optimize()} for details). The sequence of
+            primitive merge operations performed is governed by the
+            merge policy.
+            
+            <p />Note that each term in the document can be no longer
+            than 16383 characters, otherwise an
+            IllegalArgumentException will be thrown.<p /><p />Note that it's possible to create an invalid Unicode
+            string in java if a UTF16 surrogate pair is malformed.
+            In this case, the invalid characters are silently
+            replaced with the Unicode replacement character
+            U+FFFD.<p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="46d966a6-5aa1-3452-df05-3cd1bcc4fe9d.htm">AddDocument(Document, Analyzer)</a></td><td><div class="summary"> Adds a document to this index, using the provided analyzer instead of the
+            value of {@link #GetAnalyzer()}.  If the document contains more than
+            {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+            discarded.
+            
+            <p />See {@link #AddDocument(Document)} for details on
+            index and IndexWriter state after an Exception, and
+            flushing/merging temporary free space requirements.<p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="6197c808-d4ae-8efb-b4ab-a71dd1c0041e.htm">AddIndexes(<span class="languageSpecificText"><span class="cpp">array&lt;</span></span>Directory<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>)</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary">Merges all segments from an array of indexes into this index.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="15912d73-08bd-dbf3-82d0-e2d638801cb4.htm">AddIndexes(<span class="languageSpecificText"><span class="cpp">array&lt;</span></span>IndexReader<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>)</a></td><td><div class="summary">Merges the provided indexes into this index.
+            <p />After this completes, the index is optimized. <p /><p />The provided IndexReaders are not closed.<p /><p /><b>NOTE:</b> while this is running, any attempts to
+            add or delete documents (with another thread) will be
+            paused until this method completes.
+            
+            <p />See {@link #AddIndexesNoOptimize(Directory[])} for
+            details on transactional semantics, temporary free
+            space required in the Directory, and non-CFS segments
+            on an Exception.<p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="40068077-deb4-94fd-e952-145d3004c96e.htm">AddIndexesNoOptimize</a></td><td><div class="summary"> Merges all segments from an array of indexes into this
+            index.
+            
+            <p />This may be used to parallelize batch indexing.  A large document
+            collection can be broken into sub-collections.  Each sub-collection can be
+            indexed in parallel, on a different thread, process or machine.  The
+            complete index can then be created by merging sub-collection indexes
+            with this method.
+            
+            <p /><b>NOTE:</b> the index in each Directory must not be
+            changed (opened by a writer) while this method is
+            running.  This method does not acquire a write lock in
+            each input Directory, so it is up to the caller to
+            enforce this.
+            
+            <p /><b>NOTE:</b> while this is running, any attempts to
+            add or delete documents (with another thread) will be
+            paused until this method completes.
+            
+            <p />This method is transactional in how Exceptions are
+            handled: it does not commit a new segments_N file until
+            all indexes are added.  This means if an Exception
+            occurs (for example disk full), then either no indexes
+            will have been added or they all will have been.<p /><p />Note that this requires temporary free space in the
+            Directory up to 2X the sum of all input indexes
+            (including the starting index).  If readers/searchers
+            are open against the starting index, then temporary
+            free space required will be higher by the size of the
+            starting index (see {@link #Optimize()} for details).
+            <p /><p />Once this completes, the final size of the index
+            will be less than the sum of all input index sizes
+            (including the starting index).  It could be quite a
+            bit smaller (if there were many pending deletes) or
+            just slightly smaller.<p /><p />
+            This requires this index not be among those to be added.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="5fee8995-a492-615e-698e-46c8fe9e5635.htm">Close<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary"> Commits all changes to an index and closes all
+            associated files.  Note that this may be a costly
+            operation, so, try to re-use a single writer instead of
+            closing and opening a new one.  See {@link #Commit()} for
+            caveats about write caching done by some IO devices.
+            
+            <p /> If an Exception is hit during close, eg due to disk
+            full or some other reason, then both the on-disk index
+            and the internal state of the IndexWriter instance will
+            be consistent.  However, the close will not be complete
+            even though part of it (flushing buffered documents)
+            may have succeeded, so the write lock will still be
+            held.<p /><p /> If you can correct the underlying cause (eg free up
+            some disk space) then you can call close() again.
+            Failing that, if you want to force the write lock to be
+            released (dangerous, because you may then lose buffered
+            docs in the IndexWriter instance) then you can do
+            something like this:<p /><pre>
+            try {
+            writer.close();
+            } finally {
+            if (IndexWriter.isLocked(directory)) {
+            IndexWriter.unlock(directory);
+            }
+            }
+            </pre>
+            
+            after which, you must be certain not to use the writer
+            instance anymore.<p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer, again.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="51c1c861-1f37-11a4-7f70-cc3e4698b950.htm">Close(Boolean)</a></td><td><div class="summary"> Closes the index with or without waiting for currently
+            running merges to finish.  This is only meaningful when
+            using a MergeScheduler that runs merges in background
+            threads.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer, again.  See <a href="#OOME">above</a> for details.<p /><p /><b>NOTE</b>: it is dangerous to always call
+            close(false), especially when IndexWriter is not open
+            for very long, because this can result in "merge
+            starvation" whereby long merges will never have a
+            chance to finish.  This will cause too many segments in
+            your index over time.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9e5b5681-859f-8190-2a3c-2a0b364f95d8.htm">Commit<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary"><p />Commits all pending changes (added &amp; deleted
+            documents, optimizations, segment merges, added
+            indexes, etc.) to the index, and syncs all referenced
+            index files, such that a reader will see the changes
+            and the index updates will survive an OS or machine
+            crash or power loss.  Note that this does not wait for
+            any running background merges to finish.  This may be a
+            costly operation, so you should test the cost in your
+            application and do it only when really necessary.<p /><p /> Note that this operation calls Directory.sync on
+            the index files.  That call should not return until the
+            file contents &amp; metadata are on stable storage.  For
+            FSDirectory, this calls the OS's fsync.  But, beware:
+            some hardware devices may in fact cache writes even
+            during fsync, and return before the bits are actually
+            on stable storage, to give the appearance of faster
+            performance.  If you have such a device, and it does
+            not have a battery backup (for example) then on power
+            loss it may still lose data.  Lucene cannot guarantee
+            consistency on such devices.  <p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9b465ff4-ca15-bfc4-98eb-2e556c997b71.htm">Commit(IDictionary<span class="languageSpecificText"><span class="cs">&lt;</span><span class="vb">(Of </span><span class="cpp">&lt;</span><span class="fs">&lt;'</span><span class="nu">(</span></span>String, String<span class="languageSpecificText"><span class="cs">&gt;</span><span class="vb">)</span><span class="cpp">&gt;</span><span class="fs">&gt;</span><span class="nu">)</span></span>)</a></td><td><div class="summary">Commits all changes to the index, specifying a
+            commitUserData Map (String -&gt; String).  This just
+            calls {@link #PrepareCommit(Map)} (if you didn't
+            already call it) and then {@link #finishCommit}.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="40e72cdc-92cc-aec0-00da-0ac670f7ac7d.htm">DeleteAll</a></td><td><div class="summary"> Delete all documents in the index.
+            
+            <p />This method will drop all buffered documents and will 
+            remove all segments from the index. This change will not be
+            visible until a {@link #Commit()} has been called. This method
+            can be rolled back using {@link #Rollback()}.<p /><p />NOTE: this method is much faster than using deleteDocuments( new MatchAllDocsQuery() ).<p /><p />NOTE: this method will forcefully abort all merges
+            in progress.  If other threads are running {@link
+            #Optimize()} or any of the addIndexes methods, they
+            will receive {@link MergePolicy.MergeAbortedException}s.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="f690fc4e-84af-24b4-d760-e4f50a2acc6c.htm">DeleteDocuments(Query)</a></td><td><div class="summary"> Deletes the document(s) matching the provided query.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="426978b4-aa6b-bdde-6e5f-79369139eb9c.htm">DeleteDocuments(<span class="languageSpecificText"><span class="cpp">array&lt;</span></span>Query<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>)</a></td><td><div class="summary"> Deletes the document(s) matching any of the provided queries.
+            All deletes are flushed at the same time.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="264792af-ca74-45cb-1c6b-cf3d6d73dfa9.htm">DeleteDocuments(Term)</a></td><td><div class="summary"> Deletes the document(s) containing <span id="cbc_1" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">term</pre></div></span>.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="135a44b0-75e6-c271-c5d4-a1ce893949de.htm">DeleteDocuments(<span class="languageSpecificText"><span class="cpp">array&lt;</span></span>Term<span class="languageSpecificText"><span class="cpp">&gt;</span><span class="cs">[]</span><span class="vb">()</span><span class="nu">[]</span><span class="fs">[]</span></span>)</a></td><td><div class="summary"> Deletes the document(s) containing any of the
+            terms. All deletes are flushed at the same time.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="aec4e56e-e7ad-6cc3-2965-497271876fd4.htm">Dispose</a></td><td><div class="summary">
+            .NET
+            </div></td></tr><tr data="protected;declared;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="133b8965-1ccd-ffa0-8279-17ecf67de9b1.htm">DoAfterFlush</a></td><td><div class="summary">
+             A hook for extending classes to execute operations after pending added and
+             deleted documents have been flushed to the Directory but before the change
+             is committed (new segments_N file written).
+            </div></td></tr><tr data="protected;declared;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="1692ecd5-ee77-8bf0-9002-1022b343d340.htm">DoBeforeFlush</a></td><td><div class="summary">
+             A hook for extending classes to execute operations before pending added and
+             deleted documents are flushed to the Directory.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="145ad7d9-3371-3ab0-a1a5-13265c8bd279.htm">DocCount</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary">Returns the number of documents currently in this
+            index, not counting deletions.
+            </div></td></tr><tr data="protected;declared;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="aa2d56e6-ce48-9f41-0e09-265dfcee0c15.htm">EnsureOpen<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td /></tr><tr data="protected;declared;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="45e67fbc-05ee-e857-23bf-7b778f136bf5.htm">EnsureOpen(Boolean)</a></td><td><div class="summary"> Used internally to throw an {@link
+            AlreadyClosedException} if this IndexWriter has been
+            closed.
+            </div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/bsc2ak47" target="_blank">Equals</a></td><td><div class="summary">Determines whether the specified <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> is equal to the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="0d163284-6587-701a-2d25-64a49abaf325.htm">ExpungeDeletes<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary">Expunges all deletes from the index.  When an index
+            has many document deletions (or updates to existing
+            documents), it's best to either call optimize or
+            expungeDeletes to remove all unused data in the index
+            associated with the deleted documents.  To see how
+            many deletions you have pending in your index, call
+            {@link IndexReader#numDeletedDocs}
+            This saves disk space and memory usage while
+            searching.  expungeDeletes should be somewhat faster
+            than optimize since it does not insist on reducing the
+            index to a single segment (though, this depends on the
+            {@link MergePolicy}; see {@link
+            MergePolicy#findMergesToExpungeDeletes}.). Note that
+            this call does not first commit any buffered
+            documents, so you must do so yourself if necessary.
+            See also {@link #ExpungeDeletes(boolean)}
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="3234b4f3-8560-98f7-f321-692e9bbe9c27.htm">ExpungeDeletes(Boolean)</a></td><td><div class="summary">Just like {@link #ExpungeDeletes()}, except you can
+            specify whether the call should block until the
+            operation completes.  This is only meaningful with a
+            {@link MergeScheduler} that is able to run merges in
+            background threads.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="protected;inherited;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/4k87zsw7" target="_blank">Finalize</a></td><td><div class="summary">Allows an <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> to attempt to free resources and perform other cleanup operations before the <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a> is reclaimed by garbage collection.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2c5f3f30-9935-304d-f3c1-3571d7817be6.htm">Flush<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary"> Flush all in-memory buffered updates (adds and deletes)
+            to the Directory. 
+            <p />Note: while this will force buffered docs to be
+            pushed into the index, it will not make these docs
+            visible to a reader.  Use {@link #Commit()} instead
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="bcfd7552-695a-701b-12f8-5076a62a0640.htm">Flush(Boolean, Boolean, Boolean)</a></td><td><div class="summary"> Flush all in-memory buffered udpates (adds and deletes)
+            to the Directory.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="4b1028ce-26a7-3273-b79f-d3ab752e06e1.htm">GetAnalyzer</a></td><td><div class="summary">Returns the analyzer used by this index. </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2193ae64-52a2-fdb5-b7c3-437d7e81f5fd.htm">GetBufferedDeleteTermsSize</a></td><td /></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="34e9ec37-8018-a4cc-955e-5b6e8bfb88de.htm">GetDefaultInfoStream</a></td><td><div class="summary"> Returns the current default infoStream for newly
+            instantiated IndexWriters.
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="b271e6ba-0eba-a2e1-a52e-f2a08f311e6f.htm">GetDefaultWriteLockTimeout</a></td><td><div class="summary"> Returns default write lock timeout for newly
+            instantiated IndexWriters.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="165d0270-3fb1-257d-f68b-27c5a30d6ec7.htm">GetDirectory</a></td><td><div class="summary">Returns the Directory used by this index. </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="4317ec4d-dc49-ca7e-694f-62003ebe3dff.htm">GetDocCount</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="21d0e067-8aef-d2d6-fa59-3b1689226985.htm">GetFlushCount</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ad732fd3-e842-6eaa-ef7d-fc04c574fc5e.htm">GetFlushDeletesCount</a></td><td /></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/zdee4b3y" target="_blank">GetHashCode</a></td><td><div class="summary">Serves as a hash function for a particular type. </div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="b2d9b2b8-ec7e-3840-d43a-61571f28891d.htm">GetInfoStream</a></td><td><div class="summary"> Returns the current infoStream in use by this writer.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2e8ea501-98e0-915d-fe2c-3deb0053a4ec.htm">GetMaxBufferedDeleteTerms</a></td><td><div class="summary"> Returns the number of buffered deleted terms that will
+            trigger a flush if enabled.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="7cfc2831-197f-ea9a-b18b-ba1d6d1b4fa7.htm">GetMaxBufferedDocs</a></td><td><div class="summary"> Returns the number of buffered added documents that will
+            trigger a flush if enabled.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ede9ce8b-a875-af8a-2ce8-426b3dc98711.htm">GetMaxFieldLength</a></td><td><div class="summary"> Returns the maximum number of terms that will be
+            indexed for a single field in a document.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2758407b-19d9-63a2-c7bf-142b0b4eee56.htm">GetMaxMergeDocs</a></td><td><div class="summary"><p />Returns the largest segment (measured by document
+            count) that may be merged with other segments.<p /><p />Note that this method is a convenience method: it
+            just calls mergePolicy.getMaxMergeDocs as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="990ae587-5a14-2a98-898f-76a1e05afd86.htm">GetMaxSyncPauseSeconds</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary"> Expert: returns max delay inserted before syncing a
+            commit point.  On Windows, at least, pausing before
+            syncing can increase net indexing throughput.  The
+            delay is variable based on size of the segment's files,
+            and is only inserted when using
+            ConcurrentMergeScheduler for merges.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="78e6b1e2-17b1-24c4-a486-f0926d4c9ba4.htm">GetMergedSegmentWarmer</a></td><td><div class="summary">Returns the current merged segment warmer.  See {@link
+            IndexReaderWarmer}. 
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="61f6bce7-05b2-4ca5-bc10-ea1970d57d60.htm">GetMergeFactor</a></td><td><div class="summary"><p />Returns the number of segments that are merged at
+            once and also controls the total number of segments
+            allowed to accumulate in the index.<p /><p />Note that this method is a convenience method: it
+            just calls mergePolicy.getMergeFactor as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="cc1d7e3e-83be-71cc-8f88-9ed8b716836a.htm">GetMergePolicy</a></td><td><div class="summary"> Expert: returns the current MergePolicy in use by this writer.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="113dc072-8c2f-f852-949a-653562e8e47b.htm">GetMergeScheduler</a></td><td><div class="summary"> Expert: returns the current MergePolicy in use by this
+            writer.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="42c17e05-171f-cb88-1892-664ba60764b8.htm">GetNextMerge_forNUnit</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="0ace3d71-ef36-14be-dffd-e44c3627c9be.htm">GetNumBufferedDeleteTerms</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ff5803f1-96d7-98bc-bb6d-b41c64572aec.htm">GetNumBufferedDocuments</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="dc116f3b-cd57-d413-b11a-2931bafe6acf.htm">GetRAMBufferSizeMB</a></td><td><div class="summary"> Returns the value set by {@link #setRAMBufferSizeMB} if enabled.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="e398759c-a8b4-d505-4585-a1dd84bd62c4.htm">GetReader<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary"> Expert: returns a readonly reader, covering all committed as well as
+            un-committed changes to the index. This provides "near real-time"
+            searching, in that changes made during an IndexWriter session can be
+            quickly made available for searching without closing the writer nor
+            calling {@link #commit}.
+            
+            <p />
+            Note that this is functionally equivalent to calling {#commit} and then
+            using {@link IndexReader#open} to open a new reader. But the turarnound
+            time of this method should be faster since it avoids the potentially
+            costly {@link #commit}.
+            <p />
+            
+            You must close the {@link IndexReader} returned by  this method once you are done using it.
+            
+            <p />
+            It's <i>near</i> real-time because there is no hard
+            guarantee on how quickly you can get a new reader after
+            making changes with IndexWriter.  You'll have to
+            experiment in your situation to determine if it's
+            faster enough.  As this is a new and experimental
+            feature, please report back on your findings so we can
+            learn, improve and iterate.<p /><p />The resulting reader suppports {@link
+            IndexReader#reopen}, but that call will simply forward
+            back to this method (though this may change in the
+            future).<p /><p />The very first time this method is called, this
+            writer instance will make every effort to pool the
+            readers that it opens for doing merges, applying
+            deletes, etc.  This means additional resources (RAM,
+            file descriptors, CPU time) will be consumed.<p /><p />For lower latency on reopening a reader, you should call {@link #setMergedSegmentWarmer} 
+            to call {@link #setMergedSegmentWarmer} to
+            pre-warm a newly merged segment before it's committed
+            to the index. This is important for minimizing index-to-search 
+            delay after a large merge.
+            
+            <p />If an addIndexes* call is running in another thread,
+            then this reader will only search those segments from
+            the foreign index that have been successfully copied
+            over, so far<p />.
+            
+            <p /><b>NOTE</b>: Once the writer is closed, any
+            outstanding readers may continue to be used.  However,
+            if you attempt to reopen any of those readers, you'll
+            hit an {@link AlreadyClosedException}.<p /><p /><b>NOTE:</b> This API is experimental and might
+            change in incompatible ways in the next release.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="8d795541-5ecf-3769-f4bf-2cf1275a8077.htm">GetReader(Int32)</a></td><td><div class="summary">Expert: like {@link #getReader}, except you can
+            specify which termInfosIndexDivisor should be used for
+            any newly opened readers.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="e0ee5cb6-15da-b664-85bf-6c7b5c7051af.htm">GetReaderTermsIndexDivisor</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="4d55b5b9-0828-f83c-4557-1b7cc3c545ae.htm">GetSegmentCount</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="29077115-b8ac-f28d-489e-ba5d8c529ae4.htm">GetSimilarity</a></td><td><div class="summary">Expert: Return the Similarity implementation used by this IndexWriter.
+            
+            <p />This defaults to the current value of {@link Similarity#GetDefault()}.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ec7192d8-3486-8d8f-e665-60e8bb2da5fa.htm">GetTermIndexInterval</a></td><td><div class="summary">Expert: Return the interval between indexed terms.
+            
+            </div></td></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/dfwy45w9" target="_blank">GetType</a></td><td><div class="summary">Gets the <a href="http://msdn2.microsoft.com/en-us/library/42892f65" target="_blank">Type</a> of the current instance.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="b754f5f0-2b33-a90d-7dce-5551987ef847.htm">GetUseCompoundFile</a></td><td><div class="summary"><p />Get the current setting of whether newly flushed
+            segments will use the compound file format.  Note that
+            this just returns the value previously set with
+            setUseCompoundFile(boolean), or the default value
+            (true).  You cannot use this to query the status of
+            previously flushed segments.<p /><p />Note that this method is a convenience method: it
+            just calls mergePolicy.getUseCompoundFile as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9eb1f3a9-8a4f-d0c8-0e6d-ddc50957c685.htm">GetWriteLockTimeout</a></td><td><div class="summary"> Returns allowed timeout when acquiring the write lock.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="3cc01188-689a-7392-21b2-c3f507eaf33b.htm">HasDeletions</a></td><td /></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="e122adcf-6d2d-5395-203e-38a763fc7197.htm">IsLocked(String)</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary"> Returns <span id="cbc_2" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve"><span class="highlight-keyword">true</span></pre></div></span> iff the index in the named directory is
+            currently locked.
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="5d81209a-c719-5b08-34f3-1649550a511e.htm">IsLocked(Directory)</a></td><td><div class="summary"> Returns <span id="cbc_3" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve"><span class="highlight-keyword">true</span></pre></div></span> iff the index in the named directory is
+            currently locked.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="0e16bf2c-6a1a-7638-8443-f54451420da1.htm">MaxDoc</a></td><td><div class="summary">Returns total number of docs in this index, including
+            docs not yet flushed (still in the RAM buffer),
+            not counting deletions.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="f3d23142-5a58-ef1a-ab75-c3d6ec6fba09.htm">MaybeMerge</a></td><td><div class="summary"> Expert: asks the mergePolicy whether any merges are
+            necessary now and if so, runs the requested merges and
+            then iterate (test again if merges are needed) until no
+            more merges are returned by the mergePolicy.
+            
+            Explicit calls to maybeMerge() are usually not
+            necessary. The most common case is when merge policy
+            parameters have changed.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="protected;inherited;notNetfw;"><td><img src="../icons/protmethod.gif" alt="Protected method" title="Protected method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/57ctke0a" target="_blank">MemberwiseClone</a></td><td><div class="summary">Creates a shallow copy of the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="5e9693de-31b6-9e35-7a51-af52b96b5d10.htm">Merge_ForNUnit</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9ae43972-5d6f-a554-0686-bf3ab27a97ab.htm">Message</a></td><td><div class="summary"> Prints a message to the infoStream (if non-null),
+            prefixed with the identifying information for this
+            writer and the thread that's calling it.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="bd2081fd-5005-9dee-7110-dc83f3690184.htm">NewestSegment</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="388b8c86-e28a-870f-287c-ba7145519660.htm">NumDeletedDocs</a></td><td><div class="summary"> Obtain the number of deleted docs for a pooled reader.
+            If the reader isn't being pooled, the segmentInfo's 
+            delCount is returned.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="d29b8aa3-4028-1ec0-f6fc-fba6d872432d.htm">NumDocs</a></td><td><div class="summary">Returns total number of docs in this index, including
+            docs not yet flushed (still in the RAM buffer), and
+            including deletions.  <b>NOTE:</b> buffered deletions
+            are not counted.  If you really need these to be
+            counted you should call {@link #Commit()} first.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9c589d11-4073-bb39-8765-5778238f1994.htm">NumRamDocs</a></td><td><div class="summary">Expert:  Return the number of documents currently
+            buffered in RAM. 
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="f9522f71-6d7e-08f6-64ea-391d39fe94fc.htm">Optimize<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary"> Requests an "optimize" operation on an index, priming the index
+            for the fastest available search. Traditionally this has meant
+            merging all segments into a single segment as is done in the
+            default merge policy, but individaul merge policies may implement
+            optimize in different ways.
+            
+            <p />It is recommended that this method be called upon completion of indexing.  In
+            environments with frequent updates, optimize is best done during low volume times, if at all. 
+            
+            <p /><p />See http://www.gossamer-threads.com/lists/lucene/java-dev/47895 for more discussion. <p /><p />Note that optimize requires 2X the index size free
+            space in your Directory (3X if you're using compound
+            file format).  For example, if your index
+            size is 10 MB then you need 20 MB free for optimize to
+            complete (30 MB if you're using compound fiel format).<p /><p />If some but not all readers re-open while an
+            optimize is underway, this will cause &gt; 2X temporary
+            space to be consumed as those new readers will then
+            hold open the partially optimized segments at that
+            time.  It is best not to re-open readers while optimize
+            is running.<p /><p />The actual temporary usage could be much less than
+            these figures (it depends on many factors).<p /><p />In general, once the optimize completes, the total size of the
+            index will be less than the size of the starting index.
+            It could be quite a bit smaller (if there were many
+            pending deletes) or just slightly smaller.<p /><p />If an Exception is hit during optimize(), for example
+            due to disk full, the index will not be corrupt and no
+            documents will have been lost.  However, it may have
+            been partially optimized (some segments were merged but
+            not all), and it's possible that one of the segments in
+            the index will be in non-compound format even when
+            using compound file format.  This will occur when the
+            Exception is hit during conversion of the segment into
+            compound format.<p /><p />This call will optimize those segments present in
+            the index when the call started.  If other threads are
+            still adding documents and flushing segments, those
+            newly created segments will not be optimized unless you
+            call optimize again.<p /><p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="50613dc8-ccac-0822-6685-ebd4e599d1bb.htm">Optimize(Boolean)</a></td><td><div class="summary">Just like {@link #Optimize()}, except you can specify
+            whether the call should block until the optimize
+            completes.  This is only meaningful with a
+            {@link MergeScheduler} that is able to run merges in
+            background threads.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="e2eb815c-f045-2bbf-5487-8ef93dd4312f.htm">Optimize(Int32)</a></td><td><div class="summary"> Optimize the index down to &lt;= maxNumSegments.  If
+            maxNumSegments==1 then this is the same as {@link
+            #Optimize()}.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="a218d9bc-3d07-9e0d-8afb-62bbf8eb33ed.htm">Optimize(Int32, Boolean)</a></td><td><div class="summary">Just like {@link #Optimize(int)}, except you can
+            specify whether the call should block until the
+            optimize completes.  This is only meaningful with a
+            {@link MergeScheduler} that is able to run merges in
+            background threads.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="18b0fa15-04cc-2e41-bc83-f066d927b0ab.htm">PrepareCommit<span class="languageSpecificText"><span class="cs">()</span><span class="cpp">()</span><span class="nu">()</span><span class="fs">()</span></span></a></td><td><div class="summary">Expert: prepare for commit.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="f7c6bf44-a928-05e7-b3b9-7a14049ac72c.htm">PrepareCommit(IDictionary<span class="languageSpecificText"><span class="cs">&lt;</span><span class="vb">(Of </span><span class="cpp">&lt;</span><span class="fs">&lt;'</span><span class="nu">(</span></span>String, String<span class="languageSpecificText"><span class="cs">&gt;</span><span class="vb">)</span><span class="cpp">&gt;</span><span class="fs">&gt;</span><span class="nu">)</span></span>)</a></td><td><div class="summary"><p />Expert: prepare for commit, specifying
+            commitUserData Map (String -&gt; String).  This does the
+            first phase of 2-phase commit.  You can only call this
+            when autoCommit is false.  This method does all steps
+            necessary to commit changes since this writer was
+            opened: flushes pending added and deleted docs, syncs
+            the index files, writes most of next segments_N file.
+            After calling this you must call either {@link
+            #Commit()} to finish the commit, or {@link
+            #Rollback()} to revert the commit and undo all changes
+            done since the writer was opened.<p />
+            
+            You can also just call {@link #Commit(Map)} directly
+            without prepareCommit first in which case that method
+            will internally call prepareCommit.
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="6bc2bb61-760a-f237-e543-15267376c534.htm">RamSizeInBytes</a></td><td><div class="summary">Expert:  Return the total size of all index files currently cached in memory.
+            Useful for size management with flushRamDocs()
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="94bf1661-b9b0-0a56-3fe4-1630b7798035.htm">Rollback</a></td><td><div class="summary"> Close the <span id="cbc_4" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">IndexWriter</pre></div></span> without committing
+            any changes that have occurred since the last commit
+            (or since it was opened, if commit hasn't been called).
+            This removes any temporary files that had been created,
+            after which the state of the index will be the same as
+            it was when commit() was last called or when this
+            writer was first opened.  This can only be called when
+            this IndexWriter was opened with
+            <span id="cbc_5" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">autoCommit=<span class="highlight-keyword">false</span></pre></div></span>.  This also clears a
+            previous call to {@link #prepareCommit}.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="61cbc12e-63be-4a54-60f3-9bcc68dbbdbc.htm">SegString</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="d6602ef0-b866-e994-0c37-51d4be4ee637.htm">SetAllowMinus1Position</a></td><td><div class="summary">Deprecated: emulates IndexWriter's buggy behavior when
+            first token(s) have positionIncrement==0 (ie, prior to
+            fixing LUCENE-1542) 
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="102b9fc6-2437-5fd3-3ddf-1feac47f27d2.htm">SetDefaultInfoStream</a></td><td><div class="summary">If non-null, this will be the default infoStream used
+            by a newly instantiated IndexWriter.
+            </div></td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="77c353a1-2279-25c4-72e9-0bd04f60729b.htm">SetDefaultWriteLockTimeout</a></td><td><div class="summary"> Sets the default (for any instance of IndexWriter) maximum time to wait for a write lock (in
+            milliseconds).
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="60fc0aca-aecd-7eeb-d782-941e43de18b0.htm">SetInfoStream</a></td><td><div class="summary">If non-null, information about merges, deletes and a
+            message when maxFieldLength is reached will be printed
+            to this.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="83b96c0f-d0f8-c9d0-3637-8f52b80a5d37.htm">SetMaxBufferedDeleteTerms</a></td><td><div class="summary"><p />Determines the minimal number of delete terms required before the buffered
+            in-memory delete terms are applied and flushed. If there are documents
+            buffered in memory at the time, they are merged and a new segment is
+            created.<p /><p />Disabled by default (writer flushes by RAM usage).<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="8a86a6f4-80ae-59f5-2512-8b4824586d0b.htm">SetMaxBufferedDocs</a></td><td><div class="summary">Determines the minimal number of documents required
+            before the buffered in-memory documents are flushed as
+            a new Segment.  Large values generally gives faster
+            indexing.
+            
+            <p />When this is set, the writer will flush every
+            maxBufferedDocs added documents.  Pass in {@link
+            #DISABLE_AUTO_FLUSH} to prevent triggering a flush due
+            to number of buffered documents.  Note that if flushing
+            by RAM usage is also enabled, then the flush will be
+            triggered by whichever comes first.<p /><p />Disabled by default (writer flushes by RAM usage).<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="601e7b59-c9dc-cf8e-ff47-f7e6f36bbbef.htm">SetMaxFieldLength</a></td><td><div class="summary"> The maximum number of terms that will be indexed for a single field in a
+            document.  This limits the amount of memory required for indexing, so that
+            collections with very large files will not crash the indexing process by
+            running out of memory.  This setting refers to the number of running terms,
+            not to the number of different terms.<p /><strong>Note:</strong> this silently truncates large documents, excluding from the
+            index all terms that occur further in the document.  If you know your source
+            documents are large, be sure to set this value high enough to accomodate
+            the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
+            is your memory, but you should anticipate an OutOfMemoryError.<p />
+            By default, no more than {@link #DEFAULT_MAX_FIELD_LENGTH} terms
+            will be indexed for a field.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="a91662f3-cf04-be73-c1bd-53ab57f5abd6.htm">SetMaxMergeDocs</a></td><td><div class="summary"><p />Determines the largest segment (measured by
+            document count) that may be merged with other segments.
+            Small values (e.g., less than 10,000) are best for
+            interactive indexing, as this limits the length of
+            pauses while indexing to a few seconds.  Larger values
+            are best for batched indexing and speedier
+            searches.<p /><p />The default value is {@link Integer#MAX_VALUE}.<p /><p />Note that this method is a convenience method: it
+            just calls mergePolicy.setMaxMergeDocs as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /><p />The default merge policy ({@link
+            LogByteSizeMergePolicy}) also allows you to set this
+            limit by net size (in MB) of the segment, using {@link
+            LogByteSizeMergePolicy#setMaxMergeMB}.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="65b970d0-bc39-5344-5874-1e4c39cdb5a4.htm">SetMaxSyncPauseSeconds</a></td><td> <font color="red"><b>Obsolete. </b></font><div class="summary"> Expert: sets the max delay before syncing a commit
+            point.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="c1d8e448-96a8-3e7c-2c82-929808df161f.htm">SetMergedSegmentWarmer</a></td><td><div class="summary">Set the merged segment warmer.  See {@link
+            IndexReaderWarmer}. 
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9fd981a2-973b-9c29-96e3-4abbcd55ca4d.htm">SetMergeFactor</a></td><td><div class="summary">Determines how often segment indices are merged by addDocument().  With
+            smaller values, less RAM is used while indexing, and searches on
+            unoptimized indices are faster, but indexing speed is slower.  With larger
+            values, more RAM is used during indexing, and while searches on unoptimized
+            indices are slower, indexing is faster.  Thus larger values (&gt; 10) are best
+            for batch index creation, and smaller values (&lt; 10) for indices that are
+            interactively maintained.
+            
+            <p />Note that this method is a convenience method: it
+            just calls mergePolicy.setMergeFactor as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /><p />This must never be less than 2.  The default value is 10.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2f9ed3ab-aa4b-3fd5-9fad-3b93ce23c66b.htm">SetMergePolicy</a></td><td><div class="summary"> Expert: set the merge policy used by this writer.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="0727949c-77f0-c5c3-37fa-be777dfb360d.htm">SetMergeScheduler</a></td><td><div class="summary"> Expert: set the merge scheduler used by this writer.</div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="2c6c2ba1-c297-e5bf-236c-fb7f49f020d9.htm">SetRAMBufferSizeMB</a></td><td><div class="summary">Determines the amount of RAM that may be used for
+            buffering added documents and deletions before they are
+            flushed to the Directory.  Generally for faster
+            indexing performance it's best to flush by RAM usage
+            instead of document count and use as large a RAM buffer
+            as you can.
+            
+            <p />When this is set, the writer will flush whenever
+            buffered documents and deletions use this much RAM.
+            Pass in {@link #DISABLE_AUTO_FLUSH} to prevent
+            triggering a flush due to RAM usage.  Note that if
+            flushing by document count is also enabled, then the
+            flush will be triggered by whichever comes first.<p /><p /><b>NOTE</b>: the account of RAM usage for pending
+            deletions is only approximate.  Specifically, if you
+            delete by Query, Lucene currently has no way to measure
+            the RAM usage if individual Queries so the accounting
+            will under-estimate and you should compensate by either
+            calling commit() periodically yourself, or by using
+            {@link #setMaxBufferedDeleteTerms} to flush by count
+            instead of RAM usage (each buffered delete Query counts
+            as one).
+            
+            <p /><b>NOTE</b>: because IndexWriter uses <span id="cbc_7" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve"><span class="highlight-keyword">int</span></pre></div></span>s when managing its
+            internal storage, the absolute maximum value for this setting is somewhat
+            less than 2048 MB. The precise limit depends on various factors, such as
+            how large your documents are, how many fields have norms, etc., so it's
+            best to set this value comfortably under 2048.
+            <p /><p /> The default value is {@link #DEFAULT_RAM_BUFFER_SIZE_MB}.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="b758a441-817a-d328-f573-d18fba9bb20d.htm">SetReaderTermsIndexDivisor</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="74dcab87-c8bb-8f21-54ba-b61f837ba78f.htm">SetSimilarity</a></td><td><div class="summary">Expert: Set the Similarity implementation used by this IndexWriter.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="e8bf8175-3823-823f-bf79-7eefdaf35926.htm">SetTermIndexInterval</a></td><td><div class="summary">Expert: Set the interval between indexed terms.  Large values cause less
+            memory to be used by IndexReader, but slow random-access to terms.  Small
+            values cause more memory to be used by an IndexReader, and speed
+            random-access to terms.
+            
+            This parameter determines the amount of computation required per query
+            term, regardless of the number of documents that contain that term.  In
+            particular, it is the maximum number of other terms that must be
+            scanned before a term is located and its frequency and position information
+            may be processed.  In a large index with user-entered query terms, query
+            processing time is likely to be dominated not by term lookup but rather
+            by the processing of frequency and positional data.  In a small index
+            or when many uncommon query terms are generated (e.g., by wildcard
+            queries) term lookup may become a dominant cost.
+            
+            In particular, <span id="cbc_8" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">numUniqueTerms/interval</pre></div></span> terms are read into
+            memory by an IndexReader, and, on average, <span id="cbc_9" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">interval/<span class="highlight-number">2</span></pre></div></span> terms
+            must be scanned for each random term access.
+            
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="d4cb70c0-204c-3564-ed16-a7f3a96428ae.htm">SetUseCompoundFile</a></td><td><div class="summary"><p />Setting to turn on usage of a compound file. When on,
+            multiple files for each segment are merged into a
+            single file when a new segment is flushed.<p /><p />Note that this method is a convenience method: it
+            just calls mergePolicy.setUseCompoundFile as long as
+            mergePolicy is an instance of {@link LogMergePolicy}.
+            Otherwise an IllegalArgumentException is thrown.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="778e4818-fb14-bd13-25d5-c103dbdd2724.htm">SetWriteLockTimeout</a></td><td /></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="3423cf36-9bd6-492d-4338-437e56faf35b.htm">TestPoint</a></td><td /></tr><tr data="public;inherited;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="http://msdn2.microsoft.com/en-us/library/7bxwbwt2" target="_blank">ToString</a></td><td><div class="summary">Returns a <a href="http://msdn2.microsoft.com/en-us/library/s1wwdcbf" target="_blank">String</a> that represents the current <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.</div> (Inherited from <a href="http://msdn2.microsoft.com/en-us/library/e5kfa45b" target="_blank">Object</a>.)</td></tr><tr data="public;static;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /><img src="../icons/static.gif" alt="Static member" title="Static member" /></td><td><a href="a4956047-6d1f-68d2-ffb6-d696e1682abb.htm">Unlock</a></td><td><div class="summary"> Forcibly unlocks the index in the named directory.
+            <p />
+            Caution: this should only be used by failure recovery code,
+            when it is known that no other process nor thread is in fact
+            currently accessing this index.
+            </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="dc882e02-d7ef-5491-bb2e-c08ee5514db0.htm">UpdateDocument(Term, Document)</a></td><td><div class="summary"> Updates a document by first deleting the document(s)
+            containing <span id="cbc_10" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">term</pre></div></span> and then adding the new
+            document.  The delete and then add are atomic as seen
+            by a reader on the same index (flush may happen only after
+            the add).
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="9304f434-84bc-8b7a-aadd-1193e387ca91.htm">UpdateDocument(Term, Document, Analyzer)</a></td><td><div class="summary"> Updates a document by first deleting the document(s)
+            containing <span id="cbc_11" x-lang="CSharp" codeLanguage="CSharp"><div class="highlight-title"><span class="highlight-copycode" onkeypress="javascript:CopyColorizedCodeCheckKey(this.parentNode, event);" tabindex="0" onmouseover="CopyCodeChangeIcon(this)" onmouseout="CopyCodeChangeIcon(this)" onclick="javascript:CopyColorizedCode(this.parentNode);"><img style="margin-right: 5px;" src="../icons/CopyCode.gif" />Copy</span>C#</div><div class="code"><pre xml:space="preserve">term</pre></div></span> and then adding the new
+            document.  The delete and then add are atomic as seen
+            by a reader on the same index (flush may happen only after
+            the add).
+            
+            <p /><b>NOTE</b>: if this method hits an OutOfMemoryError
+            you should immediately close the writer.  See <a href="#OOME">above</a> for details.<p /></div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="ba135993-6ee1-0860-8595-96dc76e7e868.htm">Verbose</a></td><td><div class="summary">Returns true if verbosing is enabled (i.e., infoStream != null). </div></td></tr><tr data="public;declared;notNetfw;"><td><img src="../icons/pubmethod.gif" alt="Public method" title="Public method" /></td><td><a href="4b9a1c9f-6b68-a733-3df1-ac0af26d1bed.htm">WaitForMerges</a></td><td><div class="summary"> Wait for any currently outstanding merges to finish.
+            
+            <p />It is guaranteed that any merges started prior to calling this method 
+            will have completed once this method completes.<p /></div></td></tr></table></div><h1 class="heading"><span onclick="ExpandCollapse(seeAlsoToggle)" style="cursor:default;" onkeypress="ExpandCollapse_CheckKey(seeAlsoToggle, event)" tabindex="0"><img id="seeAlsoToggle" class="toggle" name="toggleSwitch" src="../icons/collapse_all.gif" />See Also</span></h1><div id="seeAlsoSection" class="section" name="collapseableSection" style=""><div class="seeAlsoStyle"><a href="cfb56f63-f6d1-efdf-e1eb-54ef6f901cd1.htm">IndexWriter Class</a></div><div class="seeAlsoStyle"><a href="4d52bcdb-050f-b66e-6d74-d7169ebc88b0.htm">Lucene.Net.Index Namespace</a></div></div></div><div id="footer"><div class="footerLine"><img width="100%" height="3px" src="../icons/footer.gif" alt="Footer image" title="Footer image" /></div><A NAME="feedback"></A><span id="fb" class="feedbackcss"></span></div></div></body></html>
