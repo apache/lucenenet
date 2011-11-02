@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Lucene.Net.Core</id>
+    <version>$version$</version>
+    <title>Lucene.Net Core</title>
+    <authors>Lucene.Net Community</authors>
+    <owners>The Apache Software Foundation</owners>
+    <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>http://incubator.apache.org/lucene.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
+
+**This package contains only the contrbi Lucene.Net assemblies.</description>
+    <summary>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</summary>
+	<tags>lucene.net core search information retrieval lucene apache</tags>
+     <dependencies>
+     </dependencies>  
+  </metadata>
+  <files>
+        <file src="..\..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.dll" target="lib\net40\Lucene.Net.Contrib.Analyzers.dll" />
+        <file src="..\..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.XML" target="lib\net40\Lucene.Net.Contrib.Analyzers.XML" />
+        <file src="..\..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.dll" target="lib\net40\Lucene.Net.Contrib.Core.dll" />
+        <file src="..\..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.XML" target="lib\net40\Lucene.Net.Contrib.Core.XML" />
+        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.dll" target="lib\net40\Lucene.Net.FastVectorHighlighter.dll" />
+        <file src="..\..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.XML" target="lib\net40\Lucene.Net.FastVectorHighlighter.XML" />
+        <file src="..\..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.dll" target="lib\net40\Lucene.Net.Contrib.Highlighter.dll" />
+        <file src="..\..\bin\contrib\Highlighter\Release\Lucene.Net.Contrib.Highlighter.XML" target="lib\net40\Lucene.Net.Contrib.Highlighter.XML" />
+        <file src="..\..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.dll" target="lib\net40\Lucene.Net.Contrib.Queries.dll" />
+        <file src="..\..\bin\contrib\Queries\Release\Lucene.Net.Contrib.Queries.XML" target="lib\net40\Lucene.Net.Contrib.Queries.XML" />
+        <file src="..\..\bin\contrib\Regex\Release\Contrib.Regex.dll" target="lib\net40\Contrib.Regex.dll" />
+        <file src="..\..\bin\contrib\Regex\Release\Contrib.Regex.XML" target="lib\net40\Contrib.Regex.XML" />
+        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.dll" target="lib\net40\Lucene.Net.Search.SimpleFacetedSearch.dll" />
+        <file src="..\..\bin\contrib\SimpleFacetedSearch\Release\Lucene.Net.Search.SimpleFacetedSearch.XML" target="lib\net40\Lucene.Net.Search.SimpleFacetedSearch.XML" />
+        <file src="..\..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.dll" target="lib\net40\Lucene.Net.Contrib.Snowball.dll" />
+        <file src="..\..\bin\contrib\Snowball\Release\Lucene.Net.Contrib.Snowball.XML" target="lib\net40\Lucene.Net.Contrib.Snowball.XML" />
+        <file src="..\..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.dll" target="lib\net40\Lucene.Net.Contrib.Spatial.dll" />
+        <file src="..\..\bin\contrib\Spatial\Release\Lucene.Net.Contrib.Spatial.XML" target="lib\net40\Lucene.Net.Contrib.Spatial.XML" />
+        <file src="..\..\bin\contrib\SpellChecker\Release\Lucene.Net.Contrib.SpellChecker.dll" target="lib\net40\Lucene.Net.Contrib.SpellChecker.dll" />
+        <file src="..\..\bin\contrib\SpellChecker\Release\Lucene.Net.Contrib.SpellChecker.XML" target="lib\net40\Lucene.Net.Contrib.SpellChecker.XML" />
+  </files>
+ 
+</package>

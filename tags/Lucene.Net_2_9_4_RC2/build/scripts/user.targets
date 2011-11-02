@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+ 
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+  
+ http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	
+	
+  	<PropertyGroup>
+		<Configuration Condition="'$(Configuration)' == '' Or '$(Configuration)' == 'debug'">Debug</Configuration>
+		<Configuration Condition="'$(Configuration)' == 'release'">Release</Configuration>
+		<BuildArea Condition="'$(BuildArea)' == ''">all</BuildArea>
+		<LuceneFolder>core</LuceneFolder>
+		<ContribFolder>contrib</ContribFolder>
+		<BinFolder>bin</BinFolder>
+		<SourceFolder>src</SourceFolder>
+		<TestFolder>test</TestFolder>
+		<LibFolder>lib</LibFolder>
+		<!-- This path is a bit redundant -->
+		<NUnitBinFolder>lib\NUnit.org\NUnit\2.5.9\bin\net-2.0\</NUnitBinFolder>
+		<TempFolder>$(TEMP)</TempFolder>
+		<BuildFolder>$(MSBuildProjectDirectory)</BuildFolder>
+		<RootFolder>$(MSBuildProjectDirectory)\..\..\</RootFolder>
+		<Executable></Executable>
+	 </PropertyGroup>
+	
+	<!-- To Execute commands on mono like running nunit, it requires running through the program mono.exe -->
+	<PropertyGroup Condition="'$(NETFRAMEWORK)' == 'mono'">
+		<Executable>mono</Executable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<LuceneSourceFolder>$(RootFolder)$(SourceFolder)\$(LuceneFolder)\</LuceneSourceFolder>
+		<LuceneTestFolder>$(RootFolder)$(TestFolder)\$(LuceneFolder)\</LuceneTestFolder>
+		<LuceneBinFolder>$(RootFolder)$(BinFolder)\$(LuceneFolder)\</LuceneBinFolder>
+		<ContribSourceFolder>$(RootFolder)$(SourceFolder)\$(ContribFolder)\</ContribSourceFolder>
+		<ContribTestFolder>$(RootFolder)$(TestFolder)\$(ContribFolder)\</ContribTestFolder>
+		<ContribBinFolder>$(RootFolder)$(BinFolder)\$(ContribFolder)\</ContribBinFolder>
+	</PropertyGroup>
+
+
+
+  	<ItemGroup Condition="'$(BuildArea)' == 'lucene' Or '$(BuildArea)' == 'all'">
+		<BuildFiles Include="\$(LuceneBinFolder)**\*" />
+		<TestFiles Include="\$(LuceneBinFolder)**\*.Test.dll" />
+		<SubFiles Include="\$(LuceneBinFolder)$(Configuration)\**\*.*" Exclude="\$(LuceneBinFolder)$(Configuration)\*.*" />
+		<ProjectFiles Include="\$(LuceneSourceFolder)\**\*.csproj" />
+		<ProjectFiles Include="\$(LuceneTestFolder)\**\*.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	    <SubFolders Include="@(SubFiles->'%(RootDir)%(Directory)')" />
+		<NUnitFolder Include="\$(RootFolder)$(NunitBinFolder)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	    <BuildFolders Include="@(SubFolders->'%(RootDir)%(Directory)')" Exclude="\$(LuceneBinFolder)" />
+	</ItemGroup>
+  
+	<Target Name="clean">
+		<Exec Command="echo %(BuildFolders.FullPath)" WorkingDirectory="/" />
+		<Delete Files="@(BuildFiles)" /> 
+		<!-- 
+		TODO: fix this
+		<RemoveDir Directories="@(BuildFolders)" /> -->
+	</Target>
+  
+ 	<Target Name="build">
+		<MSBuild Projects="@(ProjectFiles)" Properties="Configuration=$(Configuration)" />
+	</Target>
+  
+	<Target Name="test">
+		<MakeDir Condition="!Exists('$(TEMP)')" Directories="$(TEMP)" />
+		
+		<Exec Command="$(Executable) %(NUnitFolder.FullPath)nunit-console.exe -nologo @(TestFiles).FullPath" />
+	</Target>
+
+</Project>
