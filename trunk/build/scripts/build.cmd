@@ -17,8 +17,8 @@ GOTO LicenseEnd
  limitations under the License.
 :LicenseEnd
 
-SET TARGETS ="all"
-SET AREA = "all"
+SET TARGETS=all
+SET AREA=all
 IF [%1] NEQ [] SET TARGETS=%1
 IF [%2] NEQ [] SET AREA=%2
 
