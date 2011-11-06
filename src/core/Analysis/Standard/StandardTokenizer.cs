@@ -34,13 +34,13 @@ namespace Lucene.Net.Analysis.Standard
 	/// 
 	/// <p/> This should be a good tokenizer for most European-language documents:
 	/// 
-	/// <ul>
-	/// <li>Splits words at punctuation characters, removing punctuation. However, a 
-	/// dot that's not followed by whitespace is considered part of a token.</li>
-	/// <li>Splits words at hyphens, unless there's a number in the token, in which case
-	/// the whole token is interpreted as a product number and is not split.</li>
-	/// <li>Recognizes email addresses and internet hostnames as one token.</li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>Splits words at punctuation characters, removing punctuation. However, a 
+	/// dot that's not followed by whitespace is considered part of a token.</item>
+	/// <item>Splits words at hyphens, unless there's a number in the token, in which case
+	/// the whole token is interpreted as a product number and is not split.</item>
+	/// <item>Recognizes email addresses and internet hostnames as one token.</item>
+	/// </list>
 	/// 
 	/// <p/>Many applications have specific tokenizer needs.  If this tokenizer does
 	/// not suit your application, please consider copying this source code
@@ -48,12 +48,12 @@ namespace Lucene.Net.Analysis.Standard
 	/// 
 	/// <a name="version"/>
 	/// <p/>
-	/// You must specify the required {@link Version} compatibility when creating
+	/// You must specify the required <see cref="Version" /> compatibility when creating
 	/// StandardAnalyzer:
-	/// <ul>
-	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></item>
+	/// </list>
 	/// </summary>
 	
 	public class StandardTokenizer:Tokenizer
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>String token types that correspond to token type int constants </summary>
 		public static readonly System.String[] TOKEN_TYPES = new System.String[]{"<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>"};
 		
-		/// <deprecated> Please use {@link #TOKEN_TYPES} instead 
+		/// <deprecated> Please use <see cref="TOKEN_TYPES" /> instead 
 		/// </deprecated>
         [Obsolete("Please use TOKEN_TYPES instead")]
 		public static readonly System.String[] tokenImage = TOKEN_TYPES;
@@ -110,25 +110,25 @@ namespace Lucene.Net.Analysis.Standard
 			this.maxTokenLength = length;
 		}
 		
-		/// <seealso cref="setMaxTokenLength">
+		/// <seealso cref="SetMaxTokenLength">
 		/// </seealso>
 		public virtual int GetMaxTokenLength()
 		{
 			return maxTokenLength;
 		}
 		
-		/// <summary> Creates a new instance of the {@link StandardTokenizer}. Attaches the
-		/// <code>input</code> to a newly created JFlex scanner.
+		/// <summary> Creates a new instance of the <see cref="StandardTokenizer" />. Attaches the
+		/// <c>input</c> to a newly created JFlex scanner.
 		/// </summary>
-		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
+        /// <deprecated> Use <see cref="StandardTokenizer(Version, System.IO.TextReader)" /> instead
 		/// </deprecated>
         [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
 		public StandardTokenizer(System.IO.TextReader input):this(Version.LUCENE_24, input)
 		{
 		}
 		
-		/// <summary> Creates a new instance of the {@link Lucene.Net.Analysis.Standard.StandardTokenizer}.  Attaches
-		/// the <code>input</code> to the newly created JFlex scanner.
+		/// <summary> Creates a new instance of the <see cref="Lucene.Net.Analysis.Standard.StandardTokenizer" />.  Attaches
+		/// the <c>input</c> to the newly created JFlex scanner.
 		/// 
 		/// </summary>
 		/// <param name="input">The input reader
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// 
 		/// See http://issues.apache.org/jira/browse/LUCENE-1068
 		/// </param>
-		/// <deprecated> Use {@link #StandardTokenizer(Version, Reader)} instead
+        /// <deprecated> Use <see cref="StandardTokenizer(Version, System.IO.TextReader)" /> instead
 		/// </deprecated>
         [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
 		public StandardTokenizer(System.IO.TextReader input, bool replaceInvalidAcronym):base()
@@ -146,26 +146,27 @@ namespace Lucene.Net.Analysis.Standard
 			this.scanner = new StandardTokenizerImpl(input);
 			Init(input, replaceInvalidAcronym);
 		}
-		
-		/// <summary> Creates a new instance of the
-		/// {@link org.apache.lucene.analysis.standard.StandardTokenizer}. Attaches
-		/// the <code>input</code> to the newly created JFlex scanner.
-		/// 
-		/// </summary>
-		/// <param name="input">The input reader
-		/// 
-		/// See http://issues.apache.org/jira/browse/LUCENE-1068
-		/// </param>
-		public StandardTokenizer(Version matchVersion, System.IO.TextReader input):base()
+
+	    /// <summary> Creates a new instance of the
+	    /// <see cref="Lucene.Net.Analysis.Standard.StandardTokenizer" />. Attaches
+	    /// the <c>input</c> to the newly created JFlex scanner.
+	    /// 
+	    /// </summary>
+	    /// <param name="matchVersion"></param>
+	    /// <param name="input">The input reader
+	    /// 
+	    /// See http://issues.apache.org/jira/browse/LUCENE-1068
+	    /// </param>
+	    public StandardTokenizer(Version matchVersion, System.IO.TextReader input):base()
 		{
 			InitBlock();
 			this.scanner = new StandardTokenizerImpl(input);
 			Init(input, matchVersion);
 		}
 		
-		/// <summary> Creates a new StandardTokenizer with a given {@link AttributeSource}. </summary>
+		/// <summary> Creates a new StandardTokenizer with a given <see cref="AttributeSource" />. </summary>
 		/// <deprecated> Use
-		/// {@link #StandardTokenizer(Version, AttributeSource, Reader)}
+        /// <see cref="StandardTokenizer(Version, AttributeSource, System.IO.TextReader)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use StandardTokenizer(Version, AttributeSource, Reader) instead")]
@@ -176,7 +177,7 @@ namespace Lucene.Net.Analysis.Standard
 			Init(input, replaceInvalidAcronym);
 		}
 		
-		/// <summary> Creates a new StandardTokenizer with a given {@link AttributeSource}.</summary>
+		/// <summary> Creates a new StandardTokenizer with a given <see cref="AttributeSource" />.</summary>
 		public StandardTokenizer(Version matchVersion, AttributeSource source, System.IO.TextReader input):base(source)
 		{
 			InitBlock();
@@ -184,9 +185,9 @@ namespace Lucene.Net.Analysis.Standard
 			Init(input, matchVersion);
 		}
 		
-		/// <summary> Creates a new StandardTokenizer with a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory} </summary>
+		/// <summary> Creates a new StandardTokenizer with a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" /> </summary>
 		/// <deprecated> Use
-		/// {@link #StandardTokenizer(Version, org.apache.lucene.util.AttributeSource.AttributeFactory, Reader)}
+        /// <see cref="StandardTokenizer(Version, AttributeSource.AttributeFactory, System.IO.TextReader)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use StandardTokenizer(Version, Lucene.Net.Util.AttributeSource.AttributeFactory, Reader) instead")]
@@ -198,7 +199,7 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary> Creates a new StandardTokenizer with a given
-		/// {@link org.apache.lucene.util.AttributeSource.AttributeFactory}
+		/// <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />
 		/// </summary>
 		public StandardTokenizer(Version matchVersion, AttributeFactory factory, System.IO.TextReader input):base(factory)
 		{
@@ -236,11 +237,11 @@ namespace Lucene.Net.Analysis.Standard
 		private PositionIncrementAttribute posIncrAtt;
 		private TypeAttribute typeAtt;
 		
-		/*
-		* (non-Javadoc)
-		*
-		* @see Lucene.Net.Analysis.TokenStream#next()
-		*/
+		///<summary>
+		/// (non-Javadoc)
+		///
+		/// <see cref="Lucene.Net.Analysis.TokenStream.Next()" />
+        ///</summary>
 		public override bool IncrementToken()
 		{
 			ClearAttributes();

@@ -34,28 +34,28 @@ namespace Lucene.Net.Documents
 	/// which makes them suitable for use as field values and search terms.
 	/// 
 	/// <p/>Note that this class saves dates with millisecond granularity,
-	/// which is bad for {@link TermRangeQuery} and {@link PrefixQuery}, as those
+	/// which is bad for <see cref="TermRangeQuery" /> and <see cref="PrefixQuery" />, as those
 	/// queries are expanded to a BooleanQuery with a potentially large number
 	/// of terms when searching. Thus you might want to use
-	/// {@link DateTools} instead.
+	/// <see cref="DateTools" /> instead.
 	/// 
 	/// <p/>
 	/// Note: dates before 1970 cannot be used, and therefore cannot be
-	/// indexed when using this class. See {@link DateTools} for an
+	/// indexed when using this class. See <see cref="DateTools" /> for an
 	/// alternative without such a limitation.
 	/// 
 	/// <p/>
-	/// Another approach is {@link NumericUtils}, which provides
+	/// Another approach is <see cref="NumericUtils" />, which provides
 	/// a sortable binary representation (prefix encoded) of numeric values, which
 	/// date/time are.
-	/// For indexing a {@link Date} or {@link Calendar}, just get the unix timestamp as
-	/// <code>long</code> using {@link Date#getTime} or {@link Calendar#getTimeInMillis} and
-	/// index this as a numeric value with {@link NumericField}
-	/// and use {@link NumericRangeQuery} to query it.
+	/// For indexing a <see cref="DateTime" />, convert it to unix timestamp as
+	/// <c>long</c> and
+	/// index this as a numeric value with <see cref="NumericField" />
+	/// and use <see cref="NumericRangeQuery" /> to query it.
 	/// 
 	/// </summary>
-	/// <deprecated> If you build a new index, use {@link DateTools} or 
-	/// {@link NumericField} instead.
+	/// <deprecated> If you build a new index, use <see cref="DateTools" /> or 
+	/// <see cref="NumericField" /> instead.
 	/// This class is included for use with existing
 	/// indices and will be removed in a future release.
 	/// </deprecated>

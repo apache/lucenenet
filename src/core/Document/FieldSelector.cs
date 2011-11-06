@@ -19,10 +19,9 @@ using System;
 
 namespace Lucene.Net.Documents
 {
-	/// <summary> Similar to a {@link java.io.FileFilter}, the FieldSelector allows one to make decisions about
-	/// what Fields get loaded on a {@link Document} by {@link Lucene.Net.Index.IndexReader#Document(int,Lucene.Net.Documents.FieldSelector)}
-	/// 
-	/// 
+    /// <summary> Similar to a <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/io/FileFilter.html">
+    /// java.io.FileFilter</a>, the FieldSelector allows one to make decisions about
+	/// what Fields get loaded on a <see cref="Document" /> by <see cref="Lucene.Net.Index.IndexReader.Document(int,Lucene.Net.Documents.FieldSelector)" />
 	/// </summary>
 	public interface FieldSelector
 	{
@@ -30,8 +29,8 @@ namespace Lucene.Net.Documents
 		/// <summary> </summary>
 		/// <param name="fieldName">the field to accept or reject
 		/// </param>
-		/// <returns> an instance of {@link FieldSelectorResult}
-		/// if the {@link Field} named <code>fieldName</code> should be loaded.
+		/// <returns> an instance of <see cref="FieldSelectorResult" />
+		/// if the <see cref="Field" /> named <c>fieldName</c> should be loaded.
 		/// </returns>
 		FieldSelectorResult Accept(System.String fieldName);
 	}

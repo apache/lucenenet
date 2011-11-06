@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> MultiPhraseQuery is a generalized version of PhraseQuery, with an added
-	/// method {@link #Add(Term[])}.
+	/// method <see cref="Add(Term[])" />.
 	/// To use this class, to search for the phrase "Microsoft app*" first use
 	/// add(Term) on the term "Microsoft", then find all terms that have "app" as
 	/// prefix using IndexReader.terms(Term), and use MultiPhraseQuery.add(Term[]
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Add a single term at the next position in the phrase.</summary>
-		/// <seealso cref="PhraseQuery.add(Term)">
+		/// <seealso cref="PhraseQuery.Add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term term)
 		{
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 		/// may match.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery.add(Term)">
+		/// <seealso cref="PhraseQuery.Add(Term)">
 		/// </seealso>
 		public virtual void  Add(Term[] terms)
 		{
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (!(o is MultiPhraseQuery))

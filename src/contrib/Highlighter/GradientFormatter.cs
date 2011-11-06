@@ -44,23 +44,23 @@ namespace Lucene.Net.Highlight
 		/// <summary> Sets the color range for the IDF scores
 		/// 
 		/// </summary>
-		/// <param name="">maxScore
+        /// <param name="maxScore">
 		/// The score (and above) displayed as maxColor (See QueryScorer.getMaxWeight 
 		/// which can be used to callibrate scoring scale)
 		/// </param>
-		/// <param name="">minForegroundColor
+        /// <param name="minForegroundColor">
 		/// The hex color used for representing IDF scores of zero eg
 		/// #FFFFFF (white) or null if no foreground color required
 		/// </param>
-		/// <param name="">maxForegroundColor
+        /// <param name="maxForegroundColor">
 		/// The largest hex color used for representing IDF scores eg
 		/// #000000 (black) or null if no foreground color required
 		/// </param>
-		/// <param name="">minBackgroundColor
+        /// <param name="minBackgroundColor">
 		/// The hex color used for representing IDF scores of zero eg
 		/// #FFFFFF (white) or null if no background color required
 		/// </param>
-		/// <param name="">maxBackgroundColor
+        /// <param name="maxBackgroundColor">
 		/// The largest hex color used for representing IDF scores eg
 		/// #000000 (black) or null if no background color required
 		/// </param>
@@ -193,14 +193,12 @@ namespace Lucene.Net.Highlight
 		/// for negative integer values.
 		/// 
 		/// </summary>
-		/// <param name="">hex
+        /// <param name="hex">
 		/// A string in capital or lower case hex, of no more then 16
 		/// characters.
 		/// </param>
-		/// <throws>  NumberFormatException </throws>
-		/// <summary>             if the string is more than 16 characters long, or if any
-		/// character is not in the set [0-9a-fA-f]
-		/// </summary>
+        /// <exception cref="FormatException">if the string is more than 16 characters long, or if any
+		/// character is not in the set [0-9a-fA-f]</exception>
 		public static int HexToInt(System.String hex)
 		{
 			int len = hex.Length;

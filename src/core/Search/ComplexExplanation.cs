@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 		/// uses it; otherwise it defers to the superclass.
 		/// <p/>
 		/// </summary>
-		/// <seealso cref="getMatch">
+		/// <seealso cref="GetMatch">
 		/// </seealso>
 		public override bool IsMatch()
 		{

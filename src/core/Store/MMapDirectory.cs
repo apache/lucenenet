@@ -22,9 +22,9 @@ using Constants = Lucene.Net.Util.Constants;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary>File-based {@link Directory} implementation that uses
-	/// mmap for reading, and {@link
-	/// SimpleFSDirectory.SimpleFSIndexOutput} for writing.
+	/// <summary>File-based <see cref="Directory" /> implementation that uses
+	/// mmap for reading, and <see cref="SimpleFSDirectory.SimpleFSIndexOutput" />
+	/// for writing.
 	/// 
 	/// <p/><b>NOTE</b>: memory mapping uses up a portion of the
 	/// virtual memory address space in your process equal to the
@@ -32,13 +32,13 @@ namespace Lucene.Net.Store
 	/// be sure your have plenty of virtual address space, e.g. by
 	/// using a 64 bit JRE, or a 32 bit JRE with indexes that are
 	/// guaranteed to fit within the address space.
-	/// On 32 bit platforms also consult {@link #setMaxChunkSize}
+	/// On 32 bit platforms also consult <see cref="SetMaxChunkSize" />
 	/// if you have problems with mmap failing because of fragmented
 	/// address space. If you get an OutOfMemoryException, it is recommened
 	/// to reduce the chunk size, until it works.
 	/// 
 	/// <p/>Due to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
-	/// this bug</a> in Sun's JRE, MMapDirectory's {@link IndexInput#close}
+	/// this bug</a> in Sun's JRE, MMapDirectory's <see cref="IndexInput.Close" />
 	/// is unable to close the underlying OS file handle.  Only when GC
 	/// finally collects the underlying objects, which could be quite
 	/// some time later, will the file handle be closed.
@@ -53,10 +53,10 @@ namespace Lucene.Net.Store
 	/// an important limitation to be aware of.
 	/// 
 	/// <p/>This class supplies the workaround mentioned in the bug report
-	/// (disabled by default, see {@link #setUseUnmap}), which may fail on
+	/// (disabled by default, see <see cref="SetUseUnmap" />), which may fail on
 	/// non-Sun JVMs. It forcefully unmaps the buffer on close by using
 	/// an undocumented internal cleanup functionality.
-	/// {@link #UNMAP_SUPPORTED} is <code>true</code>, if the workaround
+	/// <see cref="UNMAP_SUPPORTED" /> is <c>true</c>, if the workaround
 	/// can be enabled (with no guarantees).
 	/// </summary>
 	public class MMapDirectory:FSDirectory
@@ -169,20 +169,20 @@ namespace Lucene.Net.Store
 		private bool useUnmapHack = false;
 		private int maxBBuf;
 		
-		/// <summary> <code>true</code>, if this platform supports unmapping mmaped files.</summary>
+		/// <summary> <c>true</c>, if this platform supports unmapping mmaped files.</summary>
 		public static bool UNMAP_SUPPORTED;
 		
 		/// <summary> This method enables the workaround for unmapping the buffers
-		/// from address space after closing {@link IndexInput}, that is
+		/// from address space after closing <see cref="IndexInput" />, that is
 		/// mentioned in the bug report. This hack may fail on non-Sun JVMs.
 		/// It forcefully unmaps the buffer on close by using
 		/// an undocumented internal cleanup functionality.
 		/// <p/><b>NOTE:</b> Enabling this is completely unsupported
-		/// by Java and may lead to JVM crashs if <code>IndexInput</code>
+		/// by Java and may lead to JVM crashs if <c>IndexInput</c>
 		/// is closed while another thread is still accessing it (SIGSEGV).
 		/// </summary>
-		/// <throws>  IllegalArgumentException if {@link #UNMAP_SUPPORTED} </throws>
-		/// <summary> is <code>false</code> and the workaround cannot be enabled.
+		/// <throws>  IllegalArgumentException if <see cref="UNMAP_SUPPORTED" /> </throws>
+		/// <summary> is <c>false</c> and the workaround cannot be enabled.
 		/// </summary>
 		public virtual void  SetUseUnmap(bool useUnmapHack)
 		{
@@ -191,8 +191,8 @@ namespace Lucene.Net.Store
 			this.useUnmapHack = useUnmapHack;
 		}
 		
-		/// <summary> Returns <code>true</code>, if the unmap workaround is enabled.</summary>
-		/// <seealso cref="setUseUnmap">
+		/// <summary> Returns <c>true</c>, if the unmap workaround is enabled.</summary>
+		/// <seealso cref="SetUseUnmap">
 		/// </seealso>
 		public virtual bool GetUseUnmap()
 		{
@@ -221,14 +221,14 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		/// <summary> Sets the maximum chunk size (default is {@link Integer#MAX_VALUE} for
+		/// <summary> Sets the maximum chunk size (default is <see cref="int.MaxValue" /> for
 		/// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
 		/// Especially on 32 bit platform, the address space can be very fragmented,
 		/// so large index files cannot be mapped.
 		/// Using a lower chunk size makes the directory implementation a little
 		/// bit slower (as the correct chunk must be resolved on each seek)
 		/// but the chance is higher that mmap does not fail. On 64 bit
-		/// Java platforms, this parameter should always be {@link Integer#MAX_VALUE},
+		/// Java platforms, this parameter should always be <see cref="int.MaxValue" />,
 		/// as the adress space is big enough.
 		/// </summary>
 		public virtual void  SetMaxChunkSize(int maxBBuf)
@@ -239,7 +239,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary> Returns the current mmap chunk size.</summary>
-		/// <seealso cref="setMaxChunkSize">
+		/// <seealso cref="SetMaxChunkSize">
 		/// </seealso>
 		public virtual int GetMaxChunkSize()
 		{

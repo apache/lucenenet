@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,16 +28,16 @@ namespace Lucene.Net.Analysis.AR
 {
     /**
      *  Normalizer for Arabic.
-     *  <p>
+     *  <p/>
      *  Normalization is done in-place for efficiency, operating on a termbuffer.
-     *  <p>
+     *  <p/>
      *  Normalization is defined as:
      *  <ul>
-     *  <li> Normalization of hamza with alef seat to a bare alef.
-     *  <li> Normalization of teh marbuta to heh
-     *  <li> Normalization of dotless yeh (alef maksura) to yeh.
-     *  <li> Removal of Arabic diacritics (the harakat)
-     *  <li> Removal of tatweel (stretching character).
+     *  <li> Normalization of hamza with alef seat to a bare alef.</li>
+     *  <li> Normalization of teh marbuta to heh</li>
+     *  <li> Normalization of dotless yeh (alef maksura) to yeh.</li>
+     *  <li> Removal of Arabic diacritics (the harakat)</li>
+     *  <li> Removal of tatweel (stretching character).</li>
      * </ul>
      *
      */
@@ -68,9 +68,9 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Normalize an input buffer of Arabic text
          * 
-         * @param s input buffer
-         * @param len length of input buffer
-         * @return length of input buffer after normalization
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>length of input buffer after normalization</returns>
          */
         public int Normalize(char[] s, int len)
         {
@@ -100,10 +100,10 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Delete a character in-place
          * 
-         * @param s Input Buffer
-         * @param pos Position of character to delete
-         * @param len length of input buffer
-         * @return length of input buffer after deletion
+         * <param name="s">Input Buffer</param>
+         * <param name="pos">Position of character to delete</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>length of input buffer after deletion</returns>
          */
         protected int Delete(char[] s, int pos, int len)
         {

@@ -27,14 +27,14 @@ namespace Lucene.Net
 		private LucenePackage()
 		{
 		} // can't construct
-		
-		/// <summary>Return Lucene's package, including version information. </summary>
-		// {{Aroush-1.9}}
+
         /*
-		public static Package Get()
-		{
-			return typeof(LucenePackage).getPackage();
-		}
+         * /// <summary>Return Lucene's package, including version information. </summary>
+        // {{Aroush-1.9}}
+        public static Package Get()
+        {
+            return typeof(LucenePackage).getPackage();
+        }
         */
 	}
 }

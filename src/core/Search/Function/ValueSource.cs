@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Function
 	/// <summary> Expert: source of values for basic function queries.
 	/// <p/>At its default/simplest form, values - one per doc - are used as the score of that doc.
 	/// <p/>Values are instantiated as 
-	/// {@link Lucene.Net.Search.Function.DocValues DocValues} for a particular reader.
+	/// <see cref="Lucene.Net.Search.Function.DocValues">DocValues</see> for a particular reader.
 	/// <p/>ValueSource implementations differ in RAM requirements: it would always be a factor
 	/// of the number of documents, but for each document the number of bytes can be 1, 2, 4, or 8. 
 	/// 
@@ -50,19 +50,19 @@ namespace Lucene.Net.Search.Function
 		/// <summary> description of field, used in explain() </summary>
 		public abstract System.String Description();
 		
-		/* (non-Javadoc) @see java.lang.Object#toString() */
+		/* (non-Javadoc) <see cref="java.lang.Object.toString() */
 		public override System.String ToString()
 		{
 			return Description();
 		}
 		
-		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(Object)}.</summary>
-		/// <seealso cref="Object.equals(Object)">
+		/// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.Equals(Object)" />.</summary>
+		/// <seealso cref="Object.Equals(Object)">
 		/// </seealso>
 		abstract public  override bool Equals(System.Object o);
 		
-		/// <summary> Needed for possible caching of query results - used by {@link ValueSourceQuery#hashCode()}.</summary>
-		/// <seealso cref="Object.hashCode()">
+		/// <summary> Needed for possible caching of query results - used by <see cref="ValueSourceQuery.GetHashCode()" />.</summary>
+		/// <seealso cref="Object.GetHashCode()">
 		/// </seealso>
 		abstract public override int GetHashCode();
 	}

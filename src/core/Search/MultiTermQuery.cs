@@ -26,33 +26,33 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> An abstract {@link Query} that matches documents
-	/// containing a subset of terms provided by a {@link
-	/// FilteredTermEnum} enumeration.
+	/// <summary> An abstract <see cref="Query" /> that matches documents
+	/// containing a subset of terms provided by a <see cref="FilteredTermEnum" />
+	/// enumeration.
 	/// 
 	/// <p/>This query cannot be used directly; you must subclass
-	/// it and define {@link #getEnum} to provide a {@link
-	/// FilteredTermEnum} that iterates through the terms to be
+	/// it and define <see cref="GetEnum" /> to provide a <see cref="FilteredTermEnum" />
+	/// that iterates through the terms to be
 	/// matched.
 	/// 
-	/// <p/><b>NOTE</b>: if {@link #setRewriteMethod} is either
-	/// {@link #CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE} or {@link
-	/// #SCORING_BOOLEAN_QUERY_REWRITE}, you may encounter a
-	/// {@link BooleanQuery.TooManyClauses} exception during
+	/// <p/><b>NOTE</b>: if <see cref="SetRewriteMethod" /> is either
+	/// <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE" /> or <see cref="SCORING_BOOLEAN_QUERY_REWRITE" />
+	///, you may encounter a
+	/// <see cref="BooleanQuery.TooManyClauses" /> exception during
 	/// searching, which happens when the number of terms to be
-	/// searched exceeds {@link
-	/// BooleanQuery#GetMaxClauseCount()}.  Setting {@link
-	/// #setRewriteMethod} to {@link #CONSTANT_SCORE_FILTER_REWRITE}
+	/// searched exceeds <see cref="BooleanQuery.GetMaxClauseCount()" />
+	///.  Setting <see cref="SetRewriteMethod" />
+	/// to <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
 	/// prevents this.
 	/// 
-	/// <p/>The recommended rewrite method is {@link
-	/// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}: it doesn't spend CPU
+	/// <p/>The recommended rewrite method is <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
+	///: it doesn't spend CPU
 	/// computing unhelpful scores, and it tries to pick the most
 	/// performant rewrite method given the query.
 	/// 
-	/// Note that {@link QueryParser} produces
-	/// MultiTermQueries using {@link
-	/// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} by default.
+	/// Note that <see cref="QueryParser" /> produces
+	/// MultiTermQueries using <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
+	/// by default.
 	/// </summary>
 	[Serializable]
 	public abstract class MultiTermQuery:Query
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 				return Lucene.Net.Search.MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 			}
 		}
-		/* @deprecated move to sub class */
+		// @deprecated move to sub class
 		protected internal Term term;
 		protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		[NonSerialized]
@@ -114,11 +114,11 @@ namespace Lucene.Net.Search
 		/// <p/> This method is faster than the BooleanQuery
 		/// rewrite methods when the number of matched terms or
 		/// matched documents is non-trivial. Also, it will never
-		/// hit an errant {@link BooleanQuery.TooManyClauses}
+		/// hit an errant <see cref="BooleanQuery.TooManyClauses" />
 		/// exception.
 		/// 
 		/// </summary>
-		/// <seealso cref="setRewriteMethod">
+		/// <seealso cref="SetRewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new ConstantScoreFilterRewrite();
 		
@@ -162,19 +162,19 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>A rewrite method that first translates each term into
-		/// {@link BooleanClause.Occur#SHOULD} clause in a
+		/// <see cref="BooleanClause.Occur.SHOULD" /> clause in a
 		/// BooleanQuery, and keeps the scores as computed by the
 		/// query.  Note that typically such scores are
 		/// meaningless to the user, and require non-trivial CPU
-		/// to compute, so it's almost always better to use {@link
-		/// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} instead.
+		/// to compute, so it's almost always better to use <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />
+		/// instead.
 		/// 
-		/// <p/><b>NOTE</b>: This rewrite method will hit {@link
-		/// BooleanQuery.TooManyClauses} if the number of terms
-		/// exceeds {@link BooleanQuery#getMaxClauseCount}.
+		/// <p/><b>NOTE</b>: This rewrite method will hit <see cref="BooleanQuery.TooManyClauses" />
+		/// if the number of terms
+		/// exceeds <see cref="BooleanQuery.GetMaxClauseCount" />.
 		/// 
 		/// </summary>
-		/// <seealso cref="setRewriteMethod">
+		/// <seealso cref="SetRewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod SCORING_BOOLEAN_QUERY_REWRITE = new ScoringBooleanQueryRewrite();
 		
@@ -196,17 +196,17 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Like {@link #SCORING_BOOLEAN_QUERY_REWRITE} except
+		/// <summary>Like <see cref="SCORING_BOOLEAN_QUERY_REWRITE" /> except
 		/// scores are not computed.  Instead, each matching
 		/// document receives a constant score equal to the
 		/// query's boost.
 		/// 
-		/// <p/><b>NOTE</b>: This rewrite method will hit {@link
-		/// BooleanQuery.TooManyClauses} if the number of terms
-		/// exceeds {@link BooleanQuery#getMaxClauseCount}.
+		/// <p/><b>NOTE</b>: This rewrite method will hit <see cref="BooleanQuery.TooManyClauses" />
+		/// if the number of terms
+		/// exceeds <see cref="BooleanQuery.GetMaxClauseCount" />.
 		/// 
 		/// </summary>
-		/// <seealso cref="setRewriteMethod">
+		/// <seealso cref="SetRewriteMethod">
 		/// </seealso>
 		public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new ConstantScoreBooleanQueryRewrite();
 		
@@ -214,9 +214,9 @@ namespace Lucene.Net.Search
 		/// <summary>A rewrite method that tries to pick the best
 		/// constant-score rewrite method based on term and
 		/// document counts from the query.  If both the number of
-		/// terms and documents is small enough, then {@link
-		/// #CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE} is used.
-		/// Otherwise, {@link #CONSTANT_SCORE_FILTER_REWRITE} is
+		/// terms and documents is small enough, then <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE" />
+		/// is used.
+		/// Otherwise, <see cref="CONSTANT_SCORE_FILTER_REWRITE" /> is
 		/// used.
 		/// </summary>
 		[Serializable]
@@ -245,15 +245,15 @@ namespace Lucene.Net.Search
 			private double docCountPercent;
 			
 			/// <summary>If the number of terms in this query is equal to or
-			/// larger than this setting then {@link
-			/// #CONSTANT_SCORE_FILTER_REWRITE} is used. 
+			/// larger than this setting then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
+			/// is used. 
 			/// </summary>
 			public virtual void  SetTermCountCutoff(int count)
 			{
 				termCountCutoff = count;
 			}
 			
-			/// <seealso cref="setTermCountCutoff">
+			/// <seealso cref="SetTermCountCutoff">
 			/// </seealso>
 			public virtual int GetTermCountCutoff()
 			{
@@ -262,8 +262,8 @@ namespace Lucene.Net.Search
 			
 			/// <summary>If the number of documents to be visited in the
 			/// postings exceeds this specified percentage of the
-			/// maxDoc() for the index, then {@link
-			/// #CONSTANT_SCORE_FILTER_REWRITE} is used.
+			/// maxDoc() for the index, then <see cref="CONSTANT_SCORE_FILTER_REWRITE" />
+			/// is used.
 			/// </summary>
 			/// <param name="percent">0.0 to 100.0 
 			/// </param>
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
 				docCountPercent = percent;
 			}
 			
-			/// <seealso cref="setDocCountPercent">
+			/// <seealso cref="SetDocCountPercent">
 			/// </seealso>
 			public virtual double GetDocCountPercent()
 			{
@@ -369,22 +369,22 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Read-only default instance of {@link
-		/// ConstantScoreAutoRewrite}, with {@link
-		/// ConstantScoreAutoRewrite#setTermCountCutoff} set to
-		/// {@link
-		/// ConstantScoreAutoRewrite#DEFAULT_TERM_COUNT_CUTOFF}
-		/// and {@link
-		/// ConstantScoreAutoRewrite#setDocCountPercent} set to
-		/// {@link
-		/// ConstantScoreAutoRewrite#DEFAULT_DOC_COUNT_PERCENT}.
+		/// <summary>Read-only default instance of <see cref="ConstantScoreAutoRewrite" />
+		///, with <see cref="ConstantScoreAutoRewrite.SetTermCountCutoff" />
+		/// set to
+		/// <see cref="ConstantScoreAutoRewrite.DEFAULT_TERM_COUNT_CUTOFF" />
+		///
+		/// and <see cref="ConstantScoreAutoRewrite.SetDocCountPercent" />
+		/// set to
+		/// <see cref="ConstantScoreAutoRewrite.DEFAULT_DOC_COUNT_PERCENT" />
+		///.
 		/// Note that you cannot alter the configuration of this
 		/// instance; you'll need to create a private instance
 		/// instead. 
 		/// </summary>
 		public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 		
-		/// <summary> Constructs a query for terms matching <code>term</code>.</summary>
+		/// <summary> Constructs a query for terms matching <c>term</c>.</summary>
 		/// <deprecated> check sub class for possible term access - the Term does not
 		/// make sense for all MultiTermQuerys and will be removed.
 		/// </deprecated>
@@ -420,14 +420,14 @@ namespace Lucene.Net.Search
 		/// <p/>This method is not thread safe, be sure to only call it when no query is running!
 		/// If you re-use the same query instance for another
 		/// search, be sure to first reset the term counter
-		/// with {@link #clearTotalNumberOfTerms}.
+		/// with <see cref="ClearTotalNumberOfTerms" />.
 		/// <p/>On optimized indexes / no MultiReaders, you get the correct number of
 		/// unique terms for the whole index. Use this number to compare different queries.
 		/// For non-optimized indexes this number can also be achived in
 		/// non-constant-score mode. In constant-score mode you get the total number of
 		/// terms seeked for all segments / sub-readers.
 		/// </summary>
-		/// <seealso cref="clearTotalNumberOfTerms">
+		/// <seealso cref="ClearTotalNumberOfTerms">
 		/// </seealso>
 		public virtual int GetTotalNumberOfTerms()
 		{
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the query/filter.
 		/// </summary>
-		/// <seealso cref="getTotalNumberOfTerms">
+		/// <seealso cref="GetTotalNumberOfTerms">
 		/// </seealso>
 		public virtual void  ClearTotalNumberOfTerms()
 		{
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <seealso cref="setRewriteMethod">
+		/// <seealso cref="SetRewriteMethod">
 		/// </seealso>
 		public virtual RewriteMethod GetRewriteMethod()
 		{
@@ -488,7 +488,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Sets the rewrite method to be used when executing the
 		/// query.  You can use one of the four core methods, or
-		/// implement your own subclass of {@link RewriteMethod}. 
+		/// implement your own subclass of <see cref="RewriteMethod" />. 
 		/// </summary>
 		public virtual void  SetRewriteMethod(RewriteMethod method)
 		{

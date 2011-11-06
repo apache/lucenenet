@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,9 +46,9 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenFilter with given min and max n-grams.
-         * @param input {@link TokenStream} holding the input to be tokenized
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public NGramTokenFilter(TokenStream input, int minGram, int maxGram)
             : base(input)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenFilter with default min and max n-grams.
-         * @param input {@link TokenStream} holding the input to be tokenized
+         * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
          */
         public NGramTokenFilter(TokenStream input)
             : this(input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)

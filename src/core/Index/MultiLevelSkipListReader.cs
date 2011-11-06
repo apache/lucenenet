@@ -25,10 +25,10 @@ namespace Lucene.Net.Index
 	
 	/// <summary> This abstract class reads skip lists with multiple levels.
 	/// 
-	/// See {@link MultiLevelSkipListWriter} for the information about the encoding 
+	/// See <see cref="MultiLevelSkipListWriter" /> for the information about the encoding 
 	/// of the multi level skip lists. 
 	/// 
-	/// Subclasses must implement the abstract method {@link #ReadSkipData(int, IndexInput)}
+	/// Subclasses must implement the abstract method <see cref="ReadSkipData(int, IndexInput)" />
 	/// which defines the actual format of the skip data.
 	/// </summary>
 	abstract class MultiLevelSkipListReader
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>Returns the id of the doc to which the last call of {@link #SkipTo(int)}
+		/// <summary>Returns the id of the doc to which the last call of <see cref="SkipTo(int)" />
 		/// has skipped.  
 		/// </summary>
 		internal virtual int GetDoc()

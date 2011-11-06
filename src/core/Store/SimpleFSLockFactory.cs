@@ -20,31 +20,31 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> <p/>Implements {@link LockFactory} using {@link
-	/// File#createNewFile()}.<p/>
+	/// <summary> <p/>Implements <see cref="LockFactory" /> using <see cref="System.IO.FileInfo.Create()" />
+	///.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> the <a target="_top"
 	/// href="http://java.sun.com/j2se/1.4.2/docs/api/java/io/File.html#createNewFile()">javadocs
-	/// for <code>File.createNewFile</code></a> contain a vague
+	/// for <c>File.createNewFile</c></a> contain a vague
 	/// yet spooky warning about not using the API for file
 	/// locking.  This warning was added due to <a target="_top"
 	/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4676183">this
 	/// bug</a>, and in fact the only known problem with using
 	/// this API for locking is that the Lucene write lock may
 	/// not be released when the JVM exits abnormally.<p/>
-	/// <p/>When this happens, a {@link LockObtainFailedException}
+	/// <p/>When this happens, a <see cref="LockObtainFailedException" />
 	/// is hit when trying to create a writer, in which case you
 	/// need to explicitly clear the lock file first.  You can
-	/// either manually remove the file, or use the {@link
-	/// org.apache.lucene.index.IndexReader#unlock(Directory)}
+	/// either manually remove the file, or use the <see cref="Lucene.Net.Index.IndexReader.Unlock(Directory)" />
+	///
 	/// API.  But, first be certain that no writer is in fact
 	/// writing to the index otherwise you can easily corrupt
 	/// your index.<p/>
 	/// 
 	/// <p/>If you suspect that this or any other LockFactory is
 	/// not working properly in your environment, you can easily
-	/// test it by using {@link VerifyingLockFactory}, {@link
-	/// LockVerifyServer} and {@link LockStressTest}.<p/>
+	/// test it by using <see cref="VerifyingLockFactory" />, <see cref="LockVerifyServer" />
+	/// and <see cref="LockStressTest" />.<p/>
 	/// 
 	/// </summary>
 	/// <seealso cref="LockFactory">
@@ -54,7 +54,7 @@ namespace Lucene.Net.Store
 	{
 		
 		/// <summary> Create a SimpleFSLockFactory instance, with null (unset)
-		/// lock directory. When you pass this factory to a {@link FSDirectory}
+		/// lock directory. When you pass this factory to a <see cref="FSDirectory" />
 		/// subclass, the lock directory is automatically set to the
 		/// directory itsself. Be sure to create one instance for each directory
 		/// your create!

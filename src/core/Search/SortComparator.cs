@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 	/// </version>
 	/// <since> 1.4
 	/// </since>
-	/// <deprecated> Please use {@link FieldComparatorSource} instead.
+	/// <deprecated> Please use <see cref="FieldComparatorSource" /> instead.
 	/// </deprecated>
     [Obsolete("Please use FieldComparatorSource instead.")]
 	[Serializable]
@@ -105,16 +105,16 @@ namespace Lucene.Net.Search
 		/// <summary> Returns an object which, when sorted according to natural order,
 		/// will order the Term values in the correct order.
 		/// <p/>For example, if the Terms contained integer values, this method
-		/// would return <code>new Integer(termtext)</code>.  Note that this
+		/// would return <c>new Integer(termtext)</c>.  Note that this
 		/// might not always be the most efficient implementation - for this
 		/// particular example, a better implementation might be to make a
 		/// ScoreDocLookupComparator that uses an internal lookup table of int.
 		/// </summary>
 		/// <param name="termtext">The textual value of the term.
 		/// </param>
-		/// <returns> An object representing <code>termtext</code> that sorts according to the natural order of <code>termtext</code>.
+		/// <returns> An object representing <c>termtext</c> that sorts according to the natural order of <c>termtext</c>.
 		/// </returns>
-		/// <seealso cref="Comparable">
+		/// <seealso cref="IComparable">
 		/// </seealso>
 		/// <seealso cref="ScoreDocComparator">
 		/// </seealso>

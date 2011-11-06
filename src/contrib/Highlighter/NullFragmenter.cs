@@ -21,7 +21,7 @@ using Token = Lucene.Net.Analysis.Token;
 namespace Lucene.Net.Highlight
 {
 	
-	/// <summary> {@link Fragmenter} implementation which does not fragment the text.
+	/// <summary> <see cref="Fragmenter"/> implementation which does not fragment the text.
 	/// This is useful for highlighting the entire content of a document or field.
 	/// </summary>
 	public class NullFragmenter : Fragmenter

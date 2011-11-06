@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 	{
 		
 		/// <summary>Default PrintStream for all CheckIndex instances.</summary>
-		/// <deprecated> Use {@link #setInfoStream} per instance,
+		/// <deprecated> Use <see cref="SetInfoStream" /> per instance,
 		/// instead. 
 		/// </deprecated>
         [Obsolete("Use SetInfoStream per instance,instead.")]
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
 		private System.IO.StreamWriter infoStream;
 		private Directory dir;
 		
-		/// <summary> Returned from {@link #CheckIndex()} detailing the health and status of the index.
+		/// <summary> Returned from <see cref="CheckIndex_Renamed_Method()" /> detailing the health and status of the index.
 		/// 
 		/// <p/><b>WARNING</b>: this API is new and experimental and is
 		/// subject to suddenly change in the next release.
@@ -83,21 +83,21 @@ namespace Lucene.Net.Index
 			public System.String segmentFormat;
 			
 			/// <summary>Empty unless you passed specific segments list to check as optional 3rd argument.</summary>
-			/// <seealso cref="CheckIndex.CheckIndex(List)">
+			/// <seealso cref="CheckIndex.CheckIndex_Renamed_Method(System.Collections.IList)">
 			/// </seealso>
 			public System.Collections.IList segmentsChecked = new System.Collections.ArrayList();
 			
 			/// <summary>True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
 			public bool toolOutOfDate;
 			
-			/// <summary>List of {@link SegmentInfoStatus} instances, detailing status of each segment. </summary>
+			/// <summary>List of <see cref="SegmentInfoStatus" /> instances, detailing status of each segment. </summary>
 			public System.Collections.IList segmentInfos = new System.Collections.ArrayList();
 			
 			/// <summary>Directory index is in. </summary>
 			public Directory dir;
 			
 			/// <summary> SegmentInfos instance containing only segments that
-			/// had no problems (this is used with the {@link CheckIndex#fixIndex} 
+			/// had no problems (this is used with the <see cref="CheckIndex.FixIndex" /> 
 			/// method to repair the index. 
 			/// </summary>
 			internal SegmentInfos newSegments;
@@ -108,8 +108,8 @@ namespace Lucene.Net.Index
 			/// <summary>How many bad segments were found. </summary>
 			public int numBadSegments;
 			
-			/// <summary>True if we checked only specific segments ({@link
-			/// #CheckIndex(List)}) was called with non-null
+			/// <summary>True if we checked only specific segments (<see cref="CheckIndex_Renamed_Method(System.Collections.IList)" />)
+			/// was called with non-null
 			/// argument). 
 			/// </summary>
 			public bool partial;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
             public System.Collections.Generic.IDictionary<string, string> userData;
 			
 			/// <summary>Holds the status of each segment in the index.
-			/// See {@link #segmentInfos}.
+			/// See <see cref="SegmentInfos" />.
 			/// 
 			/// <p/><b>WARNING</b>: this API is new and experimental and is
 			/// subject to suddenly change in the next release.
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 				/// <summary>True if at least one of the fields in this segment
 				/// does not omitTermFreqAndPositions.
 				/// </summary>
-				/// <seealso cref="AbstractField.setOmitTermFreqAndPositions">
+				/// <seealso cref="AbstractField.SetOmitTermFreqAndPositions">
 				/// </seealso>
 				public bool hasProx;
 
@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns true if index is clean, else false. </summary>
-		/// <deprecated> Please instantiate a CheckIndex and then use {@link #CheckIndex()} instead 
+        /// <deprecated> Please instantiate a CheckIndex and then use <see cref="CheckIndex_Renamed_Method()" /> instead 
 		/// </deprecated>
         [Obsolete("Please instantiate a CheckIndex and then use CheckIndex() instead")]
 		public static bool Check(Directory dir, bool doFix)
@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns true if index is clean, else false.</summary>
-		/// <deprecated> Please instantiate a CheckIndex and then use {@link #CheckIndex(List)} instead 
+        /// <deprecated> Please instantiate a CheckIndex and then use <see cref="CheckIndex_Renamed_Method(System.Collections.IList)" /> instead 
 		/// </deprecated>
         [Obsolete("Please instantiate a CheckIndex and then use CheckIndex(List) instead")]
 		public static bool Check(Directory dir, bool doFix, System.Collections.IList onlySegments)
@@ -321,7 +321,7 @@ namespace Lucene.Net.Index
 			return status.clean;
 		}
 		
-		/// <summary>Returns a {@link Status} instance detailing
+		/// <summary>Returns a <see cref="Status" /> instance detailing
 		/// the state of the index.
 		/// 
 		/// <p/>As this method checks every byte in the index, on a large
@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
 			return CheckIndex_Renamed_Method(null);
 		}
 		
-		/// <summary>Returns a {@link Status} instance detailing
+		/// <summary>Returns a <see cref="Status" /> instance detailing
 		/// the state of the index.
 		/// 
 		/// </summary>
@@ -877,9 +877,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Repairs the index using previously returned result
-		/// from {@link #checkIndex}.  Note that this does not
+		/// from <see cref="CheckIndex" />.  Note that this does not
 		/// remove any of the unreferenced files after it's done;
-		/// you must separately open an {@link IndexWriter}, which
+		/// you must separately open an <see cref="IndexWriter" />, which
 		/// deletes unreferenced files when it's created.
 		/// 
 		/// <p/><b>WARNING</b>: this writes a
@@ -914,18 +914,18 @@ namespace Lucene.Net.Index
 		/// <summary>Command-line interface to check and fix an index.
 		/// <p/>
 		/// Run it like this:
-		/// <pre>
+        /// <code>
 		/// java -ea:Lucene.Net... Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-segment X] [-segment Y]
-		/// </pre>
-		/// <ul>
-		/// <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments</li>
-		/// <li><code>-segment X</code>: only check the specified
+        /// </code>
+		/// <list type="bullet">
+		/// <item><c>-fix</c>: actually write a new segments_N file, removing any problematic segments</item>
+		/// <item><c>-segment X</c>: only check the specified
 		/// segment(s).  This can be specified multiple times,
-		/// to check more than one segment, eg <code>-segment _2
-		/// -segment _a</code>.  You can't use this with the -fix
-		/// option.</li>
-		/// </ul>
-		/// <p/><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
+		/// to check more than one segment, eg <c>-segment _2
+		/// -segment _a</c>.  You can't use this with the -fix
+		/// option.</item>
+		/// </list>
+		/// <p/><b>WARNING</b>: <c>-fix</c> should only be used on an emergency basis as it will cause
 		/// documents (perhaps many) to be permanently removed from the index.  Always make
 		/// a backup copy of your index before running this!  Do not run this tool on an index
 		/// that is actively being written to.  You have been warned!

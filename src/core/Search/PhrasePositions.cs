@@ -74,9 +74,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Go to next location of this term current document, and set 
-		/// <code>position</code> as <code>location - offset</code>, so that a 
+		/// <c>position</c> as <c>location - offset</c>, so that a 
 		/// matching exact phrase is easily identified when all PhrasePositions 
-		/// have exactly the same <code>position</code>.
+		/// have exactly the same <c>position</c>.
 		/// </summary>
 		internal bool NextPosition()
 		{

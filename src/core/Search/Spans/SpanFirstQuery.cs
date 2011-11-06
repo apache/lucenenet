@@ -109,8 +109,8 @@ namespace Lucene.Net.Search.Spans
 		private SpanQuery match;
 		private int end;
 		
-		/// <summary>Construct a SpanFirstQuery matching spans in <code>match</code> whose end
-		/// position is less than or equal to <code>end</code>. 
+		/// <summary>Construct a SpanFirstQuery matching spans in <c>match</c> whose end
+		/// position is less than or equal to <c>end</c>. 
 		/// </summary>
 		public SpanFirstQuery(SpanQuery match, int end)
 		{
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="ExtractTerms(Set)">
+        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
 		public override System.Collections.ICollection GetTerms()

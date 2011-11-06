@@ -48,11 +48,11 @@ namespace Lucene.Net.Documents
 			/// <summary>Store the original field value in the index in a compressed form. This is
 			/// useful for long documents and for binary valued fields.
 			/// </summary>
-			/// <deprecated> Please use {@link CompressionTools} instead.
+			/// <deprecated> Please use <see cref="CompressionTools" /> instead.
 			/// For string fields that were previously indexed and stored using compression,
 			/// the new way to achieve this is: First add the field indexed-only (no store)
 			/// and additionally using the same field name as a binary, stored field
-			/// with {@link CompressionTools#compressString}.
+			/// with <see cref="CompressionTools.CompressString(string)" />.
 			/// </deprecated>
 			public static readonly Store COMPRESS = new Store("COMPRESS");
 			
@@ -78,7 +78,7 @@ namespace Lucene.Net.Documents
 			
 			/// <summary>Do not index the field value. This field can thus not be searched,
 			/// but one can still access its contents provided it is
-			/// {@link Field.Store stored}. 
+			/// <see cref="Field.Store">stored</see>. 
 			/// </summary>
 			public static readonly Index NO = new Index("NO");
 			
@@ -88,7 +88,7 @@ namespace Lucene.Net.Documents
 			/// </summary>
 			public static readonly Index ANALYZED = new Index("ANALYZED");
 			
-			/// <deprecated> this has been renamed to {@link #ANALYZED} 
+			/// <deprecated> this has been renamed to <see cref="ANALYZED" /> 
 			/// </deprecated>
             [Obsolete("this has been renamed to ANALYZED")]
 			public static readonly Index TOKENIZED;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Documents
 			/// </summary>
 			public static readonly Index NOT_ANALYZED = new Index("NOT_ANALYZED");
 			
-			/// <deprecated> This has been renamed to {@link #NOT_ANALYZED} 
+			/// <deprecated> This has been renamed to <see cref="NOT_ANALYZED" /> 
 			/// </deprecated>
             [Obsolete("This has been renamed to NOT_ANALYZED")]
 			public static readonly Index UN_TOKENIZED;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Documents
 			/// <summary>Expert: Index the field's value without an Analyzer,
 			/// and also disable the storing of norms.  Note that you
 			/// can also separately enable/disable norms by calling
-			/// {@link Field#setOmitNorms}.  No norms means that
+            /// <see cref="AbstractField.SetOmitNorms" />.  No norms means that
 			/// index-time field and document boosting and field
 			/// length normalization are disabled.  The benefit is
 			/// less memory usage as norms take up one byte of RAM
@@ -122,7 +122,7 @@ namespace Lucene.Net.Documents
 			public static readonly Index NOT_ANALYZED_NO_NORMS = new Index("NOT_ANALYZED_NO_NORMS");
 			
 			/// <deprecated> This has been renamed to
-			/// {@link #NOT_ANALYZED_NO_NORMS} 
+			/// <see cref="NOT_ANALYZED_NO_NORMS" /> 
 			/// </deprecated>
             [Obsolete("This has been renamed to NOT_ANALYZED_NO_NORMS")]
 			public static readonly Index NO_NORMS;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Documents
 			/// <summary>Expert: Index the tokens produced by running the
 			/// field's value through an Analyzer, and also
 			/// separately disable the storing of norms.  See
-			/// {@link #NOT_ANALYZED_NO_NORMS} for what norms are
+			/// <see cref="NOT_ANALYZED_NO_NORMS" /> for what norms are
 			/// and why you may want to disable them. 
 			/// </summary>
 			public static readonly Index ANALYZED_NO_NORMS = new Index("ANALYZED_NO_NORMS");
@@ -209,10 +209,10 @@ namespace Lucene.Net.Documents
 		/// readerValue(), and getBinaryValue() must be set.
 		/// </summary>
 		/// <deprecated> This method must allocate a new byte[] if
-		/// the {@link AbstractField#GetBinaryOffset()} is non-zero
-		/// or {@link AbstractField#GetBinaryLength()} is not the
-		/// full length of the byte[]. Please use {@link
-		/// AbstractField#GetBinaryValue()} instead, which simply
+		/// the <see cref="AbstractField.GetBinaryOffset()" /> is non-zero
+		/// or <see cref="AbstractField.GetBinaryLength()" /> is not the
+		/// full length of the byte[]. Please use <see cref="AbstractField.GetBinaryValue()" />
+		/// instead, which simply
 		/// returns the byte[].
 		/// </deprecated>
         [Obsolete("This method must allocate a new byte[] if the AbstractField.GetBinaryOffset() is non-zero or AbstractField.GetBinaryLength() is not the full length of the byte[]. Please use AbstractField.GetBinaryValue() instead, which simply returns the byte[].")]
@@ -242,11 +242,11 @@ namespace Lucene.Net.Documents
 		/// be used during indexing to re-use a single Field
 		/// instance to improve indexing speed by avoiding GC cost
 		/// of new'ing and reclaiming Field instances.  Typically
-		/// a single {@link Document} instance is re-used as
+		/// a single <see cref="Document" /> instance is re-used as
 		/// well.  This helps most on small documents.<p/>
 		/// 
 		/// <p/>Each Field instance should only be used once
-		/// within a single {@link Document} instance.  See <a
+		/// within a single <see cref="Document" /> instance.  See <a
 		/// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed">ImproveIndexingSpeed</a>
 		/// for details.<p/> 
 		/// </summary>
@@ -299,10 +299,10 @@ namespace Lucene.Net.Documents
 		
 		
 		/// <summary>Expert: change the value of this field.  See <a href="#setValue(java.lang.String)">setValue(String)</a>.</summary>
-		/// <deprecated> use {@link #setTokenStream} 
+		/// <deprecated> use <see cref="SetTokenStream" /> 
 		/// </deprecated>
         [Obsolete("use SetTokenStream ")]
-		public void  SetValue(TokenStream value_Renamed)
+		public void SetValue(TokenStream value_Renamed)
 		{
 			if (isBinary)
 			{
@@ -332,14 +332,14 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">The name of the field
 		/// </param>
-		/// <param name="value">The string to process
+		/// <param name="value_Renamed">The string to process
 		/// </param>
-		/// <param name="store">Whether <code>value</code> should be stored in the index
+		/// <param name="store">Whether <c>value</c> should be stored in the index
 		/// </param>
 		/// <param name="index">Whether the field should be indexed, and if so, if it should
 		/// be tokenized before indexing 
 		/// </param>
-		/// <throws>  NullPointerException if name or value is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or value is <c>null</c> </throws>
 		/// <throws>  IllegalArgumentException if the field is neither stored nor indexed  </throws>
 		public Field(System.String name, System.String value_Renamed, Store store, Index index):this(name, value_Renamed, store, index, TermVector.NO)
 		{
@@ -351,21 +351,21 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">The name of the field
 		/// </param>
-		/// <param name="value">The string to process
+		/// <param name="value_Renamed">The string to process
 		/// </param>
-		/// <param name="store">Whether <code>value</code> should be stored in the index
+		/// <param name="store">Whether <c>value</c> should be stored in the index
 		/// </param>
 		/// <param name="index">Whether the field should be indexed, and if so, if it should
 		/// be tokenized before indexing 
 		/// </param>
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
-		/// <throws>  NullPointerException if name or value is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or value is <c>null</c> </throws>
 		/// <throws>  IllegalArgumentException in any of the following situations: </throws>
-		/// <summary> <ul> 
-		/// <li>the field is neither stored nor indexed</li> 
-		/// <li>the field is not indexed but termVector is <code>TermVector.YES</code></li>
-		/// </ul> 
+		/// <summary> <list> 
+		/// <item>the field is neither stored nor indexed</item> 
+		/// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
+		/// </list> 
 		/// </summary>
 		public Field(System.String name, System.String value_Renamed, Store store, Index index, TermVector termVector):this(name, true, value_Renamed, store, index, termVector)
 		{
@@ -379,21 +379,21 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="internName">Whether to .intern() name or not
 		/// </param>
-		/// <param name="value">The string to process
+		/// <param name="value_Renamed">The string to process
 		/// </param>
-		/// <param name="store">Whether <code>value</code> should be stored in the index
+		/// <param name="store">Whether <c>value</c> should be stored in the index
 		/// </param>
 		/// <param name="index">Whether the field should be indexed, and if so, if it should
 		/// be tokenized before indexing 
 		/// </param>
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
-		/// <throws>  NullPointerException if name or value is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or value is <c>null</c> </throws>
 		/// <throws>  IllegalArgumentException in any of the following situations: </throws>
-		/// <summary> <ul> 
-		/// <li>the field is neither stored nor indexed</li> 
-		/// <li>the field is not indexed but termVector is <code>TermVector.YES</code></li>
-		/// </ul> 
+		/// <summary> <list> 
+		/// <item>the field is neither stored nor indexed</item> 
+		/// <item>the field is not indexed but termVector is <c>TermVector.YES</c></item>
+		/// </list> 
 		/// </summary>
 		public Field(System.String name, bool internName, System.String value_Renamed, Store store, Index index, TermVector termVector)
 		{
@@ -477,7 +477,7 @@ namespace Lucene.Net.Documents
 		
 		/// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
 		/// not be stored.  The Reader is read only when the Document is added to the index,
-		/// i.e. you may not close the Reader until {@link IndexWriter#AddDocument(Document)}
+		/// i.e. you may not close the Reader until <see cref="IndexWriter.AddDocument(Document)" />
 		/// has been called.
 		/// 
 		/// </summary>
@@ -485,14 +485,14 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="reader">The reader with the content
 		/// </param>
-		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or reader is <c>null</c> </throws>
 		public Field(System.String name, System.IO.TextReader reader):this(name, reader, TermVector.NO)
 		{
 		}
 		
 		/// <summary> Create a tokenized and indexed field that is not stored, optionally with 
 		/// storing term vectors.  The Reader is read only when the Document is added to the index,
-		/// i.e. you may not close the Reader until {@link IndexWriter#AddDocument(Document)}
+		/// i.e. you may not close the Reader until <see cref="IndexWriter.AddDocument(Document)" />
 		/// has been called.
 		/// 
 		/// </summary>
@@ -502,7 +502,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
-		/// <throws>  NullPointerException if name or reader is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or reader is <c>null</c> </throws>
 		public Field(System.String name, System.IO.TextReader reader, TermVector termVector)
 		{
 			if (name == null)
@@ -527,7 +527,7 @@ namespace Lucene.Net.Documents
 		/// <summary> Create a tokenized and indexed field that is not stored. Term vectors will
 		/// not be stored. This is useful for pre-analyzed fields.
 		/// The TokenStream is read only when the Document is added to the index,
-		/// i.e. you may not close the TokenStream until {@link IndexWriter#AddDocument(Document)}
+		/// i.e. you may not close the TokenStream until <see cref="IndexWriter.AddDocument(Document)" />
 		/// has been called.
 		/// 
 		/// </summary>
@@ -535,7 +535,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="tokenStream">The TokenStream with the content
 		/// </param>
-		/// <throws>  NullPointerException if name or tokenStream is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or tokenStream is <c>null</c> </throws>
 		public Field(System.String name, TokenStream tokenStream):this(name, tokenStream, TermVector.NO)
 		{
 		}
@@ -543,7 +543,7 @@ namespace Lucene.Net.Documents
 		/// <summary> Create a tokenized and indexed field that is not stored, optionally with 
 		/// storing term vectors.  This is useful for pre-analyzed fields.
 		/// The TokenStream is read only when the Document is added to the index,
-		/// i.e. you may not close the TokenStream until {@link IndexWriter#AddDocument(Document)}
+		/// i.e. you may not close the TokenStream until <see cref="IndexWriter.AddDocument(Document)" />
 		/// has been called.
 		/// 
 		/// </summary>
@@ -553,7 +553,7 @@ namespace Lucene.Net.Documents
 		/// </param>
 		/// <param name="termVector">Whether term vector should be stored
 		/// </param>
-		/// <throws>  NullPointerException if name or tokenStream is <code>null</code> </throws>
+		/// <throws>  NullPointerException if name or tokenStream is <c>null</c> </throws>
 		public Field(System.String name, TokenStream tokenStream, TermVector termVector)
 		{
 			if (name == null)
@@ -582,11 +582,11 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">The name of the field
 		/// </param>
-		/// <param name="value">The binary value
+		/// <param name="value_Renamed">The binary value
 		/// </param>
-		/// <param name="store">How <code>value</code> should be stored (compressed or not)
+		/// <param name="store">How <c>value</c> should be stored (compressed or not)
 		/// </param>
-		/// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
+		/// <throws>  IllegalArgumentException if store is <c>Store.NO</c>  </throws>
 		public Field(System.String name, byte[] value_Renamed, Store store):this(name, value_Renamed, 0, value_Renamed.Length, store)
 		{
 		}
@@ -596,15 +596,15 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">The name of the field
 		/// </param>
-		/// <param name="value">The binary value
+		/// <param name="value_Renamed">The binary value
 		/// </param>
 		/// <param name="offset">Starting offset in value where this Field's bytes are
 		/// </param>
 		/// <param name="length">Number of bytes to use for this Field, starting at offset
 		/// </param>
-		/// <param name="store">How <code>value</code> should be stored (compressed or not)
+		/// <param name="store">How <c>value</c> should be stored (compressed or not)
 		/// </param>
-		/// <throws>  IllegalArgumentException if store is <code>Store.NO</code>  </throws>
+		/// <throws>  IllegalArgumentException if store is <c>Store.NO</c>  </throws>
 		public Field(System.String name, byte[] value_Renamed, int offset, int length, Store store)
 		{
 			

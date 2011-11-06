@@ -23,7 +23,7 @@ using Attribute = Lucene.Net.Util.Attribute;
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
-	/// <summary> The payload of a Token. See also {@link Payload}.</summary>
+	/// <summary> The payload of a Token. See also <see cref="Payload" />.</summary>
 	public interface PayloadAttribute:Attribute
 	{
 		/// <summary> Returns this Token's payload.</summary>

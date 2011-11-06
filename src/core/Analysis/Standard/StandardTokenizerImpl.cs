@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Standard
 		/* error messages for the codes above */
 		private static readonly System.String[] ZZ_ERROR_MSG = new System.String[]{"Unkown internal scanner error", "Error: could not match input", "Error: pushback value was too large"};
 		
-		/// <summary> ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code></summary>
+		/// <summary> ZZ_ATTRIBUTE[aState] contains the attributes of state <c>aState</c></summary>
 		private static readonly int[] ZZ_ATTRIBUTE = ZzUnpackAttribute();
 		
 		private const System.String ZZ_ATTRIBUTE_PACKED_0 = "\x0001\x0000\x0001\x0009\x0003\x0001\x0001\x0009\x0001\x0001\x000B\x0000\x0004\x0001\x0002\x0000" + "\x0001\x0001\x0001\x0000\x000F\x0001\x0001\x0000\x0001\x0001\x0003\x0000\x0005\x0001";
@@ -289,7 +289,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// There is also a java.io.InputStream version of this constructor.
 		/// 
 		/// </summary>
-		/// <param name="in"> the java.io.Reader to read input from.
+        /// <param name="in_Renamed"> the java.io.Reader to read input from.
 		/// </param>
 		internal StandardTokenizerImpl(System.IO.TextReader in_Renamed)
 		{
@@ -300,7 +300,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// There is also java.io.Reader version of this constructor.
 		/// 
 		/// </summary>
-		/// <param name="in"> the java.io.Inputstream to read input from.
+        /// <param name="in_Renamed"> the java.io.Inputstream to read input from.
 		/// </param>
 		internal StandardTokenizerImpl(System.IO.Stream in_Renamed):this(new System.IO.StreamReader(in_Renamed, System.Text.Encoding.Default))
 		{
@@ -331,12 +331,11 @@ namespace Lucene.Net.Analysis.Standard
 		
 		
 		/// <summary> Refills the input buffer.
-		/// 
 		/// </summary>
-		/// <returns>      <code>false</code>, iff there was new input.
+		/// <returns><c>false</c>, iff there was new input.
 		/// 
 		/// </returns>
-		/// <exception cref="java.io.IOException"> if any I/O-Error occurs
+		/// <exception cref="System.IO.IOException"> if any I/O-Error occurs
 		/// </exception>
 		private bool ZzRefill()
 		{
@@ -514,7 +513,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		/// <returns>      the next token
 		/// </returns>
-		/// <exception cref="java.io.IOException"> if any I/O-Error occurs
+		/// <exception cref="System.IO.IOException"> if any I/O-Error occurs
 		/// </exception>
 		public virtual int GetNextToken()
 		{

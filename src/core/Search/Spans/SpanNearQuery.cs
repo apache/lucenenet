@@ -39,9 +39,9 @@ namespace Lucene.Net.Search.Spans
 		private bool collectPayloads;
 		
 		/// <summary>Construct a SpanNearQuery.  Matches spans matching a span from each
-		/// clause, with up to <code>slop</code> total unmatched positions between
-		/// them.  * When <code>inOrder</code> is true, the spans from each clause
-		/// must be * ordered as in <code>clauses</code>. 
+		/// clause, with up to <c>slop</c> total unmatched positions between
+		/// them.  * When <c>inOrder</c> is true, the spans from each clause
+		/// must be * ordered as in <c>clauses</c>. 
 		/// </summary>
 		public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder):this(clauses, slop, inOrder, true)
 		{
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="ExtractTerms(Set)">
+        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
 		public override System.Collections.ICollection GetTerms()
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search.Spans
 			return spanNearQuery;
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

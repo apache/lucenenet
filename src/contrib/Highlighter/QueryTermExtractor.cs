@@ -85,7 +85,7 @@ namespace Lucene.Net.Highlight
 		/// </summary>
 		/// <param name="query">     Query to extract term texts from
 		/// </param>
-		/// <param name="prohibited"><code>true</code> to extract "prohibited" terms, too
+		/// <param name="prohibited"><c>true</c> to extract "prohibited" terms, too
 		/// </param>
 		/// <param name="fieldName"> The fieldName used to filter query terms
 		/// </param>
@@ -114,7 +114,7 @@ namespace Lucene.Net.Highlight
 		/// </summary>
 		/// <param name="query">     Query to extract term texts from
 		/// </param>
-		/// <param name="prohibited"><code>true</code> to extract "prohibited" terms, too
+		/// <param name="prohibited"><c>true</c> to extract "prohibited" terms, too
 		/// </param>
 		/// <returns> an array of the terms used in a query, plus their weights.
 		/// </returns>

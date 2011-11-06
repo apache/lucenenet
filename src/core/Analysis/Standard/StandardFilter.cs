@@ -26,7 +26,7 @@ using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary>Normalizes tokens extracted with {@link StandardTokenizer}. </summary>
+	/// <summary>Normalizes tokens extracted with <see cref="StandardTokenizer" />. </summary>
 	
 	public sealed class StandardFilter:TokenFilter
 	{

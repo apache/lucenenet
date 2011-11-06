@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> A memory-resident {@link IndexOutput} implementation.
+	/// <summary> A memory-resident <see cref="IndexOutput" /> implementation.
 	/// 
 	/// </summary>
 	/// <version>  $Id: RAMOutputStream.java 691694 2008-09-03 17:34:29Z mikemccand $

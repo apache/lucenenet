@@ -24,32 +24,32 @@ namespace Lucene.Net.Search
 	
 	/// <summary>The abstract base class for queries.
 	/// <p/>Instantiable subclasses are:
-	/// <ul>
-	/// <li> {@link TermQuery} </li>
-    /// <li> {@link MultiTermQuery} </li>
-    /// <li> {@link BooleanQuery} </li>
-    /// <li> {@link WildcardQuery} </li>
-    /// <li> {@link PhraseQuery} </li>
-    /// <li> {@link PrefixQuery} </li>
-    /// <li> {@link MultiPhraseQuery} </li>
-    /// <li> {@link FuzzyQuery} </li>
-    /// <li> {@link TermRangeQuery} </li>
-    /// <li> {@link NumericRangeQuery} </li>
-    /// <li> {@link Lucene.Net.Search.Spans.SpanQuery} </li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item> <see cref="TermQuery" /> </item>
+    /// <item> <see cref="MultiTermQuery" /> </item>
+    /// <item> <see cref="BooleanQuery" /> </item>
+    /// <item> <see cref="WildcardQuery" /> </item>
+    /// <item> <see cref="PhraseQuery" /> </item>
+    /// <item> <see cref="PrefixQuery" /> </item>
+    /// <item> <see cref="MultiPhraseQuery" /> </item>
+    /// <item> <see cref="FuzzyQuery" /> </item>
+    /// <item> <see cref="TermRangeQuery" /> </item>
+    /// <item> <see cref="NumericRangeQuery" /> </item>
+    /// <item> <see cref="Lucene.Net.Search.Spans.SpanQuery" /> </item>
+	/// </list>
 	/// <p/>A parser for queries is contained in:
-	/// <ul>
-    /// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser} </li>
-	/// </ul>
+	/// <list type="bullet">
+    /// <item><see cref="Lucene.Net.QueryParsers.QueryParser">QueryParser</see> </item>
+	/// </list>
 	/// </summary>
 	[Serializable]
 	public abstract class Query : System.ICloneable
 	{
 		private float boost = 1.0f; // query boost factor
 		
-		/// <summary>Sets the boost for this query clause to <code>b</code>.  Documents
+		/// <summary>Sets the boost for this query clause to <c>b</c>.  Documents
 		/// matching this clause will (in addition to the normal weightings) have
-		/// their score multiplied by <code>b</code>.
+		/// their score multiplied by <c>b</c>.
 		/// </summary>
 		public virtual void  SetBoost(float b)
 		{
@@ -58,26 +58,26 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Gets the boost for this clause.  Documents matching
 		/// this clause will (in addition to the normal weightings) have their score
-		/// multiplied by <code>b</code>.   The boost is 1.0 by default.
+		/// multiplied by <c>b</c>.   The boost is 1.0 by default.
 		/// </summary>
 		public virtual float GetBoost()
 		{
 			return boost;
 		}
 		
-		/// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
+		/// <summary>Prints a query to a string, with <c>field</c> assumed to be the 
 		/// default field and omitted.
 		/// <p/>The representation used is one that is supposed to be readable
-		/// by {@link Lucene.Net.QueryParsers.QueryParser QueryParser}. However,
+		/// by <see cref="Lucene.Net.QueryParsers.QueryParser">QueryParser</see>. However,
 		/// there are the following limitations:
-		/// <ul>
-		/// <li>If the query was created by the parser, the printed
+		/// <list type="bullet">
+		/// <item>If the query was created by the parser, the printed
 		/// representation may not be exactly what was parsed. For example,
 		/// characters that need to be escaped will be represented without
-		/// the required backslash.</li>
-		/// <li>Some of the more complicated queries (e.g. span queries)
-		/// don't have a representation that can be parsed by QueryParser.</li>
-		/// </ul>
+		/// the required backslash.</item>
+		/// <item>Some of the more complicated queries (e.g. span queries)
+		/// don't have a representation that can be parsed by QueryParser.</item>
+		/// </list>
 		/// </summary>
 		public abstract System.String ToString(System.String field);
 		
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary> Expert: adds all terms occuring in this query to the terms set. Only
-		/// works if this query is in its {@link #rewrite rewritten} form.
+		/// works if this query is in its <see cref="Rewrite">rewritten</see> form.
 		/// 
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this query is not yet rewritten </throws>
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
 		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
 		/// BooleanQuery.
 		/// 
-		/// <p/>A utility for use by {@link #Combine(Query[])} implementations.
+		/// <p/>A utility for use by <see cref="Combine(Query[])" /> implementations.
 		/// </summary>
 		public static Query MergeBooleanQueries(BooleanQuery[] queries)
 		{

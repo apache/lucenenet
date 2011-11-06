@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Returns the column position of the character last read.</summary>
 		/// <deprecated>
 		/// </deprecated>
-		/// <seealso cref="getEndColumn">
+		/// <seealso cref="GetEndColumn">
 		/// </seealso>
         [Obsolete]
 		int GetColumn();
@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Returns the line number of the character last read.</summary>
 		/// <deprecated>
 		/// </deprecated>
-		/// <seealso cref="getEndLine">
+		/// <seealso cref="GetEndLine">
 		/// </seealso>
         [Obsolete]
 		int GetLine();

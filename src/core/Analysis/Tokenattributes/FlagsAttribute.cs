@@ -23,7 +23,7 @@ using Attribute = Lucene.Net.Util.Attribute;
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
-	/// <summary> This attribute can be used to pass different flags down the {@link Tokenizer} chain,
+	/// <summary> This attribute can be used to pass different flags down the <see cref="Tokenizer" /> chain,
 	/// eg from one TokenFilter to another one. 
 	/// </summary>
 	public interface FlagsAttribute:Attribute
@@ -31,8 +31,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		/// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
 		/// <p/>
 		/// 
-		/// Get the bitset for any bits that have been set.  This is completely distinct from {@link TypeAttribute#Type()}, although they do share similar purposes.
-		/// The flags can be used to encode information about the token for use by other {@link Lucene.Net.Analysis.TokenFilter}s.
+		/// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="TypeAttribute.Type()" />, although they do share similar purposes.
+		/// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
 		/// 
 		/// 
 		/// </summary>

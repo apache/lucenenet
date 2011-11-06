@@ -24,10 +24,10 @@ using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A {@link Collector} that sorts by {@link SortField} using
-	/// {@link FieldComparator}s.
+	/// <summary> A <see cref="Collector" /> that sorts by <see cref="SortField" /> using
+	/// <see cref="FieldComparator" />s.
 	/// <p/>
-	/// See the {@link #create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)} method
+    /// See the <see cref="create(Lucene.Net.Search.Sort, int, bool, bool, bool, bool)" /> method
 	/// for instantiating a TopFieldCollector.
 	/// 
 	/// <p/><b>NOTE:</b> This API is experimental and might change in
@@ -976,12 +976,12 @@ namespace Lucene.Net.Search
 			this.fillFields = fillFields;
 		}
 		
-		/// <summary> Creates a new {@link TopFieldCollector} from the given
+		/// <summary> Creates a new <see cref="TopFieldCollector" /> from the given
 		/// arguments.
 		/// 
 		/// <p/><b>NOTE</b>: The instances returned by this method
 		/// pre-allocate a full array of length
-		/// <code>numHits</code>.
+		/// <c>numHits</c>.
 		/// 
 		/// </summary>
 		/// <param name="sort">the sort criteria (SortFields).
@@ -999,16 +999,16 @@ namespace Lucene.Net.Search
 		/// it is recommended to set it to false.
 		/// </param>
 		/// <param name="trackMaxScore">specifies whether the query's maxScore should be tracked and set
-		/// on the resulting {@link TopDocs}. Note that if set to false,
-		/// {@link TopDocs#GetMaxScore()} returns Float.NaN. Setting this to
+		/// on the resulting <see cref="TopDocs" />. Note that if set to false,
+		/// <see cref="TopDocs.GetMaxScore()" /> returns Float.NaN. Setting this to
 		/// true affects performance as it incurs the score computation on
 		/// each result. Also, setting this true automatically sets
-		/// <code>trackDocScores</code> to true as well.
+		/// <c>trackDocScores</c> to true as well.
 		/// </param>
 		/// <param name="docsScoredInOrder">specifies whether documents are scored in doc Id order or not by
-		/// the given {@link Scorer} in {@link #SetScorer(Scorer)}.
+		/// the given <see cref="Scorer" /> in <see cref="Collector.SetScorer(Scorer)" />.
 		/// </param>
-		/// <returns> a {@link TopFieldCollector} instance which will sort the results by
+		/// <returns> a <see cref="TopFieldCollector" /> instance which will sort the results by
 		/// the sort criteria.
 		/// </returns>
 		/// <throws>  IOException </throws>

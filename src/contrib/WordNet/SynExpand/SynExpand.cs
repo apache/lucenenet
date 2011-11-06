@@ -29,7 +29,7 @@ namespace WorldNet.Net
 	
 	
 	/// <summary> Expand a query by looking up synonyms for every term.
-	/// You need to invoke {@link Syns2Index} first to build the synonym index.
+	/// You need to invoke <see cref="Syns2Index"/> first to build the synonym index.
 	/// 
 	/// </summary>
 	/// <seealso cref="Syns2Index">
@@ -42,10 +42,10 @@ namespace WorldNet.Net
 		/// 
 		/// If you pass in the query "big dog" then it prints out:
 		/// 
-		/// <code><pre>
+		/// <pre>
 		/// Query: big adult^0.9 bad^0.9 bighearted^0.9 boastful^0.9 boastfully^0.9 bounteous^0.9 bountiful^0.9 braggy^0.9 crowing^0.9 freehanded^0.9 giving^0.9 grown^0.9 grownup^0.9 handsome^0.9 large^0.9 liberal^0.9 magnanimous^0.9 momentous^0.9 openhanded^0.9 prominent^0.9 swelled^0.9 vainglorious^0.9 vauntingly^0.9
 		/// dog andiron^0.9 blackguard^0.9 bounder^0.9 cad^0.9 chase^0.9 click^0.9 detent^0.9 dogtooth^0.9 firedog^0.9 frank^0.9 frankfurter^0.9 frump^0.9 heel^0.9 hotdog^0.9 hound^0.9 pawl^0.9 tag^0.9 tail^0.9 track^0.9 trail^0.9 weenie^0.9 wiener^0.9 wienerwurst^0.9
-		/// </pre></code>
+		/// </pre>
 		/// </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
@@ -78,10 +78,10 @@ namespace WorldNet.Net
 		/// <param name="query">users query that is assumed to not have any "special" query syntax, thus it should be just normal words, so "big dog" makes sense, but a query like "title:foo^1.2" doesn't as this should presumably be passed directly to the default query parser.
 		/// 
 		/// </param>
-		/// <param name="syns">a opened to the Lucene index you previously created with {@link Syns2Index}. The searcher is not closed or otherwise altered.
+		/// <param name="syns">a opened to the Lucene index you previously created with <see cref="Syns2Index"/>. The searcher is not closed or otherwise altered.
 		/// 
 		/// </param>
-		/// <param name="a">optional analyzer used to parse the users query else {@link StandardAnalyzer} is used
+		/// <param name="a">optional analyzer used to parse the users query else <see cref="StandardAnalyzer"/> is used
 		/// 
 		/// </param>
 		/// <param name="field">optional field name to search in or null if you want the default of "contents"

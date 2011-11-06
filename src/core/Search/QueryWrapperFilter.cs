@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	/// <summary> Constrains search results to only match those which also match a provided
 	/// query.  
 	/// 
-	/// <p/> This could be used, for example, with a {@link TermRangeQuery} on a suitably
+	/// <p/> This could be used, for example, with a <see cref="TermRangeQuery" /> on a suitably
 	/// formatted date field to implement date filtering.  One could re-use a single
 	/// QueryFilter that matches, e.g., only documents modified within the last
 	/// week.  The QueryFilter and TermRangeQuery would only need to be reconstructed
@@ -115,14 +115,14 @@ namespace Lucene.Net.Search
 		private Query query;
 		
 		/// <summary>Constructs a filter which only matches documents matching
-		/// <code>query</code>.
+		/// <c>query</c>.
 		/// </summary>
 		public QueryWrapperFilter(Query query)
 		{
 			this.query = query;
 		}
 		
-		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
 		/// </deprecated>
         [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)

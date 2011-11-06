@@ -22,12 +22,12 @@ using SF.Snowball.Ext;
 namespace Lucene.Net.Analysis.Snowball
 {
 	
-	/// <summary>Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
-	/// LowerCaseFilter}, {@link StopFilter} and {@link SnowballFilter}.
+	/// <summary>Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, {@link
+	/// LowerCaseFilter}, <see cref="StopFilter"/> and <see cref="SnowballFilter"/>.
 	/// 
-	/// Available stemmers are listed in {@link SF.Snowball.Ext}.  The name of a
+	/// Available stemmers are listed in <see cref="SF.Snowball.Ext"/>.  The name of a
 	/// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
-	/// {@link EnglishStemmer} is named "English".
+	/// <see cref="EnglishStemmer"/> is named "English".
 	/// </summary>
 	public class SnowballAnalyzer : Analyzer
 	{
@@ -46,8 +46,8 @@ namespace Lucene.Net.Analysis.Snowball
 			stopSet = StopFilter.MakeStopSet(stopWords);
 		}
 		
-		/// <summary>Constructs a {@link StandardTokenizer} filtered by a {@link
-		/// StandardFilter}, a {@link LowerCaseFilter} and a {@link StopFilter}. 
+		/// <summary>Constructs a <see cref="StandardTokenizer"/> filtered by a {@link
+		/// StandardFilter}, a <see cref="LowerCaseFilter"/> and a <see cref="StopFilter"/>. 
 		/// </summary>
         public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{

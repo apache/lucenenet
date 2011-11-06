@@ -19,7 +19,7 @@ using System;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple {@link Formatter} implementation to highlight terms with a pre and post tag</summary>
+	/// <summary> Simple <see cref="Formatter"/> implementation to highlight terms with a pre and post tag</summary>
 	/// <author>  MAHarwood
 	/// 
 	/// </author>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Highlight
 		}
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.Formatter#highlightTerm(java.lang.String, Lucene.Net.Highlight.TokenGroup)
+		* <see cref="Lucene.Net.Highlight.Formatter.highlightTerm(java.lang.String, Lucene.Net.Highlight.TokenGroup)"/>
 		*/
 		public virtual System.String HighlightTerm(System.String originalText, TokenGroup tokenGroup)
 		{

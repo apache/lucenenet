@@ -16,10 +16,10 @@
  */
 
 
-/// To enable compression support in Lucene.Net ,
-/// you will need to define 'SHARP_ZIP_LIB' and reference the SharpLibZip 
-/// library.  The SharpLibZip library can be downloaded from: 
-/// http://www.icsharpcode.net/OpenSource/SharpZipLib/
+// To enable compression support in Lucene.Net ,
+// you will need to define 'SHARP_ZIP_LIB' and reference the SharpLibZip 
+// library.  The SharpLibZip library can be downloaded from: 
+// http://www.icsharpcode.net/OpenSource/SharpZipLib/
 
 using System;
 

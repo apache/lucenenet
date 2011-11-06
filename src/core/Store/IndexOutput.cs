@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
 		/// <param name="length">the number of characters in the sequence
 		/// </param>
 		/// <deprecated> -- please pre-convert to utf8 bytes
-		/// instead or use {@link #writeString}
+		/// instead or use <see cref="WriteString" />
 		/// </deprecated>
         [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(System.String s, int start, int length)
@@ -166,7 +166,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="length">the number of characters in the sequence
 		/// </param>
-		/// <deprecated> -- please pre-convert to utf8 bytes instead or use {@link #writeString}
+		/// <deprecated> -- please pre-convert to utf8 bytes instead or use <see cref="WriteString" />
 		/// </deprecated>
         [Obsolete("-- please pre-convert to utf8 bytes instead or use WriteString")]
 		public virtual void  WriteChars(char[] s, int start, int length)

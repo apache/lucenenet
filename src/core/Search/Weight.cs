@@ -24,24 +24,24 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Expert: Calculate query weights and build query scorers.
 	/// <p/>
-	/// The purpose of {@link Weight} is to ensure searching does not
-	/// modify a {@link Query}, so that a {@link Query} instance can be reused. <br/>
-	/// {@link Searcher} dependent state of the query should reside in the
-	/// {@link Weight}. <br/>
-	/// {@link IndexReader} dependent state should reside in the {@link Scorer}.
+	/// The purpose of <see cref="Weight" /> is to ensure searching does not
+	/// modify a <see cref="Query" />, so that a <see cref="Query" /> instance can be reused. <br/>
+	/// <see cref="Searcher" /> dependent state of the query should reside in the
+	/// <see cref="Weight" />. <br/>
+	/// <see cref="IndexReader" /> dependent state should reside in the <see cref="Scorer" />.
 	/// <p/>
-	/// A <code>Weight</code> is used in the following way:
-	/// <ol>
-	/// <li>A <code>Weight</code> is constructed by a top-level query, given a
-	/// <code>Searcher</code> ({@link Query#CreateWeight(Searcher)}).</li>
-	/// <li>The {@link #SumOfSquaredWeights()} method is called on the
-	/// <code>Weight</code> to compute the query normalization factor
-	/// {@link Similarity#QueryNorm(float)} of the query clauses contained in the
-	/// query.</li>
-	/// <li>The query normalization factor is passed to {@link #Normalize(float)}. At
-	/// this point the weighting is complete.</li>
-	/// <li>A <code>Scorer</code> is constructed by {@link #Scorer(IndexReader,boolean,boolean)}.</li>
-	/// </ol>
+	/// A <c>Weight</c> is used in the following way:
+	/// <list type="bullet">
+	/// <item>A <c>Weight</c> is constructed by a top-level query, given a
+	/// <c>Searcher</c> (<see cref="Query.CreateWeight(Searcher)" />).</item>
+	/// <item>The <see cref="SumOfSquaredWeights()" /> method is called on the
+	/// <c>Weight</c> to compute the query normalization factor
+	/// <see cref="Similarity.QueryNorm(float)" /> of the query clauses contained in the
+	/// query.</item>
+	/// <item>The query normalization factor is passed to <see cref="Normalize(float)" />. At
+	/// this point the weighting is complete.</item>
+    /// <item>A <c>Scorer</c> is constructed by <see cref="Scorer(IndexReader,bool,bool)" />.</item>
+	/// </list>
 	/// 
 	/// </summary>
 	/// <since> 2.9
@@ -71,35 +71,35 @@ namespace Lucene.Net.Search
 		/// <summary>Assigns the query normalization factor to this. </summary>
 		public abstract void  Normalize(float norm);
 		
-		/// <summary> Returns a {@link Scorer} which scores documents in/out-of order according
-		/// to <code>scoreDocsInOrder</code>.
+		/// <summary> Returns a <see cref="Scorer" /> which scores documents in/out-of order according
+		/// to <c>scoreDocsInOrder</c>.
 		/// <p/>
-		/// <b>NOTE:</b> even if <code>scoreDocsInOrder</code> is false, it is
-		/// recommended to check whether the returned <code>Scorer</code> indeed scores
-		/// documents out of order (i.e., call {@link #ScoresDocsOutOfOrder()}), as
-		/// some <code>Scorer</code> implementations will always return documents
+		/// <b>NOTE:</b> even if <c>scoreDocsInOrder</c> is false, it is
+		/// recommended to check whether the returned <c>Scorer</c> indeed scores
+		/// documents out of order (i.e., call <see cref="ScoresDocsOutOfOrder()" />), as
+		/// some <c>Scorer</c> implementations will always return documents
 		/// in-order.<br/>
 		/// <b>NOTE:</b> null can be returned if no documents will be scored by this
 		/// query.
 		/// 
 		/// </summary>
 		/// <param name="reader">
-		/// the {@link IndexReader} for which to return the {@link Scorer}.
+        /// the <see cref="IndexReader" /> for which to return the <see cref="Lucene.Net.Search.Scorer" />.
 		/// </param>
 		/// <param name="scoreDocsInOrder">specifies whether in-order scoring of documents is required. Note
 		/// that if set to false (i.e., out-of-order scoring is required),
 		/// this method can return whatever scoring mode it supports, as every
 		/// in-order scorer is also an out-of-order one. However, an
-		/// out-of-order scorer may not support {@link Scorer#NextDoc()}
-		/// and/or {@link Scorer#Advance(int)}, therefore it is recommended to
+        /// out-of-order scorer may not support <see cref="DocIdSetIterator.NextDoc" />
+        /// and/or <see cref="DocIdSetIterator.Advance(int)" />, therefore it is recommended to
 		/// request an in-order scorer if use of these methods is required.
 		/// </param>
 		/// <param name="topScorer">
-		/// if true, {@link Scorer#Score(Collector)} will be called; if false,
-		/// {@link Scorer#NextDoc()} and/or {@link Scorer#Advance(int)} will
+        /// if true, <see cref="Lucene.Net.Search.Scorer.Score(Lucene.Net.Search.Collector)" /> will be called; if false,
+        /// <see cref="DocIdSetIterator.NextDoc" /> and/or <see cref="DocIdSetIterator.Advance(int)" /> will
 		/// be called.
 		/// </param>
-		/// <returns> a {@link Scorer} which scores documents in/out-of order.
+		/// <returns> a <see cref="Scorer" /> which scores documents in/out-of order.
 		/// </returns>
 		/// <throws>  IOException </throws>
 		public abstract Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer);
@@ -108,14 +108,14 @@ namespace Lucene.Net.Search
 		public abstract float SumOfSquaredWeights();
 		
 		/// <summary> Returns true iff this implementation scores docs only out of order. This
-		/// method is used in conjunction with {@link Collector}'s
-		/// {@link Collector#AcceptsDocsOutOfOrder() acceptsDocsOutOfOrder} and
-		/// {@link #Scorer(Lucene.Net.Index.IndexReader, boolean, boolean)} to
-		/// create a matching {@link Scorer} instance for a given {@link Collector}, or
+		/// method is used in conjunction with <see cref="Collector" />'s 
+        /// <see cref="Collector.AcceptsDocsOutOfOrder()">AcceptsDocsOutOfOrder</see> and
+        /// <see cref="Scorer(Lucene.Net.Index.IndexReader, bool, bool)" /> to
+		/// create a matching <see cref="Scorer" /> instance for a given <see cref="Collector" />, or
 		/// vice versa.
 		/// <p/>
-		/// <b>NOTE:</b> the default implementation returns <code>false</code>, i.e.
-		/// the <code>Scorer</code> scores documents in-order.
+		/// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
+		/// the <c>Scorer</c> scores documents in-order.
 		/// </summary>
 		public virtual bool ScoresDocsOutOfOrder()
 		{

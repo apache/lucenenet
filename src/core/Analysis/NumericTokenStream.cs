@@ -33,32 +33,32 @@ using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionI
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> <b>Expert:</b> This class provides a {@link TokenStream}
-	/// for indexing numeric values that can be used by {@link
-	/// NumericRangeQuery} or {@link NumericRangeFilter}.
+	/// <summary> <b>Expert:</b> This class provides a <see cref="TokenStream" />
+	/// for indexing numeric values that can be used by <see cref="NumericRangeQuery" />
+	/// or <see cref="NumericRangeFilter" />.
 	/// 
-	/// <p/>Note that for simple usage, {@link NumericField} is
-	/// recommended.  {@link NumericField} disables norms and
+	/// <p/>Note that for simple usage, <see cref="NumericField" /> is
+	/// recommended.  <see cref="NumericField" /> disables norms and
 	/// term freqs, as they are not usually needed during
 	/// searching.  If you need to change these settings, you
 	/// should use this class.
 	/// 
-	/// <p/>See {@link NumericField} for capabilities of fields
+	/// <p/>See <see cref="NumericField" /> for capabilities of fields
 	/// indexed numerically.<p/>
 	/// 
-	/// <p/>Here's an example usage, for an <code>int</code> field:
+	/// <p/>Here's an example usage, for an <c>int</c> field:
 	/// 
-	/// <pre>
+	/// <code>
 	///  Field field = new Field(name, new NumericTokenStream(precisionStep).setIntValue(value));
 	///  field.setOmitNorms(true);
 	///  field.setOmitTermFreqAndPositions(true);
 	///  document.add(field);
-	/// </pre>
+	/// </code>
 	/// 
 	/// <p/>For optimal performance, re-use the TokenStream and Field instance
 	/// for more than one document:
 	/// 
-	/// <pre>
+	/// <code>
 	///  NumericTokenStream stream = new NumericTokenStream(precisionStep);
 	///  Field field = new Field(name, stream);
 	///  field.setOmitNorms(true);
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis
 	///    stream.setIntValue(value)
 	///    writer.addDocument(document);
 	///  }
-	/// </pre>
+	/// </code>
 	/// 
 	/// <p/>This stream is not intended to be used in analyzers;
 	/// it's more for iterating the different precisions during
@@ -78,20 +78,17 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// <p/><b>NOTE</b>: as token streams are only consumed once
 	/// the document is added to the index, if you index more
-	/// than one numeric field, use a separate <code>NumericTokenStream</code>
+	/// than one numeric field, use a separate <c>NumericTokenStream</c>
 	/// instance for each.<p/>
 	/// 
-	/// <p/>See {@link NumericRangeQuery} for more details on the
-	/// <a
-	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
+	/// <p/>See <see cref="NumericRangeQuery" /> for more details on the
+	/// <a href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
 	/// parameter as well as how numeric fields work under the hood.<p/>
 	/// 
 	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
 	/// might change in incompatible ways in the next release.</font>
-	/// 
+	///   Since 2.9
 	/// </summary>
-	/// <since> 2.9
-	/// </since>
 	public sealed class NumericTokenStream:TokenStream
 	{
 		private void  InitBlock()
@@ -107,8 +104,8 @@ namespace Lucene.Net.Analysis
 		/// <summary>The lower precision tokens gets this token type assigned. </summary>
 		public const System.String TOKEN_TYPE_LOWER_PREC = "lowerPrecNumeric";
 		
-		/// <summary> Creates a token stream for numeric values using the default <code>precisionStep</code>
-		/// {@link NumericUtils#PRECISION_STEP_DEFAULT} (4). The stream is not yet initialized,
+		/// <summary> Creates a token stream for numeric values using the default <c>precisionStep</c>
+		/// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The stream is not yet initialized,
 		/// before using set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
 		public NumericTokenStream():this(NumericUtils.PRECISION_STEP_DEFAULT)
@@ -116,7 +113,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Creates a token stream for numeric values with the specified
-		/// <code>precisionStep</code>. The stream is not yet initialized,
+		/// <c>precisionStep</c>. The stream is not yet initialized,
 		/// before using set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
 		public NumericTokenStream(int precisionStep):base()
@@ -128,7 +125,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Expert: Creates a token stream for numeric values with the specified
-		/// <code>precisionStep</code> using the given {@link AttributeSource}.
+		/// <c>precisionStep</c> using the given <see cref="AttributeSource" />.
 		/// The stream is not yet initialized,
 		/// before using set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
@@ -141,8 +138,8 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Expert: Creates a token stream for numeric values with the specified
-		/// <code>precisionStep</code> using the given
-		/// {@link org.apache.lucene.util.AttributeSource.AttributeFactory}.
+		/// <c>precisionStep</c> using the given
+		/// <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />.
 		/// The stream is not yet initialized,
 		/// before using set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
@@ -154,11 +151,11 @@ namespace Lucene.Net.Analysis
 				throw new System.ArgumentException("precisionStep must be >=1");
 		}
 		
-		/// <summary> Initializes the token stream with the supplied <code>long</code> value.</summary>
-		/// <param name="value">the value, for which this TokenStream should enumerate tokens.
+		/// <summary> Initializes the token stream with the supplied <c>long</c> value.</summary>
+		/// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>new Field(name, new NumericTokenStream(precisionStep).SetLongValue(value))</code>
+		/// <c>new Field(name, new NumericTokenStream(precisionStep).SetLongValue(value))</c>
 		/// </returns>
 		public NumericTokenStream SetLongValue(long value_Renamed)
 		{
@@ -168,11 +165,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary> Initializes the token stream with the supplied <code>int</code> value.</summary>
-		/// <param name="value">the value, for which this TokenStream should enumerate tokens.
+		/// <summary> Initializes the token stream with the supplied <c>int</c> value.</summary>
+		/// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>new Field(name, new NumericTokenStream(precisionStep).SetIntValue(value))</code>
+		/// <c>new Field(name, new NumericTokenStream(precisionStep).SetIntValue(value))</c>
 		/// </returns>
 		public NumericTokenStream SetIntValue(int value_Renamed)
 		{
@@ -182,11 +179,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary> Initializes the token stream with the supplied <code>double</code> value.</summary>
-		/// <param name="value">the value, for which this TokenStream should enumerate tokens.
+		/// <summary> Initializes the token stream with the supplied <c>double</c> value.</summary>
+		/// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>new Field(name, new NumericTokenStream(precisionStep).SetDoubleValue(value))</code>
+		/// <c>new Field(name, new NumericTokenStream(precisionStep).SetDoubleValue(value))</c>
 		/// </returns>
 		public NumericTokenStream SetDoubleValue(double value_Renamed)
 		{
@@ -196,11 +193,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary> Initializes the token stream with the supplied <code>float</code> value.</summary>
-		/// <param name="value">the value, for which this TokenStream should enumerate tokens.
+		/// <summary> Initializes the token stream with the supplied <c>float</c> value.</summary>
+		/// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>new Field(name, new NumericTokenStream(precisionStep).SetFloatValue(value))</code>
+		/// <c>new Field(name, new NumericTokenStream(precisionStep).SetFloatValue(value))</c>
 		/// </returns>
 		public NumericTokenStream SetFloatValue(float value_Renamed)
 		{

@@ -27,32 +27,32 @@ namespace Lucene.Net.Index
 	/// and optimize operations.<p/>
 	/// 
 	/// <p/>Whenever the segments in an index have been altered by
-	/// {@link IndexWriter}, either the addition of a newly
+	/// <see cref="IndexWriter" />, either the addition of a newly
 	/// flushed segment, addition of many segments from
 	/// addIndexes* calls, or a previous merge that may now need
-	/// to cascade, {@link IndexWriter} invokes {@link
-	/// #findMerges} to give the MergePolicy a chance to pick
+	/// to cascade, <see cref="IndexWriter" /> invokes <see cref="FindMerges" />
+	/// to give the MergePolicy a chance to pick
 	/// merges that are now required.  This method returns a
-	/// {@link MergeSpecification} instance describing the set of
+	/// <see cref="MergeSpecification" /> instance describing the set of
 	/// merges that should be done, or null if no merges are
 	/// necessary.  When IndexWriter.optimize is called, it calls
-	/// {@link #findMergesForOptimize} and the MergePolicy should
+	/// <see cref="FindMergesForOptimize" /> and the MergePolicy should
 	/// then return the necessary merges.<p/>
 	/// 
 	/// <p/>Note that the policy can return more than one merge at
-	/// a time.  In this case, if the writer is using {@link
-	/// SerialMergeScheduler}, the merges will be run
-	/// sequentially but if it is using {@link
-	/// ConcurrentMergeScheduler} they will be run concurrently.<p/>
+	/// a time.  In this case, if the writer is using <see cref="SerialMergeScheduler" />
+	///, the merges will be run
+	/// sequentially but if it is using <see cref="ConcurrentMergeScheduler" />
+	/// they will be run concurrently.<p/>
 	/// 
-	/// <p/>The default MergePolicy is {@link
-	/// LogByteSizeMergePolicy}.<p/>
+	/// <p/>The default MergePolicy is <see cref="LogByteSizeMergePolicy" />
+	///.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
 	/// 
 	/// <p/><b>NOTE</b>: This class typically requires access to
-	/// package-private APIs (e.g. <code>SegmentInfos</code>) to do its job;
+	/// package-private APIs (e.g. <c>SegmentInfos</c>) to do its job;
 	/// if you implement your own MergePolicy, you'll need to put
 	/// it in package Lucene.Net.Index in order to use
 	/// these APIs.
@@ -106,8 +106,8 @@ namespace Lucene.Net.Index
 				}
 			}
 			
-			/// <summary>Retrieve previous exception set by {@link
-			/// #setException}. 
+			/// <summary>Retrieve previous exception set by <see cref="SetException" />
+			///. 
 			/// </summary>
 			internal virtual System.Exception GetException()
 			{
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> A MergeSpecification instance provides the information
 		/// necessary to perform multiple merges.  It simply
-		/// contains a list of {@link OneMerge} instances.
+		/// contains a list of <see cref="OneMerge" /> instances.
 		/// </summary>
 		
 		public class MergeSpecification
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 		{
 			private Directory dir;
 			/// <deprecated>
-			/// Use {@link #MergePolicy.MergeException(String,Directory)} instead 
+			/// Use <see cref="MergePolicy.MergeException(String,Directory)" /> instead 
 			/// </deprecated>
             [Obsolete("Use MergePolicy.MergeException(String,Directory) instead ")]
 			public MergeException(System.String message):base(message)
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
 				this.dir = dir;
 			}
 			/// <deprecated>
-			/// Use {@link #MergePolicy.MergeException(Throwable,Directory)} instead 
+			/// Use <see cref="MergePolicy.MergeException(Exception,Directory)" /> instead 
 			/// </deprecated>
             [Obsolete("Use MergePolicy.MergeException(Throwable,Directory) instead ")]
 			public MergeException(System.Exception exc):base(null, exc)
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
 			{
 				this.dir = dir;
 			}
-			/// <summary>Returns the {@link Directory} of the index that hit
+			/// <summary>Returns the <see cref="Directory" /> of the index that hit
 			/// the exception. 
 			/// </summary>
 			public virtual Directory GetDirectory()
@@ -259,8 +259,8 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Determine what set of merge operations are now necessary on the index.
-		/// {@link IndexWriter} calls this whenever there is a change to the segments.
-		/// This call is always synchronized on the {@link IndexWriter} instance so
+		/// <see cref="IndexWriter" /> calls this whenever there is a change to the segments.
+		/// This call is always synchronized on the <see cref="IndexWriter" /> instance so
 		/// only one thread at a time will call this method.
 		/// 
 		/// </summary>
@@ -269,9 +269,9 @@ namespace Lucene.Net.Index
 		public abstract MergeSpecification FindMerges(SegmentInfos segmentInfos);
 		
 		/// <summary> Determine what set of merge operations is necessary in order to optimize
-		/// the index. {@link IndexWriter} calls this when its
-		/// {@link IndexWriter#Optimize()} method is called. This call is always
-		/// synchronized on the {@link IndexWriter} instance so only one thread at a
+		/// the index. <see cref="IndexWriter" /> calls this when its
+		/// <see cref="IndexWriter.Optimize()" /> method is called. This call is always
+		/// synchronized on the <see cref="IndexWriter" /> instance so only one thread at a
 		/// time will call this method.
 		/// 
 		/// </summary>

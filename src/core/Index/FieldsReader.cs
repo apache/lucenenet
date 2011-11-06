@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Closes the underlying {@link Lucene.Net.Store.IndexInput} streams, including any ones associated with a
+		/// <summary> Closes the underlying <see cref="Lucene.Net.Store.IndexInput" /> streams, including any ones associated with a
 		/// lazy implementation of a Field.  This means that the Fields values will not be accessible.
 		/// 
 		/// </summary>

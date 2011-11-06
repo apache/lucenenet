@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
 	/// require log(size) time.
 	/// 
 	/// <p/><b>NOTE</b>: This class pre-allocates a full array of
-	/// length <code>maxSize+1</code>, in {@link #initialize}.
+	/// length <c>maxSize+1</c>, in <see cref="Initialize" />.
 	/// 
 	/// </summary>
 	public abstract class PriorityQueue
@@ -40,12 +40,12 @@ namespace Lucene.Net.Util
 		public abstract bool LessThan(System.Object a, System.Object b);
 		
 		/// <summary> This method can be overridden by extending classes to return a sentinel
-		/// object which will be used by {@link #Initialize(int)} to fill the queue, so
+		/// object which will be used by <see cref="Initialize(int)" /> to fill the queue, so
 		/// that the code which uses that queue can always assume it's full and only
 		/// change the top without attempting to insert any new object.<br/>
 		/// 
 		/// Those sentinel values should always compare worse than any non-sentinel
-		/// value (i.e., {@link #LessThan(Object, Object)} should always favor the
+		/// value (i.e., <see cref="LessThan(Object, Object)" /> should always favor the
 		/// non-sentinel values).<br/>
 		/// 
 		/// By default, this method returns false, which means the queue will not be
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
 		/// If this method is extended to return a non-null value, then the following
 		/// usage pattern is recommended:
 		/// 
-		/// <pre>
+        /// <code>
 		/// // extends getSentinelObject() to return a non-null value.
 		/// PriorityQueue pq = new MyQueue(numHits);
 		/// // save the 'top' element, which is guaranteed to not be null.
@@ -65,10 +65,10 @@ namespace Lucene.Net.Util
 		/// // you've verified it is better), it is as simple as:
 		/// pqTop.change().
 		/// pqTop = pq.updateTop();
-		/// </pre>
+        /// </code>
 		/// 
 		/// <b>NOTE:</b> if this method returns a non-null value, it will be called by
-		/// {@link #Initialize(int)} {@link #Size()} times, relying on a new object to
+		/// <see cref="Initialize(int)" /> <see cref="Size()" /> times, relying on a new object to
 		/// be returned and will not check if it's null again. Therefore you should
 		/// ensure any call to this method creates a new instance and behaves
 		/// consistently, e.g., it cannot return null if it previously returned
@@ -133,8 +133,8 @@ namespace Lucene.Net.Util
 		/// (ArrayIndexOutOfBound) is thrown.
 		/// 
 		/// </summary>
-		/// <deprecated> use {@link #Add(Object)} which returns the new top object,
-		/// saving an additional call to {@link #Top()}.
+		/// <deprecated> use <see cref="Add(Object)" /> which returns the new top object,
+		/// saving an additional call to <see cref="Top()" />.
 		/// </deprecated>
         [Obsolete("use Add(Object) which returns the new top object, saving an additional call to Top().")]
 		public void  Put(System.Object element)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Adds an Object to a PriorityQueue in log(size) time. If one tries to add
 		/// more objects than maxSize from initialize an
-		/// {@link ArrayIndexOutOfBoundsException} is thrown.
+		/// <see cref="System.IndexOutOfRangeException" /> is thrown.
 		/// 
 		/// </summary>
 		/// <returns> the new 'top' element in the queue.
@@ -167,7 +167,7 @@ namespace Lucene.Net.Util
 		/// </param>
 		/// <returns> true if element is added, false otherwise.
 		/// </returns>
-		/// <deprecated> use {@link #InsertWithOverflow(Object)} instead, which
+		/// <deprecated> use <see cref="InsertWithOverflow(Object)" /> instead, which
 		/// encourages objects reuse.
 		/// </deprecated>
         [Obsolete("use InsertWithOverflow(Object) instead, which encourages objects reuse.")]
@@ -235,22 +235,22 @@ namespace Lucene.Net.Util
 		/// <summary> Should be called when the Object at top changes values. Still log(n) worst
 		/// case, but it's at least twice as fast to
 		/// 
-		/// <pre>
+        /// <code>
 		/// pq.top().change();
 		/// pq.adjustTop();
-		/// </pre>
+        /// </code>
 		/// 
 		/// instead of
 		/// 
-		/// <pre>
+        /// <code>
 		/// o = pq.pop();
 		/// o.change();
 		/// pq.push(o);
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
-		/// <deprecated> use {@link #UpdateTop()} which returns the new top element and
-		/// saves an additional call to {@link #Top()}.
+		/// <deprecated> use <see cref="UpdateTop()" /> which returns the new top element and
+		/// saves an additional call to <see cref="Top()" />.
 		/// </deprecated>
         [Obsolete("use UpdateTop() which returns the new top element and saves an additional call to Top()")]
 		public void  AdjustTop()
@@ -261,18 +261,18 @@ namespace Lucene.Net.Util
 		/// <summary> Should be called when the Object at top changes values. Still log(n) worst
 		/// case, but it's at least twice as fast to
 		/// 
-		/// <pre>
+        /// <code>
 		/// pq.top().change();
 		/// pq.updateTop();
-		/// </pre>
+        /// </code>
 		/// 
 		/// instead of
 		/// 
-		/// <pre>
+        /// <code>
 		/// o = pq.pop();
 		/// o.change();
 		/// pq.push(o);
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
 		/// <returns> the new 'top' element.

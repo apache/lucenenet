@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Geometry
 		/// <summary>
 		/// Calculates the distance between two lat/lng's in miles.
 		/// </summary>
-		/// <param name="latLng">The lat lng.</param>
+        /// <param name="ll2">The lat lng.</param>
 		/// <returns>Returns the distance in miles</returns>
 		public double ArcDistance(LatLng ll2)
 		{

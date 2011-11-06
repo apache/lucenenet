@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 		/// <summary>the current term </summary>
 		protected internal Term currentTerm = null;
 		
-		/// <summary>the delegate enum - to set this member use {@link #setEnum} </summary>
+		/// <summary>the delegate enum - to set this member use <see cref="SetEnum" /> </summary>
 		protected internal TermEnum actualEnum = null;
 		
 		public FilteredTermEnum()

@@ -38,17 +38,17 @@ namespace Lucene.Net.Index
 	/// (with DocumentWriter) and doing standard merges on those
 	/// segments.
 	/// 
-	/// Each added document is passed to the {@link DocConsumer},
+	/// Each added document is passed to the <see cref="DocConsumer" />,
 	/// which in turn processes the document and interacts with
 	/// other consumers in the indexing chain.  Certain
-	/// consumers, like {@link StoredFieldsWriter} and {@link
-	/// TermVectorsTermsWriter}, digest a document and
+	/// consumers, like <see cref="StoredFieldsWriter" /> and <see cref="TermVectorsTermsWriter" />
+	///, digest a document and
 	/// immediately write bytes to the "doc store" files (ie,
 	/// they do not consume RAM per document, except while they
 	/// are processing the document).
 	/// 
-	/// Other consumers, eg {@link FreqProxTermsWriter} and
-	/// {@link NormsWriter}, buffer bytes in RAM and flush only
+	/// Other consumers, eg <see cref="FreqProxTermsWriter" /> and
+	/// <see cref="NormsWriter" />, buffer bytes in RAM and flush only
 	/// when a new segment is produced.
 	/// Once we have used our allowed RAM buffer, or the number
 	/// of added docs is large enough (in the case we are
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
             }
         }
 
-		/// <summary> The IndexingChain must define the {@link #GetChain(DocumentsWriter)} method
+		/// <summary> The IndexingChain must define the <see cref="GetChain(DocumentsWriter)" /> method
 		/// which returns the DocConsumer that the DocumentsWriter calls to process the
 		/// documents. 
 		/// </summary>

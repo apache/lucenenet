@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Compares {@link Lucene.Net.Index.TermVectorEntry}s first by frequency and then by
+	/// <summary> Compares <see cref="Lucene.Net.Index.TermVectorEntry" />s first by frequency and then by
 	/// the term (case-sensitive)
 	/// 
 	/// 

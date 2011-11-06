@@ -145,8 +145,8 @@ namespace Lucene.Net.Search.Spans
 		private SpanQuery include;
 		private SpanQuery exclude;
 		
-		/// <summary>Construct a SpanNotQuery matching spans from <code>include</code> which
-		/// have no overlap with spans from <code>exclude</code>.
+		/// <summary>Construct a SpanNotQuery matching spans from <c>include</c> which
+		/// have no overlap with spans from <c>exclude</c>.
 		/// </summary>
 		public SpanNotQuery(SpanQuery include, SpanQuery exclude)
 		{
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="ExtractTerms(Set)">
+        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
 		/// </seealso>
         [Obsolete("use ExtractTerms instead")]
 		public override System.Collections.ICollection GetTerms()
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

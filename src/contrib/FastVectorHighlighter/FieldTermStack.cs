@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Vectorhighlight
 {
    
    /// <summary>
-   /// <code>FieldTermStack</code> is a stack that keeps query terms in the specified field
+   /// <c>FieldTermStack</c> is a stack that keeps query terms in the specified field
    /// of the document to be highlighted.
    /// </summary>
     public class FieldTermStack

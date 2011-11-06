@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Expert: A Query that sets the scores of document to the
-	/// values obtained from a {@link Lucene.Net.Search.Function.ValueSource ValueSource}.
+	/// values obtained from a <see cref="Lucene.Net.Search.Function.ValueSource">ValueSource</see>.
 	/// <p/>
 	/// This query provides a score for <em>each and every</em> undeleted document in the index.    
 	/// <p/>
@@ -53,13 +53,13 @@ namespace Lucene.Net.Search.Function
 			this.valSrc = valSrc;
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Query#rewrite(Lucene.Net.Index.IndexReader) */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.rewrite(Lucene.Net.Index.IndexReader) */
 		public override Query Rewrite(IndexReader reader)
 		{
 			return this;
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Query#extractTerms(java.util.Set) */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.extractTerms(java.util.Set) */
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
 			// no terms involved here
@@ -91,26 +91,26 @@ namespace Lucene.Net.Search.Function
 				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#getQuery() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
 			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#getValue() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
 			public override float GetValue()
 			{
 				return queryWeight;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#sumOfSquaredWeights() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
 			public override float SumOfSquaredWeights()
 			{
 				queryWeight = Enclosing_Instance.GetBoost();
 				return queryWeight * queryWeight;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#normalize(float) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
 			public override void  Normalize(float norm)
 			{
 				this.queryNorm = norm;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Function
 				return new ValueSourceScorer(enclosingInstance, similarity, reader, this);
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#explain(Lucene.Net.Index.IndexReader, int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.explain(Lucene.Net.Index.IndexReader, int) */
 			public override Explanation Explain(IndexReader reader, int doc)
 			{
 				return new ValueSourceScorer(enclosingInstance, similarity, reader, this).Explain(doc);
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Function
 				termDocs = reader.TermDocs(null);
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead. ")]
 			public override bool Next()
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Function
 				return doc = termDocs.Next()?termDocs.Doc():NO_MORE_DOCS;
 			}
 			
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead.")]
 			public override int Doc()
@@ -192,13 +192,13 @@ namespace Lucene.Net.Search.Function
 				return doc;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Scorer#score() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.score() */
 			public override float Score()
 			{
 				return qWeight * vals.FloatVal(termDocs.Doc());
 			}
 			
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int)} instead.")]
 			public override bool SkipTo(int target)
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Function
 				return doc = termDocs.SkipTo(target)?termDocs.Doc():NO_MORE_DOCS;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Scorer#explain(int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.explain(int) */
 			public override Explanation Explain(int doc)
 			{
 				float sc = qWeight * vals.FloatVal(doc);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Function
 			return valSrc.ToString() + ToStringUtils.Boost(GetBoost());
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (GetType() != o.GetType())

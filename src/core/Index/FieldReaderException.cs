@@ -27,9 +27,9 @@ namespace Lucene.Net.Index
 	[Serializable]
 	public class FieldReaderException:System.SystemException
 	{
-		/// <summary> Constructs a new runtime exception with <code>null</code> as its
+		/// <summary> Constructs a new runtime exception with <c>null</c> as its
 		/// detail message.  The cause is not initialized, and may subsequently be
-        /// initialized by a call to {@link #innerException}.
+        /// initialized by a call to <see cref="Exception.InnerException" />.
 		/// </summary>
 		public FieldReaderException()
 		{
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <param name="cause">the cause (which is saved for later retrieval by the
-		/// {@link #InnerException()} method).  (A <tt>null</tt> value is
+        /// <see cref="Exception.InnerException" />).  (A <tt>null</tt> value is
 		/// permitted, and indicates that the cause is nonexistent or
 		/// unknown.)
 		/// </param>
@@ -57,11 +57,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Constructs a new runtime exception with the specified detail message.
 		/// The cause is not initialized, and may subsequently be initialized by a
-        /// call to {@link #innerException}.
+        /// call to <see cref="Exception.InnerException" />.
 		/// 
 		/// </summary>
 		/// <param name="message">the detail message. The detail message is saved for
-		/// later retrieval by the {@link #getMessage()} method.
+        /// later retrieval by the <see cref="Exception.Message" /> method.
 		/// </param>
 		public FieldReaderException(System.String message):base(message)
 		{
@@ -69,15 +69,15 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Constructs a new runtime exception with the specified detail message and
 		/// cause.  <p/>Note that the detail message associated with
-		/// <code>cause</code> is <i>not</i> automatically incorporated in
+		/// <c>cause</c> is <i>not</i> automatically incorporated in
 		/// this runtime exception's detail message.
 		/// 
 		/// </summary>
 		/// <param name="message">the detail message (which is saved for later retrieval
-		/// by the {@link #getMessage()} method).
+        /// by the <see cref="Exception.Message" /> method).
 		/// </param>
 		/// <param name="cause">  the cause (which is saved for later retrieval by the
-		/// {@link #InnerException()} method).  (A <tt>null</tt> value is
+        /// <see cref="Exception.InnerException" /> method).  (A <tt>null</tt> value is
 		/// permitted, and indicates that the cause is nonexistent or
 		/// unknown.)
 		/// </param>

@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>
-	/// Represents hits returned by {@link Searcher#search(Query,Filter,int,Sort)}.
+	/// Represents hits returned by <see cref="Searcher.Search(Query,Filter,int,Sort)" />.
 	/// </summary>
 	[Serializable]
 	public class TopFieldDocs:TopDocs

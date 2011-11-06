@@ -27,17 +27,17 @@ namespace Lucene.Net.Index
 	
 	/// <summary> Combines multiple files into a single compound file.
 	/// The file format:<br/>
-	/// <ul>
-	/// <li>VInt fileCount</li>
-	/// <li>{Directory}
-	/// fileCount entries with the following structure:</li>
-	/// <ul>
-	/// <li>long dataOffset</li>
-	/// <li>String fileName</li>
-	/// </ul>
-	/// <li>{File Data}
-	/// fileCount entries with the raw data of the corresponding file</li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>VInt fileCount</item>
+	/// <item>{Directory}
+	/// fileCount entries with the following structure:</item>
+	/// <list type="bullet">
+	/// <item>long dataOffset</item>
+	/// <item>String fileName</item>
+	/// </list>
+	/// <item>{File Data}
+	/// fileCount entries with the raw data of the corresponding file</item>
+	/// </list>
 	/// 
 	/// The fileCount integer indicates how many files are contained in this compound
 	/// file. The {directory} that follows has that many entries. Each directory entry
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 		/// <summary>Create the compound stream in the specified file. The file name is the
 		/// entire name (no extensions are added).
 		/// </summary>
-		/// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
+		/// <throws>  NullPointerException if <c>dir</c> or <c>name</c> is null </throws>
 		public CompoundFileWriter(Directory dir, System.String name):this(dir, name, null)
 		{
 		}
@@ -104,12 +104,12 @@ namespace Lucene.Net.Index
 			return fileName;
 		}
 		
-		/// <summary>Add a source stream. <code>file</code> is the string by which the 
+		/// <summary>Add a source stream. <c>file</c> is the string by which the 
 		/// sub-stream will be known in the compound stream.
 		/// 
 		/// </summary>
 		/// <throws>  IllegalStateException if this writer is closed </throws>
-		/// <throws>  NullPointerException if <code>file</code> is null </throws>
+		/// <throws>  NullPointerException if <c>file</c> is null </throws>
 		/// <throws>  IllegalArgumentException if a file with the same name </throws>
 		/// <summary>   has been added already
 		/// </summary>

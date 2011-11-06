@@ -15,20 +15,17 @@
  * limitations under the License.
  */
 
-
-/// <summary>Implement this class to plug into the TermsHash
-/// processor, which inverts & stores Tokens into a hash
-/// table and provides an API for writing bytes into
-/// multiple streams for each unique Token. 
-/// </summary>
-
 using System;
 
 using Fieldable = Lucene.Net.Documents.Fieldable;
 
 namespace Lucene.Net.Index
 {
-	
+    /// <summary>Implement this class to plug into the TermsHash
+    /// processor, which inverts and stores Tokens into a hash
+    /// table and provides an API for writing bytes into
+    /// multiple streams for each unique Token. 
+    /// </summary>
 	abstract class TermsHashConsumerPerField
 	{
 		internal abstract bool Start(Fieldable[] fields, int count);

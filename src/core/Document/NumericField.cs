@@ -29,18 +29,18 @@ namespace Lucene.Net.Documents
 {
 	// javadocs
 	
-	/// <summary> <p/>This class provides a {@link Field} that enables indexing
+	/// <summary> <p/>This class provides a <see cref="Field" /> that enables indexing
 	/// of numeric values for efficient range filtering and
 	/// sorting.  Here's an example usage, adding an int value:
-	/// <pre>
+    /// <code>
 	/// document.add(new NumericField(name).setIntValue(value));
-	/// </pre>
+    /// </code>
 	/// 
 	/// For optimal performance, re-use the
-	/// <code>NumericField</code> and {@link Document} instance for more than
+	/// <c>NumericField</c> and <see cref="Document" /> instance for more than
 	/// one document:
 	/// 
-	/// <pre>
+    /// <code>
 	/// NumericField field = new NumericField(name);
 	/// Document document = new Document();
 	/// document.add(field);
@@ -51,42 +51,42 @@ namespace Lucene.Net.Documents
 	/// writer.addDocument(document);
 	/// ...
 	/// }
-	/// </pre>
+    /// </code>
 	/// 
-	/// <p/>The java native types <code>int</code>, <code>long</code>,
-	/// <code>float</code> and <code>double</code> are
+	/// <p/>The .Net native types <c>int</c>, <c>long</c>,
+	/// <c>float</c> and <c>double</c> are
 	/// directly supported.  However, any value that can be
 	/// converted into these native types can also be indexed.
 	/// For example, date/time values represented by a
-	/// {@link java.util.Date} can be translated into a long
-	/// value using the {@link java.util.Date#getTime} method.  If you
+	/// <see cref="System.DateTime" /> can be translated into a long
+    /// value using the <c>java.util.Date.getTime</c> method.  If you
 	/// don't need millisecond precision, you can quantize the
 	/// value, either by dividing the result of
-	/// {@link java.util.Date#getTime} or using the separate getters
-	/// (for year, month, etc.) to construct an <code>int</code> or
-	/// <code>long</code> value.<p/>
+	/// <c>java.util.Date.getTime</c> or using the separate getters
+	/// (for year, month, etc.) to construct an <c>int</c> or
+	/// <c>long</c> value.<p/>
 	/// 
 	/// <p/>To perform range querying or filtering against a
-	/// <code>NumericField</code>, use {@link NumericRangeQuery} or {@link
-	/// NumericRangeFilter}.  To sort according to a
-	/// <code>NumericField</code>, use the normal numeric sort types, eg
-	/// {@link SortField#INT} (note that {@link SortField#AUTO}
-	/// will not work with these fields).  <code>NumericField</code> values
-	/// can also be loaded directly from {@link FieldCache}.<p/>
+	/// <c>NumericField</c>, use <see cref="NumericRangeQuery" /> or <see cref="NumericRangeFilter" />
+	///.  To sort according to a
+	/// <c>NumericField</c>, use the normal numeric sort types, eg
+	/// <see cref="SortField.INT" /> (note that <see cref="SortField.AUTO" />
+	/// will not work with these fields).  <c>NumericField</c> values
+	/// can also be loaded directly from <see cref="FieldCache" />.<p/>
 	/// 
-	/// <p/>By default, a <code>NumericField</code>'s value is not stored but
+	/// <p/>By default, a <c>NumericField</c>'s value is not stored but
 	/// is indexed for range filtering and sorting.  You can use
-	/// the {@link #NumericField(String,Field.Store,boolean)}
+	/// the <see cref="NumericField(String,Field.Store,bool)" />
 	/// constructor if you need to change these defaults.<p/>
 	/// 
-	/// <p/>You may add the same field name as a <code>NumericField</code> to
+	/// <p/>You may add the same field name as a <c>NumericField</c> to
 	/// the same document more than once.  Range querying and
 	/// filtering will be the logical OR of all values; so a range query
 	/// will hit all documents that have at least one value in
 	/// the range. However sort behavior is not defined.  If you need to sort,
-	/// you should separately index a single-valued <code>NumericField</code>.<p/>
+	/// you should separately index a single-valued <c>NumericField</c>.<p/>
 	/// 
-	/// <p/>A <code>NumericField</code> will consume somewhat more disk space
+	/// <p/>A <c>NumericField</c> will consume somewhat more disk space
 	/// in the index than an ordinary single-valued field.
 	/// However, for a typical index that includes substantial
 	/// textual content per document, this increase will likely
@@ -97,44 +97,44 @@ namespace Lucene.Net.Documents
 	/// assigned to larger and larger pre-defined brackets (which
 	/// are simply lower-precision representations of the value).
 	/// The step size between each successive bracket is called the
-	/// <code>precisionStep</code>, measured in bits.  Smaller
-	/// <code>precisionStep</code> values result in larger number
+	/// <c>precisionStep</c>, measured in bits.  Smaller
+	/// <c>precisionStep</c> values result in larger number
 	/// of brackets, which consumes more disk space in the index
 	/// but may result in faster range search performance.  The
 	/// default value, 4, was selected for a reasonable tradeoff
 	/// of disk space consumption versus performance.  You can
-	/// use the expert constructor {@link
-	/// #NumericField(String,int,Field.Store,boolean)} if you'd
+	/// use the expert constructor <see cref="NumericField(String,int,Field.Store,bool)" />
+	/// if you'd
 	/// like to change the value.  Note that you must also
-	/// specify a congruent value when creating {@link
-	/// NumericRangeQuery} or {@link NumericRangeFilter}.
+	/// specify a congruent value when creating <see cref="NumericRangeQuery" />
+	/// or <see cref="NumericRangeFilter" />.
 	/// For low cardinality fields larger precision steps are good.
 	/// If the cardinality is &lt; 100, it is fair
-	/// to use {@link Integer#MAX_VALUE}, which produces one
+	/// to use <see cref="int.MaxValue" />, which produces one
 	/// term per value.
 	/// 
 	/// <p/>For more information on the internals of numeric trie
 	/// indexing, including the <a
-	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
-	/// configuration, see {@link NumericRangeQuery}. The format of
-	/// indexed values is described in {@link NumericUtils}.
+	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
+	/// configuration, see <see cref="NumericRangeQuery" />. The format of
+	/// indexed values is described in <see cref="NumericUtils" />.
 	/// 
 	/// <p/>If you only need to sort by numeric value, and never
 	/// run range querying/filtering, you can index using a
-	/// <code>precisionStep</code> of {@link Integer#MAX_VALUE}.
+    /// <c>precisionStep</c> of <see cref="int.MaxValue" />.
 	/// This will minimize disk space consumed. <p/>
 	/// 
-	/// <p/>More advanced users can instead use {@link
-	/// NumericTokenStream} directly, when indexing numbers. This
+	/// <p/>More advanced users can instead use <see cref="NumericTokenStream" />
+	/// directly, when indexing numbers. This
 	/// class is a wrapper around this token stream type for
 	/// easier, more intuitive usage.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This class is only used during
 	/// indexing. When retrieving the stored field value from a
-	/// {@link Document} instance after search, you will get a
-	/// conventional {@link Fieldable} instance where the numeric
-	/// values are returned as {@link String}s (according to
-	/// <code>toString(value)</code> of the used data type).
+	/// <see cref="Document" /> instance after search, you will get a
+	/// conventional <see cref="Fieldable" /> instance where the numeric
+	/// values are returned as <see cref="String" />s (according to
+	/// <c>toString(value)</c> of the used data type).
 	/// 
 	/// <p/><font color="red"><b>NOTE:</b> This API is
 	/// experimental and might change in incompatible ways in the
@@ -149,8 +149,8 @@ namespace Lucene.Net.Documents
 		
 		new private NumericTokenStream tokenStream;
 		
-		/// <summary> Creates a field for numeric values using the default <code>precisionStep</code>
-		/// {@link NumericUtils#PRECISION_STEP_DEFAULT} (4). The instance is not yet initialized with
+		/// <summary> Creates a field for numeric values using the default <c>precisionStep</c>
+		/// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The instance is not yet initialized with
 		/// a numeric value, before indexing a document containing this field,
 		/// set a value using the various set<em>???</em>Value() methods.
 		/// This constructor creates an indexed, but not stored field.
@@ -161,24 +161,24 @@ namespace Lucene.Net.Documents
 		{
 		}
 		
-		/// <summary> Creates a field for numeric values using the default <code>precisionStep</code>
-		/// {@link NumericUtils#PRECISION_STEP_DEFAULT} (4). The instance is not yet initialized with
+		/// <summary> Creates a field for numeric values using the default <c>precisionStep</c>
+		/// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The instance is not yet initialized with
 		/// a numeric value, before indexing a document containing this field,
 		/// set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
 		/// <param name="name">the field name
 		/// </param>
 		/// <param name="store">if the field should be stored in plain text form
-		/// (according to <code>toString(value)</code> of the used data type)
+		/// (according to <c>toString(value)</c> of the used data type)
 		/// </param>
-		/// <param name="index">if the field should be indexed using {@link NumericTokenStream}
+		/// <param name="index">if the field should be indexed using <see cref="NumericTokenStream" />
 		/// </param>
 		public NumericField(System.String name, Field.Store store, bool index):this(name, NumericUtils.PRECISION_STEP_DEFAULT, store, index)
 		{
 		}
 		
 		/// <summary> Creates a field for numeric values with the specified
-		/// <code>precisionStep</code>. The instance is not yet initialized with
+		/// <c>precisionStep</c>. The instance is not yet initialized with
 		/// a numeric value, before indexing a document containing this field,
 		/// set a value using the various set<em>???</em>Value() methods.
 		/// This constructor creates an indexed, but not stored field.
@@ -192,7 +192,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary> Creates a field for numeric values with the specified
-		/// <code>precisionStep</code>. The instance is not yet initialized with
+		/// <c>precisionStep</c>. The instance is not yet initialized with
 		/// a numeric value, before indexing a document containing this field,
 		/// set a value using the various set<em>???</em>Value() methods.
 		/// </summary>
@@ -201,9 +201,9 @@ namespace Lucene.Net.Documents
 		/// <param name="precisionStep">the used <a href="../search/NumericRangeQuery.html#precisionStepDesc">precision step</a>
 		/// </param>
 		/// <param name="store">if the field should be stored in plain text form
-		/// (according to <code>toString(value)</code> of the used data type)
+		/// (according to <c>toString(value)</c> of the used data type)
 		/// </param>
-		/// <param name="index">if the field should be indexed using {@link NumericTokenStream}
+		/// <param name="index">if the field should be indexed using <see cref="NumericTokenStream" />
 		/// </param>
 		public NumericField(System.String name, int precisionStep, Field.Store store, bool index):base(name, store, index?Field.Index.ANALYZED_NO_NORMS:Field.Index.NO, Field.TermVector.NO)
 		{
@@ -211,47 +211,47 @@ namespace Lucene.Net.Documents
 			tokenStream = new NumericTokenStream(precisionStep);
 		}
 		
-		/// <summary>Returns a {@link NumericTokenStream} for indexing the numeric value. </summary>
+		/// <summary>Returns a <see cref="NumericTokenStream" /> for indexing the numeric value. </summary>
 		public override TokenStream TokenStreamValue()
 		{
 			return IsIndexed()?tokenStream:null;
 		}
 		
-		/// <summary>Returns always <code>null</code> for numeric fields </summary>
+		/// <summary>Returns always <c>null</c> for numeric fields </summary>
 		public override byte[] BinaryValue()
 		{
 			return null;
 		}
 		
-		/// <summary>Returns always <code>null</code> for numeric fields </summary>
+		/// <summary>Returns always <c>null</c> for numeric fields </summary>
 		public override byte[] GetBinaryValue(byte[] result)
 		{
 			return null;
 		}
 		
-		/// <summary>Returns always <code>null</code> for numeric fields </summary>
+		/// <summary>Returns always <c>null</c> for numeric fields </summary>
 		public override System.IO.TextReader ReaderValue()
 		{
 			return null;
 		}
 		
-		/// <summary>Returns the numeric value as a string (how it is stored, when {@link Field.Store#YES} is chosen). </summary>
+		/// <summary>Returns the numeric value as a string (how it is stored, when <see cref="Field.Store.YES" /> is chosen). </summary>
 		public override System.String StringValue()
 		{
 			return (fieldsData == null)?null:fieldsData.ToString();
 		}
 		
-		/// <summary>Returns the current numeric value as a subclass of {@link Number}, <code>null</code> if not yet initialized. </summary>
+		/// <summary>Returns the current numeric value as a subclass of <see cref="Number" />, <c>null</c> if not yet initialized. </summary>
 		public System.ValueType GetNumericValue()
 		{
 			return (System.ValueType) fieldsData;
 		}
 		
-		/// <summary> Initializes the field with the supplied <code>long</code> value.</summary>
-		/// <param name="value">the numeric value
+		/// <summary> Initializes the field with the supplied <c>long</c> value.</summary>
+		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>document.add(new NumericField(name, precisionStep).SetLongValue(value))</code>
+		/// <c>document.add(new NumericField(name, precisionStep).SetLongValue(value))</c>
 		/// </returns>
 		public NumericField SetLongValue(long value_Renamed)
 		{
@@ -260,11 +260,11 @@ namespace Lucene.Net.Documents
 			return this;
 		}
 		
-		/// <summary> Initializes the field with the supplied <code>int</code> value.</summary>
-		/// <param name="value">the numeric value
+		/// <summary> Initializes the field with the supplied <c>int</c> value.</summary>
+		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>document.add(new NumericField(name, precisionStep).setIntValue(value))</code>
+		/// <c>document.add(new NumericField(name, precisionStep).setIntValue(value))</c>
 		/// </returns>
 		public NumericField SetIntValue(int value_Renamed)
 		{
@@ -273,11 +273,11 @@ namespace Lucene.Net.Documents
 			return this;
 		}
 		
-		/// <summary> Initializes the field with the supplied <code>double</code> value.</summary>
-		/// <param name="value">the numeric value
+		/// <summary> Initializes the field with the supplied <c>double</c> value.</summary>
+		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>document.add(new NumericField(name, precisionStep).setDoubleValue(value))</code>
+		/// <c>document.add(new NumericField(name, precisionStep).setDoubleValue(value))</c>
 		/// </returns>
 		public NumericField SetDoubleValue(double value_Renamed)
 		{
@@ -286,11 +286,11 @@ namespace Lucene.Net.Documents
 			return this;
 		}
 		
-		/// <summary> Initializes the field with the supplied <code>float</code> value.</summary>
-		/// <param name="value">the numeric value
+		/// <summary> Initializes the field with the supplied <c>float</c> value.</summary>
+		/// <param name="value_Renamed">the numeric value
 		/// </param>
 		/// <returns> this instance, because of this you can use it the following way:
-		/// <code>document.add(new NumericField(name, precisionStep).setFloatValue(value))</code>
+		/// <c>document.add(new NumericField(name, precisionStep).setFloatValue(value))</c>
 		/// </returns>
 		public NumericField SetFloatValue(float value_Renamed)
 		{
