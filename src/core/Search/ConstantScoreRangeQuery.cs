@@ -26,15 +26,15 @@ namespace Lucene.Net.Search
 	/// <p/>It does not have an upper bound on the number of clauses covered in the range.
 	/// 
 	/// <p/>This query matches the documents looking for terms that fall into the
-	/// supplied range according to {@link String#compareTo(String)}. It is not intended
-	/// for numerical ranges, use {@link NumericRangeQuery} instead.
+	/// supplied range according to <see cref="String.CompareTo(String)" />. It is not intended
+	/// for numerical ranges, use <see cref="NumericRangeQuery" /> instead.
 	/// 
-	/// <p/>This query is hardwired to {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}.
-	/// If you want to change this, use {@link TermRangeQuery} instead.
+	/// <p/>This query is hardwired to <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT" />.
+	/// If you want to change this, use <see cref="TermRangeQuery" /> instead.
 	/// 
 	/// </summary>
-	/// <deprecated> Use {@link TermRangeQuery} for term ranges or
-	/// {@link NumericRangeQuery} for numeric ranges instead.
+	/// <deprecated> Use <see cref="TermRangeQuery" /> for term ranges or
+	/// <see cref="NumericRangeQuery" /> for numeric ranges instead.
 	/// This class will be removed in Lucene 3.0.
 	/// </deprecated>
 	/// <version>  $Id: ConstantScoreRangeQuery.java 797694 2009-07-25 00:03:33Z mikemccand $

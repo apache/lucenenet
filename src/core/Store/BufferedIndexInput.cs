@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary>Base implementation class for buffered {@link IndexInput}. </summary>
+	/// <summary>Base implementation class for buffered <see cref="IndexInput" />. </summary>
 	public abstract class BufferedIndexInput:IndexInput, System.ICloneable
 	{
 		
@@ -88,7 +88,7 @@ namespace Lucene.Net.Store
 			buffer = newBuffer;
 		}
 		
-		/// <seealso cref="setBufferSize">
+		/// <seealso cref="SetBufferSize">
 		/// </seealso>
 		public virtual int GetBufferSize()
 		{
@@ -220,7 +220,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Expert: implements seek.  Sets current position in this file, where the
-		/// next {@link #ReadInternal(byte[],int,int)} will occur.
+		/// next <see cref="ReadInternal(byte[],int,int)" /> will occur.
 		/// </summary>
 		/// <seealso cref="ReadInternal(byte[],int,int)">
 		/// </seealso>

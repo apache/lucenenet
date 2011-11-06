@@ -28,11 +28,11 @@ namespace Lucene.Net.Search
 	{
 		
 		/// <summary>Implemented as
-		/// <code>state.getBoost()*lengthNorm(numTerms)</code>, where
-		/// <code>numTerms</code> is {@link FieldInvertState#GetLength()} if {@link
-		/// #setDiscountOverlaps} is false, else it's {@link
-		/// FieldInvertState#GetLength()} - {@link
-		/// FieldInvertState#GetNumOverlap()}.
+		/// <c>state.getBoost()*lengthNorm(numTerms)</c>, where
+		/// <c>numTerms</c> is <see cref="FieldInvertState.GetLength()" /> if <see cref="SetDiscountOverlaps" />
+		/// is false, else it's <see cref="FieldInvertState.GetLength()" />
+		/// - <see cref="FieldInvertState.GetNumOverlap()" />
+		///.
 		/// 
 		/// <p/><b>WARNING</b>: This API is new and experimental, and may suddenly
 		/// change.<p/> 
@@ -47,37 +47,37 @@ namespace Lucene.Net.Search
 			return (float) (state.GetBoost() * LengthNorm(field, numTerms));
 		}
 		
-		/// <summary>Implemented as <code>1/sqrt(numTerms)</code>. </summary>
+		/// <summary>Implemented as <c>1/sqrt(numTerms)</c>. </summary>
 		public override float LengthNorm(System.String fieldName, int numTerms)
 		{
 			return (float) (1.0 / System.Math.Sqrt(numTerms));
 		}
 		
-		/// <summary>Implemented as <code>1/sqrt(sumOfSquaredWeights)</code>. </summary>
+		/// <summary>Implemented as <c>1/sqrt(sumOfSquaredWeights)</c>. </summary>
 		public override float QueryNorm(float sumOfSquaredWeights)
 		{
 			return (float) (1.0 / System.Math.Sqrt(sumOfSquaredWeights));
 		}
 		
-		/// <summary>Implemented as <code>sqrt(freq)</code>. </summary>
+		/// <summary>Implemented as <c>sqrt(freq)</c>. </summary>
 		public override float Tf(float freq)
 		{
 			return (float) System.Math.Sqrt(freq);
 		}
 		
-		/// <summary>Implemented as <code>1 / (distance + 1)</code>. </summary>
+		/// <summary>Implemented as <c>1 / (distance + 1)</c>. </summary>
 		public override float SloppyFreq(int distance)
 		{
 			return 1.0f / (distance + 1);
 		}
 		
-		/// <summary>Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. </summary>
+		/// <summary>Implemented as <c>log(numDocs/(docFreq+1)) + 1</c>. </summary>
 		public override float Idf(int docFreq, int numDocs)
 		{
 			return (float) (System.Math.Log(numDocs / (double) (docFreq + 1)) + 1.0);
 		}
 		
-		/// <summary>Implemented as <code>overlap / maxOverlap</code>. </summary>
+		/// <summary>Implemented as <c>overlap / maxOverlap</c>. </summary>
 		public override float Coord(int overlap, int maxOverlap)
 		{
 			return overlap / (float) maxOverlap;
@@ -95,14 +95,14 @@ namespace Lucene.Net.Search
 		/// change.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="computeNorm">
+		/// <seealso cref="ComputeNorm">
 		/// </seealso>
 		public virtual void  SetDiscountOverlaps(bool v)
 		{
 			discountOverlaps = v;
 		}
 		
-		/// <seealso cref="setDiscountOverlaps">
+		/// <seealso cref="SetDiscountOverlaps">
 		/// </seealso>
 		public virtual bool GetDiscountOverlaps()
 		{

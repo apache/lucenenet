@@ -31,13 +31,13 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Query that sets document score as a programmatic function of several (sub) scores:
-	/// <ol>
-	/// <li>the score of its subQuery (any query)</li>
-	/// <li>(optional) the score of its ValueSourceQuery (or queries).
+	/// <list type="bullet">
+	/// <item>the score of its subQuery (any query)</item>
+	/// <item>(optional) the score of its ValueSourceQuery (or queries).
 	/// For most simple/convenient use cases this query is likely to be a 
-	/// {@link Lucene.Net.Search.Function.FieldScoreQuery FieldScoreQuery}</li>
-	/// </ol>
-    /// Subclasses can modify the computation by overriding {@link #getCustomScoreProvider}.
+	/// <see cref="Lucene.Net.Search.Function.FieldScoreQuery">FieldScoreQuery</see></item>
+	/// </list>
+    /// Subclasses can modify the computation by overriding <see cref="GetCustomScoreProvider" />.
 	/// 
 	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
@@ -59,24 +59,24 @@ namespace Lucene.Net.Search.Function
 		{
 		}
 		
-		/// <summary> Create a CustomScoreQuery over input subQuery and a {@link ValueSourceQuery}.</summary>
+		/// <summary> Create a CustomScoreQuery over input subQuery and a <see cref="ValueSourceQuery" />.</summary>
 		/// <param name="subQuery">the sub query whose score is being customed. Must not be null.
 		/// </param>
 		/// <param name="valSrcQuery">a value source query whose scores are used in the custom score
 		/// computation. For most simple/convineient use case this would be a 
-		/// {@link Lucene.Net.Search.Function.FieldScoreQuery FieldScoreQuery}.
+		/// <see cref="Lucene.Net.Search.Function.FieldScoreQuery">FieldScoreQuery</see>.
         /// This parameter is optional - it can be null or even an empty array.
 		/// </param>
 		public CustomScoreQuery(Query subQuery, ValueSourceQuery valSrcQuery):this(subQuery, valSrcQuery != null?new ValueSourceQuery[]{valSrcQuery}:new ValueSourceQuery[0])
 		{
 		}
 		
-		/// <summary> Create a CustomScoreQuery over input subQuery and a {@link ValueSourceQuery}.</summary>
+		/// <summary> Create a CustomScoreQuery over input subQuery and a <see cref="ValueSourceQuery" />.</summary>
 		/// <param name="subQuery">the sub query whose score is being customized. Must not be null.
 		/// </param>
 		/// <param name="valSrcQueries">value source queries whose scores are used in the custom score
 		/// computation. For most simple/convenient use case these would be 
-		/// {@link Lucene.Net.Search.Function.FieldScoreQuery FieldScoreQueries}.
+		/// <see cref="Lucene.Net.Search.Function.FieldScoreQuery">FieldScoreQueries</see>.
 		/// This parameter is optional - it can be null or even an empty array.
 		/// </param>
 		public CustomScoreQuery(Query subQuery, ValueSourceQuery[] valSrcQueries)
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Function
 				throw new System.ArgumentException("<subquery> must not be null!");
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Query#rewrite(Lucene.Net.Index.IndexReader) */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.rewrite(Lucene.Net.Index.IndexReader) */
         public override Query Rewrite(IndexReader reader)
         {
             CustomScoreQuery clone = null;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Function
             return (clone == null) ? this : clone;
         }
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Query#extractTerms(java.util.Set) */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.extractTerms(java.util.Set) */
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
 			subQuery.ExtractTerms(terms);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Function
 			}
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Query#clone() */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Query.clone() */
 		public override System.Object Clone()
 		{
 			CustomScoreQuery clone = (CustomScoreQuery) base.Clone();
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Function
 			return clone;
 		}
 		
-		/* (non-Javadoc) @see Lucene.Net.Search.Query#toString(java.lang.String) */
+		/* (non-Javadoc) <see cref="Lucene.Net.Search.Query.toString(java.lang.String) */
 		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder(Name()).Append("(");
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Function
 			return sb.ToString() + ToStringUtils.Boost(GetBoost());
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (GetType() != o.GetType())
@@ -189,12 +189,11 @@ namespace Lucene.Net.Search.Function
 
 		}
 
-        /**
-       * Returns a {@link CustomScoreProvider} that calculates the custom scores
-       * for the given {@link IndexReader}. The default implementation returns a default
-       * implementation as specified in the docs of {@link CustomScoreProvider}.
-       * @since 2.9.2
-       */
+        /// <summary>
+        /// Returns a <see cref="CustomScoreProvider" /> that calculates the custom scores
+        /// for the given <see cref="IndexReader" />. The default implementation returns a default
+        /// implementation as specified in the docs of <see cref="CustomScoreProvider" />.
+        /// </summary>
         protected virtual CustomScoreProvider GetCustomScoreProvider(IndexReader reader)
         {
             // when deprecated methods are removed, do not extend class here, just return new default CustomScoreProvider
@@ -235,8 +234,8 @@ namespace Lucene.Net.Search.Function
         /// 
         /// The doc is relative to the current reader, which is
         /// unknown to CustomScoreQuery when using per-segment search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass
-        /// of {@link CustomScoreProvider} for the given {@link IndexReader}.
+        /// Please override <see cref="GetCustomScoreProvider" /> and return a subclass
+        /// of <see cref="CustomScoreProvider" /> for the given <see cref="IndexReader" />.
         /// see CustomScoreProvider#customScore(int,float,float[])
         /// </summary>
         [Obsolete("Will be removed in Lucene 3.1")]
@@ -262,10 +261,10 @@ namespace Lucene.Net.Search.Function
         /// 
         /// The doc is relative to the current reader, which is
         /// unknown to CustomScoreQuery when using per-segment search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass
-        /// of {@link CustomScoreProvider} for the given {@link IndexReader}.
-        /// @see CustomScoreProvider#customScore(int,float,float)
-		/// </summary>
+        /// Please override <see cref="GetCustomScoreProvider" /> and return a subclass
+        /// of <see cref="CustomScoreProvider" /> for the given <see cref="IndexReader" />.
+        /// </summary>
+        /// <seealso cref="CustomScoreProvider.CustomScore(int,float,float)" />
         [Obsolete("Will be removed in Lucene 3.1")]
 		public virtual float CustomScore(int doc, float subQueryScore, float valSrcScore)
 		{
@@ -278,8 +277,8 @@ namespace Lucene.Net.Search.Function
         /// 
         /// The doc is relative to the current reader, which is
         /// unknown to CustomScoreQuery when using per-segment search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass
-        /// of {@link CustomScoreProvider} for the given {@link IndexReader}.
+        /// Please override <see cref="GetCustomScoreProvider(IndexReader)" /> and return a subclass
+        /// of <see cref="CustomScoreProvider" /> for the given <see cref="IndexReader" />.
 		/// </summary>
         [Obsolete("Will be removed in Lucene 3.1.")]
 		public virtual Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation[] valSrcExpls)
@@ -309,8 +308,8 @@ namespace Lucene.Net.Search.Function
 		/// <summary> Explain the custom score.
         /// The doc is relative to the current reader, which is
         /// unknown to CustomScoreQuery when using per-segment search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass
-        /// of {@link CustomScoreProvider} for the given {@link IndexReader}.
+        /// Please override <see cref="GetCustomScoreProvider" /> and return a subclass
+        /// of <see cref="CustomScoreProvider" /> for the given <see cref="IndexReader" />.
 		/// </summary>
         [Obsolete("Will be removed in Lucene 3.1")]
 		public virtual Explanation CustomExplain(int doc, Explanation subQueryExpl, Explanation valSrcExpl)
@@ -362,19 +361,19 @@ namespace Lucene.Net.Search.Function
 				this.qStrict = Enclosing_Instance.strict;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#getQuery() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getQuery() */
 			public override Query GetQuery()
 			{
 				return Enclosing_Instance;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#getValue() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.getValue() */
 			public override float GetValue()
 			{
 				return Enclosing_Instance.GetBoost();
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#sumOfSquaredWeights() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.sumOfSquaredWeights() */
 			public override float SumOfSquaredWeights()
 			{
 				float sum = subQueryWeight.SumOfSquaredWeights();
@@ -393,7 +392,7 @@ namespace Lucene.Net.Search.Function
 				return sum;
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Weight#normalize(float) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Weight.normalize(float) */
 			public override void  Normalize(float norm)
 			{
 				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
@@ -509,7 +508,7 @@ namespace Lucene.Net.Search.Function
                 this.provider = this.Enclosing_Instance.GetCustomScoreProvider(reader);
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead.")]
 			public override bool Next()
@@ -530,7 +529,7 @@ namespace Lucene.Net.Search.Function
 				return doc;
 			}
 			
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead.")]
 			public override int Doc()
@@ -543,7 +542,7 @@ namespace Lucene.Net.Search.Function
 				return subQueryScorer.DocID();
 			}
 			
-			/*(non-Javadoc) @see Lucene.Net.Search.Scorer#score() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.score() */
 			public override float Score()
 			{
 				for (int i = 0; i < valSrcScorers.Length; i++)
@@ -553,7 +552,7 @@ namespace Lucene.Net.Search.Function
                 return qWeight * provider.CustomScore(subQueryScorer.DocID(), subQueryScorer.Score(), vScores);
 			}
 			
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int) instead.")]
 			public override bool SkipTo(int target)
@@ -575,7 +574,7 @@ namespace Lucene.Net.Search.Function
 			}
 			
 			// TODO: remove in 3.0
-			/*(non-Javadoc) @see Lucene.Net.Search.Scorer#explain(int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Scorer.explain(int) */
 			public override Explanation Explain(int doc)
 			{
 				Explanation subQueryExpl = weight.subQueryWeight.Explain(reader, doc);
@@ -626,7 +625,7 @@ namespace Lucene.Net.Search.Function
 			this.strict = strict;
 		}
 		
-		/// <summary> A short name of this query, used in {@link #ToString(String)}.</summary>
+		/// <summary> A short name of this query, used in <see cref="ToString(String)" />.</summary>
 		public virtual System.String Name()
 		{
 			return "custom";

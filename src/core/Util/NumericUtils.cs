@@ -37,24 +37,24 @@ namespace Lucene.Net.Util
 	/// be converted to strings. For that integer values (32 bit or 64 bit) are made unsigned
 	/// and the bits are converted to ASCII chars with each 7 bit. The resulting string is
 	/// sortable like the original integer value. Each value is also prefixed
-	/// (in the first char) by the <code>shift</code> value (number of bits removed) used
+	/// (in the first char) by the <c>shift</c> value (number of bits removed) used
 	/// during encoding.
 	/// 
 	/// <p/>To also index floating point numbers, this class supplies two methods to convert them
-	/// to integer values by changing their bit layout: {@link #doubleToSortableLong},
-	/// {@link #floatToSortableInt}. You will have no precision loss by
+	/// to integer values by changing their bit layout: <see cref="DoubleToSortableLong" />,
+	/// <see cref="FloatToSortableInt" />. You will have no precision loss by
 	/// converting floating point numbers to integers and back (only that the integer form
 	/// is not usable). Other data types like dates can easily converted to longs or ints (e.g.
-	/// date to long: {@link java.util.Date#getTime}).
+	/// date to long: <see cref="DateTime" />).
 	/// 
 	/// <p/>For easy usage, the trie algorithm is implemented for indexing inside
-	/// {@link NumericTokenStream} that can index <code>int</code>, <code>long</code>,
-	/// <code>float</code>, and <code>double</code>. For querying,
-	/// {@link NumericRangeQuery} and {@link NumericRangeFilter} implement the query part
+	/// <see cref="NumericTokenStream" /> that can index <c>int</c>, <c>long</c>,
+	/// <c>float</c>, and <c>double</c>. For querying,
+	/// <see cref="NumericRangeQuery" /> and <see cref="NumericRangeFilter" /> implement the query part
 	/// for the same data types.
 	/// 
 	/// <p/>This class can also be used, to generate lexicographically sortable (according
-	/// {@link String#compareTo(String)}) representations of numeric data types for other
+	/// <see cref="String.CompareTo(String)" />) representations of numeric data types for other
 	/// usages (e.g. sorting).
 	/// 
 	/// <p/><font color="red"><b>NOTE:</b> This API is experimental and
@@ -70,43 +70,43 @@ namespace Lucene.Net.Util
 		{
 		} // no instance!
 		
-		/// <summary> The default precision step used by {@link NumericField}, {@link NumericTokenStream},
-		/// {@link NumericRangeQuery}, and {@link NumericRangeFilter} as default
+		/// <summary> The default precision step used by <see cref="NumericField" />, <see cref="NumericTokenStream" />,
+		/// <see cref="NumericRangeQuery" />, and <see cref="NumericRangeFilter" /> as default
 		/// </summary>
 		public const int PRECISION_STEP_DEFAULT = 4;
 		
 		/// <summary> Expert: Longs are stored at lower precision by shifting off lower bits. The shift count is
-		/// stored as <code>SHIFT_START_LONG+shift</code> in the first character
+		/// stored as <c>SHIFT_START_LONG+shift</c> in the first character
 		/// </summary>
 		public static char SHIFT_START_LONG = (char) 0x20;
 		
-		/// <summary> Expert: The maximum term length (used for <code>char[]</code> buffer size)
-		/// for encoding <code>long</code> values.
+		/// <summary> Expert: The maximum term length (used for <c>char[]</c> buffer size)
+		/// for encoding <c>long</c> values.
 		/// </summary>
 		/// <seealso cref="LongToPrefixCoded(long,int,char[])">
 		/// </seealso>
 		public const int BUF_SIZE_LONG = 63 / 7 + 2;
 		
 		/// <summary> Expert: Integers are stored at lower precision by shifting off lower bits. The shift count is
-		/// stored as <code>SHIFT_START_INT+shift</code> in the first character
+		/// stored as <c>SHIFT_START_INT+shift</c> in the first character
 		/// </summary>
 		public static char SHIFT_START_INT = (char) 0x60;
 		
-		/// <summary> Expert: The maximum term length (used for <code>char[]</code> buffer size)
-		/// for encoding <code>int</code> values.
+		/// <summary> Expert: The maximum term length (used for <c>char[]</c> buffer size)
+		/// for encoding <c>int</c> values.
 		/// </summary>
 		/// <seealso cref="IntToPrefixCoded(int,int,char[])">
 		/// </seealso>
 		public const int BUF_SIZE_INT = 31 / 7 + 2;
 		
-		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
-		/// This is method is used by {@link NumericTokenStream}.
+		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <c>shift</c> bits.
+		/// This is method is used by <see cref="NumericTokenStream" />.
 		/// </summary>
 		/// <param name="val">the numeric value
 		/// </param>
 		/// <param name="shift">how many bits to strip from the right
 		/// </param>
-		/// <param name="buffer">that will contain the encoded chars, must be at least of {@link #BUF_SIZE_LONG}
+		/// <param name="buffer">that will contain the encoded chars, must be at least of <see cref="BUF_SIZE_LONG" />
 		/// length
 		/// </param>
 		/// <returns> number of chars written to buffer
@@ -130,8 +130,8 @@ namespace Lucene.Net.Util
 			return len;
 		}
 		
-		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
-		/// This is method is used by {@link LongRangeBuilder}.
+		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <c>shift</c> bits.
+		/// This is method is used by <see cref="LongRangeBuilder" />.
 		/// </summary>
 		/// <param name="val">the numeric value
 		/// </param>
@@ -147,21 +147,21 @@ namespace Lucene.Net.Util
 		/// <summary> This is a convenience method, that returns prefix coded bits of a long without
 		/// reducing the precision. It can be used to store the full precision value as a
 		/// stored field in index.
-		/// <p/>To decode, use {@link #prefixCodedToLong}.
+		/// <p/>To decode, use <see cref="PrefixCodedToLong" />.
 		/// </summary>
 		public static System.String LongToPrefixCoded(long val)
 		{
 			return LongToPrefixCoded(val, 0);
 		}
 		
-		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
-		/// This is method is used by {@link NumericTokenStream}.
+		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <c>shift</c> bits.
+		/// This is method is used by <see cref="NumericTokenStream" />.
 		/// </summary>
 		/// <param name="val">the numeric value
 		/// </param>
 		/// <param name="shift">how many bits to strip from the right
 		/// </param>
-		/// <param name="buffer">that will contain the encoded chars, must be at least of {@link #BUF_SIZE_INT}
+		/// <param name="buffer">that will contain the encoded chars, must be at least of <see cref="BUF_SIZE_INT" />
 		/// length
 		/// </param>
 		/// <returns> number of chars written to buffer
@@ -185,8 +185,8 @@ namespace Lucene.Net.Util
 			return len;
 		}
 		
-		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
-		/// This is method is used by {@link IntRangeBuilder}.
+		/// <summary> Expert: Returns prefix coded bits after reducing the precision by <c>shift</c> bits.
+		/// This is method is used by <see cref="IntRangeBuilder" />.
 		/// </summary>
 		/// <param name="val">the numeric value
 		/// </param>
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
 		/// <summary> This is a convenience method, that returns prefix coded bits of an int without
 		/// reducing the precision. It can be used to store the full precision value as a
 		/// stored field in index.
-		/// <p/>To decode, use {@link #prefixCodedToInt}.
+		/// <p/>To decode, use <see cref="PrefixCodedToInt" />.
 		/// </summary>
 		public static System.String IntToPrefixCoded(int val)
 		{
@@ -265,12 +265,12 @@ namespace Lucene.Net.Util
 			return (sortableBits << shift) ^ unchecked((int) 0x80000000);
 		}
 		
-		/// <summary> Converts a <code>double</code> value to a sortable signed <code>long</code>.
+		/// <summary> Converts a <c>double</c> value to a sortable signed <c>long</c>.
 		/// The value is converted by getting their IEEE 754 floating-point &quot;double format&quot;
 		/// bit layout and then some bits are swapped, to be able to compare the result as long.
 		/// By this the precision is not reduced, but the value can easily used as a long.
 		/// </summary>
-		/// <seealso cref="sortableLongToDouble">
+		/// <seealso cref="SortableLongToDouble">
 		/// </seealso>
 		public static long DoubleToSortableLong(double val)
 		{
@@ -288,8 +288,8 @@ namespace Lucene.Net.Util
 			return LongToPrefixCoded(DoubleToSortableLong(val));
 		}
 		
-		/// <summary> Converts a sortable <code>long</code> back to a <code>double</code>.</summary>
-		/// <seealso cref="doubleToSortableLong">
+		/// <summary> Converts a sortable <c>long</c> back to a <c>double</c>.</summary>
+		/// <seealso cref="DoubleToSortableLong">
 		/// </seealso>
 		public static double SortableLongToDouble(long val)
 		{
@@ -306,12 +306,12 @@ namespace Lucene.Net.Util
 			return SortableLongToDouble(PrefixCodedToLong(val));
 		}
 		
-		/// <summary> Converts a <code>float</code> value to a sortable signed <code>int</code>.
+		/// <summary> Converts a <c>float</c> value to a sortable signed <c>int</c>.
 		/// The value is converted by getting their IEEE 754 floating-point &quot;float format&quot;
 		/// bit layout and then some bits are swapped, to be able to compare the result as int.
 		/// By this the precision is not reduced, but the value can easily used as an int.
 		/// </summary>
-		/// <seealso cref="sortableIntToFloat">
+		/// <seealso cref="SortableIntToFloat">
 		/// </seealso>
 		public static int FloatToSortableInt(float val)
 		{
@@ -329,8 +329,8 @@ namespace Lucene.Net.Util
 			return IntToPrefixCoded(FloatToSortableInt(val));
 		}
 		
-		/// <summary> Converts a sortable <code>int</code> back to a <code>float</code>.</summary>
-		/// <seealso cref="floatToSortableInt">
+		/// <summary> Converts a sortable <c>int</c> back to a <c>float</c>.</summary>
+		/// <seealso cref="FloatToSortableInt">
 		/// </seealso>
 		public static float SortableIntToFloat(int val)
 		{
@@ -349,10 +349,10 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Expert: Splits a long range recursively.
 		/// You may implement a builder that adds clauses to a
-		/// {@link Lucene.Net.Search.BooleanQuery} for each call to its
-		/// {@link LongRangeBuilder#AddRange(String,String)}
+		/// <see cref="Lucene.Net.Search.BooleanQuery" /> for each call to its
+		/// <see cref="LongRangeBuilder.AddRange(String,String)" />
 		/// method.
-		/// <p/>This method is used by {@link NumericRangeQuery}.
+		/// <p/>This method is used by <see cref="NumericRangeQuery" />.
 		/// </summary>
 		public static void  SplitLongRange(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound)
 		{
@@ -361,10 +361,10 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Expert: Splits an int range recursively.
 		/// You may implement a builder that adds clauses to a
-		/// {@link Lucene.Net.Search.BooleanQuery} for each call to its
-		/// {@link IntRangeBuilder#AddRange(String,String)}
+		/// <see cref="Lucene.Net.Search.BooleanQuery" /> for each call to its
+		/// <see cref="IntRangeBuilder.AddRange(String,String)" />
 		/// method.
-		/// <p/>This method is used by {@link NumericRangeQuery}.
+		/// <p/>This method is used by <see cref="NumericRangeQuery" />.
 		/// </summary>
 		public static void  SplitIntRange(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound)
 		{
@@ -436,7 +436,7 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		/// <summary> Expert: Callback for {@link #splitLongRange}.
+		/// <summary> Expert: Callback for <see cref="SplitLongRange" />.
 		/// You need to overwrite only one of the methods.
 		/// <p/><font color="red"><b>NOTE:</b> This is a very low-level interface,
 		/// the method signatures may change in later versions.</font>
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		/// <summary> Expert: Callback for {@link #splitIntRange}.
+		/// <summary> Expert: Callback for <see cref="SplitIntRange" />.
 		/// You need to overwrite only one of the methods.
 		/// <p/><font color="red"><b>NOTE:</b> This is a very low-level interface,
 		/// the method signatures may change in later versions.</font>

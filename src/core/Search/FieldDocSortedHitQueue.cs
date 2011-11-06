@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		/// <summary> Allows redefinition of sort fields if they are <code>null</code>.
+		/// <summary> Allows redefinition of sort fields if they are <c>null</c>.
 		/// This is to handle the case using ParallelMultiSearcher where the
 		/// original list contains AUTO and we don't know the actual sort
 		/// type until the values come back.  The fields can only be set once.
@@ -85,12 +85,12 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		/// <summary>Returns an array of collators, possibly <code>null</code>.  The collators
+		/// <summary>Returns an array of collators, possibly <c>null</c>.  The collators
 		/// correspond to any SortFields which were given a specific locale.
 		/// </summary>
 		/// <param name="fields">Array of sort fields.
 		/// </param>
-		/// <returns> Array, possibly <code>null</code>.
+		/// <returns> Array, possibly <c>null</c>.
 		/// </returns>
 		private System.Globalization.CompareInfo[] HasCollators(SortField[] fields)
 		{
@@ -107,12 +107,12 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		/// <summary> Returns whether <code>a</code> is less relevant than <code>b</code>.</summary>
+		/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
 		/// <param name="a">ScoreDoc
 		/// </param>
 		/// <param name="b">ScoreDoc
 		/// </param>
-		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
+		/// <returns> <c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.
 		/// </returns>
 		public override bool LessThan(System.Object a, System.Object b)
 		{

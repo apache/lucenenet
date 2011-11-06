@@ -33,53 +33,53 @@ using AttributeSource = Lucene.Net.Util.AttributeSource;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> A <code>TokenStream</code> enumerates the sequence of tokens, either from
-	/// {@link Field}s of a {@link Document} or from query text.
+	/// <summary> A <c>TokenStream</c> enumerates the sequence of tokens, either from
+	/// <see cref="Field" />s of a <see cref="Document" /> or from query text.
 	/// <p/>
 	/// This is an abstract class. Concrete subclasses are:
-	/// <ul>
-	/// <li>{@link Tokenizer}, a <code>TokenStream</code> whose input is a Reader; and</li>
-	/// <li>{@link TokenFilter}, a <code>TokenStream</code> whose input is another
-	/// <code>TokenStream</code>.</li>
-	/// </ul>
-	/// A new <code>TokenStream</code> API has been introduced with Lucene 2.9. This API
-	/// has moved from being {@link Token} based to {@link Attribute} based. While
-	/// {@link Token} still exists in 2.9 as a convenience class, the preferred way
-	/// to store the information of a {@link Token} is to use {@link AttributeImpl}s.
+	/// <list type="bullet">
+	/// <item><see cref="Tokenizer" />, a <c>TokenStream</c> whose input is a Reader; and</item>
+	/// <item><see cref="TokenFilter" />, a <c>TokenStream</c> whose input is another
+	/// <c>TokenStream</c>.</item>
+	/// </list>
+	/// A new <c>TokenStream</c> API has been introduced with Lucene 2.9. This API
+	/// has moved from being <see cref="Token" /> based to <see cref="Attribute" /> based. While
+	/// <see cref="Token" /> still exists in 2.9 as a convenience class, the preferred way
+	/// to store the information of a <see cref="Token" /> is to use <see cref="AttributeImpl" />s.
 	/// <p/>
-	/// <code>TokenStream</code> now extends {@link AttributeSource}, which provides
-	/// access to all of the token {@link Attribute}s for the <code>TokenStream</code>.
-	/// Note that only one instance per {@link AttributeImpl} is created and reused
+	/// <c>TokenStream</c> now extends <see cref="AttributeSource" />, which provides
+	/// access to all of the token <see cref="Attribute" />s for the <c>TokenStream</c>.
+	/// Note that only one instance per <see cref="AttributeImpl" /> is created and reused
 	/// for every token. This approach reduces object creation and allows local
-	/// caching of references to the {@link AttributeImpl}s. See
-	/// {@link #IncrementToken()} for further details.
+	/// caching of references to the <see cref="AttributeImpl" />s. See
+	/// <see cref="IncrementToken()" /> for further details.
 	/// <p/>
-	/// <b>The workflow of the new <code>TokenStream</code> API is as follows:</b>
-	/// <ol>
-	/// <li>Instantiation of <code>TokenStream</code>/{@link TokenFilter}s which add/get
-	/// attributes to/from the {@link AttributeSource}.</li>
-	/// <li>The consumer calls {@link TokenStream#Reset()}.</li>
-	/// <li>The consumer retrieves attributes from the stream and stores local
-	/// references to all attributes it wants to access</li>
-	/// <li>The consumer calls {@link #IncrementToken()} until it returns false and
-	/// consumes the attributes after each call.</li>
-	/// <li>The consumer calls {@link #End()} so that any end-of-stream operations
-	/// can be performed.</li>
-	/// <li>The consumer calls {@link #Close()} to release any resource when finished
-	/// using the <code>TokenStream</code></li>
-	/// </ol>
+	/// <b>The workflow of the new <c>TokenStream</c> API is as follows:</b>
+	/// <list type="bullet">
+	/// <item>Instantiation of <c>TokenStream</c>/<see cref="TokenFilter" />s which add/get
+	/// attributes to/from the <see cref="AttributeSource" />.</item>
+	/// <item>The consumer calls <see cref="TokenStream.Reset()" />.</item>
+	/// <item>The consumer retrieves attributes from the stream and stores local
+	/// references to all attributes it wants to access</item>
+	/// <item>The consumer calls <see cref="IncrementToken()" /> until it returns false and
+	/// consumes the attributes after each call.</item>
+	/// <item>The consumer calls <see cref="End()" /> so that any end-of-stream operations
+	/// can be performed.</item>
+	/// <item>The consumer calls <see cref="Close()" /> to release any resource when finished
+	/// using the <c>TokenStream</c></item>
+	/// </list>
 	/// To make sure that filters and consumers know which attributes are available,
 	/// the attributes must be added during instantiation. Filters and consumers are
 	/// not required to check for availability of attributes in
-	/// {@link #IncrementToken()}.
+	/// <see cref="IncrementToken()" />.
 	/// <p/>
 	/// You can find some example code for the new API in the analysis package level
 	/// Javadoc.
 	/// <p/>
-	/// Sometimes it is desirable to capture a current state of a <code>TokenStream</code>
-	/// , e. g. for buffering purposes (see {@link CachingTokenFilter},
-	/// {@link TeeSinkTokenFilter}). For this usecase
-	/// {@link AttributeSource#CaptureState} and {@link AttributeSource#RestoreState}
+	/// Sometimes it is desirable to capture a current state of a <c>TokenStream</c>
+	/// , e. g. for buffering purposes (see <see cref="CachingTokenFilter" />,
+	/// <see cref="TeeSinkTokenFilter" />). For this usecase
+	/// <see cref="AttributeSource.CaptureState" /> and <see cref="AttributeSource.RestoreState" />
 	/// can be used.
 	/// </summary>
 	public abstract class TokenStream:AttributeSource
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis
 			Check();
 		}
 		
-		/// <summary> A TokenStream using the supplied AttributeFactory for creating new {@link Attribute} instances.</summary>
+		/// <summary> A TokenStream using the supplied AttributeFactory for creating new <see cref="Attribute" /> instances.</summary>
 		protected internal TokenStream(AttributeFactory factory):base(onlyUseNewAPI?factory:new TokenWrapperAttributeFactory(factory))
 		{
 			InitBlock();
@@ -285,24 +285,24 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> For extra performance you can globally enable the new
-		/// {@link #IncrementToken} API using {@link Attribute}s. There will be a
+		/// <see cref="IncrementToken" /> API using <see cref="Attribute" />s. There will be a
 		/// small, but in most cases negligible performance increase by enabling this,
-		/// but it only works if <b>all</b> <code>TokenStream</code>s use the new API and
-		/// implement {@link #IncrementToken}. This setting can only be enabled
+		/// but it only works if <b>all</b> <c>TokenStream</c>s use the new API and
+		/// implement <see cref="IncrementToken" />. This setting can only be enabled
 		/// globally.
 		/// <p/>
-		/// This setting only affects <code>TokenStream</code>s instantiated after this
-		/// call. All <code>TokenStream</code>s already created use the other setting.
+		/// This setting only affects <c>TokenStream</c>s instantiated after this
+		/// call. All <c>TokenStream</c>s already created use the other setting.
 		/// <p/>
-		/// All core {@link Analyzer}s are compatible with this setting, if you have
-		/// your own <code>TokenStream</code>s that are also compatible, you should enable
+		/// All core <see cref="Analyzer" />s are compatible with this setting, if you have
+		/// your own <c>TokenStream</c>s that are also compatible, you should enable
 		/// this.
 		/// <p/>
-		/// When enabled, tokenization may throw {@link UnsupportedOperationException}
+		/// When enabled, tokenization may throw <see cref="InvalidOperationException" />
 		/// s, if the whole tokenizer chain is not compatible eg one of the
-		/// <code>TokenStream</code>s does not implement the new <code>TokenStream</code> API.
+		/// <c>TokenStream</c>s does not implement the new <c>TokenStream</c> API.
 		/// <p/>
-		/// The default is <code>false</code>, so there is the fallback to the old API
+		/// The default is <c>false</c>, so there is the fallback to the old API
 		/// available.
 		/// 
 		/// </summary>
@@ -318,7 +318,7 @@ namespace Lucene.Net.Analysis
 		/// <summary> Returns if only the new API is used.
 		/// 
 		/// </summary>
-		/// <seealso cref="setOnlyUseNewAPI">
+		/// <seealso cref="SetOnlyUseNewAPI">
 		/// </seealso>
 		/// <deprecated> This setting will no longer be needed in Lucene 3.0 as
 		/// the old API will be removed.
@@ -329,26 +329,26 @@ namespace Lucene.Net.Analysis
 			return onlyUseNewAPI;
 		}
 		
-		/// <summary> Consumers (i.e., {@link IndexWriter}) use this method to advance the stream to
+		/// <summary> Consumers (i.e., <see cref="IndexWriter" />) use this method to advance the stream to
 		/// the next token. Implementing classes must implement this method and update
-		/// the appropriate {@link AttributeImpl}s with the attributes of the next
+		/// the appropriate <see cref="AttributeImpl" />s with the attributes of the next
 		/// token.
 		/// 
 		/// The producer must make no assumptions about the attributes after the
 		/// method has been returned: the caller may arbitrarily change it. If the
 		/// producer needs to preserve the state for subsequent calls, it can use
-		/// {@link #captureState} to create a copy of the current attribute state.
+		/// <see cref="AttributeSource.CaptureState" /> to create a copy of the current attribute state.
 		/// 
 		/// This method is called for every token of a document, so an efficient
 		/// implementation is crucial for good performance. To avoid calls to
-		/// {@link #AddAttribute(Class)} and {@link #GetAttribute(Class)} or downcasts,
-		/// references to all {@link AttributeImpl}s that this stream uses should be
+		/// <see cref="AttributeSource.AddAttribute(Type)" /> and <see cref="AttributeSource.GetAttribute(Type)" /> or downcasts,
+		/// references to all <see cref="AttributeImpl" />s that this stream uses should be
 		/// retrieved during instantiation.
 		/// 
 		/// To ensure that filters and consumers know which attributes are available,
 		/// the attributes must be added during instantiation. Filters and consumers
 		/// are not required to check for availability of attributes in
-		/// {@link #IncrementToken()}.
+		/// <see cref="IncrementToken()" />.
 		/// 
 		/// </summary>
 		/// <returns> false for end of stream; true otherwise
@@ -377,14 +377,14 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> This method is called by the consumer after the last token has been
-		/// consumed, after {@link #IncrementToken()} returned <code>false</code>
-		/// (using the new <code>TokenStream</code> API). Streams implementing the old API
+		/// consumed, after <see cref="IncrementToken" /> returned <c>false</c>
+		/// (using the new <c>TokenStream</c> API). Streams implementing the old API
 		/// should upgrade to use this feature.
 		/// <p/>
 		/// This method can be used to perform any end-of-stream operations, such as
 		/// setting the final offset of a stream. The final offset of a stream might
 		/// differ from the offset of the last token eg in case one or more whitespaces
-		/// followed after the last token, but a {@link WhitespaceTokenizer} was used.
+		/// followed after the last token, but a <see cref="WhitespaceTokenizer" /> was used.
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
@@ -402,27 +402,27 @@ namespace Lucene.Net.Analysis
 		/// This implicitly defines a "contract" between consumers (callers of this
 		/// method) and producers (implementations of this method that are the source
 		/// for tokens):
-		/// <ul>
-		/// <li>A consumer must fully consume the previously returned {@link Token}
-		/// before calling this method again.</li>
-		/// <li>A producer must call {@link Token#Clear()} before setting the fields in
-		/// it and returning it</li>
-		/// </ul>
-		/// Also, the producer must make no assumptions about a {@link Token} after it
+		/// <list type="bullet">
+		/// <item>A consumer must fully consume the previously returned <see cref="Token" />
+		/// before calling this method again.</item>
+		/// <item>A producer must call <see cref="Token.Clear()" /> before setting the fields in
+		/// it and returning it</item>
+		/// </list>
+		/// Also, the producer must make no assumptions about a <see cref="Token" /> after it
 		/// has been returned: the caller may arbitrarily change it. If the producer
-		/// needs to hold onto the {@link Token} for subsequent calls, it must clone()
-		/// it before storing it. Note that a {@link TokenFilter} is considered a
+		/// needs to hold onto the <see cref="Token" /> for subsequent calls, it must clone()
+		/// it before storing it. Note that a <see cref="TokenFilter" /> is considered a
 		/// consumer.
 		/// 
 		/// </summary>
-		/// <param name="reusableToken">a {@link Token} that may or may not be used to return;
+		/// <param name="reusableToken">a <see cref="Token" /> that may or may not be used to return;
 		/// this parameter should never be null (the callee is not required to
 		/// check for null before using it, but it is a good idea to assert that
 		/// it is not null.)
 		/// </param>
-		/// <returns> next {@link Token} in the stream or null if end-of-stream was hit
+		/// <returns> next <see cref="Token" /> in the stream or null if end-of-stream was hit
 		/// </returns>
-		/// <deprecated> The new {@link #IncrementToken()} and {@link AttributeSource}
+		/// <deprecated> The new <see cref="IncrementToken" /> and <see cref="AttributeSource" />
 		/// APIs should be used instead.
 		/// </deprecated>
         [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
@@ -445,15 +445,15 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		/// <summary> Returns the next {@link Token} in the stream, or null at EOS.
+		/// <summary> Returns the next <see cref="Token" /> in the stream, or null at EOS.
 		/// 
 		/// </summary>
 		/// <deprecated> The returned Token is a "full private copy" (not re-used across
-		/// calls to {@link #Next()}) but will be slower than calling
-		/// {@link #Next(Token)} or using the new {@link #IncrementToken()}
-		/// method with the new {@link AttributeSource} API.
+		/// calls to <see cref="Next()" />) but will be slower than calling
+		/// <see cref="Next(Token)" /> or using the new <see cref="IncrementToken()" />
+		/// method with the new <see cref="AttributeSource" /> API.
 		/// </deprecated>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling {@link #Next(Token)} or using the new IncrementToken() method with the new AttributeSource API.")]
+        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
 		public virtual Token Next()
 		{
 			if (tokenWrapper == null)
@@ -485,13 +485,13 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Resets this stream to the beginning. This is an optional operation, so
-		/// subclasses may or may not implement this method. {@link #Reset()} is not needed for
+		/// subclasses may or may not implement this method. <see cref="Reset()" /> is not needed for
 		/// the standard indexing process. However, if the tokens of a
-		/// <code>TokenStream</code> are intended to be consumed more than once, it is
-		/// necessary to implement {@link #Reset()}. Note that if your TokenStream
+		/// <c>TokenStream</c> are intended to be consumed more than once, it is
+		/// necessary to implement <see cref="Reset()" />. Note that if your TokenStream
 		/// caches tokens and feeds them back again after a reset, it is imperative
 		/// that you clone the tokens when you store them away (on the first pass) as
-		/// well as when you return them (on future passes after {@link #Reset()}).
+		/// well as when you return them (on future passes after <see cref="Reset()" />).
 		/// </summary>
 		public virtual void  Reset()
 		{

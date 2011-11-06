@@ -139,7 +139,7 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 
 		/// <summary>
 		/// A log to the base 2 formula.
-		/// <code>Math.Log(value) / Math.Log(2)</code>
+		/// <c>Math.Log(value) / Math.Log(2)</c>
 		/// </summary>
 		/// <param name="value">The value.</param>
 		public double Log2(double value)

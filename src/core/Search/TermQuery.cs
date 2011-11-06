@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents containing a term.
-	/// This may be combined with other terms with a {@link BooleanQuery}.
+	/// This may be combined with other terms with a <see cref="BooleanQuery" />.
 	/// </summary>
 	[Serializable]
 	public class TermQuery:Query
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Constructs a query for the term <code>t</code>. </summary>
+		/// <summary>Constructs a query for the term <c>t</c>. </summary>
 		public TermQuery(Term t)
 		{
 			term = t;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (!(o is TermQuery))

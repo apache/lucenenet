@@ -28,48 +28,48 @@ using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> <p/>A {@link Query} that matches numeric values within a
+	/// <summary> <p/>A <see cref="Query" /> that matches numeric values within a
 	/// specified range.  To use this, you must first index the
-	/// numeric values using {@link NumericField} (expert: {@link
-	/// NumericTokenStream}).  If your terms are instead textual,
-	/// you should use {@link TermRangeQuery}.  {@link
-	/// NumericRangeFilter} is the filter equivalent of this
+	/// numeric values using <see cref="NumericField" /> (expert: <see cref="NumericTokenStream" />
+	///).  If your terms are instead textual,
+	/// you should use <see cref="TermRangeQuery" />.  <see cref="NumericRangeFilter" />
+	/// is the filter equivalent of this
 	/// query.<p/>
 	/// 
 	/// <p/>You create a new NumericRangeQuery with the static
 	/// factory methods, eg:
 	/// 
-	/// <pre>
+    /// <code>
 	/// Query q = NumericRangeQuery.newFloatRange("weight",
 	/// new Float(0.3f), new Float(0.10f),
 	/// true, true);
-	/// </pre>
+    /// </code>
 	/// 
 	/// matches all documents whose float valued "weight" field
 	/// ranges from 0.3 to 0.10, inclusive.
 	/// 
 	/// <p/>The performance of NumericRangeQuery is much better
-	/// than the corresponding {@link TermRangeQuery} because the
+	/// than the corresponding <see cref="TermRangeQuery" /> because the
 	/// number of terms that must be searched is usually far
 	/// fewer, thanks to trie indexing, described below.<p/>
 	/// 
 	/// <p/>You can optionally specify a <a
-	/// href="#precisionStepDesc"><code>precisionStep</code></a>
+	/// href="#precisionStepDesc"><c>precisionStep</c></a>
 	/// when creating this query.  This is necessary if you've
 	/// changed this configuration from its default (4) during
 	/// indexing.  Lower values consume more disk space but speed
 	/// up searching.  Suitable values are between <b>1</b> and
 	/// <b>8</b>. A good starting point to test is <b>4</b>,
-	/// which is the default value for all <code>Numeric*</code>
+	/// which is the default value for all <c>Numeric*</c>
 	/// classes.  See <a href="#precisionStepDesc">below</a> for
 	/// details.
 	/// 
-	/// <p/>This query defaults to {@linkplain
-	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} for
+	/// <p/>This query defaults to
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> for
 	/// 32 bit (int/float) ranges with precisionStep &lt;8 and 64
 	/// bit (long/double) ranges with precisionStep &lt;6.
-	/// Otherwise it uses {@linkplain
-	/// MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE} as the
+	/// Otherwise it uses 
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> as the
 	/// number of terms is likely to be high.  With precision
 	/// steps of &lt;4, this query can be run with one of the
 	/// BooleanQuery rewrite methods without changing
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 	/// <br/><h3>How it works</h3>
 	/// 
 	/// <p/>See the publication about <a target="_blank" href="http://www.panfmp.org">panFMP</a>,
-	/// where this algorithm was described (referred to as <code>TrieRangeQuery</code>):
+	/// where this algorithm was described (referred to as <c>TrieRangeQuery</c>):
 	/// 
 	/// <blockquote><strong>Schindler, U, Diepenbroek, M</strong>, 2008.
 	/// <em>Generic XML-based Framework for Metadata Portals.</em>
@@ -97,52 +97,52 @@ namespace Lucene.Net.Search
 	/// (all numerical values like doubles, longs, floats, and ints are converted to
 	/// lexicographic sortable string representations and stored with different precisions
 	/// (for a more detailed description of how the values are stored,
-	/// see {@link NumericUtils}). A range is then divided recursively into multiple intervals for searching:
+	/// see <see cref="NumericUtils" />). A range is then divided recursively into multiple intervals for searching:
 	/// The center of the range is searched only with the lowest possible precision in the <em>trie</em>,
 	/// while the boundaries are matched more exactly. This reduces the number of terms dramatically.<p/>
 	/// 
 	/// <p/>For the variant that stores long values in 8 different precisions (each reduced by 8 bits) that
 	/// uses a lowest precision of 1 byte, the index contains only a maximum of 256 distinct values in the
 	/// lowest precision. Overall, a range could consist of a theoretical maximum of
-	/// <code>7*255*2 + 255 = 3825</code> distinct terms (when there is a term for every distinct value of an
+	/// <c>7*255*2 + 255 = 3825</c> distinct terms (when there is a term for every distinct value of an
 	/// 8-byte-number in the index and the range covers almost all of them; a maximum of 255 distinct values is used
 	/// because it would always be possible to reduce the full 256 values to one term with degraded precision).
 	/// In practice, we have seen up to 300 terms in most cases (index with 500,000 metadata records
 	/// and a uniform value distribution).<p/>
 	/// 
 	/// <a name="precisionStepDesc"/><h3>Precision Step</h3>
-	/// <p/>You can choose any <code>precisionStep</code> when encoding values.
+	/// <p/>You can choose any <c>precisionStep</c> when encoding values.
 	/// Lower step values mean more precisions and so more terms in index (and index gets larger).
 	/// On the other hand, the maximum number of terms to match reduces, which optimized query speed.
 	/// The formula to calculate the maximum term count is:
-	/// <pre>
+    /// <code>
 	/// n = [ (bitsPerValue/precisionStep - 1) * (2^precisionStep - 1 ) * 2 ] + (2^precisionStep - 1 )
-	/// </pre>
-	/// <p/><em>(this formula is only correct, when <code>bitsPerValue/precisionStep</code> is an integer;
+    /// </code>
+	/// <p/><em>(this formula is only correct, when <c>bitsPerValue/precisionStep</c> is an integer;
 	/// in other cases, the value must be rounded up and the last summand must contain the modulo of the division as
 	/// precision step)</em>.
-	/// For longs stored using a precision step of 4, <code>n = 15*15*2 + 15 = 465</code>, and for a precision
-	/// step of 2, <code>n = 31*3*2 + 3 = 189</code>. But the faster search speed is reduced by more seeking
-	/// in the term enum of the index. Because of this, the ideal <code>precisionStep</code> value can only
+	/// For longs stored using a precision step of 4, <c>n = 15*15*2 + 15 = 465</c>, and for a precision
+	/// step of 2, <c>n = 31*3*2 + 3 = 189</c>. But the faster search speed is reduced by more seeking
+	/// in the term enum of the index. Because of this, the ideal <c>precisionStep</c> value can only
 	/// be found out by testing. <b>Important:</b> You can index with a lower precision step value and test search speed
 	/// using a multiple of the original step value.<p/>
 	/// 
-	/// <p/>Good values for <code>precisionStep</code> are depending on usage and data type:
-	/// <ul>
-	/// <li>The default for all data types is <b>4</b>, which is used, when no <code>precisionStep</code> is given.</li>
-	/// <li>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.</li>
-	/// <li>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.</li>
-	/// <li>Steps <b>&gt;64</b> for <em>long/double</em> and <b>&gt;32</b> for <em>int/float</em> produces one token
-	/// per value in the index and querying is as slow as a conventional {@link TermRangeQuery}. But it can be used
-	/// to produce fields, that are solely used for sorting (in this case simply use {@link Integer#MAX_VALUE} as
-	/// <code>precisionStep</code>). Using {@link NumericField NumericFields} for sorting
+	/// <p/>Good values for <c>precisionStep</c> are depending on usage and data type:
+	/// <list type="bullet">
+	/// <item>The default for all data types is <b>4</b>, which is used, when no <c>precisionStep</c> is given.</item>
+	/// <item>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.</item>
+	/// <item>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.</item>
+	/// <item>Steps <b>&gt;64</b> for <em>long/double</em> and <b>&gt;32</b> for <em>int/float</em> produces one token
+	/// per value in the index and querying is as slow as a conventional <see cref="TermRangeQuery" />. But it can be used
+	/// to produce fields, that are solely used for sorting (in this case simply use <see cref="int.MaxValue" /> as
+	/// <c>precisionStep</c>). Using <see cref="NumericField">NumericFields</see> for sorting
 	/// is ideal, because building the field cache is much faster than with text-only numbers.
-	/// Sorting is also possible with range query optimized fields using one of the above <code>precisionSteps</code>.</li>
-	/// </ul>
+	/// Sorting is also possible with range query optimized fields using one of the above <c>precisionSteps</c>.</item>
+	/// </list>
 	/// 
 	/// <p/>Comparisons of the different types of RangeQueries on an index with about 500,000 docs showed
-	/// that {@link TermRangeQuery} in boolean rewrite mode (with raised {@link BooleanQuery} clause count)
-	/// took about 30-40 secs to complete, {@link TermRangeQuery} in constant score filter rewrite mode took 5 secs
+	/// that <see cref="TermRangeQuery" /> in boolean rewrite mode (with raised <see cref="BooleanQuery" /> clause count)
+	/// took about 30-40 secs to complete, <see cref="TermRangeQuery" /> in constant score filter rewrite mode took 5 secs
 	/// and executing this class took &lt;100ms to complete (on an Opteron64 machine, Java 1.5, 8 bit
 	/// precision step). This query type was developed for a geographic portal, where the performance for
 	/// e.g. bounding boxes or exact date/time stamps is important.<p/>
@@ -196,10 +196,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
-		/// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
+		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewLongRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -207,10 +207,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
-		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>long</c>
+		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewLongRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -218,10 +218,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
-		/// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
+		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewIntRange(System.String field, int precisionStep, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -229,10 +229,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
-		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>int</c>
+		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewIntRange(System.String field, System.ValueType min, System.ValueType max, bool minInclusive, bool maxInclusive)
@@ -240,10 +240,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 32, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
-		/// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
+		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewDoubleRange(System.String field, int precisionStep, System.Double min, System.Double max, bool minInclusive, bool maxInclusive)
@@ -251,10 +251,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, precisionStep, 64, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
-		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>double</c>
+		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewDoubleRange(System.String field, System.Double min, System.Double max, bool minInclusive, bool maxInclusive)
@@ -262,10 +262,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, NumericUtils.PRECISION_STEP_DEFAULT, 64, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
-		/// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
+		/// range using the given <a href="#precisionStepDesc"><c>precisionStep</c></a>.
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewFloatRange(System.String field, int precisionStep, System.Single min, System.Single max, bool minInclusive, bool maxInclusive)
@@ -273,10 +273,10 @@ namespace Lucene.Net.Search
 			return new NumericRangeQuery(field, precisionStep, 32, min, max, minInclusive, maxInclusive);
 		}
 		
-		/// <summary> Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
-		/// range using the default <code>precisionStep</code> {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).
+		/// <summary> Factory that creates a <c>NumericRangeQuery</c>, that queries a <c>float</c>
+		/// range using the default <c>precisionStep</c> <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4).
         /// You can have half-open ranges (which are in fact &lt;/&#8804; or &gt;/&#8805; queries)
-		/// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+		/// by setting the min or max value to <c>null</c>. By setting inclusive to false, it will
 		/// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
 		/// </summary>
 		public static NumericRangeQuery NewFloatRange(System.String field, System.Single min, System.Single max, bool minInclusive, bool maxInclusive)
@@ -296,13 +296,13 @@ namespace Lucene.Net.Search
 			return field;
 		}
 		
-		/// <summary>Returns <code>true</code> if the lower endpoint is inclusive </summary>
+		/// <summary>Returns <c>true</c> if the lower endpoint is inclusive </summary>
 		public bool IncludesMin()
 		{
 			return minInclusive;
 		}
 		
-		/// <summary>Returns <code>true</code> if the upper endpoint is inclusive </summary>
+		/// <summary>Returns <c>true</c> if the upper endpoint is inclusive </summary>
 		public bool IncludesMax()
 		{
 			return maxInclusive;
@@ -383,10 +383,10 @@ namespace Lucene.Net.Search
 		/// sub-ranges for trie range queries.
 		/// <p/>
 		/// WARNING: This term enumeration is not guaranteed to be always ordered by
-		/// {@link Term#compareTo}.
-		/// The ordering depends on how {@link NumericUtils#splitLongRange} and
-		/// {@link NumericUtils#splitIntRange} generates the sub-ranges. For
-		/// {@link MultiTermQuery} ordering is not relevant.
+		/// <see cref="Term.CompareTo(Term)" />.
+		/// The ordering depends on how <see cref="NumericUtils.SplitLongRange" /> and
+		/// <see cref="NumericUtils.SplitIntRange" /> generates the sub-ranges. For
+		/// <see cref="MultiTermQuery" /> ordering is not relevant.
 		/// </summary>
 		private sealed class NumericRangeTermEnum:FilteredTermEnum
 		{
@@ -574,8 +574,8 @@ namespace Lucene.Net.Search
 			
 			/// <summary> Compares if current upper bound is reached,
 			/// this also updates the term count for statistics.
-			/// In contrast to {@link FilteredTermEnum}, a return value
-			/// of <code>false</code> ends iterating the current enum
+			/// In contrast to <see cref="FilteredTermEnum" />, a return value
+			/// of <c>false</c> ends iterating the current enum
 			/// and forwards to the next sub-range.
 			/// </summary>
 			//@Override

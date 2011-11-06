@@ -20,12 +20,12 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary>A straightforward implementation of {@link FSDirectory}
+	/// <summary>A straightforward implementation of <see cref="FSDirectory" />
 	/// using java.io.RandomAccessFile.  However, this class has
 	/// poor concurrent performance (multiple threads will
 	/// bottleneck) as it synchronizes when multiple threads
 	/// read from the same file.  It's usually better to use
-	/// {@link NIOFSDirectory} or {@link MMapDirectory} instead. 
+	/// <see cref="NIOFSDirectory" /> or <see cref="MMapDirectory" /> instead. 
 	/// </summary>
 	public class SimpleFSDirectory:FSDirectory
 	{

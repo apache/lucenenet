@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Lower-level search API. <br/>
 	/// HitCollectors are primarily meant to be used to implement queries, sorting
-	/// and filtering. See {@link Collector} for a lower level and higher performance
+	/// and filtering. See <see cref="Collector" /> for a lower level and higher performance
 	/// (on a multi-segment index) API.
 	/// 
 	/// </summary>
@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <version>  $Id: HitCollector.java 764551 2009-04-13 18:33:56Z mikemccand $
 	/// </version>
-	/// <deprecated> Please use {@link Collector} instead.
+	/// <deprecated> Please use <see cref="Collector" /> instead.
 	/// </deprecated>
     [Obsolete("Please use Collector instead.")]
 	public abstract class HitCollector
@@ -39,23 +39,24 @@ namespace Lucene.Net.Search
 		/// number and its raw score.
 		/// 
 		/// <p/>If, for example, an application wished to collect all of the hits for a
-		/// query in a BitSet, then it might:<pre>
+		/// query in a BitSet, then it might:
+        /// <code>
 		/// Searcher searcher = new IndexSearcher(indexReader);
 		/// final BitSet bits = new BitSet(indexReader.maxDoc());
 		/// searcher.search(query, new HitCollector() {
-		/// public void collect(int doc, float score) {
-		/// bits.set(doc);
-		/// }
+		///     public void collect(int doc, float score) {
+		///         bits.set(doc);
+		///     }
 		/// });
-		/// </pre>
+        /// </code>
 		/// 
 		/// <p/>Note: This is called in an inner search loop.  For good search
 		/// performance, implementations of this method should not call
-		/// {@link Searcher#Doc(int)} or
-		/// {@link Lucene.Net.Index.IndexReader#Document(int)} on every
+		/// <see cref="Searcher.Doc(int)" /> or
+		/// <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> on every
 		/// document number encountered.  Doing so can slow searches by an order
 		/// of magnitude or more.
-		/// <p/>Note: The <code>score</code> passed to this method is a raw score.
+		/// <p/>Note: The <c>score</c> passed to this method is a raw score.
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.
 		/// </summary>

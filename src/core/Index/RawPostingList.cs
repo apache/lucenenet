@@ -22,9 +22,9 @@ namespace Lucene.Net.Index
 	
 	
 	/// <summary>This is the base class for an in-memory posting list,
-	/// keyed by a Token.  {@link TermsHash} maintains a hash
+	/// keyed by a Token.  <see cref="TermsHash" /> maintains a hash
 	/// table holding one instance of this per unique Token.
-	/// Consumers of TermsHash ({@link TermsHashConsumer}) must
+	/// Consumers of TermsHash (<see cref="TermsHashConsumer" />) must
 	/// subclass this class with its own concrete class.
 	/// FreqProxTermsWriter.PostingList is a private inner class used 
 	/// for the freq/prox postings, and 

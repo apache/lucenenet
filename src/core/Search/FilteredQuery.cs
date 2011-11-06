@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
 					return scorerDoc;
 				}
 				
-				/// <deprecated> use {@link #NextDoc()} instead. 
+				/// <deprecated> use <see cref="NextDoc()" /> instead. 
 				/// </deprecated>
                 [Obsolete("use NextDoc() instead. ")]
 				public override bool Next()
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 					return doc = (disiDoc = docIdSetIterator.NextDoc()) != NO_MORE_DOCS && (scorerDoc = scorer.NextDoc()) != NO_MORE_DOCS && AdvanceToCommon(scorerDoc, disiDoc) != NO_MORE_DOCS?scorer.DocID():NO_MORE_DOCS;
 				}
 				
-				/// <deprecated> use {@link #DocID()} instead. 
+				/// <deprecated> use <see cref="DocID()" /> instead. 
 				/// </deprecated>
                 [Obsolete("use DocID() instead.")]
 				public override int Doc()
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
 					return doc;
 				}
 				
-				/// <deprecated> use {@link #Advance(int)} instead. 
+				/// <deprecated> use <see cref="Advance(int)" /> instead. 
 				/// </deprecated>
                 [Obsolete("use Advance(int) instead.")]
 				public override bool SkipTo(int i)
@@ -251,9 +251,9 @@ namespace Lucene.Net.Search
 		/// <summary> Constructs a new query which applies a filter to the results of the original query.
 		/// Filter.getDocIdSet() will be called every time this query is used in a search.
 		/// </summary>
-		/// <param name="query"> Query to be filtered, cannot be <code>null</code>.
+		/// <param name="query"> Query to be filtered, cannot be <c>null</c>.
 		/// </param>
-		/// <param name="filter">Filter to apply to query results, cannot be <code>null</code>.
+		/// <param name="filter">Filter to apply to query results, cannot be <c>null</c>.
 		/// </param>
 		public FilteredQuery(Query query, Filter filter)
 		{
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (o is FilteredQuery)

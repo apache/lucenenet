@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
 			Initialize(readers);
 		}
 		
-		/// <summary>This constructor is only used for {@link #Reopen()} </summary>
+		/// <summary>This constructor is only used for <see cref="Reopen()" /> </summary>
 		internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts, System.Collections.IDictionary oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
 		{
 			this.directory = directory;
@@ -648,7 +648,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Checks is the index is optimized (if it has a single segment and no deletions)</summary>
-		/// <returns> <code>true</code> if the index is optimized; <code>false</code> otherwise
+		/// <returns> <c>true</c> if the index is optimized; <c>false</c> otherwise
 		/// </returns>
 		public override bool IsOptimized()
 		{
@@ -865,7 +865,7 @@ namespace Lucene.Net.Index
 		/// <throws>  StaleReaderException  if the index has changed since this reader was opened </throws>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  Lucene.Net.Store.LockObtainFailedException </throws>
-		/// <summary>                               if another writer has this index open (<code>write.lock</code> could not be
+		/// <summary>                               if another writer has this index open (<c>write.lock</c> could not be
 		/// obtained)
 		/// </summary>
 		/// <throws>  IOException           if there is a low-level IO error </throws>
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Index
 			return new ReaderCommit(segmentInfos, directory);
 		}
 		
-		/// <seealso cref="Lucene.Net.Index.IndexReader.listCommits">
+		/// <seealso cref="Lucene.Net.Index.IndexReader.ListCommits">
 		/// </seealso>
 		public static new System.Collections.ICollection ListCommits(Directory dir)
 		{

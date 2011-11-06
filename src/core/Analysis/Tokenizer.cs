@@ -24,12 +24,12 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary> A Tokenizer is a TokenStream whose input is a Reader.
 	/// <p/>
-	/// This is an abstract class; subclasses must override {@link #IncrementToken()}
+	/// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()" />
 	/// <p/>
-    /// NOTE: Subclasses overriding {@link #next(Token)} must call
-	/// {@link AttributeSource#ClearAttributes()} before setting attributes.
-	/// Subclasses overriding {@link #IncrementToken()} must call
-	/// {@link Token#Clear()} before setting Token attributes.
+    /// NOTE: Subclasses overriding <see cref="TokenStream.Next(Token)" /> must call
+	/// <see cref="AttributeSource.ClearAttributes()" /> before setting attributes.
+    /// Subclasses overriding <see cref="TokenStream.IncrementToken()" /> must call
+	/// <see cref="Token.Clear()" /> before setting Token attributes.
 	/// </summary>
 	
 	public abstract class Tokenizer:TokenStream
@@ -82,8 +82,8 @@ namespace Lucene.Net.Analysis
 
 		}
   
-		/// <summary>Return the corrected offset. If {@link #input} is a {@link CharStream} subclass
-		/// this method calls {@link CharStream#CorrectOffset}, else returns <code>currentOff</code>.
+		/// <summary>Return the corrected offset. If <see cref="input" /> is a <see cref="CharStream" /> subclass
+		/// this method calls <see cref="CharStream.CorrectOffset" />, else returns <c>currentOff</c>.
 		/// </summary>
 		/// <param name="currentOff">offset as seen in the output
 		/// </param>

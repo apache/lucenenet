@@ -28,23 +28,21 @@ namespace Lucene.Net.Search
 	/// <b>Caution:</b> Iterate only over the hits needed. Iterating over all hits is
 	/// generally not desirable and may be the source of performance issues. If you
 	/// need to iterate over many or all hits, consider using the search method that
-	/// takes a {@link HitCollector}.
+	/// takes a <see cref="HitCollector" />.
 	/// <p/>
 	/// <p/>
 	/// <b>Note:</b> Deleting matching documents concurrently with traversing the
 	/// hits, might, when deleting hits that were not yet retrieved, decrease
-	/// {@link #Length()}. In such case,
-	/// {@link java.util.ConcurrentModificationException
-	/// ConcurrentModificationException} is thrown when accessing hit <code>n</code>
-	/// &gt; current_{@link #Length()} (but <code>n</code> &lt; {@link #Length()}
+	/// <see cref="Length()" />. In such case, an exceptionw is thrown when accessing hit <c>n</c>
+	/// &gt; current_<see cref="Length()" /> (but <c>n</c> &lt; <see cref="Length()" />
 	/// _at_start).
 	/// 
 	/// </summary>
-	/// <deprecated> see {@link Searcher#Search(Query, int)},
-	/// {@link Searcher#Search(Query, Filter, int)} and
-	/// {@link Searcher#Search(Query, Filter, int, Sort)}:<br/>
+	/// <deprecated> see <see cref="Searcher.Search(Query, int)" />,
+	/// <see cref="Searcher.Search(Query, Filter, int)" /> and
+	/// <see cref="Searcher.Search(Query, Filter, int, Sort)" />:<br/>
 	/// 
-	/// <pre>
+    /// <code>
 	/// TopDocs topDocs = searcher.Search(query, numHits);
 	/// ScoreDoc[] hits = topDocs.scoreDocs;
 	/// for (int i = 0; i &lt; hits.Length; i++) {
@@ -52,7 +50,7 @@ namespace Lucene.Net.Search
 	/// Document d = searcher.Doc(docId);
 	/// // do something with current hit
 	/// ...
-	/// </pre>
+    /// </code>
 	/// </deprecated>
     [Obsolete("see Searcher.Search(Query, int), Searcher.Search(Query, Filter, int) and Searcher.Search(Query, Filter, int, Sort)")]
 	public sealed class Hits
@@ -109,7 +107,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Tries to add new documents to hitDocs.
-		/// Ensures that the hit numbered <code>min</code> has been retrieved.
+		/// Ensures that the hit numbered <c>min</c> has been retrieved.
 		/// </summary>
 		private void  GetMoreDocs(int min)
 		{
@@ -218,13 +216,13 @@ namespace Lucene.Net.Search
 			return HitDoc(n).id;
 		}
 		
-		/// <summary> Returns a {@link HitIterator} to navigate the Hits.  Each item returned
-		/// from {@link Iterator#next()} is a {@link Hit}.
+		/// <summary> Returns a <see cref="HitIterator" /> to navigate the Hits.  Each item returned
+		/// from <see cref="HitIterator.Current" /> is a <see cref="Hit" />.
 		/// <p/>
 		/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
 		/// hits is generally not desirable and may be the source of
 		/// performance issues. If you need to iterate over many or all hits, consider
-		/// using a search method that takes a {@link HitCollector}.
+		/// using a search method that takes a <see cref="HitCollector" />.
 		/// <p/>
 		/// </summary>
 		public System.Collections.IEnumerator Iterator()

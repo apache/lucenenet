@@ -25,12 +25,11 @@ namespace Lucene.Net.Util
 	
 	/// <summary> Stores and iterate on sorted integers in compressed form in RAM. <br/>
 	/// The code for compressing the differences between ascending integers was
-	/// borrowed from {@link Lucene.Net.Store.IndexInput} and
-	/// {@link Lucene.Net.Store.IndexOutput}.
-	/// <p/>
+	/// borrowed from <see cref="Lucene.Net.Store.IndexInput" /> and
+	/// <see cref="Lucene.Net.Store.IndexOutput" />.<p/>
 	/// <b>NOTE:</b> this class assumes the stored integers are doc Ids (hence why it
-	/// extends {@link DocIdSet}). Therefore its {@link #Iterator()} assumes {@link
-	/// DocIdSetIterator#NO_MORE_DOCS} can be used as sentinel. If you intent to use
+	/// extends <see cref="DocIdSet" />). Therefore its <see cref="Iterator()" /> assumes <see cref="DocIdSetIterator.NO_MORE_DOCS" />
+	/// can be used as sentinel. If you intent to use
 	/// this value, then make sure it's not used during search flow.
 	/// </summary>
 	public class SortedVIntList:DocIdSet
@@ -70,7 +69,7 @@ namespace Lucene.Net.Util
 				}
 			}
 			
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead.")]
 			public override int Doc()
@@ -83,7 +82,7 @@ namespace Lucene.Net.Util
 				return doc;
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead.")]
 			public override bool Next()
@@ -105,7 +104,7 @@ namespace Lucene.Net.Util
 				return doc;
 			}
 			
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int) instead.")]
 			public override bool SkipTo(int docNr)

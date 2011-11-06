@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns an array of positions in which the term is found.
 		/// Terms are identified by the index at which its number appears in the
-		/// term String array obtained from the <code>indexOf</code> method.
+		/// term String array obtained from the <c>indexOf</c> method.
 		/// </summary>
 		public virtual int[] GetTermPositions(int index)
 		{

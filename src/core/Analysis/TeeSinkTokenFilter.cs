@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
 	/// It is also useful for doing things like entity extraction or proper noun analysis as
 	/// part of the analysis workflow and saving off those tokens for use in another field.
 	/// 
-	/// <pre>
+	/// <code>
 	/// TeeSinkTokenFilter source1 = new TeeSinkTokenFilter(new WhitespaceTokenizer(reader1));
 	/// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.newSinkTokenStream();
 	/// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.newSinkTokenStream();
@@ -45,23 +45,23 @@ namespace Lucene.Net.Analysis
 	/// d.add(new Field("f2", final2));
 	/// d.add(new Field("f3", final3));
 	/// d.add(new Field("f4", final4));
-	/// </pre>
-	/// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
-	/// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
+	/// </code>
+	/// In this example, <c>sink1</c> and <c>sink2</c> will both get tokens from both
+	/// <c>reader1</c> and <c>reader2</c> after whitespace tokenizer
 	/// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
 	/// It is important, that tees are consumed before sinks (in the above example, the field names must be
 	/// less the sink's field names). If you are not sure, which stream is consumed first, you can simply
-	/// add another sink and then pass all tokens to the sinks at once using {@link #consumeAllTokens}.
+	/// add another sink and then pass all tokens to the sinks at once using <see cref="ConsumeAllTokens" />.
 	/// This TokenFilter is exhausted after this. In the above example, change
 	/// the example above to:
-	/// <pre>
+	/// <code>
 	/// ...
 	/// TokenStream final1 = new LowerCaseFilter(source1.newSinkTokenStream());
 	/// TokenStream final2 = source2.newSinkTokenStream();
 	/// sink1.consumeAllTokens();
 	/// sink2.consumeAllTokens();
 	/// ...
-	/// </pre>
+	/// </code>
 	/// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are ready.
 	/// <p/>Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
 	/// </summary>
@@ -81,13 +81,13 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary> Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream.</summary>
+		/// <summary> Returns a new <see cref="SinkTokenStream" /> that receives all tokens consumed by this stream.</summary>
 		public SinkTokenStream NewSinkTokenStream()
 		{
 			return NewSinkTokenStream(ACCEPT_ALL_FILTER);
 		}
 		
-		/// <summary> Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream
+		/// <summary> Returns a new <see cref="SinkTokenStream" /> that receives all tokens consumed by this stream
 		/// that pass the supplied filter.
 		/// </summary>
 		/// <seealso cref="SinkFilter">
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis
 			return sink;
 		}
 		
-		/// <summary> Adds a {@link SinkTokenStream} created by another <code>TeeSinkTokenFilter</code>
+		/// <summary> Adds a <see cref="SinkTokenStream" /> created by another <c>TeeSinkTokenFilter</c>
 		/// to this one. The supplied stream will also receive all consumed tokens.
 		/// This method can be used to pass tokens from two different tees to one sink.
 		/// </summary>
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis
 			this.sinks.Add(new System.WeakReference(sink));
 		}
 		
-		/// <summary> <code>TeeSinkTokenFilter</code> passes all tokens to the added sinks
+		/// <summary> <c>TeeSinkTokenFilter</c> passes all tokens to the added sinks
 		/// when itself is consumed. To be sure, that all tokens from the input
 		/// stream are passed to the sinks, you can call this methods.
 		/// This instance is exhausted after this, but all sinks are instant available.
@@ -170,15 +170,15 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		/// <summary> A filter that decides which {@link AttributeSource} states to store in the sink.</summary>
+		/// <summary> A filter that decides which <see cref="AttributeSource" /> states to store in the sink.</summary>
 		public abstract class SinkFilter
 		{
-			/// <summary> Returns true, iff the current state of the passed-in {@link AttributeSource} shall be stored
+			/// <summary> Returns true, iff the current state of the passed-in <see cref="AttributeSource" /> shall be stored
 			/// in the sink. 
 			/// </summary>
 			public abstract bool Accept(AttributeSource source);
 			
-			/// <summary> Called by {@link SinkTokenStream#Reset()}. This method does nothing by default
+			/// <summary> Called by <see cref="SinkTokenStream.Reset()" />. This method does nothing by default
 			/// and can optionally be overridden.
 			/// </summary>
 			public void  Reset()

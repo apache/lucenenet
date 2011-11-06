@@ -59,21 +59,23 @@ namespace Lucene.Net.Util
 		{
 			return ParseInt(chars, offset, len, 10);
 		}
-		
-		/// <summary> Parses the string argument as if it was an int value and returns the
-		/// result. Throws NumberFormatException if the string does not represent an
-		/// int quantity. The second argument specifies the radix to use when parsing
-		/// the value.
-		/// 
-		/// </summary>
-		/// <param name="chars">a string representation of an int quantity.
-		/// </param>
-		/// <param name="radix">the base to use for conversion.
-		/// </param>
-		/// <returns> int the value represented by the argument
-		/// </returns>
-		/// <throws>  NumberFormatException if the argument could not be parsed as an int quantity. </throws>
-		public static int ParseInt(char[] chars, int offset, int len, int radix)
+
+	    /// <summary> Parses the string argument as if it was an int value and returns the
+	    /// result. Throws NumberFormatException if the string does not represent an
+	    /// int quantity. The second argument specifies the radix to use when parsing
+	    /// the value.
+	    /// 
+	    /// </summary>
+	    /// <param name="chars">a string representation of an int quantity.
+	    /// </param>
+	    /// <param name="offset"></param>
+	    /// <param name="len"></param>
+	    /// <param name="radix">the base to use for conversion.
+	    /// </param>
+	    /// <returns> int the value represented by the argument
+	    /// </returns>
+	    /// <throws>  NumberFormatException if the argument could not be parsed as an int quantity. </throws>
+	    public static int ParseInt(char[] chars, int offset, int len, int radix)
 		{
 			if (chars == null || radix < 2 || radix > 36)
 			{

@@ -43,8 +43,8 @@ namespace Lucene.Net.Search
 		private bool includeLower;
 		private bool includeUpper;
 		
-		/// <summary> Enumerates all terms greater/equal than <code>lowerTerm</code>
-		/// but less/equal than <code>upperTerm</code>. 
+		/// <summary> Enumerates all terms greater/equal than <c>lowerTerm</c>
+		/// but less/equal than <c>upperTerm</c>. 
 		/// 
 		/// If an endpoint is null, it is said to be "open". Either or both 
 		/// endpoints may be open.  Open endpoints may not be exclusive 
@@ -60,13 +60,13 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="upperTermText">The term text at the upper end of the range
 		/// </param>
-		/// <param name="includeLower">If true, the <code>lowerTerm</code> is included in the range.
+		/// <param name="includeLower">If true, the <c>lowerTerm</c> is included in the range.
 		/// </param>
-		/// <param name="includeUpper">If true, the <code>upperTerm</code> is included in the range.
+		/// <param name="includeUpper">If true, the <c>upperTerm</c> is included in the range.
 		/// </param>
 		/// <param name="collator">The collator to use to collate index Terms, to determine their
-		/// membership in the range bounded by <code>lowerTerm</code> and
-		/// <code>upperTerm</code>.
+		/// membership in the range bounded by <c>lowerTerm</c> and
+		/// <c>upperTerm</c>.
 		/// 
 		/// </param>
 		/// <throws>  IOException </throws>

@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis
 {
 
     /// <summary>
-    /// * Base utility class for implementing a {@link CharFilter}.
+    /// * Base utility class for implementing a <see cref="CharFilter" />.
     /// * You subclass this, and then record mappings by calling
-    /// * {@link #addOffCorrectMap}, and then invoke the correct
+    /// * <see cref="AddOffCorrectMap" />, and then invoke the correct
     /// * method to correct an offset.
     /// </summary>
     public abstract class BaseCharFilter : CharFilter

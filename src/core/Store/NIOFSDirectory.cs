@@ -49,13 +49,13 @@ namespace Lucene.Net.Store
 //namespace Lucene.Net.Store
 //{
 	
-//    /// <summary> An {@link FSDirectory} implementation that uses
+//    /// <summary> An <see cref="FSDirectory" /> implementation that uses
 //    /// java.nio's FileChannel's positional read, which allows
 //    /// multiple threads to read from the same file without
 //    /// synchronizing.
 //    /// 
 //    /// <p/>This class only uses FileChannel when reading; writing
-//    /// is achieved with {@link SimpleFSDirectory.SimpleFSIndexOutput}.
+//    /// is achieved with <see cref="SimpleFSDirectory.SimpleFSIndexOutput" />.
 //    /// 
 //    /// <p/><b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug
 //    /// in how FileChannel.read is implemented in Sun's JRE.

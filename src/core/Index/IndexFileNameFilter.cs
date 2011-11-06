@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/* (non-Javadoc)
-		* @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		* <see cref="java.io.FilenameFilter.accept(java.io.File, java.lang.String)"/>
 		*/
 		public virtual bool Accept(System.IO.FileInfo dir, System.String name)
 		{

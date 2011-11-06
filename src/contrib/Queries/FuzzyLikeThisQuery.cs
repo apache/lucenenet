@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -101,8 +101,8 @@ namespace Lucene.Net.Search
 
         /**
          * 
-         * @param maxNumTerms The total number of terms clauses that will appear once rewritten as a BooleanQuery
-         * @param analyzer
+         * <param name="maxNumTerms">The total number of terms clauses that will appear once rewritten as a BooleanQuery</param>
+         * <param name="analyzer"></param>
          */
         public FuzzyLikeThisQuery(int maxNumTerms, Analyzer analyzer)
         {
@@ -174,11 +174,11 @@ namespace Lucene.Net.Search
         }
 
         /**
-         * Adds user input for "fuzzification" 
-         * @param queryString The string which will be parsed by the analyzer and for which fuzzy variants will be parsed
-         * @param fieldName
-         * @param minSimilarity The minimum similarity of the term variants (see FuzzyTermEnum)
-         * @param prefixLength Length of required common prefix on variant terms (see FuzzyTermEnum)
+         * <summary>Adds user input for "fuzzification" </summary>
+         * <param name="queryString">The string which will be parsed by the analyzer and for which fuzzy variants will be parsed</param>
+         * <param name="fieldName"></param>
+         * <param name="minSimilarity">The minimum similarity of the term variants (see FuzzyTermEnum)</param>
+         * <param name="prefixLength">Length of required common prefix on variant terms (see FuzzyTermEnum)</param>
          */
         public void AddTerms(String queryString, String fieldName, float minSimilarity, int prefixLength)
         {
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
             }
 
             /* (non-Javadoc)
-             * @see org.apache.lucene.util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
+             * <see cref="org.apache.lucene.util.PriorityQueue.lessThan(java.lang.Object, java.lang.Object)"/>
              */
             public override bool LessThan(Object a, Object b)
             {
@@ -429,7 +429,7 @@ namespace Lucene.Net.Search
 
 
         /* (non-Javadoc)
-         * @see org.apache.lucene.search.Query#toString(java.lang.String)
+         * <see cref="org.apache.lucene.search.Query.toString(java.lang.String)"/>
          */
         public override String ToString(String field)
         {

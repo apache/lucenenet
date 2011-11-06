@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Provides a {@link FieldComparator} for custom field sorting.
+	/// <summary> Provides a <see cref="FieldComparator" /> for custom field sorting.
 	/// 
 	/// <b>NOTE:</b> This API is experimental and might change in
 	/// incompatible ways in the next release.

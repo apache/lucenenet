@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	/// at "valid" positons. What "valid positions" are
 	/// depends on the type of the phrase query: for an exact phrase query terms are required 
 	/// to appear in adjacent locations, while for a sloppy phrase query some distance between 
-	/// the terms is allowed. The abstract method {@link #PhraseFreq()} of extending classes
+	/// the terms is allowed. The abstract method <see cref="PhraseFreq()" /> of extending classes
 	/// is invoked for each document containing all the phrase query terms, in order to 
 	/// compute the frequency of the phrase query in that document. A non zero frequency
 	/// means a match. 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 			first.doc = - 1;
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead.")]
 		public override int Doc()
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 			return first.doc;
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 			return norms == null?raw:raw * Similarity.DecodeNorm(norms[first.doc]); // normalize
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)

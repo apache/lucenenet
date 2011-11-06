@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -27,10 +27,11 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Similar
 {
-    /**
+    /**<summary>
  * A simple wrapper for MoreLikeThis for use in scenarios where a Query object is required eg
  * in custom QueryParser extensions. At query.rewrite() time the reader is used to construct the
  * actual MoreLikeThis object and obtain the real Query object.
+     * </summary>
  */
     public class MoreLikeThisQuery : Query
     {
@@ -46,8 +47,10 @@ namespace Lucene.Net.Search.Similar
         int minDocFreq = -1;
 
 
-        /**
-         * @param moreLikeFields
+        /**<summary></summary>
+         * <param name="moreLikeFields"></param>
+         * <param name="likeText"></param>
+         * <param name="analyzer"></param>
          */
         public MoreLikeThisQuery(String likeText, String[] moreLikeFields, Analyzer analyzer)
         {
@@ -76,7 +79,7 @@ namespace Lucene.Net.Search.Similar
             return bq;
         }
         /* (non-Javadoc)
-         * @see org.apache.lucene.search.Query#toString(java.lang.String)
+         * <see cref="org.apache.lucene.search.Query.toString(java.lang.String)"/>
          */
         public override String ToString(String field)
         {

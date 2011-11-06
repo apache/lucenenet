@@ -30,19 +30,19 @@ namespace Lucene.Net.Search
 	
 	/// <summary>Implements search over a single IndexReader.
 	/// 
-	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
+	/// or <see cref="Searcher.Search(Query,Filter)" /> methods. For performance reasons it is 
 	/// recommended to open only one IndexSearcher and use it for all of your searches.
 	/// 
 	/// <p/>Note that you can only access Hits from an IndexSearcher as long as it is
 	/// not yet closed, otherwise an IOException will be thrown. 
 	/// 
-	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
-	/// <code>IndexSearcher</code>} instances are completely
+	/// <a name="thread-safety"></a><p/><b>NOTE</b>:
+	/// <see cref="IndexSearcher" /> instances are completely
 	/// thread safe, meaning multiple threads can call any of its
 	/// methods, concurrently.  If your application requires
 	/// external synchronization, you should <b>not</b>
-	/// synchronize on the <code>IndexSearcher</code> instance;
+	/// synchronize on the <c>IndexSearcher</c> instance;
 	/// use your own (non-Lucene) objects instead.<p/>
 	/// </summary>
     [Serializable]
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a searcher searching the index in the named directory.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
 		/// </deprecated>
         [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(System.String path):this(IndexReader.Open(path), true)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
 		/// </deprecated>
         [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(System.String path, bool readOnly):this(IndexReader.Open(path, readOnly), true)
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a searcher searching the index in the provided directory.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #IndexSearcher(Directory, boolean)} instead
+		/// <deprecated> Use <see cref="IndexSearcher(Directory, bool)" /> instead
 		/// </deprecated>
         [Obsolete("Use IndexSearcher(Directory, bool) instead")]
 		public IndexSearcher(Directory directory):this(IndexReader.Open(directory), true)
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 			ReaderUtil.GatherSubReaders(allSubReaders, r);
 		}
 		
-		/// <summary>Return the {@link IndexReader} this searches. </summary>
+		/// <summary>Return the <see cref="IndexReader" /> this searches. </summary>
 		public virtual IndexReader GetIndexReader()
 		{
 			return reader;
@@ -206,15 +206,15 @@ namespace Lucene.Net.Search
 			return Search(weight, filter, nDocs, sort, true);
 		}
 		
-		/// <summary> Just like {@link #Search(Weight, Filter, int, Sort)}, but you choose
-		/// whether or not the fields in the returned {@link FieldDoc} instances
+		/// <summary> Just like <see cref="Search(Weight, Filter, int, Sort)" />, but you choose
+		/// whether or not the fields in the returned <see cref="FieldDoc" /> instances
 		/// should be set by specifying fillFields.<br/>
 		/// 
 		/// <p/>
 		/// NOTE: this does not compute scores by default. If you need scores, create
-		/// a {@link TopFieldCollector} instance by calling
-		/// {@link TopFieldCollector#create} and then pass that to
-		/// {@link #Search(Weight, Filter, Collector)}.
+		/// a <see cref="TopFieldCollector" /> instance by calling
+		/// <see cref="TopFieldCollector.create" /> and then pass that to
+		/// <see cref="Search(Weight, Filter, Collector)" />.
 		/// <p/>
 		/// </summary>
 		public virtual TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort, bool fillFields)
@@ -379,13 +379,13 @@ namespace Lucene.Net.Search
 		private bool fieldSortDoMaxScore;
 		
 		/// <summary> By default, no scores are computed when sorting by field (using
-		/// {@link #Search(Query,Filter,int,Sort)}). You can change that, per
+		/// <see cref="Searcher.Search(Query,Filter,int,Sort)" />). You can change that, per
 		/// IndexSearcher instance, by calling this method. Note that this will incur
 		/// a CPU cost.
 		/// 
 		/// </summary>
 		/// <param name="doTrackScores">If true, then scores are returned for every matching document
-		/// in {@link TopFieldDocs}.
+		/// in <see cref="TopFieldDocs" />.
 		/// 
 		/// </param>
 		/// <param name="doMaxScore">If true, then the max score for all matching docs is computed.

@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
 	/// <summary>A Scorer for queries with a required part and an optional part.
 	/// Delays skipTo() on the optional part until a score() is needed.
 	/// <br/>
-	/// This <code>Scorer</code> implements {@link Scorer#SkipTo(int)}.
+	/// This <c>Scorer</c> implements <see cref="DocIdSetIterator.SkipTo(int)" />.
 	/// </summary>
 	class ReqOptSumScorer:Scorer
 	{
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 		private Scorer reqScorer;
 		private Scorer optScorer;
 		
-		/// <summary>Construct a <code>ReqOptScorer</code>.</summary>
+		/// <summary>Construct a <c>ReqOptScorer</c>.</summary>
 		/// <param name="reqScorer">The required scorer. This must match.
 		/// </param>
 		/// <param name="optScorer">The optional scorer. This is used for scoring only.
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 			this.optScorer = optScorer;
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 			return reqScorer.NextDoc();
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 			return reqScorer.Advance(target);
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead.")]
 		public override int Doc()
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-		/// Initially invalid, until {@link #Next()} is called the first time.
+		/// Initially invalid, until <see cref="Next()" /> is called the first time.
 		/// </summary>
 		/// <returns> The score of the required scorer, eventually increased by the score
 		/// of the optional scorer when it also matches the current document.

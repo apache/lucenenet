@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Cache
         /// Value creation.
         /// </summary>
         /// <param name="reader">The reader.</param>
-        /// <param name="field">The key to the item under the reader.</param>
+        /// <param name="key">The key to the item under the reader.</param>
         /// <returns>The value.</returns>
         protected abstract T CreateValue(IndexReader reader, string key);
 

@@ -23,12 +23,12 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> <p/>Expert: represents a single commit into an index as seen by the
-	/// {@link IndexDeletionPolicy} or {@link IndexReader}.<p/>
+	/// <see cref="IndexDeletionPolicy" /> or <see cref="IndexReader" />.<p/>
 	/// 
 	/// <p/> Changes to the content of an index are made visible
 	/// only after the writer who made that change commits by
 	/// writing a new segments file
-	/// (<code>segments_N</code>). This point in time, when the
+	/// (<c>segments_N</c>). This point in time, when the
 	/// action of writing of a new segments file to the directory
 	/// is completed, is an index commit.<p/>
 	/// 
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 	public abstract class IndexCommit : IndexCommitPoint
 	{
 		
-		/// <summary> Get the segments file (<code>segments_N</code>) associated 
+		/// <summary> Get the segments file (<c>segments_N</c>) associated 
 		/// with this commit point.
 		/// </summary>
 		public abstract System.String GetSegmentsFileName();
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns all index files referenced by this commit point.</summary>
 		public abstract System.Collections.Generic.ICollection<string> GetFileNames();
 		
-		/// <summary> Returns the {@link Directory} for the index.</summary>
+		/// <summary> Returns the <see cref="Directory" /> for the index.</summary>
 		public abstract Directory GetDirectory();
 		
 		/// <summary> Delete this commit point.  This only applies when using
@@ -61,9 +61,9 @@ namespace Lucene.Net.Index
 		/// Upon calling this, the writer is notified that this commit 
 		/// point should be deleted. 
 		/// <p/>
-		/// Decision that a commit-point should be deleted is taken by the {@link IndexDeletionPolicy} in effect
-		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
-		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
+		/// Decision that a commit-point should be deleted is taken by the <see cref="IndexDeletionPolicy" /> in effect
+        /// and therefore this should only be called by its <see cref="IndexDeletionPolicy.OnInit(System.Collections.IList)" /> or 
+        /// <see cref="IndexDeletionPolicy.OnCommit(System.Collections.IList)" /> methods.
 		/// </summary>
         public abstract void Delete();
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the version for this IndexCommit.  This is the
-		/// same value that {@link IndexReader#getVersion} would
+		/// same value that <see cref="IndexReader.GetVersion" /> would
 		/// return if it were opened on this commit. 
 		/// </summary>
         public abstract long GetVersion();
@@ -109,10 +109,10 @@ namespace Lucene.Net.Index
 		{
 			return GetDirectory().FileModified(GetSegmentsFileName());
 		}
-		
-		/// <summary>Returns userData, previously passed to {@link
-		/// IndexWriter#Commit(Map)} for this commit.  Map is
-		/// String -> String. 
+
+        /// <summary>Returns userData, previously passed to 
+        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
+		/// for this commit.  IDictionary is String -> String. 
 		/// </summary>
         public abstract System.Collections.Generic.IDictionary<string, string> GetUserData();
 	}

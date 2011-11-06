@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
 				return NO_MORE_DOCS;
 			}
 			
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead.")]
 			public override int Doc()
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
 				return null;
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead. ")]
 			public override bool Next()
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
 				return score;
 			}
 			
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int) instead. ")]
 			public override bool SkipTo(int target)
@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
 			return false;
 		}
 		
-		/// <deprecated> use {@link #Score(Collector, int, int)} instead. 
+		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector hc, int max)
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search
 			throw new System.NotSupportedException();
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead. ")]
 		public override int Doc()
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
 			throw new System.NotSupportedException();
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
 			Score(collector, System.Int32.MaxValue, NextDoc());
 		}
 		
-		/// <deprecated> use {@link #Score(Collector)} instead. 
+		/// <deprecated> use <see cref="Score(Collector)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Score(Collector) instead. ")]
 		public override void  Score(HitCollector hc)
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search
 			Score(new HitCollectorWrapper(hc));
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead. ")]
 		public override bool SkipTo(int target)

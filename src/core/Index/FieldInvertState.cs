@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 			return length;
 		}
 		
-		/// <summary> Get the number of terms with <code>positionIncrement == 0</code>.</summary>
+		/// <summary> Get the number of terms with <c>positionIncrement == 0</c>.</summary>
 		/// <returns> the numOverlap
 		/// </returns>
 		public int GetNumOverlap()

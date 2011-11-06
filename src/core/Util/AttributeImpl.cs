@@ -21,10 +21,10 @@ namespace Lucene.Net.Util
 {
 	
 	/// <summary> Base class for Attributes that can be added to a 
-	/// {@link Lucene.Net.Util.AttributeSource}.
+	/// <see cref="Lucene.Net.Util.AttributeSource" />.
 	/// <p/>
 	/// Attributes are used to add data in a dynamic, yet type-safe way to a source
-	/// of usually streamed objects, e. g. a {@link Lucene.Net.Analysis.TokenStream}.
+	/// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
 	/// </summary>
 	[Serializable]
 	public abstract class AttributeImpl : System.ICloneable, Attribute
@@ -38,11 +38,11 @@ namespace Lucene.Net.Util
 		/// <summary> The default implementation of this method accesses all declared
 		/// fields of this object and prints the values in the following syntax:
 		/// 
-		/// <pre>
+        /// <code>
 		/// public String toString() {
 		/// return "start=" + startOffset + ",end=" + endOffset;
 		/// }
-		/// </pre>
+        /// </code>
 		/// 
 		/// This method may be overridden by subclasses.
 		/// </summary>
@@ -86,24 +86,24 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Subclasses must implement this method and should compute
 		/// a hashCode similar to this:
-		/// <pre>
+		/// <code>
 		/// public int hashCode() {
 		/// int code = startOffset;
 		/// code = code * 31 + endOffset;
 		/// return code;
 		/// }
-		/// </pre> 
+		/// </code> 
 		/// 
-		/// see also {@link #equals(Object)}
+		/// see also <see cref="Equals(Object)" />
 		/// </summary>
 		abstract public override int GetHashCode();
 		
-		/// <summary> All values used for computation of {@link #hashCode()} 
+		/// <summary> All values used for computation of <see cref="GetHashCode()" /> 
 		/// should be checked here for equality.
 		/// 
-		/// see also {@link Object#equals(Object)}
+		/// see also <see cref="Object.Equals(Object)" />
 		/// </summary>
-		abstract public  override bool Equals(System.Object other);
+		abstract public override bool Equals(System.Object other);
 		
 		/// <summary> Copies the values from this Attribute into the passed-in
 		/// target attribute. The target implementation must support all the

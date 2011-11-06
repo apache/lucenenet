@@ -31,16 +31,16 @@ namespace Lucene.Net.Util
 	/// by someone other than the author.  It also allows one to efficiently implement
 	/// alternate serialization or interchange formats.
 	/// <p/>
-	/// <code>OpenBitSet</code> is faster than <code>java.util.BitSet</code> in most operations
+	/// <c>OpenBitSet</c> is faster than <c>java.util.BitSet</c> in most operations
 	/// and *much* faster at calculating cardinality of sets and results of set operations.
 	/// It can also handle sets of larger cardinality (up to 64 * 2**32-1)
 	/// <p/>
-	/// The goals of <code>OpenBitSet</code> are the fastest implementation possible, and
+	/// The goals of <c>OpenBitSet</c> are the fastest implementation possible, and
 	/// maximum code reuse.  Extra safety and encapsulation
 	/// may always be built on top, but if that's built in, the cost can never be removed (and
 	/// hence people re-implement their own version in order to get better performance).
 	/// If you want a "safe", totally encapsulated (and slower and limited) BitSet
-	/// class, use <code>java.util.BitSet</code>.
+	/// class, use <c>java.util.BitSet</c>.
 	/// <p/>
 	/// <h3>Performance Results</h3>
 	/// 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Returns the current capacity of this set.  Included for
-		/// compatibility.  This is *not* equal to {@link #cardinality}
+		/// compatibility.  This is *not* equal to <see cref="Cardinality" />
 		/// </summary>
 		public virtual long Size()
 		{
@@ -828,19 +828,19 @@ namespace Lucene.Net.Util
 		
 		// some BitSet compatability methods
 		
-		//** see {@link intersect} */
+		//** see <see cref="intersect" /> */
 		public virtual void  And(OpenBitSet other)
 		{
 			Intersect(other);
 		}
 		
-		//** see {@link union} */
+		//** see <see cref="union" /> */
 		public virtual void  Or(OpenBitSet other)
 		{
 			Union(other);
 		}
 		
-		//** see {@link andNot} */
+		//** see <see cref="andNot" /> */
 		public virtual void  AndNot(OpenBitSet other)
 		{
 			Remove(other);

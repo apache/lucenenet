@@ -21,7 +21,7 @@ namespace Lucene.Net.Util.Cache
 {
 	
 	/// <summary> Simple cache implementation that uses a HashMap to store (key, value) pairs.
-	/// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
+	/// This cache is not synchronized, use <see cref="Cache.SynchronizedCache(Cache)" />
 	/// if needed.
 	/// </summary>
 	public class SimpleMapCache:Cache

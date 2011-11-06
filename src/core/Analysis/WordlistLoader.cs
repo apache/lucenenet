@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis
 		
 		
 		/// <summary> Reads a stem dictionary. Each line contains:
-		/// <pre>word<b>\t</b>stem</pre>
+		/// <c>word<b>\t</b>stem</c>
 		/// (i.e. two tab seperated words)
 		/// 
 		/// </summary>

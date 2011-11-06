@@ -36,18 +36,18 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary>Construct a new LetterTokenizer using a given {@link AttributeSource}. </summary>
+		/// <summary>Construct a new LetterTokenizer using a given <see cref="AttributeSource" />. </summary>
 		public LetterTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
 		{
 		}
 		
-		/// <summary>Construct a new LetterTokenizer using a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory}. </summary>
+		/// <summary>Construct a new LetterTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
 		public LetterTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
 		{
 		}
 		
 		/// <summary>Collects only characters which satisfy
-		/// {@link Character#isLetter(char)}.
+		/// <see cref="char.IsLetter(char)" />.
 		/// </summary>
 		protected internal override bool IsTokenChar(char c)
 		{
