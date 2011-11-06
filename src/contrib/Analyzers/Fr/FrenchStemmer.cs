@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Sets the search region Strings<br>
+		/// Sets the search region Strings<br/>
 		/// it needs to be done each time the buffer was modified
 		/// </summary>
 		private void SetStrings() 
@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// First step of the Porter Algorithmn<br>
+		/// First step of the Porter Algorithmn<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step1( ) 
@@ -269,9 +269,9 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Second step (A) of the Porter Algorithmn<br>
+		/// Second step (A) of the Porter Algorithmn<br/>
 		/// Will be performed if nothing changed from the first step
-		/// or changed were done in the amment, emment, ments or ment suffixes<br>
+		/// or changed were done in the amment, emment, ments or ment suffixes<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		/// <returns>
@@ -288,8 +288,8 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Second step (B) of the Porter Algorithmn<br>
-		/// Will be performed if step 2 A was performed unsuccessfully<br>
+		/// Second step (B) of the Porter Algorithmn<br/>
+		/// Will be performed if step 2 A was performed unsuccessfully<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step2b() 
@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Third step of the Porter Algorithmn<br>
+		/// Third step of the Porter Algorithmn<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step3() 
@@ -330,7 +330,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Fourth step of the Porter Algorithmn<br>
+		/// Fourth step of the Porter Algorithmn<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step4() 
@@ -358,7 +358,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Fifth step of the Porter Algorithmn<br>
+		/// Fifth step of the Porter Algorithmn<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step5() 
@@ -374,7 +374,7 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Sixth (and last!) step of the Porter Algorithmn<br>
+		/// Sixth (and last!) step of the Porter Algorithmn<br/>
 		/// refer to http://snowball.sourceforge.net/french/stemmer.html for an explanation
 		/// </summary>
 		private void Step6() 
@@ -509,8 +509,8 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Delete a suffix searched in zone "source" if preceded by prefix<br>
-		/// or replace it with the replace string if preceded by the prefix in the zone "from"<br>
+		/// Delete a suffix searched in zone "source" if preceded by prefix<br/>
+		/// or replace it with the replace string if preceded by the prefix in the zone "from"<br/>
 		/// or delete the suffix if specified
 		/// </summary>
 		/// <param name="source">the primary source zone for search</param>
@@ -633,9 +633,9 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Retrieve the "R zone" (1 or 2 depending on the buffer) and return the corresponding string<br>
+		/// Retrieve the "R zone" (1 or 2 depending on the buffer) and return the corresponding string<br/>
 		/// "R is the region after the first non-vowel following a vowel
-		/// or is the null region at the end of the word if there is no such non-vowel"<br>
+		/// or is the null region at the end of the word if there is no such non-vowel"<br/>
 		/// </summary>
 		/// <param name="buffer">the in buffer</param>
 		/// <returns>the resulting string</returns>
@@ -672,10 +672,10 @@ namespace Lucene.Net.Analysis.Fr
 		}
 
 		/// <summary>
-		/// Retrieve the "RV zone" from a buffer an return the corresponding string<br>
+		/// Retrieve the "RV zone" from a buffer an return the corresponding string<br/>
 		/// "If the word begins with two vowels, RV is the region after the third letter,
 		/// otherwise the region after the first vowel not at the beginning of the word,
-		/// or the end of the word if these positions cannot be found."<br>
+		/// or the end of the word if these positions cannot be found."<br/>
 		/// </summary>
 		/// <param name="buffer">the in buffer</param>
 		/// <returns>the resulting string</returns>
@@ -711,9 +711,9 @@ namespace Lucene.Net.Analysis.Fr
 
 
 		/// <summary>
-		/// Turns u and i preceded AND followed by a vowel to UpperCase<br>
-		/// Turns y preceded OR followed by a vowel to UpperCase<br>
-		/// Turns u preceded by q to UpperCase<br>
+		/// Turns u and i preceded AND followed by a vowel to UpperCase<br/>
+		/// Turns y preceded OR followed by a vowel to UpperCase<br/>
+		/// Turns u preceded by q to UpperCase<br/>
 		/// </summary>
 		/// <param name="buffer">the buffer to treat</param>
 		/// <returns>the treated buffer</returns>

@@ -22,12 +22,12 @@ using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>This class implements {@link InvertedDocConsumer}, which
+	/// <summary>This class implements <see cref="InvertedDocConsumer" />, which
 	/// is passed each token produced by the analyzer on each
 	/// field.  It stores these tokens in a hash table, and
 	/// allocates separate byte streams per token.  Consumers of
-	/// this class, eg {@link FreqProxTermsWriter} and {@link
-	/// TermVectorsTermsWriter}, write their own byte streams
+	/// this class, eg <see cref="FreqProxTermsWriter" /> and <see cref="TermVectorsTermsWriter" />
+	///, write their own byte streams
 	/// under each term.
 	/// </summary>
 	

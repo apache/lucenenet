@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	/// all token attribute states locally in a List.
 	/// 
 	/// <p/>CachingTokenFilter implements the optional method
-	/// {@link TokenStream#Reset()}, which repositions the
+	/// <see cref="TokenStream.Reset()" />, which repositions the
 	/// stream to the first Token. 
 	/// </summary>
 	public class CachingTokenFilter:TokenFilter

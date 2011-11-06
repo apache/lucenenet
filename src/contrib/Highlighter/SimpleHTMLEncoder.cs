@@ -19,7 +19,7 @@ using System;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple {@link Encoder} implementation to escape text for HTML output</summary>
+	/// <summary> Simple <see cref="Encoder"/> implementation to escape text for HTML output</summary>
 	/// <author>  Nicko Cadell
 	/// 
 	/// </author>

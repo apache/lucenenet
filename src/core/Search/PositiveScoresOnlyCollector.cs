@@ -22,8 +22,8 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A {@link Collector} implementation which wraps another
-	/// {@link Collector} and makes sure only documents with
+	/// <summary> A <see cref="Collector" /> implementation which wraps another
+	/// <see cref="Collector" /> and makes sure only documents with
 	/// scores &gt; 0 are collected.
 	/// </summary>
 	public class PositiveScoresOnlyCollector:Collector

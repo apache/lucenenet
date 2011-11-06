@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.BR
         }
 
         /**
-         * @return Returns the next token in the stream, or null at EOS.
+         * <returns>Returns the next token in the stream, or null at EOS.</returns>
          */
         public override Token Next(Token reusableToken)
         {

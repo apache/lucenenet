@@ -21,7 +21,7 @@ namespace Lucene.Net.Documents
 	
 	/// <summary> Load the First field and break.
 	/// <p/>
-	/// See {@link FieldSelectorResult#LOAD_AND_BREAK}
+	/// See <see cref="FieldSelectorResult.LOAD_AND_BREAK" />
 	/// </summary>
 	[Serializable]
 	public class LoadFirstFieldSelector : FieldSelector

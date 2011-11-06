@@ -46,13 +46,13 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p/>{@link HitCollector#Collect(int,float)} is called for every non-zero
+		/// <p/><see cref="HitCollector.Collect(int,float)" /> is called for every non-zero
 		/// scoring document.
 		/// <br/>HitCollector-based access to remote indexes is discouraged.
 		/// 
 		/// <p/>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API ({@link
-		/// Searcher#Search(Query)}) is usually more efficient, as it skips
+		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query)" />)
+		/// is usually more efficient, as it skips
 		/// non-high-scoring hits.
 		/// 
 		/// </summary>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 		/// <param name="results">to receive hits
 		/// </param>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
-		/// <deprecated> use {@link #Search(Weight, Filter, Collector)} instead.
+		/// <deprecated> use <see cref="Search(Weight, Filter, Collector)" /> instead.
 		/// </deprecated>
         [Obsolete("use Search(Weight, Filter, Collector) instead.")]
 		void  Search(Weight weight, Filter filter, HitCollector results);
@@ -71,12 +71,12 @@ namespace Lucene.Net.Search
 		/// <summary> Lower-level search API.
 		/// 
 		/// <p/>
-		/// {@link Collector#Collect(int)} is called for every document. <br/>
+		/// <see cref="Collector.Collect(int)" /> is called for every document. <br/>
 		/// Collector-based access to remote indexes is discouraged.
 		/// 
 		/// <p/>
 		/// Applications should only use this if they need <i>all</i> of the matching
-		/// documents. The high-level search API ({@link Searcher#Search(Query)}) is
+		/// documents. The high-level search API (<see cref="Searcher.Search(Query)" />) is
 		/// usually more efficient, as it skips non-high-scoring hits.
 		/// 
 		/// </summary>
@@ -91,11 +91,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Frees resources associated with this Searcher.
 		/// Be careful not to call this method while you are still using objects
-		/// like {@link Hits}.
+		/// like <see cref="Hits" />.
 		/// </summary>
 		void  Close();
 		
-		/// <summary>Expert: Returns the number of documents containing <code>term</code>.
+		/// <summary>Expert: Returns the number of documents containing <c>term</c>.
 		/// Called by search code to compute term weights.
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.DocFreq(Term)">
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
 		int DocFreq(Term term);
 		
 		/// <summary>Expert: For each term in the terms array, calculates the number of
-		/// documents containing <code>term</code>. Returns an array with these
+		/// documents containing <c>term</c>. Returns an array with these
 		/// document frequencies. Used to minimize number of remote calls.
 		/// </summary>
 		int[] DocFreqs(Term[] terms);
@@ -115,40 +115,40 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		int MaxDoc();
 		
-		/// <summary>Expert: Low-level search implementation.  Finds the top <code>n</code>
-		/// hits for <code>query</code>, applying <code>filter</code> if non-null.
+		/// <summary>Expert: Low-level search implementation.  Finds the top <c>n</c>
+		/// hits for <c>query</c>, applying <c>filter</c> if non-null.
 		/// 
-		/// <p/>Called by {@link Hits}.
+		/// <p/>Called by <see cref="Hits" />.
 		/// 
-		/// <p/>Applications should usually call {@link Searcher#Search(Query)} or
-		/// {@link Searcher#Search(Query,Filter)} instead.
+		/// <p/>Applications should usually call <see cref="Searcher.Search(Query)" /> or
+		/// <see cref="Searcher.Search(Query,Filter)" /> instead.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		TopDocs Search(Weight weight, Filter filter, int n);
 		
-		/// <summary>Expert: Returns the stored fields of document <code>i</code>.
-		/// Called by {@link HitCollector} implementations.
+		/// <summary>Expert: Returns the stored fields of document <c>i</c>.
+		/// Called by <see cref="HitCollector" /> implementations.
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.Document(int)">
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		Document Doc(int i);
-		
-		/// <summary> Get the {@link Lucene.Net.Documents.Document} at the <code>n</code><sup>th</sup> position. The {@link Lucene.Net.Documents.FieldSelector}
-		/// may be used to determine what {@link Lucene.Net.Documents.Field}s to load and how they should be loaded.
+
+        /// <summary> Get the <see cref="Lucene.Net.Documents.Document" />at the <c>n</c><sup>th</sup> position. The <see cref="Lucene.Net.Documents.FieldSelector"/>
+		/// may be used to determine what <see cref="Lucene.Net.Documents.Field" />s to load and how they should be loaded.
 		/// 
-		/// <b>NOTE:</b> If the underlying Reader (more specifically, the underlying <code>FieldsReader</code>) is closed before the lazy {@link Lucene.Net.Documents.Field} is
-		/// loaded an exception may be thrown.  If you want the value of a lazy {@link Lucene.Net.Documents.Field} to be available after closing you must
+		/// <b>NOTE:</b> If the underlying Reader (more specifically, the underlying <c>FieldsReader</c>) is closed before the lazy <see cref="Lucene.Net.Documents.Field" /> is
+		/// loaded an exception may be thrown.  If you want the value of a lazy <see cref="Lucene.Net.Documents.Field" /> to be available after closing you must
 		/// explicitly load it or fetch the Document again with a new loader.
 		/// 
 		/// 
 		/// </summary>
-		/// <param name="n">Get the document at the <code>n</code><sup>th</sup> position
+		/// <param name="n">Get the document at the <c>n</c><sup>th</sup> position
 		/// </param>
-		/// <param name="fieldSelector">The {@link Lucene.Net.Documents.FieldSelector} to use to determine what Fields should be loaded on the Document.  May be null, in which case all Fields will be loaded.
+		/// <param name="fieldSelector">The <see cref="Lucene.Net.Documents.FieldSelector" /> to use to determine what Fields should be loaded on the Document.  May be null, in which case all Fields will be loaded.
 		/// </param>
-		/// <returns> The stored fields of the {@link Lucene.Net.Documents.Document} at the nth position
+		/// <returns> The stored fields of the <see cref="Lucene.Net.Documents.Document" /> at the nth position
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -171,25 +171,25 @@ namespace Lucene.Net.Search
 		Query Rewrite(Query query);
 		
 		/// <summary>Expert: low-level implementation method
-		/// Returns an Explanation that describes how <code>doc</code> scored against
-		/// <code>weight</code>.
+		/// Returns an Explanation that describes how <c>doc</c> scored against
+		/// <c>weight</c>.
 		/// 
 		/// <p/>This is intended to be used in developing Similarity implementations,
 		/// and, for good performance, should not be displayed with every hit.
 		/// Computing an explanation is as expensive as executing the query over the
 		/// entire index.
-		/// <p/>Applications should call {@link Searcher#Explain(Query, int)}.
+		/// <p/>Applications should call <see cref="Searcher.Explain(Query, int)" />.
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>
 		Explanation Explain(Weight weight, int doc);
 		
 		/// <summary>Expert: Low-level search implementation with arbitrary sorting.  Finds
-		/// the top <code>n</code> hits for <code>query</code>, applying
-		/// <code>filter</code> if non-null, and sorting the hits by the criteria in
-		/// <code>sort</code>.
+		/// the top <c>n</c> hits for <c>query</c>, applying
+		/// <c>filter</c> if non-null, and sorting the hits by the criteria in
+		/// <c>sort</c>.
 		/// 
 		/// <p/>Applications should usually call
-		/// {@link Searcher#Search(Query,Filter,int,Sort)} instead.
+		/// <see cref="Searcher.Search(Query,Filter,int,Sort)" /> instead.
 		/// 
 		/// </summary>
 		/// <throws>  BooleanQuery.TooManyClauses </throws>

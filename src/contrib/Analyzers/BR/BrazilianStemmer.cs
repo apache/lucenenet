@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,8 +41,8 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Stemms the given term to an unique <tt>discriminator</tt>.
          *
-         * @param term  The term that should be stemmed.
-         * @return      Discriminator for <tt>term</tt>
+         * <param name="term"> The term that should be stemmed.</param>
+         * <returns>     Discriminator for <tt>term</tt></returns>
          */
         public string Stem(string term)
         {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Checks a term if it can be processed correctly.
          *
-         * @return  true if, and only if, the given term consists in letters.
+         * <returns> true if, and only if, the given term consists in letters.</returns>
          */
         private bool isStemmable(string term)
         {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Checks a term if it can be processed indexed.
          *
-         * @return  true if it can be indexed
+         * <returns> true if it can be indexed</returns>
          */
         private bool isIndexable(string term)
         {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * See if string is 'a','e','i','o','u'
        *
-       * @return true if is vowel
+       * <returns>true if is vowel</returns>
          */
         private bool isVowel(char value)
         {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.BR
        *      or is the null region at the end of the word if there is
        *      no such non-vowel.
        *
-       * @return null or a string representing R1
+       * <returns>null or a string representing R1</returns>
          */
         private string getR1(string value)
         {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.BR
        *      BUT RV is the end of the word if this positions cannot be
        *      found.
        *
-       * @return null or a string representing RV
+       * <returns>null or a string representing RV</returns>
          */
         private string getRV(string value)
         {
@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis.BR
        * 3) ã -> a ; õ -> o
        * 4) ç -> c
        *
-       * @return null or a string transformed
+       * <returns>null or a string transformed</returns>
          */
         private string changeTerm(string value)
         {
@@ -326,7 +326,7 @@ namespace Lucene.Net.Analysis.BR
         /**
        * Check if a string ends with a suffix
        *
-       * @return true if the string ends with the specified suffix
+       * <returns>true if the string ends with the specified suffix</returns>
          */
         private bool suffix(string value, string suffix)
         {
@@ -348,7 +348,7 @@ namespace Lucene.Net.Analysis.BR
         /**
        * Replace a string suffix by another
        *
-       * @return the replaced string
+       * <returns>the replaced string</returns>
          */
         private string replaceSuffix(string value, string toReplace, string changeTo)
         {
@@ -377,7 +377,7 @@ namespace Lucene.Net.Analysis.BR
         /**
        * Remove a string suffix
        *
-       * @return the string without the suffix
+       * <returns>the string without the suffix</returns>
          */
         private string removeSuffix(string value, string toRemove)
         {
@@ -395,7 +395,7 @@ namespace Lucene.Net.Analysis.BR
         /**
        * See if a suffix is preceded by a string
        *
-       * @return true if the suffix is preceded
+       * <returns>true if the suffix is preceded</returns>
          */
         private bool suffixPreceded(string value, string _suffix, string preceded)
         {
@@ -460,7 +460,7 @@ namespace Lucene.Net.Analysis.BR
        * Search for the longest among the following suffixes, and perform
        * the following actions:
        *
-       * @return false if no ending was removed
+       * <returns>false if no ending was removed</returns>
          */
         private bool step1()
         {
@@ -671,7 +671,7 @@ namespace Lucene.Net.Analysis.BR
        * Search for the longest among the following suffixes in RV,
        * and if found, delete.
        *
-       * @return false if no ending was removed
+       * <returns>false if no ending was removed</returns>
         */
         private bool step2()
         {
@@ -1248,7 +1248,7 @@ namespace Lucene.Net.Analysis.BR
         /**
          * For log and debug purpose
          *
-         * @return  TERM, CT, RV, R1 and R2
+         * <returns> TERM, CT, RV, R1 and R2</returns>
          */
         public string Log()
         {

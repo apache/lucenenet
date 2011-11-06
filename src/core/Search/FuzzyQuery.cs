@@ -47,8 +47,8 @@ namespace Lucene.Net.Search
 		new protected internal Term term;
 		
 		/// <summary> Create a new FuzzyQuery that will match terms with a similarity 
-		/// of at least <code>minimumSimilarity</code> to <code>term</code>.
-		/// If a <code>prefixLength</code> &gt; 0 is specified, a common prefix
+		/// of at least <c>minimumSimilarity</c> to <c>term</c>.
+		/// If a <c>prefixLength</c> &gt; 0 is specified, a common prefix
 		/// of that length is also required.
 		/// 
 		/// </summary>
@@ -56,9 +56,9 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="minimumSimilarity">a value between 0 and 1 to set the required similarity
 		/// between the query term and the matching terms. For example, for a
-		/// <code>minimumSimilarity</code> of <code>0.5</code> a term of the same length
+		/// <c>minimumSimilarity</c> of <c>0.5</c> a term of the same length
 		/// as the query term is considered similar to the query term if the edit distance
-		/// between both terms is less than <code>length(term)*0.5</code>
+		/// between both terms is less than <c>length(term)*0.5</c>
 		/// </param>
 		/// <param name="prefixLength">length of common (non-fuzzy) prefix
 		/// </param>
@@ -85,13 +85,13 @@ namespace Lucene.Net.Search
 			this.prefixLength = prefixLength;
 			rewriteMethod = SCORING_BOOLEAN_QUERY_REWRITE;
 		}
-		
-		/// <summary> Calls {@link #FuzzyQuery(Term, float) FuzzyQuery(term, minimumSimilarity, 0)}.</summary>
+
+        /// <summary> Calls <see cref="FuzzyQuery(Term, float)">FuzzyQuery(term, minimumSimilarity, 0)</see>.</summary>
 		public FuzzyQuery(Term term, float minimumSimilarity):this(term, minimumSimilarity, defaultPrefixLength)
 		{
 		}
-		
-		/// <summary> Calls {@link #FuzzyQuery(Term, float) FuzzyQuery(term, 0.5f, 0)}.</summary>
+
+        /// <summary> Calls <see cref="FuzzyQuery(Term, float)">FuzzyQuery(term, 0.5f, 0)</see>.</summary>
 		public FuzzyQuery(Term term):this(term, defaultMinSimilarity, defaultPrefixLength)
 		{
 		}
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
 			}
 			
 			/* (non-Javadoc)
-			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
+			* <see cref="Lucene.Net.Util.PriorityQueue.lessThan(java.lang.Object, java.lang.Object)"/>
 			*/
 			public override bool LessThan(System.Object a, System.Object b)
 			{

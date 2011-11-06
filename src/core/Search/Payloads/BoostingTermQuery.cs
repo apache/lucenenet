@@ -27,11 +27,11 @@ using TermSpans = Lucene.Net.Search.Spans.TermSpans;
 namespace Lucene.Net.Search.Payloads
 {
 	
-	/// <summary> The BoostingTermQuery is very similar to the {@link Lucene.Net.Search.Spans.SpanTermQuery} except
+	/// <summary> The BoostingTermQuery is very similar to the <see cref="Lucene.Net.Search.Spans.SpanTermQuery" /> except
 	/// that it factors in the value of the payload located at each of the positions where the
-	/// {@link Lucene.Net.Index.Term} occurs.
+	/// <see cref="Lucene.Net.Index.Term" /> occurs.
 	/// <p/>
-	/// In order to take advantage of this, you must override {@link Lucene.Net.Search.Similarity#ScorePayload(String, byte[],int,int)}
+	/// In order to take advantage of this, you must override <see cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[],int,int)" />
 	/// which returns 1 by default.
 	/// <p/>
 	/// Payload scores are averaged across term occurrences in the document.  
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
 	/// <seealso cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[], int, int)">
 	/// 
 	/// </seealso>
-	/// <deprecated> See {@link Lucene.Net.Search.Payloads.PayloadTermQuery}
+	/// <deprecated> See <see cref="Lucene.Net.Search.Payloads.PayloadTermQuery" />
 	/// </deprecated>
     [Obsolete("See Lucene.Net.Search.Payloads.PayloadTermQuery")]
 	[Serializable]

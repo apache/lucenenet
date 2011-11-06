@@ -29,8 +29,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		/// 
 		/// This method has a performance penalty
 		/// because the text is stored internally in a char[].  If
-		/// possible, use {@link #TermBuffer()} and {@link
-		/// #TermLength()} directly instead.  If you really need a
+		/// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()" />
+		/// directly instead.  If you really need a
 		/// String, use this method, which is nothing more than
 		/// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
 		/// </summary>
@@ -65,10 +65,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		
 		/// <summary>Returns the internal termBuffer character array which
 		/// you can then directly alter.  If the array is too
-		/// small for your token, use {@link
-		/// #ResizeTermBuffer(int)} to increase it.  After
-		/// altering the buffer be sure to call {@link
-		/// #setTermLength} to record the number of valid
+		/// small for your token, use <see cref="ResizeTermBuffer(int)" />
+		/// to increase it.  After
+		/// altering the buffer be sure to call <see cref="SetTermLength" />
+		/// to record the number of valid
 		/// characters that were placed into the termBuffer. 
 		/// </summary>
 		char[] TermBuffer();
@@ -76,9 +76,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		/// <summary>Grows the termBuffer to at least size newSize, preserving the
 		/// existing content. Note: If the next operation is to change
 		/// the contents of the term buffer use
-		/// {@link #SetTermBuffer(char[], int, int)},
-		/// {@link #SetTermBuffer(String)}, or
-		/// {@link #SetTermBuffer(String, int, int)}
+		/// <see cref="SetTermBuffer(char[], int, int)" />,
+		/// <see cref="SetTermBuffer(String)" />, or
+		/// <see cref="SetTermBuffer(String, int, int)" />
 		/// to optimally combine the resize with the setting of the termBuffer.
 		/// </summary>
 		/// <param name="newSize">minimum size of the new termBuffer
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		/// the termBuffer array. Use this to truncate the termBuffer
 		/// or to synchronize with external manipulation of the termBuffer.
 		/// Note: to grow the size of the array,
-		/// use {@link #ResizeTermBuffer(int)} first.
+		/// use <see cref="ResizeTermBuffer(int)" /> first.
 		/// </summary>
 		/// <param name="length">the truncated length
 		/// </param>

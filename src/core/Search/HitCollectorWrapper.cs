@@ -22,12 +22,12 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Wrapper for ({@link HitCollector}) implementations, which simply re-bases the
-	/// incoming docID before calling {@link HitCollector#collect}.
+	/// <summary> Wrapper for (<see cref="HitCollector" />) implementations, which simply re-bases the
+	/// incoming docID before calling <see cref="HitCollector.Collect" />.
 	/// 
 	/// </summary>
-	/// <deprecated> Please migrate custom HitCollectors to the new {@link Collector}
-	/// class. This class will be removed when {@link HitCollector} is
+	/// <deprecated> Please migrate custom HitCollectors to the new <see cref="Collector" />
+	/// class. This class will be removed when <see cref="HitCollector" /> is
 	/// removed.
 	/// </deprecated>
     [Obsolete("Please migrate custom HitCollectors to the new Collector class. This class will be removed when HitCollector is removed.")]

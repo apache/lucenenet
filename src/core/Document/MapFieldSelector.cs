@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> A {@link FieldSelector} based on a Map of field names to {@link FieldSelectorResult}s
+	/// <summary> A <see cref="FieldSelector" /> based on a Map of field names to <see cref="FieldSelectorResult" />s
 	/// 
 	/// </summary>
 	[Serializable]
@@ -30,7 +30,7 @@ namespace Lucene.Net.Documents
 		internal System.Collections.IDictionary fieldSelections;
 		
 		/// <summary>Create a a MapFieldSelector</summary>
-		/// <param name="fieldSelections">maps from field names (String) to {@link FieldSelectorResult}s
+		/// <param name="fieldSelections">maps from field names (String) to <see cref="FieldSelectorResult" />s
 		/// </param>
 		public MapFieldSelector(System.Collections.IDictionary fieldSelections)
 		{

@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Encodes the input byte sequence into the output char sequence.  Before
 		/// calling this method, ensure that the output CharBuffer has sufficient
-		/// capacity by calling {@link #GetEncodedLength(java.nio.ByteBuffer)}.
+		/// capacity by calling <see cref="GetEncodedLength(System.Collections.Generic.List{byte})" />.
 		/// 
 		/// </summary>
 		/// <param name="input">The byte sequence to encode
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> Decodes the input char sequence into the output byte sequence.  Before
 		/// calling this method, ensure that the output ByteBuffer has sufficient
-		/// capacity by calling {@link #GetDecodedLength(java.nio.CharBuffer)}.
+		/// capacity by calling <see cref="GetDecodedLength(System.Collections.Generic.List{char})" />.
 		/// 
 		/// </summary>
 		/// <param name="input">The char sequence to decode
@@ -271,8 +271,8 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Decodes the given char sequence, which must have been encoded by
-		/// {@link #Encode(java.nio.ByteBuffer)} or 
-		/// {@link #Encode(java.nio.ByteBuffer, java.nio.CharBuffer)}.
+		/// <see cref="Encode(System.Collections.Generic.List{byte})" /> or 
+        /// <see cref="Encode(System.Collections.Generic.List{byte}, System.Collections.Generic.List{char})" />.
 		/// 
 		/// </summary>
 		/// <param name="input">The char sequence to decode

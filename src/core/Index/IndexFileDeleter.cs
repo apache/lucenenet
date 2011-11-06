@@ -1,19 +1,19 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+* 
+* http://www.apache.org/licenses/LICENSE-2.0
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 using System;
 
@@ -21,76 +21,76 @@ using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
-	
-	/*
-	* This class keeps track of each SegmentInfos instance that
-	* is still "live", either because it corresponds to a
-	* segments_N file in the Directory (a "commit", i.e. a
-	* committed SegmentInfos) or because it's an in-memory
-	* SegmentInfos that a writer is actively updating but has
-	* not yet committed.  This class uses simple reference
-	* counting to map the live SegmentInfos instances to
-	* individual files in the Directory.
-	*
-	* When autoCommit=true, IndexWriter currently commits only
-	* on completion of a merge (though this may change with
-	* time: it is not a guarantee).  When autoCommit=false,
-	* IndexWriter only commits when it is closed.  Regardless
-	* of autoCommit, the user may call IndexWriter.commit() to
-	* force a blocking commit.
-	* 
-	* The same directory file may be referenced by more than
-	* one IndexCommit, i.e. more than one SegmentInfos.
-	* Therefore we count how many commits reference each file.
-	* When all the commits referencing a certain file have been
-	* deleted, the refcount for that file becomes zero, and the
-	* file is deleted.
-	*
-	* A separate deletion policy interface
-	* (IndexDeletionPolicy) is consulted on creation (onInit)
-	* and once per commit (onCommit), to decide when a commit
-	* should be removed.
-	* 
-	* It is the business of the IndexDeletionPolicy to choose
-	* when to delete commit points.  The actual mechanics of
-	* file deletion, retrying, etc, derived from the deletion
-	* of commit points is the business of the IndexFileDeleter.
-	* 
-	* The current default deletion policy is {@link
-	* KeepOnlyLastCommitDeletionPolicy}, which removes all
-	* prior commits when a new commit has completed.  This
-	* matches the behavior before 2.2.
-	*
-	* Note that you must hold the write.lock before
-	* instantiating this class.  It opens segments_N file(s)
-	* directly with no retry logic.
-	*/
+
+    /// <summary>
+    /// <para>This class keeps track of each SegmentInfos instance that
+    /// is still "live", either because it corresponds to a
+    /// segments_N file in the Directory (a "commit", i.e. a
+    /// committed SegmentInfos) or because it's an in-memory
+    /// SegmentInfos that a writer is actively updating but has
+    /// not yet committed.  This class uses simple reference
+    /// counting to map the live SegmentInfos instances to
+    /// individual files in the Directory.</para>
+    ///
+    /// <para>When autoCommit=true, IndexWriter currently commits only
+    /// on completion of a merge (though this may change with
+    /// time: it is not a guarantee).  When autoCommit=false,
+    /// IndexWriter only commits when it is closed.  Regardless
+    /// of autoCommit, the user may call IndexWriter.commit() to
+    /// force a blocking commit.</para>
+    /// 
+    /// <para>The same directory file may be referenced by more than
+    /// one IndexCommit, i.e. more than one SegmentInfos.
+    /// Therefore we count how many commits reference each file.
+    /// When all the commits referencing a certain file have been
+    /// deleted, the refcount for that file becomes zero, and the
+    /// file is deleted.</para>
+    ///
+    /// <para>A separate deletion policy interface
+    /// (IndexDeletionPolicy) is consulted on creation (onInit)
+    /// and once per commit (onCommit), to decide when a commit
+    /// should be removed.</para>
+    /// 
+    /// <para>It is the business of the IndexDeletionPolicy to choose
+    /// when to delete commit points.  The actual mechanics of
+    /// file deletion, retrying, etc, derived from the deletion
+    /// of commit points is the business of the IndexFileDeleter.</para>
+    /// 
+    /// <para>The current default deletion policy is
+    /// <see cref="KeepOnlyLastCommitDeletionPolicy"/>, which removes all
+    /// prior commits when a new commit has completed.  This
+    /// matches the behavior before 2.2.</para>
+    ///
+    /// <para>Note that you must hold the write.lock before
+    /// instantiating this class.  It opens segments_N file(s)
+    /// directly with no retry logic.</para>
+    /// </summary>
 	
 	public sealed class IndexFileDeleter
 	{
 		
-		/* Files that we tried to delete but failed (likely
-		* because they are open and we are running on Windows),
-		* so we will retry them again later: */
+		//// Files that we tried to delete but failed (likely
+		/// because they are open and we are running on Windows),
+		/// so we will retry them again later: ////
 		private System.Collections.Generic.IList<string> deletable;
 		
-		/* Reference count for all files in the index.  
-		* Counts how many existing commits reference a file.
-		* Maps String to RefCount (class below) instances: */
+		//// Reference count for all files in the index.  
+		/// Counts how many existing commits reference a file.
+		/// Maps String to RefCount (class below) instances: ////
 		private System.Collections.Generic.Dictionary<System.String, RefCount> refCounts = new System.Collections.Generic.Dictionary<System.String, RefCount>();
 		
-		/* Holds all commits (segments_N) currently in the index.
-		* This will have just 1 commit if you are using the
-		* default delete policy (KeepOnlyLastCommitDeletionPolicy).
-		* Other policies may leave commit points live for longer
-		* in which case this list would be longer than 1: */
+		//// Holds all commits (segments_N) currently in the index.
+		/// This will have just 1 commit if you are using the
+		/// default delete policy (KeepOnlyLastCommitDeletionPolicy).
+		/// Other policies may leave commit points live for longer
+		/// in which case this list would be longer than 1: ////
 		private System.Collections.ArrayList commits = new System.Collections.ArrayList();
 		
-		/* Holds files we had incref'd from the previous
-		* non-commit checkpoint: */
+		//// Holds files we had incref'd from the previous
+		/// non-commit checkpoint: ////
         private System.Collections.Generic.IList<string> lastFiles = new System.Collections.Generic.List<string>();
 		
-		/* Commits that the IndexDeletionPolicy have decided to delete: */
+		//// Commits that the IndexDeletionPolicy have decided to delete: ////
 		private System.Collections.ArrayList commitsToDelete = new System.Collections.ArrayList();
 		
 		private System.IO.StreamWriter infoStream;

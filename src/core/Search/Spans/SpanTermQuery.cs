@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
 		/// <deprecated> use extractTerms instead
 		/// </deprecated>
-		/// <seealso cref="ExtractTerms(Set)">
+        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
 		/// </seealso>
         [Obsolete("use extractTerms instead")]
 		public override System.Collections.ICollection GetTerms()

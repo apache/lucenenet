@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 		/// <summary> Get the mapping between fields and terms, sorted by the comparator
 		/// 
 		/// </summary>
-		/// <returns> A map between field names and a Map.  The sub-Map key is the position as the integer, the value is {@link Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo}.
+		/// <returns> A map between field names and a Map.  The sub-Map key is the position as the integer, the value is <see cref="Lucene.Net.Index.PositionBasedTermVectorMapper.TVPositionInfo" />.
 		/// </returns>
 		public virtual System.Collections.IDictionary GetFieldToTerms()
 		{
@@ -140,7 +140,8 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			/// <summary> Parallel list (to {@link #getTerms()}) of TermVectorOffsetInfo objects.  There may be multiple entries since there may be multiple terms at a position</summary>
+			/// <summary> Parallel list (to <see cref="Terms" />) of TermVectorOffsetInfo objects.  
+			/// There may be multiple entries since there may be multiple terms at a position</summary>
 			/// <returns> A List of TermVectorOffsetInfo objects, if offsets are store.
 			/// </returns>
 			virtual public System.Collections.IList Offsets

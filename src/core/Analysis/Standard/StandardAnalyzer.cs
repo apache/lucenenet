@@ -16,26 +16,26 @@
  */
 
 using System;
-
+using System.Collections;
 using Lucene.Net.Analysis;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter},
-	/// {@link LowerCaseFilter} and {@link StopFilter}, using a list of English stop
+	/// <summary> Filters <see cref="StandardTokenizer" /> with <see cref="StandardFilter" />,
+	/// <see cref="LowerCaseFilter" /> and <see cref="StopFilter" />, using a list of English stop
 	/// words.
 	/// 
 	/// <a name="version"/>
 	/// <p/>
-	/// You must specify the required {@link Version} compatibility when creating
+	/// You must specify the required <see cref="Version" /> compatibility when creating
 	/// StandardAnalyzer:
-	/// <ul>
-	/// <li>As of 2.9, StopFilter preserves position increments</li>
-	/// <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a></li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>As of 2.9, StopFilter preserves position increments</item>
+	/// <item>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+	/// <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1608</a>)</item>
+	/// </list>
 	/// 
 	/// </summary>
 	/// <version>  $Id: StandardAnalyzer.java 829134 2009-10-23 17:18:53Z mikemccand $
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>An array containing some common English words that are usually not
 		/// useful for searching. 
 		/// </summary>
-		/// <deprecated> Use {@link #STOP_WORDS_SET} instead 
+		/// <deprecated> Use <see cref="STOP_WORDS_SET" /> instead 
 		/// </deprecated>
         [Obsolete("Use STOP_WORDS_SET instead ")]
 		public static readonly System.String[] STOP_WORDS;
@@ -109,28 +109,27 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		public static readonly System.Collections.Hashtable STOP_WORDS_SET;
 		
-		/// <summary>Builds an analyzer with the default stop words ({@link
-		/// #STOP_WORDS_SET}).
+		/// <summary>Builds an analyzer with the default stop words 
+		/// (<see cref="STOP_WORDS_SET" />).
 		/// </summary>
-		/// <deprecated> Use {@link #StandardAnalyzer(Version)} instead. 
+		/// <deprecated> Use <see cref="StandardAnalyzer(Version)" /> instead. 
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version) instead")]
 		public StandardAnalyzer():this(Version.LUCENE_24, STOP_WORDS_SET)
 		{
 		}
 		
-		/// <summary>Builds an analyzer with the default stop words ({@link
-		/// #STOP_WORDS}).
+		/// <summary>Builds an analyzer with the default stop words (<see cref="STOP_WORDS" />).
 		/// </summary>
-		/// <param name="matchVersion">Lucene version to match See {@link
-		/// <a href="#version">above</a>}
+		/// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
+		///
 		/// </param>
 		public StandardAnalyzer(Version matchVersion):this(matchVersion, STOP_WORDS_SET)
 		{
 		}
 		
 		/// <summary>Builds an analyzer with the given stop words.</summary>
-		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)}
+		/// <deprecated> Use <see cref="StandardAnalyzer(Version, Hashtable)" />
 		/// instead 
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
@@ -139,8 +138,8 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the given stop words.</summary>
-		/// <param name="matchVersion">Lucene version to match See {@link
-		/// <a href="#version">above</a>}
+        /// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
+		///
 		/// </param>
 		/// <param name="stopWords">stop words 
 		/// </param>
@@ -151,7 +150,7 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the given stop words.</summary>
-		/// <deprecated> Use {@link #StandardAnalyzer(Version, Set)} instead 
+		/// <deprecated> Use <see cref="StandardAnalyzer(Version, Hashtable)" /> instead 
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, Set) instead")]
 		public StandardAnalyzer(System.String[] stopWords):this(Version.LUCENE_24, StopFilter.MakeStopSet(stopWords))
@@ -159,9 +158,9 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
-		/// <seealso cref="WordlistLoader.GetWordSet(File)">
+		/// <seealso cref="WordlistLoader.GetWordSet(System.IO.FileInfo)">
 		/// </seealso>
-		/// <deprecated> Use {@link #StandardAnalyzer(Version, File)}
+		/// <deprecated> Use <see cref="StandardAnalyzer(Version, System.IO.FileInfo)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, File) instead")]
@@ -170,10 +169,10 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given file.</summary>
-		/// <seealso cref="WordlistLoader.GetWordSet(File)">
+		/// <seealso cref="WordlistLoader.GetWordSet(System.IO.FileInfo)">
 		/// </seealso>
-		/// <param name="matchVersion">Lucene version to match See {@link
-		/// <a href="#version">above</a>}
+        /// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
+		///
 		/// </param>
 		/// <param name="stopwords">File to read stop words from 
 		/// </param>
@@ -184,9 +183,9 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
-		/// <seealso cref="WordlistLoader.GetWordSet(Reader)">
+        /// <seealso cref="WordlistLoader.GetWordSet(System.IO.TextReader)">
 		/// </seealso>
-		/// <deprecated> Use {@link #StandardAnalyzer(Version, Reader)}
+		/// <deprecated> Use <see cref="StandardAnalyzer(Version, System.IO.TextReader)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use StandardAnalyzer(Version, Reader) instead")]
@@ -195,10 +194,10 @@ namespace Lucene.Net.Analysis.Standard
 		}
 		
 		/// <summary>Builds an analyzer with the stop words from the given reader.</summary>
-		/// <seealso cref="WordlistLoader.GetWordSet(Reader)">
+        /// <seealso cref="WordlistLoader.GetWordSet(System.IO.TextReader)">
 		/// </seealso>
-		/// <param name="matchVersion">Lucene version to match See {@link
-		/// <a href="#version">above</a>}
+        /// <param name="matchVersion">Lucene version to match See <see cref="Version">above</see> />
+		///
 		/// </param>
 		/// <param name="stopwords">Reader to read stop words from 
 		/// </param>
@@ -305,8 +304,8 @@ namespace Lucene.Net.Analysis.Standard
 			}
 		}
 		
-		/// <summary>Constructs a {@link StandardTokenizer} filtered by a {@link
-		/// StandardFilter}, a {@link LowerCaseFilter} and a {@link StopFilter}. 
+		/// <summary>Constructs a <see cref="StandardTokenizer" /> filtered by a <see cref="StandardFilter" />
+		///, a <see cref="LowerCaseFilter" /> and a <see cref="StopFilter" />. 
 		/// </summary>
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
@@ -346,14 +345,14 @@ namespace Lucene.Net.Analysis.Standard
 			maxTokenLength = length;
 		}
 		
-		/// <seealso cref="setMaxTokenLength">
+		/// <seealso cref="SetMaxTokenLength">
 		/// </seealso>
 		public virtual int GetMaxTokenLength()
 		{
 			return maxTokenLength;
 		}
 		
-		/// <deprecated> Use {@link #tokenStream} instead 
+		/// <deprecated> Use <see cref="TokenStream" /> instead 
 		/// </deprecated>
         [Obsolete("Use TokenStream instead")]
 		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)

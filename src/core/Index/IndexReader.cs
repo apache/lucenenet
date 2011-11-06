@@ -29,8 +29,8 @@ namespace Lucene.Net.Index
 	/// index.  Search of an index is done entirely through this abstract interface,
 	/// so that any subclass which implements it is searchable.
 	/// <p/> Concrete subclasses of IndexReader are usually constructed with a call to
-	/// one of the static <code>open()</code> methods, e.g. {@link
-	/// #Open(String, boolean)}.
+	/// one of the static <c>open()</c> methods, e.g. <see cref="Open(String, bool)" />
+	///.
 	/// <p/> For efficiency, in this API documents are often referred to via
 	/// <i>document numbers</i>, non-negative integers which each name a unique
 	/// document in the index.  These document numbers are ephemeral--they may change
@@ -56,12 +56,12 @@ namespace Lucene.Net.Index
 	/// change to true, meaning you must explicitly specify false
 	/// if you want to make changes with the resulting IndexReader.
 	/// <p/>
-	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
-	/// <code>IndexReader</code>} instances are completely thread
+	/// <a name="thread-safety"></a><p/><b>NOTE</b>: <see cref="IndexReader" />
+	/// instances are completely thread
 	/// safe, meaning multiple threads can call any of its methods,
 	/// concurrently.  If your application requires external
 	/// synchronization, you should <b>not</b> synchronize on the
-	/// <code>IndexReader</code> instance; use your own
+	/// <c>IndexReader</c> instance; use your own
 	/// (non-Lucene) objects instead.
 	/// </summary>
 	/// <version>  $Id: IndexReader.java 826049 2009-10-16 19:28:55Z mikemccand $
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constants describing field properties, for example used for
-		/// {@link IndexReader#GetFieldNames(FieldOption)}.
+		/// <see cref="IndexReader.GetFieldNames(FieldOption)" />.
 		/// </summary>
 		public sealed class FieldOption
 		{
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
 			public static readonly FieldOption STORES_PAYLOADS = new FieldOption("STORES_PAYLOADS");
 			/// <summary>All fields that omit tf </summary>
 			public static readonly FieldOption OMIT_TERM_FREQ_AND_POSITIONS = new FieldOption("OMIT_TERM_FREQ_AND_POSITIONS");
-			/// <deprecated> Renamed to {@link #OMIT_TERM_FREQ_AND_POSITIONS} 
+			/// <deprecated> Renamed to <see cref="OMIT_TERM_FREQ_AND_POSITIONS" /> 
 			/// </deprecated>
             [Obsolete("Renamed to OMIT_TERM_FREQ_AND_POSITIONS")]
 			public static readonly FieldOption OMIT_TF;
@@ -156,15 +156,15 @@ namespace Lucene.Net.Index
 		/// instance.  RefCounts are used to determine when a
 		/// reader can be closed safely, i.e. as soon as there are
 		/// no more references.  Be sure to always call a
-		/// corresponding {@link #decRef}, in a finally clause;
+		/// corresponding <see cref="DecRef" />, in a finally clause;
 		/// otherwise the reader may never be closed.  Note that
-		/// {@link #close} simply calls decRef(), which means that
-		/// the IndexReader will not really be closed until {@link
-		/// #decRef} has been called for all outstanding
+		/// <see cref="Close" /> simply calls decRef(), which means that
+		/// the IndexReader will not really be closed until <see cref="DecRef" />
+		/// has been called for all outstanding
 		/// references.
 		/// 
 		/// </summary>
-		/// <seealso cref="decRef">
+		/// <seealso cref="DecRef">
 		/// </seealso>
 		public virtual void  IncRef()
 		{
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException in case an IOException occurs in commit() or doClose() </throws>
 		/// <summary> 
 		/// </summary>
-		/// <seealso cref="incRef">
+		/// <seealso cref="IncRef">
 		/// </seealso>
 		public virtual void  DecRef()
 		{
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #Open(Directory, boolean)} instead. 
+		/// <deprecated> Use <see cref="Open(Directory, bool)" /> instead. 
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
 		/// <param name="readOnly">true if this should be a readOnly
 		/// reader
 		/// </param>
-		/// <deprecated> Use {@link #Open(Directory, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #Open(Directory, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
 		/// <param name="readOnly">true if this should be a readOnly
 		/// reader
 		/// </param>
-		/// <deprecated> Use {@link #Open(Directory, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #Open(Directory, boolean)} instead
+        /// <deprecated> Use <see cref="Open(Directory, bool)" /> instead
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -382,12 +382,12 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
-		/// {@link IndexCommit}.
+		/// <see cref="IndexCommit" />.
 		/// </summary>
 		/// <param name="commit">the commit point to open
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
-		/// <deprecated> Use {@link #Open(IndexCommit, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(IndexCommit, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in the given
-		/// {@link IndexCommit}.  You should pass readOnly=true, since it
+		/// <see cref="IndexCommit" />.  You should pass readOnly=true, since it
 		/// gives much better concurrent performance, unless you
 		/// intend to do write operations (delete documents or
 		/// change norms) with the reader.
@@ -416,15 +416,15 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
-		/// Directory, with a custom {@link IndexDeletionPolicy}.
+		/// Directory, with a custom <see cref="IndexDeletionPolicy" />.
 		/// </summary>
 		/// <param name="directory">the index directory
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
-		/// <deprecated> Use {@link #Open(Directory, IndexDeletionPolicy, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(Directory, IndexDeletionPolicy, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -437,8 +437,8 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
-		/// the given Directory, with a custom {@link
-		/// IndexDeletionPolicy}.  You should pass readOnly=true,
+		/// the given Directory, with a custom <see cref="IndexDeletionPolicy" />
+		///.  You should pass readOnly=true,
 		/// since it gives much better concurrent performance,
 		/// unless you intend to do write operations (delete
 		/// documents or change norms) with the reader.
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
@@ -459,8 +459,8 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
-		/// the given Directory, with a custom {@link
-		/// IndexDeletionPolicy}.  You should pass readOnly=true,
+		/// the given Directory, with a custom <see cref="IndexDeletionPolicy" />
+		///.  You should pass readOnly=true,
 		/// since it gives much better concurrent performance,
 		/// unless you intend to do write operations (delete
 		/// documents or change norms) with the reader.
@@ -469,13 +469,13 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
 		/// <param name="termInfosIndexDivisor">Subsamples which indexed
-		/// terms are loaded into RAM. This has the same effect as {@link
-		/// IndexWriter#setTermIndexInterval} except that setting
+		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
+		/// except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -493,17 +493,17 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Expert: returns a read/write IndexReader reading the index in the given
 		/// Directory, using a specific commit and with a custom
-		/// {@link IndexDeletionPolicy}.
+		/// <see cref="IndexDeletionPolicy" />.
 		/// </summary>
-		/// <param name="commit">the specific {@link IndexCommit} to open;
-		/// see {@link IndexReader#listCommits} to list all commits
+		/// <param name="commit">the specific <see cref="IndexCommit" /> to open;
+		/// see <see cref="IndexReader.ListCommits" /> to list all commits
 		/// in a directory
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
-		/// <deprecated> Use {@link #Open(IndexCommit, IndexDeletionPolicy, boolean)} instead.
+        /// <deprecated> Use <see cref="Open(IndexCommit, IndexDeletionPolicy, bool)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -517,18 +517,18 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
 		/// the given Directory, using a specific commit and with
-		/// a custom {@link IndexDeletionPolicy}.  You should pass
+		/// a custom <see cref="IndexDeletionPolicy" />.  You should pass
 		/// readOnly=true, since it gives much better concurrent
 		/// performance, unless you intend to do write operations
 		/// (delete documents or change norms) with the reader.
 		/// </summary>
-		/// <param name="commit">the specific {@link IndexCommit} to open;
-		/// see {@link IndexReader#listCommits} to list all commits
+		/// <param name="commit">the specific <see cref="IndexCommit" /> to open;
+		/// see <see cref="IndexReader.ListCommits" /> to list all commits
 		/// in a directory
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
@@ -541,24 +541,24 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Expert: returns an IndexReader reading the index in
 		/// the given Directory, using a specific commit and with
-		/// a custom {@link IndexDeletionPolicy}.  You should pass
+		/// a custom <see cref="IndexDeletionPolicy" />.  You should pass
 		/// readOnly=true, since it gives much better concurrent
 		/// performance, unless you intend to do write operations
 		/// (delete documents or change norms) with the reader.
 		/// </summary>
-		/// <param name="commit">the specific {@link IndexCommit} to open;
-		/// see {@link IndexReader#listCommits} to list all commits
+		/// <param name="commit">the specific <see cref="IndexCommit" /> to open;
+		/// see <see cref="IndexReader.ListCommits" /> to list all commits
 		/// in a directory
 		/// </param>
 		/// <param name="deletionPolicy">a custom deletion policy (only used
 		/// if you use this reader to perform deletes or to set
-		/// norms); see {@link IndexWriter} for details.
+		/// norms); see <see cref="IndexWriter" /> for details.
 		/// </param>
 		/// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
 		/// </param>
 		/// <param name="termInfosIndexDivisor">Subsambles which indexed
-		/// terms are loaded into RAM. This has the same effect as {@link
-		/// IndexWriter#setTermIndexInterval} except that setting
+		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
+		/// except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -599,7 +599,7 @@ namespace Lucene.Net.Index
 		/// <p/>
 		/// You can determine whether a reader was actually reopened by comparing the
 		/// old instance with the instance returned by this method: 
-		/// <pre>
+        /// <code>
 		/// IndexReader reader = ... 
 		/// ...
 		/// IndexReader newReader = r.reopen();
@@ -609,14 +609,14 @@ namespace Lucene.Net.Index
 		/// }
 		/// reader = newReader;
 		/// ...
-		/// </pre>
+        /// </code>
 		/// 
 		/// Be sure to synchronize that code so that other threads,
 		/// if present, can never use reader after it has been
 		/// closed and before it's switched to newReader.
 		/// 
 		/// <p/><b>NOTE</b>: If this reader is a near real-time
-		/// reader (obtained from {@link IndexWriter#GetReader()},
+		/// reader (obtained from <see cref="IndexWriter.GetReader()" />,
 		/// reopen() will simply call writer.getReader() again for
 		/// you, though this may change in the future.
 		/// 
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>Just like {@link #Reopen()}, except you can change the
+		/// <summary>Just like <see cref="Reopen()" />, except you can change the
 		/// readOnly of the original reader.  If the index is
 		/// unchanged but readOnly is different then a new reader
 		/// will be returned. 
@@ -670,7 +670,7 @@ namespace Lucene.Net.Index
 		/// changes to the index on close, but the old reader still
 		/// reflects all changes made up until it was cloned.
 		/// <p/>
-		/// Like {@link #Reopen()}, it's safe to make changes to
+		/// Like <see cref="Reopen()" />, it's safe to make changes to
 		/// either the original or the cloned reader: all shared
 		/// mutable state obeys "copy on write" semantics to ensure
 		/// the changes are not seen by other readers.
@@ -717,11 +717,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the time the index in the named directory was last modified.
 		/// Do not use this to check whether the reader is still up-to-date, use
-		/// {@link #IsCurrent()} instead. 
+		/// <see cref="IsCurrent()" /> instead. 
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #LastModified(Directory)} instead.
+		/// <deprecated> Use <see cref="LastModified(Lucene.Net.Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
         [Obsolete("Use LastModified(Directory) instead. This method will be removed in the 3.0 release.")]
@@ -732,11 +732,11 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the time the index in the named directory was last modified. 
 		/// Do not use this to check whether the reader is still up-to-date, use
-		/// {@link #IsCurrent()} instead. 
+		/// <see cref="IsCurrent()" /> instead. 
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #LastModified(Directory)} instead.
+		/// <deprecated> Use <see cref="LastModified(Lucene.Net.Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -756,7 +756,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the time the index in the named directory was last modified. 
 		/// Do not use this to check whether the reader is still up-to-date, use
-		/// {@link #IsCurrent()} instead. 
+		/// <see cref="IsCurrent()" /> instead. 
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #GetCurrentVersion(Directory)} instead.
+		/// <deprecated> Use <see cref="GetCurrentVersion(Lucene.Net.Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
         [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
@@ -796,7 +796,7 @@ namespace Lucene.Net.Index
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #GetCurrentVersion(Directory)} instead.
+		/// <deprecated> Use <see cref="GetCurrentVersion(Lucene.Net.Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// </deprecated>
         [Obsolete("Use GetCurrentVersion(Directory) instead. This method will be removed in the 3.0 release.")]
@@ -828,13 +828,12 @@ namespace Lucene.Net.Index
 		{
 			return SegmentInfos.ReadCurrentVersion(directory);
 		}
-		
-		/// <summary> Reads commitUserData, previously passed to {@link
-		/// IndexWriter#Commit(Map)}, from current index
-		/// segments file.  This will return null if {@link
-		/// IndexWriter#Commit(Map)} has never been called for
-		/// this index.
-		/// 
+
+        /// <summary> Reads commitUserData, previously passed to 
+        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />,
+		/// from current index segments file.  This will return null if 
+        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
+		/// has never been called for this index.
 		/// </summary>
 		/// <param name="directory">where the index resides.
 		/// </param>
@@ -856,20 +855,21 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>
 		/// If this reader is based on a Directory (ie, was created by calling
-		/// {@link #Open}, or {@link #Reopen} on a reader based on a Directory), then
+		/// <see cref="Open(Lucene.Net.Store.Directory)" />, or <see cref="Reopen()" /> 
+		/// on a reader based on a Directory), then
 		/// this method returns the version recorded in the commit that the reader
-		/// opened. This version is advanced every time {@link IndexWriter#Commit} is
+		/// opened. This version is advanced every time <see cref="IndexWriter.Commit()" /> is
 		/// called.
 		/// <p/>
 		/// 
 		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
-		/// to {@link IndexWriter#GetReader}, or by calling {@link #Reopen} on a near
+		/// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
 		/// real-time reader), then this method returns the version of the last
 		/// commit done by the writer. Note that even as further changes are made
 		/// with the writer, the version will not changed until a commit is
 		/// completed. Thus, you should not rely on this method to determine when a
-		/// near real-time reader should be opened. Use {@link #IsCurrent} instead.
+		/// near real-time reader should be opened. Use <see cref="IsCurrent" /> instead.
 		/// <p/>
 		/// 
 		/// </summary>
@@ -882,10 +882,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Retrieve the String userData optionally passed to
-		/// IndexWriter#commit.  This will return null if {@link
-		/// IndexWriter#Commit(Map)} has never been called for
-		/// this index.
-		/// 
+        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />.  
+        /// This will return null if 
+        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
+		/// has never been called for this index.
 		/// </summary>
 		/// <seealso cref="GetCommitUserData(Directory)">
 		/// </seealso>
@@ -897,8 +897,8 @@ namespace Lucene.Net.Index
 		/// <summary><p/>For IndexReader implementations that use
 		/// TermInfosReader to read terms, this sets the
 		/// indexDivisor to subsample the number of indexed terms
-		/// loaded into memory.  This has the same effect as {@link
-		/// IndexWriter#setTermIndexInterval} except that setting
+		/// loaded into memory.  This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
+		/// except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -911,7 +911,7 @@ namespace Lucene.Net.Index
 		/// an IllegalStateException is thrown.
 		/// </summary>
 		/// <throws>  IllegalStateException if the term index has already been loaded into memory </throws>
-		/// <deprecated> Please use {@link IndexReader#Open(Directory, IndexDeletionPolicy, boolean, int)} to specify the required TermInfos index divisor instead.
+		/// <deprecated> Please use <see cref="IndexReader.Open(Directory, IndexDeletionPolicy, bool, int)" /> to specify the required TermInfos index divisor instead.
 		/// </deprecated>
         [Obsolete("Please use IndexReader.Open(Directory, IndexDeletionPolicy, bool, int) to specify the required TermInfos index divisor instead.")]
 		public virtual void  SetTermInfosIndexDivisor(int indexDivisor)
@@ -934,14 +934,14 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>
 		/// If this reader is based on a Directory (ie, was created by calling
-		/// {@link #open}, or {@link #reopen} on a reader based on a Directory), then
-		/// this method checks if any further commits (see {@link IndexWriter#commit}
+		/// <see cref="Open(Store.Directory)" />, or <see cref="Reopen()" /> on a reader based on a Directory), then
+		/// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
 		/// have occurred in that directory).
 		/// <p/>
 		/// 
 		/// <p/>
 		/// If instead this reader is a near real-time reader (ie, obtained by a call
-		/// to {@link IndexWriter#getReader}, or by calling {@link #reopen} on a near
+		/// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
 		/// real-time reader), then this method checks if either a new commmit has
 		/// occurred, or any new uncommitted changes have taken place via the writer.
 		/// Note that even if the writer has only performed merging, this method will
@@ -949,7 +949,7 @@ namespace Lucene.Net.Index
 		/// <p/>
 		/// 
 		/// <p/>
-		/// In any event, if this returns false, you should call {@link #reopen} to
+		/// In any event, if this returns false, you should call <see cref="Reopen()" /> to
 		/// get a new reader that sees the changes.
 		/// <p/>
 		/// 
@@ -965,7 +965,7 @@ namespace Lucene.Net.Index
 		/// <summary> Checks is the index is optimized (if it has a single segment and 
 		/// no deletions).  Not implemented in the IndexReader base class.
 		/// </summary>
-		/// <returns> <code>true</code> if the index is optimized; <code>false</code> otherwise
+		/// <returns> <c>true</c> if the index is optimized; <c>false</c> otherwise
 		/// </returns>
 		/// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
 		public virtual bool IsOptimized()
@@ -977,8 +977,8 @@ namespace Lucene.Net.Index
 		/// The array contains a vector for each vectorized field in the document.
 		/// Each vector contains terms and frequencies for all terms in a given vectorized field.
 		/// If no such fields existed, the method returns null. The term vectors that are
-		/// returned may either be of type {@link TermFreqVector}
-		/// or of type {@link TermPositionVector} if
+		/// returned may either be of type <see cref="TermFreqVector" />
+		/// or of type <see cref="TermPositionVector" /> if
 		/// positions or offsets have been stored.
 		/// 
 		/// </summary>
@@ -997,7 +997,7 @@ namespace Lucene.Net.Index
 		/// returned vector contains terms and frequencies for the terms in
 		/// the specified field of this document, if the field had the storeTermVector
 		/// flag set. If termvectors had been stored with positions or offsets, a 
-		/// {@link TermPositionVector} is returned.
+		/// <see cref="TermPositionVector" /> is returned.
 		/// 
 		/// </summary>
 		/// <param name="docNumber">document for which the term frequency vector is returned
@@ -1013,13 +1013,13 @@ namespace Lucene.Net.Index
 		abstract public TermFreqVector GetTermFreqVector(int docNumber, System.String field);
 		
 		/// <summary> Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of
-		/// the {@link TermFreqVector}.
+		/// the <see cref="TermFreqVector" />.
 		/// </summary>
 		/// <param name="docNumber">The number of the document to load the vector for
 		/// </param>
 		/// <param name="field">The name of the field to load
 		/// </param>
-		/// <param name="mapper">The {@link TermVectorMapper} to process the vector.  Must not be null
+		/// <param name="mapper">The <see cref="TermVectorMapper" /> to process the vector.  Must not be null
 		/// </param>
 		/// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
 		/// <summary> 
@@ -1029,20 +1029,20 @@ namespace Lucene.Net.Index
 		/// <summary> Map all the term vectors for all fields in a Document</summary>
 		/// <param name="docNumber">The number of the document to load the vector for
 		/// </param>
-		/// <param name="mapper">The {@link TermVectorMapper} to process the vector.  Must not be null
+		/// <param name="mapper">The <see cref="TermVectorMapper" /> to process the vector.  Must not be null
 		/// </param>
 		/// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
 		abstract public void  GetTermFreqVector(int docNumber, TermVectorMapper mapper);
 		
-		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
+		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
-		/// <code>false</code> is returned.
+		/// <c>false</c> is returned.
 		/// </summary>
 		/// <param name="directory">the directory to check for an index
 		/// </param>
-		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
+		/// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
 		/// </returns>
-		/// <deprecated> Use {@link #IndexExists(Directory)} instead
+		/// <deprecated> Use <see cref="IndexExists(Lucene.Net.Store.Directory)" /> instead
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -1052,14 +1052,14 @@ namespace Lucene.Net.Index
 			return IndexExists(new System.IO.FileInfo(directory));
 		}
 		
-		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
+		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
 		/// </summary>
 		/// <param name="directory">the directory to check for an index
 		/// </param>
-		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
+		/// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
 		/// </returns>
-		/// <deprecated> Use {@link #IndexExists(Directory)} instead.
+		/// <deprecated> Use <see cref="IndexExists(Lucene.Net.Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -1083,12 +1083,12 @@ namespace Lucene.Net.Index
 			return SegmentInfos.GetCurrentSegmentGeneration(list) != - 1;
 		}
 		
-		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
+		/// <summary> Returns <c>true</c> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
 		/// </summary>
 		/// <param name="directory">the directory to check for an index
 		/// </param>
-		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
+		/// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
 		/// </returns>
 		/// <throws>  IOException if there is a problem with accessing the index </throws>
 		public static bool IndexExists(Directory directory)
@@ -1111,13 +1111,13 @@ namespace Lucene.Net.Index
 			return MaxDoc() - NumDocs();
 		}
 		
-		/// <summary> Returns the stored fields of the <code>n</code><sup>th</sup>
-		/// <code>Document</code> in this index.
+		/// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
+		/// <c>Document</c> in this index.
 		/// <p/>
 		/// <b>NOTE:</b> for performance reasons, this method does not check if the
 		/// requested document is deleted, and therefore asking for a deleted document
 		/// may yield unspecified results. Usually this is not required, however you
-		/// can call {@link #IsDeleted(int)} with the requested document ID to verify
+		/// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
 		/// the document is not deleted.
 		/// 
 		/// </summary>
@@ -1129,31 +1129,31 @@ namespace Lucene.Net.Index
 			return Document(n, null);
 		}
 		
-		/// <summary> Get the {@link Lucene.Net.Documents.Document} at the <code>n</code>
-		/// <sup>th</sup> position. The {@link FieldSelector} may be used to determine
-		/// what {@link Lucene.Net.Documents.Field}s to load and how they should
+		/// <summary> Get the <see cref="Lucene.Net.Documents.Document" /> at the <c>n</c>
+		/// <sup>th</sup> position. The <see cref="FieldSelector" /> may be used to determine
+		/// what <see cref="Lucene.Net.Documents.Field" />s to load and how they should
 		/// be loaded. <b>NOTE:</b> If this Reader (more specifically, the underlying
-		/// <code>FieldsReader</code>) is closed before the lazy
-		/// {@link Lucene.Net.Documents.Field} is loaded an exception may be
+		/// <c>FieldsReader</c>) is closed before the lazy
+		/// <see cref="Lucene.Net.Documents.Field" /> is loaded an exception may be
 		/// thrown. If you want the value of a lazy
-		/// {@link Lucene.Net.Documents.Field} to be available after closing you
+		/// <see cref="Lucene.Net.Documents.Field" /> to be available after closing you
 		/// must explicitly load it or fetch the Document again with a new loader.
 		/// <p/>
 		/// <b>NOTE:</b> for performance reasons, this method does not check if the
 		/// requested document is deleted, and therefore asking for a deleted document
 		/// may yield unspecified results. Usually this is not required, however you
-		/// can call {@link #IsDeleted(int)} with the requested document ID to verify
+		/// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
 		/// the document is not deleted.
 		/// 
 		/// </summary>
-		/// <param name="n">Get the document at the <code>n</code><sup>th</sup> position
+		/// <param name="n">Get the document at the <c>n</c><sup>th</sup> position
 		/// </param>
-		/// <param name="fieldSelector">The {@link FieldSelector} to use to determine what
+		/// <param name="fieldSelector">The <see cref="FieldSelector" /> to use to determine what
 		/// Fields should be loaded on the Document. May be null, in which case
 		/// all Fields will be loaded.
 		/// </param>
 		/// <returns> The stored fields of the
-		/// {@link Lucene.Net.Documents.Document} at the nth position
+		/// <see cref="Lucene.Net.Documents.Document" /> at the nth position
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1187,7 +1187,7 @@ namespace Lucene.Net.Index
 		/// every document.  This is used by the search code to score documents.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
 		/// </seealso>
 		public abstract byte[] Norms(System.String field);
 		
@@ -1195,14 +1195,13 @@ namespace Lucene.Net.Index
 		/// document.  This is used by the search code to score documents.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
 		/// </seealso>
 		public abstract void  Norms(System.String field, byte[] bytes, int offset);
 		
 		/// <summary>Expert: Resets the normalization factor for the named field of the named
-		/// document.  The norm represents the product of the field's {@link
-		/// Lucene.Net.Documents.Fieldable#SetBoost(float) boost} and its {@link Similarity#LengthNorm(String,
-		/// int) length normalization}.  Thus, to preserve the length normalization
+		/// document.  The norm represents the product of the field's <see cref="Lucene.Net.Documents.Fieldable.SetBoost(float)">boost</see>
+        /// and its <see cref="Similarity.LengthNorm(String,int)">length normalization</see>.  Thus, to preserve the length normalization
 		/// values when resetting this, one should base the new value upon the old.
 		/// 
 		/// <b>NOTE:</b> If this field does not store norms, then
@@ -1218,7 +1217,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1250,7 +1249,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1263,9 +1262,9 @@ namespace Lucene.Net.Index
 		/// <summary>Returns an enumeration of all the terms in the index. The
 		/// enumeration is ordered by Term.compareTo(). Each term is greater
 		/// than all that precede it in the enumeration. Note that after
-		/// calling terms(), {@link TermEnum#Next()} must be called
+		/// calling terms(), <see cref="TermEnum.Next()" /> must be called
 		/// on the resulting enumeration before calling other methods such as
-		/// {@link TermEnum#Term()}.
+		/// <see cref="TermEnum.Term()" />.
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract TermEnum Terms();
@@ -1279,19 +1278,19 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract TermEnum Terms(Term t);
 		
-		/// <summary>Returns the number of documents containing the term <code>t</code>.</summary>
+		/// <summary>Returns the number of documents containing the term <c>t</c>.</summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract int DocFreq(Term t);
 		
 		/// <summary>Returns an enumeration of all the documents which contain
-		/// <code>term</code>. For each document, the document number, the frequency of
+		/// <c>term</c>. For each document, the document number, the frequency of
 		/// the term in that document is also provided, for use in
 		/// search scoring.  If term is null, then all non-deleted
 		/// docs are returned with freq=1.
 		/// Thus, this method implements the mapping:
-		/// <p/><ul>
+		/// <p/><list>
 		/// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq&gt;<sup>*</sup>
-		/// </ul>
+		/// </list>
 		/// <p/>The enumeration is ordered by document number.  Each document number
 		/// is greater than all that precede it in the enumeration.
 		/// </summary>
@@ -1303,23 +1302,23 @@ namespace Lucene.Net.Index
 			termDocs.Seek(term);
 			return termDocs;
 		}
-		
-		/// <summary>Returns an unpositioned {@link TermDocs} enumerator.</summary>
+
+        /// <summary>Returns an unpositioned <see cref="Lucene.Net.Index.TermDocs" /> enumerator.</summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract TermDocs TermDocs();
 		
 		/// <summary>Returns an enumeration of all the documents which contain
-		/// <code>term</code>.  For each document, in addition to the document number
+		/// <c>term</c>.  For each document, in addition to the document number
 		/// and frequency of the term in that document, a list of all of the ordinal
 		/// positions of the term in the document is available.  Thus, this method
 		/// implements the mapping:
 		/// 
-		/// <p/><ul>
+		/// <p/><list>
 		/// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq,
 		/// &lt;pos<sub>1</sub>, pos<sub>2</sub>, ...
 		/// pos<sub>freq-1</sub>&gt;
 		/// &gt;<sup>*</sup>
-		/// </ul>
+		/// </list>
 		/// <p/> This positional information facilitates phrase and proximity searching.
 		/// <p/>The enumeration is ordered by document number.  Each document number is
 		/// greater than all that precede it in the enumeration.
@@ -1333,17 +1332,17 @@ namespace Lucene.Net.Index
 			return termPositions;
 		}
 		
-		/// <summary>Returns an unpositioned {@link TermPositions} enumerator.</summary>
+		/// <summary>Returns an unpositioned <see cref="Lucene.Net.Index.TermPositions" /> enumerator.</summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public abstract TermPositions TermPositions();
 		
 		
 		
-		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
+		/// <summary>Deletes the document numbered <c>docNum</c>.  Once a document is
 		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
-		/// Attempts to read its field with the {@link #document}
+		/// Attempts to read its field with the <see cref="Document(int)" />
 		/// method will result in an error.  The presence of this document may still be
-		/// reflected in the {@link #docFreq} statistic, though
+		/// reflected in the <see cref="DocFreq" /> statistic, though
 		/// this will be corrected eventually as the index is further modified.
 		/// 
 		/// </summary>
@@ -1352,7 +1351,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1368,18 +1367,18 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>Implements deletion of the document numbered <code>docNum</code>.
-		/// Applications should call {@link #DeleteDocument(int)} or {@link #DeleteDocuments(Term)}.
+		/// <summary>Implements deletion of the document numbered <c>docNum</c>.
+		/// Applications should call <see cref="DeleteDocument(int)" /> or <see cref="DeleteDocuments(Term)" />.
 		/// </summary>
 		protected internal abstract void  DoDelete(int docNum);
 		
 		
-		/// <summary>Deletes all documents that have a given <code>term</code> indexed.
+		/// <summary>Deletes all documents that have a given <c>term</c> indexed.
 		/// This is useful if one uses a document field to hold a unique ID string for
 		/// the document.  Then to delete such a document, one merely constructs a
 		/// term with the appropriate field and the unique ID string as its text and
 		/// passes it to this method.
-		/// See {@link #DeleteDocument(int)} for information about when this deletion will 
+		/// See <see cref="DeleteDocument(int)" /> for information about when this deletion will 
 		/// become effective.
 		/// 
 		/// </summary>
@@ -1390,7 +1389,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -1423,7 +1422,7 @@ namespace Lucene.Net.Index
 		/// <summary>  since this reader was opened
 		/// </summary>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -1466,8 +1465,8 @@ namespace Lucene.Net.Index
 		
 		/// <param name="commitUserData">Opaque Map (String -> String)
 		/// that's recorded into the segments file in the index,
-		/// and retrievable by {@link
-		/// IndexReader#getCommitUserData}.
+		/// and retrievable by <see cref="IndexReader.GetCommitUserData" />
+		///.
 		/// </param>
 		/// <throws>  IOException </throws>
         public void Flush(System.Collections.Generic.IDictionary<string, string> commitUserData)
@@ -1516,8 +1515,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Implements commit.</summary>
-		/// <deprecated> Please implement {@link #DoCommit(Map)
-		/// instead}. 
+        /// <deprecated> Please implement 
+        /// <see cref="DoCommit(System.Collections.Generic.IDictionary{string, string})"/>
+		/// instead. 
 		/// </deprecated>
         [Obsolete("Please implement DoCommit(IDictionary<string, string>) instead")]
 		protected internal abstract void  DoCommit();
@@ -1572,13 +1572,13 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		public abstract System.Collections.Generic.ICollection<string> GetFieldNames(FieldOption fldOption);
 		
-		/// <summary> Returns <code>true</code> iff the index in the named directory is
+		/// <summary> Returns <c>true</c> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
 		/// </param>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Please use {@link IndexWriter#IsLocked(Directory)} instead.
+		/// <deprecated> Please use <see cref="IndexWriter.IsLocked(Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -1588,13 +1588,13 @@ namespace Lucene.Net.Index
 			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked();
 		}
 		
-		/// <summary> Returns <code>true</code> iff the index in the named directory is
+		/// <summary> Returns <c>true</c> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
 		/// </param>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #IsLocked(Directory)} instead.
+		/// <deprecated> Use <see cref="IsLocked(Store.Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -1618,7 +1618,7 @@ namespace Lucene.Net.Index
 		/// when it is known that no other process nor thread is in fact
 		/// currently accessing this index.
 		/// </summary>
-		/// <deprecated> Please use {@link IndexWriter#Unlock(Directory)} instead.
+		/// <deprecated> Please use <see cref="IndexWriter.Unlock(Directory)" /> instead.
 		/// This method will be removed in the 3.0 release.
 		/// 
 		/// </deprecated>
@@ -1736,15 +1736,15 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns all commit points that exist in the Directory.
-		/// Normally, because the default is {@link
-		/// KeepOnlyLastCommitDeletionPolicy}, there would be only
-		/// one commit point.  But if you're using a custom {@link
-		/// IndexDeletionPolicy} then there could be many commits.
+		/// Normally, because the default is <see cref="KeepOnlyLastCommitDeletionPolicy" />
+		///, there would be only
+		/// one commit point.  But if you're using a custom <see cref="IndexDeletionPolicy" />
+		/// then there could be many commits.
 		/// Once you have a given commit, you can open a reader on
-		/// it by calling {@link IndexReader#Open(IndexCommit)}
+		/// it by calling <see cref="IndexReader.Open(IndexCommit)" />
 		/// There must be at least one commit in
-		/// the Directory, else this method throws {@link
-		/// java.io.IOException}.  Note that if a commit is in
+		/// the Directory, else this method throws <see cref="System.IO.IOException" />.  
+		/// Note that if a commit is in
 		/// progress while this method is running, that commit
 		/// may or may not be returned array.  
 		/// </summary>
@@ -1767,7 +1767,7 @@ namespace Lucene.Net.Index
 		/// etc.). While this might succeed for one composite reader
 		/// (like MultiReader), it will most likely lead to index
 		/// corruption for other readers (like DirectoryReader obtained
-		/// through {@link #open}. Use the parent reader directly. 
+		/// through <see cref="IndexReader.Open(Lucene.Net.Store.Directory,bool)" />. Use the parent reader directly. 
 		/// </summary>
 		public virtual IndexReader[] GetSequentialSubReaders()
 		{
@@ -1801,8 +1801,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  UnsupportedOperationException if this count </throws>
 		/// <summary>  cannot be easily determined (eg Multi*Readers).
-		/// Instead, you should call {@link
-		/// #getSequentialSubReaders} and ask each sub reader for
+		/// Instead, you should call <see cref="GetSequentialSubReaders" />
+		/// and ask each sub reader for
 		/// its unique term count. 
 		/// </summary>
 		public virtual long GetUniqueTermCount()

@@ -26,17 +26,17 @@ namespace Lucene.Net.Search
 	/// <summary> A Query that matches documents within an exclusive range of terms.
 	/// 
 	/// <p/>This query matches the documents looking for terms that fall into the
-	/// supplied range according to {@link Term#CompareTo(Term)}. It is not intended
-	/// for numerical ranges, use {@link NumericRangeQuery} instead.
+	/// supplied range according to <see cref="Term.CompareTo(Term)" />. It is not intended
+	/// for numerical ranges, use <see cref="NumericRangeQuery" /> instead.
 	/// 
-	/// <p/>This query uses {@linkplain
-	/// MultiTermQuery#SCORING_BOOLEAN_QUERY_REWRITE}.  If you
-	/// want to change this, use the new {@link TermRangeQuery}
+	/// <p/>This query uses 
+    /// <see cref="MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE"/>.  If you
+	/// want to change this, use the new <see cref="TermRangeQuery" />
 	/// instead.
 	/// 
 	/// </summary>
-	/// <deprecated> Use {@link TermRangeQuery} for term ranges or
-	/// {@link NumericRangeQuery} for numeric ranges instead.
+	/// <deprecated> Use <see cref="TermRangeQuery" /> for term ranges or
+	/// <see cref="NumericRangeQuery" /> for numeric ranges instead.
 	/// This class will be removed in Lucene 3.0.
 	/// </deprecated>
     [Obsolete("Use TermRangeQuery for term ranges or NumericRangeQuery for numeric ranges instead. This class will be removed in Lucene 3.0")]
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 		private TermRangeQuery delegate_Renamed;
 		
 		/// <summary>Constructs a query selecting all terms greater than
-		/// <code>lowerTerm</code> but less than <code>upperTerm</code>.
+		/// <c>lowerTerm</c> but less than <c>upperTerm</c>.
 		/// There must be at least one term and either term may be null,
 		/// in which case there is no bound on that side, but if there are
 		/// two terms, both terms <b>must</b> be for the same field.
@@ -56,25 +56,25 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="upperTerm">The Term at the upper end of the range
 		/// </param>
-		/// <param name="inclusive">If true, both <code>lowerTerm</code> and
-		/// <code>upperTerm</code> will themselves be included in the range.
+		/// <param name="inclusive">If true, both <c>lowerTerm</c> and
+		/// <c>upperTerm</c> will themselves be included in the range.
 		/// </param>
 		public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive):this(lowerTerm, upperTerm, inclusive, null)
 		{
 		}
 		
 		/// <summary>Constructs a query selecting all terms greater than
-		/// <code>lowerTerm</code> but less than <code>upperTerm</code>.
+		/// <c>lowerTerm</c> but less than <c>upperTerm</c>.
 		/// There must be at least one term and either term may be null,
 		/// in which case there is no bound on that side, but if there are
 		/// two terms, both terms <b>must</b> be for the same field.
 		/// <p/>
-		/// If <code>collator</code> is not null, it will be used to decide whether
+		/// If <c>collator</c> is not null, it will be used to decide whether
 		/// index terms are within the given range, rather than using the Unicode code
 		/// point order in which index terms are stored.
 		/// <p/>
 		/// <strong>WARNING:</strong> Using this constructor and supplying a non-null
-		/// value in the <code>collator</code> parameter will cause every single 
+		/// value in the <c>collator</c> parameter will cause every single 
 		/// index Term in the Field referenced by lowerTerm and/or upperTerm to be
 		/// examined.  Depending on the number of index Terms in this Field, the 
 		/// operation could be very slow.
@@ -84,12 +84,12 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="upperTerm">The Term at the upper end of the range
 		/// </param>
-		/// <param name="inclusive">If true, both <code>lowerTerm</code> and
-		/// <code>upperTerm</code> will themselves be included in the range.
+		/// <param name="inclusive">If true, both <c>lowerTerm</c> and
+		/// <c>upperTerm</c> will themselves be included in the range.
 		/// </param>
 		/// <param name="collator">The collator to use to collate index Terms, to determine
-		/// their membership in the range bounded by <code>lowerTerm</code> and
-		/// <code>upperTerm</code>.
+		/// their membership in the range bounded by <c>lowerTerm</c> and
+		/// <c>upperTerm</c>.
 		/// </param>
 		public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive, System.Globalization.CompareInfo collator)
 		{
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
 			return (term == null)?null:new Term(GetField(), term);
 		}
 		
-		/// <summary>Returns <code>true</code> if the range query is inclusive </summary>
+		/// <summary>Returns <c>true</c> if the range query is inclusive </summary>
 		public virtual bool IsInclusive()
 		{
 			return delegate_Renamed.IncludesLower() && delegate_Renamed.IncludesUpper();
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
 			return delegate_Renamed.ToString(field);
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

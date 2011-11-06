@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.NGram
     /**
      * Tokenizes the given token into n-grams of given size(s).
      * <p>
-     * This {@link TokenFilter} create n-grams from the beginning edge or ending edge of a input token.
+     * This <see cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
      * </p>
      */
     public class EdgeNGramTokenFilter : TokenFilter
@@ -90,10 +90,10 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
          *
-         * @param input {@link TokenStream} holding the input to be tokenized
-         * @param side the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
+         * <param name="side">the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenFilter(TokenStream input, Side side, int minGram, int maxGram)
             : base(input)
@@ -125,10 +125,10 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenFilter that can generate n-grams in the sizes of the given range
          *
-         * @param input {@link TokenStream} holding the input to be tokenized
-         * @param sideLabel the name of the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TokenStream"/> holding the input to be tokenized</param>
+         * <param name="sideLabel">the name of the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenFilter(TokenStream input, string sideLabel, int minGram, int maxGram)
             : this(input, Side.getSide(sideLabel), minGram, maxGram)

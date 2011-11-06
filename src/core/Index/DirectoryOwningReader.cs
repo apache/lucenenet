@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> This member contains the ref counter, that is passed to each instance after cloning/reopening,
 		/// and is global to all DirectoryOwningReader derived from the original one.
-		/// This reuses the class {@link SegmentReader.Ref}
+		/// This reuses the class <see cref="SegmentReader.Ref" />
 		/// </summary>
 		private SegmentReader.Ref ref_Renamed;
 	}

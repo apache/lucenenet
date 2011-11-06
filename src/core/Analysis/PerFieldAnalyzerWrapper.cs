@@ -21,17 +21,17 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> This analyzer is used to facilitate scenarios where different
-	/// fields require different analysis techniques.  Use {@link #addAnalyzer}
+	/// fields require different analysis techniques.  Use <see cref="AddAnalyzer" />
 	/// to add a non-default analyzer on a field name basis.
 	/// 
 	/// <p/>Example usage:
 	/// 
-	/// <pre>
+	/// <code>
 	/// PerFieldAnalyzerWrapper aWrapper =
 	/// new PerFieldAnalyzerWrapper(new StandardAnalyzer());
 	/// aWrapper.addAnalyzer("firstname", new KeywordAnalyzer());
 	/// aWrapper.addAnalyzer("lastname", new KeywordAnalyzer());
-	/// </pre>
+	/// </code>
 	/// 
 	/// <p/>In this example, StandardAnalyzer will be used for all fields except "firstname"
 	/// and "lastname", for which KeywordAnalyzer will be used.

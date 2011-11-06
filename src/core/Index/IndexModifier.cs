@@ -27,16 +27,16 @@ namespace Lucene.Net.Index
 {
 	
 	/// <summary> <p/>[Note that as of <b>2.1</b>, all but one of the
-	/// methods in this class are available via {@link
-	/// IndexWriter}.  The one method that is not available is
-	/// {@link #DeleteDocument(int)}.]<p/>
+	/// methods in this class are available via <see cref="IndexWriter" />
+	///.  The one method that is not available is
+	/// <see cref="DeleteDocument(int)" />.]<p/>
 	/// 
 	/// A class to modify an index, i.e. to delete and add documents. This
-	/// class hides {@link IndexReader} and {@link IndexWriter} so that you
+	/// class hides <see cref="IndexReader" /> and <see cref="IndexWriter" /> so that you
 	/// do not need to care about implementation details such as that adding
 	/// documents is done via IndexWriter and deletion is done via IndexReader.
 	/// 
-	/// <p/>Note that you cannot create more than one <code>IndexModifier</code> object
+	/// <p/>Note that you cannot create more than one <c>IndexModifier</c> object
 	/// on the same directory at the same time.
 	/// 
 	/// <p/>Example usage:
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 	/// 
 	/// <p/>Not all methods of IndexReader and IndexWriter are offered by this
 	/// class. If you need access to additional methods, either use those classes
-	/// directly or implement your own class that extends <code>IndexModifier</code>.
+	/// directly or implement your own class that extends <c>IndexModifier</c>.
 	/// 
 	/// <p/>Although an instance of this class can be used from more than one
 	/// thread, you will not get the best performance. You might want to use
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 	/// then add all the new documents.
 	/// 
 	/// </summary>
-	/// <deprecated> Please use {@link IndexWriter} instead.
+	/// <deprecated> Please use <see cref="IndexWriter" /> instead.
 	/// </deprecated>
     [Obsolete("Please use IndexWriter instead.")]
 	public class IndexModifier
@@ -119,12 +119,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="analyzer">the analyzer to use for adding new documents
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
-		/// <code>false</code> to append to the existing index
+		/// <param name="create"><c>true</c> to create the index or overwrite the existing one;
+		/// <c>false</c> to append to the existing index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -141,12 +141,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="analyzer">the analyzer to use for adding new documents
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
-		/// <code>false</code> to append to the existing index
+		/// <param name="create"><c>true</c> to create the index or overwrite the existing one;
+		/// <c>false</c> to append to the existing index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -165,12 +165,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="analyzer">the analyzer to use for adding new documents
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite the existing one;
-		/// <code>false</code> to append to the existing index
+		/// <param name="create"><c>true</c> to create the index or overwrite the existing one;
+		/// <c>false</c> to append to the existing index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 		/// <summary> Initialize an IndexWriter.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
 		/// <summary> Close the IndexReader and open an IndexWriter.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
 		/// <summary> Make sure all changes are written to disk.</summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Adds a document to this index, using the provided analyzer instead of the
 		/// one specific in the constructor.  If the document contains more than
-		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+		/// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
 		/// <seealso cref="IndexWriter.AddDocument(Document, Analyzer)">
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Adds a document to this index.  If the document contains more than
-		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+		/// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
 		/// discarded.
 		/// </summary>
 		/// <seealso cref="IndexWriter.AddDocument(Document)">
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
 			AddDocument(doc, null);
 		}
 		
-		/// <summary> Deletes all documents containing <code>term</code>.
+		/// <summary> Deletes all documents containing <c>term</c>.
 		/// This is useful if one uses a document field to hold a unique ID string for
 		/// the document.  Then to delete such a document, one merely constructs a
 		/// term with the appropriate field and the unique ID string as its text and
@@ -343,7 +343,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Deletes the document numbered <code>docNum</code>.</summary>
+		/// <summary> Deletes the document numbered <c>docNum</c>.</summary>
 		/// <seealso cref="IndexReader.DeleteDocument(int)">
 		/// </seealso>
 		/// <throws>  StaleReaderException if the index has changed </throws>
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IllegalStateException if the index is closed </throws>
@@ -382,10 +382,10 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Returns the number of documents currently in this
 		/// index.  If the writer is currently open, this returns
-		/// {@link IndexWriter#DocCount()}, else {@link
-		/// IndexReader#NumDocs()}.  But, note that {@link
-		/// IndexWriter#DocCount()} does not take deletions into
-		/// account, unlike {@link IndexReader#numDocs}.
+		/// <see cref="IndexWriter.DocCount()" />, else <see cref="IndexReader.NumDocs()" />
+		///.  But, note that <see cref="IndexWriter.DocCount()" />
+		/// does not take deletions into
+		/// account, unlike <see cref="IndexReader.NumDocs" />.
 		/// </summary>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual int DocCount()
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -427,10 +427,10 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> If non-null, information about merges and a message when
-		/// {@link #GetMaxFieldLength()} is reached will be printed to this.
+		/// <see cref="GetMaxFieldLength()" /> is reached will be printed to this.
 		/// <p/>Example: <tt>index.setInfoStream(System.err);</tt>
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexWriter.SetInfoStream(System.IO.StreamWriter)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetInfoStream(System.IO.StreamWriter infoStream)
@@ -446,11 +446,11 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <seealso cref="IndexModifier.SetInfoStream(PrintStream)">
+		/// <seealso cref="IndexModifier.SetInfoStream(System.IO.StreamWriter)">
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
 		/// for each segment are merged into a single file once the segment creation
 		/// is finished. This is done regardless of what directory is in use.
 		/// </summary>
-		/// <seealso cref="IndexWriter.SetUseCompoundFile(boolean)">
+        /// <seealso cref="IndexWriter.SetUseCompoundFile(bool)">
 		/// </seealso>
 		/// <throws>  IllegalStateException if the index is closed </throws>
 		public virtual void  SetUseCompoundFile(bool useCompoundFile)
@@ -483,12 +483,12 @@ namespace Lucene.Net.Index
 				this.useCompoundFile = useCompoundFile;
 			}
 		}
-		
-		/// <seealso cref="IndexModifier.SetUseCompoundFile(boolean)">
+
+        /// <seealso cref="IndexModifier.SetUseCompoundFile(bool)">
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -533,7 +533,7 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -549,7 +549,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary> Determines the minimal number of documents required before the buffered
 		/// in-memory documents are merging and a new Segment is created.
-		/// Since Documents are merged in a {@link Lucene.Net.Store.RAMDirectory},
+		/// Since Documents are merged in a <see cref="Lucene.Net.Store.RAMDirectory" />,
 		/// large value gives faster indexing.  At the same time, mergeFactor limits
 		/// the number of files open in a FSDirectory.
 		/// 
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
 		/// </seealso>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>

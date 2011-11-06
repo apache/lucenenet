@@ -22,7 +22,7 @@ namespace Lucene.Net.Highlight
 {
 	
 	/// <summary> Implements the policy for breaking text into multiple fragments for consideration
-	/// by the {@link Highlighter} class. A sophisticated implementation may do this on the basis
+	/// by the <see cref="Highlighter"/> class. A sophisticated implementation may do this on the basis
 	/// of detecting end of sentences in the text. 
 	/// </summary>
 	/// <author>  mark@searcharea.co.uk
@@ -30,12 +30,12 @@ namespace Lucene.Net.Highlight
 	public interface Fragmenter
 	{
 		/// <summary> Initializes the Fragmenter</summary>
-		/// <param name="">originalText
+        /// <param name="originalText">
 		/// </param>
 		void  Start(System.String originalText);
 		
 		/// <summary> Test to see if this token from the stream should be held in a new TextFragment</summary>
-		/// <param name="">nextToken
+        /// <param name="nextToken">
 		/// </param>
 		bool IsNewFragment(Token nextToken);
 	}

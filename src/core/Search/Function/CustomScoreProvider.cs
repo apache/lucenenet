@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,19 +23,19 @@ using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Function
 {
-    /**
- * An instance of this subclass should be returned by
- * {@link CustomScoreQuery#getCustomScoreProvider}, if you want
- * to modify the custom score calculation of a {@link CustomScoreQuery}.
- * <p>Since Lucene 2.9, queries operate on each segment of an Index separately,
- * so overriding the similar (now deprecated) methods in {@link CustomScoreQuery}
- * is no longer suitable, as the supplied <code>doc</code> ID is per-segment
- * and without knowledge of the IndexReader you cannot access the
- * document or {@link FieldCache}.
- * 
- * @lucene.experimental
- * @since 2.9.2
- */
+    /// <summary>
+    /// An instance of this subclass should be returned by
+    /// <see cref="CustomScoreQuery.GetCustomScoreProvider" />, if you want
+    /// to modify the custom score calculation of a <see cref="CustomScoreQuery" />.
+    /// <para>Since Lucene 2.9, queries operate on each segment of an Index separately,
+    /// so overriding the similar (now deprecated) methods in <see cref="CustomScoreQuery" />
+    /// is no longer suitable, as the supplied <c>doc</c> ID is per-segment
+    /// and without knowledge of the IndexReader you cannot access the
+    /// document or <see cref="FieldCache" />.</para>
+    /// 
+    /// @lucene.experimental
+    /// @since 2.9.2
+    /// </summary>
     public class CustomScoreProvider
     {
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Function
         /// should override at least one of the two customScore() methods.
         /// If the number of ValueSourceQueries is always &lt; 2 it is 
         /// sufficient to override the other 
-        /// {@link #customScore(int, float, float) customScore()} 
+        /// <see cref="CustomScore(int, float, float)">CustomScore()</see>
         /// method, which is simpler. 
         /// <p/>
         /// The default computation herein is a multiplication of given scores:
@@ -96,12 +96,12 @@ namespace Lucene.Net.Search.Function
         /// <p/>
         /// If your custom scoring is different than the default herein you 
         /// should override at least one of the two customScore() methods.
-        /// If the number of ValueSourceQueries is always < 2 it is 
+        /// If the number of ValueSourceQueries is always &lt; 2 it is 
         /// sufficient to override this customScore() method, which is simpler. 
         /// <p/>
         /// The default computation herein is a multiplication of the two scores:
         /// <pre>
-        ///     ModifiedScore = subQueryScore /// valSrcScore
+        ///     ModifiedScore = subQueryScore * valSrcScore
         /// </pre>
         /// </summary>
         /// <param name="doc">id of scored doc</param>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Function
 
         /// <summary>
         /// Explain the custom score.
-        /// Whenever overriding {@link #customScore(int, float, float[])}, 
+        /// Whenever overriding <see cref="CustomScore(int, float, float[])" />, 
         /// this method should also be overridden to provide the correct explanation
         /// for the part of the custom scoring.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Function
                 
         /// <summary>
         /// Explain the custom score.
-        /// Whenever overriding {@link #customScore(int, float, float)}, 
+        /// Whenever overriding <see cref="CustomScore(int, float, float)" />, 
         /// this method should also be overridden to provide the correct explanation
         /// for the part of the custom scoring.
         /// 

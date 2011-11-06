@@ -20,10 +20,10 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> Use this {@link LockFactory} to disable locking entirely.
-	/// This LockFactory is used when you call {@link FSDirectory#setDisableLocks}.
-	/// Only one instance of this lock is created.  You should call {@link
-	/// #GetNoLockFactory()} to get the instance.
+	/// <summary> Use this <see cref="LockFactory" /> to disable locking entirely.
+	/// This LockFactory is used when you call <see cref="FSDirectory.SetDisableLocks" />.
+	/// Only one instance of this lock is created.  You should call <see cref="GetNoLockFactory()" />
+	/// to get the instance.
 	/// 
 	/// </summary>
 	/// <seealso cref="LockFactory">

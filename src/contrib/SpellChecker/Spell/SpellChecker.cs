@@ -41,7 +41,7 @@ namespace SpellChecker.Net.Search.Spell
     /// (initially inspired by the David Spencer code).
     /// </p>
     /// 
-    /// <p>Example Usage:
+    /// <p>Example Usage:</p>
     /// 
     /// <pre>
     /// SpellChecker spellchecker = new SpellChecker(spellIndexDirectory);
@@ -97,7 +97,7 @@ namespace SpellChecker.Net.Search.Spell
         /// is created if it doesn't exist yet.
         /// </summary>
         /// <param name="gramIndex">the spell index directory</param>
-        /// <param name="sd">the {@link StringDistance} measurement to use </param>
+        /// <param name="sd">the <see cref="StringDistance"/> measurement to use </param>
         public SpellChecker(Directory gramIndex, StringDistance sd)
         {
             this.SetSpellIndex(gramIndex);
@@ -106,7 +106,7 @@ namespace SpellChecker.Net.Search.Spell
 
         /// <summary>
         /// Use the given directory as a spell checker index with a
-        /// {@link LevensteinDistance} as the default {@link StringDistance}. The
+        /// <see cref="LevenshteinDistance"/> as the default <see cref="StringDistance"/>. The
         /// directory is created if it doesn't exist yet.
         /// </summary>
         /// <param name="gramIndex">the spell index directory</param>
@@ -140,23 +140,23 @@ namespace SpellChecker.Net.Search.Spell
         }
 
         /// <summary>
-        /// Sets the {@link StringDistance} implementation for this
-        /// {@link SpellChecker} instance.
+        /// Sets the <see cref="StringDistance"/> implementation for this
+        /// <see cref="SpellChecker"/> instance.
         /// </summary>
-        /// <param name="sd">the {@link StringDistance} implementation for this
-        /// {@link SpellChecker} instance.</param>
+        /// <param name="sd">the <see cref="StringDistance"/> implementation for this
+        /// <see cref="SpellChecker"/> instance.</param>
         public void setStringDistance(StringDistance sd)
         {
             this.sd = sd;
         }
 
         /// <summary>
-        /// Returns the {@link StringDistance} instance used by this
-        /// {@link SpellChecker} instance.
+        /// Returns the <see cref="StringDistance"/> instance used by this
+        /// <see cref="SpellChecker"/> instance.
         /// </summary>
         /// <returns>
-        /// Returns the {@link StringDistance} instance used by this
-        /// {@link SpellChecker} instance.
+        /// Returns the <see cref="StringDistance"/> instance used by this
+        /// <see cref="SpellChecker"/> instance.
         /// </returns>
         public StringDistance GetStringDistance()
         {
@@ -431,7 +431,7 @@ namespace SpellChecker.Net.Search.Spell
         }
 
         /// <summary>
-        /// Indexes the data from the given {@link Dictionary}.
+        /// Indexes the data from the given <see cref="Dictionary"/>.
         /// </summary>
         /// <param name="dict">dict the dictionary to index</param>
         public void IndexDictionary(Dictionary dict)
@@ -576,10 +576,10 @@ namespace SpellChecker.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns <code>true</code> if and only if the {@link SpellChecker} is
+        /// Returns <code>true</code> if and only if the <see cref="SpellChecker"/> is
         /// closed, otherwise <code>false</code>.
         /// </summary>
-        /// <returns><code>true</code> if and only if the {@link SpellChecker} is
+        /// <returns><code>true</code> if and only if the <see cref="SpellChecker"/> is
         ///         closed, otherwise <code>false</code>.
         ///</returns>
         bool IsClosed()

@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 			EstimateSize(new RamUsageEstimator(false)); // doesn't check for interned
 		}
 		/// <summary> Computes (and stores) the estimated size of the cache Value </summary>
-		/// <seealso cref="getEstimatedSize">
+		/// <seealso cref="GetEstimatedSize">
 		/// </seealso>
 		public virtual void  EstimateSize(RamUsageEstimator ramCalc)
 		{
@@ -151,32 +151,32 @@ namespace Lucene.Net.Search
 		public readonly static int STRING_INDEX = - 1;
 		/// <summary>Expert: The cache used internally by sorting and range query classes. </summary>
 		public readonly static FieldCache DEFAULT;
-		/// <summary>The default parser for byte values, which are encoded by {@link Byte#toString(byte)} </summary>
+		/// <summary>The default parser for byte values, which are encoded by <see cref="byte.ToString()" /> </summary>
 		public readonly static ByteParser DEFAULT_BYTE_PARSER;
-		/// <summary>The default parser for short values, which are encoded by {@link Short#toString(short)} </summary>
+		/// <summary>The default parser for short values, which are encoded by <see cref="short.ToString()" /> </summary>
 		public readonly static ShortParser DEFAULT_SHORT_PARSER;
-		/// <summary>The default parser for int values, which are encoded by {@link Integer#toString(int)} </summary>
+		/// <summary>The default parser for int values, which are encoded by <see cref="int.ToString()" /> </summary>
 		public readonly static IntParser DEFAULT_INT_PARSER;
-		/// <summary>The default parser for float values, which are encoded by {@link Float#toString(float)} </summary>
+		/// <summary>The default parser for float values, which are encoded by <see cref="float.ToString()" /> </summary>
 		public readonly static FloatParser DEFAULT_FLOAT_PARSER;
-		/// <summary>The default parser for long values, which are encoded by {@link Long#toString(long)} </summary>
+		/// <summary>The default parser for long values, which are encoded by <see cref="long.ToString()" /> </summary>
 		public readonly static LongParser DEFAULT_LONG_PARSER;
-		/// <summary>The default parser for double values, which are encoded by {@link Double#toString(double)} </summary>
+		/// <summary>The default parser for double values, which are encoded by <see cref="double.ToString()" /> </summary>
 		public readonly static DoubleParser DEFAULT_DOUBLE_PARSER;
-		/// <summary> A parser instance for int values encoded by {@link NumericUtils#IntToPrefixCoded(int)}, e.g. when indexed
-		/// via {@link NumericField}/{@link NumericTokenStream}.
+		/// <summary> A parser instance for int values encoded by <see cref="NumericUtils.IntToPrefixCoded(int)" />, e.g. when indexed
+		/// via <see cref="NumericField" />/<see cref="NumericTokenStream" />.
 		/// </summary>
 		public readonly static IntParser NUMERIC_UTILS_INT_PARSER;
-		/// <summary> A parser instance for float values encoded with {@link NumericUtils}, e.g. when indexed
-		/// via {@link NumericField}/{@link NumericTokenStream}.
+		/// <summary> A parser instance for float values encoded with <see cref="NumericUtils" />, e.g. when indexed
+		/// via <see cref="NumericField" />/<see cref="NumericTokenStream" />.
 		/// </summary>
 		public readonly static FloatParser NUMERIC_UTILS_FLOAT_PARSER;
-		/// <summary> A parser instance for long values encoded by {@link NumericUtils#LongToPrefixCoded(long)}, e.g. when indexed
-		/// via {@link NumericField}/{@link NumericTokenStream}.
+		/// <summary> A parser instance for long values encoded by <see cref="NumericUtils.LongToPrefixCoded(long)" />, e.g. when indexed
+		/// via <see cref="NumericField" />/<see cref="NumericTokenStream" />.
 		/// </summary>
 		public readonly static LongParser NUMERIC_UTILS_LONG_PARSER;
-		/// <summary> A parser instance for double values encoded with {@link NumericUtils}, e.g. when indexed
-		/// via {@link NumericField}/{@link NumericTokenStream}.
+		/// <summary> A parser instance for double values encoded with <see cref="NumericUtils" />, e.g. when indexed
+		/// via <see cref="NumericField" />/<see cref="NumericTokenStream" />.
 		/// </summary>
 		public readonly static DoubleParser NUMERIC_UTILS_DOUBLE_PARSER;
 		static FieldCache_Fields()
@@ -378,8 +378,8 @@ namespace Lucene.Net.Search
 	{
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as a single byte and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// found, reads the terms in <c>field</c> as a single byte and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -392,8 +392,8 @@ namespace Lucene.Net.Search
 		sbyte[] GetBytes(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as bytes and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// reads the terms in <c>field</c> as bytes and returns an array of
+		/// size <c>reader.maxDoc()</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -408,8 +408,8 @@ namespace Lucene.Net.Search
 		sbyte[] GetBytes(IndexReader reader, System.String field, ByteParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as shorts and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// found, reads the terms in <c>field</c> as shorts and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -422,8 +422,8 @@ namespace Lucene.Net.Search
 		short[] GetShorts(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as shorts and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// reads the terms in <c>field</c> as shorts and returns an array of
+		/// size <c>reader.maxDoc()</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -438,8 +438,8 @@ namespace Lucene.Net.Search
 		short[] GetShorts(IndexReader reader, System.String field, ShortParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as integers and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// found, reads the terms in <c>field</c> as integers and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -452,8 +452,8 @@ namespace Lucene.Net.Search
 		int[] GetInts(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as integers and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// reads the terms in <c>field</c> as integers and returns an array of
+		/// size <c>reader.maxDoc()</c> of the value each document has in the
 		/// given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -468,8 +468,8 @@ namespace Lucene.Net.Search
 		int[] GetInts(IndexReader reader, System.String field, IntParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
-		/// none is found, reads the terms in <code>field</code> as floats and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// none is found, reads the terms in <c>field</c> as floats and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -482,8 +482,8 @@ namespace Lucene.Net.Search
 		float[] GetFloats(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
-		/// none is found, reads the terms in <code>field</code> as floats and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// none is found, reads the terms in <c>field</c> as floats and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -498,8 +498,8 @@ namespace Lucene.Net.Search
 		float[] GetFloats(IndexReader reader, System.String field, FloatParser parser);
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as longs and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// found, reads the terms in <c>field</c> as longs and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -513,8 +513,8 @@ namespace Lucene.Net.Search
 		long[] GetLongs(IndexReader reader, System.String field);
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as longs and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// reads the terms in <c>field</c> as longs and returns an array of
+		/// size <c>reader.maxDoc()</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -531,8 +531,8 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is
-		/// found, reads the terms in <code>field</code> as integers and returns an array
-		/// of size <code>reader.maxDoc()</code> of the value each document
+		/// found, reads the terms in <c>field</c> as integers and returns an array
+		/// of size <c>reader.maxDoc()</c> of the value each document
 		/// has in the given field.
 		/// 
 		/// </summary>
@@ -546,8 +546,8 @@ namespace Lucene.Net.Search
 		double[] GetDoubles(IndexReader reader, System.String field);
 		
 		/// <summary> Checks the internal cache for an appropriate entry, and if none is found,
-		/// reads the terms in <code>field</code> as doubles and returns an array of
-		/// size <code>reader.maxDoc()</code> of the value each document has in the
+		/// reads the terms in <c>field</c> as doubles and returns an array of
+		/// size <c>reader.maxDoc()</c> of the value each document has in the
 		/// given field.
 		/// 
 		/// </summary>
@@ -563,8 +563,8 @@ namespace Lucene.Net.Search
 		double[] GetDoubles(IndexReader reader, System.String field, DoubleParser parser);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
-		/// is found, reads the term values in <code>field</code> and returns an array
-		/// of size <code>reader.maxDoc()</code> containing the value each document
+		/// is found, reads the term values in <c>field</c> and returns an array
+		/// of size <c>reader.maxDoc()</c> containing the value each document
 		/// has in the given field.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -577,7 +577,7 @@ namespace Lucene.Net.Search
 		System.String[] GetStrings(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
-		/// is found reads the term values in <code>field</code> and returns
+		/// is found reads the term values in <c>field</c> and returns
 		/// an array of them in natural order, along with an array telling
 		/// which element in the term array each document uses.
 		/// </summary>
@@ -591,11 +591,11 @@ namespace Lucene.Net.Search
 		StringIndex GetStringIndex(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if
-		/// none is found reads <code>field</code> to see if it contains integers, longs, floats
+		/// none is found reads <c>field</c> to see if it contains integers, longs, floats
 		/// or strings, and then calls one of the other methods in this class to get the
 		/// values.  For string values, a StringIndex is returned.  After
 		/// calling this method, there is an entry in the cache for both
-		/// type <code>AUTO</code> and the actual found type.
+		/// type <c>AUTO</c> and the actual found type.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
 		/// </param>
@@ -606,15 +606,15 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException  If any error occurs. </throws>
 		/// <deprecated> Please specify the exact type, instead.
 		/// Especially, guessing does <b>not</b> work with the new
-		/// {@link NumericField} type.
+		/// <see cref="NumericField" /> type.
 		/// </deprecated>
         [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		System.Object GetAuto(IndexReader reader, System.String field);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none
-		/// is found reads the terms out of <code>field</code> and calls the given SortComparator
-		/// to get the sort values.  A hit in the cache will happen if <code>reader</code>,
-		/// <code>field</code>, and <code>comparator</code> are the same (using <code>equals()</code>)
+		/// is found reads the terms out of <c>field</c> and calls the given SortComparator
+		/// to get the sort values.  A hit in the cache will happen if <c>reader</c>,
+		/// <c>field</c>, and <c>comparator</c> are the same (using <c>equals()</c>)
 		/// as a previous call to this method.
 		/// </summary>
 		/// <param name="reader"> Used to get field values.
@@ -626,8 +626,8 @@ namespace Lucene.Net.Search
 		/// <returns> Array of sort objects, one for each document.
 		/// </returns>
 		/// <throws>  IOException  If any error occurs. </throws>
-		/// <deprecated> Please implement {@link
-		/// FieldComparatorSource} directly, instead.
+		/// <deprecated> Please implement <see cref="FieldComparatorSource" />
+		/// directly, instead.
 		/// </deprecated>
         [Obsolete("Please implement FieldComparatorSource directly, instead.")]
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
@@ -677,24 +677,23 @@ namespace Lucene.Net.Search
 		
 		/// <summary> If non-null, FieldCacheImpl will warn whenever
 		/// entries are created that are not sane according to
-		/// {@link Lucene.Net.Util.FieldCacheSanityChecker}.
+		/// <see cref="Lucene.Net.Util.FieldCacheSanityChecker" />.
 		/// </summary>
 		void  SetInfoStream(System.IO.StreamWriter stream);
 		
-		/// <summary>counterpart of {@link #SetInfoStream(PrintStream)} </summary>
+		/// <summary>counterpart of <see cref="SetInfoStream(System.IO.StreamWriter)" /> </summary>
 		System.IO.StreamWriter GetInfoStream();
 	}
 	
 	/// <summary> Marker interface as super-interface to all parsers. It
-	/// is used to specify a custom parser to {@link
-	/// SortField#SortField(String, FieldCache.Parser)}.
+	/// is used to specify a custom parser to <see cref="SortField(String, Parser)" />.
 	/// </summary>
 	public interface Parser
 	{
 	}
 	
 	/// <summary>Interface to parse bytes from document fields.</summary>
-	/// <seealso cref="FieldCache.GetBytes(IndexReader, String, FieldCache.ByteParser)">
+	/// <seealso cref="FieldCache.GetBytes(IndexReader, String, ByteParser)">
 	/// </seealso>
 	public interface ByteParser:Parser
 	{
@@ -703,7 +702,7 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse shorts from document fields.</summary>
-	/// <seealso cref="FieldCache.GetShorts(IndexReader, String, FieldCache.ShortParser)">
+	/// <seealso cref="FieldCache.GetShorts(IndexReader, String, ShortParser)">
 	/// </seealso>
 	public interface ShortParser:Parser
 	{
@@ -712,7 +711,7 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse ints from document fields.</summary>
-	/// <seealso cref="FieldCache.GetInts(IndexReader, String, FieldCache.IntParser)">
+	/// <seealso cref="FieldCache.GetInts(IndexReader, String, IntParser)">
 	/// </seealso>
 	public interface IntParser:Parser
 	{
@@ -721,7 +720,7 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse floats from document fields.</summary>
-	/// <seealso cref="FieldCache.GetFloats(IndexReader, String, FieldCache.FloatParser)">
+	/// <seealso cref="FieldCache.GetFloats(IndexReader, String, FloatParser)">
 	/// </seealso>
 	public interface FloatParser:Parser
 	{
@@ -730,9 +729,9 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse long from document fields.</summary>
-	/// <seealso cref="FieldCache.GetLongs(IndexReader, String, FieldCache.LongParser)">
+	/// <seealso cref="FieldCache.GetLongs(IndexReader, String, LongParser)">
 	/// </seealso>
-	/// <deprecated> Use {@link FieldCache.LongParser}, this will be removed in Lucene 3.0 
+	/// <deprecated> Use <see cref="LongParser" />, this will be removed in Lucene 3.0 
 	/// </deprecated>
     [Obsolete("Use FieldCache.LongParser, this will be removed in Lucene 3.0")]
 	public interface LongParser:Parser
@@ -742,9 +741,9 @@ namespace Lucene.Net.Search
 	}
 	
 	/// <summary>Interface to parse doubles from document fields.</summary>
-	/// <seealso cref="FieldCache.GetDoubles(IndexReader, String, FieldCache.DoubleParser)">
+	/// <seealso cref="FieldCache.GetDoubles(IndexReader, String, DoubleParser)">
 	/// </seealso>
-	/// <deprecated> Use {@link FieldCache.DoubleParser}, this will be removed in Lucene 3.0 
+	/// <deprecated> Use <see cref="DoubleParser" />, this will be removed in Lucene 3.0 
 	/// </deprecated>
     [Obsolete("Use FieldCache.DoubleParser, this will be removed in Lucene 3.0 ")]
 	public interface DoubleParser:Parser

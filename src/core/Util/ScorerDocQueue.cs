@@ -203,11 +203,11 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>Should be called when the scorer at top changes doc() value.
-		/// Still log(n) worst case, but it's at least twice as fast to <pre>
+        /// Still log(n) worst case, but it's at least twice as fast to <c>
 		/// { pq.top().change(); pq.adjustTop(); }
-		/// </pre> instead of <pre>
+        /// </c> instead of <c>
 		/// { o = pq.pop(); o.change(); pq.push(o); }
-		/// </pre>
+        /// </c>
 		/// </summary>
 		public void  AdjustTop()
 		{

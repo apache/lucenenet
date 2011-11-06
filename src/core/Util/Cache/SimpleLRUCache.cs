@@ -116,7 +116,7 @@ namespace Lucene.Net.Util.Cache
   
 
 	/// <summary> Simple LRU cache implementation that uses a LinkedHashMap.
-	/// This cache is not synchronized, use {@link Cache#SynchronizedCache(Cache)}
+	/// This cache is not synchronized, use <see cref="Cache.SynchronizedCache(Cache)" />
 	/// if needed.
 	/// 
 	/// </summary>

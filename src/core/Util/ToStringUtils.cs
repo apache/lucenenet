@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> Helper methods to ease implementing {@link Object#toString()}.</summary>
+	/// <summary> Helper methods to ease implementing <see cref="Object.ToString()" />.</summary>
 	public class ToStringUtils
 	{
 		/// <summary>for printing boost only if not 1.0 </summary>

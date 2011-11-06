@@ -23,13 +23,13 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary> A SinkTokenizer can be used to cache Tokens for use in an Analyzer
 	/// <p/>
-	/// WARNING: {@link TeeTokenFilter} and {@link SinkTokenizer} only work with the old TokenStream API.
-	/// If you switch to the new API, you need to use {@link TeeSinkTokenFilter} instead, which offers 
+	/// WARNING: <see cref="TeeTokenFilter" /> and <see cref="SinkTokenizer" /> only work with the old TokenStream API.
+	/// If you switch to the new API, you need to use <see cref="TeeSinkTokenFilter" /> instead, which offers 
 	/// the same functionality.
 	/// </summary>
 	/// <seealso cref="TeeTokenFilter">
 	/// </seealso>
-	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
+	/// <deprecated> Use <see cref="TeeSinkTokenFilter" /> instead
 	/// 
 	/// 
 	/// </deprecated>
@@ -58,14 +58,14 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary> Get the tokens in the internal List.
 		/// <p/>
-		/// WARNING: Adding tokens to this list requires the {@link #Reset()} method to be called in order for them
-		/// to be made available.  Also, this Tokenizer does nothing to protect against {@link java.util.ConcurrentModificationException}s
-		/// in the case of adds happening while {@link #Next(Lucene.Net.Analysis.Token)} is being called.
+		/// WARNING: Adding tokens to this list requires the <see cref="Reset()" /> method to be called in order for them
+        /// to be made available.  Also, this Tokenizer does nothing to protect against <see cref="System.InvalidOperationException" />s
+		/// in the case of adds happening while <see cref="Next(Token)" /> is being called.
 		/// <p/>
 		/// WARNING: Since this SinkTokenizer can be reset and the cached tokens made available again, do not modify them. Modify clones instead.
 		/// 
 		/// </summary>
-		/// <returns> A List of {@link Lucene.Net.Analysis.Token}s
+		/// <returns> A List of <see cref="Lucene.Net.Analysis.Token" />s
 		/// </returns>
 		public virtual System.Collections.IList GetTokens()
 		{
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Returns the next token out of the list of cached tokens</summary>
-		/// <returns> The next {@link Lucene.Net.Analysis.Token} in the Sink.
+		/// <returns> The next <see cref="Lucene.Net.Analysis.Token" /> in the Sink.
 		/// </returns>
 		/// <throws>  IOException </throws>
         [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Analysis.TokenStream.Next(Lucene.Net.Analysis.Token)")]
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis
 		/// on the old tokens.
 		/// 
 		/// </summary>
-		/// <param name="t">The {@link Lucene.Net.Analysis.Token} to add to the sink
+		/// <param name="t">The <see cref="Lucene.Net.Analysis.Token" /> to add to the sink
 		/// </param>
 		public virtual void  Add(Token t)
 		{
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary> Reset the internal data structures to the start at the front of the list of tokens.  Should be called
-		/// if tokens were added to the list after an invocation of {@link #Next(Token)}
+		/// if tokens were added to the list after an invocation of <see cref="Next(Token)" />
 		/// </summary>
 		/// <throws>  IOException </throws>
 		public override void  Reset()

@@ -22,7 +22,7 @@ using TermDocs = Lucene.Net.Index.TermDocs;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
+	/// <summary>Expert: A <c>Scorer</c> for documents matching a <c>Term</c>.</summary>
 	public sealed class TermScorer:Scorer
 	{
 		
@@ -42,17 +42,17 @@ namespace Lucene.Net.Search
 		private const int SCORE_CACHE_SIZE = 32;
 		private float[] scoreCache = new float[SCORE_CACHE_SIZE];
 		
-		/// <summary> Construct a <code>TermScorer</code>.
+		/// <summary> Construct a <c>TermScorer</c>.
 		/// 
 		/// </summary>
-		/// <param name="weight">The weight of the <code>Term</code> in the query.
+		/// <param name="weight">The weight of the <c>Term</c> in the query.
 		/// </param>
-		/// <param name="td">An iterator over the documents matching the <code>Term</code>.
+		/// <param name="td">An iterator over the documents matching the <c>Term</c>.
 		/// </param>
-		/// <param name="similarity">The <code>Similarity</code> implementation to be used for score
+		/// <param name="similarity">The <c>Similarity</c> implementation to be used for score
 		/// computations.
 		/// </param>
-		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
+		/// <param name="norms">The field norms of the document fields for the <c>Term</c>.
 		/// </param>
 		public /*internal*/ TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms):base(similarity)
 		{
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 				scoreCache[i] = GetSimilarity().Tf(i) * weightValue;
 		}
 		
-		/// <deprecated> use {@link #Score(Collector)} instead. 
+		/// <deprecated> use <see cref="Score(Collector)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Score(Collector) instead. ")]
 		public override void  Score(HitCollector hc)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 			Score(c, System.Int32.MaxValue, NextDoc());
 		}
 		
-		/// <deprecated> use {@link #Score(Collector, int, int)} instead. 
+		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector c, int end)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 			return true;
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead. ")]
 		public override int Doc()
@@ -129,12 +129,12 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
-		/// {@link TermDocs#Read(int[],int[])}.
+		/// <see cref="TermDocs.Read(int[],int[])" />.
 		/// 
 		/// </summary>
 		/// <returns> true iff there is another document matching the query.
 		/// </returns>
-		/// <deprecated> use {@link #NextDoc()} instead.
+		/// <deprecated> use <see cref="NextDoc()" /> instead.
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Advances to the next document matching the query. <br/>
 		/// The iterator over the matching documents is buffered using
-		/// {@link TermDocs#Read(int[],int[])}.
+		/// <see cref="TermDocs.Read(int[],int[])" />.
 		/// 
 		/// </summary>
 		/// <returns> the document matching the query or -1 if there are no more documents.
@@ -180,14 +180,14 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Skips to the first match beyond the current whose document number is
 		/// greater than or equal to a given target. <br/>
-		/// The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// The implementation uses <see cref="TermDocs.SkipTo(int)" />.
 		/// 
 		/// </summary>
 		/// <param name="target">The target document number.
 		/// </param>
 		/// <returns> true iff there is such a match.
 		/// </returns>
-		/// <deprecated> use {@link #Advance(int)} instead.
+		/// <deprecated> use <see cref="Advance(int)" /> instead.
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Advances to the first match beyond the current whose document number is
 		/// greater than or equal to a given target. <br/>
-		/// The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// The implementation uses <see cref="TermDocs.SkipTo(int)" />.
 		/// 
 		/// </summary>
 		/// <param name="target">The target document number.
@@ -232,8 +232,8 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br/>When this method is used, the {@link #Next()} method
-		/// and the {@link #Score(HitCollector)} method should not be used.
+		/// <br/>When this method is used, the <see cref="Next()" /> method
+		/// and the <see cref="Score(HitCollector)" /> method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.
 		/// </param>
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
 			return tfExplanation;
 		}
 		
-		/// <summary>Returns a string representation of this <code>TermScorer</code>. </summary>
+		/// <summary>Returns a string representation of this <c>TermScorer</c>. </summary>
 		public override System.String ToString()
 		{
 			return "scorer(" + weight + ")";

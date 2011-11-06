@@ -36,18 +36,18 @@ namespace Lucene.Net.Index
 		/// </summary>
 		void  Seek(Term term);
 		
-		/// <summary>Sets this to the data for the current term in a {@link TermEnum}.
+		/// <summary>Sets this to the data for the current term in a <see cref="TermEnum" />.
 		/// This may be optimized in some implementations.
 		/// </summary>
 		void  Seek(TermEnum termEnum);
 		
-		/// <summary>Returns the current document number.  <p/> This is invalid until {@link
-		/// #Next()} is called for the first time.
+		/// <summary>Returns the current document number.  <p/> This is invalid until <see cref="Next()" />
+		/// is called for the first time.
 		/// </summary>
 		int Doc();
 		
 		/// <summary>Returns the frequency of the term within the current document.  <p/> This
-		/// is invalid until {@link #Next()} is called for the first time.
+		/// is invalid until <see cref="Next()" /> is called for the first time.
 		/// </summary>
 		int Freq();
 		
@@ -68,15 +68,15 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Skips entries to the first beyond the current whose document number is
 		/// greater than or equal to <i>target</i>. <p/>Returns true iff there is such
-		/// an entry.  <p/>Behaves as if written: <pre>
+        /// an entry.  <p/>Behaves as if written: <code>
 		/// boolean skipTo(int target) {
-		/// do {
-		/// if (!next())
-		/// return false;
-		/// } while (target > doc());
-		/// return true;
+		///     do {
+		///         if (!next())
+		///             return false;
+		///     } while (target > doc());
+		///         return true;
 		/// }
-		/// </pre>
+        /// </code>
 		/// Some implementations are considerably more efficient than that.
 		/// </summary>
 		bool SkipTo(int target);

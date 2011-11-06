@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> Simple standalone server that must be running when you
-	/// use {@link VerifyingLockFactory}.  This server simply
+	/// use <see cref="VerifyingLockFactory" />.  This server simply
 	/// verifies at most one process holds the lock at a time.
 	/// Run without any args to see usage.
 	/// 

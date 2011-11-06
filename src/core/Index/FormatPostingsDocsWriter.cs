@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-
-/// <summary>Consumes doc & freq, writing them using the current
-/// index file format 
-/// </summary>
-
 using System;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Index
 {
-	
+    /// <summary>Consumes doc and freq, writing them using the current
+    /// index file format 
+    /// </summary>
 	sealed class FormatPostingsDocsWriter:FormatPostingsDocsConsumer
 	{
 		

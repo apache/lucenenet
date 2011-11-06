@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Function
 	
 	/// <summary> Expert: represents field values as different types.
 	/// Normally created via a 
-	/// {@link Lucene.Net.Search.Function.ValueSource ValueSuorce} 
+	/// <see cref="Lucene.Net.Search.Function.ValueSource">ValueSuorce</see> 
 	/// for a particular field and reader.
 	/// 
 	/// <p/><font color="#FF0000">
@@ -104,10 +104,10 @@ namespace Lucene.Net.Search.Function
 		/// <summary> Expert: for test purposes only, return the inner array of values, or null if not applicable.
 		/// <p/>
 		/// Allows tests to verify that loaded values are:
-		/// <ol>
-		/// <li>indeed cached/reused.</li>
-		/// <li>stored in the expected size/type (byte/short/int/float).</li>
-		/// </ol>
+		/// <list type="bullet">
+		/// <item>indeed cached/reused.</item>
+		/// <item>stored in the expected size/type (byte/short/int/float).</item>
+		/// </list>
 		/// Note: implementations of DocValues must override this method for 
 		/// these test elements to be tested, Otherwise the test would not fail, just 
 		/// print a warning.
@@ -152,14 +152,14 @@ namespace Lucene.Net.Search.Function
 			computed = true;
 		}
 		
-		/// <summary> Returns the minimum of all values or <code>Float.NaN</code> if this
+		/// <summary> Returns the minimum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
 		/// <p/>
 		/// This operation is optional
 		/// <p/>
 		/// 
 		/// </summary>
-		/// <returns> the minimum of all values or <code>Float.NaN</code> if this
+		/// <returns> the minimum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
 		/// </returns>
 		public virtual float GetMinValue()
@@ -168,14 +168,14 @@ namespace Lucene.Net.Search.Function
 			return minVal;
 		}
 		
-		/// <summary> Returns the maximum of all values or <code>Float.NaN</code> if this
+		/// <summary> Returns the maximum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
 		/// <p/>
 		/// This operation is optional
 		/// <p/>
 		/// 
 		/// </summary>
-		/// <returns> the maximum of all values or <code>Float.NaN</code> if this
+		/// <returns> the maximum of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value.
 		/// </returns>
 		public virtual float GetMaxValue()
@@ -184,14 +184,14 @@ namespace Lucene.Net.Search.Function
 			return maxVal;
 		}
 		
-		/// <summary> Returns the average of all values or <code>Float.NaN</code> if this
+		/// <summary> Returns the average of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value. *
 		/// <p/>
 		/// This operation is optional
 		/// <p/>
 		/// 
 		/// </summary>
-		/// <returns> the average of all values or <code>Float.NaN</code> if this
+		/// <returns> the average of all values or <c>Float.NaN</c> if this
 		/// DocValues instance does not contain any value
 		/// </returns>
 		public virtual float GetAverageValue()

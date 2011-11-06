@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>Extends <code>TermFreqVector</code> to provide additional information about
+	/// <summary>Extends <c>TermFreqVector</c> to provide additional information about
 	/// positions in which each of the terms is found. A TermPositionVector not necessarily
 	/// contains both positions and offsets, but at least one of these arrays exists.
 	/// </summary>
@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Returns an array of positions in which the term is found.
 		/// Terms are identified by the index at which its number appears in the
-		/// term String array obtained from the <code>indexOf</code> method.
+		/// term String array obtained from the <c>indexOf</c> method.
 		/// May return null if positions have not been stored.
 		/// </summary>
 		int[] GetTermPositions(int index);

@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 		internal int preLen;
 		internal bool endEnum = false;
 		
-		/// <summary> Creates a new <code>WildcardTermEnum</code>.
+		/// <summary> Creates a new <c>WildcardTermEnum</c>.
 		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists.

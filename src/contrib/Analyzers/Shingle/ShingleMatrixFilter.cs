@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analyzers.Shingle
             : this( input, minimumShingleSize, maximumShingleSize, spacerCharacter, IgnoringSinglePrefixOrSuffixShingleByDefault) { }
 
         /// <summary>
-        /// Creates a shingle filter using the default {@link TokenSettingsCodec}.
+        /// Creates a shingle filter using the default <see cref="TokenSettingsCodec"/>.
         /// 
         /// See DefaultSettingsCodec
         /// </summary>
@@ -348,7 +348,7 @@ namespace Lucene.Net.Analyzers.Shingle
         /// Deprecated: Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
         /// </summary>
         /// <returns></returns>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling {@link #Next(Token)} or using the new IncrementToken() method with the new AttributeSource API.")]
+        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
         public override sealed Token Next()
         {
             return base.Next();
@@ -521,7 +521,7 @@ namespace Lucene.Net.Analyzers.Shingle
         }
 
         /// <summary>
-        /// Final touch of a shingle token before it is passed on to the consumer from method {@link #next(org.apache.lucene.analysis.Token)}.
+        /// Final touch of a shingle token before it is passed on to the consumer from method <see cref="Next(Token)"/>.
         /// 
         /// Calculates and sets type, flags, position increment, start/end offsets and weight.
         /// </summary>

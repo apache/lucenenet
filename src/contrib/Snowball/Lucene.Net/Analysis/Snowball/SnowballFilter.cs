@@ -27,9 +27,9 @@ namespace Lucene.Net.Analysis.Snowball
 	
 	/// <summary>A filter that stems words using a Snowball-generated stemmer.
 	/// 
-	/// Available stemmers are listed in {@link SF.Snowball.Ext}.  The name of a
+	/// Available stemmers are listed in <see cref="SF.Snowball.Ext"/>.  The name of a
 	/// stemmer is the part of the class name before "Stemmer", e.g., the stemmer in
-	/// {@link EnglishStemmer} is named "English".
+	/// <see cref="EnglishStemmer"/> is named "English".
 	/// </summary>
 	
 	public class SnowballFilter : TokenFilter
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Snowball
 		/// <summary>Construct the named stemming filter.
 		/// 
 		/// </summary>
-		/// <param name="in">the input tokens to stem
+        /// <param name="in_Renamed">the input tokens to stem
 		/// </param>
 		/// <param name="name">the name of a stemmer
 		/// </param>

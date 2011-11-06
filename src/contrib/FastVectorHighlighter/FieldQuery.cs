@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -287,9 +287,9 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         /**
          * 
-         * @param fieldName
-         * @param term
-         * @return QueryPhraseMap
+         * <param name="fieldName"></param>
+         * <param name="term"></param>
+         * <returns>QueryPhraseMap</returns>
          */
         public QueryPhraseMap GetFieldTermMap(String fieldName, String term)
         {
@@ -299,9 +299,9 @@ namespace Lucene.Net.Search.Vectorhighlight
 
         /**
          * 
-         * @param fieldName
-         * @param phraseCandidate
-         * @return QueryPhraseMap
+         * <param name="fieldName"></param>
+         * <param name="phraseCandidate"></param>
+         * <returns>QueryPhraseMap</returns>
          */
         public QueryPhraseMap SearchPhrase(String fieldName, List<TermInfo> phraseCandidate)
         {

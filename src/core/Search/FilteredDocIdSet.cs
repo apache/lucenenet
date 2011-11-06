@@ -29,10 +29,10 @@ namespace Lucene.Net.Search
 	/// Technically, this same functionality could be achieved
 	/// with ChainedFilter (under contrib/misc), however the
 	/// benefit of this class is it never materializes the full
-	/// bitset for the filter.  Instead, the {@link #match}
+	/// bitset for the filter.  Instead, the <see cref="Match" />
 	/// method is invoked on-demand, per docID visited during
 	/// searching.  If you know few docIDs will be visited, and
-	/// the logic behind {@link #match} is relatively costly,
+	/// the logic behind <see cref="Match" /> is relatively costly,
 	/// this may be a better way to filter than ChainedFilter.
 	/// 
 	/// </summary>

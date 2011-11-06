@@ -20,8 +20,8 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Simplistic {@link CharFilter} that applies the mappings
-	/// contained in a {@link NormalizeCharMap} to the character
+	/// <summary> Simplistic <see cref="CharFilter" /> that applies the mappings
+	/// contained in a <see cref="NormalizeCharMap" /> to the character
 	/// stream, and correcting the resulting changes to the
 	/// offsets.
 	/// </summary>
@@ -35,13 +35,13 @@ namespace Lucene.Net.Analysis
 		private int charPointer;
 		private int nextCharCounter;
 		
-		/// Default constructor that takes a {@link CharStream}.
+		/// Default constructor that takes a <see cref="CharStream" />.
 		public MappingCharFilter(NormalizeCharMap normMap, CharStream in_Renamed):base(in_Renamed)
 		{
 			this.normMap = normMap;
 		}
 		
-		/// Easy-use constructor that takes a {@link Reader}.
+		/// Easy-use constructor that takes a <see cref="System.IO.TextReader" />.
 		public MappingCharFilter(NormalizeCharMap normMap, System.IO.TextReader in_Renamed):base(CharReader.Get(in_Renamed))
 		{
 			this.normMap = normMap;

@@ -32,13 +32,13 @@ namespace Lucene.Net.Analysis
 	/// To use this with LowerCaseTokenizer, for example, you'd write an
 	/// analyzer like this:
 	/// <p/>
-	/// <PRE>
+	/// <code>
 	/// class MyAnalyzer extends Analyzer {
-	/// public final TokenStream tokenStream(String fieldName, Reader reader) {
-	/// return new PorterStemFilter(new LowerCaseTokenizer(reader));
+	///     public final TokenStream tokenStream(String fieldName, Reader reader) {
+	///          return new PorterStemFilter(new LowerCaseTokenizer(reader));
+	///     }
 	/// }
-	/// }
-	/// </PRE>
+	/// </code>
 	/// </summary>
 	public sealed class PorterStemFilter:TokenFilter
 	{

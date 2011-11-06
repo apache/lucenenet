@@ -47,15 +47,15 @@ namespace Lucene.Net.Analysis
 	/// with type "eos".  The default token type is "word".  
 	/// <p/>
 	/// A Token can optionally have metadata (a.k.a. Payload) in the form of a variable
-	/// length byte array. Use {@link TermPositions#GetPayloadLength()} and 
-	/// {@link TermPositions#GetPayload(byte[], int)} to retrieve the payloads from the index.
+	/// length byte array. Use <see cref="TermPositions.GetPayloadLength()" /> and 
+	/// <see cref="TermPositions.GetPayload(byte[], int)" /> to retrieve the payloads from the index.
 	/// </summary>
 	/// <summary><br/><br/>
 	/// </summary>
-	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all {@link Attribute} interfaces
-	/// that are part of core Lucene and can be found in the {@code tokenattributes} subpackage.
+	/// <summary><p/><b>NOTE:</b> As of 2.9, Token implements all <see cref="Attribute" /> interfaces
+	/// that are part of core Lucene and can be found in the <see cref="Lucene.Net.Analysis.Tokenattributes"/> namespace.
 	/// Even though it is not necessary to use Token anymore, with the new TokenStream API it can
-	/// be used as convenience class that implements all {@link Attribute}s, which is especially useful
+	/// be used as convenience class that implements all <see cref="Attribute" />s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
 	/// </summary>
 	/// <summary><br/><br/>
@@ -69,65 +69,65 @@ namespace Lucene.Net.Analysis
 	/// String for every term.  The APIs that accept String
 	/// termText are still available but a warning about the
 	/// associated performance cost has been added (below).  The
-	/// {@link #TermText()} method has been deprecated.<p/>
+	/// <see cref="TermText()" /> method has been deprecated.<p/>
 	/// </summary>
 	/// <summary><p/>Tokenizers and TokenFilters should try to re-use a Token instance when
 	/// possible for best performance, by implementing the
-	/// {@link TokenStream#IncrementToken()} API.
+	/// <see cref="TokenStream.IncrementToken()" /> API.
 	/// Failing that, to create a new Token you should first use
 	/// one of the constructors that starts with null text.  To load
-	/// the token from a char[] use {@link #SetTermBuffer(char[], int, int)}.
-	/// To load from a String use {@link #SetTermBuffer(String)} or {@link #SetTermBuffer(String, int, int)}.
-	/// Alternatively you can get the Token's termBuffer by calling either {@link #TermBuffer()},
+	/// the token from a char[] use <see cref="SetTermBuffer(char[], int, int)" />.
+	/// To load from a String use <see cref="SetTermBuffer(String)" /> or <see cref="SetTermBuffer(String, int, int)" />.
+	/// Alternatively you can get the Token's termBuffer by calling either <see cref="TermBuffer()" />,
 	/// if you know that your text is shorter than the capacity of the termBuffer
-	/// or {@link #ResizeTermBuffer(int)}, if there is any possibility
+	/// or <see cref="ResizeTermBuffer(int)" />, if there is any possibility
 	/// that you may need to grow the buffer. Fill in the characters of your term into this
-	/// buffer, with {@link String#getChars(int, int, char[], int)} if loading from a string,
-	/// or with {@link System#arraycopy(Object, int, Object, int, int)}, and finally call {@link #SetTermLength(int)} to
+    /// buffer, with <see cref="string.ToCharArray(int, int)" /> if loading from a string,
+	/// or with <see cref="Array.Copy(Array, long, Array, long, long)" />, and finally call <see cref="SetTermLength(int)" /> to
 	/// set the length of the term text.  See <a target="_top"
 	/// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
 	/// for details.<p/>
 	/// <p/>Typical Token reuse patterns:
-	/// <ul>
-	/// <li> Copying text from a string (type is reset to {@link #DEFAULT_TYPE} if not
+	/// <list type="bullet">
+	/// <item> Copying text from a string (type is reset to <see cref="DEFAULT_TYPE" /> if not
 	/// specified):<br/>
-	/// <pre>
+	/// <code>
 	/// return reusableToken.reinit(string, startOffset, endOffset[, type]);
-	/// </pre>
-	/// </li>
-	/// <li> Copying some text from a string (type is reset to {@link #DEFAULT_TYPE}
+	/// </code>
+	/// </item>
+	/// <item> Copying some text from a string (type is reset to <see cref="DEFAULT_TYPE" />
 	/// if not specified):<br/>
-	/// <pre>
+    /// <code>
 	/// return reusableToken.reinit(string, 0, string.length(), startOffset, endOffset[, type]);
-	/// </pre>
-	/// </li>
-	/// <li> Copying text from char[] buffer (type is reset to {@link #DEFAULT_TYPE}
+    /// </code>
+	/// </item>
+	/// <item> Copying text from char[] buffer (type is reset to <see cref="DEFAULT_TYPE" />
 	/// if not specified):<br/>
-	/// <pre>
+    /// <code>
 	/// return reusableToken.reinit(buffer, 0, buffer.length, startOffset, endOffset[, type]);
-	/// </pre>
-	/// </li>
-	/// <li> Copying some text from a char[] buffer (type is reset to
-	/// {@link #DEFAULT_TYPE} if not specified):<br/>
-	/// <pre>
+    /// </code>
+	/// </item>
+	/// <item> Copying some text from a char[] buffer (type is reset to
+	/// <see cref="DEFAULT_TYPE" /> if not specified):<br/>
+    /// <code>
 	/// return reusableToken.reinit(buffer, start, end - start, startOffset, endOffset[, type]);
-	/// </pre>
-	/// </li>
-	/// <li> Copying from one one Token to another (type is reset to
-	/// {@link #DEFAULT_TYPE} if not specified):<br/>
-	/// <pre>
+    /// </code>
+	/// </item>
+	/// <item> Copying from one one Token to another (type is reset to
+	/// <see cref="DEFAULT_TYPE" /> if not specified):<br/>
+    /// <code>
 	/// return reusableToken.reinit(source.termBuffer(), 0, source.termLength(), source.startOffset(), source.endOffset()[, source.type()]);
-	/// </pre>
-	/// </li>
-	/// </ul>
+    /// </code>
+	/// </item>
+	/// </list>
 	/// A few things to note:
-	/// <ul>
-	/// <li>clear() initializes all of the fields to default values. This was changed in contrast to Lucene 2.4, but should affect no one.</li>
-	/// <li>Because <code>TokenStreams</code> can be chained, one cannot assume that the <code>Token's</code> current type is correct.</li>
-	/// <li>The startOffset and endOffset represent the start and offset in the
-	/// source text, so be careful in adjusting them.</li>
-	/// <li>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</li>
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>clear() initializes all of the fields to default values. This was changed in contrast to Lucene 2.4, but should affect no one.</item>
+	/// <item>Because <c>TokenStreams</c> can be chained, one cannot assume that the <c>Token's</c> current type is correct.</item>
+	/// <item>The startOffset and endOffset represent the start and offset in the
+	/// source text, so be careful in adjusting them.</item>
+	/// <item>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</item>
+	/// </list>
 	/// <p/>
 	/// </summary>
 	/// <seealso cref="Lucene.Net.Index.Payload">
@@ -148,38 +148,38 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary> Characters for the term text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #TermBuffer()}, 
-		/// {@link #SetTermBuffer(char[], int, int)},
-		/// {@link #SetTermBuffer(String)}, or
-		/// {@link #SetTermBuffer(String, int, int)}
+		/// <see cref="TermBuffer()" />, 
+		/// <see cref="SetTermBuffer(char[], int, int)" />,
+		/// <see cref="SetTermBuffer(String)" />, or
+		/// <see cref="SetTermBuffer(String, int, int)" />
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: TermBuffer(), SetTermBuffer(char[], int, int), SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		internal char[] termBuffer;
 		
 		/// <summary> Length of term text in the buffer.</summary>
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #TermLength()}, or @{link setTermLength(int)}.
+        /// <see cref="TermLength()" />, or <see cref="SetTermLength(int)"/>.
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: TermLength(), or setTermLength(int)")]
 		internal int termLength;
 		
 		/// <summary> Start in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #StartOffset()}, or @{link setStartOffset(int)}.
+        /// <see cref="StartOffset()" />, or <see cref="SetStartOffset(int)"/>.
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: StartOffset(), or SetStartOffset(int).")]
 		internal int startOffset;
 		
 		/// <summary> End in source text.</summary>
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #EndOffset()}, or @{link setEndOffset(int)}.
+        /// <see cref="EndOffset()" />, or <see cref="SetEndOffset(int)"/>.
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: EndOffset(), or SetEndOffset(int).")]
 		internal int endOffset;
 		
 		/// <summary> The lexical type of the token.</summary>
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #Type()}, or @{link setType(String)}.
+        /// <see cref="Type()" />, or <see cref="SetType(String)"/>.
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: Type(), or SetType(String).")]
 		internal System.String type = DEFAULT_TYPE;
@@ -187,15 +187,15 @@ namespace Lucene.Net.Analysis
 		private int flags;
 		
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #GetPayload()}, or @{link setPayload(Payload)}.
+        /// <see cref="GetPayload()" />, or <see cref="SetPayload(Payload)"/>.
 		/// </deprecated>
         [Obsolete("This will be made private. Instead, use: GetPayload(), or SetPayload(Payload).")]
 		internal Payload payload;
 		
 		/// <deprecated> This will be made private. Instead, use:
-		/// {@link #GetPositionIncrement()}, or @{link setPositionIncrement(String)}.
+        /// <see cref="GetPositionIncrement()" />, or <see cref="SetPositionIncrement(int)"/>.
 		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: GetPositionIncrement(), or SetPositionIncrement(String).")]
+        [Obsolete("This will be made private. Instead, use: GetPositionIncrement(), or SetPositionIncrement(int).")]
 		internal int positionIncrement = 1;
 		
 		/// <summary>Constructs a Token will null text. </summary>
@@ -331,28 +331,28 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Set the position increment.  This determines the position of this token
-		/// relative to the previous Token in a {@link TokenStream}, used in phrase
+		/// relative to the previous Token in a <see cref="TokenStream" />, used in phrase
 		/// searching.
 		/// 
 		/// <p/>The default value is one.
 		/// 
-		/// <p/>Some common uses for this are:<ul>
+		/// <p/>Some common uses for this are:<list>
 		/// 
-		/// <li>Set it to zero to put multiple terms in the same position.  This is
+		/// <item>Set it to zero to put multiple terms in the same position.  This is
 		/// useful if, e.g., a word has multiple stems.  Searches for phrases
 		/// including either stem will match.  In this case, all but the first stem's
 		/// increment should be set to zero: the increment of the first instance
 		/// should be one.  Repeating a token with an increment of zero can also be
-		/// used to boost the scores of matches on that token.</li>
+		/// used to boost the scores of matches on that token.</item>
 		/// 
-		/// <li>Set it to values greater than one to inhibit exact phrase matches.
+		/// <item>Set it to values greater than one to inhibit exact phrase matches.
 		/// If, for example, one does not want phrases to match across removed stop
 		/// words, then one could build a stop word filter that removes stop words and
 		/// also sets the increment to the number of stop words removed before each
 		/// non-stop word.  Then exact phrase queries will only match when the terms
-		/// occur with no intervening stop words.</li>
+		/// occur with no intervening stop words.</item>
 		/// 
-		/// </ul>
+		/// </list>
 		/// </summary>
 		/// <param name="positionIncrement">the distance from the prior term
 		/// </param>
@@ -366,7 +366,7 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="setPositionIncrement">
+		/// <seealso cref="SetPositionIncrement">
 		/// </seealso>
 		public virtual int GetPositionIncrement()
 		{
@@ -377,9 +377,9 @@ namespace Lucene.Net.Analysis
 		/// indexing speed you should instead use the char[]
 		/// termBuffer methods to set the term text.
 		/// </summary>
-		/// <deprecated> use {@link #SetTermBuffer(char[], int, int)} or
-		/// {@link #SetTermBuffer(String)} or
-		/// {@link #SetTermBuffer(String, int, int)}.
+		/// <deprecated> use <see cref="SetTermBuffer(char[], int, int)" /> or
+		/// <see cref="SetTermBuffer(String)" /> or
+		/// <see cref="SetTermBuffer(String, int, int)" />.
 		/// </deprecated>
         [Obsolete("Use SetTermBuffer(char[], int, int) or SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
 		public virtual void  SetTermText(System.String text)
@@ -393,9 +393,9 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <deprecated> This method now has a performance penalty
 		/// because the text is stored internally in a char[].  If
-		/// possible, use {@link #TermBuffer()} and {@link
-		/// #TermLength()} directly instead.  If you really need a
-		/// String, use {@link #Term()}
+		/// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()"/>
+		/// directly instead.  If you really need a
+		/// String, use <see cref="Term()" />
 		/// </deprecated>
 		public System.String TermText()
 		{
@@ -408,8 +408,8 @@ namespace Lucene.Net.Analysis
 		/// 
 		/// This method has a performance penalty
 		/// because the text is stored internally in a char[].  If
-		/// possible, use {@link #TermBuffer()} and {@link
-		/// #TermLength()} directly instead.  If you really need a
+        /// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()"/>
+        /// directly instead.  If you really need a
 		/// String, use this method, which is nothing more than
 		/// a convenience call to <b>new String(token.termBuffer(), 0, token.termLength())</b>
 		/// </summary>
@@ -471,10 +471,10 @@ namespace Lucene.Net.Analysis
 		
 		/// <summary>Returns the internal termBuffer character array which
 		/// you can then directly alter.  If the array is too
-		/// small for your token, use {@link
-		/// #ResizeTermBuffer(int)} to increase it.  After
-		/// altering the buffer be sure to call {@link
-		/// #setTermLength} to record the number of valid
+		/// small for your token, use <see cref="ResizeTermBuffer(int)" />
+		/// to increase it.  After
+		/// altering the buffer be sure to call <see cref="SetTermLength" />
+		/// to record the number of valid
 		/// characters that were placed into the termBuffer. 
 		/// </summary>
 		public char[] TermBuffer()
@@ -486,9 +486,9 @@ namespace Lucene.Net.Analysis
 		/// <summary>Grows the termBuffer to at least size newSize, preserving the
 		/// existing content. Note: If the next operation is to change
 		/// the contents of the term buffer use
-		/// {@link #SetTermBuffer(char[], int, int)},
-		/// {@link #SetTermBuffer(String)}, or
-		/// {@link #SetTermBuffer(String, int, int)}
+		/// <see cref="SetTermBuffer(char[], int, int)" />,
+		/// <see cref="SetTermBuffer(String)" />, or
+		/// <see cref="SetTermBuffer(String, int, int)" />
 		/// to optimally combine the resize with the setting of the termBuffer.
 		/// </summary>
 		/// <param name="newSize">minimum size of the new termBuffer
@@ -596,7 +596,7 @@ namespace Lucene.Net.Analysis
 		/// the termBuffer array. Use this to truncate the termBuffer
 		/// or to synchronize with external manipulation of the termBuffer.
 		/// Note: to grow the size of the array,
-		/// use {@link #ResizeTermBuffer(int)} first.
+		/// use <see cref="ResizeTermBuffer(int)" /> first.
 		/// </summary>
 		/// <param name="length">the truncated length
 		/// </param>
@@ -670,8 +670,8 @@ namespace Lucene.Net.Analysis
 		/// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
 		/// <p/>
 		/// 
-		/// Get the bitset for any bits that have been set.  This is completely distinct from {@link #Type()}, although they do share similar purposes.
-		/// The flags can be used to encode information about the token for use by other {@link Lucene.Net.Analysis.TokenFilter}s.
+		/// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="Type()" />, although they do share similar purposes.
+		/// The flags can be used to encode information about the token for use by other <see cref="TokenFilter"/>s.
 		/// 
 		/// 
 		/// </summary>
@@ -825,11 +825,11 @@ namespace Lucene.Net.Analysis
 			type = DEFAULT_TYPE;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(char[], int, int)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset},
-		/// {@link #setType}
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(char[], int, int)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />,
+		/// <see cref="SetType" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -845,11 +845,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(char[], int, int)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset}
-		/// {@link #setType} on Token.DEFAULT_TYPE
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(char[], int, int)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />
+		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -863,11 +863,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(String)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset}
-		/// {@link #setType}
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(String)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />
+		/// <see cref="SetType" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -881,11 +881,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(String, int, int)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset}
-		/// {@link #setType}
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(String, int, int)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />
+		/// <see cref="SetType" />
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -899,11 +899,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(String)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset}
-		/// {@link #setType} on Token.DEFAULT_TYPE
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(String)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />
+		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>
@@ -917,11 +917,11 @@ namespace Lucene.Net.Analysis
 			return this;
 		}
 		
-		/// <summary>Shorthand for calling {@link #clear},
-		/// {@link #SetTermBuffer(String, int, int)},
-		/// {@link #setStartOffset},
-		/// {@link #setEndOffset}
-		/// {@link #setType} on Token.DEFAULT_TYPE
+		/// <summary>Shorthand for calling <see cref="Clear" />,
+		/// <see cref="SetTermBuffer(String, int, int)" />,
+		/// <see cref="SetStartOffset" />,
+		/// <see cref="SetEndOffset" />
+		/// <see cref="SetType" /> on Token.DEFAULT_TYPE
 		/// </summary>
 		/// <returns> this Token instance 
 		/// </returns>

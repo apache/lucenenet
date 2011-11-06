@@ -24,7 +24,7 @@ using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A {@link Filter} that only accepts documents whose single
+	/// <summary> A <see cref="Filter" /> that only accepts documents whose single
 	/// term value in the specified field is contained in the
 	/// provided set of allowed terms.
 	/// 
@@ -40,23 +40,23 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// 
 	/// The first invocation of this filter on a given field will
-	/// be slower, since a {@link FieldCache.StringIndex} must be
+	/// be slower, since a <see cref="StringIndex" /> must be
 	/// created.  Subsequent invocations using the same field
 	/// will re-use this cache.  However, as with all
-	/// functionality based on {@link FieldCache}, persistent RAM
+	/// functionality based on <see cref="FieldCache" />, persistent RAM
 	/// is consumed to hold the cache, and is not freed until the
-	/// {@link IndexReader} is closed.  In contrast, TermsFilter
+	/// <see cref="IndexReader" /> is closed.  In contrast, TermsFilter
 	/// has no persistent RAM consumption.
 	/// 
 	/// 
 	/// <p/>
 	/// 
 	/// With each search, this filter translates the specified
-	/// set of Terms into a private {@link OpenBitSet} keyed by
-	/// term number per unique {@link IndexReader} (normally one
+	/// set of Terms into a private <see cref="OpenBitSet" /> keyed by
+	/// term number per unique <see cref="IndexReader" /> (normally one
 	/// reader per segment).  Then, during matching, the term
 	/// number for each docID is retrieved from the cache and
-	/// then checked for inclusion using the {@link OpenBitSet}.
+	/// then checked for inclusion using the <see cref="OpenBitSet" />.
 	/// Since all testing is done using RAM resident data
 	/// structures, performance should be very fast, most likely
 	/// fast enough to not require further caching of the
@@ -67,12 +67,12 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>
 	/// 
-	/// In contrast, TermsFilter builds up an {@link OpenBitSet},
+	/// In contrast, TermsFilter builds up an <see cref="OpenBitSet" />,
 	/// keyed by docID, every time it's created, by enumerating
-	/// through all matching docs using {@link TermDocs} to seek
+	/// through all matching docs using <see cref="TermDocs" /> to seek
 	/// and scan through each term's docID list.  While there is
 	/// no linear scan of all docIDs, besides the allocation of
-	/// the underlying array in the {@link OpenBitSet}, this
+	/// the underlying array in the <see cref="OpenBitSet" />, this
 	/// approach requires a number of "disk seeks" in proportion
 	/// to the number of terms, which can be exceptionally costly
 	/// when there are cache misses in the OS's IO cache.
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
 				}
 				private int doc = - 1;
 				
-				/// <deprecated> use {@link #DocID()} instead. 
+				/// <deprecated> use <see cref="DocID()" /> instead. 
 				/// </deprecated>
                 [Obsolete("use DocID() instead.")]
 				public override int Doc()
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 					return doc;
 				}
 				
-				/// <deprecated> use {@link #NextDoc()} instead. 
+				/// <deprecated> use <see cref="NextDoc()" /> instead. 
 				/// </deprecated>
                 [Obsolete("use NextDoc() instead.")]
 				public override bool Next()
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
 					return doc;
 				}
 				
-				/// <deprecated> use {@link #Advance(int)} instead. 
+				/// <deprecated> use <see cref="Advance(int)" /> instead. 
 				/// </deprecated>
                 [Obsolete("use Advance(int) instead.")]
 				public override bool SkipTo(int target)

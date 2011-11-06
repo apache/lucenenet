@@ -60,8 +60,8 @@ namespace Lucene.Net.Index
 		/// </summary>
 		internal int indexInterval = 128;
 		
-		/// <summary>Expert: The fraction of {@link TermDocs} entries stored in skip tables,
-		/// used to accellerate {@link TermDocs#SkipTo(int)}.  Larger values result in
+		/// <summary>Expert: The fraction of <see cref="TermDocs" /> entries stored in skip tables,
+		/// used to accellerate <see cref="TermDocs.SkipTo(int)" />.  Larger values result in
 		/// smaller indexes, greater acceleration, but fewer accelerable cases, while
 		/// smaller values result in bigger indexes, less acceleration and more
 		/// accelerable cases. More detailed experiments would be useful here. 

@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>A {@link MergeScheduler} that simply does each merge
+	/// <summary>A <see cref="MergeScheduler" /> that simply does each merge
 	/// sequentially, using the current thread. 
 	/// </summary>
 	public class SerialMergeScheduler:MergeScheduler

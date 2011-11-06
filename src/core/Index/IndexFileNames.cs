@@ -92,9 +92,9 @@ namespace Lucene.Net.Index
 		
 		/// <summary> This array contains all filename extensions used by
 		/// Lucene's index files, with two exceptions, namely the
-		/// extension made up from <code>.f</code> + a number and
-		/// from <code>.s</code> + a number.  Also note that
-		/// Lucene's <code>segments_N</code> files do not have any
+		/// extension made up from <c>.f</c> + a number and
+		/// from <c>.s</c> + a number.  Also note that
+		/// Lucene's <c>segments_N</c> files do not have any
 		/// filename extension.
 		/// </summary>
 		public /*internal*/ static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{COMPOUND_FILE_EXTENSION, FIELD_INFOS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, DELETES_EXTENSION, VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION, GEN_EXTENSION, NORMS_EXTENSION, COMPOUND_FILE_STORE_EXTENSION};
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 		/// If it's > 0, the file name is 
 		/// 
 		/// </summary>
-		/// <param name="base">-- main part of the file name
+        /// <param name="base_Renamed">-- main part of the file name
 		/// </param>
 		/// <param name="extension">-- extension of the filename (including .)
 		/// </param>

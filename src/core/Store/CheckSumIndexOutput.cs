@@ -76,8 +76,8 @@ namespace Lucene.Net.Store
 		
 		/// <summary> Starts but does not complete the commit of this file (=
 		/// writing of the final checksum at the end).  After this
-		/// is called must call {@link #finishCommit} and the
-		/// {@link #close} to complete the commit.
+		/// is called must call <see cref="FinishCommit" /> and the
+		/// <see cref="Close" /> to complete the commit.
 		/// </summary>
 		public virtual void  PrepareCommit()
 		{
@@ -93,7 +93,7 @@ namespace Lucene.Net.Store
 			main.Seek(pos);
 		}
 		
-		/// <summary>See {@link #prepareCommit} </summary>
+		/// <summary>See <see cref="PrepareCommit" /> </summary>
 		public virtual void  FinishCommit()
 		{
 			main.WriteLong(GetChecksum());

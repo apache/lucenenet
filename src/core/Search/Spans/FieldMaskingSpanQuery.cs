@@ -27,14 +27,14 @@ using Weight = Lucene.Net.Search.Weight;
 namespace Lucene.Net.Search.Spans
 {
 	
-	/// <summary> <p/>Wrapper to allow {@link SpanQuery} objects participate in composite 
+	/// <summary> <p/>Wrapper to allow <see cref="SpanQuery" /> objects participate in composite 
 	/// single-field SpanQueries by 'lying' about their search field. That is, 
 	/// the masked SpanQuery will function as normal, 
-	/// but {@link SpanQuery#GetField()} simply hands back the value supplied 
+	/// but <see cref="SpanQuery.GetField()" /> simply hands back the value supplied 
 	/// in this class's constructor.<p/>
 	/// 
-	/// <p/>This can be used to support Queries like {@link SpanNearQuery} or 
-	/// {@link SpanOrQuery} across different fields, which is not ordinarily 
+	/// <p/>This can be used to support Queries like <see cref="SpanNearQuery" /> or 
+	/// <see cref="SpanOrQuery" /> across different fields, which is not ordinarily 
 	/// permitted.<p/>
 	/// 
 	/// <p/>This can be useful for denormalized relational data: for example, when 
@@ -53,18 +53,18 @@ namespace Lucene.Net.Search.Spans
 	/// </pre>
 	/// 
 	/// <p/>a SpanNearQuery with a slop of 0 can be applied across two 
-	/// {@link SpanTermQuery} objects as follows:
-	/// <pre>
+	/// <see cref="SpanTermQuery" /> objects as follows:
+    /// <code>
 	/// SpanQuery q1  = new SpanTermQuery(new Term("studentfirstname", "james"));
 	/// SpanQuery q2  = new SpanTermQuery(new Term("studentsurname", "jones"));
 	/// SpanQuery q2m new FieldMaskingSpanQuery(q2, "studentfirstname");
 	/// Query q = new SpanNearQuery(new SpanQuery[]{q1, q2m}, -1, false);
-	/// </pre>
+    /// </code>
 	/// to search for 'studentfirstname:james studentsurname:jones' and find 
 	/// teacherid 1 without matching teacherid 2 (which has a 'james' in position 0 
 	/// and 'jones' in position 1). <p/>
 	/// 
-	/// <p/>Note: as {@link #GetField()} returns the masked field, scoring will be 
+	/// <p/>Note: as <see cref="GetField()" /> returns the masked field, scoring will be 
 	/// done using the norms of the field name supplied. This may lead to unexpected
 	/// scoring behaviour.<p/>
 	/// </summary>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Spans
 			return maskedQuery.GetSpans(reader);
 		}
 		
-		/// <deprecated> use {@link #ExtractTerms(Set)} instead. 
+		/// <deprecated> use <see cref="ExtractTerms(System.Collections.Hashtable)" /> instead. 
 		/// </deprecated>
         [Obsolete("use ExtractTerms(Hashtable) instead.")]
 		public override System.Collections.ICollection GetTerms()

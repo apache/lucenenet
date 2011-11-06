@@ -19,10 +19,10 @@ using System;
 
 namespace Lucene.Net.Store
 {
-	
-	/// <summary> A memory-resident {@link Directory} implementation.  Locking
-	/// implementation is by default the {@link SingleInstanceLockFactory}
-	/// but can be changed with {@link #setLockFactory}.
+
+    /// <summary> A memory-resident <see cref="Directory"/> implementation.  Locking
+    /// implementation is by default the <see cref="SingleInstanceLockFactory"/>
+    /// but can be changed with <see cref="Directory.SetLockFactory"/>.
 	/// 
 	/// </summary>
 	/// <version>  $Id: RAMDirectory.java 781333 2009-06-03 10:38:57Z mikemccand $
@@ -39,29 +39,29 @@ namespace Lucene.Net.Store
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
 		// *****
-		
-		/// <summary>Constructs an empty {@link Directory}. </summary>
+
+        /// <summary>Constructs an empty <see cref="Directory"/>. </summary>
 		public RAMDirectory()
 		{
 			SetLockFactory(new SingleInstanceLockFactory());
 		}
 		
-		/// <summary> Creates a new <code>RAMDirectory</code> instance from a different
-		/// <code>Directory</code> implementation.  This can be used to load
+		/// <summary> Creates a new <c>RAMDirectory</c> instance from a different
+		/// <c>Directory</c> implementation.  This can be used to load
 		/// a disk-based index into memory.
 		/// <p/>
 		/// This should be used only with indices that can fit into memory.
 		/// <p/>
-		/// Note that the resulting <code>RAMDirectory</code> instance is fully
-		/// independent from the original <code>Directory</code> (it is a
+		/// Note that the resulting <c>RAMDirectory</c> instance is fully
+		/// independent from the original <c>Directory</c> (it is a
 		/// complete copy).  Any subsequent changes to the
-		/// original <code>Directory</code> will not be visible in the
-		/// <code>RAMDirectory</code> instance.
+		/// original <c>Directory</c> will not be visible in the
+		/// <c>RAMDirectory</c> instance.
 		/// 
 		/// </summary>
-		/// <param name="dir">a <code>Directory</code> value
+		/// <param name="dir">a <c>Directory</c> value
 		/// </param>
-		/// <exception cref="IOException">if an error occurs
+		/// <exception cref="System.IO.IOException">if an error occurs
 		/// </exception>
 		public RAMDirectory(Directory dir):this(dir, false)
 		{
@@ -71,31 +71,31 @@ namespace Lucene.Net.Store
 		{
 			Directory.Copy(dir, this, closeDir);
 		}
-		
-		/// <summary> Creates a new <code>RAMDirectory</code> instance from the {@link FSDirectory}.
+
+        /// <summary> Creates a new <c>RAMDirectory</c> instance from the <see cref="FSDirectory"/>.
 		/// 
 		/// </summary>
-		/// <param name="dir">a <code>File</code> specifying the index directory
+		/// <param name="dir">a <c>File</c> specifying the index directory
 		/// 
 		/// </param>
 		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
-		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
+        /// <deprecated> Use <see cref="RAMDirectory(Directory)"/> instead
 		/// </deprecated>
         [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
 		{
 		}
-		
-		/// <summary> Creates a new <code>RAMDirectory</code> instance from the {@link FSDirectory}.
+
+        /// <summary> Creates a new <c>RAMDirectory</c> instance from the <see cref="FSDirectory"/>.
 		/// 
 		/// </summary>
-		/// <param name="dir">a <code>String</code> specifying the full index directory path
+		/// <param name="dir">a <c>String</c> specifying the full index directory path
 		/// 
 		/// </param>
 		/// <seealso cref="RAMDirectory(Directory)">
 		/// </seealso>
-		/// <deprecated> Use {@link #RAMDirectory(Directory)} instead
+        /// <deprecated> Use <see cref="RAMDirectory(Directory)"/> instead
 		/// </deprecated>
         [Obsolete("Use RAMDirectory(Directory) instead")]
 		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)

@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> For each Field, store a sorted collection of {@link TermVectorEntry}s
+	/// <summary> For each Field, store a sorted collection of <see cref="TermVectorEntry" />s
 	/// <p/>
 	/// This is not thread-safe.
 	/// </summary>
@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 		private System.Collections.Generic.IComparer<object> comparator;
 		
 		/// <summary> </summary>
-		/// <param name="comparator">A Comparator for sorting {@link TermVectorEntry}s
+		/// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
 		/// </param>
 		public FieldSortedTermVectorMapper(System.Collections.Generic.IComparer<object> comparator):this(false, false, comparator)
 		{
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
 		/// <summary> Get the mapping between fields and terms, sorted by the comparator
 		/// 
 		/// </summary>
-		/// <returns> A map between field names and {@link java.util.SortedSet}s per field.  SortedSet entries are {@link TermVectorEntry}
+        /// <returns> A map between field names and <see cref="System.Collections.Generic.SortedDictionary{Object,Object}" />s per field.  SortedSet entries are <see cref="TermVectorEntry" />
 		/// </returns>
 		public virtual System.Collections.IDictionary GetFieldToTerms()
 		{

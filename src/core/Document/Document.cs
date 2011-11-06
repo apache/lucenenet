@@ -28,15 +28,14 @@ namespace Lucene.Net.Documents
 	/// <summary>Documents are the unit of indexing and search.
 	/// 
 	/// A Document is a set of fields.  Each field has a name and a textual value.
-	/// A field may be {@link Fieldable#IsStored() stored} with the document, in which
+	/// A field may be <see cref="Fieldable.IsStored()">stored</see> with the document, in which
 	/// case it is returned with search hits on the document.  Thus each document
 	/// should typically contain one or more stored fields which uniquely identify
 	/// it.
 	/// 
-	/// <p/>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
-	/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
-	/// ScoreDoc#doc}, {@link Searcher#Doc(int)} or {@link
-	/// IndexReader#Document(int)}.
+	/// <p/>Note that fields which are <i>not</i> <see cref="Fieldable.IsStored()">stored</see> are
+	/// <i>not</i> available in documents retrieved from the index, e.g. with <see cref="ScoreDoc.doc" />,
+	/// <see cref="Searcher.Doc(int)" /> or <see cref="IndexReader.Document(int)" />.
 	/// </summary>
 	
 	[Serializable]
@@ -108,7 +107,7 @@ namespace Lucene.Net.Documents
 		/// 
 		/// <p/>The default value is 1.0.
 		/// 
-		/// <p/>Values are multiplied into the value of {@link Fieldable#GetBoost()} of
+		/// <p/>Values are multiplied into the value of <see cref="Fieldable.GetBoost()" /> of
 		/// each field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
 		/// 
@@ -120,7 +119,7 @@ namespace Lucene.Net.Documents
 			this.boost = boost;
 		}
 		
-		/// <summary>Returns, at indexing time, the boost factor as set by {@link #SetBoost(float)}. 
+		/// <summary>Returns, at indexing time, the boost factor as set by <see cref="SetBoost(float)" />. 
 		/// 
 		/// <p/>Note that once a document is indexed this value is no longer available
 		/// from the index.  At search time, for retrieved documents, this method always 
@@ -128,7 +127,7 @@ namespace Lucene.Net.Documents
 		/// time was ignored - it was just combined with other indexing time factors and 
 		/// stored elsewhere, for better indexing and search performance. (For more 
 		/// information see the "norm(t,d)" part of the scoring formula in 
-		/// {@link Lucene.Net.Search.Similarity Similarity}.)
+		/// <see cref="Lucene.Net.Search.Similarity">Similarity</see>.)
 		/// 
 		/// </summary>
 		/// <seealso cref="SetBoost(float)">
@@ -244,7 +243,7 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns an Enumeration of all the fields in a document.</summary>
-		/// <deprecated> use {@link #GetFields()} instead
+		/// <deprecated> use <see cref="GetFields()" /> instead
 		/// </deprecated>
         [Obsolete("Use GetFields() instead")]
 		public System.Collections.IEnumerator Fields()
@@ -253,10 +252,9 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns a List of all the fields in a document.
-		/// <p/>Note that fields which are <i>not</i> {@link Fieldable#IsStored() stored} are
+		/// <p/>Note that fields which are <i>not</i> <see cref="Fieldable.IsStored()">stored</see> are
 		/// <i>not</i> available in documents retrieved from the
-		/// index, e.g. {@link Searcher#Doc(int)} or {@link
-		/// IndexReader#Document(int)}.
+		/// index, e.g. <see cref="Searcher.Doc(int)" /> or <see cref="IndexReader.Document(int)" />.
 		/// </summary>
 		public System.Collections.IList GetFields()
 		{
@@ -265,7 +263,7 @@ namespace Lucene.Net.Documents
 		
 		private static readonly Field[] NO_FIELDS = new Field[0];
 		
-		/// <summary> Returns an array of {@link Field}s with the given name.
+		/// <summary> Returns an array of <see cref="Field" />s with the given name.
 		/// Do not use with lazy loaded fields.
 		/// This method returns an empty array when there are no
 		/// matching fields.  It never returns null.
@@ -273,7 +271,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>Field[]</code> array
+		/// <returns> a <c>Field[]</c> array
 		/// </returns>
 		public Field[] GetFields(System.String name)
 		{
@@ -296,14 +294,14 @@ namespace Lucene.Net.Documents
 		
 		private static readonly Fieldable[] NO_FIELDABLES = new Fieldable[0];
 		
-		/// <summary> Returns an array of {@link Fieldable}s with the given name.
+		/// <summary> Returns an array of <see cref="Fieldable" />s with the given name.
 		/// This method returns an empty array when there are no
 		/// matching fields.  It never returns null.
 		/// 
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>Fieldable[]</code> array
+		/// <returns> a <c>Fieldable[]</c> array
 		/// </returns>
 		public Fieldable[] GetFieldables(System.String name)
 		{
@@ -332,7 +330,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>String[]</code> of field values
+		/// <returns> a <c>String[]</c> of field values
 		/// </returns>
 		public System.String[] GetValues(System.String name)
 		{
@@ -360,7 +358,7 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		/// <param name="name">the name of the field
 		/// </param>
-		/// <returns> a <code>byte[][]</code> of binary field values
+		/// <returns> a <c>byte[][]</c> of binary field values
 		/// </returns>
 		public byte[][] GetBinaryValues(System.String name)
 		{
@@ -395,14 +393,14 @@ namespace Lucene.Net.Documents
         }
 		
 		/// <summary> Returns an array of bytes for the first (or only) field that has the name
-		/// specified as the method parameter. This method will return <code>null</code>
+		/// specified as the method parameter. This method will return <c>null</c>
 		/// if no binary fields with the specified name are available.
 		/// There may be non-binary fields with the same name.
 		/// 
 		/// </summary>
 		/// <param name="name">the name of the field.
 		/// </param>
-		/// <returns> a <code>byte[]</code> containing the binary field value or <code>null</code>
+		/// <returns> a <c>byte[]</c> containing the binary field value or <c>null</c>
 		/// </returns>
 		public byte[] GetBinaryValue(System.String name)
 		{

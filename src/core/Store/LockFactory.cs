@@ -20,13 +20,13 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> <p/>Base class for Locking implementation.  {@link Directory} uses
+	/// <summary> <p/>Base class for Locking implementation.  <see cref="Directory" /> uses
 	/// instances of this class to implement locking.<p/>
 	/// 
 	/// <p/>Note that there are some useful tools to verify that
-	/// your LockFactory is working correctly: {@link
-	/// VerifyingLockFactory}, {@link LockStressTest}, {@link
-	/// LockVerifyServer}.<p/>
+	/// your LockFactory is working correctly: <see cref="VerifyingLockFactory" />
+	///, <see cref="LockStressTest" />, <see cref="LockVerifyServer" />
+	///.<p/>
 	/// 
 	/// </summary>
 	/// <seealso cref="LockVerifyServer">

@@ -22,7 +22,7 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> Common util methods for dealing with {@link IndexReader}s.
+	/// <summary> Common util methods for dealing with <see cref="IndexReader" />s.
 	/// 
 	/// </summary>
 	public class ReaderUtil
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 		}
 		
 		
-		/// <summary> Returns index of the searcher/reader for document <code>n</code> in the
+		/// <summary> Returns index of the searcher/reader for document <c>n</c> in the
 		/// array used to construct this searcher/reader.
 		/// </summary>
 		public static int SubIndex(int n, int[] docStarts)

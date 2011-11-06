@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 		protected internal System.IO.DirectoryInfo lockDir = null;
 		
 		/// <summary> Set the lock directory. This method can be only called
-		/// once to initialize the lock directory. It is used by {@link FSDirectory}
+		/// once to initialize the lock directory. It is used by <see cref="FSDirectory" />
 		/// to set the lock directory to itsself.
 		/// Subclasses can also use this method to set the directory
 		/// in the constructor.

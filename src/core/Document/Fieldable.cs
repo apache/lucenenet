@@ -23,7 +23,7 @@ using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> Synonymous with {@link Field}.
+	/// <summary> Synonymous with <see cref="Field" />.
 	/// 
 	/// <p/><bold>WARNING</bold>: This interface may change within minor versions, despite Lucene's backward compatibility requirements.
 	/// This means new methods may be added from version to version.  This change only affects the Fieldable API; other backwards
@@ -39,16 +39,14 @@ namespace Lucene.Net.Documents
 		/// multiplied into the score of all hits on this this field of this
 		/// document.
 		/// 
-		/// <p/>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
+		/// <p/>The boost is multiplied by <see cref="Lucene.Net.Documents.Document.GetBoost()" /> of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
 		/// used to compute the norm factor for the field.  By
-		/// default, in the {@link
-		/// Lucene.Net.Search.Similarity#ComputeNorm(String,
-		/// FieldInvertState)} method, the boost value is multiplied
-		/// by the {@link
-		/// Lucene.Net.Search.Similarity#LengthNorm(String,
-		/// int)} and then rounded by {@link Lucene.Net.Search.Similarity#EncodeNorm(float)} before it is stored in the
+        /// default, in the <see cref="Lucene.Net.Search.Similarity.ComputeNorm(String,Lucene.Net.Index.FieldInvertState)"/>
+        /// method, the boost value is multiplied
+        /// by the <see cref="Lucene.Net.Search.Similarity.LengthNorm(String,int)"/>
+        /// and then rounded by <see cref="Lucene.Net.Search.Similarity.EncodeNorm(float)" /> before it is stored in the
 		/// index.  One should attempt to ensure that this product does not overflow
 		/// the range of that encoding.
 		/// 
@@ -66,8 +64,8 @@ namespace Lucene.Net.Documents
 		/// <p/>The default value is 1.0.
 		/// 
 		/// <p/>Note: this value is not stored directly with the document in the index.
-		/// Documents returned from {@link Lucene.Net.Index.IndexReader#Document(int)} and
-		/// {@link Lucene.Net.Search.Hits#Doc(int)} may thus not have the same value present as when
+		/// Documents returned from <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> and
+		/// <see cref="Lucene.Net.Search.Hits.Doc(int)" /> may thus not have the same value present as when
 		/// this field was indexed.
 		/// 
 		/// </summary>
@@ -126,10 +124,10 @@ namespace Lucene.Net.Documents
 		bool IsCompressed();
 		
 		/// <summary>True if the term or terms used to index this field are stored as a term
-		/// vector, available from {@link Lucene.Net.Index.IndexReader#GetTermFreqVector(int,String)}.
+		/// vector, available from <see cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int,String)" />.
 		/// These methods do not provide access to the original content of the field,
 		/// only to terms used to index it. If the original content must be
-		/// preserved, use the <code>stored</code> attribute instead.
+		/// preserved, use the <c>stored</c> attribute instead.
 		/// 
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int, String)">
@@ -157,19 +155,19 @@ namespace Lucene.Net.Documents
 		/// </summary>
 		void  SetOmitNorms(bool omitNorms);
 		
-		/// <deprecated> Renamed to {@link AbstractField#setOmitTermFreqAndPositions} 
+		/// <deprecated> Renamed to <see cref="AbstractField.SetOmitTermFreqAndPositions" /> 
 		/// </deprecated>
         [Obsolete("Renamed to AbstractField.SetOmitTermFreqAndPositions")]
 		void  SetOmitTf(bool omitTf);
 		
-		/// <deprecated> Renamed to {@link AbstractField#getOmitTermFreqAndPositions} 
+		/// <deprecated> Renamed to <see cref="AbstractField.GetOmitTermFreqAndPositions" /> 
 		/// </deprecated>
         [Obsolete("Renamed to AbstractField.GetOmitTermFreqAndPositions")]
 		bool GetOmitTf();
 		
 		/// <summary> Indicates whether a Field is Lazy or not.  The semantics of Lazy loading are such that if a Field is lazily loaded, retrieving
-		/// it's values via {@link #StringValue()} or {@link #BinaryValue()} is only valid as long as the {@link Lucene.Net.Index.IndexReader} that
-		/// retrieved the {@link Document} is still open.
+		/// it's values via <see cref="StringValue()" /> or <see cref="BinaryValue()" /> is only valid as long as the <see cref="Lucene.Net.Index.IndexReader" /> that
+		/// retrieved the <see cref="Document" /> is still open.
 		/// 
 		/// </summary>
 		/// <returns> true if this field can be loaded lazily
@@ -191,8 +189,8 @@ namespace Lucene.Net.Documents
 		int GetBinaryLength();
 		
 		/// <summary> Return the raw byte[] for the binary field.  Note that
-		/// you must also call {@link #getBinaryLength} and {@link
-		/// #getBinaryOffset} to know which range of bytes in this
+		/// you must also call <see cref="GetBinaryLength" /> and <see cref="GetBinaryOffset" />
+		/// to know which range of bytes in this
 		/// returned array belong to the field.
 		/// </summary>
 		/// <returns> reference to the Field value as byte[].
@@ -200,13 +198,13 @@ namespace Lucene.Net.Documents
 		byte[] GetBinaryValue();
 		
 		/// <summary> Return the raw byte[] for the binary field.  Note that
-		/// you must also call {@link #getBinaryLength} and {@link
-		/// #getBinaryOffset} to know which range of bytes in this
+		/// you must also call <see cref="GetBinaryLength" /> and <see cref="GetBinaryOffset" />
+		/// to know which range of bytes in this
 		/// returned array belong to the field.<p/>
 		/// About reuse: if you pass in the result byte[] and it is
 		/// used, likely the underlying implementation will hold
 		/// onto this byte[] and return it in future calls to
-		/// {@link #BinaryValue()} or {@link #GetBinaryValue()}.
+		/// <see cref="BinaryValue()" /> or <see cref="GetBinaryValue()" />.
 		/// So if you subsequently re-use the same byte[] elsewhere
 		/// it will alter this Fieldable's value.
 		/// </summary>
