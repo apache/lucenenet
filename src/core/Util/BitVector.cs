@@ -26,12 +26,12 @@ namespace Lucene.Net.Util
 	
 	/// <summary>Optimized implementation of a vector of bits.  This is more-or-less like
 	/// java.util.BitSet, but also includes the following:
-	/// <ul>
-	/// <li>a count() method, which efficiently computes the number of one bits;</li>
-	/// <li>optimized read from and write to disk;</li>
-	/// <li>inlinable get() method;</li>
-	/// <li>store and load, as bit set or d-gaps, depending on sparseness;</li> 
-	/// </ul>
+	/// <list type="bullet">
+	/// <item>a count() method, which efficiently computes the number of one bits;</item>
+	/// <item>optimized read from and write to disk;</item>
+	/// <item>inlinable get() method;</item>
+	/// <item>store and load, as bit set or d-gaps, depending on sparseness;</item> 
+	/// </list>
 	/// </summary>
 	/// <version>  $Id: BitVector.java 765649 2009-04-16 14:29:26Z mikemccand $
 	/// </version>
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
 		private int size;
 		private int count;
 		
-		/// <summary>Constructs a vector capable of holding <code>n</code> bits. </summary>
+		/// <summary>Constructs a vector capable of holding <c>n</c> bits. </summary>
 		public BitVector(int n)
 		{
 			size = n;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
             return clone;
 		}
 		
-		/// <summary>Sets the value of <code>bit</code> to one. </summary>
+		/// <summary>Sets the value of <c>bit</c> to one. </summary>
 		public void  Set(int bit)
 		{
 			if (bit >= size)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
 			count = - 1;
 		}
 		
-		/// <summary>Sets the value of <code>bit</code> to true, and
+		/// <summary>Sets the value of <c>bit</c> to true, and
 		/// returns true if bit was already set 
 		/// </summary>
 		public bool GetAndSet(int bit)
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
 			}
 		}
 		
-		/// <summary>Sets the value of <code>bit</code> to zero. </summary>
+		/// <summary>Sets the value of <c>bit</c> to zero. </summary>
 		public void  Clear(int bit)
 		{
 			if (bit >= size)
@@ -111,8 +111,8 @@ namespace Lucene.Net.Util
 			count = - 1;
 		}
 		
-		/// <summary>Returns <code>true</code> if <code>bit</code> is one and
-		/// <code>false</code> if it is zero. 
+		/// <summary>Returns <c>true</c> if <c>bit</c> is one and
+		/// <c>false</c> if it is zero. 
 		/// </summary>
 		public bool Get(int bit)
 		{
@@ -161,9 +161,9 @@ namespace Lucene.Net.Util
 		private static readonly byte[] BYTE_COUNTS = new byte[]{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
 		
 		
-		/// <summary>Writes this vector to the file <code>name</code> in Directory
-		/// <code>d</code>, in a format that can be read by the constructor {@link
-		/// #BitVector(Directory, String)}.  
+		/// <summary>Writes this vector to the file <c>name</c> in Directory
+		/// <c>d</c>, in a format that can be read by the constructor 
+		/// <see cref="BitVector(Directory, String)" />.  
 		/// </summary>
 		public void  Write(Directory d, System.String name)
 		{
@@ -236,8 +236,8 @@ namespace Lucene.Net.Util
 			return factor * (4 + (8 + 40) * Count()) < Size();
 		}
 		
-		/// <summary>Constructs a bit vector from the file <code>name</code> in Directory
-		/// <code>d</code>, as written by the {@link #write} method.
+		/// <summary>Constructs a bit vector from the file <c>name</c> in Directory
+		/// <c>d</c>, as written by the <see cref="Write" /> method.
 		/// </summary>
 		public BitVector(Directory d, System.String name)
 		{

@@ -20,10 +20,10 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> This exception is thrown when an {@link IndexReader}
-	/// tries to make changes to the index (via {@link
-	/// IndexReader#deleteDocument}, {@link
-	/// IndexReader#undeleteAll} or {@link IndexReader#setNorm})
+	/// <summary> This exception is thrown when an <see cref="IndexReader" />
+	/// tries to make changes to the index (via <see cref="IndexReader.DeleteDocument" />
+	///, <see cref="IndexReader.UndeleteAll" />
+	/// or <see cref="IndexReader.SetNorm(int,string,float)" />)
 	/// but changes have already been committed to the index
 	/// since this reader was instantiated.  When this happens
 	/// you must open a new reader on the current index to make

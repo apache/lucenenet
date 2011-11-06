@@ -29,7 +29,7 @@ using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> The SegmentMerger class combines two or more Segments, represented by an IndexReader ({@link #add},
+	/// <summary> The SegmentMerger class combines two or more Segments, represented by an IndexReader (<see cref="Add" />,
 	/// into a single Segment.  After adding the appropriate readers, call the merge method to combine the 
 	/// segments.
 	/// <p/> 
@@ -37,9 +37,9 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	/// <seealso cref="merge">
+	/// <seealso cref="Merge()">
 	/// </seealso>
-	/// <seealso cref="add">
+	/// <seealso cref="Add">
 	/// </seealso>
 	public sealed class SegmentMerger
 	{
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
 			return (IndexReader) readers[i];
 		}
 		
-		/// <summary> Merges the readers specified by the {@link #add} method into the directory passed to the constructor</summary>
+		/// <summary> Merges the readers specified by the <see cref="Add" /> method into the directory passed to the constructor</summary>
 		/// <returns> The number of documents that were merged
 		/// </returns>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 			return Merge(true);
 		}
 		
-		/// <summary> Merges the readers specified by the {@link #add} method
+		/// <summary> Merges the readers specified by the <see cref="Add" /> method
 		/// into the directory passed to the constructor.
 		/// </summary>
 		/// <param name="mergeDocStores">if false, we will not merge the

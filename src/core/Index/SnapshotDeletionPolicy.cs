@@ -22,15 +22,15 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>A {@link IndexDeletionPolicy} that wraps around any other
-	/// {@link IndexDeletionPolicy} and adds the ability to hold and
+	/// <summary>A <see cref="IndexDeletionPolicy" /> that wraps around any other
+	/// <see cref="IndexDeletionPolicy" /> and adds the ability to hold and
 	/// later release a single "snapshot" of an index.  While
-	/// the snapshot is held, the {@link IndexWriter} will not
+	/// the snapshot is held, the <see cref="IndexWriter" /> will not
 	/// remove any files associated with it even if the index is
 	/// otherwise being actively, arbitrarily changed.  Because
-	/// we wrap another arbitrary {@link IndexDeletionPolicy}, this
-	/// gives you the freedom to continue using whatever {@link
-	/// IndexDeletionPolicy} you would normally want to use with your
+	/// we wrap another arbitrary <see cref="IndexDeletionPolicy" />, this
+	/// gives you the freedom to continue using whatever <see cref="IndexDeletionPolicy" />
+	/// you would normally want to use with your
 	/// index.  Note that you can re-use a single instance of
 	/// SnapshotDeletionPolicy across multiple writers as long
 	/// as they are against the same index Directory.  Any

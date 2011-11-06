@@ -20,10 +20,10 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary><p/>Expert: {@link IndexWriter} uses an instance
+	/// <summary><p/>Expert: <see cref="IndexWriter" /> uses an instance
 	/// implementing this interface to execute the merges
-	/// selected by a {@link MergePolicy}.  The default
-	/// MergeScheduler is {@link ConcurrentMergeScheduler}.<p/>
+	/// selected by a <see cref="MergePolicy" />.  The default
+	/// MergeScheduler is <see cref="ConcurrentMergeScheduler" />.<p/>
 	/// 
 	/// <p/><b>NOTE:</b> This API is new and still experimental
 	/// (subject to change suddenly in the next release)<p/>
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	public abstract class MergeScheduler
 	{
 		
-		/// <summary>Run the merges provided by {@link IndexWriter#GetNextMerge()}. </summary>
+		/// <summary>Run the merges provided by <see cref="IndexWriter.GetNextMerge()" />. </summary>
 		public abstract void  Merge(IndexWriter writer);
 		
 		/// <summary>Close this MergeScheduler. </summary>

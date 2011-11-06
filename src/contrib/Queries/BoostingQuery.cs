@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,16 +29,18 @@ namespace Lucene.Net.Search
     ///  The BoostingQuery class can be used to effectively demote results that match a given query. 
     ///  Unlike the "NOT" clause, this still selects documents that contain undesirable terms, 
     ///  but reduces their overall score:
-    /// 
+    ///  <pre>
     ///      Query balancedQuery = new BoostingQuery(positiveQuery, negativeQuery, 0.01f);
+    ///  </pre>
     ///  In this scenario the positiveQuery contains the mandatory, desirable criteria which is used to 
     ///  select all matching documents, and the negativeQuery contains the undesirable elements which 
     ///  are simply used to lessen the scores. Documents that match the negativeQuery have their score 
     ///  multiplied by the supplied "boost" parameter, so this should be less than 1 to achieve a 
     ///  demoting effect
     ///  
-    ///  This code was originally made available here: [WWW] http://marc.theaimsgroup.com/?l=lucene-user&m=108058407130459&w=2
-    ///  and is documented here: http://wiki.apache.org/lucene-java/CommunityContributions
+    ///  This code was originally made available here:
+    ///  <a href="http://marc.theaimsgroup.com/?l=lucene-user&amp;m=108058407130459&amp;w=2">mailing list</a>
+    ///  and is documented here: <a href="http://wiki.apache.org/lucene-java/CommunityContributions">Documentation</a>
     /// </summary>
     public class BoostingQuery : Query
     {

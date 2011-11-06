@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 			indexArray = (int) bitlist[word & 0xff];
 		}
 		
-		/// <summary>** alternate shift implementations
+		/*/// <summary>** alternate shift implementations
 		/// // 32 bit shifts, but a long shift needed at the end
 		/// private void shift2() {
 		/// int y = (int)word;
@@ -114,9 +114,9 @@ namespace Lucene.Net.Util
 		/// shift();
 		/// }
 		/// ****
-		/// </summary>
+		/// </summary>*/
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
 			return curDocId = (i << 6) + bitIndex;
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
 			return curDocId = (i << 6) + bitIndex;
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead.")]
 		public override int Doc()

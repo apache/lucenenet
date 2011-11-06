@@ -27,10 +27,10 @@ using ReaderUtil = Lucene.Net.Util.ReaderUtil;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Implements search over a set of <code>Searchables</code>.
+	/// <summary>Implements search over a set of <c>Searchables</c>.
 	/// 
-	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
+	/// or <see cref="Searcher.Search(Query,Filter)" /> methods.
 	/// </summary>
 	public class MultiSearcher:Searcher
 	{
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
 			starts[searchables.Length] = maxDoc;
 		}
 		
-		/// <summary>Return the array of {@link Searchable}s this searches. </summary>
+		/// <summary>Return the array of <see cref="Searchable" />s this searches. </summary>
 		public virtual Searchable[] GetSearchables()
 		{
 			return searchables;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
 			return searchables[i].Doc(n - starts[i], fieldSelector); // dispatch to searcher
 		}
 		
-		/// <summary>Returns index of the searcher for document <code>n</code> in the array
+		/// <summary>Returns index of the searcher for document <c>n</c> in the array
 		/// used to construct this searcher. 
 		/// </summary>
 		public virtual int SubSearcher(int n)
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search
 			return ReaderUtil.SubIndex(n, starts);
 		}
 		
-		/// <summary>Returns the document number of document <code>n</code> within its
+		/// <summary>Returns the document number of document <c>n</c> within its
 		/// sub-index. 
 		/// </summary>
 		public virtual int SubDoc(int n)

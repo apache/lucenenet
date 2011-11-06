@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	{
 		
 		/// <summary>Constructs a filter which only matches documents matching
-		/// <code>query</code>.
+		/// <c>query</c>.
 		/// </summary>
 		public QueryFilter(Query query):base(new QueryWrapperFilter(query))
 		{

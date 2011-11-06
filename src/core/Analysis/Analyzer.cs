@@ -23,7 +23,6 @@ using CloseableThreadLocal = Lucene.Net.Util.CloseableThreadLocal;
 
 namespace Lucene.Net.Analysis
 {
-	
 	/// <summary>An Analyzer builds TokenStreams, which analyze text.  It thus represents a
 	/// policy for extracting index terms from text.
 	/// <p/>
@@ -144,14 +143,14 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <param name="fieldName">Fieldable name being indexed.
 		/// </param>
-		/// <returns> position increment gap, added to the next token emitted from {@link #TokenStream(String,Reader)}
+		/// <returns> position increment gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
 		public virtual int GetPositionIncrementGap(System.String fieldName)
 		{
 			return 0;
 		}
 		
-		/// <summary> Just like {@link #getPositionIncrementGap}, except for
+		/// <summary> Just like <see cref="GetPositionIncrementGap" />, except for
 		/// Token offsets instead.  By default this returns 1 for
 		/// tokenized fields and, as if the fields were joined
 		/// with an extra space character, and 0 for un-tokenized
@@ -161,7 +160,7 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		/// <param name="field">the field just indexed
 		/// </param>
-		/// <returns> offset gap, added to the next token emitted from {@link #TokenStream(String,Reader)}
+		/// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(String,System.IO.TextReader)" />
 		/// </returns>
 		public virtual int GetOffsetGap(Fieldable field)
 		{

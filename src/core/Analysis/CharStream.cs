@@ -20,11 +20,11 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> CharStream adds {@link #CorrectOffset}
-	/// functionality over {@link Reader}.  All Tokenizers accept a
-	/// CharStream instead of {@link Reader} as input, which enables
+	/// <summary> CharStream adds <see cref="CorrectOffset" />
+	/// functionality over <see cref="System.IO.TextReader" />.  All Tokenizers accept a
+	/// CharStream instead of <see cref="System.IO.TextReader" /> as input, which enables
 	/// arbitrary character based filtering before tokenization. 
-	/// The {@link #CorrectOffset} method fixed offsets to account for
+	/// The <see cref="CorrectOffset" /> method fixed offsets to account for
 	/// removal or insertion of characters, so that the offsets
 	/// reported in the tokens match the character offsets of the
 	/// original Reader.

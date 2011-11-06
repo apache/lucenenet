@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Store a sorted collection of {@link Lucene.Net.Index.TermVectorEntry}s.  Collects all term information
+	/// <summary> Store a sorted collection of <see cref="Lucene.Net.Index.TermVectorEntry" />s.  Collects all term information
 	/// into a single, SortedSet.
 	/// <br/>
 	/// NOTE: This Mapper ignores all Field information for the Document.  This means that if you are using offset/positions you will not
@@ -36,11 +36,11 @@ namespace Lucene.Net.Index
 		private System.Collections.IDictionary termToTVE = new System.Collections.Hashtable();
 		private bool storeOffsets;
 		private bool storePositions;
-		/// <summary> Stand-in name for the field in {@link TermVectorEntry}.</summary>
+		/// <summary> Stand-in name for the field in <see cref="TermVectorEntry" />.</summary>
 		public const System.String ALL = "_ALL_";
 		
 		/// <summary> </summary>
-		/// <param name="comparator">A Comparator for sorting {@link TermVectorEntry}s
+		/// <param name="comparator">A Comparator for sorting <see cref="TermVectorEntry" />s
 		/// </param>
 		public SortedTermVectorMapper(System.Collections.Generic.IComparer<System.Object> comparator):this(false, false, comparator)
 		{
@@ -117,12 +117,12 @@ namespace Lucene.Net.Index
 			this.storePositions = storePositions;
 		}
 		
-		/// <summary> The TermVectorEntrySet.  A SortedSet of {@link TermVectorEntry} objects.  Sort is by the comparator passed into the constructor.
+		/// <summary> The TermVectorEntrySet.  A SortedSet of <see cref="TermVectorEntry" /> objects.  Sort is by the comparator passed into the constructor.
 		/// <br/>
 		/// This set will be empty until after the mapping process takes place.
 		/// 
 		/// </summary>
-		/// <returns> The SortedSet of {@link TermVectorEntry}.
+		/// <returns> The SortedSet of <see cref="TermVectorEntry" />.
 		/// </returns>
         public virtual System.Collections.Generic.SortedDictionary<Object, Object> GetTermVectorEntrySet()
 		{

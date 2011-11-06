@@ -33,58 +33,58 @@ using Similarity = Lucene.Net.Search.Similarity;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>An <code>IndexWriter</code> creates and maintains an index.
-	/// <p/>The <code>create</code> argument to the {@link
-	/// #IndexWriter(Directory, Analyzer, boolean) constructor} determines 
+	/// <summary>An <c>IndexWriter</c> creates and maintains an index.
+	/// <p/>The <c>create</c> argument to the 
+    /// <see cref="IndexWriter(Directory, Analyzer, bool)">constructor</see> determines 
 	/// whether a new index is created, or whether an existing index is
-	/// opened.  Note that you can open an index with <code>create=true</code>
+	/// opened.  Note that you can open an index with <c>create=true</c>
 	/// even while readers are using the index.  The old readers will 
 	/// continue to search the "point in time" snapshot they had opened, 
 	/// and won't see the newly created index until they re-open.  There are
-	/// also {@link #IndexWriter(Directory, Analyzer) constructors}
-	/// with no <code>create</code> argument which will create a new index
+	/// also <see cref="IndexWriter(Directory, Analyzer)">constructors</see>
+	/// with no <c>create</c> argument which will create a new index
 	/// if there is not already an index at the provided path and otherwise 
 	/// open the existing index.<p/>
-	/// <p/>In either case, documents are added with {@link #AddDocument(Document)
-	/// addDocument} and removed with {@link #DeleteDocuments(Term)} or {@link
-	/// #DeleteDocuments(Query)}. A document can be updated with {@link
-	/// #UpdateDocument(Term, Document) updateDocument} (which just deletes
+	/// <p/>In either case, documents are added with <see cref="AddDocument(Document)" />
+	/// and removed with <see cref="DeleteDocuments(Term)" /> or
+	/// <see cref="DeleteDocuments(Query)" />. A document can be updated with
+	/// <see cref="UpdateDocument(Term, Document)" /> (which just deletes
 	/// and then adds the entire document). When finished adding, deleting 
-	/// and updating documents, {@link #Close() close} should be called.<p/>
+	/// and updating documents, <see cref="Close()" /> should be called.<p/>
 	/// <a name="flush"></a>
 	/// <p/>These changes are buffered in memory and periodically
-	/// flushed to the {@link Directory} (during the above method
+	/// flushed to the <see cref="Directory" /> (during the above method
 	/// calls).  A flush is triggered when there are enough
-	/// buffered deletes (see {@link #setMaxBufferedDeleteTerms})
+	/// buffered deletes (see <see cref="SetMaxBufferedDeleteTerms" />)
 	/// or enough added documents since the last flush, whichever
 	/// is sooner.  For the added documents, flushing is triggered
-	/// either by RAM usage of the documents (see {@link
-	/// #setRAMBufferSizeMB}) or the number of added documents.
+	/// either by RAM usage of the documents (see 
+	/// <see cref="SetRAMBufferSizeMB" />) or the number of added documents.
 	/// The default is to flush when RAM usage hits 16 MB.  For
 	/// best indexing speed you should flush by RAM usage with a
 	/// large RAM buffer.  Note that flushing just moves the
 	/// internal buffered state in IndexWriter into the index, but
 	/// these changes are not visible to IndexReader until either
-	/// {@link #Commit()} or {@link #close} is called.  A flush may
+	/// <see cref="Commit()" /> or <see cref="Close()" /> is called.  A flush may
 	/// also trigger one or more segment merges which by default
 	/// run with a background thread so as not to block the
 	/// addDocument calls (see <a href="#mergePolicy">below</a>
-	/// for changing the {@link MergeScheduler}).<p/>
+	/// for changing the <see cref="MergeScheduler" />).<p/>
 	/// <a name="autoCommit"></a>
-	/// <p/>The optional <code>autoCommit</code> argument to the {@link
-	/// #IndexWriter(Directory, boolean, Analyzer) constructors}
-	/// controls visibility of the changes to {@link IndexReader}
+	/// <p/>The optional <c>autoCommit</c> argument to the 
+	/// <see cref="IndexWriter(Directory, bool, Analyzer)">constructors</see>
+	/// controls visibility of the changes to <see cref="IndexReader" />
 	/// instances reading the same index.  When this is
-	/// <code>false</code>, changes are not visible until {@link
-	/// #Close()} or {@link #Commit()} is called.  Note that changes will still be
-	/// flushed to the {@link Directory} as new files, but are 
-	/// not committed (no new <code>segments_N</code> file is written 
+	/// <c>false</c>, changes are not visible until 
+	/// <see cref="Close()" /> or <see cref="Commit()" /> is called.  Note that changes will still be
+	/// flushed to the <see cref="Directory" /> as new files, but are 
+	/// not committed (no new <c>segments_N</c> file is written 
 	/// referencing the new files, nor are the files sync'd to stable storage)
-	/// until {@link #Close()} or {@link #Commit()} is called.  If something
+	/// until <see cref="Close()" /> or <see cref="Commit()" /> is called.  If something
 	/// goes terribly wrong (for example the JVM crashes), then
 	/// the index will reflect none of the changes made since the
 	/// last commit, or the starting state if commit was not called.
-	/// You can also call {@link #Rollback()}, which closes the writer
+	/// You can also call <see cref="Rollback()" />, which closes the writer
 	/// without committing any changes, and removes any index
 	/// files that had been flushed but are now unreferenced.
 	/// This mode is useful for preventing readers from refreshing
@@ -92,47 +92,47 @@ namespace Lucene.Net.Index
 	/// deletes but before you've done your adds).  It can also be
 	/// used to implement simple single-writer transactional
 	/// semantics ("all or none").  You can do a two-phase commit
-	/// by calling {@link #PrepareCommit()}
-	/// followed by {@link #Commit()}. This is necessary when
+	/// by calling <see cref="PrepareCommit()" />
+	/// followed by <see cref="Commit()" />. This is necessary when
 	/// Lucene is working with an external resource (for example,
 	/// a database) and both must either commit or rollback the
 	/// transaction.<p/>
-	/// <p/>When <code>autoCommit</code> is <code>true</code> then
+	/// <p/>When <c>autoCommit</c> is <c>true</c> then
 	/// the writer will periodically commit on its own.  [<b>Deprecated</b>: Note that in 3.0, IndexWriter will
 	/// no longer accept autoCommit=true (it will be hardwired to
-	/// false).  You can always call {@link #Commit()} yourself
+	/// false).  You can always call <see cref="Commit()" /> yourself
 	/// when needed]. There is
 	/// no guarantee when exactly an auto commit will occur (it
 	/// used to be after every flush, but it is now after every
 	/// completed merge, as of 2.4).  If you want to force a
-	/// commit, call {@link #Commit()}, or, close the writer.  Once
-	/// a commit has finished, newly opened {@link IndexReader} instances will
+	/// commit, call <see cref="Commit()" />, or, close the writer.  Once
+	/// a commit has finished, newly opened <see cref="IndexReader" /> instances will
 	/// see the changes to the index as of that commit.  When
 	/// running in this mode, be careful not to refresh your
 	/// readers while optimize or segment merges are taking place
 	/// as this can tie up substantial disk space.<p/>
 	/// </summary>
-	/// <summary><p/>Regardless of <code>autoCommit</code>, an {@link
-	/// IndexReader} or {@link Lucene.Net.Search.IndexSearcher} will only see the
+	/// <summary><p/>Regardless of <c>autoCommit</c>, an 
+	/// <see cref="IndexReader" /> or <see cref="Lucene.Net.Search.IndexSearcher"/> will only see the
 	/// index as of the "point in time" that it was opened.  Any
 	/// changes committed to the index after the reader was opened
 	/// are not visible until the reader is re-opened.<p/>
 	/// <p/>If an index will not have more documents added for a while and optimal search
-	/// performance is desired, then either the full {@link #Optimize() optimize}
-	/// method or partial {@link #Optimize(int)} method should be
+	/// performance is desired, then either the full <see cref="Optimize()" />
+	/// method or partial <see cref="Optimize(int)" /> method should be
 	/// called before the index is closed.<p/>
-	/// <p/>Opening an <code>IndexWriter</code> creates a lock file for the directory in use. Trying to open
-	/// another <code>IndexWriter</code> on the same directory will lead to a
-	/// {@link LockObtainFailedException}. The {@link LockObtainFailedException}
+	/// <p/>Opening an <c>IndexWriter</c> creates a lock file for the directory in use. Trying to open
+	/// another <c>IndexWriter</c> on the same directory will lead to a
+	/// <see cref="LockObtainFailedException" />. The <see cref="LockObtainFailedException" />
 	/// is also thrown if an IndexReader on the same directory is used to delete documents
 	/// from the index.<p/>
 	/// </summary>
 	/// <summary><a name="deletionPolicy"></a>
-	/// <p/>Expert: <code>IndexWriter</code> allows an optional
-	/// {@link IndexDeletionPolicy} implementation to be
+	/// <p/>Expert: <c>IndexWriter</c> allows an optional
+	/// <see cref="IndexDeletionPolicy" /> implementation to be
 	/// specified.  You can use this to control when prior commits
-	/// are deleted from the index.  The default policy is {@link
-	/// KeepOnlyLastCommitDeletionPolicy} which removes all prior
+	/// are deleted from the index.  The default policy is <see cref="KeepOnlyLastCommitDeletionPolicy" />
+	/// which removes all prior
 	/// commits as soon as a new commit is done (this matches
 	/// behavior before 2.2).  Creating your own policy can allow
 	/// you to explicitly keep previous "point in time" commits
@@ -143,35 +143,35 @@ namespace Lucene.Net.Index
 	/// close" semantics, which Lucene's "point in time" search
 	/// normally relies on. <p/>
 	/// <a name="mergePolicy"></a> <p/>Expert:
-	/// <code>IndexWriter</code> allows you to separately change
-	/// the {@link MergePolicy} and the {@link MergeScheduler}.
-	/// The {@link MergePolicy} is invoked whenever there are
+	/// <c>IndexWriter</c> allows you to separately change
+	/// the <see cref="MergePolicy" /> and the <see cref="MergeScheduler" />.
+	/// The <see cref="MergePolicy" /> is invoked whenever there are
 	/// changes to the segments in the index.  Its role is to
-	/// select which merges to do, if any, and return a {@link
-	/// MergePolicy.MergeSpecification} describing the merges.  It
+	/// select which merges to do, if any, and return a <see cref="MergePolicy.MergeSpecification" />
+	/// describing the merges.  It
 	/// also selects merges to do for optimize().  (The default is
-	/// {@link LogByteSizeMergePolicy}.  Then, the {@link
-	/// MergeScheduler} is invoked with the requested merges and
+	/// <see cref="LogByteSizeMergePolicy" />.  Then, the <see cref="MergeScheduler" />
+	/// is invoked with the requested merges and
 	/// it decides when and how to run the merges.  The default is
-	/// {@link ConcurrentMergeScheduler}. <p/>
+	/// <see cref="ConcurrentMergeScheduler" />. <p/>
 	/// <a name="OOME"></a><p/><b>NOTE</b>: if you hit an
 	/// OutOfMemoryError then IndexWriter will quietly record this
 	/// fact and block all future segment commits.  This is a
 	/// defensive measure in case any internal state (buffered
 	/// documents and deletions) were corrupted.  Any subsequent
-	/// calls to {@link #Commit()} will throw an
+	/// calls to <see cref="Commit()" /> will throw an
 	/// IllegalStateException.  The only course of action is to
-	/// call {@link #Close()}, which internally will call {@link
-	/// #Rollback()}, to undo any changes to the index since the
+	/// call <see cref="Close()" />, which internally will call <see cref="Rollback()" />
+	///, to undo any changes to the index since the
 	/// last commit.  If you opened the writer with autoCommit
-	/// false you can also just call {@link #Rollback()}
+	/// false you can also just call <see cref="Rollback()" />
 	/// directly.<p/>
-	/// <a name="thread-safety"></a><p/><b>NOTE</b>: {@link
-	/// <code>IndexWriter</code>} instances are completely thread
+	/// <a name="thread-safety"></a><p/><b>NOTE</b>: 
+    /// <see cref="IndexWriter" /> instances are completely thread
 	/// safe, meaning multiple threads can call any of its
 	/// methods, concurrently.  If your application requires
 	/// external synchronization, you should <b>not</b>
-	/// synchronize on the <code>IndexWriter</code> instance as
+	/// synchronize on the <c>IndexWriter</c> instance as
 	/// this may cause deadlock; use your own (non-Lucene) objects
 	/// instead. <p/>
 	/// </summary>
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Default value for the write lock timeout (1,000).</summary>
-		/// <seealso cref="setDefaultWriteLockTimeout">
+		/// <seealso cref="SetDefaultWriteLockTimeout">
 		/// </seealso>
 		public static long WRITE_LOCK_TIMEOUT = 1000;
 		
@@ -230,41 +230,41 @@ namespace Lucene.Net.Index
 		public const int DISABLE_AUTO_FLUSH = - 1;
 		
 		/// <summary> Disabled by default (because IndexWriter flushes by RAM usage
-		/// by default). Change using {@link #SetMaxBufferedDocs(int)}.
+		/// by default). Change using <see cref="SetMaxBufferedDocs(int)" />.
 		/// </summary>
 		public static readonly int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
 		
 		/// <summary> Default value is 16 MB (which means flush when buffered
-		/// docs consume 16 MB RAM).  Change using {@link #setRAMBufferSizeMB}.
+		/// docs consume 16 MB RAM).  Change using <see cref="SetRAMBufferSizeMB" />.
 		/// </summary>
 		public const double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
 		
 		/// <summary> Disabled by default (because IndexWriter flushes by RAM usage
-		/// by default). Change using {@link #SetMaxBufferedDeleteTerms(int)}.
+		/// by default). Change using <see cref="SetMaxBufferedDeleteTerms(int)" />.
 		/// </summary>
 		public static readonly int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
 		
 		/// <deprecated>
 		/// </deprecated>
-		/// <seealso cref="LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS">
+        /// <seealso cref="Lucene.Net.Index.LogMergePolicy.DEFAULT_MAX_MERGE_DOCS">
 		/// </seealso>
         [Obsolete("See LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS")]
 		public static readonly int DEFAULT_MAX_MERGE_DOCS;
 		
-		/// <summary> Default value is 10,000. Change using {@link #SetMaxFieldLength(int)}.</summary>
+		/// <summary> Default value is 10,000. Change using <see cref="SetMaxFieldLength(int)" />.</summary>
 		public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
 		
-		/// <summary> Default value is 128. Change using {@link #SetTermIndexInterval(int)}.</summary>
+		/// <summary> Default value is 128. Change using <see cref="SetTermIndexInterval(int)" />.</summary>
 		public const int DEFAULT_TERM_INDEX_INTERVAL = 128;
 		
 		/// <summary> Absolute hard maximum length for a term.  If a term
 		/// arrives from the analyzer longer than this length, it
 		/// is skipped and a message is printed to infoStream, if
-		/// set (see {@link #setInfoStream}).
+		/// set (see <see cref="SetInfoStream" />).
 		/// </summary>
 		public static readonly int MAX_TERM_LENGTH;
 		
-		/// <summary> Default for {@link #getMaxSyncPauseSeconds}.  On
+		/// <summary> Default for <see cref="GetMaxSyncPauseSeconds" />.  On
 		/// Windows this defaults to 10.0 seconds; elsewhere it's
 		/// 0.
 		/// </summary>
@@ -359,16 +359,16 @@ namespace Lucene.Net.Index
 		/// un-committed changes to the index. This provides "near real-time"
 		/// searching, in that changes made during an IndexWriter session can be
 		/// quickly made available for searching without closing the writer nor
-		/// calling {@link #commit}.
+		/// calling <see cref="Commit()" />.
 		/// 
 		/// <p/>
 		/// Note that this is functionally equivalent to calling {#commit} and then
-		/// using {@link IndexReader#open} to open a new reader. But the turarnound
+		/// using <see cref="IndexReader.Open(string)" /> to open a new reader. But the turarnound
 		/// time of this method should be faster since it avoids the potentially
-		/// costly {@link #commit}.
+		/// costly <see cref="Commit()" />.
 		/// <p/>
 		/// 
-        /// You must close the {@link IndexReader} returned by  this method once you are done using it.
+        /// You must close the <see cref="IndexReader" /> returned by  this method once you are done using it.
         /// 
 		/// <p/>
 		/// It's <i>near</i> real-time because there is no hard
@@ -379,8 +379,8 @@ namespace Lucene.Net.Index
 		/// feature, please report back on your findings so we can
 		/// learn, improve and iterate.<p/>
 		/// 
-		/// <p/>The resulting reader suppports {@link
-		/// IndexReader#reopen}, but that call will simply forward
+		/// <p/>The resulting reader suppports <see cref="IndexReader.Reopen()" />
+		///, but that call will simply forward
 		/// back to this method (though this may change in the
 		/// future).<p/>
 		/// 
@@ -390,8 +390,8 @@ namespace Lucene.Net.Index
 		/// deletes, etc.  This means additional resources (RAM,
 		/// file descriptors, CPU time) will be consumed.<p/>
 		/// 
-		/// <p/>For lower latency on reopening a reader, you should call {@link #setMergedSegmentWarmer} 
-        /// to call {@link #setMergedSegmentWarmer} to
+		/// <p/>For lower latency on reopening a reader, you should call <see cref="SetMergedSegmentWarmer" /> 
+        /// to call <see cref="SetMergedSegmentWarmer" /> to
 		/// pre-warm a newly merged segment before it's committed
 		/// to the index. This is important for minimizing index-to-search 
         /// delay after a large merge.
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
 		/// <p/><b>NOTE</b>: Once the writer is closed, any
 		/// outstanding readers may continue to be used.  However,
 		/// if you attempt to reopen any of those readers, you'll
-		/// hit an {@link AlreadyClosedException}.<p/>
+		/// hit an <see cref="AlreadyClosedException" />.<p/>
 		/// 
 		/// <p/><b>NOTE:</b> This API is experimental and might
 		/// change in incompatible ways in the next release.<p/>
@@ -420,13 +420,13 @@ namespace Lucene.Net.Index
             return GetReader(readerTermsIndexDivisor);
 		}
 		
-		/// <summary>Expert: like {@link #getReader}, except you can
+		/// <summary>Expert: like <see cref="GetReader()" />, except you can
 		/// specify which termInfosIndexDivisor should be used for
 		/// any newly opened readers.
 		/// </summary>
 		/// <param name="termInfosIndexDivisor">Subsambles which indexed
-		/// terms are loaded into RAM. This has the same effect as {@link
-		/// IndexWriter#setTermIndexInterval} except that setting
+		/// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.SetTermIndexInterval" />
+		/// except that setting
 		/// must be done at indexing time while this setting can be
 		/// set per reader.  When set to N, then one in every
 		/// N*termIndexInterval terms in the index is loaded into
@@ -561,14 +561,15 @@ namespace Lucene.Net.Index
 					Release(sr, false);
 				}
 			}
-			
-			/// <summary> Release the segment reader (i.e. decRef it and close if there
-			/// are no more references.
-			/// </summary>
-			/// <param name="sr">
-			/// </param>
-			/// <throws>  IOException </throws>
-			public virtual void  Release(SegmentReader sr, bool drop)
+
+		    /// <summary> Release the segment reader (i.e. decRef it and close if there
+		    /// are no more references.
+		    /// </summary>
+		    /// <param name="sr">
+		    /// </param>
+		    /// <param name="drop"></param>
+		    /// <throws>  IOException </throws>
+		    public virtual void  Release(SegmentReader sr, bool drop)
 			{
 				lock (this)
 				{
@@ -696,7 +697,7 @@ namespace Lucene.Net.Index
 			}
 			
 			/// <summary> Obtain a SegmentReader from the readerPool.  The reader
-			/// must be returned by calling {@link #Release(SegmentReader)}
+			/// must be returned by calling <see cref="Release(SegmentReader)" />
 			/// </summary>
 			/// <seealso cref="Release(SegmentReader)">
 			/// </seealso>
@@ -713,7 +714,7 @@ namespace Lucene.Net.Index
 				}
 			}
 			/// <summary> Obtain a SegmentReader from the readerPool.  The reader
-			/// must be returned by calling {@link #Release(SegmentReader)}
+			/// must be returned by calling <see cref="Release(SegmentReader)" />
 			/// 
 			/// </summary>
 			/// <seealso cref="Release(SegmentReader)">
@@ -895,8 +896,8 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Used internally to throw an {@link
-		/// AlreadyClosedException} if this IndexWriter has been
+		/// <summary> Used internally to throw an <see cref="AlreadyClosedException" />
+		/// if this IndexWriter has been
 		/// closed.
 		/// </summary>
 		/// <throws>  AlreadyClosedException if this IndexWriter is </throws>
@@ -964,11 +965,11 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.getUseCompoundFile as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="SetUseCompoundFile(boolean)">
+        /// <seealso cref="SetUseCompoundFile(bool)">
 		/// </seealso>
 		public virtual bool GetUseCompoundFile()
 		{
@@ -981,7 +982,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.setUseCompoundFile as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// </summary>
 		public virtual void  SetUseCompoundFile(bool value_Renamed)
@@ -1004,7 +1005,7 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
 		/// 
-		/// <p/>This defaults to the current value of {@link Similarity#GetDefault()}.
+		/// <p/>This defaults to the current value of <see cref="Similarity.GetDefault()" />.
 		/// </summary>
 		public virtual Similarity GetSimilarity()
 		{
@@ -1027,8 +1028,8 @@ namespace Lucene.Net.Index
 		/// or when many uncommon query terms are generated (e.g., by wildcard
 		/// queries) term lookup may become a dominant cost.
 		/// 
-		/// In particular, <code>numUniqueTerms/interval</code> terms are read into
-		/// memory by an IndexReader, and, on average, <code>interval/2</code> terms
+		/// In particular, <c>numUniqueTerms/interval</c> terms are read into
+		/// memory by an IndexReader, and, on average, <c>interval/2</c> terms
 		/// must be scanned for each random term access.
 		/// 
 		/// </summary>
@@ -1052,10 +1053,10 @@ namespace Lucene.Net.Index
 			return termIndexInterval;
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>path</code>, replacing the index already there,
+		/// <c>path</c>, replacing the index already there,
 		/// if any.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
@@ -1067,8 +1068,8 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="mfl">Maximum field length in number of tokens/terms: LIMITED, UNLIMITED, or user-specified
@@ -1076,16 +1077,15 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
-		/// <deprecated> Use {@link #IndexWriter(Directory, Analyzer,
-		/// boolean, MaxFieldLength)}
+        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)"/>
         /// </deprecated>
         [Obsolete("Use IndexWriter(Directory, Analyzer,boolean, MaxFieldLength)")]
         public IndexWriter(System.String path, Analyzer a, bool create, MaxFieldLength mfl)
@@ -1094,34 +1094,34 @@ namespace Lucene.Net.Index
 			Init(FSDirectory.GetDirectory(path), a, create, true, null, false, mfl.GetLimit(), null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>path</code>, replacing the index already there, if any.
+		/// <c>path</c>, replacing the index already there, if any.
 		/// 
 		/// </summary>
 		/// <param name="path">the path to the index directory
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed")]
 		public IndexWriter(System.String path, Analyzer a, bool create)
@@ -1130,10 +1130,10 @@ namespace Lucene.Net.Index
 			Init(FSDirectory.GetDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>path</code>, replacing the index already there, if any.
+		/// <c>path</c>, replacing the index already there, if any.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1144,8 +1144,8 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
@@ -1153,16 +1153,15 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
-		/// <deprecated> Use {@link #IndexWriter(Directory,
-		/// Analyzer, boolean, MaxFieldLength)}
+        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)"/>
 		/// </deprecated>
         [Obsolete("Use IndexWriter(Directory, Analyzer, boolean, MaxFieldLength)")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create, MaxFieldLength mfl)
@@ -1171,34 +1170,34 @@ namespace Lucene.Net.Index
 			Init(FSDirectory.GetDirectory(path), a, create, true, null, false, mfl.GetLimit(), null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>path</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>path</code>, replacing the index already there, if any.
+		/// <c>path</c>, replacing the index already there, if any.
 		/// 
 		/// </summary>
 		/// <param name="path">the path to the index directory
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create)
@@ -1207,10 +1206,10 @@ namespace Lucene.Net.Index
 			Init(FSDirectory.GetDirectory(path), a, create, true, null, true, DEFAULT_MAX_FIELD_LENGTH, null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>d</code>, replacing the index already there, if any.
+		/// <c>d</c>, replacing the index already there, if any.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1221,8 +1220,8 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
@@ -1230,12 +1229,12 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		public IndexWriter(Directory d, Analyzer a, bool create, MaxFieldLength mfl)
@@ -1244,33 +1243,33 @@ namespace Lucene.Net.Index
 			Init(d, a, create, false, null, false, mfl.GetLimit(), null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>d</code>, replacing the index already there, if any.
+		/// <c>d</c>, replacing the index already there, if any.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0
-		/// release, and call {@link #Commit()} when needed.
-		/// Use {@link #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)} instead.
+		/// release, and call <see cref="Commit()" /> when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" /> instead.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,bool,MaxFieldLength) instead.")]
 		public IndexWriter(Directory d, Analyzer a, bool create)
@@ -1280,9 +1279,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>path</code>, first creating it if it does not
+		/// <c>path</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1298,14 +1297,14 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
 		/// <summary>  read/written to or if there is any other low-level
 		/// IO error
 		/// </summary>
-		/// <deprecated> Use {@link #IndexWriter(Directory, Analyzer, MaxFieldLength)}
+		/// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)" />
 		/// </deprecated>
         [Obsolete("Use IndexWriter(Directory, Analyzer, MaxFieldLength)")]
 		public IndexWriter(System.String path, Analyzer a, MaxFieldLength mfl)
@@ -1315,9 +1314,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>path</code>, first creating it if it does not
+		/// <c>path</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// </summary>
 		/// <param name="path">the path to the index directory
@@ -1326,7 +1325,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1334,8 +1333,8 @@ namespace Lucene.Net.Index
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0
-		/// release, and call {@link #Commit()} when needed.
-		/// Use {@link #IndexWriter(Directory,Analyzer,MaxFieldLength)} instead.
+		/// release, and call <see cref="Commit()" /> when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" /> instead.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release, and call Commit() when needed. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead.")]
 		public IndexWriter(System.String path, Analyzer a)
@@ -1345,9 +1344,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>path</code>, first creating it if it does not
+		/// <c>path</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1363,17 +1362,16 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
 		/// <summary>  read/written to or if there is any other low-level
 		/// IO error
 		/// </summary>
-		/// <deprecated> Use {@link #IndexWriter(Directory,
-		/// Analyzer, MaxFieldLength)}
+        /// <deprecated> Use <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)"/>
 		/// </deprecated>
-        [Obsolete("Use {@link #IndexWriter(Directory,Analyzer, MaxFieldLength)")]
+        [Obsolete("Use IndexWriter(Directory,Analyzer, MaxFieldLength)")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a, MaxFieldLength mfl)
 		{
 			InitBlock();
@@ -1381,9 +1379,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>path</code>, first creating it if it does not
+		/// <c>path</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// </summary>
 		/// <param name="path">the path to the index directory
@@ -1392,7 +1390,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1400,8 +1398,8 @@ namespace Lucene.Net.Index
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link #IndexWriter(Directory,Analyzer,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(System.IO.FileInfo path, Analyzer a)
@@ -1411,9 +1409,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>d</code>, first creating it if it does not
+		/// <c>d</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1429,7 +1427,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1443,9 +1441,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>d</code>, first creating it if it does not
+		/// <c>d</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1454,7 +1452,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1462,9 +1460,9 @@ namespace Lucene.Net.Index
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, Analyzer a)
@@ -1474,9 +1472,9 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Constructs an IndexWriter for the index in
-		/// <code>d</code>, first creating it if it does not
+		/// <c>d</c>, first creating it if it does not
 		/// already exist.  Text will be analyzed with
-		/// <code>a</code>.
+		/// <c>a</c>.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1487,7 +1485,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1495,9 +1493,9 @@ namespace Lucene.Net.Index
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a)
@@ -1506,10 +1504,10 @@ namespace Lucene.Net.Index
 			Init(d, a, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
 		}
 		
-		/// <summary> Constructs an IndexWriter for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// <summary> Constructs an IndexWriter for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If <c>create</c>
 		/// is true, then a new, empty index will be created in
-		/// <code>d</code>, replacing the index already there, if any.
+		/// <c>d</c>, replacing the index already there, if any.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1518,24 +1516,24 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,boolean,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+        /// Use <see cref="IndexWriter(Directory,Analyzer,bool,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create)
@@ -1544,10 +1542,10 @@ namespace Lucene.Net.Index
 			Init(d, a, create, false, null, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
 		}
 		
-		/// <summary> Expert: constructs an IndexWriter with a custom {@link
-		/// IndexDeletionPolicy}, for the index in <code>d</code>,
+		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
+		///, for the index in <c>d</c>,
 		/// first creating it if it does not already exist.  Text
-		/// will be analyzed with <code>a</code>.
+		/// will be analyzed with <c>a</c>.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
 		/// href="#autoCommit">above</a>) is set to false with this
@@ -1564,7 +1562,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1577,10 +1575,10 @@ namespace Lucene.Net.Index
 			Init(d, a, false, deletionPolicy, false, mfl.GetLimit(), null, null);
 		}
 		
-		/// <summary> Expert: constructs an IndexWriter with a custom {@link
-		/// IndexDeletionPolicy}, for the index in <code>d</code>,
+		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
+		///, for the index in <c>d</c>,
 		/// first creating it if it does not already exist.  Text
-		/// will be analyzed with <code>a</code>.
+		/// will be analyzed with <c>a</c>.
 		/// 
 		/// </summary>
 		/// <param name="d">the index directory
@@ -1593,7 +1591,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be </throws>
@@ -1601,9 +1599,9 @@ namespace Lucene.Net.Index
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+		/// Use <see cref="IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, IndexDeletionPolicy deletionPolicy)
@@ -1612,11 +1610,11 @@ namespace Lucene.Net.Index
 			Init(d, a, false, deletionPolicy, autoCommit, DEFAULT_MAX_FIELD_LENGTH, null, null);
 		}
 		
-		/// <summary> Expert: constructs an IndexWriter with a custom {@link
-		/// IndexDeletionPolicy}, for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If
-		/// <code>create</code> is true, then a new, empty index
-		/// will be created in <code>d</code>, replacing the index
+		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
+		///, for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If
+		/// <c>create</c> is true, then a new, empty index
+		/// will be created in <c>d</c>, replacing the index
 		/// already there, if any.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
@@ -1628,22 +1626,22 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
 		/// </param>
-		/// <param name="mfl">{@link Lucene.Net.Index.IndexWriter.MaxFieldLength}, whether or not to limit field lengths.  Value is in number of terms/tokens
+		/// <param name="mfl"><see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />, whether or not to limit field lengths.  Value is in number of terms/tokens
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		public IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
@@ -1652,12 +1650,12 @@ namespace Lucene.Net.Index
 			Init(d, a, create, false, deletionPolicy, false, mfl.GetLimit(), null, null);
 		}
 		
-		/// <summary> Expert: constructs an IndexWriter with a custom {@link
-		/// IndexDeletionPolicy} and {@link IndexingChain}, 
-		/// for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If
-		/// <code>create</code> is true, then a new, empty index
-		/// will be created in <code>d</code>, replacing the index
+		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
+		/// and <see cref="IndexingChain" />, 
+		/// for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If
+		/// <c>create</c> is true, then a new, empty index
+		/// will be created in <c>d</c>, replacing the index
 		/// already there, if any.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
@@ -1669,27 +1667,27 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
 		/// </param>
-		/// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See {@link Lucene.Net.Index.IndexWriter.MaxFieldLength}.
+		/// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See <see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />.
 		/// </param>
-		/// <param name="indexingChain">the {@link DocConsumer} chain to be used to 
+		/// <param name="indexingChain">the <see cref="DocConsumer" /> chain to be used to 
 		/// process documents
 		/// </param>
 		/// <param name="commit">which commit to open
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		internal IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexingChain indexingChain, IndexCommit commit)
@@ -1698,11 +1696,11 @@ namespace Lucene.Net.Index
 			Init(d, a, create, false, deletionPolicy, false, mfl.GetLimit(), indexingChain, commit);
 		}
 		
-		/// <summary> Expert: constructs an IndexWriter with a custom {@link
-		/// IndexDeletionPolicy}, for the index in <code>d</code>.
-		/// Text will be analyzed with <code>a</code>.  If
-		/// <code>create</code> is true, then a new, empty index
-		/// will be created in <code>d</code>, replacing the index
+		/// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
+		///, for the index in <c>d</c>.
+		/// Text will be analyzed with <c>a</c>.  If
+		/// <c>create</c> is true, then a new, empty index
+		/// will be created in <c>d</c>, replacing the index
 		/// already there, if any.
 		/// 
 		/// </summary>
@@ -1712,26 +1710,26 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="a">the analyzer to use
 		/// </param>
-		/// <param name="create"><code>true</code> to create the index or overwrite
-		/// the existing one; <code>false</code> to append to the existing
+		/// <param name="create"><c>true</c> to create the index or overwrite
+		/// the existing one; <c>false</c> to append to the existing
 		/// index
 		/// </param>
 		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		/// <deprecated> This constructor will be removed in the 3.0 release.
-		/// Use {@link
-		/// #IndexWriter(Directory,Analyzer,boolean,IndexDeletionPolicy,MaxFieldLength)}
-		/// instead, and call {@link #Commit()} when needed.
+        /// Use <see cref="IndexWriter(Directory,Analyzer,bool,IndexDeletionPolicy,MaxFieldLength)" />
+		///
+		/// instead, and call <see cref="Commit()" /> when needed.
 		/// </deprecated>
         [Obsolete("This constructor will be removed in the 3.0 release. Use IndexWriter(Directory,Analyzer,boolean,IndexDeletionPolicy,MaxFieldLength) instead, and call Commit() when needed.")]
 		public IndexWriter(Directory d, bool autoCommit, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy)
@@ -1741,20 +1739,20 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Expert: constructs an IndexWriter on specific commit
-		/// point, with a custom {@link IndexDeletionPolicy}, for
-		/// the index in <code>d</code>.  Text will be analyzed
-		/// with <code>a</code>.
+		/// point, with a custom <see cref="IndexDeletionPolicy" />, for
+		/// the index in <c>d</c>.  Text will be analyzed
+		/// with <c>a</c>.
 		/// 
-		/// <p/> This is only meaningful if you've used a {@link
-		/// IndexDeletionPolicy} in that past that keeps more than
+		/// <p/> This is only meaningful if you've used a <see cref="IndexDeletionPolicy" />
+		/// in that past that keeps more than
 		/// just the last commit.
 		/// 
-		/// <p/>This operation is similar to {@link #Rollback()},
+		/// <p/>This operation is similar to <see cref="Rollback()" />,
 		/// except that method can only rollback what's been done
 		/// with the current instance of IndexWriter since its last
 		/// commit, whereas this method can rollback to an
 		/// arbitrary commit point from the past, assuming the
-		/// {@link IndexDeletionPolicy} has preserved past
+		/// <see cref="IndexDeletionPolicy" /> has preserved past
 		/// commits.
 		/// 
 		/// <p/><b>NOTE</b>: autoCommit (see <a
@@ -1768,18 +1766,18 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
 		/// </param>
-		/// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See {@link Lucene.Net.Index.IndexWriter.MaxFieldLength}.
+		/// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See <see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />.
 		/// </param>
 		/// <param name="commit">which commit to open
 		/// </param>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  LockObtainFailedException if another writer </throws>
-		/// <summary>  has this index open (<code>write.lock</code> could not
+		/// <summary>  has this index open (<c>write.lock</c> could not
 		/// be obtained)
 		/// </summary>
 		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
-		/// <summary>  if it does not exist and <code>create</code> is
-		/// <code>false</code> or if there is any other low-level
+		/// <summary>  if it does not exist and <c>create</c> is
+		/// <c>false</c> or if there is any other low-level
 		/// IO error
 		/// </summary>
 		public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexCommit commit)
@@ -1968,7 +1966,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Expert: returns the current MergePolicy in use by this writer.</summary>
-		/// <seealso cref="setMergePolicy">
+		/// <seealso cref="SetMergePolicy">
 		/// </seealso>
 		public virtual MergePolicy GetMergePolicy()
 		{
@@ -2001,7 +1999,7 @@ namespace Lucene.Net.Index
 		/// <summary> Expert: returns the current MergePolicy in use by this
 		/// writer.
 		/// </summary>
-		/// <seealso cref="setMergePolicy">
+		/// <seealso cref="SetMergePolicy">
 		/// </seealso>
 		public virtual MergeScheduler GetMergeScheduler()
 		{
@@ -2017,17 +2015,17 @@ namespace Lucene.Net.Index
 		/// are best for batched indexing and speedier
 		/// searches.<p/>
 		/// 
-		/// <p/>The default value is {@link Integer#MAX_VALUE}.<p/>
+		/// <p/>The default value is <see cref="int.MaxValue" />.<p/>
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.setMaxMergeDocs as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// 
-		/// <p/>The default merge policy ({@link
-		/// LogByteSizeMergePolicy}) also allows you to set this
-		/// limit by net size (in MB) of the segment, using {@link
-		/// LogByteSizeMergePolicy#setMaxMergeMB}.<p/>
+		/// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
+		/// also allows you to set this
+		/// limit by net size (in MB) of the segment, using 
+		/// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
 		/// </summary>
 		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
 		{
@@ -2039,11 +2037,11 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.getMaxMergeDocs as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="setMaxMergeDocs">
+		/// <seealso cref="SetMaxMergeDocs">
 		/// </seealso>
 		public virtual int GetMaxMergeDocs()
 		{
@@ -2060,7 +2058,7 @@ namespace Lucene.Net.Index
 		/// documents are large, be sure to set this value high enough to accomodate
 		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-		/// By default, no more than {@link #DEFAULT_MAX_FIELD_LENGTH} terms
+		/// By default, no more than <see cref="DEFAULT_MAX_FIELD_LENGTH" /> terms
 		/// will be indexed for a field.
 		/// </summary>
 		public virtual void  SetMaxFieldLength(int maxFieldLength)
@@ -2075,7 +2073,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns the maximum number of terms that will be
 		/// indexed for a single field in a document.
 		/// </summary>
-		/// <seealso cref="setMaxFieldLength">
+		/// <seealso cref="SetMaxFieldLength">
 		/// </seealso>
 		public virtual int GetMaxFieldLength()
 		{
@@ -2083,11 +2081,11 @@ namespace Lucene.Net.Index
 			return maxFieldLength;
 		}
 
-        /** Sets the termsIndexDivisor passed to any readers that
-        *  IndexWriter opens, for example when applying deletes
-        *  or creating a near-real-time reader in {@link
-        *  IndexWriter#getReader}.  Default value is {@link
-        *  IndexReader#DEFAULT_TERMS_INDEX_DIVISOR}. */
+        /// Sets the termsIndexDivisor passed to any readers that
+        /// IndexWriter opens, for example when applying deletes
+        /// or creating a near-real-time reader in 
+        /// <see cref="GetReader()"/>.  Default value is 
+        /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
         public void SetReaderTermsIndexDivisor(int divisor)
         {
             EnsureOpen();
@@ -2102,7 +2100,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        /** @see #setReaderTermsIndexDivisor */
+        /// <summary>
+        /// <see cref="SetReaderTermsIndexDivisor"/>
+        /// </summary>
         public int GetReaderTermsIndexDivisor()
         {
             EnsureOpen();
@@ -2115,8 +2115,8 @@ namespace Lucene.Net.Index
 		/// indexing.
 		/// 
 		/// <p/>When this is set, the writer will flush every
-		/// maxBufferedDocs added documents.  Pass in {@link
-		/// #DISABLE_AUTO_FLUSH} to prevent triggering a flush due
+		/// maxBufferedDocs added documents.  Pass in <see cref="DISABLE_AUTO_FLUSH" />
+		/// to prevent triggering a flush due
 		/// to number of buffered documents.  Note that if flushing
 		/// by RAM usage is also enabled, then the flush will be
 		/// triggered by whichever comes first.<p/>
@@ -2128,7 +2128,7 @@ namespace Lucene.Net.Index
 		/// <summary> enabled but smaller than 2, or it disables maxBufferedDocs
 		/// when ramBufferSize is already disabled
 		/// </summary>
-		/// <seealso cref="setRAMBufferSizeMB">
+		/// <seealso cref="SetRAMBufferSizeMB">
 		/// </seealso>
 		public virtual void  SetMaxBufferedDocs(int maxBufferedDocs)
 		{
@@ -2169,7 +2169,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns the number of buffered added documents that will
 		/// trigger a flush if enabled.
 		/// </summary>
-		/// <seealso cref="setMaxBufferedDocs">
+		/// <seealso cref="SetMaxBufferedDocs">
 		/// </seealso>
 		public virtual int GetMaxBufferedDocs()
 		{
@@ -2186,7 +2186,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>When this is set, the writer will flush whenever
 		/// buffered documents and deletions use this much RAM.
-		/// Pass in {@link #DISABLE_AUTO_FLUSH} to prevent
+		/// Pass in <see cref="DISABLE_AUTO_FLUSH" /> to prevent
 		/// triggering a flush due to RAM usage.  Note that if
 		/// flushing by document count is also enabled, then the
 		/// flush will be triggered by whichever comes first.<p/>
@@ -2197,19 +2197,19 @@ namespace Lucene.Net.Index
 		/// the RAM usage if individual Queries so the accounting
 		/// will under-estimate and you should compensate by either
 		/// calling commit() periodically yourself, or by using
-		/// {@link #setMaxBufferedDeleteTerms} to flush by count
+		/// <see cref="SetMaxBufferedDeleteTerms" /> to flush by count
 		/// instead of RAM usage (each buffered delete Query counts
 		/// as one).
 		/// 
 		/// <p/>
-		/// <b>NOTE</b>: because IndexWriter uses <code>int</code>s when managing its
+		/// <b>NOTE</b>: because IndexWriter uses <c>int</c>s when managing its
 		/// internal storage, the absolute maximum value for this setting is somewhat
 		/// less than 2048 MB. The precise limit depends on various factors, such as
 		/// how large your documents are, how many fields have norms, etc., so it's
 		/// best to set this value comfortably under 2048.
 		/// <p/>
 		/// 
-		/// <p/> The default value is {@link #DEFAULT_RAM_BUFFER_SIZE_MB}.<p/>
+		/// <p/> The default value is <see cref="DEFAULT_RAM_BUFFER_SIZE_MB" />.<p/>
 		/// 
 		/// </summary>
 		/// <throws>  IllegalArgumentException if ramBufferSize is </throws>
@@ -2231,7 +2231,7 @@ namespace Lucene.Net.Index
 				Message("setRAMBufferSizeMB " + mb);
 		}
 		
-		/// <summary> Returns the value set by {@link #setRAMBufferSizeMB} if enabled.</summary>
+		/// <summary> Returns the value set by <see cref="SetRAMBufferSizeMB" /> if enabled.</summary>
 		public virtual double GetRAMBufferSizeMB()
 		{
 			return docWriter.GetRAMBufferSizeMB();
@@ -2247,7 +2247,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IllegalArgumentException if maxBufferedDeleteTerms </throws>
 		/// <summary> is enabled but smaller than 1
 		/// </summary>
-		/// <seealso cref="setRAMBufferSizeMB">
+		/// <seealso cref="SetRAMBufferSizeMB">
 		/// </seealso>
 		public virtual void  SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
 		{
@@ -2262,7 +2262,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns the number of buffered deleted terms that will
 		/// trigger a flush if enabled.
 		/// </summary>
-		/// <seealso cref="setMaxBufferedDeleteTerms">
+		/// <seealso cref="SetMaxBufferedDeleteTerms">
 		/// </seealso>
 		public virtual int GetMaxBufferedDeleteTerms()
 		{
@@ -2280,7 +2280,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.setMergeFactor as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// 
 		/// <p/>This must never be less than 2.  The default value is 10.
@@ -2296,11 +2296,11 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>Note that this method is a convenience method: it
 		/// just calls mergePolicy.getMergeFactor as long as
-		/// mergePolicy is an instance of {@link LogMergePolicy}.
+		/// mergePolicy is an instance of <see cref="LogMergePolicy" />.
 		/// Otherwise an IllegalArgumentException is thrown.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="setMergeFactor">
+		/// <seealso cref="SetMergeFactor">
 		/// </seealso>
 		public virtual int GetMergeFactor()
 		{
@@ -2326,7 +2326,7 @@ namespace Lucene.Net.Index
 		/// <summary> Expert: sets the max delay before syncing a commit
 		/// point.
 		/// </summary>
-		/// <seealso cref="getMaxSyncPauseSeconds">
+		/// <seealso cref="GetMaxSyncPauseSeconds">
 		/// </seealso>
 		/// <deprecated> This will be removed in 3.0, when
 		/// autoCommit=true is removed from IndexWriter.
@@ -2340,7 +2340,7 @@ namespace Lucene.Net.Index
 		/// <summary>If non-null, this will be the default infoStream used
 		/// by a newly instantiated IndexWriter.
 		/// </summary>
-		/// <seealso cref="setInfoStream">
+		/// <seealso cref="SetInfoStream">
 		/// </seealso>
 		public static void  SetDefaultInfoStream(System.IO.StreamWriter infoStream)
 		{
@@ -2350,7 +2350,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns the current default infoStream for newly
 		/// instantiated IndexWriters.
 		/// </summary>
-		/// <seealso cref="setDefaultInfoStream">
+		/// <seealso cref="SetDefaultInfoStream">
 		/// </seealso>
 		public static System.IO.StreamWriter GetDefaultInfoStream()
 		{
@@ -2377,7 +2377,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns the current infoStream in use by this writer.</summary>
-		/// <seealso cref="setInfoStream">
+		/// <seealso cref="SetInfoStream">
 		/// </seealso>
 		public virtual System.IO.StreamWriter GetInfoStream()
 		{
@@ -2391,7 +2391,7 @@ namespace Lucene.Net.Index
 			return infoStream != null;
 		}
 		
-		/// <seealso cref="setDefaultWriteLockTimeout"> to change the default value for all instances of IndexWriter.
+		/// <seealso cref="SetDefaultWriteLockTimeout"> to change the default value for all instances of IndexWriter.
 		/// </seealso>
 		public virtual void  SetWriteLockTimeout(long writeLockTimeout)
 		{
@@ -2400,7 +2400,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Returns allowed timeout when acquiring the write lock.</summary>
-		/// <seealso cref="setWriteLockTimeout">
+		/// <seealso cref="SetWriteLockTimeout">
 		/// </seealso>
 		public virtual long GetWriteLockTimeout()
 		{
@@ -2419,7 +2419,7 @@ namespace Lucene.Net.Index
 		/// <summary> Returns default write lock timeout for newly
 		/// instantiated IndexWriters.
 		/// </summary>
-		/// <seealso cref="setDefaultWriteLockTimeout">
+		/// <seealso cref="SetDefaultWriteLockTimeout">
 		/// </seealso>
 		public static long GetDefaultWriteLockTimeout()
 		{
@@ -2429,7 +2429,7 @@ namespace Lucene.Net.Index
 		/// <summary> Commits all changes to an index and closes all
 		/// associated files.  Note that this may be a costly
 		/// operation, so, try to re-use a single writer instead of
-		/// closing and opening a new one.  See {@link #Commit()} for
+		/// closing and opening a new one.  See <see cref="Commit()" /> for
 		/// caveats about write caching done by some IO devices.
 		/// 
 		/// <p/> If an Exception is hit during close, eg due to disk
@@ -2447,15 +2447,15 @@ namespace Lucene.Net.Index
 		/// docs in the IndexWriter instance) then you can do
 		/// something like this:<p/>
 		/// 
-		/// <pre>
+        /// <code>
 		/// try {
-		/// writer.close();
+		///     writer.close();
 		/// } finally {
-		/// if (IndexWriter.isLocked(directory)) {
-		/// IndexWriter.unlock(directory);
+		///     if (IndexWriter.isLocked(directory)) {
+		///         IndexWriter.unlock(directory);
+		///     }
 		/// }
-		/// }
-		/// </pre>
+        /// </code>
 		/// 
 		/// after which, you must be certain not to use the writer
 		/// instance anymore.<p/>
@@ -2747,8 +2747,8 @@ namespace Lucene.Net.Index
 		/// <summary>Returns the number of documents currently in this
 		/// index, not counting deletions.
 		/// </summary>
-		/// <deprecated> Please use {@link #MaxDoc()} (same as this
-		/// method) or {@link #NumDocs()} (also takes deletions
+		/// <deprecated> Please use <see cref="MaxDoc()" /> (same as this
+		/// method) or <see cref="NumDocs()" /> (also takes deletions
 		/// into account), instead. 
 		/// </deprecated>
         [Obsolete("Please use MaxDoc() (same as this method) or NumDocs() (also takes deletions into account), instead. ")]
@@ -2765,7 +2765,7 @@ namespace Lucene.Net.Index
 		/// docs not yet flushed (still in the RAM buffer),
 		/// not counting deletions.
 		/// </summary>
-		/// <seealso cref="numDocs">
+		/// <seealso cref="NumDocs">
 		/// </seealso>
 		public virtual int MaxDoc()
 		{
@@ -2787,9 +2787,9 @@ namespace Lucene.Net.Index
 		/// docs not yet flushed (still in the RAM buffer), and
 		/// including deletions.  <b>NOTE:</b> buffered deletions
 		/// are not counted.  If you really need these to be
-		/// counted you should call {@link #Commit()} first.
+		/// counted you should call <see cref="Commit()" /> first.
 		/// </summary>
-		/// <seealso cref="numDocs">
+		/// <seealso cref="NumDocs">
 		/// </seealso>
 		public virtual int NumDocs()
 		{
@@ -2841,7 +2841,7 @@ namespace Lucene.Net.Index
 		private int maxFieldLength;
 		
 		/// <summary> Adds a document to this index.  If the document contains more than
-		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+		/// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
 		/// discarded.
 		/// 
 		/// <p/> Note that if an Exception is hit (for example disk full)
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Index
 		/// <p/> This method periodically flushes pending documents
 		/// to the Directory (see <a href="#flush">above</a>), and
 		/// also periodically triggers segment merges in the index
-		/// according to the {@link MergePolicy} in use.<p/>
+		/// according to the <see cref="MergePolicy" /> in use.<p/>
 		/// 
 		/// <p/>Merges temporarily consume space in the
 		/// directory. The amount of space required is up to 1X the
@@ -2862,7 +2862,7 @@ namespace Lucene.Net.Index
 		/// readers/searchers are open against the index, and up to
 		/// 2X the size of all segments being merged when
 		/// readers/searchers are open against the index (see
-		/// {@link #Optimize()} for details). The sequence of
+		/// <see cref="Optimize()" /> for details). The sequence of
 		/// primitive merge operations performed is governed by the
 		/// merge policy.
 		/// 
@@ -2889,11 +2889,11 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Adds a document to this index, using the provided analyzer instead of the
-		/// value of {@link #GetAnalyzer()}.  If the document contains more than
-		/// {@link #SetMaxFieldLength(int)} terms for a given field, the remainder are
+		/// value of <see cref="GetAnalyzer()" />.  If the document contains more than
+		/// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
 		/// discarded.
 		/// 
-		/// <p/>See {@link #AddDocument(Document)} for details on
+		/// <p/>See <see cref="AddDocument(Document)" /> for details on
 		/// index and IndexWriter state after an Exception, and
 		/// flushing/merging temporary free space requirements.<p/>
 		/// 
@@ -2946,7 +2946,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Deletes the document(s) containing <code>term</code>.
+		/// <summary> Deletes the document(s) containing <c>term</c>.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
@@ -3041,7 +3041,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Updates a document by first deleting the document(s)
-		/// containing <code>term</code> and then adding the new
+		/// containing <c>term</c> and then adding the new
 		/// document.  The delete and then add are atomic as seen
 		/// by a reader on the same index (flush may happen only after
 		/// the add).
@@ -3065,7 +3065,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Updates a document by first deleting the document(s)
-		/// containing <code>term</code> and then adding the new
+		/// containing <c>term</c> and then adding the new
 		/// document.  The delete and then add are atomic as seen
 		/// by a reader on the same index (flush may happen only after
 		/// the add).
@@ -3251,7 +3251,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <seealso cref="LogMergePolicy.findMergesForOptimize">
+		/// <seealso cref="LogMergePolicy.FindMergesForOptimize">
 		/// </seealso>
 		public virtual void  Optimize()
 		{
@@ -3259,8 +3259,8 @@ namespace Lucene.Net.Index
 		}
 
         /// <summary> Optimize the index down to &lt;= maxNumSegments.  If
-		/// maxNumSegments==1 then this is the same as {@link
-		/// #Optimize()}.
+		/// maxNumSegments==1 then this is the same as <see cref="Optimize()" />
+		///.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
@@ -3275,10 +3275,10 @@ namespace Lucene.Net.Index
 			Optimize(maxNumSegments, true);
 		}
 		
-		/// <summary>Just like {@link #Optimize()}, except you can specify
+		/// <summary>Just like <see cref="Optimize()" />, except you can specify
 		/// whether the call should block until the optimize
 		/// completes.  This is only meaningful with a
-		/// {@link MergeScheduler} that is able to run merges in
+		/// <see cref="MergeScheduler" /> that is able to run merges in
 		/// background threads.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
@@ -3290,10 +3290,10 @@ namespace Lucene.Net.Index
 			Optimize(1, doWait);
 		}
 		
-		/// <summary>Just like {@link #Optimize(int)}, except you can
+		/// <summary>Just like <see cref="Optimize(int)" />, except you can
 		/// specify whether the call should block until the
 		/// optimize completes.  This is only meaningful with a
-		/// {@link MergeScheduler} that is able to run merges in
+		/// <see cref="MergeScheduler" /> that is able to run merges in
 		/// background threads.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
@@ -3417,10 +3417,10 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Just like {@link #ExpungeDeletes()}, except you can
+		/// <summary>Just like <see cref="ExpungeDeletes()" />, except you can
 		/// specify whether the call should block until the
 		/// operation completes.  This is only meaningful with a
-		/// {@link MergeScheduler} that is able to run merges in
+		/// <see cref="MergeScheduler" /> that is able to run merges in
 		/// background threads.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
@@ -3499,16 +3499,15 @@ namespace Lucene.Net.Index
 		/// expungeDeletes to remove all unused data in the index
 		/// associated with the deleted documents.  To see how
 		/// many deletions you have pending in your index, call
-		/// {@link IndexReader#numDeletedDocs}
+		/// <see cref="IndexReader.NumDeletedDocs" />
 		/// This saves disk space and memory usage while
 		/// searching.  expungeDeletes should be somewhat faster
 		/// than optimize since it does not insist on reducing the
 		/// index to a single segment (though, this depends on the
-		/// {@link MergePolicy}; see {@link
-		/// MergePolicy#findMergesToExpungeDeletes}.). Note that
+		/// <see cref="MergePolicy" />; see <see cref="MergePolicy.FindMergesToExpungeDeletes" />.). Note that
 		/// this call does not first commit any buffered
 		/// documents, so you must do so yourself if necessary.
-		/// See also {@link #ExpungeDeletes(boolean)}
+		/// See also <seealso cref="ExpungeDeletes(bool)" />
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
@@ -3598,7 +3597,7 @@ namespace Lucene.Net.Index
             return GetNextMerge();
         }
 		
-		/// <summary>Expert: the {@link MergeScheduler} calls this method
+		/// <summary>Expert: the <see cref="MergeScheduler" /> calls this method
 		/// to retrieve the next merge requested by the
 		/// MergePolicy 
 		/// </summary>
@@ -3851,7 +3850,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <deprecated> Please use {@link #rollback} instead.
+		/// <deprecated> Please use <see cref="Rollback" /> instead.
 		/// </deprecated>
         [Obsolete("Please use Rollback instead.")]
 		public virtual void  Abort()
@@ -3859,7 +3858,7 @@ namespace Lucene.Net.Index
 			Rollback();
 		}
 		
-		/// <summary> Close the <code>IndexWriter</code> without committing
+		/// <summary> Close the <c>IndexWriter</c> without committing
 		/// any changes that have occurred since the last commit
 		/// (or since it was opened, if commit hasn't been called).
 		/// This removes any temporary files that had been created,
@@ -3867,11 +3866,11 @@ namespace Lucene.Net.Index
 		/// it was when commit() was last called or when this
 		/// writer was first opened.  This can only be called when
 		/// this IndexWriter was opened with
-		/// <code>autoCommit=false</code>.  This also clears a
-		/// previous call to {@link #prepareCommit}.
+		/// <c>autoCommit=false</c>.  This also clears a
+		/// previous call to <see cref="PrepareCommit()" />.
 		/// </summary>
 		/// <throws>  IllegalStateException if this is called when </throws>
-		/// <summary>  the writer was opened with <code>autoCommit=true</code>.
+		/// <summary>  the writer was opened with <c>autoCommit=true</c>.
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Rollback()
@@ -3971,15 +3970,15 @@ namespace Lucene.Net.Index
 		/// 
 		/// <p/>This method will drop all buffered documents and will 
 		/// remove all segments from the index. This change will not be
-		/// visible until a {@link #Commit()} has been called. This method
-		/// can be rolled back using {@link #Rollback()}.<p/>
+		/// visible until a <see cref="Commit()" /> has been called. This method
+		/// can be rolled back using <see cref="Rollback()" />.<p/>
 		/// 
 		/// <p/>NOTE: this method is much faster than using deleteDocuments( new MatchAllDocsQuery() ).<p/>
 		/// 
 		/// <p/>NOTE: this method will forcefully abort all merges
-		/// in progress.  If other threads are running {@link
-		/// #Optimize()} or any of the addIndexes methods, they
-		/// will receive {@link MergePolicy.MergeAbortedException}s.
+		/// in progress.  If other threads are running <see cref="Optimize()" />
+		/// or any of the addIndexes methods, they
+		/// will receive <see cref="MergePolicy.MergeAbortedException" />s.
 		/// </summary>
 		public virtual void  DeleteAll()
 		{
@@ -4167,14 +4166,14 @@ namespace Lucene.Net.Index
 		/// href="#OOME">above</a> for details.<p/>
 		/// 
 		/// </summary>
-		/// <deprecated> Use {@link #addIndexesNoOptimize} instead,
-		/// then separately call {@link #optimize} afterwards if
+		/// <deprecated> Use <see cref="AddIndexesNoOptimize" /> instead,
+		/// then separately call <see cref="Optimize()" /> afterwards if
 		/// you need to.
 		/// 
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use {@link #addIndexesNoOptimize} instead,then separately call {@link #optimize} afterwards if you need to.")]
+        [Obsolete("Use AddIndexesNoOptimize instead,then separately call Optimize afterwards if you need to.")]
 		public virtual void  AddIndexes(Directory[] dirs)
 		{
 			
@@ -4303,7 +4302,7 @@ namespace Lucene.Net.Index
 		/// (including the starting index).  If readers/searchers
 		/// are open against the starting index, then temporary
 		/// free space required will be higher by the size of the
-		/// starting index (see {@link #Optimize()} for details).
+		/// starting index (see <see cref="Optimize()" /> for details).
 		/// <p/>
 		/// 
 		/// <p/>Once this completes, the final size of the index
@@ -4508,7 +4507,7 @@ namespace Lucene.Net.Index
 		/// add or delete documents (with another thread) will be
 		/// paused until this method completes.
 		/// 
-		/// <p/>See {@link #AddIndexesNoOptimize(Directory[])} for
+		/// <p/>See <see cref="AddIndexesNoOptimize(Directory[])" /> for
 		/// details on transactional semantics, temporary free
 		/// space required in the Directory, and non-CFS segments
 		/// on an Exception.<p/>
@@ -4711,14 +4710,14 @@ namespace Lucene.Net.Index
 		/// to the Directory. 
 		/// <p/>Note: while this will force buffered docs to be
 		/// pushed into the index, it will not make these docs
-		/// visible to a reader.  Use {@link #Commit()} instead
+		/// visible to a reader.  Use <see cref="Commit()" /> instead
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
 		/// href="#OOME">above</a> for details.<p/>
 		/// 
 		/// </summary>
-		/// <deprecated> please call {@link #Commit()}) instead
+		/// <deprecated> please call <see cref="Commit()" />) instead
 		/// 
 		/// </deprecated>
 		/// <throws>  CorruptIndexException if the index is corrupt </throws>
@@ -4749,7 +4748,7 @@ namespace Lucene.Net.Index
 		/// href="#OOME">above</a> for details.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="PrepareCommit(Map)">
+        /// <seealso cref="PrepareCommit(System.Collections.Generic.IDictionary{string,string})">
 		/// </seealso>
 		public void  PrepareCommit()
 		{
@@ -4764,12 +4763,12 @@ namespace Lucene.Net.Index
 		/// necessary to commit changes since this writer was
 		/// opened: flushes pending added and deleted docs, syncs
 		/// the index files, writes most of next segments_N file.
-		/// After calling this you must call either {@link
-		/// #Commit()} to finish the commit, or {@link
-		/// #Rollback()} to revert the commit and undo all changes
+		/// After calling this you must call either <see cref="Commit()" />
+		/// to finish the commit, or <see cref="Rollback()" />
+		/// to revert the commit and undo all changes
 		/// done since the writer was opened.<p/>
 		/// 
-		/// You can also just call {@link #Commit(Map)} directly
+        /// You can also just call <see cref="Commit(System.Collections.Generic.IDictionary{string,string})" /> directly
 		/// without prepareCommit first in which case that method
 		/// will internally call prepareCommit.
 		/// 
@@ -4780,10 +4779,10 @@ namespace Lucene.Net.Index
 		/// </summary>
 		/// <param name="commitUserData">Opaque Map (String->String)
 		/// that's recorded into the segments file in the index,
-		/// and retrievable by {@link
-		/// IndexReader#getCommitUserData}.  Note that when
+		/// and retrievable by <see cref="IndexReader.GetCommitUserData" />
+		///.  Note that when
 		/// IndexWriter commits itself, for example if open with
-		/// autoCommit=true, or, during {@link #close}, the
+		/// autoCommit=true, or, during <see cref="Close()" />, the
 		/// commitUserData is unchanged (just carried over from
 		/// the prior commit).  If this is null then the previous
 		/// commitUserData is kept.  Also, the commitUserData will
@@ -4856,9 +4855,9 @@ namespace Lucene.Net.Index
 		/// href="#OOME">above</a> for details.<p/>
 		/// 
 		/// </summary>
-		/// <seealso cref="prepareCommit">
+		/// <seealso cref="PrepareCommit()">
 		/// </seealso>
-		/// <seealso cref="Commit(Map)">
+        /// <seealso cref="Commit(System.Collections.Generic.IDictionary{string,string})">
 		/// </seealso>
 		public void  Commit()
 		{
@@ -4867,8 +4866,8 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Commits all changes to the index, specifying a
 		/// commitUserData Map (String -> String).  This just
-		/// calls {@link #PrepareCommit(Map)} (if you didn't
-		/// already call it) and then {@link #finishCommit}.
+		/// calls <see cref="PrepareCommit(System.Collections.Generic.IDictionary{string, string})" /> (if you didn't
+		/// already call it) and then <see cref="FinishCommit" />.
 		/// 
 		/// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
 		/// you should immediately close the writer.  See <a
@@ -4876,7 +4875,6 @@ namespace Lucene.Net.Index
 		/// </summary>
         public void Commit(System.Collections.Generic.IDictionary<string, string> commitUserData)
 		{
-			
 			EnsureOpen();
 
             if (infoStream != null)
@@ -6697,7 +6695,7 @@ namespace Lucene.Net.Index
 			System.Diagnostics.Debug.Assert(TestPoint("finishStartCommit"));
 		}
 		
-		/// <summary> Returns <code>true</code> iff the index in the named directory is
+		/// <summary> Returns <c>true</c> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
@@ -6708,13 +6706,13 @@ namespace Lucene.Net.Index
 			return directory.MakeLock(WRITE_LOCK_NAME).IsLocked();
 		}
 		
-		/// <summary> Returns <code>true</code> iff the index in the named directory is
+		/// <summary> Returns <c>true</c> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
 		/// </param>
 		/// <throws>  IOException if there is a low-level IO error </throws>
-		/// <deprecated> Use {@link #IsLocked(Directory)}
+		/// <deprecated> Use <see cref="IsLocked(Directory)" />
 		/// </deprecated>
         [Obsolete("Use IsLocked(Directory)")]
 		public static bool IsLocked(System.String directory)
@@ -6741,8 +6739,8 @@ namespace Lucene.Net.Index
 			directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
 		}
 		
-		/// <summary> Specifies maximum field length (in number of tokens/terms) in {@link IndexWriter} constructors.
-		/// {@link #SetMaxFieldLength(int)} overrides the value set by
+		/// <summary> Specifies maximum field length (in number of tokens/terms) in <see cref="IndexWriter" /> constructors.
+		/// <see cref="SetMaxFieldLength(int)" /> overrides the value set by
 		/// the constructor.
 		/// </summary>
 		public sealed class MaxFieldLength
@@ -6783,11 +6781,11 @@ namespace Lucene.Net.Index
 				return name + ":" + limit;
 			}
 			
-			/// <summary>Sets the maximum field length to {@link Integer#MAX_VALUE}. </summary>
+			/// <summary>Sets the maximum field length to <see cref="int.MaxValue" />. </summary>
 			public static readonly MaxFieldLength UNLIMITED = new MaxFieldLength("UNLIMITED", System.Int32.MaxValue);
 			
 			/// <summary>  Sets the maximum field length to 
-			/// {@link #DEFAULT_MAX_FIELD_LENGTH} 
+			/// <see cref="DEFAULT_MAX_FIELD_LENGTH" /> 
 			/// 
 			/// </summary>
 			public static readonly MaxFieldLength LIMITED;
@@ -6797,7 +6795,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>If {@link #getReader} has been called (ie, this writer
+		/// <summary>If <see cref="GetReader()" /> has been called (ie, this writer
 		/// is in near real-time mode), then after a merge
 		/// completes, this class can be invoked to warm the
 		/// reader on the newly merged segment, before the merge
@@ -6818,16 +6816,16 @@ namespace Lucene.Net.Index
 		
 		private IndexReaderWarmer mergedSegmentWarmer;
 		
-		/// <summary>Set the merged segment warmer.  See {@link
-		/// IndexReaderWarmer}. 
+		/// <summary>Set the merged segment warmer.  See <see cref="IndexReaderWarmer" />
+		///. 
 		/// </summary>
 		public virtual void  SetMergedSegmentWarmer(IndexReaderWarmer warmer)
 		{
 			mergedSegmentWarmer = warmer;
 		}
 		
-		/// <summary>Returns the current merged segment warmer.  See {@link
-		/// IndexReaderWarmer}. 
+		/// <summary>Returns the current merged segment warmer.  See <see cref="IndexReaderWarmer" />
+		///. 
 		/// </summary>
 		public virtual IndexReaderWarmer GetMergedSegmentWarmer()
 		{

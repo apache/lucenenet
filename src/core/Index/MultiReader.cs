@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 		/// A re-opened instance might share one or more subreaders with the old 
 		/// instance. Index modification operations result in undefined behavior
 		/// when performed before the old instance is closed.
-		/// (see {@link IndexReader#Reopen()}).
+		/// (see <see cref="IndexReader.Reopen()" />).
 		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Clones the subreaders.
-		/// (see {@link IndexReader#clone()}).
+		/// (see <see cref="IndexReader.Clone()" />).
 		/// <br/>
 		/// <p/>
 		/// If subreaders are shared, then the reference count of those

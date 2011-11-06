@@ -22,12 +22,12 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A base class for all collectors that return a {@link TopDocs} output. This
+	/// <summary> A base class for all collectors that return a <see cref="Lucene.Net.Search.TopDocs" /> output. This
 	/// collector allows easy extension by providing a single constructor which
-	/// accepts a {@link PriorityQueue} as well as protected members for that
+	/// accepts a <see cref="PriorityQueue" /> as well as protected members for that
 	/// priority queue and a counter of the number of total hits.<br/>
-	/// Extending classes can override {@link #TopDocs(int, int)} and
-	/// {@link #GetTotalHits()} in order to provide their own implementation.
+	/// Extending classes can override <see cref="TopDocs(int, int)" /> and
+	/// <see cref="GetTotalHits()" /> in order to provide their own implementation.
 	/// </summary>
 	public abstract class TopDocsCollector:Collector
 	{
@@ -61,9 +61,9 @@ namespace Lucene.Net.Search
 				results[i] = (ScoreDoc) pq.Pop();
 			}
 		}
-		
-		/// <summary> Returns a {@link TopDocs} instance containing the given results. If
-		/// <code>results</code> is null it means there are no results to return,
+
+        /// <summary> Returns a <see cref="Lucene.Net.Search.TopDocs" /> instance containing the given results. If
+		/// <c>results</c> is null it means there are no results to return,
 		/// either because there were 0 calls to collect() or because the arguments to
 		/// topDocs were invalid.
 		/// </summary>
@@ -94,8 +94,8 @@ namespace Lucene.Net.Search
 		/// last results, starting from the last 'page'.<br/>
 		/// <b>NOTE:</b> you cannot call this method more than once for each search
 		/// execution. If you need to call it more than once, passing each time a
-		/// different <code>start</code>, you should call {@link #TopDocs()} and work
-		/// with the returned {@link TopDocs} object, which will contain all the
+		/// different <c>start</c>, you should call <see cref="TopDocs()" /> and work
+        /// with the returned <see cref="Lucene.Net.Search.TopDocs" /> object, which will contain all the
 		/// results this search execution collected.
 		/// </summary>
 		public TopDocs TopDocs(int start)
@@ -115,8 +115,8 @@ namespace Lucene.Net.Search
 		/// memory used by allocating only as much as requested by howMany.<br/>
 		/// <b>NOTE:</b> you cannot call this method more than once for each search
 		/// execution. If you need to call it more than once, passing each time a
-		/// different range, you should call {@link #TopDocs()} and work with the
-		/// returned {@link TopDocs} object, which will contain all the results this
+		/// different range, you should call <see cref="TopDocs()" /> and work with the
+        /// returned <see cref="Lucene.Net.Search.TopDocs" /> object, which will contain all the results this
 		/// search execution collected.
 		/// </summary>
 		public TopDocs TopDocs(int start, int howMany)

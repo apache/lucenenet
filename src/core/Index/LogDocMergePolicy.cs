@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>This is a {@link LogMergePolicy} that measures size of a
+	/// <summary>This is a <see cref="LogMergePolicy" /> that measures size of a
 	/// segment as the number of documents (not taking deletions
 	/// into account). 
 	/// </summary>
@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	public class LogDocMergePolicy:LogMergePolicy
 	{
 		
-		/// <seealso cref="setMinMergeDocs">
+		/// <seealso cref="SetMinMergeDocs">
 		/// </seealso>
 		public const int DEFAULT_MIN_MERGE_DOCS = 1000;
 		
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 		/// <summary>Get the minimum size for a segment to remain
 		/// un-merged.
 		/// </summary>
-		/// <seealso cref="setMinMergeDocs">
+		/// <seealso cref="SetMinMergeDocs">
 		/// </seealso>
 		public virtual int GetMinMergeDocs()
 		{

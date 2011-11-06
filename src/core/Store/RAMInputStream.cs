@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> A memory-resident {@link IndexInput} implementation.
+	/// <summary> A memory-resident <see cref="IndexInput" /> implementation.
 	/// 
 	/// </summary>
 	/// <version>  $Id: RAMInputStream.java 632120 2008-02-28 21:13:59Z mikemccand $

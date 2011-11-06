@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <deprecated> Please specify the exact type, instead.
 		/// Especially, guessing does <b>not</b> work with the new
-		/// {@link NumericField} type.
+		/// <see cref="NumericField" /> type.
 		/// </deprecated>
         [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		public const int AUTO = 2;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Sort using term values as Strings, but comparing by
 		/// value (using String.compareTo) for all comparisons.
-		/// This is typically slower than {@link #STRING}, which
+		/// This is typically slower than <see cref="STRING" />, which
 		/// uses ordinals to do the sorting. 
 		/// </summary>
 		public const int STRING_VAL = 11;
@@ -134,10 +134,10 @@ namespace Lucene.Net.Search
 		private bool useLegacy = false; // remove in Lucene 3.0
 		
 		/// <summary>Creates a sort by terms in the given field where the type of term value
-		/// is determined dynamically ({@link #AUTO AUTO}).
+		/// is determined dynamically (<see cref="AUTO" />).
 		/// </summary>
 		/// <param name="field">Name of field to sort by, cannot be
-		/// <code>null</code>.
+		/// <c>null</c>.
 		/// </param>
 		/// <deprecated> Please specify the exact type instead.
 		/// </deprecated>
@@ -148,9 +148,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort, possibly in reverse, by terms in the given field where
-		/// the type of term value is determined dynamically ({@link #AUTO AUTO}).
+		/// the type of term value is determined dynamically (<see cref="AUTO" />).
 		/// </summary>
-		/// <param name="field">Name of field to sort by, cannot be <code>null</code>.
+		/// <param name="field">Name of field to sort by, cannot be <c>null</c>.
 		/// </param>
 		/// <param name="reverse">True if natural order should be reversed.
 		/// </param>
@@ -166,8 +166,8 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a sort by terms in the given field with the type of term
 		/// values explicitly given.
 		/// </summary>
-		/// <param name="field"> Name of field to sort by.  Can be <code>null</code> if
-		/// <code>type</code> is SCORE or DOC.
+		/// <param name="field"> Name of field to sort by.  Can be <c>null</c> if
+		/// <c>type</c> is SCORE or DOC.
 		/// </param>
 		/// <param name="type">  Type of values in the terms.
 		/// </param>
@@ -179,8 +179,8 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a sort, possibly in reverse, by terms in the given field with the
 		/// type of term values explicitly given.
 		/// </summary>
-		/// <param name="field"> Name of field to sort by.  Can be <code>null</code> if
-		/// <code>type</code> is SCORE or DOC.
+		/// <param name="field"> Name of field to sort by.  Can be <c>null</c> if
+		/// <c>type</c> is SCORE or DOC.
 		/// </param>
 		/// <param name="type">  Type of values in the terms.
 		/// </param>
@@ -193,13 +193,13 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort by terms in the given field, parsed
-		/// to numeric values using a custom {@link FieldCache.Parser}.
+        /// to numeric values using a custom <see cref="Parser" />.
 		/// </summary>
 		/// <param name="field"> Name of field to sort by.  Must not be null.
 		/// </param>
-		/// <param name="parser">Instance of a {@link FieldCache.Parser},
+        /// <param name="parser">Instance of a <see cref="Parser" />,
 		/// which must subclass one of the existing numeric
-		/// parsers from {@link FieldCache}. Sort type is inferred
+		/// parsers from <see cref="FieldCache" />. Sort type is inferred
 		/// by testing which numeric parser the parser subclasses.
 		/// </param>
 		/// <throws>  IllegalArgumentException if the parser fails to </throws>
@@ -210,13 +210,13 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort, possibly in reverse, by terms in the given field, parsed
-		/// to numeric values using a custom {@link FieldCache.Parser}.
+        /// to numeric values using a custom <see cref="Parser" />.
 		/// </summary>
 		/// <param name="field"> Name of field to sort by.  Must not be null.
 		/// </param>
-		/// <param name="parser">Instance of a {@link FieldCache.Parser},
+		/// <param name="parser">Instance of a <see cref="Parser" />,
 		/// which must subclass one of the existing numeric
-		/// parsers from {@link FieldCache}. Sort type is inferred
+		/// parsers from <see cref="FieldCache" />. Sort type is inferred
 		/// by testing which numeric parser the parser subclasses.
 		/// </param>
 		/// <param name="reverse">True if natural order should be reversed.
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a sort by terms in the given field sorted
 		/// according to the given locale.
 		/// </summary>
-		/// <param name="field"> Name of field to sort by, cannot be <code>null</code>.
+		/// <param name="field"> Name of field to sort by, cannot be <c>null</c>.
 		/// </param>
 		/// <param name="locale">Locale of values in the field.
 		/// </param>
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
 		/// <summary>Creates a sort, possibly in reverse, by terms in the given field sorted
 		/// according to the given locale.
 		/// </summary>
-		/// <param name="field"> Name of field to sort by, cannot be <code>null</code>.
+		/// <param name="field"> Name of field to sort by, cannot be <c>null</c>.
 		/// </param>
 		/// <param name="locale">Locale of values in the field.
 		/// </param>
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort with a custom comparison function.</summary>
-		/// <param name="field">Name of field to sort by; cannot be <code>null</code>.
+		/// <param name="field">Name of field to sort by; cannot be <c>null</c>.
 		/// </param>
 		/// <param name="comparator">Returns a comparator for sorting hits.
 		/// </param>
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort with a custom comparison function.</summary>
-		/// <param name="field">Name of field to sort by; cannot be <code>null</code>.
+		/// <param name="field">Name of field to sort by; cannot be <c>null</c>.
 		/// </param>
 		/// <param name="comparator">Returns a comparator for sorting hits.
 		/// </param>
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort, possibly in reverse, with a custom comparison function.</summary>
-		/// <param name="field">Name of field to sort by; cannot be <code>null</code>.
+		/// <param name="field">Name of field to sort by; cannot be <c>null</c>.
 		/// </param>
 		/// <param name="comparator">Returns a comparator for sorting hits.
 		/// </param>
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Creates a sort, possibly in reverse, with a custom comparison function.</summary>
-		/// <param name="field">Name of field to sort by; cannot be <code>null</code>.
+		/// <param name="field">Name of field to sort by; cannot be <c>null</c>.
 		/// </param>
 		/// <param name="comparator">Returns a comparator for sorting hits.
 		/// </param>
@@ -348,10 +348,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Returns the name of the field.  Could return <code>null</code>
+		/// <summary>Returns the name of the field.  Could return <c>null</c>
 		/// if the sort is by SCORE or DOC.
 		/// </summary>
-		/// <returns> Name of field, possibly <code>null</code>.
+		/// <returns> Name of field, possibly <c>null</c>.
 		/// </returns>
 		public virtual System.String GetField()
 		{
@@ -367,19 +367,19 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the Locale by which term values are interpreted.
-		/// May return <code>null</code> if no Locale was specified.
+		/// May return <c>null</c> if no Locale was specified.
 		/// </summary>
-		/// <returns> Locale, or <code>null</code>.
+		/// <returns> Locale, or <c>null</c>.
 		/// </returns>
 		public virtual System.Globalization.CultureInfo GetLocale()
 		{
 			return locale;
 		}
 		
-		/// <summary>Returns the instance of a {@link FieldCache} parser that fits to the given sort type.
-		/// May return <code>null</code> if no parser was specified. Sorting is using the default parser then.
+		/// <summary>Returns the instance of a <see cref="FieldCache" /> parser that fits to the given sort type.
+		/// May return <c>null</c> if no parser was specified. Sorting is using the default parser then.
 		/// </summary>
-		/// <returns> An instance of a {@link FieldCache} parser, or <code>null</code>.
+		/// <returns> An instance of a <see cref="FieldCache" /> parser, or <c>null</c>.
 		/// </returns>
 		public virtual Lucene.Net.Search.Parser GetParser()
 		{
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
 			return reverse;
 		}
 		
-		/// <deprecated> use {@link #GetComparatorSource()}
+		/// <deprecated> use <see cref="GetComparatorSource()" />
 		/// </deprecated>
         [Obsolete("use GetComparatorSource()")]
 		public virtual SortComparatorSource GetFactory()
@@ -514,9 +514,9 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this.  If a
-		/// {@link SortComparatorSource} (deprecated) or {@link
-		/// FieldCache.Parser} was provided, it must properly
+		/// <summary>Returns true if <c>o</c> is equal to this.  If a
+		/// <see cref="SortComparatorSource" /> (deprecated) or <see cref="Parser" />
+		/// was provided, it must properly
 		/// implement equals (unless a singleton is always used). 
 		/// </summary>
 		public  override bool Equals(System.Object o)
@@ -529,9 +529,9 @@ namespace Lucene.Net.Search
 			return ((System.Object) other.field == (System.Object) this.field && other.type == this.type && other.reverse == this.reverse && (other.locale == null?this.locale == null:other.locale.Equals(this.locale)) && (other.factory == null?this.factory == null:other.factory.Equals(this.factory)) && (other.comparatorSource == null?this.comparatorSource == null:other.comparatorSource.Equals(this.comparatorSource)) && (other.parser == null?this.parser == null:other.parser.Equals(this.parser)));
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this.  If a
-		/// {@link SortComparatorSource} (deprecated) or {@link
-		/// FieldCache.Parser} was provided, it must properly
+		/// <summary>Returns true if <c>o</c> is equal to this.  If a
+		/// <see cref="SortComparatorSource" /> (deprecated) or <see cref="Parser" />
+		/// was provided, it must properly
 		/// implement hashCode (unless a singleton is always
 		/// used). 
 		/// </summary>
@@ -567,7 +567,7 @@ namespace Lucene.Net.Search
             field = StringHelper.Intern(field);
         }
 		
-		/// <summary>Returns the {@link FieldComparator} to use for
+		/// <summary>Returns the <see cref="FieldComparator" /> to use for
 		/// sorting.
 		/// 
 		/// <b>NOTE:</b> This API is experimental and might change in
@@ -576,12 +576,12 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="numHits">number of top hits the queue will store
 		/// </param>
-		/// <param name="sortPos">position of this SortField within {@link
-		/// Sort}.  The comparator is primary if sortPos==0,
+		/// <param name="sortPos">position of this SortField within <see cref="Sort" />
+		///.  The comparator is primary if sortPos==0,
 		/// secondary if sortPos==1, etc.  Some comparators can
 		/// optimize themselves when they are the primary sort.
 		/// </param>
-		/// <returns> {@link FieldComparator} to use when sorting
+		/// <returns> <see cref="FieldComparator" /> to use when sorting
 		/// </returns>
 		public virtual FieldComparator GetComparator(int numHits, int sortPos)
 		{

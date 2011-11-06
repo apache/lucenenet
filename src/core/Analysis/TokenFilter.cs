@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary> A TokenFilter is a TokenStream whose input is another TokenStream.
 	/// <p/>
-	/// This is an abstract class; subclasses must override {@link #IncrementToken()}.
+    /// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()" />.
 	/// 
 	/// </summary>
 	/// <seealso cref="TokenStream">
@@ -38,9 +38,9 @@ namespace Lucene.Net.Analysis
 			this.input = input;
 		}
 		
-		/// <summary>Performs end-of-stream operations, if any, and calls then <code>end()</code> on the
+		/// <summary>Performs end-of-stream operations, if any, and calls then <c>end()</c> on the
 		/// input TokenStream.<p/> 
-		/// <b>NOTE:</b> Be sure to call <code>super.end()</code> first when overriding this method.
+		/// <b>NOTE:</b> Be sure to call <c>super.end()</c> first when overriding this method.
 		/// </summary>
 		public override void  End()
 		{

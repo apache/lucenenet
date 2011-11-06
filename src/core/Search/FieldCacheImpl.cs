@@ -923,16 +923,15 @@ namespace Lucene.Net.Search
 		}
 		
 		
-		/// <summary>The pattern used to detect integer values in a field </summary>
-		/// <summary>removed for java 1.3 compatibility
-		/// protected static final Pattern pIntegers = Pattern.compile ("[0-9\\-]+");
-		/// 
-		/// </summary>
+        ///// <summary>The pattern used to detect integer values in a field </summary>
+        ///// <summary>removed for java 1.3 compatibility
+        ///// protected static final Pattern pIntegers = Pattern.compile ("[0-9\\-]+");
+        ///// </summary>
 		
-		/// <summary>The pattern used to detect float values in a field </summary>
-		/// <summary> removed for java 1.3 compatibility
-		/// protected static final Object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
-		/// </summary>
+        ///// <summary>The pattern used to detect float values in a field </summary>
+        ///// <summary> removed for java 1.3 compatibility
+        ///// protected static final Object pFloats = Pattern.compile ("[0-9+\\-\\.eEfFdD]+");
+        ///// </summary>
 		
 		// inherit javadocs
 		public virtual System.Object GetAuto(IndexReader reader, System.String field)
@@ -942,7 +941,7 @@ namespace Lucene.Net.Search
 		
 		/// <deprecated> Please specify the exact type, instead.
 		/// Especially, guessing does <b>not</b> work with the new
-		/// {@link NumericField} type.
+		/// <see cref="NumericField" /> type.
 		/// </deprecated>
         [Obsolete("Please specify the exact type, instead. Especially, guessing does not work with the new NumericField type.")]
 		internal sealed class AutoCache:Cache

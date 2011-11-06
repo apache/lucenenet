@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,6 +43,7 @@ namespace Lucene.Net.Index
     /// standard Field and NumericField implementations.  The string and numeric enumerators
     /// have slightly different options, but both should be used within a using statment
     /// to close the underlying TermEnum/TermDocs. Refer to the unit tests for usage examples.
+    /// </para>
     /// </summary>
     /// <typeparam name="T">The type of data being enumerated.</typeparam>
     public abstract class FieldEnumerator<T> : IDisposable
@@ -93,7 +94,7 @@ namespace Lucene.Net.Index
         /// base constructor as generic classes cannot have a parameterized ctor.
         /// </summary>
         /// <param name="reader">The index reader to read from.</param>
-        /// <param name="field">The field to enumerate.</param>
+        /// <param name="fieldName">The field to enumerate.</param>
         /// <param name="includeDocs">Whether this enumerator will support TermDocs.</param>
         protected void Init(IndexReader reader, string fieldName, bool includeDocs)
         {
@@ -111,7 +112,6 @@ namespace Lucene.Net.Index
         /// and sets the value of Current.
         /// </summary>
         /// <param name="s">The encoded string.</param>
-        /// <param name="?">The value.</param>
         /// <returns>True if the value was successfully parsed, false if we reached the
         /// end of encoded values in the fiele and only the tries remain.</returns>
         protected abstract bool TryParse(string s);
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
             /// Ctor.
             /// </summary>
             /// <param name="td">Underlying TermDocs.</param>
-            /// <param name="fieldEnum">Enclosing field enum.</param>
+            /// <param name="termEnum">Enclosing field enum.</param>
             internal TermDocUsingTermsEnumerator(TermDocs td, TermEnum termEnum)
             {
                 this.termDocs = td;

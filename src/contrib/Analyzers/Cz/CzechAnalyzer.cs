@@ -195,6 +195,7 @@ namespace Lucene.Net.Analysis.Cz
 
 		/// <summary>
 		/// Creates a TokenStream which tokenizes all the text in the provided Reader.
+		/// </summary>
 		/// <returns>
 		/// A TokenStream build from a StandardTokenizer filtered with
 		/// StandardFilter, StopFilter, GermanStemFilter and LowerCaseFilter

@@ -23,7 +23,7 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search.Spans
 {
 	
-	/// <summary> Similar to {@link NearSpansOrdered}, but for the unordered case.
+	/// <summary> Similar to <see cref="NearSpansOrdered" />, but for the unordered case.
 	/// 
 	/// Expert:
 	/// Only public for subclassing.  Most implementations should not need this class
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search.Spans
 		
 		// TODO: Remove warning after API has been finalized
 		/// <summary> WARNING: The List is not necessarily in order of the the positions</summary>
-		/// <returns> Collection of <code>byte[]</code> payloads
+		/// <returns> Collection of <c>byte[]</c> payloads
 		/// </returns>
 		/// <throws>  IOException </throws>
 		public override System.Collections.Generic.ICollection<byte[]> GetPayload()

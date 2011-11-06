@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis
 	/// It is also useful for doing things like entity extraction or proper noun analysis as
 	/// part of the analysis workflow and saving off those tokens for use in another field.
 	/// 
-	/// <pre>
+	/// <code>
 	/// SinkTokenizer sink1 = new SinkTokenizer();
 	/// SinkTokenizer sink2 = new SinkTokenizer();
 	/// TokenStream source1 = new TeeTokenFilter(new TeeTokenFilter(new WhitespaceTokenizer(reader1), sink1), sink2);
@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis
 	/// d.add(new Field("f2", final2));
 	/// d.add(new Field("f3", final3));
 	/// d.add(new Field("f4", final4));
-	/// </pre>
-	/// In this example, <code>sink1</code> and <code>sink2</code> will both get tokens from both
-	/// <code>reader1</code> and <code>reader2</code> after whitespace tokenizer
+	/// </code>
+	/// In this example, <c>sink1</c> and <c>sink2</c> will both get tokens from both
+	/// <c>reader1</c> and <c>reader2</c> after whitespace tokenizer
 	/// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
 	/// It is important, that tees are consumed before sinks (in the above example, the field names must be
 	/// less the sink's field names).
@@ -52,13 +52,13 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// See <a href="http://issues.apache.org/jira/browse/LUCENE-1058">LUCENE-1058</a>.
 	/// <p/>
-	/// WARNING: {@link TeeTokenFilter} and {@link SinkTokenizer} only work with the old TokenStream API.
-	/// If you switch to the new API, you need to use {@link TeeSinkTokenFilter} instead, which offers 
+	/// WARNING: <see cref="TeeTokenFilter" /> and <see cref="SinkTokenizer" /> only work with the old TokenStream API.
+	/// If you switch to the new API, you need to use <see cref="TeeSinkTokenFilter" /> instead, which offers 
 	/// the same functionality.
 	/// </summary>
 	/// <seealso cref="SinkTokenizer">
 	/// </seealso>
-	/// <deprecated> Use {@link TeeSinkTokenFilter} instead
+	/// <deprecated> Use <see cref="TeeSinkTokenFilter" /> instead
 	/// 
 	/// </deprecated>
     [Obsolete("Use TeeSinkTokenFilter instead")]

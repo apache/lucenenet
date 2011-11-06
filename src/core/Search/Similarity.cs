@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	/// <summary>Expert: Scoring API.
 	/// <p/>Subclasses implement search scoring.
 	/// 
-	/// <p/>The score of query <code>q</code> for document <code>d</code> correlates to the
+	/// <p/>The score of query <c>q</c> for document <c>d</c> correlates to the
 	/// cosine-distance or dot-product between document and query vectors in a
 	/// <a href="http://en.wikipedia.org/wiki/Vector_Space_Model">
 	/// Vector Space Model (VSM) of Information Retrieval</a>.
@@ -68,21 +68,21 @@ namespace Lucene.Net.Search
 	/// </table>
 	/// 
 	/// <p/> where
-	/// <ol>
-	/// <li>
+	/// <list type="bullet">
+	/// <item>
 	/// <A NAME="formula_tf"></A>
 	/// <b>tf(t in d)</b>
 	/// correlates to the term's <i>frequency</i>,
 	/// defined as the number of times term <i>t</i> appears in the currently scored document <i>d</i>.
 	/// Documents that have more occurrences of a given term receive a higher score.
 	/// The default computation for <i>tf(t in d)</i> in
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) DefaultSimilarity} is:
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.Tf(float)">DefaultSimilarity</see> is:
 	/// 
 	/// <br/>&#160;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Tf(float) tf(t in d)} &#160; = &#160;
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.Tf(float)">tf(t in d)</see> &#160; = &#160;
 	/// </td>
 	/// <td valign="top" align="center" rowspan="1">
 	/// frequency<sup><big>&#189;</big></sup>
@@ -90,22 +90,22 @@ namespace Lucene.Net.Search
 	/// </tr>
 	/// </table>
 	/// <br/>&#160;<br/>
-	/// </li>
+	/// </item>
 	/// 
-	/// <li>
+	/// <item>
 	/// <A NAME="formula_idf"></A>
 	/// <b>idf(t)</b> stands for Inverse Document Frequency. This value
 	/// correlates to the inverse of <i>docFreq</i>
 	/// (the number of documents in which the term <i>t</i> appears).
 	/// This means rarer terms give higher contribution to the total score.
-	/// The default computation for <i>idf(t)</i> in
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) DefaultSimilarity} is:
+	/// The default computation for <i>idf(t)</i> in 
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.Idf(int, int)">DefaultSimilarity</see> is:
 	/// 
 	/// <br/>&#160;<br/>
 	/// <table cellpadding="2" cellspacing="2" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right">
-	/// {@link Lucene.Net.Search.DefaultSimilarity#Idf(int, int) idf(t)}&#160; = &#160;
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.Idf(int, int)">idf(t)</see>&#160; = &#160;
 	/// </td>
 	/// <td valign="middle" align="center">
 	/// 1 + log <big>(</big>
@@ -123,21 +123,21 @@ namespace Lucene.Net.Search
 	/// </tr>
 	/// </table>
 	/// <br/>&#160;<br/>
-	/// </li>
+	/// </item>
 	/// 
-	/// <li>
+	/// <item>
 	/// <A NAME="formula_coord"></A>
 	/// <b>coord(q,d)</b>
 	/// is a score factor based on how many of the query terms are found in the specified document.
 	/// Typically, a document that contains more of the query's terms will receive a higher score
 	/// than another document with fewer query terms.
-	/// This is a search time factor computed in
-	/// {@link #Coord(int, int) coord(q,d)}
+	/// This is a search time factor computed in 
+    /// <see cref="Coord(int, int)">coord(q,d)</see>
 	/// by the Similarity in effect at search time.
 	/// <br/>&#160;<br/>
-	/// </li>
+	/// </item>
 	/// 
-	/// <li><b>
+	/// <item><b>
 	/// <A NAME="formula_queryNorm"></A>
 	/// queryNorm(q)
 	/// </b>
@@ -147,14 +147,14 @@ namespace Lucene.Net.Search
 	/// This is a search time factor computed by the Similarity in effect at search time.
 	/// 
 	/// The default computation in
-	/// {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) DefaultSimilarity}
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.QueryNorm(float)">DefaultSimilarity</see>
 	/// is:
 	/// <br/>&#160;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// queryNorm(q)  &#160; = &#160;
-	/// {@link Lucene.Net.Search.DefaultSimilarity#QueryNorm(float) queryNorm(sumOfSquaredWeights)}
+    /// <see cref="Lucene.Net.Search.DefaultSimilarity.QueryNorm(float)">queryNorm(sumOfSquaredWeights)</see>
 	/// &#160; = &#160;
 	/// </td>
 	/// <td valign="middle" align="center" rowspan="1">
@@ -171,16 +171,16 @@ namespace Lucene.Net.Search
 	/// <br/>&#160;<br/>
 	/// 
 	/// The sum of squared weights (of the query terms) is
-	/// computed by the query {@link Lucene.Net.Search.Weight} object.
-	/// For example, a {@link Lucene.Net.Search.BooleanQuery boolean query}
+	/// computed by the query <see cref="Lucene.Net.Search.Weight" /> object.
+	/// For example, a <see cref="Lucene.Net.Search.BooleanQuery">boolean query</see>
 	/// computes this value as:
 	/// 
 	/// <br/>&#160;<br/>
 	/// <table cellpadding="1" cellspacing="0" border="0" align="center">
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// {@link Lucene.Net.Search.Weight#SumOfSquaredWeights() sumOfSquaredWeights} &#160; = &#160;
-	/// {@link Lucene.Net.Search.Query#GetBoost() q.getBoost()} <sup><big>2</big></sup>
+    /// <see cref="Lucene.Net.Search.Weight.SumOfSquaredWeights()">sumOfSquaredWeights</see> &#160; = &#160;
+    /// <see cref="Lucene.Net.Search.Query.GetBoost()">q.getBoost()</see> <sup><big>2</big></sup>
 	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
@@ -201,43 +201,43 @@ namespace Lucene.Net.Search
 	/// </table>
 	/// <br/>&#160;<br/>
 	/// 
-	/// </li>
+	/// </item>
 	/// 
-	/// <li>
+	/// <item>
 	/// <A NAME="formula_termBoost"></A>
 	/// <b>t.getBoost()</b>
 	/// is a search time boost of term <i>t</i> in the query <i>q</i> as
 	/// specified in the query text
 	/// (see <A HREF="../../../../../../queryparsersyntax.html#Boosting a Term">query syntax</A>),
 	/// or as set by application calls to
-	/// {@link Lucene.Net.Search.Query#SetBoost(float) setBoost()}.
+	/// <see cref="Lucene.Net.Search.Query.SetBoost(float)" />.
 	/// Notice that there is really no direct API for accessing a boost of one term in a multi term query,
 	/// but rather multi terms are represented in a query as multi
-	/// {@link Lucene.Net.Search.TermQuery TermQuery} objects,
+	/// <see cref="Lucene.Net.Search.TermQuery">TermQuery</see> objects,
 	/// and so the boost of a term in the query is accessible by calling the sub-query
-	/// {@link Lucene.Net.Search.Query#GetBoost() getBoost()}.
+    /// <see cref="Lucene.Net.Search.Query.GetBoost()" />.
 	/// <br/>&#160;<br/>
-	/// </li>
+	/// </item>
 	/// 
-	/// <li>
+	/// <item>
 	/// <A NAME="formula_norm"></A>
 	/// <b>norm(t,d)</b> encapsulates a few (indexing time) boost and length factors:
 	/// 
-	/// <ul>
-	/// <li><b>Document boost</b> - set by calling
-	/// {@link Lucene.Net.Documents.Document#SetBoost(float) doc.setBoost()}
+	/// <list type="bullet">
+	/// <item><b>Document boost</b> - set by calling 
+    /// <see cref="Lucene.Net.Documents.Document.SetBoost(float)">doc.setBoost()</see>
 	/// before adding the document to the index.
-	/// </li>
-	/// <li><b>Field boost</b> - set by calling
-	/// {@link Lucene.Net.Documents.Fieldable#SetBoost(float) field.setBoost()}
+	/// </item>
+	/// <item><b>Field boost</b> - set by calling 
+    /// <see cref="Lucene.Net.Documents.Fieldable.SetBoost(float)">field.SetBoost()</see>
 	/// before adding the field to a document.
-	/// </li>
-	/// <li>{@link #LengthNorm(String, int) <b>lengthNorm</b>(field)} - computed
+	/// </item>
+	/// <item><see cref="LengthNorm(String, int)">LengthNorm(field)</see> - computed
 	/// when the document is added to the index in accordance with the number of tokens
 	/// of this field in the document, so that shorter fields contribute more to the score.
 	/// LengthNorm is computed by the Similarity class in effect at indexing.
-	/// </li>
-	/// </ul>
+	/// </item>
+	/// </list>
 	/// 
 	/// <p/>
 	/// When a document is added to the index, all the above factors are multiplied.
@@ -248,16 +248,16 @@ namespace Lucene.Net.Search
 	/// <tr>
 	/// <td valign="middle" align="right" rowspan="1">
 	/// norm(t,d) &#160; = &#160;
-	/// {@link Lucene.Net.Documents.Document#GetBoost() doc.getBoost()}
+    /// <see cref="Lucene.Net.Documents.Document.GetBoost()">doc.GetBoost()</see>
 	/// &#160;&#183;&#160;
-	/// {@link #LengthNorm(String, int) lengthNorm(field)}
+    /// <see cref="LengthNorm(String, int)">LengthNorm(field)</see>
 	/// &#160;&#183;&#160;
 	/// </td>
 	/// <td valign="bottom" align="center" rowspan="1">
     /// <big><big><big>&#8719;</big></big></big>
 	/// </td>
 	/// <td valign="middle" align="right" rowspan="1">
-	/// {@link Lucene.Net.Documents.Fieldable#GetBoost() f.getBoost}()
+	/// <see cref="Lucene.Net.Documents.Fieldable.GetBoost()">field.GetBoost()</see>
 	/// </td>
 	/// </tr>
 	/// <tr valigh="top">
@@ -267,19 +267,19 @@ namespace Lucene.Net.Search
 	/// </tr>
 	/// </table>
 	/// <br/>&#160;<br/>
-	/// However the resulted <i>norm</i> value is {@link #EncodeNorm(float) encoded} as a single byte
+	/// However the resulted <i>norm</i> value is <see cref="EncodeNorm(float)">encoded</see> as a single byte
 	/// before being stored.
 	/// At search time, the norm byte value is read from the index
-	/// {@link Lucene.Net.Store.Directory directory} and
-	/// {@link #DecodeNorm(byte) decoded} back to a float <i>norm</i> value.
+	/// <see cref="Lucene.Net.Store.Directory">directory</see> and
+    /// <see cref="DecodeNorm(byte)">decoded</see> back to a float <i>norm</i> value.
 	/// This encoding/decoding, while reducing index size, comes with the price of
 	/// precision loss - it is not guaranteed that decode(encode(x)) = x.
 	/// For instance, decode(encode(0.89)) = 0.75.
 	/// Also notice that search time is too late to modify this <i>norm</i> part of scoring, e.g. by
-	/// using a different {@link Similarity} for search.
+	/// using a different <see cref="Similarity" /> for search.
 	/// <br/>&#160;<br/>
-	/// </li>
-	/// </ol>
+	/// </item>
+	/// </list>
 	/// 
 	/// </summary>
 	/// <seealso cref="SetDefault(Similarity)">
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
 		/// <summary>Return the default Similarity implementation used by indexing and search
 		/// code.
 		/// 
-		/// <p/>This is initially an instance of {@link DefaultSimilarity}.
+		/// <p/>This is initially an instance of <see cref="DefaultSimilarity" />.
 		/// 
 		/// </summary>
 		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
@@ -488,15 +488,15 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Compute the normalization value for a field, given the accumulated
-		/// state of term processing for this field (see {@link FieldInvertState}).
+		/// state of term processing for this field (see <see cref="FieldInvertState" />).
 		/// 
 		/// <p/>Implementations should calculate a float value based on the field
 		/// state and then return that value.
 		/// 
 		/// <p/>For backward compatibility this method by default calls
-		/// {@link #LengthNorm(String, int)} passing
-		/// {@link FieldInvertState#GetLength()} as the second argument, and
-		/// then multiplies this value by {@link FieldInvertState#GetBoost()}.<p/>
+		/// <see cref="LengthNorm(String, int)" /> passing
+		/// <see cref="FieldInvertState.GetLength()" /> as the second argument, and
+		/// then multiplies this value by <see cref="FieldInvertState.GetBoost()" />.<p/>
 		/// 
 		/// <p/><b>WARNING</b>: This API is new and experimental and may
 		/// suddenly change.<p/>
@@ -519,13 +519,13 @@ namespace Lucene.Net.Search
 		/// search code.
 		/// 
 		/// <p/>Matches in longer fields are less precise, so implementations of this
-		/// method usually return smaller values when <code>numTokens</code> is large,
-		/// and larger values when <code>numTokens</code> is small.
+		/// method usually return smaller values when <c>numTokens</c> is large,
+		/// and larger values when <c>numTokens</c> is small.
 		/// 
 		/// <p/>Note that the return values are computed under 
-		/// {@link Lucene.Net.Index.IndexWriter#AddDocument(Lucene.Net.Documents.Document)} 
+		/// <see cref="Lucene.Net.Index.IndexWriter.AddDocument(Lucene.Net.Documents.Document)" /> 
 		/// and then stored using
-		/// {@link #EncodeNorm(float)}.  
+		/// <see cref="EncodeNorm(float)" />.  
 		/// Thus they have limited precision, and documents
 		/// must be re-indexed if this method is altered.
 		/// 
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
 		/// <returns> a normalization factor for hits on this field of this document
 		/// 
 		/// </returns>
-		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
 		/// </seealso>
 		public abstract float LengthNorm(System.String fieldName, int numTokens);
 		
@@ -568,7 +568,7 @@ namespace Lucene.Net.Search
 		/// value.
 		/// 
 		/// </summary>
-		/// <seealso cref="Lucene.Net.Documents.Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.AbstractField.SetBoost(float)">
 		/// </seealso>
 		/// <seealso cref="Lucene.Net.Util.SmallFloat">
 		/// </seealso>
@@ -579,16 +579,16 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary>Computes a score factor based on a term or phrase's frequency in a
-		/// document.  This value is multiplied by the {@link #Idf(Term, Searcher)}
+		/// document.  This value is multiplied by the <see cref="Idf(Term, Searcher)" />
 		/// factor for each term in the query and these products are then summed to
 		/// form the initial score for a document.
 		/// 
 		/// <p/>Terms and phrases repeated in a document indicate the topic of the
 		/// document, so implementations of this method usually return larger values
-		/// when <code>freq</code> is large, and smaller values when <code>freq</code>
+		/// when <c>freq</c> is large, and smaller values when <c>freq</c>
 		/// is small.
 		/// 
-		/// <p/>The default implementation calls {@link #Tf(float)}.
+		/// <p/>The default implementation calls <see cref="Tf(float)" />.
 		/// 
 		/// </summary>
 		/// <param name="freq">the frequency of a term within a document
@@ -602,7 +602,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes the amount of a sloppy phrase match, based on an edit distance.
 		/// This value is summed for each sloppy phrase match in a document to form
-		/// the frequency that is passed to {@link #Tf(float)}.
+		/// the frequency that is passed to <see cref="Tf(float)" />.
 		/// 
 		/// <p/>A phrase match with a small edit distance to a document passage more
 		/// closely matches the document, so implementations of this method usually
@@ -619,13 +619,13 @@ namespace Lucene.Net.Search
 		public abstract float SloppyFreq(int distance);
 		
 		/// <summary>Computes a score factor based on a term or phrase's frequency in a
-		/// document.  This value is multiplied by the {@link #Idf(Term, Searcher)}
+		/// document.  This value is multiplied by the <see cref="Idf(Term, Searcher)" />
 		/// factor for each term in the query and these products are then summed to
 		/// form the initial score for a document.
 		/// 
 		/// <p/>Terms and phrases repeated in a document indicate the topic of the
 		/// document, so implementations of this method usually return larger values
-		/// when <code>freq</code> is large, and smaller values when <code>freq</code>
+		/// when <c>freq</c> is large, and smaller values when <c>freq</c>
 		/// is small.
 		/// 
 		/// </summary>
@@ -637,13 +637,13 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes a score factor for a simple term.
 		/// 
-		/// <p/>The default implementation is:<pre>
+		/// <p/>The default implementation is: <c>
 		/// return idf(searcher.docFreq(term), searcher.maxDoc());
-		/// </pre>
+		/// </c>
 		/// 
-		/// Note that {@link Searcher#MaxDoc()} is used instead of
-		/// {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is proportional to
-		/// {@link Searcher#DocFreq(Term)} , i.e., when one is inaccurate,
+		/// Note that <see cref="Searcher.MaxDoc()" /> is used instead of
+		/// <see cref="Lucene.Net.Index.IndexReader.NumDocs()" /> because it is proportional to
+		/// <see cref="Searcher.DocFreq(Term)" /> , i.e., when one is inaccurate,
 		/// so is the other, and in the same direction.
 		/// 
 		/// </summary>
@@ -653,7 +653,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> a score factor for the term
 		/// </returns>
-		/// <deprecated> see {@link #IdfExplain(Term, Searcher)}
+		/// <deprecated> see <see cref="IdfExplain(Term, Searcher)" />
 		/// </deprecated>
         [Obsolete("see IdfExplain(Term, Searcher)")]
 		public virtual float Idf(Term term, Searcher searcher)
@@ -667,13 +667,13 @@ namespace Lucene.Net.Search
 		/// <p/>
 		/// The default implementation uses:
 		/// 
-		/// <pre>
+        /// <code>
 		/// idf(searcher.docFreq(term), searcher.maxDoc());
-		/// </pre>
+        /// </code>
 		/// 
-		/// Note that {@link Searcher#MaxDoc()} is used instead of
-		/// {@link Lucene.Net.Index.IndexReader#NumDocs()} because it is
-		/// proportional to {@link Searcher#DocFreq(Term)} , i.e., when one is
+		/// Note that <see cref="Searcher.MaxDoc()" /> is used instead of
+		/// <see cref="Lucene.Net.Index.IndexReader.NumDocs()" /> because it is
+		/// proportional to <see cref="Searcher.DocFreq(Term)" /> , i.e., when one is
 		/// inaccurate, so is the other, and in the same direction.
 		/// 
 		/// </summary>
@@ -700,7 +700,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes a score factor for a phrase.
 		/// 
-		/// <p/>The default implementation sums the {@link #Idf(Term,Searcher)} factor
+		/// <p/>The default implementation sums the <see cref="Idf(Term,Searcher)" /> factor
 		/// for each term in the phrase.
 		/// 
 		/// </summary>
@@ -710,7 +710,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> idf score factor
 		/// </returns>
-		/// <deprecated> see {@link #idfExplain(Collection, Searcher)}
+		/// <deprecated> see <see cref="idfExplain(System.Collections.ICollection, Searcher)" />
 		/// </deprecated>
         [Obsolete("see IdfExplain(Collection, Searcher)")]
 		public virtual float Idf(System.Collections.ICollection terms, Searcher searcher)
@@ -765,7 +765,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Computes a score factor based on a term's document frequency (the number
 		/// of documents which contain the term).  This value is multiplied by the
-		/// {@link #Tf(int)} factor for each term in the query and these products are
+		/// <see cref="Tf(int)" /> factor for each term in the query and these products are
 		/// then summed to form the initial score for a document.
 		/// 
 		/// <p/>Terms that occur in fewer documents are better indicators of topic, so
@@ -819,7 +819,7 @@ namespace Lucene.Net.Search
 		/// <returns> An implementation dependent float to be used as a scoring factor
 		/// 
 		/// </returns>
-		/// <deprecated> See {@link #ScorePayload(int, String, int, int, byte[], int, int)}
+		/// <deprecated> See <see cref="ScorePayload(int, String, int, int, byte[], int, int)" />
 		/// </deprecated>
 		//TODO: When removing this, set the default value below to return 1.
         [Obsolete("See ScorePayload(int, String, int, int, byte[], int, int)")]
@@ -836,7 +836,7 @@ namespace Lucene.Net.Search
 		/// The default implementation returns 1.
 		/// 
 		/// </summary>
-		/// <param name="docId">The docId currently being scored.  If this value is {@link #NO_DOC_ID_PROVIDED}, then it should be assumed that the PayloadQuery implementation does not provide document information
+		/// <param name="docId">The docId currently being scored.  If this value is <see cref="NO_DOC_ID_PROVIDED" />, then it should be assumed that the PayloadQuery implementation does not provide document information
 		/// </param>
 		/// <param name="fieldName">The fieldName of the term this payload belongs to
 		/// </param>

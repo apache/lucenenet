@@ -19,7 +19,7 @@ using System;
 
 namespace Lucene.Net.Highlight
 {
-	/// <summary> Simple {@link Encoder} implementation that does not modify the output</summary>
+	/// <summary> Simple <see cref="Encoder"/> implementation that does not modify the output</summary>
 	/// <author>  Nicko Cadell
 	/// 
 	/// </author>

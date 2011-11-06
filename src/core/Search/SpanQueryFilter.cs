@@ -27,10 +27,10 @@ namespace Lucene.Net.Search
 	/// <summary> Constrains search results to only match those which also match a provided
 	/// query. Also provides position information about where each document matches
 	/// at the cost of extra space compared with the QueryWrapperFilter.
-	/// There is an added cost to this above what is stored in a {@link QueryWrapperFilter}.  Namely,
+	/// There is an added cost to this above what is stored in a <see cref="QueryWrapperFilter" />.  Namely,
 	/// the position information for each matching document is stored.
 	/// <p/>
-	/// This filter does not cache.  See the {@link Lucene.Net.Search.CachingSpanFilter} for a wrapper that
+	/// This filter does not cache.  See the <see cref="Lucene.Net.Search.CachingSpanFilter" /> for a wrapper that
 	/// caches.
 	/// 
 	/// 
@@ -47,9 +47,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Constructs a filter which only matches documents matching
-		/// <code>query</code>.
+		/// <c>query</c>.
 		/// </summary>
-		/// <param name="query">The {@link Lucene.Net.Search.Spans.SpanQuery} to use as the basis for the Filter.
+		/// <param name="query">The <see cref="Lucene.Net.Search.Spans.SpanQuery" /> to use as the basis for the Filter.
 		/// </param>
 		public SpanQueryFilter(SpanQuery query)
 		{

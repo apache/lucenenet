@@ -20,18 +20,18 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>This is a {@link LogMergePolicy} that measures size of a
+	/// <summary>This is a <see cref="LogMergePolicy" /> that measures size of a
 	/// segment as the total byte size of the segment's files. 
 	/// </summary>
 	public class LogByteSizeMergePolicy:LogMergePolicy
 	{
 		
-		/// <seealso cref="setMinMergeMB">
+		/// <seealso cref="SetMinMergeMB">
 		/// </seealso>
 		public const double DEFAULT_MIN_MERGE_MB = 1.6;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="setMaxMergeMB">
+		/// <seealso cref="SetMaxMergeMB">
 		/// </seealso>
 		public static readonly long DEFAULT_MAX_MERGE_MB = System.Int64.MaxValue;
 		
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		/// seconds.  Larger values are best for batched indexing
 		/// and speedier searches.<p/>
 		/// 
-		/// <p/>Note that {@link #setMaxMergeDocs} is also
+		/// <p/>Note that <see cref="IndexWriter.SetMaxMergeDocs" /> is also
 		/// used to check whether a segment is too large for
 		/// merging (it's either or).<p/>
 		/// </summary>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 		/// size of the segment's files, in MB) that may be merged
 		/// with other segments.
 		/// </summary>
-		/// <seealso cref="setMaxMergeMB">
+		/// <seealso cref="SetMaxMergeMB">
 		/// </seealso>
 		public virtual double GetMaxMergeMB()
 		{
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 		/// <summary>Get the minimum size for a segment to remain
 		/// un-merged.
 		/// </summary>
-		/// <seealso cref="setMinMergeMB">
+		/// <seealso cref="SetMinMergeMB">
 		/// </seealso>
 		public virtual double GetMinMergeMB()
 		{

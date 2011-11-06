@@ -27,15 +27,15 @@ namespace Lucene.Net.Store
 	/// deleted.  Random access is permitted both when reading and writing.
 	/// 
 	/// <p/> Java's i/o APIs not used directly, but rather all i/o is
-	/// through this API.  This permits things such as: <ul>
-	/// <li> implementation of RAM-based indices;</li>
-	/// <li> implementation indices stored in a database, via JDBC;</li>
-	/// <li> implementation of an index as a single file;</li>
-	/// </ul>
+	/// through this API.  This permits things such as: <list>
+	/// <item> implementation of RAM-based indices;</item>
+	/// <item> implementation indices stored in a database, via JDBC;</item>
+	/// <item> implementation of an index as a single file;</item>
+	/// </list>
 	/// 
-	/// Directory locking is implemented by an instance of {@link
-	/// LockFactory}, and can be changed for each Directory
-	/// instance using {@link #setLockFactory}.
+	/// Directory locking is implemented by an instance of <see cref="LockFactory" />
+	///, and can be changed for each Directory
+	/// instance using <see cref="SetLockFactory" />.
 	/// 
 	/// </summary>
 	[Serializable]
@@ -49,22 +49,22 @@ namespace Lucene.Net.Store
 		[NonSerialized]
 		protected internal LockFactory lockFactory;
 		
-		/// <deprecated> For some Directory implementations ({@link
-		/// FSDirectory}, and its subclasses), this method
+		/// <deprecated> For some Directory implementations (<see cref="FSDirectory" />
+		///, and its subclasses), this method
 		/// silently filters its results to include only index
-		/// files.  Please use {@link #listAll} instead, which
+		/// files.  Please use <see cref="ListAll" /> instead, which
 		/// does no filtering. 
 		/// </deprecated>
         [Obsolete("For some Directory implementations (FSDirectory}, and its subclasses), this method silently filters its results to include only index files.  Please use ListAll instead, which does no filtering. ")]
 		public abstract System.String[] List();
 		
 		/// <summary>Returns an array of strings, one for each file in the
-		/// directory.  Unlike {@link #list} this method does no
+		/// directory.  Unlike <see cref="List" /> this method does no
 		/// filtering of the contents in a directory, and it will
 		/// never return null (throws IOException instead).
 		/// 
-		/// Currently this method simply fallsback to {@link
-		/// #list} for Directory impls outside of Lucene's core &amp;
+		/// Currently this method simply fallsback to <see cref="List" />
+		/// for Directory impls outside of Lucene's core &amp;
 		/// contrib, but in 3.0 that method will be removed and
 		/// this method will become abstract. 
 		/// </summary>
@@ -119,15 +119,15 @@ namespace Lucene.Net.Store
 		/// specified read buffer size.  The particular Directory
 		/// implementation may ignore the buffer size.  Currently
 		/// the only Directory implementations that respect this
-		/// parameter are {@link FSDirectory} and {@link
-		/// Lucene.Net.Index.CompoundFileReader}.
+		/// parameter are <see cref="FSDirectory" /> and <see cref="Lucene.Net.Index.CompoundFileReader" />
+		///.
 		/// </summary>
 		public virtual IndexInput OpenInput(System.String name, int bufferSize)
 		{
 			return OpenInput(name);
 		}
 		
-		/// <summary>Construct a {@link Lock}.</summary>
+		/// <summary>Construct a <see cref="Lock" />.</summary>
 		/// <param name="name">the name of the lock file
 		/// </param>
 		public virtual Lock MakeLock(System.String name)
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
 		/// Directories).
 		/// 
 		/// </summary>
-		/// <param name="lockFactory">instance of {@link LockFactory}.
+		/// <param name="lockFactory">instance of <see cref="LockFactory" />.
 		/// </param>
 		public virtual void  SetLockFactory(LockFactory lockFactory)
 		{
@@ -213,7 +213,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="dest">destination directory
 		/// </param>
-		/// <param name="closeDirSrc">if <code>true</code>, call {@link #Close()} method on source directory
+		/// <param name="closeDirSrc">if <c>true</c>, call <see cref="Close()" /> method on source directory
 		/// </param>
 		/// <throws>  IOException </throws>
 		public static void  Copy(Directory src, Directory dest, bool closeDirSrc)

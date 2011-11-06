@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
-		/// <code>title</code> and <code>body</code>):
+		/// <c>title</c> and <c>body</c>):
 		/// <p/>
 		/// 
 		/// <code>
@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
-		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer, Map)}
+		/// <see cref="MultiFieldQueryParser(Version, String[], Analyzer, System.Collections.IDictionary)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer, IDictionary) instead")]
@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
-		/// <code>title</code> and <code>body</code>):
+		/// <c>title</c> and <c>body</c>):
 		/// <p/>
 		/// 
 		/// <code>
@@ -127,7 +127,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
-		/// <code>title</code> and <code>body</code>):
+		/// <c>title</c> and <c>body</c>):
 		/// <p/>
 		/// 
 		/// <code>
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers
 		/// 
 		/// </summary>
 		/// <deprecated> Please use
-		/// {@link #MultiFieldQueryParser(Version, String[], Analyzer)}
+		/// <see cref="MultiFieldQueryParser(Version, String[], Analyzer)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Please use MultiFieldQueryParser(Version, String[], Analyzer) instead")]
@@ -162,7 +162,7 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// It will, when parse(String query) is called, construct a query like this
 		/// (assuming the query consists of two terms and you specify the two fields
-		/// <code>title</code> and <code>body</code>):
+		/// <c>title</c> and <c>body</c>):
 		/// <p/>
 		/// 
 		/// <code>
@@ -301,11 +301,9 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
-		/// <pre>
-		/// &lt;code&gt;
+        /// <code>
 		/// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
 		/// <param name="queries">Queries strings to parse
@@ -321,7 +319,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary>             if the length of the queries array differs from the length of
 		/// the fields array
 		/// </summary>
-		/// <deprecated> Use {@link #Parse(Version,String[],String[],Analyzer)}
+		/// <deprecated> Use <see cref="Parse(Version,String[],String[],Analyzer)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use Parse(Version,String[],String[],Analyzer) instead")]
@@ -334,11 +332,9 @@ namespace Lucene.Net.QueryParsers
 		/// <p/>
 		/// If x fields are specified, this effectively constructs:
 		/// 
-		/// <pre>
-		/// &lt;code&gt;
+		/// <code>
 		/// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
 		/// <param name="matchVersion">Lucene version to match; this is passed through to
@@ -377,7 +373,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p/><pre>
+		/// <p/>
 		/// Usage:
 		/// <code>
 		/// String[] fields = {"filename", "contents", "description"};
@@ -386,14 +382,11 @@ namespace Lucene.Net.QueryParsers
 		/// BooleanClause.Occur.MUST_NOT};
 		/// MultiFieldQueryParser.parse("query", fields, flags, analyzer);
 		/// </code>
-		/// </pre>
 		/// <p/>
 		/// The code above would construct a query:
-		/// <pre>
 		/// <code>
 		/// (filename:query) +(contents:query) -(description:query)
 		/// </code>
-		/// </pre>
 		/// 
 		/// </summary>
 		/// <param name="query">Query string to parse
@@ -409,7 +402,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary>  from the length of the flags array
 		/// </summary>
 		/// <deprecated> Use
-		/// {@link #Parse(Version, String, String[], BooleanClause.Occur[], Analyzer)}
+		/// <see cref="Parse(Version, String, String[], BooleanClause.Occur[], Analyzer)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use Parse(Version, String, String[], BooleanClause.Occur[], Analyzer) instead")]
@@ -421,25 +414,20 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
 		/// <p/>
-		/// 
-		/// <pre>
-		/// Usage:
-		/// &lt;code&gt;
+		/// Uasge:
+        /// <code>
 		/// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
 		/// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
 		/// BooleanClause.Occur.MUST,
 		/// BooleanClause.Occur.MUST_NOT};
 		/// MultiFieldQueryParser.parse(&quot;query&quot;, fields, flags, analyzer);
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// <p/>
 		/// The code above would construct a query:
 		/// 
-		/// <pre>
-		/// &lt;code&gt;
+        /// <code>
 		/// (filename:query) +(contents:query) -(description:query)
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
 		/// <param name="matchVersion">Lucene version to match; this is passed through to
@@ -480,7 +468,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
-		/// <p/><pre>
+		/// <p/>
 		/// Usage:
 		/// <code>
 		/// String[] query = {"query1", "query2", "query3"};
@@ -490,14 +478,11 @@ namespace Lucene.Net.QueryParsers
 		/// BooleanClause.Occur.MUST_NOT};
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
 		/// </code>
-		/// </pre>
 		/// <p/>
 		/// The code above would construct a query:
-		/// <pre>
 		/// <code>
 		/// (filename:query1) +(contents:query2) -(description:query3)
 		/// </code>
-		/// </pre>
 		/// 
 		/// </summary>
 		/// <param name="queries">Queries string to parse
@@ -513,7 +498,7 @@ namespace Lucene.Net.QueryParsers
 		/// <summary>  and flags array differ
 		/// </summary>
 		/// <deprecated> Used
-		/// {@link #Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer)}
+		/// <see cref="Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer)" />
 		/// instead
 		/// </deprecated>
         [Obsolete("Use Parse(Version, String[], String[], BooleanClause.Occur[], Analyzer) instead")]
@@ -525,26 +510,21 @@ namespace Lucene.Net.QueryParsers
 		/// <summary> Parses a query, searching on the fields specified. Use this if you need
 		/// to specify certain fields as required, and others as prohibited.
 		/// <p/>
-		/// 
-		/// <pre>
 		/// Usage:
-		/// &lt;code&gt;
+        /// <code>
 		/// String[] query = {&quot;query1&quot;, &quot;query2&quot;, &quot;query3&quot;};
 		/// String[] fields = {&quot;filename&quot;, &quot;contents&quot;, &quot;description&quot;};
 		/// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
 		/// BooleanClause.Occur.MUST,
 		/// BooleanClause.Occur.MUST_NOT};
 		/// MultiFieldQueryParser.parse(query, fields, flags, analyzer);
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// <p/>
 		/// The code above would construct a query:
 		/// 
-		/// <pre>
-		/// &lt;code&gt;
+        /// <code>
 		/// (filename:query1) +(contents:query2) -(description:query3)
-		/// &lt;/code&gt;
-		/// </pre>
+        /// </code>
 		/// 
 		/// </summary>
 		/// <param name="matchVersion">Lucene version to match; this is passed through to

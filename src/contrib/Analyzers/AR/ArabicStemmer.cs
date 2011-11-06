@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,13 +30,13 @@ namespace Lucene.Net.Analysis.AR
 
     /**
      *  Stemmer for Arabic.
-     *  <p>
+     *  <p/>
      *  Stemming  is done in-place for efficiency, operating on a termbuffer.
-     *  <p>
+     *  <p/>
      *  Stemming is defined as:
      *  <ul>
-     *  <li> Removal of attached definite article, conjunction, and prepositions.
-     *  <li> Stemming of common suffixes.
+     *  <li> Removal of attached definite article, conjunction, and prepositions.</li>
+     *  <li> Stemming of common suffixes.</li>
      * </ul>
      *
      */
@@ -81,9 +81,9 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Stem an input buffer of Arabic text.
          * 
-         * @param s input buffer
-         * @param len length of input buffer
-         * @return length of input buffer after normalization
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>length of input buffer after normalization</returns>
          */
         public int Stem(char[] s, int len)
         {
@@ -95,9 +95,9 @@ namespace Lucene.Net.Analysis.AR
 
         /**
          * Stem a prefix off an Arabic word.
-         * @param s input buffer
-         * @param len length of input buffer
-         * @return new length of input buffer after stemming.
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>new length of input buffer after stemming.</returns>
          */
         public int StemPrefix(char[] s, int len)
         {
@@ -109,9 +109,9 @@ namespace Lucene.Net.Analysis.AR
 
         /**
          * Stem suffix(es) off an Arabic word.
-         * @param s input buffer
-         * @param len length of input buffer
-         * @return new length of input buffer after stemming
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>new length of input buffer after stemming</returns>
          */
         public int StemSuffix(char[] s, int len)
         {
@@ -123,10 +123,10 @@ namespace Lucene.Net.Analysis.AR
 
         /**
          * Returns true if the prefix matches and can be stemmed
-         * @param s input buffer
-         * @param len length of input buffer
-         * @param prefix prefix to check
-         * @return true if the prefix matches and can be stemmed
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <param name="prefix">prefix to check</param>
+         * <returns>true if the prefix matches and can be stemmed</returns>
          */
         bool StartsWith(char[] s, int len, char[] prefix)
         {
@@ -150,10 +150,10 @@ namespace Lucene.Net.Analysis.AR
 
         /**
          * Returns true if the suffix matches and can be stemmed
-         * @param s input buffer
-         * @param len length of input buffer
-         * @param suffix suffix to check
-         * @return true if the suffix matches and can be stemmed
+         * <param name="s">input buffer</param>
+         * <param name="len">length of input buffer</param>
+         * <param name="suffix">suffix to check</param>
+         * <returns>true if the suffix matches and can be stemmed</returns>
          */
         bool EndsWith(char[] s, int len, char[] suffix)
         {
@@ -175,11 +175,11 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Delete n characters in-place
          * 
-         * @param s Input Buffer
-         * @param pos Position of character to delete
-         * @param len Length of input buffer
-         * @param nChars number of characters to delete
-         * @return length of input buffer after deletion
+         * <param name="s">Input Buffer</param>
+         * <param name="pos">Position of character to delete</param>
+         * <param name="len">Length of input buffer</param>
+         * <param name="nChars">number of characters to delete</param>
+         * <returns>length of input buffer after deletion</returns>
          */
         protected int DeleteN(char[] s, int pos, int len, int nChars)
         {
@@ -191,10 +191,10 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Delete a character in-place
          * 
-         * @param s Input Buffer
-         * @param pos Position of character to delete
-         * @param len length of input buffer
-         * @return length of input buffer after deletion
+         * <param name="s">Input Buffer</param>
+         * <param name="pos">Position of character to delete</param>
+         * <param name="len">length of input buffer</param>
+         * <returns>length of input buffer after deletion</returns>
          */
         protected int Delete(char[] s, int pos, int len)
         {

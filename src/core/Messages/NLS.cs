@@ -170,12 +170,13 @@ namespace Lucene.Net.Messages
 				LoadfieldValue(fieldArray[i], isFieldAccessible, clazz);
 			}
 		}
-		
-		/// <param name="field">
-		/// </param>
-		/// <param name="isFieldAccessible">
-		/// </param>
-		private static void  LoadfieldValue(System.Reflection.FieldInfo field, bool isFieldAccessible, System.Type clazz)
+
+	    /// <param name="field">
+	    /// </param>
+	    /// <param name="isFieldAccessible">
+	    /// </param>
+	    /// <param name="clazz"></param>
+	    private static void  LoadfieldValue(System.Reflection.FieldInfo field, bool isFieldAccessible, System.Type clazz)
 		{
             /*
 			int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;

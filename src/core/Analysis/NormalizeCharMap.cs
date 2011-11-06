@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> Holds a map of String input to String output, to be used
-	/// with {@link MappingCharFilter}.
+	/// with <see cref="MappingCharFilter" />.
 	/// </summary>
 	public class NormalizeCharMap
 	{
@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis
 		internal int diff;
 		
 		/// <summary>Records a replacement to be applied to the inputs
-		/// stream.  Whenever <code>singleMatch</code> occurs in
+		/// stream.  Whenever <c>singleMatch</c> occurs in
 		/// the input, it will be replaced with
-		/// <code>replacement</code>.
+		/// <c>replacement</c>.
 		/// 
 		/// </summary>
 		/// <param name="singleMatch">input String to be replaced

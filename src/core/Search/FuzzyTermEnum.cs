@@ -91,9 +91,9 @@ namespace Lucene.Net.Search
 		{
 		}
 		
-		/// <summary> Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
-		/// length <code>prefixLength</code> with <code>term</code> and which have a fuzzy similarity &gt;
-		/// <code>minSimilarity</code>.
+		/// <summary> Constructor for enumeration of all terms from specified <c>reader</c> which share a prefix of
+		/// length <c>prefixLength</c> with <c>term</c> and which have a fuzzy similarity &gt;
+		/// <c>minSimilarity</c>.
 		/// <p/>
 		/// After calling the constructor the enumeration is already pointing to the first 
 		/// valid term if such a term exists. 
@@ -162,10 +162,11 @@ namespace Lucene.Net.Search
 			return endEnum;
 		}
 		
-		/// <summary>***************************
-		/// Compute Levenshtein distance
-		/// ****************************
-		/// </summary>
+		// <summary>
+		// ***************************
+		// Compute Levenshtein distance
+		// ****************************
+		// </summary>
 		
 		/// <summary> Finds and returns the smallest of three integers </summary>
 		private static int Min(int a, int b, int c)
@@ -187,11 +188,11 @@ namespace Lucene.Net.Search
 		/// <summary> <p/>Similarity returns a number that is 1.0f or less (including negative numbers)
 		/// based on how similar the Term is compared to a target term.  It returns
 		/// exactly 0.0f when
-		/// <pre>
-		/// editDistance &lt; maximumEditDistance</pre>
+		/// <c>
+		/// editDistance &lt; maximumEditDistance</c>  
 		/// Otherwise it returns:
-		/// <pre>
-		/// 1 - (editDistance / length)</pre>
+		/// <c>
+		/// 1 - (editDistance / length)</c>
 		/// where length is the length of the shortest term (text or target) including a
 		/// prefix that are identical and editDistance is the Levenshtein distance for
 		/// the two words.<p/>
@@ -202,14 +203,14 @@ namespace Lucene.Net.Search
 		/// mimimum distance between the words is greater than some threshold.
 		/// 
 		/// <p/>To calculate the maximum distance threshold we use the following formula:
-		/// <pre>
-		/// (1 - minimumSimilarity) * length</pre>
+		/// <c>
+		/// (1 - minimumSimilarity) * length</c>
 		/// where length is the shortest term including any prefix that is not part of the
 		/// similarity comparision.  This formula was derived by solving for what maximum value
 		/// of distance returns false for the following statements:
-		/// <pre>
+		/// <code>
 		/// similarity = 1 - ((float)distance / (float) (prefixLength + Math.min(textlen, targetlen)));
-		/// return (similarity > minimumSimilarity);</pre>
+        /// return (similarity > minimumSimilarity);</code>
 		/// where distance is the Levenshtein distance for the two words.
 		/// <p/>
 		/// <p/>Levenshtein distance (also known as edit distance) is a measure of similiarity

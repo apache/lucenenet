@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> A DocIdSet contains a set of doc ids. Implementing classes must
-	/// only implement {@link #iterator} to provide access to the set. 
+	/// only implement <see cref="Iterator" /> to provide access to the set. 
 	/// </summary>
 	[Serializable]
 	public abstract class DocIdSet
@@ -81,21 +81,21 @@ namespace Lucene.Net.Search
 				return true;
 			}
 		}
-		
-		/// <summary>An empty {@code DocIdSet} instance for easy use, e.g. in Filters that hit no documents. </summary>
+
+        /// <summary>An empty <see cref="DocIdSet"/> instance for easy use, e.g. in Filters that hit no documents. </summary>
 		[NonSerialized]
 		public static readonly DocIdSet EMPTY_DOCIDSET;
 		
-		/// <summary>Provides a {@link DocIdSetIterator} to access the set.
-		/// This implementation can return <code>null</code> or
-		/// <code>{@linkplain #EMPTY_DOCIDSET}.iterator()</code> if there
+		/// <summary>Provides a <see cref="DocIdSetIterator" /> to access the set.
+		/// This implementation can return <c>null</c> or
+		/// <c>EMPTY_DOCIDSET.Iterator()</c> if there
 		/// are no docs that match. 
 		/// </summary>
 		public abstract DocIdSetIterator Iterator();
 
-		/// <summary>This method is a hint for {@link CachingWrapperFilter}, if this <code>DocIdSet</code>
+		/// <summary>This method is a hint for <see cref="CachingWrapperFilter" />, if this <c>DocIdSet</c>
 		/// should be cached without copying it into a BitSet. The default is to return
-		/// <code>false</code>. If you have an own <code>DocIdSet</code> implementation
+		/// <c>false</c>. If you have an own <c>DocIdSet</c> implementation
 		/// that does its iteration very effective and fast without doing disk I/O,
 		/// override this method and return true.
 		/// </summary>

@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,19 +24,19 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Analysis.AR
 {
     /**
-     * {@link Analyzer} for Arabic. 
-     * <p>
+     * <see cref="Analyzer"/> for Arabic. 
+     * <p/>
      * This analyzer implements light-stemming as specified by:
      * <i>
      * Light Stemming for Arabic Information Retrieval
      * </i>    
      * http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
-     * <p>
+     * <p/>
      * The analysis package contains three primary components:
      * <ul>
-     *  <li>{@link ArabicNormalizationFilter}: Arabic orthographic normalization.
-     *  <li>{@link ArabicStemFilter}: Arabic light stemming
-     *  <li>Arabic stop words file: a set of default Arabic stop words.
+     *  <li><see cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.</li>
+     *  <li><see cref="ArabicStemFilter"/>: Arabic light stemming</li>
+     *  <li>Arabic stop words file: a set of default Arabic stop words.</li>
      * </ul>
      * 
      */
@@ -63,9 +63,9 @@ namespace Lucene.Net.Analysis.AR
         private Version matchVersion;
 
         /**
-         * Builds an analyzer with the default stop words: {@link #DEFAULT_STOPWORD_FILE}.
+         * Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
          *
-         * @deprecated Use {@link #ArabicAnalyzer(Version)} instead
+         * @deprecated Use <see cref="ArabicAnalyzer(Version)"/> instead
          */
         public ArabicAnalyzer() : this(Version.LUCENE_24)
         {
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.AR
         }
 
         /**
-         * Builds an analyzer with the default stop words: {@link #DEFAULT_STOPWORD_FILE}.
+         * Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
          */
         public ArabicAnalyzer(Version matchVersion)
         {
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Builds an analyzer with the given stop words.
          *
-         * @deprecated Use {@link #ArabicAnalyzer(Version, String[])} instead
+         * @deprecated Use <see cref="ArabicAnalyzer(Lucene.Net.Util.Version, string[])"/> instead
          */
         public ArabicAnalyzer(string[] stopwords): this(Version.LUCENE_24, stopwords)
         {
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Builds an analyzer with the given stop words.
          *
-         * @deprecated Use {@link #ArabicAnalyzer(Version, Hashtable)} instead
+         * @deprecated Use <see cref="ArabicAnalyzer(Version, Hashtable)"/> instead
          */
         public ArabicAnalyzer(Hashtable stopwords) : this(Version.LUCENE_24, stopwords)
         {
@@ -127,9 +127,9 @@ namespace Lucene.Net.Analysis.AR
 
         //DIGY
         ///**
-        // * Builds an analyzer with the given stop words.  Lines can be commented out using {@link #STOPWORDS_COMMENT}
+        // * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
         // *
-        // * @deprecated Use {@link #ArabicAnalyzer(Version, File)} instead
+        // * @deprecated Use <see cref="ArabicAnalyzer(Version, File)"/> instead
         // */
         //public ArabicAnalyzer(File stopwords)
         //{
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.AR
         //}
 
         ///**
-        // * Builds an analyzer with the given stop words.  Lines can be commented out using {@link #STOPWORDS_COMMENT}
+        // * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
         // */
         //public ArabicAnalyzer(Version matchVersion, File stopwords)
         //{
@@ -147,11 +147,11 @@ namespace Lucene.Net.Analysis.AR
 
 
         /**
-         * Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
+         * Creates a <see cref="TokenStream"/> which tokenizes all the text in the provided <see cref="TextReader"/>.
          *
-         * @return  A {@link TokenStream} built from an {@link ArabicLetterTokenizer} filtered with
-         * 			{@link LowerCaseFilter}, {@link StopFilter}, {@link ArabicNormalizationFilter}
-         *            and {@link ArabicStemFilter}.
+         * <returns>A <see cref="TokenStream"/> built from an <see cref="ArabicLetterTokenizer"/> filtered with
+         * 			<see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
+         *            and <see cref="ArabicStemFilter"/>.</returns>
          */
         public override TokenStream TokenStream(string fieldName, TextReader reader)
         {
@@ -171,12 +171,12 @@ namespace Lucene.Net.Analysis.AR
         };
 
         /**
-         * Returns a (possibly reused) {@link TokenStream} which tokenizes all the text 
-         * in the provided {@link Reader}.
+         * Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the text 
+         * in the provided <see cref="TextReader"/>.
          *
-         * @return  A {@link TokenStream} built from an {@link ArabicLetterTokenizer} filtered with
-         *            {@link LowerCaseFilter}, {@link StopFilter}, {@link ArabicNormalizationFilter}
-         *            and {@link ArabicStemFilter}.
+         * <returns>A <see cref="TokenStream"/> built from an <see cref="ArabicLetterTokenizer"/> filtered with
+         *            <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="ArabicNormalizationFilter"/>
+         *            and <see cref="ArabicStemFilter"/>.</returns>
          */
         public override TokenStream ReusableTokenStream(string fieldName, TextReader reader)
         {

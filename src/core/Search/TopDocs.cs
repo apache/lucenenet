@@ -20,9 +20,8 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Represents hits returned by {@link
-    /// * Searcher#search(Query,Filter,int)} and {@link
-    /// * Searcher#search(Query,int)
+	/// <summary> Represents hits returned by <see cref="Searcher.Search(Query,Filter,int)" />
+    /// and <see cref="Searcher.Search(Query,int)" />
     /// </summary>
 	[Serializable]
 	public class TopDocs
@@ -59,7 +58,7 @@ namespace Lucene.Net.Search
 
 
 		/// <summary>Returns the maximum score value encountered. Note that in case
-		/// scores are not tracked, this returns {@link Float#NaN}.
+		/// scores are not tracked, this returns <see cref="float.NaN" />.
 		/// </summary>
 		public virtual float GetMaxScore()
 		{

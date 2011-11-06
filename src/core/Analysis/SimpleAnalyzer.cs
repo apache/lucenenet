@@ -20,8 +20,8 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>An {@link Analyzer} that filters {@link LetterTokenizer} 
-	/// with {@link LowerCaseFilter} 
+	/// <summary>An <see cref="Analyzer" /> that filters <see cref="LetterTokenizer" /> 
+	/// with <see cref="LowerCaseFilter" /> 
 	/// </summary>
 	
 	public sealed class SimpleAnalyzer:Analyzer

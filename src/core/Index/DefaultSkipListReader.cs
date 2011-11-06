@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         }
 		
 		/// <summary>Returns the freq pointer of the doc to which the last call of 
-		/// {@link MultiLevelSkipListReader#SkipTo(int)} has skipped.  
+		/// <see cref="MultiLevelSkipListReader.SkipTo(int)" /> has skipped.  
 		/// </summary>
 		internal virtual long GetFreqPointer()
 		{
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the prox pointer of the doc to which the last call of 
-		/// {@link MultiLevelSkipListReader#SkipTo(int)} has skipped.  
+		/// <see cref="MultiLevelSkipListReader.SkipTo(int)" /> has skipped.  
 		/// </summary>
 		internal virtual long GetProxPointer()
 		{
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Returns the payload length of the payload stored just before 
-		/// the doc to which the last call of {@link MultiLevelSkipListReader#SkipTo(int)} 
+		/// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)" /> 
 		/// has skipped.  
 		/// </summary>
 		internal virtual int GetPayloadLength()

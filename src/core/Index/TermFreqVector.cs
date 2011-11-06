@@ -22,12 +22,12 @@ namespace Lucene.Net.Index
 	
 	/// <summary>Provides access to stored term vector of 
 	/// a document field.  The vector consists of the name of the field, an array of the terms tha occur in the field of the
-	/// {@link Lucene.Net.Documents.Document} and a parallel array of frequencies.  Thus, getTermFrequencies()[5] corresponds with the
+	/// <see cref="Lucene.Net.Documents.Document" /> and a parallel array of frequencies.  Thus, getTermFrequencies()[5] corresponds with the
 	/// frequency of getTerms()[5], assuming there are at least 5 terms in the Document.
 	/// </summary>
 	public interface TermFreqVector
 	{
-		/// <summary> The {@link Lucene.Net.Documents.Fieldable} name. </summary>
+		/// <summary> The <see cref="Lucene.Net.Documents.Fieldable" /> name. </summary>
 		/// <returns> The name of the field this vector is associated with.
 		/// 
 		/// </returns>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Array of term frequencies. Locations of the array correspond one to one
-		/// to the terms in the array obtained from <code>getTerms</code>
+		/// to the terms in the array obtained from <c>getTerms</c>
 		/// method. Each location in the array contains the number of times this
 		/// term occurs in the document or the document field.
 		/// </summary>
@@ -51,14 +51,14 @@ namespace Lucene.Net.Index
 		
 		
 		/// <summary>Return an index in the term numbers array returned from
-		/// <code>getTerms</code> at which the term with the specified
-		/// <code>term</code> appears. If this term does not appear in the array,
+		/// <c>getTerms</c> at which the term with the specified
+		/// <c>term</c> appears. If this term does not appear in the array,
 		/// return -1.
 		/// </summary>
 		int IndexOf(System.String term);
 		
 		
-		/// <summary>Just like <code>indexOf(int)</code> but searches for a number of terms
+		/// <summary>Just like <c>indexOf(int)</c> but searches for a number of terms
 		/// at the same time. Returns an array that has the same size as the number
 		/// of terms searched for, each slot containing the result of searching for
 		/// that term number.

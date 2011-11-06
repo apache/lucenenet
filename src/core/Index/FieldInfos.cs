@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
 		/// <param name="isIndexed">Whether the fields are indexed or not
 		/// 
 		/// </param>
-		/// <seealso cref="Add(String, boolean)">
+		/// <seealso cref="Add(String, bool)">
 		/// </seealso>
         public void Add(System.Collections.Generic.ICollection<string> names, bool isIndexed)
 		{
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="isIndexed">true if the field is indexed
 		/// </param>
-		/// <seealso cref="Add(String, boolean, boolean, boolean, boolean)">
+        /// <seealso cref="Add(String, bool, bool, bool, bool)">
 		/// </seealso>
 		public void  Add(System.String name, bool isIndexed)
 		{

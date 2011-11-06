@@ -92,10 +92,10 @@ namespace Lucene.Net.Util.Cache
 			return cache.GetSynchronizedCache();
 		}
 		
-		/// <summary> Called by {@link #SynchronizedCache(Cache)}. This method
-		/// returns a {@link SynchronizedCache} instance that wraps
+		/// <summary> Called by <see cref="SynchronizedCache(Cache)" />. This method
+		/// returns a <see cref="SynchronizedCache" /> instance that wraps
 		/// this instance by default and can be overridden to return
-		/// e. g. subclasses of {@link SynchronizedCache} or this
+		/// e. g. subclasses of <see cref="SynchronizedCache" /> or this
 		/// in case this cache is already synchronized.
 		/// </summary>
 		internal virtual Cache GetSynchronizedCache()

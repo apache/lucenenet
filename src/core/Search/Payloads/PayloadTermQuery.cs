@@ -35,15 +35,15 @@ namespace Lucene.Net.Search.Payloads
 {
 	
 	/// <summary> This class is very similar to
-	/// {@link Lucene.Net.Search.Spans.SpanTermQuery} except that it factors
+	/// <see cref="Lucene.Net.Search.Spans.SpanTermQuery" /> except that it factors
 	/// in the value of the payload located at each of the positions where the
-	/// {@link Lucene.Net.Index.Term} occurs.
+	/// <see cref="Lucene.Net.Index.Term" /> occurs.
 	/// <p/>
 	/// In order to take advantage of this, you must override
-	/// {@link Lucene.Net.Search.Similarity#ScorePayload(String, byte[],int,int)}
+	/// <see cref="Lucene.Net.Search.Similarity.ScorePayload(String, byte[],int,int)" />
 	/// which returns 1 by default.
 	/// <p/>
-	/// Payload scores are aggregated using a pluggable {@link PayloadFunction}.
+	/// Payload scores are aggregated using a pluggable <see cref="PayloadFunction" />.
 	/// 
 	/// </summary>
 	[Serializable]
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Payloads
 				}
 				
 				/// <summary> </summary>
-				/// <returns> {@link #GetSpanScore()} * {@link #GetPayloadScore()}
+				/// <returns> <see cref="GetSpanScore()" /> * <see cref="GetPayloadScore()" />
 				/// </returns>
 				/// <throws>  IOException </throws>
 				public override float Score()
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search.Payloads
 				/// 
 				/// </summary>
 				/// <returns> The score, as calculated by
-				/// {@link PayloadFunction#DocScore(int, String, int, float)}
+				/// <see cref="PayloadFunction.DocScore(int, String, int, float)" />
 				/// </returns>
 				protected internal virtual float GetPayloadScore()
 				{

@@ -73,16 +73,11 @@ namespace Lucene.Net.Highlight
 		/// The cost of finding there are no termVectors in the index is minimal (1000 invocations still 
 		/// registers 0 ms). So this "lazy" (flexible?) approach to coding is probably acceptable
 		/// </summary>
-		/// <param name="">reader
-		/// </param>
-		/// <param name="">docId
-		/// </param>
-		/// <param name="">field
-		/// </param>
-		/// <param name="">analyzer
-		/// </param>
-		/// <returns> null if field not stored correctly 
-		/// </returns>
+        /// <param name="reader"> </param>
+        /// <param name="docId"> </param>
+        /// <param name="field"> </param>
+        /// <param name="analyzer"> </param>
+		/// <returns> null if field not stored correctly </returns>
 		/// <throws>  IOException </throws>
 		public static TokenStream GetAnyTokenStream(IndexReader reader, int docId, System.String field, Analyzer analyzer)
 		{
@@ -132,8 +127,7 @@ namespace Lucene.Net.Highlight
 		/// or slower (more CPU burn) depending on the content.
 		/// 
 		/// </summary>
-		/// <param name="">tpv
-		/// </param>
+        /// <param name="tpv"></param>
 		/// <param name="tokenPositionsGuaranteedContiguous">true if the token position numbers have no overlaps or gaps. If looking
 		/// to eek out the last drops of performance, set to true. If in doubt, set to false.
 		/// </param>

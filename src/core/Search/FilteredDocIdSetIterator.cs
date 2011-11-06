@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
 	
 	/// <summary> Abstract decorator class of a DocIdSetIterator
 	/// implementation that provides on-demand filter/validation
-	/// mechanism on an underlying DocIdSetIterator.  See {@link
-	/// FilteredDocIdSet}.
+	/// mechanism on an underlying DocIdSetIterator.  See <see cref="FilteredDocIdSet" />
+	///.
 	/// </summary>
 	public abstract class FilteredDocIdSetIterator:DocIdSetIterator
 	{
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public abstract /*protected internal*/ bool Match(int doc);
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead.")]
 		public override int Doc()
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead. ")]
 		public override bool SkipTo(int n)

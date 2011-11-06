@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> CharReader is a Reader wrapper. It reads chars from
-	/// Reader and outputs {@link CharStream}, defining an
-	/// identify function {@link #CorrectOffset} method that
+	/// Reader and outputs <see cref="CharStream" />, defining an
+	/// identify function <see cref="CorrectOffset" /> method that
 	/// simply returns the provided offset.
 	/// </summary>
 	public sealed class CharReader:CharStream

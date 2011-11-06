@@ -33,18 +33,18 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary>Construct a new WhitespaceTokenizer using a given {@link AttributeSource}. </summary>
+		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="AttributeSource" />. </summary>
 		public WhitespaceTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
 		{
 		}
 		
-		/// <summary>Construct a new WhitespaceTokenizer using a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory}. </summary>
+		/// <summary>Construct a new WhitespaceTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
 		public WhitespaceTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
 		{
 		}
 		
 		/// <summary>Collects only characters which do not satisfy
-		/// {@link Character#isWhitespace(char)}.
+        /// <see cref="char.IsWhiteSpace(char)" />.
 		/// </summary>
 		protected internal override bool IsTokenChar(char c)
 		{

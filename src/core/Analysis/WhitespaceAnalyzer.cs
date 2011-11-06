@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>An Analyzer that uses {@link WhitespaceTokenizer}. </summary>
+	/// <summary>An Analyzer that uses <see cref="WhitespaceTokenizer" />. </summary>
 	
 	public sealed class WhitespaceAnalyzer:Analyzer
 	{

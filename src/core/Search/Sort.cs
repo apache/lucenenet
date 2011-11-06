@@ -30,39 +30,39 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <p/><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</code><p/>
+	/// <p/><c>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</c><p/>
 	/// 
 	/// 
 	/// <p/><h3>Valid Types of Values</h3>
 	/// 
 	/// <p/>There are four possible kinds of term values which may be put into
 	/// sorting fields: Integers, Longs, Floats, or Strings.  Unless
-	/// {@link SortField SortField} objects are specified, the type of value
+	/// <see cref="SortField">SortField</see> objects are specified, the type of value
 	/// in the field is determined by parsing the first term in the field.
 	/// 
 	/// <p/>Integer term values should contain only digits and an optional
 	/// preceding negative sign.  Values must be base 10 and in the range
-	/// <code>Integer.MIN_VALUE</code> and <code>Integer.MAX_VALUE</code> inclusive.
+	/// <c>Integer.MIN_VALUE</c> and <c>Integer.MAX_VALUE</c> inclusive.
 	/// Documents which should appear first in the sort
 	/// should have low value integers, later documents high values
-	/// (i.e. the documents should be numbered <code>1..n</code> where
-	/// <code>1</code> is the first and <code>n</code> the last).
+	/// (i.e. the documents should be numbered <c>1..n</c> where
+	/// <c>1</c> is the first and <c>n</c> the last).
 	/// 
 	/// <p/>Long term values should contain only digits and an optional
 	/// preceding negative sign.  Values must be base 10 and in the range
-	/// <code>Long.MIN_VALUE</code> and <code>Long.MAX_VALUE</code> inclusive.
+	/// <c>Long.MIN_VALUE</c> and <c>Long.MAX_VALUE</c> inclusive.
 	/// Documents which should appear first in the sort
 	/// should have low value integers, later documents high values.
 	/// 
 	/// <p/>Float term values should conform to values accepted by
-	/// {@link Float Float.valueOf(String)} (except that <code>NaN</code>
-	/// and <code>Infinity</code> are not supported).
+	/// <see cref="float.Parse(string)" /> (except that <c>NaN</c>
+	/// and <c>Infinity</c> are not supported).
 	/// Documents which should appear first in the sort
 	/// should have low values, later documents high values.
 	/// 
 	/// <p/>String term values can contain any valid String, but should
 	/// not be tokenized.  The values are sorted according to their
-	/// {@link Comparable natural order}.  Note that using this type
+	/// <see cref="IComparable">natural order</see>.  Note that using this type
 	/// of term value has higher memory requirements than the other
 	/// two types.
 	/// 
@@ -77,11 +77,11 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p/>Sorting uses of caches of term values maintained by the
 	/// internal HitQueue(s).  The cache is static and contains an integer
-	/// or float array of length <code>IndexReader.maxDoc()</code> for each field
+	/// or float array of length <c>IndexReader.maxDoc()</c> for each field
 	/// name for which a sort is performed.  In other words, the size of the
 	/// cache in bytes is:
 	/// 
-	/// <p/><code>4 * IndexReader.maxDoc() * (# of different fields actually used to sort)</code>
+	/// <p/><c>4 * IndexReader.maxDoc() * (# of different fields actually used to sort)</c>
 	/// 
 	/// <p/>For String fields, the cache is larger: in addition to the
 	/// above array, the value of every term in the field is kept in memory.
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Represents sorting by computed relevance. Using this sort criteria returns
 		/// the same results as calling
-		/// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+		/// <see cref="Searcher.Search(Query)" />Searcher#search()without a sort criteria,
 		/// only with slightly more overhead.
 		/// </summary>
 		public static readonly Sort RELEVANCE = new Sort();
@@ -117,23 +117,23 @@ namespace Lucene.Net.Search
 		internal SortField[] fields;
 		
 		/// <summary> Sorts by computed relevance. This is the same sort criteria as calling
-		/// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+		/// <see cref="Searcher.Search(Query)" />without a sort criteria,
 		/// only with slightly more overhead.
 		/// </summary>
 		public Sort():this(SortField.FIELD_SCORE)
 		{
 		}
 		
-		/// <summary> Sorts by the terms in <code>field</code> then by index order (document
-		/// number). The type of value in <code>field</code> is determined
+		/// <summary> Sorts by the terms in <c>field</c> then by index order (document
+		/// number). The type of value in <c>field</c> is determined
 		/// automatically.
 		/// 
 		/// </summary>
 		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating a {@link SortField} and then use {@link
-		/// #Sort(SortField)}
+		/// first creating a <see cref="SortField" /> and then use <see cref="Sort(SortField)" />
+		///
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortField and then use Sort(SortField)")]
 		public Sort(System.String field)
@@ -141,16 +141,16 @@ namespace Lucene.Net.Search
 			SetSort(field, false);
 		}
 		
-		/// <summary> Sorts possibly in reverse by the terms in <code>field</code> then by
-		/// index order (document number). The type of value in <code>field</code> is
+		/// <summary> Sorts possibly in reverse by the terms in <c>field</c> then by
+		/// index order (document number). The type of value in <c>field</c> is
 		/// determined automatically.
 		/// 
 		/// </summary>
 		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating a {@link SortField} and then use {@link
-		/// #Sort(SortField)}
+		/// first creating a <see cref="SortField" /> and then use <see cref="Sort(SortField)" />
+		///
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortField and then use Sort(SortField)")]
 		public Sort(System.String field, bool reverse)
@@ -159,14 +159,14 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Sorts in succession by the terms in each field. The type of value in
-		/// <code>field</code> is determined automatically.
+		/// <c>field</c> is determined automatically.
 		/// 
 		/// </summary>
 		/// <seealso cref="SortField.AUTO">
 		/// </seealso>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating {@link SortField}s and then use {@link
-		/// #Sort(SortField[])}
+		/// first creating <see cref="SortField" />s and then use <see cref="Sort(SortField[])" />
+		///
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating SortFields and then use Sort(SortField[])")]
 		public Sort(System.String[] fields)
@@ -186,12 +186,12 @@ namespace Lucene.Net.Search
 			SetSort(fields);
 		}
 		
-		/// <summary> Sets the sort to the terms in <code>field</code> then by index order
+		/// <summary> Sets the sort to the terms in <c>field</c> then by index order
 		/// (document number).
 		/// </summary>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating a {@link SortField} and then use {@link
-		/// #SetSort(SortField)}
+		/// first creating a <see cref="SortField" /> and then use <see cref="SetSort(SortField)" />
+		///
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortField and then use SetSort(SortField)")]
 		public void  SetSort(System.String field)
@@ -199,12 +199,12 @@ namespace Lucene.Net.Search
 			SetSort(field, false);
 		}
 		
-		/// <summary> Sets the sort to the terms in <code>field</code> possibly in reverse,
+		/// <summary> Sets the sort to the terms in <c>field</c> possibly in reverse,
 		/// then by index order (document number).
 		/// </summary>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating a {@link SortField} and then use {@link
-		/// #SetSort(SortField)}
+		/// first creating a <see cref="SortField" /> and then use <see cref="SetSort(SortField)" />
+		///
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortField and then use SetSort(SortField)")]
 		public virtual void  SetSort(System.String field, bool reverse)
@@ -214,8 +214,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Sets the sort to the terms in each field in succession.</summary>
 		/// <deprecated> Please specify the type explicitly by
-		/// first creating {@link SortField}s and then use {@link
-		/// #SetSort(SortField[])} 
+		/// first creating <see cref="SortField" />s and then use <see cref="SetSort(SortField[])" />
+		/// 
 		/// </deprecated>
         [Obsolete("Please specify the type explicitly by first creating a SortFields and then use SetSort(SortField[])")]
 		public virtual void  SetSort(System.String[] fieldnames)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

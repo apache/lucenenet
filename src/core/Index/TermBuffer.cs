@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 			return len1 - len2;
 		}
 		
-		/// <summary>Call this if the IndexInput passed to {@link #read}
+		/// <summary>Call this if the IndexInput passed to <see cref="Read" />
 		/// stores terms in the "modified UTF8" (pre LUCENE-510)
 		/// format. 
 		/// </summary>

@@ -35,14 +35,14 @@ namespace Lucene.Net.Documents
 	/// 
 	/// <p/>
 	/// This class handles <b>all</b> long values (unlike
-	/// {@link Lucene.Net.Documents.DateField}).
+	/// <see cref="Lucene.Net.Documents.DateField" />).
 	/// 
 	/// </summary>
-	/// <deprecated> For new indexes use {@link NumericUtils} instead, which
+	/// <deprecated> For new indexes use <see cref="NumericUtils" /> instead, which
 	/// provides a sortable binary representation (prefix encoded) of numeric
 	/// values.
-	/// To index and efficiently query numeric values use {@link NumericField}
-	/// and {@link NumericRangeQuery}.
+	/// To index and efficiently query numeric values use <see cref="NumericField" />
+	/// and <see cref="NumericRangeQuery" />.
 	/// This class is included for use with existing
 	/// indices and will be removed in a future release.
 	/// </deprecated>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Documents
         public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
 #endif
 		
-		/// <summary> The length of (all) strings returned by {@link #longToString}</summary>
+		/// <summary> The length of (all) strings returned by <see cref="LongToString" /></summary>
 		public static readonly int STR_SIZE = MIN_STRING_VALUE.Length;
 		
 		/// <summary> Converts a long to a String suitable for indexing.</summary>
@@ -112,7 +112,7 @@ namespace Lucene.Net.Documents
 			return buf.ToString();
 		}
 		
-		/// <summary> Converts a String that was returned by {@link #longToString} back to a
+		/// <summary> Converts a String that was returned by <see cref="LongToString" /> back to a
 		/// long.
 		/// 
 		/// </summary>

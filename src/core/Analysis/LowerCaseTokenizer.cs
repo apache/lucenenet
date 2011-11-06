@@ -38,18 +38,18 @@ namespace Lucene.Net.Analysis
 		{
 		}
 		
-		/// <summary>Construct a new LowerCaseTokenizer using a given {@link AttributeSource}. </summary>
+		/// <summary>Construct a new LowerCaseTokenizer using a given <see cref="AttributeSource" />. </summary>
 		public LowerCaseTokenizer(AttributeSource source, System.IO.TextReader in_Renamed):base(source, in_Renamed)
 		{
 		}
 		
-		/// <summary>Construct a new LowerCaseTokenizer using a given {@link Lucene.Net.Util.AttributeSource.AttributeFactory}. </summary>
+		/// <summary>Construct a new LowerCaseTokenizer using a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />. </summary>
 		public LowerCaseTokenizer(AttributeFactory factory, System.IO.TextReader in_Renamed):base(factory, in_Renamed)
 		{
 		}
 		
 		/// <summary>Converts char to lower case
-		/// {@link Character#toLowerCase(char)}.
+		/// <see cref="char.ToLower(char)" />.
 		/// </summary>
 		protected internal override char Normalize(char c)
 		{

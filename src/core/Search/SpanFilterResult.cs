@@ -41,9 +41,9 @@ namespace Lucene.Net.Search
 		/// <summary> </summary>
 		/// <param name="bits">The bits for the Filter
 		/// </param>
-		/// <param name="positions">A List of {@link Lucene.Net.Search.SpanFilterResult.PositionInfo} objects
+		/// <param name="positions">A List of <see cref="Lucene.Net.Search.SpanFilterResult.PositionInfo" /> objects
 		/// </param>
-		/// <deprecated> Use {@link #SpanFilterResult(DocIdSet, List)} instead
+        /// <deprecated> Use <see cref="SpanFilterResult(DocIdSet, System.Collections.IList)" /> instead
 		/// </deprecated>
         [Obsolete("Use SpanFilterResult(DocIdSet, List) instead")]
 		public SpanFilterResult(System.Collections.BitArray bits, System.Collections.IList positions)
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 		/// <summary> </summary>
 		/// <param name="docIdSet">The DocIdSet for the Filter
 		/// </param>
-		/// <param name="positions">A List of {@link Lucene.Net.Search.SpanFilterResult.PositionInfo} objects
+		/// <param name="positions">A List of <see cref="Lucene.Net.Search.SpanFilterResult.PositionInfo" /> objects
 		/// </param>
 		public SpanFilterResult(DocIdSet docIdSet, System.Collections.IList positions)
 		{
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 			return positions;
 		}
 		
-		/// <deprecated> Use {@link #GetDocIdSet()}
+		/// <deprecated> Use <see cref="GetDocIdSet()" />
 		/// </deprecated>
         [Obsolete("Use GetDocIdSet()")]
 		public virtual System.Collections.BitArray GetBits()
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 			}
 			
 			/// <summary> </summary>
-			/// <returns> A List of {@link Lucene.Net.Search.SpanFilterResult.StartEnd} objects
+			/// <returns> A List of <see cref="Lucene.Net.Search.SpanFilterResult.StartEnd" /> objects
 			/// </returns>
 			public virtual System.Collections.IList GetPositions()
 			{

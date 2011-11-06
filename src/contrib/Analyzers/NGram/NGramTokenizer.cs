@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,9 +45,9 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenizer with given min and max n-grams.
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public NGramTokenizer(TextReader input, int minGram, int maxGram)
             : base(input)
@@ -57,10 +57,10 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenizer with given min and max n-grams.
-         * @param source {@link AttributeSource} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="source"><see cref="AttributeSource"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public NGramTokenizer(AttributeSource source, TextReader input, int minGram, int maxGram)
             : base(source, input)
@@ -70,10 +70,10 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenizer with given min and max n-grams.
-         * @param factory {@link org.apache.lucene.util.AttributeSource.AttributeFactory} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public NGramTokenizer(AttributeFactory factory, TextReader input, int minGram, int maxGram)
             : base(factory, input)
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.NGram
 
         /**
          * Creates NGramTokenizer with default min and max n-grams.
-         * @param input {@link Reader} holding the input to be tokenized
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
          */
         public NGramTokenizer(TextReader input)
             : this(input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)

@@ -27,8 +27,8 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// 
 	/// </summary>
-	/// <deprecated> Use {@link TimeLimitingCollector} instead, which extends the new
-	/// {@link Collector}. This class will be removed in 3.0.
+	/// <deprecated> Use <see cref="TimeLimitingCollector" /> instead, which extends the new
+	/// <see cref="Collector" />. This class will be removed in 3.0.
 	/// </deprecated>
     [Obsolete("Use TimeLimitingCollector instead, which extends the new Collector. This class will be removed in 3.0.")]
 	public class TimeLimitedCollector:HitCollector
@@ -39,11 +39,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Default timer resolution.</summary>
-		/// <seealso cref="SetResolution(long)">
+		/// <seealso cref="SetResolution(uint)">
 		/// </seealso>
 		public const int DEFAULT_RESOLUTION = 20;
 		
-		/// <summary> Default for {@link #IsGreedy()}.</summary>
+		/// <summary> Default for <see cref="IsGreedy()" />.</summary>
 		/// <seealso cref="IsGreedy()">
 		/// </seealso>
 		public bool DEFAULT_GREEDY = false;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 		/// <summary> Create a TimeLimitedCollector wrapper over another HitCollector with a specified timeout.</summary>
 		/// <param name="hc">the wrapped HitCollector
 		/// </param>
-		/// <param name="timeAllowed">max time allowed for collecting hits after which {@link TimeExceededException} is thrown
+		/// <param name="timeAllowed">max time allowed for collecting hits after which <see cref="TimeExceededException" /> is thrown
 		/// </param>
 		public TimeLimitedCollector(HitCollector hc, long timeAllowed)
 		{
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Return the timer resolution.</summary>
-		/// <seealso cref="SetResolution(long)">
+		/// <seealso cref="SetResolution(uint)">
 		/// </seealso>
 		public static long GetResolution()
 		{
@@ -188,13 +188,13 @@ namespace Lucene.Net.Search
 		/// This means that a search required to take no longer than 
 		/// 800 milliseconds may be stopped after 780 to 820 milliseconds.
 		/// <br/>Note that: 
-		/// <ul>
-		/// <li>Finer (smaller) resolution is more accurate but less efficient.</li>
-		/// <li>Setting resolution to less than 5 milliseconds will be silently modified to 5 milliseconds.</li>
-		/// <li>Setting resolution smaller than current resolution might take effect only after current 
+		/// <list type="bullet">
+		/// <item>Finer (smaller) resolution is more accurate but less efficient.</item>
+		/// <item>Setting resolution to less than 5 milliseconds will be silently modified to 5 milliseconds.</item>
+		/// <item>Setting resolution smaller than current resolution might take effect only after current 
 		/// resolution. (Assume current resolution of 20 milliseconds is modified to 5 milliseconds, 
-		/// then it can take up to 20 milliseconds for the change to have effect.</li>
-		/// </ul>      
+		/// then it can take up to 20 milliseconds for the change to have effect.</item>
+		/// </list>      
 		/// </summary>
 		public static void  SetResolution(uint newResolution)
 		{
@@ -202,12 +202,12 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Checks if this time limited collector is greedy in collecting the last hit.
-		/// A non greedy collector, upon a timeout, would throw a {@link TimeExceededException} 
+		/// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException" /> 
 		/// without allowing the wrapped collector to collect current doc. A greedy one would 
 		/// first allow the wrapped hit collector to collect current doc and only then 
-		/// throw a {@link TimeExceededException}.
+		/// throw a <see cref="TimeExceededException" />.
 		/// </summary>
-		/// <seealso cref="SetGreedy(boolean)">
+		/// <seealso cref="SetGreedy(bool)">
 		/// </seealso>
 		public virtual bool IsGreedy()
 		{

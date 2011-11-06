@@ -23,11 +23,11 @@ using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> Wrapper used by {@link HitIterator} to provide a lazily loaded hit
-	/// from {@link Hits}.
+	/// <summary> Wrapper used by <see cref="HitIterator" /> to provide a lazily loaded hit
+	/// from <see cref="Hits" />.
 	/// 
 	/// </summary>
-	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
+	/// <deprecated> Use <see cref="TopScoreDocCollector" /> and <see cref="TopDocs" /> instead. Hits will be removed in Lucene 3.0.
 	/// </deprecated>
     [Obsolete("Use TopScoreDocCollector and TopDocs instead. Hits will be removed in Lucene 3.0.")]
 	[Serializable]
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 		private Hits hits = null;
 		private int hitNumber;
 		
-		/// <summary> Constructed from {@link HitIterator}</summary>
+		/// <summary> Constructed from <see cref="HitIterator" /></summary>
 		/// <param name="hits">Hits returned from a search
 		/// </param>
 		/// <param name="hitNumber">Hit index in Hits

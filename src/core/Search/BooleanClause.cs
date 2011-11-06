@@ -48,16 +48,16 @@ namespace Lucene.Net.Search
 			/// <summary>Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
 			public static readonly Occur MUST = new Occur("MUST");
 			/// <summary>Use this operator for clauses that <i>should</i> appear in the 
-			/// matching documents. For a BooleanQuery with no <code>MUST</code> 
-			/// clauses one or more <code>SHOULD</code> clauses must match a document 
+			/// matching documents. For a BooleanQuery with no <c>MUST</c> 
+			/// clauses one or more <c>SHOULD</c> clauses must match a document 
 			/// for the BooleanQuery to match.
 			/// </summary>
-			/// <seealso cref="BooleanQuery.setMinimumNumberShouldMatch">
+			/// <seealso cref="BooleanQuery.SetMinimumNumberShouldMatch">
 			/// </seealso>
 			public static readonly Occur SHOULD = new Occur("SHOULD");
 			/// <summary>Use this operator for clauses that <i>must not</i> appear in the matching documents.
 			/// Note that it is not possible to search for queries that only consist
-			/// of a <code>MUST_NOT</code> clause. 
+			/// of a <c>MUST_NOT</c> clause. 
 			/// </summary>
 			public static readonly Occur MUST_NOT = new Occur("MUST_NOT");
 		}
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 		
 		
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (o == null || !(o is BooleanClause))

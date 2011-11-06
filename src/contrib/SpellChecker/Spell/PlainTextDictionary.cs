@@ -22,11 +22,10 @@ namespace SpellChecker.Net.Search.Spell
 	
 	
     /// <summary> Dictionary represented by a file text.
-    /// 
-    /// <p>Format allowed: 1 word per line:<br>
-    /// word1<br>
-    /// word2<br>
-    /// word3<br>
+    /// <p/>Format allowed: 1 word per line:<br/>
+    /// word1<br/>
+    /// word2<br/>
+    /// word3<br/>
     /// 
     /// </summary>
     /// <author>  Nicolas Maisonneuve
