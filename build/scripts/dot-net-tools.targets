@@ -133,7 +133,7 @@
       	<MSBuild 
    			Condition="Exists('%(SandCastleFolder.FullPath)') And '$(Configuration)' == 'Release'" 
    			Projects="$(BuildFolder)\scripts\docs.shfbproj"
-   			Properties='Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs;area=
+   			Properties='Configuration=Release;Platform=AnyCPU;OutDir=$(ArtifactsFolder)\docs\;area=
    			$(Area)' />
 
 		
