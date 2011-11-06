@@ -68,11 +68,20 @@
 	  <Import Project="SpellChecker/project.targets" Condition="'$(Area)' == 'spellchecker'" />
 	
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(ArtifactsFolder)' != ''">
 		<CleanFiles Include="$(ArtifactsFolder)\**\*.*" />
 		<CleanFiles Include="$(RootFolder)\bin\**\*"  Exclude="$(RootFolder)\**\.svn\*; $(RootFolder)\.svn\*" />
 	</ItemGroup>	
 	
+    <Target Name="diag">
+        <Message Text="TempFolder=$(TempFolder)" />
+        <Message Text="BuildFolder=$(BuildFolder)" />
+        <Message Text="ScriptsFolder=$(ScriptsFolder)" />
+        <Message Text="RootFolder=$(RootFolder)" />
+        <Message Text="Area=$(Area)" />
+        <Message Text="ArtifactsFolder=$(ArtifactsFolder)" />
+    </Target>
+    
 	<Target Name="paths">
 		<CallTarget Targets="@(PathsTarget)" />
 	</Target>
@@ -83,8 +92,9 @@
 	</Target>
 	
 	<Target Name="clean">
+        <Error Condition="'$(ArtifactsFolder)' == ''" Text="ArtifactsFolder is empty!  'Area' may be empty or invalid." />
 		<Message Text="Files To Clean: @(CleanFiles)" />
-		<Delete Files="@(CleanFiles)" /> 
+		<Delete Files="@(CleanFiles)" />
 	</Target>
 	
   
