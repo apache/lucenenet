@@ -38,18 +38,20 @@ namespace Lucene.Net.Util
 		{
 			return interner.Intern(s);
 		}
-		
-		/// <summary> Compares two byte[] arrays, element by element, and returns the
-		/// number of elements common to both arrays.
-		/// 
-		/// </summary>
-		/// <param name="bytes1">The first byte[] to compare
-		/// </param>
-		/// <param name="bytes2">The second byte[] to compare
-		/// </param>
-		/// <returns> The number of common elements.
-		/// </returns>
-		public static int BytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
+
+	    /// <summary> Compares two byte[] arrays, element by element, and returns the
+	    /// number of elements common to both arrays.
+	    /// 
+	    /// </summary>
+	    /// <param name="bytes1">The first byte[] to compare
+	    /// </param>
+	    /// <param name="len1"></param>
+	    /// <param name="bytes2">The second byte[] to compare
+	    /// </param>
+	    /// <param name="len2"></param>
+	    /// <returns> The number of common elements.
+	    /// </returns>
+	    public static int BytesDifference(byte[] bytes1, int len1, byte[] bytes2, int len2)
 		{
 			int len = len1 < len2?len1:len2;
 			for (int i = 0; i < len; i++)

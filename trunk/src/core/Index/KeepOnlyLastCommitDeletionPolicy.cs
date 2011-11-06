@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> This {@link IndexDeletionPolicy} implementation that
+	/// <summary> This <see cref="IndexDeletionPolicy" /> implementation that
 	/// keeps only the most recent commit and immediately removes
 	/// all prior commits after a new commit is done.  This is
 	/// the default deletion policy.

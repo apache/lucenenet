@@ -22,26 +22,26 @@ using TokenStream = Lucene.Net.Analysis.TokenStream;
 namespace Lucene.Net.Util
 {
 	
-	/// <summary> An AttributeSource contains a list of different {@link AttributeImpl}s,
+	/// <summary> An AttributeSource contains a list of different <see cref="AttributeImpl" />s,
 	/// and methods to add and get them. There can only be a single instance
 	/// of an attribute in the same AttributeSource instance. This is ensured
 	/// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to 
-	/// the {@link #AddAttribute(Class)}, which then checks if an instance of
+	/// the <see cref="AddAttribute(Type)" />, which then checks if an instance of
 	/// that type is already present. If yes, it returns the instance, otherwise
 	/// it creates a new instance and returns it.
 	/// </summary>
 	public class AttributeSource
 	{
-		/// <summary> An AttributeFactory creates instances of {@link AttributeImpl}s.</summary>
+		/// <summary> An AttributeFactory creates instances of <see cref="AttributeImpl" />s.</summary>
 		public abstract class AttributeFactory
 		{
-			/// <summary> returns an {@link AttributeImpl} for the supplied {@link Attribute} interface class.
-			/// <p/>Signature for Java 1.5: <code>public AttributeImpl createAttributeInstance(Class%lt;? extends Attribute&gt; attClass)</code>
+			/// <summary> returns an <see cref="AttributeImpl" /> for the supplied <see cref="Attribute" /> interface class.
+			/// <p/>Signature for Java 1.5: <c>public AttributeImpl createAttributeInstance(Class%lt;? extends Attribute&gt; attClass)</c>
 			/// </summary>
 			public abstract AttributeImpl CreateAttributeInstance(System.Type attClass);
 			
-			/// <summary> This is the default factory that creates {@link AttributeImpl}s using the
-			/// class name of the supplied {@link Attribute} interface class by appending <code>Impl</code> to it.
+			/// <summary> This is the default factory that creates <see cref="AttributeImpl" />s using the
+			/// class name of the supplied <see cref="Attribute" /> interface class by appending <c>Impl</c> to it.
 			/// </summary>
 			public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
 			
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
 		
 		private AttributeFactory factory;
 		
-		/// <summary> An AttributeSource using the default attribute factory {@link AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY}.</summary>
+		/// <summary> An AttributeSource using the default attribute factory <see cref="AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY" />.</summary>
 		public AttributeSource():this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY)
 		{
 		}
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util
 			this.factory = input.factory;
 		}
 		
-		/// <summary> An AttributeSource using the supplied {@link AttributeFactory} for creating new {@link Attribute} instances.</summary>
+		/// <summary> An AttributeSource using the supplied <see cref="AttributeFactory" /> for creating new <see cref="Attribute" /> instances.</summary>
 		public AttributeSource(AttributeFactory factory)
 		{
             this.attributes = new SupportClass.GeneralKeyedCollection<Type, SupportClass.AttributeImplItem>(delegate(SupportClass.AttributeImplItem att) { return att.Key; });
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary>Returns a new iterator that iterates the attribute classes
 		/// in the same order they were added in.
-		/// Signature for Java 1.5: <code>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</code>
+		/// Signature for Java 1.5: <c>public Iterator&lt;Class&lt;? extends Attribute&gt;&gt; getAttributeClassesIterator()</c>
 		///
 		/// Note that this return value is different from Java in that it enumerates over the values
 		/// and not the keys
@@ -147,9 +147,9 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary>Returns a new iterator that iterates all unique Attribute implementations.
-		/// This iterator may contain less entries that {@link #getAttributeClassesIterator},
+		/// This iterator may contain less entries that <see cref="GetAttributeClassesIterator" />,
 		/// if one instance implements more than one Attribute interface.
-		/// Signature for Java 1.5: <code>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</code>
+		/// Signature for Java 1.5: <c>public Iterator&lt;AttributeImpl&gt; getAttributeImplsIterator()</c>
 		/// </summary>
 		public virtual System.Collections.Generic.IEnumerable<AttributeImpl> GetAttributeImplsIterator()
 		{
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
 		/// This method first checks if an instance of that class is 
 		/// already in this AttributeSource and returns it. Otherwise a
 		/// new instance is created, added to this AttributeSource and returned. 
-		/// Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T addAttribute(Class&lt;T&gt;)</code>
+		/// Signature for Java 1.5: <c>public &lt;T extends Attribute&gt; T addAttribute(Class&lt;T&gt;)</c>
 		/// </summary>
 		public virtual Attribute AddAttribute(System.Type attClass)
 		{
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util
 		
 		/// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns true, iff this AttributeSource contains the passed-in Attribute.
-		/// Signature for Java 1.5: <code>public boolean hasAttribute(Class&lt;? extends Attribute&gt;)</code>
+		/// Signature for Java 1.5: <c>public boolean hasAttribute(Class&lt;? extends Attribute&gt;)</c>
 		/// </summary>
 		public virtual bool HasAttribute(System.Type attClass)
 		{
@@ -283,15 +283,15 @@ namespace Lucene.Net.Util
 		
 		/// <summary> The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 		/// Returns the instance of the passed in Attribute contained in this AttributeSource
-		/// Signature for Java 1.5: <code>public &lt;T extends Attribute&gt; T getAttribute(Class&lt;T&gt;)</code>
+		/// Signature for Java 1.5: <c>public &lt;T extends Attribute&gt; T getAttribute(Class&lt;T&gt;)</c>
 		/// 
 		/// </summary>
 		/// <throws>  IllegalArgumentException if this AttributeSource does not contain the </throws>
-		/// <summary>         Attribute. It is recommended to always use {@link #addAttribute} even in consumers
+		/// <summary>         Attribute. It is recommended to always use <see cref="AddAttribute" /> even in consumers
 		/// of TokenStreams, because you cannot know if a specific TokenStream really uses
-		/// a specific Attribute. {@link #addAttribute} will automatically make the attribute
+		/// a specific Attribute. <see cref="AddAttribute" /> will automatically make the attribute
 		/// available. If you want to only use the attribute, if it is available (to optimize
-		/// consuming), use {@link #hasAttribute}.
+		/// consuming), use <see cref="HasAttribute" />.
 		/// </summary>
 		public virtual Attribute GetAttribute(System.Type attClass)
 		{
@@ -306,9 +306,9 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> This class holds the state of an AttributeSource.</summary>
-		/// <seealso cref="captureState">
+		/// <seealso cref="CaptureState">
 		/// </seealso>
-		/// <seealso cref="restoreState">
+		/// <seealso cref="RestoreState">
 		/// </seealso>
 		public sealed class State : System.ICloneable
 		{
@@ -347,7 +347,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Resets all Attributes in this AttributeSource by calling
-		/// {@link AttributeImpl#Clear()} on each Attribute implementation.
+		/// <see cref="AttributeImpl.Clear()" /> on each Attribute implementation.
 		/// </summary>
 		public virtual void  ClearAttributes()
 		{
@@ -365,7 +365,7 @@ namespace Lucene.Net.Util
 		}
 		
 		/// <summary> Captures the state of all Attributes. The return value can be passed to
-		/// {@link #restoreState} to restore the state of this or another AttributeSource.
+		/// <see cref="RestoreState" /> to restore the state of this or another AttributeSource.
 		/// </summary>
 		public virtual State CaptureState()
 		{
@@ -393,7 +393,7 @@ namespace Lucene.Net.Util
 		/// the targetStream contains an OffsetAttribute, but this state doesn't, then
 		/// the value of the OffsetAttribute remains unchanged. It might be desirable to
 		/// reset its value to the default, in which case the caller should first
-		/// call {@link TokenStream#ClearAttributes()} on the targetStream.   
+        /// call <see cref="AttributeSource.ClearAttributes()" /> on the targetStream.   
 		/// </summary>
 		public virtual void  RestoreState(State state)
 		{
@@ -506,9 +506,9 @@ namespace Lucene.Net.Util
 			return sb.ToString();
 		}
 		
-		/// <summary> Performs a clone of all {@link AttributeImpl} instances returned in a new
+		/// <summary> Performs a clone of all <see cref="AttributeImpl" /> instances returned in a new
 		/// AttributeSource instance. This method can be used to e.g. create another TokenStream
-		/// with exactly the same attributes (using {@link #AttributeSource(AttributeSource)})
+		/// with exactly the same attributes (using <see cref="AttributeSource(AttributeSource)" />)
 		/// </summary>
 		public virtual AttributeSource CloneAttributes()
 		{

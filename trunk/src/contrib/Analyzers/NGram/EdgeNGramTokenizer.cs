@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.NGram
     /**
      * Tokenizes the input from an edge into n-grams of given size(s).
      * <p>
-     * This {@link Tokenizer} create n-grams from the beginning edge or ending edge of a input token.
+     * This <see cref="Tokenizer"/> create n-grams from the beginning edge or ending edge of a input token.
      * MaxGram can't be larger than 1024 because of limitation.
      * </p>
      */
@@ -86,10 +86,10 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param side the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="side">the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(TextReader input, Side side, int minGram, int maxGram)
             : base(input)
@@ -100,11 +100,11 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
-         * @param source {@link AttributeSource} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param side the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="source"><see cref="AttributeSource"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="side">the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeSource source, TextReader input, Side side, int minGram, int maxGram)
             : base(source, input)
@@ -116,11 +116,11 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          * 
-         * @param factory {@link org.apache.lucene.util.AttributeSource.AttributeFactory} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param side the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="side">the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeFactory factory, TextReader input, Side side, int minGram, int maxGram)
             : base(factory, input)
@@ -132,10 +132,10 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param sideLabel the name of the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="sideLabel">the name of the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(TextReader input, string sideLabel, int minGram, int maxGram)
             : this(input, Side.getSide(sideLabel), minGram, maxGram)
@@ -146,11 +146,11 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          *
-         * @param source {@link AttributeSource} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param sideLabel the name of the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="source"><see cref="AttributeSource"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="sideLabel">the name of the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeSource source, TextReader input, string sideLabel, int minGram, int maxGram)
             : this(source, input, Side.getSide(sideLabel), minGram, maxGram)
@@ -161,11 +161,11 @@ namespace Lucene.Net.Analysis.NGram
         /**
          * Creates EdgeNGramTokenizer that can generate n-grams in the sizes of the given range
          * 
-         * @param factory {@link org.apache.lucene.util.AttributeSource.AttributeFactory} to use
-         * @param input {@link Reader} holding the input to be tokenized
-         * @param sideLabel the name of the {@link Side} from which to chop off an n-gram
-         * @param minGram the smallest n-gram to generate
-         * @param maxGram the largest n-gram to generate
+         * <param name="factory"><see cref="AttributeSource.AttributeFactory"/> to use</param>
+         * <param name="input"><see cref="TextReader"/> holding the input to be tokenized</param>
+         * <param name="sideLabel">the name of the <see cref="Side"/> from which to chop off an n-gram</param>
+         * <param name="minGram">the smallest n-gram to generate</param>
+         * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenizer(AttributeFactory factory, TextReader input, string sideLabel, int minGram, int maxGram) :
             this(factory, input, Side.getSide(sideLabel), minGram, maxGram)

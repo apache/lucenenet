@@ -20,7 +20,7 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary>Abstract base class for input from a file in a {@link Directory}.  A
+	/// <summary>Abstract base class for input from a file in a <see cref="Directory" />.  A
 	/// random-access input stream.  Used for all Lucene index input operations.
 	/// </summary>
 	/// <seealso cref="Directory">
@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
 		/// specified offset with control over whether the read
 		/// should be buffered (callers who have their own buffer
 		/// should pass in "false" for useBuffer).  Currently only
-		/// {@link BufferedIndexInput} respects this parameter.
+		/// <see cref="BufferedIndexInput" /> respects this parameter.
 		/// </summary>
 		/// <param name="b">the array to read bytes into
 		/// </param>
@@ -184,8 +184,8 @@ namespace Lucene.Net.Store
 		
 		/// <summary> Expert
 		/// 
-		/// Similar to {@link #ReadChars(char[], int, int)} but does not do any conversion operations on the bytes it is reading in.  It still
-		/// has to invoke {@link #ReadByte()} just as {@link #ReadChars(char[], int, int)} does, but it does not need a buffer to store anything
+		/// Similar to <see cref="ReadChars(char[], int, int)" /> but does not do any conversion operations on the bytes it is reading in.  It still
+		/// has to invoke <see cref="ReadByte()" /> just as <see cref="ReadChars(char[], int, int)" /> does, but it does not need a buffer to store anything
 		/// and it does not have to do any of the bitwise operations, since we don't actually care what is in the byte except to determine
 		/// how many more bytes to read
 		/// </summary>

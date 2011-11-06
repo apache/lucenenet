@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.AR
 
         /** 
          * Allows for Letter category or NonspacingMark category
-         * @see org.apache.lucene.analysis.LetterTokenizer#isTokenChar(char)
+         * <see cref="LetterTokenizer.IsTokenChar(char)"/>
          */
         protected override bool IsTokenChar(char c)
         {

@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Expert: obtains the ordinal of the field value from the default Lucene 
-	/// {@link Lucene.Net.Search.FieldCache Fieldcache} using getStringIndex().
+	/// <see cref="Lucene.Net.Search.FieldCache">Fieldcache</see> using getStringIndex().
 	/// <p/>
 	/// The native lucene index order is used to assign an ordinal value for each field value.
 	/// <p/>
@@ -45,13 +45,13 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based
-	/// searching, if {@link #getValues} is invoked with a
+	/// searching, if <see cref="GetValues" /> is invoked with a
 	/// composite (multi-segment) reader, this can easily cause
 	/// double RAM usage for the values in the FieldCache.  It's
 	/// best to switch your application to pass only atomic
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
-	/// {@link MultiValueSource}, which costs more CPU per lookup
+	/// <see cref="MultiValueSource" />, which costs more CPU per lookup
 	/// but will not consume double the FieldCache RAM.<p/>
 	/// </summary>
 	
@@ -79,23 +79,23 @@ namespace Lucene.Net.Search.Function
 				}
 				
 			}
-			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#floatVal(int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.DocValues.floatVal(int) */
 			public override float FloatVal(int doc)
 			{
 				return (float) arr[doc];
 			}
-			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#strVal(int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.DocValues.strVal(int) */
 			public override System.String StrVal(int doc)
 			{
 				// the string value of the ordinal, not the string itself
 				return System.Convert.ToString(arr[doc]);
 			}
-			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#toString(int) */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.DocValues.toString(int) */
 			public override System.String ToString(int doc)
 			{
 				return Enclosing_Instance.Description() + '=' + IntVal(doc);
 			}
-			/*(non-Javadoc) @see Lucene.Net.Search.Function.DocValues#getInnerArray() */
+			/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.DocValues.getInnerArray() */
 			public /*internal*/ override System.Object GetInnerArray()
 			{
 				return arr;
@@ -111,20 +111,20 @@ namespace Lucene.Net.Search.Function
 			this.field = field;
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#description() */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.ValueSource.description() */
 		public override System.String Description()
 		{
 			return "ord(" + field + ')';
 		}
 		
-		/*(non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#getValues(Lucene.Net.Index.IndexReader) */
+		/*(non-Javadoc) <see cref="Lucene.Net.Search.Function.ValueSource.getValues(Lucene.Net.Index.IndexReader) */
 		public override DocValues GetValues(IndexReader reader)
 		{
 			int[] arr = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field).order;
 			return new AnonymousClassDocValues(arr, this);
 		}
 		
-		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
+		/*(non-Javadoc) <see cref="java.lang.Object.equals(java.lang.Object) */
 		public  override bool Equals(System.Object o)
 		{
 			if (o.GetType() != typeof(OrdFieldSource))
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Function
 		
 		private static readonly int hcode;
 		
-		/*(non-Javadoc) @see java.lang.Object#hashCode() */
+		/*(non-Javadoc) <see cref="java.lang.Object.hashCode() */
 		public override int GetHashCode()
 		{
 			return hcode + field.GetHashCode();

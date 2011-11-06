@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
 		
 		private int doc = - 1;
 		
-		/// <summary> Creates a {@link Scorer} with the given similarity and lists of required,
+		/// <summary> Creates a <see cref="Scorer" /> with the given similarity and lists of required,
 		/// prohibited and optional scorers. In no required scorers are added, at least
 		/// one of the optional scorers will have to match during the search.
 		/// 
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
 				}
 				return lastDocScore;
 			}
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead. ")]
 			public override int Doc()
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
 			{
 				return scorer.DocID();
 			}
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead. ")]
 			public override bool Next()
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
 			{
 				return scorer.NextDoc();
 			}
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int) instead. ")]
 			public override bool SkipTo(int docNr)
@@ -370,10 +370,10 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
-		/// {@link HitCollector#Collect(int, float)}.
-		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <see cref="HitCollector.Collect(int, float)" />.
+		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
 		/// </param>
-		/// <deprecated> use {@link #Score(Collector)} instead.
+		/// <deprecated> use <see cref="Score(Collector)" /> instead.
 		/// </deprecated>
         [Obsolete("use Score(Collector) instead.")]
 		public override void  Score(HitCollector hc)
@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br/>When this method is used the {@link #Explain(int)} method should not be used.
+		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
 		/// </param>
 		public override void  Score(Collector collector)
 		{
@@ -395,17 +395,17 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Expert: Collects matching documents in a range.
-		/// <br/>Note that {@link #Next()} must be called once before this method is
+		/// <br/>Note that <see cref="Next()" /> must be called once before this method is
 		/// called for the first time.
 		/// </summary>
 		/// <param name="hc">The collector to which all matching documents are passed through
-		/// {@link HitCollector#Collect(int, float)}.
+		/// <see cref="HitCollector.Collect(int, float)" />.
 		/// </param>
 		/// <param name="max">Do not score documents past this.
 		/// </param>
 		/// <returns> true if more matching documents may remain.
 		/// </returns>
-		/// <deprecated> use {@link #Score(Collector, int, int)} instead.
+		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead.
 		/// </deprecated>
         [Obsolete("use Score(Collector, int, int) instead.")]
 		protected internal override bool Score(HitCollector hc, int max)
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search
 			return doc != NO_MORE_DOCS;
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead. ")]
 		public override int Doc()
@@ -438,7 +438,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead. ")]
 		public override bool Next()
@@ -458,7 +458,7 @@ namespace Lucene.Net.Search
 			return sum * coordinator.coordFactors[coordinator.nrMatchers];
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead. ")]
 		public override bool SkipTo(int target)

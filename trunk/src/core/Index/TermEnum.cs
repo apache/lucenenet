@@ -41,20 +41,20 @@ namespace Lucene.Net.Index
 		
 		/// <summary>Skips terms to the first beyond the current whose value is
 		/// greater or equal to <i>target</i>. <p/>Returns true iff there is such
-		/// an entry.  <p/>Behaves as if written: <pre>
+        /// an entry.  <p/>Behaves as if written: <code>
 		/// public boolean skipTo(Term target) {
-		/// do {
-		/// if (!next())
-		/// return false;
-		/// } while (target > term());
-		/// return true;
+		///     do {
+		///         if (!next())
+		///             return false;
+		///     } while (target > term());
+		///         return true;
 		/// }
-		/// </pre>
+        /// </code>
 		/// Some implementations *could* be considerably more efficient than a linear scan.
 		/// Check the implementation to be sure.
 		/// </summary>
 		/// <deprecated> This method is not performant and will be removed in Lucene 3.0.
-		/// Use {@link IndexReader#Terms(Term)} to create a new TermEnum positioned at a
+		/// Use <see cref="IndexReader.Terms(Term)" /> to create a new TermEnum positioned at a
 		/// given term.
 		/// </deprecated>
         [Obsolete("This method is not performant and will be removed in Lucene 3.0.Use IndexReader.Terms(Term) to create a new TermEnum positioned at a given term.")]

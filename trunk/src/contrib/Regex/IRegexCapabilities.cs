@@ -18,7 +18,7 @@
 namespace Lucene.Net.Search.Regex
 {
 	/// <summary>
-	/// Defines basic operations needed by {@link RegexQuery} for a regular expression implementation.
+	/// Defines basic operations needed by <see cref="RegexQuery"/> for a regular expression implementation.
 	/// </summary>
 	/// <remarks>http://www.java2s.com/Open-Source/Java-Document/Net/lucene-connector/org/apache/lucene/search/regex/RegexCapabilities.java.htm</remarks>
 	public interface IRegexCapabilities

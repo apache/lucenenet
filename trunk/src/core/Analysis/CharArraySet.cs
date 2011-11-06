@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
 			this.count = count;
 		}
 		
-		/// <summary>true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
+		/// <summary>true if the <c>len</c> chars of <c>text</c> starting at <c>off</c>
 		/// are in the set 
 		/// </summary>
 		public virtual bool Contains(char[] text, int off, int len)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis
 			return entries[GetSlot(text, off, len)] != null;
 		}
 		
-		/// <summary>true if the <code>System.String</code> is in the set </summary>
+		/// <summary>true if the <c>System.String</c> is in the set </summary>
 		public virtual bool Contains(System.String cs)
 		{
 			return entries[GetSlot(cs)] != null;
@@ -306,17 +306,15 @@ namespace Lucene.Net.Analysis
 			return Add(o.ToString());
 		}
 		
-		/// <summary> Returns an unmodifiable {@link CharArraySet}. This allows to provide
+		/// <summary> Returns an unmodifiable <see cref="CharArraySet" />. This allows to provide
 		/// unmodifiable views of internal sets for "read-only" use.
-		/// 
 		/// </summary>
-		/// <param name="set">a set for which the unmodifiable set is returned.
+        /// <param name="set_Renamed">a set for which the unmodifiable set is returned.
 		/// </param>
-		/// <returns> an new unmodifiable {@link CharArraySet}.
+		/// <returns> an new unmodifiable <see cref="CharArraySet" />.
 		/// </returns>
-		/// <throws>  NullPointerException </throws>
-		/// <summary>           if the given set is <code>null</code>.
-		/// </summary>
+        /// <exception cref="NullReferenceException">NullReferenceException thrown 
+        /// if the given set is <c>null</c>.</exception>
 		public static CharArraySet UnmodifiableSet(CharArraySet set_Renamed)
 		{
 			if (set_Renamed == null)
@@ -329,7 +327,7 @@ namespace Lucene.Net.Analysis
 		}
 
         /// <summary>The Iterator&lt;String&gt; for this set.  Strings are constructed on the fly, so
-		/// use <code>nextCharArray</code> for more efficient access. 
+		/// use <c>nextCharArray</c> for more efficient access. 
 		/// </summary>
 		public class CharArraySetIterator : System.Collections.IEnumerator
 		{
@@ -403,10 +401,10 @@ namespace Lucene.Net.Analysis
 			return new CharArraySetIterator(this);
 		}
 		
-		/// <summary> Efficient unmodifiable {@link CharArraySet}. This implementation does not
-		/// delegate calls to a give {@link CharArraySet} like
-		/// {@link Collections#UnmodifiableSet(java.util.Set)} does. Instead is passes
-		/// the internal representation of a {@link CharArraySet} to a super
+		/// <summary> Efficient unmodifiable <see cref="CharArraySet" />. This implementation does not
+		/// delegate calls to a given <see cref="CharArraySet" /> like
+		/// Collections.UnmodifiableSet(java.util.Set) does. Instead is passes
+		/// the internal representation of a <see cref="CharArraySet" /> to a super
 		/// constructor and overrides all mutators. 
 		/// </summary>
 		private sealed class UnmodifiableCharArraySet:CharArraySet

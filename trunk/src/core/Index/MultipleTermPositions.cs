@@ -22,8 +22,8 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> Allows you to iterate over the {@link TermPositions} for multiple {@link Term}s as
-	/// a single {@link TermPositions}.
+	/// <summary> Allows you to iterate over the <see cref="TermPositions" /> for multiple <see cref="Term" />s as
+	/// a single <see cref="TermPositions" />.
 	/// 
 	/// </summary>
 	public class MultipleTermPositions : TermPositions
@@ -113,10 +113,10 @@ namespace Lucene.Net.Index
 		private TermPositionsQueue _termPositionsQueue;
 		private IntQueue _posList;
 		
-		/// <summary> Creates a new <code>MultipleTermPositions</code> instance.
+		/// <summary> Creates a new <c>MultipleTermPositions</c> instance.
 		/// 
 		/// </summary>
-		/// <exception cref="IOException">
+		/// <exception cref="System.IO.IOException">
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{

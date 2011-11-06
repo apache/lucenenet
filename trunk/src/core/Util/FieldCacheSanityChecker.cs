@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
 		
 		
 		/// <summary> Quick and dirty convenience method</summary>
-		/// <seealso cref="check">
+		/// <seealso cref="Check">
 		/// </seealso>
 		public static Insanity[] CheckSanity(FieldCache cache)
 		{
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
 		/// <summary> Quick and dirty convenience method that instantiates an instance with 
 		/// "good defaults" and uses it to test the CacheEntry[]
 		/// </summary>
-		/// <seealso cref="check">
+		/// <seealso cref="Check">
 		/// </seealso>
 		public static Insanity[] CheckSanity(CacheEntry[] cacheEntries)
 		{

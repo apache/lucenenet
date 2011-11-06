@@ -24,28 +24,28 @@ namespace Lucene.Net.Analysis.Tokenattributes
 {
 	
 	/// <summary>The positionIncrement determines the position of this token
-	/// relative to the previous Token in a {@link TokenStream}, used in phrase
+	/// relative to the previous Token in a <see cref="TokenStream" />, used in phrase
 	/// searching.
 	/// 
 	/// <p/>The default value is one.
 	/// 
-	/// <p/>Some common uses for this are:<ul>
+	/// <p/>Some common uses for this are:<list>
 	/// 
-	/// <li>Set it to zero to put multiple terms in the same position.  This is
+	/// <item>Set it to zero to put multiple terms in the same position.  This is
 	/// useful if, e.g., a word has multiple stems.  Searches for phrases
 	/// including either stem will match.  In this case, all but the first stem's
 	/// increment should be set to zero: the increment of the first instance
 	/// should be one.  Repeating a token with an increment of zero can also be
-	/// used to boost the scores of matches on that token.</li>
+	/// used to boost the scores of matches on that token.</item>
 	/// 
-	/// <li>Set it to values greater than one to inhibit exact phrase matches.
+	/// <item>Set it to values greater than one to inhibit exact phrase matches.
 	/// If, for example, one does not want phrases to match across removed stop
 	/// words, then one could build a stop word filter that removes stop words and
 	/// also sets the increment to the number of stop words removed before each
 	/// non-stop word.  Then exact phrase queries will only match when the terms
-	/// occur with no intervening stop words.</li>
+	/// occur with no intervening stop words.</item>
 	/// 
-	/// </ul>
+	/// </list>
 	/// </summary>
 	[Serializable]
 	public class PositionIncrementAttributeImpl:AttributeImpl, PositionIncrementAttribute, System.ICloneable
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		}
 		
 		/// <summary>Returns the position increment of this Token.</summary>
-		/// <seealso cref="setPositionIncrement">
+		/// <seealso cref="SetPositionIncrement">
 		/// </seealso>
 		public virtual int GetPositionIncrement()
 		{

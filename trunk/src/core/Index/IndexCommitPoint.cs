@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	public interface IndexCommitPoint
 	{
 		
-		/// <summary> Get the segments file (<code>segments_N</code>) associated 
+		/// <summary> Get the segments file (<c>segments_N</c>) associated 
 		/// with this commit point.
 		/// </summary>
 		System.String GetSegmentsFileName();
@@ -39,9 +39,9 @@ namespace Lucene.Net.Index
 		/// Upon calling this, the writer is notified that this commit 
 		/// point should be deleted. 
 		/// <p/>
-		/// Decision that a commit-point should be deleted is taken by the {@link IndexDeletionPolicy} in effect
-		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
-		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
+		/// Decision that a commit-point should be deleted is taken by the <see cref="IndexDeletionPolicy" /> in effect
+        /// and therefore this should only be called by its <see cref="IndexDeletionPolicy.OnInit(System.Collections.IList)" /> or 
+        /// <see cref="IndexDeletionPolicy.OnCommit(System.Collections.IList)" /> methods.
 		/// </summary>
 		void  Delete();
 	}

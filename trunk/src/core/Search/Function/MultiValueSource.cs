@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Function
 	
 	/// <summary>This class wraps another ValueSource, but protects
 	/// against accidental double RAM usage in FieldCache when
-	/// a composite reader is passed to {@link #getValues}.
+	/// a composite reader is passed to <see cref="GetValues" />.
 	/// 
 	/// <p/><b>NOTE</b>: this class adds a CPU penalty to every
 	/// lookup, as it must resolve the incoming document to the

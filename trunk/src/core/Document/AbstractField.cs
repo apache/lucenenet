@@ -126,17 +126,14 @@ namespace Lucene.Net.Documents
 		/// multiplied into the score of all hits on this this field of this
 		/// document.
 		/// 
-		/// <p/>The boost is multiplied by {@link Lucene.Net.Documents.Document#GetBoost()} of the document
+		/// <p/>The boost is multiplied by <see cref="Lucene.Net.Documents.Document.GetBoost()" /> of the document
 		/// containing this field.  If a document has multiple fields with the same
 		/// name, all such values are multiplied together.  This product is then
 		/// used to compute the norm factor for the field.  By
-		/// default, in the {@link
-		/// Lucene.Net.Search.Similarity#ComputeNorm(String,
-		/// FieldInvertState)} method, the boost value is multipled
-		/// by the {@link
-		/// Lucene.Net.Search.Similarity#LengthNorm(String,
-		/// int)} and then
-		/// rounded by {@link Lucene.Net.Search.Similarity#EncodeNorm(float)} before it is stored in the
+        /// default, in the <see cref="Lucene.Net.Search.Similarity.ComputeNorm(String,Lucene.Net.Index.FieldInvertState)"/>
+        /// method, the boost value is multipled
+        /// by the <see cref="Lucene.Net.Search.Similarity.LengthNorm(String,int)"/> and then
+		/// rounded by <see cref="Lucene.Net.Search.Similarity.EncodeNorm(float)" /> before it is stored in the
 		/// index.  One should attempt to ensure that this product does not overflow
 		/// the range of that encoding.
 		/// 
@@ -157,8 +154,8 @@ namespace Lucene.Net.Documents
 		/// <p/>The default value is 1.0.
 		/// 
 		/// <p/>Note: this value is not stored directly with the document in the index.
-		/// Documents returned from {@link Lucene.Net.Index.IndexReader#Document(int)} and
-		/// {@link Lucene.Net.Search.Hits#Doc(int)} may thus not have the same value present as when
+		/// Documents returned from <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> and
+		/// <see cref="Lucene.Net.Search.Hits.Doc(int)" /> may thus not have the same value present as when
 		/// this field was indexed.
 		/// 
 		/// </summary>
@@ -248,10 +245,10 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>True iff the term or terms used to index this field are stored as a term
-		/// vector, available from {@link Lucene.Net.Index.IndexReader#GetTermFreqVector(int,String)}.
+		/// vector, available from <see cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int,String)" />.
 		/// These methods do not provide access to the original content of the field,
 		/// only to terms used to index it. If the original content must be
-		/// preserved, use the <code>stored</code> attribute instead.
+		/// preserved, use the <c>stored</c> attribute instead.
 		/// 
 		/// </summary>
 		/// <seealso cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int, String)">
@@ -283,8 +280,8 @@ namespace Lucene.Net.Documents
 		
 		
 		/// <summary> Return the raw byte[] for the binary field.  Note that
-		/// you must also call {@link #getBinaryLength} and {@link
-		/// #getBinaryOffset} to know which range of bytes in this
+		/// you must also call <see cref="GetBinaryLength" /> and <see cref="GetBinaryOffset" />
+		/// to know which range of bytes in this
 		/// returned array belong to the field.
 		/// </summary>
 		/// <returns> reference to the Field value as byte[].
@@ -338,7 +335,7 @@ namespace Lucene.Net.Documents
 			return omitNorms;
 		}
 		
-		/// <deprecated> Renamed to {@link #getOmitTermFreqAndPositions} 
+		/// <deprecated> Renamed to <see cref="GetOmitTermFreqAndPositions" /> 
 		/// </deprecated>
         [Obsolete("Renamed to GetOmitTermFreqAndPositions")]
 		public virtual bool GetOmitTf()
@@ -346,7 +343,7 @@ namespace Lucene.Net.Documents
 			return omitTermFreqAndPositions;
 		}
 		
-		/// <seealso cref="setOmitTermFreqAndPositions">
+		/// <seealso cref="SetOmitTermFreqAndPositions">
 		/// </seealso>
 		public virtual bool GetOmitTermFreqAndPositions()
 		{
@@ -363,7 +360,7 @@ namespace Lucene.Net.Documents
 			this.omitNorms = omitNorms;
 		}
 		
-		/// <deprecated> Renamed to {@link #setOmitTermFreqAndPositions} 
+		/// <deprecated> Renamed to <see cref="SetOmitTermFreqAndPositions" /> 
 		/// </deprecated>
         [Obsolete("Renamed to SetOmitTermFreqAndPositions")]
 		public virtual void  SetOmitTf(bool omitTermFreqAndPositions)
@@ -378,8 +375,8 @@ namespace Lucene.Net.Documents
 		/// 
 		/// <p/><b>NOTE</b>: While this option reduces storage space
 		/// required in the index, it also means any query
-		/// requiring positional information, such as {@link
-		/// PhraseQuery} or {@link SpanQuery} subclasses will
+		/// requiring positional information, such as <see cref="PhraseQuery" />
+		/// or <see cref="SpanQuery" /> subclasses will
 		/// silently fail to find results.
 		/// </summary>
 		public virtual void  SetOmitTermFreqAndPositions(bool omitTermFreqAndPositions)

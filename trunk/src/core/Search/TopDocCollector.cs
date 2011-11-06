@@ -22,16 +22,16 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A {@link HitCollector} implementation that collects the top-scoring
-	/// documents, returning them as a {@link TopDocs}.  This is used by {@link
-	/// IndexSearcher} to implement {@link TopDocs}-based search.
+	/// <summary>A <see cref="HitCollector" /> implementation that collects the top-scoring
+	/// documents, returning them as a <see cref="TopDocs" />.  This is used by <see cref="IndexSearcher" />
+	/// to implement <see cref="TopDocs" />-based search.
 	/// 
 	/// <p/>This may be extended, overriding the collect method to, e.g.,
-	/// conditionally invoke <code>super()</code> in order to filter which
+	/// conditionally invoke <c>super()</c> in order to filter which
 	/// documents are collected.
 	/// 
 	/// </summary>
-	/// <deprecated> Please use {@link TopScoreDocCollector}
+	/// <deprecated> Please use <see cref="TopScoreDocCollector" />
 	/// instead, which has better performance.
 	/// 
 	/// </deprecated>

@@ -20,20 +20,20 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary><p/>This class implements a {@link MergePolicy} that tries
+	/// <summary><p/>This class implements a <see cref="MergePolicy" /> that tries
 	/// to merge segments into levels of exponentially
 	/// increasing size, where each level has fewer segments than
 	/// the value of the merge factor. Whenever extra segments
 	/// (beyond the merge factor upper bound) are encountered,
 	/// all segments within the level are merged. You can get or
-	/// set the merge factor using {@link #GetMergeFactor()} and
-	/// {@link #SetMergeFactor(int)} respectively.<p/>
+	/// set the merge factor using <see cref="GetMergeFactor()" /> and
+	/// <see cref="SetMergeFactor(int)" /> respectively.<p/>
 	/// 
 	/// <p/>This class is abstract and requires a subclass to
-	/// define the {@link #size} method which specifies how a
-	/// segment's size is determined.  {@link LogDocMergePolicy}
+	/// define the <see cref="Size" /> method which specifies how a
+	/// segment's size is determined.  <see cref="LogDocMergePolicy" />
 	/// is one subclass that measures size by document count in
-	/// the segment.  {@link LogByteSizeMergePolicy} is another
+	/// the segment.  <see cref="LogByteSizeMergePolicy" /> is another
 	/// subclass that measures size as the total byte size of the
 	/// file(s) for the segment.<p/>
 	/// </summary>
@@ -54,13 +54,13 @@ namespace Lucene.Net.Index
 		public const int DEFAULT_MERGE_FACTOR = 10;
 		
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
-		/// <seealso cref="setMaxMergeDocs">
+		/// <seealso cref="SetMaxMergeDocs">
 		/// </seealso>
 		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
 
         /// <summary> Default noCFSRatio.  If a merge's size is >= 10% of
         ///  the index, then we disable compound file for it.
-        ///  @see #setNoCFSRatio 
+        ///  See <see cref="SetNoCFSRatio"/>
         ///  </summary>
         public static double DEFAULT_NO_CFS_RATIO = 0.1;
 		
@@ -88,7 +88,9 @@ namespace Lucene.Net.Index
 		}
 
 
-        /** @see #setNoCFSRatio */
+        /// <summary>
+        /// <see cref="SetNoCFSRatio"/>
+        /// </summary>
         public double GetNoCFSRatio()
         {
             return noCFSRatio;
@@ -272,7 +274,7 @@ namespace Lucene.Net.Index
 		/// deletions pending nor separate norms, and it is in
 		/// compound file format if the current useCompoundFile
 		/// setting is true.  This method returns multiple merges
-		/// (mergeFactor at a time) so the {@link MergeScheduler}
+		/// (mergeFactor at a time) so the <see cref="MergeScheduler" />
 		/// in use may make use of concurrency. 
 		/// </summary>
 		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
@@ -422,12 +424,12 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Checks if any merges are now necessary and returns a
-		/// {@link MergePolicy.MergeSpecification} if so.  A merge
-		/// is necessary when there are more than {@link
-		/// #setMergeFactor} segments at a given level.  When
+		/// <see cref="MergePolicy.MergeSpecification" /> if so.  A merge
+		/// is necessary when there are more than <see cref="SetMergeFactor" />
+		/// segments at a given level.  When
 		/// multiple levels have too many segments, this method
-		/// will return multiple merges, allowing the {@link
-		/// MergeScheduler} to use concurrency. 
+		/// will return multiple merges, allowing the <see cref="MergeScheduler" />
+		/// to use concurrency. 
 		/// </summary>
 		public override MergeSpecification FindMerges(SegmentInfos infos)
 		{
@@ -580,12 +582,12 @@ namespace Lucene.Net.Index
 		/// are best for batched indexing and speedier
 		/// searches.<p/>
 		/// 
-		/// <p/>The default value is {@link Integer#MAX_VALUE}.<p/>
+		/// <p/>The default value is <see cref="int.MaxValue" />.<p/>
 		/// 
-		/// <p/>The default merge policy ({@link
-		/// LogByteSizeMergePolicy}) also allows you to set this
-		/// limit by net size (in MB) of the segment, using {@link
-		/// LogByteSizeMergePolicy#setMaxMergeMB}.<p/>
+		/// <p/>The default merge policy (<see cref="LogByteSizeMergePolicy" />)
+		/// also allows you to set this
+		/// limit by net size (in MB) of the segment, using 
+		/// <see cref="LogByteSizeMergePolicy.SetMaxMergeMB" />.<p/>
 		/// </summary>
 		public virtual void  SetMaxMergeDocs(int maxMergeDocs)
 		{
@@ -595,7 +597,7 @@ namespace Lucene.Net.Index
 		/// <summary>Returns the largest segment (measured by document
 		/// count) that may be merged with other segments.
 		/// </summary>
-		/// <seealso cref="setMaxMergeDocs">
+		/// <seealso cref="SetMaxMergeDocs">
 		/// </seealso>
 		public virtual int GetMaxMergeDocs()
 		{

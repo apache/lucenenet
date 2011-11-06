@@ -20,13 +20,13 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> A {@link LockFactory} that wraps another {@link
-	/// LockFactory} and verifies that each lock obtain/release
+	/// <summary> A <see cref="LockFactory" /> that wraps another <see cref="LockFactory" />
+	/// and verifies that each lock obtain/release
 	/// is "correct" (never results in two processes holding the
 	/// lock at the same time).  It does this by contacting an
-	/// external server ({@link LockVerifyServer}) to assert that
+	/// external server (<see cref="LockVerifyServer" />) to assert that
 	/// at most one process holds the lock at a time.  To use
-	/// this, you should also run {@link LockVerifyServer} on the
+	/// this, you should also run <see cref="LockVerifyServer" /> on the
 	/// host &amp; port matching what you pass to the constructor.
 	/// 
 	/// </summary>
@@ -132,10 +132,10 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <param name="lf">the LockFactory that we are testing
 		/// </param>
-		/// <param name="host">host or IP where {@link LockVerifyServer}
+		/// <param name="host">host or IP where <see cref="LockVerifyServer" />
 		/// is running
 		/// </param>
-		/// <param name="port">the port {@link LockVerifyServer} is
+		/// <param name="port">the port <see cref="LockVerifyServer" /> is
 		/// listening on
 		/// </param>
 		public VerifyingLockFactory(sbyte id, LockFactory lf, System.String host, int port)

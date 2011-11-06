@@ -44,32 +44,30 @@ namespace Similarity.Net
 		
         /// <summary> Simple similarity query generators.
         /// Takes every unique word and forms a boolean query where all words are optional.
-        /// After you get this you'll use to to query your {@link IndexSearcher} for similar docs.
+        /// After you get this you'll use to to query your <see cref="IndexSearcher"/> for similar docs.
         /// The only caveat is the first hit returned <b>should be</b> your source document - you'll
         /// need to then ignore that.
         /// 
-        /// <p>
+        /// <p/>
         /// 
         /// So, if you have a code fragment like this:
-        /// <br>
+        /// <br/>
         /// <code>
         /// Query q = formSimilaryQuery( "I use Lucene to search fast. Fast searchers are good", new StandardAnalyzer(), "contents", null);
         /// </code>
         /// 
-        /// <p>
+        /// <p/>
+        /// The query returned, in string form, will be <c>'(i use lucene to search fast searchers are good')</c>.
         /// 
-        /// </summary>
-        /// <summary> The query returned, in string form, will be <code>'(i use lucene to search fast searchers are good')</code>.
-        /// 
-        /// <p>
+        /// <p/>
         /// The philosophy behind this method is "two documents are similar if they share lots of words".
         /// Note that behind the scenes, Lucenes scoring algorithm will tend to give two documents a higher similarity score if the share more uncommon words.
         /// 
-        /// <P>
+        /// <P/>
         /// This method is fail-safe in that if a long 'body' is passed in and
-        /// {@link BooleanQuery#add BooleanQuery.add()} (used internally)
+        /// <see cref="BooleanQuery.Add(BooleanClause)"/> (used internally)
         /// throws
-        /// {@link org.apache.lucene.search.BooleanQuery.TooManyClauses BooleanQuery.TooManyClauses}, the
+        /// <see cref="BooleanQuery.TooManyClauses"/>, the
         /// query as it is will be returned.
         /// 
         /// 

@@ -21,7 +21,7 @@ using Token = Lucene.Net.Analysis.Token;
 namespace Lucene.Net.Highlight
 {
 	
-	/// <summary> {@link Fragmenter} implementation which breaks text up into same-size 
+	/// <summary> <see cref="Fragmenter"/> implementation which breaks text up into same-size 
 	/// fragments with no concerns over spotting sentence boundaries.
 	/// </summary>
 	/// <author>  mark@searcharea.co.uk
@@ -47,7 +47,7 @@ namespace Lucene.Net.Highlight
 		}
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.TextFragmenter#start(java.lang.String)
+		* <see cref="Lucene.Net.Highlight.TextFragmenter.start(java.lang.String)"/>
 		*/
 		public virtual void  Start(System.String originalText)
 		{
@@ -55,7 +55,7 @@ namespace Lucene.Net.Highlight
 		}
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.TextFragmenter#isNewFragment(org.apache.lucene.analysis.Token)
+		* <see cref="Lucene.Net.Highlight.TextFragmenter.isNewFragment(org.apache.lucene.analysis.Token)"/>
 		*/
 		public virtual bool IsNewFragment(Token token)
 		{

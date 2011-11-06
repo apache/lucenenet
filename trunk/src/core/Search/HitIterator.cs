@@ -20,20 +20,20 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> An iterator over {@link Hits} that provides lazy fetching of each document.
-	/// {@link Hits#Iterator()} returns an instance of this class.  Calls to {@link #next()}
-	/// return a {@link Hit} instance.
+	/// <summary> An iterator over <see cref="Hits" /> that provides lazy fetching of each document.
+	/// <see cref="Hits.Iterator()" /> returns an instance of this class.  Calls to <see cref="Current" />
+	/// return a <see cref="Hit" /> instance.
 	/// 
 	/// </summary>
-	/// <deprecated> Use {@link TopScoreDocCollector} and {@link TopDocs} instead. Hits will be removed in Lucene 3.0.
+	/// <deprecated> Use <see cref="TopScoreDocCollector" /> and <see cref="TopDocs" /> instead. Hits will be removed in Lucene 3.0.
 	/// </deprecated>
     [Obsolete("Use TopScoreDocCollector and TopDocs instead. Hits will be removed in Lucene 3.0.")]
 	public class HitIterator : System.Collections.IEnumerator
 	{
-		/// <summary> Returns a {@link Hit} instance representing the next hit in {@link Hits}.
+		/// <summary> Returns a <see cref="Hit" /> instance representing the next hit in <see cref="Hits" />.
 		/// 
 		/// </summary>
-		/// <returns> Next {@link Hit}.
+		/// <returns> Next <see cref="Hit" />.
 		/// </returns>
 		public virtual System.Object Current
 		{
@@ -51,13 +51,13 @@ namespace Lucene.Net.Search
 		private Hits hits;
 		private int hitNumber = 0;
 		
-		/// <summary> Constructed from {@link Hits#Iterator()}.</summary>
+		/// <summary> Constructed from <see cref="Hits.Iterator()" />.</summary>
 		internal HitIterator(Hits hits)
 		{
 			this.hits = hits;
 		}
 		
-		/// <returns> true if current hit is less than the total number of {@link Hits}.
+		/// <returns> true if current hit is less than the total number of <see cref="Hits" />.
 		/// </returns>
 		public virtual bool MoveNext()
 		{

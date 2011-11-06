@@ -20,14 +20,14 @@ using System;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A {@link Scorer} which wraps another scorer and caches the score of the
-	/// current document. Successive calls to {@link #Score()} will return the same
+	/// <summary> A <see cref="Scorer" /> which wraps another scorer and caches the score of the
+	/// current document. Successive calls to <see cref="Score()" /> will return the same
 	/// result and will not invoke the wrapped Scorer's score() method, unless the
 	/// current document has changed.<br/>
-	/// This class might be useful due to the changes done to the {@link Collector}
+	/// This class might be useful due to the changes done to the <see cref="Collector" />
 	/// interface, in which the score is not computed for a document by default, only
 	/// if the collector requests it. Some collectors may need to use the score in
-	/// several places, however all they have in hand is a {@link Scorer} object, and
+	/// several places, however all they have in hand is a <see cref="Scorer" /> object, and
 	/// might end up computing the score of a document more than once.
 	/// </summary>
 	public class ScoreCachingWrappingScorer:Scorer
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 			return curScore;
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead.")]
 		public override int Doc()
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 			return scorer.DocID();
 		}
 		
-		/// <deprecated> use {@link #NextDoc()} instead. 
+		/// <deprecated> use <see cref="NextDoc()" /> instead. 
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
 			scorer.Score(collector);
 		}
 		
-		/// <deprecated> use {@link #Advance(int)} instead. 
+		/// <deprecated> use <see cref="Advance(int)" /> instead. 
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)

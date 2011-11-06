@@ -20,10 +20,10 @@ using System;
 namespace Lucene.Net.Store
 {
 	
-	/// <summary> This exception is thrown when the <code>write.lock</code>
+	/// <summary> This exception is thrown when the <c>write.lock</c>
 	/// could not be released.
 	/// </summary>
-	/// <seealso cref="Lock.release()">
+	/// <seealso cref="Lock.Release()">
 	/// </seealso>
 	[Serializable]
 	public class LockReleaseFailedException:System.IO.IOException

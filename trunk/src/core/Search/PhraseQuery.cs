@@ -27,9 +27,9 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents containing a particular sequence of terms.
-	/// A PhraseQuery is built by QueryParser for input like <code>"new york"</code>.
+	/// A PhraseQuery is built by QueryParser for input like <c>"new york"</c>.
 	/// 
-	/// <p/>This query may be combined with other terms or queries with a {@link BooleanQuery}.
+	/// <p/>This query may be combined with other terms or queries with a <see cref="BooleanQuery" />.
 	/// </summary>
 	[Serializable]
 	public class PhraseQuery:Query
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Sets the number of other words permitted between words in query phrase.
 		/// If zero, then this is an exact phrase search.  For larger values this works
-		/// like a <code>WITHIN</code> or <code>NEAR</code> operator.
+		/// like a <c>WITHIN</c> or <c>NEAR</c> operator.
 		/// <p/>The slop is in fact an edit-distance, where the units correspond to
 		/// moves of terms in the query phrase out of position.  For example, to switch
 		/// the order of two words requires two moves (the first move places the words
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search
 			return new PhraseWeight(this, searcher);
 		}
 		
-		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(java.util.Set)">
+		/// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(System.Collections.Hashtable)">
 		/// </seealso>
 		public override void  ExtractTerms(System.Collections.Hashtable queryTerms)
 		{
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (!(o is PhraseQuery))

@@ -24,10 +24,10 @@ using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Implements parallel search over a set of <code>Searchables</code>.
+	/// <summary>Implements parallel search over a set of <c>Searchables</c>.
 	/// 
-	/// <p/>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// <p/>Applications usually need only call the inherited <see cref="Searcher.Search(Query)" />
+	/// or <see cref="Searcher.Search(Query,Filter)" /> methods.
 	/// </summary>
 	public class ParallelMultiSearcher:MultiSearcher
 	{
@@ -196,11 +196,11 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Lower-level search API.
 		/// 
-		/// <p/>{@link Collector#Collect(int)} is called for every matching document.
+		/// <p/><see cref="Collector.Collect(int)" /> is called for every matching document.
 		/// 
 		/// <p/>Applications should only use this if they need <i>all</i> of the
-		/// matching documents.  The high-level search API ({@link
-		/// Searcher#Search(Query)}) is usually more efficient, as it skips
+		/// matching documents.  The high-level search API (<see cref="Searcher.Search(Query)" />)
+		/// is usually more efficient, as it skips
 		/// non-high-scoring hits.
 		/// 
 		/// </summary>
@@ -225,10 +225,10 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/*
-		* TODO: this one could be parallelized too
-		* @see Lucene.Net.Search.Searchable#rewrite(Lucene.Net.Search.Query)
-		*/
+        /// <summary>
+        /// <para>TODO: this one could be parallelized too</para>
+        /// <para><see cref="Lucene.Net.Search.Searchable.Rewrite(Lucene.Net.Search.Query)"/></para>
+        /// </summary>
 		public override Query Rewrite(Query original)
 		{
 			return base.Rewrite(original);

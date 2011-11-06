@@ -30,52 +30,52 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> Expert: a FieldComparator compares hits so as to determine their
-	/// sort order when collecting the top results with {@link
-	/// TopFieldCollector}.  The concrete public FieldComparator
+	/// sort order when collecting the top results with <see cref="TopFieldCollector" />
+	///.  The concrete public FieldComparator
 	/// classes here correspond to the SortField types.
 	/// 
 	/// <p/>This API is designed to achieve high performance
-	/// sorting, by exposing a tight interaction with {@link
-	/// FieldValueHitQueue} as it visits hits.  Whenever a hit is
+	/// sorting, by exposing a tight interaction with <see cref="FieldValueHitQueue" />
+	/// as it visits hits.  Whenever a hit is
 	/// competitive, it's enrolled into a virtual slot, which is
-	/// an int ranging from 0 to numHits-1.  The {@link
-	/// FieldComparator} is made aware of segment transitions
+	/// an int ranging from 0 to numHits-1.  The <see cref="FieldComparator" />
+	/// is made aware of segment transitions
 	/// during searching in case any internal state it's tracking
 	/// needs to be recomputed during these transitions.<p/>
 	/// 
 	/// <p/>A comparator must define these functions:<p/>
 	/// 
-	/// <ul>
+	/// <list type="bullet">
 	/// 
-	/// <li> {@link #compare} Compare a hit at 'slot a'
-	/// with hit 'slot b'.</li>
+	/// <item> <see cref="Compare" /> Compare a hit at 'slot a'
+	/// with hit 'slot b'.</item>
 	/// 
-	/// <li> {@link #setBottom} This method is called by
-	/// {@link FieldValueHitQueue} to notify the
+	/// <item> <see cref="SetBottom" /> This method is called by
+	/// <see cref="FieldValueHitQueue" /> to notify the
 	/// FieldComparator of the current weakest ("bottom")
 	/// slot.  Note that this slot may not hold the weakest
 	/// value according to your comparator, in cases where
 	/// your comparator is not the primary one (ie, is only
-	/// used to break ties from the comparators before it).</li>
+	/// used to break ties from the comparators before it).</item>
 	/// 
-	/// <li> {@link #compareBottom} Compare a new hit (docID)
-	/// against the "weakest" (bottom) entry in the queue.</li>
+	/// <item> <see cref="CompareBottom" /> Compare a new hit (docID)
+	/// against the "weakest" (bottom) entry in the queue.</item>
 	/// 
-	/// <li> {@link #copy} Installs a new hit into the
-	/// priority queue.  The {@link FieldValueHitQueue}
-	/// calls this method when a new hit is competitive.</li>
+	/// <item> <see cref="Copy" /> Installs a new hit into the
+	/// priority queue.  The <see cref="FieldValueHitQueue" />
+	/// calls this method when a new hit is competitive.</item>
 	/// 
-	/// <li> {@link #setNextReader} Invoked
+	/// <item> <see cref="SetNextReader" /> Invoked
 	/// when the search is switching to the next segment.
 	/// You may need to update internal state of the
 	/// comparator, for example retrieving new values from
-	/// the {@link FieldCache}.</li>
+	/// the <see cref="FieldCache" />.</item>
 	/// 
-	/// <li> {@link #value} Return the sort value stored in
+	/// <item> <see cref="Value" /> Return the sort value stored in
 	/// the specified slot.  This is only called at the end
-	/// of the search, in order to populate {@link
-	/// FieldDoc#fields} when returning the top results.</li>
-	/// </ul>
+	/// of the search, in order to populate <see cref="FieldDoc.fields" />
+	/// when returning the top results.</item>
+	/// </list>
 	/// 
 	/// <b>NOTE:</b> This API is experimental and might change in
 	/// incompatible ways in the next release.
@@ -83,8 +83,8 @@ namespace Lucene.Net.Search
 	public abstract class FieldComparator
 	{
 		
-		/// <summary>Parses field's values as byte (using {@link
-		/// FieldCache#getBytes} and sorts by ascending value 
+		/// <summary>Parses field's values as byte (using <see cref="FieldCache.GetBytes(Lucene.Net.Index.IndexReader,string)" />
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class ByteComparator:FieldComparator
 		{
@@ -180,8 +180,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Parses field's values as double (using {@link
-		/// FieldCache#getDoubles} and sorts by ascending value 
+		/// <summary>Parses field's values as double (using <see cref="FieldCache.GetDoubles(Lucene.Net.Index.IndexReader,string)" />
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class DoubleComparator:FieldComparator
 		{
@@ -254,8 +254,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Parses field's values as float (using {@link
-		/// FieldCache#getFloats} and sorts by ascending value 
+		/// <summary>Parses field's values as float (using <see cref="FieldCache.GetFloats(Lucene.Net.Index.IndexReader,string)" />
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class FloatComparator:FieldComparator
 		{
@@ -332,8 +332,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Parses field's values as int (using {@link
-		/// FieldCache#getInts} and sorts by ascending value 
+		/// <summary>Parses field's values as int (using <see cref="FieldCache.GetInts(Lucene.Net.Index.IndexReader,string)" />
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class IntComparator:FieldComparator
 		{
@@ -414,8 +414,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Parses field's values as long (using {@link
-		/// FieldCache#getLongs} and sorts by ascending value 
+		/// <summary>Parses field's values as long (using <see cref="FieldCache.GetLongs(Lucene.Net.Index.IndexReader,string)" />
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class LongComparator:FieldComparator
 		{
@@ -495,8 +495,8 @@ namespace Lucene.Net.Search
 		/// <summary>Sorts by descending relevance.  NOTE: if you are
 		/// sorting only by descending relevance and then
 		/// secondarily by ascending docID, peformance is faster
-		/// using {@link TopScoreDocCollector} directly (which {@link
-		/// IndexSearcher#search} uses when no {@link Sort} is
+		/// using <see cref="TopScoreDocCollector" /> directly (which <see cref="Searcher.Search(Query)" />
+		/// uses when no <see cref="Sort" /> is
 		/// specified). 
 		/// </summary>
 		public sealed class RelevanceComparator:FieldComparator
@@ -550,8 +550,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary>Parses field's values as short (using {@link
-		/// FieldCache#getShorts} and sorts by ascending value 
+		/// <summary>Parses field's values as short (using <see cref="FieldCache.GetShorts(IndexReader, string)" />)
+		/// and sorts by ascending value 
 		/// </summary>
 		public sealed class ShortComparator:FieldComparator
 		{
@@ -677,13 +677,13 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Sorts by field's natural String sort order, using
-		/// ordinals.  This is functionally equivalent to {@link
-		/// StringValComparator}, but it first resolves the string
+		/// ordinals.  This is functionally equivalent to <see cref="StringValComparator" />
+		///, but it first resolves the string
 		/// to their relative ordinal positions (using the index
-		/// returned by {@link FieldCache#getStringIndex}), and
+		/// returned by <see cref="FieldCache.GetStringIndex" />), and
 		/// does most comparisons using the ordinals.  For medium
 		/// to large results, this comparator will be much faster
-		/// than {@link StringValComparator}.  For very small
+		/// than <see cref="FieldComparator.StringValComparator" />.  For very small
 		/// result sets it may be slower. 
 		/// </summary>
 		public sealed class StringOrdValComparator:FieldComparator
@@ -989,9 +989,9 @@ namespace Lucene.Net.Search
 		public abstract int Compare(int slot1, int slot2);
 		
 		/// <summary> Set the bottom slot, ie the "weakest" (sorted last)
-		/// entry in the queue.  When {@link #compareBottom} is
+		/// entry in the queue.  When <see cref="CompareBottom" /> is
 		/// called, you should compare against this slot.  This
-		/// will always be called before {@link #compareBottom}.
+		/// will always be called before <see cref="CompareBottom" />.
 		/// 
 		/// </summary>
 		/// <param name="slot">the currently weakest (sorted last) slot in the queue
@@ -1000,8 +1000,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary> Compare the bottom of the queue with doc.  This will
 		/// only invoked after setBottom has been called.  This
-		/// should return the same result as {@link
-		/// #Compare(int,int)}} as if bottom were slot1 and the new
+		/// should return the same result as <see cref="Compare(int,int)" />
+		///} as if bottom were slot1 and the new
 		/// document were slot 2.
 		/// 
 		/// <p/>For a search that hits many results, this method

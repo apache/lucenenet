@@ -26,17 +26,17 @@ using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A wrapper for {@link MultiTermQuery}, that exposes its
-	/// functionality as a {@link Filter}.
+	/// <summary> A wrapper for <see cref="MultiTermQuery" />, that exposes its
+	/// functionality as a <see cref="Filter" />.
 	/// <p/>
-	/// <code>MultiTermQueryWrapperFilter</code> is not designed to
+	/// <c>MultiTermQueryWrapperFilter</c> is not designed to
 	/// be used by itself. Normally you subclass it to provide a Filter
-	/// counterpart for a {@link MultiTermQuery} subclass.
+	/// counterpart for a <see cref="MultiTermQuery" /> subclass.
 	/// <p/>
-	/// For example, {@link TermRangeFilter} and {@link PrefixFilter} extend
-	/// <code>MultiTermQueryWrapperFilter</code>.
+	/// For example, <see cref="TermRangeFilter" /> and <see cref="PrefixFilter" /> extend
+	/// <c>MultiTermQueryWrapperFilter</c>.
 	/// This class also provides the functionality behind
-	/// {@link MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE};
+	/// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE" />;
 	/// this is why it is not abstract.
 	/// </summary>
 	[Serializable]
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
 		
 		protected internal MultiTermQuery query;
 		
-		/// <summary> Wrap a {@link MultiTermQuery} as a Filter.</summary>
+		/// <summary> Wrap a <see cref="MultiTermQuery" /> as a Filter.</summary>
 		protected internal MultiTermQueryWrapperFilter(MultiTermQuery query)
 		{
 			this.query = query;
@@ -137,9 +137,9 @@ namespace Lucene.Net.Search
 		/// <p/>This method is not thread safe, be sure to only call it when no filter is running!
 		/// If you re-use the same filter instance for another
 		/// search, be sure to first reset the term counter
-		/// with {@link #clearTotalNumberOfTerms}.
+		/// with <see cref="ClearTotalNumberOfTerms" />.
 		/// </summary>
-		/// <seealso cref="clearTotalNumberOfTerms">
+		/// <seealso cref="ClearTotalNumberOfTerms">
 		/// </seealso>
 		public virtual int GetTotalNumberOfTerms()
 		{
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 		/// <summary> Expert: Resets the counting of unique terms.
 		/// Do this before executing the filter.
 		/// </summary>
-		/// <seealso cref="getTotalNumberOfTerms">
+		/// <seealso cref="GetTotalNumberOfTerms">
 		/// </seealso>
 		public virtual void  ClearTotalNumberOfTerms()
 		{
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
 		/// permitted in search results, and false for those that should
 		/// not.
 		/// </summary>
-		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
 		/// </deprecated>
 		//@Override
         [Obsolete("Use GetDocIdSet(IndexReader) instead.")]

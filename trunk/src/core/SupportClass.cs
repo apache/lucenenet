@@ -968,8 +968,8 @@ public class SupportClass
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Key"></param>
-        /// <param name="Value"></param>
+        /// <param name="key"></param>
+        /// <param name="defValue"></param>
         public static void Set(System.String key, System.String defValue)
         {
             settings[key] = defValue;
@@ -978,8 +978,8 @@ public class SupportClass
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Key"></param>
-        /// <param name="Value"></param>
+        /// <param name="key"></param>
+        /// <param name="defValue"></param>
         public static void Set(System.String key, bool defValue)
         {
             settings[key] = defValue;
@@ -1742,7 +1742,7 @@ public class SupportClass
     internal class GeneralKeyedCollection<TKey, TItem> : System.Collections.ObjectModel.KeyedCollection<TKey, TItem>
     {
         /// <summary>Creates a new instance of the
-        /// <see cref="GeneralKeyedCollection"/> class.</summary>
+        /// <see cref="GeneralKeyedCollection{TKey, TItem}"/> class.</summary>
         /// <param name="converter">The <see cref="Converter{TInput, TOutput}"/> which will convert
         /// instances of <typeparamref name="TItem"/> to <typeparamref name="TKey"/>
         /// when the override of <see cref="GetKeyForItem(TItem)"/> is called.</param>
@@ -1808,17 +1808,17 @@ public class SupportClass
         ICloneable
     {
         /// <summary>Initializes a new instance of the 
-        /// <see cref="ComparableList{T}"/> class that is empty and has the 
+        /// <see cref="EquatableList{T}"/> class that is empty and has the 
         /// default initial capacity.</summary>
         public EquatableList() : base() { }
 
-        /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/>
+        /// <summary>Initializes a new instance of the <see cref="EquatableList{T}"/>
         /// class that contains elements copied from the specified collection and has
         /// sufficient capacity to accommodate the number of elements copied.</summary>
         /// <param name="collection">The collection whose elements are copied to the new list.</param>
         public EquatableList(System.Collections.Generic.IEnumerable<T> collection) : base(collection) { }
 
-        /// <summary>Initializes a new instance of the <see cref="ComparableList{T}"/> 
+        /// <summary>Initializes a new instance of the <see cref="EquatableList{T}"/> 
         /// class that is empty and has the specified initial capacity.</summary>
         /// <param name="capacity">The number of elements that the new list can initially store.</param>
         public EquatableList(int capacity) : base(capacity) { }
@@ -1843,20 +1843,20 @@ public class SupportClass
             }
         }
 
-        /// <summary>Compares the counts of two <see cref="IEnumerable{T}"/>
+        /// <summary>Compares the counts of two <see cref="System.Collections.Generic.IEnumerable{T}"/>
         /// implementations.</summary>
         /// <remarks>This uses a trick in LINQ, sniffing types for implementations
         /// of interfaces that might supply shortcuts when trying to make comparisons.
-        /// In this case, that is the <see cref="ICollection{T}"/> and
+        /// In this case, that is the <see cref="System.Collections.Generic.ICollection{T}"/> and
         /// <see cref="ICollection"/> interfaces, either of which can provide a count
         /// which can be used in determining the equality of sequences (if they don't have
         /// the same count, then they can't be equal).</remarks>
-        /// <param name="x">The <see cref="IEnumerable{T}"/> from the left hand side of the
+        /// <param name="x">The <see cref="System.Collections.Generic.IEnumerable{T}"/> from the left hand side of the
         /// comparison to check the count of.</param>
-        /// <param name="y">The <see cref="IEnumerable{T}"/> from the right hand side of the
+        /// <param name="y">The <see cref="System.Collections.Generic.IEnumerable{T}"/> from the right hand side of the
         /// comparison to check the count of.</param>
         /// <returns>Null if the result is indeterminate.  This occurs when either <paramref name="x"/>
-        /// or <paramref name="y"/> doesn't implement <see cref="ICollection"/> or <see cref="ICollection{T}"/>.
+        /// or <paramref name="y"/> doesn't implement <see cref="ICollection"/> or <see cref="System.Collections.Generic.ICollection{T}"/>.
         /// Otherwise, it will get the count from each and return true if they are equal, false otherwise.</returns>
         private static bool? EnumerableCountsEqual(System.Collections.Generic.IEnumerable<T> x, System.Collections.Generic.IEnumerable<T> y)
         {
@@ -1881,17 +1881,17 @@ public class SupportClass
             return xCount == yCount;
         }
 
-        /// <summary>Compares the contents of a <see cref="IEnumerable{T}"/>
+        /// <summary>Compares the contents of a <see cref="System.Collections.Generic.IEnumerable{T}"/>
         /// implementation to another one to determine equality.</summary>
-        /// <remarks>Thinking of the <see cref="IEnumerable{T}"/> implementation as
+        /// <remarks>Thinking of the <see cref="System.Collections.Generic.IEnumerable{T}"/> implementation as
         /// a string with any number of characters, the algorithm checks
         /// each item in each list.  If any item of the list is not equal (or
         /// one list contains all the elements of another list), then that list
         /// element is compared to the other list element to see which
         /// list is greater.</remarks>
-        /// <param name="x">The <see cref="IEnumerable{T}"/> implementation
+        /// <param name="x">The <see cref="System.Collections.Generic.IEnumerable{T}"/> implementation
         /// that is considered the left hand side.</param>
-        /// <param name="y">The <see cref="IEnumerable{T}"/> implementation
+        /// <param name="y">The <see cref="System.Collections.Generic.IEnumerable{T}"/> implementation
         /// that is considered the right hand side.</param>
         /// <returns>True if the items are equal, false otherwise.</returns>
         private static bool Equals(System.Collections.Generic.IEnumerable<T> x,
@@ -1976,9 +1976,9 @@ public class SupportClass
         }
 
 #region IEquatable<IEnumerable<T>> Members
-        /// <summary>Compares this sequence to another <see cref="IEnumerable{T}"/>
+        /// <summary>Compares this sequence to another <see cref="System.Collections.Generic.IEnumerable{T}"/>
         /// implementation, returning true if they are equal, false otherwise.</summary>
-        /// <param name="other">The other <see cref="IEnumerable{T}"/> implementation
+        /// <param name="other">The other <see cref="System.Collections.Generic.IEnumerable{T}"/> implementation
         /// to compare against.</param>
         /// <returns>True if the sequence in <paramref name="other"/> 
         /// is the same as this one.</returns>
@@ -2011,8 +2011,7 @@ public class SupportClass
         public static int GetHashCode<T>(System.Collections.Generic.IEnumerable<T> source)
         #else
         /// <summary>Gets the hash code for the list.</summary>
-        /// <param name="source">The <see cref="IEnumerable{T}"/>
-        /// <param name="source">The <see cref="IEnumerable<T>"/>
+        /// <param name="source">The <see cref="System.Collections.Generic.IEnumerable{T}"/>
         /// implementation which will have all the contents hashed.</param>
         /// <returns>The hash code value.</returns>
         public static int GetHashCode(System.Collections.Generic.IEnumerable<T> source)

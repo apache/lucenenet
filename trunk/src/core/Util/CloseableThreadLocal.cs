@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
     /// This class works around that, by only enrolling
     /// WeakReference values into the ThreadLocal, and
     /// separately holding a hard reference to each stored
-    /// value.  When you call {@link #close}, these hard
+    /// value.  When you call <see cref="Close" />, these hard
     /// references are cleared and then GC is freely able to
     /// reclaim space by objects stored in it. 
     /// </summary>

@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 	
 	/// <summary> The TermVectorMapper can be used to map Term Vectors into your own
 	/// structure instead of the parallel array structure used by
-	/// {@link Lucene.Net.Index.IndexReader#GetTermFreqVector(int,String)}.
+	/// <see cref="Lucene.Net.Index.IndexReader.GetTermFreqVector(int,String)" />.
 	/// <p/>
 	/// It is up to the implementation to make sure it is thread-safe.
 	/// 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 		/// <summary> Tell the mapper what to expect in regards to field, number of terms, offset and position storage.
 		/// This method will be called once before retrieving the vector for a field.
 		/// 
-		/// This method will be called before {@link #Map(String,int,TermVectorOffsetInfo[],int[])}.
+		/// This method will be called before <see cref="Map(String,int,TermVectorOffsetInfo[],int[])" />.
 		/// </summary>
 		/// <param name="field">The field the vector is for
 		/// </param>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> </summary>
-		/// <seealso cref="IsIgnoringPositions()"> Same principal as {@link #IsIgnoringPositions()}, but applied to offsets.  false by default.
+		/// <seealso cref="IsIgnoringPositions()"> Same principal as <see cref="IsIgnoringPositions()" />, but applied to offsets.  false by default.
 		/// </seealso>
 		/// <returns> false
 		/// </returns>

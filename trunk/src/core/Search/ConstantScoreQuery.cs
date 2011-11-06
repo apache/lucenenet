@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			/// <deprecated> use {@link #NextDoc()} instead. 
+			/// <deprecated> use <see cref="NextDoc()" /> instead. 
 			/// </deprecated>
             [Obsolete("use NextDoc() instead.")]
 			public override bool Next()
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
 				return docIdSetIterator.NextDoc();
 			}
 			
-			/// <deprecated> use {@link #DocID()} instead. 
+			/// <deprecated> use <see cref="DocID()" /> instead. 
 			/// </deprecated>
             [Obsolete("use DocID() instead. ")]
 			public override int Doc()
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
 				return theScore;
 			}
 			
-			/// <deprecated> use {@link #Advance(int)} instead. 
+			/// <deprecated> use <see cref="Advance(int)" /> instead. 
 			/// </deprecated>
             [Obsolete("use Advance(int) instead. ")]
 			public override bool SkipTo(int target)
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
 			return "ConstantScore(" + filter.ToString() + (GetBoost() == 1.0?")":"^" + GetBoost());
 		}
 		
-		/// <summary>Returns true if <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true if <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
 			if (this == o)

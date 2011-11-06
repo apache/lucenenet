@@ -33,12 +33,12 @@ namespace Lucene.Net.Search.Spans
 	/// <p/>
 	/// The formed spans may contain overlaps when the slop is at least 1.
 	/// For example, when querying using
-	/// <pre>t1 t2 t3</pre>
+	/// <c>t1 t2 t3</c>
 	/// with slop at least 1, the fragment:
-	/// <pre>t1 t2 t1 t3 t2 t3</pre>
+	/// <c>t1 t2 t1 t3 t2 t3</c>
 	/// matches twice:
-	/// <pre>t1 t2 .. t3      </pre>
-	/// <pre>      t1 .. t2 t3</pre>
+	/// <c>t1 t2 .. t3      </c>
+	/// <c>      t1 .. t2 t3</c>
 	/// 
 	/// 
 	/// Expert:
@@ -281,7 +281,7 @@ namespace Lucene.Net.Search.Spans
 			return (start1 == start2)?(spans1.End() < spans2.End()):(start1 < start2);
 		}
 		
-		/// <summary>Like {@link #DocSpansOrdered(Spans,Spans)}, but use the spans
+		/// <summary>Like <see cref="DocSpansOrdered(Spans,Spans)" />, but use the spans
 		/// starts and ends as parameters.
 		/// </summary>
 		private static bool DocSpansOrdered(int start1, int end1, int start2, int end2)

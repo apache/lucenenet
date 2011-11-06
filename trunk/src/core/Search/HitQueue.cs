@@ -27,15 +27,15 @@ namespace Lucene.Net.Search
 		
 		private bool prePopulate;
 		
-		/// <summary> Creates a new instance with <code>size</code> elements. If
-		/// <code>prePopulate</code> is set to true, the queue will pre-populate itself
-		/// with sentinel objects and set its {@link #Size()} to <code>size</code>. In
-		/// that case, you should not rely on {@link #Size()} to get the number of
+		/// <summary> Creates a new instance with <c>size</c> elements. If
+		/// <c>prePopulate</c> is set to true, the queue will pre-populate itself
+        /// with sentinel objects and set its <see cref="PriorityQueue.Size()" /> to <c>size</c>. In
+        /// that case, you should not rely on <see cref="PriorityQueue.Size()" /> to get the number of
 		/// actual elements that were added to the queue, but keep track yourself.<br/>
-		/// <b>NOTE:</b> in case <code>prePopulate</code> is true, you should pop
+		/// <b>NOTE:</b> in case <c>prePopulate</c> is true, you should pop
 		/// elements from the queue using the following code example:
 		/// 
-		/// <pre>
+        /// <code>
 		/// PriorityQueue pq = new HitQueue(10, true); // pre-populate.
 		/// ScoreDoc top = pq.top();
 		/// 
@@ -54,10 +54,10 @@ namespace Lucene.Net.Search
 		/// for (int i = totalHits - 1; i &gt;= 0; i--) {
 		/// results[i] = (ScoreDoc) pq.pop();
 		/// }
-		/// </pre>
+        /// </code>
 		/// 
 		/// <p/><b>NOTE</b>: This class pre-allocate a full array of
-		/// length <code>size</code>.
+		/// length <c>size</c>.
 		/// 
 		/// </summary>
 		/// <param name="size">the requested size of this queue.

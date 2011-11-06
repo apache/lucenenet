@@ -23,8 +23,8 @@ using Query = Lucene.Net.Search.Query;
 namespace Lucene.Net.Highlight
 {
 	
-	/// <summary> {@link Scorer} implementation which scores text fragments by the number of unique query terms found.
-	/// This class uses the {@link QueryTermExtractor} class to process determine the query terms and 
+	/// <summary> <see cref="Scorer"/> implementation which scores text fragments by the number of unique query terms found.
+	/// This class uses the <see cref="QueryTermExtractor"/> class to process determine the query terms and 
 	/// their boosts to be used. 
 	/// </summary>
 	/// <author>  mark@searcharea.co.uk
@@ -88,7 +88,7 @@ namespace Lucene.Net.Highlight
 		
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.FragmentScorer#startFragment(Lucene.Net.Highlight.TextFragment)
+		* <see cref="Lucene.Net.Highlight.FragmentScorer.startFragment(Lucene.Net.Highlight.TextFragment)"/>
 		*/
 		public virtual void  StartFragment(TextFragment newFragment)
 		{
@@ -98,7 +98,7 @@ namespace Lucene.Net.Highlight
 		}
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.FragmentScorer#scoreToken(org.apache.lucene.analysis.Token)
+		* <see cref="Lucene.Net.Highlight.FragmentScorer.scoreToken(org.apache.lucene.analysis.Token)"/>
 		*/
 		public virtual float GetTokenScore(Token token)
 		{
@@ -121,7 +121,7 @@ namespace Lucene.Net.Highlight
 		
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.FragmentScorer#endFragment(Lucene.Net.Highlight.TextFragment)
+		* <see cref="Lucene.Net.Highlight.FragmentScorer.endFragment(Lucene.Net.Highlight.TextFragment)"/>
 		*/
 		public virtual float GetFragmentScore()
 		{
@@ -130,7 +130,7 @@ namespace Lucene.Net.Highlight
 		
 		
 		/* (non-Javadoc)
-		* @see Lucene.Net.Highlight.FragmentScorer#allFragmentsProcessed()
+		* <see cref="Lucene.Net.Highlight.FragmentScorer.allFragmentsProcessed()"/>
 		*/
 		public virtual void  AllFragmentsProcessed()
 		{

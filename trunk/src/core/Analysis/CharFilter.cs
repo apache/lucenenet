@@ -21,8 +21,8 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> Subclasses of CharFilter can be chained to filter CharStream.
-	/// They can be used as {@link java.io.Reader} with additional offset
-	/// correction. {@link Tokenizer}s will automatically use {@link #CorrectOffset}
+	/// They can be used as <see cref="System.IO.TextReader" /> with additional offset
+	/// correction. <see cref="Tokenizer" />s will automatically use <see cref="CorrectOffset" />
 	/// if a CharFilter/CharStream subclass is used.
 	/// 
 	/// </summary>

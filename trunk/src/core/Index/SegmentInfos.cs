@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
         private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
-		/// <seealso cref="setInfoStream">
+		/// <seealso cref="SetInfoStream">
 		/// </seealso>
 		private static System.IO.StreamWriter infoStream;
 		
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 			defaultGenFileRetryCount = count;
 		}
 		
-		/// <seealso cref="setDefaultGenFileRetryCount">
+		/// <seealso cref="SetDefaultGenFileRetryCount">
 		/// </seealso>
 		public static int GetDefaultGenFileRetryCount()
 		{
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
 			defaultGenFileRetryPauseMsec = msec;
 		}
 		
-		/// <seealso cref="setDefaultGenFileRetryPauseMsec">
+		/// <seealso cref="SetDefaultGenFileRetryPauseMsec">
 		/// </seealso>
 		public static int GetDefaultGenFileRetryPauseMsec()
 		{
@@ -545,14 +545,14 @@ namespace Lucene.Net.Index
 		{
 			defaultGenLookaheadCount = count;
 		}
-		/// <seealso cref="setDefaultGenLookaheadCount">
+		/// <seealso cref="SetDefaultGenLookaheadCount">
 		/// </seealso>
 		public static int GetDefaultGenLookahedCount()
 		{
 			return defaultGenLookaheadCount;
 		}
 		
-		/// <seealso cref="setInfoStream">
+		/// <seealso cref="SetInfoStream">
 		/// </seealso>
 		public static System.IO.StreamWriter GetInfoStream()
 		{
@@ -895,8 +895,8 @@ namespace Lucene.Net.Index
 		/// <summary>Call this to start a commit.  This writes the new
 		/// segments file, but writes an invalid checksum at the
 		/// end, so that it is not visible to readers.  Once this
-		/// is called you must call {@link #finishCommit} to complete
-		/// the commit or {@link #rollbackCommit} to abort it. 
+		/// is called you must call <see cref="FinishCommit" /> to complete
+		/// the commit or <see cref="RollbackCommit" /> to abort it. 
 		/// </summary>
 		internal void  PrepareCommit(Directory dir)
 		{

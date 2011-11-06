@@ -22,9 +22,9 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>A {@link MergeScheduler} that runs each merge using a
+	/// <summary>A <see cref="MergeScheduler" /> that runs each merge using a
 	/// separate thread, up until a maximum number of threads
-	/// ({@link #setMaxThreadCount}) at which when a merge is
+	/// (<see cref="SetMaxThreadCount" />) at which when a merge is
 	/// needed, the thread(s) that are updating the index will
 	/// pause until one or more merges completes.  This is a
 	/// simple way to use concurrency in the indexing process
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Get the max # simultaneous threads that may be</summary>
-		/// <seealso cref="setMaxThreadCount">
+		/// <seealso cref="SetMaxThreadCount">
 		/// </seealso>
 		public virtual int GetMaxThreadCount()
 		{
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Does the actual merge, by calling {@link IndexWriter#merge} </summary>
+		/// <summary>Does the actual merge, by calling <see cref="IndexWriter.Merge" /> </summary>
 		protected internal virtual void  DoMerge(MergePolicy.OneMerge merge)
 		{
 			writer.Merge(merge);

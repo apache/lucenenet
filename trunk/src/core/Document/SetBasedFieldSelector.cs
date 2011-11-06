@@ -32,27 +32,27 @@ namespace Lucene.Net.Documents
 		
 		
 		
-		/// <summary> Pass in the Set of {@link Field} names to load and the Set of {@link Field} names to load lazily.  If both are null, the
-		/// Document will not have any {@link Field} on it.  
+		/// <summary> Pass in the Set of <see cref="Field" /> names to load and the Set of <see cref="Field" /> names to load lazily.  If both are null, the
+		/// Document will not have any <see cref="Field" /> on it.  
 		/// </summary>
-		/// <param name="fieldsToLoad">A Set of {@link String} field names to load.  May be empty, but not null
+		/// <param name="fieldsToLoad">A Set of <see cref="String" /> field names to load.  May be empty, but not null
 		/// </param>
-		/// <param name="lazyFieldsToLoad">A Set of {@link String} field names to load lazily.  May be empty, but not null  
+		/// <param name="lazyFieldsToLoad">A Set of <see cref="String" /> field names to load lazily.  May be empty, but not null  
 		/// </param>
 		public SetBasedFieldSelector(System.Collections.Hashtable fieldsToLoad, System.Collections.Hashtable lazyFieldsToLoad)
 		{
 			this.fieldsToLoad = fieldsToLoad;
 			this.lazyFieldsToLoad = lazyFieldsToLoad;
 		}
-		
-		/// <summary> Indicate whether to load the field with the given name or not. If the {@link Field#Name()} is not in either of the 
-		/// initializing Sets, then {@link Lucene.Net.Documents.FieldSelectorResult#NO_LOAD} is returned.  If a Field name
-		/// is in both <code>fieldsToLoad</code> and <code>lazyFieldsToLoad</code>, lazy has precedence.
+
+        /// <summary> Indicate whether to load the field with the given name or not. If the <see cref="AbstractField.Name()" /> is not in either of the 
+		/// initializing Sets, then <see cref="Lucene.Net.Documents.FieldSelectorResult.NO_LOAD" /> is returned.  If a Field name
+		/// is in both <c>fieldsToLoad</c> and <c>lazyFieldsToLoad</c>, lazy has precedence.
 		/// 
 		/// </summary>
-		/// <param name="fieldName">The {@link Field} name to check
+		/// <param name="fieldName">The <see cref="Field" /> name to check
 		/// </param>
-		/// <returns> The {@link FieldSelectorResult}
+		/// <returns> The <see cref="FieldSelectorResult" />
 		/// </returns>
 		public virtual FieldSelectorResult Accept(System.String fieldName)
 		{

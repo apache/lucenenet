@@ -27,8 +27,7 @@ namespace Lucene.Net.Highlight
 	public interface Scorer
 	{
 		/// <summary> called when a new fragment is started for consideration</summary>
-		/// <param name="">newFragment
-		/// </param>
+        /// <param name="newFragment"></param>
 		void  StartFragment(TextFragment newFragment);
 		
 		/// <summary> Called for each token in the current fragment</summary>

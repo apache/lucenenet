@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.AR
 
 
     /**
-     * A {@link TokenFilter} that applies {@link ArabicStemmer} to stem Arabic words..
+     * A <see cref="TokenFilter"/> that applies <see cref="ArabicStemmer"/> to stem Arabic words..
      * 
      */
 

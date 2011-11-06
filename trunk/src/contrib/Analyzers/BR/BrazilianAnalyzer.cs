@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.BR
         private Hashtable excltable = new Hashtable();
 
         /**
-         * Builds an analyzer with the default stop words ({@link #BRAZILIAN_STOP_WORDS}).
+         * Builds an analyzer with the default stop words (<see cref="BRAZILIAN_STOP_WORDS"/>).
          */
         public BrazilianAnalyzer()
         {
@@ -124,8 +124,8 @@ namespace Lucene.Net.Analysis.BR
         /**
          * Creates a TokenStream which tokenizes all the text in the provided Reader.
          *
-         * @return  A TokenStream build from a StandardTokenizer filtered with
-         * 			StandardFilter, StopFilter, GermanStemFilter and LowerCaseFilter.
+         * <returns>A TokenStream build from a StandardTokenizer filtered with
+         * 			StandardFilter, StopFilter, GermanStemFilter and LowerCaseFilter.</returns>
          */
         public override TokenStream TokenStream(string fieldName, TextReader reader)
         {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// New deletions always result in a cache miss, by default
-        /// ({@link CachingWrapperFilter.DeletesMode#RECACHE}.
+        /// (<see cref="CachingWrapperFilter.DeletesMode.RECACHE" />.
         /// <param name="filter">Filter to cache results of
 		/// </param>
         /// </summary>
@@ -46,10 +46,9 @@ namespace Lucene.Net.Search
 			
 		}
 
-        /**
-        * @param filter Filter to cache results of
-        * @param deletesMode See {@link CachingWrapperFilter.DeletesMode}
-        */
+        /// <summary>New deletions always result in a cache miss, specify the <paramref name="deletesMode"/></summary>
+        /// <param name="filter">Filter to cache results of</param>
+        /// <param name="deletesMode">See <see cref="CachingWrapperFilter.DeletesMode" /></param>
         public CachingSpanFilter(SpanFilter filter, CachingWrapperFilter.DeletesMode deletesMode)
         {
             this.filter = filter;
@@ -72,7 +71,7 @@ namespace Lucene.Net.Search
             }
         }
 
-		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
 		/// </deprecated>
         [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)

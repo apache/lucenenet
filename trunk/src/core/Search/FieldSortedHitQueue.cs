@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
-	/// Uses <code>FieldCache.DEFAULT</code> for maintaining internal term lookup tables.
+	/// Uses <c>FieldCache.DEFAULT</c> for maintaining internal term lookup tables.
 	/// 
 	/// <p/>Created: Dec 8, 2003 12:56:03 PM
 	/// 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 	/// </seealso>
 	/// <seealso cref="FieldCache">
 	/// </seealso>
-	/// <deprecated> see {@link FieldValueHitQueue}
+	/// <deprecated> see <see cref="FieldValueHitQueue" />
 	/// </deprecated>
     [Obsolete("see FieldValueHitQueue")]
 	public class FieldSortedHitQueue:PriorityQueue
@@ -392,7 +392,7 @@ namespace Lucene.Net.Search
 		/// <summary> Creates a hit queue sorted by the given list of fields.</summary>
 		/// <param name="reader"> Index to use.
 		/// </param>
-		/// <param name="fields">Fieldable names, in priority order (highest priority first).  Cannot be <code>null</code> or empty.
+		/// <param name="fields">Fieldable names, in priority order (highest priority first).  Cannot be <c>null</c> or empty.
 		/// </param>
 		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
 		/// </param>
@@ -476,12 +476,12 @@ namespace Lucene.Net.Search
 			return base.InsertWithOverflow(element);
 		}
 		
-		/// <summary> Returns whether <code>a</code> is less relevant than <code>b</code>.</summary>
+		/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
 		/// <param name="a">ScoreDoc
 		/// </param>
 		/// <param name="b">ScoreDoc
 		/// </param>
-		/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
+		/// <returns> <c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.
 		/// </returns>
 		public override bool LessThan(System.Object a, System.Object b)
 		{
@@ -652,16 +652,17 @@ namespace Lucene.Net.Search
 			Lucene.Net.Search.StringIndex index = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetStringIndex(reader, field);
 			return new AnonymousClassScoreDocComparator6(index);
 		}
-		
-		/// <summary> Returns a comparator for sorting hits according to a field containing strings.</summary>
-		/// <param name="reader"> Index to use.
-		/// </param>
-		/// <param name="fieldname"> Fieldable containing string values.
-		/// </param>
-		/// <returns>  Comparator for sorting hits.
-		/// </returns>
-		/// <throws>  IOException If an error occurs reading the index. </throws>
-		internal static ScoreDocComparator comparatorStringLocale(IndexReader reader, System.String fieldname, System.Globalization.CultureInfo locale)
+
+	    /// <summary> Returns a comparator for sorting hits according to a field containing strings.</summary>
+	    /// <param name="reader"> Index to use.
+	    /// </param>
+	    /// <param name="fieldname"> Fieldable containing string values.
+	    /// </param>
+	    /// <param name="locale"></param>
+	    /// <returns>  Comparator for sorting hits.
+	    /// </returns>
+	    /// <throws>  IOException If an error occurs reading the index. </throws>
+	    internal static ScoreDocComparator comparatorStringLocale(IndexReader reader, System.String fieldname, System.Globalization.CultureInfo locale)
 		{
 			System.Globalization.CompareInfo collator = locale.CompareInfo;
 			System.String field = String.Intern(fieldname);

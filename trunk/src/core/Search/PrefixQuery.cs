@@ -25,10 +25,10 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents containing terms with a specified prefix. A PrefixQuery
-	/// is built by QueryParser for input like <code>app*</code>.
+	/// is built by QueryParser for input like <c>app*</c>.
 	/// 
-	/// <p/>This query uses the {@link
-	/// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+	/// <p/>This query uses the 
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
 	/// rewrite method. 
 	/// </summary>
 	[Serializable]
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	{
 		private Term prefix;
 		
-		/// <summary>Constructs a query for terms starting with <code>prefix</code>. </summary>
+		/// <summary>Constructs a query for terms starting with <c>prefix</c>. </summary>
 		public PrefixQuery(Term prefix):base(prefix)
 		{ //will be removed in 3.0
 			this.prefix = prefix;

@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 		/// By default, an Explanation represents a "match" if the value is positive.
 		/// <p/>
 		/// </summary>
-		/// <seealso cref="getValue">
+		/// <seealso cref="GetValue">
 		/// </seealso>
 		public virtual bool IsMatch()
 		{
@@ -131,9 +131,9 @@ namespace Lucene.Net.Search
 		public virtual System.String ToHtml()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-			buffer.Append("<ul>\n");
+			buffer.Append("<list>\n");
 			
-			buffer.Append("<li>");
+			buffer.Append("<item>");
 			buffer.Append(GetSummary());
 			buffer.Append("<br />\n");
 			
@@ -146,8 +146,8 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-			buffer.Append("</li>\n");
-			buffer.Append("</ul>\n");
+			buffer.Append("</item>\n");
+			buffer.Append("</list>\n");
 			
 			return buffer.ToString();
 		}
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
 		/// <summary> Small Util class used to pass both an idf factor as well as an
 		/// explanation for that factor.
 		/// 
-		/// This class will likely be held on a {@link Weight}, so be aware 
+		/// This class will likely be held on a <see cref="Weight" />, so be aware 
 		/// before storing any large or un-serializable fields.
 		/// 
 		/// </summary>

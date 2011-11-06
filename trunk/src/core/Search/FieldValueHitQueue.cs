@@ -23,12 +23,12 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary> Expert: A hit queue for sorting by hits by terms in more than one field.
-	/// Uses <code>FieldCache.DEFAULT</code> for maintaining
+	/// Uses <c>FieldCache.DEFAULT</c> for maintaining
 	/// internal term lookup tables.
 	/// 
 	/// This class will not resolve SortField.AUTO types, and expects the type
 	/// of all SortFields used for construction to already have been resolved. 
-	/// {@link SortField#DetectFieldType(IndexReader, String)} is a utility method which
+	/// <see cref="SortField.DetectFieldType(Lucene.Net.Index.IndexReader, String)" /> is a utility method which
 	/// may be used for field type detection.
 	/// 
 	/// <b>NOTE:</b> This API is experimental and might change in
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary> An implementation of {@link FieldValueHitQueue} which is optimized in case
+		/// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
 		/// there is just one comparator.
 		/// </summary>
 		private sealed class OneComparatorFieldValueHitQueue:FieldValueHitQueue
@@ -93,12 +93,12 @@ namespace Lucene.Net.Search
 				Initialize(size);
 			}
 			
-			/// <summary> Returns whether <code>a</code> is less relevant than <code>b</code>.</summary>
+			/// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
 			/// <param name="a">ScoreDoc
 			/// </param>
 			/// <param name="b">ScoreDoc
 			/// </param>
-			/// <returns> <code>true</code> if document <code>a</code> should be sorted after document <code>b</code>.
+			/// <returns> <c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.
 			/// </returns>
 			public override bool LessThan(System.Object a, System.Object b)
 			{
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <summary> An implementation of {@link FieldValueHitQueue} which is optimized in case
+		/// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
 		/// there is more than one comparator.
 		/// </summary>
 		private sealed class MultiComparatorsFieldValueHitQueue:FieldValueHitQueue
@@ -185,11 +185,11 @@ namespace Lucene.Net.Search
 		/// <summary> Creates a hit queue sorted by the given list of fields.
 		/// 
 		/// <p/><b>NOTE</b>: The instances returned by this method
-		/// pre-allocate a full array of length <code>numHits</code>.
+		/// pre-allocate a full array of length <c>numHits</c>.
 		/// 
 		/// </summary>
 		/// <param name="fields">SortField array we are sorting by in priority order (highest
-		/// priority first); cannot be <code>null</code> or empty
+		/// priority first); cannot be <c>null</c> or empty
 		/// </param>
 		/// <param name="size">The number of hits to retain. Must be greater than zero.
 		/// </param>

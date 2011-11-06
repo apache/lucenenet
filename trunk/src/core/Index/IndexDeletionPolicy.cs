@@ -20,14 +20,14 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> <p/>Expert: policy for deletion of stale {@link IndexCommit index commits}. 
+	/// <summary> <p/>Expert: policy for deletion of stale <see cref="IndexCommit">index commits</see>. 
 	/// 
 	/// <p/>Implement this interface, and pass it to one
-	/// of the {@link IndexWriter} or {@link IndexReader}
+	/// of the <see cref="IndexWriter" /> or <see cref="IndexReader" />
 	/// constructors, to customize when older
-	/// {@link IndexCommit point-in-time commits}
+	/// <see cref="IndexCommit">point-in-time commits</see>
 	/// are deleted from the index directory.  The default deletion policy
-	/// is {@link KeepOnlyLastCommitDeletionPolicy}, which always
+	/// is <see cref="KeepOnlyLastCommitDeletionPolicy" />, which always
 	/// removes old commits as soon as a new commit is done (this
 	/// matches the behavior before 2.2).<p/>
 	/// 
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 	/// By implementing a custom deletion policy, such as "a
 	/// commit is only removed once it has been stale for more
 	/// than X minutes", you can give your readers time to
-	/// refresh to the new commit before {@link IndexWriter}
+	/// refresh to the new commit before <see cref="IndexWriter" />
 	/// removes the old commits.  Note that doing so will
 	/// increase the storage requirements of the index.  See <a
 	/// target="top"
@@ -57,8 +57,8 @@ namespace Lucene.Net.Index
 		/// <p/>The writer locates all index commits present in the 
 		/// index directory and calls this method.  The policy may 
 		/// choose to delete some of the commit points, doing so by
-		/// calling method {@link IndexCommit#delete delete()} 
-		/// of {@link IndexCommit}.<p/>
+		/// calling method <see cref="IndexCommit.Delete()" /> 
+		/// of <see cref="IndexCommit" />.<p/>
 		/// 
 		/// <p/><u>Note:</u> the last CommitPoint is the most recent one,
 		/// i.e. the "front index state". Be careful not to delete it,
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// </summary>
 		/// <param name="commits">List of current 
-		/// {@link IndexCommit point-in-time commits},
+		/// <see cref="IndexCommit">point-in-time commits</see>,
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
 		void  OnInit(System.Collections.IList commits);
@@ -77,15 +77,15 @@ namespace Lucene.Net.Index
 		/// with each commit.<p/>
 		/// 
 		/// <p/>The policy may now choose to delete old commit points 
-		/// by calling method {@link IndexCommit#delete delete()} 
-		/// of {@link IndexCommit}.<p/>
+		/// by calling method <see cref="IndexCommit.Delete()" /> 
+		/// of <see cref="IndexCommit" />.<p/>
 		/// 
-		/// <p/>If writer has <code>autoCommit = true</code> then
+		/// <p/>If writer has <c>autoCommit = true</c> then
 		/// this method will in general be called many times during
-		/// one instance of {@link IndexWriter}.  If
-		/// <code>autoCommit = false</code> then this method is
-		/// only called once when {@link IndexWriter#close} is
-		/// called, or not at all if the {@link IndexWriter#abort}
+		/// one instance of <see cref="IndexWriter" />.  If
+		/// <c>autoCommit = false</c> then this method is
+		/// only called once when <see cref="IndexWriter.Close()" /> is
+		/// called, or not at all if the <see cref="IndexWriter.Abort" />
 		/// is called. 
 		/// 
 		/// <p/><u>Note:</u> the last CommitPoint is the most recent one,
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 		/// you can afford to lose the index content while doing that.
 		/// 
 		/// </summary>
-		/// <param name="commits">List of {@link IndexCommit},
+		/// <param name="commits">List of <see cref="IndexCommit" />,
 		/// sorted by age (the 0th one is the oldest commit).
 		/// </param>
 		void  OnCommit(System.Collections.IList commits);

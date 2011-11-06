@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 		/// <summary>     of documents
 		/// </summary>
 		/// <throws>  IllegalArgumentException if not all indexes have the same value </throws>
-		/// <summary>     of {@link IndexReader#MaxDoc()}
+		/// <summary>     of <see cref="IndexReader.MaxDoc()" />
 		/// </summary>
 		/// <throws>  IOException if there is a low-level IO error </throws>
 		public virtual void  Add(IndexReader reader, bool ignoreStoredFields)
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
 		/// A re-opened instance might share one or more subreaders with the old 
 		/// instance. Index modification operations result in undefined behavior
 		/// when performed before the old instance is closed.
-		/// (see {@link IndexReader#Reopen()}).
+		/// (see <see cref="IndexReader.Reopen()" />).
 		/// <p/>
 		/// If subreaders are shared, then the reference count of those
 		/// readers is increased to ensure that the subreaders remain open

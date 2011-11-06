@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
 		public static readonly Version LUCENE_24 = new Version("LUCENE_24", 2400);
 
         /// <summary>Match settings and bugs in Lucene's 2.3 release. 
-        /// Use this to get the latest & greatest settings, bug
+        /// Use this to get the latest and greatest settings, bug
         /// fixes, etc, for Lucene.
         /// </summary>
 		public static readonly Version LUCENE_29 = new Version("LUCENE_29", 2900);

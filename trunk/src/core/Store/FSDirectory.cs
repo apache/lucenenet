@@ -31,30 +31,30 @@ namespace Lucene.Net.Store
 	/// files in the file system.  There are currently three core
 	/// subclasses:
 	/// 
-	/// <ul>
+	/// <list type="bullet">
 	/// 
-	/// <li> {@link SimpleFSDirectory} is a straightforward
+	/// <item> <see cref="SimpleFSDirectory" /> is a straightforward
 	/// implementation using java.io.RandomAccessFile.
 	/// However, it has poor concurrent performance
 	/// (multiple threads will bottleneck) as it
 	/// synchronizes when multiple threads read from the
-	/// same file.</li>
+	/// same file.</item>
 	/// 
-	/// <li> {@link NIOFSDirectory} uses java.nio's
+	/// <item> <see cref="NIOFSDirectory" /> uses java.nio's
 	/// FileChannel's positional io when reading to avoid
 	/// synchronization when reading from the same file.
 	/// Unfortunately, due to a Windows-only <a
 	/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
 	/// JRE bug</a> this is a poor choice for Windows, but
 	/// on all other platforms this is the preferred
-	/// choice. Applications using {@link Thread#interrupt()} or
-    /// <code>Future#cancel(boolean)</code> (on Java 1.5) should use
-    /// {@link SimpleFSDirectory} instead. See {@link NIOFSDirectory} java doc
+	/// choice. Applications using <see cref="System.Threading.Thread.Interrupt()" /> or
+    /// <c>Future#cancel(boolean)</c> (on Java 1.5) should use
+    /// <see cref="SimpleFSDirectory" /> instead. See <see cref="NIOFSDirectory" /> java doc
     /// for details.
     ///        
     ///        
 	/// 
-	/// <li> {@link MMapDirectory} uses memory-mapped IO when
+	/// <item> <see cref="MMapDirectory" /> uses memory-mapped IO when
 	/// reading. This is a good choice if you have plenty
 	/// of virtual memory relative to your index size, eg
 	/// if you are running on a 64 bit JRE, or you are
@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
 	/// unmap files from user code. The files are unmapped, when GC
 	/// releases the byte buffers. Due to
 	/// <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
-	/// this bug</a> in Sun's JRE, MMapDirectory's {@link IndexInput#close}
+	/// this bug</a> in Sun's JRE, MMapDirectory's <see cref="IndexInput.Close" />
 	/// is unable to close the underlying OS file handle. Only when
 	/// GC finally collects the underlying objects, which could be
 	/// quite some time later, will the file handle be closed.
@@ -77,38 +77,38 @@ namespace Lucene.Net.Store
 	/// and you don't rely on overwriting files on Windows) but it's still
 	/// an important limitation to be aware of. This class supplies a
 	/// (possibly dangerous) workaround mentioned in the bug report,
-	/// which may fail on non-Sun JVMs.</li>
+	/// which may fail on non-Sun JVMs.</item>
     ///       
-    /// Applications using {@link Thread#interrupt()} or
-    /// <code>Future#cancel(boolean)</code> (on Java 1.5) should use
-    /// {@link SimpleFSDirectory} instead. See {@link MMapDirectory}
-    /// java doc for details.
-	/// </ul>
+    /// Applications using <see cref="System.Threading.Thread.Interrupt()" /> or
+    /// <c>Future#cancel(boolean)</c> (on Java 1.5) should use
+    /// <see cref="SimpleFSDirectory" /> instead. See <see cref="MMapDirectory" />
+    /// java doc for details.</item>
+	/// </list>
 	/// 
 	/// Unfortunately, because of system peculiarities, there is
 	/// no single overall best implementation.  Therefore, we've
-	/// added the {@link #open} method, to allow Lucene to choose
+	/// added the <see cref="Open(System.IO.DirectoryInfo)" /> method, to allow Lucene to choose
 	/// the best FSDirectory implementation given your
 	/// environment, and the known limitations of each
 	/// implementation.  For users who have no reason to prefer a
-	/// specific implementation, it's best to simply use {@link
-	/// #open}.  For all others, you should instantiate the
+	/// specific implementation, it's best to simply use <see cref="FSDirectory.Open(System.IO.DirectoryInfo)" />
+	///.  For all others, you should instantiate the
 	/// desired implementation directly.
 	/// 
-	/// <p/>The locking implementation is by default {@link
-	/// NativeFSLockFactory}, but can be changed by
-	/// passing in a custom {@link LockFactory} instance.
-	/// The deprecated <code>getDirectory</code> methods default to use
-	/// {@link SimpleFSLockFactory} for backwards compatibility.
+	/// <p/>The locking implementation is by default <see cref="NativeFSLockFactory" />
+	///, but can be changed by
+	/// passing in a custom <see cref="LockFactory" /> instance.
+	/// The deprecated <c>getDirectory</c> methods default to use
+	/// <see cref="SimpleFSLockFactory" /> for backwards compatibility.
 	/// The system properties 
-	/// <code>org.apache.lucene.store.FSDirectoryLockFactoryClass</code>
-	/// and <code>org.apache.lucene.FSDirectory.class</code>
+	/// <c>org.apache.lucene.store.FSDirectoryLockFactoryClass</c>
+	/// and <c>org.apache.lucene.FSDirectory.class</c>
 	/// are deprecated and only used by the deprecated
-	/// <code>getDirectory</code> methods. The system property
-	/// <code>org.apache.lucene.lockDir</code> is ignored completely,
+	/// <c>getDirectory</c> methods. The system property
+	/// <c>org.apache.lucene.lockDir</c> is ignored completely,
 	/// If you really want to store locks
-	/// elsewhere, you can create your own {@link
-	/// SimpleFSLockFactory} (or {@link NativeFSLockFactory},
+	/// elsewhere, you can create your own <see cref="SimpleFSLockFactory" />
+	/// (or <see cref="NativeFSLockFactory" />,
 	/// etc.) passing in your preferred lock directory.
 	/// 
 	/// <p/><em>In 3.0 this class will become abstract.</em>
@@ -142,13 +142,13 @@ namespace Lucene.Net.Store
 		/// lock files are enabled. They should only be disabled if the index
 		/// is on a read-only medium like a CD-ROM.
 		/// </summary>
-		/// <deprecated> Use a {@link #open(File, LockFactory)} or a constructor
-		/// that takes a {@link LockFactory} and supply
-		/// {@link NoLockFactory#getNoLockFactory}. This setting does not work
-		/// with {@link #open(File)} only the deprecated <code>getDirectory</code>
+        /// <deprecated> Use a <see cref="Open(System.IO.DirectoryInfo, LockFactory)" /> or a constructor
+		/// that takes a <see cref="LockFactory" /> and supply
+		/// <see cref="NoLockFactory.GetNoLockFactory" />. This setting does not work
+        /// with <see cref="Open(System.IO.DirectoryInfo)" /> only the deprecated <c>getDirectory</c>
 		/// respect this setting.   
 		/// </deprecated>
-        [Obsolete("Use a Open(File, LockFactory) or a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory. This setting does not work with Open(File) only the deprecated GetDirectory respect this setting.")]
+        [Obsolete("Use a Open(System.IO.DirectoryInfo, LockFactory) or a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory. This setting does not work with Open(File) only the deprecated GetDirectory respect this setting.")]
 		public static void  SetDisableLocks(bool doDisableLocks)
 		{
 			FSDirectory.disableLocks = doDisableLocks;
@@ -157,10 +157,10 @@ namespace Lucene.Net.Store
 		/// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
 		/// <returns> true if locks are disabled, false if locks are enabled.
 		/// </returns>
-		/// <seealso cref="setDisableLocks">
+		/// <seealso cref="SetDisableLocks">
 		/// </seealso>
-		/// <deprecated> Use a constructor that takes a {@link LockFactory} and
-		/// supply {@link NoLockFactory#getNoLockFactory}.
+		/// <deprecated> Use a constructor that takes a <see cref="LockFactory" /> and
+		/// supply <see cref="NoLockFactory.GetNoLockFactory" />.
 		/// </deprecated>
         [Obsolete("Use a constructor that takes a LockFactory and supply NoLockFactory.GetNoLockFactory.")]
 		public static bool GetDisableLocks()
@@ -168,19 +168,19 @@ namespace Lucene.Net.Store
 			return FSDirectory.disableLocks;
 		}
 		
-		/// <summary> Directory specified by <code>org.apache.lucene.lockDir</code>
-		/// or <code>java.io.tmpdir</code> system property.
-		/// </summary>
-		/// <deprecated> As of 2.1, <code>LOCK_DIR</code> is unused
-		/// because the write.lock is now stored by default in the
-		/// index directory.  If you really want to store locks
-		/// elsewhere, you can create your own {@link
-		/// SimpleFSLockFactory} (or {@link NativeFSLockFactory},
-		/// etc.) passing in your preferred lock directory.  Then,
-		/// pass this <code>LockFactory</code> instance to one of
-		/// the <code>open</code> methods that take a
-		/// <code>lockFactory</code> (for example, {@link #open(File, LockFactory)}).
-		/// </deprecated>
+        ///// <summary> Directory specified by <c>org.apache.lucene.lockDir</c>
+        ///// or <c>java.io.tmpdir</c> system property.
+        ///// </summary>
+        ///// <deprecated> As of 2.1, <c>LOCK_DIR</c> is unused
+        ///// because the write.lock is now stored by default in the
+        ///// index directory.  If you really want to store locks
+        ///// elsewhere, you can create your own <see cref="// SimpleFSLockFactory" />
+        ///// (or <see cref="NativeFSLockFactory" />,
+        ///// etc.) passing in your preferred lock directory.  Then,
+        ///// pass this <c>LockFactory</c> instance to one of
+        ///// the <c>open</c> methods that take a
+        ///// <c>lockFactory</c> (for example, <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />).
+        ///// </deprecated>
         //[Obsolete("As of 2.1, LOCK_DIR is unused because the write.lock is now stored by default in the index directory. ")]
 		//public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
@@ -198,14 +198,14 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the directory instance for the named location.
 		/// 
 		/// </summary>
-		/// <deprecated> Use {@link #Open(File)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
 		/// 
 		/// </deprecated>
 		/// <param name="path">the path to the directory.
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
-        [Obsolete("Use Open(File)")]
+        [Obsolete("Use Open(System.IO.DirectoryInfo)")]
 		public static FSDirectory GetDirectory(System.String path)
 		{
 			return GetDirectory(new System.IO.DirectoryInfo(path), null);
@@ -214,12 +214,12 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the directory instance for the named location.
 		/// 
 		/// </summary>
-		/// <deprecated> Use {@link #Open(File, LockFactory)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
 		/// 
 		/// </deprecated>
 		/// <param name="path">the path to the directory.
 		/// </param>
-		/// <param name="lockFactory">instance of {@link LockFactory} providing the
+		/// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
 		/// locking implementation.
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
@@ -233,7 +233,7 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the directory instance for the named location.
 		/// 
 		/// </summary>
-		/// <deprecated> Use {@link #Open(File)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
 		/// 
 		/// </deprecated>
 		/// <param name="file">the path to the directory.
@@ -249,7 +249,7 @@ namespace Lucene.Net.Store
         /// <summary>Returns the directory instance for the named location.
         /// 
         /// </summary>
-        /// <deprecated> Use {@link #Open(File)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo)" />
         /// 
         /// </deprecated>
         /// <param name="file">the path to the directory.
@@ -265,12 +265,12 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the directory instance for the named location.
 		/// 
 		/// </summary>
-		/// <deprecated> Use {@link #Open(File, LockFactory)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
 		/// 
 		/// </deprecated>
 		/// <param name="file">the path to the directory.
 		/// </param>
-		/// <param name="lockFactory">instance of {@link LockFactory} providing the
+		/// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
 		/// locking implementation.
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
@@ -284,12 +284,12 @@ namespace Lucene.Net.Store
         /// <summary>Returns the directory instance for the named location.
         /// 
         /// </summary>
-        /// <deprecated> Use {@link #Open(File, LockFactory)}
+        /// <deprecated> Use <see cref="Open(System.IO.DirectoryInfo, LockFactory)" />
         /// 
         /// </deprecated>
         /// <param name="file">the path to the directory.
         /// </param>
-        /// <param name="lockFactory">instance of {@link LockFactory} providing the
+        /// <param name="lockFactory">instance of <see cref="LockFactory" /> providing the
         /// locking implementation.
         /// </param>
         /// <returns> the FSDirectory for the named file.  
@@ -449,7 +449,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Initializes the directory to create a new file with the given name.
-		/// This method should be used in {@link #createOutput}. 
+		/// This method should be used in <see cref="CreateOutput" />. 
 		/// </summary>
 		protected internal void  InitOutput(System.String name)
 		{
@@ -489,7 +489,7 @@ namespace Lucene.Net.Store
 		/// <param name="path">the path of the directory
 		/// </param>
 		/// <param name="lockFactory">the lock factory to use, or null for the default
-		/// ({@link NativeFSLockFactory});
+		/// (<see cref="NativeFSLockFactory" />);
 		/// </param>
 		/// <throws>  IOException </throws>
 		protected internal FSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
@@ -505,12 +505,12 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Creates an FSDirectory instance, trying to pick the
 		/// best implementation given the current environment.
-		/// The directory returned uses the {@link NativeFSLockFactory}.
+		/// The directory returned uses the <see cref="NativeFSLockFactory" />.
         /// 
-        /// <p/>Currently this returns {@link SimpleFSDirectory} as
+        /// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
         /// NIOFSDirectory is currently not supported.
 		/// 
-		/// <p/>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
 		/// NIOFSDirectory is currently not supported.
 		/// 
 		/// <p/><b>NOTE</b>: this method may suddenly change which
@@ -519,7 +519,7 @@ namespace Lucene.Net.Store
 		/// possible; if the precise implementation is important to
 		/// your application, please instantiate it directly,
 		/// instead. On 64 bit systems, it may also good to
-		/// return {@link MMapDirectory}, but this is disabled
+		/// return <see cref="MMapDirectory" />, but this is disabled
 		/// because of officially missing unmap support in Java.
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
@@ -535,9 +535,9 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Creates an FSDirectory instance, trying to pick the
 		/// best implementation given the current environment.
-		/// The directory returned uses the {@link NativeFSLockFactory}.
+		/// The directory returned uses the <see cref="NativeFSLockFactory" />.
 		/// 
-		/// <p/>Currently this returns {@link SimpleFSDirectory} as
+		/// <p/>Currently this returns <see cref="SimpleFSDirectory" /> as
 		/// NIOFSDirectory is currently not supported.
 		/// 
 		/// <p/><b>NOTE</b>: this method may suddenly change which
@@ -546,7 +546,7 @@ namespace Lucene.Net.Store
 		/// possible; if the precise implementation is important to
 		/// your application, please instantiate it directly,
 		/// instead. On 64 bit systems, it may also good to
-		/// return {@link MMapDirectory}, but this is disabled
+		/// return <see cref="MMapDirectory" />, but this is disabled
 		/// because of officially missing unmap support in Java.
 		/// For optimal performance you should consider using
 		/// this implementation on 64 bit JVMs.
@@ -557,9 +557,9 @@ namespace Lucene.Net.Store
 		{
 			return Open(path, null);
 		}
-		
-		/// <summary>Just like {@link #Open(File)}, but allows you to
-		/// also specify a custom {@link LockFactory}. 
+
+        /// <summary>Just like <see cref="Open(System.IO.DirectoryInfo)" />, but allows you to
+		/// also specify a custom <see cref="LockFactory" />. 
 		/// </summary>
 		public static FSDirectory Open(System.IO.DirectoryInfo path, LockFactory lockFactory)
 		{
@@ -672,7 +672,7 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Lists all files (not subdirectories) in the
 		/// directory.  This method never returns null (throws
-		/// {@link IOException} instead).
+		/// <see cref="System.IO.IOException" /> instead).
 		/// 
 		/// </summary>
 		/// <throws>  NoSuchDirectoryException if the directory </throws>
@@ -688,7 +688,7 @@ namespace Lucene.Net.Store
 		
         /// <summary>Lists all files (not subdirectories) in the
         /// directory.  This method never returns null (throws
-        /// {@link IOException} instead).
+        /// <see cref="System.IO.IOException" /> instead).
         /// 
         /// </summary>
         /// <throws>  NoSuchDirectoryException if the directory </throws>
@@ -727,7 +727,7 @@ namespace Lucene.Net.Store
 		/// <summary>Lists all files (not subdirectories) in the
 		/// directory.
 		/// </summary>
-		/// <seealso cref="ListAll(File)">
+		/// <seealso cref="ListAll(System.IO.DirectoryInfo)">
 		/// </seealso>
 		public override System.String[] ListAll()
 		{
@@ -968,9 +968,9 @@ namespace Lucene.Net.Store
 		
 		/// <summary> Default read chunk size.  This is a conditional
 		/// default: on 32bit JVMs, it defaults to 100 MB.  On
-		/// 64bit JVMs, it's <code>Integer.MAX_VALUE</code>.
+		/// 64bit JVMs, it's <c>Integer.MAX_VALUE</c>.
 		/// </summary>
-		/// <seealso cref="setReadChunkSize">
+		/// <seealso cref="SetReadChunkSize">
 		/// </seealso>
 		public static readonly int DEFAULT_READ_CHUNK_SIZE;
 		
@@ -978,8 +978,8 @@ namespace Lucene.Net.Store
 		private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
 		
 		/// <summary> Sets the maximum number of bytes read at once from the
-		/// underlying file during {@link IndexInput#readBytes}.
-		/// The default value is {@link #DEFAULT_READ_CHUNK_SIZE};
+		/// underlying file during <see cref="IndexInput.ReadBytes(byte[], int, int)" />.
+		/// The default value is <see cref="DEFAULT_READ_CHUNK_SIZE" />;
 		/// 
 		/// <p/> This was introduced due to <a
 		/// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546">Sun
@@ -989,7 +989,7 @@ namespace Lucene.Net.Store
 		/// maximum heap size.<p/>
 		/// 
 		/// <p/>Changes to this value will not impact any
-		/// already-opened {@link IndexInput}s.  You should call
+		/// already-opened <see cref="IndexInput" />s.  You should call
 		/// this before attempting to open an index on the
 		/// directory.<p/>
 		/// 
@@ -1012,9 +1012,9 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary> The maximum number of bytes to read at once from the
-		/// underlying file during {@link IndexInput#readBytes}.
+		/// underlying file during <see cref="IndexInput.ReadBytes(byte[],int,int)" />.
 		/// </summary>
-		/// <seealso cref="setReadChunkSize">
+		/// <seealso cref="SetReadChunkSize">
 		/// </seealso>
 		public int GetReadChunkSize()
 		{

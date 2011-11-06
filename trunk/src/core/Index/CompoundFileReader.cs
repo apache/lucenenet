@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 			}
 			
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
-			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
+			/// the next <see cref="ReadInternal(byte[],int,int)" /> will occur.
 			/// </summary>
 			/// <seealso cref="ReadInternal(byte[],int,int)">
 			/// </seealso>

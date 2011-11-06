@@ -25,8 +25,8 @@ namespace Lucene.Net.Highlight
 {
 	
 	/// <summary> Class used to markup highlighted terms found in the best sections of a 
-	/// text, using configurable {@link Fragmenter}, {@link Scorer}, {@link Formatter}, 
-	/// {@link Encoder} and tokenizers.
+	/// text, using configurable <see cref="Fragmenter"/>, <see cref="Scorer"/>, <see cref="Formatter"/>, 
+	/// <see cref="Encoder"/> and tokenizers.
 	/// </summary>
 	/// <author>  mark@searcharea.co.uk
 	/// </author>
@@ -59,10 +59,10 @@ namespace Lucene.Net.Highlight
 		
 		/// <summary> Highlights chosen terms in a text, extracting the most relevant section.
 		/// This is a convenience method that calls
-		/// {@link #GetBestFragment(TokenStream, String)}
+		/// <see cref="GetBestFragment(TokenStream, String)"/>
 		/// 
 		/// </summary>
-		/// <param name="analyzer">  the analyzer that will be used to split <code>text</code>
+		/// <param name="analyzer">  the analyzer that will be used to split <c>text</c>
 		/// into chunks  
 		/// </param>
 		/// <param name="text">text to highlight terms in
@@ -107,10 +107,10 @@ namespace Lucene.Net.Highlight
 		
 		/// <summary> Highlights chosen terms in a text, extracting the most relevant sections.
 		/// This is a convenience method that calls
-		/// {@link #getBestFragments(TokenStream, String, int)}
+		/// <see cref="GetBestFragments(TokenStream, String, int)"/>
 		/// 
 		/// </summary>
-		/// <param name="analyzer">  the analyzer that will be used to split <code>text</code>
+		/// <param name="analyzer">  the analyzer that will be used to split <c>text</c>
 		/// into chunks  
 		/// </param>
 		/// <param name="text">       	text to highlight terms in
@@ -129,10 +129,10 @@ namespace Lucene.Net.Highlight
 		}
 		/// <summary> Highlights chosen terms in a text, extracting the most relevant sections.
 		/// This is a convenience method that calls
-		/// {@link #getBestFragments(TokenStream, String, int)}
+		/// <see cref="GetBestFragments(TokenStream, String, int)"/>
 		/// 
 		/// </summary>
-		/// <param name="analyzer">  the analyzer that will be used to split <code>text</code>
+		/// <param name="analyzer">  the analyzer that will be used to split <c>text</c>
 		/// into chunks  
 		/// </param>
 		/// <param name="fieldName">    the name of the field being highlighted (used by analyzer)
@@ -187,13 +187,13 @@ namespace Lucene.Net.Highlight
 		/// This method has been made public to allow visibility of score information held in TextFragment objects.
 		/// Thanks to Jason Calabrese for help in redefining the interface.  
 		/// </summary>
-		/// <param name="">tokenStream
+        /// <param name="tokenStream">
 		/// </param>
-		/// <param name="">text
+        /// <param name="text">
 		/// </param>
-		/// <param name="">maxNumFragments
+        /// <param name="maxNumFragments">
 		/// </param>
-		/// <param name="">mergeContiguousFragments
+        /// <param name="mergeContiguousFragments">
 		/// </param>
 		/// <throws>  IOException </throws>
 		public TextFragment[] GetBestTextFragments(TokenStream tokenStream, System.String text, bool mergeContiguousFragments, int maxNumFragments)
@@ -475,9 +475,8 @@ namespace Lucene.Net.Highlight
 		{
 			return textFragmenter;
 		}
-		
-		/// <param name="">fragmenter
-		/// </param>
+
+        /// <param name="fragmenter"> </param>
 		public virtual void  SetTextFragmenter(Fragmenter fragmenter)
 		{
 			textFragmenter = fragmenter;
@@ -489,9 +488,9 @@ namespace Lucene.Net.Highlight
 		{
 			return fragmentScorer;
 		}
-		
-		
-		/// <param name="">scorer
+
+
+        /// <param name="scorer">
 		/// </param>
 		public virtual void  SetFragmentScorer(Scorer scorer)
 		{

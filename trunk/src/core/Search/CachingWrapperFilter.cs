@@ -34,28 +34,28 @@ namespace Lucene.Net.Search
 	public class CachingWrapperFilter:Filter
 	{
 		protected internal Filter filter;
-		
-	    /**
-       * Expert: Specifies how new deletions against a reopened
-       * reader should be handled.
-       *
-       * <p>The default is IGNORE, which means the cache entry
-       * will be re-used for a given segment, even when that
-       * segment has been reopened due to changes in deletions.
-       * This is a big performance gain, especially with
-       * near-real-timer readers, since you don't hit a cache
-       * miss on every reopened reader for prior segments.</p>
-       *
-       * <p>However, in some cases this can cause invalid query
-       * results, allowing deleted documents to be returned.
-       * This only happens if the main query does not rule out
-       * deleted documents on its own, such as a toplevel
-       * ConstantScoreQuery.  To fix this, use RECACHE to
-       * re-create the cached filter (at a higher per-reopen
-       * cost, but at faster subsequent search performance), or
-       * use DYNAMIC to dynamically intersect deleted docs (fast
-       * reopen time but some hit to search performance).</p>
-       */
+
+        ///
+        /// Expert: Specifies how new deletions against a reopened
+        /// reader should be handled.
+        ///
+        /// <para>The default is IGNORE, which means the cache entry
+        /// will be re-used for a given segment, even when that
+        /// segment has been reopened due to changes in deletions.
+        /// This is a big performance gain, especially with
+        /// near-real-timer readers, since you don't hit a cache
+        /// miss on every reopened reader for prior segments.</para>
+        ///
+        /// <para>However, in some cases this can cause invalid query
+        /// results, allowing deleted documents to be returned.
+        /// This only happens if the main query does not rule out
+        /// deleted documents on its own, such as a toplevel
+        /// ConstantScoreQuery.  To fix this, use RECACHE to
+        /// re-create the cached filter (at a higher per-reopen
+        /// cost, but at faster subsequent search performance), or
+        /// use DYNAMIC to dynamically intersect deleted docs (fast
+        /// reopen time but some hit to search performance).</para>
+        ///
         [Serializable]
         public class DeletesMode : Parameter
         {
@@ -151,28 +151,29 @@ namespace Lucene.Net.Search
             }
         }
 
-        /**
-          * New deletes are ignored by default, which gives higher
-          * cache hit rate on reopened readers.  Most of the time
-          * this is safe, because the filter will be AND'd with a
-          * Query that fully enforces deletions.  If instead you
-          * need this filter to always enforce deletions, pass
-          * either {@link DeletesMode#RECACHE} or {@link
-          * DeletesMode#DYNAMIC}.
-          * @param filter Filter to cache results of
-          */
+        /// <summary>
+        /// New deletes are ignored by default, which gives higher
+        /// cache hit rate on reopened readers.  Most of the time
+        /// this is safe, because the filter will be AND'd with a
+        /// Query that fully enforces deletions.  If instead you
+        /// need this filter to always enforce deletions, pass
+        /// either <see cref="DeletesMode.RECACHE" /> or
+        /// <see cref="DeletesMode.DYNAMIC"/>.
+        /// </summary>
+        /// <param name="filter">Filter to cache results of</param>
+        ///
         public CachingWrapperFilter(Filter filter) : this(filter, DeletesMode.IGNORE)
 		{
 		}
 
-         /**
-   * Expert: by default, the cached filter will be shared
-   * across reopened segments that only had changes to their
-   * deletions.  
-   *
-   * @param filter Filter to cache results of
-   * @param deletesMode See {@link DeletesMode}
-   */
+        /// <summary>
+        /// Expert: by default, the cached filter will be shared
+        /// across reopened segments that only had changes to their
+        /// deletions.  
+        /// </summary>
+        /// <param name="filter">Filter to cache results of</param>
+        /// <param name="deletesMode">See <see cref="DeletesMode" /></param>
+        ///
         public CachingWrapperFilter(Filter filter, DeletesMode deletesMode)
         {
             this.filter = filter;
@@ -215,7 +216,7 @@ namespace Lucene.Net.Search
             }
         }
 
-		/// <deprecated> Use {@link #GetDocIdSet(IndexReader)} instead.
+		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
 		/// </deprecated>
         [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
 		public override System.Collections.BitArray Bits(IndexReader reader)

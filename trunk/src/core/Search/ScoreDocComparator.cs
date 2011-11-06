@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	/// </since>
 	/// <version>  $Id: ScoreDocComparator.java 738219 2009-01-27 20:15:21Z mikemccand $
 	/// </version>
-	/// <deprecated> use {@link FieldComparator}
+	/// <deprecated> use <see cref="FieldComparator" />
 	/// </deprecated>
     [Obsolete("use FieldComparator")]
 	public struct ScoreDocComparator_Fields{
@@ -91,11 +91,11 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="j">Second ScoreDoc
 		/// </param>
-		/// <returns> a negative integer if <code>i</code> should come before <code>j</code><br/>
-		/// a positive integer if <code>i</code> should come after <code>j</code><br/>
-		/// <code>0</code> if they are equal
+		/// <returns> a negative integer if <c>i</c> should come before <c>j</c><br/>
+		/// a positive integer if <c>i</c> should come after <c>j</c><br/>
+		/// <c>0</c> if they are equal
 		/// </returns>
-		/// <seealso cref="java.util.Comparator">
+		/// <seealso cref="IComparable">
 		/// </seealso>
 		int Compare(ScoreDoc i, ScoreDoc j);
 		
@@ -112,11 +112,11 @@ namespace Lucene.Net.Search
 		/// </returns>
 		System.IComparable SortValue(ScoreDoc i);
 		
-		/// <summary> Returns the type of sort.  Should return <code>SortField.SCORE</code>,
-		/// <code>SortField.DOC</code>, <code>SortField.STRING</code>,
-		/// <code>SortField.INTEGER</code>, <code>SortField.FLOAT</code> or
-		/// <code>SortField.CUSTOM</code>.  It is not valid to return
-		/// <code>SortField.AUTO</code>.
+		/// <summary> Returns the type of sort.  Should return <c>SortField.SCORE</c>,
+		/// <c>SortField.DOC</c>, <c>SortField.STRING</c>,
+		/// <c>SortField.INTEGER</c>, <c>SortField.FLOAT</c> or
+		/// <c>SortField.CUSTOM</c>.  It is not valid to return
+		/// <c>SortField.AUTO</c>.
 		/// This is used by multisearchers to determine how to collate results
 		/// from their searchers.
 		/// </summary>

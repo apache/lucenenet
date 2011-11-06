@@ -21,13 +21,13 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary>An interprocess mutex lock.
-	/// <p/>Typical use might look like:<pre>
+    /// <p/>Typical use might look like:<code>
 	/// new Lock.With(directory.makeLock("my.lock")) {
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
 	/// }.run();
-	/// </pre>
+    /// </code>
 	/// 
 	/// 
 	/// </summary>
@@ -38,12 +38,12 @@ namespace Lucene.Net.Store
 	public abstract class Lock
 	{
 		
-		/// <summary>How long {@link #Obtain(long)} waits, in milliseconds,
+		/// <summary>How long <see cref="Obtain(long)" /> waits, in milliseconds,
 		/// in between attempts to acquire the lock. 
 		/// </summary>
 		public static long LOCK_POLL_INTERVAL = 1000;
 		
-		/// <summary>Pass this value to {@link #Obtain(long)} to try
+		/// <summary>Pass this value to <see cref="Obtain(long)" /> to try
 		/// forever to obtain the lock. 
 		/// </summary>
 		public const long LOCK_OBTAIN_WAIT_FOREVER = - 1;
@@ -62,13 +62,13 @@ namespace Lucene.Net.Store
 		protected internal System.Exception failureReason;
 		
 		/// <summary>Attempts to obtain an exclusive lock within amount of
-		/// time given. Polls once per {@link #LOCK_POLL_INTERVAL}
+		/// time given. Polls once per <see cref="LOCK_POLL_INTERVAL" />
 		/// (currently 1000) milliseconds until lockWaitTimeout is
 		/// passed.
 		/// </summary>
 		/// <param name="lockWaitTimeout">length of time to wait in
-		/// milliseconds or {@link
-		/// #LOCK_OBTAIN_WAIT_FOREVER} to retry forever
+		/// milliseconds or <see cref="LOCK_OBTAIN_WAIT_FOREVER" />
+		/// to retry forever
 		/// </param>
 		/// <returns> true if lock was obtained
 		/// </returns>
@@ -126,7 +126,7 @@ namespace Lucene.Net.Store
 		public abstract void  Release();
 		
 		/// <summary>Returns true if the resource is currently locked.  Note that one must
-		/// still call {@link #Obtain()} before using the resource. 
+		/// still call <see cref="Obtain()" /> before using the resource. 
 		/// </summary>
 		public abstract bool IsLocked();
 		
@@ -148,15 +148,15 @@ namespace Lucene.Net.Store
 			/// <summary>Code to execute with exclusive access. </summary>
 			protected internal abstract System.Object DoBody();
 			
-			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
+			/// <summary>Calls <see cref="DoBody" /> while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second
 			/// until it is obtained, or until it has tried ten times. Lock is released when
-			/// {@link #doBody} exits.
+			/// <see cref="DoBody" /> exits.
 			/// </summary>
 			/// <throws>  LockObtainFailedException if lock could not </throws>
 			/// <summary> be obtained
 			/// </summary>
-			/// <throws>  IOException if {@link Lock#obtain} throws IOException </throws>
+			/// <throws>  IOException if <see cref="Lock.Obtain(long)" /> throws IOException </throws>
 			public virtual System.Object run()
 			{
 				bool locked = false;

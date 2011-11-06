@@ -22,16 +22,16 @@ using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A {@link HitCollector} implementation that collects the top-sorting
-	/// documents, returning them as a {@link TopFieldDocs}.  This is used by {@link
-	/// IndexSearcher} to implement {@link TopFieldDocs}-based search.
+	/// <summary>A <see cref="HitCollector" /> implementation that collects the top-sorting
+	/// documents, returning them as a <see cref="TopFieldDocs" />.  This is used by <see cref="IndexSearcher" />
+	/// to implement <see cref="TopFieldDocs" />-based search.
 	/// 
 	/// <p/>This may be extended, overriding the collect method to, e.g.,
-	/// conditionally invoke <code>super()</code> in order to filter which
+	/// conditionally invoke <c>super()</c> in order to filter which
 	/// documents are collected.
 	/// 
 	/// </summary>
-	/// <deprecated> Please use {@link TopFieldCollector} instead.
+	/// <deprecated> Please use <see cref="TopFieldCollector" /> instead.
 	/// </deprecated>
     [Obsolete("Please use TopFieldCollector instead.")]
 	public class TopFieldDocCollector:TopDocCollector

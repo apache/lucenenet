@@ -699,7 +699,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Construct the vector</summary>
-		/// <returns> The {@link TermFreqVector} based on the mappings.
+		/// <returns> The <see cref="TermFreqVector" /> based on the mappings.
 		/// </returns>
 		public virtual TermFreqVector MaterializeVector()
 		{

@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Spans
 		
 		/// <summary>Skips to the first match beyond the current, whose document number is
 		/// greater than or equal to <i>target</i>. <p/>Returns true iff there is such
-		/// a match.  <p/>Behaves as if written: <pre>
+        /// a match.  <p/>Behaves as if written: <code>
 		/// boolean skipTo(int target) {
 		/// do {
 		/// if (!next())
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
 		/// } while (target > doc());
 		/// return true;
 		/// }
-		/// </pre>
+        /// </code>
 		/// Most implementations are considerably more efficient than that.
 		/// </summary>
 		public abstract bool SkipTo(int target);
@@ -55,10 +55,10 @@ namespace Lucene.Net.Search.Spans
 		public abstract int End();
 		
 		/// <summary> Returns the payload data for the current span.
-		/// This is invalid until {@link #Next()} is called for
+		/// This is invalid until <see cref="Next()" /> is called for
 		/// the first time.
 		/// This method must not be called more than once after each call
-		/// of {@link #Next()}. However, most payloads are loaded lazily,
+		/// of <see cref="Next()" />. However, most payloads are loaded lazily,
 		/// so if the payload data for the current position is not needed,
 		/// this method may not be called at all for performance reasons. An ordered
 		/// SpanQuery does not lazy load, so if you have payloads in your index and
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary> Checks if a payload can be loaded at this position.
 		/// <p/>
 		/// Payloads can only be loaded once per call to
-		/// {@link #Next()}.
+		/// <see cref="Next()" />.
 		/// 
 		/// </summary>
 		/// <returns> true if there is a payload available at this position that can be loaded

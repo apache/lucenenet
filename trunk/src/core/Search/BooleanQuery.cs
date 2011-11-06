@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>A Query that matches documents matching boolean combinations of other
-	/// queries, e.g. {@link TermQuery}s, {@link PhraseQuery}s or other
+	/// queries, e.g. <see cref="TermQuery" />s, <see cref="PhraseQuery" />s or other
 	/// BooleanQuerys.
 	/// </summary>
 	[Serializable]
@@ -59,8 +59,8 @@ namespace Lucene.Net.Search
 		
 		private static int maxClauseCount = 1024;
 		
-		/// <summary>Thrown when an attempt is made to add more than {@link
-		/// #GetMaxClauseCount()} clauses. This typically happens if
+		/// <summary>Thrown when an attempt is made to add more than <see cref="GetMaxClauseCount()" />
+		/// clauses. This typically happens if
 		/// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery 
 		/// is expanded to many terms during search. 
 		/// </summary>
@@ -81,8 +81,8 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Return the maximum number of clauses permitted, 1024 by default.
-		/// Attempts to add more than the permitted number of clauses cause {@link
-		/// TooManyClauses} to be thrown.
+		/// Attempts to add more than the permitted number of clauses cause <see cref="TooManyClauses" />
+		/// to be thrown.
 		/// </summary>
 		/// <seealso cref="SetMaxClauseCount(int)">
 		/// </seealso>
@@ -111,23 +111,23 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Constructs an empty boolean query.
 		/// 
-		/// {@link Similarity#Coord(int,int)} may be disabled in scoring, as
+		/// <see cref="Similarity.Coord(int,int)" /> may be disabled in scoring, as
 		/// appropriate. For example, this score factor does not make sense for most
-		/// automatically generated queries, like {@link WildcardQuery} and {@link
-		/// FuzzyQuery}.
+		/// automatically generated queries, like <see cref="WildcardQuery" /> and <see cref="FuzzyQuery" />
+		///.
 		/// 
 		/// </summary>
-		/// <param name="disableCoord">disables {@link Similarity#Coord(int,int)} in scoring.
+		/// <param name="disableCoord">disables <see cref="Similarity.Coord(int,int)" /> in scoring.
 		/// </param>
 		public BooleanQuery(bool disableCoord)
 		{
 			this.disableCoord = disableCoord;
 		}
 		
-		/// <summary>Returns true iff {@link Similarity#Coord(int,int)} is disabled in
+		/// <summary>Returns true iff <see cref="Similarity.Coord(int,int)" /> is disabled in
 		/// scoring for this query instance.
 		/// </summary>
-		/// <seealso cref="BooleanQuery(boolean)">
+		/// <seealso cref="BooleanQuery(bool)">
 		/// </seealso>
 		public virtual bool IsCoordDisabled()
 		{
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <param name="min">the number of optional clauses that must match
 		/// </param>
-		/// <seealso cref="setAllowDocsOutOfOrder">
+		/// <seealso cref="SetAllowDocsOutOfOrder">
 		/// </seealso>
 		public virtual void  SetMinimumNumberShouldMatch(int min)
 		{
@@ -468,7 +468,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <deprecated> this will not be needed anymore, as
-		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// <see cref="Weight.ScoresDocsOutOfOrder()" /> is used.
 		/// </deprecated>
         [Obsolete("this will not be needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		private static bool allowDocsOutOfOrder = true;
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
 		/// 
 		/// </summary>
 		/// <deprecated> this is not needed anymore, as
-		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// <see cref="Weight.ScoresDocsOutOfOrder()" /> is used.
 		/// </deprecated>
         [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static void  SetAllowDocsOutOfOrder(bool allow)
@@ -507,18 +507,18 @@ namespace Lucene.Net.Search
 		/// <summary> Whether hit docs may be collected out of docid order.
 		/// 
 		/// </summary>
-		/// <seealso cref="SetAllowDocsOutOfOrder(boolean)">
+        /// <seealso cref="SetAllowDocsOutOfOrder(bool)">
 		/// </seealso>
 		/// <deprecated> this is not needed anymore, as
-		/// {@link Weight#ScoresDocsOutOfOrder()} is used.
+		/// <see cref="Weight.ScoresDocsOutOfOrder()" /> is used.
 		/// </deprecated>
         [Obsolete("this is not needed anymore, as Weight.ScoresDocsOutOfOrder() is used.")]
 		public static bool GetAllowDocsOutOfOrder()
 		{
 			return allowDocsOutOfOrder;
 		}
-		
-		/// <deprecated> Use {@link #SetAllowDocsOutOfOrder(boolean)} instead. 
+
+        /// <deprecated> Use <see cref="SetAllowDocsOutOfOrder(bool)" /> instead. 
 		/// </deprecated>
         [Obsolete("Use SetAllowDocsOutOfOrder(bool) instead.")]
 		public static void  SetUseScorer14(bool use14)
@@ -526,7 +526,7 @@ namespace Lucene.Net.Search
 			SetAllowDocsOutOfOrder(use14);
 		}
 		
-		/// <deprecated> Use {@link #GetAllowDocsOutOfOrder()} instead.
+		/// <deprecated> Use <see cref="GetAllowDocsOutOfOrder()" /> instead.
 		/// </deprecated>
         [Obsolete("Use GetAllowDocsOutOfOrder() instead.")]
 		public static bool GetUseScorer14()
@@ -663,7 +663,7 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		/// <summary>Returns true iff <c>o</c> is equal to this. </summary>
 		public  override bool Equals(System.Object o)
 		{
             if (!(o is BooleanQuery))

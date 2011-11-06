@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		/// <returns> true iff there is a next document
 		/// </returns>
-		/// <deprecated> use {@link #NextDoc()} instead.
+		/// <deprecated> use <see cref="NextDoc()" /> instead.
 		/// </deprecated>
         [Obsolete("use NextDoc() instead.")]
 		public override bool Next()
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
 			return doc = subScorers[0].DocID();
 		}
 		
-		/// <deprecated> use {@link #DocID()} instead. 
+		/// <deprecated> use <see cref="DocID()" /> instead. 
 		/// </deprecated>
         [Obsolete("use DocID() instead. ")]
 		public override int Doc()
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 			return doc;
 		}
 		
-		/// <summary>Determine the current document score.  Initially invalid, until {@link #Next()} is called the first time.</summary>
+		/// <summary>Determine the current document score.  Initially invalid, until <see cref="Next()" /> is called the first time.</summary>
 		/// <returns> the score of the current generated document
 		/// </returns>
 		public override float Score()
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 		/// <returns> true iff there is a document to be generated whose number is at
 		/// least target
 		/// </returns>
-		/// <deprecated> use {@link #Advance(int)} instead.
+		/// <deprecated> use <see cref="Advance(int)" /> instead.
 		/// </deprecated>
         [Obsolete("use Advance(int) instead.")]
 		public override bool SkipTo(int target)

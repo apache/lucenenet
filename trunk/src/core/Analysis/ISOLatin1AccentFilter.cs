@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
 	/// <p/>
 	/// 
 	/// </summary>
-	/// <deprecated> in favor of {@link ASCIIFoldingFilter} which covers a superset 
+	/// <deprecated> in favor of <see cref="ASCIIFoldingFilter" /> which covers a superset 
 	/// of Latin 1. This class will be removed in Lucene 3.0.
 	/// </deprecated>
     [Obsolete("in favor of ASCIIFoldingFilter which covers a superset of Latin 1. This class will be removed in Lucene 3.0.")]

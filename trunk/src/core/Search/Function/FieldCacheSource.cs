@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Function
 {
 	
 	/// <summary> Expert: A base class for ValueSource implementations that retrieve values for
-	/// a single field from the {@link Lucene.Net.Search.FieldCache FieldCache}.
+	/// a single field from the <see cref="Lucene.Net.Search.FieldCache">FieldCache</see>.
 	/// <p/>
 	/// Fields used herein nust be indexed (doesn't matter if these fields are stored or not).
 	/// <p/> 
@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Function
 	/// For documents with multiple tokens of the same field, behavior is undefined (It is likely that current 
 	/// code would use the value of one of these tokens, but this is not guaranteed).
 	/// <p/>
-	/// Document with no tokens in this field are assigned the <code>Zero</code> value.    
+	/// Document with no tokens in this field are assigned the <c>Zero</c> value.    
 	/// 
 	/// <p/><font color="#FF0000">
 	/// WARNING: The status of the <b>Search.Function</b> package is experimental. 
@@ -40,13 +40,13 @@ namespace Lucene.Net.Search.Function
 	/// supported anymore in such a case.</font>
 	/// 
 	/// <p/><b>NOTE</b>: with the switch in 2.9 to segment-based
-	/// searching, if {@link #getValues} is invoked with a
+	/// searching, if <see cref="GetValues" /> is invoked with a
 	/// composite (multi-segment) reader, this can easily cause
 	/// double RAM usage for the values in the FieldCache.  It's
 	/// best to switch your application to pass only atomic
 	/// (single segment) readers to this API.  Alternatively, for
 	/// a short-term fix, you could wrap your ValueSource using
-	/// {@link MultiValueSource}, which costs more CPU per lookup
+	/// <see cref="MultiValueSource" />, which costs more CPU per lookup
 	/// but will not consume double the FieldCache RAM.<p/>
 	/// </summary>
 	[Serializable]
@@ -60,13 +60,13 @@ namespace Lucene.Net.Search.Function
 			this.field = field;
 		}
 		
-		/* (non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#getValues(Lucene.Net.Index.IndexReader) */
+		/* (non-Javadoc) <see cref="Lucene.Net.Search.Function.ValueSource.getValues(Lucene.Net.Index.IndexReader) */
 		public override DocValues GetValues(IndexReader reader)
 		{
 			return GetCachedFieldValues(Lucene.Net.Search.FieldCache_Fields.DEFAULT, field, reader);
 		}
 		
-		/* (non-Javadoc) @see Lucene.Net.Search.Function.ValueSource#description() */
+		/* (non-Javadoc) <see cref="Lucene.Net.Search.Function.ValueSource.description() */
 		public override System.String Description()
 		{
 			return field;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Function
 		/// </seealso>
 		public abstract DocValues GetCachedFieldValues(FieldCache cache, System.String field, IndexReader reader);
 		
-		/*(non-Javadoc) @see java.lang.Object#equals(java.lang.Object) */
+		/*(non-Javadoc) <see cref="java.lang.Object.equals(java.lang.Object) */
 		public  override bool Equals(System.Object o)
 		{
 			if (!(o is FieldCacheSource))
@@ -92,21 +92,21 @@ namespace Lucene.Net.Search.Function
 			return this.field.Equals(other.field) && CachedFieldSourceEquals(other);
 		}
 		
-		/*(non-Javadoc) @see java.lang.Object#hashCode() */
+		/*(non-Javadoc) <see cref="java.lang.Object.hashCode() */
 		public override int GetHashCode()
 		{
 			return field.GetHashCode() + CachedFieldSourceHashCode();
 		}
 		
-		/// <summary> Check if equals to another {@link FieldCacheSource}, already knowing that cache and field are equal.  </summary>
-		/// <seealso cref="Object.equals(java.lang.Object)">
+		/// <summary> Check if equals to another <see cref="FieldCacheSource" />, already knowing that cache and field are equal.  </summary>
+		/// <seealso cref="Object.Equals(Object)">
 		/// </seealso>
 		public abstract bool CachedFieldSourceEquals(FieldCacheSource other);
 		
-		/// <summary> Return a hash code of a {@link FieldCacheSource}, without the hash-codes of the field 
+		/// <summary> Return a hash code of a <see cref="FieldCacheSource" />, without the hash-codes of the field 
 		/// and the cache (those are taken care of elsewhere).  
 		/// </summary>
-		/// <seealso cref="Object.hashCode()">
+		/// <seealso cref="Object.GetHashCode()">
 		/// </seealso>
 		public abstract int CachedFieldSourceHashCode();
 	}
