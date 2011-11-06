@@ -22,8 +22,8 @@
 		<DocumentationSources>
       		<DocumentationSource sourceFile="..\bin\core\Release\Lucene.Net.dll" />
       		<DocumentationSource sourceFile="..\bin\core\Release\Lucene.Net.XML" />
-  			<DocumentationSource sourceFile="..\bin\contrib\Anayzers\Release\Lucene.Net.Contrib.Analyzers.dll" />
-      		<DocumentationSource sourceFile="..\bin\contrib\Anayzers\Release\Lucene.Net.Contrib.Analyzers.XML" />
+  			<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.dll" />
+      		<DocumentationSource sourceFile="..\bin\contrib\Analyzers\Release\Lucene.Net.Contrib.Analyzers.XML" />
       		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.dll" />
       		<DocumentationSource sourceFile="..\bin\contrib\Core\Release\Lucene.Net.Contrib.Core.XML" />
   			<DocumentationSource sourceFile="..\bin\contrib\FastVectorHighlighter\Release\Lucene.Net.FastVectorHighlighter.dll" />
