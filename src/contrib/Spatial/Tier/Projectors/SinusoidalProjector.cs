@@ -26,6 +26,9 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 	/// </summary>
 	public class SinusoidalProjector : IProjector
 	{
+		public static double LATITUDE_RANGE = Math.PI;
+		public static double LONGITUDE_RANGE = 2*Math.PI;
+
 		public string CoordsAsString(double latitude, double longitude)
 		{
 			return null;
@@ -38,6 +41,12 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 			double nlat = rlong * Math.Cos(rlat);
 			double[] r = {nlat, rlong};
 			return r;
+		}
+
+		public double[] Range()
+		{
+			double[] ranges = {LATITUDE_RANGE, LONGITUDE_RANGE};
+			return ranges;
 		}
 	}
 }

@@ -21,5 +21,6 @@ namespace Lucene.Net.Spatial.Tier.Projectors
 	{
 		string CoordsAsString(double latitude, double longitude);
 		double[] Coords(double latitude, double longitude);
+	    double[] Range();
 	}
 }
