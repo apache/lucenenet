@@ -182,4 +182,140 @@ namespace Lucene.Net.Contrib.Spatial.Test
 			}
 		}
 	}
+
+	[TestFixture]
+	public class TestCartesian2
+	{
+		private Directory _directory;
+		private IndexSearcher _searcher;
+		// reston va
+		private double _lat = 55.6880508001;
+		private double _lng = 13.5871808352; // This passes: 13.6271808352
+		private const string LatField = "lat";
+		private const string LngField = "lng";
+		private readonly List<CartesianTierPlotter> _ctps = new List<CartesianTierPlotter>();
+
+		private readonly IProjector _projector = new SinusoidalProjector();
+
+		[SetUp]
+		protected void SetUp()
+		{
+			_directory = new RAMDirectory();
+
+			var writer = new IndexWriter(_directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+
+			SetUpPlotter(2, 15);
+
+			AddData(writer);
+		}
+
+		private void SetUpPlotter(int @base, int top)
+		{
+
+			for (; @base <= top; @base++)
+			{
+				_ctps.Add(new CartesianTierPlotter(@base, _projector, CartesianTierPlotter.DefaltFieldPrefix));
+			}
+		}
+
+		private void AddData(IndexWriter writer)
+		{
+			AddPoint(writer, "Within radius", 55.6880508001, 13.5717346673);
+			AddPoint(writer, "Within radius", 55.6821978456, 13.6076183965);
+			AddPoint(writer, "Within radius", 55.673251569, 13.5946697607);
+			AddPoint(writer, "Close but not in radius", 55.8634157297, 13.5497731987);
+			AddPoint(writer, "Faar away", 40.7137578228, -74.0126901936);            
+
+			writer.Commit();
+			writer.Close();
+		}
+
+		private void AddPoint(IndexWriter writer, String name, double lat, double lng)
+		{
+			Document doc = new Document();
+
+			doc.Add(new Field("name", name, Field.Store.YES, Field.Index.ANALYZED));
+
+			// convert the lat / long to lucene fields
+			doc.Add(new Field(LatField, NumericUtils.DoubleToPrefixCoded(lat), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.Add(new Field(LngField, NumericUtils.DoubleToPrefixCoded(lng), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
+			// add a default meta field to make searching all documents easy 
+			doc.Add(new Field("metafile", "doc", Field.Store.YES, Field.Index.ANALYZED));
+
+			int ctpsize = _ctps.Count;
+			for (int i = 0; i < ctpsize; i++)
+			{
+				CartesianTierPlotter ctp = _ctps[i];
+				var boxId = ctp.GetTierBoxId(lat, lng);
+				doc.Add(new Field(ctp.GetTierFieldName(),
+								  NumericUtils.DoubleToPrefixCoded(boxId),
+								  Field.Store.YES,
+								  Field.Index.NOT_ANALYZED_NO_NORMS));
+			}
+			writer.AddDocument(doc);
+
+		}
+
+		[Test]
+		public void TestAntiM()
+		{
+			_searcher = new IndexSearcher(_directory, true);
+
+			const double miles = 5.0;
+
+			Console.WriteLine("testAntiM");
+			// create a distance query
+			var dq = new DistanceQueryBuilder(_lat, _lng, miles, LatField, LngField, CartesianTierPlotter.DefaltFieldPrefix, true);
+
+			Console.WriteLine(dq);
+			//create a term query to search against all documents
+			Query tq = new TermQuery(new Term("metafile", "doc"));
+
+			var dsort = new DistanceFieldComparatorSource(dq.DistanceFilter);
+			Sort sort = new Sort(new SortField("foo", dsort, false));
+
+			// Perform the search, using the term query, the distance filter, and the
+			// distance sort
+			TopDocs hits = _searcher.Search(tq, dq.Filter, 1000, sort);
+			int results = hits.TotalHits;
+			ScoreDoc[] scoreDocs = hits.ScoreDocs;
+
+			// Get a list of distances
+			Dictionary<int, Double> distances = dq.DistanceFilter.Distances;
+
+
+			Console.WriteLine("Distance Filter filtered: " + distances.Count);
+			Console.WriteLine("Results: " + results);
+			Console.WriteLine("=============================");
+			Console.WriteLine("Distances should be 3 " + distances.Count);
+			Console.WriteLine("Results should be 3 " + results);
+
+			Assert.AreEqual(3, distances.Count); // fixed a store of only needed distances
+			Assert.AreEqual(3, results);            
+
+			double lastDistance = 0;
+			for (int i = 0; i < results; i++)
+			{
+				Document d = _searcher.Doc(scoreDocs[i].doc);
+
+				String name = d.Get("name");
+				double rsLat = NumericUtils.PrefixCodedToDouble(d.Get(LatField));
+				double rsLng = NumericUtils.PrefixCodedToDouble(d.Get(LngField));
+				Double geo_distance = distances[scoreDocs[i].doc];
+
+				double distance = DistanceUtils.GetInstance().GetDistanceMi(_lat, _lng, rsLat, rsLng);
+				double llm = DistanceUtils.GetInstance().GetLLMDistance(_lat, _lng, rsLat, rsLng);
+
+				Console.WriteLine("Name: " + name + ", Distance " + distance);
+
+				Assert.IsTrue(Math.Abs((distance - llm)) < 1);
+				Assert.IsTrue((distance < miles));
+				Assert.IsTrue(geo_distance >= lastDistance);
+
+				lastDistance = geo_distance;
+			}
+		}
+	}
+
 }
