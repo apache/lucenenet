@@ -1795,6 +1795,11 @@ public class SupportClass
                 return false;
             }
         }
+
+        public System.Collections.Generic.IList<TItem> Values()
+        {
+            return base.Items;
+        }
     }
 
     /// <summary>Represents a strongly typed list of objects that can be accessed by index.

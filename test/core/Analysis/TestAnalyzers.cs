@@ -134,6 +134,25 @@ namespace Lucene.Net.Analysis
 			Assert.IsTrue(ts.IncrementToken());
 			Assert.IsFalse(ts.IncrementToken());
 		}
+
+        [Test]
+        public void Test_LUCENE_3042_LUCENENET_433()
+        {
+            String testString = "t";
+
+            Analyzer analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer();
+            TokenStream stream = analyzer.ReusableTokenStream("dummy", new System.IO.StringReader(testString));
+            stream.Reset();
+            while (stream.IncrementToken())
+            {
+                // consume
+            }
+            stream.End();
+            stream.Close();
+
+            AssertAnalyzesToReuse(analyzer, testString, new String[] { "t" });
+        }
+
 	}
 	
 	class PayloadSetter:TokenFilter
