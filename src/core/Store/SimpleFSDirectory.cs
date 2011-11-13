@@ -95,7 +95,22 @@ namespace Lucene.Net.Store
 		public override IndexInput OpenInput(System.String name, int bufferSize)
 		{
 			EnsureOpen();
-			return new SimpleFSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize, GetReadChunkSize());
+
+		    Exception e = null;
+		    for (int i = 0; i < 10; i++)
+		    {
+		        try
+		        {
+                    return new SimpleFSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize, GetReadChunkSize());
+		        }
+		        catch (System.UnauthorizedAccessException ex)
+		        {
+		            e = ex;
+                    System.Threading.Thread.Sleep(1);
+		        }
+		    }
+
+		    throw e;
 		}
 		
 		public /*protected internal*/class SimpleFSIndexInput:BufferedIndexInput, System.ICloneable
