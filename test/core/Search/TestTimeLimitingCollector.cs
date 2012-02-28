@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
     [TestFixture]
 	public class TestTimeLimitingCollector:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:ThreadClass
 		{
 			public AnonymousClassThread(bool withTimeout, System.Collections.BitArray success, int num, TestTimeLimitingCollector enclosingInstance)
 			{
@@ -115,14 +115,15 @@ namespace Lucene.Net.Search
 				Add(docText[i % docText.Length], iw);
 			}
 			iw.Close();
-			searcher = new IndexSearcher(directory);
+		    searcher = new IndexSearcher(directory, true);
 			
 			System.String qtxt = "one";
+            // start from 1, so that the 0th doc never matches
 			for (int i = 0; i < docText.Length; i++)
 			{
 				qtxt += (' ' + docText[i]); // large query so that search will be longer
 			}
-			QueryParser queryParser = new QueryParser(FIELD_NAME, new WhitespaceAnalyzer());
+			QueryParser queryParser = new QueryParser(Util.Version.LUCENE_CURRENT, FIELD_NAME, new WhitespaceAnalyzer());
 			query = queryParser.Parse(qtxt);
 			
 			// warm the searcher
@@ -316,7 +317,7 @@ namespace Lucene.Net.Search
 		
 		private void  DoTestMultiThreads(bool withTimeout)
 		{
-			SupportClass.ThreadClass[] threadArray = new SupportClass.ThreadClass[N_THREADS];
+			ThreadClass[] threadArray = new ThreadClass[N_THREADS];
 			System.Collections.BitArray success = new System.Collections.BitArray((N_THREADS % 64 == 0?N_THREADS / 64:N_THREADS / 64 + 1) * 64);
 			for (int i = 0; i < threadArray.Length; ++i)
 			{
@@ -331,7 +332,7 @@ namespace Lucene.Net.Search
 			{
 				threadArray[i].Join();
 			}
-			Assert.AreEqual(N_THREADS, SupportClass.BitSetSupport.Cardinality(success), "some threads failed!");
+			Assert.AreEqual(N_THREADS, BitSetSupport.Cardinality(success), "some threads failed!");
 		}
 		
 		// counting collector that can slow down at collect().
@@ -367,7 +368,7 @@ namespace Lucene.Net.Search
 			
 			public virtual int HitCount()
 			{
-				return SupportClass.BitSetSupport.Cardinality(bits);
+				return BitSetSupport.Cardinality(bits);
 			}
 			
 			public virtual int GetLastDocCollected()
@@ -391,8 +392,7 @@ namespace Lucene.Net.Search
 					}
 					catch (System.Threading.ThreadInterruptedException ie)
 					{
-						SupportClass.ThreadClass.Current().Interrupt();
-						throw new System.SystemException("", ie);
+					    throw;
 					}
 				}
 				System.Diagnostics.Debug.Assert(docId >= 0, "base=" + docBase + " doc=" + doc);

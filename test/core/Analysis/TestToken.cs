@@ -16,9 +16,12 @@
  */
 
 using System;
-
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
-
+using Attribute = Lucene.Net.Util.Attribute;
+using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using Payload = Lucene.Net.Index.Payload;
 using TestSimpleAttributeImpls = Lucene.Net.Analysis.Tokenattributes.TestSimpleAttributeImpls;
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -164,7 +167,7 @@ namespace Lucene.Net.Analysis
 			t.SetTermBuffer(b, 0, 5);
 			Assert.AreEqual("(aloha,0,5)", t.ToString());
 			
-			t.SetTermText("hi there");
+			t.SetTermBuffer("hi there");
 			Assert.AreEqual("(hi there,0,5)", t.ToString());
 		}
 		
@@ -189,20 +192,17 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestMixedStringArray()
 		{
 			Token t = new Token("hello", 0, 5);
-			Assert.AreEqual(t.TermText(), "hello");
 			Assert.AreEqual(t.TermLength(), 5);
 			Assert.AreEqual(t.Term(), "hello");
-			t.SetTermText("hello2");
+			t.SetTermBuffer("hello2");
 			Assert.AreEqual(t.TermLength(), 6);
 			Assert.AreEqual(t.Term(), "hello2");
 			t.SetTermBuffer("hello3".ToCharArray(), 0, 6);
-			Assert.AreEqual(t.TermText(), "hello3");
+			Assert.AreEqual(t.Term(), "hello3");
 			
-			// Make sure if we get the buffer and change a character
-			// that termText() reflects the change
 			char[] buffer = t.TermBuffer();
 			buffer[1] = 'o';
-			Assert.AreEqual(t.TermText(), "hollo3");
+			Assert.AreEqual(t.Term(), "hollo3");
 		}
 		
         [Test]
@@ -245,5 +245,42 @@ namespace Lucene.Net.Analysis
 			Assert.AreEqual(pl, copy.GetPayload());
             Assert.AreNotSame(pl, copy.GetPayload());
 		}
+
+        public interface SenselessAttribute : Attribute {}
+
+        public class SenselessAttributeImpl : AttributeImpl, SenselessAttribute
+        {
+            public override void CopyTo(AttributeImpl target) 
+            { }
+
+            public override void Clear() 
+            { }
+
+            public override bool Equals(object other)
+            {
+                return other is SenselessAttributeImpl;
+            }
+
+            public override int GetHashCode()
+            {
+                return 0;
+            }
+        }
+
+        [Test]
+        public void TestTokenAttributeFactory()
+        {
+            TokenStream ts = new WhitespaceTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo, bar"));
+
+            Assert.IsTrue(ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl,
+                          "TypeAttribute is not implemented by SenselessAttributeImpl");
+
+            Assert.IsTrue(ts.AddAttribute<TermAttribute>() is Token, "TermAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<OffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<FlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<PayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<PositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
+            Assert.IsTrue(ts.AddAttribute<TypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+        }
 	}
 }

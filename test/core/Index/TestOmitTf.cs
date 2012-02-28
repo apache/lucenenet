@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Search;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -38,8 +38,6 @@ using _TestUtil = Lucene.Net.Util._TestUtil;
 
 namespace Lucene.Net.Index
 {
-	
-	
     [TestFixture]
 	public class TestOmitTf:LuceneTestCase
 	{
@@ -203,6 +201,19 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+        private class AnonymousIDFExplanation : Explanation.IDFExplanation
+        {
+            public override float GetIdf()
+            {
+                return 1.0f;
+            }
+
+            public override string Explain()
+            {
+                return "Inexplicable";
+            }
+        }
+
 		[Serializable]
 		public class SimpleSimilarity:Similarity
 		{
@@ -224,10 +235,6 @@ namespace Lucene.Net.Index
 			{
 				return 2.0f;
 			}
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
-			{
-				return 1.0f;
-			}
 			public override float Idf(int docFreq, int numDocs)
 			{
 				return 1.0f;
@@ -236,6 +243,10 @@ namespace Lucene.Net.Index
 			{
 				return 1.0f;
 			}
+            public override Search.Explanation.IDFExplanation IdfExplain(System.Collections.Generic.ICollection<Term> terms, Searcher searcher)
+            {
+                return new AnonymousIDFExplanation();
+            }
 		}
 		
 		
@@ -244,7 +255,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestOmitTermFreqAndPositions()
 		{
 			Directory ram = new MockRAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			Document d = new Document();
 			
@@ -292,7 +303,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestMixedMerge()
 		{
 			Directory ram = new MockRAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(3);
 			writer.SetMergeFactor(2);
@@ -347,7 +358,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestMixedRAM()
 		{
 			Directory ram = new MockRAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(2);
@@ -398,7 +409,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestNoPrxFile()
 		{
 			Directory ram = new MockRAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMaxBufferedDocs(3);
 			writer.SetMergeFactor(2);
@@ -431,7 +442,7 @@ namespace Lucene.Net.Index
 		public virtual void  TestBasic()
 		{
 			Directory dir = new MockRAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.SetMergeFactor(2);
 			writer.SetMaxBufferedDocs(2);
@@ -464,7 +475,7 @@ namespace Lucene.Net.Index
 			/*
 			* Verify the index
 			*/
-			Searcher searcher = new IndexSearcher(dir);
+			Searcher searcher = new IndexSearcher(dir, true);
 			searcher.SetSimilarity(new SimpleSimilarity());
 			
 			Term a = new Term("noTf", term);

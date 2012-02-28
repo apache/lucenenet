@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
 			
 			for (Entry e = first; e != null; e = e.next)
 			{
-				if (e.hash == h && ((System.Object) e.str == (System.Object) s || String.CompareOrdinal(e.str, s) == 0))
+                if (e.hash == h && (ReferenceEquals(e.str, s) || String.CompareOrdinal(e.str, s) == 0))
 				{
 					// if (e.str == s || (e.hash == h && e.str.compareTo(s)==0)) {
 					return e.str;

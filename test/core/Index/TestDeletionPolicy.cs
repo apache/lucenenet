@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -39,18 +39,18 @@ namespace Lucene.Net.Index
 	against it, and add documents to it.*/
 	
 	[TestFixture]
-	public class TestDeletionPolicy:LuceneTestCase
+	public class TestDeletionPolicy : LuceneTestCase
 	{
-		private void  VerifyCommitOrder(System.Collections.IList commits)
+		private void  VerifyCommitOrder<T>(IList<T> commits) where T : IndexCommit
 		{
-			IndexCommit firstCommit = ((IndexCommit) commits[0]);
+			IndexCommit firstCommit = commits[0];
 			long last = SegmentInfos.GenerationFromSegmentsFileName(firstCommit.GetSegmentsFileName());
 			Assert.AreEqual(last, firstCommit.GetGeneration());
 			long lastVersion = firstCommit.GetVersion();
 			long lastTimestamp = firstCommit.GetTimestamp();
 			for (int i = 1; i < commits.Count; i++)
 			{
-				IndexCommit commit = ((IndexCommit) commits[i]);
+				IndexCommit commit = commits[i];
 				long now = SegmentInfos.GenerationFromSegmentsFileName(commit.GetSegmentsFileName());
 				long nowVersion = commit.GetVersion();
 				long nowTimestamp = commit.GetTimestamp();
@@ -86,15 +86,15 @@ namespace Lucene.Net.Index
 			internal int numOnInit;
 			internal int numOnCommit;
 			internal Directory dir;
-			public virtual void  OnInit(System.Collections.IList commits)
+			public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
-				IndexReader r = IndexReader.Open(dir);
+				IndexReader r = IndexReader.Open(dir, true);
 				Assert.AreEqual(r.IsOptimized(), lastCommit.IsOptimized(), "lastCommit.isOptimized()=" + lastCommit.IsOptimized() + " vs IndexReader.isOptimized=" + r.IsOptimized());
 				r.Close();
 				Enclosing_Instance.VerifyCommitOrder(commits);
@@ -102,8 +102,8 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> This is useful for adding to a big index w/ autoCommit
-		/// false when you know readers are not using it.
+		/// <summary> This is useful for adding to a big index when you know
+		/// readers are not using it.
 		/// </summary>
 		internal class KeepNoneOnInitDeletionPolicy : IndexDeletionPolicy
 		{
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 			}
 			internal int numOnInit;
 			internal int numOnCommit;
-			public virtual void  OnInit(System.Collections.IList commits)
+			public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 					Assert.IsTrue(commit.IsDeleted());
 				}
 			}
-			public virtual void  OnCommit(System.Collections.IList commits)
+			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				int size = commits.Count;
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
 				this.numToKeep = numToKeep;
 			}
 			
-			public virtual void  OnInit(System.Collections.IList commits)
+			public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				numOnInit++;
@@ -187,20 +187,20 @@ namespace Lucene.Net.Index
 				DoDeletes(commits, false);
 			}
 			
-			public virtual void  OnCommit(System.Collections.IList commits)
+			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				DoDeletes(commits, true);
 			}
 			
-			private void  DoDeletes(System.Collections.IList commits, bool isCommit)
+			private void  DoDeletes<T>(IList<T> commits, bool isCommit) where T : IndexCommit
 			{
 				
 				// Assert that we really are only called for each new
 				// commit:
 				if (isCommit)
 				{
-					System.String fileName = ((IndexCommit) commits[commits.Count - 1]).GetSegmentsFileName();
+					System.String fileName = commits[commits.Count - 1].GetSegmentsFileName();
 					if (seen.Contains(fileName))
 					{
 						throw new System.SystemException("onCommit was called twice on the same commit point: " + fileName);
@@ -248,17 +248,17 @@ namespace Lucene.Net.Index
 				this.expirationTimeSeconds = seconds;
 			}
 			
-			public virtual void  OnInit(System.Collections.IList commits)
+			public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				OnCommit(commits);
 			}
 			
-			public virtual void  OnCommit(System.Collections.IList commits)
+			public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
 			{
 				Enclosing_Instance.VerifyCommitOrder(commits);
 				
-				IndexCommit lastCommit = (IndexCommit) commits[commits.Count - 1];
+				IndexCommit lastCommit = commits[commits.Count - 1];
 				
 				// Any commit older than expireTime should be deleted:
 				double expireTime = dir.FileModified(lastCommit.GetSegmentsFileName()) / 1000.0 - expirationTimeSeconds;
@@ -284,15 +284,13 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestExpirationTimeDeletionPolicy()
 		{
-			
 			double SECONDS = 2.0;
 			
-			bool autoCommit = false;
 			bool useCompoundFile = true;
 			
 			Directory dir = new RAMDirectory();
 			ExpirationTimeDeletionPolicy policy = new ExpirationTimeDeletionPolicy(this, dir, SECONDS);
-			IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetUseCompoundFile(useCompoundFile);
 			writer.Close();
 			
@@ -302,7 +300,7 @@ namespace Lucene.Net.Index
 				// Record last time when writer performed deletes of
 				// past commits
 				lastDeleteTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-				writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetUseCompoundFile(useCompoundFile);
 				for (int j = 0; j < 17; j++)
 				{
@@ -330,7 +328,7 @@ namespace Lucene.Net.Index
 			{
 				try
 				{
-					IndexReader reader = IndexReader.Open(dir);
+					IndexReader reader = IndexReader.Open(dir, true);
 					reader.Close();
 					fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", gen);
 					long modTime = dir.FileModified(fileName);
@@ -356,57 +354,48 @@ namespace Lucene.Net.Index
 		public virtual void  TestKeepAllDeletionPolicy()
 		{
 			
-			for (int pass = 0; pass < 4; pass++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				
-				bool autoCommit = pass < 2;
-				bool useCompoundFile = (pass % 2) > 0;
+				bool useCompoundFile = (pass % 2) != 0;
 				
 				// Never deletes a commit
 				KeepAllDeletionPolicy policy = new KeepAllDeletionPolicy(this);
 				
 				Directory dir = new RAMDirectory();
 				policy.dir = dir;
-				
-				IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.SetMergeScheduler(new SerialMergeScheduler());
 				for (int i = 0; i < 107; i++)
 				{
 					AddDoc(writer);
-					if (autoCommit && i % 10 == 0)
-						writer.Commit();
 				}
 				writer.Close();
-				
-				writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.Optimize();
 				writer.Close();
 				
 				Assert.AreEqual(2, policy.numOnInit);
-				if (!autoCommit)
+
 				// If we are not auto committing then there should
 				// be exactly 2 commits (one per close above):
-					Assert.AreEqual(2, policy.numOnCommit);
+				Assert.AreEqual(2, policy.numOnCommit);
 				
 				// Test listCommits
-				System.Collections.ICollection commits = IndexReader.ListCommits(dir);
-				if (!autoCommit)
+				ICollection<IndexCommit> commits = IndexReader.ListCommits(dir);
 				// 1 from opening writer + 2 from closing writer
-					Assert.AreEqual(3, commits.Count);
-				// 1 from opening writer + 2 from closing writer +
-				// 11 from calling writer.commit() explicitly above
-				else
-					Assert.AreEqual(14, commits.Count);
+				Assert.AreEqual(3, commits.Count);
 				
 				System.Collections.IEnumerator it = commits.GetEnumerator();
 				// Make sure we can open a reader on each commit:
 				while (it.MoveNext())
 				{
 					IndexCommit commit = (IndexCommit) it.Current;
-					IndexReader r = IndexReader.Open(commit, null);
+					IndexReader r = IndexReader.Open(commit, null, false);
 					r.Close();
 				}
 				
@@ -416,7 +405,7 @@ namespace Lucene.Net.Index
 				long gen = SegmentInfos.GetCurrentSegmentGeneration(dir);
 				while (gen > 0)
 				{
-					IndexReader reader = IndexReader.Open(dir);
+					IndexReader reader = IndexReader.Open(dir, true);
 					reader.Close();
 					dir.DeleteFile(IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", gen));
 					gen--;
@@ -462,7 +451,7 @@ namespace Lucene.Net.Index
 			}
 			writer.Close();
 			
-			System.Collections.ICollection commits = IndexReader.ListCommits(dir);
+			ICollection<IndexCommit> commits = IndexReader.ListCommits(dir);
 			Assert.AreEqual(6, commits.Count);
 			IndexCommit lastCommit = null;
 			System.Collections.IEnumerator it = commits.GetEnumerator();
@@ -490,7 +479,7 @@ namespace Lucene.Net.Index
 			// Should undo our rollback:
 			writer.Rollback();
 			
-			IndexReader r = IndexReader.Open(dir);
+			IndexReader r = IndexReader.Open(dir, true);
 			// Still optimized, still 11 docs
 			Assert.IsTrue(r.IsOptimized());
 			Assert.AreEqual(11, r.NumDocs());
@@ -504,7 +493,7 @@ namespace Lucene.Net.Index
 			// Now 8 because we made another commit
 			Assert.AreEqual(8, IndexReader.ListCommits(dir).Count);
 			
-			r = IndexReader.Open(dir);
+			r = IndexReader.Open(dir, true);
 			// Not optimized because we rolled it back, and now only
 			// 10 docs
 			Assert.IsTrue(!r.IsOptimized());
@@ -516,7 +505,7 @@ namespace Lucene.Net.Index
 			writer.Optimize();
 			writer.Close();
 			
-			r = IndexReader.Open(dir);
+			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(r.IsOptimized());
 			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
@@ -528,7 +517,7 @@ namespace Lucene.Net.Index
 			
 			// Reader still sees optimized index, because writer
 			// opened on the prior commit has not yet committed:
-			r = IndexReader.Open(dir);
+			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(r.IsOptimized());
 			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
@@ -536,7 +525,7 @@ namespace Lucene.Net.Index
 			writer.Close();
 			
 			// Now reader sees unoptimized index:
-			r = IndexReader.Open(dir);
+			r = IndexReader.Open(dir, true);
 			Assert.IsTrue(!r.IsOptimized());
 			Assert.AreEqual(10, r.NumDocs());
 			r.Close();
@@ -546,24 +535,21 @@ namespace Lucene.Net.Index
 		
 		
 		/* Test keeping NO commit points.  This is a viable and
-		* useful case eg where you want to build a big index with
-		* autoCommit false and you know there are no readers.
+		* useful case eg where you want to build a big index and
+		* you know there are no readers.
 		*/
 		[Test]
 		public virtual void  TestKeepNoneOnInitDeletionPolicy()
 		{
-			
-			for (int pass = 0; pass < 4; pass++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				
-				bool autoCommit = pass < 2;
-				bool useCompoundFile = (pass % 2) > 0;
+				bool useCompoundFile = (pass % 2) != 0;
 				
 				KeepNoneOnInitDeletionPolicy policy = new KeepNoneOnInitDeletionPolicy(this);
 				
 				Directory dir = new RAMDirectory();
-				
-				IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetUseCompoundFile(useCompoundFile);
 				for (int i = 0; i < 107; i++)
@@ -571,21 +557,20 @@ namespace Lucene.Net.Index
 					AddDoc(writer);
 				}
 				writer.Close();
-				
-				writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.Optimize();
 				writer.Close();
 				
 				Assert.AreEqual(2, policy.numOnInit);
-				if (!autoCommit)
 				// If we are not auto committing then there should
 				// be exactly 2 commits (one per close above):
-					Assert.AreEqual(2, policy.numOnCommit);
+				Assert.AreEqual(2, policy.numOnCommit);
 				
 				// Simplistic check: just verify the index is in fact
 				// readable:
-				IndexReader reader = IndexReader.Open(dir);
+				IndexReader reader = IndexReader.Open(dir, true);
 				reader.Close();
 				
 				dir.Close();
@@ -598,14 +583,11 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestKeepLastNDeletionPolicy()
 		{
-			
 			int N = 5;
 			
-			for (int pass = 0; pass < 4; pass++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				
-				bool autoCommit = pass < 2;
-				bool useCompoundFile = (pass % 2) > 0;
+				bool useCompoundFile = (pass % 2) != 0;
 				
 				Directory dir = new RAMDirectory();
 				
@@ -613,7 +595,7 @@ namespace Lucene.Net.Index
 				
 				for (int j = 0; j < N + 1; j++)
 				{
-					IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+                    IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					writer.SetMaxBufferedDocs(10);
 					writer.SetUseCompoundFile(useCompoundFile);
 					for (int i = 0; i < 17; i++)
@@ -626,14 +608,7 @@ namespace Lucene.Net.Index
 				
 				Assert.IsTrue(policy.numDelete > 0);
 				Assert.AreEqual(N + 1, policy.numOnInit);
-				if (autoCommit)
-				{
-					Assert.IsTrue(policy.numOnCommit > 1);
-				}
-				else
-				{
-					Assert.AreEqual(N + 1, policy.numOnCommit);
-				}
+				Assert.AreEqual(N + 1, policy.numOnCommit);
 				
 				// Simplistic check: just verify only the past N segments_N's still
 				// exist, and, I can open a reader on each:
@@ -643,7 +618,7 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						IndexReader reader = IndexReader.Open(dir);
+						IndexReader reader = IndexReader.Open(dir, true);
 						reader.Close();
 						if (i == N)
 						{
@@ -675,19 +650,16 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestKeepLastNDeletionPolicyWithReader()
 		{
-			
 			int N = 10;
 			
-			for (int pass = 0; pass < 4; pass++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				
-				bool autoCommit = pass < 2;
-				bool useCompoundFile = (pass % 2) > 0;
+				bool useCompoundFile = (pass % 2) != 0;
 				
 				KeepLastNDeletionPolicy policy = new KeepLastNDeletionPolicy(this, N);
 				
 				Directory dir = new RAMDirectory();
-				IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.Close();
 				Term searchTerm = new Term("content", "aaa");
@@ -695,35 +667,34 @@ namespace Lucene.Net.Index
 				
 				for (int i = 0; i < N + 1; i++)
 				{
-					writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+                    writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					writer.SetUseCompoundFile(useCompoundFile);
 					for (int j = 0; j < 17; j++)
 					{
 						AddDoc(writer);
 					}
-					// this is a commit when autoCommit=false:
+					// this is a commit
 					writer.Close();
-					IndexReader reader = IndexReader.Open(dir, policy);
+					IndexReader reader = IndexReader.Open(dir, policy, false);
 					reader.DeleteDocument(3 * i + 1);
 					reader.SetNorm(4 * i + 1, "content", 2.0F);
 					IndexSearcher searcher = new IndexSearcher(reader);
 					ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 					Assert.AreEqual(16 * (1 + i), hits.Length);
-					// this is a commit when autoCommit=false:
+					// this is a commit
 					reader.Close();
 					searcher.Close();
 				}
-				writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+                writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.Optimize();
-				// this is a commit when autoCommit=false:
+				// this is a commit
 				writer.Close();
 				
 				Assert.AreEqual(2 * (N + 2), policy.numOnInit);
-				if (!autoCommit)
-					Assert.AreEqual(2 * (N + 2) - 1, policy.numOnCommit);
+				Assert.AreEqual(2 * (N + 2) - 1, policy.numOnCommit);
 				
-				IndexSearcher searcher2 = new IndexSearcher(dir);
+				IndexSearcher searcher2 = new IndexSearcher(dir, false);
 				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(176, hits2.Length);
 				
@@ -738,29 +709,25 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						IndexReader reader = IndexReader.Open(dir);
+						IndexReader reader = IndexReader.Open(dir, true);
 						
 						// Work backwards in commits on what the expected
-						// count should be.  Only check this in the
-						// autoCommit false case:
-						if (!autoCommit)
+						// count should be.
+						searcher2 = new IndexSearcher(reader);
+						hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
+						if (i > 1)
 						{
-							searcher2 = new IndexSearcher(reader);
-							hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
-							if (i > 1)
+							if (i % 2 == 0)
 							{
-								if (i % 2 == 0)
-								{
-									expectedCount += 1;
-								}
-								else
-								{
-									expectedCount -= 17;
-								}
+								expectedCount += 1;
 							}
-							Assert.AreEqual(expectedCount, hits2.Length);
-							searcher2.Close();
+							else
+							{
+								expectedCount -= 17;
+							}
 						}
+						Assert.AreEqual(expectedCount, hits2.Length);
+						searcher2.Close();
 						reader.Close();
 						if (i == N)
 						{
@@ -792,19 +759,16 @@ namespace Lucene.Net.Index
 		[Test]
 		public virtual void  TestKeepLastNDeletionPolicyWithCreates()
 		{
-			
 			int N = 10;
 			
-			for (int pass = 0; pass < 4; pass++)
+			for (int pass = 0; pass < 2; pass++)
 			{
-				
-				bool autoCommit = pass < 2;
-				bool useCompoundFile = (pass % 2) > 0;
+				bool useCompoundFile = (pass % 2) != 0;
 				
 				KeepLastNDeletionPolicy policy = new KeepLastNDeletionPolicy(this, N);
 				
 				Directory dir = new RAMDirectory();
-				IndexWriter writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(10);
 				writer.SetUseCompoundFile(useCompoundFile);
 				writer.Close();
@@ -813,37 +777,36 @@ namespace Lucene.Net.Index
 				
 				for (int i = 0; i < N + 1; i++)
 				{
-					
-					writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), false, policy);
+
+                    writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					writer.SetMaxBufferedDocs(10);
 					writer.SetUseCompoundFile(useCompoundFile);
 					for (int j = 0; j < 17; j++)
 					{
 						AddDoc(writer);
 					}
-					// this is a commit when autoCommit=false:
+					// this is a commit
 					writer.Close();
-					IndexReader reader = IndexReader.Open(dir, policy);
+					IndexReader reader = IndexReader.Open(dir, policy, false);
 					reader.DeleteDocument(3);
 					reader.SetNorm(5, "content", 2.0F);
 					IndexSearcher searcher = new IndexSearcher(reader);
 					ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 					Assert.AreEqual(16, hits.Length);
-					// this is a commit when autoCommit=false:
+					// this is a commit
 					reader.Close();
 					searcher.Close();
-					
-					writer = new IndexWriter(dir, autoCommit, new WhitespaceAnalyzer(), true, policy);
+
+                    writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, policy, IndexWriter.MaxFieldLength.UNLIMITED);
 					// This will not commit: there are no changes
 					// pending because we opened for "create":
 					writer.Close();
 				}
 				
 				Assert.AreEqual(1 + 3 * (N + 1), policy.numOnInit);
-				if (!autoCommit)
-					Assert.AreEqual(3 * (N + 1), policy.numOnCommit);
+				Assert.AreEqual(3 * (N + 1), policy.numOnCommit);
 				
-				IndexSearcher searcher2 = new IndexSearcher(dir);
+				IndexSearcher searcher2 = new IndexSearcher(dir, false);
 				ScoreDoc[] hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
 				Assert.AreEqual(0, hits2.Length);
 				
@@ -858,29 +821,25 @@ namespace Lucene.Net.Index
 				{
 					try
 					{
-						IndexReader reader = IndexReader.Open(dir);
+						IndexReader reader = IndexReader.Open(dir, true);
 						
 						// Work backwards in commits on what the expected
-						// count should be.  Only check this in the
-						// autoCommit false case:
-						if (!autoCommit)
+						// count should be.
+						searcher2 = new IndexSearcher(reader);
+						hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
+						Assert.AreEqual(expectedCount, hits2.Length);
+						searcher2.Close();
+						if (expectedCount == 0)
 						{
-							searcher2 = new IndexSearcher(reader);
-							hits2 = searcher2.Search(query, null, 1000).ScoreDocs;
-							Assert.AreEqual(expectedCount, hits2.Length);
-							searcher2.Close();
-							if (expectedCount == 0)
-							{
-								expectedCount = 16;
-							}
-							else if (expectedCount == 16)
-							{
-								expectedCount = 17;
-							}
-							else if (expectedCount == 17)
-							{
-								expectedCount = 0;
-							}
+							expectedCount = 16;
+						}
+						else if (expectedCount == 16)
+						{
+							expectedCount = 17;
+						}
+						else if (expectedCount == 17)
+						{
+							expectedCount = 0;
 						}
 						reader.Close();
 						if (i == N)

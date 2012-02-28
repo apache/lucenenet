@@ -59,8 +59,8 @@ namespace Lucene.Net.Index
 			SegmentInfo info1 = DocHelper.WriteDoc(merge1Dir, doc1);
 			DocHelper.SetupDoc(doc2);
 			SegmentInfo info2 = DocHelper.WriteDoc(merge2Dir, doc2);
-			reader1 = SegmentReader.Get(info1);
-			reader2 = SegmentReader.Get(info2);
+			reader1 = SegmentReader.Get(true, info1, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
+            reader2 = SegmentReader.Get(true, info2, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 		}
 
         [TearDown]
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 			merger.CloseReaders();
 			Assert.IsTrue(docsMerged == 2);
 			//Should be able to open a new SegmentReader against the new directory
-			SegmentReader mergedReader = SegmentReader.Get(new SegmentInfo(mergedSegment, docsMerged, mergedDir, false, true));
+            SegmentReader mergedReader = SegmentReader.Get(true, new SegmentInfo(mergedSegment, docsMerged, mergedDir, false, true), IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 			Assert.IsTrue(mergedReader != null);
 			Assert.IsTrue(mergedReader.NumDocs() == 2);
 			Document newDoc1 = mergedReader.Document(0);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 			System.Collections.Generic.ICollection<string> stored = mergedReader.GetFieldNames(IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR);
 			Assert.IsTrue(stored != null);
 			//System.out.println("stored size: " + stored.size());
-			Assert.IsTrue(stored.Count == 4, "We do not have 4 fields that were indexed with term vector");
+			Assert.IsTrue(stored.Count == 3, "We do not have 3 fields that were indexed with term vector");
 			
 			TermFreqVector vector = mergedReader.GetTermFreqVector(0, DocHelper.TEXT_FIELD_2_KEY);
 			Assert.IsTrue(vector != null);

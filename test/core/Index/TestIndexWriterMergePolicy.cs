@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new RAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMaxBufferedDocs(101);
 			writer.SetMergeFactor(101);
 			writer.SetMergePolicy(new LogDocMergePolicy(writer));
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 				}
 				writer.Close();
 				
-				writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), false);
+				writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
 				writer.SetMaxBufferedDocs(101);
 				writer.SetMergeFactor(101);
 				writer.SetMergePolicy(new LogDocMergePolicy(writer));
@@ -182,6 +182,9 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer);
 			}
+		    writer.Commit();
+		    ((ConcurrentMergeScheduler) writer.GetMergeScheduler()).Sync();
+		    writer.Commit();
 			CheckInvariants(writer);
 			
 			writer.Close();
@@ -193,7 +196,7 @@ namespace Lucene.Net.Index
 		{
 			Directory dir = new RAMDirectory();
 			
-			IndexWriter writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), true);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMergePolicy(new LogDocMergePolicy(writer));
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(100);
@@ -204,12 +207,12 @@ namespace Lucene.Net.Index
 				CheckInvariants(writer);
 			}
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(dir);
+
+		    IndexReader reader = IndexReader.Open(dir, false);
 			reader.DeleteDocuments(new Term("content", "aaa"));
 			reader.Close();
 			
-			writer = new IndexWriter(dir, true, new WhitespaceAnalyzer(), false);
+			writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMergePolicy(new LogDocMergePolicy(writer));
 			writer.SetMaxBufferedDocs(10);
 			writer.SetMergeFactor(5);
@@ -219,8 +222,11 @@ namespace Lucene.Net.Index
 			{
 				AddDoc(writer);
 			}
+		    writer.Commit();
+            ((ConcurrentMergeScheduler)writer.GetMergeScheduler()).Sync();
+		    writer.Commit();
 			CheckInvariants(writer);
-			Assert.AreEqual(10, writer.DocCount());
+			Assert.AreEqual(10, writer.MaxDoc());
 			
 			writer.Close();
 		}
@@ -260,7 +266,7 @@ namespace Lucene.Net.Index
 				{
 					if (upperBound * mergeFactor <= maxMergeDocs)
 					{
-						Assert.IsTrue(numSegments < mergeFactor);
+                        Assert.IsTrue(numSegments < mergeFactor, "maxMergeDocs=" + maxMergeDocs + "; numSegments=" + numSegments + "; upperBound=" + upperBound + "; mergeFactor=" + mergeFactor);
 					}
 					
 					do 

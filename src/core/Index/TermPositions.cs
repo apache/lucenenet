@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	/// <seealso cref="IndexReader.TermPositions()">
 	/// </seealso>
 	
-	public interface TermPositions:TermDocs
+	public interface TermPositions : TermDocs
 	{
 		/// <summary>Returns next position in the current document.  It is an error to call
 		/// this more than <see cref="TermDocs.Freq()" /> times

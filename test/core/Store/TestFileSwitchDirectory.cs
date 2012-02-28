@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -36,9 +37,9 @@ namespace Lucene.Net.Store
         [Test]
 		public virtual void  TestBasic()
 		{
-			System.Collections.Hashtable fileExtensions = new System.Collections.Hashtable();
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdt");
-			SupportClass.CollectionsHelper.AddIfNotContains(fileExtensions, "fdx");
+            HashSet<string> fileExtensions = new HashSet<string>();
+		    fileExtensions.Add("fdt");
+            fileExtensions.Add("fdx");
 			
 			Directory primaryDir = new MockRAMDirectory();
 			RAMDirectory secondaryDir = new MockRAMDirectory();

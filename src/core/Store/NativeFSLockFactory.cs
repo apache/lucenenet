@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Store
 	/// <seealso cref="LockFactory">
 	/// </seealso>
 	
-	public class NativeFSLockFactory:FSLockFactory
+	public class NativeFSLockFactory : FSLockFactory
 	{
 		/// <summary> Create a NativeFSLockFactory instance, with null (unset)
 		/// lock directory. When you pass this factory to a <see cref="FSDirectory" />
@@ -69,17 +70,6 @@ namespace Lucene.Net.Store
 		/// <param name="lockDirName">where lock files are created.
 		/// </param>
 		public NativeFSLockFactory(System.String lockDirName):this(new System.IO.DirectoryInfo(lockDirName))
-		{
-		}
-		
-		/// <summary> Create a NativeFSLockFactory instance, storing lock
-		/// files into the specified lockDir:
-		/// 
-		/// </summary>
-		/// <param name="lockDir">where lock files are created.
-		/// </param>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public NativeFSLockFactory(System.IO.FileInfo lockDir) : this(new System.IO.DirectoryInfo(lockDir.FullName))
 		{
 		}
 		
@@ -168,12 +158,7 @@ namespace Lucene.Net.Store
 		* one JVM (each with their own NativeFSLockFactory
 		* instance) have set the same lock dir and lock prefix.
 		*/
-		private static System.Collections.Hashtable LOCK_HELD = new System.Collections.Hashtable();
-
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public NativeFSLock(System.IO.FileInfo lockDir, System.String lockFileName):this(new System.IO.DirectoryInfo(lockDir.FullName), lockFileName)
-		{
-		}
+        private static HashSet<string> LOCK_HELD = new HashSet<string>();
 		
         public NativeFSLock(System.IO.DirectoryInfo lockDir, System.String lockFileName)
         {
@@ -245,7 +230,7 @@ namespace Lucene.Net.Store
 							// thread trying to obtain this lock, so we own
 							// the only instance of a channel against this
 							// file:
-                            LOCK_HELD.Add(canonicalPath, canonicalPath);
+                            LOCK_HELD.Add(canonicalPath);
 							markedHeld = true;
 						}
 					}

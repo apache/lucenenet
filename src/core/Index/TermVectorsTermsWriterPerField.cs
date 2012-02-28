@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 		{
 			if (doVectorOffsets)
 			{
-				offsetAttribute = (OffsetAttribute) fieldState.attributeSource.AddAttribute(typeof(OffsetAttribute));
+				offsetAttribute = fieldState.attributeSource.AddAttribute<OffsetAttribute>();
 			}
 			else
 			{

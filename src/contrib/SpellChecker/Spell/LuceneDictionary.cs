@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using TermEnum = Lucene.Net.Index.TermEnum;
-using Term = Lucene.Net.Index.Term;
-
 namespace SpellChecker.Net.Search.Spell
 {
-    /// <summary> Lucene Dictionary
-    /// 
+    using System;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using TermEnum = Lucene.Net.Index.TermEnum;
+    using Term = Lucene.Net.Index.Term;
+
+    /// <summary> 
+    /// Lucene Dictionary
     /// </summary>
-    public class LuceneDictionary : Dictionary
+    public class LuceneDictionary : IDictionary
     {
         internal IndexReader reader;
         internal System.String field;
@@ -49,11 +49,11 @@ namespace SpellChecker.Net.Search.Spell
 		
         internal sealed class LuceneIterator : System.Collections.IEnumerator
         {
-            private TermEnum termEnum;
+            private readonly TermEnum termEnum;
             private Term actualTerm;
             private bool hasNextCalled;
 
-            private LuceneDictionary enclosingInstance;
+            private readonly LuceneDictionary enclosingInstance;
 			
             public LuceneIterator(LuceneDictionary enclosingInstance)
             {

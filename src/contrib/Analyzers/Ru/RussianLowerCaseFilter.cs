@@ -21,41 +21,40 @@
 
 using System;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Ru
 {
-	/// <summary>
-	/// Normalizes token text to lower case, analyzing given ("russian") charset.
-	/// </summary>
-	public sealed class RussianLowerCaseFilter : TokenFilter
-	{
-		char[] charset;
+    /// <summary>
+    /// Normalizes token text to lower case.
+    /// </summary>
+    [Obsolete("Use LowerCaseFilter instead, which has the same functionality. This filter will be removed in Lucene 4.0")]
+    public sealed class RussianLowerCaseFilter : TokenFilter
+    {
+        private TermAttribute termAtt;
 
-		public RussianLowerCaseFilter(TokenStream _in, char[] charset) : base(_in)
-		{
-			this.charset = charset;
-		}
+        public RussianLowerCaseFilter(TokenStream _in)
+            : base(_in)
+        {
+            termAtt = AddAttribute<TermAttribute>();
+        }
 
-		public override Token Next() 
-		{
-			Token t = input.Next();
-
-			if (t == null)
-				return null;
-
-			String txt = t.TermText();
-
-			char[] chArray = txt.ToCharArray();
-			for (int i = 0; i < chArray.Length; i++)
-			{
-				chArray[i] = RussianCharsets.ToLowerCase(chArray[i], charset);
-			}
-
-			String newTxt = new String(chArray);
-			// create new token
-			Token newToken = new Token(newTxt, t.StartOffset(), t.EndOffset());
-
-			return newToken;
-		}
-	}
+        public sealed override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                char[] chArray = termAtt.TermBuffer();
+                int chLen = termAtt.TermLength();
+                for (int i = 0; i < chLen; i++)
+                {
+                    chArray[i] = char.ToLower(chArray[i]);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

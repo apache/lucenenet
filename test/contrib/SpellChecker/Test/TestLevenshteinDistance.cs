@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SpellChecker.Net.Search.Spell;
 using NUnit.Framework;
 
@@ -26,7 +23,7 @@ namespace SpellChecker.Net.Test.Search.Spell
     [TestFixture]
     public class TestLevenshteinDistance
     {
-        private StringDistance sd = new LevenshteinDistance();
+        private readonly StringDistance sd = new LevenshteinDistance();
 
         [Test]
         public void TestGetDistance()

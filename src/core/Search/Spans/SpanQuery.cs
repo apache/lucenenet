@@ -37,14 +37,6 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns the name of the field matched by this query.</summary>
 		public abstract System.String GetField();
 		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-		/// <seealso cref="Query.ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use ExtractTerms instead")]
-		public abstract System.Collections.ICollection GetTerms();
-		
 		public override Weight CreateWeight(Searcher searcher)
 		{
 			return new SpanWeight(this, searcher);

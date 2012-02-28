@@ -25,6 +25,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Index;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
@@ -48,7 +49,7 @@ namespace Lucene.Net.Search
     {
         static Similarity sim = new DefaultSimilarity();
         Query rewrittenQuery = null;
-        ArrayList fieldVals = new ArrayList();
+        EquatableList<FieldVals> fieldVals = new EquatableList<FieldVals>();
         Analyzer analyzer;
 
         ScoreTermQueue q;
@@ -89,7 +90,7 @@ namespace Lucene.Net.Search
                 if (other.fieldVals != null)
                     return false;
             }
-            else if (!fieldVals.EqualsToArrayList(other.fieldVals))
+            else if (!fieldVals.Equals(other.fieldVals))
                 return false;
             if (ignoreTF != other.ignoreTF)
                 return false;
@@ -190,17 +191,17 @@ namespace Lucene.Net.Search
         {
             if (f.queryString == null) return;
             TokenStream ts = analyzer.TokenStream(f.fieldName, new System.IO.StringReader(f.queryString));
-            TermAttribute termAtt = (TermAttribute)ts.AddAttribute(typeof(TermAttribute));
+            TermAttribute termAtt = ts.AddAttribute<TermAttribute>();
 
             int corpusNumDocs = reader.NumDocs();
             Term internSavingTemplateTerm = new Term(f.fieldName); //optimization to avoid constructing new Term() objects
-            Hashtable processedTerms = new Hashtable();
+            HashSet<string> processedTerms = new HashSet<string>();
             while (ts.IncrementToken())
             {
                 String term = termAtt.Term();
                 if (!processedTerms.Contains(term))
                 {
-                    processedTerms.Add(term,term);
+                    processedTerms.Add(term);
                     ScoreTermQueue variantsQ = new ScoreTermQueue(MAX_VARIANTS_PER_TERM); //maxNum variants considered for any one term
                     float minScore = 0;
                     Term startTerm = internSavingTemplateTerm.CreateTerm(term);
@@ -224,8 +225,8 @@ namespace Lucene.Net.Search
                             if (variantsQ.Size() < MAX_VARIANTS_PER_TERM || score > minScore)
                             {
                                 ScoreTerm st = new ScoreTerm(possibleMatch, score, startTerm);
-                                variantsQ.Insert(st);
-                                minScore = ((ScoreTerm)variantsQ.Top()).score; // maintain minScore
+                                variantsQ.InsertWithOverflow(st);
+                                minScore = variantsQ.Top().score; // maintain minScore
                             }
                         }
                     }
@@ -244,9 +245,9 @@ namespace Lucene.Net.Search
                         int size = variantsQ.Size();
                         for (int i = 0; i < size; i++)
                         {
-                            ScoreTerm st = (ScoreTerm)variantsQ.Pop();
+                            ScoreTerm st = variantsQ.Pop();
                             st.score = (st.score * st.score) * sim.Idf(df, corpusNumDocs);
-                            q.Insert(st);
+                            q.InsertWithOverflow(st);
                         }
                     }
                 }
@@ -264,11 +265,6 @@ namespace Lucene.Net.Search
             {
                 AddTerms(reader, f);
             }
-            //for (Iterator iter = fieldVals.iterator(); iter.hasNext(); )
-            //{
-            //    FieldVals f = (FieldVals)iter.next();
-            //    addTerms(reader, f);
-            //}
             //clear the list of fields
             fieldVals.Clear();
 
@@ -278,28 +274,26 @@ namespace Lucene.Net.Search
             //create BooleanQueries to hold the variants for each token/field pair and ensure it
             // has no coord factor
             //Step 1: sort the termqueries by term/field
-            Hashtable variantQueries = new Hashtable();
+            HashMap<Term, List<ScoreTerm>> variantQueries = new HashMap<Term, List<ScoreTerm>>();
             int size = q.Size();
             for (int i = 0; i < size; i++)
             {
-                ScoreTerm st = (ScoreTerm)q.Pop();
-                ArrayList l = (ArrayList)variantQueries[st.fuzziedSourceTerm];
+                ScoreTerm st = q.Pop();
+                var l = variantQueries[st.fuzziedSourceTerm];
                 if (l == null)
                 {
-                    l = new ArrayList();
+                    l = new List<ScoreTerm>();
                     variantQueries.Add(st.fuzziedSourceTerm, l);
                 }
                 l.Add(st);
             }
             //Step 2: Organize the sorted termqueries into zero-coord scoring boolean queries
-            foreach(ArrayList variants in variantQueries.Values)
-            //for (Iterator iter = variantQueries.values().iterator(); iter.hasNext(); )
+            foreach(var variants in variantQueries.Values)
             {
-                //ArrayList variants = (ArrayList)iter.next();
                 if (variants.Count == 1)
                 {
                     //optimize where only one selected variant
-                    ScoreTerm st = (ScoreTerm)variants[0];
+                    ScoreTerm st = variants[0];
                     TermQuery tq = new FuzzyTermQuery(st.term, ignoreTF);
                     tq.SetBoost(st.score); // set the boost to a mix of IDF and score
                     bq.Add(tq, BooleanClause.Occur.SHOULD);
@@ -308,9 +302,7 @@ namespace Lucene.Net.Search
                 {
                     BooleanQuery termVariants = new BooleanQuery(true); //disable coord and IDF for these term variants
                     foreach(ScoreTerm st in variants)
-                    //for (Iterator iterator2 = variants.iterator(); iterator2.hasNext(); )
                     {
-                        //ScoreTerm st = (ScoreTerm)iterator2.next();
                         TermQuery tq = new FuzzyTermQuery(st.term, ignoreTF);      // found a match
                         tq.SetBoost(st.score); // set the boost using the ScoreTerm's score
                         termVariants.Add(tq, BooleanClause.Occur.SHOULD);          // add to query                    
@@ -342,7 +334,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ScoreTermQueue : PriorityQueue
+        private class ScoreTermQueue : PriorityQueue<ScoreTerm>
         {
             public ScoreTermQueue(int size)
             {
@@ -352,10 +344,8 @@ namespace Lucene.Net.Search
             /* (non-Javadoc)
              * <see cref="org.apache.lucene.util.PriorityQueue.lessThan(java.lang.Object, java.lang.Object)"/>
              */
-            public override bool LessThan(Object a, Object b)
+            public override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
-                ScoreTerm termA = (ScoreTerm)a;
-                ScoreTerm termB = (ScoreTerm)b;
                 if (termA.score == termB.score)
                     return termA.term.CompareTo(termB.term) > 0;
                 else
@@ -403,28 +393,7 @@ namespace Lucene.Net.Search
                     //IDF is already factored into individual term boosts
                     return 1;
                 }
-
-                public override float Coord(int overlap, int maxOverlap)
-                {
-                    return base.Coord(overlap, maxOverlap);
-                }
-
-                public override float LengthNorm(string fieldName, int numTokens)
-                {
-                    return base.LengthNorm(fieldName, numTokens);
-                }
-
-                public override float QueryNorm(float sumOfSquaredWeights)
-                {
-                    return base.QueryNorm(sumOfSquaredWeights);
-                }
-
-                public override float SloppyFreq(int distance)
-                {
-                    return base.SloppyFreq(distance);
-                }
             }
-
         }
 
 

@@ -102,8 +102,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			searcher = new IndexSearcher(directory);
+
+		    searcher = new IndexSearcher(directory, true);
 			query = new PhraseQuery();
 		}
 		
@@ -236,14 +236,14 @@ namespace Lucene.Net.Search
 		public virtual void  TestPhraseQueryWithStopAnalyzer()
 		{
 			RAMDirectory directory = new RAMDirectory();
-			StopAnalyzer stopAnalyzer = new StopAnalyzer();
+			StopAnalyzer stopAnalyzer = new StopAnalyzer(Util.Version.LUCENE_24);
 			IndexWriter writer = new IndexWriter(directory, stopAnalyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
 			doc.Add(new Field("field", "the stop words are here", Field.Store.YES, Field.Index.ANALYZED));
 			writer.AddDocument(doc);
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(directory);
+
+		    IndexSearcher searcher = new IndexSearcher(directory, true);
 			
 			// valid exact phrase query
 			PhraseQuery query = new PhraseQuery();
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(query, searcher);
 			
 			
-			// currently StopAnalyzer does not leave "holes", so this matches.
+			// StopAnalyzer as of 2.4 does not leave "holes", so this matches.
 			query = new PhraseQuery();
 			query.Add(new Term("field", "words"));
 			query.Add(new Term("field", "here"));
@@ -283,8 +283,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(directory);
+
+		    IndexSearcher searcher = new IndexSearcher(directory, true);
 			
 			PhraseQuery phraseQuery = new PhraseQuery();
 			phraseQuery.Add(new Term("source", "marketing"));
@@ -320,8 +320,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			searcher = new IndexSearcher(directory);
+
+		    searcher = new IndexSearcher(directory, true);
 			
 			termQuery = new TermQuery(new Term("contents", "woo"));
 			phraseQuery = new PhraseQuery();
@@ -372,8 +372,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			Searcher searcher = new IndexSearcher(directory);
+
+		    Searcher searcher = new IndexSearcher(directory, true);
 			PhraseQuery query = new PhraseQuery();
 			query.Add(new Term("field", "firstname"));
 			query.Add(new Term("field", "lastname"));
@@ -394,9 +394,8 @@ namespace Lucene.Net.Search
 		[Test]
 		public virtual void  TestToString()
 		{
-			StopAnalyzer analyzer = new StopAnalyzer();
-			StopFilter.SetEnablePositionIncrementsDefault(true);
-			QueryParser qp = new QueryParser("field", analyzer);
+			StopAnalyzer analyzer = new StopAnalyzer(Util.Version.LUCENE_CURRENT);
+			QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", analyzer);
 			qp.SetEnablePositionIncrements(true);
 			PhraseQuery q = (PhraseQuery) qp.Parse("\"this hi this is a test is\"");
 			Assert.AreEqual("field:\"? hi ? ? ? test\"", q.ToString());

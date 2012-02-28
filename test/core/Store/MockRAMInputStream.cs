@@ -31,6 +31,7 @@ namespace Lucene.Net.Store
 		private MockRAMDirectory dir;
 		private System.String name;
 		private bool isClone;
+	    private bool isDisposed;
 		
 		/// <summary>Construct an empty output buffer. </summary>
 		/// <throws>  IOException  </throws>
@@ -39,34 +40,38 @@ namespace Lucene.Net.Store
 			this.name = name;
 			this.dir = dir;
 		}
-		
-		public override void  Close()
-		{
-			base.Close();
-			// Pending resolution on LUCENE-686 we may want to
-			// remove the conditional check so we also track that
-			// all clones get closed:
-			if (!isClone)
-			{
-				lock (dir)
-				{
-					// Could be null when MockRAMDirectory.crash() was called
-					if (dir.openFiles[name] != null)
-					{
-						System.Int32 v = (System.Int32) dir.openFiles[name];
-						if (v == 1)
-						{
-							dir.openFiles.Remove(name);
-						}
-						else
-						{
-							v = (System.Int32) (v - 1);
-							dir.openFiles[name] = v;
-						}
-					}
-				}
-			}
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            // Pending resolution on LUCENE-686 we may want to
+            // remove the conditional check so we also track that
+            // all clones get closed:
+            if (disposing && !isClone)
+            {
+                lock (dir)
+                {
+                    // Could be null when MockRAMDirectory.crash() was called
+                    if (dir.openFiles[name] != null)
+                    {
+                        System.Int32 v = dir.openFiles[name];
+                        if (v == 1)
+                        {
+                            dir.openFiles.Remove(name);
+                        }
+                        else
+                        {
+                            v = v - 1;
+                            dir.openFiles[name] = v;
+                        }
+                    }
+                }
+            }
+
+            isDisposed = true;
+            base.Dispose(disposing);
+        }
 		
 		public override System.Object Clone()
 		{

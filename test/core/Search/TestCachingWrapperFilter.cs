@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, new KeywordAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             MockFilter filter = new MockFilter();
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
@@ -50,8 +50,7 @@ namespace Lucene.Net.Search
             cacher.GetDocIdSet(reader);
             Assert.IsTrue(filter.WasCalled(), "first time");
 
-            // make sure no exception if cache is holding the wrong bitset
-            cacher.Bits(reader);
+            // make sure no exception if cache is holding the wrong DocIdSet
             cacher.GetDocIdSet(reader);
 
             // second time, nested filter should not be called
@@ -100,17 +99,6 @@ namespace Lucene.Net.Search
             IndexReader reader = IndexReader.Open(dir, true);
 
             Filter filter = new AnonymousFilter2();
-            //final Filter filter = new Filter() {
-            //  //@Override
-            //  public DocIdSet getDocIdSet(IndexReader reader) {
-            //    return new DocIdSet() {
-            //      //@Override
-            //      public DocIdSetIterator iterator() {
-            //        return null;
-            //      }
-            //    };
-            //  }
-            //};
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
@@ -154,13 +142,13 @@ namespace Lucene.Net.Search
         }
 
         [Test]
-        public void TestIsCacheAble()
+        public void TestIsCacheable()
         {
             Directory dir = new RAMDirectory();
             IndexWriter writer = new IndexWriter(dir, new KeywordAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
             writer.Close();
 
-            IndexReader reader = IndexReader.Open(dir);
+            IndexReader reader = IndexReader.Open(dir, true);
 
             // not cacheable:
             assertDocIdSetCacheable(reader, new QueryWrapperFilter(new TermQuery(new Term("test", "value"))), false);
@@ -170,37 +158,15 @@ namespace Lucene.Net.Search
             assertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewIntRange("test", 10, 20, true, true), true);
             // a openbitset filter is always cacheable
             assertDocIdSetCacheable(reader, new AnonymousFilter3(), true);
-            // a deprecated filter is always cacheable
-            assertDocIdSetCacheable(reader, new AnonymousFilter4(), true);
 
             reader.Close();
         }
-        /*
-          new Filter() {
-              public DocIdSet getDocIdSet(IndexReader reader) {
-                return new OpenBitSet();
-              }
-            }
-    
-         * new Filter() {
-              public BitSet bits(IndexReader reader) {
-                return new BitSet();
-              }
-            }
-         */
+
         class AnonymousFilter3 : Filter
         {
             public override DocIdSet GetDocIdSet(IndexReader reader)
             {
                 return new OpenBitSet();
-            }
-        }
-
-        class AnonymousFilter4 : Filter
-        {
-            public override System.Collections.BitArray Bits(IndexReader reader)
-            {
-                return new System.Collections.BitArray(100000); //DIGY
             }
         }
 

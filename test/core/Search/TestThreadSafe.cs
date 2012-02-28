@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -29,10 +29,6 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> </summary>
-	/// <version>  $Id: TestThreadSafe.java 741311 2009-02-05 21:53:40Z mikemccand $
-	/// </version>
     [TestFixture]
 	public class TestThreadSafe:LuceneTestCase
 	{
@@ -46,7 +42,7 @@ namespace Lucene.Net.Search
 		internal System.String failure = null;
 		
 		
-		internal class Thr:SupportClass.ThreadClass
+		internal class Thr:ThreadClass
 		{
 			[Serializable]
 			private class AnonymousClassFieldSelector : FieldSelector
@@ -137,10 +133,10 @@ namespace Lucene.Net.Search
 				// beware of deleted docs in the future
 				Document doc = ir.Document(rand.Next(ir.MaxDoc()), new AnonymousClassFieldSelector(this));
 				
-				System.Collections.IList fields = doc.GetFields();
+				var fields = doc.GetFields();
 				for (int i = 0; i < fields.Count; i++)
 				{
-					Fieldable f = (Fieldable) fields[i];
+					Fieldable f = fields[i];
 					Enclosing_Instance.ValidateField(f);
 				}
 			}
@@ -212,7 +208,7 @@ namespace Lucene.Net.Search
 			// do many small tests so the thread locals go away inbetween
 			for (int i = 0; i < 100; i++)
 			{
-				ir1 = IndexReader.Open(dir1);
+			    ir1 = IndexReader.Open(dir1, false);
 				DoTest(10, 100);
 			}
 		}

@@ -97,15 +97,9 @@ namespace Lucene.Net.Search.Regex
 			return _term.Field();
 		}
 
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-		/// <seealso cref="Query.ExtractTerms">
-		/// </seealso>
-		[Obsolete("use ExtractTerms instead")]
-        public override ICollection GetTerms()
+        public ICollection<Term> GetTerms()
         {
-            ArrayList terms = new ArrayList {_term};
+            ICollection<Term> terms = new List<Term>(){_term};
 		    return terms;
         }
     

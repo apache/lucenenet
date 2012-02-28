@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	/// <version>  $Revision: 791175 $
+	/// <version>  $Revision: 821340 $
 	/// </version>
     [TestFixture]
 	public class TestDateFilter:LuceneTestCase
@@ -58,8 +58,8 @@ namespace Lucene.Net.Search
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			
 			// filter that should preserve matches
 			//DateFilter df1 = DateFilter.Before("datefield", now);
@@ -115,8 +115,8 @@ namespace Lucene.Net.Search
 			writer.AddDocument(doc);
 			writer.Optimize();
 			writer.Close();
-			
-			IndexSearcher searcher = new IndexSearcher(indexStore);
+
+		    IndexSearcher searcher = new IndexSearcher(indexStore, true);
 			
 			// filter that should preserve matches
 			//DateFilter df1 = DateFilter.After("datefield", now);

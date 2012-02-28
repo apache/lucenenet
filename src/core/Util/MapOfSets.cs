@@ -16,27 +16,26 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
 	
 	/// <summary> Helper class for keeping Listss of Objects associated with keys. <b>WARNING: THIS CLASS IS NOT THREAD SAFE</b></summary>
-    public class MapOfSets<T, V>
+    public class MapOfSets<TKey, TValue>
     {
-		
-		// TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-		private System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> theMap;
+		private IDictionary<TKey, HashSet<TValue>> theMap;
 		
 		/// <param name="m">the backing store for this object
 		/// </param>
-		public MapOfSets(System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> m)
+        public MapOfSets(IDictionary<TKey, HashSet<TValue>> m)
 		{
 			theMap = m;
 		}
 		
 		/// <returns> direct access to the map backing this object.
 		/// </returns>
-		public virtual System.Collections.Generic.IDictionary<T, System.Collections.Generic.Dictionary<V, V>> GetMap()
+        public virtual IDictionary<TKey, HashSet<TValue>> GetMap()
 		{
 			return theMap;
 		}
@@ -46,19 +45,15 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.
 		/// </returns>
-		public virtual int Put(T key, V val)
+		public virtual int Put(TKey key, TValue val)
 		{
-            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-            System.Collections.Generic.Dictionary<V, V> theSet;
+            HashSet<TValue> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
-                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theSet = new HashSet<TValue>();
                 theMap[key] = theSet;
             }
-            if (!theSet.ContainsKey(val))
-            {
-                theSet.Add(val, val);
-            }
+            theSet.Add(val);
 			return theSet.Count;
 		}
 		/// <summary> Adds multiple vals to the Set associated with key in the Map.  
@@ -67,22 +62,15 @@ namespace Lucene.Net.Util
 		/// </summary>
 		/// <returns> the size of the Set associated with key once val is added to it.
 		/// </returns>
-		public virtual int PutAll(T key, System.Collections.Generic.Dictionary<V, V> vals)
+		public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
 		{
-            // TODO: This will be a HashSet<T> when we start using .NET Framework 3.5
-            System.Collections.Generic.Dictionary<V, V> theSet;
+            HashSet<TValue> theSet;
             if (!theMap.TryGetValue(key, out theSet))
             {
-                theSet = new System.Collections.Generic.Dictionary<V, V>(23);
+                theSet = new HashSet<TValue>();
                 theMap[key] = theSet;
             }
-            foreach(V item in vals.Keys)
-            {
-                if (!theSet.ContainsKey(item))
-                {
-                    theSet.Add(item, item);
-                }
-            }
+		    theSet.UnionWith(vals);
 			return theSet.Count;
 		}
 	}

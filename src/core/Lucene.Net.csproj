@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -87,6 +86,8 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\build\bin\core\Release\</OutputPath>
@@ -99,14 +100,16 @@
     <DocumentationFile>..\..\build\bin\core\Release\Lucene.Net.XML</DocumentationFile>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>618</NoWarn>
+    <NoWarn>618,1591</NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <DebugSymbols>true</DebugSymbols>
+    <CodeAnalysisRuleSet>JustDesign.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -116,13 +119,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.configuration" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Runtime.Remoting">
-      <Name>System.Runtime.Remoting</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -134,7 +130,6 @@
     <Compile Include="Analysis\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\BaseCharFilter.cs" />
     <Compile Include="Analysis\CachingTokenFilter.cs" />
-    <Compile Include="Analysis\CharacterCache.cs" />
     <Compile Include="Analysis\CharArraySet.cs" />
     <Compile Include="Analysis\CharFilter.cs" />
     <Compile Include="Analysis\CharReader.cs" />
@@ -178,7 +173,6 @@
     <Compile Include="Analysis\SimpleAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\SinkTokenizer.cs" />
     <Compile Include="Analysis\Standard\StandardAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -196,7 +190,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\TeeSinkTokenFilter.cs" />
-    <Compile Include="Analysis\TeeTokenFilter.cs" />
     <Compile Include="Analysis\Token.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -221,7 +214,6 @@
     <Compile Include="Analysis\TokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Analysis\TokenWrapper.cs" />
     <Compile Include="Analysis\WhitespaceAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -290,7 +282,6 @@
     <Compile Include="Index\CorruptIndexException.cs" />
     <Compile Include="Index\DefaultSkipListReader.cs" />
     <Compile Include="Index\DefaultSkipListWriter.cs" />
-    <Compile Include="Index\DirectoryOwningReader.cs" />
     <Compile Include="Index\DirectoryReader.cs" />
     <Compile Include="Index\DocConsumer.cs" />
     <Compile Include="Index\DocConsumerPerThread.cs" />
@@ -341,7 +332,6 @@
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerThread.cs" />
     <Compile Include="Index\IndexCommit.cs" />
-    <Compile Include="Index\IndexCommitPoint.cs" />
     <Compile Include="Index\IndexDeletionPolicy.cs" />
     <Compile Include="Index\IndexFileDeleter.cs">
       <SubType>Code</SubType>
@@ -350,9 +340,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\IndexFileNames.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\IndexModifier.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Index\IndexReader.cs">
@@ -546,9 +533,6 @@
     <Compile Include="Search\ConstantScoreQuery.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\ConstantScoreRangeQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\DefaultSimilarity.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -569,7 +553,6 @@
     <Compile Include="Search\Explanation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\ExtendedFieldCache.cs" />
     <Compile Include="Search\FieldCache.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -584,9 +567,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldDocSortedHitQueue.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\FieldSortedHitQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\FieldValueHitQueue.cs" />
@@ -610,7 +590,6 @@
     <Compile Include="Search\Function\FieldScoreQuery.cs" />
     <Compile Include="Search\Function\FloatFieldSource.cs" />
     <Compile Include="Search\Function\IntFieldSource.cs" />
-    <Compile Include="Search\Function\MultiValueSource.cs" />
     <Compile Include="Search\Function\OrdFieldSource.cs" />
     <Compile Include="Search\Function\ReverseOrdFieldSource.cs" />
     <Compile Include="Search\Function\ShortFieldSource.cs" />
@@ -622,20 +601,7 @@
     <Compile Include="Search\FuzzyTermEnum.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\Hit.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\HitCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\HitCollectorWrapper.cs" />
-    <Compile Include="Search\HitIterator.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\HitQueue.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\Hits.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\IndexSearcher.cs">
@@ -660,7 +626,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Payloads\AveragePayloadFunction.cs" />
-    <Compile Include="Search\Payloads\BoostingTermQuery.cs" />
     <Compile Include="Search\Payloads\MaxPayloadFunction.cs" />
     <Compile Include="Search\Payloads\MinPayloadFunction.cs" />
     <Compile Include="Search\Payloads\PayloadFunction.cs" />
@@ -690,19 +655,10 @@
     <Compile Include="Search\Query.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\QueryFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\QueryTermVector.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\QueryWrapperFilter.cs" />
-    <Compile Include="Search\RangeFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\RangeQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\ReqExclScorer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -711,9 +667,6 @@
     </Compile>
     <Compile Include="Search\ScoreCachingWrappingScorer.cs" />
     <Compile Include="Search\ScoreDoc.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\ScoreDocComparator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Scorer.cs">
@@ -731,16 +684,11 @@
     <Compile Include="Search\SimilarityDelegator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Search\SingleTermEnum.cs" />
     <Compile Include="Search\SloppyPhraseScorer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\Sort.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\SortComparator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\SortComparatorSource.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\SortField.cs">
@@ -793,19 +741,12 @@
     <Compile Include="Search\TermScorer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Search\TimeLimitedCollector.cs" />
     <Compile Include="Search\TimeLimitingCollector.cs" />
-    <Compile Include="Search\TopDocCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\TopDocs.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Search\TopDocsCollector.cs" />
     <Compile Include="Search\TopFieldCollector.cs" />
-    <Compile Include="Search\TopFieldDocCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\TopFieldDocs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -819,23 +760,33 @@
     <Compile Include="Search\WildcardTermEnum.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\AlreadyClosedException.cs" />
+    <Compile Include="Store\AlreadyClosedException.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\BufferedIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\BufferedIndexOutput.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\CheckSumIndexInput.cs" />
-    <Compile Include="Store\CheckSumIndexOutput.cs" />
+    <Compile Include="Store\CheckSumIndexInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\CheckSumIndexOutput.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\Directory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\FileSwitchDirectory.cs" />
+    <Compile Include="Store\FileSwitchDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\FSDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\FSLockFactory.cs" />
+    <Compile Include="Store\FSLockFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\IndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -848,21 +799,33 @@
     <Compile Include="Store\LockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\LockObtainFailedException.cs" />
-    <Compile Include="Store\LockReleaseFailedException.cs" />
-    <Compile Include="Store\LockStressTest.cs" />
-    <Compile Include="Store\LockVerifyServer.cs" />
+    <Compile Include="Store\LockObtainFailedException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\LockReleaseFailedException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\LockStressTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\LockVerifyServer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\MMapDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\NativeFSLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\NIOFSDirectory.cs" />
+    <Compile Include="Store\NIOFSDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\NoLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\NoSuchDirectoryException.cs" />
+    <Compile Include="Store\NoSuchDirectoryException.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\RAMDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -875,17 +838,48 @@
     <Compile Include="Store\RAMOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\SimpleFSDirectory.cs" />
+    <Compile Include="Store\SimpleFSDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Store\SimpleFSLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Store\SingleInstanceLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Store\VerifyingLockFactory.cs" />
-    <Compile Include="SupportClass.cs">
+    <Compile Include="Store\VerifyingLockFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\AppSettings.cs" />
+    <Compile Include="Support\AttributeImplItem.cs" />
+    <Compile Include="Support\BitSetSupport.cs" />
+    <Compile Include="Support\BuildType.cs" />
+    <Compile Include="Support\Character.cs" />
+    <Compile Include="Support\CloseableThreadLocalProfiler.cs" />
+    <Compile Include="Support\CollectionsHelper.cs" />
+    <Compile Include="Support\Compare.cs" />
+    <Compile Include="Support\CRC32.cs" />
+    <Compile Include="Support\Cryptography.cs" />
+    <Compile Include="Support\Deflater.cs" />
+    <Compile Include="Support\Double.cs" />
+    <Compile Include="Support\EquatableList.cs" />
+    <Compile Include="Support\FileSupport.cs" />
+    <Compile Include="Support\GeneralKeyedCollection.cs" />
+    <Compile Include="Support\HashMap.cs" />
+    <Compile Include="Support\Inflater.cs" />
+    <Compile Include="Support\IThreadRunnable.cs" />
+    <Compile Include="Support\Number.cs" />
+    <Compile Include="Support\OS.cs" />
+    <Compile Include="Support\SharpZipLib.cs" />
+    <Compile Include="Support\Single.cs" />
+    <Compile Include="Support\IChecksum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Support\TextSupport.cs" />
+    <Compile Include="Support\ThreadClass.cs" />
+    <Compile Include="Support\WeakDictionary.cs" />
+    <Compile Include="Support\WeakHashTable.cs" />
+    <Compile Include="Support\WeakReference.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Attribute.cs" />
     <Compile Include="Util\AttributeImpl.cs" />
@@ -901,6 +895,7 @@
     </Compile>
     <Compile Include="Util\DocIdBitSet.cs" />
     <Compile Include="Util\FieldCacheSanityChecker.cs" />
+    <Compile Include="Util\IdentityDictionary.cs" />
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\MapOfSets.cs" />
     <Compile Include="Util\MemoryModel.cs" />
@@ -941,21 +936,10 @@
     <None Include="Lucene.Net.Search.RemoteSearchable.config" />
     <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.snk" />
+    <Content Include="Analysis\Standard\READ_BEFORE_REGENERATING.txt" />
+    <Content Include="ChangeNotes.txt" />
+    <Content Include="FileDiffs.txt" />
     <None Include="QueryParser\QueryParser.jj" />
-    <Content Include="Analysis\Package.html" />
-    <Content Include="Analysis\Standard\Package.html" />
-    <Content Include="Document\Package.html" />
-    <Content Include="Index\Package.html" />
-    <Content Include="Messages\Package.html" />
-    <Content Include="Overview.html" />
-    <Content Include="Package.html" />
-    <Content Include="QueryParser\Package.html" />
-    <Content Include="Search\Function\Package.html" />
-    <Content Include="Search\Package.html" />
-    <Content Include="Search\Payloads\Package.html" />
-    <Content Include="Search\Spans\Package.html" />
-    <Content Include="Store\Package.html" />
-    <Content Include="Util\Package.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -92,7 +91,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Similar\MoreLikeThisQuery.cs" />
     <Compile Include="Similar\SimilarityQueries.cs" />
-    <Compile Include="Support.cs" />
     <Compile Include="TermsFilter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FileDiffs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -64,13 +64,13 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override void RecycleByteBlocks(System.Collections.ArrayList blocks)
+            public override void RecycleByteBlocks(System.Collections.Generic.IList<byte[]> blocks)
             {
                 lock (this)
                 {
                     int size = blocks.Count;
                     for (int i = 0; i < size; i++)
-                        freeByteBlocks.Add((byte[])blocks[i]);
+                        freeByteBlocks.Add(blocks[i]);
                 }
             }
         }

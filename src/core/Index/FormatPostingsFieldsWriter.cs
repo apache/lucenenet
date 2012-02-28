@@ -48,8 +48,8 @@ namespace Lucene.Net.Index
 			// can provide skip data or not
 			skipListWriter = new DefaultSkipListWriter(termsOut.skipInterval, termsOut.maxSkipLevels, totalNumDocs, null, null);
 			
-			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.SegmentFileName(IndexFileNames.TERMS_EXTENSION));
-			SupportClass.CollectionsHelper.AddIfNotContains(state.flushedFiles, state.SegmentFileName(IndexFileNames.TERMS_INDEX_EXTENSION));
+			state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_EXTENSION));
+			state.flushedFiles.Add(state.SegmentFileName(IndexFileNames.TERMS_INDEX_EXTENSION));
 			
 			termsWriter = new FormatPostingsTermsWriter(state, this);
 		}
@@ -64,8 +64,8 @@ namespace Lucene.Net.Index
 		/// <summary>Called when we are done adding everything. </summary>
 		internal override void  Finish()
 		{
-			termsOut.Close();
-			termsWriter.Close();
+			termsOut.Dispose();
+			termsWriter.Dispose();
 		}
 	}
 }

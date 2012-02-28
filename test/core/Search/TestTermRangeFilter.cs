@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
 		
         [Test]
 		public virtual void  TestRangeFilterId()
-		{
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+        {
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			int medId = ((maxId - minId) / 2);
@@ -134,9 +134,9 @@ namespace Lucene.Net.Search
 		
         [Test]
 		public virtual void  TestRangeFilterIdCollating()
-		{
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+        {
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("en").CompareInfo;
@@ -151,77 +151,77 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 			
-			Hits result;
 			Query q = new TermQuery(new Term("body", "body"));
 			
 			// test id, bounded on both ends
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, maxIP, T, T, c));
-			Assert.AreEqual(numDocs, result.Length(), "find all");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, maxIP, T, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "all but last");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, maxIP, F, T, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "all but first");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, maxIP, F, F, c));
-			Assert.AreEqual(numDocs - 2, result.Length(), "all but ends");
-			
-			result = search.Search(q, new TermRangeFilter("id", medIP, maxIP, T, T, c));
-			Assert.AreEqual(1 + maxId - medId, result.Length(), "med and up");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, medIP, T, T, c));
-			Assert.AreEqual(1 + medId - minId, result.Length(), "up to med");
+            int numHits = search.Search(q, new TermRangeFilter("id", minIP, maxIP, T, T, c), 1000).TotalHits;
+            Assert.AreEqual(numDocs, numHits, "find all");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, maxIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "find all");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, maxIP, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "all but last");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, maxIP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "all but first");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, maxIP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 2, numHits, "all but ends");
+
+            numHits = search.Search(q, new TermRangeFilter("id", medIP, maxIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1 + maxId - medId, numHits, "med and up");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, medIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1 + medId - minId, numHits, "up to med");
 			
 			// unbounded id
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, null, T, F, c));
-			Assert.AreEqual(numDocs, result.Length(), "min and up");
-			
-			result = search.Search(q, new TermRangeFilter("id", null, maxIP, F, T, c));
-			Assert.AreEqual(numDocs, result.Length(), "max and down");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, null, F, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "not min, but up");
-			
-			result = search.Search(q, new TermRangeFilter("id", null, maxIP, F, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "not max, but down");
-			
-			result = search.Search(q, new TermRangeFilter("id", medIP, maxIP, T, F, c));
-			Assert.AreEqual(maxId - medId, result.Length(), "med and up, not max");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, medIP, F, T, c));
-			Assert.AreEqual(medId - minId, result.Length(), "not min, up to med");
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, null, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "min and up");
+
+            numHits = search.Search(q, new TermRangeFilter("id", null, maxIP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "max and down");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, null, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "not min, but up");
+
+            numHits = search.Search(q, new TermRangeFilter("id", null, maxIP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "not max, but down");
+
+            numHits = search.Search(q, new TermRangeFilter("id", medIP, maxIP, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(maxId - medId, numHits, "med and up, not max");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, medIP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(medId - minId, numHits, "not min, up to med");
 			
 			// very small sets
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, minIP, F, F, c));
-			Assert.AreEqual(0, result.Length(), "min,min,F,F");
-			result = search.Search(q, new TermRangeFilter("id", medIP, medIP, F, F, c));
-			Assert.AreEqual(0, result.Length(), "med,med,F,F");
-			result = search.Search(q, new TermRangeFilter("id", maxIP, maxIP, F, F, c));
-			Assert.AreEqual(0, result.Length(), "max,max,F,F");
-			
-			result = search.Search(q, new TermRangeFilter("id", minIP, minIP, T, T, c));
-			Assert.AreEqual(1, result.Length(), "min,min,T,T");
-			result = search.Search(q, new TermRangeFilter("id", null, minIP, F, T, c));
-			Assert.AreEqual(1, result.Length(), "nul,min,F,T");
-			
-			result = search.Search(q, new TermRangeFilter("id", maxIP, maxIP, T, T, c));
-			Assert.AreEqual(1, result.Length(), "max,max,T,T");
-			result = search.Search(q, new TermRangeFilter("id", maxIP, null, T, F, c));
-			Assert.AreEqual(1, result.Length(), "max,nul,T,T");
-			
-			result = search.Search(q, new TermRangeFilter("id", medIP, medIP, T, T, c));
-			Assert.AreEqual(1, result.Length(), "med,med,T,T");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, minIP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "min,min,F,F");
+            numHits = search.Search(q, new TermRangeFilter("id", medIP, medIP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "med,med,F,F");
+            numHits = search.Search(q, new TermRangeFilter("id", maxIP, maxIP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "max,max,F,F");
+
+            numHits = search.Search(q, new TermRangeFilter("id", minIP, minIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "min,min,T,T");
+            numHits = search.Search(q, new TermRangeFilter("id", null, minIP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "nul,min,F,T");
+
+            numHits = search.Search(q, new TermRangeFilter("id", maxIP, maxIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "max,max,T,T");
+            numHits = search.Search(q, new TermRangeFilter("id", maxIP, null, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "max,nul,T,T");
+
+            numHits = search.Search(q, new TermRangeFilter("id", medIP, medIP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "med,med,T,T");
 		}
 		
         [Test]
 		public virtual void  TestRangeFilterRand()
 		{
 			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+			IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.String minRP = Pad(signedIndex.minR);
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
 		{
 			
 			// using the unsigned index because collation seems to ignore hyphens
-			IndexReader reader = IndexReader.Open(unsignedIndex.index);
+            IndexReader reader = IndexReader.Open(unsignedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("en").CompareInfo;
@@ -297,53 +297,52 @@ namespace Lucene.Net.Search
 			
 			Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 			
-			Hits result;
 			Query q = new TermQuery(new Term("body", "body"));
 			
 			// test extremes, bounded on both ends
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, T, T, c));
-			Assert.AreEqual(numDocs, result.Length(), "find all");
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, T, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "all but biggest");
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, F, T, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "all but smallest");
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, F, F, c));
-			Assert.AreEqual(numDocs - 2, result.Length(), "all but extremes");
+
+            int numHits = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "find all");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "all but biggest");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "all but smallest");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, maxRP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 2, numHits, "all but extremes");
 			
 			// unbounded
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, null, T, F, c));
-			Assert.AreEqual(numDocs, result.Length(), "smallest and up");
-			
-			result = search.Search(q, new TermRangeFilter("rand", null, maxRP, F, T, c));
-			Assert.AreEqual(numDocs, result.Length(), "biggest and down");
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, null, F, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "not smallest, but up");
-			
-			result = search.Search(q, new TermRangeFilter("rand", null, maxRP, F, F, c));
-			Assert.AreEqual(numDocs - 1, result.Length(), "not biggest, but down");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, null, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "smallest and up");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", null, maxRP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs, numHits, "biggest and down");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, null, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "not smallest, but up");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", null, maxRP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(numDocs - 1, numHits, "not biggest, but down");
 			
 			// very small sets
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, minRP, F, F, c));
-			Assert.AreEqual(0, result.Length(), "min,min,F,F");
-			result = search.Search(q, new TermRangeFilter("rand", maxRP, maxRP, F, F, c));
-			Assert.AreEqual(0, result.Length(), "max,max,F,F");
-			
-			result = search.Search(q, new TermRangeFilter("rand", minRP, minRP, T, T, c));
-			Assert.AreEqual(1, result.Length(), "min,min,T,T");
-			result = search.Search(q, new TermRangeFilter("rand", null, minRP, F, T, c));
-			Assert.AreEqual(1, result.Length(), "nul,min,F,T");
-			
-			result = search.Search(q, new TermRangeFilter("rand", maxRP, maxRP, T, T, c));
-			Assert.AreEqual(1, result.Length(), "max,max,T,T");
-			result = search.Search(q, new TermRangeFilter("rand", maxRP, null, T, F, c));
-			Assert.AreEqual(1, result.Length(), "max,nul,T,T");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, minRP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "min,min,F,F");
+            numHits = search.Search(q, new TermRangeFilter("rand", maxRP, maxRP, F, F, c), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "max,max,F,F");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", minRP, minRP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "min,min,T,T");
+            numHits = search.Search(q, new TermRangeFilter("rand", null, minRP, F, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "nul,min,F,T");
+
+            numHits = search.Search(q, new TermRangeFilter("rand", maxRP, maxRP, T, T, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "max,max,T,T");
+            numHits = search.Search(q, new TermRangeFilter("rand", maxRP, null, T, F, c), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "max,nul,T,T");
 		}
 		
         [Test]
@@ -354,14 +353,14 @@ namespace Lucene.Net.Search
 			RAMDirectory farsiIndex = new RAMDirectory();
 			IndexWriter writer = new IndexWriter(farsiIndex, new SimpleAnalyzer(), T, IndexWriter.MaxFieldLength.LIMITED);
 			Document doc = new Document();
-			doc.Add(new Field("content", "\u0633\u0627\u0628", Field.Store.YES, Field.Index.UN_TOKENIZED));
-			doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.Add(new Field("content", "\u0633\u0627\u0628", Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			writer.AddDocument(doc);
 			
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(farsiIndex);
+
+            IndexReader reader = IndexReader.Open(farsiIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			Query q = new TermQuery(new Term("body", "body"));
 			
@@ -374,11 +373,11 @@ namespace Lucene.Net.Search
 			// orders the U+0698 character before the U+0633 character, so the single
 			// index Term below should NOT be returned by a TermRangeFilter with a Farsi
 			// Collator (or an Arabic one for the case when Farsi is not supported).
-			Hits result = search.Search(q, new TermRangeFilter("content", "\u062F", "\u0698", T, T, collator));
-			Assert.AreEqual(0, result.Length(), "The index Term should not be included.");
-			
-			result = search.Search(q, new TermRangeFilter("content", "\u0633", "\u0638", T, T, collator));
-			Assert.AreEqual(1, result.Length(), "The index Term should be included.");
+            int numHits = search.Search(q, new TermRangeFilter("content", "\u062F", "\u0698", T, T, collator), 1000).TotalHits;
+            Assert.AreEqual(0, numHits, "The index Term should not be included.");
+
+            numHits = search.Search(q, new TermRangeFilter("content", "\u0633", "\u0638", T, T, collator), 1000).TotalHits;
+            Assert.AreEqual(1, numHits, "The index Term should be included.");
 			search.Close();
 		}
 		
@@ -395,14 +394,14 @@ namespace Lucene.Net.Search
 			for (int docnum = 0; docnum < words.Length; ++docnum)
 			{
 				Document doc = new Document();
-				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.UN_TOKENIZED));
-				doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.NOT_ANALYZED));
+				doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(danishIndex);
+
+            IndexReader reader = IndexReader.Open(danishIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			Query q = new TermQuery(new Term("body", "body"));
 			
@@ -411,11 +410,12 @@ namespace Lucene.Net.Search
 			
 			// Unicode order would not include "H\u00C5T" in [ "H\u00D8T", "MAND" ],
 			// but Danish collation does.
-			Hits result = search.Search(q, new TermRangeFilter("content", "H\u00D8T", "MAND", F, F, collator));
-			Assert.AreEqual(1, result.Length(), "The index Term should be included.");
+            int numHits =
+                search.Search(q, new TermRangeFilter("content", "H\u00D8T", "MAND", F, F, collator), 1000).TotalHits;
+			Assert.AreEqual(1, numHits, "The index Term should be included.");
 			
-			result = search.Search(q, new TermRangeFilter("content", "H\u00C5T", "MAND", F, F, collator));
-			Assert.AreEqual(0, result.Length(), "The index Term should not be included.");
+			numHits = search.Search(q, new TermRangeFilter("content", "H\u00C5T", "MAND", F, F, collator), 1000).TotalHits;
+			Assert.AreEqual(0, numHits, "The index Term should not be included.");
 			search.Close();
 		}
 	}

@@ -35,8 +35,8 @@ namespace Lucene.Net.Store
 	/// <p/>When this happens, a <see cref="LockObtainFailedException" />
 	/// is hit when trying to create a writer, in which case you
 	/// need to explicitly clear the lock file first.  You can
-	/// either manually remove the file, or use the <see cref="Lucene.Net.Index.IndexReader.Unlock(Directory)" />
-	///
+	/// either manually remove the file, or use the 
+	/// <see cref="Lucene.Net.Index.IndexWriter.Unlock(Directory)" />
 	/// API.  But, first be certain that no writer is in fact
 	/// writing to the index otherwise you can easily corrupt
 	/// your index.<p/>
@@ -62,15 +62,6 @@ namespace Lucene.Net.Store
 		public SimpleFSLockFactory():this((System.IO.DirectoryInfo) null)
 		{
 		}
-		
-		/// <summary> Instantiate using the provided directory (as a File instance).</summary>
-		/// <param name="lockDir">where lock files should be created.
-		/// </param>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public SimpleFSLockFactory(System.IO.FileInfo lockDir)
-		{
-			SetLockDir(new System.IO.DirectoryInfo(lockDir.FullName));
-		}
 
         /// <summary> Instantiate using the provided directory (as a File instance).</summary>
         /// <param name="lockDir">where lock files should be created.
@@ -84,9 +75,8 @@ namespace Lucene.Net.Store
 		/// <param name="lockDirName">where lock files should be created.
 		/// </param>
 		public SimpleFSLockFactory(System.String lockDirName)
+            : this(new System.IO.DirectoryInfo(lockDirName))
 		{
-			lockDir = new System.IO.DirectoryInfo(lockDirName);
-			SetLockDir(lockDir);
 		}
 		
 		public override Lock MakeLock(System.String lockName)

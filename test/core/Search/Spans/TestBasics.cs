@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
 			
 			writer.Close();
 			
-			searcher = new IndexSearcher(directory);
+			searcher = new IndexSearcher(directory, true);
 		}
 		
 		[Test]

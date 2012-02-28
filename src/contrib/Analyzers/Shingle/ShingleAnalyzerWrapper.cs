@@ -19,77 +19,89 @@ using System;
 using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analyzers.Shingle
 {
-    /// <summary>
-    /// A ShingleAnalyzerWrapper wraps a ShingleFilter around another Analyzer.
-    /// 
-    /// <p>A shingle is another name for a token based n-gram.</p>
-    /// </summary>
+    /**
+ * A ShingleAnalyzerWrapper wraps a {@link ShingleFilter} around another {@link Analyzer}.
+ * <p>
+ * A shingle is another name for a token based n-gram.
+ * </p>
+ */
     public class ShingleAnalyzerWrapper : Analyzer
     {
-        protected Analyzer DefaultAnalyzer;
-        protected int MaxShingleSize = 2;
-        protected bool OutputUnigrams = true;
 
-        /// <summary>
-        /// Wraps StandardAnalyzer. 
-        /// </summary>
-        public ShingleAnalyzerWrapper()
-        {
-            DefaultAnalyzer = new StandardAnalyzer();
-            SetOverridesTokenStreamMethod(typeof (ShingleAnalyzerWrapper));
-        }
-
-        public ShingleAnalyzerWrapper(int nGramSize)
-            : this()
-        {
-            MaxShingleSize = nGramSize;
-        }
+        protected Analyzer defaultAnalyzer;
+        protected int maxShingleSize = 2;
+        protected bool outputUnigrams = true;
 
         public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer)
         {
-            DefaultAnalyzer = defaultAnalyzer;
-            SetOverridesTokenStreamMethod(typeof (ShingleAnalyzerWrapper));
+            this.defaultAnalyzer = defaultAnalyzer;
+            SetOverridesTokenStreamMethod<ShingleAnalyzerWrapper>();
         }
 
-        public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer, int maxShingleSize) : this(defaultAnalyzer)
+        public ShingleAnalyzerWrapper(Analyzer defaultAnalyzer, int maxShingleSize)
+            : this(defaultAnalyzer)
         {
-            MaxShingleSize = maxShingleSize;
+
+            this.maxShingleSize = maxShingleSize;
         }
 
-        /// <summary>
-        /// The max shingle (ngram) size
-        /// </summary>
-        /// <returns></returns>
+        /**
+         * Wraps {@link StandardAnalyzer}. 
+         */
+        public ShingleAnalyzerWrapper(Version matchVersion)
+        {
+            this.defaultAnalyzer = new StandardAnalyzer(matchVersion);
+            SetOverridesTokenStreamMethod<ShingleAnalyzerWrapper>();
+        }
+
+        /**
+         * Wraps {@link StandardAnalyzer}. 
+         */
+        public ShingleAnalyzerWrapper(Version matchVersion, int nGramSize)
+            : this(matchVersion)
+        {
+            this.maxShingleSize = nGramSize;
+        }
+
+        /**
+         * The max shingle (ngram) size
+         * 
+         * @return The max shingle (ngram) size
+         */
         public int GetMaxShingleSize()
         {
-            return MaxShingleSize;
+            return maxShingleSize;
         }
 
-        /// <summary>
-        /// Set the maximum size of output shingles
-        /// </summary>
-        /// <param name="maxShingleSize">max shingle size</param>
+        /**
+         * Set the maximum size of output shingles
+         * 
+         * @param maxShingleSize max shingle size
+         */
         public void SetMaxShingleSize(int maxShingleSize)
         {
-            MaxShingleSize = maxShingleSize;
+            this.maxShingleSize = maxShingleSize;
         }
 
         public bool IsOutputUnigrams()
         {
-            return OutputUnigrams;
+            return outputUnigrams;
         }
 
-        /// <summary>
-        /// Shall the filter pass the original tokens (the "unigrams") to the output
-        /// stream?
-        /// </summary>
-        /// <param name="outputUnigrams">Whether or not the filter shall pass the original tokens to the output stream</param>
+        /**
+         * Shall the filter pass the original tokens (the "unigrams") to the output
+         * stream?
+         * 
+         * @param outputUnigrams Whether or not the filter shall pass the original
+         *        tokens to the output stream
+         */
         public void SetOutputUnigrams(bool outputUnigrams)
         {
-            OutputUnigrams = outputUnigrams;
+            this.outputUnigrams = outputUnigrams;
         }
 
         public override TokenStream TokenStream(String fieldName, TextReader reader)
@@ -97,19 +109,23 @@ namespace Lucene.Net.Analyzers.Shingle
             TokenStream wrapped;
             try
             {
-                wrapped = DefaultAnalyzer.ReusableTokenStream(fieldName, reader);
+                wrapped = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                wrapped = DefaultAnalyzer.TokenStream(fieldName, reader);
+                wrapped = defaultAnalyzer.TokenStream(fieldName, reader);
             }
-
-            var filter = new ShingleFilter(wrapped);
-            filter.SetMaxShingleSize(MaxShingleSize);
-            filter.SetOutputUnigrams(OutputUnigrams);
-
+            ShingleFilter filter = new ShingleFilter(wrapped);
+            filter.SetMaxShingleSize(maxShingleSize);
+            filter.SetOutputUnigrams(outputUnigrams);
             return filter;
         }
+
+        class SavedStreams
+        {
+            protected internal TokenStream wrapped;
+            protected internal ShingleFilter shingle;
+        };
 
         public override TokenStream ReusableTokenStream(String fieldName, TextReader reader)
         {
@@ -121,47 +137,32 @@ namespace Lucene.Net.Analyzers.Shingle
                 return TokenStream(fieldName, reader);
             }
 
-            var streams = (SavedStreams) GetPreviousTokenStream();
-
+            SavedStreams streams = (SavedStreams)GetPreviousTokenStream();
             if (streams == null)
             {
-                streams = new SavedStreams
-                              {
-                                  Wrapped = DefaultAnalyzer.ReusableTokenStream(fieldName, reader)
-                              };
-                streams.Shingle = new ShingleFilter(streams.Wrapped);
+                streams = new SavedStreams();
+                streams.wrapped = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
+                streams.shingle = new ShingleFilter(streams.wrapped);
                 SetPreviousTokenStream(streams);
             }
             else
             {
-                var result = DefaultAnalyzer.ReusableTokenStream(fieldName, reader);
-                if (result == streams.Wrapped)
+                TokenStream result = defaultAnalyzer.ReusableTokenStream(fieldName, reader);
+                if (result == streams.wrapped)
                 {
-                    // the wrapped analyzer reused the stream 
-                    streams.Shingle.Reset();
+                    /* the wrapped analyzer reused the stream */
+                    streams.shingle.Reset();
                 }
                 else
                 {
-                    // the wrapped analyzer did not, create a new shingle around the new one 
-                    streams.Wrapped = result;
-                    streams.Shingle = new ShingleFilter(streams.Wrapped);
+                    /* the wrapped analyzer did not, create a new shingle around the new one */
+                    streams.wrapped = result;
+                    streams.shingle = new ShingleFilter(streams.wrapped);
                 }
             }
-
-            streams.Shingle.SetMaxShingleSize(MaxShingleSize);
-            streams.Shingle.SetOutputUnigrams(OutputUnigrams);
-
-            return streams.Shingle;
+            streams.shingle.SetMaxShingleSize(maxShingleSize);
+            streams.shingle.SetOutputUnigrams(outputUnigrams);
+            return streams.shingle;
         }
-
-        #region Nested type: SavedStreams
-
-        private class SavedStreams
-        {
-            public ShingleFilter Shingle;
-            public TokenStream Wrapped;
-        } ;
-
-        #endregion
     }
 }

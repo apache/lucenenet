@@ -89,9 +89,9 @@ namespace Lucene.Net.Index
 						// un-tokenized field
 						System.String stringValue = field.StringValue();
 						int valueLength = stringValue.Length;
-						perThread.singleTokenTokenStream.Reinit(stringValue, 0, valueLength);
-						fieldState.attributeSource = perThread.singleTokenTokenStream;
-						consumer.Start(field);
+						perThread.singleToken.Reinit(stringValue, 0, valueLength);
+						fieldState.attributeSource = perThread.singleToken;
+					    consumer.Start(field);
 						
 						bool success = false;
 						try
@@ -144,9 +144,6 @@ namespace Lucene.Net.Index
 						
 						int startLength = fieldState.length;
 						
-						// deprecated
-						bool allowMinus1Position = docState.allowMinus1Position;
-						
 						try
 						{
 							int offsetEnd = fieldState.offset - 1;
@@ -154,9 +151,9 @@ namespace Lucene.Net.Index
 							bool hasMoreTokens = stream.IncrementToken();
 							
 							fieldState.attributeSource = stream;
-							
-							OffsetAttribute offsetAttribute = (OffsetAttribute) fieldState.attributeSource.AddAttribute(typeof(OffsetAttribute));
-							PositionIncrementAttribute posIncrAttribute = (PositionIncrementAttribute) fieldState.attributeSource.AddAttribute(typeof(PositionIncrementAttribute));
+
+                            OffsetAttribute offsetAttribute = fieldState.attributeSource.AddAttribute<OffsetAttribute>();
+							PositionIncrementAttribute posIncrAttribute = fieldState.attributeSource.AddAttribute<PositionIncrementAttribute>();
 							
 							consumer.Start(field);
 							
@@ -175,7 +172,7 @@ namespace Lucene.Net.Index
 								
 								int posIncr = posIncrAttribute.GetPositionIncrement();
 								fieldState.position += posIncr;
-								if (allowMinus1Position || fieldState.position > 0)
+								if (fieldState.position > 0)
 								{
 									fieldState.position--;
 								}

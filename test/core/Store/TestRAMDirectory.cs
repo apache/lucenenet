@@ -17,7 +17,7 @@
 
 using System;
 using System.IO;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -34,15 +34,11 @@ namespace Lucene.Net.Store
 	
 	/// <summary> JUnit testcase to test RAMDirectory. RAMDirectory itself is used in many testcases,
 	/// but not one of them uses an different constructor other than the default constructor.
-	/// 
-	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 150537 2004-09-28 22:45:26 +0200 (Di, 28 Sep 2004) cutting $
-	/// </version>
     [TestFixture]
 	public class TestRAMDirectory:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:ThreadClass
 		{
 			public AnonymousClassThread(int num, Lucene.Net.Index.IndexWriter writer, Lucene.Net.Store.MockRAMDirectory ramDir, TestRAMDirectory enclosingInstance)
 			{
@@ -85,7 +81,7 @@ namespace Lucene.Net.Store
 			}
 		}
 		
-		private System.IO.FileInfo indexDir = null;
+		private System.IO.DirectoryInfo indexDir = null;
 		
 		// add enough document so that the index will be larger than RAMDirectory.READ_BUFFER_SIZE
 		private int docsToAdd = 500;
@@ -98,9 +94,10 @@ namespace Lucene.Net.Store
 			System.String tempDir = System.IO.Path.GetTempPath();
 			if (tempDir == null)
 				throw new System.IO.IOException("java.io.tmpdir undefined, cannot run test");
-			indexDir = new System.IO.FileInfo(Path.Combine(tempDir, "RAMDirIndex"));
-			
-			IndexWriter writer = new IndexWriter(indexDir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			indexDir = new System.IO.DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
+
+		    Directory dir = FSDirectory.Open(indexDir);
+			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			// add some documents
 			Document doc = null;
 			for (int i = 0; i < docsToAdd; i++)
@@ -109,8 +106,9 @@ namespace Lucene.Net.Store
 				doc.Add(new Field("content", English.IntToEnglish(i).Trim(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
-			Assert.AreEqual(docsToAdd, writer.DocCount());
+			Assert.AreEqual(docsToAdd, writer.MaxDoc());
 			writer.Close();
+		    dir.Close();
 		}
 		
         [Test]
@@ -127,63 +125,7 @@ namespace Lucene.Net.Store
 			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 			
 			// open reader to test document count
-			IndexReader reader = IndexReader.Open(ramDir);
-			Assert.AreEqual(docsToAdd, reader.NumDocs());
-			
-			// open search zo check if all doc's are there
-			IndexSearcher searcher = new IndexSearcher(reader);
-			
-			// search for all documents
-			for (int i = 0; i < docsToAdd; i++)
-			{
-				Document doc = searcher.Doc(i);
-				Assert.IsTrue(doc.GetField("content") != null);
-			}
-			
-			// cleanup
-			reader.Close();
-			searcher.Close();
-		}
-		
-        [Test]
-		public virtual void  TestRAMDirectoryFile()
-		{
-			
-			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir);
-			
-			// Check size
-			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
-			
-			// open reader to test document count
-			IndexReader reader = IndexReader.Open(ramDir);
-			Assert.AreEqual(docsToAdd, reader.NumDocs());
-			
-			// open search zo check if all doc's are there
-			IndexSearcher searcher = new IndexSearcher(reader);
-			
-			// search for all documents
-			for (int i = 0; i < docsToAdd; i++)
-			{
-				Document doc = searcher.Doc(i);
-				Assert.IsTrue(doc.GetField("content") != null);
-			}
-			
-			// cleanup
-			reader.Close();
-			searcher.Close();
-		}
-		
-        [Test]
-		public virtual void  TestRAMDirectoryString()
-		{
-			
-			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.FullName);
-			
-			// Check size
-			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
-			
-			// open reader to test document count
-			IndexReader reader = IndexReader.Open(ramDir);
+			IndexReader reader = IndexReader.Open(ramDir, true);
 			Assert.AreEqual(docsToAdd, reader.NumDocs());
 			
 			// open search zo check if all doc's are there
@@ -206,15 +148,16 @@ namespace Lucene.Net.Store
 		
         [Test]
 		public virtual void  TestRAMDirectorySize()
-		{
-			
-			MockRAMDirectory ramDir = new MockRAMDirectory(indexDir.FullName);
+        {
+            Directory dir = FSDirectory.Open(indexDir);
+			MockRAMDirectory ramDir = new MockRAMDirectory(dir);
+            dir.Close();
 			IndexWriter writer = new IndexWriter(ramDir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
 			writer.Optimize();
 			
 			Assert.AreEqual(ramDir.SizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 			
-			SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[numThreads];
+			ThreadClass[] threads = new ThreadClass[numThreads];
 			for (int i = 0; i < numThreads; i++)
 			{
 				int num = i;

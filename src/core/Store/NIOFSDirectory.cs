@@ -23,13 +23,10 @@ namespace Lucene.Net.Store
     /// </summary>
     public class NIOFSDirectory : Lucene.Net.Store.FSDirectory
     {
-        public NIOFSDirectory()
+        public NIOFSDirectory(System.IO.DirectoryInfo dir, LockFactory lockFactory)
+            : base(dir, lockFactory)
         {
             throw new System.NotImplementedException("Waiting for volunteers to implement this class");
-
-        }
-        public NIOFSDirectory(System.IO.DirectoryInfo dir,LockFactory lockFactory)
-        {
         }
 
         /// <summary>
@@ -41,6 +38,11 @@ namespace Lucene.Net.Store
             {
                 throw new System.NotImplementedException("Waiting for volunteers to implement this class");
             }
+        }
+
+        public override IndexOutput CreateOutput(string name)
+        {
+            throw new System.NotImplementedException("Waiting for volunteers to implement this class");
         }
     }
 }

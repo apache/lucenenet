@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
         public void SetUp()
         {
             directory = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(), true);
+            IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
             //Add series of docs with filterable fields : url, text and dates  flags
             AddDoc(writer, "http://lucene.apache.org", "lucene 1.4.3 available", "20040101");
@@ -84,10 +84,10 @@ namespace Lucene.Net.Search
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
             Hashtable results = new Hashtable();
-            Hits h = searcher.Search(tq, df);
-            for (int i = 0; i < h.Length(); i++)
+            var h = searcher.Search(tq, df, 1000).ScoreDocs;
+            for (int i = 0; i < h.Length; i++)
             {
-                Document d = h.Doc(i);
+                Document d = searcher.Doc(h[i].doc);
                 String url = d.Get(KEY_FIELD);
                 Assert.IsFalse(results.Contains(url), "No duplicate urls should be returned");
                 results.Add(url,url);
@@ -98,12 +98,12 @@ namespace Lucene.Net.Search
         public void TestNoFilter()
         {
             Hashtable results = new Hashtable();
-            Hits h = searcher.Search(tq);
-            Assert.IsTrue(h.Length() > 0, "Default searching should have found some matches");
+            ScoreDoc[] h = searcher.Search(tq, null, 1000).ScoreDocs;
+            Assert.IsTrue(h.Length > 0, "Default searching should have found some matches");
             bool dupsFound = false;
-            for (int i = 0; i < h.Length(); i++)
+            for (int i = 0; i < h.Length; i++)
             {
-                Document d = h.Doc(i);
+                Document d = searcher.Doc(h[i].doc);
                 String url = d.Get(KEY_FIELD);
                 if (!dupsFound)
                     dupsFound = results.Contains(url);
@@ -118,11 +118,11 @@ namespace Lucene.Net.Search
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
             df.SetProcessingMode(DuplicateFilter.PM_FAST_INVALIDATION);
             Hashtable results = new Hashtable();
-            Hits h = searcher.Search(tq, df);
-            Assert.IsTrue(h.Length() > 0, "Filtered searching should have found some matches");
-            for (int i = 0; i < h.Length(); i++)
+            ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
+            Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
+            for (int i = 0; i < h.Length; i++)
             {
-                Document d = h.Doc(i);
+                Document d = searcher.Doc(h[i].doc);
                 String url = d.Get(KEY_FIELD);
                 Assert.IsFalse(results.Contains(url), "No duplicate urls should be returned");
                 results.Add(url,url);
@@ -135,11 +135,11 @@ namespace Lucene.Net.Search
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
             df.SetKeepMode(DuplicateFilter.KM_USE_LAST_OCCURRENCE);
-            Hits h = searcher.Search(tq, df);
-            Assert.IsTrue(h.Length() > 0, "Filtered searching should have found some matches");
-            for (int i = 0; i < h.Length(); i++)
+            ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
+            Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
+            for (int i = 0; i < h.Length; i++)
             {
-                Document d = h.Doc(i);
+                Document d = searcher.Doc(h[i].doc);
                 String url = d.Get(KEY_FIELD);
                 TermDocs td = reader.TermDocs(new Term(KEY_FIELD, url));
                 int lastDoc = 0;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
                 {
                     lastDoc = td.Doc();
                 }
-                Assert.AreEqual(lastDoc, h.Id((i)), "Duplicate urls should return last doc");
+                Assert.AreEqual(lastDoc, h[i].doc, "Duplicate urls should return last doc");
             }
         }
 
@@ -156,17 +156,17 @@ namespace Lucene.Net.Search
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
             df.SetKeepMode(DuplicateFilter.KM_USE_FIRST_OCCURRENCE);
-            Hits h = searcher.Search(tq, df);
-            Assert.IsTrue(h.Length() > 0, "Filtered searching should have found some matches");
-            for (int i = 0; i < h.Length(); i++)
+            ScoreDoc[] h = searcher.Search(tq, df, 1000).ScoreDocs;
+            Assert.IsTrue(h.Length > 0, "Filtered searching should have found some matches");
+            for (int i = 0; i < h.Length; i++)
             {
-                Document d = h.Doc(i);
+                Document d = searcher.Doc(h[i].doc);
                 String url = d.Get(KEY_FIELD);
                 TermDocs td = reader.TermDocs(new Term(KEY_FIELD, url));
                 int lastDoc = 0;
                 td.Next();
                 lastDoc = td.Doc();
-                Assert.AreEqual(lastDoc, h.Id((i)), "Duplicate urls should return first doc");
+                Assert.AreEqual(lastDoc, h[i].doc, "Duplicate urls should return first doc");
             }
         }
     }

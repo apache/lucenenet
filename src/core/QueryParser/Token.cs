@@ -129,5 +129,5 @@ namespace Lucene.Net.QueryParsers
 			return NewToken(ofKind, null);
 		}
 	}
-	/* JavaCC - OriginalChecksum=37b1923f964a5a434f5ea3d6952ff200 (do not edit this line) */
+    /* JavaCC - OriginalChecksum=c147cc166a7cf8812c7c39bc8c5eb868 (do not edit this line) */
 }

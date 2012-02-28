@@ -77,8 +77,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             analyzerW = new WhitespaceAnalyzer();
             analyzerB = new BigramAnalyzer();
             analyzerK = new KeywordAnalyzer();
-            paW = new QueryParser(F, analyzerW);
-            paB = new QueryParser(F, analyzerB);
+            paW = new QueryParser(Util.Version.LUCENE_CURRENT, F, analyzerW);
+            paB = new QueryParser(Util.Version.LUCENE_CURRENT, F, analyzerB);
             dir = new RAMDirectory();
         }
 
@@ -238,8 +238,8 @@ namespace Lucene.Net.Search.Vectorhighlight
 
             void Init()
             {
-                termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-                offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+                termAtt = AddAttribute<TermAttribute>();
+                offsetAtt = AddAttribute<OffsetAttribute>();
             }
 
             TermAttribute termAtt = null;

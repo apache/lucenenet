@@ -62,8 +62,8 @@ namespace Lucene.Net.Analysis
 			protected internal CharFilter1(CharStream in_Renamed):base(in_Renamed)
 			{
 			}
-			
-			public /*protected internal*/ override int Correct(int currentOff)
+
+		    protected internal override int Correct(int currentOff)
 			{
 				return currentOff + 1;
 			}
@@ -75,8 +75,8 @@ namespace Lucene.Net.Analysis
 			protected internal CharFilter2(CharStream in_Renamed):base(in_Renamed)
 			{
 			}
-			
-			public /*protected internal*/ override int Correct(int currentOff)
+
+		    protected internal override int Correct(int currentOff)
 			{
 				return currentOff + 2;
 			}

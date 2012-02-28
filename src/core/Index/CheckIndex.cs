@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using AbstractField = Lucene.Net.Documents.AbstractField;
 using Document = Lucene.Net.Documents.Document;
 using Directory = Lucene.Net.Store.Directory;
@@ -40,14 +41,6 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class CheckIndex
 	{
-		
-		/// <summary>Default PrintStream for all CheckIndex instances.</summary>
-		/// <deprecated> Use <see cref="SetInfoStream" /> per instance,
-		/// instead. 
-		/// </deprecated>
-        [Obsolete("Use SetInfoStream per instance,instead.")]
-		public static System.IO.StreamWriter out_Renamed = null;
-		
 		private System.IO.StreamWriter infoStream;
 		private Directory dir;
 		
@@ -85,13 +78,13 @@ namespace Lucene.Net.Index
 			/// <summary>Empty unless you passed specific segments list to check as optional 3rd argument.</summary>
 			/// <seealso cref="CheckIndex.CheckIndex_Renamed_Method(System.Collections.IList)">
 			/// </seealso>
-			public System.Collections.IList segmentsChecked = new System.Collections.ArrayList();
+			public List<string> segmentsChecked = new List<string>();
 			
 			/// <summary>True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
 			public bool toolOutOfDate;
 			
 			/// <summary>List of <see cref="SegmentInfoStatus" /> instances, detailing status of each segment. </summary>
-			public System.Collections.IList segmentInfos = new System.Collections.ArrayList();
+			public IList<SegmentInfoStatus> segmentInfos = new List<SegmentInfoStatus>();
 			
 			/// <summary>Directory index is in. </summary>
 			public Directory dir;
@@ -115,7 +108,7 @@ namespace Lucene.Net.Index
 			public bool partial;
 			
 			/// <summary>Holds the userData of the last commit in the index </summary>
-            public System.Collections.Generic.IDictionary<string, string> userData;
+            public IDictionary<string, string> userData;
 			
 			/// <summary>Holds the status of each segment in the index.
 			/// See <see cref="SegmentInfos" />.
@@ -186,7 +179,7 @@ namespace Lucene.Net.Index
 				/// debugging details that IndexWriter records into
 				/// each segment it creates 
 				/// </summary>
-                public System.Collections.Generic.IDictionary<string, string> diagnostics;
+                public IDictionary<string, string> diagnostics;
 				
 				/// <summary>Status for testing of field norms (null if field norms could not be tested). </summary>
 				public FieldNormStatus fieldNormStatus;
@@ -260,7 +253,7 @@ namespace Lucene.Net.Index
 		public CheckIndex(Directory dir)
 		{
 			this.dir = dir;
-			infoStream = out_Renamed;
+			infoStream = null;
 		}
 		
 		/// <summary>Set infoStream where messages should go.  If null, no
@@ -298,29 +291,6 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Returns true if index is clean, else false. </summary>
-        /// <deprecated> Please instantiate a CheckIndex and then use <see cref="CheckIndex_Renamed_Method()" /> instead 
-		/// </deprecated>
-        [Obsolete("Please instantiate a CheckIndex and then use CheckIndex() instead")]
-		public static bool Check(Directory dir, bool doFix)
-		{
-			return Check(dir, doFix, null);
-		}
-		
-		/// <summary>Returns true if index is clean, else false.</summary>
-        /// <deprecated> Please instantiate a CheckIndex and then use <see cref="CheckIndex_Renamed_Method(System.Collections.IList)" /> instead 
-		/// </deprecated>
-        [Obsolete("Please instantiate a CheckIndex and then use CheckIndex(List) instead")]
-		public static bool Check(Directory dir, bool doFix, System.Collections.IList onlySegments)
-		{
-			CheckIndex checker = new CheckIndex(dir);
-			Status status = checker.CheckIndex_Renamed_Method(onlySegments);
-			if (doFix && !status.clean)
-				checker.FixIndex(status);
-			
-			return status.clean;
-		}
-		
 		/// <summary>Returns a <see cref="Status" /> instance detailing
 		/// the state of the index.
 		/// 
@@ -350,7 +320,7 @@ namespace Lucene.Net.Index
 		/// you only call this when the index is not opened by any
 		/// writer. 
 		/// </param>
-		public virtual Status CheckIndex_Renamed_Method(System.Collections.IList onlySegments)
+		public virtual Status CheckIndex_Renamed_Method(List<string> onlySegments)
 		{
             System.Globalization.NumberFormatInfo nf = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
 			SegmentInfos sis = new SegmentInfos();
@@ -444,7 +414,7 @@ namespace Lucene.Net.Index
 			System.String userDataString;
 			if (sis.GetUserData().Count > 0)
 			{
-				userDataString = " userData=" + SupportClass.CollectionsHelper.CollectionToString(sis.GetUserData());
+				userDataString = " userData=" + CollectionsHelper.CollectionToString(sis.GetUserData());
 			}
 			else
 			{
@@ -458,19 +428,14 @@ namespace Lucene.Net.Index
 				result.partial = true;
 				if (infoStream != null)
 					infoStream.Write("\nChecking only these segments:");
-				System.Collections.IEnumerator it = onlySegments.GetEnumerator();
-				while (it.MoveNext())
+                foreach(string s in onlySegments)
 				{
 					if (infoStream != null)
 					{
-						infoStream.Write(" " + it.Current);
+						infoStream.Write(" " + s);
 					}
 				}
-                System.Collections.IEnumerator e = onlySegments.GetEnumerator();
-                while (e.MoveNext() == true)
-                {
-                    result.segmentsChecked.Add(e.Current);
-                }
+                result.segmentsChecked.AddRange(onlySegments);
                 Msg(":");
 			}
 			
@@ -510,11 +475,11 @@ namespace Lucene.Net.Index
 					segInfoStat.numFiles = info.Files().Count;
 					Msg(System.String.Format(nf, "    size (MB)={0:f}", new System.Object[] { (info.SizeInBytes() / (1024.0 * 1024.0)) }));
 					segInfoStat.sizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
-                    System.Collections.Generic.IDictionary<string, string> diagnostics = info.GetDiagnostics();
+                    IDictionary<string, string> diagnostics = info.GetDiagnostics();
 					segInfoStat.diagnostics = diagnostics;
 					if (diagnostics.Count > 0)
 					{
-						Msg("    diagnostics = " + SupportClass.CollectionsHelper.CollectionToString(diagnostics));
+						Msg("    diagnostics = " + CollectionsHelper.CollectionToString(diagnostics));
 					}
 					
 					int docStoreOffset = info.GetDocStoreOffset();
@@ -541,7 +506,7 @@ namespace Lucene.Net.Index
 					}
 					if (infoStream != null)
 						infoStream.Write("    test: open reader.........");
-					reader = SegmentReader.Get(info);
+					reader = SegmentReader.Get(true, info, IndexReader.DEFAULT_TERMS_INDEX_DIVISOR);
 					
 					segInfoStat.openReaderPassed = true;
 					
@@ -580,7 +545,7 @@ namespace Lucene.Net.Index
 					{
 						infoStream.Write("    test: fields..............");
 					}
-                    System.Collections.Generic.ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+                    ICollection<string> fieldNames = reader.GetFieldNames(IndexReader.FieldOption.ALL);
 					Msg("OK [" + fieldNames.Count + " fields]");
 					segInfoStat.numFields = fieldNames.Count;
 					
@@ -637,7 +602,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Keeper
-				result.newSegments.Add(info.Clone());
+				result.newSegments.Add((SegmentInfo)info.Clone());
 			}
 			
 			if (0 == result.numBadSegments)
@@ -652,7 +617,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary> Test field norms.</summary>
-        private Status.FieldNormStatus TestFieldNorms(System.Collections.Generic.ICollection<string> fieldNames, SegmentReader reader)
+        private Status.FieldNormStatus TestFieldNorms(ICollection<string> fieldNames, SegmentReader reader)
 		{
 			Status.FieldNormStatus status = new Status.FieldNormStatus();
 			
@@ -663,11 +628,10 @@ namespace Lucene.Net.Index
 				{
 					infoStream.Write("    test: field norms.........");
 				}
-				System.Collections.IEnumerator it = fieldNames.GetEnumerator();
+
 				byte[] b = new byte[reader.MaxDoc()];
-				while (it.MoveNext())
+				foreach(string fieldName in fieldNames)
 				{
-					System.String fieldName = (System.String) it.Current;
                     if (reader.HasNorms(fieldName))
                     {
                         reader.Norms(fieldName, b, 0);
@@ -752,6 +716,7 @@ namespace Lucene.Net.Index
 							{
 								throw new System.SystemException("term " + term + ": doc " + doc + ": pos " + pos + " < lastPos " + lastPos);
 							}
+						    lastPos = pos;
 						}
 					}
 					
@@ -943,7 +908,7 @@ namespace Lucene.Net.Index
 		{
 			
 			bool doFix = false;
-			System.Collections.IList onlySegments = new System.Collections.ArrayList();
+			List<string> onlySegments = new List<string>();
 			System.String indexPath = null;
 			int i = 0;
 			while (i < args.Length)
@@ -997,7 +962,7 @@ namespace Lucene.Net.Index
 			Directory dir = null;
 			try
 			{
-				dir = FSDirectory.Open(new System.IO.FileInfo(indexPath));
+				dir = FSDirectory.Open(new System.IO.DirectoryInfo(indexPath));
 			}
 			catch (System.Exception t)
 			{

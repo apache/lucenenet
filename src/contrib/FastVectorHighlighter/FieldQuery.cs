@@ -78,10 +78,8 @@ namespace Lucene.Net.Search.Vectorhighlight
             else if (sourceQuery is DisjunctionMaxQuery)
             {
                 DisjunctionMaxQuery dmq = (DisjunctionMaxQuery)sourceQuery;
-                System.Collections.IEnumerator en = dmq.Iterator();
-                while (en.MoveNext())
+                foreach(Query query in dmq)
                 {
-                    Query query = (Query)en.Current;
                     flatten(query, flatQueries);
                 }
             }

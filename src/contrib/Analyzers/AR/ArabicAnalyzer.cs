@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections;
-
+using System.Linq;
 using Lucene.Net.Analysis;
-using Lucene.Net.Util;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.AR
 {
@@ -54,96 +56,96 @@ namespace Lucene.Net.Analysis.AR
         /**
          * Contains the stopwords used with the StopFilter.
          */
-        private Hashtable stoptable = new Hashtable();
-        /**
+        private readonly ISet<string> stoptable;
+        /**<summary>
          * The comment character in the stopwords file.  All lines prefixed with this will be ignored  
+         * </summary>
          */
+        [Obsolete("Use WordListLoader.GetWordSet(FileInfo, string) directly")]
         public static string STOPWORDS_COMMENT = "#";
+
+        /// <summary>
+        /// Returns an unmodifiable instance of the default stop-words set
+        /// </summary>
+        /// <returns>Returns an unmodifiable instance of the default stop-words set</returns>
+        public static ISet<string>  GetDefaultStopSet()
+        {
+            return DefaultSetHolder.DEFAULT_STOP_SET;
+        }
+
+        private static class DefaultSetHolder
+        {
+            internal static ISet<string> DEFAULT_STOP_SET;
+
+            static DefaultSetHolder()
+            {
+                try
+                {
+                    DEFAULT_STOP_SET = LoadDefaultStopWordSet();
+                }
+                catch (System.IO.IOException)
+                {
+                    // default set should always be present as it is part of the
+                    // distribution (JAR)
+                    throw new Exception("Unable to load default stopword set");
+                }
+            }
+
+            internal static ISet<string> LoadDefaultStopWordSet()
+            {
+                using (StreamReader reader = new StreamReader(System.Reflection.Assembly.GetAssembly(typeof(ArabicAnalyzer)).GetManifestResourceStream("Lucene.Net.Analysis.AR." + DEFAULT_STOPWORD_FILE)))
+                {
+                    return CharArraySet.UnmodifiableSet(CharArraySet.Copy(WordlistLoader.GetWordSet(reader, STOPWORDS_COMMENT)));
+                }
+            }
+        }
 
         private Version matchVersion;
 
         /**
          * Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
-         *
-         * @deprecated Use <see cref="ArabicAnalyzer(Version)"/> instead
-         */
-        public ArabicAnalyzer() : this(Version.LUCENE_24)
-        {
-            
-        }
-
-        /**
-         * Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
          */
         public ArabicAnalyzer(Version matchVersion)
-        {
-            this.matchVersion = matchVersion;
-
-            using (StreamReader reader = new StreamReader(System.Reflection.Assembly.GetAssembly(this.GetType()).GetManifestResourceStream("Lucene.Net.Analyzers.AR." + DEFAULT_STOPWORD_FILE)))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string word = reader.ReadLine();
-                    stoptable.Add(word, word);
-                }
-            }
-        }
-
-        /**
-         * Builds an analyzer with the given stop words.
-         *
-         * @deprecated Use <see cref="ArabicAnalyzer(Lucene.Net.Util.Version, string[])"/> instead
-         */
-        public ArabicAnalyzer(string[] stopwords): this(Version.LUCENE_24, stopwords)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
-        /**
-         * Builds an analyzer with the given stop words.
-         */
-        public ArabicAnalyzer(Version matchVersion, string[] stopwords)
+        /// <summary>
+        /// Builds an analyzer with the given stop words.
+        /// </summary>
+        /// <param name="matchVersion">Lucene compatibility version</param>
+        /// <param name="stopwords">a stopword set</param>
+        public ArabicAnalyzer(Version matchVersion, ISet<string> stopwords)
         {
-            stoptable = StopFilter.MakeStopSet(stopwords);
+            stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(stopwords));
             this.matchVersion = matchVersion;
         }
 
         /**
          * Builds an analyzer with the given stop words.
-         *
-         * @deprecated Use <see cref="ArabicAnalyzer(Version, Hashtable)"/> instead
          */
-        public ArabicAnalyzer(Hashtable stopwords) : this(Version.LUCENE_24, stopwords)
+        [Obsolete("Use ArabicAnalyzer(Version, Set) instead")]
+        public ArabicAnalyzer(Version matchVersion, params string[] stopwords)
+            : this(matchVersion, StopFilter.MakeStopSet(stopwords))
         {
         }
 
         /**
          * Builds an analyzer with the given stop words.
          */
-        public ArabicAnalyzer(Version matchVersion, Hashtable stopwords)
+        [Obsolete("Use ArabicAnalyzer(Version, Set) instead")]
+        public ArabicAnalyzer(Version matchVersion, IDictionary<string, string> stopwords)
+            : this(matchVersion, stopwords.Keys.ToArray())
         {
-            stoptable = new Hashtable(stopwords);
-            this.matchVersion = matchVersion;
         }
 
-        //DIGY
-        ///**
-        // * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
-        // *
-        // * @deprecated Use <see cref="ArabicAnalyzer(Version, File)"/> instead
-        // */
-        //public ArabicAnalyzer(File stopwords)
-        //{
-        //    this(Version.LUCENE_24, stopwords);
-        //}
-
-        ///**
-        // * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
-        // */
-        //public ArabicAnalyzer(Version matchVersion, File stopwords)
-        //{
-        //    stoptable = WordlistLoader.getWordSet(stopwords, STOPWORDS_COMMENT);
-        //    this.matchVersion = matchVersion;
-        //}
+        /**
+         * Builds an analyzer with the given stop words.  Lines can be commented out using <see cref="STOPWORDS_COMMENT"/>
+         */
+        public ArabicAnalyzer(Version matchVersion, FileInfo stopwords)
+            : this(matchVersion, WordlistLoader.GetWordSet(stopwords, STOPWORDS_COMMENT))
+        {
+        }
 
 
         /**
@@ -157,6 +159,7 @@ namespace Lucene.Net.Analysis.AR
         {
             TokenStream result = new ArabicLetterTokenizer(reader);
             result = new LowerCaseFilter(result);
+            // the order here is important: the stopword list is not normalized!
             result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
             result = new ArabicNormalizationFilter(result);
             result = new ArabicStemFilter(result);
@@ -186,6 +189,7 @@ namespace Lucene.Net.Analysis.AR
                 streams = new SavedStreams();
                 streams.Source = new ArabicLetterTokenizer(reader);
                 streams.Result = new LowerCaseFilter(streams.Source);
+                // the order here is important: the stopword list is not normalized!
                 streams.Result = new StopFilter(StopFilter.GetEnablePositionIncrementsVersionDefault(matchVersion),
                                                 streams.Result, stoptable);
                 streams.Result = new ArabicNormalizationFilter(streams.Result);

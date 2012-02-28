@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
 		{
 			return name;
 		}
-		
+
 		/// <summary> Resolves the deserialized instance to the local reference for accurate
 		/// equals() and == comparisons.
 		/// 

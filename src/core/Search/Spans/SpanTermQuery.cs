@@ -46,22 +46,10 @@ namespace Lucene.Net.Search.Spans
 		{
 			return term.Field();
 		}
-		
-		/// <summary>Returns a collection of all terms matched by this query.</summary>
-		/// <deprecated> use extractTerms instead
-		/// </deprecated>
-        /// <seealso cref="ExtractTerms(System.Collections.Hashtable)">
-		/// </seealso>
-        [Obsolete("use extractTerms instead")]
-		public override System.Collections.ICollection GetTerms()
+
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
-			System.Collections.ArrayList terms = new System.Collections.ArrayList();
-			terms.Add(term);
-			return terms;
-		}
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
-		{
-			SupportClass.CollectionsHelper.AddIfNotContains(terms, term);
+		    terms.Add(term);
 		}
 		
 		public override System.String ToString(System.String field)

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			RAMDirectory directory = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
-			IndexWriter writer = new IndexWriter(directory, analyzer, true);
+			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetSimilarity(similarity);
 			
 			Document doc = new Document();
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spans
 			
 			writer.Close();
 			
-			IndexSearcher searcher = new IndexSearcher(directory);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
 			searcher.SetSimilarity(similarity);
 			return searcher;
 		}
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Spans
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexSearcher is_Renamed = new IndexSearcher(directory);
+			IndexSearcher is_Renamed = new IndexSearcher(directory, true);
 			
 			SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 			SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spans
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Spans
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexSearcher is_Renamed = new IndexSearcher(directory);
+			IndexSearcher is_Renamed = new IndexSearcher(directory, true);
 			
 			SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 			SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -320,10 +320,9 @@ namespace Lucene.Net.Search.Spans
 				while (spans.Next())
 				{
 					System.Collections.Generic.ICollection<byte[]> payloads = spans.GetPayload();
-					int cnt = 0;
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -342,7 +341,7 @@ namespace Lucene.Net.Search.Spans
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			IndexSearcher is_Renamed = new IndexSearcher(directory);
+			IndexSearcher is_Renamed = new IndexSearcher(directory, true);
 			
 			SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 			SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -360,7 +359,7 @@ namespace Lucene.Net.Search.Spans
 					
 					for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext(); )
 					{
-						SupportClass.CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
+						CollectionsHelper.AddIfNotContains(payloadSet, new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current)));
 					}
 				}
 			}
@@ -382,7 +381,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			RAMDirectory directory = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
-			IndexWriter writer = new IndexWriter(directory, analyzer, true);
+			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetSimilarity(similarity);
 			Document doc = new Document();
 			doc.Add(new Field(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES, Field.Index.ANALYZED));
@@ -390,7 +389,7 @@ namespace Lucene.Net.Search.Spans
 			
 			writer.Close();
 			
-			IndexSearcher searcher = new IndexSearcher(directory);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
 			
 			IndexReader reader = searcher.GetIndexReader();
 			PayloadSpanUtil psu = new PayloadSpanUtil(reader);
@@ -446,7 +445,7 @@ namespace Lucene.Net.Search.Spans
 			RAMDirectory directory = new RAMDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
 			System.String[] docs = new System.String[]{"xx rr yy mm  pp", "xx yy mm rr pp", "nopayload qq ss pp np", "one two three four five six seven eight nine ten eleven", "nine one two three four five six seven eight eleven ten"};
-			IndexWriter writer = new IndexWriter(directory, analyzer, true);
+			IndexWriter writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			
 			writer.SetSimilarity(similarity);
 			
@@ -461,7 +460,7 @@ namespace Lucene.Net.Search.Spans
 			
 			writer.Close();
 			
-			IndexSearcher searcher = new IndexSearcher(directory);
+			IndexSearcher searcher = new IndexSearcher(directory, true);
 			return searcher;
 		}
 		
@@ -555,13 +554,13 @@ namespace Lucene.Net.Search.Spans
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
 				pos = 0;
-				SupportClass.CollectionsHelper.AddIfNotContains(entities, "xx");
-				SupportClass.CollectionsHelper.AddIfNotContains(entities, "one");
-				SupportClass.CollectionsHelper.AddIfNotContains(nopayload, "nopayload");
-				SupportClass.CollectionsHelper.AddIfNotContains(nopayload, "np");
-				termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-				posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+				CollectionsHelper.AddIfNotContains(entities, "xx");
+				CollectionsHelper.AddIfNotContains(entities, "one");
+				CollectionsHelper.AddIfNotContains(nopayload, "nopayload");
+				CollectionsHelper.AddIfNotContains(nopayload, "np");
+                termAtt = AddAttribute<TermAttribute>();
+                posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+                payloadAtt = AddAttribute<PayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()

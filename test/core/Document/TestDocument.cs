@@ -33,12 +33,7 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 namespace Lucene.Net.Documents
 {
 	
-	/// <summary> Tests {@link Document} class.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: TestDocument.java 754789 2009-03-15 23:24:39Z mikemccand $
-	/// </version>
+	/// <summary>Tests {@link Document} class.</summary>
 	[TestFixture]
 	public class TestDocument:LuceneTestCase
 	{
@@ -170,11 +165,11 @@ namespace Lucene.Net.Documents
 		public virtual void  TestGetValuesForIndexedDocument()
 		{
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(MakeDocumentWithFields());
 			writer.Close();
 			
-			Searcher searcher = new IndexSearcher(dir);
+			Searcher searcher = new IndexSearcher(dir, true);
 			
 			// search for something that does exists
 			Query query = new TermQuery(new Term("keyword", "test1"));
@@ -243,7 +238,7 @@ namespace Lucene.Net.Documents
 			doc.Add(new Field("keyword", "test", Field.Store.YES, Field.Index.NOT_ANALYZED));
 			
 			RAMDirectory dir = new RAMDirectory();
-			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT), true, IndexWriter.MaxFieldLength.LIMITED);
 			writer.AddDocument(doc);
 			field.SetValue("id2");
 			writer.AddDocument(doc);
@@ -251,7 +246,7 @@ namespace Lucene.Net.Documents
 			writer.AddDocument(doc);
 			writer.Close();
 			
-			Searcher searcher = new IndexSearcher(dir);
+			Searcher searcher = new IndexSearcher(dir, true);
 			
 			Query query = new TermQuery(new Term("keyword", "test"));
 			

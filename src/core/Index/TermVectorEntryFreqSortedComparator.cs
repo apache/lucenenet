@@ -25,14 +25,11 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	//public class TermVectorEntryFreqSortedComparator : System.Collections.IComparer
-    public class TermVectorEntryFreqSortedComparator : System.Collections.Generic.IComparer<System.Object>
+    public class TermVectorEntryFreqSortedComparator : System.Collections.Generic.IComparer<TermVectorEntry>
 	{
-		public virtual int Compare(System.Object object_Renamed, System.Object object1)
+        public virtual int Compare(TermVectorEntry entry, TermVectorEntry entry1)
 		{
 			int result = 0;
-			TermVectorEntry entry = (TermVectorEntry) object_Renamed;
-			TermVectorEntry entry1 = (TermVectorEntry) object1;
 			result = entry1.GetFrequency() - entry.GetFrequency();
 			if (result == 0)
 			{

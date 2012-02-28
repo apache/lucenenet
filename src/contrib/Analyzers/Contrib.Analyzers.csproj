@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,7 +28,7 @@
     <ProjectGuid>{4286E961-9143-4821-B46D-3D39D3736386}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Analyzers</RootNamespace>
+    <RootNamespace>Lucene.Net.Analysis</RootNamespace>
     <AssemblyName>Lucene.Net.Contrib.Analyzers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -84,16 +83,34 @@
     <Compile Include="Cn\ChineseAnalyzer.cs" />
     <Compile Include="Cn\ChineseFilter.cs" />
     <Compile Include="Cn\ChineseTokenizer.cs" />
+    <Compile Include="Compound\CompoundWordTokenFilterBase.cs" />
+    <Compile Include="Compound\DictionaryCompoundWordTokenFilter.cs" />
+    <Compile Include="Compound\HyphenationCompoundWordTokenFilter.cs" />
+    <Compile Include="Compound\Hyphenation\ByteVector.cs" />
+    <Compile Include="Compound\Hyphenation\CharVector.cs" />
+    <Compile Include="Compound\Hyphenation\Hyphen.cs" />
+    <Compile Include="Compound\Hyphenation\Hyphenation.cs" />
+    <Compile Include="Compound\Hyphenation\HyphenationException.cs" />
+    <Compile Include="Compound\Hyphenation\HyphenationTree.cs" />
+    <Compile Include="Compound\Hyphenation\PatternConsumer.cs" />
+    <Compile Include="Compound\Hyphenation\PatternParser.cs" />
+    <Compile Include="Compound\Hyphenation\TernaryTree.cs" />
     <Compile Include="Cz\CzechAnalyzer.cs" />
     <Compile Include="De\GermanAnalyzer.cs" />
     <Compile Include="De\GermanStemFilter.cs" />
     <Compile Include="De\GermanStemmer.cs" />
-    <Compile Include="De\WordlistLoader.cs" />
+    <Compile Include="El\GreekAnalyzer.cs" />
+    <Compile Include="El\GreekLowerCaseFilter.cs" />
+    <Compile Include="Fa\PersianAnalyzer.cs" />
+    <Compile Include="Fa\PersianNormalizationFilter.cs" />
+    <Compile Include="Fa\PersianNormalizer.cs" />
+    <Compile Include="Fr\ElisionFilter.cs" />
     <Compile Include="Fr\FrenchAnalyzer.cs" />
     <Compile Include="Fr\FrenchStemFilter.cs" />
     <Compile Include="Fr\FrenchStemmer.cs" />
     <Compile Include="Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Miscellaneous\InjectablePrefixAwareTokenFilter.cs" />
+    <Compile Include="Miscellaneous\PatternAnalyzer.cs" />
     <Compile Include="Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\PrefixAwareTokenStream.cs" />
     <Compile Include="Miscellaneous\SingleTokenTokenStream.cs" />
@@ -104,10 +121,20 @@
     <Compile Include="Nl\DutchAnalyzer.cs" />
     <Compile Include="Nl\DutchStemFilter.cs" />
     <Compile Include="Nl\DutchStemmer.cs" />
-    <Compile Include="Nl\WordlistLoader.cs" />
+    <Compile Include="Payloads\AbstractEncoder.cs" />
+    <Compile Include="Payloads\DelimitedPayloadTokenFilter.cs" />
+    <Compile Include="Payloads\FloatEncoder.cs" />
+    <Compile Include="Payloads\IdentityEncoder.cs" />
+    <Compile Include="Payloads\IntegerEncoder.cs" />
+    <Compile Include="Payloads\NumericPayloadTokenFilter.cs" />
+    <Compile Include="Payloads\PayloadEncoder.cs" />
     <Compile Include="Payloads\PayloadHelper.cs" />
+    <Compile Include="Payloads\TokenOffsetPayloadTokenFilter.cs" />
+    <Compile Include="Payloads\TypeAsPayloadTokenFilter.cs" />
+    <Compile Include="Position\PositionFilter.cs" />
+    <Compile Include="Query\QueryAutoStopWordAnalyzer.cs" />
+    <Compile Include="Reverse\ReverseStringFilter.cs" />
     <Compile Include="Ru\RussianAnalyzer.cs" />
-    <Compile Include="Ru\RussianCharsets.cs" />
     <Compile Include="Ru\RussianLetterTokenizer.cs" />
     <Compile Include="Ru\RussianLowerCaseFilter.cs" />
     <Compile Include="Ru\RussianStemFilter.cs" />
@@ -125,6 +152,11 @@
     <Compile Include="Shingle\Codec\SimpleThreeDimensionalTokenSettingsCodec.cs" />
     <Compile Include="Shingle\Codec\TokenSettingsCodec.cs" />
     <Compile Include="Shingle\Codec\TwoDimensionalNonWeightedSynonymTokenSettingsCodec.cs" />
+    <Compile Include="Sinks\DateRecognizerSinkFilter.cs" />
+    <Compile Include="Sinks\TokenRangeSinkFilter.cs" />
+    <Compile Include="Sinks\TokenTypeSinkFilter.cs" />
+    <Compile Include="Th\ThaiAnalyzer.cs" />
+    <Compile Include="Th\ThaiWordFilter.cs" />
     <Compile Include="WordlistLoader.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +169,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Compound\Hyphenation\hyphenation.dtd" />
     <None Include="Lucene.Net.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FileDiffs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

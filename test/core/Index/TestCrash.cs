@@ -41,8 +41,8 @@ namespace Lucene.Net.Index
 		private IndexWriter InitIndex(MockRAMDirectory dir)
 		{
 			dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
-			
-			IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer());
+
+            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
 			//writer.setMaxBufferedDocs(2);
 			writer.SetMaxBufferedDocs(10);
 			((ConcurrentMergeScheduler) writer.GetMergeScheduler()).SetSuppressExceptions();
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 			IndexWriter writer = InitIndex();
 			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
 			Crash(writer);
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, true);
 			Assert.IsTrue(reader.NumDocs() < 157);
 		}
 		
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 			writer = InitIndex(dir);
 			writer.Close();
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Assert.IsTrue(reader.NumDocs() < 314);
 		}
 		
@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
 			writer.Close();
 			writer = InitIndex(dir);
-			Assert.AreEqual(314, writer.DocCount());
+			Assert.AreEqual(314, writer.MaxDoc());
 			Crash(writer);
 			
 			/*
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 			dir.fileLength(l[i]) + " bytes");
 			*/
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Assert.IsTrue(reader.NumDocs() >= 157);
 		}
 		
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
 			
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Assert.AreEqual(157, reader.NumDocs());
 		}
 		
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
 			for(int i=0;i<l.length;i++)
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			Assert.AreEqual(157, reader.NumDocs());
 		}
 		
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
 			
 			writer.Close(false);
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			reader.DeleteDocument(3);
 			
 			dir.Crash();
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 			for(int i=0;i<l.length;i++)
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
-			reader = IndexReader.Open(dir);
+			reader = IndexReader.Open(dir, false);
 			Assert.AreEqual(157, reader.NumDocs());
 		}
 		
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 			MockRAMDirectory dir = (MockRAMDirectory) writer.GetDirectory();
 			
 			writer.Close(false);
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			reader.DeleteDocument(3);
 			reader.Close();
 			
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 			for(int i=0;i<l.length;i++)
 			System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
 			*/
-			reader = IndexReader.Open(dir);
+			reader = IndexReader.Open(dir, false);
 			Assert.AreEqual(156, reader.NumDocs());
 		}
 	}

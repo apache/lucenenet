@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -53,10 +53,10 @@ namespace Lucene.Net.Search
 			int lower = (distance * 3 / 2) + startOffset, upper = lower + count * distance + (distance / 3);
 			System.Int32 tempAux = (System.Int32) lower;
 			System.Int32 tempAux2 = (System.Int32) upper;
-			NumericRangeQuery q = NumericRangeQuery.NewIntRange(field, precisionStep, tempAux, tempAux2, true, true);
+			NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange(field, precisionStep, tempAux, tempAux2, true, true);
 			System.Int32 tempAux3 = (System.Int32) lower;
 			System.Int32 tempAux4 = (System.Int32) upper;
-			NumericRangeFilter f = NumericRangeFilter.NewIntRange(field, precisionStep, tempAux3, tempAux4, true, true);
+            NumericRangeFilter<int> f = NumericRangeFilter.NewIntRange(field, precisionStep, tempAux3, tempAux4, true, true);
 			int lastTerms = 0;
 			for (sbyte i = 0; i < 3; i++)
 			{
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
 		{
 			System.Int32 tempAux = 1000;
 			System.Int32 tempAux2 = - 1000;
-			NumericRangeFilter f = NumericRangeFilter.NewIntRange("field8", 8, tempAux, tempAux2, true, true);
+            NumericRangeFilter<int> f = NumericRangeFilter.NewIntRange("field8", 8, tempAux, tempAux2, true, true);
 			Assert.AreSame(DocIdSet.EMPTY_DOCIDSET, f.GetDocIdSet(searcher.GetIndexReader()), "A inverse range should return the EMPTY_DOCIDSET instance");
 			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
 			System.Int32 tempAux3 = (System.Int32) System.Int32.MaxValue;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 		{
 			System.Int32 tempAux = 1000;
 			System.Int32 tempAux2 = 1000;
-			NumericRangeQuery q = NumericRangeQuery.NewIntRange("ascfield8", 8, tempAux, tempAux2, true, true);
+            NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange("ascfield8", 8, tempAux, tempAux2, true, true);
 			Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.GetRewriteMethod());
 			TopDocs topDocs = searcher.Search(q, noDocs);
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 			int upper = (count - 1) * distance + (distance / 3) + startOffset;
 			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
 			System.Int32 tempAux = (System.Int32) upper;
-			NumericRangeQuery q = NumericRangeQuery.NewIntRange(field, precisionStep, null, tempAux, true, true);
+            NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange(field, precisionStep, null, tempAux, true, true);
 			TopDocs topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 			System.Console.Out.WriteLine("Found " + q.GetTotalNumberOfTerms() + " distinct terms in left open range for field '" + field + "'.");
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -198,9 +198,7 @@ namespace Lucene.Net.Search
 			System.String field = "field" + precisionStep;
 			int count = 3000;
 			int lower = (count - 1) * distance + (distance / 3) + startOffset;
-			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
-			System.Int32 tempAux = (System.Int32) lower;
-			NumericRangeQuery q = NumericRangeQuery.NewIntRange(field, precisionStep, tempAux, null, true, true);
+            NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange(field, precisionStep, lower, null, true, true);
 			TopDocs topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 			System.Console.Out.WriteLine("Found " + q.GetTotalNumberOfTerms() + " distinct terms in right open range for field '" + field + "'.");
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -246,7 +244,7 @@ namespace Lucene.Net.Search
 				// test inclusive range
 				System.Int32 tempAux = (System.Int32) lower;
 				System.Int32 tempAux2 = (System.Int32) upper;
-				NumericRangeQuery tq = NumericRangeQuery.NewIntRange(field, precisionStep, tempAux, tempAux2, true, true);
+                NumericRangeQuery<int> tq = NumericRangeQuery.NewIntRange(field, precisionStep, tempAux, tempAux2, true, true);
 				TermRangeQuery cq = new TermRangeQuery(field, NumericUtils.IntToPrefixCoded(lower), NumericUtils.IntToPrefixCoded(upper), true, true);
 				TopDocs tTopDocs = searcher.Search(tq, 1);
 				TopDocs cTopDocs = searcher.Search(cq, 1);
@@ -469,67 +467,82 @@ namespace Lucene.Net.Search
         [Test]
 		public virtual void  TestEqualsAndHash()
 		{
-			System.Int32 tempAux = 10;
-			System.Int32 tempAux2 = 20;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test1", 4, tempAux, tempAux2, true, true));
-			System.Int32 tempAux3 = 10;
-			System.Int32 tempAux4 = 20;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test2", 4, tempAux3, tempAux4, false, true));
-			System.Int32 tempAux5 = 10;
-			System.Int32 tempAux6 = 20;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test3", 4, tempAux5, tempAux6, true, false));
-			System.Int32 tempAux7 = 10;
-			System.Int32 tempAux8 = 20;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test4", 4, tempAux7, tempAux8, false, false));
-			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
-			System.Int32 tempAux9 = 10;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test5", 4, tempAux9, null, true, true));
-			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
-			System.Int32 tempAux10 = 20;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test6", 4, null, tempAux10, true, true));
-			//UPGRADE_TODO: The 'System.Int32' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test1", 4, 10, 20, true, true));
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test2", 4, 10, 20, false, true));
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test3", 4, 10, 20, true, false));
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test4", 4, 10, 20, false, false));
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test5", 4, 10, null, true, true));
+			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test6", 4, null, 20, true, true));
 			QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test7", 4, null, null, true, true));
-			System.Int32 tempAux11 = 10;
-			System.Int32 tempAux12 = 20;
-			System.Int32 tempAux13 = 10;
-			System.Int32 tempAux14 = 20;
-			QueryUtils.CheckEqual(NumericRangeQuery.NewIntRange("test8", 4, tempAux11, tempAux12, true, true), NumericRangeQuery.NewIntRange("test8", 4, tempAux13, tempAux14, true, true));
-			System.Int32 tempAux15 = 10;
-			System.Int32 tempAux16 = 20;
-			System.Int32 tempAux17 = 10;
-			System.Int32 tempAux18 = 20;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test9", 4, tempAux15, tempAux16, true, true), NumericRangeQuery.NewIntRange("test9", 8, tempAux17, tempAux18, true, true));
-			System.Int32 tempAux19 = 10;
-			System.Int32 tempAux20 = 20;
-			System.Int32 tempAux21 = 10;
-			System.Int32 tempAux22 = 20;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test10a", 4, tempAux19, tempAux20, true, true), NumericRangeQuery.NewIntRange("test10b", 4, tempAux21, tempAux22, true, true));
-			System.Int32 tempAux23 = 10;
-			System.Int32 tempAux24 = 20;
-			System.Int32 tempAux25 = 20;
-			System.Int32 tempAux26 = 10;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test11", 4, tempAux23, tempAux24, true, true), NumericRangeQuery.NewIntRange("test11", 4, tempAux25, tempAux26, true, true));
-			System.Int32 tempAux27 = 10;
-			System.Int32 tempAux28 = 20;
-			System.Int32 tempAux29 = 10;
-			System.Int32 tempAux30 = 20;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test12", 4, tempAux27, tempAux28, true, true), NumericRangeQuery.NewIntRange("test12", 4, tempAux29, tempAux30, false, true));
-			System.Int32 tempAux31 = 10;
-			System.Int32 tempAux32 = 20;
-			System.Single tempAux33 = (float) 10f;
-			System.Single tempAux34 = (float) 20f;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test13", 4, tempAux31, tempAux32, true, true), NumericRangeQuery.NewFloatRange("test13", 4, tempAux33, tempAux34, true, true));
+            QueryUtils.CheckEqual(NumericRangeQuery.NewIntRange("test8", 4, 10, 20, true, true),
+                                  NumericRangeQuery.NewIntRange("test8", 4, 10, 20, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test9", 4, 10, 20, true, true),
+                                    NumericRangeQuery.NewIntRange("test9", 8, 10, 20, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test10a", 4, 10, 20, true, true),
+                                    NumericRangeQuery.NewIntRange("test10b", 4, 10, 20, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test11", 4, 10, 20, true, true),
+                                    NumericRangeQuery.NewIntRange("test11", 4, 20, 10, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test12", 4, 10, 20, true, true),
+                                    NumericRangeQuery.NewIntRange("test12", 4, 10, 20, false, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewIntRange("test13", 4, 10, 20, true, true),
+                                    NumericRangeQuery.NewFloatRange("test13", 4, 10f, 20f, true, true));
 			// the following produces a hash collision, because Long and Integer have the same hashcode, so only test equality:
-			System.Int32 tempAux35 = 10;
-			System.Int32 tempAux36 = 20;
-			Query q1 = NumericRangeQuery.NewIntRange("test14", 4, tempAux35, tempAux36, true, true);
-			System.Int64 tempAux37 = 10L;
-			System.Int64 tempAux38 = 20L;
-			Query q2 = NumericRangeQuery.NewLongRange("test14", 4, tempAux37, tempAux38, true, true);
+
+			Query q1 = NumericRangeQuery.NewIntRange("test14", 4, 10, 20, true, true);
+			Query q2 = NumericRangeQuery.NewLongRange("test14", 4, 10L, 20L, true, true);
 			Assert.IsFalse(q1.Equals(q2));
 			Assert.IsFalse(q2.Equals(q1));
 		}
-		static TestNumericRangeQuery32()
+
+
+        private void testEnum(int lower, int upper)
+        {
+            NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange("field4", 4, lower, upper, true, true);
+            FilteredTermEnum termEnum = q.GetEnum(searcher.GetIndexReader());
+            try
+            {
+                int count = 0;
+                do
+                {
+                    Term t = termEnum.Term();
+                    if (t != null)
+                    {
+                        int val = NumericUtils.PrefixCodedToInt(t.Text());
+                        Assert.True(val >= lower && val <= upper, "value not in bounds");
+                        count++;
+                    }
+                    else break;
+                } while (termEnum.Next());
+                Assert.False(termEnum.Next());
+                Console.WriteLine("TermEnum on 'field4' for range [" + lower + "," + upper + "] contained " + count +
+                                  " terms.");
+            }
+            finally
+            {
+                termEnum.Close();
+            }
+        }
+
+        public void testEnum()
+        {
+            int count = 3000;
+            int lower = (distance*3/2) + startOffset, upper = lower + count*distance + (distance/3);
+            // test enum with values
+            testEnum(lower, upper);
+            // test empty enum
+            testEnum(upper, lower);
+            // test empty enum outside of bounds
+            lower = distance*noDocs + startOffset;
+            upper = 2*lower;
+            testEnum(lower, upper);
+        }
+
+        static TestNumericRangeQuery32()
 		{
 			{
 				try

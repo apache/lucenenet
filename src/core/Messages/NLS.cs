@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Messages
 {
@@ -62,7 +64,7 @@ namespace Lucene.Net.Messages
 			}
 		}
 		
-		private static System.Collections.IDictionary bundles = new System.Collections.Hashtable(0);
+		private static IDictionary<string, Type> bundles = new HashMap<string, Type>(0);
 		
 		protected internal NLS()
 		{
@@ -84,7 +86,7 @@ namespace Lucene.Net.Messages
 			return message.ToString();
 		}
 		
-		public static System.String GetLocalizedMessage(System.String key, System.Globalization.CultureInfo locale, System.Object[] args)
+		public static System.String GetLocalizedMessage(System.String key, System.Globalization.CultureInfo locale, params System.Object[] args)
 		{
 			System.String str = GetLocalizedMessage(key, locale);
 			
@@ -96,7 +98,7 @@ namespace Lucene.Net.Messages
 			return str;
 		}
 		
-		public static System.String GetLocalizedMessage(System.String key, System.Object[] args)
+		public static System.String GetLocalizedMessage(System.String key, params System.Object[] args)
 		{
 			return GetLocalizedMessage(key, System.Threading.Thread.CurrentThread.CurrentCulture, args);
 		}
@@ -110,13 +112,13 @@ namespace Lucene.Net.Messages
 		/// <param name="clazz">where constants will reside
 		/// </param>
 		//@SuppressWarnings("unchecked")
-		protected internal static void  InitializeMessages(System.String bundleName, System.Type clazz)
+		protected internal static void  InitializeMessages<T>(System.String bundleName)
 		{
 			try
 			{
-				Load(clazz);
-				if (!bundles.Contains(bundleName))
-					bundles[bundleName] = clazz;
+				Load<T>();
+				if (!bundles.ContainsKey(bundleName))
+					bundles[bundleName] = typeof(T);
 			}
 			catch (System.Exception e)
 			{
@@ -130,9 +132,9 @@ namespace Lucene.Net.Messages
 			
 			// slow resource checking
 			// need to loop thru all registered resource bundles
-			for (System.Collections.IEnumerator it = bundles.Keys.GetEnumerator(); it.MoveNext(); )
+			for (var it = bundles.Keys.GetEnumerator(); it.MoveNext(); )
 			{
-				System.Type clazz = (System.Type) bundles[(System.String) it.Current];
+				System.Type clazz = bundles[it.Current];
 				System.Threading.Thread.CurrentThread.CurrentUICulture = locale;
                 System.Resources.ResourceManager resourceBundle = System.Resources.ResourceManager.CreateFileBasedResourceManager(clazz.Name, "Messages", null); //{{Lucene.Net-2.9.1}} Can we make resourceDir "Messages" more general?
 				if (resourceBundle != null)
@@ -153,31 +155,28 @@ namespace Lucene.Net.Messages
 			return null;
 		}
 		
-		/// <param name="clazz">
-		/// </param>
-		private static void  Load(System.Type clazz)
+		private static void  Load<T>()
 		{
-			System.Reflection.FieldInfo[] fieldArray = clazz.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.Static);
+            var clazz = typeof (T);
+            System.Reflection.FieldInfo[] fieldArray = clazz.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.Static);
 			
 			bool isFieldAccessible = clazz.IsPublic;
 			
 			// build a map of field names to Field objects
 			int len = fieldArray.Length;
-			System.Collections.IDictionary fields = new System.Collections.Hashtable(len * 2);
+			var fields = new HashMap<string, System.Reflection.FieldInfo>(len * 2);
 			for (int i = 0; i < len; i++)
 			{
 				fields[fieldArray[i].Name] = fieldArray[i];
-				LoadfieldValue(fieldArray[i], isFieldAccessible, clazz);
+				LoadfieldValue<T>(fieldArray[i], isFieldAccessible);
 			}
 		}
 
-	    /// <param name="field">
-	    /// </param>
-	    /// <param name="isFieldAccessible">
-	    /// </param>
-	    /// <param name="clazz"></param>
-	    private static void  LoadfieldValue(System.Reflection.FieldInfo field, bool isFieldAccessible, System.Type clazz)
-		{
+	    /// <param name="field"></param>
+	    /// <param name="isFieldAccessible"></param>
+	    private static void  LoadfieldValue<T>(System.Reflection.FieldInfo field, bool isFieldAccessible)
+	    {
+	        var clazz = typeof (T);
             /*
 			int MOD_EXPECTED = Modifier.PUBLIC | Modifier.STATIC;
 			int MOD_MASK = MOD_EXPECTED | Modifier.FINAL;
@@ -193,7 +192,7 @@ namespace Lucene.Net.Messages
 			try
 			{
 				field.SetValue(null, field.Name);
-				ValidateMessage(field.Name, clazz);
+				ValidateMessage<T>(field.Name);
 			}
 			catch (System.ArgumentException e)
 			{
@@ -207,9 +206,10 @@ namespace Lucene.Net.Messages
 		
 		/// <param name="key">- Message Key
 		/// </param>
-		private static void  ValidateMessage(System.String key, System.Type clazz)
+		private static void  ValidateMessage<T>(System.String key)
 		{
 			// Test if the message is present in the resource bundle
+		    var clazz = typeof (T);
 			try
 			{
 				System.Threading.Thread.CurrentThread.CurrentUICulture = System.Threading.Thread.CurrentThread.CurrentCulture;

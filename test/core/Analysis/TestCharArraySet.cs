@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -63,13 +63,13 @@ namespace Lucene.Net.Analysis
 		{
 			CharArraySet set_Renamed = new CharArraySet(10, true);
 			System.Int32 val = 1;
-			set_Renamed.Add((System.Object) val);
-			Assert.IsTrue(set_Renamed.Contains((System.Object) val));
-			Assert.IsTrue(set_Renamed.Contains((System.Object) 1));
+			set_Renamed.Add(val);
+			Assert.IsTrue(set_Renamed.Contains(val));
+			Assert.IsTrue(set_Renamed.Contains(1));
 			// test unmodifiable
 			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
-			Assert.IsTrue(set_Renamed.Contains((System.Object) val));
-			Assert.IsTrue(set_Renamed.Contains((System.Object) 1));
+			Assert.IsTrue(set_Renamed.Contains(val));
+			Assert.IsTrue(set_Renamed.Contains(1));
 		}
 		
         [Test]
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis
 			}
 			try
 			{
-				set_Renamed.RemoveAll(new System.Collections.ArrayList(TEST_STOP_WORDS));
+				set_Renamed.RemoveAll(new List<string>(TEST_STOP_WORDS));
 				Assert.Fail("Modified unmodifiable set");
 			}
 			catch (System.NotSupportedException e)
@@ -173,7 +173,7 @@ namespace Lucene.Net.Analysis
 			
 			try
 			{
-                set_Renamed.RetainAll(new System.Collections.ArrayList(new System.String[] { NOT_IN_SET }));
+                set_Renamed.RetainAll(new List<string>(new [] { NOT_IN_SET }));
 				Assert.Fail("Modified unmodifiable set");
 			}
 			catch (System.NotSupportedException e)
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis
 			
 			try
 			{
-				set_Renamed.AddAll(new System.Collections.ArrayList(new System.String[] { NOT_IN_SET }));
+                set_Renamed.AddAll(new List<string>(new [] { NOT_IN_SET }));
 				Assert.Fail("Modified unmodifiable set");
 			}
 			catch (System.NotSupportedException e)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis
 		public virtual void  TestUnmodifiableSet()
 		{
 			CharArraySet set_Renamed = new CharArraySet(10, true);
-			set_Renamed.AddAll(new System.Collections.ArrayList(TEST_STOP_WORDS));
+            set_Renamed.AddAll(new List<string>(TEST_STOP_WORDS));
 			int size = set_Renamed.Count;
 			set_Renamed = CharArraySet.UnmodifiableSet(set_Renamed);
 			Assert.AreEqual(size, set_Renamed.Count, "Set size changed due to UnmodifiableSet call");
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis
 				CharArraySet.UnmodifiableSet(null);
 				Assert.Fail("can not make null unmodifiable");
 			}
-			catch (System.NullReferenceException e)
+            catch (System.ArgumentNullException e)
 			{
 				// expected
 			}

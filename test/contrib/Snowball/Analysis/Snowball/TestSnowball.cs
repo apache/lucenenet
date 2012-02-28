@@ -19,129 +19,141 @@
  *
 */
 
-/* ====================================================================
-* The Apache Software License, Version 1.1
-*
-* Copyright (c) 2004 The Apache Software Foundation.  All rights
-* reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-*
-* 1. Redistributions of source code must retain the above copyright
-*    notice, this list of conditions and the following disclaimer.
-*
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in
-*    the documentation and/or other materials provided with the
-*    distribution.
-*
-* 3. The end-user documentation included with the redistribution,
-*    if any, must include the following acknowledgment:
-*       "This product includes software developed by the
-*        Apache Software Foundation (http://www.apache.org/)."
-*    Alternately, this acknowledgment may appear in the software itself,
-*    if and wherever such third-party acknowledgments normally appear.
-*
-* 4. The names "Apache" and "Apache Software Foundation" and
-*    "Apache Lucene" must not be used to endorse or promote products
-*    derived from this software without prior written permission. For
-*    written permission, please contact apache@apache.org.
-*
-* 5. Products derived from this software may not be called "Apache",
-*    "Apache Lucene", nor may "Apache" appear in their name, without
-*    prior written permission of the Apache Software Foundation.
-*
-* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-* ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-* USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-* OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-* SUCH DAMAGE.
-* ====================================================================
-*
-* This software consists of voluntary contributions made by many
-* individuals on behalf of the Apache Software Foundation.  For more
-* information on the Apache Software Foundation, please see
-* <http://www.apache.org/>.
-*/
-
 using System;
+using System.IO;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Index;
 using NUnit.Framework;
 using Lucene.Net.Analysis;
+using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Snowball
 {
-	[TestFixture]
-	public class TestSnowball
-	{
-		private class AnonymousClassTokenStream : TokenStream
-		{
-			public AnonymousClassTokenStream(Token tok, TestSnowball enclosingInstance)
-			{
-				InitBlock(tok, enclosingInstance);
-			}
-			private void  InitBlock(Token tok, TestSnowball enclosingInstance)
-			{
-				this.tok = tok;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private Token tok;
-			private TestSnowball enclosingInstance;
-			public TestSnowball Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-            public override Token Next()
-			{
-				return tok;
-			}
-		}
-		
-		public virtual void  AssertAnalyzesTo(Analyzer a, System.String input, System.String[] output)
-		{
-			TokenStream ts = a.TokenStream("dummy", new System.IO.StringReader(input));
-			for (int i = 0; i < output.Length; i++)
-			{
-				Token t = ts.Next();
-				Assert.IsNotNull(t);
-				Assert.AreEqual(output[i], t.TermText());
-			}
-			Assert.IsNull(ts.Next());
-			ts.Close();
-		}
-		[Test]
-		public virtual void  TestEnglish()
-		{
-			Analyzer a = new SnowballAnalyzer("English");
-			AssertAnalyzesTo(a, "he abhorred accents", new System.String[]{"he", "abhor", "accent"});
-		}
-		[Test]
-		public virtual void  TestFilterTokens()
-		{
-			Token tok = new Token("accents", 2, 7, "wrd");
-			tok.SetPositionIncrement(3);
-			
-			SnowballFilter filter = new SnowballFilter(new AnonymousClassTokenStream(tok, this), "English");
-			
-			Token newtok = filter.Next();
-			
-			Assert.AreEqual("accent", newtok.TermText());
-			Assert.AreEqual(2, newtok.StartOffset());
-			Assert.AreEqual(7, newtok.EndOffset());
-			Assert.AreEqual("wrd", newtok.Type());
-			Assert.AreEqual(3, newtok.GetPositionIncrement());
-		}
-	}
+    [TestFixture]
+    public class TestSnowball : BaseTokenStreamTestCase
+    {
+        [Test]
+        public void TestEnglish()
+        {
+            Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "English");
+            AssertAnalyzesTo(a, "he abhorred accents",
+                new String[] { "he", "abhor", "accent" });
+        }
+
+        [Test]
+        public void TestStopwords()
+        {
+            Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "English",
+                StandardAnalyzer.STOP_WORDS_SET);
+            AssertAnalyzesTo(a, "the quick brown fox jumped",
+                new String[] { "quick", "brown", "fox", "jump" });
+        }
+
+        [Test]
+        public void TestReusableTokenStream()
+        {
+            Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "English");
+            AssertAnalyzesToReuse(a, "he abhorred accents",
+                new String[] { "he", "abhor", "accent" });
+            AssertAnalyzesToReuse(a, "she abhorred him",
+                new String[] { "she", "abhor", "him" });
+        }
+
+        /**
+         * subclass that acts just like whitespace analyzer for testing
+         */
+        private class SnowballSubclassAnalyzer : SnowballAnalyzer
+        {
+            public SnowballSubclassAnalyzer(String name)
+                : base(Version.LUCENE_CURRENT, name)
+            {
+
+            }
+
+            public override TokenStream TokenStream(String fieldName, TextReader reader)
+            {
+                return new WhitespaceTokenizer(reader);
+            }
+        }
+
+        [Test]
+        public void TestLucene1678BwComp()
+        {
+            Analyzer a = new SnowballSubclassAnalyzer("English");
+            AssertAnalyzesToReuse(a, "he abhorred accents",
+                new String[] { "he", "abhorred", "accents" });
+        }
+
+        [Test]
+        public void TestFilterTokens()
+        {
+            SnowballFilter filter = new SnowballFilter(new TestTokenStream(), "English");
+            TermAttribute termAtt = filter.GetAttribute<TermAttribute>();
+            OffsetAttribute offsetAtt = filter.GetAttribute<OffsetAttribute>();
+            TypeAttribute typeAtt = filter.GetAttribute<TypeAttribute>();
+            PayloadAttribute payloadAtt = filter.GetAttribute<PayloadAttribute>();
+            PositionIncrementAttribute posIncAtt = filter.GetAttribute<PositionIncrementAttribute>();
+            FlagsAttribute flagsAtt = filter.GetAttribute<FlagsAttribute>();
+
+            filter.IncrementToken();
+
+            Assert.AreEqual("accent", termAtt.Term());
+            Assert.AreEqual(2, offsetAtt.StartOffset());
+            Assert.AreEqual(7, offsetAtt.EndOffset());
+            Assert.AreEqual("wrd", typeAtt.Type());
+            Assert.AreEqual(3, posIncAtt.GetPositionIncrement());
+            Assert.AreEqual(77, flagsAtt.GetFlags());
+            Assert.AreEqual(new Payload(new byte[] { 0, 1, 2, 3 }), payloadAtt.GetPayload());
+        }
+
+        [Test(Description = "LUCENENET-54")]
+        public void TestJiraLuceneNet54()
+        {
+            var analyzer = new SnowballAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT, "Finnish");
+            var input = new StringReader("terve");
+            var tokenStream = analyzer.TokenStream("fieldName", input);
+            var termAttr = tokenStream.AddAttribute<TermAttribute>();
+            Assert.That(tokenStream.IncrementToken(), Is.True);
+            Assert.That(termAttr.Term(), Is.EqualTo("terv"));
+        }
+
+        private sealed class TestTokenStream : TokenStream
+        {
+            private TermAttribute termAtt;
+            private OffsetAttribute offsetAtt;
+            private TypeAttribute typeAtt;
+            private PayloadAttribute payloadAtt;
+            private PositionIncrementAttribute posIncAtt;
+            private FlagsAttribute flagsAtt;
+
+            internal TestTokenStream()
+            {
+                termAtt = AddAttribute<TermAttribute>();
+                offsetAtt = AddAttribute<OffsetAttribute>();
+                typeAtt = AddAttribute<TypeAttribute>();
+                payloadAtt = AddAttribute<PayloadAttribute>();
+                posIncAtt = AddAttribute<PositionIncrementAttribute>();
+                flagsAtt = AddAttribute<FlagsAttribute>();
+            }
+
+            public override bool IncrementToken()
+            {
+                ClearAttributes();
+                termAtt.SetTermBuffer("accents");
+                offsetAtt.SetOffset(2, 7);
+                typeAtt.SetType("wrd");
+                posIncAtt.SetPositionIncrement(3);
+                payloadAtt.SetPayload(new Payload(new byte[] { 0, 1, 2, 3 }));
+                flagsAtt.SetFlags(77);
+                return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // do nothing
+            }
+        }
+    }
 }

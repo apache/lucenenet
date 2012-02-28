@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.IO;
 using System.Collections;
 
@@ -24,6 +25,45 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.NGram
 {
+    public static class SideExtensions
+    {
+        public static string GetLabel(this Side theSide)
+        {
+            switch(theSide)
+            {
+                case Side.FRONT:
+                    return "front";
+                case Side.BACK:
+                    return "back";
+                default:
+                    throw new ArgumentException(string.Format("{0} is not a valid value for EdgeNGramTokenFilter.Side", theSide));
+            }
+        }
+
+        public static Side GetSide(string sideName)
+        {
+            if (Side.FRONT.GetLabel() == sideName)
+            {
+                return Side.FRONT;
+            }
+
+            if (Side.BACK.GetLabel() == sideName)
+            {
+                return Side.BACK;
+            }
+
+            return (Side)(-1); // TODO: returning null instead of null?  Should an exception be thrown instead?
+        }
+    }
+
+    /// <summary>
+    /// Specifies which side of the input the n-gram should be generated from
+    /// </summary>
+    public enum Side
+    {
+        FRONT,
+        BACK
+    }
 
     /**
      * Tokenizes the given token into n-grams of given size(s).
@@ -31,43 +71,11 @@ namespace Lucene.Net.Analysis.NGram
      * This <see cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
      * </p>
      */
-    public class EdgeNGramTokenFilter : TokenFilter
+    public sealed class EdgeNGramTokenFilter : TokenFilter
     {
         public static Side DEFAULT_SIDE = Side.FRONT;
         public static int DEFAULT_MAX_GRAM_SIZE = 1;
         public static int DEFAULT_MIN_GRAM_SIZE = 1;
-
-        // Replace this with an enum when the Java 1.5 upgrade is made, the impl will be simplified
-        /** Specifies which side of the input the n-gram should be generated from */
-        public class Side
-        {
-            private string label;
-
-            /** Get the n-gram from the front of the input */
-            public static Side FRONT = new Side("front");
-
-            /** Get the n-gram from the end of the input */
-            public static Side BACK = new Side("back");
-
-            // Private ctor
-            private Side(string label) { this.label = label; }
-
-            public string getLabel() { return label; }
-
-            // Get the appropriate Side from a string
-            public static Side getSide(string sideName)
-            {
-                if (FRONT.getLabel().Equals(sideName))
-                {
-                    return FRONT;
-                }
-                else if (BACK.getLabel().Equals(sideName))
-                {
-                    return BACK;
-                }
-                return null;
-            }
-        }
 
         private int minGram;
         private int maxGram;
@@ -83,8 +91,8 @@ namespace Lucene.Net.Analysis.NGram
 
         protected EdgeNGramTokenFilter(TokenStream input) : base(input)
         {
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            this.termAtt = AddAttribute<TermAttribute>();
+            this.offsetAtt = AddAttribute<OffsetAttribute>();
         }
 
         /**
@@ -100,7 +108,7 @@ namespace Lucene.Net.Analysis.NGram
         {
 
 
-            if (side == null)
+            if (side != Side.FRONT && side != Side.BACK)
             {
                 throw new System.ArgumentException("sideLabel must be either front or back");
             }
@@ -118,8 +126,8 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
             this.side = side;
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            this.termAtt = AddAttribute<TermAttribute>();
+            this.offsetAtt = AddAttribute<OffsetAttribute>();
         }
 
         /**
@@ -131,9 +139,8 @@ namespace Lucene.Net.Analysis.NGram
          * <param name="maxGram">the largest n-gram to generate</param>
          */
         public EdgeNGramTokenFilter(TokenStream input, string sideLabel, int minGram, int maxGram)
-            : this(input, Side.getSide(sideLabel), minGram, maxGram)
+            : this(input, SideExtensions.GetSide(sideLabel), minGram, maxGram)
         {
-
         }
 
         public override bool IncrementToken()
@@ -171,22 +178,6 @@ namespace Lucene.Net.Analysis.NGram
                 }
                 curTermBuffer = null;
             }
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override  Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-
-        /** @deprecated Will be removed in Lucene 3.0. This method is final, as it should
-         * not be overridden. Delegates to the backwards compatibility layer. */
-        [System.Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.")]
-        public override Token Next()
-        {
-            return base.Next();
         }
 
         public override void Reset()

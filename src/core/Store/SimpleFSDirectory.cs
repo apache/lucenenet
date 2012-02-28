@@ -27,22 +27,8 @@ namespace Lucene.Net.Store
 	/// read from the same file.  It's usually better to use
 	/// <see cref="NIOFSDirectory" /> or <see cref="MMapDirectory" /> instead. 
 	/// </summary>
-	public class SimpleFSDirectory:FSDirectory
+	public class SimpleFSDirectory : FSDirectory
 	{
-		
-		/// <summary>Create a new SimpleFSDirectory for the named location.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <param name="lockFactory">the lock factory to use, or null for the default.
-		/// </param>
-		/// <throws>  IOException </throws>
-		[System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public SimpleFSDirectory(System.IO.FileInfo path, LockFactory lockFactory):base(new System.IO.DirectoryInfo(path.FullName), lockFactory)
-		{
-		}
-		
         /// <summary>Create a new SimpleFSDirectory for the named location.
         /// 
         /// </summary>
@@ -51,40 +37,22 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory">the lock factory to use, or null for the default.
         /// </param>
         /// <throws>  IOException </throws>
-        public SimpleFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        public SimpleFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
+            : base(path, lockFactory)
         {
         }
-		
-		/// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
-		/// 
-		/// </summary>
-		/// <param name="path">the path of the directory
-		/// </param>
-		/// <throws>  IOException </throws>
-        [System.Obsolete("Use the constructor that takes a DirectoryInfo, this will be removed in the 3.0 release")]
-		public SimpleFSDirectory(System.IO.FileInfo path):base(new System.IO.DirectoryInfo(path.FullName), null)
-		{
-		}
-		
-		// back compatibility so FSDirectory can instantiate via reflection
-		/// <deprecated> 
-		/// </deprecated>
-        [Obsolete]
-		internal SimpleFSDirectory()
-		{
-		}
-		
-        /// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
+
+	    /// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
         /// 
         /// </summary>
         /// <param name="path">the path of the directory
         /// </param>
         /// <throws>  IOException </throws>
         public SimpleFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
-        {
-        }
+	    {
+	    }
 
-		/// <summary>Creates an IndexOutput for the file with the given name. </summary>
+	    /// <summary>Creates an IndexOutput for the file with the given name. </summary>
 		public override IndexOutput CreateOutput(System.String name)
 		{
 			InitOutput(name);
@@ -96,33 +64,36 @@ namespace Lucene.Net.Store
 		{
 			EnsureOpen();
 
-		    Exception e = null;
-		    for (int i = 0; i < 10; i++)
-		    {
-		        try
-		        {
-                    return new SimpleFSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)), bufferSize, GetReadChunkSize());
-		        }
-		        catch (System.UnauthorizedAccessException ex)
-		        {
-		            e = ex;
+            Exception e = null;
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    return new SimpleFSIndexInput(new System.IO.FileInfo(
+                        System.IO.Path.Combine(directory.FullName, name)), bufferSize, GetReadChunkSize());
+                }
+                catch (System.UnauthorizedAccessException ex)
+                {
+                    e = ex;
                     System.Threading.Thread.Sleep(1);
-		        }
-		    }
+                }
+            }
 
 		    throw e;
 		}
 		
-		public /*protected internal*/class SimpleFSIndexInput:BufferedIndexInput, System.ICloneable
+		protected internal class SimpleFSIndexInput : BufferedIndexInput
 		{
-			
-			protected internal class Descriptor:System.IO.BinaryReader
+			// TODO: This is a bad way to handle memory and disposing
+			protected internal class Descriptor : System.IO.BinaryReader
 			{
 				// remember if the file is open, so that we don't try to close it
 				// more than once
 				protected internal volatile bool isOpen;
 				internal long position;
 				internal long length;
+
+			    private bool isDisposed;
 				
 				public Descriptor(/*FSIndexInput enclosingInstance,*/ System.IO.FileInfo file, System.IO.FileAccess mode) 
 					: base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, mode, System.IO.FileShare.ReadWrite))
@@ -130,21 +101,28 @@ namespace Lucene.Net.Store
 					isOpen = true;
 					length = file.Length;
 				}
-				
-				public override void  Close()
-				{
-					if (isOpen)
-					{
-						isOpen = false;
-						base.Close();
-					}
-				}
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (isDisposed) return;
+
+                    if (disposing)
+                    {
+                        if (isOpen)
+                        {
+                            isOpen = false;
+                        }
+                    }
+
+                    isDisposed = true;
+                    base.Dispose(disposing);
+                }
 			
 				~Descriptor()
 				{
 					try
 					{
-						Close();
+						Dispose(false);
 					}
 					finally
 					{
@@ -154,30 +132,18 @@ namespace Lucene.Net.Store
 			
 			protected internal Descriptor file;
 			internal bool isClone;
+		    private bool isDisposed;
 			//  LUCENE-1566 - maximum read length on a 32bit JVM to prevent incorrect OOM 
 			protected internal int chunkSize;
-			
-			/// <deprecated> Please use ctor taking chunkSize 
-			/// </deprecated>
-            [Obsolete("Please use ctor taking chunkSize ")]
-			public SimpleFSIndexInput(System.IO.FileInfo path):this(path, BufferedIndexInput.BUFFER_SIZE, SimpleFSDirectory.DEFAULT_READ_CHUNK_SIZE)
-			{
-			}
-			
-			/// <deprecated> Please use ctor taking chunkSize 
-			/// </deprecated>
-            [Obsolete("Please use ctor taking chunkSize ")]
-			public SimpleFSIndexInput(System.IO.FileInfo path, int bufferSize):this(path, bufferSize, SimpleFSDirectory.DEFAULT_READ_CHUNK_SIZE)
-			{
-			}
-			
-			public SimpleFSIndexInput(System.IO.FileInfo path, int bufferSize, int chunkSize):base(bufferSize)
-			{
-				file = new Descriptor(path, System.IO.FileAccess.Read);
-				this.chunkSize = chunkSize;
-			}
-			
-			/// <summary>IndexInput methods </summary>
+
+            public SimpleFSIndexInput(System.IO.FileInfo path, int bufferSize, int chunkSize)
+                : base(bufferSize)
+            {
+                file = new Descriptor(path, System.IO.FileAccess.Read);
+                this.chunkSize = chunkSize;
+            }
+
+		    /// <summary>IndexInput methods </summary>
 			public override void  ReadInternal(byte[] b, int offset, int len)
 			{
 				lock (file)
@@ -223,15 +189,24 @@ namespace Lucene.Net.Store
 					}
 				}
 			}
-			
-			public override void  Close()
-			{
-				// only close the file if this is not a clone
-				if (!isClone)
-					file.Close();
-			}
-			
-			public override void  SeekInternal(long position)
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isDisposed) return;
+                if (disposing)
+                {
+                    // only close the file if this is not a clone
+                    if (!isClone && file != null)
+                    {
+                        file.Close();
+                        file = null;
+                    }
+                }
+
+                isDisposed = true;
+            }
+
+		    public override void  SeekInternal(long position)
 			{
 			}
 			
@@ -268,6 +243,8 @@ namespace Lucene.Net.Store
 			// remember if the file is open, so that we don't try to close it
 			// more than once
 			private volatile bool isOpen;
+
+		    private bool isDisposed;
 			
 			public SimpleFSIndexOutput(System.IO.FileInfo path)
 			{
@@ -291,36 +268,37 @@ namespace Lucene.Net.Store
                 // Can there be a indexing-performance problem?
                 file.Flush();
 			}
-			public override void  Close()
-			{
-				// only close the file if it has not been closed yet
-				if (isOpen)
-				{
-					bool success = false;
-					try
-					{
-						base.Close();
-						success = true;
-					}
-					finally
-					{
-						isOpen = false;
-						if (!success)
-						{
-							try
-							{
-								file.Close();
-							}
-							catch (System.Exception t)
-							{
-								// Suppress so we don't mask original exception
-							}
-						}
-						else
-							file.Close();
-					}
-				}
-			}
+
+            protected override void Dispose(bool disposing)
+            {
+                // only close the file if it has not been closed yet
+                if (isOpen)
+                {
+                    bool success = false;
+                    try
+                    {
+                        base.Dispose(disposing);
+                        success = true;
+                    }
+                    finally
+                    {
+                        isOpen = false;
+                        if (!success)
+                        {
+                            try
+                            {
+                                file.Dispose();
+                            }
+                            catch (System.Exception t)
+                            {
+                                // Suppress so we don't mask original exception
+                            }
+                        }
+                        else
+                            file.Dispose();
+                    }
+                }
+            }
 			
 			/// <summary>Random-access methods </summary>
 			public override void  Seek(long pos)

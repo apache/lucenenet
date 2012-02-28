@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 		internal int numDocs;
 		internal int termIndexInterval;
 		internal int numDocsInStore;
-		internal System.Collections.Hashtable flushedFiles;
+		internal System.Collections.Generic.ICollection<string> flushedFiles;
 		
 		public SegmentWriteState(DocumentsWriter docWriter, Directory directory, System.String segmentName, System.String docStoreSegmentName, int numDocs, int numDocsInStore, int termIndexInterval)
 		{
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 			this.numDocs = numDocs;
 			this.numDocsInStore = numDocsInStore;
 			this.termIndexInterval = termIndexInterval;
-            flushedFiles = new System.Collections.Hashtable();
+            flushedFiles = new System.Collections.Generic.HashSet<string>();
 		}
 		
 		public virtual System.String SegmentFileName(System.String ext)

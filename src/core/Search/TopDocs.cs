@@ -26,34 +26,31 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class TopDocs
 	{
-		/// <summary>The total number of hits for the query.</summary>
-		/// <seealso cref="Hits.Length()">
-		/// </seealso>
-        [Obsolete("For backward compatibility. Use TotalHits instead")]
-		public int totalHits;
-		/// <summary>The top hits for the query. </summary>
-        [Obsolete("For backward compatibility. Use ScoreDocs instead")]
-		public ScoreDoc[] scoreDocs;
-		/// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
-        [Obsolete("For backward compatibility. Use MaxScore instead")]
-		private float maxScore;
+		private int _totalHits;
+        private ScoreDoc[] _scoreDocs;
+        private float _maxScore;
 
+        /// <summary>The total number of hits for the query.</summary>
+        /// <seealso cref="Hits.Length()">
+        /// </seealso>
         public int TotalHits
         {
-            get { return totalHits; }
-            set { totalHits = value; }
+            get { return _totalHits; }
+            set { _totalHits = value; }
         }
 
+        /// <summary>The top hits for the query. </summary>
         public ScoreDoc[] ScoreDocs
         {
-            get { return scoreDocs; }
-            set { scoreDocs = value; }
+            get { return _scoreDocs; }
+            set { _scoreDocs = value; }
         }
 
+        /// <summary>Stores the maximum score value encountered, needed for normalizing. </summary>
         public float MaxScore
         {
-            get { return maxScore; }
-            set { maxScore = value; }
+            get { return _maxScore; }
+            set { _maxScore = value; }
         }
 
 

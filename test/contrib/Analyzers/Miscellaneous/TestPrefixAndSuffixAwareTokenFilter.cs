@@ -22,6 +22,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Analyzers.Miscellaneous
 {
+    [TestFixture]
     public class TestPrefixAndSuffixAwareTokenFilter : BaseTokenStreamTestCase
     {
         [Test]

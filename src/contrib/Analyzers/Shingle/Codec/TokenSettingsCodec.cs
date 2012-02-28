@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Analysis;
+using Lucene.Net.Analyzers.Shingle;
 
-namespace Lucene.Net.Analyzers.Shingle.Codec
+namespace Lucene.Net.Analysis.Shingle.Codec
 {
     /// <summary>
     /// Strategy used to code and decode meta data of the tokens from the input stream

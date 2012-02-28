@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 	/// into account). 
 	/// </summary>
 	
-	public class LogDocMergePolicy:LogMergePolicy
+	public class LogDocMergePolicy : LogMergePolicy
 	{
 		
 		/// <seealso cref="SetMinMergeDocs">
@@ -59,7 +59,12 @@ namespace Lucene.Net.Index
 		{
 			minMergeSize = minMergeDocs;
 		}
-		
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
+
 		/// <summary>Get the minimum size for a segment to remain
 		/// un-merged.
 		/// </summary>

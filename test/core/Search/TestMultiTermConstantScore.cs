@@ -189,8 +189,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestEqualScores()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			ScoreDoc[] result;
@@ -219,8 +219,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestBoost()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// test for correct application of query normalization
@@ -274,8 +274,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestBooleanOrderUnAffected()
 		{
 			// NOTE: uses index build in *this* setUp
-			
-			IndexReader reader = IndexReader.Open(small);
+
+            IndexReader reader = IndexReader.Open(small, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// first do a regular TermRangeQuery which uses term expansion so
@@ -306,8 +306,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryId()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			int medId = ((maxId - minId) / 2);
@@ -435,8 +435,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryIdCollating()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			int medId = ((maxId - minId) / 2);
@@ -520,8 +520,8 @@ namespace Lucene.Net.Search
 		public virtual void  TestRangeQueryRand()
 		{
 			// NOTE: uses index build in *super* setUp
-			
-			IndexReader reader = IndexReader.Open(signedIndex.index);
+
+            IndexReader reader = IndexReader.Open(signedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.String minRP = Pad(signedIndex.minR);
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
 			// NOTE: uses index build in *super* setUp
 			
 			// using the unsigned index because collation seems to ignore hyphens
-			IndexReader reader = IndexReader.Open(unsignedIndex.index);
+            IndexReader reader = IndexReader.Open(unsignedIndex.index, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.String minRP = Pad(unsignedIndex.minR);
@@ -659,8 +659,8 @@ namespace Lucene.Net.Search
 			
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(farsiIndex);
+
+            IndexReader reader = IndexReader.Open(farsiIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
@@ -695,14 +695,14 @@ namespace Lucene.Net.Search
 			for (int docnum = 0; docnum < words.Length; ++docnum)
 			{
 				Document doc = new Document();
-				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.UN_TOKENIZED));
-				doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.Add(new Field("content", words[docnum], Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.NOT_ANALYZED));
 				writer.AddDocument(doc);
 			}
 			writer.Optimize();
 			writer.Close();
-			
-			IndexReader reader = IndexReader.Open(danishIndex);
+
+            IndexReader reader = IndexReader.Open(danishIndex, true);
 			IndexSearcher search = new IndexSearcher(reader);
 			
 			System.Globalization.CompareInfo c = new System.Globalization.CultureInfo("da" + "-" + "dk").CompareInfo;

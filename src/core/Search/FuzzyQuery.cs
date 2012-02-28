@@ -16,10 +16,13 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using Single = Lucene.Net.Support.Single;
 using Term = Lucene.Net.Index.Term;
-using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -34,7 +37,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// </summary>
 	[Serializable]
-	public class FuzzyQuery:MultiTermQuery
+	public class FuzzyQuery : MultiTermQuery
 	{
 		
 		public const float defaultMinSimilarity = 0.5f;
@@ -44,7 +47,7 @@ namespace Lucene.Net.Search
 		private int prefixLength;
 		private bool termLongEnough = false;
 		
-		new protected internal Term term;
+		protected internal Term term;
 		
 		/// <summary> Create a new FuzzyQuery that will match terms with a similarity 
 		/// of at least <c>minimumSimilarity</c> to <c>term</c>.
@@ -65,8 +68,8 @@ namespace Lucene.Net.Search
 		/// <throws>  IllegalArgumentException if minimumSimilarity is &gt;= 1 or &lt; 0 </throws>
 		/// <summary> or if prefixLength &lt; 0
 		/// </summary>
-		public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength):base(term)
-		{ // will be removed in 3.0
+		public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength)
+		{
 			this.term = term;
 			
 			if (minimumSimilarity >= 1.0f)
@@ -119,8 +122,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns the pattern term.</summary>
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Search.MultiTermQuery.GetTerm()")]
-		public override Term GetTerm()
+		public Term GetTerm()
 		{
 			return term;
 		}
@@ -137,40 +139,40 @@ namespace Lucene.Net.Search
 				// can only match if it's exact
 				return new TermQuery(term);
 			}
-			
+
+		    int maxSize = BooleanQuery.GetMaxClauseCount();
+
+            // TODO: Java uses a PriorityQueue.  Using Linq, we can emulate it, 
+            //       however it's considerable slower than the java counterpart.
+            //       this should be a temporary thing, fixed before release
+            SortedList<ScoreTerm, ScoreTerm> stQueue = new SortedList<ScoreTerm, ScoreTerm>();
 			FilteredTermEnum enumerator = GetEnum(reader);
-			int maxClauseCount = BooleanQuery.GetMaxClauseCount();
-			ScoreTermQueue stQueue = new ScoreTermQueue(maxClauseCount);
-			ScoreTerm reusableST = null;
 			
 			try
 			{
+                ScoreTerm st = new ScoreTerm();
 				do 
 				{
-					float score = 0.0f;
 					Term t = enumerator.Term();
-					if (t != null)
-					{
-						score = enumerator.Difference();
-						if (reusableST == null)
-						{
-							reusableST = new ScoreTerm(t, score);
-						}
-						else if (score >= reusableST.score)
-						{
-							// reusableST holds the last "rejected" entry, so, if
-							// this new score is not better than that, there's no
-							// need to try inserting it
-							reusableST.score = score;
-							reusableST.term = t;
-						}
-						else
-						{
-							continue;
-						}
-						
-						reusableST = (ScoreTerm) stQueue.InsertWithOverflow(reusableST);
-					}
+                    if (t == null) break;
+				    float score = enumerator.Difference();
+                    //ignore uncompetetive hits
+                    if (stQueue.Count >= maxSize && score <= stQueue.Keys.First().score)
+                        continue;
+                    // add new entry in PQ
+				    st.term = t;
+				    st.score = score;
+				    stQueue.Add(st, st);
+                    // possibly drop entries from queue
+                    if (stQueue.Count > maxSize)
+                    {
+                        st = stQueue.Keys.First();
+                        stQueue.Remove(st);
+                    }
+                    else
+                    {
+                        st = new ScoreTerm();
+                    }
 				}
 				while (enumerator.Next());
 			}
@@ -180,10 +182,8 @@ namespace Lucene.Net.Search
 			}
 			
 			BooleanQuery query = new BooleanQuery(true);
-			int size = stQueue.Size();
-			for (int i = 0; i < size; i++)
+			foreach(ScoreTerm st in stQueue.Keys)
 			{
-				ScoreTerm st = (ScoreTerm) stQueue.Pop();
 				TermQuery tq = new TermQuery(st.term); // found a match
 				tq.SetBoost(GetBoost() * st.score); // set the boost
 				query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
@@ -202,43 +202,27 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(term.Text());
 			buffer.Append('~');
-			buffer.Append(SupportClass.Single.ToString(minimumSimilarity));
+			buffer.Append(Single.ToString(minimumSimilarity));
 			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
-		protected internal class ScoreTerm
+		protected internal class ScoreTerm : IComparable<ScoreTerm>
 		{
 			public Term term;
 			public float score;
-			
-			public ScoreTerm(Term term, float score)
-			{
-				this.term = term;
-				this.score = score;
-			}
-		}
-		
-		protected internal class ScoreTermQueue:PriorityQueue
-		{
-			
-			public ScoreTermQueue(int size)
-			{
-				Initialize(size);
-			}
-			
-			/* (non-Javadoc)
-			* <see cref="Lucene.Net.Util.PriorityQueue.lessThan(java.lang.Object, java.lang.Object)"/>
-			*/
-			public override bool LessThan(System.Object a, System.Object b)
-			{
-				ScoreTerm termA = (ScoreTerm) a;
-				ScoreTerm termB = (ScoreTerm) b;
-				if (termA.score == termB.score)
-					return termA.term.CompareTo(termB.term) > 0;
-				else
-					return termA.score < termB.score;
-			}
+
+		    public int CompareTo(ScoreTerm other)
+		    {
+                if (Comparer<float>.Default.Compare(this.score, other.score) == 0)
+                {
+                    return other.term.CompareTo(this.term);
+                }
+                else
+                {
+                    return Comparer<float>.Default.Compare(this.score, other.score);
+                }
+		    }
 		}
 		
 		public override int GetHashCode()

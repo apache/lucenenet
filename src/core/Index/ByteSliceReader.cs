@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	* each slice until we hit the end of that slice at which
 	* point we read the forwarding address of the next slice
 	* and then jump to it.*/
-	public sealed class ByteSliceReader:IndexInput
+	public sealed class ByteSliceReader : IndexInput
 	{
 		internal ByteBlockPool pool;
 		internal int bufferUpto;
@@ -169,10 +169,11 @@ namespace Lucene.Net.Index
 		{
 			throw new System.SystemException("not implemented");
 		}
-		public override void  Close()
-		{
-			throw new System.SystemException("not implemented");
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing...
+        }
 		
 		override public System.Object Clone()
 		{

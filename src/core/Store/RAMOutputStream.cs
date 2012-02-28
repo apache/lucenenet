@@ -21,11 +21,8 @@ namespace Lucene.Net.Store
 {
 	
 	/// <summary> A memory-resident <see cref="IndexOutput" /> implementation.
-	/// 
+	/// <para>For lucene internal use.</para>
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java 691694 2008-09-03 17:34:29Z mikemccand $
-	/// </version>
-	
 	public class RAMOutputStream:IndexOutput
 	{
 		internal const int BUFFER_SIZE = 1024;
@@ -34,7 +31,9 @@ namespace Lucene.Net.Store
 		
 		private byte[] currentBuffer;
 		private int currentBufferIndex;
-		
+
+	    private bool isDisposed;
+
 		private int bufferPosition;
 		private long bufferStart;
 		private int bufferLength;
@@ -70,7 +69,7 @@ namespace Lucene.Net.Store
 					// at the last buffer
 					length = (int) (end - pos);
 				}
-				out_Renamed.WriteBytes((byte[]) file.GetBuffer(buffer++), length);
+				out_Renamed.WriteBytes(file.GetBuffer(buffer++), length);
 				pos = nextPos;
 			}
 		}
@@ -87,10 +86,17 @@ namespace Lucene.Net.Store
 			file.SetLength(0);
 		}
 		
-		public override void  Close()
-		{
-			Flush();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                Flush();
+            }
+
+            isDisposed = true;
+        }
 		
 		public override void  Seek(long pos)
 		{
@@ -149,7 +155,7 @@ namespace Lucene.Net.Store
 			}
 			else
 			{
-				currentBuffer = (byte[]) file.GetBuffer(currentBufferIndex);
+				currentBuffer = file.GetBuffer(currentBufferIndex);
 			}
 			bufferPosition = 0;
 			bufferStart = (long) BUFFER_SIZE * (long) currentBufferIndex;

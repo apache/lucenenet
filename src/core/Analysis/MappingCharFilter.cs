@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -25,12 +26,10 @@ namespace Lucene.Net.Analysis
 	/// stream, and correcting the resulting changes to the
 	/// offsets.
 	/// </summary>
-	public class MappingCharFilter:BaseCharFilter
+	public class MappingCharFilter : BaseCharFilter
 	{
-		
 		private NormalizeCharMap normMap;
-		//private LinkedList<Character> buffer;
-		private System.Collections.ArrayList buffer;
+		private System.Collections.Generic.LinkedList<char> buffer;
 		private System.String replacement;
 		private int charPointer;
 		private int nextCharCounter;
@@ -59,7 +58,9 @@ namespace Lucene.Net.Analysis
 				int firstChar = NextChar();
 				if (firstChar == - 1)
 					return - 1;
-				NormalizeCharMap nm = normMap.submap != null?(NormalizeCharMap) normMap.submap[CharacterCache.ValueOf((char) firstChar)]:null;
+			    NormalizeCharMap nm = normMap.submap != null
+			                              ? normMap.submap[(char) firstChar]
+			                              : null;
 				if (nm == null)
 					return firstChar;
 				NormalizeCharMap result = Match(nm);
@@ -69,7 +70,7 @@ namespace Lucene.Net.Analysis
 				charPointer = 0;
 				if (result.diff != 0)
 				{
-					int prevCumulativeDiff = GetLastCumulativeDiff();
+					int prevCumulativeDiff = LastCumulativeDiff;
 					if (result.diff < 0)
 					{
 						for (int i = 0; i < - result.diff; i++)
@@ -88,10 +89,9 @@ namespace Lucene.Net.Analysis
 			nextCharCounter++;
 			if (buffer != null && !(buffer.Count == 0))
 			{
-				System.Object tempObject;
-				tempObject = buffer[0];
-				buffer.RemoveAt(0);
-				return ((System.Char) tempObject);
+				char tempObject = buffer.First.Value;
+				buffer.RemoveFirst();
+				return (tempObject);
 			}
 			return input.Read();
 		}
@@ -101,18 +101,18 @@ namespace Lucene.Net.Analysis
 			nextCharCounter--;
 			if (buffer == null)
 			{
-				buffer = new System.Collections.ArrayList();
+				buffer = new LinkedList<char>();
 			}
-			buffer.Insert(0, (char) c);
+			buffer.AddFirst((char)c);
 		}
 		
 		private void  PushLastChar(int c)
 		{
 			if (buffer == null)
 			{
-				buffer = new System.Collections.ArrayList();
+                buffer = new LinkedList<char>();
 			}
-			buffer.Insert(buffer.Count, (char) c);
+			buffer.AddLast((char)c);
 		}
 		
 		private NormalizeCharMap Match(NormalizeCharMap map)
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis
 				int chr = NextChar();
 				if (chr != - 1)
 				{
-					NormalizeCharMap subMap = (NormalizeCharMap) map.submap[CharacterCache.ValueOf((char) chr)];
+					NormalizeCharMap subMap = map.submap[(char)chr];
 					if (subMap != null)
 					{
 						result = Match(subMap);

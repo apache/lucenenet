@@ -80,8 +80,8 @@ namespace Lucene.Net.Util
 			}
 			wA.Close();
 			wB.Close();
-			readerA = IndexReader.Open(dirA);
-			readerB = IndexReader.Open(dirB);
+			readerA = IndexReader.Open(dirA, true);
+			readerB = IndexReader.Open(dirB, true);
 			readerX = new MultiReader(new IndexReader[]{readerA, readerB});
 		}
 		

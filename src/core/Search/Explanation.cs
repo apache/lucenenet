@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -24,9 +25,9 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class Explanation
 	{
-		private float value_Renamed; // the value of this node
-		private System.String description; // what it represents
-		private System.Collections.ArrayList details; // sub-explanations
+		private float value_Renamed;        // the value of this node
+		private System.String description;  // what it represents
+		private List<Explanation> details;  // sub-explanations
 		
 		public Explanation()
 		{
@@ -48,54 +49,90 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public virtual bool IsMatch()
 		{
-			return (0.0f < GetValue());
+			return (0.0f < Value);
 		}
-		
-		
-		
-		/// <summary>The value assigned to this explanation node. </summary>
-		public virtual float GetValue()
-		{
-			return value_Renamed;
-		}
-		/// <summary>Sets the value assigned to this explanation node. </summary>
-		public virtual void  SetValue(float value_Renamed)
-		{
-			this.value_Renamed = value_Renamed;
-		}
-		
-		/// <summary>A description of this explanation node. </summary>
-		public virtual System.String GetDescription()
-		{
-			return description;
-		}
-		/// <summary>Sets the description of this explanation node. </summary>
-		public virtual void  SetDescription(System.String description)
-		{
-			this.description = description;
-		}
-		
-		/// <summary> A short one line summary which should contain all high level
-		/// information about this Explanation, without the "Details"
-		/// </summary>
-		protected internal virtual System.String GetSummary()
-		{
-			return GetValue() + " = " + GetDescription();
-		}
-		
-		/// <summary>The sub-nodes of this explanation node. </summary>
-		public virtual Explanation[] GetDetails()
-		{
-			if (details == null)
-				return null;
-			return (Explanation[]) details.ToArray(typeof(Explanation));
-		}
-		
-		/// <summary>Adds a sub-node to this explanation node. </summary>
+
+
+	    /// <summary>The value assigned to this explanation node. </summary>
+	    public virtual float Value
+	    {
+	        get { return value_Renamed; }
+	        set { this.value_Renamed = value; }
+        }
+        
+        /// <summary>The value assigned to this explanation node. </summary>
+        [Obsolete("Use Value property instead.")]
+        public virtual float GetValue()
+        {
+            return Value;
+        }
+        /// <summary>Sets the value assigned to this explanation node. </summary>
+        [Obsolete("Use Value property instead.")]
+        public virtual void SetValue(float newValue)
+        {
+            this.Value = newValue;
+        }
+
+	    /// <summary>A description of this explanation node. </summary>
+	    public virtual string Description
+	    {
+	        get { return description; }
+	        set { this.description = value; }
+        }
+
+        /// <summary>A description of this explanation node. </summary>
+        [Obsolete("Use Description property instead.")]
+        public virtual System.String GetDescription()
+        {
+            return Description;
+        }
+        /// <summary>Sets the description of this explanation node. </summary>
+        [Obsolete("Use Description property instead.")]
+        public virtual void SetDescription(System.String description)
+        {
+            Description = description;
+        }
+
+	    /// <summary> A short one line summary which should contain all high level
+	    /// information about this Explanation, without the "Details"
+	    /// </summary>
+	    protected internal virtual string Summary
+	    {
+	        get { return Value + " = " + Description; }
+	    }
+        
+        /// <summary> A short one line summary which should contain all high level
+        /// information about this Explanation, without the "Details"
+        /// </summary>
+        [Obsolete("Use Summary property instead.")]
+        protected internal virtual System.String GetSummary()
+        {
+            return Summary;
+        }
+
+	    /// <summary>The sub-nodes of this explanation node. </summary>
+	    public virtual Explanation[] Details
+	    {
+	        get
+	        {
+	            if (details == null)
+	                return null;
+	            return details.ToArray();
+	        }
+	    }
+        
+        /// <summary>The sub-nodes of this explanation node. </summary>
+        [Obsolete("Use Details property instead.")]
+        public virtual Explanation[] GetDetails()
+        {
+            return Details;
+        }
+
+	    /// <summary>Adds a sub-node to this explanation node. </summary>
 		public virtual void  AddDetail(Explanation detail)
 		{
 			if (details == null)
-				details = new System.Collections.ArrayList();
+				details = new List<Explanation>();
 			details.Add(detail);
 		}
 		
@@ -104,17 +141,18 @@ namespace Lucene.Net.Search
 		{
 			return ToString(0);
 		}
-		public /*protected internal*/ virtual System.String ToString(int depth)
+
+		protected internal virtual System.String ToString(int depth)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			for (int i = 0; i < depth; i++)
 			{
 				buffer.Append("  ");
 			}
-			buffer.Append(GetSummary());
+			buffer.Append(Summary);
 			buffer.Append("\n");
 			
-			Explanation[] details = GetDetails();
+			Explanation[] details = Details;
 			if (details != null)
 			{
 				for (int i = 0; i < details.Length; i++)
@@ -126,7 +164,6 @@ namespace Lucene.Net.Search
 			return buffer.ToString();
 		}
 		
-		
 		/// <summary>Render an explanation as HTML. </summary>
 		public virtual System.String ToHtml()
 		{
@@ -134,10 +171,10 @@ namespace Lucene.Net.Search
 			buffer.Append("<list>\n");
 			
 			buffer.Append("<item>");
-			buffer.Append(GetSummary());
+			buffer.Append(Summary);
 			buffer.Append("<br />\n");
 			
-			Explanation[] details = GetDetails();
+			Explanation[] details = Details;
 			if (details != null)
 			{
 				for (int i = 0; i < details.Length; i++)

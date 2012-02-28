@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis
 	/// with <see cref="LowerCaseFilter" /> 
 	/// </summary>
 	
-	public sealed class SimpleAnalyzer:Analyzer
+	public sealed class SimpleAnalyzer : Analyzer
 	{
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{

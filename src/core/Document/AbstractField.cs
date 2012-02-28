@@ -24,8 +24,6 @@ using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
 
 namespace Lucene.Net.Documents
 {
-	
-	
 	/// <summary> 
 	/// 
 	/// 
@@ -43,7 +41,6 @@ namespace Lucene.Net.Documents
 		protected internal bool isIndexed = true;
 		protected internal bool isTokenized = true;
 		protected internal bool isBinary = false;
-		protected internal bool isCompressed = false;
 		protected internal bool lazy = false;
 		protected internal bool omitTermFreqAndPositions = false;
 		protected internal float boost = 1.0f;
@@ -64,58 +61,11 @@ namespace Lucene.Net.Documents
 			if (name == null)
 				throw new System.NullReferenceException("name cannot be null");
 			this.name = StringHelper.Intern(name); // field names are interned
-			
-			if (store == Field.Store.YES)
-			{
-				this.isStored = true;
-				this.isCompressed = false;
-			}
-			else if (store == Field.Store.COMPRESS)
-			{
-				this.isStored = true;
-				this.isCompressed = true;
-			}
-			else if (store == Field.Store.NO)
-			{
-				this.isStored = false;
-				this.isCompressed = false;
-			}
-			else
-			{
-				throw new System.ArgumentException("unknown store parameter " + store);
-			}
-			
-			if (index == Field.Index.NO)
-			{
-				this.isIndexed = false;
-				this.isTokenized = false;
-			}
-			else if (index == Field.Index.ANALYZED)
-			{
-				this.isIndexed = true;
-				this.isTokenized = true;
-			}
-			else if (index == Field.Index.NOT_ANALYZED)
-			{
-				this.isIndexed = true;
-				this.isTokenized = false;
-			}
-			else if (index == Field.Index.NOT_ANALYZED_NO_NORMS)
-			{
-				this.isIndexed = true;
-				this.isTokenized = false;
-				this.omitNorms = true;
-			}
-			else if (index == Field.Index.ANALYZED_NO_NORMS)
-			{
-				this.isIndexed = true;
-				this.isTokenized = true;
-				this.omitNorms = true;
-			}
-			else
-			{
-				throw new System.ArgumentException("unknown index parameter " + index);
-			}
+
+		    this.isStored = store.IsStored();
+		    this.isIndexed = index.IsIndexed();
+		    this.isTokenized = index.IsAnalyzed();
+		    this.omitNorms = index.OmitNorms();
 			
 			this.isBinary = false;
 			
@@ -155,7 +105,7 @@ namespace Lucene.Net.Documents
 		/// 
 		/// <p/>Note: this value is not stored directly with the document in the index.
 		/// Documents returned from <see cref="Lucene.Net.Index.IndexReader.Document(int)" /> and
-		/// <see cref="Lucene.Net.Search.Hits.Doc(int)" /> may thus not have the same value present as when
+		/// <see cref="Lucene.Net.Search.Searcher.Doc(int)" /> may thus not have the same value present as when
 		/// this field was indexed.
 		/// 
 		/// </summary>
@@ -176,40 +126,9 @@ namespace Lucene.Net.Documents
 		
 		protected internal virtual void  SetStoreTermVector(Field.TermVector termVector)
 		{
-			if (termVector == Field.TermVector.NO)
-			{
-				this.storeTermVector = false;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == Field.TermVector.YES)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == Field.TermVector.WITH_POSITIONS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = true;
-				this.storeOffsetWithTermVector = false;
-			}
-			else if (termVector == Field.TermVector.WITH_OFFSETS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = false;
-				this.storeOffsetWithTermVector = true;
-			}
-			else if (termVector == Field.TermVector.WITH_POSITIONS_OFFSETS)
-			{
-				this.storeTermVector = true;
-				this.storePositionWithTermVector = true;
-				this.storeOffsetWithTermVector = true;
-			}
-			else
-			{
-				throw new System.ArgumentException("unknown termVector parameter " + termVector);
-			}
+		    this.storeTermVector = termVector.IsStored();
+		    this.storePositionWithTermVector = termVector.WithPositions();
+		    this.storeOffsetWithTermVector = termVector.WithOffsets();
 		}
 		
 		/// <summary>True iff the value of the field is to be stored in the index for return
@@ -236,12 +155,6 @@ namespace Lucene.Net.Documents
 		public bool IsTokenized()
 		{
 			return isTokenized;
-		}
-		
-		/// <summary>True if the value of the field is stored and compressed within the index </summary>
-		public bool IsCompressed()
-		{
-			return isCompressed;
 		}
 		
 		/// <summary>True iff the term or terms used to index this field are stored as a term
@@ -308,10 +221,7 @@ namespace Lucene.Net.Documents
 		{
 			if (isBinary)
 			{
-				if (!isCompressed)
-					return binaryLength;
-				else
-					return ((byte[]) fieldsData).Length;
+                return binaryLength;
 			}
 			else if (fieldsData is byte[])
 				return ((byte[]) fieldsData).Length;
@@ -335,14 +245,6 @@ namespace Lucene.Net.Documents
 			return omitNorms;
 		}
 		
-		/// <deprecated> Renamed to <see cref="GetOmitTermFreqAndPositions" /> 
-		/// </deprecated>
-        [Obsolete("Renamed to GetOmitTermFreqAndPositions")]
-		public virtual bool GetOmitTf()
-		{
-			return omitTermFreqAndPositions;
-		}
-		
 		/// <seealso cref="SetOmitTermFreqAndPositions">
 		/// </seealso>
 		public virtual bool GetOmitTermFreqAndPositions()
@@ -358,14 +260,6 @@ namespace Lucene.Net.Documents
 		public virtual void  SetOmitNorms(bool omitNorms)
 		{
 			this.omitNorms = omitNorms;
-		}
-		
-		/// <deprecated> Renamed to <see cref="SetOmitTermFreqAndPositions" /> 
-		/// </deprecated>
-        [Obsolete("Renamed to SetOmitTermFreqAndPositions")]
-		public virtual void  SetOmitTf(bool omitTermFreqAndPositions)
-		{
-			this.omitTermFreqAndPositions = omitTermFreqAndPositions;
 		}
 		
 		/// <summary>Expert:
@@ -396,10 +290,6 @@ namespace Lucene.Net.Documents
 			if (isStored)
 			{
 				result.Append("stored");
-				if (isCompressed)
-					result.Append("/compressed");
-				else
-					result.Append("/uncompressed");
 			}
 			if (isIndexed)
 			{
@@ -461,9 +351,8 @@ namespace Lucene.Net.Documents
 			result.Append('>');
 			return result.ToString();
 		}
-		public abstract Lucene.Net.Analysis.TokenStream TokenStreamValue();
-		public abstract System.IO.TextReader ReaderValue();
-		public abstract System.String StringValue();
-		public abstract byte[] BinaryValue();
+        public abstract Lucene.Net.Analysis.TokenStream TokenStreamValue();
+        public abstract System.IO.TextReader ReaderValue();
+        public abstract System.String StringValue();
 	}
 }

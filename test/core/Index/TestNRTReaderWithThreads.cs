@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 			mainDir.Close();
 		}
 		
-		public class RunThread:SupportClass.ThreadClass
+		public class RunThread:ThreadClass
 		{
 			private void  InitBlock(TestNRTReaderWithThreads enclosingInstance)
 			{

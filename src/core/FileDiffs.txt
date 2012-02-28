@@ -1,0 +1,88 @@
+﻿search\BooleanClause.java - Text files are different - Java Enum overrides ToString() -> 
+                                                       can't do that in .NET, it will always choose the 
+                                                       base class instead of the extension method, if that's how
+                                                       we choose to implement.
+store\LockStressTest.java - Text files are different
+store\MMapDirectory.java - Text files are different - PORT ISSUES
+store\NIOFSDirectory.java - Text files are different - PORT ISSUES
+
+
+util\DummyConcurrentLock.java - New in 3.x (NOT NEEDED IN .NET?  Can just use new Object() for a dummy lock) (used in MultiSearcher)
+util\NamedThreadFactory.java - New in 3.x
+util\ThreadInterruptedException.java - new in 3.x (NOT NEEDED IN .NET?)
+
+LUCENENET-468
+
+Analyzer - Implemented Dispose
+CharFilter - Implemented Dispose
+CharReader
+TokenFilter
+Tokenizer
+TokenStream
+AbstractAllTermDocs
+ByteSliceReader
+CompoundFileReader
+CompundFileWriter
+ConcurrentMergeScheduler
+DirectoryReader
+DocumentsWriter
+FieldsReader
+FieldsWriter
+FilterIndexReader
+FormatPostingsDocsWriter
+FormatPostingsPositionsWriter
+FormatPostingsTermsWriter
+IndexFileDeleter
+IndexReader
+IdnexWriter
+InvertedDocConsumer
+InvertedDocEndConsumer
+LogMergePolicy
+MergePolicy
+MergeScheduler
+MultiLevelSkipListReader
+MultipleTermPositions
+NormsWriter
+ParallelReader
+ReusableStringReader
+SegmentMergeInfo
+SegmentMergeQueue
+SegmentMerger
+SegmentReader
+SegmentTermDocs
+SegmentTermEnum
+SegmentTermPositions
+SerialMergeScheduler
+StoredFieldsWriter
+TermDocs
+TermEnum
+TermInfosReader
+TermInfosWriter
+TermVectorsReader
+TermVectorsWriter
+FilteredTermEnum
+FuzzyTermEnum
+indexSearcher
+MultiSearcher
+NumericRangeQuery
+Searchable
+BufferedIndexOutput
+CheckSumIndexInput
+CheckSumIndexOutput
+Directory
+FileSwitchDirectory
+FSDirectory
+FileSwitchDirectory
+FSDirectory
+IndexInput
+IndexOutput
+MMapDirectory
+NIOFSDirectory
+RAMDirectory
+RAMInputStream
+RAMOutputStream
+SimpleFSDirectory
+Cache
+SimpleMapCache
+CloseableThreadLocal
+

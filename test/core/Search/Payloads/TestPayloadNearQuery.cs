@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Payloads
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payAtt = AddAttribute<PayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()
@@ -286,8 +286,6 @@ namespace Lucene.Net.Search.Payloads
 		[Serializable]
 		internal class BoostingSimilarity:DefaultSimilarity
 		{
-			
-			// TODO: Remove warning after API has been finalized
 			public override float ScorePayload(int docId, System.String fieldName, int start, int end, byte[] payload, int offset, int length)
 			{
 				//we know it is size 4 here, so ignore the offset/length
@@ -298,32 +296,51 @@ namespace Lucene.Net.Search.Payloads
 			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			public override float LengthNorm(System.String fieldName, int numTerms)
 			{
-				return 1;
+			    return 1.0f;
 			}
 			
 			public override float QueryNorm(float sumOfSquaredWeights)
 			{
-				return 1;
+                return 1.0f;
 			}
 			
 			public override float SloppyFreq(int distance)
 			{
-				return 1;
+                return 1.0f;
 			}
 			
 			public override float Coord(int overlap, int maxOverlap)
 			{
-				return 1;
+                return 1.0f;
 			}
 			public override float Tf(float freq)
 			{
-				return 1;
+                return 1.0f;
 			}
 			// idf used for phrase queries
-			public override float Idf(System.Collections.ICollection terms, Searcher searcher)
+			public override Explanation.IDFExplanation IdfExplain(ICollection<Term> terms, Searcher searcher)
 			{
-				return 1;
+			    return new InjectableIDFExplanation
+			               {
+			                   ExplainFunc = () => "Inexplicable",
+                               GetIdfFunc = () => 1.0f
+			               };
 			}
+
+            private class InjectableIDFExplanation : Explanation.IDFExplanation
+            {
+                public Func<float> GetIdfFunc { get; set; }
+                public Func<string> ExplainFunc { get; set; }
+                public override float GetIdf()
+                {
+                    return GetIdfFunc.Invoke();
+                }
+
+                public override string Explain()
+                {
+                    return ExplainFunc.Invoke();
+                }
+            }
 		}
 	}
 }

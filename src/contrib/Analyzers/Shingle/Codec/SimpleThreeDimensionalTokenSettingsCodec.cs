@@ -16,11 +16,11 @@
  */
 
 using System.IO;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analyzers.Payloads;
+using Lucene.Net.Analyzers.Shingle;
 using Lucene.Net.Index;
 
-namespace Lucene.Net.Analyzers.Shingle.Codec
+namespace Lucene.Net.Analysis.Shingle.Codec
 {
     /// <summary>
     /// A full featured codec not to be used for something serious.

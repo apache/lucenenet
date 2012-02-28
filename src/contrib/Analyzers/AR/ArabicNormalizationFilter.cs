@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.AR
         {
             
             normalizer = new ArabicNormalizer();
-            termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
         }
 
         public override bool IncrementToken()
@@ -52,10 +52,7 @@ namespace Lucene.Net.Analysis.AR
                 termAtt.SetTermLength(newlen);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

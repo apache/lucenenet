@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 		/// <summary> Constructor.</summary>
 		/// <param name="innerSet">Underlying DocIdSet
 		/// </param>
-		public FilteredDocIdSet(DocIdSet innerSet)
+		protected FilteredDocIdSet(DocIdSet innerSet)
 		{
 			_innerSet = innerSet;
 		}

@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
@@ -57,21 +58,8 @@ namespace Lucene.Net.Analysis
 	/// Even though it is not necessary to use Token anymore, with the new TokenStream API it can
 	/// be used as convenience class that implements all <see cref="Attribute" />s, which is especially useful
 	/// to easily switch from the old to the new TokenStream API.
-	/// </summary>
-	/// <summary><br/><br/>
-	/// <p/><b>NOTE:</b> As of 2.3, Token stores the term text
-	/// internally as a malleable char[] termBuffer instead of
-	/// String termText.  The indexing code and core tokenizers
-	/// have been changed to re-use a single Token instance, changing
-	/// its buffer and other fields in-place as the Token is
-	/// processed.  This provides substantially better indexing
-	/// performance as it saves the GC cost of new'ing a Token and
-	/// String for every term.  The APIs that accept String
-	/// termText are still available but a warning about the
-	/// associated performance cost has been added (below).  The
-	/// <see cref="TermText()" /> method has been deprecated.<p/>
-	/// </summary>
-	/// <summary><p/>Tokenizers and TokenFilters should try to re-use a Token instance when
+	/// <br/><br/>
+	/// <p/>Tokenizers and TokenFilters should try to re-use a Token instance when
 	/// possible for best performance, by implementing the
 	/// <see cref="TokenStream.IncrementToken()" /> API.
 	/// Failing that, to create a new Token you should first use
@@ -135,68 +123,17 @@ namespace Lucene.Net.Analysis
 	[Serializable]
 	public class Token:AttributeImpl, System.ICloneable, TermAttribute, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute
 	{
-		
 		public const System.String DEFAULT_TYPE = "word";
 		
 		private static int MIN_BUFFER_SIZE = 10;
-		
-		/// <deprecated> We will remove this when we remove the
-		/// deprecated APIs 
-		/// </deprecated>
-        [Obsolete("We will remove this when we remove the deprecated APIs")]
-		private System.String termText;
-		
-		/// <summary> Characters for the term text.</summary>
-		/// <deprecated> This will be made private. Instead, use:
-		/// <see cref="TermBuffer()" />, 
-		/// <see cref="SetTermBuffer(char[], int, int)" />,
-		/// <see cref="SetTermBuffer(String)" />, or
-		/// <see cref="SetTermBuffer(String, int, int)" />
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: TermBuffer(), SetTermBuffer(char[], int, int), SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
-		internal char[] termBuffer;
-		
-		/// <summary> Length of term text in the buffer.</summary>
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="TermLength()" />, or <see cref="SetTermLength(int)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: TermLength(), or setTermLength(int)")]
-		internal int termLength;
-		
-		/// <summary> Start in source text.</summary>
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="StartOffset()" />, or <see cref="SetStartOffset(int)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: StartOffset(), or SetStartOffset(int).")]
-		internal int startOffset;
-		
-		/// <summary> End in source text.</summary>
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="EndOffset()" />, or <see cref="SetEndOffset(int)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: EndOffset(), or SetEndOffset(int).")]
-		internal int endOffset;
-		
-		/// <summary> The lexical type of the token.</summary>
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="Type()" />, or <see cref="SetType(String)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: Type(), or SetType(String).")]
-		internal System.String type = DEFAULT_TYPE;
-		
+
+        private char[] termBuffer;
+		private int termLength;
+		private int startOffset, endOffset;
+		private string type = DEFAULT_TYPE;
 		private int flags;
-		
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="GetPayload()" />, or <see cref="SetPayload(Payload)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: GetPayload(), or SetPayload(Payload).")]
-		internal Payload payload;
-		
-		/// <deprecated> This will be made private. Instead, use:
-        /// <see cref="GetPositionIncrement()" />, or <see cref="SetPositionIncrement(int)"/>.
-		/// </deprecated>
-        [Obsolete("This will be made private. Instead, use: GetPositionIncrement(), or SetPositionIncrement(int).")]
-		internal int positionIncrement = 1;
+		private Payload payload;
+		private int positionIncrement = 1;
 		
 		/// <summary>Constructs a Token will null text. </summary>
 		public Token()
@@ -206,10 +143,8 @@ namespace Lucene.Net.Analysis
 		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets.
 		/// </summary>
-		/// <param name="start">start offset in the source text
-		/// </param>
-		/// <param name="end">end offset in the source text 
-		/// </param>
+		/// <param name="start">start offset in the source text</param>
+		/// <param name="end">end offset in the source text</param>
 		public Token(int start, int end)
 		{
 			startOffset = start;
@@ -219,12 +154,9 @@ namespace Lucene.Net.Analysis
 		/// <summary>Constructs a Token with null text and start &amp; end
 		/// offsets plus the Token type.
 		/// </summary>
-		/// <param name="start">start offset in the source text
-		/// </param>
-		/// <param name="end">end offset in the source text
-		/// </param>
-		/// <param name="typ">the lexical type of this Token 
-		/// </param>
+		/// <param name="start">start offset in the source text</param>
+		/// <param name="end">end offset in the source text</param>
+		/// <param name="typ">the lexical type of this Token</param>
 		public Token(int start, int end, System.String typ)
 		{
 			startOffset = start;
@@ -235,12 +167,9 @@ namespace Lucene.Net.Analysis
 		/// <summary> Constructs a Token with null text and start &amp; end
 		/// offsets plus flags. NOTE: flags is EXPERIMENTAL.
 		/// </summary>
-		/// <param name="start">start offset in the source text
-		/// </param>
-		/// <param name="end">end offset in the source text
-		/// </param>
-		/// <param name="flags">The bits to set for this token
-		/// </param>
+		/// <param name="start">start offset in the source text</param>
+		/// <param name="end">end offset in the source text</param>
+		/// <param name="flags">The bits to set for this token</param>
 		public Token(int start, int end, int flags)
 		{
 			startOffset = start;
@@ -254,15 +183,12 @@ namespace Lucene.Net.Analysis
 		/// instead use the char[] termBuffer methods to set the
 		/// term text.
 		/// </summary>
-		/// <param name="text">term text
-		/// </param>
-		/// <param name="start">start offset
-		/// </param>
-		/// <param name="end">end offset
-		/// </param>
+		/// <param name="text">term text</param>
+		/// <param name="start">start offset</param>
+		/// <param name="end">end offset</param>
 		public Token(System.String text, int start, int end)
 		{
-			termText = text;
+		    SetTermBuffer(text);
 			startOffset = start;
 			endOffset = end;
 		}
@@ -272,17 +198,13 @@ namespace Lucene.Net.Analysis
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
-		/// <param name="text">term text
-		/// </param>
-		/// <param name="start">start offset
-		/// </param>
-		/// <param name="end">end offset
-		/// </param>
-		/// <param name="typ">token type
-		/// </param>
+		/// <param name="text">term text</param>
+		/// <param name="start">start offset</param>
+		/// <param name="end">end offset</param>
+		/// <param name="typ">token type</param>
 		public Token(System.String text, int start, int end, System.String typ)
 		{
-			termText = text;
+		    SetTermBuffer(text);
 			startOffset = start;
 			endOffset = end;
 			type = typ;
@@ -293,17 +215,13 @@ namespace Lucene.Net.Analysis
 		/// speed you should instead use the char[] termBuffer
 		/// methods to set the term text.
 		/// </summary>
-		/// <param name="text">
-		/// </param>
-		/// <param name="start">
-		/// </param>
-		/// <param name="end">
-		/// </param>
-		/// <param name="flags">token type bits
-		/// </param>
+		/// <param name="text"></param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		/// <param name="flags">token type bits</param>
 		public Token(System.String text, int start, int end, int flags)
 		{
-			termText = text;
+		    SetTermBuffer(text);
 			startOffset = start;
 			endOffset = end;
 			this.flags = flags;
@@ -313,16 +231,11 @@ namespace Lucene.Net.Analysis
 		/// &amp; length), start and end
 		/// offsets
 		/// </summary>
-		/// <param name="startTermBuffer">
-		/// </param>
-		/// <param name="termBufferOffset">
-		/// </param>
-		/// <param name="termBufferLength">
-		/// </param>
-		/// <param name="start">
-		/// </param>
-		/// <param name="end">
-		/// </param>
+		/// <param name="startTermBuffer"></param>
+		/// <param name="termBufferOffset"></param>
+		/// <param name="termBufferLength"></param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
 		public Token(char[] startTermBuffer, int termBufferOffset, int termBufferLength, int start, int end)
 		{
 			SetTermBuffer(startTermBuffer, termBufferOffset, termBufferLength);
@@ -373,37 +286,6 @@ namespace Lucene.Net.Analysis
 			return positionIncrement;
 		}
 		
-		/// <summary>Sets the Token's term text.  <b>NOTE:</b> for better
-		/// indexing speed you should instead use the char[]
-		/// termBuffer methods to set the term text.
-		/// </summary>
-		/// <deprecated> use <see cref="SetTermBuffer(char[], int, int)" /> or
-		/// <see cref="SetTermBuffer(String)" /> or
-		/// <see cref="SetTermBuffer(String, int, int)" />.
-		/// </deprecated>
-        [Obsolete("Use SetTermBuffer(char[], int, int) or SetTermBuffer(String) or SetTermBuffer(String, int, int)")]
-		public virtual void  SetTermText(System.String text)
-		{
-			termText = text;
-			termBuffer = null;
-		}
-		
-		/// <summary>Returns the Token's term text.
-		/// 
-		/// </summary>
-		/// <deprecated> This method now has a performance penalty
-		/// because the text is stored internally in a char[].  If
-		/// possible, use <see cref="TermBuffer()" /> and <see cref="TermLength()"/>
-		/// directly instead.  If you really need a
-		/// String, use <see cref="Term()" />
-		/// </deprecated>
-		public System.String TermText()
-		{
-			if (termText == null && termBuffer != null)
-				termText = new System.String(termBuffer, 0, termLength);
-			return termText;
-		}
-		
 		/// <summary>Returns the Token's term text.
 		/// 
 		/// This method has a performance penalty
@@ -415,8 +297,6 @@ namespace Lucene.Net.Analysis
 		/// </summary>
 		public System.String Term()
 		{
-			if (termText != null)
-				return termText;
 			InitTermBuffer();
 			return new System.String(termBuffer, 0, termLength);
 		}
@@ -424,15 +304,11 @@ namespace Lucene.Net.Analysis
 		/// <summary>Copies the contents of buffer, starting at offset for
 		/// length characters, into the termBuffer array.
 		/// </summary>
-		/// <param name="buffer">the buffer to copy
-		/// </param>
-		/// <param name="offset">the index in the buffer of the first character to copy
-		/// </param>
-		/// <param name="length">the number of characters to copy
-		/// </param>
+		/// <param name="buffer">the buffer to copy</param>
+		/// <param name="offset">the index in the buffer of the first character to copy</param>
+		/// <param name="length">the number of characters to copy</param>
 		public void  SetTermBuffer(char[] buffer, int offset, int length)
 		{
-			termText = null;
 			GrowTermBuffer(length);
 			Array.Copy(buffer, offset, termBuffer, 0, length);
 			termLength = length;
@@ -443,10 +319,9 @@ namespace Lucene.Net.Analysis
 		/// </param>
 		public void  SetTermBuffer(System.String buffer)
 		{
-			termText = null;
 			int length = buffer.Length;
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
+			TextSupport.GetCharsFromString(buffer, 0, length, termBuffer, 0);
 			termLength = length;
 		}
 		
@@ -463,9 +338,8 @@ namespace Lucene.Net.Analysis
 		{
 			System.Diagnostics.Debug.Assert(offset <= buffer.Length);
 			System.Diagnostics.Debug.Assert(offset + length <= buffer.Length);
-			termText = null;
 			GrowTermBuffer(length);
-			SupportClass.TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
+			TextSupport.GetCharsFromString(buffer, offset, offset + length, termBuffer, 0);
 			termLength = length;
 		}
 		
@@ -499,22 +373,7 @@ namespace Lucene.Net.Analysis
 		{
 			if (termBuffer == null)
 			{
-				// The buffer is always at least MIN_BUFFER_SIZE
-				newSize = newSize < MIN_BUFFER_SIZE?MIN_BUFFER_SIZE:newSize;
-				//Preserve termText 
-				if (termText != null)
-				{
-					int ttLen = termText.Length;
-					newSize = newSize < ttLen?ttLen:newSize;
-					termBuffer = new char[ArrayUtil.GetNextSize(newSize)];
-					SupportClass.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
-					termText = null;
-				}
-				else
-				{
-					// no term Text, the first allocation
-					termBuffer = new char[ArrayUtil.GetNextSize(newSize)];
-				}
+                termBuffer = new char[ArrayUtil.GetNextSize(newSize < MIN_BUFFER_SIZE ? MIN_BUFFER_SIZE : newSize)];
 			}
 			else
 			{
@@ -553,33 +412,12 @@ namespace Lucene.Net.Analysis
 			}
 		}
 		
-		
-		// TODO: once we remove the deprecated termText() method
-		// and switch entirely to char[] termBuffer we don't need
-		// to use this method anymore, only for late init of the buffer
 		private void  InitTermBuffer()
 		{
 			if (termBuffer == null)
 			{
-				if (termText == null)
-				{
-					termBuffer = new char[ArrayUtil.GetNextSize(MIN_BUFFER_SIZE)];
-					termLength = 0;
-				}
-				else
-				{
-					int length = termText.Length;
-					if (length < MIN_BUFFER_SIZE)
-						length = MIN_BUFFER_SIZE;
-					termBuffer = new char[ArrayUtil.GetNextSize(length)];
-					termLength = termText.Length;
-					SupportClass.TextSupport.GetCharsFromString(termText, 0, termText.Length, termBuffer, 0);
-					termText = null;
-				}
-			}
-			else
-			{
-				termText = null;
+                termBuffer = new char[ArrayUtil.GetNextSize(MIN_BUFFER_SIZE)];
+                termLength = 0;
 			}
 		}
 		
@@ -611,7 +449,7 @@ namespace Lucene.Net.Analysis
 		/// <summary>Returns this Token's starting offset, the position of the first character
 		/// corresponding to this token in the source text.
 		/// Note that the difference between endOffset() and startOffset() may not be
-		/// equal to termText.length(), as the term text may have been altered by a
+		/// equal to <see cref="TermLength"/>, as the term text may have been altered by a
 		/// stemmer or some other filter. 
 		/// </summary>
 		public int StartOffset()
@@ -727,7 +565,6 @@ namespace Lucene.Net.Analysis
 			payload = null;
 			// Leave termBuffer to allow re-use
 			termLength = 0;
-			termText = null;
 			positionIncrement = 1;
 			flags = 0;
 			startOffset = endOffset = 0;
@@ -997,11 +834,6 @@ namespace Lucene.Net.Analysis
 				{
 					to.payload = (Payload) payload.Clone();
 				}
-				// remove the following optimization in 3.0 when old TokenStream API removed:
-			}
-			else if (target is TokenWrapper)
-			{
-				((TokenWrapper) target).delegate_Renamed = (Token) this.Clone();
 			}
 			else
 			{
@@ -1014,5 +846,57 @@ namespace Lucene.Net.Analysis
 				((TypeAttribute) target).SetType(type);
 			}
 		}
-	}
+       
+        ///<summary>
+        /// Convenience factory that returns <code>Token</code> as implementation for the basic
+        /// attributes and return the default impl (with &quot;Impl&quot; appended) for all other
+        /// attributes.
+        /// @since 3.0
+        /// </summary>
+	    public static AttributeSource.AttributeFactory TOKEN_ATTRIBUTE_FACTORY =
+	        new TokenAttributeFactory(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+  
+        /// <summary>
+        /// <b>Expert</b>: Creates an AttributeFactory returning {@link Token} as instance for the basic attributes
+        /// and for all other attributes calls the given delegate factory.
+        /// </summary>
+        public class TokenAttributeFactory : AttributeSource.AttributeFactory
+        {
+
+            private AttributeSource.AttributeFactory _delegateFactory;
+
+            /// <summary>
+            /// <b>Expert</b>: Creates an AttributeFactory returning {@link Token} as instance for the basic attributes
+            /// and for all other attributes calls the given delegate factory.
+            /// </summary>
+            public TokenAttributeFactory(AttributeSource.AttributeFactory delegateFactory)
+            {
+                this._delegateFactory = delegateFactory;
+            }
+
+            public override AttributeImpl CreateAttributeInstance<T>()
+            {
+                return typeof(T).IsAssignableFrom(typeof(Token))
+                           ? new Token()
+                           : _delegateFactory.CreateAttributeInstance<T>();
+            }
+
+            public override bool Equals(Object other)
+            {
+                if (this == other) return true;
+
+                if (other is TokenAttributeFactory)
+                {
+                    TokenAttributeFactory af = (TokenAttributeFactory)other;
+                    return this._delegateFactory.Equals(af._delegateFactory);
+                }
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return _delegateFactory.GetHashCode() ^ 0x0a45aa31;
+            }
+        }
+    }
 }

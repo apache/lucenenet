@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Lucene.Net.Analysis;
@@ -53,8 +53,9 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			
-			public MockIndexWriter(TestAtomicUpdate enclosingInstance, Directory dir, bool autoCommit, Analyzer a, bool create):base(dir, autoCommit, a, create)
+
+            public MockIndexWriter(TestAtomicUpdate enclosingInstance, Directory dir, Analyzer a, bool create, IndexWriter.MaxFieldLength mfl)
+                : base(dir, a, create, mfl)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		abstract public class TimedThread:SupportClass.ThreadClass
+		abstract public class TimedThread:ThreadClass
 		{
 			internal bool failed;
 			internal int count;
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.Exception e)
                 {
-                    System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": exc");
+                    System.Console.Out.WriteLine(ThreadClass.Current().Name + ": exc");
                     System.Console.Out.WriteLine(e.StackTrace);
                     failed = true;
                 }
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
 			
 			public override void  DoWork()
 			{
-				IndexReader r = IndexReader.Open(directory);
+				IndexReader r = IndexReader.Open(directory, true);
 				Assert.AreEqual(100, r.NumDocs());
 				r.Close();
 			}
@@ -161,8 +162,8 @@ namespace Lucene.Net.Index
 		{
 			
 			TimedThread[] threads = new TimedThread[4];
-			
-			IndexWriter writer = new MockIndexWriter(this, directory, true, ANALYZER, true);
+
+            IndexWriter writer = new MockIndexWriter(this, directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMaxBufferedDocs(7);
 			writer.SetMergeFactor(3);
 			
@@ -172,11 +173,15 @@ namespace Lucene.Net.Index
 				Document d = new Document();
 				d.Add(new Field("id", System.Convert.ToString(i), Field.Store.YES, Field.Index.NOT_ANALYZED));
 				d.Add(new Field("contents", English.IntToEnglish(i), Field.Store.NO, Field.Index.ANALYZED));
+                if ((i - 1) % 7 == 0)
+                {
+                    writer.Commit();
+                }
 				writer.AddDocument(d);
 			}
 			writer.Commit();
 			
-			IndexReader r = IndexReader.Open(directory);
+			IndexReader r = IndexReader.Open(directory, true);
 			Assert.AreEqual(100, r.NumDocs());
 			r.Close();
 			
@@ -228,8 +233,7 @@ namespace Lucene.Net.Index
 			directory.Close();
 			
 			// Second in an FSDirectory:
-			System.String tempDir = System.IO.Path.GetTempPath();
-			System.IO.FileInfo dirPath = new System.IO.FileInfo(System.IO.Path.Combine(tempDir, "lucene.test.atomic"));
+            System.IO.DirectoryInfo dirPath = _TestUtil.GetTempDir("lucene.test.atomic");
 			directory = FSDirectory.Open(dirPath);
 			RunTest(directory);
 			directory.Close();

@@ -18,12 +18,13 @@
 
 
 /*
-
-NOTE: if you change this file and need to regenerate the tokenizer,
-remember to use JRE 1.4 when running jflex (before Lucene 3.0).
-This grammar now uses constructs (eg :digit:) whose meaning can
-vary according to the JRE used to run jflex.  See
-https://issues.apache.org/jira/browse/LUCENE-1126 for details
+    NOTE: if you change StandardTokenizerImpl.jflex and need to regenerate the tokenizer,
+    the tokenizer, only use Java 1.4 !!!
+    This grammar currently uses constructs (eg :digit:, :letter:) whose
+    meaning can vary according to the JRE used to run jflex.  See
+    https://issues.apache.org/jira/browse/LUCENE-1126 for details.
+    For current backwards compatibility it is needed to support
+    only Java 1.4 - this will change in Lucene 3.1.
 */
 
 using System;
@@ -246,10 +247,9 @@ namespace Lucene.Net.Analysis.Standard
 		public static readonly int NUM;
 		public static readonly int CJ;
 		/// <deprecated> this solves a bug where HOSTs that end with '.' are identified
-		/// as ACRONYMs. It is deprecated and will be removed in the next
-		/// release.
+		/// as ACRONYMs.
 		/// </deprecated>
-        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs. It is deprecated and will be removed in the next release.")]
+        [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs")]
 		public static readonly int ACRONYM_DEP;
 		
 		public static readonly System.String[] TOKEN_TYPES;

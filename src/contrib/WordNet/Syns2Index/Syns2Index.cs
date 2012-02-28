@@ -16,8 +16,12 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Lucene.Net.Store;
 using Analyzer = Lucene.Net.Analysis.Analyzer;
+using Directory = System.IO.Directory;
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
@@ -44,18 +48,12 @@ namespace WorldNet.Net
 	/// While the WordNet file distinguishes groups of synonyms with
 	/// related meanings we don't do that here.
 	/// </p>
-	/// 
 	/// This can take 4 minutes to execute and build an index on a "fast" system and the index takes up almost 3 MB.
-	/// 
 	/// </summary>
-	/// <author>  Dave Spencer, dave&#064;searchmorph.com
-	/// </author>
-	/// <seealso cref="href="http://www.cogsci.princeton.edu/~wn/">WordNet home page</a>">
-	/// </seealso>
-	/// <seealso cref="href="http://www.cogsci.princeton.edu/~wn/man/prologdb.5WN.html">prologdb man page</a>">
-	/// </seealso>
-	/// <seealso cref="href="http://www.hostmon.com/rfc/advanced.jsp">sample site that uses it</a>">
-	/// </seealso>
+	/// 
+	/// <seealso cref="http://www.cogsci.princeton.edu/~wn/"></seealso>
+	/// <seealso cref="http://www.cogsci.princeton.edu/~wn/man/prologdb.5WN.html"></seealso>
+	/// <seealso cref="http://www.hostmon.com/rfc/advanced.jsp"> </seealso>
 	public class Syns2Index
 	{
 		/// <summary> </summary>
@@ -71,15 +69,17 @@ namespace WorldNet.Net
 		public const System.String F_WORD = "word";
 		
 		/// <summary> </summary>
-		private static readonly Analyzer ana = new StandardAnalyzer();
+		private static readonly Analyzer ana = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_CURRENT);
 		
-		/// <summary> Takes arg of prolog file name and index directory.</summary>
+		/// <summary> 
+		/// Takes arg of prolog file name and index directory.
+		/// </summary>
 		[STAThread]
 		public static void  Main(System.String[] args)
 		{
 			// get command line arguments
-			System.String prologFilename = null; // name of file "wn_s.pl"
-			System.String indexDir = null;
+			String prologFilename = null; // name of file "wn_s.pl"
+			String indexDir = null;
 			if (args.Length == 2)
 			{
 				prologFilename = args[0];
@@ -88,45 +88,44 @@ namespace WorldNet.Net
 			else
 			{
 				Usage();
-				System.Environment.Exit(1);
+				Environment.Exit(1);
 			}
 			
 			// ensure that the prolog file is readable
-			if (!(new System.IO.FileInfo(prologFilename)).Exists)
+			if (!(new FileInfo(prologFilename)).Exists)
 			{
 				err.WriteLine("Error: cannot read Prolog file: " + prologFilename);
-				System.Environment.Exit(1);
+				Environment.Exit(1);
 			}
 			// exit if the target index directory already exists
-			if (System.IO.Directory.Exists((new System.IO.FileInfo(indexDir)).FullName))
+			if (Directory.Exists((new FileInfo(indexDir)).FullName))
 			{
 				err.WriteLine("Error: index directory already exists: " + indexDir);
 				err.WriteLine("Please specify a name of a non-existent directory");
-				System.Environment.Exit(1);
+				Environment.Exit(1);
 			}
 			
 			o.WriteLine("Opening Prolog file " + prologFilename);
-			System.IO.FileStream fis = new System.IO.FileStream(prologFilename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-			System.IO.StreamReader br = new System.IO.StreamReader(new System.IO.StreamReader(fis, System.Text.Encoding.Default).BaseStream, new System.IO.StreamReader(fis, System.Text.Encoding.Default).CurrentEncoding);
-			System.String line;
+			var fis = new FileStream(prologFilename, FileMode.Open, FileAccess.Read);
+			var br = new StreamReader(new StreamReader(fis, System.Text.Encoding.Default).BaseStream, new StreamReader(fis, System.Text.Encoding.Default).CurrentEncoding);
+			String line;
 			
 			// maps a word to all the "groups" it's in
 			System.Collections.IDictionary word2Nums = new System.Collections.SortedList();
 			// maps a group to all the words in it
 			System.Collections.IDictionary num2Words = new System.Collections.SortedList();
 			// number of rejected words
-			int ndecent = 0;
+			var ndecent = 0;
 			
 			// status output
-			int mod = 1;
-			int row = 1;
+			var mod = 1;
+			var row = 1;
 			// parse prolog file
 			o.WriteLine("[1/2] Parsing " + prologFilename);
 			while ((line = br.ReadLine()) != null)
 			{
 				// occasional progress
-				if ((++row) % mod == 0)
-				// periodically print out line we read in
+				if ((++row) % mod == 0) // periodically print out line we read in
 				{
 					mod *= 2;
 					o.WriteLine("\t" + row + " " + line + " " + word2Nums.Count + " " + num2Words.Count + " ndecent=" + ndecent);
@@ -136,17 +135,17 @@ namespace WorldNet.Net
 				if (!line.StartsWith("s("))
 				{
 					err.WriteLine("OUCH: " + line);
-					System.Environment.Exit(1);
+					Environment.Exit(1);
 				}
 				
 				// parse line
 				line = line.Substring(2);
-				int comma = line.IndexOf((System.Char) ',');
-				System.String num = line.Substring(0, (comma) - (0));
-				int q1 = line.IndexOf((System.Char) '\'');
+				var comma = line.IndexOf(',');
+				var num = line.Substring(0, comma);
+				var q1 = line.IndexOf('\'');
 				line = line.Substring(q1 + 1);
-				int q2 = line.IndexOf((System.Char) '\'');
-				System.String word = line.Substring(0, (q2) - (0)).ToLower();
+				var q2 = line.IndexOf('\'');
+				var word = line.Substring(0, q2).ToLower().Replace("''", "'");
 				
 				// make sure is a normal word
 				if (!IsDecent(word))
@@ -157,11 +156,10 @@ namespace WorldNet.Net
 				
 				// 1/2: word2Nums map
 				// append to entry or add new one
-				System.Collections.IList lis = (System.Collections.IList) word2Nums[word];
+				var lis = (System.Collections.IList) word2Nums[word];
 				if (lis == null)
 				{
-					lis = new System.Collections.ArrayList();
-					lis.Add(num);
+					lis = new List<String> {num};
 					word2Nums[word] = lis;
 				}
 				else
@@ -171,8 +169,7 @@ namespace WorldNet.Net
 				lis = (System.Collections.IList) num2Words[num];
 				if (lis == null)
 				{
-					lis = new System.Collections.ArrayList();
-					lis.Add(word);
+					lis = new List<String> { word };
 					num2Words[num] = lis;
 				}
 				else
@@ -188,20 +185,18 @@ namespace WorldNet.Net
 			Index(indexDir, word2Nums, num2Words);
 		}
 		
-		/// <summary> Checks to see if a word contains only alphabetic characters by
+		/// <summary> 
+		/// Checks to see if a word contains only alphabetic characters by
 		/// checking it one character at a time.
-		/// 
 		/// </summary>
-		/// <param name="s">string to check
-		/// </param>
-		/// <returns> <c>true</c> if the string is decent
-		/// </returns>
-		private static bool IsDecent(System.String s)
+		/// <param name="s">string to check </param>
+		/// <returns> <c>true</c> if the string is decent</returns>
+		private static bool IsDecent(String s)
 		{
-			int len = s.Length;
-			for (int i = 0; i < len; i++)
+			var len = s.Length;
+			for (var i = 0; i < len; i++)
 			{
-				if (!System.Char.IsLetter(s[i]))
+				if (!Char.IsLetter(s[i]))
 				{
 					return false;
 				}
@@ -209,75 +204,73 @@ namespace WorldNet.Net
 			return true;
 		}
 		
-		/// <summary> Forms a Lucene index based on the 2 maps.
-		/// 
+		/// <summary> 
+		/// Forms a Lucene index based on the 2 maps.
 		/// </summary>
-		/// <param name="indexDir">the direcotry where the index should be created
-		/// </param>
-		/// <param name="">word2Nums
-		/// </param>
-		/// <param name="">num2Words
-		/// </param>
-		private static void  Index(System.String indexDir, System.Collections.IDictionary word2Nums, System.Collections.IDictionary num2Words)
+		/// <param name="indexDir">the direcotry where the index should be created</param>
+		/// <param name="word2Nums">word2Nums</param>
+		/// <param name="num2Words">num2Words</param>
+		private static void  Index(String indexDir, System.Collections.IDictionary word2Nums, System.Collections.IDictionary num2Words)
 		{
-			int row = 0;
-			int mod = 1;
+			var row = 0;
+			var mod = 1;
 			
-			// override the specific index if it already exists
-			IndexWriter writer = new IndexWriter(indexDir, ana, true);
-			writer.SetUseCompoundFile(true); // why?
-			// blindly up these parameters for speed
-			writer.SetMergeFactor(writer.GetMergeFactor() * 2);
-			writer.SetMaxBufferedDocs(writer.GetMaxBufferedDocs() * 2);
-			System.Collections.IEnumerator i1 = word2Nums.Keys.GetEnumerator();
-			while (i1.MoveNext())
-			// for each word
+			using (var dir = FSDirectory.Open(new DirectoryInfo(indexDir)))
 			{
-				System.String g = (System.String) i1.Current;
-				Document doc = new Document();
-				
-				int n = Index(word2Nums, num2Words, g, doc);
-				if (n > 0)
+				var writer = new IndexWriter(dir, ana, true, IndexWriter.MaxFieldLength.LIMITED);
+				writer.SetUseCompoundFile(true); // why?
+
+				var i1 = word2Nums.Keys.GetEnumerator();
+				while (i1.MoveNext())
 				{
-					doc.Add(new Field(F_WORD, g, Field.Store.YES, Field.Index.UN_TOKENIZED));
-					if ((++row % mod) == 0)
+					var g = (String)i1.Current;
+					var doc = new Document();
+
+					var n = Index(word2Nums, num2Words, g, doc);
+					if (n > 0)
 					{
-						o.WriteLine("\trow=" + row + "/" + word2Nums.Count + " doc= " + doc);
-						mod *= 2;
+						doc.Add(new Field(F_WORD, g, Field.Store.YES, Field.Index.NOT_ANALYZED));
+						if ((++row % mod) == 0)
+						{
+							o.WriteLine("\trow=" + row + "/" + word2Nums.Count + " doc= " + doc);
+							mod *= 2;
+						}
+						writer.AddDocument(doc);
 					}
-					writer.AddDocument(doc);
-				} // else degenerate
+				}
+				o.WriteLine("Optimizing..");
+				writer.Optimize();
+				writer.Close();
 			}
-			o.WriteLine("Optimizing..");
-			writer.Optimize();
-			writer.Close();
+			
 		}
 
-		/// <summary> Given the 2 maps fills a document for 1 word.</summary>
+		/// <summary> 
+		/// Given the 2 maps fills a document for 1 word.
+		/// </summary>
 		private static int Index(System.Collections.IDictionary word2Nums, System.Collections.IDictionary num2Words, System.String g, Document doc)
 		{
-			System.Collections.IList keys = (System.Collections.IList) word2Nums[g]; // get list of key#'s
-			System.Collections.IEnumerator i2 = keys.GetEnumerator();
+			var keys = (System.Collections.IList) word2Nums[g]; // get list of key#'s
+			var i2 = keys.GetEnumerator();
 			
-			System.Collections.SortedList already = new System.Collections.SortedList(); // keep them sorted
+			var already = new System.Collections.SortedList(); // keep them sorted
 			
 			// pass 1: fill up 'already' with all words
 			while (i2.MoveNext()) // for each key#
 			{
-				foreach (object item in (System.Collections.IList) num2Words[i2.Current]) // get list of words
+				foreach (var item in
+					((System.Collections.IList) num2Words[i2.Current]).Cast<object>().Where(item => already.Contains(item) == false))
 				{
-					if (already.Contains(item) == false)
-					{
-						already.Add(item, item); 
-					}
+					already.Add(item, item);
 				}
 			}
-			int num = 0;
+
+			var num = 0;
 			already.Remove(g); // of course a word is it's own syn
-			System.Collections.IDictionaryEnumerator it = already.GetEnumerator();
+			var it = already.GetEnumerator();
 			while (it.MoveNext())
 			{
-				System.String cur = (System.String) it.Key;
+				var cur = (String) it.Key;
 				// don't store things like 'pit bull' -> 'american pit bull'
 				if (!IsDecent(cur))
 				{
@@ -295,16 +288,5 @@ namespace WorldNet.Net
 			o.WriteLine("\n\n" + typeof(Syns2Index) + " <prolog file> <index dir>\n\n");
 		}
 
-		static Syns2Index()
-		{
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			o = temp_writer;
-			System.IO.StreamWriter temp_writer2;
-			temp_writer2 = new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding);
-			temp_writer2.AutoFlush = true;
-			err = temp_writer2;
-		}
 	}
 }

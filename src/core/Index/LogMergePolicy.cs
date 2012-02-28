@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Index
 	/// file(s) for the segment.<p/>
 	/// </summary>
 	
-	public abstract class LogMergePolicy:MergePolicy
+	public abstract class LogMergePolicy : MergePolicy
 	{
 		
 		/// <summary>Defines the allowed range of log(size) for each
@@ -77,8 +78,8 @@ namespace Lucene.Net.Index
 		
 		private bool useCompoundFile = true;
 		private bool useCompoundDocStore = true;
-		
-		public LogMergePolicy(IndexWriter writer):base(writer)
+
+	    protected LogMergePolicy(IndexWriter writer):base(writer)
 		{
 		}
 		
@@ -205,10 +206,6 @@ namespace Lucene.Net.Index
 			return calibrateSizeByDeletes;
 		}
 		
-		public override void  Close()
-		{
-		}
-		
 		abstract protected internal long Size(SegmentInfo info);
 		
 		protected internal virtual long SizeDocs(SegmentInfo info)
@@ -239,7 +236,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private bool IsOptimized(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		private bool IsOptimized(SegmentInfos infos, int maxNumSegments, ISet<SegmentInfo> segmentsToOptimize)
 		{
 			int numSegments = infos.Count;
 			int numToOptimize = 0;
@@ -277,7 +274,7 @@ namespace Lucene.Net.Index
 		/// (mergeFactor at a time) so the <see cref="MergeScheduler" />
 		/// in use may make use of concurrency. 
 		/// </summary>
-		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, System.Collections.Hashtable segmentsToOptimize)
+		public override MergeSpecification FindMergesForOptimize(SegmentInfos infos, int maxNumSegments, ISet<SegmentInfo> segmentsToOptimize)
 		{
 			MergeSpecification spec;
 			
@@ -558,14 +555,14 @@ namespace Lucene.Net.Index
             else
             {
                 long totSize = 0;
-                for (int i = 0; i < infos.Count; i++)
+                foreach(SegmentInfo info in infos)
                 {
-                    totSize += Size(infos.Info(i));
+                    totSize += Size(info);
                 }
                 long mergeSize = 0;
-                for (int i = 0; i < infosToMerge.Count; i++)
+                foreach(SegmentInfo info in infosToMerge)
                 {
-                    mergeSize += Size(infosToMerge.Info(i));
+                    mergeSize += Size(info);
                 }
 
                 doCFS = mergeSize <= noCFSRatio * totSize;

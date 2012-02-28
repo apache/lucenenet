@@ -28,7 +28,9 @@ namespace Lucene.Net.Analysis
 	public sealed class CharReader:CharStream
 	{
         private long currentPosition = -1;
-		
+
+	    private bool isDisposed;
+
 		internal System.IO.StreamReader input;
 		
 		public static CharStream Get(System.IO.TextReader input)
@@ -53,11 +55,23 @@ namespace Lucene.Net.Analysis
 		{
 			return currentOff;
 		}
-		
-		public override void  Close()
-		{
-			input.Close();
-		}
+
+        protected override void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            if (disposing)
+            {
+                if (input != null)
+                {
+                    input.Close();
+                }
+            }
+
+            input = null;
+            isDisposed = true;
+            base.Dispose(disposing);
+        }
 		
 		public  override int Read(System.Char[] cbuf, int off, int len)
 		{

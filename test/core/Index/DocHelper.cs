@@ -40,12 +40,6 @@ namespace Lucene.Net.Index
 		public const System.String TEXT_FIELD_2_KEY = "textField2";
 		public static Field textField2;
 		
-		public const System.String FIELD_2_COMPRESSED_TEXT = "field field field two text";
-		//Fields will be lexicographically sorted.  So, the order is: field, text, two
-		public static readonly int[] COMPRESSED_FIELD_2_FREQS = new int[]{3, 1, 1};
-		public const System.String COMPRESSED_TEXT_FIELD_2_KEY = "compressedTextField2";
-		public static Field compressedTextField2;
-		
 		
 		public const System.String FIELD_3_TEXT = "aaaNoNorms aaaNoNorms bbbNoNorms";
 		public const System.String TEXT_FIELD_3_KEY = "textField3";
@@ -170,7 +164,7 @@ namespace Lucene.Net.Index
 			writer.SetSimilarity(similarity);
 			//writer.setUseCompoundFile(false);
 			writer.AddDocument(doc);
-			writer.Flush();
+            writer.Commit();
 			SegmentInfo info = writer.NewestSegment();
 			writer.Close();
 			return info;
@@ -184,7 +178,6 @@ namespace Lucene.Net.Index
 		{
 			textField1 = new Field(TEXT_FIELD_1_KEY, FIELD_1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
 			textField2 = new Field(TEXT_FIELD_2_KEY, FIELD_2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-			compressedTextField2 = new Field(COMPRESSED_TEXT_FIELD_2_KEY, FIELD_2_COMPRESSED_TEXT, Field.Store.COMPRESS, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
 			textField3 = new Field(TEXT_FIELD_3_KEY, FIELD_3_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			{
 				textField3.SetOmitNorms(true);
@@ -201,7 +194,7 @@ namespace Lucene.Net.Index
 			lazyField = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, Field.Store.YES, Field.Index.ANALYZED);
 			textUtfField1 = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO);
 			textUtfField2 = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS);
-            fields = new Field[] { textField1, textField2, textField3, compressedTextField2, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
+            fields = new Field[] { textField1, textField2, textField3, keyField, noNormsField, noTFField, unIndField, unStoredField1, unStoredField2, textUtfField1, textUtfField2, lazyField, lazyFieldBinary, largeLazyField };
 			{
 				//Initialize the large Lazy Field
 				System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -241,7 +234,7 @@ namespace Lucene.Net.Index
 						Add(unstored, f);
 					if (f.GetOmitNorms())
 						Add(noNorms, f);
-					if (f.GetOmitTf())
+					if (f.GetOmitTermFreqAndPositions())
 						Add(noTf, f);
 					if (f.IsLazy())
 						Add(lazy, f);
@@ -251,7 +244,6 @@ namespace Lucene.Net.Index
 				nameValues = new System.Collections.Hashtable();
 				nameValues[TEXT_FIELD_1_KEY] = FIELD_1_TEXT;
 				nameValues[TEXT_FIELD_2_KEY] = FIELD_2_TEXT;
-				nameValues[COMPRESSED_TEXT_FIELD_2_KEY] = FIELD_2_COMPRESSED_TEXT;
 				nameValues[TEXT_FIELD_3_KEY] = FIELD_3_TEXT;
 				nameValues[KEYWORD_FIELD_KEY] = KEYWORD_TEXT;
 				nameValues[NO_NORMS_KEY] = NO_NORMS_TEXT;

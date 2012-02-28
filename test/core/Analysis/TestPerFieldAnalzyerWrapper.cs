@@ -35,13 +35,13 @@ namespace Lucene.Net.Analysis
 			analyzer.AddAnalyzer("special", new SimpleAnalyzer());
 			
 			TokenStream tokenStream = analyzer.TokenStream("field", new System.IO.StringReader(text));
-			TermAttribute termAtt = (TermAttribute) tokenStream.GetAttribute(typeof(TermAttribute));
+            TermAttribute termAtt = tokenStream.GetAttribute<TermAttribute>();
 			
 			Assert.IsTrue(tokenStream.IncrementToken());
 			Assert.AreEqual("Qwerty", termAtt.Term(), "WhitespaceAnalyzer does not lowercase");
 			
 			tokenStream = analyzer.TokenStream("special", new System.IO.StringReader(text));
-			termAtt = (TermAttribute) tokenStream.GetAttribute(typeof(TermAttribute));
+            termAtt = tokenStream.GetAttribute<TermAttribute>();
 			Assert.IsTrue(tokenStream.IncrementToken());
 			Assert.AreEqual("qwerty", termAtt.Term(), "SimpleAnalyzer lowercases");
 		}

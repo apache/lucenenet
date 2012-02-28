@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -23,18 +24,15 @@ namespace Lucene.Net.Store
     /// <summary> A memory-resident <see cref="Directory"/> implementation.  Locking
     /// implementation is by default the <see cref="SingleInstanceLockFactory"/>
     /// but can be changed with <see cref="Directory.SetLockFactory"/>.
-	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 781333 2009-06-03 10:38:57Z mikemccand $
-	/// </version>
 	[Serializable]
 	public class RAMDirectory:Directory
 	{
 		
 		private const long serialVersionUID = 1L;
-		
-		internal protected System.Collections.Hashtable fileMap = new System.Collections.Hashtable();
-		internal protected long sizeInBytes = 0;
+
+        internal protected HashMap<string, RAMFile> fileMap = new HashMap<string, RAMFile>();
+		internal protected long _sizeInBytes = 0;
 		
 		// *****
 		// Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -72,36 +70,6 @@ namespace Lucene.Net.Store
 			Directory.Copy(dir, this, closeDir);
 		}
 
-        /// <summary> Creates a new <c>RAMDirectory</c> instance from the <see cref="FSDirectory"/>.
-		/// 
-		/// </summary>
-		/// <param name="dir">a <c>File</c> specifying the index directory
-		/// 
-		/// </param>
-		/// <seealso cref="RAMDirectory(Directory)">
-		/// </seealso>
-        /// <deprecated> Use <see cref="RAMDirectory(Directory)"/> instead
-		/// </deprecated>
-        [Obsolete("Use RAMDirectory(Directory) instead")]
-		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir), true)
-		{
-		}
-
-        /// <summary> Creates a new <c>RAMDirectory</c> instance from the <see cref="FSDirectory"/>.
-		/// 
-		/// </summary>
-		/// <param name="dir">a <c>String</c> specifying the full index directory path
-		/// 
-		/// </param>
-		/// <seealso cref="RAMDirectory(Directory)">
-		/// </seealso>
-        /// <deprecated> Use <see cref="RAMDirectory(Directory)"/> instead
-		/// </deprecated>
-        [Obsolete("Use RAMDirectory(Directory) instead")]
-		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir), true)
-		{
-		}
-
          //https://issues.apache.org/jira/browse/LUCENENET-174
         [System.Runtime.Serialization.OnDeserialized]
         void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
@@ -111,28 +79,19 @@ namespace Lucene.Net.Store
                 SetLockFactory(new SingleInstanceLockFactory());
             }
         }
-
-        [Obsolete("Lucene.Net-2.9.1. This method overrides obsolete member Lucene.Net.Store.Directory.List()")]
-		public override System.String[] List()
-		{
-			lock (this)
-			{
-				return ListAll();
-			}
-		}
 		
 		public override System.String[] ListAll()
 		{
 			lock (this)
 			{
 				EnsureOpen();
-				System.Collections.ICollection fileNames = fileMap.Keys;
+                // TODO: may have better performance if our HashMap implmented KeySet() instead of generating one via HashSet
+				System.Collections.Generic.ISet<string> fileNames = new System.Collections.Generic.HashSet<string>(fileMap.Keys);
 				System.String[] result = new System.String[fileNames.Count];
 				int i = 0;
-				System.Collections.IEnumerator it = fileNames.GetEnumerator();
-				while (it.MoveNext())
+				foreach(string filename in fileNames)
 				{
-					result[i++] = ((System.String) it.Current);
+                    result[i++] = filename;
 				}
 				return result;
 			}
@@ -145,7 +104,7 @@ namespace Lucene.Net.Store
 			RAMFile file;
 			lock (this)
 			{
-				file = (RAMFile) fileMap[name];
+				file = fileMap[name];
 			}
 			return file != null;
 		}
@@ -158,7 +117,7 @@ namespace Lucene.Net.Store
 			RAMFile file;
 			lock (this)
 			{
-				file = (RAMFile) fileMap[name];
+				file = fileMap[name];
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
@@ -173,7 +132,7 @@ namespace Lucene.Net.Store
 			RAMFile file;
 			lock (this)
 			{
-				file = (RAMFile) fileMap[name];
+				file = fileMap[name];
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
@@ -189,7 +148,7 @@ namespace Lucene.Net.Store
 				{
 					// In 3.0 we will change this to throw
 					// InterruptedException instead
-					SupportClass.ThreadClass.Current().Interrupt();
+					ThreadClass.Current().Interrupt();
 					throw new System.SystemException(ie.Message, ie);
 				}
 				ts2 = System.DateTime.Now.Ticks;
@@ -207,7 +166,7 @@ namespace Lucene.Net.Store
 			RAMFile file;
 			lock (this)
 			{
-				file = (RAMFile) fileMap[name];
+				file = fileMap[name];
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
@@ -223,7 +182,7 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				return sizeInBytes;
+				return _sizeInBytes;
 			}
 		}
 		
@@ -234,39 +193,15 @@ namespace Lucene.Net.Store
 			lock (this)
 			{
 				EnsureOpen();
-				RAMFile file = (RAMFile) fileMap[name];
+				RAMFile file = fileMap[name];
 				if (file != null)
 				{
 					fileMap.Remove(name);
 					file.directory = null;
-					sizeInBytes -= file.sizeInBytes; 
+					_sizeInBytes -= file.sizeInBytes; 
 				}
 				else
 					throw new System.IO.FileNotFoundException(name);
-			}
-		}
-		
-		/// <summary>Renames an existing file in the directory.</summary>
-		/// <throws>  FileNotFoundException if from does not exist </throws>
-		/// <deprecated>
-		/// </deprecated>
-        [Obsolete]
-		public override void  RenameFile(System.String from, System.String to)
-		{
-			lock (this)
-			{
-				EnsureOpen();
-				RAMFile fromFile = (RAMFile) fileMap[from];
-				if (fromFile == null)
-					throw new System.IO.FileNotFoundException(from);
-				RAMFile toFile = (RAMFile) fileMap[to];
-				if (toFile != null)
-				{
-					sizeInBytes -= toFile.sizeInBytes; // updates to RAMFile.sizeInBytes synchronized on directory
-					toFile.directory = null;
-				}
-				fileMap.Remove(from);
-				fileMap[to] = fromFile;
 			}
 		}
 		
@@ -277,10 +212,10 @@ namespace Lucene.Net.Store
 			RAMFile file = new RAMFile(this);
 			lock (this)
 			{
-				RAMFile existing = (RAMFile) fileMap[name];
+				RAMFile existing = fileMap[name];
 				if (existing != null)
 				{
-					sizeInBytes -= existing.sizeInBytes;
+					_sizeInBytes -= existing.sizeInBytes;
 					existing.directory = null;
 				}
 				fileMap[name] = file;
@@ -295,37 +230,29 @@ namespace Lucene.Net.Store
 			RAMFile file;
 			lock (this)
 			{
-				file = (RAMFile) fileMap[name];
+				file = fileMap[name];
 			}
 			if (file == null)
 				throw new System.IO.FileNotFoundException(name);
 			return new RAMInputStream(file);
 		}
-		
-		/// <summary>Closes the store to future operations, releasing associated memory. </summary>
-		public override void  Close()
-		{
-			isOpen = false;
-			fileMap = null;
-		}
 
-        /// <summary>
-        /// .NET
-        /// </summary>
-        public override void Dispose()
+        /// <summary>Closes the store to future operations, releasing associated memory. </summary>
+        protected override void Dispose(bool disposing)
         {
-            Close();
+            isOpen = false;
+            fileMap = null;
         }
 
-        public System.Collections.Hashtable fileMap_ForNUnit
-        {
-            get { return fileMap; }
-        }
+        //public HashMap<string, RAMFile> fileMap_ForNUnit
+        //{
+        //    get { return fileMap; }
+        //}
 
-        public long sizeInBytes_ForNUnitTest
-        {
-            get { return sizeInBytes; }
-            set { sizeInBytes = value; }
-        }
+        //public long sizeInBytes_ForNUnitTest
+        //{
+        //    get { return sizeInBytes; }
+        //    set { sizeInBytes = value; }
+        //}
 	}
 }

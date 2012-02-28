@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Index
 		public /*internal*/ abstract class Allocator
 		{
 			public /*internal*/ abstract void  RecycleByteBlocks(byte[][] blocks, int start, int end);
-            public /*internal*/ abstract void RecycleByteBlocks(System.Collections.ArrayList blocks);
+            public /*internal*/ abstract void RecycleByteBlocks(IList<byte[]> blocks);
 			public /*internal*/ abstract byte[] GetByteBlock(bool trackAllocations);
 		}
 		
@@ -152,9 +153,9 @@ namespace Lucene.Net.Index
 			buffer[newUpto + 2] = slice[upto - 1];
 			
 			// Write forwarding address at end of last slice:
-			slice[upto - 3] = (byte) (SupportClass.Number.URShift(offset, 24));
-			slice[upto - 2] = (byte) (SupportClass.Number.URShift(offset, 16));
-			slice[upto - 1] = (byte) (SupportClass.Number.URShift(offset, 8));
+			slice[upto - 3] = (byte) (Number.URShift(offset, 24));
+			slice[upto - 2] = (byte) (Number.URShift(offset, 16));
+			slice[upto - 1] = (byte) (Number.URShift(offset, 8));
 			slice[upto] = (byte) offset;
 			
 			// Write new level:

@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	/// <br/>Implements skipTo(), and has no limitations on the numbers of added scorers.
 	/// <br/>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
 	/// </summary>
-	class BooleanScorer2:Scorer
+	class BooleanScorer2 : Scorer
 	{
 		private class AnonymousClassDisjunctionSumScorer:DisjunctionSumScorer
 		{
@@ -45,7 +45,8 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal AnonymousClassDisjunctionSumScorer(BooleanScorer2 enclosingInstance, System.Collections.IList Param1, int Param2):base(Param1, Param2)
+			internal AnonymousClassDisjunctionSumScorer(BooleanScorer2 enclosingInstance, System.Collections.Generic.IList<Scorer> scorers, int minNrShouldMatch)
+                : base(scorers, minNrShouldMatch)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -85,7 +86,8 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity Param1, System.Collections.ICollection Param2):base(Param1, Param2)
+			internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity defaultSimilarity, System.Collections.Generic.IList<Scorer> requiredScorers)
+                : base(defaultSimilarity, requiredScorers)
 			{
 				InitBlock(requiredNrMatchers, enclosingInstance);
 			}
@@ -112,10 +114,10 @@ namespace Lucene.Net.Search
 				return lastDocScore;
 			}
 		}
-		
-		private System.Collections.IList requiredScorers;
-		private System.Collections.IList optionalScorers;
-		private System.Collections.IList prohibitedScorers;
+
+        private System.Collections.Generic.List<Scorer> requiredScorers;
+        private System.Collections.Generic.List<Scorer> optionalScorers;
+        private System.Collections.Generic.List<Scorer> prohibitedScorers;
 		
 		private class Coordinator
 		{
@@ -181,7 +183,11 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="optional">the list of optional scorers.
 		/// </param>
-		public BooleanScorer2(Similarity similarity, int minNrShouldMatch, System.Collections.IList required, System.Collections.IList prohibited, System.Collections.IList optional):base(similarity)
+		public BooleanScorer2(Similarity similarity, int minNrShouldMatch, 
+                                System.Collections.Generic.List<Scorer> required,
+                                System.Collections.Generic.List<Scorer> prohibited,
+                                System.Collections.Generic.List<Scorer> optional)
+            : base(similarity)
 		{
 			if (minNrShouldMatch < 0)
 			{
@@ -243,46 +249,24 @@ namespace Lucene.Net.Search
 				}
 				return lastDocScore;
 			}
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead. ")]
-			public override int Doc()
-			{
-				return scorer.Doc();
-			}
+
 			public override int DocID()
 			{
 				return scorer.DocID();
 			}
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead. ")]
-			public override bool Next()
-			{
-				return scorer.NextDoc() != NO_MORE_DOCS;
-			}
+
 			public override int NextDoc()
 			{
 				return scorer.NextDoc();
 			}
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead. ")]
-			public override bool SkipTo(int docNr)
-			{
-				return scorer.Advance(docNr) != NO_MORE_DOCS;
-			}
+
 			public override int Advance(int target)
 			{
 				return scorer.Advance(target);
 			}
-			public override Explanation Explain(int docNr)
-			{
-				return scorer.Explain(docNr);
-			}
 		}
 		
-		private Scorer CountingDisjunctionSumScorer(System.Collections.IList scorers, int minNrShouldMatch)
+		private Scorer CountingDisjunctionSumScorer(System.Collections.Generic.List<Scorer> scorers, int minNrShouldMatch)
 		{
 			// each scorer from the list counted as a single matcher
 			return new AnonymousClassDisjunctionSumScorer(this, scorers, minNrShouldMatch);
@@ -290,7 +274,7 @@ namespace Lucene.Net.Search
 		
 		private static readonly Similarity defaultSimilarity;
 		
-		private Scorer CountingConjunctionSumScorer(System.Collections.IList requiredScorers)
+		private Scorer CountingConjunctionSumScorer(System.Collections.Generic.List<Scorer> requiredScorers)
 		{
 			// each scorer from the list counted as a single matcher
 			int requiredNrMatchers = requiredScorers.Count;
@@ -325,7 +309,7 @@ namespace Lucene.Net.Search
 			if (optionalScorers.Count > nrOptRequired)
 				requiredCountingSumScorer = CountingDisjunctionSumScorer(optionalScorers, nrOptRequired);
 			else if (optionalScorers.Count == 1)
-				requiredCountingSumScorer = new SingleMatchScorer(this, (Scorer) optionalScorers[0]);
+				requiredCountingSumScorer = new SingleMatchScorer(this, optionalScorers[0]);
 			else
 				requiredCountingSumScorer = CountingConjunctionSumScorer(optionalScorers);
 			return AddProhibitedScorers(requiredCountingSumScorer);
@@ -337,14 +321,17 @@ namespace Lucene.Net.Search
 			if (optionalScorers.Count == minNrShouldMatch)
 			{
 				// all optional scorers also required.
-				System.Collections.ArrayList allReq = new System.Collections.ArrayList(requiredScorers);
+                var allReq = new System.Collections.Generic.List<Scorer>(requiredScorers);
 				allReq.AddRange(optionalScorers);
 				return AddProhibitedScorers(CountingConjunctionSumScorer(allReq));
 			}
 			else
 			{
 				// optionalScorers.size() > minNrShouldMatch, and at least one required scorer
-				Scorer requiredCountingSumScorer = requiredScorers.Count == 1?new SingleMatchScorer(this, (Scorer) requiredScorers[0]):CountingConjunctionSumScorer(requiredScorers);
+				Scorer requiredCountingSumScorer = 
+                                    requiredScorers.Count == 1
+                                    ? new SingleMatchScorer(this, requiredScorers[0])
+                                    : CountingConjunctionSumScorer(requiredScorers);
 				if (minNrShouldMatch > 0)
 				{
 					// use a required disjunction scorer over the optional scorers
@@ -353,7 +340,10 @@ namespace Lucene.Net.Search
 				else
 				{
 					// minNrShouldMatch == 0
-					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):CountingDisjunctionSumScorer(optionalScorers, 1));
+					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), 
+                                               optionalScorers.Count == 1
+                                               ? new SingleMatchScorer(this, optionalScorers[0])
+                                               : CountingDisjunctionSumScorer(optionalScorers, 1));
 				}
 			}
 		}
@@ -365,25 +355,16 @@ namespace Lucene.Net.Search
 		/// </param>
 		private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
 		{
-			return (prohibitedScorers.Count == 0)?requiredCountingSumScorer:new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1)?(Scorer) prohibitedScorers[0]:new DisjunctionSumScorer(prohibitedScorers)));
-		}
-		
-		/// <summary>Scores and collects all matching documents.</summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
-		/// </param>
-		/// <deprecated> use <see cref="Score(Collector)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector) instead.")]
-		public override void  Score(HitCollector hc)
-		{
-			Score(new HitCollectorWrapper(hc));
+			return (prohibitedScorers.Count == 0) 
+                   ? requiredCountingSumScorer
+                   : new ReqExclScorer(requiredCountingSumScorer, 
+                                       ((prohibitedScorers.Count == 1)
+                                        ? prohibitedScorers[0]
+                                        : new DisjunctionSumScorer(prohibitedScorers)));
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed through.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
 		/// </param>
 		public override void  Score(Collector collector)
 		{
@@ -392,25 +373,6 @@ namespace Lucene.Net.Search
 			{
 				collector.Collect(doc);
 			}
-		}
-		
-		/// <summary>Expert: Collects matching documents in a range.
-		/// <br/>Note that <see cref="Next()" /> must be called once before this method is
-		/// called for the first time.
-		/// </summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// </param>
-		/// <param name="max">Do not score documents past this.
-		/// </param>
-		/// <returns> true if more matching documents may remain.
-		/// </returns>
-		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector, int, int) instead.")]
-		protected internal override bool Score(HitCollector hc, int max)
-		{
-			return Score(new HitCollectorWrapper(hc), max, DocID());
 		}
 		
 		public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
@@ -425,25 +387,9 @@ namespace Lucene.Net.Search
 			return doc != NO_MORE_DOCS;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead. ")]
-		public override int Doc()
-		{
-			return countingSumScorer.Doc();
-		}
-		
 		public override int DocID()
 		{
 			return doc;
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead. ")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -458,33 +404,11 @@ namespace Lucene.Net.Search
 			return sum * coordinator.coordFactors[coordinator.nrMatchers];
 		}
 		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead. ")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
-		}
-		
 		public override int Advance(int target)
 		{
 			return doc = countingSumScorer.Advance(target);
 		}
 		
-		/// <summary>Throws an UnsupportedOperationException.
-		/// TODO: Implement an explanation of the coordination factor.
-		/// </summary>
-		/// <param name="doc">The document number for the explanation.
-		/// </param>
-		/// <throws>  UnsupportedOperationException </throws>
-		public override Explanation Explain(int doc)
-		{
-			throw new System.NotSupportedException();
-			/* How to explain the coordination factor?
-			initCountingSumScorer();
-			return countingSumScorer.explain(doc); // misses coord factor. 
-			*/
-		}
 		static BooleanScorer2()
 		{
 			defaultSimilarity = Similarity.GetDefault();

@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     /// collector will not properly collect hits with such
     /// scores.
 	/// </summary>
-	public abstract class TopScoreDocCollector:TopDocsCollector
+	public abstract class TopScoreDocCollector : TopDocsCollector<ScoreDoc>
 	{
 		
 		// Assumes docs are scored in order.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 				}
 				pqTop.doc = doc + docBase;
 				pqTop.score = score;
-				pqTop = (ScoreDoc) pq.UpdateTop();
+				pqTop = pq.UpdateTop();
 			}
 			
 			public override bool AcceptsDocsOutOfOrder()
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
 				}
 				pqTop.doc = doc;
 				pqTop.score = score;
-				pqTop = (ScoreDoc) pq.UpdateTop();
+				pqTop = pq.UpdateTop();
 			}
 			
 			public override bool AcceptsDocsOutOfOrder()
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
 		{
 			// HitQueue implements getSentinelObject to return a ScoreDoc, so we know
 			// that at this point top() is already initialized.
-			pqTop = (ScoreDoc) pq.Top();
+			pqTop = pq.Top();
 		}
 		
 		public /*protected internal*/ override TopDocs NewTopDocs(ScoreDoc[] results, int start)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
 				{
 					pq.Pop();
 				}
-				maxScore = ((ScoreDoc) pq.Pop()).score;
+				maxScore = pq.Pop().score;
 			}
 			
 			return new TopDocs(totalHits, results, maxScore);

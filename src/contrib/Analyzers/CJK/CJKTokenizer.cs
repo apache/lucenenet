@@ -20,331 +20,380 @@
 */
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.CJK
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2004 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
+    /// <summary>
+    /// <p>
+    /// CJKTokenizer was modified from StopTokenizer which does a decent job for
+    /// most European languages. and it perferm other token method for double-byte
+    /// chars: the token will return at each two charactors with overlap match.<br/>
+    /// Example: "java C1C2C3C4" will be segment to: "java" "C1C2" "C2C3" "C3C4" it
+    /// also need filter filter zero length token ""<br/>
+    /// for Digit: digit, '+', '#' will token as letter<br/>
+    /// for more info on Asia language(Chinese Japanese Korean) text segmentation:
+    /// please search  <a
+    /// href="http://www.google.com/search?q=word+chinese+segment">google</a>
+    /// </p>
+    /// 
+    /// @author Che, Dong
+    /// @version $Id: CJKTokenizer.java,v 1.3 2003/01/22 20:54:47 otis Exp $
+    /// </summary>
+    public sealed class CJKTokenizer : Tokenizer
+    {
+        //~ Static fields/initializers ---------------------------------------------
+        /// <summary>
+        /// Word token type
+        /// </summary>
+        internal static readonly int WORD_TYPE = 0;
 
-	/// <summary>
-	/// <p>
-	/// CJKTokenizer was modified from StopTokenizer which does a decent job for
-	/// most European languages. and it perferm other token method for double-byte
-	/// Characters: the token will return at each two charactors with overlap match.<br/>
-	/// Example: "java C1C2C3C4" will be segment to: "java" "C1C2" "C2C3" "C3C4" it
-	/// also need filter filter zero length token ""<br/>
-	/// for Digit: digit, '+', '#' will token as letter<br/>
-	/// for more info on Asia language(Chinese Japanese Korean) text segmentation:
-	/// please search  <a
-	/// href="http://www.google.com/search?q=word+chinese+segment">google</a>
-	/// </p>
-	/// 
-	/// @author Che, Dong
-	/// @version $Id: CJKTokenizer.java,v 1.3 2003/01/22 20:54:47 otis Exp $
-	/// </summary>
-	public sealed class CJKTokenizer : Tokenizer 
-	{
-		//~ Static fields/initializers ---------------------------------------------
+        /// <summary>
+        /// Single byte token type
+        /// </summary>
+        internal static readonly int SINGLE_TOKEN_TYPE = 1;
 
-		/// <summary>
-		/// Max word length
-		/// </summary>
-		private static int MAX_WORD_LEN = 255;
+        /// <summary>
+        /// Double byte token type
+        /// </summary>
+        internal static readonly int DOUBLE_TOKEN_TYPE = 2;
 
-		/// <summary>
-		/// buffer size
-		/// </summary>
-		private static int IO_BUFFER_SIZE = 256;
+        /// <summary>
+        /// Names for token types
+        /// </summary>
+        internal static readonly String[] TOKEN_TYPE_NAMES = { "word", "single", "double" };
 
-		//~ Instance fields --------------------------------------------------------
+        /// <summary>
+        /// Max word length
+        /// </summary>
+        internal static readonly int MAX_WORD_LEN = 255;
 
-		/// <summary>
-		/// word offset, used to imply which character(in ) is parsed
-		/// </summary>
-		private int offset = 0;
+        /// <summary>
+        /// buffer size
+        /// </summary>
+        internal static readonly int IO_BUFFER_SIZE = 256;
 
-		/// <summary>
-		/// the index used only for ioBuffer
-		/// </summary>
-		private int bufferIndex = 0;
+        //~ Instance fields --------------------------------------------------------
 
-		/// <summary>
-		/// data length
-		/// </summary>
-		private int dataLen = 0;
+        /// <summary>
+        /// word offset, used to imply which character(in ) is parsed
+        /// </summary>
+        private int offset = 0;
 
-		/// <summary>
-		/// character buffer, store the characters which are used to compose <br/>
-		/// the returned Token
-		/// </summary>
-		private char[] buffer = new char[MAX_WORD_LEN];
+        /// <summary>
+        /// the index used only for ioBuffer
+        /// </summary>
+        private int bufferIndex = 0;
 
-		/// <summary>
-		/// I/O buffer, used to store the content of the input(one of the <br/>
-		/// members of Tokenizer)
-		/// </summary>
-		private char[] ioBuffer = new char[IO_BUFFER_SIZE];
+        /// <summary>
+        /// data length
+        /// </summary>
+        private int dataLen = 0;
 
-		/// <summary>
-		/// word type: single=>ASCII  double=>non-ASCII word=>default 
-		/// </summary>
-		private String tokenType = "word";
+        /// <summary>
+        /// character buffer, store the characters which are used to compose <br/>
+        /// the returned Token
+        /// </summary>
+        private char[] buffer = new char[MAX_WORD_LEN];
 
-		/// <summary>
-		/// tag: previous character is a cached double-byte character  "C1C2C3C4"
-		/// ----(set the C1 isTokened) C1C2 "C2C3C4" ----(set the C2 isTokened)
-		/// C1C2 C2C3 "C3C4" ----(set the C3 isTokened) "C1C2 C2C3 C3C4"
-		/// </summary>
-		private bool preIsTokened = false;
+        /// <summary>
+        /// I/O buffer, used to store the content of the input(one of the <br/>
+        /// members of Tokenizer)
+        /// </summary>
+        private char[] ioBuffer = new char[IO_BUFFER_SIZE];
 
-		//~ Constructors -----------------------------------------------------------
+        /// <summary>
+        /// word type: single=>ASCII  double=>non-ASCII word=>default
+        /// </summary>
+        private int tokenType = WORD_TYPE;
 
-		/// <summary>
-		/// Construct a token stream processing the given input.
-		/// </summary>
-		/// <param name="_in">I/O reader</param>
-		public CJKTokenizer(TextReader _in) 
-		{
-			input = _in;
-		}
+        /// <summary>
+        /// tag: previous character is a cached double-byte character  "C1C2C3C4"
+        /// ----(set the C1 isTokened) C1C2 "C2C3C4" ----(set the C2 isTokened)
+        /// C1C2 C2C3 "C3C4" ----(set the C3 isTokened) "C1C2 C2C3 C3C4"
+        /// </summary>
+        private bool preIsTokened = false;
 
-		//~ Methods ----------------------------------------------------------------
+        private TermAttribute termAtt;
+        private OffsetAttribute offsetAtt;
+        private TypeAttribute typeAtt;
 
-		/// <summary>
-		///  Returns the next token in the stream, or null at EOS.
-		/// </summary>
-		/// <returns>Token</returns>
-		public override Token Next()
-		{
-			/** how many character(s) has been stored in buffer */
-			int length = 0;
+        //~ Constructors -----------------------------------------------------------
 
-			/** the position used to create Token */
-			int start = offset;
+        /// <summary>
+        /// Construct a token stream processing the given input.
+        /// </summary>
+        /// <param name="_in">I/O reader</param>
+        public CJKTokenizer(TextReader _in)
+            : base(_in)
+        {
+            Init();
+        }
 
-			while (true) 
-			{
-				/** current charactor */
-				char c;
+        public CJKTokenizer(AttributeSource source, TextReader _in)
+            : base(source, _in)
+        {
+            Init();
+        }
 
-				/** unicode block of current charactor for detail */
-				//Character.UnicodeBlock ub;
+        public CJKTokenizer(AttributeFactory factory, TextReader _in)
+            : base(factory, _in)
+        {
+            Init();
+        }
 
-				offset++;
+        private void Init()
+        {
+            termAtt = AddAttribute<TermAttribute>();
+            offsetAtt = AddAttribute<OffsetAttribute>();
+            typeAtt = AddAttribute<TypeAttribute>();
+        }
 
-				if (bufferIndex >= dataLen) 
-				{
-					dataLen = input.Read(ioBuffer, 0, ioBuffer.Length);
-					bufferIndex = 0;
-				}
+        //~ Methods ----------------------------------------------------------------
 
-				if (dataLen == 0) 
-				{
-					if (length > 0) 
-					{
-						if (preIsTokened == true) 
-						{
-							length = 0;
-							preIsTokened = false;
-						}
+        /**
+         * Returns true for the next token in the stream, or false at EOS.
+         * See http://java.sun.com/j2se/1.3/docs/api/java/lang/char.UnicodeBlock.html
+         * for detail.
+         *
+         * @return false for end of stream, true otherwise
+         *
+         * @throws java.io.IOException - throw IOException when read error <br>
+         *         happened in the InputStream
+         *
+         */
 
-						break;
-					} 
-					else 
-					{
-						return null;
-					}
-				} 
-				else 
-				{
-					//get current character
-					c = ioBuffer[bufferIndex++];
+        Regex isBasicLatin = new Regex(@"\p{IsBasicLatin}", RegexOptions.Compiled);
+        Regex isHalfWidthAndFullWidthForms = new Regex(@"\p{IsHalfwidthandFullwidthForms}", RegexOptions.Compiled);
 
-					//get the UnicodeBlock of the current character
-					//ub = Character.UnicodeBlock.of(c);
-				}
+        public override bool IncrementToken()
+        {
+            ClearAttributes();
+            /** how many character(s) has been stored in buffer */
 
-				//if the current character is ASCII or Extend ASCII
-				if (('\u0000' <= c && c <= '\u007F') || 
-					('\uFF00' <= c && c <= '\uFFEF')) 
-				{
-					if ('\uFF00' <= c && c <= '\uFFEF')
-					{
-						/** convert  HALFWIDTH_AND_FULLWIDTH_FORMS to BASIC_LATIN */
-						int i = (int) c;
-						i = i - 65248;
-						c = (char) i;
-					}
+            while (true)
+            {
+                // loop until we find a non-empty token
 
-					// if the current character is a letter or "_" "+" "#"
-					if (Char.IsLetterOrDigit(c)
-						|| ((c == '_') || (c == '+') || (c == '#'))
-						) 
-					{
-						if (length == 0) 
-						{
-							// "javaC1C2C3C4linux" <br/>
-							//      ^--: the current character begin to token the ASCII
-							// letter
-							start = offset - 1;
-						} 
-						else if (tokenType == "double") 
-						{
-							// "javaC1C2C3C4linux" <br/>
-							//              ^--: the previous non-ASCII
-							// : the current character
-							offset--;
-							bufferIndex--;
-							tokenType = "single";
+                int length = 0;
 
-							if (preIsTokened == true) 
-							{
-								// there is only one non-ASCII has been stored
-								length = 0;
-								preIsTokened = false;
+                /** the position used to create Token */
+                int start = offset;
 
-								break;
-							} 
-							else 
-							{
-								break;
-							}
-						}
+                while (true)
+                {
+                    // loop until we've found a full token
+                    /** current character */
+                    char c;
 
-						// store the LowerCase(c) in the buffer
-						buffer[length++] = Char.ToLower(c);
-						tokenType = "single";
+                    offset++;
 
-						// break the procedure if buffer overflowed!
-						if (length == MAX_WORD_LEN) 
-						{
-							break;
-						}
-					} 
-					else if (length > 0) 
-					{
-						if (preIsTokened == true) 
-						{
-							length = 0;
-							preIsTokened = false;
-						} 
-						else 
-						{
-							break;
-						}
-					}
-				} 
-				else 
-				{
-					// non-ASCII letter, eg."C1C2C3C4"
-					if (Char.IsLetter(c)) 
-					{
-						if (length == 0) 
-						{
-							start = offset - 1;
-							buffer[length++] = c;
-							tokenType = "double";
-						} 
-						else 
-						{
-							if (tokenType == "single") 
-							{
-								offset--;
-								bufferIndex--;
+                    if (bufferIndex >= dataLen)
+                    {
+                        dataLen = input.Read(ioBuffer, 0, ioBuffer.Length);
+                        bufferIndex = 0;
+                    }
 
-								//return the previous ASCII characters
-								break;
-							} 
-							else 
-							{
-								buffer[length++] = c;
-								tokenType = "double";
+                    if (dataLen == 0) // input.Read returns 0 when its empty, not -1, as in java
+                    {
+                        if (length > 0)
+                        {
+                            if (preIsTokened == true)
+                            {
+                                length = 0;
+                                preIsTokened = false;
+                            }
+                            else
+                            {
+                                offset--;
+                            }
 
-								if (length == 2) 
-								{
-									offset--;
-									bufferIndex--;
-									preIsTokened = true;
+                            break;
+                        }
+                        else
+                        {
+                            offset--;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //get current character
+                        c = ioBuffer[bufferIndex++];
+                    }
 
-									break;
-								}
-							}
-						}
-					} 
-					else if (length > 0) 
-					{
-						if (preIsTokened == true) 
-						{
-							// empty the buffer
-							length = 0;
-							preIsTokened = false;
-						} 
-						else 
-						{
-							break;
-						}
-					}
-				}
-			}
+                    //TODO: Using a Regex to determine the UnicodeCategory is probably slower than
+                    //      If we just created a small class that would look it up for us, which 
+                    //      would likely be trivial, however time-consuming.  I can't imagine a Regex
+                    //      being fast for this, considering we have to pull a char from the buffer,
+                    //      and convert it to a string before we run a regex on it. - cc
+                    bool isHalfFullForm = isHalfWidthAndFullWidthForms.Match(c.ToString()).Success;
+                    //if the current character is ASCII or Extend ASCII
+                    if ((isBasicLatin.Match(c.ToString()).Success) || (isHalfFullForm))
+                    {
+                        if (isHalfFullForm)
+                        {
+                            int i = (int) c;
+                            if (i >= 65281 && i <= 65374)
+                            {
+                                // convert certain HALFWIDTH_AND_FULLWIDTH_FORMS to BASIC_LATIN
+                                i = i - 65248;
+                                c = (char) i;
+                            }
+                        }
 
-			return new Token(new String(buffer, 0, length), start, start + length,
-				tokenType
-				);
-		}
-	}
+                        // if the current character is a letter or "_" "+" "#"
+                        if (char.IsLetterOrDigit(c)
+                            || ((c == '_') || (c == '+') || (c == '#'))
+                            )
+                        {
+                            if (length == 0)
+                            {
+                                // "javaC1C2C3C4linux" <br>
+                                //      ^--: the current character begin to token the ASCII
+                                // letter
+                                start = offset - 1;
+                            }
+                            else if (tokenType == DOUBLE_TOKEN_TYPE)
+                            {
+                                // "javaC1C2C3C4linux" <br>
+                                //              ^--: the previous non-ASCII
+                                // : the current character
+                                offset--;
+                                bufferIndex--;
 
+                                if (preIsTokened == true)
+                                {
+                                    // there is only one non-ASCII has been stored
+                                    length = 0;
+                                    preIsTokened = false;
+                                    break;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+
+                            // store the LowerCase(c) in the buffer
+                            buffer[length++] = char.ToLower(c); // TODO: is java invariant?  If so, this should be ToLowerInvariant()
+                            tokenType = SINGLE_TOKEN_TYPE;
+
+                            // break the procedure if buffer overflowed!
+                            if (length == MAX_WORD_LEN)
+                            {
+                                break;
+                            }
+                        }
+                        else if (length > 0)
+                        {
+                            if (preIsTokened)
+                            {
+                                length = 0;
+                                preIsTokened = false;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // non-ASCII letter, e.g."C1C2C3C4"
+                        if (char.IsLetter(c))
+                        {
+                            if (length == 0)
+                            {
+                                start = offset - 1;
+                                buffer[length++] = c;
+                                tokenType = DOUBLE_TOKEN_TYPE;
+                            }
+                            else
+                            {
+                                if (tokenType == SINGLE_TOKEN_TYPE)
+                                {
+                                    offset--;
+                                    bufferIndex--;
+
+                                    //return the previous ASCII characters
+                                    break;
+                                }
+                                else
+                                {
+                                    buffer[length++] = c;
+                                    tokenType = DOUBLE_TOKEN_TYPE;
+
+                                    if (length == 2)
+                                    {
+                                        offset--;
+                                        bufferIndex--;
+                                        preIsTokened = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else if (length > 0)
+                        {
+                            if (preIsTokened == true)
+                            {
+                                // empty the buffer
+                                length = 0;
+                                preIsTokened = false;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (length > 0)
+                {
+                    termAtt.SetTermBuffer(buffer, 0, length);
+                    offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + length));
+                    typeAtt.SetType(TOKEN_TYPE_NAMES[tokenType]);
+                    return true;
+                }
+                else if (dataLen == 0)
+                {
+                    offset--;
+                    return false;
+                }
+
+                // Cycle back and try for the next token (don't
+                // return an empty string)
+            }
+        }
+
+        public override void End()
+        {
+            // set final offset
+            int finalOffset = CorrectOffset(offset);
+            this.offsetAtt.SetOffset(finalOffset, finalOffset);
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            offset = bufferIndex = dataLen = 0;
+            preIsTokened = false;
+            tokenType = WORD_TYPE;
+        }
+
+        public override void Reset(TextReader reader)
+        {
+            base.Reset(reader);
+            Reset();
+        }
+    }
 }

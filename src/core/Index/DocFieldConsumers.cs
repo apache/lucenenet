@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Index
@@ -26,7 +27,7 @@ namespace Lucene.Net.Index
 	/// DocFieldConsumer instances as a single consumer. 
 	/// </summary>
 	
-	sealed class DocFieldConsumers:DocFieldConsumer
+	sealed class DocFieldConsumers : DocFieldConsumer
 	{
 		private void  InitBlock()
 		{
@@ -48,31 +49,26 @@ namespace Lucene.Net.Index
 			one.SetFieldInfos(fieldInfos);
 			two.SetFieldInfos(fieldInfos);
 		}
-		
-		public override void  Flush(System.Collections.IDictionary threadsAndFields, SegmentWriteState state)
+
+        public override void Flush(IDictionary<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>> threadsAndFields, SegmentWriteState state)
 		{
+
+            var oneThreadsAndFields = new HashMap<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>>();
+			var twoThreadsAndFields = new HashMap<DocFieldConsumerPerThread, ICollection<DocFieldConsumerPerField>>();
 			
-			System.Collections.IDictionary oneThreadsAndFields = new System.Collections.Hashtable();
-			System.Collections.IDictionary twoThreadsAndFields = new System.Collections.Hashtable();
-			
-			System.Collections.IEnumerator it = new System.Collections.Hashtable(threadsAndFields).GetEnumerator();
-			while (it.MoveNext())
+			foreach(var entry in threadsAndFields)
 			{
-				
-				System.Collections.DictionaryEntry entry = (System.Collections.DictionaryEntry) it.Current;
-				
 				DocFieldConsumersPerThread perThread = (DocFieldConsumersPerThread) entry.Key;
-				
-				System.Collections.ICollection fields = (System.Collections.ICollection) entry.Value;
-				
-				System.Collections.IEnumerator fieldsIt = fields.GetEnumerator();
-				System.Collections.Hashtable oneFields = new System.Collections.Hashtable();
-				System.Collections.Hashtable twoFields = new System.Collections.Hashtable();
+                ICollection<DocFieldConsumerPerField> fields = entry.Value;
+
+                IEnumerator<DocFieldConsumerPerField> fieldsIt = fields.GetEnumerator();
+                ICollection<DocFieldConsumerPerField> oneFields = new HashSet<DocFieldConsumerPerField>();
+                ICollection<DocFieldConsumerPerField> twoFields = new HashSet<DocFieldConsumerPerField>();
 				while (fieldsIt.MoveNext())
 				{
 					DocFieldConsumersPerField perField = (DocFieldConsumersPerField) fieldsIt.Current;
-					SupportClass.CollectionsHelper.AddIfNotContains(oneFields, perField.one);
-					SupportClass.CollectionsHelper.AddIfNotContains(twoFields, perField.two);
+					oneFields.Add(perField.one);
+					twoFields.Add(perField.two);
 				}
 				
 				oneThreadsAndFields[perThread.one] = oneFields;
@@ -83,8 +79,8 @@ namespace Lucene.Net.Index
 			one.Flush(oneThreadsAndFields, state);
 			two.Flush(twoThreadsAndFields, state);
 		}
-		
-		public override void  CloseDocStore(SegmentWriteState state)
+
+	    public override void  CloseDocStore(SegmentWriteState state)
 		{
 			try
 			{

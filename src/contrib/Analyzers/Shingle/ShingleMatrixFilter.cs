@@ -20,10 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Shingle.Codec;
+using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analyzers.Miscellaneous;
-using Lucene.Net.Analyzers.Shingle.Codec;
-using Lucene.Net.Analyzers.Shingle.Matrix;
+using Lucene.Net.Support;
 using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
 
 namespace Lucene.Net.Analyzers.Shingle
@@ -103,7 +104,7 @@ namespace Lucene.Net.Analyzers.Shingle
     /// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
     /// the ones located in org.apache.lucene.analysis.tokenattributes.</p> 
     /// </summary>
-    public class ShingleMatrixFilter : TokenStream
+    public sealed class ShingleMatrixFilter : TokenStream
     {
         public static Char DefaultSpacerCharacter = '_';
         public static TokenSettingsCodec DefaultSettingsCodec = new OneDimensionalNonWeightedTokenSettingsCodec();
@@ -135,8 +136,8 @@ namespace Lucene.Net.Analyzers.Shingle
         /// to get the same behaviour.
         /// </p>
         /// </summary>
-        private readonly HashSet<SupportClass.EquatableList<Token>> _shinglesSeen =
-            new HashSet<SupportClass.EquatableList<Token>>(); 
+        private readonly HashSet<EquatableList<Token>> _shinglesSeen =
+            new HashSet<EquatableList<Token>>(); 
 
         private readonly TermAttribute _termAtt;
         private readonly TypeAttribute _typeAtt;
@@ -158,13 +159,13 @@ namespace Lucene.Net.Analyzers.Shingle
         /// todo: don't touch the matrix! use a bool, set the input stream to null or something, and keep track of where in the matrix we are at.
         /// 
         /// </summary>
-        /// <param name="matrix">the input based for creating shingles. Does not need to contain any information until ShingleMatrixFilter.Next(Token) is called the first time.</param>
+        /// <param name="matrix">the input based for creating shingles. Does not need to contain any information until ShingleMatrixFilter.IncrementToken() is called the first time.</param>
         /// <param name="minimumShingleSize">minimum number of tokens in any shingle.</param>
         /// <param name="maximumShingleSize">maximum number of tokens in any shingle.</param>
         /// <param name="spacerCharacter">character to use between texts of the token parts in a shingle. null for none.</param>
         /// <param name="ignoringSinglePrefixOrSuffixShingle">if true, shingles that only contains permutation of the first of the last column will not be produced as shingles. Useful when adding boundary marker tokens such as '^' and '$'.</param>
         /// <param name="settingsCodec">codec used to read input token weight and matrix positioning.</param>
-        public ShingleMatrixFilter(Matrix.Matrix matrix, int minimumShingleSize, int maximumShingleSize, Char spacerCharacter, bool ignoringSinglePrefixOrSuffixShingle, TokenSettingsCodec settingsCodec)
+        public ShingleMatrixFilter(Matrix matrix, int minimumShingleSize, int maximumShingleSize, Char spacerCharacter, bool ignoringSinglePrefixOrSuffixShingle, TokenSettingsCodec settingsCodec)
         {
             Matrix = matrix;
             MinimumShingleSize = minimumShingleSize;
@@ -174,23 +175,23 @@ namespace Lucene.Net.Analyzers.Shingle
             _settingsCodec = settingsCodec;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-            _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-            _payloadAtt = (PayloadAttribute) AddAttribute(typeof (PayloadAttribute));
-            _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-            _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
-            _flagsAtt = (FlagsAttribute) AddAttribute(typeof (FlagsAttribute));
+            _termAtt = AddAttribute<TermAttribute>();
+            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<PayloadAttribute>();
+            _offsetAtt = AddAttribute<OffsetAttribute>();
+            _typeAtt = AddAttribute<TypeAttribute>();
+            _flagsAtt = AddAttribute<FlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
             // set the input to be an empty token stream, we already have the data.
             _input = new EmptyTokenStream();
 
-            _inTermAtt = (TermAttribute) _input.AddAttribute(typeof (TermAttribute));
-            _inPosIncrAtt = (PositionIncrementAttribute) _input.AddAttribute(typeof (PositionIncrementAttribute));
-            _inPayloadAtt = (PayloadAttribute) _input.AddAttribute(typeof (PayloadAttribute));
-            _inOffsetAtt = (OffsetAttribute) _input.AddAttribute(typeof (OffsetAttribute));
-            _inTypeAtt = (TypeAttribute) _input.AddAttribute(typeof (TypeAttribute));
-            _inFlagsAtt = (FlagsAttribute) _input.AddAttribute(typeof (FlagsAttribute));
+            _inTermAtt = _input.AddAttribute<TermAttribute>();
+            _inPosIncrAtt = _input.AddAttribute<PositionIncrementAttribute>();
+            _inPayloadAtt = _input.AddAttribute<PayloadAttribute>();
+            _inOffsetAtt = _input.AddAttribute<OffsetAttribute>();
+            _inTypeAtt = _input.AddAttribute<TypeAttribute>();
+            _inFlagsAtt = _input.AddAttribute<FlagsAttribute>();
         }
 
         /// <summary>
@@ -250,27 +251,27 @@ namespace Lucene.Net.Analyzers.Shingle
             _settingsCodec = settingsCodec;
 
             // ReSharper disable DoNotCallOverridableMethodsInConstructor
-            _termAtt = (TermAttribute) AddAttribute(typeof (TermAttribute));
-            _posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof (PositionIncrementAttribute));
-            _payloadAtt = (PayloadAttribute) AddAttribute(typeof (PayloadAttribute));
-            _offsetAtt = (OffsetAttribute) AddAttribute(typeof (OffsetAttribute));
-            _typeAtt = (TypeAttribute) AddAttribute(typeof (TypeAttribute));
-            _flagsAtt = (FlagsAttribute) AddAttribute(typeof (FlagsAttribute));
+            _termAtt = AddAttribute<TermAttribute>();
+            _posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+            _payloadAtt = AddAttribute<PayloadAttribute>();
+            _offsetAtt = AddAttribute<OffsetAttribute>();
+            _typeAtt = AddAttribute<TypeAttribute>();
+            _flagsAtt = AddAttribute<FlagsAttribute>();
             // ReSharper restore DoNotCallOverridableMethodsInConstructor
 
-            _inTermAtt = (TermAttribute) input.AddAttribute(typeof (TermAttribute));
-            _inPosIncrAtt = (PositionIncrementAttribute) input.AddAttribute(typeof (PositionIncrementAttribute));
-            _inPayloadAtt = (PayloadAttribute) input.AddAttribute(typeof (PayloadAttribute));
-            _inOffsetAtt = (OffsetAttribute) input.AddAttribute(typeof (OffsetAttribute));
-            _inTypeAtt = (TypeAttribute) input.AddAttribute(typeof (TypeAttribute));
-            _inFlagsAtt = (FlagsAttribute) input.AddAttribute(typeof (FlagsAttribute));
+            _inTermAtt = input.AddAttribute<TermAttribute>();
+            _inPosIncrAtt = input.AddAttribute<PositionIncrementAttribute>();
+            _inPayloadAtt = input.AddAttribute<PayloadAttribute>();
+            _inOffsetAtt = input.AddAttribute<OffsetAttribute>();
+            _inTypeAtt = input.AddAttribute<TypeAttribute>();
+            _inFlagsAtt = input.AddAttribute<FlagsAttribute>();
         }
 
         public int MinimumShingleSize { get; set; }
 
         public int MaximumShingleSize { get; set; }
 
-        public Matrix.Matrix Matrix { get; set; }
+        public Matrix Matrix { get; set; }
 
         public Char? SpacerCharacter { get; set; }
 
@@ -283,11 +284,16 @@ namespace Lucene.Net.Analyzers.Shingle
             _input.Reset();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing
+        }
+
         public override sealed bool IncrementToken()
         {
             if (Matrix == null)
             {
-                Matrix = new Matrix.Matrix();
+                Matrix = new Matrix();
 
                 // fill matrix with maximumShingleSize columns
                 while (Matrix.Columns.Count < MaximumShingleSize && ReadColumn())
@@ -333,25 +339,16 @@ namespace Lucene.Net.Analyzers.Shingle
             return token;
         }
 
-        /// <summary>
-        /// Deprecated: Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <param name="reusableToken"></param>
-        /// <returns></returns>
-        [Obsolete("The new IncrementToken() and AttributeSource APIs should be used instead.")]
-        public override sealed Token Next(Token reusableToken)
+        private Token GetNextToken(Token token)
         {
-            return base.Next(reusableToken);
-        }
-        
-        /// <summary>
-        /// Deprecated: Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("The returned Token is a \"full private copy\" (not re-used across calls to Next()) but will be slower than calling Next(Token) or using the new IncrementToken() method with the new AttributeSource API.")]
-        public override sealed Token Next()
-        {
-            return base.Next();
+            if (!this.IncrementToken()) return null;
+            token.SetTermBuffer(_termAtt.TermBuffer(), 0, _termAtt.TermLength());
+            token.SetPositionIncrement(_posIncrAtt.GetPositionIncrement());
+            token.SetFlags(_flagsAtt.GetFlags());
+            token.SetOffset(_offsetAtt.StartOffset(), _offsetAtt.EndOffset());
+            token.SetType(_typeAtt.Type());
+            token.SetPayload(_payloadAtt.GetPayload());
+            return token;
         }
 
         /// <summary>
@@ -377,12 +374,12 @@ namespace Lucene.Net.Analyzers.Shingle
                         _currentShingleLength == 1 && 
                         (_currentPermutationRows[_currentPermutationTokensStartOffset].Column.IsFirst || _currentPermutationRows[_currentPermutationTokensStartOffset].Column.IsLast))
                     {
-                        return Next();
+                        return GetNextToken(reusableToken);
                     }
 
                     var termLength = 0;
 
-                    var shingle = new SupportClass.EquatableList<Token>();
+                    var shingle = new EquatableList<Token>();
 
                     for (int i = 0; i < _currentShingleLength; i++)
                     {
@@ -521,7 +518,7 @@ namespace Lucene.Net.Analyzers.Shingle
         }
 
         /// <summary>
-        /// Final touch of a shingle token before it is passed on to the consumer from method <see cref="Next(Token)"/>.
+        /// Final touch of a shingle token before it is passed on to the consumer from method <see cref="IncrementToken()"/>.
         /// 
         /// Calculates and sets type, flags, position increment, start/end offsets and weight.
         /// </summary>

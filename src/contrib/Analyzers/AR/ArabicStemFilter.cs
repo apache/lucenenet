@@ -36,13 +36,13 @@ namespace Lucene.Net.Analysis.AR
     public class ArabicStemFilter : TokenFilter
     {
 
-        protected ArabicStemmer stemmer = null;
-        private TermAttribute termAtt;
+        private readonly ArabicStemmer stemmer;
+        private readonly TermAttribute termAtt;
 
         public ArabicStemFilter(TokenStream input) : base(input)
         {
             stemmer = new ArabicStemmer();
-            termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
         }
 
         public override bool IncrementToken()

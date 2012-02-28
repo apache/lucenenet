@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Util;
 using CharReader = Lucene.Net.Analysis.CharReader;
 using Token = Lucene.Net.Analysis.Token;
 using Tokenizer = Lucene.Net.Analysis.Tokenizer;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// </list>
 	/// </summary>
 	
-	public class StandardTokenizer:Tokenizer
+	public sealed class StandardTokenizer:Tokenizer
 	{
 		private void  InitBlock()
 		{
@@ -65,18 +65,17 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>A private instance of the JFlex-constructed scanner </summary>
 		private StandardTokenizerImpl scanner;
 		
-		public const int ALPHANUM = 0;
+		public const int ALPHANUM   = 0;
 		public const int APOSTROPHE = 1;
-		public const int ACRONYM = 2;
-		public const int COMPANY = 3;
-		public const int EMAIL = 4;
-		public const int HOST = 5;
-		public const int NUM = 6;
-		public const int CJ = 7;
+		public const int ACRONYM    = 2;
+		public const int COMPANY    = 3;
+		public const int EMAIL      = 4;
+		public const int HOST       = 5;
+		public const int NUM        = 6;
+		public const int CJ         = 7;
 		
 		/// <deprecated> this solves a bug where HOSTs that end with '.' are identified
-		/// as ACRONYMs. It is deprecated and will be removed in the next
-		/// release.
+		/// as ACRONYMs.
 		/// </deprecated>
         [Obsolete("this solves a bug where HOSTs that end with '.' are identified as ACRONYMs. It is deprecated and will be removed in the next release.")]
 		public const int ACRONYM_DEP = 8;
@@ -84,20 +83,6 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>String token types that correspond to token type int constants </summary>
 		public static readonly System.String[] TOKEN_TYPES = new System.String[]{"<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>"};
 		
-		/// <deprecated> Please use <see cref="TOKEN_TYPES" /> instead 
-		/// </deprecated>
-        [Obsolete("Please use TOKEN_TYPES instead")]
-		public static readonly System.String[] tokenImage = TOKEN_TYPES;
-		
-		/// <summary> Specifies whether deprecated acronyms should be replaced with HOST type.
-		/// This is false by default to support backward compatibility.
-		/// <p/>
-		/// See http://issues.apache.org/jira/browse/LUCENE-1068
-		/// 
-		/// </summary>
-		/// <deprecated> this should be removed in the next release (3.0).
-		/// </deprecated>
-        [Obsolete("this should be removed in the next release (3.0).")]
 		private bool replaceInvalidAcronym;
 		
 		private int maxTokenLength;
@@ -105,46 +90,16 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>Set the max allowed token length.  Any token longer
 		/// than this is skipped. 
 		/// </summary>
-		public virtual void  SetMaxTokenLength(int length)
+		public void SetMaxTokenLength(int length)
 		{
 			this.maxTokenLength = length;
 		}
 		
 		/// <seealso cref="SetMaxTokenLength">
 		/// </seealso>
-		public virtual int GetMaxTokenLength()
+		public int GetMaxTokenLength()
 		{
 			return maxTokenLength;
-		}
-		
-		/// <summary> Creates a new instance of the <see cref="StandardTokenizer" />. Attaches the
-		/// <c>input</c> to a newly created JFlex scanner.
-		/// </summary>
-        /// <deprecated> Use <see cref="StandardTokenizer(Version, System.IO.TextReader)" /> instead
-		/// </deprecated>
-        [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
-		public StandardTokenizer(System.IO.TextReader input):this(Version.LUCENE_24, input)
-		{
-		}
-		
-		/// <summary> Creates a new instance of the <see cref="Lucene.Net.Analysis.Standard.StandardTokenizer" />.  Attaches
-		/// the <c>input</c> to the newly created JFlex scanner.
-		/// 
-		/// </summary>
-		/// <param name="input">The input reader
-		/// </param>
-		/// <param name="replaceInvalidAcronym">Set to true to replace mischaracterized acronyms with HOST.
-		/// 
-		/// See http://issues.apache.org/jira/browse/LUCENE-1068
-		/// </param>
-        /// <deprecated> Use <see cref="StandardTokenizer(Version, System.IO.TextReader)" /> instead
-		/// </deprecated>
-        [Obsolete("Use StandardTokenizer(Version, Reader) instead")]
-		public StandardTokenizer(System.IO.TextReader input, bool replaceInvalidAcronym):base()
-		{
-			InitBlock();
-			this.scanner = new StandardTokenizerImpl(input);
-			Init(input, replaceInvalidAcronym);
 		}
 
 	    /// <summary> Creates a new instance of the
@@ -163,39 +118,13 @@ namespace Lucene.Net.Analysis.Standard
 			this.scanner = new StandardTokenizerImpl(input);
 			Init(input, matchVersion);
 		}
-		
-		/// <summary> Creates a new StandardTokenizer with a given <see cref="AttributeSource" />. </summary>
-		/// <deprecated> Use
-        /// <see cref="StandardTokenizer(Version, AttributeSource, System.IO.TextReader)" />
-		/// instead
-		/// </deprecated>
-        [Obsolete("Use StandardTokenizer(Version, AttributeSource, Reader) instead")]
-		public StandardTokenizer(AttributeSource source, System.IO.TextReader input, bool replaceInvalidAcronym):base(source)
-		{
-			InitBlock();
-			this.scanner = new StandardTokenizerImpl(input);
-			Init(input, replaceInvalidAcronym);
-		}
-		
+
 		/// <summary> Creates a new StandardTokenizer with a given <see cref="AttributeSource" />.</summary>
 		public StandardTokenizer(Version matchVersion, AttributeSource source, System.IO.TextReader input):base(source)
 		{
 			InitBlock();
 			this.scanner = new StandardTokenizerImpl(input);
 			Init(input, matchVersion);
-		}
-		
-		/// <summary> Creates a new StandardTokenizer with a given <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" /> </summary>
-		/// <deprecated> Use
-        /// <see cref="StandardTokenizer(Version, AttributeSource.AttributeFactory, System.IO.TextReader)" />
-		/// instead
-		/// </deprecated>
-        [Obsolete("Use StandardTokenizer(Version, Lucene.Net.Util.AttributeSource.AttributeFactory, Reader) instead")]
-		public StandardTokenizer(AttributeFactory factory, System.IO.TextReader input, bool replaceInvalidAcronym):base(factory)
-		{
-			InitBlock();
-			this.scanner = new StandardTokenizerImpl(input);
-			Init(input, replaceInvalidAcronym);
 		}
 		
 		/// <summary> Creates a new StandardTokenizer with a given
@@ -208,26 +137,21 @@ namespace Lucene.Net.Analysis.Standard
 			Init(input, matchVersion);
 		}
 		
-		private void  Init(System.IO.TextReader input, bool replaceInvalidAcronym)
-		{
-			this.replaceInvalidAcronym = replaceInvalidAcronym;
-			this.input = input;
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-			offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
-			posIncrAtt = (PositionIncrementAttribute) AddAttribute(typeof(PositionIncrementAttribute));
-			typeAtt = (TypeAttribute) AddAttribute(typeof(TypeAttribute));
-		}
-		
 		private void  Init(System.IO.TextReader input, Version matchVersion)
 		{
 			if (matchVersion.OnOrAfter(Version.LUCENE_24))
 			{
-				Init(input, true);
+			    replaceInvalidAcronym = true;
 			}
 			else
 			{
-				Init(input, false);
+			    replaceInvalidAcronym = false;
 			}
+		    this.input = input;
+		    termAtt = AddAttribute<TermAttribute>();
+		    offsetAtt = AddAttribute<OffsetAttribute>();
+		    posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+		    typeAtt = AddAttribute<TypeAttribute>();
 		}
 		
 		// this tokenizer generates three attributes:
@@ -297,25 +221,6 @@ namespace Lucene.Net.Analysis.Standard
 			offsetAtt.SetOffset(finalOffset, finalOffset);
 		}
 		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next(Token reusableToken)
-		{
-			return base.Next(reusableToken);
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next()
-		{
-			return base.Next();
-		}
-		
-				
 		public override void  Reset(System.IO.TextReader reader)
 		{
 			base.Reset(reader);
@@ -331,20 +236,20 @@ namespace Lucene.Net.Analysis.Standard
 		/// <deprecated> Remove in 3.X and make true the only valid value
 		/// </deprecated>
         [Obsolete("Remove in 3.X and make true the only valid value")]
-		public virtual bool IsReplaceInvalidAcronym()
+		public bool IsReplaceInvalidAcronym()
 		{
 			return replaceInvalidAcronym;
 		}
 		
-		/// <summary> </summary>
-		/// <param name="replaceInvalidAcronym">Set to true to replace mischaracterized acronyms as HOST.
-		/// </param>
-		/// <deprecated> Remove in 3.X and make true the only valid value
-		/// 
+
+        /// <summary>
+		/// Remove in 3.X and make true the only valid value
 		/// See https://issues.apache.org/jira/browse/LUCENE-1068
-		/// </deprecated>
+        /// </summary>
+        /// <param name="replaceInvalidAcronym">Set to true to replace mischaracterized acronyms as HOST.
+        /// </param>
         [Obsolete("Remove in 3.X and make true the only valid value. See https://issues.apache.org/jira/browse/LUCENE-1068")]
-		public virtual void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
+		public void  SetReplaceInvalidAcronym(bool replaceInvalidAcronym)
 		{
 			this.replaceInvalidAcronym = replaceInvalidAcronym;
 		}

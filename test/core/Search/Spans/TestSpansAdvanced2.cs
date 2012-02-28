@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
 			base.SetUp();
 			
 			// create test index
-			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(mDirectory, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), false, IndexWriter.MaxFieldLength.LIMITED);
 			addDocument(writer, "A", "Should we, could we, would we?");
 			addDocument(writer, "B", "it should.  Should it?");
 			addDocument(writer, "C", "it shouldn't.");
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
 			writer.Close();
 			
 			// re-open the searcher since we added more docs
-			searcher2 = new IndexSearcher(mDirectory);
+			searcher2 = new IndexSearcher(mDirectory, true);
 		}
 		
 		/// <summary> Verifies that the index has the correct number of documents.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
 		[Test]
 		public virtual void  TestVerifyIndex()
 		{
-			IndexReader reader = IndexReader.Open(mDirectory);
+			IndexReader reader = IndexReader.Open(mDirectory, true);
 			Assert.AreEqual(8, reader.NumDocs());
 			reader.Close();
 		}

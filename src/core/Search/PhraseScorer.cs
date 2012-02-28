@@ -75,25 +75,9 @@ namespace Lucene.Net.Search
 			first.doc = - 1;
 		}
 		
-		/// <deprecated> use <see cref="DocID()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use DocID() instead.")]
-		public override int Doc()
-		{
-			return first.doc;
-		}
-		
 		public override int DocID()
 		{
 			return first.doc;
-		}
-		
-		/// <deprecated> use <see cref="NextDoc()" /> instead. 
-		/// </deprecated>
-        [Obsolete("use NextDoc() instead.")]
-		public override bool Next()
-		{
-			return NextDoc() != NO_MORE_DOCS;
 		}
 		
 		public override int NextDoc()
@@ -148,14 +132,6 @@ namespace Lucene.Net.Search
 			return norms == null?raw:raw * Similarity.DecodeNorm(norms[first.doc]); // normalize
 		}
 		
-		/// <deprecated> use <see cref="Advance(int)" /> instead. 
-		/// </deprecated>
-        [Obsolete("use Advance(int) instead.")]
-		public override bool SkipTo(int target)
-		{
-			return Advance(target) != NO_MORE_DOCS;
-		}
-		
 		public override int Advance(int target)
 		{
 			firstTime = false;
@@ -173,7 +149,16 @@ namespace Lucene.Net.Search
 			}
 			return first.doc;
 		}
-		
+
+        /// <summary>
+        /// Phrase frequency in current doc as computed by PhraseFreq()
+        /// </summary>
+        /// <returns></returns>
+        public float CurrentFreq()
+        {
+            return freq;
+        }
+
 		/// <summary> For a document containing all the phrase query terms, compute the
 		/// frequency of the phrase in that document. 
 		/// A non zero frequency means a match.
@@ -210,7 +195,7 @@ namespace Lucene.Net.Search
 			last = first = null;
 			while (pq.Top() != null)
 			{
-				PhrasePositions pp = (PhrasePositions) pq.Pop();
+				PhrasePositions pp = pq.Pop();
 				if (last != null)
 				{
 					// add next to end of list
@@ -229,18 +214,6 @@ namespace Lucene.Net.Search
 			last = first;
 			first = first.next;
 			last.next = null;
-		}
-		
-		public override Explanation Explain(int doc)
-		{
-			Explanation tfExplanation = new Explanation();
-			
-			int d = Advance(doc);
-			float phraseFreq = (d == doc)?freq:0.0f;
-			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
-			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
-			
-			return tfExplanation;
 		}
 		
 		public override System.String ToString()

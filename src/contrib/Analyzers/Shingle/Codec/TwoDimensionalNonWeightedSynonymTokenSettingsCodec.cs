@@ -16,9 +16,9 @@
  */
 
 using System;
-using Lucene.Net.Analysis;
+using Lucene.Net.Analyzers.Shingle;
 
-namespace Lucene.Net.Analyzers.Shingle.Codec
+namespace Lucene.Net.Analysis.Shingle.Codec
 {
     /// <summary>
     /// A codec that creates a two dimensional matrix

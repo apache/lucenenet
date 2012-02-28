@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Payloads
 			{
 				InitBlock(enclosingInstance);
 				this.fieldName = fieldName;
-				payloadAtt = (PayloadAttribute) AddAttribute(typeof(PayloadAttribute));
+                payloadAtt = AddAttribute<PayloadAttribute>();
 			}
 			
 			public override bool IncrementToken()

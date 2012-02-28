@@ -16,7 +16,9 @@
  */
 
 using System;
+using System.Text;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Regex
 {
@@ -27,16 +29,17 @@ namespace Lucene.Net.Search.Regex
 	public class RegexQuery : MultiTermQuery, IRegexQueryCapable, IEquatable<RegexQuery>
 	{
 		private IRegexCapabilities _regexImpl = new CSharpRegexCapabilities();
+	    public Term Term { get; private set; }
 
-		public RegexQuery(Term term) : base(term)
+		public RegexQuery(Term term)
 		{
+            Term = term;
 		}
 
 		/// <summary>Construct the enumeration to be used, expanding the pattern term. </summary>
 		public override FilteredTermEnum GetEnum(IndexReader reader)
 		{
-			Term term = new Term(GetTerm().Field(), GetTerm().Text());
-			return new RegexTermEnum(reader, term, _regexImpl);
+			return new RegexTermEnum(reader, Term, _regexImpl);
 		}
 
 		public void SetRegexImplementation(IRegexCapabilities impl)
@@ -49,7 +52,21 @@ namespace Lucene.Net.Search.Regex
 			return _regexImpl;
 		}
 
-		/// <summary>
+
+        public override String ToString(String field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            if (!Term.Field().Equals(field))
+            {
+                buffer.Append(Term.Field());
+                buffer.Append(":");
+            }
+            buffer.Append(Term.Text());
+            buffer.Append(ToStringUtils.Boost(GetBoost()));
+            return buffer.ToString();
+        }
+
+	    /// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.
 		/// </summary>
 		/// <returns>

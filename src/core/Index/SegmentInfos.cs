@@ -16,7 +16,8 @@
  */
 
 using System;
-
+using System.Collections.Generic;
+using Lucene.Net.Support;
 using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
 using ChecksumIndexOutput = Lucene.Net.Store.ChecksumIndexOutput;
 using Directory = Lucene.Net.Store.Directory;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
 	/// (subject to change suddenly in the next release)<p/>
 	/// </summary>
 	[Serializable]
-	public sealed class SegmentInfos:System.Collections.ArrayList
+	public sealed class SegmentInfos : List<SegmentInfo>, ICloneable
 	{
 		private class AnonymousClassFindSegmentsFile:FindSegmentsFile
 		{
@@ -126,7 +127,7 @@ namespace Lucene.Net.Index
 		// or wrote; this is normally the same as generation except if
 		// there was an IOException that had interrupted a commit
 
-        private System.Collections.Generic.IDictionary<string, string> userData = new System.Collections.Generic.Dictionary<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
+        private IDictionary<string, string> userData = new HashMap<string, string>(); // Opaque Map<String, String> that user can specify during IndexWriter.commit
 		
 		/// <summary> If non-null, information about loading segments_N files</summary>
 		/// <seealso cref="SetInfoStream">
@@ -224,7 +225,7 @@ namespace Lucene.Net.Index
 			}
 			else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
 			{
-				return SupportClass.Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
+				return Number.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
 			}
 			else
 			{
@@ -314,22 +315,25 @@ namespace Lucene.Net.Index
 					}
 					else if (0 != input.ReadByte())
 					{
-                        userData = new System.Collections.Generic.Dictionary<string,string>();
+                        // TODO: Should be read-only map
+                        userData = new HashMap<string,string>();
 						userData.Add("userData", input.ReadString());
 					}
 					else
 					{
-                        userData = new System.Collections.Generic.Dictionary<string, string>();
+                        // TODO: Should be empty read-only map
+                        userData = new HashMap<string, string>();
 					}
 				}
 				else
 				{
-                    userData = new System.Collections.Generic.Dictionary<string, string>();
+                    // TODO: Should be empty read-only map
+                    userData = new HashMap<string, string>();
 				}
 				
 				if (format <= FORMAT_CHECKSUM)
 				{
-					long checksumNow = input.GetChecksum();
+					long checksumNow = input.Checksum;
 					long checksumThen = input.ReadLong();
 					if (checksumNow != checksumThen)
 						throw new CorruptIndexException("checksum mismatch in segments file");
@@ -432,18 +436,18 @@ namespace Lucene.Net.Index
 		/// SegmentInfo.
 		/// </summary>
 		
-		public override System.Object Clone()
+		public System.Object Clone()
 		{
             SegmentInfos sis = new SegmentInfos();
             for (int i = 0; i < this.Count; i++)
             {
-                sis.Add(((SegmentInfo) this[i]).Clone());
+                sis.Add((SegmentInfo)this[i].Clone());
             }
             sis.counter = this.counter;
             sis.generation = this.generation;
             sis.lastGeneration = this.lastGeneration;
             // sis.pendingSegnOutput = this.pendingSegnOutput; // {{Aroush-2.9}} needed?
-            sis.userData = new System.Collections.Generic.Dictionary<string, string>(userData);
+            sis.userData = new HashMap<string, string>(userData);
             sis.version = this.version;
             return sis;
 		}
@@ -563,7 +567,7 @@ namespace Lucene.Net.Index
 		{
 			if (infoStream != null)
 			{
-				infoStream.WriteLine("SIS [" + SupportClass.ThreadClass.Current().Name + "]: " + message);
+				infoStream.WriteLine("SIS [" + ThreadClass.Current().Name + "]: " + message);
 			}
 		}
 		
@@ -579,8 +583,8 @@ namespace Lucene.Net.Index
 		{
 			
 			internal Directory directory;
-			
-			public FindSegmentsFile(Directory directory)
+
+		    protected FindSegmentsFile(Directory directory)
 			{
 				this.directory = directory;
 			}
@@ -701,10 +705,11 @@ namespace Lucene.Net.Index
 							}
 							catch (System.Threading.ThreadInterruptedException ie)
 							{
-								// In 3.0 we will change this to throw
-								// InterruptedException instead
-								SupportClass.ThreadClass.Current().Interrupt();
-								throw new System.SystemException(ie.Message, ie);
+                                //// In 3.0 we will change this to throw
+                                //// InterruptedException instead
+                                //SupportClass.ThreadClass.Current().Interrupt();
+                                //throw new System.SystemException(ie.Message, ie);
+							    throw;
 							}
 						}
 						
@@ -718,17 +723,7 @@ namespace Lucene.Net.Index
 						
 						if (gen == - 1)
 						{
-							// Neither approach found a generation
-							System.String s;
-							if (files != null)
-							{
-								s = "";
-								for (int i = 0; i < files.Length; i++)
-									s += (" " + files[i]);
-							}
-							else
-								s = " null";
-							throw new System.IO.FileNotFoundException("no segments* file found in " + directory + ": files:" + s);
+							throw new System.IO.FileNotFoundException("no segments* file found in " + directory + ": files:" + string.Join(" ", files));
 						}
 					}
 					
@@ -850,7 +845,7 @@ namespace Lucene.Net.Index
 		public SegmentInfos Range(int first, int last)
 		{
 			SegmentInfos infos = new SegmentInfos();
-			infos.AddRange((System.Collections.IList) ((System.Collections.ArrayList) this).GetRange(first, last - first));
+			infos.AddRange(this.GetRange(first, last - first));
 			return infos;
 		}
 		
@@ -913,11 +908,10 @@ namespace Lucene.Net.Index
 		/// </summary>
         public System.Collections.Generic.ICollection<string> Files(Directory dir, bool includeSegmentsFile)
 		{
-            System.Collections.Generic.Dictionary<string, string> files = new System.Collections.Generic.Dictionary<string, string>();
+            System.Collections.Generic.HashSet<string> files = new System.Collections.Generic.HashSet<string>();
 			if (includeSegmentsFile)
 			{
-                string tmp = GetCurrentSegmentFileName();
-                files.Add(tmp, tmp);
+                files.Add(GetCurrentSegmentFileName());
 			}
 			int size = Count;
 			for (int i = 0; i < size; i++)
@@ -925,10 +919,10 @@ namespace Lucene.Net.Index
 				SegmentInfo info = Info(i);
 				if (info.dir == dir)
 				{
-					SupportClass.CollectionsHelper.AddAllIfNotContains(files, Info(i).Files());
+                    files.UnionWith(Info(i).Files());
 				}
 			}
-			return files.Keys;
+			return files;
 		}
 		
 		internal void  FinishCommit(Directory dir)
@@ -1043,7 +1037,7 @@ namespace Lucene.Net.Index
 		{
 			if (data == null)
 			{
-				userData = new System.Collections.Generic.Dictionary<string,string>();
+			    userData = new HashMap<string, string>();
 			}
 			else
 			{

@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis
 {
@@ -42,7 +44,7 @@ namespace Lucene.Net.Analysis
 	public class PerFieldAnalyzerWrapper:Analyzer
 	{
 		private Analyzer defaultAnalyzer;
-		private System.Collections.IDictionary analyzerMap = new System.Collections.Hashtable();
+		private IDictionary<string, Analyzer> analyzerMap = new HashMap<string, Analyzer>();
 		
 		
 		/// <summary> Constructs with default analyzer.
@@ -51,7 +53,8 @@ namespace Lucene.Net.Analysis
 		/// <param name="defaultAnalyzer">Any fields not specifically
 		/// defined to use a different analyzer will use the one provided here.
 		/// </param>
-		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer):this(defaultAnalyzer, null)
+		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer)
+            : this(defaultAnalyzer, null)
 		{
 		}
 		
@@ -65,18 +68,15 @@ namespace Lucene.Net.Analysis
 		/// <param name="fieldAnalyzers">a Map (String field name to the Analyzer) to be 
 		/// used for those fields 
 		/// </param>
-		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, System.Collections.IDictionary fieldAnalyzers)
+        public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string, Analyzer> fieldAnalyzers)
 		{
 			this.defaultAnalyzer = defaultAnalyzer;
 			if (fieldAnalyzers != null)
 			{
-				System.Collections.ArrayList keys = new System.Collections.ArrayList(fieldAnalyzers.Keys);
-				System.Collections.ArrayList values = new System.Collections.ArrayList(fieldAnalyzers.Values);
-
-				for (int i=0; i < keys.Count; i++)
-					analyzerMap[keys[i]] = values[i];
+				foreach(var entry in fieldAnalyzers)
+					analyzerMap[entry.Key] = entry.Value;
 			}
-			SetOverridesTokenStreamMethod(typeof(PerFieldAnalyzerWrapper));
+            SetOverridesTokenStreamMethod<PerFieldAnalyzerWrapper>();
 		}
 		
 		
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis
 		
 		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
-			Analyzer analyzer = (Analyzer) analyzerMap[fieldName];
+			Analyzer analyzer = analyzerMap[fieldName];
 			if (analyzer == null)
 			{
 				analyzer = defaultAnalyzer;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis
 			return analyzer.TokenStream(fieldName, reader);
 		}
 		
-		public override TokenStream ReusableTokenStream(System.String fieldName, System.IO.TextReader reader)
+		public override TokenStream ReusableTokenStream(string fieldName, System.IO.TextReader reader)
 		{
 			if (overridesTokenStreamMethod)
 			{
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
 				// tokenStream but not reusableTokenStream
 				return TokenStream(fieldName, reader);
 			}
-			Analyzer analyzer = (Analyzer) analyzerMap[fieldName];
+			Analyzer analyzer = analyzerMap[fieldName];
 			if (analyzer == null)
 				analyzer = defaultAnalyzer;
 			
@@ -120,9 +120,9 @@ namespace Lucene.Net.Analysis
 		}
 		
 		/// <summary>Return the positionIncrementGap from the analyzer assigned to fieldName </summary>
-		public override int GetPositionIncrementGap(System.String fieldName)
+		public override int GetPositionIncrementGap(string fieldName)
 		{
-			Analyzer analyzer = (Analyzer) analyzerMap[fieldName];
+			Analyzer analyzer = analyzerMap[fieldName];
 			if (analyzer == null)
 				analyzer = defaultAnalyzer;
 			return analyzer.GetPositionIncrementGap(fieldName);
@@ -131,9 +131,7 @@ namespace Lucene.Net.Analysis
         /// <summary> Return the offsetGap from the analyzer assigned to field </summary>
         public override int GetOffsetGap(Lucene.Net.Documents.Fieldable field)
         {
-            Analyzer analyzer = (Analyzer)analyzerMap[field.Name()];
-            if (analyzer == null)
-                analyzer = defaultAnalyzer;
+            Analyzer analyzer = analyzerMap[field.Name()] ?? defaultAnalyzer;
             return analyzer.GetOffsetGap(field);
         }
 		

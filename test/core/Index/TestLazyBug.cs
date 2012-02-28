@@ -96,13 +96,13 @@ namespace Lucene.Net.Index
                     dataset.Add(data[i], data[i]);
 
 			Directory dir = MakeIndex();
-			IndexReader reader = IndexReader.Open(dir);
+		    IndexReader reader = IndexReader.Open(dir, true);
 			for (int i = 0; i < docs.Length; i++)
 			{
 				Document d = reader.Document(docs[i], SELECTOR);
 				d.Get(MAGIC_FIELD);
 				
-				System.Collections.IList fields = d.GetFields();
+				var fields = d.GetFields();
 				for (System.Collections.IEnumerator fi = fields.GetEnumerator(); fi.MoveNext(); )
 				{
 					Fieldable f = null;

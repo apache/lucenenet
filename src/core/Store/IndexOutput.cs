@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
 namespace Lucene.Net.Store
@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 	/// </seealso>
 	/// <seealso cref="IndexInput">
 	/// </seealso>
-	public abstract class IndexOutput
+    public abstract class IndexOutput : IDisposable
 	{
 		/// <summary>Writes a single byte.</summary>
 		/// <seealso cref="IndexInput.ReadByte()">
@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}
@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = SupportClass.Number.URShift(i, 7);
+				i = Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					WriteByte((byte) (0xE0 | (SupportClass.Number.URShift(code, 12))));
+					WriteByte((byte) (0xE0 | (Number.URShift(code, 12))));
 					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
 					WriteByte((byte) (0x80 | (code & 0x3F)));
 				}
@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
 				}
 				else
 				{
-					WriteByte((byte) (0xE0 | (SupportClass.Number.URShift(code, 12))));
+					WriteByte((byte) (0xE0 | (Number.URShift(code, 12))));
 					WriteByte((byte) (0x80 | ((code >> 6) & 0x3F)));
 					WriteByte((byte) (0x80 | (code & 0x3F)));
 				}
@@ -216,9 +216,21 @@ namespace Lucene.Net.Store
 		
 		/// <summary>Forces any buffered output to be written. </summary>
 		public abstract void  Flush();
-		
-		/// <summary>Closes this stream to further operations. </summary>
-		public abstract void  Close();
+
+        /// <summary>Closes this stream to further operations. </summary>
+        [Obsolete("Use Dispose() instead.")]
+        public void Close()
+        {
+            Dispose();
+        }
+
+        /// <summary>Closes this stream to further operations. </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+	    protected abstract void Dispose(bool disposing);
 		
 		/// <summary>Returns the current position in this file, where the next write will
 		/// occur.
@@ -262,10 +274,10 @@ namespace Lucene.Net.Store
 			else
 			{
 				WriteInt(map.Count);
-                foreach (string key in map.Keys)
+                foreach (var entry in map)
                 {
-                    WriteString(key);
-                    WriteString(map[key]);
+                    WriteString(entry.Key);
+                    WriteString(entry.Value);
                 }
 			}
 		}

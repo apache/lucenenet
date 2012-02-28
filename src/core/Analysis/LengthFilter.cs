@@ -22,12 +22,7 @@ using TermAttribute = Lucene.Net.Analysis.Tokenattributes.TermAttribute;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary> Removes words that are too long or too short from the stream.
-	/// 
-	/// 
-	/// </summary>
-	/// <version>  $Id: LengthFilter.java 807201 2009-08-24 13:22:34Z markrmiller $
-	/// </version>
+	/// <summary>Removes words that are too long or too short from the stream.</summary>
 	public sealed class LengthFilter:TokenFilter
 	{
 		
@@ -39,11 +34,12 @@ namespace Lucene.Net.Analysis
 		/// <summary> Build a filter that removes words that are too long or too
 		/// short from the text.
 		/// </summary>
-		public LengthFilter(TokenStream in_Renamed, int min, int max):base(in_Renamed)
+		public LengthFilter(TokenStream in_Renamed, int min, int max)
+            : base(in_Renamed)
 		{
 			this.min = min;
 			this.max = max;
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
+            termAtt = AddAttribute<TermAttribute>();
 		}
 		
 		/// <summary> Returns the next input Token whose term() is the right len</summary>
@@ -59,7 +55,7 @@ namespace Lucene.Net.Analysis
 				}
 				// note: else we ignore it but should we index each part of it?
 			}
-			// reached EOS -- return null
+			// reached EOS -- return false
 			return false;
 		}
 	}

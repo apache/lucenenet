@@ -37,49 +37,6 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class QueryWrapperFilter:Filter
 	{
-		private class AnonymousClassCollector:Collector
-		{
-			public AnonymousClassCollector(System.Collections.BitArray bits, QueryWrapperFilter enclosingInstance)
-			{
-				InitBlock(bits, enclosingInstance);
-			}
-			private void  InitBlock(System.Collections.BitArray bits, QueryWrapperFilter enclosingInstance)
-			{
-				this.bits = bits;
-				this.enclosingInstance = enclosingInstance;
-			}
-			private System.Collections.BitArray bits;
-			private QueryWrapperFilter enclosingInstance;
-			public QueryWrapperFilter Enclosing_Instance
-			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
-			}
-			private int base_Renamed = 0;
-			public override void  SetScorer(Scorer scorer)
-			{
-				// score is not needed by this collector 
-			}
-			public override void  Collect(int doc)
-			{
-                for (int i = 0; doc + base_Renamed >= bits.Length; i =+ 64)
-                {
-                    bits.Length += i;
-                }
-                bits.Set(doc + base_Renamed, true); // set bit for hit
-			}
-			public override void  SetNextReader(IndexReader reader, int docBase)
-			{
-				base_Renamed = docBase;
-			}
-			public override bool AcceptsDocsOutOfOrder()
-			{
-				return true;
-			}
-		}
 		private class AnonymousClassDocIdSet:DocIdSet
 		{
 			public AnonymousClassDocIdSet(Lucene.Net.Search.Weight weight, Lucene.Net.Index.IndexReader reader, QueryWrapperFilter enclosingInstance)
@@ -120,17 +77,6 @@ namespace Lucene.Net.Search
 		public QueryWrapperFilter(Query query)
 		{
 			this.query = query;
-		}
-		
-		/// <deprecated> Use <see cref="GetDocIdSet(IndexReader)" /> instead.
-		/// </deprecated>
-        [Obsolete("Use GetDocIdSet(IndexReader) instead.")]
-		public override System.Collections.BitArray Bits(IndexReader reader)
-		{
-			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
-			
-			new IndexSearcher(reader).Search(query, new AnonymousClassCollector(bits, this));
-			return bits;
 		}
 		
 		public override DocIdSet GetDocIdSet(IndexReader reader)

@@ -34,6 +34,11 @@ namespace Lucene.Net.Index
 			}
 		}
 
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
+
         public override bool IsDeleted(int doc)
         {
             return deletedDocs != null && deletedDocs.Get(doc);

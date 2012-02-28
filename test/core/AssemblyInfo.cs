@@ -37,7 +37,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("2.9.4")]
+[assembly: AssemblyInformationalVersionAttribute("3.0.3")]
 
 //
 // Version information for an assembly consists of the following four values:
@@ -50,7 +50,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.9.4.001")]
+[assembly: AssemblyVersion("3.0.3")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

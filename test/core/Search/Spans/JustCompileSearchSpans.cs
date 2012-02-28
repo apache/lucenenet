@@ -90,14 +90,6 @@ namespace Lucene.Net.Search.Spans
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
 			}
 			
-			/// <deprecated> delete in 3.0. 
-			/// </deprecated>
-            [Obsolete("delete in 3.0")]
-			public override System.Collections.ICollection GetTerms()
-			{
-				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);
-			}
-			
 			public override System.String ToString(System.String field)
 			{
 				throw new System.NotSupportedException(Lucene.Net.Search.Spans.JustCompileSearchSpans.UNSUPPORTED_MSG);

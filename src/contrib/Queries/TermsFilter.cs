@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The set of terms for this filter.
         /// </summary>
-        protected HashSet<Term> terms = new HashSet<Term>();
+        protected ISet<Term> terms = new SortedSet<Term>();
 
         /// <summary>
         /// Add a term to the set.
@@ -83,6 +83,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermsFilter test = (TermsFilter)obj;
+            // TODO: Does SortedSet have an issues like List<T>?  see EquatableList in Support
             return (terms == test.terms || (terms != null && terms.Equals(test.terms)));
         }
 

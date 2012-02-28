@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 				writer.AddDocument(doc);
 			}
 			writer.Close();
-			IndexReader reader = IndexReader.Open(dir);
+			IndexReader reader = IndexReader.Open(dir, false);
 			reader.DeleteDocument(5);
 			reader.Close();
 			
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(18, seg.termVectorStatus.totVectors);
 			
 			Assert.IsTrue(seg.diagnostics.Count > 0);
-			System.Collections.IList onlySegments = new System.Collections.ArrayList();
+			List<string> onlySegments = new List<string>();
 			onlySegments.Add("_0");
 			
 			Assert.IsTrue(checker.CheckIndex_Renamed_Method(onlySegments).clean == true);

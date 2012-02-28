@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
@@ -30,10 +30,6 @@ using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-	
-	/// <summary> </summary>
-	/// <version>  $rcs = ' $Id: TestMultiThreadTermVectors.java 759556 2009-03-28 19:10:55Z mikemccand $ ' ;
-	/// </version>
     [TestFixture]
 	public class TestMultiThreadTermVectors:LuceneTestCase
 	{
@@ -66,7 +62,7 @@ namespace Lucene.Net.Search
 			
 			try
 			{
-				reader = IndexReader.Open(directory);
+			    reader = IndexReader.Open(directory, true);
 				for (int i = 1; i <= numThreads; i++)
 					TestTermPositionVectors(reader, i);
 			}
@@ -135,7 +131,7 @@ namespace Lucene.Net.Search
 	{
 		
 		private IndexReader reader = null;
-		private SupportClass.ThreadClass t = null;
+		private ThreadClass t = null;
 		
 		private int runsToDo = 100;
 		internal long timeElapsed = 0;
@@ -145,7 +141,7 @@ namespace Lucene.Net.Search
 		{
 			this.reader = reader;
 			timeElapsed = 0;
-			t = new SupportClass.ThreadClass(new System.Threading.ThreadStart(this.Run));
+			t = new ThreadClass(new System.Threading.ThreadStart(this.Run));
 			t.Start();
 		}
 		

@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     [TestFixture]
 	public class TestThreadedOptimize:LuceneTestCase
 	{
-		private class AnonymousClassThread:SupportClass.ThreadClass
+		private class AnonymousClassThread:ThreadClass
 		{
 			public AnonymousClassThread(Lucene.Net.Index.IndexWriter writerFinal, int iFinal, int iterFinal, TestThreadedOptimize enclosingInstance)
 			{
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 				catch (System.Exception t)
 				{
 					Enclosing_Instance.setFailed();
-					System.Console.Out.WriteLine(SupportClass.ThreadClass.Current().Name + ": hit exception");
+					System.Console.Out.WriteLine(ThreadClass.Current().Name + ": hit exception");
 					System.Console.Out.WriteLine(t.StackTrace);
 				}
 			}
@@ -107,10 +107,10 @@ namespace Lucene.Net.Index
 			failed = true;
 		}
 		
-		public virtual void  runTest(Directory directory, bool autoCommit, MergeScheduler merger)
+		public virtual void  runTest(Directory directory, MergeScheduler merger)
 		{
 			
-			IndexWriter writer = new IndexWriter(directory, autoCommit, ANALYZER, true);
+			IndexWriter writer = new IndexWriter(directory, ANALYZER, true, IndexWriter.MaxFieldLength.UNLIMITED);
 			writer.SetMaxBufferedDocs(2);
 			if (merger != null)
 				writer.SetMergeScheduler(merger);
@@ -132,9 +132,7 @@ namespace Lucene.Net.Index
 				writer.SetMergeFactor(4);
 				//writer.setInfoStream(System.out);
 				
-				int docCount = writer.DocCount();
-				
-				SupportClass.ThreadClass[] threads = new SupportClass.ThreadClass[NUM_THREADS];
+				ThreadClass[] threads = new ThreadClass[NUM_THREADS];
 				
 				for (int i = 0; i < NUM_THREADS; i++)
 				{
@@ -155,16 +153,13 @@ namespace Lucene.Net.Index
 				
 				// System.out.println("TEST: now index=" + writer.segString());
 				
-				Assert.AreEqual(expectedDocCount, writer.DocCount());
+				Assert.AreEqual(expectedDocCount, writer.MaxDoc());
 				
-				if (!autoCommit)
-				{
-					writer.Close();
-					writer = new IndexWriter(directory, autoCommit, ANALYZER, false);
-					writer.SetMaxBufferedDocs(2);
-				}
-				
-				IndexReader reader = IndexReader.Open(directory);
+				writer.Close();
+				writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);
+				writer.SetMaxBufferedDocs(2);
+
+			    IndexReader reader = IndexReader.Open(directory, true);
 				Assert.IsTrue(reader.IsOptimized());
 				Assert.AreEqual(expectedDocCount, reader.NumDocs());
 				reader.Close();
@@ -180,22 +175,18 @@ namespace Lucene.Net.Index
 		public virtual void  TestThreadedOptimize_Renamed()
 		{
 			Directory directory = new MockRAMDirectory();
-			runTest(directory, false, new SerialMergeScheduler());
-			runTest(directory, true, new SerialMergeScheduler());
-			runTest(directory, false, new ConcurrentMergeScheduler());
-			runTest(directory, true, new ConcurrentMergeScheduler());
+			runTest(directory, new SerialMergeScheduler());
+			runTest(directory, new ConcurrentMergeScheduler());
 			directory.Close();
 			
-			System.String tempDir = SupportClass.AppSettings.Get("tempDir", "");
+			System.String tempDir = AppSettings.Get("tempDir", "");
 			if (tempDir == null)
 				throw new System.IO.IOException("tempDir undefined, cannot run test");
 			
 			System.String dirName = tempDir + "/luceneTestThreadedOptimize";
-			directory = FSDirectory.Open(new System.IO.FileInfo(dirName));
-			runTest(directory, false, new SerialMergeScheduler());
-			runTest(directory, true, new SerialMergeScheduler());
-			runTest(directory, false, new ConcurrentMergeScheduler());
-			runTest(directory, true, new ConcurrentMergeScheduler());
+			directory = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
+			runTest(directory, new SerialMergeScheduler());
+			runTest(directory, new ConcurrentMergeScheduler());
 			directory.Close();
 			_TestUtil.RmDir(dirName);
 		}

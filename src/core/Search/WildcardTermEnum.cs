@@ -28,11 +28,8 @@ namespace Lucene.Net.Search
 	/// <p/>
 	/// Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.
-	/// 
 	/// </summary>
-	/// <version>  $Id: WildcardTermEnum.java 783371 2009-06-10 14:39:56Z mikemccand $
-	/// </version>
-	public class WildcardTermEnum:FilteredTermEnum
+	public class WildcardTermEnum : FilteredTermEnum
 	{
 		internal Term searchTerm;
 		internal System.String field;

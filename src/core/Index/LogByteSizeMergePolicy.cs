@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	/// <summary>This is a <see cref="LogMergePolicy" /> that measures size of a
 	/// segment as the total byte size of the segment's files. 
 	/// </summary>
-	public class LogByteSizeMergePolicy:LogMergePolicy
+	public class LogByteSizeMergePolicy : LogMergePolicy
 	{
 		
 		/// <seealso cref="SetMinMergeMB">
@@ -33,9 +33,10 @@ namespace Lucene.Net.Index
 		/// <summary>Default maximum segment size.  A segment of this size</summary>
 		/// <seealso cref="SetMaxMergeMB">
 		/// </seealso>
-		public static readonly long DEFAULT_MAX_MERGE_MB = System.Int64.MaxValue;
+		public static readonly long DEFAULT_MAX_MERGE_MB = long.MaxValue;
 		
-		public LogByteSizeMergePolicy(IndexWriter writer):base(writer)
+		public LogByteSizeMergePolicy(IndexWriter writer)
+            : base(writer)
 		{
 			minMergeSize = (long) (DEFAULT_MIN_MERGE_MB * 1024 * 1024);
             //mgarski - the line below causes an overflow in .NET, resulting in a negative number...
@@ -46,6 +47,11 @@ namespace Lucene.Net.Index
 		{
 			return SizeBytes(info);
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            // Do nothing.
+        }
 		
 		/// <summary><p/>Determines the largest segment (measured by total
 		/// byte size of the segment's files, in MB) that may be

@@ -37,10 +37,7 @@ namespace Lucene.Net.Search
 	/// not valid scores.  Certain collectors (eg <see cref="TopScoreDocCollector" />
 	///) will not properly collect hits
 	/// with these scores.
-	/// 
 	/// </summary>
-	/// <seealso cref="BooleanQuery.SetAllowDocsOutOfOrder">
-	/// </seealso>
 	public abstract class Scorer:DocIdSetIterator
 	{
 		private Similarity similarity;
@@ -60,21 +57,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
-		/// </param>
-		/// <deprecated> use <see cref="Score(Collector)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector) instead.")]
-		public virtual void  Score(HitCollector hc)
-		{
-			Score(new HitCollectorWrapper(hc));
-		}
-		
-		/// <summary>Scores and collects all matching documents.</summary>
 		/// <param name="collector">The collector to which all matching documents are passed.
-		/// <br/>When this method is used the <see cref="Explain(int)" /> method should not be used.
 		/// </param>
 		public virtual void  Score(Collector collector)
 		{
@@ -84,25 +67,6 @@ namespace Lucene.Net.Search
 			{
 				collector.Collect(doc);
 			}
-		}
-		
-		/// <summary>Expert: Collects matching documents in a range.  Hook for optimization.
-		/// Note that <see cref="DocIdSetIterator.Next()" /> must be called once before this method is called
-		/// for the first time.
-		/// </summary>
-		/// <param name="hc">The collector to which all matching documents are passed through
-		/// <see cref="HitCollector.Collect(int, float)" />.
-		/// </param>
-		/// <param name="max">Do not score documents past this.
-		/// </param>
-		/// <returns> true if more matching documents may remain.
-		/// </returns>
-		/// <deprecated> use <see cref="Score(Collector, int, int)" /> instead.
-		/// </deprecated>
-        [Obsolete("use Score(Collector, int, int) instead")]
-		protected internal virtual bool Score(HitCollector hc, int max)
-		{
-			return Score(new HitCollectorWrapper(hc), max, DocID());
 		}
 		
 		/// <summary> Expert: Collects matching documents in a range. Hook for optimization.
@@ -133,25 +97,10 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the score of the current document matching the query.
-        /// Initially invalid, until <see cref="DocIdSetIterator.Next()" /> or <see cref="DocIdSetIterator.SkipTo(int)" />
+        /// Initially invalid, until <see cref="DocIdSetIterator.NextDoc()" /> or <see cref="DocIdSetIterator.Advance(int)" />
 		/// is called the first time, or when called from within
 		/// <see cref="Collector.Collect(int)" />.
 		/// </summary>
 		public abstract float Score();
-		
-		/// <summary>Returns an explanation of the score for a document.
-        /// <br/>When this method is used, the <see cref="DocIdSetIterator.Next()" />, <see cref="DocIdSetIterator.SkipTo(int)" /> and
-		/// <see cref="Score(HitCollector)" /> methods should not be used.
-		/// </summary>
-		/// <param name="doc">The document number for the explanation.
-		/// 
-		/// </param>
-		/// <deprecated> Please use <see cref="IndexSearcher.Explain(Lucene.Net.Search.Weight,int)" />
-		/// or <see cref="Weight.Explain(IndexReader, int)" /> instead.
-		/// </deprecated>
-		public virtual Explanation Explain(int doc)
-		{
-			throw new System.NotSupportedException();
-		}
 	}
 }

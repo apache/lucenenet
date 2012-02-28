@@ -53,10 +53,10 @@ namespace Lucene.Net.Search
 			long lower = (distance * 3 / 2) + startOffset, upper = lower + count * distance + (distance / 3);
 			System.Int64 tempAux = (long) lower;
 			System.Int64 tempAux2 = (long) upper;
-			NumericRangeQuery q = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, tempAux2, true, true);
+			NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, tempAux2, true, true);
 			System.Int64 tempAux3 = (long) lower;
 			System.Int64 tempAux4 = (long) upper;
-			NumericRangeFilter f = NumericRangeFilter.NewLongRange(field, precisionStep, tempAux3, tempAux4, true, true);
+            NumericRangeFilter<long> f = NumericRangeFilter.NewLongRange(field, precisionStep, tempAux3, tempAux4, true, true);
 			int lastTerms = 0;
 			for (sbyte i = 0; i < 3; i++)
 			{
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
 		{
 			System.Int64 tempAux = 1000L;
 			System.Int64 tempAux2 = - 1000L;
-			NumericRangeFilter f = NumericRangeFilter.NewLongRange("field8", 8, tempAux, tempAux2, true, true);
+            NumericRangeFilter<long> f = NumericRangeFilter.NewLongRange("field8", 8, tempAux, tempAux2, true, true);
 			Assert.AreSame(DocIdSet.EMPTY_DOCIDSET, f.GetDocIdSet(searcher.GetIndexReader()), "A inverse range should return the EMPTY_DOCIDSET instance");
 			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
 			System.Int64 tempAux3 = (long) System.Int64.MaxValue;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
 			System.Int64 tempAux = 1000L;
 			//UPGRADE_NOTE: ref keyword was added to struct-type parameters. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1303'"
 			System.Int64 tempAux2 = 1000L;
-			NumericRangeQuery q = NumericRangeQuery.NewLongRange("ascfield8", 8, tempAux, tempAux2, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange("ascfield8", 8, tempAux, tempAux2, true, true);
 			Assert.AreSame(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE, q.GetRewriteMethod());
 			TopDocs topDocs = searcher.Search(q, noDocs);
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 			long upper = (count - 1) * distance + (distance / 3) + startOffset;
 			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
 			System.Int64 tempAux = (long) upper;
-			NumericRangeQuery q = NumericRangeQuery.NewLongRange(field, precisionStep, null, tempAux, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, null, tempAux, true, true);
 			TopDocs topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 			System.Console.Out.WriteLine("Found " + q.GetTotalNumberOfTerms() + " distinct terms in left open range for field '" + field + "'.");
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
 			long lower = (count - 1) * distance + (distance / 3) + startOffset;
 			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
 			System.Int64 tempAux = (long) lower;
-			NumericRangeQuery q = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, null, true, true);
+			NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, null, true, true);
 			TopDocs topDocs = searcher.Search(q, null, noDocs, Sort.INDEXORDER);
 			System.Console.Out.WriteLine("Found " + q.GetTotalNumberOfTerms() + " distinct terms in right open range for field '" + field + "'.");
 			ScoreDoc[] sd = topDocs.ScoreDocs;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
 				// test inclusive range
 				System.Int64 tempAux = (long) lower;
 				System.Int64 tempAux2 = (long) upper;
-				NumericRangeQuery tq = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, tempAux2, true, true);
+                NumericRangeQuery<long> tq = NumericRangeQuery.NewLongRange(field, precisionStep, tempAux, tempAux2, true, true);
 				TermRangeQuery cq = new TermRangeQuery(field, NumericUtils.LongToPrefixCoded(lower), NumericUtils.LongToPrefixCoded(upper), true, true);
 				TopDocs tTopDocs = searcher.Search(tq, 1);
 				TopDocs cTopDocs = searcher.Search(cq, 1);
@@ -512,57 +512,32 @@ namespace Lucene.Net.Search
         [Test]
 		public virtual void  TestEqualsAndHash()
 		{
-			System.Int64 tempAux = 10L;
-			System.Int64 tempAux2 = 20L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test1", 4, tempAux, tempAux2, true, true));
-			System.Int64 tempAux3 = 10L;
-			System.Int64 tempAux4 = 20L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test2", 4, tempAux3, tempAux4, false, true));
-			System.Int64 tempAux5 = 10L;
-			System.Int64 tempAux6 = 20L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test3", 4, tempAux5, tempAux6, true, false));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test1", 4, 10L, 20L, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test2", 4, 10L, 20L, false, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test3", 4, 10L, 20L, true, false));
 			System.Int64 tempAux7 = 10L;
-			System.Int64 tempAux8 = 20L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test4", 4, tempAux7, tempAux8, false, false));
-			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
-			System.Int64 tempAux9 = 10L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test5", 4, tempAux9, null, true, true));
-			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
-			System.Int64 tempAux10 = 20L;
-			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test6", 4, null, tempAux10, true, true));
-			//UPGRADE_TODO: The 'System.Int64' structure does not have an equivalent to NULL. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1291'"
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test4", 4, 10L, 20L, false, false));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test5", 4, 10L, null, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test6", 4, null, 20L, true, true));
 			QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test7", 4, null, null, true, true));
-			System.Int64 tempAux11 = 10L;
-			System.Int64 tempAux12 = 20L;
-			System.Int64 tempAux13 = 10L;
-			System.Int64 tempAux14 = 20L;
-			QueryUtils.CheckEqual(NumericRangeQuery.NewLongRange("test8", 4, tempAux11, tempAux12, true, true), NumericRangeQuery.NewLongRange("test8", 4, tempAux13, tempAux14, true, true));
-			System.Int64 tempAux15 = 10L;
-			System.Int64 tempAux16 = 20L;
-			System.Int64 tempAux17 = 10L;
-			System.Int64 tempAux18 = 20L;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test9", 4, tempAux15, tempAux16, true, true), NumericRangeQuery.NewLongRange("test9", 8, tempAux17, tempAux18, true, true));
-			System.Int64 tempAux19 = 10L;
-			System.Int64 tempAux20 = 20L;
-			System.Int64 tempAux21 = 10L;
-			System.Int64 tempAux22 = 20L;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test10a", 4, tempAux19, tempAux20, true, true), NumericRangeQuery.NewLongRange("test10b", 4, tempAux21, tempAux22, true, true));
-			System.Int64 tempAux23 = 10L;
-			System.Int64 tempAux24 = 20L;
-			System.Int64 tempAux25 = 20L;
-			System.Int64 tempAux26 = 10L;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test11", 4, tempAux23, tempAux24, true, true), NumericRangeQuery.NewLongRange("test11", 4, tempAux25, tempAux26, true, true));
-			System.Int64 tempAux27 = 10L;
-			System.Int64 tempAux28 = 20L;
-			System.Int64 tempAux29 = 10L;
-			System.Int64 tempAux30 = 20L;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test12", 4, tempAux27, tempAux28, true, true), NumericRangeQuery.NewLongRange("test12", 4, tempAux29, tempAux30, false, true));
-			System.Int64 tempAux31 = 10L;
-			System.Int64 tempAux32 = 20L;
-			System.Single tempAux33 = (float) 10f;
-			System.Single tempAux34 = (float) 20f;
-			QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test13", 4, tempAux31, tempAux32, true, true), NumericRangeQuery.NewFloatRange("test13", 4, tempAux33, tempAux34, true, true));
-			// difference to int range is tested in TestNumericRangeQuery32
+            QueryUtils.CheckEqual(NumericRangeQuery.NewLongRange("test8", 4, 10L, 20L, true, true),
+                                  NumericRangeQuery.NewLongRange("test8", 4, 10L, 20L, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test9", 4, 10L, 20L, true, true),
+                                    NumericRangeQuery.NewLongRange("test9", 8, 10L, 20L, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test10a", 4, 10L, 20L, true, true),
+                                    NumericRangeQuery.NewLongRange("test10b", 4, 10L, 20L, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test11", 4, 10L, 20L, true, true),
+                                    NumericRangeQuery.NewLongRange("test11", 4, 20L, 10L, true, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test12", 4, 10L, 20L, true, true),
+                                    NumericRangeQuery.NewLongRange("test12", 4, 10L, 20L, false, true));
+
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test13", 4, 10L, 20L, true, true),
+                                    NumericRangeQuery.NewFloatRange("test13", 4, 10f, 20f, true, true));
+            // difference to int range is tested in TestNumericRangeQuery32
 		}
 		static TestNumericRangeQuery64()
 		{

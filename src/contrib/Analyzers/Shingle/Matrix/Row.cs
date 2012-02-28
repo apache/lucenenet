@@ -16,9 +16,8 @@
  */
 
 using System.Collections.Generic;
-using Lucene.Net.Analysis;
 
-namespace Lucene.Net.Analyzers.Shingle.Matrix
+namespace Lucene.Net.Analysis.Shingle.Matrix
 {
     public class Row
     {

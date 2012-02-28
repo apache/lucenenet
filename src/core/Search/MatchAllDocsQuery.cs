@@ -16,7 +16,7 @@
  */
 
 using System;
-
+using Lucene.Net.Index;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using TermDocs = Lucene.Net.Index.TermDocs;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -72,30 +72,9 @@ namespace Lucene.Net.Search
 				this.norms = norms;
 			}
 			
-			public override Explanation Explain(int doc)
-			{
-				return null; // not called... see MatchAllDocsWeight.explain()
-			}
-			
-			/// <deprecated> use <see cref="DocID()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use DocID() instead.")]
-			public override int Doc()
-			{
-				return termDocs.Doc();
-			}
-			
 			public override int DocID()
 			{
 				return doc;
-			}
-			
-			/// <deprecated> use <see cref="NextDoc()" /> instead. 
-			/// </deprecated>
-            [Obsolete("use NextDoc() instead. ")]
-			public override bool Next()
-			{
-				return NextDoc() != NO_MORE_DOCS;
 			}
 			
 			public override int NextDoc()
@@ -106,14 +85,6 @@ namespace Lucene.Net.Search
 			public override float Score()
 			{
 				return norms == null?score:score * Similarity.DecodeNorm(norms[DocID()]);
-			}
-			
-			/// <deprecated> use <see cref="Advance(int)" /> instead. 
-			/// </deprecated>
-            [Obsolete("use Advance(int) instead.")]
-			public override bool SkipTo(int target)
-			{
-				return Advance(target) != NO_MORE_DOCS;
 			}
 			
 			public override int Advance(int target)
@@ -199,7 +170,7 @@ namespace Lucene.Net.Search
 			return new MatchAllDocsWeight(this, searcher);
 		}
 		
-		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
 		{
 		}
 		

@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis
 {
 	
 	/// <summary> Emits the entire input as a single token.</summary>
-	public class KeywordTokenizer:Tokenizer
+	public sealed class KeywordTokenizer:Tokenizer
 	{
 		
 		private const int DEFAULT_BUFFER_SIZE = 256;
@@ -57,8 +57,8 @@ namespace Lucene.Net.Analysis
 		private void  Init(int bufferSize)
 		{
 			this.done = false;
-			termAtt = (TermAttribute) AddAttribute(typeof(TermAttribute));
-			offsetAtt = (OffsetAttribute) AddAttribute(typeof(OffsetAttribute));
+            termAtt = AddAttribute<TermAttribute>();
+            offsetAtt = AddAttribute<OffsetAttribute>();
 			termAtt.ResizeTermBuffer(bufferSize);
 		}
 		
@@ -91,24 +91,6 @@ namespace Lucene.Net.Analysis
 		{
 			// set final offset 
 			offsetAtt.SetOffset(finalOffset, finalOffset);
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next(Token reusableToken)
-		{
-			return base.Next(reusableToken);
-		}
-		
-		/// <deprecated> Will be removed in Lucene 3.0. This method is final, as it should
-		/// not be overridden. Delegates to the backwards compatibility layer. 
-		/// </deprecated>
-        [Obsolete("Will be removed in Lucene 3.0. This method is final, as it should not be overridden. Delegates to the backwards compatibility layer. ")]
-		public override Token Next()
-		{
-			return base.Next();
 		}
 		
 		public override void  Reset(System.IO.TextReader input)
